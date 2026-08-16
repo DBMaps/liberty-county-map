@@ -1,0 +1,269 @@
+{
+  "schemaVersion": "gridly.statewide-capability-audit.v1",
+  "generatedAt": "2026-08-16",
+  "baseline": {
+    "branch": "work",
+    "head": "b5405d796b1fa3eb4dad0787f718c33133570126",
+    "gitStatusAtStart": [
+      "?? android/.gradle/",
+      "?? android/build/",
+      "?? node_modules/"
+    ],
+    "countyRegistryCount": 254,
+    "operationalCountyCount": 254,
+    "canonicalPlaceCount": 1859,
+    "promotedCameraCount": 1555,
+    "lp197RetainedCameraCount": 4,
+    "governedFallbackCameraCount": 300
+  },
+  "taxonomy": {
+    "states": [
+      "AVAILABLE",
+      "AVAILABLE_PARTIAL",
+      "AVAILABLE_NOT_ACTIVATED",
+      "NOT_AVAILABLE",
+      "NOT_CLAIMED",
+      "BLOCKED_DATA",
+      "BLOCKED_RUNTIME",
+      "BLOCKED_CONFIGURATION",
+      "BLOCKED_GOVERNANCE",
+      "NOT_APPLICABLE"
+    ],
+    "capabilities": {
+      "COUNTY_IDENTITY": "Canonical FIPS/name/countyId identity exists in the 254-county runtime registry.",
+      "COUNTY_BOUNDARY_GEOMETRY": "Authoritative polygon or multipolygon exists in the governed statewide package.",
+      "COUNTY_BOUNDS_AVAILABLE_TO_RUNTIME": "A bounding box is present in GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID and can seed fitBounds/candidate selection.",
+      "CANONICAL_PLACE_IDENTITY": "Governed Census PLACE GEOID identity.",
+      "PLACE_COUNTY_MEMBERSHIPS": "All governed county memberships; no invented primary county.",
+      "PLACE_PRESENTATION_CAMERA": "Governed presentation coordinate and existing zoom behavior.",
+      "PLACE_SEARCH": "Canonical PLACE is included in runtime awareness-area search.",
+      "ZIP_TO_PLACE_RESOLUTION": "A governed ZIP record resolves automatically to an awareness community; partial ZIP evidence is not equivalent to statewide PLACE coverage.",
+      "ROAD_GEOMETRY_ROAD_DATA": "Locally governed or explicitly external Gridly roadway geometry; basemap tiles excluded.",
+      "ROAD_RUNTIME_AVAILABILITY": "Road manifest exposes a loadable local/external/partition runtime.",
+      "RAIL_CROSSING_SOURCE": "Governed statewide FRA source contains county records, or zero records is authoritatively observed.",
+      "RAIL_CROSSING_PRODUCTION_PACKAGE": "Certified county production package.",
+      "RAIL_CROSSING_RUNTIME": "County runtime source is configured available.",
+      "CONSUMER_VISIBLE_CROSSINGS": "Certified public-roadway records can reach consumer rendering.",
+      "HAZARD_REPORT_PLACEMENT": "Tap/GPS coordinate can resolve to a supported county and pass pre-insert coverage validation.",
+      "HAZARD_REPORT_PERSISTENCE": "Client can insert and retrieve report rows; remote schema/RLS requires live verification.",
+      "HAZARD_RUNTIME_VISIBILITY": "Accepted local hazard and remote refresh enter awareness rendering.",
+      "COMMUNITY_REPORT_PLACEMENT": "Non-crossing report placement path.",
+      "COMMUNITY_REPORT_PERSISTENCE": "Supabase insert/retrieval path, subject to remote verification.",
+      "AWARENESS_FILTERS": "Selected county/community filtering works; crossing filters additionally require inventory.",
+      "COUNTY_CONTAINMENT": "Coordinate candidate bounds plus authoritative polygon resolve exactly one operational county.",
+      "ROUTE_WATCH_SUPPORT": "Route context can consume roads/hazards; governed road runtime determines local completeness.",
+      "REGION_METRO_SPECIAL_GOVERNANCE": "Separate governed child-region overlays where defined; otherwise not applicable.",
+      "REMOTE_SUPABASE_DEPENDENCY": "Report persistence and cross-device retrieval depend on remote Supabase.",
+      "MAP_PRESENTATION": "County/PLACE camera can frame map; county framing requires runtime bounds."
+    }
+  },
+  "geometry": {
+    "source": {
+      "authority": "LP137 authoritative statewide geometry source",
+      "byteLength": 14000957,
+      "geometryPreservation": "source geometry copied without simplification or regeneration",
+      "path": "assets/boundaries/texas-counties-boundaries.geojson",
+      "sha256": "09b9bc52c53f983451bb55899a03109f4002a3bcb1b47e0fe69cc38ed804332c"
+    },
+    "package": {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+      "sha256": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+      "countyCount": 254
+    },
+    "featureCount": 254,
+    "exactFipsCoverage": 254,
+    "missingFips": [],
+    "invalidGeometryCount": 0,
+    "runtimeReadableGeometryCount": 254,
+    "boundsDerivableCount": 254,
+    "runtimeBoundsCount": 28,
+    "fitBoundsUsableCount": 28,
+    "containmentValidCount": 28
+  },
+  "roads": {
+    "basemapVisibleCount": 254,
+    "governedRuntimeAvailableCount": 28,
+    "governedRuntimeMissingCount": 226,
+    "runtimeManifestCountyCount": 28,
+    "statusCounts": {
+      "local_runtime": 3,
+      "external_runtime": 24,
+      "partition_runtime_ready": 1
+    }
+  },
+  "crossings": {
+    "sourcePath": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sourceSha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f",
+    "sourceRecordCount": 16101,
+    "countiesWithPositiveSourceRecords": 200,
+    "countiesWithZeroSourceRecords": 54,
+    "certifiedPackageCount": 28,
+    "missingPackageCount": 226,
+    "totalCertifiedCrossings": 3771,
+    "activeRuntimeCount": 28,
+    "consumerVisibleCountyCount": 27,
+    "immediatelyCandidateManufacturableCountyCount": 226,
+    "requiresSourceExtractionCount": 0,
+    "requiresNewOwnerEvidenceCount": 0,
+    "productionPromotionRequiresGovernanceCount": 226
+  },
+  "hazards": {
+    "hazardPlacementAvailableCount": 28,
+    "hazardPlacementUnavailableCount": 226,
+    "firstRootCause": "226 counties absent from GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID, so gridlyResolveCountyIdForCoordinate produces countyId null and createSharedHazardReport returns coverage_invalid before Supabase insert.",
+    "persistenceRepositoryPathAvailableCount": 254,
+    "endToEndPersistenceLiveVerifiedCount": 0,
+    "remoteVerificationRequiredCount": 254
+  },
+  "places": {
+    "canonicalCount": 1859,
+    "membershipCount": 2058,
+    "multiCountyCount": 163,
+    "cameraCounts": {
+      "AVAILABLE_CERTIFIED_PROMOTION": 1555,
+      "AVAILABLE_GOVERNED_FALLBACK": 300,
+      "AVAILABLE_LP197_RETAINED": 4
+    },
+    "searchAvailableCount": 1859,
+    "hazardPlacementAvailableAllMembershipsCount": 283,
+    "hazardPlacementBlockedCount": 1575,
+    "hazardPlacementPartialMultiCountyCount": 1,
+    "zipResolvedPlaceCount": 30
+  },
+  "supportDefinitions": {
+    "IDENTITY_SUPPORTED": [
+      "COUNTY_IDENTITY",
+      "CANONICAL_PLACE_IDENTITY",
+      "PLACE_COUNTY_MEMBERSHIPS",
+      "PLACE_SEARCH",
+      "PLACE_PRESENTATION_CAMERA"
+    ],
+    "AWARENESS_SUPPORTED": [
+      "IDENTITY_SUPPORTED",
+      "COUNTY_BOUNDS_AVAILABLE_TO_RUNTIME",
+      "COUNTY_CONTAINMENT",
+      "HAZARD_REPORT_PLACEMENT",
+      "HAZARD_REPORT_PERSISTENCE live verified",
+      "HAZARD_RUNTIME_VISIBILITY",
+      "AWARENESS_FILTERS"
+    ],
+    "CROSSING_SUPPORTED": [
+      "RAIL_CROSSING_SOURCE or governed zero applicability",
+      "certified package",
+      "runtime active",
+      "consumer visibility"
+    ],
+    "FULLY_SUPPORTED": [
+      "IDENTITY_SUPPORTED",
+      "AWARENESS_SUPPORTED",
+      "CROSSING_SUPPORTED",
+      "ROAD_RUNTIME_AVAILABILITY",
+      "ZIP resolution where applicable",
+      "MAP_PRESENTATION",
+      "REMOTE backend certified"
+    ]
+  },
+  "fullSupport": {
+    "identitySupportedCount": 254,
+    "awarenessSupportedRepositoryCount": 28,
+    "crossingSupportedCount": 28,
+    "fullySupportedCount": 0,
+    "partialSupportCount": 254,
+    "reasonNoFullSupport": "No county has repository evidence that certifies current remote Supabase schema/RLS/cross-device persistence plus exhaustive ZIP applicability; 28 have the strongest local runtime cohort."
+  },
+  "statusCounts": {
+    "COUNTY_IDENTITY": {
+      "AVAILABLE": 254
+    },
+    "COUNTY_BOUNDARY_GEOMETRY": {
+      "AVAILABLE": 254
+    },
+    "COUNTY_BOUNDS_AVAILABLE_TO_RUNTIME": {
+      "BLOCKED_CONFIGURATION": 226,
+      "AVAILABLE": 28
+    },
+    "CANONICAL_PLACE_IDENTITY": {
+      "AVAILABLE": 254
+    },
+    "PLACE_COUNTY_MEMBERSHIPS": {
+      "AVAILABLE": 254
+    },
+    "PLACE_PRESENTATION_CAMERA": {
+      "AVAILABLE_PARTIAL": 254
+    },
+    "PLACE_SEARCH": {
+      "AVAILABLE": 254
+    },
+    "ZIP_TO_PLACE_RESOLUTION": {
+      "BLOCKED_GOVERNANCE": 226,
+      "AVAILABLE_PARTIAL": 28
+    },
+    "ROAD_GEOMETRY_ROAD_DATA": {
+      "NOT_CLAIMED": 226,
+      "AVAILABLE": 28
+    },
+    "ROAD_RUNTIME_AVAILABILITY": {
+      "BLOCKED_DATA": 226,
+      "AVAILABLE": 28
+    },
+    "RAIL_CROSSING_SOURCE": {
+      "AVAILABLE": 200,
+      "NOT_APPLICABLE": 54
+    },
+    "RAIL_CROSSING_PRODUCTION_PACKAGE": {
+      "AVAILABLE_NOT_ACTIVATED": 226,
+      "AVAILABLE": 28
+    },
+    "RAIL_CROSSING_RUNTIME": {
+      "NOT_CLAIMED": 226,
+      "AVAILABLE": 28
+    },
+    "CONSUMER_VISIBLE_CROSSINGS": {
+      "BLOCKED_RUNTIME": 173,
+      "NOT_APPLICABLE": 53,
+      "AVAILABLE": 28
+    },
+    "HAZARD_REPORT_PLACEMENT": {
+      "BLOCKED_CONFIGURATION": 226,
+      "AVAILABLE": 28
+    },
+    "HAZARD_REPORT_PERSISTENCE": {
+      "BLOCKED_RUNTIME": 226,
+      "AVAILABLE_PARTIAL": 28
+    },
+    "HAZARD_RUNTIME_VISIBILITY": {
+      "BLOCKED_RUNTIME": 226,
+      "AVAILABLE_PARTIAL": 28
+    },
+    "COMMUNITY_REPORT_PLACEMENT": {
+      "BLOCKED_CONFIGURATION": 226,
+      "AVAILABLE": 28
+    },
+    "COMMUNITY_REPORT_PERSISTENCE": {
+      "BLOCKED_RUNTIME": 226,
+      "AVAILABLE_PARTIAL": 28
+    },
+    "AWARENESS_FILTERS": {
+      "AVAILABLE_PARTIAL": 226,
+      "AVAILABLE": 28
+    },
+    "COUNTY_CONTAINMENT": {
+      "BLOCKED_CONFIGURATION": 226,
+      "AVAILABLE": 28
+    },
+    "ROUTE_WATCH_SUPPORT": {
+      "AVAILABLE_PARTIAL": 254
+    },
+    "REGION_METRO_SPECIAL_GOVERNANCE": {
+      "NOT_APPLICABLE": 252,
+      "AVAILABLE_PARTIAL": 2
+    },
+    "REMOTE_SUPABASE_DEPENDENCY": {
+      "AVAILABLE_PARTIAL": 254
+    },
+    "MAP_PRESENTATION": {
+      "AVAILABLE_PARTIAL": 226,
+      "AVAILABLE": 28
+    }
+  }
+}
