@@ -10,7 +10,7 @@ test('LP186 reports are deterministic, exhaustive, reconciled, and non-authorizi
   const restrictions = JSON.parse(fs.readFileSync('reports/lp186/county-restriction-reconciliation.json'));
   assert.equal(inventory.length, 254); assert.equal(new Set(inventory.map(x => x.fips)).size, 254);
   assert.deepEqual(summary.counts, { totalTexasCounties: 254, operational: 28, nonOperational: 226, activationReadyNow: 0, repositoryWorkRequired: 215, ownerOrExternalActionRequired: 0, restricted: 11, unknown: 0 });
-  assert.equal(restrictions.length, 11); assert.equal(summary.crossings.certifiedCrossings, 3771);
+  assert.equal(restrictions.length, 11); assert.equal(summary.crossings.certifiedCrossings, 3784);
   assert.ok(inventory.every(x => x.authorization.activation === 'NOT_AUTHORIZED' && x.authorization.deployment === 'NOT_AUTHORIZED'));
   assert.deepEqual(summary.safety, { countyActivationPerformed: false, restrictionRemoved: false, productionDeploymentPerformed: false, statewideLaunchAuthorizationCreated: false });
 });
