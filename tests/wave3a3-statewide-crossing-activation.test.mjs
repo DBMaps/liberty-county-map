@@ -4,6 +4,8 @@ import {mkdtemp,mkdir,readFile,rm,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import {canonicalCandidateBytes,certifiedCandidateBytes,governedPathOrderMatches,guardedReplace,inspect,orderGovernedWrites,outputs,run,sortGovernedPaths} from '../tools/wave3a3/activate-statewide-crossings.mjs';
 
 const sha256=body=>createHash('sha256').update(body).digest('hex');
@@ -75,9 +77,19 @@ test('what-if is deterministic and performs no production writes',async()=>{
 });
 
 test('apply fails before writes when the committed certification or any preflight gate is absent',async()=>{
- const x=await inspect(),paths=x.production,before=await Promise.all(paths.map(async p=>{try{return [p,await readFile(new URL(`../${p}`,import.meta.url))]}catch{return [p,null]}}));
- await assert.rejects(run({mode:'apply'}),/fail closed/);
- for(const [p,b] of before){let after=null;try{after=await readFile(new URL(`../${p}`,import.meta.url))}catch{}assert.deepEqual(after,b,p)}
+ const fixture=await mkdtemp(join(tmpdir(),'wave3a3-missing-certification-'));
+ try{
+  execFileSync('git',['clone','--quiet','--no-local',fileURLToPath(new URL('..',import.meta.url)),fixture]);
+  await rm(join(fixture,'evidence/wave3a3-statewide-crossing-activation/summary.json'));
+  const paths=(await inspect({root:fixture})).production;
+  const bytes=async path=>{try{return await readFile(join(fixture,path))}catch(error){if(error.code==='ENOENT')return null;throw error}};
+  const before=await Promise.all(paths.map(async path=>[path,await bytes(path)]));
+
+  await assert.rejects(run({mode:'apply',root:fixture}),/fail closed/);
+
+  for(const [path,body] of before)assert.deepEqual(await bytes(path),body,path);
+  assert(before.some(([,body])=>body===null),'fixture must include at least one not-yet-created governed target');
+ }finally{await rm(fixture,{recursive:true,force:true})}
 });
 
 test('guarded replacement stages valid JSON and rolls every partial replacement back',async()=>{
