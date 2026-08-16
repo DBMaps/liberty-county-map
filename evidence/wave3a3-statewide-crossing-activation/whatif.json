@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.wave3a3.whatif.v1",
-  "status": "BLOCKED",
+  "status": "PASS",
   "applied": false,
   "productionWrites": 0,
   "projected": {

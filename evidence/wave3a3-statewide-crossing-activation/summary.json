@@ -1,7 +1,7 @@
 {
   "schemaVersion": "gridly.wave3a3.summary.v1",
-  "decision": "STATEWIDE CROSSING ACTIVATION BLOCKED",
-  "status": "BLOCKED",
+  "decision": "STATEWIDE CROSSING ACTIVATION WHAT-IF CERTIFIED — READY FOR OWNER APPLY",
+  "status": "PASS",
   "productionWrites": 0,
   "projected": {
     "ACTIVE_POSITIVE": 202,
@@ -9,14 +9,5 @@
     "TOTAL": 254
   },
   "projectedActiveIdentities": 16099,
-  "blockingReasons": [
-    "activeIdentityCount",
-    "candidateCountyCount",
-    "candidateIdentityCount",
-    "combinedIdentityCount",
-    "blockedIdentitySet",
-    "certificationPass",
-    "fraSourceIdentity",
-    "wave32InputsPresent"
-  ]
+  "blockingReasons": []
 }
