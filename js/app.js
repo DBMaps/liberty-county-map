@@ -46102,7 +46102,12 @@ function gridlyGetCountyBounds(countyId = GRIDLY_DEFAULT_COUNTY_ID) {
   if (typeof L === "undefined" || !L.latLngBounds) return null;
   const metadata = gridlyGetCountyBoundsMetadata(countyId);
   const raw = metadata.rawBounds;
-  if (!raw) return null;
+  // The original awareness-bounds table only covers the early activated
+  // counties. Statewide PLACE activation loads authoritative county geometry
+  // during startup, so use that governed geometry for later counties.
+  if (!raw) return typeof gridlyGetAuthoritativeCountyGeometryFocusBounds === "function"
+    ? gridlyGetAuthoritativeCountyGeometryFocusBounds(metadata.countyId)
+    : null;
   // Legacy test sentinel only: const raw = normalized === "montgomery-tx" ? MONTGOMERY_COUNTY_AWARENESS_BOUNDS : LIBERTY_COUNTY_AWARENESS_BOUNDS;
   const bounds = L.latLngBounds([raw.south, raw.west], [raw.north, raw.east]);
   return bounds.isValid() ? bounds : null;
@@ -71146,8 +71151,24 @@ function getActiveDelayCrossingsForViewport() {
 
 function gridlyReissueActiveAreaPresentation(source = "geo-filter-empty") {
   const area = typeof getGridlyHomeTownAwarenessAnchor === "function" ? getGridlyHomeTownAwarenessAnchor() : null;
-  if (!area || typeof gridlyDispatchSemanticCamera !== "function") return false;
-  return gridlyDispatchSemanticCamera(area, area.countyId, { source, animate: true });
+  if (!area || !map || area.countyWide === true || area.fallback === true) return false;
+
+  // Filter changes are presentation actions, not semantic-selection actions.
+  // Resolve the already-governed camera, then issue the real Leaflet movement
+  // directly without opening a transaction, changing identity, or persisting.
+  const placeGeoid = typeof gridlyResolveCanonicalPlaceGeoid === "function" ? gridlyResolveCanonicalPlaceGeoid(area) : null;
+  const consumerCamera = placeGeoid && typeof gridlyGetGovernedPlaceConsumerPresentationCamera === "function"
+    ? gridlyGetGovernedPlaceConsumerPresentationCamera(placeGeoid)
+    : null;
+  const canonicalTarget = placeGeoid ? gridlyPlacePresentationTargets?.[placeGeoid] : null;
+  const target = consumerCamera || canonicalTarget || area;
+  const lng = consumerCamera ? target?.lng : (canonicalTarget ? target?.lon : target?.lng);
+  const zoom = consumerCamera ? target?.zoom : (canonicalTarget ? GRIDLY_TOWN_STARTUP_ZOOM : (target?.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM));
+  if (![target?.lat, lng, zoom].every((value) => Number.isFinite(Number(value)))) return false;
+  if (typeof gridlyRecordSemanticCameraOperation === "function") {
+    gridlyRecordSemanticCameraOperation("setView", [[Number(target.lat), Number(lng)], Number(zoom), { animate: true }], "FILTER_PRESENTATION", source);
+  }
+  return setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(lng) }, Number(zoom), { animate: true, compensateForChrome: false });
 }
 
 function gridlyApplyZeroCrossingViewportContract(filterKey = activeGeoFilter, reason = "unknown") {
@@ -71197,11 +71218,15 @@ function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
 }
 
 function updateGeoFilterStatus(visibleCrossings = []) {
-  if (!els.geoFilterStatus) return;
   const count = visibleCrossings.length;
   const crossingCoverageUnavailable = count === 0 && typeof gridlyGetActiveCountyCrossingInventory === "function" && gridlyGetActiveCountyCrossingInventory().length === 0;
+  const publish = (message) => {
+    if (els.geoFilterStatus) els.geoFilterStatus.textContent = message;
+    const portraitStatus = typeof document !== "undefined" ? document.getElementById("gridlyV2TopStatusSecondary") : null;
+    if (portraitStatus && (typeof isPortraitMode !== "function" || isPortraitMode())) portraitStatus.textContent = message;
+  };
   if (crossingCoverageUnavailable) {
-    els.geoFilterStatus.textContent = "No crossing data available for this area yet.";
+    publish("No crossing data available for this area yet.");
     return;
   }
   if (activeGeoFilter === "nearby" && userLocation) {
@@ -71225,7 +71250,7 @@ function updateGeoFilterStatus(visibleCrossings = []) {
     message = count ? "All crossings visible: tap markers to confirm route status." : "No crossing data available for this area yet.";
   }
 
-  els.geoFilterStatus.textContent = message;
+  publish(message);
 }
 
 function getVisibleCrossingsForFilter(reason = "unknown") {
