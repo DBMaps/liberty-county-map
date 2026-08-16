@@ -154,10 +154,35 @@ export async function guardedReplace(root,writes,{failAfter=Infinity,validate=as
 async function postActivation(root){
  const inventory=await read(root,'data/lp104/texas-counties.json'),manifest=await read(root,'Crossing-Packages/production-crossing-manifest.json'),registry=await read(root,'assets/package-registry/runtime-package-registry.json'),reconciliation=await read(root,`${WAVE32}/reconciliation-index.json`),owner=new Map(reconciliation.entries.map(e=>[e.crossingId,e.gridlyCountyFips]));
  const seen=new Set(),duplicates=[],mismatches=[],leakage=[],counts={};let positive=0,empty=0;
- for(const r of manifest.records){const c=inventory.counties.find(x=>x.countyName===r.county),pkg=await read(root,portable(r.packageFile)),values=ids(pkg);counts[c.countyName]=values.length;values.length?positive++:empty++;for(const id of values){if(seen.has(id))duplicates.push(id);seen.add(id);if(owner.get(id)!==c.fips)mismatches.push(id);if(BLOCKED.includes(id))leakage.push(id)}}
+ if(manifest.records.length!==254||manifest.totalPackages!==254||manifest.totalCrossings!==16099||manifest.passCount!==254||manifest.blockedCount!==0)fail('post-activation production manifest totals');
+ for(const r of manifest.records){const c=inventory.counties.find(x=>x.countyName===r.county);if(!c)fail(`unknown manifest county ${r.county}`);const pkg=await read(root,portable(r.packageFile)),values=ids(pkg),countyManifest=await read(root,`Crossing-Packages/${slug(c)}/package-manifest.json`);if(pkg.type!=='FeatureCollection'||!Array.isArray(pkg.features)||r.crossingCount!==values.length||countyManifest.crossingCount!==values.length||portable(countyManifest.packageFile)!==portable(r.packageFile))fail(`package certification differs for ${c.fips}`);counts[c.countyName]=values.length;values.length?positive++:empty++;for(const id of values){if(seen.has(id))duplicates.push(id);seen.add(id);if(owner.get(id)!==c.fips)mismatches.push(id);if(BLOCKED.includes(id))leakage.push(id)}}
  const assigned=new Set(reconciliation.entries.filter(e=>e.gridlyCountyFips).map(e=>e.crossingId)),missing=[...assigned].filter(id=>!seen.has(id)),extra=[...seen].filter(id=>!assigned.has(id)),crossing=registry.packages.filter(p=>p.packageType==='Crossing');
- const result={classification:{ACTIVE_POSITIVE:positive,ACTIVE_EMPTY:empty,TOTAL:manifest.records.length},activeIdentities:seen.size,missing,extra,duplicates,mismatches,blockedLeakage:leakage,controls:{Brazos:counts.Brazos,Lavaca:counts.Lavaca,Washington:counts.Washington,Tyler:counts.Tyler},fraSource:{expected:FRA,observed:{bytes:(await raw(root,'Crossing-Packages/Texas/fra-crossings-tx.geojson')).length,sha256:sha(await raw(root,'Crossing-Packages/Texas/fra-crossings-tx.geojson'))}},manifestRegistryAgree:crossing.length===254&&same(crossing.map(p=>p.county),manifest.records.map(r=>r.county))};
+ const result={classification:{ACTIVE_POSITIVE:positive,ACTIVE_EMPTY:empty,TOTAL:manifest.records.length},activeIdentities:seen.size,missing,extra,duplicates,mismatches,blockedLeakage:leakage,controls:{Brazos:counts.Brazos,Lavaca:counts.Lavaca,Washington:counts.Washington,Tyler:counts.Tyler},fraSource:{expected:FRA,observed:{bytes:(await raw(root,'Crossing-Packages/Texas/fra-crossings-tx.geojson')).length,sha256:sha(await raw(root,'Crossing-Packages/Texas/fra-crossings-tx.geojson'))}},manifestRegistryAgree:crossing.length===254&&registry.packageTypes.find(p=>p.packageType==='Crossing')?.packageCount===254&&same(crossing.map(p=>p.county),manifest.records.map(r=>r.county))};
  const expected={classification:{ACTIVE_POSITIVE:202,ACTIVE_EMPTY:52,TOTAL:254},activeIdentities:16099,missing:[],extra:[],duplicates:[],mismatches:[],blockedLeakage:[],controls:{Brazos:95,Lavaca:40,Washington:44,Tyler:0},fraSource:{expected:FRA,observed:FRA},manifestRegistryAgree:true};if(!same(result,expected))fail(`post-write certification failed: ${JSON.stringify(result)}`);return result;
+}
+
+async function requireCommittedFile(root,path){
+ if(!existsSync(join(root,path)))fail(`committed apply evidence is absent: ${path.split('/').at(-1)}`);
+ try{git(root,['ls-files','--error-unmatch',path]);git(root,['diff','--quiet','HEAD','--',path])}catch{fail(`apply evidence is not owner-current and committed: ${path.split('/').at(-1)}`)}
+ return read(root,path);
+}
+
+/** Validate the applied lifecycle without regenerating or comparing historical WHAT-IF evidence. */
+export async function verifyPostActivation({root=DEFAULT_ROOT,reinspect=postActivation}={}){
+ const names=['apply-preflight.json','apply-write-plan.json','apply-result.json','post-activation-state.json','post-activation-conservation.json','post-activation-registry-certification.json','post-activation-package-certification.json'];
+ const values=await Promise.all(names.map(name=>requireCommittedFile(root,`${OUT}/${name}`))),e=Object.fromEntries(names.map((name,i)=>[name,values[i]])),result=e['apply-result.json'];
+ if(result.status!=='PASS'||result.decision!==DECISION_APPLIED||result.productionWrites!==454)fail('committed apply result is not the certified applied decision');
+ const preflight=e['apply-preflight.json'],plan=e['apply-write-plan.json'];
+ if(preflight.status!=='PASS'||preflight.productionWrites!==0||plan.status!=='PASS'||plan.count!==454||plan.files?.length!==454||!governedPathOrderMatches(plan.orderedPaths,plan.files.map(f=>f.path))||new Set(plan.orderedPaths).size!==454)fail('committed apply plan contract');
+ for(const file of plan.files){const body=await raw(root,portable(file.path));if(body.length!==file.bytes||sha(body)!==file.sha256)fail(`applied file differs from committed write plan: ${file.path}`)}
+ const post=await reinspect(root),expected={
+  'post-activation-state.json':{schemaVersion:'gridly.wave3a3.post-state.v1',status:'PASS',...post},
+  'post-activation-conservation.json':{schemaVersion:'gridly.wave3a3.post-conservation.v1',status:'PASS',activeIdentities:post.activeIdentities,missing:post.missing,extra:post.extra,duplicates:post.duplicates,ownershipMismatches:post.mismatches,blockedLeakage:post.blockedLeakage},
+  'post-activation-registry-certification.json':{schemaVersion:'gridly.wave3a3.post-registry.v1',status:'PASS',manifestRegistryAgree:post.manifestRegistryAgree,counties:254},
+  'post-activation-package-certification.json':{schemaVersion:'gridly.wave3a3.post-packages.v1',status:'PASS',positive:202,empty:52,total:254,identities:16099,controls:post.controls}
+ };
+ for(const [name,value] of Object.entries(expected))if(!same(e[name],value))fail(`post-activation evidence mismatch: ${name}`);
+ return result;
 }
 
 async function apply(root){
@@ -172,6 +197,7 @@ async function apply(root){
 
 export async function run({mode='whatif',writeEvidence=true,root=DEFAULT_ROOT}={}){
  if(mode==='apply')return apply(root);
+ if(mode==='verify'&&existsSync(join(root,OUT,'apply-result.json')))return verifyPostActivation({root});
  const generated=await outputs({root});
  if(mode==='verify')for(const [name,value] of Object.entries(generated)){const path=join(root,OUT,name);if(!existsSync(path)||await readFile(path,'utf8')!==json(value))fail(`evidence mismatch: ${name}`)}
  else if(mode==='whatif'&&writeEvidence){await mkdir(join(root,OUT),{recursive:true});for(const [name,value] of Object.entries(generated))await writeFile(join(root,OUT,name),json(value))}
