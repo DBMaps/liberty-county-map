@@ -1,0 +1,2050 @@
+{
+  "schemaVersion": "gridly.wave3a1b.counts.v1",
+  "method": "351 contained mismatches reassigned by polygon containment; two outside-Texas rows retained by identity but excluded from geographic county counts",
+  "statewide": {
+    "identitiesBefore": 16101,
+    "identitiesRetained": 16101,
+    "geographicallyAssignedAfter": 16099,
+    "blockedBorderRows": 2,
+    "duplicatesBefore": 0,
+    "duplicatesAfter": 0,
+    "positiveSourceCounties": 200,
+    "zeroSourceCounties": 54,
+    "positiveGeographicCounties": 202,
+    "zeroGeographicCounties": 52
+  },
+  "counties": [
+    {
+      "countyId": "anderson-tx",
+      "countyFips": "48001",
+      "countyName": "Anderson County",
+      "beforeFraSourceCount": 71,
+      "afterGeographicCount": 70,
+      "netDelta": -1
+    },
+    {
+      "countyId": "andrews-tx",
+      "countyFips": "48003",
+      "countyName": "Andrews County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "angelina-tx",
+      "countyFips": "48005",
+      "countyName": "Angelina County",
+      "beforeFraSourceCount": 100,
+      "afterGeographicCount": 100,
+      "netDelta": 0
+    },
+    {
+      "countyId": "aransas-tx",
+      "countyFips": "48007",
+      "countyName": "Aransas County",
+      "beforeFraSourceCount": 7,
+      "afterGeographicCount": 5,
+      "netDelta": -2
+    },
+    {
+      "countyId": "archer-tx",
+      "countyFips": "48009",
+      "countyName": "Archer County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "armstrong-tx",
+      "countyFips": "48011",
+      "countyName": "Armstrong County",
+      "beforeFraSourceCount": 25,
+      "afterGeographicCount": 24,
+      "netDelta": -1
+    },
+    {
+      "countyId": "atascosa-tx",
+      "countyFips": "48013",
+      "countyName": "Atascosa County",
+      "beforeFraSourceCount": 59,
+      "afterGeographicCount": 57,
+      "netDelta": -2
+    },
+    {
+      "countyId": "austin-tx",
+      "countyFips": "48015",
+      "countyName": "Austin County",
+      "beforeFraSourceCount": 101,
+      "afterGeographicCount": 101,
+      "netDelta": 0
+    },
+    {
+      "countyId": "bailey-tx",
+      "countyFips": "48017",
+      "countyName": "Bailey County",
+      "beforeFraSourceCount": 21,
+      "afterGeographicCount": 21,
+      "netDelta": 0
+    },
+    {
+      "countyId": "bandera-tx",
+      "countyFips": "48019",
+      "countyName": "Bandera County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "bastrop-tx",
+      "countyFips": "48021",
+      "countyName": "Bastrop County",
+      "beforeFraSourceCount": 159,
+      "afterGeographicCount": 158,
+      "netDelta": -1
+    },
+    {
+      "countyId": "baylor-tx",
+      "countyFips": "48023",
+      "countyName": "Baylor County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "bee-tx",
+      "countyFips": "48025",
+      "countyName": "Bee County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "bell-tx",
+      "countyFips": "48027",
+      "countyName": "Bell County",
+      "beforeFraSourceCount": 143,
+      "afterGeographicCount": 150,
+      "netDelta": 7
+    },
+    {
+      "countyId": "bexar-tx",
+      "countyFips": "48029",
+      "countyName": "Bexar County",
+      "beforeFraSourceCount": 378,
+      "afterGeographicCount": 380,
+      "netDelta": 2
+    },
+    {
+      "countyId": "blanco-tx",
+      "countyFips": "48031",
+      "countyName": "Blanco County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 7,
+      "netDelta": 7
+    },
+    {
+      "countyId": "borden-tx",
+      "countyFips": "48033",
+      "countyName": "Borden County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "bosque-tx",
+      "countyFips": "48035",
+      "countyName": "Bosque County",
+      "beforeFraSourceCount": 49,
+      "afterGeographicCount": 48,
+      "netDelta": -1
+    },
+    {
+      "countyId": "bowie-tx",
+      "countyFips": "48037",
+      "countyName": "Bowie County",
+      "beforeFraSourceCount": 119,
+      "afterGeographicCount": 119,
+      "netDelta": 0
+    },
+    {
+      "countyId": "brazoria-tx",
+      "countyFips": "48039",
+      "countyName": "Brazoria County",
+      "beforeFraSourceCount": 157,
+      "afterGeographicCount": 157,
+      "netDelta": 0
+    },
+    {
+      "countyId": "brazos-tx",
+      "countyFips": "48041",
+      "countyName": "Brazos County",
+      "beforeFraSourceCount": 86,
+      "afterGeographicCount": 95,
+      "netDelta": 9
+    },
+    {
+      "countyId": "brewster-tx",
+      "countyFips": "48043",
+      "countyName": "Brewster County",
+      "beforeFraSourceCount": 49,
+      "afterGeographicCount": 55,
+      "netDelta": 6
+    },
+    {
+      "countyId": "briscoe-tx",
+      "countyFips": "48045",
+      "countyName": "Briscoe County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "brooks-tx",
+      "countyFips": "48047",
+      "countyName": "Brooks County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "brown-tx",
+      "countyFips": "48049",
+      "countyName": "Brown County",
+      "beforeFraSourceCount": 106,
+      "afterGeographicCount": 97,
+      "netDelta": -9
+    },
+    {
+      "countyId": "burleson-tx",
+      "countyFips": "48051",
+      "countyName": "Burleson County",
+      "beforeFraSourceCount": 67,
+      "afterGeographicCount": 67,
+      "netDelta": 0
+    },
+    {
+      "countyId": "burnet-tx",
+      "countyFips": "48053",
+      "countyName": "Burnet County",
+      "beforeFraSourceCount": 69,
+      "afterGeographicCount": 63,
+      "netDelta": -6
+    },
+    {
+      "countyId": "caldwell-tx",
+      "countyFips": "48055",
+      "countyName": "Caldwell County",
+      "beforeFraSourceCount": 45,
+      "afterGeographicCount": 47,
+      "netDelta": 2
+    },
+    {
+      "countyId": "calhoun-tx",
+      "countyFips": "48057",
+      "countyName": "Calhoun County",
+      "beforeFraSourceCount": 74,
+      "afterGeographicCount": 74,
+      "netDelta": 0
+    },
+    {
+      "countyId": "callahan-tx",
+      "countyFips": "48059",
+      "countyName": "Callahan County",
+      "beforeFraSourceCount": 24,
+      "afterGeographicCount": 26,
+      "netDelta": 2
+    },
+    {
+      "countyId": "cameron-tx",
+      "countyFips": "48061",
+      "countyName": "Cameron County",
+      "beforeFraSourceCount": 287,
+      "afterGeographicCount": 290,
+      "netDelta": 3
+    },
+    {
+      "countyId": "camp-tx",
+      "countyFips": "48063",
+      "countyName": "Camp County",
+      "beforeFraSourceCount": 55,
+      "afterGeographicCount": 55,
+      "netDelta": 0
+    },
+    {
+      "countyId": "carson-tx",
+      "countyFips": "48065",
+      "countyName": "Carson County",
+      "beforeFraSourceCount": 58,
+      "afterGeographicCount": 63,
+      "netDelta": 5
+    },
+    {
+      "countyId": "cass-tx",
+      "countyFips": "48067",
+      "countyName": "Cass County",
+      "beforeFraSourceCount": 47,
+      "afterGeographicCount": 49,
+      "netDelta": 2
+    },
+    {
+      "countyId": "castro-tx",
+      "countyFips": "48069",
+      "countyName": "Castro County",
+      "beforeFraSourceCount": 30,
+      "afterGeographicCount": 28,
+      "netDelta": -2
+    },
+    {
+      "countyId": "chambers-tx",
+      "countyFips": "48071",
+      "countyName": "Chambers County",
+      "beforeFraSourceCount": 15,
+      "afterGeographicCount": 15,
+      "netDelta": 0
+    },
+    {
+      "countyId": "cherokee-tx",
+      "countyFips": "48073",
+      "countyName": "Cherokee County",
+      "beforeFraSourceCount": 65,
+      "afterGeographicCount": 69,
+      "netDelta": 4
+    },
+    {
+      "countyId": "childress-tx",
+      "countyFips": "48075",
+      "countyName": "Childress County",
+      "beforeFraSourceCount": 27,
+      "afterGeographicCount": 28,
+      "netDelta": 1
+    },
+    {
+      "countyId": "clay-tx",
+      "countyFips": "48077",
+      "countyName": "Clay County",
+      "beforeFraSourceCount": 30,
+      "afterGeographicCount": 29,
+      "netDelta": -1
+    },
+    {
+      "countyId": "cochran-tx",
+      "countyFips": "48079",
+      "countyName": "Cochran County",
+      "beforeFraSourceCount": 4,
+      "afterGeographicCount": 4,
+      "netDelta": 0
+    },
+    {
+      "countyId": "coke-tx",
+      "countyFips": "48081",
+      "countyName": "Coke County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "coleman-tx",
+      "countyFips": "48083",
+      "countyName": "Coleman County",
+      "beforeFraSourceCount": 66,
+      "afterGeographicCount": 58,
+      "netDelta": -8
+    },
+    {
+      "countyId": "collin-tx",
+      "countyFips": "48085",
+      "countyName": "Collin County",
+      "beforeFraSourceCount": 186,
+      "afterGeographicCount": 185,
+      "netDelta": -1
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "countyFips": "48087",
+      "countyName": "Collingsworth County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "colorado-tx",
+      "countyFips": "48089",
+      "countyName": "Colorado County",
+      "beforeFraSourceCount": 109,
+      "afterGeographicCount": 109,
+      "netDelta": 0
+    },
+    {
+      "countyId": "comal-tx",
+      "countyFips": "48091",
+      "countyName": "Comal County",
+      "beforeFraSourceCount": 100,
+      "afterGeographicCount": 110,
+      "netDelta": 10
+    },
+    {
+      "countyId": "comanche-tx",
+      "countyFips": "48093",
+      "countyName": "Comanche County",
+      "beforeFraSourceCount": 85,
+      "afterGeographicCount": 80,
+      "netDelta": -5
+    },
+    {
+      "countyId": "concho-tx",
+      "countyFips": "48095",
+      "countyName": "Concho County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "cooke-tx",
+      "countyFips": "48097",
+      "countyName": "Cooke County",
+      "beforeFraSourceCount": 30,
+      "afterGeographicCount": 31,
+      "netDelta": 1
+    },
+    {
+      "countyId": "coryell-tx",
+      "countyFips": "48099",
+      "countyName": "Coryell County",
+      "beforeFraSourceCount": 12,
+      "afterGeographicCount": 12,
+      "netDelta": 0
+    },
+    {
+      "countyId": "cottle-tx",
+      "countyFips": "48101",
+      "countyName": "Cottle County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "crane-tx",
+      "countyFips": "48103",
+      "countyName": "Crane County",
+      "beforeFraSourceCount": 3,
+      "afterGeographicCount": 3,
+      "netDelta": 0
+    },
+    {
+      "countyId": "crockett-tx",
+      "countyFips": "48105",
+      "countyName": "Crockett County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 1,
+      "netDelta": 1
+    },
+    {
+      "countyId": "crosby-tx",
+      "countyFips": "48107",
+      "countyName": "Crosby County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "culberson-tx",
+      "countyFips": "48109",
+      "countyName": "Culberson County",
+      "beforeFraSourceCount": 15,
+      "afterGeographicCount": 17,
+      "netDelta": 2
+    },
+    {
+      "countyId": "dallam-tx",
+      "countyFips": "48111",
+      "countyName": "Dallam County",
+      "beforeFraSourceCount": 51,
+      "afterGeographicCount": 51,
+      "netDelta": 0
+    },
+    {
+      "countyId": "dallas-tx",
+      "countyFips": "48113",
+      "countyName": "Dallas County",
+      "beforeFraSourceCount": 784,
+      "afterGeographicCount": 789,
+      "netDelta": 5
+    },
+    {
+      "countyId": "dawson-tx",
+      "countyFips": "48115",
+      "countyName": "Dawson County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "countyFips": "48117",
+      "countyName": "Deaf Smith County",
+      "beforeFraSourceCount": 27,
+      "afterGeographicCount": 25,
+      "netDelta": -2
+    },
+    {
+      "countyId": "delta-tx",
+      "countyFips": "48119",
+      "countyName": "Delta County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "denton-tx",
+      "countyFips": "48121",
+      "countyName": "Denton County",
+      "beforeFraSourceCount": 232,
+      "afterGeographicCount": 231,
+      "netDelta": -1
+    },
+    {
+      "countyId": "dewitt-tx",
+      "countyFips": "48123",
+      "countyName": "DeWitt County",
+      "beforeFraSourceCount": 58,
+      "afterGeographicCount": 57,
+      "netDelta": -1
+    },
+    {
+      "countyId": "dickens-tx",
+      "countyFips": "48125",
+      "countyName": "Dickens County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "dimmit-tx",
+      "countyFips": "48127",
+      "countyName": "Dimmit County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "donley-tx",
+      "countyFips": "48129",
+      "countyName": "Donley County",
+      "beforeFraSourceCount": 34,
+      "afterGeographicCount": 36,
+      "netDelta": 2
+    },
+    {
+      "countyId": "duval-tx",
+      "countyFips": "48131",
+      "countyName": "Duval County",
+      "beforeFraSourceCount": 50,
+      "afterGeographicCount": 49,
+      "netDelta": -1
+    },
+    {
+      "countyId": "eastland-tx",
+      "countyFips": "48133",
+      "countyName": "Eastland County",
+      "beforeFraSourceCount": 34,
+      "afterGeographicCount": 34,
+      "netDelta": 0
+    },
+    {
+      "countyId": "ector-tx",
+      "countyFips": "48135",
+      "countyName": "Ector County",
+      "beforeFraSourceCount": 49,
+      "afterGeographicCount": 45,
+      "netDelta": -4
+    },
+    {
+      "countyId": "edwards-tx",
+      "countyFips": "48137",
+      "countyName": "Edwards County",
+      "beforeFraSourceCount": 1,
+      "afterGeographicCount": 0,
+      "netDelta": -1
+    },
+    {
+      "countyId": "ellis-tx",
+      "countyFips": "48139",
+      "countyName": "Ellis County",
+      "beforeFraSourceCount": 163,
+      "afterGeographicCount": 164,
+      "netDelta": 1
+    },
+    {
+      "countyId": "el-paso-tx",
+      "countyFips": "48141",
+      "countyName": "El Paso County",
+      "beforeFraSourceCount": 201,
+      "afterGeographicCount": 198,
+      "netDelta": -3
+    },
+    {
+      "countyId": "erath-tx",
+      "countyFips": "48143",
+      "countyName": "Erath County",
+      "beforeFraSourceCount": 100,
+      "afterGeographicCount": 93,
+      "netDelta": -7
+    },
+    {
+      "countyId": "falls-tx",
+      "countyFips": "48145",
+      "countyName": "Falls County",
+      "beforeFraSourceCount": 58,
+      "afterGeographicCount": 69,
+      "netDelta": 11
+    },
+    {
+      "countyId": "fannin-tx",
+      "countyFips": "48147",
+      "countyName": "Fannin County",
+      "beforeFraSourceCount": 76,
+      "afterGeographicCount": 74,
+      "netDelta": -2
+    },
+    {
+      "countyId": "fayette-tx",
+      "countyFips": "48149",
+      "countyName": "Fayette County",
+      "beforeFraSourceCount": 152,
+      "afterGeographicCount": 152,
+      "netDelta": 0
+    },
+    {
+      "countyId": "fisher-tx",
+      "countyFips": "48151",
+      "countyName": "Fisher County",
+      "beforeFraSourceCount": 8,
+      "afterGeographicCount": 10,
+      "netDelta": 2
+    },
+    {
+      "countyId": "floyd-tx",
+      "countyFips": "48153",
+      "countyName": "Floyd County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 1,
+      "netDelta": 1
+    },
+    {
+      "countyId": "foard-tx",
+      "countyFips": "48155",
+      "countyName": "Foard County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "countyFips": "48157",
+      "countyName": "Fort Bend County",
+      "beforeFraSourceCount": 175,
+      "afterGeographicCount": 175,
+      "netDelta": 0
+    },
+    {
+      "countyId": "franklin-tx",
+      "countyFips": "48159",
+      "countyName": "Franklin County",
+      "beforeFraSourceCount": 21,
+      "afterGeographicCount": 20,
+      "netDelta": -1
+    },
+    {
+      "countyId": "freestone-tx",
+      "countyFips": "48161",
+      "countyName": "Freestone County",
+      "beforeFraSourceCount": 79,
+      "afterGeographicCount": 75,
+      "netDelta": -4
+    },
+    {
+      "countyId": "frio-tx",
+      "countyFips": "48163",
+      "countyName": "Frio County",
+      "beforeFraSourceCount": 37,
+      "afterGeographicCount": 36,
+      "netDelta": -1
+    },
+    {
+      "countyId": "gaines-tx",
+      "countyFips": "48165",
+      "countyName": "Gaines County",
+      "beforeFraSourceCount": 5,
+      "afterGeographicCount": 5,
+      "netDelta": 0
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyFips": "48167",
+      "countyName": "Galveston County",
+      "beforeFraSourceCount": 144,
+      "afterGeographicCount": 144,
+      "netDelta": 0
+    },
+    {
+      "countyId": "garza-tx",
+      "countyFips": "48169",
+      "countyName": "Garza County",
+      "beforeFraSourceCount": 18,
+      "afterGeographicCount": 18,
+      "netDelta": 0
+    },
+    {
+      "countyId": "gillespie-tx",
+      "countyFips": "48171",
+      "countyName": "Gillespie County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "glasscock-tx",
+      "countyFips": "48173",
+      "countyName": "Glasscock County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "goliad-tx",
+      "countyFips": "48175",
+      "countyName": "Goliad County",
+      "beforeFraSourceCount": 9,
+      "afterGeographicCount": 9,
+      "netDelta": 0
+    },
+    {
+      "countyId": "gonzales-tx",
+      "countyFips": "48177",
+      "countyName": "Gonzales County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 41,
+      "netDelta": -3
+    },
+    {
+      "countyId": "gray-tx",
+      "countyFips": "48179",
+      "countyName": "Gray County",
+      "beforeFraSourceCount": 25,
+      "afterGeographicCount": 25,
+      "netDelta": 0
+    },
+    {
+      "countyId": "grayson-tx",
+      "countyFips": "48181",
+      "countyName": "Grayson County",
+      "beforeFraSourceCount": 247,
+      "afterGeographicCount": 240,
+      "netDelta": -7
+    },
+    {
+      "countyId": "gregg-tx",
+      "countyFips": "48183",
+      "countyName": "Gregg County",
+      "beforeFraSourceCount": 84,
+      "afterGeographicCount": 85,
+      "netDelta": 1
+    },
+    {
+      "countyId": "grimes-tx",
+      "countyFips": "48185",
+      "countyName": "Grimes County",
+      "beforeFraSourceCount": 109,
+      "afterGeographicCount": 109,
+      "netDelta": 0
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "countyFips": "48187",
+      "countyName": "Guadalupe County",
+      "beforeFraSourceCount": 67,
+      "afterGeographicCount": 58,
+      "netDelta": -9
+    },
+    {
+      "countyId": "hale-tx",
+      "countyFips": "48189",
+      "countyName": "Hale County",
+      "beforeFraSourceCount": 129,
+      "afterGeographicCount": 129,
+      "netDelta": 0
+    },
+    {
+      "countyId": "hall-tx",
+      "countyFips": "48191",
+      "countyName": "Hall County",
+      "beforeFraSourceCount": 18,
+      "afterGeographicCount": 15,
+      "netDelta": -3
+    },
+    {
+      "countyId": "hamilton-tx",
+      "countyFips": "48193",
+      "countyName": "Hamilton County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 1,
+      "netDelta": 1
+    },
+    {
+      "countyId": "hansford-tx",
+      "countyFips": "48195",
+      "countyName": "Hansford County",
+      "beforeFraSourceCount": 3,
+      "afterGeographicCount": 8,
+      "netDelta": 5
+    },
+    {
+      "countyId": "hardeman-tx",
+      "countyFips": "48197",
+      "countyName": "Hardeman County",
+      "beforeFraSourceCount": 43,
+      "afterGeographicCount": 39,
+      "netDelta": -4
+    },
+    {
+      "countyId": "hardin-tx",
+      "countyFips": "48199",
+      "countyName": "Hardin County",
+      "beforeFraSourceCount": 82,
+      "afterGeographicCount": 82,
+      "netDelta": 0
+    },
+    {
+      "countyId": "harris-tx",
+      "countyFips": "48201",
+      "countyName": "Harris County",
+      "beforeFraSourceCount": 1159,
+      "afterGeographicCount": 1159,
+      "netDelta": 0
+    },
+    {
+      "countyId": "harrison-tx",
+      "countyFips": "48203",
+      "countyName": "Harrison County",
+      "beforeFraSourceCount": 88,
+      "afterGeographicCount": 87,
+      "netDelta": -1
+    },
+    {
+      "countyId": "hartley-tx",
+      "countyFips": "48205",
+      "countyName": "Hartley County",
+      "beforeFraSourceCount": 41,
+      "afterGeographicCount": 40,
+      "netDelta": -1
+    },
+    {
+      "countyId": "haskell-tx",
+      "countyFips": "48207",
+      "countyName": "Haskell County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "hays-tx",
+      "countyFips": "48209",
+      "countyName": "Hays County",
+      "beforeFraSourceCount": 54,
+      "afterGeographicCount": 53,
+      "netDelta": -1
+    },
+    {
+      "countyId": "hemphill-tx",
+      "countyFips": "48211",
+      "countyName": "Hemphill County",
+      "beforeFraSourceCount": 11,
+      "afterGeographicCount": 13,
+      "netDelta": 2
+    },
+    {
+      "countyId": "henderson-tx",
+      "countyFips": "48213",
+      "countyName": "Henderson County",
+      "beforeFraSourceCount": 89,
+      "afterGeographicCount": 85,
+      "netDelta": -4
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "countyFips": "48215",
+      "countyName": "Hidalgo County",
+      "beforeFraSourceCount": 267,
+      "afterGeographicCount": 265,
+      "netDelta": -2
+    },
+    {
+      "countyId": "hill-tx",
+      "countyFips": "48217",
+      "countyName": "Hill County",
+      "beforeFraSourceCount": 45,
+      "afterGeographicCount": 45,
+      "netDelta": 0
+    },
+    {
+      "countyId": "hockley-tx",
+      "countyFips": "48219",
+      "countyName": "Hockley County",
+      "beforeFraSourceCount": 54,
+      "afterGeographicCount": 52,
+      "netDelta": -2
+    },
+    {
+      "countyId": "hood-tx",
+      "countyFips": "48221",
+      "countyName": "Hood County",
+      "beforeFraSourceCount": 68,
+      "afterGeographicCount": 56,
+      "netDelta": -12
+    },
+    {
+      "countyId": "hopkins-tx",
+      "countyFips": "48223",
+      "countyName": "Hopkins County",
+      "beforeFraSourceCount": 111,
+      "afterGeographicCount": 108,
+      "netDelta": -3
+    },
+    {
+      "countyId": "houston-tx",
+      "countyFips": "48225",
+      "countyName": "Houston County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 44,
+      "netDelta": 0
+    },
+    {
+      "countyId": "howard-tx",
+      "countyFips": "48227",
+      "countyName": "Howard County",
+      "beforeFraSourceCount": 32,
+      "afterGeographicCount": 32,
+      "netDelta": 0
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "countyFips": "48229",
+      "countyName": "Hudspeth County",
+      "beforeFraSourceCount": 27,
+      "afterGeographicCount": 26,
+      "netDelta": -1
+    },
+    {
+      "countyId": "hunt-tx",
+      "countyFips": "48231",
+      "countyName": "Hunt County",
+      "beforeFraSourceCount": 157,
+      "afterGeographicCount": 162,
+      "netDelta": 5
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "countyFips": "48233",
+      "countyName": "Hutchinson County",
+      "beforeFraSourceCount": 38,
+      "afterGeographicCount": 34,
+      "netDelta": -4
+    },
+    {
+      "countyId": "irion-tx",
+      "countyFips": "48235",
+      "countyName": "Irion County",
+      "beforeFraSourceCount": 56,
+      "afterGeographicCount": 55,
+      "netDelta": -1
+    },
+    {
+      "countyId": "jack-tx",
+      "countyFips": "48237",
+      "countyName": "Jack County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "jackson-tx",
+      "countyFips": "48239",
+      "countyName": "Jackson County",
+      "beforeFraSourceCount": 74,
+      "afterGeographicCount": 74,
+      "netDelta": 0
+    },
+    {
+      "countyId": "jasper-tx",
+      "countyFips": "48241",
+      "countyName": "Jasper County",
+      "beforeFraSourceCount": 106,
+      "afterGeographicCount": 106,
+      "netDelta": 0
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "countyFips": "48243",
+      "countyName": "Jeff Davis County",
+      "beforeFraSourceCount": 13,
+      "afterGeographicCount": 10,
+      "netDelta": -3
+    },
+    {
+      "countyId": "jefferson-tx",
+      "countyFips": "48245",
+      "countyName": "Jefferson County",
+      "beforeFraSourceCount": 378,
+      "afterGeographicCount": 378,
+      "netDelta": 0
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "countyFips": "48247",
+      "countyName": "Jim Hogg County",
+      "beforeFraSourceCount": 17,
+      "afterGeographicCount": 17,
+      "netDelta": 0
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "countyFips": "48249",
+      "countyName": "Jim Wells County",
+      "beforeFraSourceCount": 62,
+      "afterGeographicCount": 63,
+      "netDelta": 1
+    },
+    {
+      "countyId": "johnson-tx",
+      "countyFips": "48251",
+      "countyName": "Johnson County",
+      "beforeFraSourceCount": 148,
+      "afterGeographicCount": 168,
+      "netDelta": 20
+    },
+    {
+      "countyId": "jones-tx",
+      "countyFips": "48253",
+      "countyName": "Jones County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "karnes-tx",
+      "countyFips": "48255",
+      "countyName": "Karnes County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "kaufman-tx",
+      "countyFips": "48257",
+      "countyName": "Kaufman County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 45,
+      "netDelta": 1
+    },
+    {
+      "countyId": "kendall-tx",
+      "countyFips": "48259",
+      "countyName": "Kendall County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "kenedy-tx",
+      "countyFips": "48261",
+      "countyName": "Kenedy County",
+      "beforeFraSourceCount": 22,
+      "afterGeographicCount": 22,
+      "netDelta": 0
+    },
+    {
+      "countyId": "kent-tx",
+      "countyFips": "48263",
+      "countyName": "Kent County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "kerr-tx",
+      "countyFips": "48265",
+      "countyName": "Kerr County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "kimble-tx",
+      "countyFips": "48267",
+      "countyName": "Kimble County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "king-tx",
+      "countyFips": "48269",
+      "countyName": "King County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "kinney-tx",
+      "countyFips": "48271",
+      "countyName": "Kinney County",
+      "beforeFraSourceCount": 20,
+      "afterGeographicCount": 20,
+      "netDelta": 0
+    },
+    {
+      "countyId": "kleberg-tx",
+      "countyFips": "48273",
+      "countyName": "Kleberg County",
+      "beforeFraSourceCount": 32,
+      "afterGeographicCount": 30,
+      "netDelta": -2
+    },
+    {
+      "countyId": "knox-tx",
+      "countyFips": "48275",
+      "countyName": "Knox County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "lamar-tx",
+      "countyFips": "48277",
+      "countyName": "Lamar County",
+      "beforeFraSourceCount": 41,
+      "afterGeographicCount": 42,
+      "netDelta": 1
+    },
+    {
+      "countyId": "lamb-tx",
+      "countyFips": "48279",
+      "countyName": "Lamb County",
+      "beforeFraSourceCount": 28,
+      "afterGeographicCount": 29,
+      "netDelta": 1
+    },
+    {
+      "countyId": "lampasas-tx",
+      "countyFips": "48281",
+      "countyName": "Lampasas County",
+      "beforeFraSourceCount": 50,
+      "afterGeographicCount": 41,
+      "netDelta": -9
+    },
+    {
+      "countyId": "la-salle-tx",
+      "countyFips": "48283",
+      "countyName": "La Salle County",
+      "beforeFraSourceCount": 45,
+      "afterGeographicCount": 43,
+      "netDelta": -2
+    },
+    {
+      "countyId": "lavaca-tx",
+      "countyFips": "48285",
+      "countyName": "Lavaca County",
+      "beforeFraSourceCount": 39,
+      "afterGeographicCount": 40,
+      "netDelta": 1
+    },
+    {
+      "countyId": "lee-tx",
+      "countyFips": "48287",
+      "countyName": "Lee County",
+      "beforeFraSourceCount": 47,
+      "afterGeographicCount": 47,
+      "netDelta": 0
+    },
+    {
+      "countyId": "leon-tx",
+      "countyFips": "48289",
+      "countyName": "Leon County",
+      "beforeFraSourceCount": 80,
+      "afterGeographicCount": 82,
+      "netDelta": 2
+    },
+    {
+      "countyId": "liberty-tx",
+      "countyFips": "48291",
+      "countyName": "Liberty County",
+      "beforeFraSourceCount": 115,
+      "afterGeographicCount": 115,
+      "netDelta": 0
+    },
+    {
+      "countyId": "limestone-tx",
+      "countyFips": "48293",
+      "countyName": "Limestone County",
+      "beforeFraSourceCount": 51,
+      "afterGeographicCount": 45,
+      "netDelta": -6
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "countyFips": "48295",
+      "countyName": "Lipscomb County",
+      "beforeFraSourceCount": 21,
+      "afterGeographicCount": 21,
+      "netDelta": 0
+    },
+    {
+      "countyId": "live-oak-tx",
+      "countyFips": "48297",
+      "countyName": "Live Oak County",
+      "beforeFraSourceCount": 55,
+      "afterGeographicCount": 56,
+      "netDelta": 1
+    },
+    {
+      "countyId": "llano-tx",
+      "countyFips": "48299",
+      "countyName": "Llano County",
+      "beforeFraSourceCount": 16,
+      "afterGeographicCount": 13,
+      "netDelta": -3
+    },
+    {
+      "countyId": "loving-tx",
+      "countyFips": "48301",
+      "countyName": "Loving County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "lubbock-tx",
+      "countyFips": "48303",
+      "countyName": "Lubbock County",
+      "beforeFraSourceCount": 172,
+      "afterGeographicCount": 173,
+      "netDelta": 1
+    },
+    {
+      "countyId": "lynn-tx",
+      "countyFips": "48305",
+      "countyName": "Lynn County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "countyFips": "48307",
+      "countyName": "McCulloch County",
+      "beforeFraSourceCount": 35,
+      "afterGeographicCount": 34,
+      "netDelta": -1
+    },
+    {
+      "countyId": "mclennan-tx",
+      "countyFips": "48309",
+      "countyName": "McLennan County",
+      "beforeFraSourceCount": 168,
+      "afterGeographicCount": 169,
+      "netDelta": 1
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "countyFips": "48311",
+      "countyName": "McMullen County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "madison-tx",
+      "countyFips": "48313",
+      "countyName": "Madison County",
+      "beforeFraSourceCount": 17,
+      "afterGeographicCount": 16,
+      "netDelta": -1
+    },
+    {
+      "countyId": "marion-tx",
+      "countyFips": "48315",
+      "countyName": "Marion County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 44,
+      "netDelta": 0
+    },
+    {
+      "countyId": "martin-tx",
+      "countyFips": "48317",
+      "countyName": "Martin County",
+      "beforeFraSourceCount": 12,
+      "afterGeographicCount": 12,
+      "netDelta": 0
+    },
+    {
+      "countyId": "mason-tx",
+      "countyFips": "48319",
+      "countyName": "Mason County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "matagorda-tx",
+      "countyFips": "48321",
+      "countyName": "Matagorda County",
+      "beforeFraSourceCount": 80,
+      "afterGeographicCount": 80,
+      "netDelta": 0
+    },
+    {
+      "countyId": "maverick-tx",
+      "countyFips": "48323",
+      "countyName": "Maverick County",
+      "beforeFraSourceCount": 26,
+      "afterGeographicCount": 26,
+      "netDelta": 0
+    },
+    {
+      "countyId": "medina-tx",
+      "countyFips": "48325",
+      "countyName": "Medina County",
+      "beforeFraSourceCount": 72,
+      "afterGeographicCount": 72,
+      "netDelta": 0
+    },
+    {
+      "countyId": "menard-tx",
+      "countyFips": "48327",
+      "countyName": "Menard County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "midland-tx",
+      "countyFips": "48329",
+      "countyName": "Midland County",
+      "beforeFraSourceCount": 32,
+      "afterGeographicCount": 35,
+      "netDelta": 3
+    },
+    {
+      "countyId": "milam-tx",
+      "countyFips": "48331",
+      "countyName": "Milam County",
+      "beforeFraSourceCount": 110,
+      "afterGeographicCount": 109,
+      "netDelta": -1
+    },
+    {
+      "countyId": "mills-tx",
+      "countyFips": "48333",
+      "countyName": "Mills County",
+      "beforeFraSourceCount": 23,
+      "afterGeographicCount": 50,
+      "netDelta": 27
+    },
+    {
+      "countyId": "mitchell-tx",
+      "countyFips": "48335",
+      "countyName": "Mitchell County",
+      "beforeFraSourceCount": 23,
+      "afterGeographicCount": 22,
+      "netDelta": -1
+    },
+    {
+      "countyId": "montague-tx",
+      "countyFips": "48337",
+      "countyName": "Montague County",
+      "beforeFraSourceCount": 64,
+      "afterGeographicCount": 64,
+      "netDelta": 0
+    },
+    {
+      "countyId": "montgomery-tx",
+      "countyFips": "48339",
+      "countyName": "Montgomery County",
+      "beforeFraSourceCount": 170,
+      "afterGeographicCount": 170,
+      "netDelta": 0
+    },
+    {
+      "countyId": "moore-tx",
+      "countyFips": "48341",
+      "countyName": "Moore County",
+      "beforeFraSourceCount": 67,
+      "afterGeographicCount": 65,
+      "netDelta": -2
+    },
+    {
+      "countyId": "morris-tx",
+      "countyFips": "48343",
+      "countyName": "Morris County",
+      "beforeFraSourceCount": 41,
+      "afterGeographicCount": 39,
+      "netDelta": -2
+    },
+    {
+      "countyId": "motley-tx",
+      "countyFips": "48345",
+      "countyName": "Motley County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "countyFips": "48347",
+      "countyName": "Nacogdoches County",
+      "beforeFraSourceCount": 52,
+      "afterGeographicCount": 52,
+      "netDelta": 0
+    },
+    {
+      "countyId": "navarro-tx",
+      "countyFips": "48349",
+      "countyName": "Navarro County",
+      "beforeFraSourceCount": 113,
+      "afterGeographicCount": 116,
+      "netDelta": 3
+    },
+    {
+      "countyId": "newton-tx",
+      "countyFips": "48351",
+      "countyName": "Newton County",
+      "beforeFraSourceCount": 26,
+      "afterGeographicCount": 26,
+      "netDelta": 0
+    },
+    {
+      "countyId": "nolan-tx",
+      "countyFips": "48353",
+      "countyName": "Nolan County",
+      "beforeFraSourceCount": 83,
+      "afterGeographicCount": 83,
+      "netDelta": 0
+    },
+    {
+      "countyId": "nueces-tx",
+      "countyFips": "48355",
+      "countyName": "Nueces County",
+      "beforeFraSourceCount": 196,
+      "afterGeographicCount": 196,
+      "netDelta": 0
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "countyFips": "48357",
+      "countyName": "Ochiltree County",
+      "beforeFraSourceCount": 17,
+      "afterGeographicCount": 8,
+      "netDelta": -9
+    },
+    {
+      "countyId": "oldham-tx",
+      "countyFips": "48359",
+      "countyName": "Oldham County",
+      "beforeFraSourceCount": 6,
+      "afterGeographicCount": 5,
+      "netDelta": -1
+    },
+    {
+      "countyId": "orange-tx",
+      "countyFips": "48361",
+      "countyName": "Orange County",
+      "beforeFraSourceCount": 149,
+      "afterGeographicCount": 149,
+      "netDelta": 0
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "countyFips": "48363",
+      "countyName": "Palo Pinto County",
+      "beforeFraSourceCount": 29,
+      "afterGeographicCount": 29,
+      "netDelta": 0
+    },
+    {
+      "countyId": "panola-tx",
+      "countyFips": "48365",
+      "countyName": "Panola County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 41,
+      "netDelta": -3
+    },
+    {
+      "countyId": "parker-tx",
+      "countyFips": "48367",
+      "countyName": "Parker County",
+      "beforeFraSourceCount": 41,
+      "afterGeographicCount": 39,
+      "netDelta": -2
+    },
+    {
+      "countyId": "parmer-tx",
+      "countyFips": "48369",
+      "countyName": "Parmer County",
+      "beforeFraSourceCount": 37,
+      "afterGeographicCount": 37,
+      "netDelta": 0
+    },
+    {
+      "countyId": "pecos-tx",
+      "countyFips": "48371",
+      "countyName": "Pecos County",
+      "beforeFraSourceCount": 36,
+      "afterGeographicCount": 44,
+      "netDelta": 8
+    },
+    {
+      "countyId": "polk-tx",
+      "countyFips": "48373",
+      "countyName": "Polk County",
+      "beforeFraSourceCount": 64,
+      "afterGeographicCount": 64,
+      "netDelta": 0
+    },
+    {
+      "countyId": "potter-tx",
+      "countyFips": "48375",
+      "countyName": "Potter County",
+      "beforeFraSourceCount": 118,
+      "afterGeographicCount": 125,
+      "netDelta": 7
+    },
+    {
+      "countyId": "presidio-tx",
+      "countyFips": "48377",
+      "countyName": "Presidio County",
+      "beforeFraSourceCount": 53,
+      "afterGeographicCount": 44,
+      "netDelta": -9
+    },
+    {
+      "countyId": "rains-tx",
+      "countyFips": "48379",
+      "countyName": "Rains County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "randall-tx",
+      "countyFips": "48381",
+      "countyName": "Randall County",
+      "beforeFraSourceCount": 45,
+      "afterGeographicCount": 45,
+      "netDelta": 0
+    },
+    {
+      "countyId": "reagan-tx",
+      "countyFips": "48383",
+      "countyName": "Reagan County",
+      "beforeFraSourceCount": 21,
+      "afterGeographicCount": 22,
+      "netDelta": 1
+    },
+    {
+      "countyId": "real-tx",
+      "countyFips": "48385",
+      "countyName": "Real County",
+      "beforeFraSourceCount": 1,
+      "afterGeographicCount": 0,
+      "netDelta": -1
+    },
+    {
+      "countyId": "red-river-tx",
+      "countyFips": "48387",
+      "countyName": "Red River County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "reeves-tx",
+      "countyFips": "48389",
+      "countyName": "Reeves County",
+      "beforeFraSourceCount": 67,
+      "afterGeographicCount": 67,
+      "netDelta": 0
+    },
+    {
+      "countyId": "refugio-tx",
+      "countyFips": "48391",
+      "countyName": "Refugio County",
+      "beforeFraSourceCount": 34,
+      "afterGeographicCount": 39,
+      "netDelta": 5
+    },
+    {
+      "countyId": "roberts-tx",
+      "countyFips": "48393",
+      "countyName": "Roberts County",
+      "beforeFraSourceCount": 10,
+      "afterGeographicCount": 10,
+      "netDelta": 0
+    },
+    {
+      "countyId": "robertson-tx",
+      "countyFips": "48395",
+      "countyName": "Robertson County",
+      "beforeFraSourceCount": 169,
+      "afterGeographicCount": 155,
+      "netDelta": -14
+    },
+    {
+      "countyId": "rockwall-tx",
+      "countyFips": "48397",
+      "countyName": "Rockwall County",
+      "beforeFraSourceCount": 19,
+      "afterGeographicCount": 18,
+      "netDelta": -1
+    },
+    {
+      "countyId": "runnels-tx",
+      "countyFips": "48399",
+      "countyName": "Runnels County",
+      "beforeFraSourceCount": 42,
+      "afterGeographicCount": 48,
+      "netDelta": 6
+    },
+    {
+      "countyId": "rusk-tx",
+      "countyFips": "48401",
+      "countyName": "Rusk County",
+      "beforeFraSourceCount": 56,
+      "afterGeographicCount": 58,
+      "netDelta": 2
+    },
+    {
+      "countyId": "sabine-tx",
+      "countyFips": "48403",
+      "countyName": "Sabine County",
+      "beforeFraSourceCount": 16,
+      "afterGeographicCount": 16,
+      "netDelta": 0
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "countyFips": "48405",
+      "countyName": "San Augustine County",
+      "beforeFraSourceCount": 13,
+      "afterGeographicCount": 16,
+      "netDelta": 3
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "countyFips": "48407",
+      "countyName": "San Jacinto County",
+      "beforeFraSourceCount": 12,
+      "afterGeographicCount": 12,
+      "netDelta": 0
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "countyFips": "48409",
+      "countyName": "San Patricio County",
+      "beforeFraSourceCount": 132,
+      "afterGeographicCount": 135,
+      "netDelta": 3
+    },
+    {
+      "countyId": "san-saba-tx",
+      "countyFips": "48411",
+      "countyName": "San Saba County",
+      "beforeFraSourceCount": 67,
+      "afterGeographicCount": 47,
+      "netDelta": -20
+    },
+    {
+      "countyId": "schleicher-tx",
+      "countyFips": "48413",
+      "countyName": "Schleicher County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "scurry-tx",
+      "countyFips": "48415",
+      "countyName": "Scurry County",
+      "beforeFraSourceCount": 36,
+      "afterGeographicCount": 37,
+      "netDelta": 1
+    },
+    {
+      "countyId": "shackelford-tx",
+      "countyFips": "48417",
+      "countyName": "Shackelford County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "shelby-tx",
+      "countyFips": "48419",
+      "countyName": "Shelby County",
+      "beforeFraSourceCount": 91,
+      "afterGeographicCount": 88,
+      "netDelta": -3
+    },
+    {
+      "countyId": "sherman-tx",
+      "countyFips": "48421",
+      "countyName": "Sherman County",
+      "beforeFraSourceCount": 41,
+      "afterGeographicCount": 42,
+      "netDelta": 1
+    },
+    {
+      "countyId": "smith-tx",
+      "countyFips": "48423",
+      "countyName": "Smith County",
+      "beforeFraSourceCount": 119,
+      "afterGeographicCount": 123,
+      "netDelta": 4
+    },
+    {
+      "countyId": "somervell-tx",
+      "countyFips": "48425",
+      "countyName": "Somervell County",
+      "beforeFraSourceCount": 1,
+      "afterGeographicCount": 1,
+      "netDelta": 0
+    },
+    {
+      "countyId": "starr-tx",
+      "countyFips": "48427",
+      "countyName": "Starr County",
+      "beforeFraSourceCount": 28,
+      "afterGeographicCount": 28,
+      "netDelta": 0
+    },
+    {
+      "countyId": "stephens-tx",
+      "countyFips": "48429",
+      "countyName": "Stephens County",
+      "beforeFraSourceCount": 1,
+      "afterGeographicCount": 1,
+      "netDelta": 0
+    },
+    {
+      "countyId": "sterling-tx",
+      "countyFips": "48431",
+      "countyName": "Sterling County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "stonewall-tx",
+      "countyFips": "48433",
+      "countyName": "Stonewall County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "sutton-tx",
+      "countyFips": "48435",
+      "countyName": "Sutton County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "swisher-tx",
+      "countyFips": "48437",
+      "countyName": "Swisher County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 45,
+      "netDelta": 1
+    },
+    {
+      "countyId": "tarrant-tx",
+      "countyFips": "48439",
+      "countyName": "Tarrant County",
+      "beforeFraSourceCount": 610,
+      "afterGeographicCount": 615,
+      "netDelta": 5
+    },
+    {
+      "countyId": "taylor-tx",
+      "countyFips": "48441",
+      "countyName": "Taylor County",
+      "beforeFraSourceCount": 110,
+      "afterGeographicCount": 106,
+      "netDelta": -4
+    },
+    {
+      "countyId": "terrell-tx",
+      "countyFips": "48443",
+      "countyName": "Terrell County",
+      "beforeFraSourceCount": 26,
+      "afterGeographicCount": 27,
+      "netDelta": 1
+    },
+    {
+      "countyId": "terry-tx",
+      "countyFips": "48445",
+      "countyName": "Terry County",
+      "beforeFraSourceCount": 45,
+      "afterGeographicCount": 46,
+      "netDelta": 1
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "countyFips": "48447",
+      "countyName": "Throckmorton County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "titus-tx",
+      "countyFips": "48449",
+      "countyName": "Titus County",
+      "beforeFraSourceCount": 59,
+      "afterGeographicCount": 63,
+      "netDelta": 4
+    },
+    {
+      "countyId": "tom-green-tx",
+      "countyFips": "48451",
+      "countyName": "Tom Green County",
+      "beforeFraSourceCount": 94,
+      "afterGeographicCount": 97,
+      "netDelta": 3
+    },
+    {
+      "countyId": "travis-tx",
+      "countyFips": "48453",
+      "countyName": "Travis County",
+      "beforeFraSourceCount": 174,
+      "afterGeographicCount": 176,
+      "netDelta": 2
+    },
+    {
+      "countyId": "trinity-tx",
+      "countyFips": "48455",
+      "countyName": "Trinity County",
+      "beforeFraSourceCount": 13,
+      "afterGeographicCount": 13,
+      "netDelta": 0
+    },
+    {
+      "countyId": "tyler-tx",
+      "countyFips": "48457",
+      "countyName": "Tyler County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "upshur-tx",
+      "countyFips": "48459",
+      "countyName": "Upshur County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 43,
+      "netDelta": -1
+    },
+    {
+      "countyId": "upton-tx",
+      "countyFips": "48461",
+      "countyName": "Upton County",
+      "beforeFraSourceCount": 22,
+      "afterGeographicCount": 22,
+      "netDelta": 0
+    },
+    {
+      "countyId": "uvalde-tx",
+      "countyFips": "48463",
+      "countyName": "Uvalde County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 44,
+      "netDelta": 0
+    },
+    {
+      "countyId": "val-verde-tx",
+      "countyFips": "48465",
+      "countyName": "Val Verde County",
+      "beforeFraSourceCount": 50,
+      "afterGeographicCount": 47,
+      "netDelta": -3
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "countyFips": "48467",
+      "countyName": "Van Zandt County",
+      "beforeFraSourceCount": 29,
+      "afterGeographicCount": 29,
+      "netDelta": 0
+    },
+    {
+      "countyId": "victoria-tx",
+      "countyFips": "48469",
+      "countyName": "Victoria County",
+      "beforeFraSourceCount": 199,
+      "afterGeographicCount": 194,
+      "netDelta": -5
+    },
+    {
+      "countyId": "walker-tx",
+      "countyFips": "48471",
+      "countyName": "Walker County",
+      "beforeFraSourceCount": 36,
+      "afterGeographicCount": 36,
+      "netDelta": 0
+    },
+    {
+      "countyId": "waller-tx",
+      "countyFips": "48473",
+      "countyName": "Waller County",
+      "beforeFraSourceCount": 46,
+      "afterGeographicCount": 46,
+      "netDelta": 0
+    },
+    {
+      "countyId": "ward-tx",
+      "countyFips": "48475",
+      "countyName": "Ward County",
+      "beforeFraSourceCount": 23,
+      "afterGeographicCount": 23,
+      "netDelta": 0
+    },
+    {
+      "countyId": "washington-tx",
+      "countyFips": "48477",
+      "countyName": "Washington County",
+      "beforeFraSourceCount": 41,
+      "afterGeographicCount": 44,
+      "netDelta": 3
+    },
+    {
+      "countyId": "webb-tx",
+      "countyFips": "48479",
+      "countyName": "Webb County",
+      "beforeFraSourceCount": 161,
+      "afterGeographicCount": 164,
+      "netDelta": 3
+    },
+    {
+      "countyId": "wharton-tx",
+      "countyFips": "48481",
+      "countyName": "Wharton County",
+      "beforeFraSourceCount": 72,
+      "afterGeographicCount": 72,
+      "netDelta": 0
+    },
+    {
+      "countyId": "wheeler-tx",
+      "countyFips": "48483",
+      "countyName": "Wheeler County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "wichita-tx",
+      "countyFips": "48485",
+      "countyName": "Wichita County",
+      "beforeFraSourceCount": 121,
+      "afterGeographicCount": 118,
+      "netDelta": -3
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "countyFips": "48487",
+      "countyName": "Wilbarger County",
+      "beforeFraSourceCount": 36,
+      "afterGeographicCount": 42,
+      "netDelta": 6
+    },
+    {
+      "countyId": "willacy-tx",
+      "countyFips": "48489",
+      "countyName": "Willacy County",
+      "beforeFraSourceCount": 44,
+      "afterGeographicCount": 43,
+      "netDelta": -1
+    },
+    {
+      "countyId": "williamson-tx",
+      "countyFips": "48491",
+      "countyName": "Williamson County",
+      "beforeFraSourceCount": 161,
+      "afterGeographicCount": 166,
+      "netDelta": 5
+    },
+    {
+      "countyId": "wilson-tx",
+      "countyFips": "48493",
+      "countyName": "Wilson County",
+      "beforeFraSourceCount": 2,
+      "afterGeographicCount": 2,
+      "netDelta": 0
+    },
+    {
+      "countyId": "winkler-tx",
+      "countyFips": "48495",
+      "countyName": "Winkler County",
+      "beforeFraSourceCount": 21,
+      "afterGeographicCount": 21,
+      "netDelta": 0
+    },
+    {
+      "countyId": "wise-tx",
+      "countyFips": "48497",
+      "countyName": "Wise County",
+      "beforeFraSourceCount": 101,
+      "afterGeographicCount": 100,
+      "netDelta": -1
+    },
+    {
+      "countyId": "wood-tx",
+      "countyFips": "48499",
+      "countyName": "Wood County",
+      "beforeFraSourceCount": 37,
+      "afterGeographicCount": 37,
+      "netDelta": 0
+    },
+    {
+      "countyId": "yoakum-tx",
+      "countyFips": "48501",
+      "countyName": "Yoakum County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "young-tx",
+      "countyFips": "48503",
+      "countyName": "Young County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "zapata-tx",
+      "countyFips": "48505",
+      "countyName": "Zapata County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    },
+    {
+      "countyId": "zavala-tx",
+      "countyFips": "48507",
+      "countyName": "Zavala County",
+      "beforeFraSourceCount": 0,
+      "afterGeographicCount": 0,
+      "netDelta": 0
+    }
+  ]
+}

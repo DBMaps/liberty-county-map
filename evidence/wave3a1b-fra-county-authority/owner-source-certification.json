@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "gridly.wave3a1b.owner-source.v1",
+  "status": "BLOCKED_HASH_CONTRADICTION",
+  "evidenceBasis": "OWNER-SUPPLIED GOVERNED RESULT CROSS-CHECKED AGAINST CHECKED-OUT REPOSITORY BYTES",
+  "raw": {
+    "path": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Raw\\fra-crossings-tx-raw.geojson",
+    "bytes": 68229691,
+    "sha256": "d5da727edfefc95e2d36b6d73a3653cfea71d7a46ee9322efc8f23d38c1bdbb9"
+  },
+  "ownerProcessed": {
+    "path": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+    "bytes": null,
+    "bytesStatus": "NOT_SUPPLIED",
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+  },
+  "repositoryProcessed": {
+    "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "bytes": 67186117,
+    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f",
+    "measurement": "computed from checked-out bytes"
+  },
+  "ownerClaimedRepositorySha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c",
+  "ownerProcessedMatchesRepository": false,
+  "blockingContradiction": "Owner claims e30bdd... for repository processed, but checked-out governed repository file hashes to 639658....",
+  "comparison": {
+    "comparisonScope": "all 353 Wave 3A.1 authority exceptions matched by crossing ID to owner raw",
+    "processedRowsCompared": 353,
+    "rawRecordFound": 353,
+    "crossingIdEqual": 353,
+    "coordinatesEqual": 353,
+    "STCYFIPSEqual": 353,
+    "CountyCodeEqual": 353,
+    "COUNTYNAMEEqual": 353,
+    "stateIdentityEqual": 353,
+    "allComparedFieldsEqual": 353
+  },
+  "comparatorSummaryCommand": "node tools/wave3a1/compare-owner-fra-source.mjs --raw 'C:\\GitHub\\Gridly-Source-Data\\FRA\\Raw\\fra-crossings-tx-raw.geojson' --processed Crossing-Packages/Texas/fra-crossings-tx.geojson --summary"
+}

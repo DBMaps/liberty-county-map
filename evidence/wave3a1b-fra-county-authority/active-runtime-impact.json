@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "gridly.wave3a1b.active-impact.v1",
+  "activeCountyCount": 28,
+  "currentProductionPackageCount": 28,
+  "currentProductionPackageRowsWithCountyMismatch": 0,
+  "rows": [],
+  "productionMovementApplied": false,
+  "migrationRequired": false,
+  "migrationPlan": [
+    "approve reconciliation-index contract and LP115 repair",
+    "generate audit candidates for both source and destination counties",
+    "verify each CROSSING/gridlyId appears exactly once statewide",
+    "validate report and historical-report linkage",
+    "approve atomic package/manifest migration with rollback evidence"
+  ]
+}

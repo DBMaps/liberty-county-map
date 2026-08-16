@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "gridly.wave3a1b.lp115.v1",
+  "currentFilter": "feature.properties.STCYFIPS || feature.properties.CountyCode",
+  "finding": "Current filter reproduces FRA attribution and cannot implement certified geographic ownership.",
+  "smallestRepair": {
+    "artifact": "deterministic crossing reconciliation index",
+    "rowContract": [
+      "crossingId",
+      "fraSourceCountyFips",
+      "fraSourceCountyName",
+      "gridlyCountyId",
+      "gridlyCountyFips",
+      "resolution",
+      "evidence"
+    ],
+    "consumerRule": "LP115 joins by CROSSING and selects gridlyCountyFips; missing, duplicate, blocked, or conflicting index rows fail closed; raw FRA properties remain untouched."
+  },
+  "implementationStatus": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "packagesManufactured": false
+}

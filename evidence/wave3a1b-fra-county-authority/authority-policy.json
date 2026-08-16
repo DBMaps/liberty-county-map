@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "gridly.wave3a1b.authority-policy.v1",
+  "status": "RECOMMENDED_BUT_CERTIFICATION_BLOCKED_BY_SOURCE_HASH_CONTRADICTION",
+  "sourceProvenanceAuthority": {
+    "fields": [
+      "STCYFIPS",
+      "CountyCode",
+      "COUNTYNAME"
+    ],
+    "rule": "retain exactly; never overwrite"
+  },
+  "gridlyGeographicAuthority": {
+    "source": "certified 2025 TIGER/Line county polygon containment",
+    "fields": [
+      "gridlyCountyId",
+      "gridlyCountyFips"
+    ],
+    "rule": "use containing Texas county for package ownership and county-scoped consumer loading"
+  },
+  "reviewRule": {
+    "thresholdMeters": 25,
+    "purpose": "classification only",
+    "reassignmentRule": "never use distance alone; require polygon containment",
+    "failClosed": "outside-Texas or genuinely conflicting cases remain unassigned"
+  },
+  "consumerImpact": {
+    "affectedSurfaces": [
+      "Area",
+      "County",
+      "Nearby",
+      "All",
+      "crossing markers",
+      "crossing reports",
+      "Alerts",
+      "Route Watch",
+      "county package loading"
+    ],
+    "sourceCountyDefects": [
+      "county-scoped package may omit a marker physically inside the selected county",
+      "wrong county may load a geographically remote crossing",
+      "county filters, reports, alerts, and Route Watch can disagree with marker location"
+    ],
+    "geographicAuthorityBenefit": "Package ownership and county-scoped discovery agree with the coordinate used to render and calculate proximity; All remains identity-complete subject to explicit blocked-border handling."
+  },
+  "identityProtection": {
+    "unchanged": [
+      "FRA CROSSING",
+      "gridlyId = FRA-{CROSSING}",
+      "report linkage",
+      "historical report linkage"
+    ],
+    "onlyMutableAssociation": "county package ownership"
+  },
+  "compatibility": "Compatible by additive reconciliation index; current LP115 filter is not compatible until repaired.",
+  "manufacturePackages": false,
+  "activateCrossings": false
+}
