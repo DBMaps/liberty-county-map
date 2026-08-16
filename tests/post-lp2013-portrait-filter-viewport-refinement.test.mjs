@@ -102,7 +102,7 @@ test('consumer messaging distinguishes unavailable crossing coverage from a supp
     context.update([]);
     return context.els.geoFilterStatus.textContent;
   };
-  assert.equal(run([]), 'No crossing data available for this area yet.');
+  assert.equal(run([]), "Crossing data isn't available for this area yet.");
   assert.equal(run([{ id: 'supported' }]), 'Good news: no active delays in this view.');
 });
 
@@ -118,7 +118,7 @@ test('filter owner preserves all canonical states, synchronizes both surfaces, a
   assert.doesNotMatch(fallbackSource, /crossings?\.(push|splice)|markers?\.(push|add)/i);
 });
 
-test('portrait delays message is mirrored to the visible Portrait V2 status surface', () => {
+test('portrait delays feedback remains on the filter status surface', () => {
   const updateSource = functionSource('updateGeoFilterStatus');
   const visibleStatus = { textContent: '' };
   const context = {
@@ -132,7 +132,8 @@ test('portrait delays message is mirrored to the visible Portrait V2 status surf
   vm.runInNewContext(`${updateSource}; this.update = updateGeoFilterStatus`, context);
   context.update([]);
   assert.equal(context.activeGeoFilter, 'active-delays');
-  assert.equal(visibleStatus.textContent, 'No crossing data available for this area yet.');
+  assert.equal(context.els.geoFilterStatus.textContent, "Crossing data isn't available for this area yet.");
+  assert.equal(visibleStatus.textContent, '');
 });
 
 test('county bounds fall back to loaded authoritative geometry for statewide counties', () => {
