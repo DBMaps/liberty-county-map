@@ -267,13 +267,6 @@
       "delta": -4
     },
     {
-      "countyFips": "48137",
-      "countyName": "Edwards County",
-      "sourceAuthoritativeCount": 1,
-      "coordinateContainmentWhatIfCount": 0,
-      "delta": -1
-    },
-    {
       "countyFips": "48139",
       "countyName": "Ellis County",
       "sourceAuthoritativeCount": 163,
@@ -720,13 +713,6 @@
       "sourceAuthoritativeCount": 21,
       "coordinateContainmentWhatIfCount": 22,
       "delta": 1
-    },
-    {
-      "countyFips": "48385",
-      "countyName": "Real County",
-      "sourceAuthoritativeCount": 1,
-      "coordinateContainmentWhatIfCount": 0,
-      "delta": -1
     },
     {
       "countyFips": "48391",

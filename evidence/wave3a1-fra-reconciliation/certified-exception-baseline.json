@@ -1,0 +1,4239 @@
+{
+  "schemaVersion": "gridly.wave3a.containment.v1",
+  "geometryPath": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+  "boundaryPolicy": "point on ring is reported as ambiguity; no reassignment",
+  "candidateRows": 12330,
+  "exactMatches": 11977,
+  "boundaryAmbiguities": 0,
+  "crossCountyMismatches": 351,
+  "outsideTexas": 2,
+  "unresolved": 0,
+  "exceptions": [
+    {
+      "crossingId": "426590D",
+      "sourceFips": "48001",
+      "resolvedFips": "48073",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48073",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "746308F",
+      "sourceFips": "48007",
+      "resolvedFips": "48409",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48409",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "746307Y",
+      "sourceFips": "48007",
+      "resolvedFips": "48409",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48409",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275225P",
+      "sourceFips": "48011",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "435414E",
+      "sourceFips": "48013",
+      "resolvedFips": "48029",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48029",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "427943S",
+      "sourceFips": "48013",
+      "resolvedFips": "48325",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48325",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "416273W",
+      "sourceFips": "48021",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "416276S",
+      "sourceFips": "48021",
+      "resolvedFips": "48453",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48453",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "416277Y",
+      "sourceFips": "48021",
+      "resolvedFips": "48453",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48453",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930217E",
+      "sourceFips": "48027",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "416230D",
+      "sourceFips": "48027",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "023081S",
+      "sourceFips": "48035",
+      "resolvedFips": "48309",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48309",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019017L",
+      "sourceFips": "48043",
+      "resolvedFips": "48371",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48371",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019012C",
+      "sourceFips": "48043",
+      "resolvedFips": "48371",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48371",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019013J",
+      "sourceFips": "48043",
+      "resolvedFips": "48371",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48371",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019014R",
+      "sourceFips": "48043",
+      "resolvedFips": "48371",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48371",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019010N",
+      "sourceFips": "48043",
+      "resolvedFips": "48371",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48371",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019011V",
+      "sourceFips": "48043",
+      "resolvedFips": "48371",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48371",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "764202H",
+      "sourceFips": "48043",
+      "resolvedFips": "48377",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48377",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021032N",
+      "sourceFips": "48049",
+      "resolvedFips": "48331",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48331",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021041M",
+      "sourceFips": "48049",
+      "resolvedFips": "48477",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48477",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021042U",
+      "sourceFips": "48049",
+      "resolvedFips": "48477",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48477",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021043B",
+      "sourceFips": "48049",
+      "resolvedFips": "48477",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48477",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021057J",
+      "sourceFips": "48049",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021058R",
+      "sourceFips": "48049",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021053G",
+      "sourceFips": "48049",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021052A",
+      "sourceFips": "48049",
+      "resolvedFips": "48073",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48073",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021055V",
+      "sourceFips": "48049",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021050L",
+      "sourceFips": "48049",
+      "resolvedFips": "48073",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48073",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "744798T",
+      "sourceFips": "48053",
+      "resolvedFips": "48453",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48453",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "976532A",
+      "sourceFips": "48053",
+      "resolvedFips": "48031",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48031",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "745251D",
+      "sourceFips": "48053",
+      "resolvedFips": "48031",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48031",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930577C",
+      "sourceFips": "48053",
+      "resolvedFips": "48031",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48031",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930576V",
+      "sourceFips": "48053",
+      "resolvedFips": "48031",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48031",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930575N",
+      "sourceFips": "48053",
+      "resolvedFips": "48031",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48031",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415731E",
+      "sourceFips": "48055",
+      "resolvedFips": "48021",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48021",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016938K",
+      "sourceFips": "48065",
+      "resolvedFips": "48375",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48375",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016998U",
+      "sourceFips": "48065",
+      "resolvedFips": "48233",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48233",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016939S",
+      "sourceFips": "48065",
+      "resolvedFips": "48375",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48375",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "014634M",
+      "sourceFips": "48065",
+      "resolvedFips": "48179",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48179",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275951L",
+      "sourceFips": "48069",
+      "resolvedFips": "48189",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48189",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275947W",
+      "sourceFips": "48069",
+      "resolvedFips": "48189",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48189",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "274702C",
+      "sourceFips": "48077",
+      "resolvedFips": "48337",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48337",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275166P",
+      "sourceFips": "48077",
+      "resolvedFips": "48487",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48487",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "274705X",
+      "sourceFips": "48077",
+      "resolvedFips": "48337",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48337",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021397V",
+      "sourceFips": "48083",
+      "resolvedFips": "48399",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48399",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021391E",
+      "sourceFips": "48083",
+      "resolvedFips": "48451",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48451",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021398C",
+      "sourceFips": "48083",
+      "resolvedFips": "48399",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48399",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021400B",
+      "sourceFips": "48083",
+      "resolvedFips": "48399",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48399",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021401H",
+      "sourceFips": "48083",
+      "resolvedFips": "48399",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48399",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021403W",
+      "sourceFips": "48083",
+      "resolvedFips": "48399",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48399",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021404D",
+      "sourceFips": "48083",
+      "resolvedFips": "48399",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48399",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021392L",
+      "sourceFips": "48083",
+      "resolvedFips": "48451",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48451",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763376B",
+      "sourceFips": "48085",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "675119L",
+      "sourceFips": "48085",
+      "resolvedFips": "48121",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48121",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "675230R",
+      "sourceFips": "48085",
+      "resolvedFips": "48121",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48121",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "672139M",
+      "sourceFips": "48085",
+      "resolvedFips": "48121",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48121",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "788907S",
+      "sourceFips": "48085",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415195N",
+      "sourceFips": "48085",
+      "resolvedFips": "48397",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48397",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "312392R",
+      "sourceFips": "48093",
+      "resolvedFips": "48133",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48133",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021024W",
+      "sourceFips": "48093",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021026K",
+      "sourceFips": "48093",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "849261Y",
+      "sourceFips": "48093",
+      "resolvedFips": "48193",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48193",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "924795V",
+      "sourceFips": "48093",
+      "resolvedFips": "48133",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48133",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021023P",
+      "sourceFips": "48093",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021028Y",
+      "sourceFips": "48093",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021029F",
+      "sourceFips": "48093",
+      "resolvedFips": "48027",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48027",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "018903R",
+      "sourceFips": "48103",
+      "resolvedFips": "48105",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48105",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796217L",
+      "sourceFips": "48109",
+      "resolvedFips": "48243",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48243",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "971211B",
+      "sourceFips": "48113",
+      "resolvedFips": "48085",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48085",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "928369B",
+      "sourceFips": "48113",
+      "resolvedFips": "48085",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48085",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "794806U",
+      "sourceFips": "48113",
+      "resolvedFips": "48257",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48257",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "848970B",
+      "sourceFips": "48113",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "014737M",
+      "sourceFips": "48117",
+      "resolvedFips": "48375",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48375",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "014738U",
+      "sourceFips": "48117",
+      "resolvedFips": "48375",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48375",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "795425J",
+      "sourceFips": "48121",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930203W",
+      "sourceFips": "48121",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "967410W",
+      "sourceFips": "48121",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "795393F",
+      "sourceFips": "48121",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "966265W",
+      "sourceFips": "48121",
+      "resolvedFips": "48085",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48085",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "764992R",
+      "sourceFips": "48123",
+      "resolvedFips": "48285",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48285",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "793798B",
+      "sourceFips": "48131",
+      "resolvedFips": "48249",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48249",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "967062V",
+      "sourceFips": "48133",
+      "resolvedFips": "48143",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48143",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "967067E",
+      "sourceFips": "48133",
+      "resolvedFips": "48093",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48093",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "795389R",
+      "sourceFips": "48135",
+      "resolvedFips": "48329",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48329",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796278C",
+      "sourceFips": "48135",
+      "resolvedFips": "48103",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48103",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796300M",
+      "sourceFips": "48135",
+      "resolvedFips": "48329",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48329",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796302B",
+      "sourceFips": "48135",
+      "resolvedFips": "48329",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48329",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019061Y",
+      "sourceFips": "48137",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763628A",
+      "sourceFips": "48139",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763630B",
+      "sourceFips": "48139",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019791X",
+      "sourceFips": "48141",
+      "resolvedFips": null,
+      "status": "OUTSIDE_TEXAS",
+      "hits": []
+    },
+    {
+      "crossingId": "019606B",
+      "sourceFips": "48141",
+      "resolvedFips": "48303",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48303",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019788P",
+      "sourceFips": "48141",
+      "resolvedFips": null,
+      "status": "OUTSIDE_TEXAS",
+      "hits": []
+    },
+    {
+      "crossingId": "020925R",
+      "sourceFips": "48143",
+      "resolvedFips": "48221",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48221",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020924J",
+      "sourceFips": "48143",
+      "resolvedFips": "48221",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48221",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020928L",
+      "sourceFips": "48143",
+      "resolvedFips": "48221",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48221",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020929T",
+      "sourceFips": "48143",
+      "resolvedFips": "48221",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48221",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020930M",
+      "sourceFips": "48143",
+      "resolvedFips": "48221",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48221",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020931U",
+      "sourceFips": "48143",
+      "resolvedFips": "48221",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48221",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020918F",
+      "sourceFips": "48143",
+      "resolvedFips": "48221",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48221",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020927E",
+      "sourceFips": "48143",
+      "resolvedFips": "48221",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48221",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020981X",
+      "sourceFips": "48143",
+      "resolvedFips": "48093",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48093",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020982E",
+      "sourceFips": "48143",
+      "resolvedFips": "48093",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48093",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796003U",
+      "sourceFips": "48147",
+      "resolvedFips": "48277",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48277",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "977454Y",
+      "sourceFips": "48147",
+      "resolvedFips": "48231",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48231",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "977455F",
+      "sourceFips": "48147",
+      "resolvedFips": "48231",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48231",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "977855Y",
+      "sourceFips": "48147",
+      "resolvedFips": "48231",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48231",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "977856F",
+      "sourceFips": "48147",
+      "resolvedFips": "48231",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48231",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415114L",
+      "sourceFips": "48147",
+      "resolvedFips": "48231",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48231",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "980417A",
+      "sourceFips": "48159",
+      "resolvedFips": "48223",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48223",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "598242Y",
+      "sourceFips": "48161",
+      "resolvedFips": "48289",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48289",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765414P",
+      "sourceFips": "48161",
+      "resolvedFips": "48349",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48349",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765412B",
+      "sourceFips": "48161",
+      "resolvedFips": "48349",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48349",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765415W",
+      "sourceFips": "48161",
+      "resolvedFips": "48349",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48349",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "448972K",
+      "sourceFips": "48163",
+      "resolvedFips": "48283",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48283",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "742786S",
+      "sourceFips": "48177",
+      "resolvedFips": "48187",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48187",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "742681D",
+      "sourceFips": "48177",
+      "resolvedFips": "48055",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48055",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "742682K",
+      "sourceFips": "48177",
+      "resolvedFips": "48055",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48055",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "014546C",
+      "sourceFips": "48179",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763685N",
+      "sourceFips": "48181",
+      "resolvedFips": "48085",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48085",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765309N",
+      "sourceFips": "48181",
+      "resolvedFips": "48085",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48085",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "795195K",
+      "sourceFips": "48181",
+      "resolvedFips": "48147",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48147",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "795197Y",
+      "sourceFips": "48181",
+      "resolvedFips": "48147",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48147",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415093V",
+      "sourceFips": "48181",
+      "resolvedFips": "48147",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48147",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765400G",
+      "sourceFips": "48181",
+      "resolvedFips": "48147",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48147",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "920232E",
+      "sourceFips": "48181",
+      "resolvedFips": "48097",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48097",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415591E",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415596N",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415592L",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415597V",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415587P",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415590X",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "412457H",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415589D",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "924381U",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "924383H",
+      "sourceFips": "48187",
+      "resolvedFips": "48091",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48091",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017428K",
+      "sourceFips": "48189",
+      "resolvedFips": "48153",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48153",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017434N",
+      "sourceFips": "48189",
+      "resolvedFips": "48437",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48437",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "274761E",
+      "sourceFips": "48191",
+      "resolvedFips": "48129",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48129",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "274762L",
+      "sourceFips": "48191",
+      "resolvedFips": "48129",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48129",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "982802K",
+      "sourceFips": "48191",
+      "resolvedFips": "48075",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48075",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016517Y",
+      "sourceFips": "48195",
+      "resolvedFips": "48421",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48421",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275161F",
+      "sourceFips": "48197",
+      "resolvedFips": "48487",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48487",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275162M",
+      "sourceFips": "48197",
+      "resolvedFips": "48487",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48487",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275163U",
+      "sourceFips": "48197",
+      "resolvedFips": "48487",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48487",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275165H",
+      "sourceFips": "48197",
+      "resolvedFips": "48487",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48487",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "919130P",
+      "sourceFips": "48203",
+      "resolvedFips": "48183",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48183",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "276482R",
+      "sourceFips": "48205",
+      "resolvedFips": "48359",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48359",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415684Y",
+      "sourceFips": "48209",
+      "resolvedFips": "48055",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48055",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789807R",
+      "sourceFips": "48213",
+      "resolvedFips": "48423",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48423",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "790425S",
+      "sourceFips": "48213",
+      "resolvedFips": "48423",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48423",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "440149C",
+      "sourceFips": "48213",
+      "resolvedFips": "48423",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48423",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "790435X",
+      "sourceFips": "48213",
+      "resolvedFips": "48423",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48423",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "448776D",
+      "sourceFips": "48215",
+      "resolvedFips": "48061",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48061",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "758567B",
+      "sourceFips": "48215",
+      "resolvedFips": "48061",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48061",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017652V",
+      "sourceFips": "48219",
+      "resolvedFips": "48445",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48445",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017637T",
+      "sourceFips": "48219",
+      "resolvedFips": "48445",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48445",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020882A",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020885V",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020897P",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020873B",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020874H",
+      "sourceFips": "48221",
+      "resolvedFips": "48139",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48139",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020879S",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020884N",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020896H",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020899D",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020872U",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020876W",
+      "sourceFips": "48221",
+      "resolvedFips": "48139",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48139",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020877D",
+      "sourceFips": "48221",
+      "resolvedFips": "48139",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48139",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020878K",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020887J",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020889X",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020891Y",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020898W",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020901C",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020902J",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020903R",
+      "sourceFips": "48221",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789388V",
+      "sourceFips": "48223",
+      "resolvedFips": "48449",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48449",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789387N",
+      "sourceFips": "48223",
+      "resolvedFips": "48449",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48449",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789391D",
+      "sourceFips": "48223",
+      "resolvedFips": "48449",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48449",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789398B",
+      "sourceFips": "48223",
+      "resolvedFips": "48449",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48449",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "764219L",
+      "sourceFips": "48229",
+      "resolvedFips": "48109",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48109",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016995Y",
+      "sourceFips": "48233",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016989V",
+      "sourceFips": "48233",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016994S",
+      "sourceFips": "48233",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016992D",
+      "sourceFips": "48233",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016993K",
+      "sourceFips": "48233",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "018791U",
+      "sourceFips": "48235",
+      "resolvedFips": "48451",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48451",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "764217X",
+      "sourceFips": "48243",
+      "resolvedFips": "48377",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48377",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "742886W",
+      "sourceFips": "48243",
+      "resolvedFips": "48109",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48109",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "764216R",
+      "sourceFips": "48243",
+      "resolvedFips": "48377",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48377",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "764218E",
+      "sourceFips": "48243",
+      "resolvedFips": "48109",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48109",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021550J",
+      "sourceFips": "48251",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021561W",
+      "sourceFips": "48251",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "021563K",
+      "sourceFips": "48251",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "427635L",
+      "sourceFips": "48273",
+      "resolvedFips": "48355",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48355",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "921098Y",
+      "sourceFips": "48273",
+      "resolvedFips": "48409",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48409",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024704C",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024705J",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024711M",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024709L",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024707X",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024708E",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024713B",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024706R",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024703V",
+      "sourceFips": "48281",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "446671H",
+      "sourceFips": "48283",
+      "resolvedFips": "48479",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48479",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "446672P",
+      "sourceFips": "48283",
+      "resolvedFips": "48479",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48479",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "446677Y",
+      "sourceFips": "48283",
+      "resolvedFips": "48479",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48479",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "966345P",
+      "sourceFips": "48293",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "966344H",
+      "sourceFips": "48293",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "966343B",
+      "sourceFips": "48293",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "966342U",
+      "sourceFips": "48293",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "966341M",
+      "sourceFips": "48293",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "966340F",
+      "sourceFips": "48293",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930581S",
+      "sourceFips": "48299",
+      "resolvedFips": "48031",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48031",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "745304A",
+      "sourceFips": "48299",
+      "resolvedFips": "48453",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48453",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "976455C",
+      "sourceFips": "48299",
+      "resolvedFips": "48031",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48031",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024809R",
+      "sourceFips": "48307",
+      "resolvedFips": "48049",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48049",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "597155S",
+      "sourceFips": "48313",
+      "resolvedFips": "48289",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48289",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "742922P",
+      "sourceFips": "48325",
+      "resolvedFips": "48029",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48029",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "446549R",
+      "sourceFips": "48331",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "446550K",
+      "sourceFips": "48331",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796127M",
+      "sourceFips": "48335",
+      "resolvedFips": "48353",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48353",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275048M",
+      "sourceFips": "48337",
+      "resolvedFips": "48497",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48497",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275049U",
+      "sourceFips": "48337",
+      "resolvedFips": "48497",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48497",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "275050N",
+      "sourceFips": "48337",
+      "resolvedFips": "48497",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48497",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017063F",
+      "sourceFips": "48341",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017158N",
+      "sourceFips": "48341",
+      "resolvedFips": "48375",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48375",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017160P",
+      "sourceFips": "48341",
+      "resolvedFips": "48375",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48375",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789612D",
+      "sourceFips": "48343",
+      "resolvedFips": "48067",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48067",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "920069K",
+      "sourceFips": "48343",
+      "resolvedFips": "48067",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48067",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "018695S",
+      "sourceFips": "48353",
+      "resolvedFips": "48415",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48415",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796098E",
+      "sourceFips": "48353",
+      "resolvedFips": "48151",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48151",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796099L",
+      "sourceFips": "48353",
+      "resolvedFips": "48151",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48151",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "921099F",
+      "sourceFips": "48355",
+      "resolvedFips": "48409",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48409",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016501C",
+      "sourceFips": "48357",
+      "resolvedFips": "48195",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48195",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016498W",
+      "sourceFips": "48357",
+      "resolvedFips": "48195",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48195",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016495B",
+      "sourceFips": "48357",
+      "resolvedFips": "48421",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48421",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016492F",
+      "sourceFips": "48357",
+      "resolvedFips": "48195",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48195",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016506L",
+      "sourceFips": "48357",
+      "resolvedFips": "48195",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48195",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016504X",
+      "sourceFips": "48357",
+      "resolvedFips": "48195",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48195",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016503R",
+      "sourceFips": "48357",
+      "resolvedFips": "48195",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48195",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016466R",
+      "sourceFips": "48357",
+      "resolvedFips": "48211",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48211",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "016467X",
+      "sourceFips": "48357",
+      "resolvedFips": "48211",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48211",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "276485L",
+      "sourceFips": "48359",
+      "resolvedFips": "48375",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48375",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "276526N",
+      "sourceFips": "48359",
+      "resolvedFips": "48375",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48375",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "023985K",
+      "sourceFips": "48365",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024017W",
+      "sourceFips": "48365",
+      "resolvedFips": "48401",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48401",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024015H",
+      "sourceFips": "48365",
+      "resolvedFips": "48401",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48401",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020867X",
+      "sourceFips": "48367",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "839211T",
+      "sourceFips": "48367",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "014166V",
+      "sourceFips": "48375",
+      "resolvedFips": "48065",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48065",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019040F",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019041M",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019037X",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019025D",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019026K",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019027S",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019029F",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019030A",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019032N",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019034C",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019036R",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "019035J",
+      "sourceFips": "48377",
+      "resolvedFips": "48043",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48043",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "973845E",
+      "sourceFips": "48385",
+      "resolvedFips": "48389",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48389",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796256C",
+      "sourceFips": "48389",
+      "resolvedFips": "48475",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48475",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765835B",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765836H",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765839D",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765841E",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765842L",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765843T",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765844A",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765845G",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "430171M",
+      "sourceFips": "48395",
+      "resolvedFips": "48041",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48041",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "744850V",
+      "sourceFips": "48395",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "744851C",
+      "sourceFips": "48395",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "744852J",
+      "sourceFips": "48395",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "744848U",
+      "sourceFips": "48395",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "430233H",
+      "sourceFips": "48395",
+      "resolvedFips": "48145",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48145",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "748584P",
+      "sourceFips": "48397",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "414406E",
+      "sourceFips": "48397",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "435613G",
+      "sourceFips": "48409",
+      "resolvedFips": "48297",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48297",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024744A",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024734U",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024733M",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024740X",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024725V",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024716W",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024720L",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024738W",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024759P",
+      "sourceFips": "48411",
+      "resolvedFips": "48143",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48143",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024758H",
+      "sourceFips": "48411",
+      "resolvedFips": "48143",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48143",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024739D",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024742L",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024741E",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024722A",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024715P",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024736H",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024721T",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024718K",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024737P",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "024723G",
+      "sourceFips": "48411",
+      "resolvedFips": "48333",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48333",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "023927P",
+      "sourceFips": "48419",
+      "resolvedFips": "48405",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48405",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "023933T",
+      "sourceFips": "48419",
+      "resolvedFips": "48405",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48405",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "023922F",
+      "sourceFips": "48419",
+      "resolvedFips": "48405",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48405",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017075A",
+      "sourceFips": "48421",
+      "resolvedFips": "48341",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48341",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "426628X",
+      "sourceFips": "48423",
+      "resolvedFips": "48073",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48073",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020668V",
+      "sourceFips": "48439",
+      "resolvedFips": "48121",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48121",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930196N",
+      "sourceFips": "48439",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789746C",
+      "sourceFips": "48439",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020864C",
+      "sourceFips": "48439",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020865J",
+      "sourceFips": "48439",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "020861G",
+      "sourceFips": "48439",
+      "resolvedFips": "48251",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48251",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789736W",
+      "sourceFips": "48439",
+      "resolvedFips": "48113",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48113",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "864732Y",
+      "sourceFips": "48441",
+      "resolvedFips": "48059",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48059",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "864740R",
+      "sourceFips": "48441",
+      "resolvedFips": "48059",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48059",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796092N",
+      "sourceFips": "48441",
+      "resolvedFips": "48353",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48353",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "796094C",
+      "sourceFips": "48441",
+      "resolvedFips": "48353",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48353",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763855F",
+      "sourceFips": "48443",
+      "resolvedFips": "48371",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48371",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763856M",
+      "sourceFips": "48443",
+      "resolvedFips": "48371",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48371",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "017765B",
+      "sourceFips": "48445",
+      "resolvedFips": "48279",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48279",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765664C",
+      "sourceFips": "48453",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "765665J",
+      "sourceFips": "48453",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "925947T",
+      "sourceFips": "48453",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "976642K",
+      "sourceFips": "48453",
+      "resolvedFips": "48021",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48021",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "435964F",
+      "sourceFips": "48453",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "439696L",
+      "sourceFips": "48453",
+      "resolvedFips": "48491",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48491",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "789462X",
+      "sourceFips": "48459",
+      "resolvedFips": "48423",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48423",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "018868E",
+      "sourceFips": "48461",
+      "resolvedFips": "48383",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48383",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763872W",
+      "sourceFips": "48465",
+      "resolvedFips": "48443",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48443",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763870H",
+      "sourceFips": "48465",
+      "resolvedFips": "48443",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48443",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "763873D",
+      "sourceFips": "48465",
+      "resolvedFips": "48443",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48443",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "427537V",
+      "sourceFips": "48469",
+      "resolvedFips": "48391",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48391",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "427539J",
+      "sourceFips": "48469",
+      "resolvedFips": "48391",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48391",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "427540D",
+      "sourceFips": "48469",
+      "resolvedFips": "48391",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48391",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "427541K",
+      "sourceFips": "48469",
+      "resolvedFips": "48391",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48391",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "427544F",
+      "sourceFips": "48469",
+      "resolvedFips": "48391",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48391",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "864587C",
+      "sourceFips": "48475",
+      "resolvedFips": "48461",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48461",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "274941C",
+      "sourceFips": "48485",
+      "resolvedFips": "48487",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48487",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "274994B",
+      "sourceFips": "48485",
+      "resolvedFips": "48077",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48077",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "415442D",
+      "sourceFips": "48485",
+      "resolvedFips": "48077",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48077",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "432751K",
+      "sourceFips": "48489",
+      "resolvedFips": "48061",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48061",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "744811E",
+      "sourceFips": "48491",
+      "resolvedFips": "48453",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48453",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930572T",
+      "sourceFips": "48491",
+      "resolvedFips": "48453",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48453",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930573A",
+      "sourceFips": "48491",
+      "resolvedFips": "48453",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48453",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "930565H",
+      "sourceFips": "48491",
+      "resolvedFips": "48453",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48453",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "274639M",
+      "sourceFips": "48497",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "598470L",
+      "sourceFips": "48497",
+      "resolvedFips": "48337",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48337",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "598303M",
+      "sourceFips": "48497",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    },
+    {
+      "crossingId": "274638F",
+      "sourceFips": "48497",
+      "resolvedFips": "48439",
+      "status": "CROSS_COUNTY_MISMATCH",
+      "hits": [
+        {
+          "fips": "48439",
+          "location": "inside"
+        }
+      ]
+    }
+  ]
+}
