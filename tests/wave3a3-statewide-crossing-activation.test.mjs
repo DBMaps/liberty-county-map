@@ -3,7 +3,26 @@ import assert from 'node:assert/strict';
 import {mkdtemp,mkdir,readFile,rm,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {guardedReplace,inspect,outputs,run} from '../tools/wave3a3/activate-statewide-crossings.mjs';
+import {createHash} from 'node:crypto';
+import {canonicalCandidateBytes,certifiedCandidateBytes,guardedReplace,inspect,outputs,run} from '../tools/wave3a3/activate-statewide-crossings.mjs';
+
+const sha256=body=>createHash('sha256').update(body).digest('hex');
+
+test('candidate certification tolerates only CRLF checkout materialization and retains LF identity',()=>{
+ const lf=Buffer.from('{\n  "type": "FeatureCollection",\n  "features": [{"properties":{"CROSSING":"A1","name":"Main"},"geometry":{"type":"Point","coordinates":[-95.1,30.2]}}]\n}\n');
+ const crlf=Buffer.from(lf.toString().replaceAll('\n','\r\n'));
+ const certification={countyFips:'48001',bytes:lf.length,sha256:sha256(lf)};
+
+ assert.deepEqual(certifiedCandidateBytes(lf,certification),lf);
+ assert.deepEqual(certifiedCandidateBytes(crlf,certification),lf);
+ assert.deepEqual(canonicalCandidateBytes(crlf),lf);
+ assert.equal(sha256(certifiedCandidateBytes(crlf,certification)),certification.sha256);
+
+ const substantive=Buffer.from(lf);substantive[substantive.indexOf('Main')]='m'.charCodeAt(0);
+ assert.throws(()=>certifiedCandidateBytes(substantive,certification),/byte identity differs/);
+ assert.throws(()=>certifiedCandidateBytes(Buffer.from(lf.toString().replace('"Main"','"Changed"')),certification),/byte identity differs/);
+ assert.throws(()=>certifiedCandidateBytes(Buffer.from(lf.toString().replace('-95.1','-95.2')),certification),/byte identity differs/);
+});
 
 test('projects the exact governed statewide contract and zero cohort',async()=>{
  const e=await outputs(), p=e['projected-254-county-state.json'], z=e['zero-county-governance.json'];
@@ -52,7 +71,8 @@ test('guarded replacement stages valid JSON and rolls every partial replacement 
 test('apply implementation preserves immutable domains and performs post-write certification',async()=>{
  const source=await readFile(new URL('../tools/wave3a3/activate-statewide-crossings.mjs',import.meta.url),'utf8');
  assert.match(source,/same\(allow\.paths,x\.production\)/);
- assert.match(source,/body\.length!==record\.bytes\|\|sha\(body\)!==record\.sha256/);
+ assert.match(source,/canonicalCandidateBytes\(await raw\(root,record\.packagePath\)\)/);
+ assert.match(source,/certifiedCandidateBytes\(await raw\(x\.root,rec\.packagePath\),rec\)/);
  assert.match(source,/roadRuntimeDependencyIntroduced:false/);
  assert.match(source,/reportIdentityMutation:false/);
  assert.match(source,/postActivation\(root\)/);
