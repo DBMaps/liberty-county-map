@@ -83141,6 +83141,82 @@ function gridlyBetaInstantInteractionAudit() {
 window.gridlyBetaInstantInteractionAudit = gridlyBetaInstantInteractionAudit;
 exposeGridlyAuditHelper("gridlyBetaInstantInteractionAudit", gridlyBetaInstantInteractionAudit);
 
+function gridlyDiagnoseHazardReportPersistenceBoundary({ hazardType = "flooding", lat, lng, confidence = "tap map placement", locationName = "", options = {} } = {}) {
+  const numericLat = Number(lat);
+  const numericLng = Number(lng);
+  const coordinateCountyResolution = gridlyResolveCountyIdForCoordinate(numericLat, numericLng);
+  const countyScopedMetadata = gridlyGetReportSubmissionCountyScopedMetadata(numericLat, numericLng);
+  const countyConfig = countyScopedMetadata ? GRIDLY_COUNTY_REGISTRY[countyScopedMetadata.county_id] : null;
+  const awarenessArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const homeIdentity = typeof gridlyReadHomePersonalizationRecord === "function" ? gridlyReadHomePersonalizationRecord() : null;
+  const communityKey = homeIdentity?.communityKey || awarenessArea?.placeGeoid || awarenessArea?.communityKey || awarenessArea?.communityId || null;
+  const placeGeoid = /^48\d{5}$/.test(String(communityKey || ""))
+    ? String(communityKey)
+    : (/^48\d{5}$/.test(String(awarenessArea?.placeGeoid || "")) ? String(awarenessArea.placeGeoid) : null);
+  const copy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
+  const sourceTag = ROAD_HAZARD_SOURCE_MAP[hazardType] || "community_report";
+  const locationPayload = gridlyBuildRoadHazardSubmissionLocationPayload({
+    roadName: options?.roadName,
+    primaryRoad: options?.primaryRoad,
+    selectedRoadName: options?.selectedRoadName,
+    submittedCoordinate: { lat: numericLat, lng: numericLng },
+    resolvedRoadName: options?.resolvedRoadName
+  }).payload || {};
+  const detailLocationMetadata = countyScopedMetadata ? {
+    ...gridlyBuildRoadHazardDetailLocationMetadata(locationPayload, { submittedCoordinate: { lat: numericLat, lng: numericLng } }),
+    county_id: countyScopedMetadata.county_id,
+    countyId: countyScopedMetadata.county_id,
+    state: countyScopedMetadata.state
+  } : null;
+  const row = countyScopedMetadata ? {
+    crossing_id: `hazard-${deviceId}-<generated-at-submit>`,
+    crossing_name: locationName ? `${copy.label} · ${locationName}` : copy.label,
+    railroad: "Road hazard",
+    lat: numericLat,
+    lng: numericLng,
+    report_type: hazardType,
+    severity: copy.severity,
+    detail: appendGridlyStructuredMetadata(`${copy.detail} (future_source: ${sourceTag})`, detailLocationMetadata),
+    source: "user",
+    confidence,
+    device_id: deviceId,
+    expires_at: "<generated-at-submit>",
+    ...countyScopedMetadata
+  } : null;
+  const persistencePayload = row ? gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS) : null;
+  const duplicateLockKey = gridlyRoadHazardDuplicateGuardClusterKey(hazardType, numericLat, numericLng, deviceId);
+  const activeDuplicate = Number.isFinite(numericLat) && Number.isFinite(numericLng)
+    ? gridlyFindExistingActiveRoadHazardDuplicate({ hazardType, lat: numericLat, lng: numericLng, reportDeviceId: deviceId })
+    : null;
+  const pendingLock = gridlyRoadHazardPendingSubmitLocks.get(duplicateLockKey);
+  let blockingGuard = null;
+  if (reportingState.submissionInProgress) blockingGuard = "submission_already_in_progress";
+  else if (!supabaseClient) blockingGuard = "supabase_unavailable";
+  else if (!countyScopedMetadata) blockingGuard = "coverage_invalid";
+  else if (activeDuplicate) blockingGuard = "duplicate_active_hazard_suppressed";
+  else if (pendingLock && pendingLock.expiresAtMs > Date.now()) blockingGuard = "duplicate_pending_hazard_suppressed";
+  const payloadReady = Boolean(persistencePayload && GRIDLY_REPORTS_BASE_INSERT_KEYS.every((key) => Object.prototype.hasOwnProperty.call(persistencePayload, key)));
+  return Object.freeze({
+    countyId: coordinateCountyResolution.countyId,
+    countyFips: countyConfig ? gridlyExtractCountyGeoid(countyConfig) : null,
+    communityKey,
+    placeGeoid,
+    awarenessArea: awarenessArea ? { key: awarenessArea.key || null, label: awarenessArea.label || awarenessArea.storageValue || null } : null,
+    hazardType,
+    countyResolution: coordinateCountyResolution,
+    countyScopedMetadata,
+    payloadReadiness: payloadReady,
+    payload: row,
+    persistencePayload,
+    persistenceFunctionName: "gridlyInsertWithCountyMetadataFallback(supabaseClient, \"reports\", row)",
+    wouldSubmit: payloadReady && !blockingGuard,
+    blockingGuard,
+    persistenceAttempted: false
+  });
+}
+window.gridlyDiagnoseHazardReportPersistenceBoundary = gridlyDiagnoseHazardReportPersistenceBoundary;
+exposeGridlyAuditHelper("gridlyDiagnoseHazardReportPersistenceBoundary", gridlyDiagnoseHazardReportPersistenceBoundary);
+
 async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "", originalTapCoords = null, options = {}) {
   gridlyResetHazardPropagationTiming({ type: hazardType, lat, lng, locationName });
   gridlyHazardPropagationTimingState.lastSubmitStartedAt = gridlyHazardPropagationNowIso();
