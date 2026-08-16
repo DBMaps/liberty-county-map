@@ -96,15 +96,29 @@ test("actual production-boundary render harness certifies every county and Waco 
     assert.equal(row.actualRender.alertItemCreated && row.actualRender.alertRendered && row.actualRender.awarenessPresented, true);
     assert.equal(row.actualRender.crossingDependencies, 0);
   }
-  const waco = normalizeGenericHazard({ id: "48c70dd1-6b56-45ee-ac2c-d4a1314d7386", report_type: "flooding", lat: 31.5561805244549, lng: -97.1312159299851 }, { countyId: "mclennan-tx", countyFips: "48309", name: "McLennan County" }, { placeGeoid: "4876000", displayName: "Waco", countyMemberships: ["48309"] });
+  const waco = normalizeGenericHazard({ id: "48c70dd1-6b56-45ee-ac2c-d4a1314d7386", crossing_id: "hazard-device-fb254e5c-da39-4ff0-92d1-15c9cc62b57d-1786898439054", report_type: "flooding", lat: 31.5561805244549, lng: -97.1312159299851 }, { countyId: "mclennan-tx", countyFips: "48309", name: "McLennan County" }, { placeGeoid: "4876000", displayName: "Waco", countyMemberships: ["48309"] });
   const actual = exerciseActualRenderPath(waco, createRenderHarness());
   assert.equal(actual.markerCurrentlyOnMap && actual.alertRendered && actual.awarenessPresented, true);
+  assert.equal(actual.crossingDependencies, 0, "legacy hazard crossing_id is data, never a rendering dependency");
 });
 
 test("owner render diagnostics are read-only and production refresh invalidates stale models", () => {
   const source = fs.readFileSync("js/app.js", "utf8");
   assert.match(source, /function gridlyGetHazardRenderSnapshot\(\)/);
   assert.match(source, /function gridlyGetAlertsRenderSnapshot\(\)/);
+  assert.match(source, /function gridlyGetAwarenessFinalStateSnapshot\(\)/);
   assert.match(source, /gridlyAuthoritativeIncidentSnapshotState\.snapshot = null/);
   assert.match(source, /unifiedIncidents\+activeHazards/);
+});
+
+test("final presentation owners do not gate generic hazards on crossing, desktop, or popup enrichment", () => {
+  const source = fs.readFileSync("js/app.js", "utf8");
+  const addAt = source.indexOf("marker.addTo(unifiedIncidentLayer);", source.indexOf("function renderUnifiedIncidents"));
+  const popupAt = source.indexOf("const popupContent = buildUnifiedIncidentPopup", source.indexOf("function renderUnifiedIncidents"));
+  assert.ok(addAt > 0 && addAt < popupAt, "Leaflet insertion precedes optional popup enrichment");
+  const refresh = source.slice(source.indexOf("function refreshReportHazardViews"), source.indexOf("function getCrossingReviewOverrides"));
+  assert.ok(refresh.indexOf("refreshGridlyCommunityPulseSharedModel") < refresh.indexOf("refreshPortraitV2LocalizedIntelligence"));
+  assert.ok(refresh.indexOf('timeRefreshChild("renderAlerts"') < refresh.indexOf("if (refreshLayoutModeIsDesktop)"));
+  assert.match(source, /const lifecycleActiveHazards = getGridlyAwarenessLifecycleActiveHazards\(hazardItems\)/);
+  assert.match(source, /data-gridly-alert-report-id=.*data-gridly-alert-state="active"/);
 });

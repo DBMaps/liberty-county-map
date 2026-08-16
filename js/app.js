@@ -51873,18 +51873,21 @@ function refreshReportHazardViews(source = "unspecified") {
       childDurations[name] = Number((performance.now() - start).toFixed(2));
     };
     const refreshLayoutModeIsDesktop = evaluateLayoutMode() === "desktop";
-    if (!refreshLayoutModeIsDesktop) {
-      timeRefreshChild("refreshGridlyCommunityPulseSharedModel", () => refreshGridlyCommunityPulseSharedModel({ reason: source, topAwarenessMicrolineReadOnly: true }));
-    }
+    // Build the authoritative active model before the Portrait writer consumes
+    // it.  Previously desktop performed this in the opposite order, allowing a
+    // cached quiet/coverage model to become the final visible writer.
+    timeRefreshChild("refreshGridlyCommunityPulseSharedModel", () => refreshGridlyCommunityPulseSharedModel({ reason: source, topAwarenessMicrolineReadOnly: true }));
     timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
     gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
     timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
     timeRefreshChild("renderDriveTexasOfficialMarkers", () => renderGridlyDriveTexasOfficialMarkers(source));
     gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
     timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
+    // Alerts owns a real DOM collection in portrait and desktop layouts.
+    // Creating generic items cannot be conditional on desktop layout.
+    gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
+    timeRefreshChild("renderAlerts", () => renderAlerts());
     if (refreshLayoutModeIsDesktop) {
-      gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
-      timeRefreshChild("renderAlerts", () => renderAlerts());
       gridlyRefreshAuditState.renderCounts.renderRoadHazards += 1;
       timeRefreshChild("renderRoadHazards", () => renderRoadHazards());
       gridlyRefreshAuditState.renderCounts.renderTrendingCrossings += 1;
@@ -55383,6 +55386,8 @@ async function loadSharedReports(reason = "manual") {
     // though the newly loaded rows are eligible.
     gridlyAuthoritativeIncidentSnapshotState.snapshot = null;
     gridlyV734RefreshReuseState.renderUnifiedSignature = "";
+    gridlyV734RefreshReuseState.communityPulseSignature = "";
+    gridlyV734RefreshReuseState.communityPulseModel = null;
     gridlyAuthoritativeCommuteIntelligenceRuntime?.values?.clear?.();
     const activeHazardIds = new Set(activeHazards.map((report) => String(report.id || "")));
     gridlyLoadedReportSnapshot = Object.freeze(normalized.map((report, index) => {
@@ -60061,7 +60066,13 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     ? gridlyGetCrossingReportAreaFilter(rawActiveReportItems, "lightweightActiveAwareness.activeReports")
     : { applied: false, pass: true, filteredOutCount: 0, filteredOutRecords: [], inSelectedArea: rawActiveReportItems, outsideSelectedArea: [], selectedMode: "unknown", selectedLabel: "" };
   const activeReportItems = rawActiveReportItems.filter((report) => !isGridlyCrossingReportRecord(report) || crossingAreaFilter.inSelectedArea.includes(report));
-  const activeHazardItems = (explicitActiveHazardsSupplied ? getGridlyAwarenessLifecycleActiveHazards(hazardItems) : userFacingRoadHazardIncidents).slice(0, sourceLimit);
+  // A generic coordinate-owned report is primary awareness evidence.  The
+  // road-intelligence adapter is additive; it must not become a gate merely
+  // because Alerts has not rendered yet or the report has no road runtime.
+  const lifecycleActiveHazards = getGridlyAwarenessLifecycleActiveHazards(hazardItems);
+  const activeHazardItems = [...lifecycleActiveHazards, ...userFacingRoadHazardIncidents]
+    .filter((item, index, rows) => rows.findIndex((candidate) => String(candidate?.id || candidate?.reportId || candidate?.report_id || "") === String(item?.id || item?.reportId || item?.report_id || "")) === index)
+    .slice(0, sourceLimit);
   const seen = new Set();
   const activeItems = [];
   const userLocationAwarenessAnchor = getGridlyActiveAwarenessUserLocationAnchor(options);
@@ -72027,13 +72038,18 @@ function renderUnifiedIncidents(reason = "auto") {
       });
       addPhaseDuration("marker creation", markerPhaseStart);
       markerPhaseStart = gridlyNowMs();
+      // Layer insertion is the generic incident presentation boundary.  Popup
+      // enrichment (which historically assumed a crossing/corridor) must not
+      // prevent a valid coordinate-owned marker from existing on the map.
+      marker.addTo(unifiedIncidentLayer);
+      addPhaseDuration("marker updates", markerPhaseStart);
+      markerPhaseStart = gridlyNowMs();
       const popupContent = buildUnifiedIncidentPopup(incident, { popupAuditRows });
       addPhaseDuration("popup generation", markerPhaseStart);
       markerPhaseStart = gridlyNowMs();
       marker.bindPopup(popupContent, { maxWidth: 340 });
       marker.on("click", () => gridlyLp0546BindIncidentSelection?.(incident, /official|drivetexas|txdot/i.test(String(incident.providerId || incident.source || "")) ? "official_marker" : "community_marker"));
       marker.on("popupopen", () => { if (gridlyHistoricalSelectionStateV1?.incidentId === String(incident?.id || incident?.report_id || incident?.key || "") || gridlyHistoricalSelectionStateV1?.officialIncidentId === String(incident?.id || incident?.report_id || incident?.key || "")) gridlyLp0546BindIncidentSelection?.(incident, /official|drivetexas|txdot/i.test(String(incident.providerId || incident.source || "")) ? "official_popup" : "community_popup"); });
-      marker.addTo(unifiedIncidentLayer);
       addPhaseDuration("marker updates", markerPhaseStart);
     } catch (error) {
       markerRenderSkipReasons.render_exception += 1;
@@ -82167,6 +82183,22 @@ function gridlyGetAlertsRenderSnapshot() {
 }
 window.gridlyGetAlertsRenderSnapshot = gridlyGetAlertsRenderSnapshot;
 exposeGridlyAuditHelper("gridlyGetAlertsRenderSnapshot", gridlyGetAlertsRenderSnapshot);
+
+function gridlyGetAwarenessFinalStateSnapshot() {
+  const activeEvidence = getGridlyAwarenessLifecycleActiveHazards(Array.isArray(activeHazards) ? activeHazards : []);
+  const primary = safeDisplayText(document?.getElementById?.("gridlyV2TopStatusPrimary")?.textContent, "");
+  const secondary = safeDisplayText(document?.getElementById?.("gridlyV2TopStatusSecondary")?.textContent, "");
+  return Object.freeze({
+    state: activeEvidence.length ? "active" : (gridlyCommunityPulseAuditState?.activeAwareness?.activeAwarenessCount > 0 ? "active" : "quiet"),
+    activeEvidenceCount: activeEvidence.length,
+    visiblePrimary: primary,
+    visibleSecondary: secondary,
+    finalWriter: "refreshPortraitV2LocalizedIntelligence",
+    precedence: Object.freeze(["active", "recently_cleared", "coverage_limited", "quiet"])
+  });
+}
+window.gridlyGetAwarenessFinalStateSnapshot = gridlyGetAwarenessFinalStateSnapshot;
+exposeGridlyAuditHelper("gridlyGetAwarenessFinalStateSnapshot", gridlyGetAwarenessFinalStateSnapshot);
 let lastGridlyRoadHazardSubmitShapeAudit = {
   supabaseInsertKeys: [],
   legacyRetryInsertKeys: [],
@@ -107306,7 +107338,11 @@ function renderAlerts() {
     const reportId = String(report?.id || "");
     const label = report?.communityName || report?.countyName || report?.crossingName || "Reported location";
     const condition = report?.crossingName || HAZARD_TYPES?.[report?.type]?.label || "Road hazard";
-    sections.push(`<article class="alert-item intelligence-row community-hazard" data-gridly-alert-report-id="${sanitizeText(reportId)}"><div class="alert-row-main"><span class="alert-severity-chip">Community</span><strong>${sanitizeText(condition)}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(label)} · Active community report</p></article>`);
+    const severity = safeDisplayText(report?.severity, "reported");
+    const submittedAtMs = new Date(report?.submittedAt || report?.created_at || report?.createdAt || 0).getTime();
+    const ageMinutes = Number.isFinite(submittedAtMs) && submittedAtMs > 0 ? Math.max(0, Math.floor((Date.now() - submittedAtMs) / 60000)) : null;
+    const timing = Number.isFinite(ageMinutes) ? `${ageMinutes}m` : "live";
+    sections.push(`<article class="alert-item intelligence-row community-hazard" data-gridly-alert-report-id="${sanitizeText(reportId)}" data-gridly-alert-state="active"><div class="alert-row-main"><span class="alert-severity-chip">${sanitizeText(severity)}</span><strong>${sanitizeText(condition)}</strong><span class="alert-row-time">${sanitizeText(timing)}</span></div><p class="alert-row-subline">${sanitizeText(label)} · Active community report · Report ${sanitizeText(reportId)}</p></article>`);
   });
   officialSituationAlertsForLegacy.forEach((alert) => {
     const source = sanitizeText(alert.sourceLabel || alert.source || "Official");
