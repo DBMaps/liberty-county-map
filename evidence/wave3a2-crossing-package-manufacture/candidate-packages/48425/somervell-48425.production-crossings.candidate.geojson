@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 200478,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.8159760002958,
+          32.2989819999262
+        ]
+      },
+      "properties": {
+        "OBJECTID": 200478,
+        "CROSSING": "900212N",
+        "EFFDATE": 357782400000,
+        "REASON": "15",
+        "StateCode": "48",
+        "CountyCode": "48425",
+        "STCYFIPS": "48425",
+        "CITYCD": "484252680",
+        "RAILROAD": "TEXU",
+        "RRDIV": "",
+        "RRSUBDIV": "",
+        "HIGHWAY": "PRIVATE",
+        "STREET": "PRIVATE ROAD",
+        "TTSTN": "668850",
+        "MILEPOST": "0008.46",
+        "TYPEXING": "Private",
+        "POSXING": "At Grade",
+        "PRVCAT": "15",
+        "INIT": "1",
+        "LATITUDE": 32.298982,
+        "LONGITUD": -97.815976,
+        "LLSOURCE": "",
+        "WHISTBAN": "0",
+        "RRCONT": "",
+        "POLCONT": "",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=900212N",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=900212N",
+        "TTSTNNAM": "STEPHENVILLE",
+        "XPURPOSE": "1",
+        "OPERATINGR": "TEXU",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 0,
+        "NGHTTHRU": 0,
+        "MAINTRK": 0,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "No signs or signals",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "5/4/1981",
+        "AADT": "",
+        "AADTYEAR": "1981",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "SOMERVELL",
+        "CITYNAME": "GLEN ROSE",
+        "LATDD": 32.298982,
+        "LONGDD": -97.815976,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "PRIVATE ROAD",
+        "gridlyId": "FRA-900212N"
+      }
+    }
+  ]
+}

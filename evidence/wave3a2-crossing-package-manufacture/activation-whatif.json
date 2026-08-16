@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "gridly.wave3a2.activation-whatif.v1",
+  "auditOnly": true,
+  "applied": false,
+  "projected": {
+    "ACTIVE_POSITIVE": 202,
+    "ACTIVE_EMPTY": 1,
+    "TOTAL_ACTIVE_CROSSING_COUNTIES": 203,
+    "ZERO_GEOGRAPHIC_SOURCE_INACTIVE": 51,
+    "TOTAL": 254
+  },
+  "productionActivationChanges": 0
+}

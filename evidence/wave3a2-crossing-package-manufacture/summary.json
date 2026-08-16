@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "gridly.wave3a2.summary.v1",
+  "decision": "175 GEOGRAPHIC-POSITIVE COUNTY PACKAGES CERTIFIED — READY FOR GUARDED ACTIVATION",
+  "indexEntries": 16101,
+  "assigned": 16099,
+  "blocked": 2,
+  "candidatePackages": 175,
+  "activePackages": 28,
+  "activeRows": 3784,
+  "candidateRows": 12315,
+  "identityConservation": true,
+  "representativeControls": {
+    "majorMetro": {
+      "countyId": "dallas",
+      "countyFips": "48113",
+      "countyName": "Dallas County",
+      "crossingCount": 789
+    },
+    "rural": {
+      "countyId": "crane",
+      "countyFips": "48103",
+      "countyName": "Crane County",
+      "crossingCount": 3
+    },
+    "border": {
+      "countyId": "el-paso",
+      "countyFips": "48141",
+      "countyName": "El Paso County",
+      "crossingCount": 198
+    },
+    "coastal": {
+      "countyId": "aransas",
+      "countyFips": "48007",
+      "countyName": "Aransas County",
+      "crossingCount": 5
+    },
+    "highCrossingCount": {
+      "countyId": "dallas",
+      "countyFips": "48113",
+      "countyName": "Dallas County",
+      "crossingCount": 789
+    },
+    "fewCrossings": {
+      "countyId": "crockett",
+      "countyFips": "48105",
+      "countyName": "Crockett County",
+      "crossingCount": 1
+    },
+    "gaining": {
+      "countyId": "bell-tx",
+      "countyFips": "48027",
+      "countyName": "Bell County",
+      "beforeFraSourceCount": 143,
+      "afterGeographicCount": 150,
+      "netDelta": 7
+    },
+    "losing": {
+      "countyId": "anderson-tx",
+      "countyFips": "48001",
+      "countyName": "Anderson County",
+      "beforeFraSourceCount": 71,
+      "afterGeographicCount": 70,
+      "netDelta": -1
+    }
+  },
+  "elPasoExclusionCausesCountyToBecomeZero": false,
+  "productionActivationChanges": 0
+}

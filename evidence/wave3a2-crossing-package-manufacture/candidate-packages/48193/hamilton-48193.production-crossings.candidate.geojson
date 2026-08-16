@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 211213,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.9999999996334,
+          31.9999999996598
+        ]
+      },
+      "properties": {
+        "OBJECTID": 211213,
+        "CROSSING": "849261Y",
+        "EFFDATE": 1761609600000,
+        "REASON": "20",
+        "StateCode": "48",
+        "CountyCode": "48093",
+        "STCYFIPS": "48093",
+        "CITYCD": "480931810",
+        "RAILROAD": "FWWR",
+        "RRDIV": "SYSTEM",
+        "RRSUBDIV": "GORMAN",
+        "HIGHWAY": "private",
+        "STREET": "FARM-PRIVATE",
+        "TTSTN": "690114",
+        "MILEPOST": "0009.60",
+        "TYPEXING": "Private",
+        "POSXING": "At Grade",
+        "PRVCAT": "20",
+        "INIT": "1",
+        "LATITUDE": 32,
+        "LONGITUD": -98,
+        "LLSOURCE": "2",
+        "WHISTBAN": "0",
+        "RRCONT": "8008613657",
+        "POLCONT": "8008613657",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=849261Y",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=849261Y",
+        "TTSTNNAM": "COMYN",
+        "XPURPOSE": "1",
+        "OPERATINGR": "FWWR",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 1,
+        "NGHTTHRU": 1,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "",
+        "REVISIONDA": "1989/01/01 00:00:00",
+        "LASTUPDATE": "10/28/2025",
+        "AADT": "",
+        "AADTYEAR": "",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "COMANCHE",
+        "CITYNAME": "DE LEON",
+        "LATDD": 32,
+        "LONGDD": -98,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "FARM-PRIVATE",
+        "gridlyId": "FRA-849261Y"
+      }
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "gridly.wave3a2.active-protection.v1",
+  "status": "PASS_ZERO_DIFF",
+  "activePackageCount": 28,
+  "activeRows": 3784,
+  "files": [
+    {
+      "path": "Crossing-Packages/austin/Production/austin-production-crossings.geojson",
+      "bytes": 461422,
+      "sha256": "b8c2f9cd93f0a5784ac3038118ef76d3d3f1f9e216ac55cedad19319aa9d7b12",
+      "crossingCount": 101
+    },
+    {
+      "path": "Crossing-Packages/brazoria/Production/brazoria-production-crossings.geojson",
+      "bytes": 716032,
+      "sha256": "730414201318cd95d6df15ae325196d4175ef1d3bb261819ea798176df3f0c68",
+      "crossingCount": 157
+    },
+    {
+      "path": "Crossing-Packages/brazos/Production/brazos-production-crossings.geojson",
+      "bytes": 203713,
+      "sha256": "ebf922d62432238c4b9f6d854150674438bc7269e03980d7d86f54308dd00e36",
+      "crossingCount": 95
+    },
+    {
+      "path": "Crossing-Packages/calhoun/Production/calhoun-production-crossings.geojson",
+      "bytes": 338033,
+      "sha256": "d97056e54322be43e6b3dda49d211234d611bb44d8abb1c1c9c811b7edf76a6c",
+      "crossingCount": 74
+    },
+    {
+      "path": "Crossing-Packages/chambers/Production/chambers-production-crossings.geojson",
+      "bytes": 68498,
+      "sha256": "faa23b29c6623a999fa1a4c2a8b470481e4443ccf72d05d91057c4e62047d83b",
+      "crossingCount": 15
+    },
+    {
+      "path": "Crossing-Packages/colorado/Production/colorado-production-crossings.geojson",
+      "bytes": 497174,
+      "sha256": "9496898fa712277ef592a3a30c6ea51594ea2ed398142101abeda9d898777e48",
+      "crossingCount": 109
+    },
+    {
+      "path": "Crossing-Packages/fayette/Production/fayette-production-crossings.geojson",
+      "bytes": 693383,
+      "sha256": "ab60b17ce92337f409161611a0e9ee6374dc572b1048eb007c4faefb3277af3d",
+      "crossingCount": 152
+    },
+    {
+      "path": "Crossing-Packages/fort-bend/Production/fort-bend-production-crossings.geojson",
+      "bytes": 798876,
+      "sha256": "e0b6df0b0f3fd3a1f8a0996cacec33ca4555d3f61e4a8d4140c17ce3f29c5be7",
+      "crossingCount": 175
+    },
+    {
+      "path": "Crossing-Packages/galveston/Production/galveston-production-crossings.geojson",
+      "bytes": 658644,
+      "sha256": "8ba946eba692efa61b13a25f68cb8798ca917914c437f585969612104d72197d",
+      "crossingCount": 144
+    },
+    {
+      "path": "Crossing-Packages/grimes/Production/grimes-production-crossings.geojson",
+      "bytes": 496608,
+      "sha256": "0495abd499a18cd6ba19c4ecbd90fb20606ffa00b717d2cffb2d09e865ec3897",
+      "crossingCount": 109
+    },
+    {
+      "path": "Crossing-Packages/hardin/Production/hardin-production-crossings.geojson",
+      "bytes": 374129,
+      "sha256": "efe9b4e9d1bc94f509d5253901815a6bb181f2a143994967c9a3ff4cfadd6985",
+      "crossingCount": 82
+    },
+    {
+      "path": "Crossing-Packages/harris/Production/harris-production-crossings.geojson",
+      "bytes": 5288898,
+      "sha256": "a723dea27f84be27c14676f64c87e5c4de481ebd6b04fbe247e5fff06d2c4cb2",
+      "crossingCount": 1159
+    },
+    {
+      "path": "Crossing-Packages/jackson/Production/jackson-production-crossings.geojson",
+      "bytes": 336944,
+      "sha256": "db8f02399f4326e97d63f8f8b3b03b40b546a6747e47cbf08b08fec0b9df24ce",
+      "crossingCount": 74
+    },
+    {
+      "path": "Crossing-Packages/jasper/Production/jasper-production-crossings.geojson",
+      "bytes": 481694,
+      "sha256": "6351f52a65e4d6540dc5b4e92148d6a1f5b0f7960e9fd78fcdc5e146da88db46",
+      "crossingCount": 106
+    },
+    {
+      "path": "Crossing-Packages/jefferson/Production/jefferson-production-crossings.geojson",
+      "bytes": 1724680,
+      "sha256": "ba491b461de6e3a5feceb1dd229dc2354d706f985f6626d0a2b7b6bae9863e15",
+      "crossingCount": 378
+    },
+    {
+      "path": "Crossing-Packages/lavaca/Production/lavaca-production-crossings.geojson",
+      "bytes": 85371,
+      "sha256": "b955c810ecaef52bf36ba29e0222660d450b2289253e5ad6e7bc4defa486d898",
+      "crossingCount": 40
+    },
+    {
+      "path": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+      "bytes": 524285,
+      "sha256": "c4d7aa22cc5be16ed2d1d594f8b08b4bf165f8aeadda29a5647a511b75d44360",
+      "crossingCount": 115
+    },
+    {
+      "path": "Crossing-Packages/matagorda/Production/matagorda-production-crossings.geojson",
+      "bytes": 365427,
+      "sha256": "368ab9ac343d882f7e50fde8ba1a8a60e358d7562d74d58a91f8881a0ea46769",
+      "crossingCount": 80
+    },
+    {
+      "path": "Crossing-Packages/montgomery/Production/montgomery-production-crossings.geojson",
+      "bytes": 776473,
+      "sha256": "0e646a532a97730f4694e4c1c5f9b9a64ca6a4122ff3499fbdcd64bc8ad63d2d",
+      "crossingCount": 170
+    },
+    {
+      "path": "Crossing-Packages/newton/Production/newton-production-crossings.geojson",
+      "bytes": 118690,
+      "sha256": "437ecd7a033210ffc06314172200b83524fd6dc0fc2f2b8c15dfeed84f965067",
+      "crossingCount": 26
+    },
+    {
+      "path": "Crossing-Packages/orange/Production/orange-production-crossings.geojson",
+      "bytes": 678396,
+      "sha256": "3f2743743ee048610f334e32ae2262ebb0284f3d399d82d3183d1580afd62a4e",
+      "crossingCount": 149
+    },
+    {
+      "path": "Crossing-Packages/polk/Production/polk-production-crossings.geojson",
+      "bytes": 291501,
+      "sha256": "a4cda485601a920307bc69263bd57e4130c368831ab3f98ef4520b4476154839",
+      "crossingCount": 64
+    },
+    {
+      "path": "Crossing-Packages/san-jacinto/Production/san-jacinto-production-crossings.geojson",
+      "bytes": 54964,
+      "sha256": "72d7b24a6a0157634e40214c78c4735cad3e2211073c5f391e183ddb7d4a2514",
+      "crossingCount": 12
+    },
+    {
+      "path": "Crossing-Packages/tyler/Production/tyler-production-crossings.geojson",
+      "bytes": 286,
+      "sha256": "6e518cc32c7644824dd65e0c5bd8d4c7489285a8a519c13c93fc2ffd83d75cae",
+      "crossingCount": 0
+    },
+    {
+      "path": "Crossing-Packages/walker/Production/walker-production-crossings.geojson",
+      "bytes": 164483,
+      "sha256": "d8af88476611daf17b9b2b19bfe3b2c95a78147c7854a4d0dc5a34272be3c904",
+      "crossingCount": 36
+    },
+    {
+      "path": "Crossing-Packages/waller/Production/waller-production-crossings.geojson",
+      "bytes": 210056,
+      "sha256": "616495ba80b4895a5461a2d57fd877d181860eded0a6c9fc5d33fac7eb17cffa",
+      "crossingCount": 46
+    },
+    {
+      "path": "Crossing-Packages/washington/Production/washington-production-crossings.geojson",
+      "bytes": 94815,
+      "sha256": "61542078d99e44431d8af0fd83f67ce68e245ce7af0d139e96aea4eface196f7",
+      "crossingCount": 44
+    },
+    {
+      "path": "Crossing-Packages/wharton/Production/wharton-production-crossings.geojson",
+      "bytes": 328079,
+      "sha256": "94546285d085cc7a903213061b9baefcdb957a7b24fbf5490b5de1b3b3231941",
+      "crossingCount": 72
+    }
+  ],
+  "tyler": {
+    "countyFips": "48457",
+    "state": "ACTIVE_EMPTY",
+    "changed": false
+  },
+  "productionManifestChanged": false
+}

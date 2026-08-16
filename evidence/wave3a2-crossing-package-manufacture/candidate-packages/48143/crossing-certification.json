@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "gridly-lp115-crossing-candidate-v2",
+  "county": "Erath County",
+  "countyId": "erath",
+  "fips": "48143",
+  "authoritativeSource": "FRA Texas statewide crossing GeoJSON",
+  "source": {
+    "identity": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sizeBytes": 68200491,
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+  },
+  "sourceQueryCompleted": true,
+  "sourceFilter": {
+    "property": "reconciliation-index.gridlyCountyFips",
+    "value": "48143"
+  },
+  "sourceRecordsSelected": 93,
+  "productionAuthorized": false,
+  "activated": false,
+  "uploadEnabled": false,
+  "deploymentEnabled": false,
+  "status": "GENERATED",
+  "totalSourceCrossings": 93,
+  "productionCrossingCount": 93,
+  "classificationCounts": {
+    "PUBLIC_ROADWAY": 93,
+    "PRIVATE_ROAD": 0,
+    "INDUSTRIAL": 0,
+    "RAIL_YARD": 0,
+    "TEMPORARY_ACCESS": 0
+  },
+  "publicCrossings": 93,
+  "hiddenCrossings": 0,
+  "duplicateCount": 0,
+  "rejectedCount": 0,
+  "package": {
+    "path": "evidence/wave3a2-crossing-package-manufacture/candidate-packages/48143/erath-48143.production-crossings.candidate.geojson",
+    "sizeBytes": 192251,
+    "sha256": "efc42c23227b8ed0ca6b8cb8152a234001ffba7eeac68668b413c61bb458a73d"
+  },
+  "certificationStatus": "PASS",
+  "candidateManifestStatus": "GENERATED",
+  "productionRule": "V790 Add-ProductionVisibilityFields (preserve source; certified; governed classification; display name; FRA identity)",
+  "blockingReasons": []
+}

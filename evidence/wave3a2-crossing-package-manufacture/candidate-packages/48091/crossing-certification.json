@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "gridly-lp115-crossing-candidate-v2",
+  "county": "Comal County",
+  "countyId": "comal",
+  "fips": "48091",
+  "authoritativeSource": "FRA Texas statewide crossing GeoJSON",
+  "source": {
+    "identity": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sizeBytes": 68200491,
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+  },
+  "sourceQueryCompleted": true,
+  "sourceFilter": {
+    "property": "reconciliation-index.gridlyCountyFips",
+    "value": "48091"
+  },
+  "sourceRecordsSelected": 110,
+  "productionAuthorized": false,
+  "activated": false,
+  "uploadEnabled": false,
+  "deploymentEnabled": false,
+  "status": "GENERATED",
+  "totalSourceCrossings": 110,
+  "productionCrossingCount": 110,
+  "classificationCounts": {
+    "PUBLIC_ROADWAY": 110,
+    "PRIVATE_ROAD": 0,
+    "INDUSTRIAL": 0,
+    "RAIL_YARD": 0,
+    "TEMPORARY_ACCESS": 0
+  },
+  "publicCrossings": 110,
+  "hiddenCrossings": 0,
+  "duplicateCount": 0,
+  "rejectedCount": 0,
+  "package": {
+    "path": "evidence/wave3a2-crossing-package-manufacture/candidate-packages/48091/comal-48091.production-crossings.candidate.geojson",
+    "sizeBytes": 228215,
+    "sha256": "6f33689b5c121078c7e1c5f6f3fd8db953e56a01ac17bf6ac2f87635da0bf20e"
+  },
+  "certificationStatus": "PASS",
+  "candidateManifestStatus": "GENERATED",
+  "productionRule": "V790 Add-ProductionVisibilityFields (preserve source; certified; governed classification; display name; FRA identity)",
+  "blockingReasons": []
+}

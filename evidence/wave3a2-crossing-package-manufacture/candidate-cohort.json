@@ -1,0 +1,1057 @@
+{
+  "schemaVersion": "gridly.wave3a2.candidate-cohort.v1",
+  "derivation": "reconciliation index geographic-positive minus protected active 28",
+  "count": 175,
+  "counties": [
+    {
+      "countyId": "anderson",
+      "countyFips": "48001",
+      "countyName": "Anderson County",
+      "crossingCount": 70
+    },
+    {
+      "countyId": "angelina",
+      "countyFips": "48005",
+      "countyName": "Angelina County",
+      "crossingCount": 100
+    },
+    {
+      "countyId": "aransas",
+      "countyFips": "48007",
+      "countyName": "Aransas County",
+      "crossingCount": 5
+    },
+    {
+      "countyId": "armstrong",
+      "countyFips": "48011",
+      "countyName": "Armstrong County",
+      "crossingCount": 24
+    },
+    {
+      "countyId": "atascosa",
+      "countyFips": "48013",
+      "countyName": "Atascosa County",
+      "crossingCount": 57
+    },
+    {
+      "countyId": "bailey",
+      "countyFips": "48017",
+      "countyName": "Bailey County",
+      "crossingCount": 21
+    },
+    {
+      "countyId": "bastrop",
+      "countyFips": "48021",
+      "countyName": "Bastrop County",
+      "crossingCount": 158
+    },
+    {
+      "countyId": "bell",
+      "countyFips": "48027",
+      "countyName": "Bell County",
+      "crossingCount": 150
+    },
+    {
+      "countyId": "bexar",
+      "countyFips": "48029",
+      "countyName": "Bexar County",
+      "crossingCount": 380
+    },
+    {
+      "countyId": "blanco",
+      "countyFips": "48031",
+      "countyName": "Blanco County",
+      "crossingCount": 7
+    },
+    {
+      "countyId": "bosque",
+      "countyFips": "48035",
+      "countyName": "Bosque County",
+      "crossingCount": 48
+    },
+    {
+      "countyId": "bowie",
+      "countyFips": "48037",
+      "countyName": "Bowie County",
+      "crossingCount": 119
+    },
+    {
+      "countyId": "brewster",
+      "countyFips": "48043",
+      "countyName": "Brewster County",
+      "crossingCount": 55
+    },
+    {
+      "countyId": "brown",
+      "countyFips": "48049",
+      "countyName": "Brown County",
+      "crossingCount": 97
+    },
+    {
+      "countyId": "burleson",
+      "countyFips": "48051",
+      "countyName": "Burleson County",
+      "crossingCount": 67
+    },
+    {
+      "countyId": "burnet",
+      "countyFips": "48053",
+      "countyName": "Burnet County",
+      "crossingCount": 63
+    },
+    {
+      "countyId": "caldwell",
+      "countyFips": "48055",
+      "countyName": "Caldwell County",
+      "crossingCount": 47
+    },
+    {
+      "countyId": "callahan",
+      "countyFips": "48059",
+      "countyName": "Callahan County",
+      "crossingCount": 26
+    },
+    {
+      "countyId": "cameron",
+      "countyFips": "48061",
+      "countyName": "Cameron County",
+      "crossingCount": 290
+    },
+    {
+      "countyId": "camp",
+      "countyFips": "48063",
+      "countyName": "Camp County",
+      "crossingCount": 55
+    },
+    {
+      "countyId": "carson",
+      "countyFips": "48065",
+      "countyName": "Carson County",
+      "crossingCount": 63
+    },
+    {
+      "countyId": "cass",
+      "countyFips": "48067",
+      "countyName": "Cass County",
+      "crossingCount": 49
+    },
+    {
+      "countyId": "castro",
+      "countyFips": "48069",
+      "countyName": "Castro County",
+      "crossingCount": 28
+    },
+    {
+      "countyId": "cherokee",
+      "countyFips": "48073",
+      "countyName": "Cherokee County",
+      "crossingCount": 69
+    },
+    {
+      "countyId": "childress",
+      "countyFips": "48075",
+      "countyName": "Childress County",
+      "crossingCount": 28
+    },
+    {
+      "countyId": "clay",
+      "countyFips": "48077",
+      "countyName": "Clay County",
+      "crossingCount": 29
+    },
+    {
+      "countyId": "cochran",
+      "countyFips": "48079",
+      "countyName": "Cochran County",
+      "crossingCount": 4
+    },
+    {
+      "countyId": "coleman",
+      "countyFips": "48083",
+      "countyName": "Coleman County",
+      "crossingCount": 58
+    },
+    {
+      "countyId": "collin",
+      "countyFips": "48085",
+      "countyName": "Collin County",
+      "crossingCount": 185
+    },
+    {
+      "countyId": "comal",
+      "countyFips": "48091",
+      "countyName": "Comal County",
+      "crossingCount": 110
+    },
+    {
+      "countyId": "comanche",
+      "countyFips": "48093",
+      "countyName": "Comanche County",
+      "crossingCount": 80
+    },
+    {
+      "countyId": "cooke",
+      "countyFips": "48097",
+      "countyName": "Cooke County",
+      "crossingCount": 31
+    },
+    {
+      "countyId": "coryell",
+      "countyFips": "48099",
+      "countyName": "Coryell County",
+      "crossingCount": 12
+    },
+    {
+      "countyId": "crane",
+      "countyFips": "48103",
+      "countyName": "Crane County",
+      "crossingCount": 3
+    },
+    {
+      "countyId": "crockett",
+      "countyFips": "48105",
+      "countyName": "Crockett County",
+      "crossingCount": 1
+    },
+    {
+      "countyId": "culberson",
+      "countyFips": "48109",
+      "countyName": "Culberson County",
+      "crossingCount": 17
+    },
+    {
+      "countyId": "dallam",
+      "countyFips": "48111",
+      "countyName": "Dallam County",
+      "crossingCount": 51
+    },
+    {
+      "countyId": "dallas",
+      "countyFips": "48113",
+      "countyName": "Dallas County",
+      "crossingCount": 789
+    },
+    {
+      "countyId": "deaf-smith",
+      "countyFips": "48117",
+      "countyName": "Deaf Smith County",
+      "crossingCount": 25
+    },
+    {
+      "countyId": "denton",
+      "countyFips": "48121",
+      "countyName": "Denton County",
+      "crossingCount": 231
+    },
+    {
+      "countyId": "dewitt",
+      "countyFips": "48123",
+      "countyName": "DeWitt County",
+      "crossingCount": 57
+    },
+    {
+      "countyId": "donley",
+      "countyFips": "48129",
+      "countyName": "Donley County",
+      "crossingCount": 36
+    },
+    {
+      "countyId": "duval",
+      "countyFips": "48131",
+      "countyName": "Duval County",
+      "crossingCount": 49
+    },
+    {
+      "countyId": "eastland",
+      "countyFips": "48133",
+      "countyName": "Eastland County",
+      "crossingCount": 34
+    },
+    {
+      "countyId": "ector",
+      "countyFips": "48135",
+      "countyName": "Ector County",
+      "crossingCount": 45
+    },
+    {
+      "countyId": "ellis",
+      "countyFips": "48139",
+      "countyName": "Ellis County",
+      "crossingCount": 164
+    },
+    {
+      "countyId": "el-paso",
+      "countyFips": "48141",
+      "countyName": "El Paso County",
+      "crossingCount": 198
+    },
+    {
+      "countyId": "erath",
+      "countyFips": "48143",
+      "countyName": "Erath County",
+      "crossingCount": 93
+    },
+    {
+      "countyId": "falls",
+      "countyFips": "48145",
+      "countyName": "Falls County",
+      "crossingCount": 69
+    },
+    {
+      "countyId": "fannin",
+      "countyFips": "48147",
+      "countyName": "Fannin County",
+      "crossingCount": 74
+    },
+    {
+      "countyId": "fisher",
+      "countyFips": "48151",
+      "countyName": "Fisher County",
+      "crossingCount": 10
+    },
+    {
+      "countyId": "floyd",
+      "countyFips": "48153",
+      "countyName": "Floyd County",
+      "crossingCount": 1
+    },
+    {
+      "countyId": "franklin",
+      "countyFips": "48159",
+      "countyName": "Franklin County",
+      "crossingCount": 20
+    },
+    {
+      "countyId": "freestone",
+      "countyFips": "48161",
+      "countyName": "Freestone County",
+      "crossingCount": 75
+    },
+    {
+      "countyId": "frio",
+      "countyFips": "48163",
+      "countyName": "Frio County",
+      "crossingCount": 36
+    },
+    {
+      "countyId": "gaines",
+      "countyFips": "48165",
+      "countyName": "Gaines County",
+      "crossingCount": 5
+    },
+    {
+      "countyId": "garza",
+      "countyFips": "48169",
+      "countyName": "Garza County",
+      "crossingCount": 18
+    },
+    {
+      "countyId": "goliad",
+      "countyFips": "48175",
+      "countyName": "Goliad County",
+      "crossingCount": 9
+    },
+    {
+      "countyId": "gonzales",
+      "countyFips": "48177",
+      "countyName": "Gonzales County",
+      "crossingCount": 41
+    },
+    {
+      "countyId": "gray",
+      "countyFips": "48179",
+      "countyName": "Gray County",
+      "crossingCount": 25
+    },
+    {
+      "countyId": "grayson",
+      "countyFips": "48181",
+      "countyName": "Grayson County",
+      "crossingCount": 240
+    },
+    {
+      "countyId": "gregg",
+      "countyFips": "48183",
+      "countyName": "Gregg County",
+      "crossingCount": 85
+    },
+    {
+      "countyId": "guadalupe",
+      "countyFips": "48187",
+      "countyName": "Guadalupe County",
+      "crossingCount": 58
+    },
+    {
+      "countyId": "hale",
+      "countyFips": "48189",
+      "countyName": "Hale County",
+      "crossingCount": 129
+    },
+    {
+      "countyId": "hall",
+      "countyFips": "48191",
+      "countyName": "Hall County",
+      "crossingCount": 15
+    },
+    {
+      "countyId": "hamilton",
+      "countyFips": "48193",
+      "countyName": "Hamilton County",
+      "crossingCount": 1
+    },
+    {
+      "countyId": "hansford",
+      "countyFips": "48195",
+      "countyName": "Hansford County",
+      "crossingCount": 8
+    },
+    {
+      "countyId": "hardeman",
+      "countyFips": "48197",
+      "countyName": "Hardeman County",
+      "crossingCount": 39
+    },
+    {
+      "countyId": "harrison",
+      "countyFips": "48203",
+      "countyName": "Harrison County",
+      "crossingCount": 87
+    },
+    {
+      "countyId": "hartley",
+      "countyFips": "48205",
+      "countyName": "Hartley County",
+      "crossingCount": 40
+    },
+    {
+      "countyId": "hays",
+      "countyFips": "48209",
+      "countyName": "Hays County",
+      "crossingCount": 53
+    },
+    {
+      "countyId": "hemphill",
+      "countyFips": "48211",
+      "countyName": "Hemphill County",
+      "crossingCount": 13
+    },
+    {
+      "countyId": "henderson",
+      "countyFips": "48213",
+      "countyName": "Henderson County",
+      "crossingCount": 85
+    },
+    {
+      "countyId": "hidalgo",
+      "countyFips": "48215",
+      "countyName": "Hidalgo County",
+      "crossingCount": 265
+    },
+    {
+      "countyId": "hill",
+      "countyFips": "48217",
+      "countyName": "Hill County",
+      "crossingCount": 45
+    },
+    {
+      "countyId": "hockley",
+      "countyFips": "48219",
+      "countyName": "Hockley County",
+      "crossingCount": 52
+    },
+    {
+      "countyId": "hood",
+      "countyFips": "48221",
+      "countyName": "Hood County",
+      "crossingCount": 56
+    },
+    {
+      "countyId": "hopkins",
+      "countyFips": "48223",
+      "countyName": "Hopkins County",
+      "crossingCount": 108
+    },
+    {
+      "countyId": "houston",
+      "countyFips": "48225",
+      "countyName": "Houston County",
+      "crossingCount": 44
+    },
+    {
+      "countyId": "howard",
+      "countyFips": "48227",
+      "countyName": "Howard County",
+      "crossingCount": 32
+    },
+    {
+      "countyId": "hudspeth",
+      "countyFips": "48229",
+      "countyName": "Hudspeth County",
+      "crossingCount": 26
+    },
+    {
+      "countyId": "hunt",
+      "countyFips": "48231",
+      "countyName": "Hunt County",
+      "crossingCount": 162
+    },
+    {
+      "countyId": "hutchinson",
+      "countyFips": "48233",
+      "countyName": "Hutchinson County",
+      "crossingCount": 34
+    },
+    {
+      "countyId": "irion",
+      "countyFips": "48235",
+      "countyName": "Irion County",
+      "crossingCount": 55
+    },
+    {
+      "countyId": "jeff-davis",
+      "countyFips": "48243",
+      "countyName": "Jeff Davis County",
+      "crossingCount": 10
+    },
+    {
+      "countyId": "jim-hogg",
+      "countyFips": "48247",
+      "countyName": "Jim Hogg County",
+      "crossingCount": 17
+    },
+    {
+      "countyId": "jim-wells",
+      "countyFips": "48249",
+      "countyName": "Jim Wells County",
+      "crossingCount": 63
+    },
+    {
+      "countyId": "johnson",
+      "countyFips": "48251",
+      "countyName": "Johnson County",
+      "crossingCount": 168
+    },
+    {
+      "countyId": "kaufman",
+      "countyFips": "48257",
+      "countyName": "Kaufman County",
+      "crossingCount": 45
+    },
+    {
+      "countyId": "kenedy",
+      "countyFips": "48261",
+      "countyName": "Kenedy County",
+      "crossingCount": 22
+    },
+    {
+      "countyId": "kinney",
+      "countyFips": "48271",
+      "countyName": "Kinney County",
+      "crossingCount": 20
+    },
+    {
+      "countyId": "kleberg",
+      "countyFips": "48273",
+      "countyName": "Kleberg County",
+      "crossingCount": 30
+    },
+    {
+      "countyId": "lamar",
+      "countyFips": "48277",
+      "countyName": "Lamar County",
+      "crossingCount": 42
+    },
+    {
+      "countyId": "lamb",
+      "countyFips": "48279",
+      "countyName": "Lamb County",
+      "crossingCount": 29
+    },
+    {
+      "countyId": "lampasas",
+      "countyFips": "48281",
+      "countyName": "Lampasas County",
+      "crossingCount": 41
+    },
+    {
+      "countyId": "la-salle",
+      "countyFips": "48283",
+      "countyName": "La Salle County",
+      "crossingCount": 43
+    },
+    {
+      "countyId": "lee",
+      "countyFips": "48287",
+      "countyName": "Lee County",
+      "crossingCount": 47
+    },
+    {
+      "countyId": "leon",
+      "countyFips": "48289",
+      "countyName": "Leon County",
+      "crossingCount": 82
+    },
+    {
+      "countyId": "limestone",
+      "countyFips": "48293",
+      "countyName": "Limestone County",
+      "crossingCount": 45
+    },
+    {
+      "countyId": "lipscomb",
+      "countyFips": "48295",
+      "countyName": "Lipscomb County",
+      "crossingCount": 21
+    },
+    {
+      "countyId": "live-oak",
+      "countyFips": "48297",
+      "countyName": "Live Oak County",
+      "crossingCount": 56
+    },
+    {
+      "countyId": "llano",
+      "countyFips": "48299",
+      "countyName": "Llano County",
+      "crossingCount": 13
+    },
+    {
+      "countyId": "lubbock",
+      "countyFips": "48303",
+      "countyName": "Lubbock County",
+      "crossingCount": 173
+    },
+    {
+      "countyId": "mcculloch",
+      "countyFips": "48307",
+      "countyName": "McCulloch County",
+      "crossingCount": 34
+    },
+    {
+      "countyId": "mclennan",
+      "countyFips": "48309",
+      "countyName": "McLennan County",
+      "crossingCount": 169
+    },
+    {
+      "countyId": "madison",
+      "countyFips": "48313",
+      "countyName": "Madison County",
+      "crossingCount": 16
+    },
+    {
+      "countyId": "marion",
+      "countyFips": "48315",
+      "countyName": "Marion County",
+      "crossingCount": 44
+    },
+    {
+      "countyId": "martin",
+      "countyFips": "48317",
+      "countyName": "Martin County",
+      "crossingCount": 12
+    },
+    {
+      "countyId": "maverick",
+      "countyFips": "48323",
+      "countyName": "Maverick County",
+      "crossingCount": 26
+    },
+    {
+      "countyId": "medina",
+      "countyFips": "48325",
+      "countyName": "Medina County",
+      "crossingCount": 72
+    },
+    {
+      "countyId": "midland",
+      "countyFips": "48329",
+      "countyName": "Midland County",
+      "crossingCount": 35
+    },
+    {
+      "countyId": "milam",
+      "countyFips": "48331",
+      "countyName": "Milam County",
+      "crossingCount": 109
+    },
+    {
+      "countyId": "mills",
+      "countyFips": "48333",
+      "countyName": "Mills County",
+      "crossingCount": 50
+    },
+    {
+      "countyId": "mitchell",
+      "countyFips": "48335",
+      "countyName": "Mitchell County",
+      "crossingCount": 22
+    },
+    {
+      "countyId": "montague",
+      "countyFips": "48337",
+      "countyName": "Montague County",
+      "crossingCount": 64
+    },
+    {
+      "countyId": "moore",
+      "countyFips": "48341",
+      "countyName": "Moore County",
+      "crossingCount": 65
+    },
+    {
+      "countyId": "morris",
+      "countyFips": "48343",
+      "countyName": "Morris County",
+      "crossingCount": 39
+    },
+    {
+      "countyId": "nacogdoches",
+      "countyFips": "48347",
+      "countyName": "Nacogdoches County",
+      "crossingCount": 52
+    },
+    {
+      "countyId": "navarro",
+      "countyFips": "48349",
+      "countyName": "Navarro County",
+      "crossingCount": 116
+    },
+    {
+      "countyId": "nolan",
+      "countyFips": "48353",
+      "countyName": "Nolan County",
+      "crossingCount": 83
+    },
+    {
+      "countyId": "nueces",
+      "countyFips": "48355",
+      "countyName": "Nueces County",
+      "crossingCount": 196
+    },
+    {
+      "countyId": "ochiltree",
+      "countyFips": "48357",
+      "countyName": "Ochiltree County",
+      "crossingCount": 8
+    },
+    {
+      "countyId": "oldham",
+      "countyFips": "48359",
+      "countyName": "Oldham County",
+      "crossingCount": 5
+    },
+    {
+      "countyId": "palo-pinto",
+      "countyFips": "48363",
+      "countyName": "Palo Pinto County",
+      "crossingCount": 29
+    },
+    {
+      "countyId": "panola",
+      "countyFips": "48365",
+      "countyName": "Panola County",
+      "crossingCount": 41
+    },
+    {
+      "countyId": "parker",
+      "countyFips": "48367",
+      "countyName": "Parker County",
+      "crossingCount": 39
+    },
+    {
+      "countyId": "parmer",
+      "countyFips": "48369",
+      "countyName": "Parmer County",
+      "crossingCount": 37
+    },
+    {
+      "countyId": "pecos",
+      "countyFips": "48371",
+      "countyName": "Pecos County",
+      "crossingCount": 44
+    },
+    {
+      "countyId": "potter",
+      "countyFips": "48375",
+      "countyName": "Potter County",
+      "crossingCount": 125
+    },
+    {
+      "countyId": "presidio",
+      "countyFips": "48377",
+      "countyName": "Presidio County",
+      "crossingCount": 44
+    },
+    {
+      "countyId": "randall",
+      "countyFips": "48381",
+      "countyName": "Randall County",
+      "crossingCount": 45
+    },
+    {
+      "countyId": "reagan",
+      "countyFips": "48383",
+      "countyName": "Reagan County",
+      "crossingCount": 22
+    },
+    {
+      "countyId": "reeves",
+      "countyFips": "48389",
+      "countyName": "Reeves County",
+      "crossingCount": 67
+    },
+    {
+      "countyId": "refugio",
+      "countyFips": "48391",
+      "countyName": "Refugio County",
+      "crossingCount": 39
+    },
+    {
+      "countyId": "roberts",
+      "countyFips": "48393",
+      "countyName": "Roberts County",
+      "crossingCount": 10
+    },
+    {
+      "countyId": "robertson",
+      "countyFips": "48395",
+      "countyName": "Robertson County",
+      "crossingCount": 155
+    },
+    {
+      "countyId": "rockwall",
+      "countyFips": "48397",
+      "countyName": "Rockwall County",
+      "crossingCount": 18
+    },
+    {
+      "countyId": "runnels",
+      "countyFips": "48399",
+      "countyName": "Runnels County",
+      "crossingCount": 48
+    },
+    {
+      "countyId": "rusk",
+      "countyFips": "48401",
+      "countyName": "Rusk County",
+      "crossingCount": 58
+    },
+    {
+      "countyId": "sabine",
+      "countyFips": "48403",
+      "countyName": "Sabine County",
+      "crossingCount": 16
+    },
+    {
+      "countyId": "san-augustine",
+      "countyFips": "48405",
+      "countyName": "San Augustine County",
+      "crossingCount": 16
+    },
+    {
+      "countyId": "san-patricio",
+      "countyFips": "48409",
+      "countyName": "San Patricio County",
+      "crossingCount": 135
+    },
+    {
+      "countyId": "san-saba",
+      "countyFips": "48411",
+      "countyName": "San Saba County",
+      "crossingCount": 47
+    },
+    {
+      "countyId": "scurry",
+      "countyFips": "48415",
+      "countyName": "Scurry County",
+      "crossingCount": 37
+    },
+    {
+      "countyId": "shelby",
+      "countyFips": "48419",
+      "countyName": "Shelby County",
+      "crossingCount": 88
+    },
+    {
+      "countyId": "sherman",
+      "countyFips": "48421",
+      "countyName": "Sherman County",
+      "crossingCount": 42
+    },
+    {
+      "countyId": "smith",
+      "countyFips": "48423",
+      "countyName": "Smith County",
+      "crossingCount": 123
+    },
+    {
+      "countyId": "somervell",
+      "countyFips": "48425",
+      "countyName": "Somervell County",
+      "crossingCount": 1
+    },
+    {
+      "countyId": "starr",
+      "countyFips": "48427",
+      "countyName": "Starr County",
+      "crossingCount": 28
+    },
+    {
+      "countyId": "stephens",
+      "countyFips": "48429",
+      "countyName": "Stephens County",
+      "crossingCount": 1
+    },
+    {
+      "countyId": "swisher",
+      "countyFips": "48437",
+      "countyName": "Swisher County",
+      "crossingCount": 45
+    },
+    {
+      "countyId": "tarrant",
+      "countyFips": "48439",
+      "countyName": "Tarrant County",
+      "crossingCount": 615
+    },
+    {
+      "countyId": "taylor",
+      "countyFips": "48441",
+      "countyName": "Taylor County",
+      "crossingCount": 106
+    },
+    {
+      "countyId": "terrell",
+      "countyFips": "48443",
+      "countyName": "Terrell County",
+      "crossingCount": 27
+    },
+    {
+      "countyId": "terry",
+      "countyFips": "48445",
+      "countyName": "Terry County",
+      "crossingCount": 46
+    },
+    {
+      "countyId": "titus",
+      "countyFips": "48449",
+      "countyName": "Titus County",
+      "crossingCount": 63
+    },
+    {
+      "countyId": "tom-green",
+      "countyFips": "48451",
+      "countyName": "Tom Green County",
+      "crossingCount": 97
+    },
+    {
+      "countyId": "travis",
+      "countyFips": "48453",
+      "countyName": "Travis County",
+      "crossingCount": 176
+    },
+    {
+      "countyId": "trinity",
+      "countyFips": "48455",
+      "countyName": "Trinity County",
+      "crossingCount": 13
+    },
+    {
+      "countyId": "upshur",
+      "countyFips": "48459",
+      "countyName": "Upshur County",
+      "crossingCount": 43
+    },
+    {
+      "countyId": "upton",
+      "countyFips": "48461",
+      "countyName": "Upton County",
+      "crossingCount": 22
+    },
+    {
+      "countyId": "uvalde",
+      "countyFips": "48463",
+      "countyName": "Uvalde County",
+      "crossingCount": 44
+    },
+    {
+      "countyId": "val-verde",
+      "countyFips": "48465",
+      "countyName": "Val Verde County",
+      "crossingCount": 47
+    },
+    {
+      "countyId": "van-zandt",
+      "countyFips": "48467",
+      "countyName": "Van Zandt County",
+      "crossingCount": 29
+    },
+    {
+      "countyId": "victoria",
+      "countyFips": "48469",
+      "countyName": "Victoria County",
+      "crossingCount": 194
+    },
+    {
+      "countyId": "ward",
+      "countyFips": "48475",
+      "countyName": "Ward County",
+      "crossingCount": 23
+    },
+    {
+      "countyId": "webb",
+      "countyFips": "48479",
+      "countyName": "Webb County",
+      "crossingCount": 164
+    },
+    {
+      "countyId": "wichita",
+      "countyFips": "48485",
+      "countyName": "Wichita County",
+      "crossingCount": 118
+    },
+    {
+      "countyId": "wilbarger",
+      "countyFips": "48487",
+      "countyName": "Wilbarger County",
+      "crossingCount": 42
+    },
+    {
+      "countyId": "willacy",
+      "countyFips": "48489",
+      "countyName": "Willacy County",
+      "crossingCount": 43
+    },
+    {
+      "countyId": "williamson",
+      "countyFips": "48491",
+      "countyName": "Williamson County",
+      "crossingCount": 166
+    },
+    {
+      "countyId": "wilson",
+      "countyFips": "48493",
+      "countyName": "Wilson County",
+      "crossingCount": 2
+    },
+    {
+      "countyId": "winkler",
+      "countyFips": "48495",
+      "countyName": "Winkler County",
+      "crossingCount": 21
+    },
+    {
+      "countyId": "wise",
+      "countyFips": "48497",
+      "countyName": "Wise County",
+      "crossingCount": 100
+    },
+    {
+      "countyId": "wood",
+      "countyFips": "48499",
+      "countyName": "Wood County",
+      "crossingCount": 37
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "gridly-lp115-crossing-candidate-v2",
+  "county": "Roberts County",
+  "countyId": "roberts",
+  "fips": "48393",
+  "authoritativeSource": "FRA Texas statewide crossing GeoJSON",
+  "source": {
+    "identity": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sizeBytes": 68200491,
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+  },
+  "sourceQueryCompleted": true,
+  "sourceFilter": {
+    "property": "reconciliation-index.gridlyCountyFips",
+    "value": "48393"
+  },
+  "sourceRecordsSelected": 10,
+  "productionAuthorized": false,
+  "activated": false,
+  "uploadEnabled": false,
+  "deploymentEnabled": false,
+  "status": "GENERATED",
+  "totalSourceCrossings": 10,
+  "productionCrossingCount": 10,
+  "classificationCounts": {
+    "PUBLIC_ROADWAY": 10,
+    "PRIVATE_ROAD": 0,
+    "INDUSTRIAL": 0,
+    "RAIL_YARD": 0,
+    "TEMPORARY_ACCESS": 0
+  },
+  "publicCrossings": 10,
+  "hiddenCrossings": 0,
+  "duplicateCount": 0,
+  "rejectedCount": 0,
+  "package": {
+    "path": "evidence/wave3a2-crossing-package-manufacture/candidate-packages/48393/roberts-48393.production-crossings.candidate.geojson",
+    "sizeBytes": 20800,
+    "sha256": "b1a759c1fea24778bbdff69cca5555d6d9d96f72d688da046aa58410cfebbafb"
+  },
+  "certificationStatus": "PASS",
+  "candidateManifestStatus": "GENERATED",
+  "productionRule": "V790 Add-ProductionVisibilityFields (preserve source; certified; governed classification; display name; FRA identity)",
+  "blockingReasons": []
+}

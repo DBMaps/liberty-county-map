@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "gridly.wave3a2.cross-package-uniqueness.v1",
+  "status": "PASS",
+  "activePackages": 28,
+  "candidatePackages": 175,
+  "activeRows": 3784,
+  "candidateRows": 12315,
+  "combinedAssignedRows": 16099,
+  "duplicateIds": 0,
+  "activeCandidateOverlap": [],
+  "blockedRows": [
+    "019788P",
+    "019791X"
+  ]
+}

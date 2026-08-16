@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "gridly-lp115-crossing-candidate-v2",
+  "county": "Duval County",
+  "countyId": "duval",
+  "fips": "48131",
+  "authoritativeSource": "FRA Texas statewide crossing GeoJSON",
+  "source": {
+    "identity": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sizeBytes": 68200491,
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+  },
+  "sourceQueryCompleted": true,
+  "sourceFilter": {
+    "property": "reconciliation-index.gridlyCountyFips",
+    "value": "48131"
+  },
+  "sourceRecordsSelected": 49,
+  "productionAuthorized": false,
+  "activated": false,
+  "uploadEnabled": false,
+  "deploymentEnabled": false,
+  "status": "GENERATED",
+  "totalSourceCrossings": 49,
+  "productionCrossingCount": 49,
+  "classificationCounts": {
+    "PUBLIC_ROADWAY": 49,
+    "PRIVATE_ROAD": 0,
+    "INDUSTRIAL": 0,
+    "RAIL_YARD": 0,
+    "TEMPORARY_ACCESS": 0
+  },
+  "publicCrossings": 49,
+  "hiddenCrossings": 0,
+  "duplicateCount": 0,
+  "rejectedCount": 0,
+  "package": {
+    "path": "evidence/wave3a2-crossing-package-manufacture/candidate-packages/48131/duval-48131.production-crossings.candidate.geojson",
+    "sizeBytes": 100935,
+    "sha256": "c9c963e807f88ff42cf2f0b24acea76f26a3b636462510901255fa97ced24bc5"
+  },
+  "certificationStatus": "PASS",
+  "candidateManifestStatus": "GENERATED",
+  "productionRule": "V790 Add-ProductionVisibilityFields (preserve source; certified; governed classification; display name; FRA identity)",
+  "blockingReasons": []
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "gridly.wave3a2.consumer-compatibility.v1",
+  "status": "PASS",
+  "basis": "candidate schema compared with V790 known-good active feature properties; CROSSING and gridlyId remain stable",
+  "consumers": {
+    "gridlyCrossingPackageAdapter": "PASS",
+    "gridlyCrossingProvider": "PASS",
+    "marker rendering": "PASS",
+    "Area filter": "PASS",
+    "County filter": "PASS",
+    "Nearby filter": "PASS",
+    "All filter": "PASS",
+    "Delays": "PASS",
+    "crossing reporting": "PASS",
+    "Alerts": "PASS",
+    "Awareness": "PASS",
+    "Route Watch input identity": "PASS"
+  },
+  "roadRuntimeRequired": false
+}

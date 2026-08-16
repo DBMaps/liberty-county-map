@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "gridly-lp115-crossing-candidate-v2",
+  "county": "Mills County",
+  "countyId": "mills",
+  "fips": "48333",
+  "authoritativeSource": "FRA Texas statewide crossing GeoJSON",
+  "source": {
+    "identity": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sizeBytes": 68200491,
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+  },
+  "sourceQueryCompleted": true,
+  "sourceFilter": {
+    "property": "reconciliation-index.gridlyCountyFips",
+    "value": "48333"
+  },
+  "sourceRecordsSelected": 50,
+  "productionAuthorized": false,
+  "activated": false,
+  "uploadEnabled": false,
+  "deploymentEnabled": false,
+  "status": "GENERATED",
+  "totalSourceCrossings": 50,
+  "productionCrossingCount": 50,
+  "classificationCounts": {
+    "PUBLIC_ROADWAY": 50,
+    "PRIVATE_ROAD": 0,
+    "INDUSTRIAL": 0,
+    "RAIL_YARD": 0,
+    "TEMPORARY_ACCESS": 0
+  },
+  "publicCrossings": 50,
+  "hiddenCrossings": 0,
+  "duplicateCount": 0,
+  "rejectedCount": 0,
+  "package": {
+    "path": "evidence/wave3a2-crossing-package-manufacture/candidate-packages/48333/mills-48333.production-crossings.candidate.geojson",
+    "sizeBytes": 103568,
+    "sha256": "5cc94360207c067efcf960270ce2ed9d6583a85f5f9bef4eca75624b7a3ef201"
+  },
+  "certificationStatus": "PASS",
+  "candidateManifestStatus": "GENERATED",
+  "productionRule": "V790 Add-ProductionVisibilityFields (preserve source; certified; governed classification; display name; FRA identity)",
+  "blockingReasons": []
+}

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "gridly.wave3a2.manufacture-summary.v1",
+  "candidatePackages": 175,
+  "candidateRows": 12315,
+  "allPass": true,
+  "productionActivationChanges": 0,
+  "productionRegistryChanges": 0,
+  "rawRedundantArtifactsCommitted": false
+}
