@@ -29445,6 +29445,9 @@ let lastMarkerAuditDebug = {
   },
   markerSourceUsed: ""
 };
+// Written only by renderUnifiedIncidents.  Owner diagnostics consume these
+// stage facts after a render instead of attempting to re-run renderer policy.
+let gridlyHazardMarkerLoopTrace = new Map();
 let lastMobileReportSubmitDebug = {
   lastSubmitAttempt: "idle",
   lastSubmitError: "",
@@ -71788,7 +71791,20 @@ function renderUnifiedIncidents(reason = "auto") {
 
   phaseStart = gridlyNowMs();
   const unifiedIncidents = getUnifiedIncidents();
-  const fallbackHazards = renderCanonicalState?.activeRoadHazardRecords || (Array.isArray(activeHazards) ? activeHazards : []);
+  // The canonical community projection is presentation data, not the map's
+  // source authority.  In particular, legacy generic rows can be active before
+  // that projection classifies them as reportKind=hazard.  Always union the
+  // coordinate-owned activeHazards collection into the production render path.
+  const canonicalHazards = Array.isArray(renderCanonicalState?.activeRoadHazardRecords)
+    ? renderCanonicalState.activeRoadHazardRecords
+    : [];
+  const authoritativeActiveHazards = Array.isArray(activeHazards) ? activeHazards : [];
+  const fallbackHazardsById = new Map();
+  [...canonicalHazards, ...authoritativeActiveHazards].forEach((hazard, index) => {
+    const identity = String(hazard?.reportId || hazard?.report_id || hazard?.id || `anonymous:${index}`);
+    fallbackHazardsById.set(identity, hazard);
+  });
+  const fallbackHazards = [...fallbackHazardsById.values()];
   const getIncidentCoordinate = (incident) => {
     const lat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
     const lng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
@@ -71815,6 +71831,19 @@ function renderUnifiedIncidents(reason = "auto") {
     return !id || !primaryKeys.has(id);
   });
   const incidents = [...primaryIncidents, ...genericHazardsMissingFromPrimary];
+  const reportIdentity = (record) => String(record?.reportId || record?.report_id || record?.id || "");
+  gridlyHazardMarkerLoopTrace = new Map(authoritativeActiveHazards.map((hazard) => {
+    const id = reportIdentity(hazard);
+    return [id, {
+      presentInActiveHazards: true,
+      presentInUnifiedIncidents: primaryIncidents.some((incident) => reportIdentity(incident) === id),
+      presentInMergedRenderSource: incidents.some((incident) => reportIdentity(incident) === id),
+      presentAfterDeduplication: false, presentInMarkerLoop: false,
+      coordinateAccepted: false, typeAccepted: false, identityAccepted: Boolean(id),
+      iconResolved: false, markerConstructorReached: false, markerCreated: false,
+      markerAddedToMap: false, markerCurrentlyOnMap: false, firstFailedStage: null
+    }];
+  }));
   const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, cleared_or_recently_cleared: 0, duplicate_unified_blocked_crossing_marker: 0, missing_marker_layer: 0, render_exception: 0 };
   const markerSourceUsed = genericHazardsMissingFromPrimary.length ? "unifiedIncidents+activeHazards" : "unifiedIncidents";
   const sourceCounts = {
@@ -71843,6 +71872,10 @@ function renderUnifiedIncidents(reason = "auto") {
     dedupedMap.set(renderKey, choosePreferredIncidentCandidate(dedupedMap.get(renderKey), incident, routeHazard));
   });
   const dedupedIncidents = [...dedupedMap.values()];
+  dedupedIncidents.forEach((incident) => {
+    const trace = gridlyHazardMarkerLoopTrace.get(reportIdentity(incident));
+    if (trace) trace.presentAfterDeduplication = true;
+  });
   addPhaseDuration("filter incidents", phaseStart);
   phaseStart = gridlyNowMs();
   const crossingLayerOwnershipKeys = gridlyGetCrossingLayerBlockedMarkerOwnershipKeys();
@@ -71879,6 +71912,11 @@ function renderUnifiedIncidents(reason = "auto") {
   let routeHighlightedMarkers = 0;
 
   markerEligibleIncidents.forEach((incident) => {
+    const markerTrace = gridlyHazardMarkerLoopTrace.get(reportIdentity(incident));
+    if (markerTrace) {
+      markerTrace.presentInMarkerLoop = true;
+      markerTrace.typeAccepted = true;
+    }
     let markerPhaseStart = gridlyNowMs();
     if (!unifiedIncidentLayer) { markerRenderSkipReasons.missing_marker_layer += 1; return; }
     const { lat: rawLat, lng: rawLng } = getIncidentCoordinate(incident);
@@ -71886,6 +71924,7 @@ function renderUnifiedIncidents(reason = "auto") {
     const lat = Number(rawLat);
     const lng = Number(rawLng);
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) { markerRenderSkipReasons.invalid_lat_lng += 1; return; }
+    if (markerTrace) markerTrace.coordinateAccepted = true;
 
     const distanceFromUser = userLocation
       ? getDistanceMiles(userLocation.lat, userLocation.lng, lat, lng)
@@ -72002,11 +72041,13 @@ function renderUnifiedIncidents(reason = "auto") {
       iconAnchor: productionMarkerAnchor,
       popupAnchor: productionMarkerPopupAnchor
     });
+    if (markerTrace) markerTrace.iconResolved = Boolean(icon);
     markGridlyProductionMarkerAssetLoad(productionMarkerAsset.assetName, "attempted");
     addPhaseDuration("marker creation", markerPhaseStart);
 
     try {
       markerPhaseStart = gridlyNowMs();
+      if (markerTrace) markerTrace.markerConstructorReached = true;
       const marker = L.marker([lat, lng], {
         icon,
         incidentId: String(incident?.id || incident?.report_id || incident?.key || ""),
@@ -72036,12 +72077,17 @@ function renderUnifiedIncidents(reason = "auto") {
           representativeCoordinateReason: incident?.representativeCoordinateReason || null
         }
       });
+      if (markerTrace) markerTrace.markerCreated = Boolean(marker);
       addPhaseDuration("marker creation", markerPhaseStart);
       markerPhaseStart = gridlyNowMs();
       // Layer insertion is the generic incident presentation boundary.  Popup
       // enrichment (which historically assumed a crossing/corridor) must not
       // prevent a valid coordinate-owned marker from existing on the map.
       marker.addTo(unifiedIncidentLayer);
+      if (markerTrace) {
+        markerTrace.markerAddedToMap = true;
+        markerTrace.markerCurrentlyOnMap = Boolean(map?.hasLayer?.(unifiedIncidentLayer));
+      }
       addPhaseDuration("marker updates", markerPhaseStart);
       markerPhaseStart = gridlyNowMs();
       const popupContent = buildUnifiedIncidentPopup(incident, { popupAuditRows });
@@ -72053,7 +72099,21 @@ function renderUnifiedIncidents(reason = "auto") {
       addPhaseDuration("marker updates", markerPhaseStart);
     } catch (error) {
       markerRenderSkipReasons.render_exception += 1;
+      if (markerTrace && !markerTrace.firstFailedStage) markerTrace.firstFailedStage = markerTrace.markerConstructorReached ? "marker_construction_or_insertion" : "icon_resolution";
     }
+  });
+
+  gridlyHazardMarkerLoopTrace.forEach((trace) => {
+    if (trace.firstFailedStage) return;
+    const stages = [
+      ["active_hazards", trace.presentInActiveHazards], ["generic_merge", trace.presentInMergedRenderSource],
+      ["deduplication", trace.presentAfterDeduplication], ["marker_loop", trace.presentInMarkerLoop],
+      ["identity", trace.identityAccepted], ["type", trace.typeAccepted], ["coordinates", trace.coordinateAccepted],
+      ["icon", trace.iconResolved], ["marker_constructor", trace.markerConstructorReached],
+      ["marker_created", trace.markerCreated], ["layer_insertion", trace.markerAddedToMap],
+      ["layer_visibility", trace.markerCurrentlyOnMap]
+    ];
+    trace.firstFailedStage = stages.find(([, passed]) => !passed)?.[0] || null;
   });
 
   const duplicateEntries = [...duplicateCounts.entries()].filter(([, count]) => count > 1);
@@ -82166,7 +82226,15 @@ function gridlyGetHazardRenderSnapshot() {
       return String(incident?.reportId || incident?.report_id || incident?.id || "") === id;
     });
     const eligible = getIncidentLifecycleState(report) === "active" && Number.isFinite(Number(report?.lat)) && Number.isFinite(Number(report?.lng));
-    return Object.freeze({ id: id || null, crossing_id: report?.crossingId || null, countyId: report?.countyId || null, report_type: report?.type || null, eligible, markerCreated: Boolean(marker), markerAddedToMap: Boolean(marker && layers.includes(marker)), markerCurrentlyOnMap: Boolean(marker && onMap), layerOwner: marker ? "unifiedIncidentLayer" : null, removalReason: marker ? null : (eligible ? "not_rendered" : "ineligible") });
+    const execution = gridlyHazardMarkerLoopTrace.get(id) || {};
+    return Object.freeze({ id: id || null, crossing_id: report?.crossingId || report?.crossing_id || null, countyId: report?.countyId || null, report_type: report?.type || report?.report_type || null, eligible,
+      presentInActiveHazards: Boolean(execution.presentInActiveHazards), presentInUnifiedIncidents: Boolean(execution.presentInUnifiedIncidents),
+      presentInMergedRenderSource: Boolean(execution.presentInMergedRenderSource), presentAfterDeduplication: Boolean(execution.presentAfterDeduplication),
+      presentInMarkerLoop: Boolean(execution.presentInMarkerLoop), coordinateAccepted: Boolean(execution.coordinateAccepted),
+      typeAccepted: Boolean(execution.typeAccepted), identityAccepted: Boolean(execution.identityAccepted), iconResolved: Boolean(execution.iconResolved),
+      markerConstructorReached: Boolean(execution.markerConstructorReached), markerCreated: Boolean(marker), markerAddedToMap: Boolean(marker && layers.includes(marker)),
+      markerCurrentlyOnMap: Boolean(marker && onMap), firstFailedStage: marker ? null : (execution.firstFailedStage || (eligible ? "not_rendered" : "ineligible")),
+      layerOwner: marker ? "unifiedIncidentLayer" : null, removalReason: marker ? null : (eligible ? "not_rendered" : "ineligible") });
   }));
 }
 window.gridlyGetHazardRenderSnapshot = gridlyGetHazardRenderSnapshot;

@@ -83,7 +83,8 @@ export function certify({ write = false } = {}) {
     const policy = genericHazardPolicy(fixture);
     const runtimeReport = normalizeGenericHazard({ ...fixture, id: `render-${county.countyId}`, report_type: "flooding" }, county);
     const actualRender = exerciseActualRenderPath(runtimeReport, createRenderHarness());
-    if (!actualRender.markerCreated || !actualRender.markerAddedToLayer || !actualRender.markerCurrentlyOnMap || !actualRender.alertItemCreated || !actualRender.alertRendered || !actualRender.awarenessPresented || actualRender.crossingDependencies) fail(`Actual render failure ${county.countyId}`);
+    const requiredMarkerStages = ["presentInMergedRenderSource", "presentAfterDeduplication", "presentInMarkerLoop", "coordinateAccepted", "typeAccepted", "identityAccepted", "iconResolved", "markerConstructorReached", "markerCreated", "markerAddedToMap", "markerCurrentlyOnMap"];
+    if (!requiredMarkerStages.every((field) => actualRender[field] === true) || actualRender.firstFailedStage !== null || !actualRender.alertItemCreated || !actualRender.alertRendered || !actualRender.awarenessPresented || actualRender.crossingDependencies) fail(`Actual production-path render failure ${county.countyId}`);
     if (!Object.values(policy).every((value) => value === true || value === false || value === "active") || !policy.mapVisible || !policy.alertsVisible || policy.awarenessState !== "active" || policy.crossingRuntimeRequired) fail(`Reporting policy failure ${county.countyId}`);
     return { countyId: county.countyId, countyFips: county.countyFips, countyName: county.name, point, ...policy, payloadReady: true, persistenceShapeCompatible: true, retrievalShapeCompatible: true, structuredCountyMetadataPresent: true, structuredMetadataNormalized: true, deployedInsertKeys: insertKeys, deployedSelectKeys: deployedReportsSelectKeys, actualRender, passed: true };
   });
