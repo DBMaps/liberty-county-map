@@ -1,8 +1,16 @@
 {
   "schemaVersion": "gridly.wave3a1.source-lineage.v1",
   "processedPath": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+  "processedBytes": 68200491,
   "processedSha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c",
+  "identityBasis": "OWNER-VERIFIED CURRENT-MAIN ARTIFACT IDENTITY",
   "repositoryManifest": "Crossing-Packages/Texas/package-manifest.json",
+  "exceptionBaseline": {
+    "path": "evidence/wave3a1-fra-reconciliation/certified-exception-baseline.json",
+    "role": "HISTORICAL_CERTIFIED_INPUT_NOT_REGENERATED_BY_THIS_BUILD",
+    "originCommit": "352bd1356416c01e56ecc8d316c0bb111f18c505",
+    "sha256": "f34e8035084711708bc6569c2d3d42edf01a75dd7f59d5bd52996cc3e1cca8e6"
+  },
   "manifestSource": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
   "manifestPackageFile": "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\Texas\\fra-crossings-tx.geojson",
   "manifestGenerated": "2026-06-27T11:41:08.4641290-05:00",
