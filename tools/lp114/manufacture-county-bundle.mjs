@@ -147,7 +147,7 @@ export async function manufacture(options, hooks = {}) {
   if (!options.addresses_only) {
     const foundation = await (hooks.manufactureLp117Assets || manufactureLp117Assets)({ fips: counties.map(x => x.fips).join(','), boundaries: options.roadway_boundaries, roadway_source: options.tiger_road_root ? null : options.roadway_source, reports, resume: options.resume, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
     foundationByFips = new Map(foundation.counties.map(row => [row.fips, row]));
-    const crossingReport = await (hooks.manufactureCrossings || manufactureCrossings)({ fips: counties.map(x => x.fips).join(','), source: options.crossing_source, reports: options.crossing_reports || join(reports, 'crossings'), resume: options.resume, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
+    const crossingReport = await (hooks.manufactureCrossings || manufactureCrossings)({ fips: counties.map(x => x.fips).join(','), source: options.crossing_source, indexPath: options.crossing_index || options.indexPath, reports: options.crossing_reports || join(reports, 'crossings'), resume: options.resume, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
     crossingByFips = new Map(crossingReport.counties.map(row => [row.fips, row]));
     let extractedByFips = new Map();
     if (options.tiger_road_root) {
