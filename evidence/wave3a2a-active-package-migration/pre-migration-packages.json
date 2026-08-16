@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "gridly.wave3a2a.pre-migration.v1",
+  "status": "BLOCKED",
+  "stopCondition": "FRA_SOURCE_IDENTITY_MISMATCH",
+  "expected": {
+    "bytes": 68200491,
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+  },
+  "observed": {
+    "bytes": 67186117,
+    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
+  },
+  "productionPackageWrites": 0,
+  "inactiveCountiesActivated": 0,
+  "activeCountyCount": 28,
+  "decision": "ACTIVE PACKAGE MIGRATION BLOCKED",
+  "totalActiveIdentities": 3771,
+  "packages": [
+    {
+      "countyId": "brazos",
+      "countyFips": "48041",
+      "packagePath": "Crossing-Packages/brazos/Production/brazos-production-crossings.geojson",
+      "manifestPath": "Crossing-Packages/production-crossing-manifest.json",
+      "crossingCount": 86,
+      "bytes": 387040,
+      "sha256": "5db9fbbcf348146e59462ce20b8c6d61f0d6ceea0b3c79dc4dd4468419cf2c41",
+      "certificationMetadata": {
+        "manifestStatus": "PASS",
+        "certificationFile": "Crossing-Packages\\brazos\\Production\\production-certification.json",
+        "filePresent": false
+      },
+      "runtimeRegistration": {
+        "registered": true,
+        "status": "ACTIVE_POSITIVE"
+      },
+      "supabaseObjectIdentity": {
+        "packageObject": "Crossing-Packages\\brazos\\Production\\brazos-production-crossings.geojson",
+        "reportRowsMutated": false
+      }
+    },
+    {
+      "countyId": "lavaca",
+      "countyFips": "48285",
+      "packagePath": "Crossing-Packages/lavaca/Production/lavaca-production-crossings.geojson",
+      "manifestPath": "Crossing-Packages/production-crossing-manifest.json",
+      "crossingCount": 39,
+      "bytes": 175107,
+      "sha256": "6db4fa45a74a36f4dddeb6b7ab46765b010b582a425ca9045628397b5bf40871",
+      "certificationMetadata": {
+        "manifestStatus": "PASS",
+        "certificationFile": "Crossing-Packages\\lavaca\\Production\\production-certification.json",
+        "filePresent": false
+      },
+      "runtimeRegistration": {
+        "registered": true,
+        "status": "ACTIVE_POSITIVE"
+      },
+      "supabaseObjectIdentity": {
+        "packageObject": "Crossing-Packages\\lavaca\\Production\\lavaca-production-crossings.geojson",
+        "reportRowsMutated": false
+      }
+    },
+    {
+      "countyId": "washington",
+      "countyFips": "48477",
+      "packagePath": "Crossing-Packages/washington/Production/washington-production-crossings.geojson",
+      "manifestPath": "Crossing-Packages/production-crossing-manifest.json",
+      "crossingCount": 41,
+      "bytes": 185111,
+      "sha256": "398ca971cbe85ef1cfe7db67b68a674510d0c2dbdaacc8c49f2b84e2a5e187b0",
+      "certificationMetadata": {
+        "manifestStatus": "PASS",
+        "certificationFile": "Crossing-Packages\\washington\\Production\\production-certification.json",
+        "filePresent": false
+      },
+      "runtimeRegistration": {
+        "registered": true,
+        "status": "ACTIVE_POSITIVE"
+      },
+      "supabaseObjectIdentity": {
+        "packageObject": "Crossing-Packages\\washington\\Production\\washington-production-crossings.geojson",
+        "reportRowsMutated": false
+      }
+    }
+  ]
+}
