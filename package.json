@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:wave3a1b-fra-county-authority": "node tools/wave3a1b/build-fra-county-authority.mjs --write",
+    "verify:wave3a1b-fra-county-authority": "node tools/wave3a1b/build-fra-county-authority.mjs --verify",
+    "test:wave3a1b-fra-county-authority": "node --test tests/wave3a1b-fra-county-authority.test.mjs",
     "build:wave3a1-fra-reconciliation": "node tools/wave3a1/build-fra-reconciliation.mjs --write",
     "verify:wave3a1-fra-reconciliation": "node tools/wave3a1/build-fra-reconciliation.mjs --verify",
     "test:wave3a1-fra-reconciliation": "node --test tests/wave3a1-fra-reconciliation.test.mjs",

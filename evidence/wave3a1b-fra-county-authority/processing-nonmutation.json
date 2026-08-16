@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "gridly.wave3a1b.processing.v1",
+  "evidenceBasis": "OWNER-SUPPLIED DIRECT INSPECTION OF BOTH OWNER-LOCAL SCRIPTS",
+  "scripts": [
+    "C:\\GitHub\\Gridly-Source-Data\\Tools\\Build-Scripts\\Update-FraDataset.ps1",
+    "C:\\GitHub\\Gridly-Source-Data\\Tools\\Processing\\Update-FraDataset.ps1"
+  ],
+  "observedBehavior": [
+    "read raw GeoJSON",
+    "require Point geometry",
+    "read original longitude/latitude",
+    "reject only coordinate (0,0)",
+    "require STATEAB = TX",
+    "append original Feature unchanged to ValidFeatures",
+    "serialize ValidFeatures"
+  ],
+  "fieldsCertifiedPassThrough": [
+    "CROSSING",
+    "geometry.coordinates",
+    "STCYFIPS",
+    "CountyCode",
+    "COUNTYNAME",
+    "StateCode",
+    "STATENAME",
+    "STATEAB"
+  ],
+  "countyJoinPerformed": false,
+  "tigerContainmentPerformed": false,
+  "conclusion": "OWNER PROCESSING DID NOT CREATE COUNTY/COORDINATE DISAGREEMENTS"
+}

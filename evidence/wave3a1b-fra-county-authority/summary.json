@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "gridly.wave3a1b.summary.v1",
+  "decision": "FRA COUNTY AUTHORITY STILL REQUIRES OWNER DECISION",
+  "blocker": "Owner-supplied repository processed SHA-256 does not match the checked-out repository processed file; owner processed byte count was not supplied.",
+  "ownerRawProcessedEqualForAllComparedExceptionRows": true,
+  "ownerComparedExceptionRows": 353,
+  "processingMutationCreatedDisagreement": false,
+  "crossCountyContained": 351,
+  "outsideTexasBlocked": 2,
+  "geographicAssigned": 16099,
+  "identitiesRetained": 16101,
+  "duplicates": 0,
+  "positiveGeographicCounties": 202,
+  "zeroGeographicCounties": 52,
+  "projectedPartitionCounts": {
+    "ACTIVE_POSITIVE": 27,
+    "ACTIVE_EMPTY": 1,
+    "SOURCE_OR_GEOGRAPHIC_POSITIVE_INACTIVE": 175,
+    "ZERO_GEOGRAPHIC_SOURCE_INACTIVE": 51
+  },
+  "activeMismatchRows": 0,
+  "packagesManufactured": false,
+  "crossingsActivated": false
+}
