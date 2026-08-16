@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "gridly.wave3a3.apply-result.v1",
+  "status": "PASS",
+  "decision": "STATEWIDE CROSSING ACTIVATION APPLIED / VERIFIED",
+  "productionWrites": 454,
+  "rollbackStrategy": "all bytes staged under .git; prior bytes restored in reverse order on any replacement failure"
+}

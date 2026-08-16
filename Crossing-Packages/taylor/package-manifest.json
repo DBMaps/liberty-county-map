@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Taylor",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/taylor/Production/taylor-production-crossings.geojson",
+  "crossingCount": 106
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "McLennan",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/mclennan/Production/mclennan-production-crossings.geojson",
+  "crossingCount": 169
+}

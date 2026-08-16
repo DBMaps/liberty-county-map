@@ -1,0 +1,2733 @@
+{
+  "schemaVersion": "gridly.wave3a3.apply-write-plan.v1",
+  "status": "PASS",
+  "count": 454,
+  "orderedPaths": [
+    "Crossing-Packages/anderson/Production/anderson-production-crossings.geojson",
+    "Crossing-Packages/anderson/package-manifest.json",
+    "Crossing-Packages/andrews/Production/andrews-production-crossings.geojson",
+    "Crossing-Packages/andrews/package-manifest.json",
+    "Crossing-Packages/angelina/Production/angelina-production-crossings.geojson",
+    "Crossing-Packages/angelina/package-manifest.json",
+    "Crossing-Packages/aransas/Production/aransas-production-crossings.geojson",
+    "Crossing-Packages/aransas/package-manifest.json",
+    "Crossing-Packages/archer/Production/archer-production-crossings.geojson",
+    "Crossing-Packages/archer/package-manifest.json",
+    "Crossing-Packages/armstrong/Production/armstrong-production-crossings.geojson",
+    "Crossing-Packages/armstrong/package-manifest.json",
+    "Crossing-Packages/atascosa/Production/atascosa-production-crossings.geojson",
+    "Crossing-Packages/atascosa/package-manifest.json",
+    "Crossing-Packages/bailey/Production/bailey-production-crossings.geojson",
+    "Crossing-Packages/bailey/package-manifest.json",
+    "Crossing-Packages/bandera/Production/bandera-production-crossings.geojson",
+    "Crossing-Packages/bandera/package-manifest.json",
+    "Crossing-Packages/bastrop/Production/bastrop-production-crossings.geojson",
+    "Crossing-Packages/bastrop/package-manifest.json",
+    "Crossing-Packages/baylor/Production/baylor-production-crossings.geojson",
+    "Crossing-Packages/baylor/package-manifest.json",
+    "Crossing-Packages/bee/Production/bee-production-crossings.geojson",
+    "Crossing-Packages/bee/package-manifest.json",
+    "Crossing-Packages/bell/Production/bell-production-crossings.geojson",
+    "Crossing-Packages/bell/package-manifest.json",
+    "Crossing-Packages/bexar/Production/bexar-production-crossings.geojson",
+    "Crossing-Packages/bexar/package-manifest.json",
+    "Crossing-Packages/blanco/Production/blanco-production-crossings.geojson",
+    "Crossing-Packages/blanco/package-manifest.json",
+    "Crossing-Packages/borden/Production/borden-production-crossings.geojson",
+    "Crossing-Packages/borden/package-manifest.json",
+    "Crossing-Packages/bosque/Production/bosque-production-crossings.geojson",
+    "Crossing-Packages/bosque/package-manifest.json",
+    "Crossing-Packages/bowie/Production/bowie-production-crossings.geojson",
+    "Crossing-Packages/bowie/package-manifest.json",
+    "Crossing-Packages/brewster/Production/brewster-production-crossings.geojson",
+    "Crossing-Packages/brewster/package-manifest.json",
+    "Crossing-Packages/briscoe/Production/briscoe-production-crossings.geojson",
+    "Crossing-Packages/briscoe/package-manifest.json",
+    "Crossing-Packages/brooks/Production/brooks-production-crossings.geojson",
+    "Crossing-Packages/brooks/package-manifest.json",
+    "Crossing-Packages/brown/Production/brown-production-crossings.geojson",
+    "Crossing-Packages/brown/package-manifest.json",
+    "Crossing-Packages/burleson/Production/burleson-production-crossings.geojson",
+    "Crossing-Packages/burleson/package-manifest.json",
+    "Crossing-Packages/burnet/Production/burnet-production-crossings.geojson",
+    "Crossing-Packages/burnet/package-manifest.json",
+    "Crossing-Packages/caldwell/Production/caldwell-production-crossings.geojson",
+    "Crossing-Packages/caldwell/package-manifest.json",
+    "Crossing-Packages/callahan/Production/callahan-production-crossings.geojson",
+    "Crossing-Packages/callahan/package-manifest.json",
+    "Crossing-Packages/cameron/Production/cameron-production-crossings.geojson",
+    "Crossing-Packages/cameron/package-manifest.json",
+    "Crossing-Packages/camp/Production/camp-production-crossings.geojson",
+    "Crossing-Packages/camp/package-manifest.json",
+    "Crossing-Packages/carson/Production/carson-production-crossings.geojson",
+    "Crossing-Packages/carson/package-manifest.json",
+    "Crossing-Packages/cass/Production/cass-production-crossings.geojson",
+    "Crossing-Packages/cass/package-manifest.json",
+    "Crossing-Packages/castro/Production/castro-production-crossings.geojson",
+    "Crossing-Packages/castro/package-manifest.json",
+    "Crossing-Packages/cherokee/Production/cherokee-production-crossings.geojson",
+    "Crossing-Packages/cherokee/package-manifest.json",
+    "Crossing-Packages/childress/Production/childress-production-crossings.geojson",
+    "Crossing-Packages/childress/package-manifest.json",
+    "Crossing-Packages/clay/Production/clay-production-crossings.geojson",
+    "Crossing-Packages/clay/package-manifest.json",
+    "Crossing-Packages/cochran/Production/cochran-production-crossings.geojson",
+    "Crossing-Packages/cochran/package-manifest.json",
+    "Crossing-Packages/coke/Production/coke-production-crossings.geojson",
+    "Crossing-Packages/coke/package-manifest.json",
+    "Crossing-Packages/coleman/Production/coleman-production-crossings.geojson",
+    "Crossing-Packages/coleman/package-manifest.json",
+    "Crossing-Packages/collin/Production/collin-production-crossings.geojson",
+    "Crossing-Packages/collin/package-manifest.json",
+    "Crossing-Packages/collingsworth/Production/collingsworth-production-crossings.geojson",
+    "Crossing-Packages/collingsworth/package-manifest.json",
+    "Crossing-Packages/comal/Production/comal-production-crossings.geojson",
+    "Crossing-Packages/comal/package-manifest.json",
+    "Crossing-Packages/comanche/Production/comanche-production-crossings.geojson",
+    "Crossing-Packages/comanche/package-manifest.json",
+    "Crossing-Packages/concho/Production/concho-production-crossings.geojson",
+    "Crossing-Packages/concho/package-manifest.json",
+    "Crossing-Packages/cooke/Production/cooke-production-crossings.geojson",
+    "Crossing-Packages/cooke/package-manifest.json",
+    "Crossing-Packages/coryell/Production/coryell-production-crossings.geojson",
+    "Crossing-Packages/coryell/package-manifest.json",
+    "Crossing-Packages/cottle/Production/cottle-production-crossings.geojson",
+    "Crossing-Packages/cottle/package-manifest.json",
+    "Crossing-Packages/crane/Production/crane-production-crossings.geojson",
+    "Crossing-Packages/crane/package-manifest.json",
+    "Crossing-Packages/crockett/Production/crockett-production-crossings.geojson",
+    "Crossing-Packages/crockett/package-manifest.json",
+    "Crossing-Packages/crosby/Production/crosby-production-crossings.geojson",
+    "Crossing-Packages/crosby/package-manifest.json",
+    "Crossing-Packages/culberson/Production/culberson-production-crossings.geojson",
+    "Crossing-Packages/culberson/package-manifest.json",
+    "Crossing-Packages/dallam/Production/dallam-production-crossings.geojson",
+    "Crossing-Packages/dallam/package-manifest.json",
+    "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson",
+    "Crossing-Packages/dallas/package-manifest.json",
+    "Crossing-Packages/dawson/Production/dawson-production-crossings.geojson",
+    "Crossing-Packages/dawson/package-manifest.json",
+    "Crossing-Packages/deaf-smith/Production/deaf-smith-production-crossings.geojson",
+    "Crossing-Packages/deaf-smith/package-manifest.json",
+    "Crossing-Packages/delta/Production/delta-production-crossings.geojson",
+    "Crossing-Packages/delta/package-manifest.json",
+    "Crossing-Packages/denton/Production/denton-production-crossings.geojson",
+    "Crossing-Packages/denton/package-manifest.json",
+    "Crossing-Packages/dewitt/Production/dewitt-production-crossings.geojson",
+    "Crossing-Packages/dewitt/package-manifest.json",
+    "Crossing-Packages/dickens/Production/dickens-production-crossings.geojson",
+    "Crossing-Packages/dickens/package-manifest.json",
+    "Crossing-Packages/dimmit/Production/dimmit-production-crossings.geojson",
+    "Crossing-Packages/dimmit/package-manifest.json",
+    "Crossing-Packages/donley/Production/donley-production-crossings.geojson",
+    "Crossing-Packages/donley/package-manifest.json",
+    "Crossing-Packages/duval/Production/duval-production-crossings.geojson",
+    "Crossing-Packages/duval/package-manifest.json",
+    "Crossing-Packages/eastland/Production/eastland-production-crossings.geojson",
+    "Crossing-Packages/eastland/package-manifest.json",
+    "Crossing-Packages/ector/Production/ector-production-crossings.geojson",
+    "Crossing-Packages/ector/package-manifest.json",
+    "Crossing-Packages/edwards/Production/edwards-production-crossings.geojson",
+    "Crossing-Packages/edwards/package-manifest.json",
+    "Crossing-Packages/el-paso/Production/el-paso-production-crossings.geojson",
+    "Crossing-Packages/el-paso/package-manifest.json",
+    "Crossing-Packages/ellis/Production/ellis-production-crossings.geojson",
+    "Crossing-Packages/ellis/package-manifest.json",
+    "Crossing-Packages/erath/Production/erath-production-crossings.geojson",
+    "Crossing-Packages/erath/package-manifest.json",
+    "Crossing-Packages/falls/Production/falls-production-crossings.geojson",
+    "Crossing-Packages/falls/package-manifest.json",
+    "Crossing-Packages/fannin/Production/fannin-production-crossings.geojson",
+    "Crossing-Packages/fannin/package-manifest.json",
+    "Crossing-Packages/fisher/Production/fisher-production-crossings.geojson",
+    "Crossing-Packages/fisher/package-manifest.json",
+    "Crossing-Packages/floyd/Production/floyd-production-crossings.geojson",
+    "Crossing-Packages/floyd/package-manifest.json",
+    "Crossing-Packages/foard/Production/foard-production-crossings.geojson",
+    "Crossing-Packages/foard/package-manifest.json",
+    "Crossing-Packages/franklin/Production/franklin-production-crossings.geojson",
+    "Crossing-Packages/franklin/package-manifest.json",
+    "Crossing-Packages/freestone/Production/freestone-production-crossings.geojson",
+    "Crossing-Packages/freestone/package-manifest.json",
+    "Crossing-Packages/frio/Production/frio-production-crossings.geojson",
+    "Crossing-Packages/frio/package-manifest.json",
+    "Crossing-Packages/gaines/Production/gaines-production-crossings.geojson",
+    "Crossing-Packages/gaines/package-manifest.json",
+    "Crossing-Packages/garza/Production/garza-production-crossings.geojson",
+    "Crossing-Packages/garza/package-manifest.json",
+    "Crossing-Packages/gillespie/Production/gillespie-production-crossings.geojson",
+    "Crossing-Packages/gillespie/package-manifest.json",
+    "Crossing-Packages/glasscock/Production/glasscock-production-crossings.geojson",
+    "Crossing-Packages/glasscock/package-manifest.json",
+    "Crossing-Packages/goliad/Production/goliad-production-crossings.geojson",
+    "Crossing-Packages/goliad/package-manifest.json",
+    "Crossing-Packages/gonzales/Production/gonzales-production-crossings.geojson",
+    "Crossing-Packages/gonzales/package-manifest.json",
+    "Crossing-Packages/gray/Production/gray-production-crossings.geojson",
+    "Crossing-Packages/gray/package-manifest.json",
+    "Crossing-Packages/grayson/Production/grayson-production-crossings.geojson",
+    "Crossing-Packages/grayson/package-manifest.json",
+    "Crossing-Packages/gregg/Production/gregg-production-crossings.geojson",
+    "Crossing-Packages/gregg/package-manifest.json",
+    "Crossing-Packages/guadalupe/Production/guadalupe-production-crossings.geojson",
+    "Crossing-Packages/guadalupe/package-manifest.json",
+    "Crossing-Packages/hale/Production/hale-production-crossings.geojson",
+    "Crossing-Packages/hale/package-manifest.json",
+    "Crossing-Packages/hall/Production/hall-production-crossings.geojson",
+    "Crossing-Packages/hall/package-manifest.json",
+    "Crossing-Packages/hamilton/Production/hamilton-production-crossings.geojson",
+    "Crossing-Packages/hamilton/package-manifest.json",
+    "Crossing-Packages/hansford/Production/hansford-production-crossings.geojson",
+    "Crossing-Packages/hansford/package-manifest.json",
+    "Crossing-Packages/hardeman/Production/hardeman-production-crossings.geojson",
+    "Crossing-Packages/hardeman/package-manifest.json",
+    "Crossing-Packages/harrison/Production/harrison-production-crossings.geojson",
+    "Crossing-Packages/harrison/package-manifest.json",
+    "Crossing-Packages/hartley/Production/hartley-production-crossings.geojson",
+    "Crossing-Packages/hartley/package-manifest.json",
+    "Crossing-Packages/haskell/Production/haskell-production-crossings.geojson",
+    "Crossing-Packages/haskell/package-manifest.json",
+    "Crossing-Packages/hays/Production/hays-production-crossings.geojson",
+    "Crossing-Packages/hays/package-manifest.json",
+    "Crossing-Packages/hemphill/Production/hemphill-production-crossings.geojson",
+    "Crossing-Packages/hemphill/package-manifest.json",
+    "Crossing-Packages/henderson/Production/henderson-production-crossings.geojson",
+    "Crossing-Packages/henderson/package-manifest.json",
+    "Crossing-Packages/hidalgo/Production/hidalgo-production-crossings.geojson",
+    "Crossing-Packages/hidalgo/package-manifest.json",
+    "Crossing-Packages/hill/Production/hill-production-crossings.geojson",
+    "Crossing-Packages/hill/package-manifest.json",
+    "Crossing-Packages/hockley/Production/hockley-production-crossings.geojson",
+    "Crossing-Packages/hockley/package-manifest.json",
+    "Crossing-Packages/hood/Production/hood-production-crossings.geojson",
+    "Crossing-Packages/hood/package-manifest.json",
+    "Crossing-Packages/hopkins/Production/hopkins-production-crossings.geojson",
+    "Crossing-Packages/hopkins/package-manifest.json",
+    "Crossing-Packages/houston/Production/houston-production-crossings.geojson",
+    "Crossing-Packages/houston/package-manifest.json",
+    "Crossing-Packages/howard/Production/howard-production-crossings.geojson",
+    "Crossing-Packages/howard/package-manifest.json",
+    "Crossing-Packages/hudspeth/Production/hudspeth-production-crossings.geojson",
+    "Crossing-Packages/hudspeth/package-manifest.json",
+    "Crossing-Packages/hunt/Production/hunt-production-crossings.geojson",
+    "Crossing-Packages/hunt/package-manifest.json",
+    "Crossing-Packages/hutchinson/Production/hutchinson-production-crossings.geojson",
+    "Crossing-Packages/hutchinson/package-manifest.json",
+    "Crossing-Packages/irion/Production/irion-production-crossings.geojson",
+    "Crossing-Packages/irion/package-manifest.json",
+    "Crossing-Packages/jack/Production/jack-production-crossings.geojson",
+    "Crossing-Packages/jack/package-manifest.json",
+    "Crossing-Packages/jeff-davis/Production/jeff-davis-production-crossings.geojson",
+    "Crossing-Packages/jeff-davis/package-manifest.json",
+    "Crossing-Packages/jim-hogg/Production/jim-hogg-production-crossings.geojson",
+    "Crossing-Packages/jim-hogg/package-manifest.json",
+    "Crossing-Packages/jim-wells/Production/jim-wells-production-crossings.geojson",
+    "Crossing-Packages/jim-wells/package-manifest.json",
+    "Crossing-Packages/johnson/Production/johnson-production-crossings.geojson",
+    "Crossing-Packages/johnson/package-manifest.json",
+    "Crossing-Packages/jones/Production/jones-production-crossings.geojson",
+    "Crossing-Packages/jones/package-manifest.json",
+    "Crossing-Packages/karnes/Production/karnes-production-crossings.geojson",
+    "Crossing-Packages/karnes/package-manifest.json",
+    "Crossing-Packages/kaufman/Production/kaufman-production-crossings.geojson",
+    "Crossing-Packages/kaufman/package-manifest.json",
+    "Crossing-Packages/kendall/Production/kendall-production-crossings.geojson",
+    "Crossing-Packages/kendall/package-manifest.json",
+    "Crossing-Packages/kenedy/Production/kenedy-production-crossings.geojson",
+    "Crossing-Packages/kenedy/package-manifest.json",
+    "Crossing-Packages/kent/Production/kent-production-crossings.geojson",
+    "Crossing-Packages/kent/package-manifest.json",
+    "Crossing-Packages/kerr/Production/kerr-production-crossings.geojson",
+    "Crossing-Packages/kerr/package-manifest.json",
+    "Crossing-Packages/kimble/Production/kimble-production-crossings.geojson",
+    "Crossing-Packages/kimble/package-manifest.json",
+    "Crossing-Packages/king/Production/king-production-crossings.geojson",
+    "Crossing-Packages/king/package-manifest.json",
+    "Crossing-Packages/kinney/Production/kinney-production-crossings.geojson",
+    "Crossing-Packages/kinney/package-manifest.json",
+    "Crossing-Packages/kleberg/Production/kleberg-production-crossings.geojson",
+    "Crossing-Packages/kleberg/package-manifest.json",
+    "Crossing-Packages/knox/Production/knox-production-crossings.geojson",
+    "Crossing-Packages/knox/package-manifest.json",
+    "Crossing-Packages/la-salle/Production/la-salle-production-crossings.geojson",
+    "Crossing-Packages/la-salle/package-manifest.json",
+    "Crossing-Packages/lamar/Production/lamar-production-crossings.geojson",
+    "Crossing-Packages/lamar/package-manifest.json",
+    "Crossing-Packages/lamb/Production/lamb-production-crossings.geojson",
+    "Crossing-Packages/lamb/package-manifest.json",
+    "Crossing-Packages/lampasas/Production/lampasas-production-crossings.geojson",
+    "Crossing-Packages/lampasas/package-manifest.json",
+    "Crossing-Packages/lee/Production/lee-production-crossings.geojson",
+    "Crossing-Packages/lee/package-manifest.json",
+    "Crossing-Packages/leon/Production/leon-production-crossings.geojson",
+    "Crossing-Packages/leon/package-manifest.json",
+    "Crossing-Packages/limestone/Production/limestone-production-crossings.geojson",
+    "Crossing-Packages/limestone/package-manifest.json",
+    "Crossing-Packages/lipscomb/Production/lipscomb-production-crossings.geojson",
+    "Crossing-Packages/lipscomb/package-manifest.json",
+    "Crossing-Packages/live-oak/Production/live-oak-production-crossings.geojson",
+    "Crossing-Packages/live-oak/package-manifest.json",
+    "Crossing-Packages/llano/Production/llano-production-crossings.geojson",
+    "Crossing-Packages/llano/package-manifest.json",
+    "Crossing-Packages/loving/Production/loving-production-crossings.geojson",
+    "Crossing-Packages/loving/package-manifest.json",
+    "Crossing-Packages/lubbock/Production/lubbock-production-crossings.geojson",
+    "Crossing-Packages/lubbock/package-manifest.json",
+    "Crossing-Packages/lynn/Production/lynn-production-crossings.geojson",
+    "Crossing-Packages/lynn/package-manifest.json",
+    "Crossing-Packages/madison/Production/madison-production-crossings.geojson",
+    "Crossing-Packages/madison/package-manifest.json",
+    "Crossing-Packages/marion/Production/marion-production-crossings.geojson",
+    "Crossing-Packages/marion/package-manifest.json",
+    "Crossing-Packages/martin/Production/martin-production-crossings.geojson",
+    "Crossing-Packages/martin/package-manifest.json",
+    "Crossing-Packages/mason/Production/mason-production-crossings.geojson",
+    "Crossing-Packages/mason/package-manifest.json",
+    "Crossing-Packages/maverick/Production/maverick-production-crossings.geojson",
+    "Crossing-Packages/maverick/package-manifest.json",
+    "Crossing-Packages/mcculloch/Production/mcculloch-production-crossings.geojson",
+    "Crossing-Packages/mcculloch/package-manifest.json",
+    "Crossing-Packages/mclennan/Production/mclennan-production-crossings.geojson",
+    "Crossing-Packages/mclennan/package-manifest.json",
+    "Crossing-Packages/mcmullen/Production/mcmullen-production-crossings.geojson",
+    "Crossing-Packages/mcmullen/package-manifest.json",
+    "Crossing-Packages/medina/Production/medina-production-crossings.geojson",
+    "Crossing-Packages/medina/package-manifest.json",
+    "Crossing-Packages/menard/Production/menard-production-crossings.geojson",
+    "Crossing-Packages/menard/package-manifest.json",
+    "Crossing-Packages/midland/Production/midland-production-crossings.geojson",
+    "Crossing-Packages/midland/package-manifest.json",
+    "Crossing-Packages/milam/Production/milam-production-crossings.geojson",
+    "Crossing-Packages/milam/package-manifest.json",
+    "Crossing-Packages/mills/Production/mills-production-crossings.geojson",
+    "Crossing-Packages/mills/package-manifest.json",
+    "Crossing-Packages/mitchell/Production/mitchell-production-crossings.geojson",
+    "Crossing-Packages/mitchell/package-manifest.json",
+    "Crossing-Packages/montague/Production/montague-production-crossings.geojson",
+    "Crossing-Packages/montague/package-manifest.json",
+    "Crossing-Packages/moore/Production/moore-production-crossings.geojson",
+    "Crossing-Packages/moore/package-manifest.json",
+    "Crossing-Packages/morris/Production/morris-production-crossings.geojson",
+    "Crossing-Packages/morris/package-manifest.json",
+    "Crossing-Packages/motley/Production/motley-production-crossings.geojson",
+    "Crossing-Packages/motley/package-manifest.json",
+    "Crossing-Packages/nacogdoches/Production/nacogdoches-production-crossings.geojson",
+    "Crossing-Packages/nacogdoches/package-manifest.json",
+    "Crossing-Packages/navarro/Production/navarro-production-crossings.geojson",
+    "Crossing-Packages/navarro/package-manifest.json",
+    "Crossing-Packages/nolan/Production/nolan-production-crossings.geojson",
+    "Crossing-Packages/nolan/package-manifest.json",
+    "Crossing-Packages/nueces/Production/nueces-production-crossings.geojson",
+    "Crossing-Packages/nueces/package-manifest.json",
+    "Crossing-Packages/ochiltree/Production/ochiltree-production-crossings.geojson",
+    "Crossing-Packages/ochiltree/package-manifest.json",
+    "Crossing-Packages/oldham/Production/oldham-production-crossings.geojson",
+    "Crossing-Packages/oldham/package-manifest.json",
+    "Crossing-Packages/palo-pinto/Production/palo-pinto-production-crossings.geojson",
+    "Crossing-Packages/palo-pinto/package-manifest.json",
+    "Crossing-Packages/panola/Production/panola-production-crossings.geojson",
+    "Crossing-Packages/panola/package-manifest.json",
+    "Crossing-Packages/parker/Production/parker-production-crossings.geojson",
+    "Crossing-Packages/parker/package-manifest.json",
+    "Crossing-Packages/parmer/Production/parmer-production-crossings.geojson",
+    "Crossing-Packages/parmer/package-manifest.json",
+    "Crossing-Packages/pecos/Production/pecos-production-crossings.geojson",
+    "Crossing-Packages/pecos/package-manifest.json",
+    "Crossing-Packages/potter/Production/potter-production-crossings.geojson",
+    "Crossing-Packages/potter/package-manifest.json",
+    "Crossing-Packages/presidio/Production/presidio-production-crossings.geojson",
+    "Crossing-Packages/presidio/package-manifest.json",
+    "Crossing-Packages/production-crossing-manifest.json",
+    "Crossing-Packages/rains/Production/rains-production-crossings.geojson",
+    "Crossing-Packages/rains/package-manifest.json",
+    "Crossing-Packages/randall/Production/randall-production-crossings.geojson",
+    "Crossing-Packages/randall/package-manifest.json",
+    "Crossing-Packages/reagan/Production/reagan-production-crossings.geojson",
+    "Crossing-Packages/reagan/package-manifest.json",
+    "Crossing-Packages/real/Production/real-production-crossings.geojson",
+    "Crossing-Packages/real/package-manifest.json",
+    "Crossing-Packages/red-river/Production/red-river-production-crossings.geojson",
+    "Crossing-Packages/red-river/package-manifest.json",
+    "Crossing-Packages/reeves/Production/reeves-production-crossings.geojson",
+    "Crossing-Packages/reeves/package-manifest.json",
+    "Crossing-Packages/refugio/Production/refugio-production-crossings.geojson",
+    "Crossing-Packages/refugio/package-manifest.json",
+    "Crossing-Packages/roberts/Production/roberts-production-crossings.geojson",
+    "Crossing-Packages/roberts/package-manifest.json",
+    "Crossing-Packages/robertson/Production/robertson-production-crossings.geojson",
+    "Crossing-Packages/robertson/package-manifest.json",
+    "Crossing-Packages/rockwall/Production/rockwall-production-crossings.geojson",
+    "Crossing-Packages/rockwall/package-manifest.json",
+    "Crossing-Packages/runnels/Production/runnels-production-crossings.geojson",
+    "Crossing-Packages/runnels/package-manifest.json",
+    "Crossing-Packages/rusk/Production/rusk-production-crossings.geojson",
+    "Crossing-Packages/rusk/package-manifest.json",
+    "Crossing-Packages/sabine/Production/sabine-production-crossings.geojson",
+    "Crossing-Packages/sabine/package-manifest.json",
+    "Crossing-Packages/san-augustine/Production/san-augustine-production-crossings.geojson",
+    "Crossing-Packages/san-augustine/package-manifest.json",
+    "Crossing-Packages/san-patricio/Production/san-patricio-production-crossings.geojson",
+    "Crossing-Packages/san-patricio/package-manifest.json",
+    "Crossing-Packages/san-saba/Production/san-saba-production-crossings.geojson",
+    "Crossing-Packages/san-saba/package-manifest.json",
+    "Crossing-Packages/schleicher/Production/schleicher-production-crossings.geojson",
+    "Crossing-Packages/schleicher/package-manifest.json",
+    "Crossing-Packages/scurry/Production/scurry-production-crossings.geojson",
+    "Crossing-Packages/scurry/package-manifest.json",
+    "Crossing-Packages/shackelford/Production/shackelford-production-crossings.geojson",
+    "Crossing-Packages/shackelford/package-manifest.json",
+    "Crossing-Packages/shelby/Production/shelby-production-crossings.geojson",
+    "Crossing-Packages/shelby/package-manifest.json",
+    "Crossing-Packages/sherman/Production/sherman-production-crossings.geojson",
+    "Crossing-Packages/sherman/package-manifest.json",
+    "Crossing-Packages/smith/Production/smith-production-crossings.geojson",
+    "Crossing-Packages/smith/package-manifest.json",
+    "Crossing-Packages/somervell/Production/somervell-production-crossings.geojson",
+    "Crossing-Packages/somervell/package-manifest.json",
+    "Crossing-Packages/starr/Production/starr-production-crossings.geojson",
+    "Crossing-Packages/starr/package-manifest.json",
+    "Crossing-Packages/stephens/Production/stephens-production-crossings.geojson",
+    "Crossing-Packages/stephens/package-manifest.json",
+    "Crossing-Packages/sterling/Production/sterling-production-crossings.geojson",
+    "Crossing-Packages/sterling/package-manifest.json",
+    "Crossing-Packages/stonewall/Production/stonewall-production-crossings.geojson",
+    "Crossing-Packages/stonewall/package-manifest.json",
+    "Crossing-Packages/sutton/Production/sutton-production-crossings.geojson",
+    "Crossing-Packages/sutton/package-manifest.json",
+    "Crossing-Packages/swisher/Production/swisher-production-crossings.geojson",
+    "Crossing-Packages/swisher/package-manifest.json",
+    "Crossing-Packages/tarrant/Production/tarrant-production-crossings.geojson",
+    "Crossing-Packages/tarrant/package-manifest.json",
+    "Crossing-Packages/taylor/Production/taylor-production-crossings.geojson",
+    "Crossing-Packages/taylor/package-manifest.json",
+    "Crossing-Packages/terrell/Production/terrell-production-crossings.geojson",
+    "Crossing-Packages/terrell/package-manifest.json",
+    "Crossing-Packages/terry/Production/terry-production-crossings.geojson",
+    "Crossing-Packages/terry/package-manifest.json",
+    "Crossing-Packages/throckmorton/Production/throckmorton-production-crossings.geojson",
+    "Crossing-Packages/throckmorton/package-manifest.json",
+    "Crossing-Packages/titus/Production/titus-production-crossings.geojson",
+    "Crossing-Packages/titus/package-manifest.json",
+    "Crossing-Packages/tom-green/Production/tom-green-production-crossings.geojson",
+    "Crossing-Packages/tom-green/package-manifest.json",
+    "Crossing-Packages/travis/Production/travis-production-crossings.geojson",
+    "Crossing-Packages/travis/package-manifest.json",
+    "Crossing-Packages/trinity/Production/trinity-production-crossings.geojson",
+    "Crossing-Packages/trinity/package-manifest.json",
+    "Crossing-Packages/upshur/Production/upshur-production-crossings.geojson",
+    "Crossing-Packages/upshur/package-manifest.json",
+    "Crossing-Packages/upton/Production/upton-production-crossings.geojson",
+    "Crossing-Packages/upton/package-manifest.json",
+    "Crossing-Packages/uvalde/Production/uvalde-production-crossings.geojson",
+    "Crossing-Packages/uvalde/package-manifest.json",
+    "Crossing-Packages/val-verde/Production/val-verde-production-crossings.geojson",
+    "Crossing-Packages/val-verde/package-manifest.json",
+    "Crossing-Packages/van-zandt/Production/van-zandt-production-crossings.geojson",
+    "Crossing-Packages/van-zandt/package-manifest.json",
+    "Crossing-Packages/victoria/Production/victoria-production-crossings.geojson",
+    "Crossing-Packages/victoria/package-manifest.json",
+    "Crossing-Packages/ward/Production/ward-production-crossings.geojson",
+    "Crossing-Packages/ward/package-manifest.json",
+    "Crossing-Packages/webb/Production/webb-production-crossings.geojson",
+    "Crossing-Packages/webb/package-manifest.json",
+    "Crossing-Packages/wheeler/Production/wheeler-production-crossings.geojson",
+    "Crossing-Packages/wheeler/package-manifest.json",
+    "Crossing-Packages/wichita/Production/wichita-production-crossings.geojson",
+    "Crossing-Packages/wichita/package-manifest.json",
+    "Crossing-Packages/wilbarger/Production/wilbarger-production-crossings.geojson",
+    "Crossing-Packages/wilbarger/package-manifest.json",
+    "Crossing-Packages/willacy/Production/willacy-production-crossings.geojson",
+    "Crossing-Packages/willacy/package-manifest.json",
+    "Crossing-Packages/williamson/Production/williamson-production-crossings.geojson",
+    "Crossing-Packages/williamson/package-manifest.json",
+    "Crossing-Packages/wilson/Production/wilson-production-crossings.geojson",
+    "Crossing-Packages/wilson/package-manifest.json",
+    "Crossing-Packages/winkler/Production/winkler-production-crossings.geojson",
+    "Crossing-Packages/winkler/package-manifest.json",
+    "Crossing-Packages/wise/Production/wise-production-crossings.geojson",
+    "Crossing-Packages/wise/package-manifest.json",
+    "Crossing-Packages/wood/Production/wood-production-crossings.geojson",
+    "Crossing-Packages/wood/package-manifest.json",
+    "Crossing-Packages/yoakum/Production/yoakum-production-crossings.geojson",
+    "Crossing-Packages/yoakum/package-manifest.json",
+    "Crossing-Packages/young/Production/young-production-crossings.geojson",
+    "Crossing-Packages/young/package-manifest.json",
+    "Crossing-Packages/zapata/Production/zapata-production-crossings.geojson",
+    "Crossing-Packages/zapata/package-manifest.json",
+    "Crossing-Packages/zavala/Production/zavala-production-crossings.geojson",
+    "Crossing-Packages/zavala/package-manifest.json",
+    "assets/package-registry/runtime-package-registry.json"
+  ],
+  "files": [
+    {
+      "path": "Crossing-Packages/anderson/Production/anderson-production-crossings.geojson",
+      "bytes": 145228,
+      "sha256": "64bd8423cd10dc9d7ab2aaa780dfa149bf3ab9349720ed9451630aeea183ba02"
+    },
+    {
+      "path": "Crossing-Packages/anderson/package-manifest.json",
+      "bytes": 257,
+      "sha256": "a6c00f012b254ba1e4fd42621895baf9e4884dcbf660995a6e664fea48282c5e"
+    },
+    {
+      "path": "Crossing-Packages/andrews/Production/andrews-production-crossings.geojson",
+      "bytes": 180,
+      "sha256": "8766a1de849ad450308409296ce5b523705c2314329ee77417184d7d8ed5a311"
+    },
+    {
+      "path": "Crossing-Packages/andrews/package-manifest.json",
+      "bytes": 253,
+      "sha256": "c7bade31bc6e0fef8446e4182bf93998e31f4f0dc3fdf3895737c57b9269f774"
+    },
+    {
+      "path": "Crossing-Packages/angelina/Production/angelina-production-crossings.geojson",
+      "bytes": 205368,
+      "sha256": "e47d0b6828560c6a745418f05af0d0c8870332ba512442b385fdb1f2c7133a48"
+    },
+    {
+      "path": "Crossing-Packages/angelina/package-manifest.json",
+      "bytes": 258,
+      "sha256": "a287b9e2e02e5de7fdc45fb78dd163c5a6aac56131c155cde90cac0ebeef828b"
+    },
+    {
+      "path": "Crossing-Packages/aransas/Production/aransas-production-crossings.geojson",
+      "bytes": 10487,
+      "sha256": "a90d1045866209f3f65a884b655df998a9b28d1f19563cdaeda777a5c6f0f611"
+    },
+    {
+      "path": "Crossing-Packages/aransas/package-manifest.json",
+      "bytes": 253,
+      "sha256": "14326c5c93914d2cc8732ef1659f20a54aa8522492972c5329ecf3a55ac3f7d9"
+    },
+    {
+      "path": "Crossing-Packages/archer/Production/archer-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "2a9a0dbd8c1fb418bfa1b5e51b3175702b69bb4e484e60992490a99af06e085d"
+    },
+    {
+      "path": "Crossing-Packages/archer/package-manifest.json",
+      "bytes": 250,
+      "sha256": "162a4c35d522b577a339dd2200086f128db9e90ffa5c6e0990f2f23f22e27523"
+    },
+    {
+      "path": "Crossing-Packages/armstrong/Production/armstrong-production-crossings.geojson",
+      "bytes": 50228,
+      "sha256": "a7a3da9a578d4f16dda30e222a33ac85bd28ca91e8ddec07f13c4e007ac6c0fc"
+    },
+    {
+      "path": "Crossing-Packages/armstrong/package-manifest.json",
+      "bytes": 260,
+      "sha256": "9f4f49828381f79016b5deea3a64adb5c0e6be4e7b7fd0a2a9020f56bb64712a"
+    },
+    {
+      "path": "Crossing-Packages/atascosa/Production/atascosa-production-crossings.geojson",
+      "bytes": 118234,
+      "sha256": "0b946754605c9a4ea80075e7b9693cb074ace4a1459d8c9735ed65df8220fe06"
+    },
+    {
+      "path": "Crossing-Packages/atascosa/package-manifest.json",
+      "bytes": 257,
+      "sha256": "d5058ea2a4a1a7c20c35373d34bf5e055d8ad7928ac9547eaac20fc2e94d0114"
+    },
+    {
+      "path": "Crossing-Packages/bailey/Production/bailey-production-crossings.geojson",
+      "bytes": 43860,
+      "sha256": "6d51c053a127fba96d27440f00ac00465deb662ef3869ec068d7b4baa998bd37"
+    },
+    {
+      "path": "Crossing-Packages/bailey/package-manifest.json",
+      "bytes": 251,
+      "sha256": "36ce9bfd99f46f85780a4a9d85fd7fc4ba848628e235f408a5dea3c237bbcd02"
+    },
+    {
+      "path": "Crossing-Packages/bandera/Production/bandera-production-crossings.geojson",
+      "bytes": 180,
+      "sha256": "78e68ec230f3f5e65cc3e948ab74625b5a18d33584901788962cd2543be654cf"
+    },
+    {
+      "path": "Crossing-Packages/bandera/package-manifest.json",
+      "bytes": 253,
+      "sha256": "fdebcad3aa214dca9fb417572f412a27609c53b08a172e718559163f4d698301"
+    },
+    {
+      "path": "Crossing-Packages/bastrop/Production/bastrop-production-crossings.geojson",
+      "bytes": 326142,
+      "sha256": "3412eedfb36c5785a1b725a8bec2853ec6c9a4360f1e70a07f9ee2a9593cbb69"
+    },
+    {
+      "path": "Crossing-Packages/bastrop/package-manifest.json",
+      "bytes": 255,
+      "sha256": "7750bbb3debc2a9d6c67053076e8345408c6f08bde9267a8a5ead4e96e00b3f2"
+    },
+    {
+      "path": "Crossing-Packages/baylor/Production/baylor-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "f786bfd6a91f4c2bed943013eec8fd76a89832aebdcb1da3ab778003c4de021a"
+    },
+    {
+      "path": "Crossing-Packages/baylor/package-manifest.json",
+      "bytes": 250,
+      "sha256": "29684d58ae36ac36c23c460d0c3a7da28744a343a7b1f55981671ea5569278bb"
+    },
+    {
+      "path": "Crossing-Packages/bee/Production/bee-production-crossings.geojson",
+      "bytes": 176,
+      "sha256": "c79b5568f92ecba69f21ed5ca67d58511eb454393d2337c13a963de84123f5ac"
+    },
+    {
+      "path": "Crossing-Packages/bee/package-manifest.json",
+      "bytes": 241,
+      "sha256": "fff0e5dfa395b275b2d825b9be31edb2f27150b8f719c080694bb039b4a7d353"
+    },
+    {
+      "path": "Crossing-Packages/bell/Production/bell-production-crossings.geojson",
+      "bytes": 311692,
+      "sha256": "94bd260738c8120f9b86404afd75e791b78f1d9c3bb27e1b1fe1115815b9d649"
+    },
+    {
+      "path": "Crossing-Packages/bell/package-manifest.json",
+      "bytes": 246,
+      "sha256": "dbd8f505e49e0479a553ec1eb09c86ade44d5d4bbd0b4f0808bb82ed807e2a8d"
+    },
+    {
+      "path": "Crossing-Packages/bexar/Production/bexar-production-crossings.geojson",
+      "bytes": 791151,
+      "sha256": "256dd5f4827afba5fef5da99175b441bdbee356946043a7ea133798afe60b3b3"
+    },
+    {
+      "path": "Crossing-Packages/bexar/package-manifest.json",
+      "bytes": 249,
+      "sha256": "50e175e3f122fe00f1f63dc4190c1ad9c4b9d72847c895cb4e79f0bfecd0f590"
+    },
+    {
+      "path": "Crossing-Packages/blanco/Production/blanco-production-crossings.geojson",
+      "bytes": 14391,
+      "sha256": "b9b4437a62bd3444028e901e03dd9f735c88876f8d5a80ec87d145d1f8ff8bd0"
+    },
+    {
+      "path": "Crossing-Packages/blanco/package-manifest.json",
+      "bytes": 250,
+      "sha256": "c691475713a4e268b6a9e15b8a28c012ec4732a4903e001a8c33f6eb6491e576"
+    },
+    {
+      "path": "Crossing-Packages/borden/Production/borden-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "fb09a992226df5f4b809d5dc7c5f73e850b7abe273d7def60f02857a63fc55f5"
+    },
+    {
+      "path": "Crossing-Packages/borden/package-manifest.json",
+      "bytes": 250,
+      "sha256": "cb4f74c9f791a52f4d6b0e1ae93db1e1dd1d67b4a7f1cd1bfcbaddec0c524b6a"
+    },
+    {
+      "path": "Crossing-Packages/bosque/Production/bosque-production-crossings.geojson",
+      "bytes": 99792,
+      "sha256": "3caa82bbcbdb65f3b13ee1d4f3d494f13062016abfd22310c955bb0b4a2e99ac"
+    },
+    {
+      "path": "Crossing-Packages/bosque/package-manifest.json",
+      "bytes": 251,
+      "sha256": "4908412b960e38c0842c247b50a53c595d04b95d7158ae705232b4e14b39bd79"
+    },
+    {
+      "path": "Crossing-Packages/bowie/Production/bowie-production-crossings.geojson",
+      "bytes": 246038,
+      "sha256": "279cb24d5f49447f4a84018524feda337c6e42a42202f308cc189b69164160b9"
+    },
+    {
+      "path": "Crossing-Packages/bowie/package-manifest.json",
+      "bytes": 249,
+      "sha256": "4f62f3c75337b26257ddb57036588d6eee72802a49211794d968ae8b4d93e046"
+    },
+    {
+      "path": "Crossing-Packages/brewster/Production/brewster-production-crossings.geojson",
+      "bytes": 113661,
+      "sha256": "59f0c05a8c38d07f641663fe42c1676ff529d70bef6692851ad0a719157c2e49"
+    },
+    {
+      "path": "Crossing-Packages/brewster/package-manifest.json",
+      "bytes": 257,
+      "sha256": "9efe5f48aaacf0ea45411c95be7959e81bbdc856ff73ad5cafc2fe784f46f728"
+    },
+    {
+      "path": "Crossing-Packages/briscoe/Production/briscoe-production-crossings.geojson",
+      "bytes": 180,
+      "sha256": "f6bc55befdca34dfaff43f4cfcc80860d159f68bc9e870d52c89eec2bd3edb79"
+    },
+    {
+      "path": "Crossing-Packages/briscoe/package-manifest.json",
+      "bytes": 253,
+      "sha256": "733c91fe9666d16fd3894cc56dfe6ed1a6a3557064e75ca1e5d67f966416593b"
+    },
+    {
+      "path": "Crossing-Packages/brooks/Production/brooks-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "f8842298485586dc6570c2be7354197633f003f5481577f021ca2299adcb88cb"
+    },
+    {
+      "path": "Crossing-Packages/brooks/package-manifest.json",
+      "bytes": 250,
+      "sha256": "abff869842fa379498f11dcb93573c75848dd7192898bcfaa0186c8f8c9455e3"
+    },
+    {
+      "path": "Crossing-Packages/brown/Production/brown-production-crossings.geojson",
+      "bytes": 201446,
+      "sha256": "e93fc2daabda75ae8be8d800603f58de8b5abda2bd39e234101a1cdf5e1bec0f"
+    },
+    {
+      "path": "Crossing-Packages/brown/package-manifest.json",
+      "bytes": 248,
+      "sha256": "a7ddfba3a2618bf5815d0ddbc6d940f70540301f700eb457fc76831ef4a94905"
+    },
+    {
+      "path": "Crossing-Packages/burleson/Production/burleson-production-crossings.geojson",
+      "bytes": 139027,
+      "sha256": "59463bddfa86c6a5a682d7899d308f7e743155602ee02952e242567a94bfc73b"
+    },
+    {
+      "path": "Crossing-Packages/burleson/package-manifest.json",
+      "bytes": 257,
+      "sha256": "8a98d70892df26e731a1cae5c0fdb4a6b40aaa8a2f633ec2bc42603db2ac4407"
+    },
+    {
+      "path": "Crossing-Packages/burnet/Production/burnet-production-crossings.geojson",
+      "bytes": 129909,
+      "sha256": "3500c5e300ec9d50c854e9e357dcdb2d7e0618518be9cef793cba79b72082f44"
+    },
+    {
+      "path": "Crossing-Packages/burnet/package-manifest.json",
+      "bytes": 251,
+      "sha256": "56078fe03fcf3fff62cdbc47eea7659b0dea32ea4e3646e9873bd672bdc389a8"
+    },
+    {
+      "path": "Crossing-Packages/caldwell/Production/caldwell-production-crossings.geojson",
+      "bytes": 97507,
+      "sha256": "98d65c5e0e0b242e2ac213adda0f970aaa7ffbc1252a463c76215a36a7c88f13"
+    },
+    {
+      "path": "Crossing-Packages/caldwell/package-manifest.json",
+      "bytes": 257,
+      "sha256": "c1bceeafd85e66fa89f6a008cf03d7bf1e9c1e98ae73a435f75c3fcc66f46e21"
+    },
+    {
+      "path": "Crossing-Packages/callahan/Production/callahan-production-crossings.geojson",
+      "bytes": 53550,
+      "sha256": "9d6ed65efa2a9a93eb7c016f52193f7d43d5229f9d5199e7af525d33d0496600"
+    },
+    {
+      "path": "Crossing-Packages/callahan/package-manifest.json",
+      "bytes": 257,
+      "sha256": "031bbff47b9378aa1841d8bfb1b26d4490a47f4d17a106d6b0b1a5bd9c870185"
+    },
+    {
+      "path": "Crossing-Packages/cameron/Production/cameron-production-crossings.geojson",
+      "bytes": 601751,
+      "sha256": "c6531529523d38255fdf06b8f1fa50a9b5a319747eb14ba31ddbf98fce97d5ae"
+    },
+    {
+      "path": "Crossing-Packages/cameron/package-manifest.json",
+      "bytes": 255,
+      "sha256": "1c5caec51693ece6f2148191795502e67e9f8e62a09588c016d3e4714e582e29"
+    },
+    {
+      "path": "Crossing-Packages/camp/Production/camp-production-crossings.geojson",
+      "bytes": 113646,
+      "sha256": "76f308d8f72e0acc84601e81de164cda051e78d64b841e80695581392eab9612"
+    },
+    {
+      "path": "Crossing-Packages/camp/package-manifest.json",
+      "bytes": 245,
+      "sha256": "7df8ffec845c631042ef687dd35311e70fea59b3026a996b9fa4803cb0334bfc"
+    },
+    {
+      "path": "Crossing-Packages/carson/Production/carson-production-crossings.geojson",
+      "bytes": 129818,
+      "sha256": "e7a29f117506a4bba1a7c604999ba06a41f5068940288349ae53393f0246f575"
+    },
+    {
+      "path": "Crossing-Packages/carson/package-manifest.json",
+      "bytes": 251,
+      "sha256": "044179f4871984c02b3a4ed20cd768c4dc720b9d43912d5a7f941aa37f0bbd7b"
+    },
+    {
+      "path": "Crossing-Packages/cass/Production/cass-production-crossings.geojson",
+      "bytes": 101321,
+      "sha256": "7d10e62c482017cbd6ecf1692d26a585ed238a67966ce9ffecf0001299bf8143"
+    },
+    {
+      "path": "Crossing-Packages/cass/package-manifest.json",
+      "bytes": 245,
+      "sha256": "36070afc069d35aab6e416ce6a4ced458c84599e34820c24d78751fa8cd43bec"
+    },
+    {
+      "path": "Crossing-Packages/castro/Production/castro-production-crossings.geojson",
+      "bytes": 57628,
+      "sha256": "19e6395a16cf2ac7f5bba6f8bdf22d4a0e1f055a47803436de0d02f40f875ea0"
+    },
+    {
+      "path": "Crossing-Packages/castro/package-manifest.json",
+      "bytes": 251,
+      "sha256": "e0fa356b59cc2f4eb512626b53523ffd6f47adc769165760551a8762d2bbc3a6"
+    },
+    {
+      "path": "Crossing-Packages/cherokee/Production/cherokee-production-crossings.geojson",
+      "bytes": 142882,
+      "sha256": "64fffe0aefa9e9f40c3bb656aafd6c5621587fc76d24e7e62e28dc71b8f34aab"
+    },
+    {
+      "path": "Crossing-Packages/cherokee/package-manifest.json",
+      "bytes": 257,
+      "sha256": "09857760fc1056d64e2dacce4a0c00609ffe3a25dfe8414e5e7fc94ae98955c1"
+    },
+    {
+      "path": "Crossing-Packages/childress/Production/childress-production-crossings.geojson",
+      "bytes": 58271,
+      "sha256": "d0c27707b7a3a7d127ff71e365aa1fe646976547424be105f866fc42b867d697"
+    },
+    {
+      "path": "Crossing-Packages/childress/package-manifest.json",
+      "bytes": 260,
+      "sha256": "ecc03eebcf141f57e1a31c43dbea0bf2d2a8a39b4a91beca8985afa03de9af16"
+    },
+    {
+      "path": "Crossing-Packages/clay/Production/clay-production-crossings.geojson",
+      "bytes": 60545,
+      "sha256": "016dd1f3eae57eca513e092db487d70d4cb4977d284e9435c7ea6f067f1c7744"
+    },
+    {
+      "path": "Crossing-Packages/clay/package-manifest.json",
+      "bytes": 245,
+      "sha256": "b747d59054fc7e0733d27b3cfede157d82bc41183e4ae569ce66c22fc1707191"
+    },
+    {
+      "path": "Crossing-Packages/cochran/Production/cochran-production-crossings.geojson",
+      "bytes": 8423,
+      "sha256": "2c99b2b9e0c377d3fb07aea17a34d9a0316b92c5f99042fe2266bd5af8bce7a3"
+    },
+    {
+      "path": "Crossing-Packages/cochran/package-manifest.json",
+      "bytes": 253,
+      "sha256": "550b094d3d29b01855ba864bd1369db44c4eca9123de0761cc75470b65fb63f0"
+    },
+    {
+      "path": "Crossing-Packages/coke/Production/coke-production-crossings.geojson",
+      "bytes": 177,
+      "sha256": "74c42f386ab19598145dd821063c00c48d27287a78569f8bfd7fec72e0628922"
+    },
+    {
+      "path": "Crossing-Packages/coke/package-manifest.json",
+      "bytes": 244,
+      "sha256": "0b8f1a19cb870d6cc818edebfb86472c2319dab4d897d7f3ee0076e8608d9ceb"
+    },
+    {
+      "path": "Crossing-Packages/coleman/Production/coleman-production-crossings.geojson",
+      "bytes": 120896,
+      "sha256": "8adea6f91501cd306bc64186a1e611f9e0966f06aff76bd12c98e105b4b0f466"
+    },
+    {
+      "path": "Crossing-Packages/coleman/package-manifest.json",
+      "bytes": 254,
+      "sha256": "b9e0101d1cffb4a803c5a7b42451eb228b501f0f64a0a91233cf81d1ac2e0783"
+    },
+    {
+      "path": "Crossing-Packages/collin/Production/collin-production-crossings.geojson",
+      "bytes": 383270,
+      "sha256": "ba7d9f08d0b1a2ac3cb816e266d43d98c68ebb780191156b37f370d00a31b112"
+    },
+    {
+      "path": "Crossing-Packages/collin/package-manifest.json",
+      "bytes": 252,
+      "sha256": "df26f4e148668e37058b1439cc184c7e28a595a81caa0a12c994d2e25dace700"
+    },
+    {
+      "path": "Crossing-Packages/collingsworth/Production/collingsworth-production-crossings.geojson",
+      "bytes": 186,
+      "sha256": "94ab60c0f643f7162933a04bb3b4cf51259c5fbf1ac6156c443622ce874f49a2"
+    },
+    {
+      "path": "Crossing-Packages/collingsworth/package-manifest.json",
+      "bytes": 271,
+      "sha256": "3368643e114974aba4c7c680a89a80ee136d6b79cedf0b4a038232bcb2ad75f3"
+    },
+    {
+      "path": "Crossing-Packages/comal/Production/comal-production-crossings.geojson",
+      "bytes": 228215,
+      "sha256": "6f33689b5c121078c7e1c5f6f3fd8db953e56a01ac17bf6ac2f87635da0bf20e"
+    },
+    {
+      "path": "Crossing-Packages/comal/package-manifest.json",
+      "bytes": 249,
+      "sha256": "d358eb88d433cb56a0563fd9f926225aea1200b07ca953f1b21ce14e30228865"
+    },
+    {
+      "path": "Crossing-Packages/comanche/Production/comanche-production-crossings.geojson",
+      "bytes": 165146,
+      "sha256": "461d0bd21bb1c33ae8a389584555e5e0beeb5e3fea7f6aed6e302b61e79ce5ca"
+    },
+    {
+      "path": "Crossing-Packages/comanche/package-manifest.json",
+      "bytes": 257,
+      "sha256": "01179cd5abf1ad43bfefa0521f7a4722ffb1e6ecd034e6130193b744f27f72b4"
+    },
+    {
+      "path": "Crossing-Packages/concho/Production/concho-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "c378bf3fa3dc063034bdf9f0502974cbb720890e42387fb470dc6151816aedf0"
+    },
+    {
+      "path": "Crossing-Packages/concho/package-manifest.json",
+      "bytes": 250,
+      "sha256": "f09eceb2eb93a5dab3fda862781165667222d823acdf849e18bee53e6c7ecca3"
+    },
+    {
+      "path": "Crossing-Packages/cooke/Production/cooke-production-crossings.geojson",
+      "bytes": 64574,
+      "sha256": "d4805f7841a2846e417cf2297f5abd0351d120b9ad22817f6870c9e0ab3f23a2"
+    },
+    {
+      "path": "Crossing-Packages/cooke/package-manifest.json",
+      "bytes": 248,
+      "sha256": "40f91fde60cf29f198f680fb511c3a77072937fabd155d662817d60d643b3e9e"
+    },
+    {
+      "path": "Crossing-Packages/coryell/Production/coryell-production-crossings.geojson",
+      "bytes": 25179,
+      "sha256": "3fb8acb141699250b098e1834c3f416fe66adedf5dc3a6d049c39706a9f24d02"
+    },
+    {
+      "path": "Crossing-Packages/coryell/package-manifest.json",
+      "bytes": 254,
+      "sha256": "59e816158a13169eb94e00646c68b1dcde5d144d1348a22bbc85c2793c84985f"
+    },
+    {
+      "path": "Crossing-Packages/cottle/Production/cottle-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "4231d5d65437290a4610b2dce910d7a0b1c180ad117f52e7948c9000f3d2afd8"
+    },
+    {
+      "path": "Crossing-Packages/cottle/package-manifest.json",
+      "bytes": 250,
+      "sha256": "2fb3287c6b091140862a4dd6a407fb7d63f09ff3b9ba94a67997173c92727eec"
+    },
+    {
+      "path": "Crossing-Packages/crane/Production/crane-production-crossings.geojson",
+      "bytes": 6205,
+      "sha256": "3d743d91bbcdb40808c388626125b6f68298f02165b6b59628a2712130922fbb"
+    },
+    {
+      "path": "Crossing-Packages/crane/package-manifest.json",
+      "bytes": 247,
+      "sha256": "156115267fd98e8a54f4956339e6aa531357c6a235b8143eee9ce63854d70dd2"
+    },
+    {
+      "path": "Crossing-Packages/crockett/Production/crockett-production-crossings.geojson",
+      "bytes": 2112,
+      "sha256": "1a374f9cc7668ff78426c84ccf50e3e2c84f57c5b075ccd674bba99b093c66ac"
+    },
+    {
+      "path": "Crossing-Packages/crockett/package-manifest.json",
+      "bytes": 256,
+      "sha256": "6f8397aa3bc4ae913c3b2c9d39716c78d591f77c4382d48f86ca83d504ee0168"
+    },
+    {
+      "path": "Crossing-Packages/crosby/Production/crosby-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "66c6ac49ca20e93f3ba9c31651542de50bd369a94a62997612e92df070a56bda"
+    },
+    {
+      "path": "Crossing-Packages/crosby/package-manifest.json",
+      "bytes": 250,
+      "sha256": "fc8e882752c03a06d0eaecc0effd638219da66e75d285ae02035accae0815eba"
+    },
+    {
+      "path": "Crossing-Packages/culberson/Production/culberson-production-crossings.geojson",
+      "bytes": 35282,
+      "sha256": "8ccccfbc6a9fa1594077737fad52d02fa4fd71bcd466590fcbec6bb8864d89cc"
+    },
+    {
+      "path": "Crossing-Packages/culberson/package-manifest.json",
+      "bytes": 260,
+      "sha256": "1716c914693cbd0bb3843c21a0572c5a916ae3ef2c146a9554c9950a0b6dbc86"
+    },
+    {
+      "path": "Crossing-Packages/dallam/Production/dallam-production-crossings.geojson",
+      "bytes": 105804,
+      "sha256": "307d4e0343f487b0d6cde253a285bbc39f0327913f082e6333865c1f76683879"
+    },
+    {
+      "path": "Crossing-Packages/dallam/package-manifest.json",
+      "bytes": 251,
+      "sha256": "061ccf5836b11184dd3b6bb5e82349811dbbd3f20ebe79175310a754eea716a1"
+    },
+    {
+      "path": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson",
+      "bytes": 1633851,
+      "sha256": "f49ddc075595eb3af49e1bfb3ea7e1e265bbba25414df6fdcded1b0eb77db174"
+    },
+    {
+      "path": "Crossing-Packages/dallas/package-manifest.json",
+      "bytes": 252,
+      "sha256": "37b6f908fc6eded8e7fb12341ba49d5aebd2da918bd022bd8f0d59c13ece7650"
+    },
+    {
+      "path": "Crossing-Packages/dawson/Production/dawson-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "2b4b586205c0e7c87e4695007f57fbd77a6cdc171bdb83a9d85a2de113b2648a"
+    },
+    {
+      "path": "Crossing-Packages/dawson/package-manifest.json",
+      "bytes": 250,
+      "sha256": "6014e343c3e1130c0554cfde2e606bf39cee06038a8446653a892a29e61471cc"
+    },
+    {
+      "path": "Crossing-Packages/deaf-smith/Production/deaf-smith-production-crossings.geojson",
+      "bytes": 52364,
+      "sha256": "c26899dedf8bc0e3ae0da5c191901bca57bca263bd8ff3980fa88472aceecf7d"
+    },
+    {
+      "path": "Crossing-Packages/deaf-smith/package-manifest.json",
+      "bytes": 263,
+      "sha256": "b5f202aef2e005a16ebdf871c743b123328f22ccd1a9d2094ab599876056991b"
+    },
+    {
+      "path": "Crossing-Packages/delta/Production/delta-production-crossings.geojson",
+      "bytes": 178,
+      "sha256": "3123a958299e19099f3da1139a228ee36a56992cbb543664f7588e5b43a8bcfe"
+    },
+    {
+      "path": "Crossing-Packages/delta/package-manifest.json",
+      "bytes": 247,
+      "sha256": "3cdb55002f4e935f5dc43acc7b2189105664065ac3f60ece86b5275947d5cb91"
+    },
+    {
+      "path": "Crossing-Packages/denton/Production/denton-production-crossings.geojson",
+      "bytes": 478903,
+      "sha256": "953c3ff82155fa08943b7e6b82c98176ab818f5b3cb957ad6b8eb5ae0397f1d2"
+    },
+    {
+      "path": "Crossing-Packages/denton/package-manifest.json",
+      "bytes": 252,
+      "sha256": "6d95e35e3efd6aa37793e6d34f11c07f6a6ff40bd2d0a1832394bf2c08409d65"
+    },
+    {
+      "path": "Crossing-Packages/dewitt/Production/dewitt-production-crossings.geojson",
+      "bytes": 117594,
+      "sha256": "bd847dd9d54d6dae820d33a39e492f6d27ab5015ac3824a9a30273b3d9574280"
+    },
+    {
+      "path": "Crossing-Packages/dewitt/package-manifest.json",
+      "bytes": 251,
+      "sha256": "a2685fc815ad5d139b6728d94cf211982118bf4b58eb31eea53ee2fcc0db3e49"
+    },
+    {
+      "path": "Crossing-Packages/dickens/Production/dickens-production-crossings.geojson",
+      "bytes": 180,
+      "sha256": "dd7174f8d27f6cad1463bb259f219a4328e17d335a041c1840fd3b8151796609"
+    },
+    {
+      "path": "Crossing-Packages/dickens/package-manifest.json",
+      "bytes": 253,
+      "sha256": "1212cf47d2b5d86a4aa1517cc1e96946ba410755bf43c9c6302cc9ca9c8d5376"
+    },
+    {
+      "path": "Crossing-Packages/dimmit/Production/dimmit-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "266db151c437a80e2e988d7a61921b7c95de9ebbcd707c4a6ba76f6164d95631"
+    },
+    {
+      "path": "Crossing-Packages/dimmit/package-manifest.json",
+      "bytes": 250,
+      "sha256": "ad6d582defec45da62197451f026a9b3a98a36ccaed9f810c45e9ea6ca061c38"
+    },
+    {
+      "path": "Crossing-Packages/donley/Production/donley-production-crossings.geojson",
+      "bytes": 75052,
+      "sha256": "9200a5e2c6df954bb62250a975df83d8c8765724efc8545e05fb73ab52fb7cd9"
+    },
+    {
+      "path": "Crossing-Packages/donley/package-manifest.json",
+      "bytes": 251,
+      "sha256": "cd6f7fecb7ef352e766d328971295b44a9e953c3ac7d58ac05591840cf1d71ec"
+    },
+    {
+      "path": "Crossing-Packages/duval/Production/duval-production-crossings.geojson",
+      "bytes": 100935,
+      "sha256": "c9c963e807f88ff42cf2f0b24acea76f26a3b636462510901255fa97ced24bc5"
+    },
+    {
+      "path": "Crossing-Packages/duval/package-manifest.json",
+      "bytes": 248,
+      "sha256": "38db4fd937869bad8d096c9a8811e0fc474645047f0cbfe536ce6dac62f34709"
+    },
+    {
+      "path": "Crossing-Packages/eastland/Production/eastland-production-crossings.geojson",
+      "bytes": 70387,
+      "sha256": "990ee55a5856bee62fac35c545815d3bbcf981a42f3c9f423a225348ac4c104f"
+    },
+    {
+      "path": "Crossing-Packages/eastland/package-manifest.json",
+      "bytes": 257,
+      "sha256": "664f53f7702983be7dd2637ee2f723d16abc218b5c6a15b3eb63fd8bb86428d8"
+    },
+    {
+      "path": "Crossing-Packages/ector/Production/ector-production-crossings.geojson",
+      "bytes": 93199,
+      "sha256": "ccd21c56311b80a38ba9542724bd82223277dc5305c6ebb8866df43cfc11c0b3"
+    },
+    {
+      "path": "Crossing-Packages/ector/package-manifest.json",
+      "bytes": 248,
+      "sha256": "6bc30bfbe0aa019e874dc99073bd02847d09b0405a6802dfda5179b6e5fd6c2f"
+    },
+    {
+      "path": "Crossing-Packages/edwards/Production/edwards-production-crossings.geojson",
+      "bytes": 180,
+      "sha256": "27f19de2c6b2918436d4ecd1e1bb99b4d14b71bfc69e50bc2397b261569815dd"
+    },
+    {
+      "path": "Crossing-Packages/edwards/package-manifest.json",
+      "bytes": 253,
+      "sha256": "44880729979098a294002359f4f9b0e24062fef326136a2f41ba733fa250532c"
+    },
+    {
+      "path": "Crossing-Packages/el-paso/Production/el-paso-production-crossings.geojson",
+      "bytes": 411787,
+      "sha256": "a56a5eb0292870d5e2306b2a351bb8d31e40fb8043e37835576b8871e56828f0"
+    },
+    {
+      "path": "Crossing-Packages/el-paso/package-manifest.json",
+      "bytes": 255,
+      "sha256": "fa610429f1f2c9fd2a6f08ee94ceeaf0b15e24a340ee3c36330820f5afb2da9a"
+    },
+    {
+      "path": "Crossing-Packages/ellis/Production/ellis-production-crossings.geojson",
+      "bytes": 339062,
+      "sha256": "fd6c201e878d31bd578abd709a75e0f52d58f060ae3559a56976211ca83c3f2f"
+    },
+    {
+      "path": "Crossing-Packages/ellis/package-manifest.json",
+      "bytes": 249,
+      "sha256": "cf1aa929f05c85e8fcf51a4c990c29f6dbb07e62e6d7c7090b8602df1edb1baa"
+    },
+    {
+      "path": "Crossing-Packages/erath/Production/erath-production-crossings.geojson",
+      "bytes": 192251,
+      "sha256": "efc42c23227b8ed0ca6b8cb8152a234001ffba7eeac68668b413c61bb458a73d"
+    },
+    {
+      "path": "Crossing-Packages/erath/package-manifest.json",
+      "bytes": 248,
+      "sha256": "765319fa3ea58d382d9803bc5f30bf612f408100d8541815bf9c5584f381f4aa"
+    },
+    {
+      "path": "Crossing-Packages/falls/Production/falls-production-crossings.geojson",
+      "bytes": 141876,
+      "sha256": "ec241e97c7e446a1f5075b3dd62251432a2bb073b89ab1e1cb61a1c28402c03c"
+    },
+    {
+      "path": "Crossing-Packages/falls/package-manifest.json",
+      "bytes": 248,
+      "sha256": "af6fbafd78bcc0b228651b180fccdd182cbbb1fb8ac0914d38cc33035c490e11"
+    },
+    {
+      "path": "Crossing-Packages/fannin/Production/fannin-production-crossings.geojson",
+      "bytes": 153834,
+      "sha256": "31eb31b357936b942ba151c93c3361e17d7ae60c3a5140ddf4d97ff87db7aa74"
+    },
+    {
+      "path": "Crossing-Packages/fannin/package-manifest.json",
+      "bytes": 251,
+      "sha256": "3df08d031ff43e63c44e92de60f0b2df456970c9aa5d6d21ccc7b5c8a95fb307"
+    },
+    {
+      "path": "Crossing-Packages/fisher/Production/fisher-production-crossings.geojson",
+      "bytes": 20770,
+      "sha256": "daa419ed8f87afce70c6344cc2027111c95c26b3f2cf70eb72db1efac60c3aa2"
+    },
+    {
+      "path": "Crossing-Packages/fisher/package-manifest.json",
+      "bytes": 251,
+      "sha256": "33f67e4630098bc9ac887cfeddf139835b04d49546e082f610ec72ba21aee75f"
+    },
+    {
+      "path": "Crossing-Packages/floyd/Production/floyd-production-crossings.geojson",
+      "bytes": 2143,
+      "sha256": "25851edf84a9313c70f75279391a8cd2efe75def38b0d95cdb80fbd858cd27ab"
+    },
+    {
+      "path": "Crossing-Packages/floyd/package-manifest.json",
+      "bytes": 247,
+      "sha256": "a4be897bd9063a3f9ac1b493561010192f448b02170a048c968aba469ae9fb35"
+    },
+    {
+      "path": "Crossing-Packages/foard/Production/foard-production-crossings.geojson",
+      "bytes": 178,
+      "sha256": "a37dd0bcca7649471b6bb0815b27e913d0ea0cc9ba0480f37fc1930db12e7d36"
+    },
+    {
+      "path": "Crossing-Packages/foard/package-manifest.json",
+      "bytes": 247,
+      "sha256": "983837ac5eb54e374843a9a9661bba453ba5e359d6671e5deb941b370fd816b7"
+    },
+    {
+      "path": "Crossing-Packages/franklin/Production/franklin-production-crossings.geojson",
+      "bytes": 41480,
+      "sha256": "28176ffe0a1f22a0b5e4c86f95a6c8c48e1bce67cc10c3bdc0a80ed1cd89996f"
+    },
+    {
+      "path": "Crossing-Packages/franklin/package-manifest.json",
+      "bytes": 257,
+      "sha256": "27ae615a15b3e1fceb11a894c64e56fd7e1b52dacd32547911fa702944b42ade"
+    },
+    {
+      "path": "Crossing-Packages/freestone/Production/freestone-production-crossings.geojson",
+      "bytes": 154602,
+      "sha256": "99f34baad2a745339eaf0a656e34190dd2d6085bbf5ff3708b4cd0d6989ce643"
+    },
+    {
+      "path": "Crossing-Packages/freestone/package-manifest.json",
+      "bytes": 260,
+      "sha256": "b77084191aae41d460345ca5da99b3e577859dd1d029724a13ee4dbf26bb36ba"
+    },
+    {
+      "path": "Crossing-Packages/frio/Production/frio-production-crossings.geojson",
+      "bytes": 74386,
+      "sha256": "90b7c88f158fd6287362d12b475bfbeec0afe7e5057a124faa16e9c0438d13be"
+    },
+    {
+      "path": "Crossing-Packages/frio/package-manifest.json",
+      "bytes": 245,
+      "sha256": "c743116925718d6be7a56888377f3cd9422e41715a805055b371f67f89a1a4e7"
+    },
+    {
+      "path": "Crossing-Packages/gaines/Production/gaines-production-crossings.geojson",
+      "bytes": 10521,
+      "sha256": "17a01c44f948ed07ac6e2ce6ff8f232fc1ed043489490a82e05322cff9a06785"
+    },
+    {
+      "path": "Crossing-Packages/gaines/package-manifest.json",
+      "bytes": 250,
+      "sha256": "23ac66a32d941466fd10ac69ef44e78b43847d70eb2abd0413fcd49140b9038e"
+    },
+    {
+      "path": "Crossing-Packages/garza/Production/garza-production-crossings.geojson",
+      "bytes": 37549,
+      "sha256": "b1c038b4d27fe32eb953b3763603936ccd264a5ffda05f6ac1d4b41a116ca53e"
+    },
+    {
+      "path": "Crossing-Packages/garza/package-manifest.json",
+      "bytes": 248,
+      "sha256": "9109f54a6e200d54ac206938d9910ab93524c90e7d5413820de1464711342a98"
+    },
+    {
+      "path": "Crossing-Packages/gillespie/Production/gillespie-production-crossings.geojson",
+      "bytes": 182,
+      "sha256": "2084e60a155e52feac1de8757a32106aebcc3201e65c9c92f199cd4f6e062f12"
+    },
+    {
+      "path": "Crossing-Packages/gillespie/package-manifest.json",
+      "bytes": 259,
+      "sha256": "31e84f09e7a9db1f65b2ed3a844b5b4e6a83c517efc96079be5fd47b105db6b8"
+    },
+    {
+      "path": "Crossing-Packages/glasscock/Production/glasscock-production-crossings.geojson",
+      "bytes": 182,
+      "sha256": "0755d0802307768083213d994cc4db1db9b47d28e8ee020f2b3d132086341940"
+    },
+    {
+      "path": "Crossing-Packages/glasscock/package-manifest.json",
+      "bytes": 259,
+      "sha256": "b09fdf912acffe10f82e25fcd26d3c27835fafd252ed92fc9a8dda3a3ba4c93e"
+    },
+    {
+      "path": "Crossing-Packages/goliad/Production/goliad-production-crossings.geojson",
+      "bytes": 18630,
+      "sha256": "d63962ee329e7b6c1fd2afe236ea33f7b130da427985b07d75081b92fc3e125f"
+    },
+    {
+      "path": "Crossing-Packages/goliad/package-manifest.json",
+      "bytes": 250,
+      "sha256": "cf85a744e52a93e5f07a58832efa312c282a2681e7585b67b8967cc84f4c0160"
+    },
+    {
+      "path": "Crossing-Packages/gonzales/Production/gonzales-production-crossings.geojson",
+      "bytes": 84708,
+      "sha256": "d48a9ead9a680b6e7f76159c2c3228bf1710002ab4a74e92839f857bb2a1ca7e"
+    },
+    {
+      "path": "Crossing-Packages/gonzales/package-manifest.json",
+      "bytes": 257,
+      "sha256": "e8eb4106cb2f9dd5e6d040190bf2b67577c0fdd05f98a762a50cf1dab26c82f9"
+    },
+    {
+      "path": "Crossing-Packages/gray/Production/gray-production-crossings.geojson",
+      "bytes": 52037,
+      "sha256": "c7534b14db6dd588a01e0e7c6d6b1ef30fdce43af71e1c23384d737b3f781202"
+    },
+    {
+      "path": "Crossing-Packages/gray/package-manifest.json",
+      "bytes": 245,
+      "sha256": "4970c724e4122953225f1ac51a10b63038bead6aaf7c133320d67a140d8c6663"
+    },
+    {
+      "path": "Crossing-Packages/grayson/Production/grayson-production-crossings.geojson",
+      "bytes": 498172,
+      "sha256": "31e4906ba80352da84792bb545847bbb817eda1ce696e0235c819db7a6dad488"
+    },
+    {
+      "path": "Crossing-Packages/grayson/package-manifest.json",
+      "bytes": 255,
+      "sha256": "ed8673a8122c2d4a29ccd3ae81388896f6c73613f37260bb8cf54a00f5ef1ce1"
+    },
+    {
+      "path": "Crossing-Packages/gregg/Production/gregg-production-crossings.geojson",
+      "bytes": 176285,
+      "sha256": "b69e76681f29a046b13a7c720882a4fd80d4dc3e9e7064dd7f8a10d6eb4aaace"
+    },
+    {
+      "path": "Crossing-Packages/gregg/package-manifest.json",
+      "bytes": 248,
+      "sha256": "b45eb441369381cc7eff3abaa16691516002d112b1fbdb2b295e1da2803fe3f1"
+    },
+    {
+      "path": "Crossing-Packages/guadalupe/Production/guadalupe-production-crossings.geojson",
+      "bytes": 120651,
+      "sha256": "2d2e8c7720c84c21457730cbf55f167ce3b8b38675f2e3b67176b07c9ccf8db6"
+    },
+    {
+      "path": "Crossing-Packages/guadalupe/package-manifest.json",
+      "bytes": 260,
+      "sha256": "1bab22cb6d778b1d319bea32f77722f25d421f1b38a10624d285872f9ba62796"
+    },
+    {
+      "path": "Crossing-Packages/hale/Production/hale-production-crossings.geojson",
+      "bytes": 267760,
+      "sha256": "62ff5bd3a4e46eccf791e27d56debba67805857f77ee6e5c155105a43de8fa1e"
+    },
+    {
+      "path": "Crossing-Packages/hale/package-manifest.json",
+      "bytes": 246,
+      "sha256": "7261555831fd5397044f80decf52506651cf023a6f6c7dfe21a345c5349af197"
+    },
+    {
+      "path": "Crossing-Packages/hall/Production/hall-production-crossings.geojson",
+      "bytes": 31214,
+      "sha256": "c8a5a92af440dd21abbaaf0f2ea7f4554706be1b203b7d67aeaff95623437fa3"
+    },
+    {
+      "path": "Crossing-Packages/hall/package-manifest.json",
+      "bytes": 245,
+      "sha256": "0b4f5ab94b56a5da813fe649628c1f908f30741c06e3398381dba27a09c51a26"
+    },
+    {
+      "path": "Crossing-Packages/hamilton/Production/hamilton-production-crossings.geojson",
+      "bytes": 2081,
+      "sha256": "b83528d74336daab508e17b0ea27d0abf8020066b613f557660dbda4dc55c07e"
+    },
+    {
+      "path": "Crossing-Packages/hamilton/package-manifest.json",
+      "bytes": 256,
+      "sha256": "e8533afe97904c4b6802d668ade1c33c803b9a9be0435408b49de4cc6608752b"
+    },
+    {
+      "path": "Crossing-Packages/hansford/Production/hansford-production-crossings.geojson",
+      "bytes": 16357,
+      "sha256": "f2aa8d19baae1c0f31df689f1a85e5fea0792a397a7d4e8ef20b4c65c3796227"
+    },
+    {
+      "path": "Crossing-Packages/hansford/package-manifest.json",
+      "bytes": 256,
+      "sha256": "19e9c2ec77a0c2ca3817bb1de8632e5fad4a6ddf9ccb6962d0cba90c57e07a87"
+    },
+    {
+      "path": "Crossing-Packages/hardeman/Production/hardeman-production-crossings.geojson",
+      "bytes": 81265,
+      "sha256": "0dbce28a7fd6aebb4076b414ac066b431d17bc10715eb59bbd2b3b0ab64c257c"
+    },
+    {
+      "path": "Crossing-Packages/hardeman/package-manifest.json",
+      "bytes": 257,
+      "sha256": "a46357fbee811d7a4e9f87e9659300ecabe8fc3dab9514374b4917981572f108"
+    },
+    {
+      "path": "Crossing-Packages/harrison/Production/harrison-production-crossings.geojson",
+      "bytes": 180310,
+      "sha256": "d770b63579ffbd7ec26e5d3d368f81944d3e94c7b277427fed1fd0b4f4c4eec2"
+    },
+    {
+      "path": "Crossing-Packages/harrison/package-manifest.json",
+      "bytes": 257,
+      "sha256": "848b732e47df08fde11f731ca94c9979175160a1852cb793b651dd20c012877b"
+    },
+    {
+      "path": "Crossing-Packages/hartley/Production/hartley-production-crossings.geojson",
+      "bytes": 83026,
+      "sha256": "520dfd04a5e89156200e01451e84d0ad6afe8f313b95422ea745f8dacc07ed13"
+    },
+    {
+      "path": "Crossing-Packages/hartley/package-manifest.json",
+      "bytes": 254,
+      "sha256": "83c2b2ac24eef76275d543e726b7cd2f670a7794969ea2763afce92fb946a073"
+    },
+    {
+      "path": "Crossing-Packages/haskell/Production/haskell-production-crossings.geojson",
+      "bytes": 180,
+      "sha256": "c548eef4130e61d674d9550c734f072b98375a540376f02e0fd207ece1dc316f"
+    },
+    {
+      "path": "Crossing-Packages/haskell/package-manifest.json",
+      "bytes": 253,
+      "sha256": "96fd1d59fb3cf41a8288e3b5e9a76da9f2fb7a046c7d0bab578733c2427c9996"
+    },
+    {
+      "path": "Crossing-Packages/hays/Production/hays-production-crossings.geojson",
+      "bytes": 110221,
+      "sha256": "751593212e4f801ca7a3c3d036d73250222b4b648d8c51aec8674c074e7b9ef1"
+    },
+    {
+      "path": "Crossing-Packages/hays/package-manifest.json",
+      "bytes": 245,
+      "sha256": "8dc35ab01cc81b08759e884a56405f87e8b5e3fb9db0c1e61cd2b95896cfae00"
+    },
+    {
+      "path": "Crossing-Packages/hemphill/Production/hemphill-production-crossings.geojson",
+      "bytes": 26890,
+      "sha256": "d69c6666d5df7ddc6c678b1bb48c9bd7bae863715148c65b354979a4f86cca5f"
+    },
+    {
+      "path": "Crossing-Packages/hemphill/package-manifest.json",
+      "bytes": 257,
+      "sha256": "b7d9bf84b772a7218b7cb67f592cbd28a6e6d83fe1219f252663933645268ce8"
+    },
+    {
+      "path": "Crossing-Packages/henderson/Production/henderson-production-crossings.geojson",
+      "bytes": 175454,
+      "sha256": "315135bfd1b231ae3338fdbe421c181f99c0d134fb4d3ace3676d878490ca10a"
+    },
+    {
+      "path": "Crossing-Packages/henderson/package-manifest.json",
+      "bytes": 260,
+      "sha256": "fc3c91be30b60263b0834a33fe2b2b91a464707bdcae535216d49d9c268d61ac"
+    },
+    {
+      "path": "Crossing-Packages/hidalgo/Production/hidalgo-production-crossings.geojson",
+      "bytes": 553153,
+      "sha256": "c51e96119bba4aae3d545087d4507b1932d752377b6ece62e0be6967ea91c51e"
+    },
+    {
+      "path": "Crossing-Packages/hidalgo/package-manifest.json",
+      "bytes": 255,
+      "sha256": "5f162654f458c06953220409215eac8c18ea6a8f74d1641463928883397ede83"
+    },
+    {
+      "path": "Crossing-Packages/hill/Production/hill-production-crossings.geojson",
+      "bytes": 93370,
+      "sha256": "d76065257edd585224dac843750199bc258ce7d1b4560b28a31f7636eb3e79dd"
+    },
+    {
+      "path": "Crossing-Packages/hill/package-manifest.json",
+      "bytes": 245,
+      "sha256": "5550c24bb8dbb22502b34f7abbb505de83384041153726b3a763b5341f2b9a26"
+    },
+    {
+      "path": "Crossing-Packages/hockley/Production/hockley-production-crossings.geojson",
+      "bytes": 107794,
+      "sha256": "c565e54b6df62ace0c9ca1ffed09b88f5189470594c9c389520e06ec1c53c350"
+    },
+    {
+      "path": "Crossing-Packages/hockley/package-manifest.json",
+      "bytes": 254,
+      "sha256": "bf3bbeb106e3979afa13a614a1f1792f3b5893547b81e3fc192a366c51c369a7"
+    },
+    {
+      "path": "Crossing-Packages/hood/Production/hood-production-crossings.geojson",
+      "bytes": 115479,
+      "sha256": "2b5aa647219aeda1704db4800bdcd5858a920e5fec9bdd81efc35b7332fd5e02"
+    },
+    {
+      "path": "Crossing-Packages/hood/package-manifest.json",
+      "bytes": 245,
+      "sha256": "2fad515962f59aa09111b6380b38047d3e1c351710db618815c08ac5d0664cc6"
+    },
+    {
+      "path": "Crossing-Packages/hopkins/Production/hopkins-production-crossings.geojson",
+      "bytes": 223701,
+      "sha256": "58695a141dcefdc0d0c6b2a3f3e2f7091ceb95289842ef490889253e7ad24afd"
+    },
+    {
+      "path": "Crossing-Packages/hopkins/package-manifest.json",
+      "bytes": 255,
+      "sha256": "764d239ad8ef315840a4ed710a0348cd017ab93093a2b1fb9b1b21bda78dca40"
+    },
+    {
+      "path": "Crossing-Packages/houston/Production/houston-production-crossings.geojson",
+      "bytes": 91119,
+      "sha256": "8bcd1228f8708464f41650b34114d3e543d3c93c190811868c842a8c720997fd"
+    },
+    {
+      "path": "Crossing-Packages/houston/package-manifest.json",
+      "bytes": 254,
+      "sha256": "ca3bc44b591da10635203077b2ed46dd58f12b98daf743f97ede4b4b6225f4e8"
+    },
+    {
+      "path": "Crossing-Packages/howard/Production/howard-production-crossings.geojson",
+      "bytes": 66118,
+      "sha256": "64ebe3624b8321ad46e7334beadb4a68f21ac4454ff2d417522dbdcb40f9169a"
+    },
+    {
+      "path": "Crossing-Packages/howard/package-manifest.json",
+      "bytes": 251,
+      "sha256": "ae85f0f717cd5366bb7a500794ea6a0423e2f940fc56b7081726e644dcbb5421"
+    },
+    {
+      "path": "Crossing-Packages/hudspeth/Production/hudspeth-production-crossings.geojson",
+      "bytes": 53970,
+      "sha256": "65024ce91c08729ff4041cd4b1b7241308dec51564da47b9a43f2229506037ee"
+    },
+    {
+      "path": "Crossing-Packages/hudspeth/package-manifest.json",
+      "bytes": 257,
+      "sha256": "b51308067412bf4b43b71db1fc2ecb1a077d8ad1afb72aabaeda2ec8bbf5a460"
+    },
+    {
+      "path": "Crossing-Packages/hunt/Production/hunt-production-crossings.geojson",
+      "bytes": 336056,
+      "sha256": "7beec30b7b6065153951828b2806db47cdb47020dc713618cfd0d2982e7cffe9"
+    },
+    {
+      "path": "Crossing-Packages/hunt/package-manifest.json",
+      "bytes": 246,
+      "sha256": "e8a13c6b90b212d3474b5e2fb3ada5c5543b49ac1a5220c99978b1e455b6e114"
+    },
+    {
+      "path": "Crossing-Packages/hutchinson/Production/hutchinson-production-crossings.geojson",
+      "bytes": 70194,
+      "sha256": "7d67b6f79f5787fc660afd3a0c316a56810a1135fdf8a99a52ade99db87a8944"
+    },
+    {
+      "path": "Crossing-Packages/hutchinson/package-manifest.json",
+      "bytes": 263,
+      "sha256": "b9651c3711bc101f67c9fa59937131294a349c5dc71b68a6f0c95d9f300750c9"
+    },
+    {
+      "path": "Crossing-Packages/irion/Production/irion-production-crossings.geojson",
+      "bytes": 113430,
+      "sha256": "48ff6150e5c3cbade415eb13db4dce5fd7220121c26bb726afb8904ea42ef447"
+    },
+    {
+      "path": "Crossing-Packages/irion/package-manifest.json",
+      "bytes": 248,
+      "sha256": "96471d56db885935ff0e0bb9d0b2431c48b5730749dd1751b03417ce198fa971"
+    },
+    {
+      "path": "Crossing-Packages/jack/Production/jack-production-crossings.geojson",
+      "bytes": 177,
+      "sha256": "bf930fca7c0249372c964aca27567d63418afc8961637a32ea0d7236b33cd73b"
+    },
+    {
+      "path": "Crossing-Packages/jack/package-manifest.json",
+      "bytes": 244,
+      "sha256": "d53f87f674032a54077f265b19ba218ab7429127a4d511f4a0ede1279858c009"
+    },
+    {
+      "path": "Crossing-Packages/jeff-davis/Production/jeff-davis-production-crossings.geojson",
+      "bytes": 20747,
+      "sha256": "c7805245895adc2bf2330c7fb7f95f19ba25e13cfc4589c4aded3d507c4b8778"
+    },
+    {
+      "path": "Crossing-Packages/jeff-davis/package-manifest.json",
+      "bytes": 263,
+      "sha256": "2b087706bf55288ff9430eb53dc77e60a307b8e134c449ce6cfb5752fba21070"
+    },
+    {
+      "path": "Crossing-Packages/jim-hogg/Production/jim-hogg-production-crossings.geojson",
+      "bytes": 35233,
+      "sha256": "a24bd8d66b30c999f28f30524d75d90bc42a16cf51cede906479116750a51916"
+    },
+    {
+      "path": "Crossing-Packages/jim-hogg/package-manifest.json",
+      "bytes": 257,
+      "sha256": "f46f542cb2faf8d8fef1430634e8b354da4e189d46f9304966614f08df187e40"
+    },
+    {
+      "path": "Crossing-Packages/jim-wells/Production/jim-wells-production-crossings.geojson",
+      "bytes": 130426,
+      "sha256": "67ad12c2791746445faae139668dddea1addf89b62a0806f5a8af0b1fa19b975"
+    },
+    {
+      "path": "Crossing-Packages/jim-wells/package-manifest.json",
+      "bytes": 260,
+      "sha256": "27c5c59649d13bf4b4e3705a83826121df45426ada7057764d1bd05528fdbc20"
+    },
+    {
+      "path": "Crossing-Packages/johnson/Production/johnson-production-crossings.geojson",
+      "bytes": 349043,
+      "sha256": "b8a3bd2f5c6b91a8b5d30ef376ff93b6bd01bf837ba5fb930a4c276b95761f7f"
+    },
+    {
+      "path": "Crossing-Packages/johnson/package-manifest.json",
+      "bytes": 255,
+      "sha256": "8cc033bd5c500a7a5fc1e6c9bdaf686bf9dd97b00535232ca80d092f48e1e913"
+    },
+    {
+      "path": "Crossing-Packages/jones/Production/jones-production-crossings.geojson",
+      "bytes": 178,
+      "sha256": "2c75207dea12799cbb84f23eeabad3d9914f7012831ed32e714e7e696ddcb18f"
+    },
+    {
+      "path": "Crossing-Packages/jones/package-manifest.json",
+      "bytes": 247,
+      "sha256": "569334ba395555eaaa191345334ea63fbdf189c564950646815aac100986d925"
+    },
+    {
+      "path": "Crossing-Packages/karnes/Production/karnes-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "c21388843c21f8a00f0ba0f4a0a68b38742af0055fc8fb88cb9ba7c931d11945"
+    },
+    {
+      "path": "Crossing-Packages/karnes/package-manifest.json",
+      "bytes": 250,
+      "sha256": "822c36146f841410956ddcc574c8a090b45a8a5981d1c79b1888aa2510443419"
+    },
+    {
+      "path": "Crossing-Packages/kaufman/Production/kaufman-production-crossings.geojson",
+      "bytes": 92949,
+      "sha256": "97aed00c9c1f8e0b798d23d0943ceb0088561f58d1ec7ff4a8049ee69272f724"
+    },
+    {
+      "path": "Crossing-Packages/kaufman/package-manifest.json",
+      "bytes": 254,
+      "sha256": "91a79fe542723e49bce033db4acd58b694a2bd12e258d07cb7aaecf8cbd7f615"
+    },
+    {
+      "path": "Crossing-Packages/kendall/Production/kendall-production-crossings.geojson",
+      "bytes": 180,
+      "sha256": "a48365e6bbf044d04ad1dd0ab51d384e2d78eb166b121c0be0e9949efafe43f5"
+    },
+    {
+      "path": "Crossing-Packages/kendall/package-manifest.json",
+      "bytes": 253,
+      "sha256": "0519e5d37270922864a4eb3180685dd5e7cb4139b2feeaa5caf31563ba4c2885"
+    },
+    {
+      "path": "Crossing-Packages/kenedy/Production/kenedy-production-crossings.geojson",
+      "bytes": 45335,
+      "sha256": "b3ff2184f8da788b3092becd0474dde41f89fb5c71683a0bf4072c7bc6d80ca8"
+    },
+    {
+      "path": "Crossing-Packages/kenedy/package-manifest.json",
+      "bytes": 251,
+      "sha256": "9e4bda682c1bdb0598e682ec2e2169fed149a959b6ac856d817e98123de27820"
+    },
+    {
+      "path": "Crossing-Packages/kent/Production/kent-production-crossings.geojson",
+      "bytes": 177,
+      "sha256": "f84a5858dae68ede7e7081b576046646d4ff5d0735b3dc23244004a59fdb2fb5"
+    },
+    {
+      "path": "Crossing-Packages/kent/package-manifest.json",
+      "bytes": 244,
+      "sha256": "50b1640c0fc565555a28b2950c3e4062b0bf324e934f17d8eea3207955c20c34"
+    },
+    {
+      "path": "Crossing-Packages/kerr/Production/kerr-production-crossings.geojson",
+      "bytes": 177,
+      "sha256": "3e33c76e5cad3625df6b5a92039b269972ef8039ab0b17ffb6797b8035e6da5c"
+    },
+    {
+      "path": "Crossing-Packages/kerr/package-manifest.json",
+      "bytes": 244,
+      "sha256": "a47d31b3b95c92a623c9cb0f180417d3bf010022cc465581d44fc8fa4255694f"
+    },
+    {
+      "path": "Crossing-Packages/kimble/Production/kimble-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "399db5a66515761cb86df02e767751cdf0e01abde9ca8c870e413e9554807c95"
+    },
+    {
+      "path": "Crossing-Packages/kimble/package-manifest.json",
+      "bytes": 250,
+      "sha256": "b74e51daad1d3a6e406dd2ec4dfa49445b4531fc3a948fc0757cd90026269a36"
+    },
+    {
+      "path": "Crossing-Packages/king/Production/king-production-crossings.geojson",
+      "bytes": 177,
+      "sha256": "5ff727f42c64ac9c13f4ddd4c21cc4a015323ab65aa02c9399a0ca2a30276768"
+    },
+    {
+      "path": "Crossing-Packages/king/package-manifest.json",
+      "bytes": 244,
+      "sha256": "a5e1edde8707f54248b677010d1d9a700ab2a5ac0cb650f00aa5aef822f0adb5"
+    },
+    {
+      "path": "Crossing-Packages/kinney/Production/kinney-production-crossings.geojson",
+      "bytes": 41200,
+      "sha256": "88cc627afd728d1a3f1e7f386c738f81b8499dfc97b82ec081bc0631d65e1b80"
+    },
+    {
+      "path": "Crossing-Packages/kinney/package-manifest.json",
+      "bytes": 251,
+      "sha256": "d7e13a4cc9a313961f95ef6ffac73c4245712f824065436288e3771421e1645f"
+    },
+    {
+      "path": "Crossing-Packages/kleberg/Production/kleberg-production-crossings.geojson",
+      "bytes": 62584,
+      "sha256": "c8484c71875d10503620e604de635d0786ca9110651ef98ecd70cb6c6fd412f3"
+    },
+    {
+      "path": "Crossing-Packages/kleberg/package-manifest.json",
+      "bytes": 254,
+      "sha256": "b3282cea8ae554f9e0b02f334f5ac071e6d13bf0a465836ccae9e96bd3f87bb0"
+    },
+    {
+      "path": "Crossing-Packages/knox/Production/knox-production-crossings.geojson",
+      "bytes": 177,
+      "sha256": "af041a0aa2838a8da5c4c7f1234b884cdef48c593ad7904960ba858d2d9e5a0d"
+    },
+    {
+      "path": "Crossing-Packages/knox/package-manifest.json",
+      "bytes": 244,
+      "sha256": "01c576382f29d0886538c25177f2db21cdca2b51c6b185e9de56a105a1ad07a0"
+    },
+    {
+      "path": "Crossing-Packages/la-salle/Production/la-salle-production-crossings.geojson",
+      "bytes": 88732,
+      "sha256": "6d7db29ee64681f8c4a3f641b222b38234c48786b015f811b433ca5454f71254"
+    },
+    {
+      "path": "Crossing-Packages/la-salle/package-manifest.json",
+      "bytes": 257,
+      "sha256": "5cf0d8996e6401ed0d6a0a0c47bfe77bdc9352cbc68075a910a5c84d78d4fb18"
+    },
+    {
+      "path": "Crossing-Packages/lamar/Production/lamar-production-crossings.geojson",
+      "bytes": 87135,
+      "sha256": "53ce29d6e39ecd5e0f7281509a512cc80aac8d0cdb7358dd3887673ed729df51"
+    },
+    {
+      "path": "Crossing-Packages/lamar/package-manifest.json",
+      "bytes": 248,
+      "sha256": "69894ff906dc11ee4f6ec0452ffbe00094852f8399b2d7571f2e284891328d3b"
+    },
+    {
+      "path": "Crossing-Packages/lamb/Production/lamb-production-crossings.geojson",
+      "bytes": 60391,
+      "sha256": "d998bb53c4734dbab2b6cb056307bbbe714471b665088595d204ec861b20e6eb"
+    },
+    {
+      "path": "Crossing-Packages/lamb/package-manifest.json",
+      "bytes": 245,
+      "sha256": "fd8fb78a9e842ab5584e1532649d39376090d6e6564f0faad6fb772ed42d4c95"
+    },
+    {
+      "path": "Crossing-Packages/lampasas/Production/lampasas-production-crossings.geojson",
+      "bytes": 85506,
+      "sha256": "503d3d29d43a09e2cdc659511067e40a463f06af82fcbb674254f127339e0f01"
+    },
+    {
+      "path": "Crossing-Packages/lampasas/package-manifest.json",
+      "bytes": 257,
+      "sha256": "862f320388776a435398d2037a290bdad7d31f4950dd76770d9d4d3f804f05fb"
+    },
+    {
+      "path": "Crossing-Packages/lee/Production/lee-production-crossings.geojson",
+      "bytes": 97072,
+      "sha256": "c03ce0fe553bbd5221e6af002c969c8efa6db42e67341c6c9955c823aa61df0b"
+    },
+    {
+      "path": "Crossing-Packages/lee/package-manifest.json",
+      "bytes": 242,
+      "sha256": "b3957bce5f9a4854eb5406b24137356e38c7ff0b382d7d630c5a584670b113d3"
+    },
+    {
+      "path": "Crossing-Packages/leon/Production/leon-production-crossings.geojson",
+      "bytes": 168670,
+      "sha256": "4d8ff8eebdb52ff735dac215977acd1edf5b271a413f9a284dbcda1f85c9de43"
+    },
+    {
+      "path": "Crossing-Packages/leon/package-manifest.json",
+      "bytes": 245,
+      "sha256": "72695ddc0dbbb7699920dfe3f216c7fab9c6b52d273e558a6ddf8988fe49ebe2"
+    },
+    {
+      "path": "Crossing-Packages/limestone/Production/limestone-production-crossings.geojson",
+      "bytes": 93216,
+      "sha256": "395a11526a8d60356f0ba31d41b94a94603ac73ea5e71382488824c0a9a5bd52"
+    },
+    {
+      "path": "Crossing-Packages/limestone/package-manifest.json",
+      "bytes": 260,
+      "sha256": "ba0ae120f0d236e079b0784e598e881369ca165af2344725aa4d3ec760fa02dc"
+    },
+    {
+      "path": "Crossing-Packages/lipscomb/Production/lipscomb-production-crossings.geojson",
+      "bytes": 43051,
+      "sha256": "cdbb66ec5f4645829628581d1b2eedea87fcb7d319375ea099285236661ce975"
+    },
+    {
+      "path": "Crossing-Packages/lipscomb/package-manifest.json",
+      "bytes": 257,
+      "sha256": "faeaa5eca916c135230f3d386dd558ac0abcce076323fb638bc03f1ffbee7137"
+    },
+    {
+      "path": "Crossing-Packages/live-oak/Production/live-oak-production-crossings.geojson",
+      "bytes": 116050,
+      "sha256": "c2a4389632509948e979c5fcc7ab363912866c546cf957e06621ab36c7ae11f3"
+    },
+    {
+      "path": "Crossing-Packages/live-oak/package-manifest.json",
+      "bytes": 257,
+      "sha256": "009f22ab33b85873cb15626be7cf14ebb78c6871b2be196d3586140a0bb7f7dd"
+    },
+    {
+      "path": "Crossing-Packages/llano/Production/llano-production-crossings.geojson",
+      "bytes": 26834,
+      "sha256": "e6d81c402099210e94733e54d96346f3c0517fda80a4be3ee47e85860f4a695c"
+    },
+    {
+      "path": "Crossing-Packages/llano/package-manifest.json",
+      "bytes": 248,
+      "sha256": "f66db3e49ece2e7dcc2402a4fe4cc0eee7c5a2bbd007e8e230969477d7aa9f44"
+    },
+    {
+      "path": "Crossing-Packages/loving/Production/loving-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "16fec28975e662bc83d6c9b60ce5b1587e45d5efece714c7cf6af02bf72be711"
+    },
+    {
+      "path": "Crossing-Packages/loving/package-manifest.json",
+      "bytes": 250,
+      "sha256": "23d98915c7a580995bc212249e35562aab81076e13ea2369c835e4048bf44d2f"
+    },
+    {
+      "path": "Crossing-Packages/lubbock/Production/lubbock-production-crossings.geojson",
+      "bytes": 360694,
+      "sha256": "f0441896ed4f7bec53a78b4a35f9623c58aaa0d714c66b79e6fc21adba043c5f"
+    },
+    {
+      "path": "Crossing-Packages/lubbock/package-manifest.json",
+      "bytes": 255,
+      "sha256": "efd9df231b9ac0e5815483f05b2bd41275ca2cfe1cd2a9b0f38a8646e7fc2e12"
+    },
+    {
+      "path": "Crossing-Packages/lynn/Production/lynn-production-crossings.geojson",
+      "bytes": 177,
+      "sha256": "63beaf602a75ab5ce056020cb8c75046271470037a0f51dba98731407eb2ccd4"
+    },
+    {
+      "path": "Crossing-Packages/lynn/package-manifest.json",
+      "bytes": 244,
+      "sha256": "081bc0b7a457c2e3cd9cbe091c1fec2a4bf1ce374e14f2993f7f6280b0cffe46"
+    },
+    {
+      "path": "Crossing-Packages/madison/Production/madison-production-crossings.geojson",
+      "bytes": 33149,
+      "sha256": "b9bc4524874b771b51da39870fd352936eef88b2692673cd250a5dd479673085"
+    },
+    {
+      "path": "Crossing-Packages/madison/package-manifest.json",
+      "bytes": 254,
+      "sha256": "ce0d5e42a499a5184bfea56d53123d044d865862bb130ce948ea6f67dd64ceff"
+    },
+    {
+      "path": "Crossing-Packages/marion/Production/marion-production-crossings.geojson",
+      "bytes": 91302,
+      "sha256": "98d7e425f151d02dbdea7a203ee7c9875cc205528b60bfdb2df556388a54f367"
+    },
+    {
+      "path": "Crossing-Packages/marion/package-manifest.json",
+      "bytes": 251,
+      "sha256": "c754a0b7f53d1958cbf5ff3fd153cc3f594d35aff29338f5197de9450f780adf"
+    },
+    {
+      "path": "Crossing-Packages/martin/Production/martin-production-crossings.geojson",
+      "bytes": 24939,
+      "sha256": "09378d735a9c2dde2c1c57048ac1f79920ee51734ecac09b90fa300f79786be2"
+    },
+    {
+      "path": "Crossing-Packages/martin/package-manifest.json",
+      "bytes": 251,
+      "sha256": "52512ade9b98265e41062c7a4c696b734f3142703fd25a325773c2b2ffaedb6c"
+    },
+    {
+      "path": "Crossing-Packages/mason/Production/mason-production-crossings.geojson",
+      "bytes": 178,
+      "sha256": "55fadbf5b5fe3bf6c73a28b9a7ede247b2b06b210b4ea44a76e2be95de110483"
+    },
+    {
+      "path": "Crossing-Packages/mason/package-manifest.json",
+      "bytes": 247,
+      "sha256": "06fe6dade50388f936385c938f27b80c453535e2ff56dba08c4345d5942b1b55"
+    },
+    {
+      "path": "Crossing-Packages/maverick/Production/maverick-production-crossings.geojson",
+      "bytes": 53961,
+      "sha256": "fd11e7935a4f095a63fa3f42fd776f51f7db9310e218b13ec386625f20f5cab4"
+    },
+    {
+      "path": "Crossing-Packages/maverick/package-manifest.json",
+      "bytes": 257,
+      "sha256": "a83265e5d65be7aa7e86816fe8687a43063cf0cdd9dfc881c9aa84e3e890d711"
+    },
+    {
+      "path": "Crossing-Packages/mcculloch/Production/mcculloch-production-crossings.geojson",
+      "bytes": 70340,
+      "sha256": "5fae5adc19f5615e6f1bd30ddad0f569561abc046c9756083311b4eeda8b94af"
+    },
+    {
+      "path": "Crossing-Packages/mcculloch/package-manifest.json",
+      "bytes": 260,
+      "sha256": "8d4f613b695a8493f616983f3a8bf99928fd6ae0ec0de7a5fff4fe3d2989b959"
+    },
+    {
+      "path": "Crossing-Packages/mclennan/Production/mclennan-production-crossings.geojson",
+      "bytes": 351702,
+      "sha256": "dbec3e9b339122728562818d7b17c619845fe63f160f07d45fbf1ccac7735134"
+    },
+    {
+      "path": "Crossing-Packages/mclennan/package-manifest.json",
+      "bytes": 258,
+      "sha256": "3e506b69af1fd01c00778d9558bcdf9bb3276d2f011ccb9f084542927d687a42"
+    },
+    {
+      "path": "Crossing-Packages/mcmullen/Production/mcmullen-production-crossings.geojson",
+      "bytes": 181,
+      "sha256": "133b911c53764b222c705e4e3ec4beb5377a61655462c0de020281d195fab564"
+    },
+    {
+      "path": "Crossing-Packages/mcmullen/package-manifest.json",
+      "bytes": 256,
+      "sha256": "0e723b1f05b8c762ec57eba7a09ef2b12c51373ae929be58c03b40cff2721e7a"
+    },
+    {
+      "path": "Crossing-Packages/medina/Production/medina-production-crossings.geojson",
+      "bytes": 148797,
+      "sha256": "efa2269705fbd65521d0e838f32744ecd31279e6a6987d0bdc7078e5b95e3aed"
+    },
+    {
+      "path": "Crossing-Packages/medina/package-manifest.json",
+      "bytes": 251,
+      "sha256": "1abc67bdf9d579993c3d433ff56c7b86a03018e8e8bdbb3f5caac93f04e4545e"
+    },
+    {
+      "path": "Crossing-Packages/menard/Production/menard-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "8d969ba30130f27bf92dcd9f8d76b19509d7b45932c0782c78941f31f35d15d1"
+    },
+    {
+      "path": "Crossing-Packages/menard/package-manifest.json",
+      "bytes": 250,
+      "sha256": "39dd00322c3ebae5e2315cd85d874bd1317273e7246896d35d52161ec73447bd"
+    },
+    {
+      "path": "Crossing-Packages/midland/Production/midland-production-crossings.geojson",
+      "bytes": 72937,
+      "sha256": "97b951cdbd16fe67eb1c1be03eeded430332e268c69d3141ed07223fe4810d42"
+    },
+    {
+      "path": "Crossing-Packages/midland/package-manifest.json",
+      "bytes": 254,
+      "sha256": "c7b406a9add2391b3128b6bc7a8cb44d27298858d8f93c139f3dca29a355f189"
+    },
+    {
+      "path": "Crossing-Packages/milam/Production/milam-production-crossings.geojson",
+      "bytes": 225293,
+      "sha256": "247bea6c575023a664be332d3c66c049ca2c2f5864bc6fcb41bbb92a066806d3"
+    },
+    {
+      "path": "Crossing-Packages/milam/package-manifest.json",
+      "bytes": 249,
+      "sha256": "85d62c878b588affbf7a167838e99ec50aa204e739aebbe85a930b5935f5543b"
+    },
+    {
+      "path": "Crossing-Packages/mills/Production/mills-production-crossings.geojson",
+      "bytes": 103568,
+      "sha256": "5cc94360207c067efcf960270ce2ed9d6583a85f5f9bef4eca75624b7a3ef201"
+    },
+    {
+      "path": "Crossing-Packages/mills/package-manifest.json",
+      "bytes": 248,
+      "sha256": "4e27634924c72be7f63b0ba96b40c62c740578c1b498b9cb50f4a0712e549d46"
+    },
+    {
+      "path": "Crossing-Packages/mitchell/Production/mitchell-production-crossings.geojson",
+      "bytes": 45468,
+      "sha256": "8304b68e5e96ee1fb119e19b39c575a332e31576ada25297cbb89067e60aa3fd"
+    },
+    {
+      "path": "Crossing-Packages/mitchell/package-manifest.json",
+      "bytes": 257,
+      "sha256": "a0976e3f1311c34bab46293a90655f42752fc6d218beb402c2152ea66e211f09"
+    },
+    {
+      "path": "Crossing-Packages/montague/Production/montague-production-crossings.geojson",
+      "bytes": 132344,
+      "sha256": "1c1a949931770a38c733c1754fb00443ef2dd874837aee1fb3134565fe1375ea"
+    },
+    {
+      "path": "Crossing-Packages/montague/package-manifest.json",
+      "bytes": 257,
+      "sha256": "ed3a8ce54e7c26c6a6cc856a783b5d340a0af11b096f3fa87c71e38b2c95aec4"
+    },
+    {
+      "path": "Crossing-Packages/moore/Production/moore-production-crossings.geojson",
+      "bytes": 134430,
+      "sha256": "84c174e072b4e57d9968f7bc88fda7e0c1ec0ff3977215db409ecdfc92dafbb0"
+    },
+    {
+      "path": "Crossing-Packages/moore/package-manifest.json",
+      "bytes": 248,
+      "sha256": "04f17f5620886c43a515da076d1646c36f9a825fcc02729131f6dda51e9d4eaf"
+    },
+    {
+      "path": "Crossing-Packages/morris/Production/morris-production-crossings.geojson",
+      "bytes": 80360,
+      "sha256": "fbd4eaeae066c8eb8da6616e0506d140941be9c9d1f6bf281494fe0d95c135a7"
+    },
+    {
+      "path": "Crossing-Packages/morris/package-manifest.json",
+      "bytes": 251,
+      "sha256": "687e84f49a5a0d8696dc94a49311678b2142f185091b0d9a769d12200d136fc7"
+    },
+    {
+      "path": "Crossing-Packages/motley/Production/motley-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "5e456f5795ab868901a525afc8784cd9f5796e0573d37aa63450b2dc19d98e60"
+    },
+    {
+      "path": "Crossing-Packages/motley/package-manifest.json",
+      "bytes": 250,
+      "sha256": "4ae984cfafc75ddc0bd5ee8537c067fc237c2af168893fd10c45902aee5cb7de"
+    },
+    {
+      "path": "Crossing-Packages/nacogdoches/Production/nacogdoches-production-crossings.geojson",
+      "bytes": 107721,
+      "sha256": "55ab063961a405e7b87748fd4649a18cf5ba2d37a8c24996e341a486b1685f58"
+    },
+    {
+      "path": "Crossing-Packages/nacogdoches/package-manifest.json",
+      "bytes": 266,
+      "sha256": "b09e9c054020b1f1037ab6fe64aca66837fb4ca5ecbfccb1dc74824381b1a83d"
+    },
+    {
+      "path": "Crossing-Packages/navarro/Production/navarro-production-crossings.geojson",
+      "bytes": 239743,
+      "sha256": "275e558dfeb74153a654baabdc7ef1f78a3d03a82bddf41224b10d2fe76d2c4e"
+    },
+    {
+      "path": "Crossing-Packages/navarro/package-manifest.json",
+      "bytes": 255,
+      "sha256": "410e710bbeb60ef616a5b56b62a6d662ddd04b9d88db085f85f506c36f3128ba"
+    },
+    {
+      "path": "Crossing-Packages/nolan/Production/nolan-production-crossings.geojson",
+      "bytes": 171444,
+      "sha256": "f57b951f2a5011671a5a67e2fa699f419570479478278c1c6010248a0d3c3080"
+    },
+    {
+      "path": "Crossing-Packages/nolan/package-manifest.json",
+      "bytes": 248,
+      "sha256": "02f25707af6b70ecb198d2282f10cb76e215c3738e2deb6b9717806675527597"
+    },
+    {
+      "path": "Crossing-Packages/nueces/Production/nueces-production-crossings.geojson",
+      "bytes": 406772,
+      "sha256": "3c9f8c97a41b3509f6efc1a69bcc3531c9a3cb21508aa4e14ad6ee64d60ef432"
+    },
+    {
+      "path": "Crossing-Packages/nueces/package-manifest.json",
+      "bytes": 252,
+      "sha256": "b75fab5f1628e4d4167ac5a2d47f76e6300d4e8fcef5a98fab94c8101f7411b1"
+    },
+    {
+      "path": "Crossing-Packages/ochiltree/Production/ochiltree-production-crossings.geojson",
+      "bytes": 16432,
+      "sha256": "de417a81917329e8c124b98cd39d67690ece92a58380bee6a4ee42dddd0a9c8f"
+    },
+    {
+      "path": "Crossing-Packages/ochiltree/package-manifest.json",
+      "bytes": 259,
+      "sha256": "6bac235edf31d831b02067ef0c6e9242ee1f9e18331d26985ef3c2c8e3825407"
+    },
+    {
+      "path": "Crossing-Packages/oldham/Production/oldham-production-crossings.geojson",
+      "bytes": 10388,
+      "sha256": "fb1c0a0022f0b6631e1dd3ffea8c1dba6dffee1243a66f578283c6b726e21a45"
+    },
+    {
+      "path": "Crossing-Packages/oldham/package-manifest.json",
+      "bytes": 250,
+      "sha256": "7184123467fead9f8ecfc17ed985ee5a54a71b29f9034fdd1581f65bdcb0779c"
+    },
+    {
+      "path": "Crossing-Packages/palo-pinto/Production/palo-pinto-production-crossings.geojson",
+      "bytes": 59765,
+      "sha256": "f4415893bb0594fc5b94159c40245f9e65d95ec7ec8d6d649673948868236e79"
+    },
+    {
+      "path": "Crossing-Packages/palo-pinto/package-manifest.json",
+      "bytes": 263,
+      "sha256": "eae57c4eb00cf2c89fdac9f9d234b1e1a83612ad9f62084336a9c1a9192d482b"
+    },
+    {
+      "path": "Crossing-Packages/panola/Production/panola-production-crossings.geojson",
+      "bytes": 84987,
+      "sha256": "ef55e46faa04403ba3ae916ec5096f22691fb93336bd42018c749271d562db6d"
+    },
+    {
+      "path": "Crossing-Packages/panola/package-manifest.json",
+      "bytes": 251,
+      "sha256": "6eb5384d61c3adcbe36637fd357dd5262f045c62e03761f4d43b3ad6ebba9fab"
+    },
+    {
+      "path": "Crossing-Packages/parker/Production/parker-production-crossings.geojson",
+      "bytes": 80470,
+      "sha256": "62067a18dc62c146e2fa217c7f0387f66dcee1a1888e671da0f39cdd02eb46da"
+    },
+    {
+      "path": "Crossing-Packages/parker/package-manifest.json",
+      "bytes": 251,
+      "sha256": "784349fe3d75909212ebdf2d1875012beb65faca5184919a57b29fd65cc9bde5"
+    },
+    {
+      "path": "Crossing-Packages/parmer/Production/parmer-production-crossings.geojson",
+      "bytes": 77061,
+      "sha256": "8e6ceec37b33147b1c055e544e0fdb0503e8fffcf3f405aa14f58de843aba798"
+    },
+    {
+      "path": "Crossing-Packages/parmer/package-manifest.json",
+      "bytes": 251,
+      "sha256": "a7e3f4987ddc473da98a80f8da92446a80bb800bf1ad6eef107857249854e7fa"
+    },
+    {
+      "path": "Crossing-Packages/pecos/Production/pecos-production-crossings.geojson",
+      "bytes": 91303,
+      "sha256": "0af313ed4b8246ef8f5bfa295eaf8e86c8f63f2ef0092d17f01962856fc59c33"
+    },
+    {
+      "path": "Crossing-Packages/pecos/package-manifest.json",
+      "bytes": 248,
+      "sha256": "529b06f7f7ed408aadabc7b05b2d167e6e322bb41dedbca3abded17c72d57671"
+    },
+    {
+      "path": "Crossing-Packages/potter/Production/potter-production-crossings.geojson",
+      "bytes": 260736,
+      "sha256": "b32d2031b35010b1f23c3dad293d49dcbdee6b7db66beb030d057083172f623d"
+    },
+    {
+      "path": "Crossing-Packages/potter/package-manifest.json",
+      "bytes": 252,
+      "sha256": "eecdfcb88fe027d32b6126dab00c3c314dfc1ce58efbba5fb9a835e98e97d89b"
+    },
+    {
+      "path": "Crossing-Packages/presidio/Production/presidio-production-crossings.geojson",
+      "bytes": 90934,
+      "sha256": "bbb928c3db362bb4eb8411814ed01e97bcb1559a04a1f0f2119c3dd84116df29"
+    },
+    {
+      "path": "Crossing-Packages/presidio/package-manifest.json",
+      "bytes": 257,
+      "sha256": "3c3bb50218fd717e605601a9b72b4b8d76a5059916385b94df27c70463cf5cc2"
+    },
+    {
+      "path": "Crossing-Packages/production-crossing-manifest.json",
+      "bytes": 74620,
+      "sha256": "ac7d97a698ccddb4a61d55ecf18ec8d184f8abef1e43c8cef018d525ad0454a6"
+    },
+    {
+      "path": "Crossing-Packages/rains/Production/rains-production-crossings.geojson",
+      "bytes": 178,
+      "sha256": "ef443c49dcdf5d6ac178b5b549d9b73884d687d460dc188428a485f598f64bce"
+    },
+    {
+      "path": "Crossing-Packages/rains/package-manifest.json",
+      "bytes": 247,
+      "sha256": "4dfe8f2dfeb199bdd188b0d01ca3b72c7d7fe1be4e104b083caaa82dc45eaf1e"
+    },
+    {
+      "path": "Crossing-Packages/randall/Production/randall-production-crossings.geojson",
+      "bytes": 93983,
+      "sha256": "94bd347af8db033305b28e3da2c275196ad0a9d1fc63b3e2447c626caa1fa0fa"
+    },
+    {
+      "path": "Crossing-Packages/randall/package-manifest.json",
+      "bytes": 254,
+      "sha256": "d994f3de291f4168c67c47fbaed208696ca48a4a7a0e56cd1c1a8b4e181ac89f"
+    },
+    {
+      "path": "Crossing-Packages/reagan/Production/reagan-production-crossings.geojson",
+      "bytes": 45570,
+      "sha256": "0b921ad1eee2c373b10fce25195c7f5cdd2aba6fc588b060db870f573616eb7f"
+    },
+    {
+      "path": "Crossing-Packages/reagan/package-manifest.json",
+      "bytes": 251,
+      "sha256": "5dd9d95af131203a3d9ab6f4195d786b6483848a9c0a721cf58b0fdf0ad35305"
+    },
+    {
+      "path": "Crossing-Packages/real/Production/real-production-crossings.geojson",
+      "bytes": 177,
+      "sha256": "b71766d2f9f2695867d8c5a287f1b044b2923faf1343ca799cb3c49809cb7968"
+    },
+    {
+      "path": "Crossing-Packages/real/package-manifest.json",
+      "bytes": 244,
+      "sha256": "3c55676e20c453f533387879bda9adfb11567e102e363888879c82b46c1bc7ea"
+    },
+    {
+      "path": "Crossing-Packages/red-river/Production/red-river-production-crossings.geojson",
+      "bytes": 182,
+      "sha256": "fd027ab1b11d9ec3f48ace1bf806fe9a81da3afa89d4f2fd0cec9afd7d0f06f4"
+    },
+    {
+      "path": "Crossing-Packages/red-river/package-manifest.json",
+      "bytes": 259,
+      "sha256": "eab02cd5232ed4a9d842691c33a09383bf6eb440c001109dd64aac24928fd76d"
+    },
+    {
+      "path": "Crossing-Packages/reeves/Production/reeves-production-crossings.geojson",
+      "bytes": 138108,
+      "sha256": "b99644cfe0bedd71d953185441443efcc8267336ae3394a7c0ec3c8c8d3b175a"
+    },
+    {
+      "path": "Crossing-Packages/reeves/package-manifest.json",
+      "bytes": 251,
+      "sha256": "64bc854f1d16318d0f74761f63afdb3611e6baedc5d3e78ff650716b6f218600"
+    },
+    {
+      "path": "Crossing-Packages/refugio/Production/refugio-production-crossings.geojson",
+      "bytes": 80780,
+      "sha256": "428d79b35c7ce7d2d319cb9888d162a0a536f0de555394801b3c881d2f205b16"
+    },
+    {
+      "path": "Crossing-Packages/refugio/package-manifest.json",
+      "bytes": 254,
+      "sha256": "8094f8668d31736786535014dff5e9d1fa80e1f6b97cf189072fa2c008a3a2e7"
+    },
+    {
+      "path": "Crossing-Packages/roberts/Production/roberts-production-crossings.geojson",
+      "bytes": 20800,
+      "sha256": "b1a759c1fea24778bbdff69cca5555d6d9d96f72d688da046aa58410cfebbafb"
+    },
+    {
+      "path": "Crossing-Packages/roberts/package-manifest.json",
+      "bytes": 254,
+      "sha256": "32db012ea4d6a908002efa3866f9448e9288b0dd3583c249fde606830f4e5187"
+    },
+    {
+      "path": "Crossing-Packages/robertson/Production/robertson-production-crossings.geojson",
+      "bytes": 320009,
+      "sha256": "5f24be9bb38d0c49253c20908dd7694431f92aab475311d9a01a423da545e202"
+    },
+    {
+      "path": "Crossing-Packages/robertson/package-manifest.json",
+      "bytes": 261,
+      "sha256": "d646c5f52fb92e106547447a7e070177e8b42a97077f3db69c591bdd37d39c8c"
+    },
+    {
+      "path": "Crossing-Packages/rockwall/Production/rockwall-production-crossings.geojson",
+      "bytes": 37632,
+      "sha256": "3a4d8b1a173ff62d3a1361abce49d4c2dfe8b3e7ed9411bda368b3b851e8c672"
+    },
+    {
+      "path": "Crossing-Packages/rockwall/package-manifest.json",
+      "bytes": 257,
+      "sha256": "ec032ef32fa012d2f862f1911c5a2d60bfec35bc0fc3c716a2525303e11ed43b"
+    },
+    {
+      "path": "Crossing-Packages/runnels/Production/runnels-production-crossings.geojson",
+      "bytes": 99509,
+      "sha256": "d358692b1735e24dac459727599a9bf0888726bc99593722876811dfc6ec02bb"
+    },
+    {
+      "path": "Crossing-Packages/runnels/package-manifest.json",
+      "bytes": 254,
+      "sha256": "247792992cb4c746216c4ac88d54f5a0db954846ba160b1952a1a058b625fa24"
+    },
+    {
+      "path": "Crossing-Packages/rusk/Production/rusk-production-crossings.geojson",
+      "bytes": 119503,
+      "sha256": "142c5663a847c3e3872204d47d588392a51f657297f8c66bb20d38817f405f66"
+    },
+    {
+      "path": "Crossing-Packages/rusk/package-manifest.json",
+      "bytes": 245,
+      "sha256": "72b151e7b50d66c1bde257cea0847a0876bd720c5390d8e6be307f6f49175064"
+    },
+    {
+      "path": "Crossing-Packages/sabine/Production/sabine-production-crossings.geojson",
+      "bytes": 33162,
+      "sha256": "59dfc2c32d6db274288589dabbd533e60972dd1070a4a55767fb604106bd339a"
+    },
+    {
+      "path": "Crossing-Packages/sabine/package-manifest.json",
+      "bytes": 251,
+      "sha256": "d193f03b1cca868decf6d9c968c4fb85ebff4d03545e5229cd2ac2edb620386f"
+    },
+    {
+      "path": "Crossing-Packages/san-augustine/Production/san-augustine-production-crossings.geojson",
+      "bytes": 33493,
+      "sha256": "e5f5b394a6446142fc6296f189ee51ebed070df3ddf31f9a6a79d4d3820b5de8"
+    },
+    {
+      "path": "Crossing-Packages/san-augustine/package-manifest.json",
+      "bytes": 272,
+      "sha256": "9817ee20bd53d75722f1d4d18ca0f2de84d8a8130d2e20654754e84cdb8a8ec3"
+    },
+    {
+      "path": "Crossing-Packages/san-patricio/Production/san-patricio-production-crossings.geojson",
+      "bytes": 280610,
+      "sha256": "d5c21c8a806c612bd016d3ffc52460e802a11e04232d8323cde3a3dfb7de3722"
+    },
+    {
+      "path": "Crossing-Packages/san-patricio/package-manifest.json",
+      "bytes": 270,
+      "sha256": "ea3534716223391d1ba1d489c9a0fc6f647ab86849edddf5270c3bc0fedadf68"
+    },
+    {
+      "path": "Crossing-Packages/san-saba/Production/san-saba-production-crossings.geojson",
+      "bytes": 97717,
+      "sha256": "5e5c29d8895fbd02b78a3fc13b3b09753c943b2603f4ba45e477acad379f8227"
+    },
+    {
+      "path": "Crossing-Packages/san-saba/package-manifest.json",
+      "bytes": 257,
+      "sha256": "57cbe99a92864c94464d68fabb94d3d2a7f2315f5de54f6825c1ffcfe9d79f21"
+    },
+    {
+      "path": "Crossing-Packages/schleicher/Production/schleicher-production-crossings.geojson",
+      "bytes": 183,
+      "sha256": "74c4435989941965a83686f5f4999b091638dc8952f6886f136959bb0cfce58d"
+    },
+    {
+      "path": "Crossing-Packages/schleicher/package-manifest.json",
+      "bytes": 262,
+      "sha256": "01733447f12bf49e9e8dc27bdc11e9a44b5d3e3f083b9ba3cd34eeb8e3de5c95"
+    },
+    {
+      "path": "Crossing-Packages/scurry/Production/scurry-production-crossings.geojson",
+      "bytes": 76568,
+      "sha256": "40e66a246e375d7bc7c3ef6dc8f54b1d08cd46cce2ebe0c05c8a1209a9d43d14"
+    },
+    {
+      "path": "Crossing-Packages/scurry/package-manifest.json",
+      "bytes": 251,
+      "sha256": "4fcfa8b5e3b3558f072283fd15c76e9ad26376d21b52256b1379d54a2741d4ef"
+    },
+    {
+      "path": "Crossing-Packages/shackelford/Production/shackelford-production-crossings.geojson",
+      "bytes": 184,
+      "sha256": "a5eb29b97da9cc362d0a005fcfcc6a74a8661c88e13b259e1acf7441499e3c3d"
+    },
+    {
+      "path": "Crossing-Packages/shackelford/package-manifest.json",
+      "bytes": 265,
+      "sha256": "550aa5e90a76807c7eb01bf655f868a4b388fb26198dbf8644ac82c621601a20"
+    },
+    {
+      "path": "Crossing-Packages/shelby/Production/shelby-production-crossings.geojson",
+      "bytes": 181821,
+      "sha256": "e2c642ded39a3ea68b85d233118ee4c15188f507f693c47e0de0997043b1a73a"
+    },
+    {
+      "path": "Crossing-Packages/shelby/package-manifest.json",
+      "bytes": 251,
+      "sha256": "b7e20ae5b4f8d771e9adb492d5ed8d3c7d9b4bc19a6dbd1944b3f441ae614f96"
+    },
+    {
+      "path": "Crossing-Packages/sherman/Production/sherman-production-crossings.geojson",
+      "bytes": 87226,
+      "sha256": "bcb532eb9775f4ec6cfd15bb3b042aa9d615bcca47bbdc1d80288804353ab914"
+    },
+    {
+      "path": "Crossing-Packages/sherman/package-manifest.json",
+      "bytes": 254,
+      "sha256": "6ef38c9355779447548a2c4264efdee7c7de36347af77264f97677c984fe1bc1"
+    },
+    {
+      "path": "Crossing-Packages/smith/Production/smith-production-crossings.geojson",
+      "bytes": 254453,
+      "sha256": "ac9250e601e67cdf88ececb51d4dbb76ea101e7b8c3a5b044bcb85ac950b57f4"
+    },
+    {
+      "path": "Crossing-Packages/smith/package-manifest.json",
+      "bytes": 249,
+      "sha256": "bec798e3248f246a40ffc1ca8da5c455dc7cf1f598dca33b729bb5753f64e496"
+    },
+    {
+      "path": "Crossing-Packages/somervell/Production/somervell-production-crossings.geojson",
+      "bytes": 2106,
+      "sha256": "1297b4bf46fd42d5340d5c248fcbcf57b9ec040b4c093b114451610c5e081e03"
+    },
+    {
+      "path": "Crossing-Packages/somervell/package-manifest.json",
+      "bytes": 259,
+      "sha256": "dc831ee6778730365eca7dfbecea13ee6ce602dc81497f1ee3799fe13ac9516e"
+    },
+    {
+      "path": "Crossing-Packages/starr/Production/starr-production-crossings.geojson",
+      "bytes": 57937,
+      "sha256": "9db077c91c9fb67c07c265a8a0be1f3ed6816db4a918d4327ace1b1286079183"
+    },
+    {
+      "path": "Crossing-Packages/starr/package-manifest.json",
+      "bytes": 248,
+      "sha256": "234453f5ffd4f9ffdd5d0a0a23de54732e9bdd9a9e33e048a85c19bd72d0a3b6"
+    },
+    {
+      "path": "Crossing-Packages/stephens/Production/stephens-production-crossings.geojson",
+      "bytes": 2079,
+      "sha256": "2278cdb5a3b3426dee17c42049009d0887b6ea2ff959b4f0d669919d6181803c"
+    },
+    {
+      "path": "Crossing-Packages/stephens/package-manifest.json",
+      "bytes": 256,
+      "sha256": "fc6f0a8b5791874449000b06638341620a23ee9e35ad61d76498838647cc9b85"
+    },
+    {
+      "path": "Crossing-Packages/sterling/Production/sterling-production-crossings.geojson",
+      "bytes": 181,
+      "sha256": "832237663bfa1fde21246c96a923690b7f95126232662dec69380ac3c0193f4a"
+    },
+    {
+      "path": "Crossing-Packages/sterling/package-manifest.json",
+      "bytes": 256,
+      "sha256": "c9ef71caad83d95f64e3ff9a2a9706acda52b41e65b263e912dd8a0e3cabeaee"
+    },
+    {
+      "path": "Crossing-Packages/stonewall/Production/stonewall-production-crossings.geojson",
+      "bytes": 182,
+      "sha256": "b6e2f8aa2342fd4c030e8233b60ec7de311ed04c98bcdd3c839d3cc97eac25fe"
+    },
+    {
+      "path": "Crossing-Packages/stonewall/package-manifest.json",
+      "bytes": 259,
+      "sha256": "54abbcc7a6a80ae187a8ea4126830998cc0aa4929049a0c4972eeec31ef14cd5"
+    },
+    {
+      "path": "Crossing-Packages/sutton/Production/sutton-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "ea9839f97f998dccc50e5d2a23f13d2ca092ac84e8a1089d7179868f54dbd873"
+    },
+    {
+      "path": "Crossing-Packages/sutton/package-manifest.json",
+      "bytes": 250,
+      "sha256": "3638ebfbca05f390edd04bad202f0509fb8f6326023160cbcb9b3a84eaff0a84"
+    },
+    {
+      "path": "Crossing-Packages/swisher/Production/swisher-production-crossings.geojson",
+      "bytes": 93756,
+      "sha256": "97258d1d7e08e5bd3cc46eeba2d10596fe6f6a79837bf26dbc55258733e5d7bd"
+    },
+    {
+      "path": "Crossing-Packages/swisher/package-manifest.json",
+      "bytes": 254,
+      "sha256": "2ff4ad3cb176fb8b7d8fc8d26bddfd6e1b6dbc60ff015baebc73236ce5f7ba56"
+    },
+    {
+      "path": "Crossing-Packages/tarrant/Production/tarrant-production-crossings.geojson",
+      "bytes": 1282129,
+      "sha256": "d8b485582f454e0ee10bcd5e29cb0b1e28e909b73adefe9d538d8c8002244fdb"
+    },
+    {
+      "path": "Crossing-Packages/tarrant/package-manifest.json",
+      "bytes": 255,
+      "sha256": "5ef979885ea4e214113a64333e2811ee5eee9dab5d4d1bce9f81d4ff0c32cdb7"
+    },
+    {
+      "path": "Crossing-Packages/taylor/Production/taylor-production-crossings.geojson",
+      "bytes": 219421,
+      "sha256": "cbf3df42df6ca6f6e98cd01c670e200f9438180220bb501c6815460e76c30abb"
+    },
+    {
+      "path": "Crossing-Packages/taylor/package-manifest.json",
+      "bytes": 252,
+      "sha256": "e76855f8f9e73fdc596c7f574db24386b4ca0c1e276f9c655131c74251e4c2a8"
+    },
+    {
+      "path": "Crossing-Packages/terrell/Production/terrell-production-crossings.geojson",
+      "bytes": 55703,
+      "sha256": "c281bb0fcb2efc3b5fd3bcc8e319514f5b62906eb72b19dac728bd53c6c4ae44"
+    },
+    {
+      "path": "Crossing-Packages/terrell/package-manifest.json",
+      "bytes": 254,
+      "sha256": "822dd105ad0c03c18adc51b600b34bfee73204083a2296f4f74b0607fae91141"
+    },
+    {
+      "path": "Crossing-Packages/terry/Production/terry-production-crossings.geojson",
+      "bytes": 95614,
+      "sha256": "10976b22d8c3acb71421474452decf3848e99a69b6826b9321c1fabf433a5fdb"
+    },
+    {
+      "path": "Crossing-Packages/terry/package-manifest.json",
+      "bytes": 248,
+      "sha256": "958855c6be4a52404684327e613992639760027909f970a94d04fd4f5f11eeef"
+    },
+    {
+      "path": "Crossing-Packages/throckmorton/Production/throckmorton-production-crossings.geojson",
+      "bytes": 185,
+      "sha256": "95091983f8914c606d548571aa5ebe6a3d8480d31b68372a5961f6e89d162e33"
+    },
+    {
+      "path": "Crossing-Packages/throckmorton/package-manifest.json",
+      "bytes": 268,
+      "sha256": "e762f23583b9627acf60a187b62c9302f1b26f34470b96ef7ef182d264e66b9e"
+    },
+    {
+      "path": "Crossing-Packages/titus/Production/titus-production-crossings.geojson",
+      "bytes": 129774,
+      "sha256": "b70c06052bf5793a1ff0563edfa26fae8a5402206a19474d68bf4589de6a1536"
+    },
+    {
+      "path": "Crossing-Packages/titus/package-manifest.json",
+      "bytes": 248,
+      "sha256": "19895246152deb4691a226311db991291b2ad9703b56d774a0f621ef1200e566"
+    },
+    {
+      "path": "Crossing-Packages/tom-green/Production/tom-green-production-crossings.geojson",
+      "bytes": 202585,
+      "sha256": "fdf72fa0b9ccc82a44371828dda5f8d0db4598df591bb939c3a2667dc808ec5d"
+    },
+    {
+      "path": "Crossing-Packages/tom-green/package-manifest.json",
+      "bytes": 260,
+      "sha256": "72583a91a025402b7d3cc36f384600989321564aac6cc80e3ccd83cefd6d13e5"
+    },
+    {
+      "path": "Crossing-Packages/travis/Production/travis-production-crossings.geojson",
+      "bytes": 365305,
+      "sha256": "5f2ad93628d7089d8c5d9dd5b548073f440cbe52db3a0bb1523736e834ee5b57"
+    },
+    {
+      "path": "Crossing-Packages/travis/package-manifest.json",
+      "bytes": 252,
+      "sha256": "e7a79fd2530338a673f727d2e8c4b073a39b2ddee4909de316c46aea30386014"
+    },
+    {
+      "path": "Crossing-Packages/trinity/Production/trinity-production-crossings.geojson",
+      "bytes": 27000,
+      "sha256": "a5d8918625ce56188e516e3fdd27d4015c637bd30a837c5049b6dba53571b90e"
+    },
+    {
+      "path": "Crossing-Packages/trinity/package-manifest.json",
+      "bytes": 254,
+      "sha256": "db4824d8f63eb998a6f840a6b33f7683ece9c3d9c3a2546b4900243e62eda26e"
+    },
+    {
+      "path": "Crossing-Packages/upshur/Production/upshur-production-crossings.geojson",
+      "bytes": 89114,
+      "sha256": "dc78f21ca57f24a4245d4b1f0ddc588195e3e37542ac88910a41772de58e365d"
+    },
+    {
+      "path": "Crossing-Packages/upshur/package-manifest.json",
+      "bytes": 251,
+      "sha256": "85a701ef5b98e219eb8612db32d10ea79f45213a2df67b4b2a7138f1b339a39a"
+    },
+    {
+      "path": "Crossing-Packages/upton/Production/upton-production-crossings.geojson",
+      "bytes": 45628,
+      "sha256": "0237df97bff4fbc1086e74c0d9927198b1c78dac1b0734c571f0946a050de072"
+    },
+    {
+      "path": "Crossing-Packages/upton/package-manifest.json",
+      "bytes": 248,
+      "sha256": "1e243a3e88a0b56f033dbb2b95cdfa46e7052925be780ac07814edc52ddfabbe"
+    },
+    {
+      "path": "Crossing-Packages/uvalde/Production/uvalde-production-crossings.geojson",
+      "bytes": 90800,
+      "sha256": "df6e6f4909c85aa7a3c7bf58289ae1a854f890ac4606bc66726d5b2f491f27ab"
+    },
+    {
+      "path": "Crossing-Packages/uvalde/package-manifest.json",
+      "bytes": 251,
+      "sha256": "b3dca8914658c15d87fa96e2a00b74b5e19455f26b0cb03cbf491d532bcc25fa"
+    },
+    {
+      "path": "Crossing-Packages/val-verde/Production/val-verde-production-crossings.geojson",
+      "bytes": 97027,
+      "sha256": "06eb2e8adab15e91f7c6c5849b4abcb39457070631faf9335e8b2d3cf8a8d183"
+    },
+    {
+      "path": "Crossing-Packages/val-verde/package-manifest.json",
+      "bytes": 260,
+      "sha256": "371aff93590c573a2d107cbdb260adb80ea3bbf8d4418b03a1c151a7d7cffaea"
+    },
+    {
+      "path": "Crossing-Packages/van-zandt/Production/van-zandt-production-crossings.geojson",
+      "bytes": 60110,
+      "sha256": "d2910179244d3b63a05edc5f8a590392058c4b75ef635c7f63eb3ed19d920861"
+    },
+    {
+      "path": "Crossing-Packages/van-zandt/package-manifest.json",
+      "bytes": 260,
+      "sha256": "74f64a4bb901d5914e5e13201e3674772bde5cb8028ff323970616bed4b5fe25"
+    },
+    {
+      "path": "Crossing-Packages/victoria/Production/victoria-production-crossings.geojson",
+      "bytes": 401843,
+      "sha256": "b887aa43298d08b051cbe4ba3a948819313c67d42c1626924ed79a810f861a14"
+    },
+    {
+      "path": "Crossing-Packages/victoria/package-manifest.json",
+      "bytes": 258,
+      "sha256": "99d23c010d9d87444cc836e17e7d912005d5ed9bbcf59bd96c0fb9a1640cf214"
+    },
+    {
+      "path": "Crossing-Packages/ward/Production/ward-production-crossings.geojson",
+      "bytes": 47594,
+      "sha256": "cd98fef0f26caae3438dd35e533805b99f48587b84f65c10769c3b9031510cc2"
+    },
+    {
+      "path": "Crossing-Packages/ward/package-manifest.json",
+      "bytes": 245,
+      "sha256": "1c643705abdc0cd56551d518d51aefed795fcdaa2b4b9f52bf39961790e87062"
+    },
+    {
+      "path": "Crossing-Packages/webb/Production/webb-production-crossings.geojson",
+      "bytes": 338049,
+      "sha256": "8e4d684fb64b11fde921331b17007a687826ef262b01c78b7cd8abe144c264ed"
+    },
+    {
+      "path": "Crossing-Packages/webb/package-manifest.json",
+      "bytes": 246,
+      "sha256": "78ab8ee9a3cbdbd27bbceada5d24f83c3098fee0c9dd52e85055d2d6f6442bb9"
+    },
+    {
+      "path": "Crossing-Packages/wheeler/Production/wheeler-production-crossings.geojson",
+      "bytes": 180,
+      "sha256": "c1f966c89216d565f11ccc905baa2e140ade15e3deca877973a39fd8562077c7"
+    },
+    {
+      "path": "Crossing-Packages/wheeler/package-manifest.json",
+      "bytes": 253,
+      "sha256": "74ce6cee17d12be90f73b329b98e20bad287f2ad46ee4e5c3a4a495c6c8807fd"
+    },
+    {
+      "path": "Crossing-Packages/wichita/Production/wichita-production-crossings.geojson",
+      "bytes": 246605,
+      "sha256": "f4951441e8ef99d7459ed8f7900c182089f2b3e6608d88ef511de7ab407fc6c6"
+    },
+    {
+      "path": "Crossing-Packages/wichita/package-manifest.json",
+      "bytes": 255,
+      "sha256": "6c4d8a5ad706a119f3fbfa6596fd1d85eb11214e8c3e125422308124afe9f1d3"
+    },
+    {
+      "path": "Crossing-Packages/wilbarger/Production/wilbarger-production-crossings.geojson",
+      "bytes": 87401,
+      "sha256": "19c6fc77a01dc6c4fcff612c31dd75d5bc80694af2becd29b9f7a8a47010d434"
+    },
+    {
+      "path": "Crossing-Packages/wilbarger/package-manifest.json",
+      "bytes": 260,
+      "sha256": "cf8527e3dfa3af8c48bd6cbb6dd8ab948f67222498901b29ce51138f3f974599"
+    },
+    {
+      "path": "Crossing-Packages/willacy/Production/willacy-production-crossings.geojson",
+      "bytes": 89822,
+      "sha256": "3446742a8d95076b736d063ea2bad949a43e3402581b5dfeb6c087633f1fcfbe"
+    },
+    {
+      "path": "Crossing-Packages/willacy/package-manifest.json",
+      "bytes": 254,
+      "sha256": "75026fc8457220a9884c2628405dfcbc8e2e02383b67722286279a151a4821ca"
+    },
+    {
+      "path": "Crossing-Packages/williamson/Production/williamson-production-crossings.geojson",
+      "bytes": 344270,
+      "sha256": "ddbb7549f4b959045289a6f4536b986ab0f4597cee4cd99716c02b793a7b0454"
+    },
+    {
+      "path": "Crossing-Packages/williamson/package-manifest.json",
+      "bytes": 264,
+      "sha256": "1766340300242e5f6e3f3e2b0bcc0c027a00f2f786e964ea2ddf754551a58f1c"
+    },
+    {
+      "path": "Crossing-Packages/wilson/Production/wilson-production-crossings.geojson",
+      "bytes": 4241,
+      "sha256": "7ffc25af35a167585be45c50eabb1b389d5bb6a2b0a7ef98e1b5298ad3684007"
+    },
+    {
+      "path": "Crossing-Packages/wilson/package-manifest.json",
+      "bytes": 250,
+      "sha256": "cd7fb2f2e289b8adfcd940e849f3e50a7e47ca17d29fb10edf5ed66435ce7305"
+    },
+    {
+      "path": "Crossing-Packages/winkler/Production/winkler-production-crossings.geojson",
+      "bytes": 43483,
+      "sha256": "05f1c21fcbfc56d9e31031c091d240d8b95727cfd249335b0c27ee95a1c74cbb"
+    },
+    {
+      "path": "Crossing-Packages/winkler/package-manifest.json",
+      "bytes": 254,
+      "sha256": "c0288336bfd5997cc360a771a810a63995f71a88ce8d762a8c1c320de13c0d72"
+    },
+    {
+      "path": "Crossing-Packages/wise/Production/wise-production-crossings.geojson",
+      "bytes": 207056,
+      "sha256": "a92cd318814630bed9bf23360ec311b5766ef460104baf72890177f8228671f3"
+    },
+    {
+      "path": "Crossing-Packages/wise/package-manifest.json",
+      "bytes": 246,
+      "sha256": "57ae2ceec6c173fd07ef619463e5be08392259dc3bfabef3e8d49a6afaf31f51"
+    },
+    {
+      "path": "Crossing-Packages/wood/Production/wood-production-crossings.geojson",
+      "bytes": 76293,
+      "sha256": "2c53f5430668d4ba14d20b42158af4b2ea0b55bfb9267a866e435c1ed8e3a2cc"
+    },
+    {
+      "path": "Crossing-Packages/wood/package-manifest.json",
+      "bytes": 245,
+      "sha256": "401b9b813ef7a5e8cf43d88c0cf8cf6d1ce376443e60c9cb7396c4dfd0db69cb"
+    },
+    {
+      "path": "Crossing-Packages/yoakum/Production/yoakum-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "048d6d1bef1edb7f2e2d0f5a1b439d80ca42c82206340ede0058468c95cf9639"
+    },
+    {
+      "path": "Crossing-Packages/yoakum/package-manifest.json",
+      "bytes": 250,
+      "sha256": "4e9800c84e5c024969cc0f7ad690df24bb1c6e9d452a8f754fc6736eb5b45045"
+    },
+    {
+      "path": "Crossing-Packages/young/Production/young-production-crossings.geojson",
+      "bytes": 178,
+      "sha256": "0737f2d60c5b46a7aa3733648f98d8ed84ae1a200c4ad4191149b9c2d8caafec"
+    },
+    {
+      "path": "Crossing-Packages/young/package-manifest.json",
+      "bytes": 247,
+      "sha256": "d28831230f349bc8f435fa8014cb39c607fe826938e852de36aefe7743a64634"
+    },
+    {
+      "path": "Crossing-Packages/zapata/Production/zapata-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "67f7f1869f90e9cd1f496f8bb1df08c7622d3a623ad63709dda8a80331f4f8be"
+    },
+    {
+      "path": "Crossing-Packages/zapata/package-manifest.json",
+      "bytes": 250,
+      "sha256": "6c9ab8d01779dc33112dd1f0ac548edac13185ac5dd2ef411f1e21d6aa3912f3"
+    },
+    {
+      "path": "Crossing-Packages/zavala/Production/zavala-production-crossings.geojson",
+      "bytes": 179,
+      "sha256": "9d435ace82db04d9e1358a7c5f70838444dd179ffa5f1816ed86cde993889369"
+    },
+    {
+      "path": "Crossing-Packages/zavala/package-manifest.json",
+      "bytes": 250,
+      "sha256": "b846ce66750df3b5eb93c3a86bef68c657f6b6f1abc967847a007f3d3f307ad3"
+    },
+    {
+      "path": "assets/package-registry/runtime-package-registry.json",
+      "bytes": 142037,
+      "sha256": "0a67e2b622445f182a2953dcdb3c0b54ef60da25d817be72927e6a76fc0b271d"
+    }
+  ]
+}

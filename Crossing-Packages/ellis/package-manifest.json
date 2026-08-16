@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Ellis",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/ellis/Production/ellis-production-crossings.geojson",
+  "crossingCount": 164
+}

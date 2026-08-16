@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Kleberg",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/kleberg/Production/kleberg-production-crossings.geojson",
+  "crossingCount": 30
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "DeWitt",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/dewitt/Production/dewitt-production-crossings.geojson",
+  "crossingCount": 57
+}

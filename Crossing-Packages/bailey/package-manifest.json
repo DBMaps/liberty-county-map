@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Bailey",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/bailey/Production/bailey-production-crossings.geojson",
+  "crossingCount": 21
+}

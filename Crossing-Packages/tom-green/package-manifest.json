@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Tom Green",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/tom-green/Production/tom-green-production-crossings.geojson",
+  "crossingCount": 97
+}

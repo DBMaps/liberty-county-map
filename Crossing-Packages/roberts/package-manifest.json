@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Roberts",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/roberts/Production/roberts-production-crossings.geojson",
+  "crossingCount": 10
+}

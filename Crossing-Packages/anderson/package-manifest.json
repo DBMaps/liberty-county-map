@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Anderson",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/anderson/Production/anderson-production-crossings.geojson",
+  "crossingCount": 70
+}

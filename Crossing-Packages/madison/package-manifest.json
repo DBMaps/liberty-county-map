@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Madison",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/madison/Production/madison-production-crossings.geojson",
+  "crossingCount": 16
+}

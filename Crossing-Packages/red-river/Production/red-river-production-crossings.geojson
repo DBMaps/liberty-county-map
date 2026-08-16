@@ -1,0 +1,8 @@
+{
+  "type": "FeatureCollection",
+  "packageType": "Crossing",
+  "county": "Red River",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "crossingCount": 0,
+  "features": []
+}

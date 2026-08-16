@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Cherokee",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/cherokee/Production/cherokee-production-crossings.geojson",
+  "crossingCount": 69
+}

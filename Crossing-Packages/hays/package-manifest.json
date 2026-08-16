@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Hays",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/hays/Production/hays-production-crossings.geojson",
+  "crossingCount": 53
+}

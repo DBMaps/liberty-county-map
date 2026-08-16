@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Borden",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/borden/Production/borden-production-crossings.geojson",
+  "crossingCount": 0
+}

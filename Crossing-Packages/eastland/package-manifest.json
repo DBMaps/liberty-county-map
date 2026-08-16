@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Eastland",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/eastland/Production/eastland-production-crossings.geojson",
+  "crossingCount": 34
+}

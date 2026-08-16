@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Refugio",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/refugio/Production/refugio-production-crossings.geojson",
+  "crossingCount": 39
+}

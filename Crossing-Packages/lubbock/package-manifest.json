@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Lubbock",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/lubbock/Production/lubbock-production-crossings.geojson",
+  "crossingCount": 173
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Cooke",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/cooke/Production/cooke-production-crossings.geojson",
+  "crossingCount": 31
+}

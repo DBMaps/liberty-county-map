@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Coryell",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/coryell/Production/coryell-production-crossings.geojson",
+  "crossingCount": 12
+}

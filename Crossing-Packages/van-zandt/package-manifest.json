@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Van Zandt",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/van-zandt/Production/van-zandt-production-crossings.geojson",
+  "crossingCount": 29
+}

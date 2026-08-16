@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Reagan",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/reagan/Production/reagan-production-crossings.geojson",
+  "crossingCount": 22
+}

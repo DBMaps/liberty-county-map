@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Randall",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/randall/Production/randall-production-crossings.geojson",
+  "crossingCount": 45
+}

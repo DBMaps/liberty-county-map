@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 213199,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.6205970002817,
+          32.5445250000761
+        ]
+      },
+      "properties": {
+        "OBJECTID": 213199,
+        "CROSSING": "978183Y",
+        "EFFDATE": 1758585600000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48429",
+        "STCYFIPS": "48429",
+        "CITYCD": "481335640",
+        "RAILROAD": "UP",
+        "RRDIV": "Texoma",
+        "RRSUBDIV": "Baird Sub",
+        "HIGHWAY": "NA",
+        "STREET": "Private",
+        "TTSTN": "",
+        "MILEPOST": "0334.370",
+        "TYPEXING": "Private",
+        "POSXING": "RR Over",
+        "PRVCAT": "14",
+        "INIT": "1",
+        "LATITUDE": 32.544525,
+        "LONGITUD": -98.620597,
+        "LLSOURCE": "1",
+        "WHISTBAN": "",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488719",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=978183Y",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=978183Y",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 7,
+        "NGHTTHRU": 7,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "9/23/2025",
+        "AADT": "",
+        "AADTYEAR": "",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "STEPHENS",
+        "CITYNAME": "RANGER",
+        "LATDD": 32.544525,
+        "LONGDD": -98.620597,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "Private",
+        "gridlyId": "FRA-978183Y"
+      }
+    }
+  ]
+}

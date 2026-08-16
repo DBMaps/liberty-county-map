@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Fisher",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/fisher/Production/fisher-production-crossings.geojson",
+  "crossingCount": 10
+}

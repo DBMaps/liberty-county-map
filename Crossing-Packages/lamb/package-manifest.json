@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Lamb",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/lamb/Production/lamb-production-crossings.geojson",
+  "crossingCount": 29
+}

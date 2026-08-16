@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Nacogdoches",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/nacogdoches/Production/nacogdoches-production-crossings.geojson",
+  "crossingCount": 52
+}

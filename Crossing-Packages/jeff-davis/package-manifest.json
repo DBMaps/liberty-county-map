@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Jeff Davis",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/jeff-davis/Production/jeff-davis-production-crossings.geojson",
+  "crossingCount": 10
+}

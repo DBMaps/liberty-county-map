@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Deaf Smith",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/deaf-smith/Production/deaf-smith-production-crossings.geojson",
+  "crossingCount": 25
+}

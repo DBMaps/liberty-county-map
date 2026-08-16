@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Atascosa",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/atascosa/Production/atascosa-production-crossings.geojson",
+  "crossingCount": 57
+}

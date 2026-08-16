@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Kimble",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/kimble/Production/kimble-production-crossings.geojson",
+  "crossingCount": 0
+}

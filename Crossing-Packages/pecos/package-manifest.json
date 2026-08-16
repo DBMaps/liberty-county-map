@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Pecos",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/pecos/Production/pecos-production-crossings.geojson",
+  "crossingCount": 44
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Travis",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/travis/Production/travis-production-crossings.geojson",
+  "crossingCount": 176
+}

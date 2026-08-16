@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Cameron",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/cameron/Production/cameron-production-crossings.geojson",
+  "crossingCount": 290
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Kinney",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/kinney/Production/kinney-production-crossings.geojson",
+  "crossingCount": 20
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Starr",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/starr/Production/starr-production-crossings.geojson",
+  "crossingCount": 28
+}

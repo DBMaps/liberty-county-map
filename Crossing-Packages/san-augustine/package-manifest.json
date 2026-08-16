@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "San Augustine",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/san-augustine/Production/san-augustine-production-crossings.geojson",
+  "crossingCount": 16
+}

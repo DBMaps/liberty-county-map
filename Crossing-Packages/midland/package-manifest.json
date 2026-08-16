@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Midland",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/midland/Production/midland-production-crossings.geojson",
+  "crossingCount": 35
+}

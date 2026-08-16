@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Hudspeth",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/hudspeth/Production/hudspeth-production-crossings.geojson",
+  "crossingCount": 26
+}

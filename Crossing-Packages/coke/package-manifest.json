@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Coke",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/coke/Production/coke-production-crossings.geojson",
+  "crossingCount": 0
+}

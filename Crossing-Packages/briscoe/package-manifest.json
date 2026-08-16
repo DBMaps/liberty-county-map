@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Briscoe",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/briscoe/Production/briscoe-production-crossings.geojson",
+  "crossingCount": 0
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Collin",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/collin/Production/collin-production-crossings.geojson",
+  "crossingCount": 185
+}

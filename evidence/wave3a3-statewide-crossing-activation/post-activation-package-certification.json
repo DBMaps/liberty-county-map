@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "gridly.wave3a3.post-packages.v1",
+  "status": "PASS",
+  "positive": 202,
+  "empty": 52,
+  "total": 254,
+  "identities": 16099,
+  "controls": {
+    "Brazos": 95,
+    "Lavaca": 40,
+    "Washington": 44,
+    "Tyler": 0
+  }
+}

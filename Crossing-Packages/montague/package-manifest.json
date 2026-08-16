@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Montague",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/montague/Production/montague-production-crossings.geojson",
+  "crossingCount": 64
+}

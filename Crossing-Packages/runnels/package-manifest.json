@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Runnels",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/runnels/Production/runnels-production-crossings.geojson",
+  "crossingCount": 48
+}

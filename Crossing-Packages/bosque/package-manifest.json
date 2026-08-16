@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Bosque",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/bosque/Production/bosque-production-crossings.geojson",
+  "crossingCount": 48
+}

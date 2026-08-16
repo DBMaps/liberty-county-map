@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Jack",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/jack/Production/jack-production-crossings.geojson",
+  "crossingCount": 0
+}

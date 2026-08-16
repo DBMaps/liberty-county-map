@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Baylor",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/baylor/Production/baylor-production-crossings.geojson",
+  "crossingCount": 0
+}

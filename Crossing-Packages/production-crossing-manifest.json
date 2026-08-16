@@ -1,207 +1,1788 @@
 {
   "dataset": "Gridly Production Crossing Packages",
   "status": "active",
-  "generatedAt": "2026-08-16T00:00:00.000Z",
-  "totalPackages": 28,
-  "totalCrossings": 3784,
-  "passCount": 28,
+  "totalPackages": 254,
+  "totalCrossings": 16099,
+  "passCount": 254,
   "blockedCount": 0,
   "records": [
+    {
+      "county": "Anderson",
+      "status": "PASS",
+      "crossingCount": 70,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/anderson/Production/anderson-production-crossings.geojson"
+    },
+    {
+      "county": "Andrews",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/andrews/Production/andrews-production-crossings.geojson"
+    },
+    {
+      "county": "Angelina",
+      "status": "PASS",
+      "crossingCount": 100,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/angelina/Production/angelina-production-crossings.geojson"
+    },
+    {
+      "county": "Aransas",
+      "status": "PASS",
+      "crossingCount": 5,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/aransas/Production/aransas-production-crossings.geojson"
+    },
+    {
+      "county": "Archer",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/archer/Production/archer-production-crossings.geojson"
+    },
+    {
+      "county": "Armstrong",
+      "status": "PASS",
+      "crossingCount": 24,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/armstrong/Production/armstrong-production-crossings.geojson"
+    },
+    {
+      "county": "Atascosa",
+      "status": "PASS",
+      "crossingCount": 57,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/atascosa/Production/atascosa-production-crossings.geojson"
+    },
     {
       "county": "Austin",
       "status": "PASS",
       "crossingCount": 101,
       "certificationFile": "Crossing-Packages\\austin\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\austin\\Production\\austin-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/austin/Production/austin-production-crossings.geojson"
+    },
+    {
+      "county": "Bailey",
+      "status": "PASS",
+      "crossingCount": 21,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/bailey/Production/bailey-production-crossings.geojson"
+    },
+    {
+      "county": "Bandera",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/bandera/Production/bandera-production-crossings.geojson"
+    },
+    {
+      "county": "Bastrop",
+      "status": "PASS",
+      "crossingCount": 158,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/bastrop/Production/bastrop-production-crossings.geojson"
+    },
+    {
+      "county": "Baylor",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/baylor/Production/baylor-production-crossings.geojson"
+    },
+    {
+      "county": "Bee",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/bee/Production/bee-production-crossings.geojson"
+    },
+    {
+      "county": "Bell",
+      "status": "PASS",
+      "crossingCount": 150,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/bell/Production/bell-production-crossings.geojson"
+    },
+    {
+      "county": "Bexar",
+      "status": "PASS",
+      "crossingCount": 380,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/bexar/Production/bexar-production-crossings.geojson"
+    },
+    {
+      "county": "Blanco",
+      "status": "PASS",
+      "crossingCount": 7,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/blanco/Production/blanco-production-crossings.geojson"
+    },
+    {
+      "county": "Borden",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/borden/Production/borden-production-crossings.geojson"
+    },
+    {
+      "county": "Bosque",
+      "status": "PASS",
+      "crossingCount": 48,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/bosque/Production/bosque-production-crossings.geojson"
+    },
+    {
+      "county": "Bowie",
+      "status": "PASS",
+      "crossingCount": 119,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/bowie/Production/bowie-production-crossings.geojson"
     },
     {
       "county": "Brazoria",
       "status": "PASS",
       "crossingCount": 157,
       "certificationFile": "Crossing-Packages\\brazoria\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\brazoria\\Production\\brazoria-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/brazoria/Production/brazoria-production-crossings.geojson"
     },
     {
       "county": "Brazos",
       "status": "PASS",
       "crossingCount": 95,
       "certificationFile": "Crossing-Packages\\brazos\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\brazos\\Production\\brazos-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/brazos/Production/brazos-production-crossings.geojson"
+    },
+    {
+      "county": "Brewster",
+      "status": "PASS",
+      "crossingCount": 55,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/brewster/Production/brewster-production-crossings.geojson"
+    },
+    {
+      "county": "Briscoe",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/briscoe/Production/briscoe-production-crossings.geojson"
+    },
+    {
+      "county": "Brooks",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/brooks/Production/brooks-production-crossings.geojson"
+    },
+    {
+      "county": "Brown",
+      "status": "PASS",
+      "crossingCount": 97,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/brown/Production/brown-production-crossings.geojson"
+    },
+    {
+      "county": "Burleson",
+      "status": "PASS",
+      "crossingCount": 67,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/burleson/Production/burleson-production-crossings.geojson"
+    },
+    {
+      "county": "Burnet",
+      "status": "PASS",
+      "crossingCount": 63,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/burnet/Production/burnet-production-crossings.geojson"
+    },
+    {
+      "county": "Caldwell",
+      "status": "PASS",
+      "crossingCount": 47,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/caldwell/Production/caldwell-production-crossings.geojson"
     },
     {
       "county": "Calhoun",
       "status": "PASS",
       "crossingCount": 74,
       "certificationFile": "Crossing-Packages\\calhoun\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\calhoun\\Production\\calhoun-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/calhoun/Production/calhoun-production-crossings.geojson"
+    },
+    {
+      "county": "Callahan",
+      "status": "PASS",
+      "crossingCount": 26,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/callahan/Production/callahan-production-crossings.geojson"
+    },
+    {
+      "county": "Cameron",
+      "status": "PASS",
+      "crossingCount": 290,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/cameron/Production/cameron-production-crossings.geojson"
+    },
+    {
+      "county": "Camp",
+      "status": "PASS",
+      "crossingCount": 55,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/camp/Production/camp-production-crossings.geojson"
+    },
+    {
+      "county": "Carson",
+      "status": "PASS",
+      "crossingCount": 63,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/carson/Production/carson-production-crossings.geojson"
+    },
+    {
+      "county": "Cass",
+      "status": "PASS",
+      "crossingCount": 49,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/cass/Production/cass-production-crossings.geojson"
+    },
+    {
+      "county": "Castro",
+      "status": "PASS",
+      "crossingCount": 28,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/castro/Production/castro-production-crossings.geojson"
     },
     {
       "county": "Chambers",
       "status": "PASS",
       "crossingCount": 15,
       "certificationFile": "Crossing-Packages\\chambers\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\chambers\\Production\\chambers-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/chambers/Production/chambers-production-crossings.geojson"
+    },
+    {
+      "county": "Cherokee",
+      "status": "PASS",
+      "crossingCount": 69,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/cherokee/Production/cherokee-production-crossings.geojson"
+    },
+    {
+      "county": "Childress",
+      "status": "PASS",
+      "crossingCount": 28,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/childress/Production/childress-production-crossings.geojson"
+    },
+    {
+      "county": "Clay",
+      "status": "PASS",
+      "crossingCount": 29,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/clay/Production/clay-production-crossings.geojson"
+    },
+    {
+      "county": "Cochran",
+      "status": "PASS",
+      "crossingCount": 4,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/cochran/Production/cochran-production-crossings.geojson"
+    },
+    {
+      "county": "Coke",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/coke/Production/coke-production-crossings.geojson"
+    },
+    {
+      "county": "Coleman",
+      "status": "PASS",
+      "crossingCount": 58,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/coleman/Production/coleman-production-crossings.geojson"
+    },
+    {
+      "county": "Collin",
+      "status": "PASS",
+      "crossingCount": 185,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/collin/Production/collin-production-crossings.geojson"
+    },
+    {
+      "county": "Collingsworth",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/collingsworth/Production/collingsworth-production-crossings.geojson"
     },
     {
       "county": "Colorado",
       "status": "PASS",
       "crossingCount": 109,
       "certificationFile": "Crossing-Packages\\colorado\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\colorado\\Production\\colorado-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/colorado/Production/colorado-production-crossings.geojson"
+    },
+    {
+      "county": "Comal",
+      "status": "PASS",
+      "crossingCount": 110,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/comal/Production/comal-production-crossings.geojson"
+    },
+    {
+      "county": "Comanche",
+      "status": "PASS",
+      "crossingCount": 80,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/comanche/Production/comanche-production-crossings.geojson"
+    },
+    {
+      "county": "Concho",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/concho/Production/concho-production-crossings.geojson"
+    },
+    {
+      "county": "Cooke",
+      "status": "PASS",
+      "crossingCount": 31,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/cooke/Production/cooke-production-crossings.geojson"
+    },
+    {
+      "county": "Coryell",
+      "status": "PASS",
+      "crossingCount": 12,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/coryell/Production/coryell-production-crossings.geojson"
+    },
+    {
+      "county": "Cottle",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/cottle/Production/cottle-production-crossings.geojson"
+    },
+    {
+      "county": "Crane",
+      "status": "PASS",
+      "crossingCount": 3,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/crane/Production/crane-production-crossings.geojson"
+    },
+    {
+      "county": "Crockett",
+      "status": "PASS",
+      "crossingCount": 1,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/crockett/Production/crockett-production-crossings.geojson"
+    },
+    {
+      "county": "Crosby",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/crosby/Production/crosby-production-crossings.geojson"
+    },
+    {
+      "county": "Culberson",
+      "status": "PASS",
+      "crossingCount": 17,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/culberson/Production/culberson-production-crossings.geojson"
+    },
+    {
+      "county": "Dallam",
+      "status": "PASS",
+      "crossingCount": 51,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/dallam/Production/dallam-production-crossings.geojson"
+    },
+    {
+      "county": "Dallas",
+      "status": "PASS",
+      "crossingCount": 789,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson"
+    },
+    {
+      "county": "Dawson",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/dawson/Production/dawson-production-crossings.geojson"
+    },
+    {
+      "county": "Deaf Smith",
+      "status": "PASS",
+      "crossingCount": 25,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/deaf-smith/Production/deaf-smith-production-crossings.geojson"
+    },
+    {
+      "county": "Delta",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/delta/Production/delta-production-crossings.geojson"
+    },
+    {
+      "county": "Denton",
+      "status": "PASS",
+      "crossingCount": 231,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/denton/Production/denton-production-crossings.geojson"
+    },
+    {
+      "county": "DeWitt",
+      "status": "PASS",
+      "crossingCount": 57,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/dewitt/Production/dewitt-production-crossings.geojson"
+    },
+    {
+      "county": "Dickens",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/dickens/Production/dickens-production-crossings.geojson"
+    },
+    {
+      "county": "Dimmit",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/dimmit/Production/dimmit-production-crossings.geojson"
+    },
+    {
+      "county": "Donley",
+      "status": "PASS",
+      "crossingCount": 36,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/donley/Production/donley-production-crossings.geojson"
+    },
+    {
+      "county": "Duval",
+      "status": "PASS",
+      "crossingCount": 49,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/duval/Production/duval-production-crossings.geojson"
+    },
+    {
+      "county": "Eastland",
+      "status": "PASS",
+      "crossingCount": 34,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/eastland/Production/eastland-production-crossings.geojson"
+    },
+    {
+      "county": "Ector",
+      "status": "PASS",
+      "crossingCount": 45,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/ector/Production/ector-production-crossings.geojson"
+    },
+    {
+      "county": "Edwards",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/edwards/Production/edwards-production-crossings.geojson"
+    },
+    {
+      "county": "Ellis",
+      "status": "PASS",
+      "crossingCount": 164,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/ellis/Production/ellis-production-crossings.geojson"
+    },
+    {
+      "county": "El Paso",
+      "status": "PASS",
+      "crossingCount": 198,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/el-paso/Production/el-paso-production-crossings.geojson"
+    },
+    {
+      "county": "Erath",
+      "status": "PASS",
+      "crossingCount": 93,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/erath/Production/erath-production-crossings.geojson"
+    },
+    {
+      "county": "Falls",
+      "status": "PASS",
+      "crossingCount": 69,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/falls/Production/falls-production-crossings.geojson"
+    },
+    {
+      "county": "Fannin",
+      "status": "PASS",
+      "crossingCount": 74,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/fannin/Production/fannin-production-crossings.geojson"
     },
     {
       "county": "Fayette",
       "status": "PASS",
       "crossingCount": 152,
       "certificationFile": "Crossing-Packages\\fayette\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\fayette\\Production\\fayette-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/fayette/Production/fayette-production-crossings.geojson"
+    },
+    {
+      "county": "Fisher",
+      "status": "PASS",
+      "crossingCount": 10,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/fisher/Production/fisher-production-crossings.geojson"
+    },
+    {
+      "county": "Floyd",
+      "status": "PASS",
+      "crossingCount": 1,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/floyd/Production/floyd-production-crossings.geojson"
+    },
+    {
+      "county": "Foard",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/foard/Production/foard-production-crossings.geojson"
     },
     {
       "county": "Fort Bend",
       "status": "PASS",
       "crossingCount": 175,
       "certificationFile": "Crossing-Packages\\fort-bend\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\fort-bend\\Production\\fort-bend-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/fort-bend/Production/fort-bend-production-crossings.geojson"
+    },
+    {
+      "county": "Franklin",
+      "status": "PASS",
+      "crossingCount": 20,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/franklin/Production/franklin-production-crossings.geojson"
+    },
+    {
+      "county": "Freestone",
+      "status": "PASS",
+      "crossingCount": 75,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/freestone/Production/freestone-production-crossings.geojson"
+    },
+    {
+      "county": "Frio",
+      "status": "PASS",
+      "crossingCount": 36,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/frio/Production/frio-production-crossings.geojson"
+    },
+    {
+      "county": "Gaines",
+      "status": "PASS",
+      "crossingCount": 5,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/gaines/Production/gaines-production-crossings.geojson"
     },
     {
       "county": "Galveston",
       "status": "PASS",
       "crossingCount": 144,
       "certificationFile": "Crossing-Packages\\galveston\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\galveston\\Production\\galveston-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/galveston/Production/galveston-production-crossings.geojson"
+    },
+    {
+      "county": "Garza",
+      "status": "PASS",
+      "crossingCount": 18,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/garza/Production/garza-production-crossings.geojson"
+    },
+    {
+      "county": "Gillespie",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/gillespie/Production/gillespie-production-crossings.geojson"
+    },
+    {
+      "county": "Glasscock",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/glasscock/Production/glasscock-production-crossings.geojson"
+    },
+    {
+      "county": "Goliad",
+      "status": "PASS",
+      "crossingCount": 9,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/goliad/Production/goliad-production-crossings.geojson"
+    },
+    {
+      "county": "Gonzales",
+      "status": "PASS",
+      "crossingCount": 41,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/gonzales/Production/gonzales-production-crossings.geojson"
+    },
+    {
+      "county": "Gray",
+      "status": "PASS",
+      "crossingCount": 25,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/gray/Production/gray-production-crossings.geojson"
+    },
+    {
+      "county": "Grayson",
+      "status": "PASS",
+      "crossingCount": 240,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/grayson/Production/grayson-production-crossings.geojson"
+    },
+    {
+      "county": "Gregg",
+      "status": "PASS",
+      "crossingCount": 85,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/gregg/Production/gregg-production-crossings.geojson"
     },
     {
       "county": "Grimes",
       "status": "PASS",
       "crossingCount": 109,
       "certificationFile": "Crossing-Packages\\grimes\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\grimes\\Production\\grimes-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/grimes/Production/grimes-production-crossings.geojson"
+    },
+    {
+      "county": "Guadalupe",
+      "status": "PASS",
+      "crossingCount": 58,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/guadalupe/Production/guadalupe-production-crossings.geojson"
+    },
+    {
+      "county": "Hale",
+      "status": "PASS",
+      "crossingCount": 129,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hale/Production/hale-production-crossings.geojson"
+    },
+    {
+      "county": "Hall",
+      "status": "PASS",
+      "crossingCount": 15,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hall/Production/hall-production-crossings.geojson"
+    },
+    {
+      "county": "Hamilton",
+      "status": "PASS",
+      "crossingCount": 1,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hamilton/Production/hamilton-production-crossings.geojson"
+    },
+    {
+      "county": "Hansford",
+      "status": "PASS",
+      "crossingCount": 8,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hansford/Production/hansford-production-crossings.geojson"
+    },
+    {
+      "county": "Hardeman",
+      "status": "PASS",
+      "crossingCount": 39,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hardeman/Production/hardeman-production-crossings.geojson"
     },
     {
       "county": "Hardin",
       "status": "PASS",
       "crossingCount": 82,
       "certificationFile": "Crossing-Packages\\hardin\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\hardin\\Production\\hardin-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/hardin/Production/hardin-production-crossings.geojson"
     },
     {
       "county": "Harris",
       "status": "PASS",
       "crossingCount": 1159,
       "certificationFile": "Crossing-Packages\\harris\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\harris\\Production\\harris-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/harris/Production/harris-production-crossings.geojson"
+    },
+    {
+      "county": "Harrison",
+      "status": "PASS",
+      "crossingCount": 87,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/harrison/Production/harrison-production-crossings.geojson"
+    },
+    {
+      "county": "Hartley",
+      "status": "PASS",
+      "crossingCount": 40,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hartley/Production/hartley-production-crossings.geojson"
+    },
+    {
+      "county": "Haskell",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/haskell/Production/haskell-production-crossings.geojson"
+    },
+    {
+      "county": "Hays",
+      "status": "PASS",
+      "crossingCount": 53,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hays/Production/hays-production-crossings.geojson"
+    },
+    {
+      "county": "Hemphill",
+      "status": "PASS",
+      "crossingCount": 13,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hemphill/Production/hemphill-production-crossings.geojson"
+    },
+    {
+      "county": "Henderson",
+      "status": "PASS",
+      "crossingCount": 85,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/henderson/Production/henderson-production-crossings.geojson"
+    },
+    {
+      "county": "Hidalgo",
+      "status": "PASS",
+      "crossingCount": 265,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hidalgo/Production/hidalgo-production-crossings.geojson"
+    },
+    {
+      "county": "Hill",
+      "status": "PASS",
+      "crossingCount": 45,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hill/Production/hill-production-crossings.geojson"
+    },
+    {
+      "county": "Hockley",
+      "status": "PASS",
+      "crossingCount": 52,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hockley/Production/hockley-production-crossings.geojson"
+    },
+    {
+      "county": "Hood",
+      "status": "PASS",
+      "crossingCount": 56,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hood/Production/hood-production-crossings.geojson"
+    },
+    {
+      "county": "Hopkins",
+      "status": "PASS",
+      "crossingCount": 108,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hopkins/Production/hopkins-production-crossings.geojson"
+    },
+    {
+      "county": "Houston",
+      "status": "PASS",
+      "crossingCount": 44,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/houston/Production/houston-production-crossings.geojson"
+    },
+    {
+      "county": "Howard",
+      "status": "PASS",
+      "crossingCount": 32,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/howard/Production/howard-production-crossings.geojson"
+    },
+    {
+      "county": "Hudspeth",
+      "status": "PASS",
+      "crossingCount": 26,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hudspeth/Production/hudspeth-production-crossings.geojson"
+    },
+    {
+      "county": "Hunt",
+      "status": "PASS",
+      "crossingCount": 162,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hunt/Production/hunt-production-crossings.geojson"
+    },
+    {
+      "county": "Hutchinson",
+      "status": "PASS",
+      "crossingCount": 34,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/hutchinson/Production/hutchinson-production-crossings.geojson"
+    },
+    {
+      "county": "Irion",
+      "status": "PASS",
+      "crossingCount": 55,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/irion/Production/irion-production-crossings.geojson"
+    },
+    {
+      "county": "Jack",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/jack/Production/jack-production-crossings.geojson"
     },
     {
       "county": "Jackson",
       "status": "PASS",
       "crossingCount": 74,
       "certificationFile": "Crossing-Packages\\jackson\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\jackson\\Production\\jackson-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/jackson/Production/jackson-production-crossings.geojson"
     },
     {
       "county": "Jasper",
       "status": "PASS",
       "crossingCount": 106,
       "certificationFile": "Crossing-Packages\\jasper\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\jasper\\Production\\jasper-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/jasper/Production/jasper-production-crossings.geojson"
+    },
+    {
+      "county": "Jeff Davis",
+      "status": "PASS",
+      "crossingCount": 10,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/jeff-davis/Production/jeff-davis-production-crossings.geojson"
     },
     {
       "county": "Jefferson",
       "status": "PASS",
       "crossingCount": 378,
       "certificationFile": "Crossing-Packages\\jefferson\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\jefferson\\Production\\jefferson-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/jefferson/Production/jefferson-production-crossings.geojson"
+    },
+    {
+      "county": "Jim Hogg",
+      "status": "PASS",
+      "crossingCount": 17,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/jim-hogg/Production/jim-hogg-production-crossings.geojson"
+    },
+    {
+      "county": "Jim Wells",
+      "status": "PASS",
+      "crossingCount": 63,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/jim-wells/Production/jim-wells-production-crossings.geojson"
+    },
+    {
+      "county": "Johnson",
+      "status": "PASS",
+      "crossingCount": 168,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/johnson/Production/johnson-production-crossings.geojson"
+    },
+    {
+      "county": "Jones",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/jones/Production/jones-production-crossings.geojson"
+    },
+    {
+      "county": "Karnes",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/karnes/Production/karnes-production-crossings.geojson"
+    },
+    {
+      "county": "Kaufman",
+      "status": "PASS",
+      "crossingCount": 45,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/kaufman/Production/kaufman-production-crossings.geojson"
+    },
+    {
+      "county": "Kendall",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/kendall/Production/kendall-production-crossings.geojson"
+    },
+    {
+      "county": "Kenedy",
+      "status": "PASS",
+      "crossingCount": 22,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/kenedy/Production/kenedy-production-crossings.geojson"
+    },
+    {
+      "county": "Kent",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/kent/Production/kent-production-crossings.geojson"
+    },
+    {
+      "county": "Kerr",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/kerr/Production/kerr-production-crossings.geojson"
+    },
+    {
+      "county": "Kimble",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/kimble/Production/kimble-production-crossings.geojson"
+    },
+    {
+      "county": "King",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/king/Production/king-production-crossings.geojson"
+    },
+    {
+      "county": "Kinney",
+      "status": "PASS",
+      "crossingCount": 20,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/kinney/Production/kinney-production-crossings.geojson"
+    },
+    {
+      "county": "Kleberg",
+      "status": "PASS",
+      "crossingCount": 30,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/kleberg/Production/kleberg-production-crossings.geojson"
+    },
+    {
+      "county": "Knox",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/knox/Production/knox-production-crossings.geojson"
+    },
+    {
+      "county": "Lamar",
+      "status": "PASS",
+      "crossingCount": 42,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/lamar/Production/lamar-production-crossings.geojson"
+    },
+    {
+      "county": "Lamb",
+      "status": "PASS",
+      "crossingCount": 29,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/lamb/Production/lamb-production-crossings.geojson"
+    },
+    {
+      "county": "Lampasas",
+      "status": "PASS",
+      "crossingCount": 41,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/lampasas/Production/lampasas-production-crossings.geojson"
+    },
+    {
+      "county": "La Salle",
+      "status": "PASS",
+      "crossingCount": 43,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/la-salle/Production/la-salle-production-crossings.geojson"
     },
     {
       "county": "Lavaca",
       "status": "PASS",
       "crossingCount": 40,
       "certificationFile": "Crossing-Packages\\lavaca\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\lavaca\\Production\\lavaca-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/lavaca/Production/lavaca-production-crossings.geojson"
+    },
+    {
+      "county": "Lee",
+      "status": "PASS",
+      "crossingCount": 47,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/lee/Production/lee-production-crossings.geojson"
+    },
+    {
+      "county": "Leon",
+      "status": "PASS",
+      "crossingCount": 82,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/leon/Production/leon-production-crossings.geojson"
     },
     {
       "county": "Liberty",
       "status": "PASS",
       "crossingCount": 115,
       "certificationFile": "Crossing-Packages\\liberty\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\liberty\\Production\\liberty-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson"
+    },
+    {
+      "county": "Limestone",
+      "status": "PASS",
+      "crossingCount": 45,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/limestone/Production/limestone-production-crossings.geojson"
+    },
+    {
+      "county": "Lipscomb",
+      "status": "PASS",
+      "crossingCount": 21,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/lipscomb/Production/lipscomb-production-crossings.geojson"
+    },
+    {
+      "county": "Live Oak",
+      "status": "PASS",
+      "crossingCount": 56,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/live-oak/Production/live-oak-production-crossings.geojson"
+    },
+    {
+      "county": "Llano",
+      "status": "PASS",
+      "crossingCount": 13,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/llano/Production/llano-production-crossings.geojson"
+    },
+    {
+      "county": "Loving",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/loving/Production/loving-production-crossings.geojson"
+    },
+    {
+      "county": "Lubbock",
+      "status": "PASS",
+      "crossingCount": 173,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/lubbock/Production/lubbock-production-crossings.geojson"
+    },
+    {
+      "county": "Lynn",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/lynn/Production/lynn-production-crossings.geojson"
+    },
+    {
+      "county": "McCulloch",
+      "status": "PASS",
+      "crossingCount": 34,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/mcculloch/Production/mcculloch-production-crossings.geojson"
+    },
+    {
+      "county": "McLennan",
+      "status": "PASS",
+      "crossingCount": 169,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/mclennan/Production/mclennan-production-crossings.geojson"
+    },
+    {
+      "county": "McMullen",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/mcmullen/Production/mcmullen-production-crossings.geojson"
+    },
+    {
+      "county": "Madison",
+      "status": "PASS",
+      "crossingCount": 16,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/madison/Production/madison-production-crossings.geojson"
+    },
+    {
+      "county": "Marion",
+      "status": "PASS",
+      "crossingCount": 44,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/marion/Production/marion-production-crossings.geojson"
+    },
+    {
+      "county": "Martin",
+      "status": "PASS",
+      "crossingCount": 12,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/martin/Production/martin-production-crossings.geojson"
+    },
+    {
+      "county": "Mason",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/mason/Production/mason-production-crossings.geojson"
     },
     {
       "county": "Matagorda",
       "status": "PASS",
       "crossingCount": 80,
       "certificationFile": "Crossing-Packages\\matagorda\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\matagorda\\Production\\matagorda-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/matagorda/Production/matagorda-production-crossings.geojson"
+    },
+    {
+      "county": "Maverick",
+      "status": "PASS",
+      "crossingCount": 26,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/maverick/Production/maverick-production-crossings.geojson"
+    },
+    {
+      "county": "Medina",
+      "status": "PASS",
+      "crossingCount": 72,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/medina/Production/medina-production-crossings.geojson"
+    },
+    {
+      "county": "Menard",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/menard/Production/menard-production-crossings.geojson"
+    },
+    {
+      "county": "Midland",
+      "status": "PASS",
+      "crossingCount": 35,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/midland/Production/midland-production-crossings.geojson"
+    },
+    {
+      "county": "Milam",
+      "status": "PASS",
+      "crossingCount": 109,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/milam/Production/milam-production-crossings.geojson"
+    },
+    {
+      "county": "Mills",
+      "status": "PASS",
+      "crossingCount": 50,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/mills/Production/mills-production-crossings.geojson"
+    },
+    {
+      "county": "Mitchell",
+      "status": "PASS",
+      "crossingCount": 22,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/mitchell/Production/mitchell-production-crossings.geojson"
+    },
+    {
+      "county": "Montague",
+      "status": "PASS",
+      "crossingCount": 64,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/montague/Production/montague-production-crossings.geojson"
     },
     {
       "county": "Montgomery",
       "status": "PASS",
       "crossingCount": 170,
       "certificationFile": "Crossing-Packages\\montgomery\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\montgomery\\Production\\montgomery-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/montgomery/Production/montgomery-production-crossings.geojson"
+    },
+    {
+      "county": "Moore",
+      "status": "PASS",
+      "crossingCount": 65,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/moore/Production/moore-production-crossings.geojson"
+    },
+    {
+      "county": "Morris",
+      "status": "PASS",
+      "crossingCount": 39,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/morris/Production/morris-production-crossings.geojson"
+    },
+    {
+      "county": "Motley",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/motley/Production/motley-production-crossings.geojson"
+    },
+    {
+      "county": "Nacogdoches",
+      "status": "PASS",
+      "crossingCount": 52,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/nacogdoches/Production/nacogdoches-production-crossings.geojson"
+    },
+    {
+      "county": "Navarro",
+      "status": "PASS",
+      "crossingCount": 116,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/navarro/Production/navarro-production-crossings.geojson"
     },
     {
       "county": "Newton",
       "status": "PASS",
       "crossingCount": 26,
       "certificationFile": "Crossing-Packages\\newton\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\newton\\Production\\newton-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/newton/Production/newton-production-crossings.geojson"
+    },
+    {
+      "county": "Nolan",
+      "status": "PASS",
+      "crossingCount": 83,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/nolan/Production/nolan-production-crossings.geojson"
+    },
+    {
+      "county": "Nueces",
+      "status": "PASS",
+      "crossingCount": 196,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/nueces/Production/nueces-production-crossings.geojson"
+    },
+    {
+      "county": "Ochiltree",
+      "status": "PASS",
+      "crossingCount": 8,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/ochiltree/Production/ochiltree-production-crossings.geojson"
+    },
+    {
+      "county": "Oldham",
+      "status": "PASS",
+      "crossingCount": 5,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/oldham/Production/oldham-production-crossings.geojson"
     },
     {
       "county": "Orange",
       "status": "PASS",
       "crossingCount": 149,
       "certificationFile": "Crossing-Packages\\orange\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\orange\\Production\\orange-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/orange/Production/orange-production-crossings.geojson"
+    },
+    {
+      "county": "Palo Pinto",
+      "status": "PASS",
+      "crossingCount": 29,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/palo-pinto/Production/palo-pinto-production-crossings.geojson"
+    },
+    {
+      "county": "Panola",
+      "status": "PASS",
+      "crossingCount": 41,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/panola/Production/panola-production-crossings.geojson"
+    },
+    {
+      "county": "Parker",
+      "status": "PASS",
+      "crossingCount": 39,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/parker/Production/parker-production-crossings.geojson"
+    },
+    {
+      "county": "Parmer",
+      "status": "PASS",
+      "crossingCount": 37,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/parmer/Production/parmer-production-crossings.geojson"
+    },
+    {
+      "county": "Pecos",
+      "status": "PASS",
+      "crossingCount": 44,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/pecos/Production/pecos-production-crossings.geojson"
     },
     {
       "county": "Polk",
       "status": "PASS",
       "crossingCount": 64,
       "certificationFile": "Crossing-Packages\\polk\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\polk\\Production\\polk-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/polk/Production/polk-production-crossings.geojson"
+    },
+    {
+      "county": "Potter",
+      "status": "PASS",
+      "crossingCount": 125,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/potter/Production/potter-production-crossings.geojson"
+    },
+    {
+      "county": "Presidio",
+      "status": "PASS",
+      "crossingCount": 44,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/presidio/Production/presidio-production-crossings.geojson"
+    },
+    {
+      "county": "Rains",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/rains/Production/rains-production-crossings.geojson"
+    },
+    {
+      "county": "Randall",
+      "status": "PASS",
+      "crossingCount": 45,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/randall/Production/randall-production-crossings.geojson"
+    },
+    {
+      "county": "Reagan",
+      "status": "PASS",
+      "crossingCount": 22,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/reagan/Production/reagan-production-crossings.geojson"
+    },
+    {
+      "county": "Real",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/real/Production/real-production-crossings.geojson"
+    },
+    {
+      "county": "Red River",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/red-river/Production/red-river-production-crossings.geojson"
+    },
+    {
+      "county": "Reeves",
+      "status": "PASS",
+      "crossingCount": 67,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/reeves/Production/reeves-production-crossings.geojson"
+    },
+    {
+      "county": "Refugio",
+      "status": "PASS",
+      "crossingCount": 39,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/refugio/Production/refugio-production-crossings.geojson"
+    },
+    {
+      "county": "Roberts",
+      "status": "PASS",
+      "crossingCount": 10,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/roberts/Production/roberts-production-crossings.geojson"
+    },
+    {
+      "county": "Robertson",
+      "status": "PASS",
+      "crossingCount": 155,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/robertson/Production/robertson-production-crossings.geojson"
+    },
+    {
+      "county": "Rockwall",
+      "status": "PASS",
+      "crossingCount": 18,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/rockwall/Production/rockwall-production-crossings.geojson"
+    },
+    {
+      "county": "Runnels",
+      "status": "PASS",
+      "crossingCount": 48,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/runnels/Production/runnels-production-crossings.geojson"
+    },
+    {
+      "county": "Rusk",
+      "status": "PASS",
+      "crossingCount": 58,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/rusk/Production/rusk-production-crossings.geojson"
+    },
+    {
+      "county": "Sabine",
+      "status": "PASS",
+      "crossingCount": 16,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/sabine/Production/sabine-production-crossings.geojson"
+    },
+    {
+      "county": "San Augustine",
+      "status": "PASS",
+      "crossingCount": 16,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/san-augustine/Production/san-augustine-production-crossings.geojson"
     },
     {
       "county": "San Jacinto",
       "status": "PASS",
       "crossingCount": 12,
       "certificationFile": "Crossing-Packages\\san-jacinto\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\san-jacinto\\Production\\san-jacinto-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/san-jacinto/Production/san-jacinto-production-crossings.geojson"
+    },
+    {
+      "county": "San Patricio",
+      "status": "PASS",
+      "crossingCount": 135,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/san-patricio/Production/san-patricio-production-crossings.geojson"
+    },
+    {
+      "county": "San Saba",
+      "status": "PASS",
+      "crossingCount": 47,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/san-saba/Production/san-saba-production-crossings.geojson"
+    },
+    {
+      "county": "Schleicher",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/schleicher/Production/schleicher-production-crossings.geojson"
+    },
+    {
+      "county": "Scurry",
+      "status": "PASS",
+      "crossingCount": 37,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/scurry/Production/scurry-production-crossings.geojson"
+    },
+    {
+      "county": "Shackelford",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/shackelford/Production/shackelford-production-crossings.geojson"
+    },
+    {
+      "county": "Shelby",
+      "status": "PASS",
+      "crossingCount": 88,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/shelby/Production/shelby-production-crossings.geojson"
+    },
+    {
+      "county": "Sherman",
+      "status": "PASS",
+      "crossingCount": 42,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/sherman/Production/sherman-production-crossings.geojson"
+    },
+    {
+      "county": "Smith",
+      "status": "PASS",
+      "crossingCount": 123,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/smith/Production/smith-production-crossings.geojson"
+    },
+    {
+      "county": "Somervell",
+      "status": "PASS",
+      "crossingCount": 1,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/somervell/Production/somervell-production-crossings.geojson"
+    },
+    {
+      "county": "Starr",
+      "status": "PASS",
+      "crossingCount": 28,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/starr/Production/starr-production-crossings.geojson"
+    },
+    {
+      "county": "Stephens",
+      "status": "PASS",
+      "crossingCount": 1,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/stephens/Production/stephens-production-crossings.geojson"
+    },
+    {
+      "county": "Sterling",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/sterling/Production/sterling-production-crossings.geojson"
+    },
+    {
+      "county": "Stonewall",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/stonewall/Production/stonewall-production-crossings.geojson"
+    },
+    {
+      "county": "Sutton",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/sutton/Production/sutton-production-crossings.geojson"
+    },
+    {
+      "county": "Swisher",
+      "status": "PASS",
+      "crossingCount": 45,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/swisher/Production/swisher-production-crossings.geojson"
+    },
+    {
+      "county": "Tarrant",
+      "status": "PASS",
+      "crossingCount": 615,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/tarrant/Production/tarrant-production-crossings.geojson"
+    },
+    {
+      "county": "Taylor",
+      "status": "PASS",
+      "crossingCount": 106,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/taylor/Production/taylor-production-crossings.geojson"
+    },
+    {
+      "county": "Terrell",
+      "status": "PASS",
+      "crossingCount": 27,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/terrell/Production/terrell-production-crossings.geojson"
+    },
+    {
+      "county": "Terry",
+      "status": "PASS",
+      "crossingCount": 46,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/terry/Production/terry-production-crossings.geojson"
+    },
+    {
+      "county": "Throckmorton",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/throckmorton/Production/throckmorton-production-crossings.geojson"
+    },
+    {
+      "county": "Titus",
+      "status": "PASS",
+      "crossingCount": 63,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/titus/Production/titus-production-crossings.geojson"
+    },
+    {
+      "county": "Tom Green",
+      "status": "PASS",
+      "crossingCount": 97,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/tom-green/Production/tom-green-production-crossings.geojson"
+    },
+    {
+      "county": "Travis",
+      "status": "PASS",
+      "crossingCount": 176,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/travis/Production/travis-production-crossings.geojson"
+    },
+    {
+      "county": "Trinity",
+      "status": "PASS",
+      "crossingCount": 13,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/trinity/Production/trinity-production-crossings.geojson"
     },
     {
       "county": "Tyler",
       "status": "PASS",
       "crossingCount": 0,
       "certificationFile": "Crossing-Packages\\tyler\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\tyler\\Production\\tyler-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/tyler/Production/tyler-production-crossings.geojson"
+    },
+    {
+      "county": "Upshur",
+      "status": "PASS",
+      "crossingCount": 43,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/upshur/Production/upshur-production-crossings.geojson"
+    },
+    {
+      "county": "Upton",
+      "status": "PASS",
+      "crossingCount": 22,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/upton/Production/upton-production-crossings.geojson"
+    },
+    {
+      "county": "Uvalde",
+      "status": "PASS",
+      "crossingCount": 44,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/uvalde/Production/uvalde-production-crossings.geojson"
+    },
+    {
+      "county": "Val Verde",
+      "status": "PASS",
+      "crossingCount": 47,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/val-verde/Production/val-verde-production-crossings.geojson"
+    },
+    {
+      "county": "Van Zandt",
+      "status": "PASS",
+      "crossingCount": 29,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/van-zandt/Production/van-zandt-production-crossings.geojson"
+    },
+    {
+      "county": "Victoria",
+      "status": "PASS",
+      "crossingCount": 194,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/victoria/Production/victoria-production-crossings.geojson"
     },
     {
       "county": "Walker",
       "status": "PASS",
       "crossingCount": 36,
       "certificationFile": "Crossing-Packages\\walker\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\walker\\Production\\walker-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/walker/Production/walker-production-crossings.geojson"
     },
     {
       "county": "Waller",
       "status": "PASS",
       "crossingCount": 46,
       "certificationFile": "Crossing-Packages\\waller\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\waller\\Production\\waller-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/waller/Production/waller-production-crossings.geojson"
+    },
+    {
+      "county": "Ward",
+      "status": "PASS",
+      "crossingCount": 23,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/ward/Production/ward-production-crossings.geojson"
     },
     {
       "county": "Washington",
       "status": "PASS",
       "crossingCount": 44,
       "certificationFile": "Crossing-Packages\\washington\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\washington\\Production\\washington-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/washington/Production/washington-production-crossings.geojson"
+    },
+    {
+      "county": "Webb",
+      "status": "PASS",
+      "crossingCount": 164,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/webb/Production/webb-production-crossings.geojson"
     },
     {
       "county": "Wharton",
       "status": "PASS",
       "crossingCount": 72,
       "certificationFile": "Crossing-Packages\\wharton\\Production\\production-certification.json",
-      "packageFile": "Crossing-Packages\\wharton\\Production\\wharton-production-crossings.geojson"
+      "packageFile": "Crossing-Packages/wharton/Production/wharton-production-crossings.geojson"
+    },
+    {
+      "county": "Wheeler",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/wheeler/Production/wheeler-production-crossings.geojson"
+    },
+    {
+      "county": "Wichita",
+      "status": "PASS",
+      "crossingCount": 118,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/wichita/Production/wichita-production-crossings.geojson"
+    },
+    {
+      "county": "Wilbarger",
+      "status": "PASS",
+      "crossingCount": 42,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/wilbarger/Production/wilbarger-production-crossings.geojson"
+    },
+    {
+      "county": "Willacy",
+      "status": "PASS",
+      "crossingCount": 43,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/willacy/Production/willacy-production-crossings.geojson"
+    },
+    {
+      "county": "Williamson",
+      "status": "PASS",
+      "crossingCount": 166,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/williamson/Production/williamson-production-crossings.geojson"
+    },
+    {
+      "county": "Wilson",
+      "status": "PASS",
+      "crossingCount": 2,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/wilson/Production/wilson-production-crossings.geojson"
+    },
+    {
+      "county": "Winkler",
+      "status": "PASS",
+      "crossingCount": 21,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/winkler/Production/winkler-production-crossings.geojson"
+    },
+    {
+      "county": "Wise",
+      "status": "PASS",
+      "crossingCount": 100,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/wise/Production/wise-production-crossings.geojson"
+    },
+    {
+      "county": "Wood",
+      "status": "PASS",
+      "crossingCount": 37,
+      "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json",
+      "packageFile": "Crossing-Packages/wood/Production/wood-production-crossings.geojson"
+    },
+    {
+      "county": "Yoakum",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/yoakum/Production/yoakum-production-crossings.geojson"
+    },
+    {
+      "county": "Young",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/young/Production/young-production-crossings.geojson"
+    },
+    {
+      "county": "Zapata",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/zapata/Production/zapata-production-crossings.geojson"
+    },
+    {
+      "county": "Zavala",
+      "status": "PASS",
+      "crossingCount": 0,
+      "certificationFile": "evidence/wave3a3-statewide-crossing-activation/post-activation-package-certification.json",
+      "packageFile": "Crossing-Packages/zavala/Production/zavala-production-crossings.geojson"
     }
   ]
 }

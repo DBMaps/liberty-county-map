@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Live Oak",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/live-oak/Production/live-oak-production-crossings.geojson",
+  "crossingCount": 56
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Ward",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/ward/Production/ward-production-crossings.geojson",
+  "crossingCount": 23
+}

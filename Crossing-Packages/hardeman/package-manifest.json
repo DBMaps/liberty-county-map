@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Hardeman",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/hardeman/Production/hardeman-production-crossings.geojson",
+  "crossingCount": 39
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "gridly.wave3a3.post-state.v1",
+  "status": "PASS",
+  "classification": {
+    "ACTIVE_POSITIVE": 202,
+    "ACTIVE_EMPTY": 52,
+    "TOTAL": 254
+  },
+  "activeIdentities": 16099,
+  "missing": [],
+  "extra": [],
+  "duplicates": [],
+  "mismatches": [],
+  "blockedLeakage": [],
+  "controls": {
+    "Brazos": 95,
+    "Lavaca": 40,
+    "Washington": 44,
+    "Tyler": 0
+  },
+  "fraSource": {
+    "expected": {
+      "bytes": 68200491,
+      "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+    },
+    "observed": {
+      "bytes": 68200491,
+      "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+    }
+  },
+  "manifestRegistryAgree": true
+}

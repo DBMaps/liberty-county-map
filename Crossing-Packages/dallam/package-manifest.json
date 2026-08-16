@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Dallam",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/dallam/Production/dallam-production-crossings.geojson",
+  "crossingCount": 51
+}

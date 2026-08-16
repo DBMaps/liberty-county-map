@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Brooks",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/brooks/Production/brooks-production-crossings.geojson",
+  "crossingCount": 0
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Cochran",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/cochran/Production/cochran-production-crossings.geojson",
+  "crossingCount": 4
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "San Patricio",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/san-patricio/Production/san-patricio-production-crossings.geojson",
+  "crossingCount": 135
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Bandera",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/bandera/Production/bandera-production-crossings.geojson",
+  "crossingCount": 0
+}

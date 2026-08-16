@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Gray",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/gray/Production/gray-production-crossings.geojson",
+  "crossingCount": 25
+}

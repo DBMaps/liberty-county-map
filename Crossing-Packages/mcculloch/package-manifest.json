@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "McCulloch",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/mcculloch/Production/mcculloch-production-crossings.geojson",
+  "crossingCount": 34
+}

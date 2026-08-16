@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Guadalupe",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/guadalupe/Production/guadalupe-production-crossings.geojson",
+  "crossingCount": 58
+}

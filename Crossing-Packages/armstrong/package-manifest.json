@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Armstrong",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/armstrong/Production/armstrong-production-crossings.geojson",
+  "crossingCount": 24
+}

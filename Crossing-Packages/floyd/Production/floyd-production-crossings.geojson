@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 203764,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -101.328872999854,
+          33.9812430000308
+        ]
+      },
+      "properties": {
+        "OBJECTID": 203764,
+        "CROSSING": "017428K",
+        "EFFDATE": 1734393600000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48189",
+        "STCYFIPS": "48189",
+        "CITYCD": "481895380",
+        "RAILROAD": "BNSF",
+        "RRDIV": "RED RIVER",
+        "RRSUBDIV": "PLAINVIEW - FLOYDADA",
+        "HIGHWAY": "Not Yet Reported by State",
+        "STREET": "PRIVATE",
+        "TTSTN": "674720",
+        "MILEPOST": "0002.245",
+        "TYPEXING": "Private",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "1",
+        "LATITUDE": 33.981243,
+        "LONGITUD": -101.328873,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "8173521549",
+        "POLCONT": "8008325452",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=017428K",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=017428K",
+        "TTSTNNAM": "PLAINVIEW",
+        "XPURPOSE": "1",
+        "OPERATINGR": "BNSF",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 0,
+        "NGHTTHRU": 0,
+        "MAINTRK": 0,
+        "SIDINGTRK": 0,
+        "YARDTRK": 1,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "",
+        "REVISIONDA": "1996/01/01 00:00:00",
+        "LASTUPDATE": "12/17/2024",
+        "AADT": "",
+        "AADTYEAR": "1970",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "HALE",
+        "CITYNAME": "PLAINVIEW",
+        "LATDD": 33.981243,
+        "LONGDD": -101.328873,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "PRIVATE",
+        "gridlyId": "FRA-017428K"
+      }
+    }
+  ]
+}

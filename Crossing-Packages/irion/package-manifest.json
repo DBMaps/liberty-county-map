@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Irion",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/irion/Production/irion-production-crossings.geojson",
+  "crossingCount": 55
+}

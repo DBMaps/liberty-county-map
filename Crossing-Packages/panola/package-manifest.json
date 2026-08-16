@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Panola",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/panola/Production/panola-production-crossings.geojson",
+  "crossingCount": 41
+}

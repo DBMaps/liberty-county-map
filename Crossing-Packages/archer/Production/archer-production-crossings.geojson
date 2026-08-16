@@ -1,0 +1,8 @@
+{
+  "type": "FeatureCollection",
+  "packageType": "Crossing",
+  "county": "Archer",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "crossingCount": 0,
+  "features": []
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Potter",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/potter/Production/potter-production-crossings.geojson",
+  "crossingCount": 125
+}

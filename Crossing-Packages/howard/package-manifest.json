@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Howard",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/howard/Production/howard-production-crossings.geojson",
+  "crossingCount": 32
+}

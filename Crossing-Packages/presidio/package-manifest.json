@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Presidio",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/presidio/Production/presidio-production-crossings.geojson",
+  "crossingCount": 44
+}

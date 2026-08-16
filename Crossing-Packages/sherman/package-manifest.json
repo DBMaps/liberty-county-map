@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Sherman",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/sherman/Production/sherman-production-crossings.geojson",
+  "crossingCount": 42
+}

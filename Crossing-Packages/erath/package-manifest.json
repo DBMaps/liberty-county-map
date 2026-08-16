@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Erath",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/erath/Production/erath-production-crossings.geojson",
+  "crossingCount": 93
+}

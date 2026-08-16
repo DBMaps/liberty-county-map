@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Aransas",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/aransas/Production/aransas-production-crossings.geojson",
+  "crossingCount": 5
+}

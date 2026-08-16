@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Gillespie",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/gillespie/Production/gillespie-production-crossings.geojson",
+  "crossingCount": 0
+}

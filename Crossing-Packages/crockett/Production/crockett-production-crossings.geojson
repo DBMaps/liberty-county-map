@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 203320,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.361518999946,
+          31.0861319996664
+        ]
+      },
+      "properties": {
+        "OBJECTID": 203320,
+        "CROSSING": "018903R",
+        "EFFDATE": 1704758400000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48103",
+        "STCYFIPS": "48103",
+        "CITYCD": "484614210",
+        "RAILROAD": "TXPF",
+        "RRDIV": "SOUTHERN",
+        "RRSUBDIV": "BIG LAKE",
+        "HIGHWAY": "us67",
+        "STREET": "PRIVATE ROAD",
+        "TTSTN": "695122",
+        "MILEPOST": "0847.50",
+        "TYPEXING": "Private",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "1",
+        "LATITUDE": 31.086132,
+        "LONGITUD": -102.361519,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "3259428164",
+        "POLCONT": "8007428905",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=018903R",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=018903R",
+        "TTSTNNAM": "GIRVIN",
+        "XPURPOSE": "1",
+        "OPERATINGR": "TXPF",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 1,
+        "NGHTTHRU": 1,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "",
+        "REVISIONDA": "2001/01/01 00:00:00",
+        "LASTUPDATE": "1/9/2024",
+        "AADT": "",
+        "AADTYEAR": "1970",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "CRANE",
+        "CITYNAME": "MCCAMEY",
+        "LATDD": 31.086132,
+        "LONGDD": -102.361519,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "PRIVATE ROAD",
+        "gridlyId": "FRA-018903R"
+      }
+    }
+  ]
+}

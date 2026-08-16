@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Val Verde",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/val-verde/Production/val-verde-production-crossings.geojson",
+  "crossingCount": 47
+}

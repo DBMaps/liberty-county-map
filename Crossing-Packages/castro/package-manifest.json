@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Castro",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/castro/Production/castro-production-crossings.geojson",
+  "crossingCount": 28
+}

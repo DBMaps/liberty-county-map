@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Fannin",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/fannin/Production/fannin-production-crossings.geojson",
+  "crossingCount": 74
+}

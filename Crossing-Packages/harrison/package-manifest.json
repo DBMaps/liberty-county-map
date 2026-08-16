@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Harrison",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/harrison/Production/harrison-production-crossings.geojson",
+  "crossingCount": 87
+}

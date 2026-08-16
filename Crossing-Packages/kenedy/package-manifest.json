@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Kenedy",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/kenedy/Production/kenedy-production-crossings.geojson",
+  "crossingCount": 22
+}

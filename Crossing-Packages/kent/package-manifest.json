@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Kent",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/kent/Production/kent-production-crossings.geojson",
+  "crossingCount": 0
+}

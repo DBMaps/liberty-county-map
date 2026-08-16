@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Childress",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/childress/Production/childress-production-crossings.geojson",
+  "crossingCount": 28
+}

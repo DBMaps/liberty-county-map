@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Hood",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/hood/Production/hood-production-crossings.geojson",
+  "crossingCount": 56
+}

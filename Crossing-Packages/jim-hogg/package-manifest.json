@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Jim Hogg",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/jim-hogg/Production/jim-hogg-production-crossings.geojson",
+  "crossingCount": 17
+}

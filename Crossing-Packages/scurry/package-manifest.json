@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Scurry",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/scurry/Production/scurry-production-crossings.geojson",
+  "crossingCount": 37
+}

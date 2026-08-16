@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Henderson",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/henderson/Production/henderson-production-crossings.geojson",
+  "crossingCount": 85
+}

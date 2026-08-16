@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Gaines",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/gaines/Production/gaines-production-crossings.geojson",
+  "crossingCount": 5
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Mitchell",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/mitchell/Production/mitchell-production-crossings.geojson",
+  "crossingCount": 22
+}

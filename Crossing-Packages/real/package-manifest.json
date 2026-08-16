@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Real",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/real/Production/real-production-crossings.geojson",
+  "crossingCount": 0
+}

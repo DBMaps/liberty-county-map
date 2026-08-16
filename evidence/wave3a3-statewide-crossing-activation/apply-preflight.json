@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "gridly.wave3a3.apply-preflight.v1",
+  "status": "PASS",
+  "certifiedSummarySha256": "963f2b51a071e2f231b4c8d2485315904204cbb078fed1011b530035c0db20f2",
+  "gates": {
+    "activeCountyCount": true,
+    "activeIdentityCount": true,
+    "candidateCountyCount": true,
+    "candidateIdentityCount": true,
+    "combinedIdentityCount": true,
+    "positiveCountyCount": true,
+    "zeroCountyCount": true,
+    "blockedIdentitySet": true,
+    "blockedAbsent": true,
+    "certificationPass": true,
+    "noDuplicates": true,
+    "noMissing": true,
+    "noExtra": true,
+    "noOverlap": true,
+    "ownership": true,
+    "fraSourceIdentity": true,
+    "protectedRuntimeWorktreeClean": true,
+    "wave32InputsPresent": true,
+    "wave32CompleteDeterministic": true,
+    "registryBaseline": true,
+    "writeAllowlistCount": true
+  },
+  "productionWrites": 0
+}

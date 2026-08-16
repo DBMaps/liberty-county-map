@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Donley",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/donley/Production/donley-production-crossings.geojson",
+  "crossingCount": 36
+}

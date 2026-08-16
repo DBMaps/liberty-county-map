@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Bee",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/bee/Production/bee-production-crossings.geojson",
+  "crossingCount": 0
+}

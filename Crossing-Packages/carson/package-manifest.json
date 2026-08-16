@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Carson",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/carson/Production/carson-production-crossings.geojson",
+  "crossingCount": 63
+}

@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Sterling",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/sterling/Production/sterling-production-crossings.geojson",
+  "crossingCount": 0
+}

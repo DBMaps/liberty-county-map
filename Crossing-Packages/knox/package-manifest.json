@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Knox",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/knox/Production/knox-production-crossings.geojson",
+  "crossingCount": 0
+}

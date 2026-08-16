@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Angelina",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/angelina/Production/angelina-production-crossings.geojson",
+  "crossingCount": 100
+}

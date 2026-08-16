@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Milam",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/milam/Production/milam-production-crossings.geojson",
+  "crossingCount": 109
+}

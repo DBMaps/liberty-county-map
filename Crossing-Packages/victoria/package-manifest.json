@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Victoria",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/victoria/Production/victoria-production-crossings.geojson",
+  "crossingCount": 194
+}

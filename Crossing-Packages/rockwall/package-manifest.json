@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Rockwall",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/rockwall/Production/rockwall-production-crossings.geojson",
+  "crossingCount": 18
+}

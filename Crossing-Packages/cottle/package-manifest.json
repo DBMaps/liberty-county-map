@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Cottle",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/cottle/Production/cottle-production-crossings.geojson",
+  "crossingCount": 0
+}

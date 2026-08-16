@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "La Salle",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/la-salle/Production/la-salle-production-crossings.geojson",
+  "crossingCount": 43
+}

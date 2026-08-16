@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Hartley",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/hartley/Production/hartley-production-crossings.geojson",
+  "crossingCount": 40
+}

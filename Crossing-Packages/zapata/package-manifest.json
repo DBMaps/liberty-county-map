@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Zapata",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/zapata/Production/zapata-production-crossings.geojson",
+  "crossingCount": 0
+}

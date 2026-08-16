@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Caldwell",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/caldwell/Production/caldwell-production-crossings.geojson",
+  "crossingCount": 47
+}

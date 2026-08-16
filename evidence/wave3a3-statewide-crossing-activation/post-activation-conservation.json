@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "gridly.wave3a3.post-conservation.v1",
+  "status": "PASS",
+  "activeIdentities": 16099,
+  "missing": [],
+  "extra": [],
+  "duplicates": [],
+  "ownershipMismatches": [],
+  "blockedLeakage": []
+}

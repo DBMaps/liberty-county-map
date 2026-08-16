@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Ector",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/ector/Production/ector-production-crossings.geojson",
+  "crossingCount": 45
+}

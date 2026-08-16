@@ -1,0 +1,8 @@
+{
+  "packageType": "Crossing",
+  "county": "Throckmorton",
+  "status": "manufactured",
+  "source": "FRA/Processed/fra-crossings-tx.geojson",
+  "packageFile": "Crossing-Packages/throckmorton/Production/throckmorton-production-crossings.geojson",
+  "crossingCount": 0
+}
