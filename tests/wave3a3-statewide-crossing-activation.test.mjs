@@ -6,7 +6,7 @@ import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {canonicalCandidateBytes,certifiedCandidateBytes,governedPathOrderMatches,guardedReplace,inspect,orderGovernedWrites,outputs,run,sortGovernedPaths} from '../tools/wave3a3/activate-statewide-crossings.mjs';
+import {canonicalCandidateBytes,certifiedCandidateBytes,governedPathOrderMatches,guardedReplace,inspect,orderGovernedWrites,outputs,run,sortGovernedPaths,verifyPostActivation} from '../tools/wave3a3/activate-statewide-crossings.mjs';
 
 const sha256=body=>createHash('sha256').update(body).digest('hex');
 
@@ -24,6 +24,45 @@ test('candidate certification tolerates only CRLF checkout materialization and r
  assert.throws(()=>certifiedCandidateBytes(substantive,certification),/byte identity differs/);
  assert.throws(()=>certifiedCandidateBytes(Buffer.from(lf.toString().replace('"Main"','"Changed"')),certification),/byte identity differs/);
  assert.throws(()=>certifiedCandidateBytes(Buffer.from(lf.toString().replace('-95.1','-95.2')),certification),/byte identity differs/);
+});
+
+test('post-activation applied-file identity accepts LF and CRLF only and remains read-only',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'wave3a3-post-activation-'));
+ const governed=Buffer.from('{\n  "type": "FeatureCollection",\n  "features": [{"properties":{"name":"Main"},"geometry":{"type":"Point","coordinates":[-95.1,30.2]}}]\n}\n');
+ const paths=Array.from({length:454},(_,i)=>`governed/${String(i).padStart(3,'0')}.geojson`),files=paths.map(path=>({path,bytes:governed.length,sha256:sha256(governed)}));
+ const post={classification:{ACTIVE_POSITIVE:202,ACTIVE_EMPTY:52,TOTAL:254},activeIdentities:16099,missing:[],extra:[],duplicates:[],mismatches:[],blockedLeakage:[],controls:{Brazos:95,Lavaca:40,Washington:44,Tyler:0},fraSource:{},manifestRegistryAgree:true};
+ const evidence={
+  'apply-preflight.json':{status:'PASS',productionWrites:0},
+  'apply-write-plan.json':{status:'PASS',count:454,orderedPaths:paths,files},
+  'apply-result.json':{status:'PASS',decision:'STATEWIDE CROSSING ACTIVATION APPLIED / VERIFIED',productionWrites:454},
+  'post-activation-state.json':{schemaVersion:'gridly.wave3a3.post-state.v1',status:'PASS',...post},
+  'post-activation-conservation.json':{schemaVersion:'gridly.wave3a3.post-conservation.v1',status:'PASS',activeIdentities:16099,missing:[],extra:[],duplicates:[],ownershipMismatches:[],blockedLeakage:[]},
+  'post-activation-registry-certification.json':{schemaVersion:'gridly.wave3a3.post-registry.v1',status:'PASS',manifestRegistryAgree:true,counties:254},
+  'post-activation-package-certification.json':{schemaVersion:'gridly.wave3a3.post-packages.v1',status:'PASS',positive:202,empty:52,total:254,identities:16099,controls:post.controls}
+ };
+ const verify=()=>verifyPostActivation({root,reinspect:async()=>post});
+ try{
+  await mkdir(join(root,'evidence/wave3a3-statewide-crossing-activation'),{recursive:true});await mkdir(join(root,'governed'));
+  for(const path of paths)await writeFile(join(root,path),governed);
+  for(const [name,value] of Object.entries(evidence))await writeFile(join(root,'evidence/wave3a3-statewide-crossing-activation',name),JSON.stringify(value,null,2)+'\n');
+  execFileSync('git',['init','--quiet'],{cwd:root});execFileSync('git',['config','user.email','test@gridly.invalid'],{cwd:root});execFileSync('git',['config','user.name','Gridly Test'],{cwd:root});execFileSync('git',['add','evidence'],{cwd:root});execFileSync('git',['commit','--quiet','-m','fixture evidence'],{cwd:root});
+
+  assert.equal((await verify()).status,'PASS','LF applied file matches the committed plan');
+  await writeFile(join(root,paths[0]),Buffer.from(governed.toString().replaceAll('\n','\r\n')));
+  assert.equal((await verify()).status,'PASS','CRLF materialization has the same governed LF identity');
+
+  for(const [label,changed] of [
+   ['substantive byte change',Buffer.from(governed.toString().replace('  "type"','   "type"'))],
+   ['changed property',Buffer.from(governed.toString().replace('Main','Changed'))],
+   ['changed coordinate',Buffer.from(governed.toString().replace('-95.1','-95.2'))]
+  ]){await writeFile(join(root,paths[0]),changed);await assert.rejects(verify(),/applied file differs from committed write plan/,label)}
+  await writeFile(join(root,paths[0]),governed);await rm(join(root,paths[1]));
+  await assert.rejects(verify(),/ENOENT/,'missing applied file fails closed');
+
+  await writeFile(join(root,paths[1]),governed);const before=await Promise.all(paths.map(async path=>[path,await readFile(join(root,path))]));
+  await verify();
+  for(const [path,body] of before)assert.deepEqual(await readFile(join(root,path)),body,`verifier wrote ${path}`);
+ }finally{await rm(root,{recursive:true,force:true})}
 });
 
 test('projects the exact governed statewide contract and zero cohort',async()=>{
@@ -119,7 +158,7 @@ test('verify dispatches by lifecycle and post-activation verification stays read
  const source=await readFile(new URL('../tools/wave3a3/activate-statewide-crossings.mjs',import.meta.url),'utf8');
  assert.match(source,/mode==='verify'&&existsSync\(join\(root,OUT,'apply-result\.json'\)\).*verifyPostActivation/);
  assert.match(source,/result\.status!==['"]PASS['"].*result\.decision!==DECISION_APPLIED.*result\.productionWrites!==454/);
- assert.match(source,/for\(const file of plan\.files\).*raw\(root,portable\(file\.path\)\).*sha\(body\)!==file\.sha256/);
+ assert.match(source,/for\(const file of plan\.files\).*canonicalCandidateBytes\(await raw\(root,portable\(file\.path\)\)\).*sha\(body\)!==file\.sha256/);
  assert.match(source,/post-activation evidence mismatch/);
  assert.match(source,/committed apply evidence is absent/);
  const verifier=source.slice(source.indexOf('export async function verifyPostActivation'),source.indexOf('\nasync function apply'));
