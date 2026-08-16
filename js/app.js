@@ -48495,11 +48495,11 @@ function getGridlyCountyBoundaryOverlayStyle(countyId = GRIDLY_DEFAULT_COUNTY_ID
   return {
     pane: "countyBoundaryOverlayPane",
     color: active ? (standardMap ? "#374151" : "#cbd5e1") : (darkOrSatellite ? "#94a3b8" : "#6b7280"),
-    weight: active ? 1.5 : passiveCountyWeight,
-    opacity: active ? (standardMap ? 0.38 : 0.44) : passiveCountyOpacity,
+    weight: active ? 3 : passiveCountyWeight,
+    opacity: active ? (standardMap ? 0.9 : 0.94) : passiveCountyOpacity,
     fill: activeCountyFillEnabled,
     fillColor: active ? (standardMap ? "#111827" : "#f8fafc") : "transparent",
-    fillOpacity: activeCountyFillOpacity,
+    fillOpacity: active ? (standardMap ? 0.035 : 0.045) : activeCountyFillOpacity,
     dashArray: active ? "" : "3 12",
     lineCap: "round",
     lineJoin: "round",
@@ -48551,6 +48551,9 @@ function renderGridlyCountyBoundaryOverlay(reason = "unknown") {
   if (!map || typeof L === "undefined" || !gridlyCountyBoundaryOverlayLayer) return gridlyCountyBoundaryOverlayAudit({ reason, renderAttempted: false });
   gridlyCountyBoundaryOverlayLayer.clearLayers();
   gridlyCountyBoundaryOverlayLayersById = {};
+  // This layer is presentation state owned exclusively by County mode.  In
+  // particular, a county bounds camera is never treated as a boundary.
+  if (activeGeoFilter !== "county") return gridlyCountyBoundaryOverlayAudit({ reason, renderAttempted: true, hiddenForFilter: true });
   const activeCountyId = gridlyGetActiveCountyId();
   const activeCountyGeoid = getGridlyCountyBoundaryOverlayCountyGeoid(activeCountyId);
   const activeGeojsonRaw = gridlyCountyBoundaryOverlayGeoJsonById[activeCountyId] || null;
@@ -48565,6 +48568,46 @@ function renderGridlyCountyBoundaryOverlay(reason = "unknown") {
     gridlyCountyBoundaryOverlayLayersById[activeCountyId] = layer;
   }
   return gridlyCountyBoundaryOverlayAudit({ reason, renderAttempted: true });
+}
+
+function gridlyGetCountyBoundaryRenderSnapshot() {
+  const countyId = gridlyGetActiveCountyId();
+  const county = GRIDLY_COUNTY_REGISTRY[countyId] || {};
+  const geojson = gridlyCountyBoundaryOverlayGeoJsonById[countyId] || null;
+  const feature = geojson?.features?.[0] || null;
+  const polygonLayer = gridlyCountyBoundaryOverlayLayersById[countyId] || null;
+  const polygonLayerCreated = Boolean(polygonLayer);
+  const polygonLayerAdded = Boolean(polygonLayer && gridlyCountyBoundaryOverlayLayer);
+  const polygonCurrentlyOnMap = Boolean(activeGeoFilter === "county" && polygonLayerAdded && (!map?.hasLayer || map.hasLayer(gridlyCountyBoundaryOverlayLayer)));
+  const bounds = getGridlyCountyBoundaryOverlayBbox(geojson);
+  const source = gridlyCountyBoundaryOverlaySourceMetadataById[countyId] || {};
+  const geometryFound = Boolean(feature?.geometry);
+  const stages = [
+    ["geometryFound", geometryFound],
+    ["polygonLayerCreated", polygonLayerCreated],
+    ["polygonLayerAdded", polygonLayerAdded],
+    ["polygonCurrentlyOnMap", polygonCurrentlyOnMap]
+  ];
+  return Object.freeze({
+    countyId,
+    countyFips: getGridlyCountyBoundaryOverlayFeatureGeoid(feature) || gridlyExtractCountyGeoid(county),
+    countyName: getGridlyCountyBoundaryOverlayFeatureName(feature) || county.name || null,
+    geometryType: feature?.geometry?.type || null,
+    geometrySource: source.sourcePath || null,
+    geometryFound,
+    polygonLayerCreated,
+    polygonLayerAdded,
+    polygonCurrentlyOnMap,
+    fitBoundsSource: activeGeoFilter === "county" && polygonLayerCreated ? "authoritative-county-polygon-layer" : null,
+    bounds,
+    activeGeoFilter: activeGeoFilter || null,
+    firstFailedStage: stages.find((entry) => !entry[1])?.[0] || null
+  });
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyGetCountyBoundaryRenderSnapshot = gridlyGetCountyBoundaryRenderSnapshot;
+  if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGetCountyBoundaryRenderSnapshot", gridlyGetCountyBoundaryRenderSnapshot);
 }
 
 async function loadGridlyCountyBoundaryOverlay() {
@@ -71358,8 +71401,14 @@ function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
   let targetBounds = null;
   let targetCrossings = Array.isArray(visibleCrossings) ? visibleCrossings : [];
 
-  if (activeGeoFilter === "county" && typeof gridlyGetCountyBounds === "function") {
-    targetBounds = gridlyGetCountyBounds(gridlyGetActiveCountyId());
+  if (activeGeoFilter === "county") {
+    // Fit the same governed polygon that the user can see, not a parallel
+    // bounds table (and never a rectangular substitute).
+    if (typeof renderGridlyCountyBoundaryOverlay === "function") renderGridlyCountyBoundaryOverlay("county-filter-fit");
+    const polygonLayer = typeof gridlyCountyBoundaryOverlayLayersById !== "undefined"
+      ? gridlyCountyBoundaryOverlayLayersById[gridlyGetActiveCountyId()] || null
+      : null;
+    targetBounds = polygonLayer?.getBounds?.() || (typeof renderGridlyCountyBoundaryOverlay !== "function" && typeof gridlyGetCountyBounds === "function" ? gridlyGetCountyBounds(gridlyGetActiveCountyId()) : null);
   } else if (activeGeoFilter === "active-delays") {
     targetCrossings = getActiveDelayCrossingsForViewport();
     if (!targetCrossings.length) return;
@@ -86241,6 +86290,7 @@ function bindEvents() {
     if (filterChanged) {
       crossingRenderFilterVersion += 1;
       renderGridlyAwarenessMapIdentity(`filter-change:${reason}`);
+      renderGridlyCountyBoundaryOverlay(`filter-change:${reason}`);
       scheduleRenderCrossings(`filter-change:${reason}`, { force: true });
     }
 

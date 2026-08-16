@@ -1,0 +1,7669 @@
+{
+  "schemaVersion": "gridly.statewideCountyGeometryValidity.v1",
+  "source": {
+    "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+    "bytes": 47911048,
+    "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316",
+    "schemaVersion": "gridly.lp1904.authoritativeCountyGeometry.runtime.v1"
+  },
+  "tested": 254,
+  "valid": 254,
+  "invalid": 0,
+  "deterministicInteriorPointMatches": 254,
+  "statewideEnvelope": {
+    "west": -106.645646,
+    "south": 25.837048,
+    "east": -93.508039,
+    "north": 36.500704
+  },
+  "topologicalValidation": {
+    "attempted": false,
+    "reason": "No GDAL/OGR/QGIS topology validator is installed; no repair or simplification performed."
+  },
+  "containment": [
+    {
+      "countyId": "anderson-tx",
+      "point": {
+        "lng": -95.65254717718128,
+        "lat": 31.813325667224557
+      },
+      "resolvedCountyIds": [
+        "anderson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "andrews-tx",
+      "point": {
+        "lng": -102.63781512106534,
+        "lat": 32.305035659604386
+      },
+      "resolvedCountyIds": [
+        "andrews-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "angelina-tx",
+      "point": {
+        "lng": -94.61186351521725,
+        "lat": 31.254783081493056
+      },
+      "resolvedCountyIds": [
+        "angelina-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "aransas-tx",
+      "point": {
+        "lng": -96.99143876544358,
+        "lat": 28.084719294194233
+      },
+      "resolvedCountyIds": [
+        "aransas-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "archer-tx",
+      "point": {
+        "lng": -98.68767480226873,
+        "lat": 33.61529421917034
+      },
+      "resolvedCountyIds": [
+        "archer-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "armstrong-tx",
+      "point": {
+        "lng": -101.35740433885465,
+        "lat": 34.96492558618824
+      },
+      "resolvedCountyIds": [
+        "armstrong-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "atascosa-tx",
+      "point": {
+        "lng": -98.52713226963257,
+        "lat": 28.893524978366234
+      },
+      "resolvedCountyIds": [
+        "atascosa-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "austin-tx",
+      "point": {
+        "lng": -96.27790889071294,
+        "lat": 29.887024099195063
+      },
+      "resolvedCountyIds": [
+        "austin-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "bailey-tx",
+      "point": {
+        "lng": -102.82991312411478,
+        "lat": 34.0685270236879
+      },
+      "resolvedCountyIds": [
+        "bailey-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "bandera-tx",
+      "point": {
+        "lng": -99.24624410603741,
+        "lat": 29.747204987821984
+      },
+      "resolvedCountyIds": [
+        "bandera-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "bastrop-tx",
+      "point": {
+        "lng": -97.31201437399257,
+        "lat": 30.10361086668305
+      },
+      "resolvedCountyIds": [
+        "bastrop-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "baylor-tx",
+      "point": {
+        "lng": -99.21351514272541,
+        "lat": 33.61648949955506
+      },
+      "resolvedCountyIds": [
+        "baylor-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "bee-tx",
+      "point": {
+        "lng": -97.74119012922989,
+        "lat": 28.41739322832837
+      },
+      "resolvedCountyIds": [
+        "bee-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "bell-tx",
+      "point": {
+        "lng": -97.47874404474598,
+        "lat": 31.03734519799816
+      },
+      "resolvedCountyIds": [
+        "bell-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "bexar-tx",
+      "point": {
+        "lng": -98.52002587325121,
+        "lat": 29.448957831833926
+      },
+      "resolvedCountyIds": [
+        "bexar-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "blanco-tx",
+      "point": {
+        "lng": -98.39986501908037,
+        "lat": 30.266376875038883
+      },
+      "resolvedCountyIds": [
+        "blanco-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "borden-tx",
+      "point": {
+        "lng": -101.43174879468816,
+        "lat": 32.743694149965286
+      },
+      "resolvedCountyIds": [
+        "borden-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "bosque-tx",
+      "point": {
+        "lng": -97.63434295586615,
+        "lat": 31.900416723482312
+      },
+      "resolvedCountyIds": [
+        "bosque-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "bowie-tx",
+      "point": {
+        "lng": -94.42333243933608,
+        "lat": 33.44575713064375
+      },
+      "resolvedCountyIds": [
+        "bowie-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "brazoria-tx",
+      "point": {
+        "lng": -95.43426826954502,
+        "lat": 29.167845304021775
+      },
+      "resolvedCountyIds": [
+        "brazoria-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "brazos-tx",
+      "point": {
+        "lng": -96.3023849442494,
+        "lat": 30.660798972141333
+      },
+      "resolvedCountyIds": [
+        "brazos-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "brewster-tx",
+      "point": {
+        "lng": -103.25175585563359,
+        "lat": 29.811949774320446
+      },
+      "resolvedCountyIds": [
+        "brewster-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "briscoe-tx",
+      "point": {
+        "lng": -101.20859330506511,
+        "lat": 34.530264104664745
+      },
+      "resolvedCountyIds": [
+        "briscoe-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "brooks-tx",
+      "point": {
+        "lng": -98.21872111945576,
+        "lat": 27.03157264378134
+      },
+      "resolvedCountyIds": [
+        "brooks-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "brown-tx",
+      "point": {
+        "lng": -98.99979417741748,
+        "lat": 31.774262415871696
+      },
+      "resolvedCountyIds": [
+        "brown-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "burleson-tx",
+      "point": {
+        "lng": -96.62147067386833,
+        "lat": 30.492485137107924
+      },
+      "resolvedCountyIds": [
+        "burleson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "burnet-tx",
+      "point": {
+        "lng": -98.18234042891214,
+        "lat": 30.78837267412477
+      },
+      "resolvedCountyIds": [
+        "burnet-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "caldwell-tx",
+      "point": {
+        "lng": -97.61991937101251,
+        "lat": 29.83684412700395
+      },
+      "resolvedCountyIds": [
+        "caldwell-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "calhoun-tx",
+      "point": {
+        "lng": -96.61507367412496,
+        "lat": 28.439109268790293
+      },
+      "resolvedCountyIds": [
+        "calhoun-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "callahan-tx",
+      "point": {
+        "lng": -99.37348808415211,
+        "lat": 32.29765570011102
+      },
+      "resolvedCountyIds": [
+        "callahan-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "cameron-tx",
+      "point": {
+        "lng": -97.45205686392548,
+        "lat": 26.150865919027208
+      },
+      "resolvedCountyIds": [
+        "cameron-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "camp-tx",
+      "point": {
+        "lng": -94.97847695445192,
+        "lat": 32.9732247417788
+      },
+      "resolvedCountyIds": [
+        "camp-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "carson-tx",
+      "point": {
+        "lng": -101.35418302981762,
+        "lat": 35.40350786999828
+      },
+      "resolvedCountyIds": [
+        "carson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "cass-tx",
+      "point": {
+        "lng": -94.3435984216982,
+        "lat": 33.07753460304627
+      },
+      "resolvedCountyIds": [
+        "cass-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "castro-tx",
+      "point": {
+        "lng": -102.2616698935864,
+        "lat": 34.529958229432204
+      },
+      "resolvedCountyIds": [
+        "castro-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "chambers-tx",
+      "point": {
+        "lng": -94.67135893572771,
+        "lat": 29.708264851628098
+      },
+      "resolvedCountyIds": [
+        "chambers-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "cherokee-tx",
+      "point": {
+        "lng": -95.16518313754132,
+        "lat": 31.836954638858625
+      },
+      "resolvedCountyIds": [
+        "cherokee-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "childress-tx",
+      "point": {
+        "lng": -100.20757494708334,
+        "lat": 34.52920145744293
+      },
+      "resolvedCountyIds": [
+        "childress-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "clay-tx",
+      "point": {
+        "lng": -98.20850330048393,
+        "lat": 33.78553104118029
+      },
+      "resolvedCountyIds": [
+        "clay-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "cochran-tx",
+      "point": {
+        "lng": -102.82843563078131,
+        "lat": 33.60414244021725
+      },
+      "resolvedCountyIds": [
+        "cochran-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "coke-tx",
+      "point": {
+        "lng": -100.52991076812842,
+        "lat": 31.88853098713445
+      },
+      "resolvedCountyIds": [
+        "coke-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "coleman-tx",
+      "point": {
+        "lng": -99.45363765027925,
+        "lat": 31.773206867831153
+      },
+      "resolvedCountyIds": [
+        "coleman-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "collin-tx",
+      "point": {
+        "lng": -96.57242942695366,
+        "lat": 33.18798980847091
+      },
+      "resolvedCountyIds": [
+        "collin-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "point": {
+        "lng": -100.27006592190628,
+        "lat": 34.96488392405681
+      },
+      "resolvedCountyIds": [
+        "collingsworth-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "colorado-tx",
+      "point": {
+        "lng": -96.52627535368119,
+        "lat": 29.620820931908618
+      },
+      "resolvedCountyIds": [
+        "colorado-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "comal-tx",
+      "point": {
+        "lng": -98.278245528079,
+        "lat": 29.808180120231654
+      },
+      "resolvedCountyIds": [
+        "comal-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "comanche-tx",
+      "point": {
+        "lng": -98.55825730159123,
+        "lat": 31.947978106664756
+      },
+      "resolvedCountyIds": [
+        "comanche-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "concho-tx",
+      "point": {
+        "lng": -99.8639623317341,
+        "lat": 31.326496735930604
+      },
+      "resolvedCountyIds": [
+        "concho-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "cooke-tx",
+      "point": {
+        "lng": -97.21262612660097,
+        "lat": 33.63920034577274
+      },
+      "resolvedCountyIds": [
+        "cooke-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "coryell-tx",
+      "point": {
+        "lng": -97.79921973764985,
+        "lat": 31.390905430256698
+      },
+      "resolvedCountyIds": [
+        "coryell-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "cottle-tx",
+      "point": {
+        "lng": -100.27874380471839,
+        "lat": 34.077648158982015
+      },
+      "resolvedCountyIds": [
+        "cottle-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "crane-tx",
+      "point": {
+        "lng": -102.51556844253567,
+        "lat": 31.428497464842216
+      },
+      "resolvedCountyIds": [
+        "crane-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "crockett-tx",
+      "point": {
+        "lng": -101.41214766138425,
+        "lat": 30.72298308599335
+      },
+      "resolvedCountyIds": [
+        "crockett-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "crosby-tx",
+      "point": {
+        "lng": -101.29995845137458,
+        "lat": 33.614625030361786
+      },
+      "resolvedCountyIds": [
+        "crosby-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "culberson-tx",
+      "point": {
+        "lng": -104.51736996532489,
+        "lat": 31.447073752005018
+      },
+      "resolvedCountyIds": [
+        "culberson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "dallam-tx",
+      "point": {
+        "lng": -102.60218561966953,
+        "lat": 36.27788789084653
+      },
+      "resolvedCountyIds": [
+        "dallam-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "dallas-tx",
+      "point": {
+        "lng": -96.77776413970456,
+        "lat": 32.76657257731832
+      },
+      "resolvedCountyIds": [
+        "dallas-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "dawson-tx",
+      "point": {
+        "lng": -101.9476844408639,
+        "lat": 32.74252609937081
+      },
+      "resolvedCountyIds": [
+        "dawson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "point": {
+        "lng": -102.60492683763134,
+        "lat": 34.96601903668664
+      },
+      "resolvedCountyIds": [
+        "deaf-smith-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "delta-tx",
+      "point": {
+        "lng": -95.67227082224055,
+        "lat": 33.3862927411859
+      },
+      "resolvedCountyIds": [
+        "delta-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "denton-tx",
+      "point": {
+        "lng": -97.11681506040618,
+        "lat": 33.20553124069311
+      },
+      "resolvedCountyIds": [
+        "denton-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "dewitt-tx",
+      "point": {
+        "lng": -97.3567784440325,
+        "lat": 29.082081292475685
+      },
+      "resolvedCountyIds": [
+        "dewitt-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "dickens-tx",
+      "point": {
+        "lng": -100.77886065206846,
+        "lat": 33.61661211369113
+      },
+      "resolvedCountyIds": [
+        "dickens-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "dimmit-tx",
+      "point": {
+        "lng": -99.75672612486777,
+        "lat": 28.42253599818304
+      },
+      "resolvedCountyIds": [
+        "dimmit-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "donley-tx",
+      "point": {
+        "lng": -100.81399160703415,
+        "lat": 34.96541759563003
+      },
+      "resolvedCountyIds": [
+        "donley-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "duval-tx",
+      "point": {
+        "lng": -98.50890606152485,
+        "lat": 27.681332988906075
+      },
+      "resolvedCountyIds": [
+        "duval-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "eastland-tx",
+      "point": {
+        "lng": -98.83232225020141,
+        "lat": 32.32707307055033
+      },
+      "resolvedCountyIds": [
+        "eastland-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "ector-tx",
+      "point": {
+        "lng": -102.54274920240243,
+        "lat": 31.86917253927263
+      },
+      "resolvedCountyIds": [
+        "ector-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "edwards-tx",
+      "point": {
+        "lng": -100.30474170158686,
+        "lat": 29.982632944409755
+      },
+      "resolvedCountyIds": [
+        "edwards-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "ellis-tx",
+      "point": {
+        "lng": -96.79463898808645,
+        "lat": 32.34843520728885
+      },
+      "resolvedCountyIds": [
+        "ellis-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "el-paso-tx",
+      "point": {
+        "lng": -106.2348354702173,
+        "lat": 31.768647564275756
+      },
+      "resolvedCountyIds": [
+        "el-paso-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "erath-tx",
+      "point": {
+        "lng": -98.21796670536712,
+        "lat": 32.23625866944045
+      },
+      "resolvedCountyIds": [
+        "erath-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "falls-tx",
+      "point": {
+        "lng": -96.93585090101045,
+        "lat": 31.25326207520973
+      },
+      "resolvedCountyIds": [
+        "falls-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "fannin-tx",
+      "point": {
+        "lng": -96.10682768314828,
+        "lat": 33.593809792938586
+      },
+      "resolvedCountyIds": [
+        "fannin-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "fayette-tx",
+      "point": {
+        "lng": -96.9197617167528,
+        "lat": 29.876786794632576
+      },
+      "resolvedCountyIds": [
+        "fayette-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "fisher-tx",
+      "point": {
+        "lng": -100.4021681054013,
+        "lat": 32.74282022188556
+      },
+      "resolvedCountyIds": [
+        "fisher-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "floyd-tx",
+      "point": {
+        "lng": -101.30323451886471,
+        "lat": 34.07242455065481
+      },
+      "resolvedCountyIds": [
+        "floyd-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "foard-tx",
+      "point": {
+        "lng": -99.77798487847123,
+        "lat": 33.97461509221422
+      },
+      "resolvedCountyIds": [
+        "foard-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "point": {
+        "lng": -95.77090938683173,
+        "lat": 29.527562417586434
+      },
+      "resolvedCountyIds": [
+        "fort-bend-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "franklin-tx",
+      "point": {
+        "lng": -95.21841939750122,
+        "lat": 33.17554867595547
+      },
+      "resolvedCountyIds": [
+        "franklin-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "freestone-tx",
+      "point": {
+        "lng": -96.14909229519955,
+        "lat": 31.704894073466505
+      },
+      "resolvedCountyIds": [
+        "freestone-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "frio-tx",
+      "point": {
+        "lng": -99.10826678241882,
+        "lat": 28.867817588188295
+      },
+      "resolvedCountyIds": [
+        "frio-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "gaines-tx",
+      "point": {
+        "lng": -102.63517378349125,
+        "lat": 32.74072772725478
+      },
+      "resolvedCountyIds": [
+        "gaines-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "galveston-tx",
+      "point": {
+        "lng": -94.8627226089706,
+        "lat": 29.37998595081851
+      },
+      "resolvedCountyIds": [
+        "galveston-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "garza-tx",
+      "point": {
+        "lng": -101.2984241012273,
+        "lat": 33.17987570492081
+      },
+      "resolvedCountyIds": [
+        "garza-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "gillespie-tx",
+      "point": {
+        "lng": -98.94648001878211,
+        "lat": 30.31805480078254
+      },
+      "resolvedCountyIds": [
+        "gillespie-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "glasscock-tx",
+      "point": {
+        "lng": -101.52080219062152,
+        "lat": 31.86946270537736
+      },
+      "resolvedCountyIds": [
+        "glasscock-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "goliad-tx",
+      "point": {
+        "lng": -97.426492261433,
+        "lat": 28.657095209044666
+      },
+      "resolvedCountyIds": [
+        "goliad-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "gonzales-tx",
+      "point": {
+        "lng": -97.49252375095084,
+        "lat": 29.456733334414373
+      },
+      "resolvedCountyIds": [
+        "gonzales-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "gray-tx",
+      "point": {
+        "lng": -100.81255803406079,
+        "lat": 35.401163256497284
+      },
+      "resolvedCountyIds": [
+        "gray-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "grayson-tx",
+      "point": {
+        "lng": -96.67772499452987,
+        "lat": 33.62680767239262
+      },
+      "resolvedCountyIds": [
+        "grayson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "gregg-tx",
+      "point": {
+        "lng": -94.81694778919429,
+        "lat": 32.480470602520825
+      },
+      "resolvedCountyIds": [
+        "gregg-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "grimes-tx",
+      "point": {
+        "lng": -95.98550298309826,
+        "lat": 30.54347151084031
+      },
+      "resolvedCountyIds": [
+        "grimes-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "point": {
+        "lng": -97.94858474189273,
+        "lat": 29.583050984465356
+      },
+      "resolvedCountyIds": [
+        "guadalupe-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hale-tx",
+      "point": {
+        "lng": -101.82688130037398,
+        "lat": 34.07051250964483
+      },
+      "resolvedCountyIds": [
+        "hale-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hall-tx",
+      "point": {
+        "lng": -100.6811285988036,
+        "lat": 34.53077914173467
+      },
+      "resolvedCountyIds": [
+        "hall-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hamilton-tx",
+      "point": {
+        "lng": -98.11072584777253,
+        "lat": 31.704803052101113
+      },
+      "resolvedCountyIds": [
+        "hamilton-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hansford-tx",
+      "point": {
+        "lng": -101.35453921102244,
+        "lat": 36.277454471593174
+      },
+      "resolvedCountyIds": [
+        "hansford-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hardeman-tx",
+      "point": {
+        "lng": -99.74571673700409,
+        "lat": 34.29029388438124
+      },
+      "resolvedCountyIds": [
+        "hardeman-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hardin-tx",
+      "point": {
+        "lng": -94.39022882951146,
+        "lat": 30.332377297848176
+      },
+      "resolvedCountyIds": [
+        "hardin-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "harris-tx",
+      "point": {
+        "lng": -95.39226044909176,
+        "lat": 29.857306611984917
+      },
+      "resolvedCountyIds": [
+        "harris-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "harrison-tx",
+      "point": {
+        "lng": -94.3714865550813,
+        "lat": 32.54813319795277
+      },
+      "resolvedCountyIds": [
+        "harrison-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hartley-tx",
+      "point": {
+        "lng": -102.60286278411257,
+        "lat": 35.84002595058839
+      },
+      "resolvedCountyIds": [
+        "hartley-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "haskell-tx",
+      "point": {
+        "lng": -99.73030000955279,
+        "lat": 33.17823128725513
+      },
+      "resolvedCountyIds": [
+        "haskell-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hays-tx",
+      "point": {
+        "lng": -98.03115517978976,
+        "lat": 30.057887498338683
+      },
+      "resolvedCountyIds": [
+        "hays-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hemphill-tx",
+      "point": {
+        "lng": -100.27047326590045,
+        "lat": 35.83756992247953
+      },
+      "resolvedCountyIds": [
+        "hemphill-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "henderson-tx",
+      "point": {
+        "lng": -95.85361287562223,
+        "lat": 32.21190742841152
+      },
+      "resolvedCountyIds": [
+        "henderson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "point": {
+        "lng": -98.18111521808156,
+        "lat": 26.396734153573167
+      },
+      "resolvedCountyIds": [
+        "hidalgo-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hill-tx",
+      "point": {
+        "lng": -97.13242692352914,
+        "lat": 31.990686521531654
+      },
+      "resolvedCountyIds": [
+        "hill-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hockley-tx",
+      "point": {
+        "lng": -102.34319717822626,
+        "lat": 33.60764268469932
+      },
+      "resolvedCountyIds": [
+        "hockley-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hood-tx",
+      "point": {
+        "lng": -97.83225706548984,
+        "lat": 32.42992672283198
+      },
+      "resolvedCountyIds": [
+        "hood-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hopkins-tx",
+      "point": {
+        "lng": -95.56395016277372,
+        "lat": 33.149555898066225
+      },
+      "resolvedCountyIds": [
+        "hopkins-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "houston-tx",
+      "point": {
+        "lng": -95.42267715165455,
+        "lat": 31.31773255613089
+      },
+      "resolvedCountyIds": [
+        "houston-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "howard-tx",
+      "point": {
+        "lng": -101.43550545048069,
+        "lat": 32.306169498866055
+      },
+      "resolvedCountyIds": [
+        "howard-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "point": {
+        "lng": -105.38645271754297,
+        "lat": 31.456142736230376
+      },
+      "resolvedCountyIds": [
+        "hudspeth-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hunt-tx",
+      "point": {
+        "lng": -96.08545497141363,
+        "lat": 33.123593705065225
+      },
+      "resolvedCountyIds": [
+        "hunt-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "point": {
+        "lng": -101.35469939589541,
+        "lat": 35.84002597464035
+      },
+      "resolvedCountyIds": [
+        "hutchinson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "irion-tx",
+      "point": {
+        "lng": -100.98241927522743,
+        "lat": 31.303925021045963
+      },
+      "resolvedCountyIds": [
+        "irion-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "jack-tx",
+      "point": {
+        "lng": -98.17245858386772,
+        "lat": 33.233460602567135
+      },
+      "resolvedCountyIds": [
+        "jack-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "jackson-tx",
+      "point": {
+        "lng": -96.57768091403835,
+        "lat": 28.954244232844932
+      },
+      "resolvedCountyIds": [
+        "jackson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "jasper-tx",
+      "point": {
+        "lng": -94.02508503648141,
+        "lat": 30.74396060735983
+      },
+      "resolvedCountyIds": [
+        "jasper-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "point": {
+        "lng": -104.14001978761954,
+        "lat": 30.71547782082932
+      },
+      "resolvedCountyIds": [
+        "jeff-davis-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "jefferson-tx",
+      "point": {
+        "lng": -94.15343618647945,
+        "lat": 29.853745300304123
+      },
+      "resolvedCountyIds": [
+        "jefferson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "point": {
+        "lng": -98.69730506869446,
+        "lat": 27.043397136843627
+      },
+      "resolvedCountyIds": [
+        "jim-hogg-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "point": {
+        "lng": -98.08988624353832,
+        "lat": 27.73133803425431
+      },
+      "resolvedCountyIds": [
+        "jim-wells-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "johnson-tx",
+      "point": {
+        "lng": -97.36654676514728,
+        "lat": 32.37899962312296
+      },
+      "resolvedCountyIds": [
+        "johnson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "jones-tx",
+      "point": {
+        "lng": -99.87874425012174,
+        "lat": 32.739903873952066
+      },
+      "resolvedCountyIds": [
+        "jones-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "karnes-tx",
+      "point": {
+        "lng": -97.85940182931468,
+        "lat": 28.90573896289523
+      },
+      "resolvedCountyIds": [
+        "karnes-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "kaufman-tx",
+      "point": {
+        "lng": -96.28776533186884,
+        "lat": 32.599290961265254
+      },
+      "resolvedCountyIds": [
+        "kaufman-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "kendall-tx",
+      "point": {
+        "lng": -98.71155520221396,
+        "lat": 29.944688872544
+      },
+      "resolvedCountyIds": [
+        "kendall-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "kenedy-tx",
+      "point": {
+        "lng": -97.63646115777335,
+        "lat": 26.928022876401688
+      },
+      "resolvedCountyIds": [
+        "kenedy-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "kent-tx",
+      "point": {
+        "lng": -100.77756938214165,
+        "lat": 33.18141522807236
+      },
+      "resolvedCountyIds": [
+        "kent-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "kerr-tx",
+      "point": {
+        "lng": -99.3501597531549,
+        "lat": 30.0614838021134
+      },
+      "resolvedCountyIds": [
+        "kerr-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "kimble-tx",
+      "point": {
+        "lng": -99.74869558490938,
+        "lat": 30.486778731792715
+      },
+      "resolvedCountyIds": [
+        "kimble-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "king-tx",
+      "point": {
+        "lng": -100.25585007222635,
+        "lat": 33.61647577888673
+      },
+      "resolvedCountyIds": [
+        "king-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "kinney-tx",
+      "point": {
+        "lng": -100.41794661808224,
+        "lat": 29.350207578513054
+      },
+      "resolvedCountyIds": [
+        "kinney-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "kleberg-tx",
+      "point": {
+        "lng": -97.66838777013432,
+        "lat": 27.4267108242156
+      },
+      "resolvedCountyIds": [
+        "kleberg-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "knox-tx",
+      "point": {
+        "lng": -99.74142704793687,
+        "lat": 33.60612914414575
+      },
+      "resolvedCountyIds": [
+        "knox-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "lamar-tx",
+      "point": {
+        "lng": -95.5712006964093,
+        "lat": 33.667262047308846
+      },
+      "resolvedCountyIds": [
+        "lamar-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "lamb-tx",
+      "point": {
+        "lng": -102.35171048610222,
+        "lat": 34.06862309066419
+      },
+      "resolvedCountyIds": [
+        "lamb-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "lampasas-tx",
+      "point": {
+        "lng": -98.24143966179315,
+        "lat": 31.196233903065032
+      },
+      "resolvedCountyIds": [
+        "lampasas-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "la-salle-tx",
+      "point": {
+        "lng": -99.09966268727237,
+        "lat": 28.34506930115425
+      },
+      "resolvedCountyIds": [
+        "la-salle-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "lavaca-tx",
+      "point": {
+        "lng": -96.93015249165708,
+        "lat": 29.384354443939447
+      },
+      "resolvedCountyIds": [
+        "lavaca-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "lee-tx",
+      "point": {
+        "lng": -96.9657045129652,
+        "lat": 30.31067970564905
+      },
+      "resolvedCountyIds": [
+        "lee-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "leon-tx",
+      "point": {
+        "lng": -95.99569065209809,
+        "lat": 31.29650680837816
+      },
+      "resolvedCountyIds": [
+        "leon-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "liberty-tx",
+      "point": {
+        "lng": -94.81221226927437,
+        "lat": 30.151612133799112
+      },
+      "resolvedCountyIds": [
+        "liberty-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "limestone-tx",
+      "point": {
+        "lng": -96.58052973781331,
+        "lat": 31.54546416200673
+      },
+      "resolvedCountyIds": [
+        "limestone-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "point": {
+        "lng": -100.27311543822312,
+        "lat": 36.277716908640976
+      },
+      "resolvedCountyIds": [
+        "lipscomb-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "live-oak-tx",
+      "point": {
+        "lng": -98.12478564888822,
+        "lat": 28.351371108779926
+      },
+      "resolvedCountyIds": [
+        "live-oak-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "llano-tx",
+      "point": {
+        "lng": -98.68409734803825,
+        "lat": 30.70574002727739
+      },
+      "resolvedCountyIds": [
+        "llano-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "loving-tx",
+      "point": {
+        "lng": -103.57989907699462,
+        "lat": 31.849192200543946
+      },
+      "resolvedCountyIds": [
+        "loving-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "lubbock-tx",
+      "point": {
+        "lng": -101.82054583089679,
+        "lat": 33.61020612041144
+      },
+      "resolvedCountyIds": [
+        "lubbock-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "lynn-tx",
+      "point": {
+        "lng": -101.8161238394426,
+        "lat": 33.17682443728595
+      },
+      "resolvedCountyIds": [
+        "lynn-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "point": {
+        "lng": -99.34747837749731,
+        "lat": 31.198871140657644
+      },
+      "resolvedCountyIds": [
+        "mcculloch-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "mclennan-tx",
+      "point": {
+        "lng": -97.20178660091672,
+        "lat": 31.552380079966
+      },
+      "resolvedCountyIds": [
+        "mclennan-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "point": {
+        "lng": -98.56784111983926,
+        "lat": 28.352687960297175
+      },
+      "resolvedCountyIds": [
+        "mcmullen-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "madison-tx",
+      "point": {
+        "lng": -95.92841010829962,
+        "lat": 30.965538598221272
+      },
+      "resolvedCountyIds": [
+        "madison-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "marion-tx",
+      "point": {
+        "lng": -94.35722218927975,
+        "lat": 32.79798178920155
+      },
+      "resolvedCountyIds": [
+        "marion-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "martin-tx",
+      "point": {
+        "lng": -101.95121677871143,
+        "lat": 32.306030133414325
+      },
+      "resolvedCountyIds": [
+        "martin-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "mason-tx",
+      "point": {
+        "lng": -99.22612742360077,
+        "lat": 30.717715802455256
+      },
+      "resolvedCountyIds": [
+        "mason-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "matagorda-tx",
+      "point": {
+        "lng": -96.00398075782229,
+        "lat": 28.78565055364251
+      },
+      "resolvedCountyIds": [
+        "matagorda-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "maverick-tx",
+      "point": {
+        "lng": -100.31451417126522,
+        "lat": 28.742590130566377
+      },
+      "resolvedCountyIds": [
+        "maverick-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "medina-tx",
+      "point": {
+        "lng": -99.11013099644481,
+        "lat": 29.355696049797476
+      },
+      "resolvedCountyIds": [
+        "medina-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "menard-tx",
+      "point": {
+        "lng": -99.82063586078536,
+        "lat": 30.88978200676198
+      },
+      "resolvedCountyIds": [
+        "menard-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "midland-tx",
+      "point": {
+        "lng": -102.03160927688336,
+        "lat": 31.8691599470378
+      },
+      "resolvedCountyIds": [
+        "midland-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "milam-tx",
+      "point": {
+        "lng": -96.97682637330048,
+        "lat": 30.78630242773364
+      },
+      "resolvedCountyIds": [
+        "milam-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "mills-tx",
+      "point": {
+        "lng": -98.5954583668646,
+        "lat": 31.4951911727431
+      },
+      "resolvedCountyIds": [
+        "mills-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "mitchell-tx",
+      "point": {
+        "lng": -100.92122865392261,
+        "lat": 32.306211752032254
+      },
+      "resolvedCountyIds": [
+        "mitchell-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "montague-tx",
+      "point": {
+        "lng": -97.72465312130014,
+        "lat": 33.67562655215194
+      },
+      "resolvedCountyIds": [
+        "montague-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "montgomery-tx",
+      "point": {
+        "lng": -95.50300850413325,
+        "lat": 30.30020781242215
+      },
+      "resolvedCountyIds": [
+        "montgomery-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "moore-tx",
+      "point": {
+        "lng": -101.89292280950839,
+        "lat": 35.83768725249161
+      },
+      "resolvedCountyIds": [
+        "moore-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "morris-tx",
+      "point": {
+        "lng": -94.73265037127084,
+        "lat": 33.11348257200743
+      },
+      "resolvedCountyIds": [
+        "morris-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "motley-tx",
+      "point": {
+        "lng": -100.77982896685812,
+        "lat": 34.07409477686105
+      },
+      "resolvedCountyIds": [
+        "motley-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "point": {
+        "lng": -94.61586919353331,
+        "lat": 31.615952196709713
+      },
+      "resolvedCountyIds": [
+        "nacogdoches-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "navarro-tx",
+      "point": {
+        "lng": -96.47248640689597,
+        "lat": 32.046942857179225
+      },
+      "resolvedCountyIds": [
+        "navarro-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "newton-tx",
+      "point": {
+        "lng": -93.7447410127137,
+        "lat": 30.786309192593034
+      },
+      "resolvedCountyIds": [
+        "newton-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "nolan-tx",
+      "point": {
+        "lng": -100.40605246217697,
+        "lat": 32.30349025928805
+      },
+      "resolvedCountyIds": [
+        "nolan-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "nueces-tx",
+      "point": {
+        "lng": -97.51623565550378,
+        "lat": 27.735048617874913
+      },
+      "resolvedCountyIds": [
+        "nueces-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "point": {
+        "lng": -100.81565396954635,
+        "lat": 36.27841371397544
+      },
+      "resolvedCountyIds": [
+        "ochiltree-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "oldham-tx",
+      "point": {
+        "lng": -102.60287060302659,
+        "lat": 35.40503461818829
+      },
+      "resolvedCountyIds": [
+        "oldham-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "orange-tx",
+      "point": {
+        "lng": -93.89387611210887,
+        "lat": 30.12131354791171
+      },
+      "resolvedCountyIds": [
+        "orange-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "point": {
+        "lng": -98.31302137936157,
+        "lat": 32.75318037868413
+      },
+      "resolvedCountyIds": [
+        "palo-pinto-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "panola-tx",
+      "point": {
+        "lng": -94.30563985768048,
+        "lat": 32.162355237756344
+      },
+      "resolvedCountyIds": [
+        "panola-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "parker-tx",
+      "point": {
+        "lng": -97.80509666481127,
+        "lat": 32.777645813411155
+      },
+      "resolvedCountyIds": [
+        "parker-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "parmer-tx",
+      "point": {
+        "lng": -102.78453885268401,
+        "lat": 34.530112945225774
+      },
+      "resolvedCountyIds": [
+        "parmer-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "pecos-tx",
+      "point": {
+        "lng": -102.72357033218269,
+        "lat": 30.781060509715644
+      },
+      "resolvedCountyIds": [
+        "pecos-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "polk-tx",
+      "point": {
+        "lng": -94.83002486127677,
+        "lat": 30.79271976623162
+      },
+      "resolvedCountyIds": [
+        "polk-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "potter-tx",
+      "point": {
+        "lng": -101.89400489770584,
+        "lat": 35.401275816489196
+      },
+      "resolvedCountyIds": [
+        "potter-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "presidio-tx",
+      "point": {
+        "lng": -104.24052167959714,
+        "lat": 29.999802670022532
+      },
+      "resolvedCountyIds": [
+        "presidio-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "rains-tx",
+      "point": {
+        "lng": -95.79337634379043,
+        "lat": 32.87033942306643
+      },
+      "resolvedCountyIds": [
+        "rains-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "randall-tx",
+      "point": {
+        "lng": -101.8969445302149,
+        "lat": 34.96585699874038
+      },
+      "resolvedCountyIds": [
+        "randall-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "reagan-tx",
+      "point": {
+        "lng": -101.52300841386517,
+        "lat": 31.36619212920664
+      },
+      "resolvedCountyIds": [
+        "reagan-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "real-tx",
+      "point": {
+        "lng": -99.8221669208522,
+        "lat": 29.831742937170567
+      },
+      "resolvedCountyIds": [
+        "real-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "red-river-tx",
+      "point": {
+        "lng": -95.05036072996346,
+        "lat": 33.620681816377264
+      },
+      "resolvedCountyIds": [
+        "red-river-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "reeves-tx",
+      "point": {
+        "lng": -103.69316726613938,
+        "lat": 31.32318615671694
+      },
+      "resolvedCountyIds": [
+        "reeves-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "refugio-tx",
+      "point": {
+        "lng": -97.15952146218062,
+        "lat": 28.321575299782317
+      },
+      "resolvedCountyIds": [
+        "refugio-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "roberts-tx",
+      "point": {
+        "lng": -100.8134440833454,
+        "lat": 35.83849167344701
+      },
+      "resolvedCountyIds": [
+        "roberts-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "robertson-tx",
+      "point": {
+        "lng": -96.51288117717084,
+        "lat": 31.027013023818814
+      },
+      "resolvedCountyIds": [
+        "robertson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "rockwall-tx",
+      "point": {
+        "lng": -96.40788512914412,
+        "lat": 32.897848822697135
+      },
+      "resolvedCountyIds": [
+        "rockwall-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "runnels-tx",
+      "point": {
+        "lng": -99.97623130387848,
+        "lat": 31.831095248144916
+      },
+      "resolvedCountyIds": [
+        "runnels-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "rusk-tx",
+      "point": {
+        "lng": -94.76184558766053,
+        "lat": 32.107679205051724
+      },
+      "resolvedCountyIds": [
+        "rusk-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "sabine-tx",
+      "point": {
+        "lng": -93.85180241443213,
+        "lat": 31.34319986259873
+      },
+      "resolvedCountyIds": [
+        "sabine-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "point": {
+        "lng": -94.16819369875341,
+        "lat": 31.394219824275297
+      },
+      "resolvedCountyIds": [
+        "san-augustine-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "point": {
+        "lng": -95.1669012010298,
+        "lat": 30.579533583205592
+      },
+      "resolvedCountyIds": [
+        "san-jacinto-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "point": {
+        "lng": -97.51830586331921,
+        "lat": 28.008811133453708
+      },
+      "resolvedCountyIds": [
+        "san-patricio-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "san-saba-tx",
+      "point": {
+        "lng": -98.81755113570635,
+        "lat": 31.155194586185583
+      },
+      "resolvedCountyIds": [
+        "san-saba-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "schleicher-tx",
+      "point": {
+        "lng": -100.53854604460025,
+        "lat": 30.897452608380814
+      },
+      "resolvedCountyIds": [
+        "schleicher-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "scurry-tx",
+      "point": {
+        "lng": -100.91640707790039,
+        "lat": 32.74631492949583
+      },
+      "resolvedCountyIds": [
+        "scurry-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "shackelford-tx",
+      "point": {
+        "lng": -99.35406694144227,
+        "lat": 32.73597287331568
+      },
+      "resolvedCountyIds": [
+        "shackelford-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "shelby-tx",
+      "point": {
+        "lng": -94.14501755823905,
+        "lat": 31.792408942648862
+      },
+      "resolvedCountyIds": [
+        "shelby-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "sherman-tx",
+      "point": {
+        "lng": -101.89346700473648,
+        "lat": 36.277666863685276
+      },
+      "resolvedCountyIds": [
+        "sherman-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "smith-tx",
+      "point": {
+        "lng": -95.26918268173013,
+        "lat": 32.37503542103108
+      },
+      "resolvedCountyIds": [
+        "smith-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "somervell-tx",
+      "point": {
+        "lng": -97.77455337195623,
+        "lat": 32.2222153280383
+      },
+      "resolvedCountyIds": [
+        "somervell-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "starr-tx",
+      "point": {
+        "lng": -98.73839874970719,
+        "lat": 26.562148989484918
+      },
+      "resolvedCountyIds": [
+        "starr-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "stephens-tx",
+      "point": {
+        "lng": -98.836173157186,
+        "lat": 32.73586501750139
+      },
+      "resolvedCountyIds": [
+        "stephens-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "sterling-tx",
+      "point": {
+        "lng": -101.050008039006,
+        "lat": 31.82787920179517
+      },
+      "resolvedCountyIds": [
+        "sterling-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "stonewall-tx",
+      "point": {
+        "lng": -100.25330550680455,
+        "lat": 33.179124387282165
+      },
+      "resolvedCountyIds": [
+        "stonewall-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "sutton-tx",
+      "point": {
+        "lng": -100.53818749476615,
+        "lat": 30.498293027670293
+      },
+      "resolvedCountyIds": [
+        "sutton-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "swisher-tx",
+      "point": {
+        "lng": -101.7350268457077,
+        "lat": 34.53038499054818
+      },
+      "resolvedCountyIds": [
+        "swisher-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "tarrant-tx",
+      "point": {
+        "lng": -97.29113114653872,
+        "lat": 32.771923506123066
+      },
+      "resolvedCountyIds": [
+        "tarrant-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "taylor-tx",
+      "point": {
+        "lng": -99.89012209256923,
+        "lat": 32.30147200681298
+      },
+      "resolvedCountyIds": [
+        "taylor-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "terrell-tx",
+      "point": {
+        "lng": -102.07648647084534,
+        "lat": 30.224961567030682
+      },
+      "resolvedCountyIds": [
+        "terrell-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "terry-tx",
+      "point": {
+        "lng": -102.33519655029323,
+        "lat": 33.173812659090096
+      },
+      "resolvedCountyIds": [
+        "terry-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "point": {
+        "lng": -99.21236985266736,
+        "lat": 33.17748994202829
+      },
+      "resolvedCountyIds": [
+        "throckmorton-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "titus-tx",
+      "point": {
+        "lng": -94.96567222635224,
+        "lat": 33.21660303596421
+      },
+      "resolvedCountyIds": [
+        "titus-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "tom-green-tx",
+      "point": {
+        "lng": -100.46207283749622,
+        "lat": 31.404399316845712
+      },
+      "resolvedCountyIds": [
+        "tom-green-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "travis-tx",
+      "point": {
+        "lng": -97.78195731241627,
+        "lat": 30.334376172087833
+      },
+      "resolvedCountyIds": [
+        "travis-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "trinity-tx",
+      "point": {
+        "lng": -95.13551054763106,
+        "lat": 31.088815201609286
+      },
+      "resolvedCountyIds": [
+        "trinity-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "tyler-tx",
+      "point": {
+        "lng": -94.37659392771755,
+        "lat": 30.771232149051905
+      },
+      "resolvedCountyIds": [
+        "tyler-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "upshur-tx",
+      "point": {
+        "lng": -94.94148452884743,
+        "lat": 32.73627653540001
+      },
+      "resolvedCountyIds": [
+        "upshur-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "upton-tx",
+      "point": {
+        "lng": -102.04303489233664,
+        "lat": 31.36873022905282
+      },
+      "resolvedCountyIds": [
+        "upton-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "uvalde-tx",
+      "point": {
+        "lng": -99.76220527591936,
+        "lat": 29.35733617790992
+      },
+      "resolvedCountyIds": [
+        "uvalde-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "val-verde-tx",
+      "point": {
+        "lng": -101.15171519752245,
+        "lat": 29.892960136641108
+      },
+      "resolvedCountyIds": [
+        "val-verde-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "point": {
+        "lng": -95.83651611152351,
+        "lat": 32.56371670238704
+      },
+      "resolvedCountyIds": [
+        "van-zandt-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "victoria-tx",
+      "point": {
+        "lng": -96.97152527480871,
+        "lat": 28.79635149135396
+      },
+      "resolvedCountyIds": [
+        "victoria-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "walker-tx",
+      "point": {
+        "lng": -95.57228392990247,
+        "lat": 30.73904486089396
+      },
+      "resolvedCountyIds": [
+        "walker-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "waller-tx",
+      "point": {
+        "lng": -95.98763213242204,
+        "lat": 30.010784111256736
+      },
+      "resolvedCountyIds": [
+        "waller-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "ward-tx",
+      "point": {
+        "lng": -103.10242523856628,
+        "lat": 31.509465550503652
+      },
+      "resolvedCountyIds": [
+        "ward-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "washington-tx",
+      "point": {
+        "lng": -96.40344376212049,
+        "lat": 30.214530426684682
+      },
+      "resolvedCountyIds": [
+        "washington-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "webb-tx",
+      "point": {
+        "lng": -99.33156530432676,
+        "lat": 27.761062430038972
+      },
+      "resolvedCountyIds": [
+        "webb-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "wharton-tx",
+      "point": {
+        "lng": -96.22210423983083,
+        "lat": 29.27786164584623
+      },
+      "resolvedCountyIds": [
+        "wharton-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "wheeler-tx",
+      "point": {
+        "lng": -100.26964751039732,
+        "lat": 35.401278804793535
+      },
+      "resolvedCountyIds": [
+        "wheeler-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "wichita-tx",
+      "point": {
+        "lng": -98.70355074786971,
+        "lat": 33.987997042809354
+      },
+      "resolvedCountyIds": [
+        "wichita-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "point": {
+        "lng": -99.2410547632518,
+        "lat": 34.08072613294793
+      },
+      "resolvedCountyIds": [
+        "wilbarger-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "willacy-tx",
+      "point": {
+        "lng": -97.59165763840991,
+        "lat": 26.476966332977252
+      },
+      "resolvedCountyIds": [
+        "willacy-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "williamson-tx",
+      "point": {
+        "lng": -97.60040382893371,
+        "lat": 30.647522636104934
+      },
+      "resolvedCountyIds": [
+        "williamson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "wilson-tx",
+      "point": {
+        "lng": -98.08657328038669,
+        "lat": 29.17400608551904
+      },
+      "resolvedCountyIds": [
+        "wilson-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "winkler-tx",
+      "point": {
+        "lng": -103.04816905601884,
+        "lat": 31.850044565042094
+      },
+      "resolvedCountyIds": [
+        "winkler-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "wise-tx",
+      "point": {
+        "lng": -97.65446210858894,
+        "lat": 33.21589956130623
+      },
+      "resolvedCountyIds": [
+        "wise-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "wood-tx",
+      "point": {
+        "lng": -95.3820619716135,
+        "lat": 32.78640514009717
+      },
+      "resolvedCountyIds": [
+        "wood-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "yoakum-tx",
+      "point": {
+        "lng": -102.82779607234885,
+        "lat": 33.172974605772644
+      },
+      "resolvedCountyIds": [
+        "yoakum-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "young-tx",
+      "point": {
+        "lng": -98.6877665582085,
+        "lat": 33.17669577661499
+      },
+      "resolvedCountyIds": [
+        "young-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "zapata-tx",
+      "point": {
+        "lng": -99.16861279123253,
+        "lat": 27.00077815589589
+      },
+      "resolvedCountyIds": [
+        "zapata-tx"
+      ],
+      "passed": true
+    },
+    {
+      "countyId": "zavala-tx",
+      "point": {
+        "lng": -99.7605956715243,
+        "lat": 28.866211422340243
+      },
+      "resolvedCountyIds": [
+        "zavala-tx"
+      ],
+      "passed": true
+    }
+  ],
+  "representativeControls": [
+    {
+      "countyId": "el-paso-tx",
+      "countyFips": "48141",
+      "countyName": "El Paso County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -106.645646,
+        "south": 31.38723,
+        "east": -105.954328,
+        "north": 32.00265
+      },
+      "interiorPoint": {
+        "lng": -106.2348354702173,
+        "lat": 31.768647564275756
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "el-paso-tx",
+      "ringCount": 1,
+      "vertexCount": 2428,
+      "passed": true
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "countyFips": "48229",
+      "countyName": "Hudspeth County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -105.998012,
+        "south": 30.629258,
+        "east": -104.907122,
+        "north": 32.002377
+      },
+      "interiorPoint": {
+        "lng": -105.38645271754297,
+        "lat": 31.456142736230376
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "hudspeth-tx",
+      "ringCount": 1,
+      "vertexCount": 6488,
+      "passed": true
+    },
+    {
+      "countyId": "presidio-tx",
+      "countyFips": "48377",
+      "countyName": "Presidio County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -104.980778,
+        "south": 29.258437,
+        "east": -103.792703,
+        "north": 30.629258
+      },
+      "interiorPoint": {
+        "lng": -104.24052167959714,
+        "lat": 29.999802670022532
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "presidio-tx",
+      "ringCount": 1,
+      "vertexCount": 9557,
+      "passed": true
+    },
+    {
+      "countyId": "brewster-tx",
+      "countyFips": "48043",
+      "countyName": "Brewster County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -103.80068,
+        "south": 28.971547,
+        "east": -102.320819,
+        "north": 30.665939
+      },
+      "interiorPoint": {
+        "lng": -103.25175585563359,
+        "lat": 29.811949774320446
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "brewster-tx",
+      "ringCount": 1,
+      "vertexCount": 5443,
+      "passed": true
+    },
+    {
+      "countyId": "cameron-tx",
+      "countyFips": "48061",
+      "countyName": "Cameron County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -97.862325,
+        "south": 25.837048,
+        "east": -97.08934,
+        "north": 26.412715
+      },
+      "interiorPoint": {
+        "lng": -97.45205686392548,
+        "lat": 26.150865919027208
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "cameron-tx",
+      "ringCount": 1,
+      "vertexCount": 4646,
+      "passed": true
+    },
+    {
+      "countyId": "harris-tx",
+      "countyFips": "48201",
+      "countyName": "Harris County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -95.960733,
+        "south": 29.497297,
+        "east": -94.908492,
+        "north": 30.170606
+      },
+      "interiorPoint": {
+        "lng": -95.39226044909176,
+        "lat": 29.857306611984917
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "harris-tx",
+      "ringCount": 1,
+      "vertexCount": 12788,
+      "passed": true
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyFips": "48167",
+      "countyName": "Galveston County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -95.233081,
+        "south": 29.062739,
+        "east": -94.369361,
+        "north": 29.598264
+      },
+      "interiorPoint": {
+        "lng": -94.8627226089706,
+        "lat": 29.37998595081851
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "galveston-tx",
+      "ringCount": 1,
+      "vertexCount": 6062,
+      "passed": true
+    },
+    {
+      "countyId": "bexar-tx",
+      "countyFips": "48029",
+      "countyName": "Bexar County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -98.806552,
+        "south": 29.114435,
+        "east": -98.116902,
+        "north": 29.760713
+      },
+      "interiorPoint": {
+        "lng": -98.52002587325121,
+        "lat": 29.448957831833926
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "bexar-tx",
+      "ringCount": 1,
+      "vertexCount": 5697,
+      "passed": true
+    },
+    {
+      "countyId": "travis-tx",
+      "countyFips": "48453",
+      "countyName": "Travis County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -98.172977,
+        "south": 30.023451,
+        "east": -97.369539,
+        "north": 30.628249
+      },
+      "interiorPoint": {
+        "lng": -97.78195731241627,
+        "lat": 30.334376172087833
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "travis-tx",
+      "ringCount": 1,
+      "vertexCount": 1952,
+      "passed": true
+    },
+    {
+      "countyId": "dallas-tx",
+      "countyFips": "48113",
+      "countyName": "Dallas County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -97.038685,
+        "south": 32.545214,
+        "east": -96.51687,
+        "north": 32.989691
+      },
+      "interiorPoint": {
+        "lng": -96.77776413970456,
+        "lat": 32.76657257731832
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "dallas-tx",
+      "ringCount": 1,
+      "vertexCount": 1405,
+      "passed": true
+    },
+    {
+      "countyId": "tarrant-tx",
+      "countyFips": "48439",
+      "countyName": "Tarrant County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -97.550582,
+        "south": 32.548666,
+        "east": -97.031007,
+        "north": 32.994194
+      },
+      "interiorPoint": {
+        "lng": -97.29113114653872,
+        "lat": 32.771923506123066
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "tarrant-tx",
+      "ringCount": 1,
+      "vertexCount": 1246,
+      "passed": true
+    },
+    {
+      "countyId": "mclennan-tx",
+      "countyFips": "48309",
+      "countyName": "McLennan County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -97.60523,
+        "south": 31.244215,
+        "east": -96.801123,
+        "north": 31.863079
+      },
+      "interiorPoint": {
+        "lng": -97.20178660091672,
+        "lat": 31.552380079966
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "mclennan-tx",
+      "ringCount": 1,
+      "vertexCount": 1093,
+      "passed": true
+    },
+    {
+      "countyId": "liberty-tx",
+      "countyFips": "48291",
+      "countyName": "Liberty County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -95.165897,
+        "south": 29.884276,
+        "east": -94.442235,
+        "north": 30.493553
+      },
+      "interiorPoint": {
+        "lng": -94.81221226927437,
+        "lat": 30.151612133799112
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "liberty-tx",
+      "ringCount": 1,
+      "vertexCount": 2341,
+      "passed": true
+    }
+  ],
+  "results": [
+    {
+      "countyId": "anderson-tx",
+      "countyFips": "48001",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.06486,
+        "south": 31.504056,
+        "east": -95.258791,
+        "north": 32.084482
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6343,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "andrews-tx",
+      "countyFips": "48003",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.064788,
+        "south": 32.085795,
+        "east": -102.210843,
+        "north": 32.523371
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 649,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "angelina-tx",
+      "countyFips": "48005",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.005566,
+        "south": 31.026088,
+        "east": -94.129632,
+        "north": 31.526916
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 8624,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "aransas-tx",
+      "countyFips": "48007",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.260818,
+        "south": 27.803783,
+        "east": -96.790437,
+        "north": 28.319238
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1298,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "archer-tx",
+      "countyFips": "48009",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.953938,
+        "south": 33.39542,
+        "east": -98.420666,
+        "north": 33.836079
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 740,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "armstrong-tx",
+      "countyFips": "48011",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.629396,
+        "south": 34.747416,
+        "east": -101.086281,
+        "north": 35.183239
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 442,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "atascosa-tx",
+      "countyFips": "48013",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.804914,
+        "south": 28.612658,
+        "east": -98.098315,
+        "north": 29.250693
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1449,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "austin-tx",
+      "countyFips": "48015",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.62198,
+        "south": 29.601658,
+        "east": -96.004525,
+        "north": 30.096833
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5598,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "bailey-tx",
+      "countyFips": "48017",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.047409,
+        "south": 33.824627,
+        "east": -102.61515,
+        "north": 34.313015
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 815,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "bandera-tx",
+      "countyFips": "48019",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.603323,
+        "south": 29.551695,
+        "east": -98.778782,
+        "north": 29.907679
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 781,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "bastrop-tx",
+      "countyFips": "48021",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.64937,
+        "south": 29.786541,
+        "east": -97.024461,
+        "north": 30.419642
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1241,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "baylor-tx",
+      "countyFips": "48023",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.47565,
+        "south": 33.397534,
+        "east": -98.95293,
+        "north": 33.834207
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 641,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "bee-tx",
+      "countyFips": "48025",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.089764,
+        "south": 28.129683,
+        "east": -97.375579,
+        "north": 28.719648
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4229,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "bell-tx",
+      "countyFips": "48027",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.913847,
+        "south": 30.752363,
+        "east": -97.070057,
+        "north": 31.320202
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1024,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "bexar-tx",
+      "countyFips": "48029",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.806552,
+        "south": 29.114435,
+        "east": -98.116902,
+        "north": 29.760713
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5697,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "blanco-tx",
+      "countyFips": "48031",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.59167,
+        "south": 29.937557,
+        "east": -98.125556,
+        "north": 30.502095
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 949,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "borden-tx",
+      "countyFips": "48033",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.69133,
+        "south": 32.52398,
+        "east": -101.173378,
+        "north": 32.963611
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 511,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "bosque-tx",
+      "countyFips": "48035",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.005462,
+        "south": 31.587762,
+        "east": -97.276716,
+        "north": 32.207403
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1654,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "bowie-tx",
+      "countyFips": "48037",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.747063,
+        "south": 33.237046,
+        "east": -94.042913,
+        "north": 33.71606
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5812,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "brazoria-tx",
+      "countyFips": "48039",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.874028,
+        "south": 28.764837,
+        "east": -95.056139,
+        "north": 29.599116
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5504,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "brazos-tx",
+      "countyFips": "48041",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.601854,
+        "south": 30.330288,
+        "east": -96.079969,
+        "north": 30.973737
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6639,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "brewster-tx",
+      "countyFips": "48043",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.80068,
+        "south": 28.971547,
+        "east": -102.320819,
+        "north": 30.665939
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5443,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "briscoe-tx",
+      "countyFips": "48045",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.472076,
+        "south": 34.312217,
+        "east": -100.944906,
+        "north": 34.748377
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 672,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "brooks-tx",
+      "countyFips": "48047",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.536646,
+        "south": 26.780917,
+        "east": -97.985457,
+        "north": 27.265249
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 645,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "brown-tx",
+      "countyFips": "48049",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.203601,
+        "south": 31.448186,
+        "east": -98.668441,
+        "north": 32.079597
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1574,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "burleson-tx",
+      "countyFips": "48051",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.96363,
+        "south": 30.295549,
+        "east": -96.271816,
+        "north": 30.730819
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 7615,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "burnet-tx",
+      "countyFips": "48053",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.459373,
+        "south": 30.426164,
+        "east": -97.8281,
+        "north": 31.035009
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2282,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "caldwell-tx",
+      "countyFips": "48055",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.899291,
+        "south": 29.630718,
+        "east": -97.315823,
+        "north": 30.071564
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4484,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "calhoun-tx",
+      "countyFips": "48057",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.930367,
+        "south": 28.022835,
+        "east": -96.322731,
+        "north": 28.730278
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3055,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "callahan-tx",
+      "countyFips": "48059",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.631561,
+        "south": 32.079123,
+        "east": -99.114049,
+        "north": 32.51527
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1276,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "cameron-tx",
+      "countyFips": "48061",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.862325,
+        "south": 25.837048,
+        "east": -97.08934,
+        "north": 26.412715
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4646,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "camp-tx",
+      "countyFips": "48063",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.152619,
+        "south": 32.902444,
+        "east": -94.719926,
+        "north": 33.077419
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3868,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "carson-tx",
+      "countyFips": "48065",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.623458,
+        "south": 35.181658,
+        "east": -101.085886,
+        "north": 35.62534
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 534,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "cass-tx",
+      "countyFips": "48067",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.654,
+        "south": 32.879499,
+        "east": -94.042863,
+        "north": 33.312057
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2246,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "castro-tx",
+      "countyFips": "48069",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.525833,
+        "south": 34.312725,
+        "east": -101.998008,
+        "north": 34.74819
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 430,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "chambers-tx",
+      "countyFips": "48071",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.018205,
+        "south": 29.49624,
+        "east": -94.353383,
+        "north": 29.88994
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6402,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "cherokee-tx",
+      "countyFips": "48073",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.462242,
+        "south": 31.42571,
+        "east": -94.865857,
+        "north": 32.138053
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 9284,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "childress-tx",
+      "countyFips": "48075",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.417783,
+        "south": 34.311829,
+        "east": -99.997491,
+        "north": 34.747529
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 795,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "clay-tx",
+      "countyFips": "48077",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.423801,
+        "south": 33.466217,
+        "east": -97.94573,
+        "north": 34.157109
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1472,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "cochran-tx",
+      "countyFips": "48079",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.056485,
+        "south": 33.388068,
+        "east": -102.594836,
+        "north": 33.825138
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 707,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "coke-tx",
+      "countyFips": "48081",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.82537,
+        "south": 31.692514,
+        "east": -100.235137,
+        "north": 32.086722
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 775,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "coleman-tx",
+      "countyFips": "48083",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.722403,
+        "south": 31.409778,
+        "east": -99.195871,
+        "north": 32.082089
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2540,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "collin-tx",
+      "countyFips": "48085",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.844122,
+        "south": 32.98149,
+        "east": -96.295057,
+        "north": 33.405504
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2006,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "countyFips": "48087",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.540997,
+        "south": 34.746358,
+        "east": -100.00038,
+        "north": 35.183144
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 966,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "colorado-tx",
+      "countyFips": "48089",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.874222,
+        "south": 29.247804,
+        "east": -96.175422,
+        "north": 29.961516
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3433,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "comal-tx",
+      "countyFips": "48091",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.646244,
+        "south": 29.594473,
+        "east": -97.999271,
+        "north": 30.037994
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3012,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "comanche-tx",
+      "countyFips": "48093",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.924401,
+        "south": 31.683989,
+        "east": -98.156568,
+        "north": 32.261436
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1202,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "concho-tx",
+      "countyFips": "48095",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.115216,
+        "south": 31.086962,
+        "east": -99.601525,
+        "north": 31.580267
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1162,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "cooke-tx",
+      "countyFips": "48097",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.487065,
+        "south": 33.41641,
+        "east": -96.943339,
+        "north": 33.956395
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2637,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "coryell-tx",
+      "countyFips": "48099",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.180006,
+        "south": 31.069374,
+        "east": -97.418606,
+        "north": 31.711019
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1303,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "cottle-tx",
+      "countyFips": "48101",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.518692,
+        "south": 33.835607,
+        "east": -99.997621,
+        "north": 34.314102
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 577,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "crane-tx",
+      "countyFips": "48103",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.767688,
+        "south": 31.086212,
+        "east": -102.300886,
+        "north": 31.651714
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3119,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "crockett-tx",
+      "countyFips": "48105",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.390667,
+        "south": 30.287333,
+        "east": -100.960501,
+        "north": 31.087156
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 8317,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "crosby-tx",
+      "countyFips": "48107",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.56358,
+        "south": 33.39476,
+        "east": -101.038772,
+        "north": 33.833625
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 456,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "culberson-tx",
+      "countyFips": "48109",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -104.918691,
+        "south": 30.663626,
+        "east": -104.024512,
+        "north": 32.000537
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1651,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "dallam-tx",
+      "countyFips": "48111",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.041729,
+        "south": 36.054975,
+        "east": -102.162424,
+        "north": 36.500704
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 423,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "dallas-tx",
+      "countyFips": "48113",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.038685,
+        "south": 32.545214,
+        "east": -96.51687,
+        "north": 32.989691
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1405,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "dawson-tx",
+      "countyFips": "48115",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.20852,
+        "south": 32.52327,
+        "east": -101.688738,
+        "north": 32.961954
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 644,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "countyFips": "48117",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.042982,
+        "south": 34.746024,
+        "east": -102.167444,
+        "north": 35.18725
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 603,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "delta-tx",
+      "countyFips": "48119",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.861778,
+        "south": 33.218269,
+        "east": -95.30664,
+        "north": 33.495452
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 8582,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "denton-tx",
+      "countyFips": "48121",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.398459,
+        "south": 32.987435,
+        "east": -96.83411,
+        "north": 33.43045
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1577,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "dewitt-tx",
+      "countyFips": "48123",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.75511,
+        "south": 28.8133,
+        "east": -96.976378,
+        "north": 29.384488
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 731,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "dickens-tx",
+      "countyFips": "48125",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.041158,
+        "south": 33.397179,
+        "east": -100.517449,
+        "north": 33.835678
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 569,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "dimmit-tx",
+      "countyFips": "48127",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.114345,
+        "south": 28.197819,
+        "east": -99.394177,
+        "north": 28.648122
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 974,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "donley-tx",
+      "countyFips": "48129",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.090753,
+        "south": 34.747723,
+        "east": -100.538978,
+        "north": 35.183327
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 721,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "duval-tx",
+      "countyFips": "48131",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.803325,
+        "south": 27.262487,
+        "east": -98.232464,
+        "north": 28.057995
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1155,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "eastland-tx",
+      "countyFips": "48133",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.118665,
+        "south": 32.078018,
+        "east": -98.474685,
+        "north": 32.515618
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1205,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "ector-tx",
+      "countyFips": "48135",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.799086,
+        "south": 31.651085,
+        "east": -102.286971,
+        "north": 32.08721
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 560,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "edwards-tx",
+      "countyFips": "48137",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.700845,
+        "south": 29.623263,
+        "east": -99.754142,
+        "north": 30.290698
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2325,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "ellis-tx",
+      "countyFips": "48139",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.087067,
+        "south": 32.052087,
+        "east": -96.38291,
+        "north": 32.549296
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1728,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "el-paso-tx",
+      "countyFips": "48141",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -106.645646,
+        "south": 31.38723,
+        "east": -105.954328,
+        "north": 32.00265
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2428,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "erath-tx",
+      "countyFips": "48143",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.551158,
+        "south": 31.917511,
+        "east": -97.864864,
+        "north": 32.513039
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 730,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "falls-tx",
+      "countyFips": "48145",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.278113,
+        "south": 30.986031,
+        "east": -96.596862,
+        "north": 31.522269
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 997,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "fannin-tx",
+      "countyFips": "48147",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.384756,
+        "south": 33.341119,
+        "east": -95.846536,
+        "north": 33.885354
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2873,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "fayette-tx",
+      "countyFips": "48149",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.317893,
+        "south": 29.628089,
+        "east": -96.569844,
+        "north": 30.16435
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1244,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "fisher-tx",
+      "countyFips": "48151",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.660626,
+        "south": 32.522793,
+        "east": -100.144224,
+        "north": 32.963469
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 572,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "floyd-tx",
+      "countyFips": "48153",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.565103,
+        "south": 33.830451,
+        "east": -101.041158,
+        "north": 34.312575
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 556,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "foard-tx",
+      "countyFips": "48155",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.04848,
+        "south": 33.733849,
+        "east": -99.474498,
+        "north": 34.242024
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2029,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "countyFips": "48157",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.088912,
+        "south": 29.26259,
+        "east": -95.424196,
+        "north": 29.788616
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5692,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "franklin-tx",
+      "countyFips": "48159",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.308957,
+        "south": 32.961829,
+        "east": -95.124491,
+        "north": 33.389456
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2148,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "freestone-tx",
+      "countyFips": "48161",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.496713,
+        "south": 31.413392,
+        "east": -95.779678,
+        "north": 32.012526
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2540,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "frio-tx",
+      "countyFips": "48163",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.41388,
+        "south": 28.640566,
+        "east": -98.800841,
+        "north": 29.09154
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1171,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "gaines-tx",
+      "countyFips": "48165",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.064871,
+        "south": 32.522193,
+        "east": -102.202703,
+        "north": 32.959508
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 848,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyFips": "48167",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.233081,
+        "south": 29.062739,
+        "east": -94.369361,
+        "north": 29.598264
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6062,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "garza-tx",
+      "countyFips": "48169",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.557618,
+        "south": 32.961025,
+        "east": -101.03839,
+        "north": 33.397221
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 522,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "gillespie-tx",
+      "countyFips": "48171",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.304015,
+        "south": 30.134298,
+        "east": -98.587777,
+        "north": 30.499887
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 816,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "glasscock-tx",
+      "countyFips": "48173",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.776085,
+        "south": 31.650854,
+        "east": -101.264216,
+        "north": 32.087533
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 549,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "goliad-tx",
+      "countyFips": "48175",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.77853,
+        "south": 28.388684,
+        "east": -97.153588,
+        "north": 28.925316
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3875,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "gonzales-tx",
+      "countyFips": "48177",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.858782,
+        "south": 29.109765,
+        "east": -97.130517,
+        "north": 29.784658
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1255,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "gray-tx",
+      "countyFips": "48179",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.086438,
+        "south": 35.18214,
+        "east": -100.538144,
+        "north": 35.620485
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 728,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "grayson-tx",
+      "countyFips": "48181",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.945126,
+        "south": 33.397826,
+        "east": -96.379452,
+        "north": 33.959579
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2508,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "gregg-tx",
+      "countyFips": "48183",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.986963,
+        "south": 32.359948,
+        "east": -94.579219,
+        "north": 32.667572
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3452,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "grimes-tx",
+      "countyFips": "48185",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.188314,
+        "south": 30.225187,
+        "east": -95.804197,
+        "north": 30.864125
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3421,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "countyFips": "48187",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.312058,
+        "south": 29.36533,
+        "east": -97.630985,
+        "north": 29.858208
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6616,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hale-tx",
+      "countyFips": "48189",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.090415,
+        "south": 33.824675,
+        "east": -101.56358,
+        "north": 34.313132
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 437,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hall-tx",
+      "countyFips": "48191",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.946372,
+        "south": 34.312759,
+        "east": -100.415748,
+        "north": 34.748356
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 923,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hamilton-tx",
+      "countyFips": "48193",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.463736,
+        "south": 31.416398,
+        "east": -97.766431,
+        "north": 32.017897
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 919,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hansford-tx",
+      "countyFips": "48195",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.623915,
+        "south": 36.05506,
+        "east": -101.084793,
+        "north": 36.499583
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 321,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hardeman-tx",
+      "countyFips": "48197",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.998006,
+        "south": 34.055774,
+        "east": -99.475056,
+        "north": 34.579139
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1182,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hardin-tx",
+      "countyFips": "48199",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.732732,
+        "south": 30.097167,
+        "east": -94.070955,
+        "north": 30.527125
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5441,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "harris-tx",
+      "countyFips": "48201",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.960733,
+        "south": 29.497297,
+        "east": -94.908492,
+        "north": 30.170606
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 12788,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "harrison-tx",
+      "countyFips": "48203",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.702201,
+        "south": 32.326583,
+        "east": -94.042817,
+        "north": 32.793088
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3880,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hartley-tx",
+      "countyFips": "48205",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.041706,
+        "south": 35.622487,
+        "east": -102.162686,
+        "north": 36.055653
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 389,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "haskell-tx",
+      "countyFips": "48207",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.991327,
+        "south": 32.956961,
+        "east": -99.471258,
+        "north": 33.399062
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 977,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hays-tx",
+      "countyFips": "48209",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.2976,
+        "south": 29.752444,
+        "east": -97.70879,
+        "north": 30.356312
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1270,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hemphill-tx",
+      "countyFips": "48211",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.54128,
+        "south": 35.619114,
+        "east": -100.000387,
+        "north": 36.056491
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 787,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "henderson-tx",
+      "countyFips": "48213",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.454573,
+        "south": 32.005895,
+        "east": -95.428127,
+        "north": 32.358925
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5695,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "countyFips": "48215",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.586444,
+        "south": 26.036268,
+        "east": -97.861684,
+        "north": 26.783081
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4132,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hill-tx",
+      "countyFips": "48217",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.497113,
+        "south": 31.708887,
+        "east": -96.719114,
+        "north": 32.266824
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1574,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hockley-tx",
+      "countyFips": "48219",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.615447,
+        "south": 33.388327,
+        "east": -102.075929,
+        "north": 33.825121
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 934,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hood-tx",
+      "countyFips": "48221",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.068545,
+        "south": 32.233468,
+        "east": -97.615221,
+        "north": 32.558822
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 816,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hopkins-tx",
+      "countyFips": "48223",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.863332,
+        "south": 32.960434,
+        "east": -95.30763,
+        "north": 33.37719
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4586,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "houston-tx",
+      "countyFips": "48225",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.777039,
+        "south": 30.925879,
+        "east": -94.95811,
+        "north": 31.592886
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3525,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "howard-tx",
+      "countyFips": "48227",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.695011,
+        "south": 32.087097,
+        "east": -101.174534,
+        "north": 32.525228
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 643,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "countyFips": "48229",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -105.998012,
+        "south": 30.629258,
+        "east": -104.907122,
+        "north": 32.002377
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6488,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hunt-tx",
+      "countyFips": "48231",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.297344,
+        "south": 32.837217,
+        "east": -95.858645,
+        "north": 33.40953
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1284,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "countyFips": "48233",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.623466,
+        "south": 35.624057,
+        "east": -101.085728,
+        "north": 36.055405
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 526,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "irion-tx",
+      "countyFips": "48235",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.274799,
+        "south": 31.079379,
+        "east": -100.688764,
+        "north": 31.528746
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1075,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "jack-tx",
+      "countyFips": "48237",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.426553,
+        "south": 33.001284,
+        "east": -97.918128,
+        "north": 33.467129
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1186,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "jackson-tx",
+      "countyFips": "48239",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.938587,
+        "south": 28.674409,
+        "east": -96.309178,
+        "north": 29.263876
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1924,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "jasper-tx",
+      "countyFips": "48241",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.460172,
+        "south": 30.241649,
+        "east": -93.865711,
+        "north": 31.158071
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4481,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "countyFips": "48243",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -104.979801,
+        "south": 30.41219,
+        "east": -103.439976,
+        "north": 31.105203
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1228,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "jefferson-tx",
+      "countyFips": "48245",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.445106,
+        "south": 29.506328,
+        "east": -93.814351,
+        "north": 30.189106
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3841,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "countyFips": "48247",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.954771,
+        "south": 26.783444,
+        "east": -98.417883,
+        "north": 27.359101
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 835,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "countyFips": "48249",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.235497,
+        "south": 27.260981,
+        "east": -97.788988,
+        "north": 28.057966
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1543,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "johnson-tx",
+      "countyFips": "48251",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.617053,
+        "south": 32.133765,
+        "east": -97.087028,
+        "north": 32.555484
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1145,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "jones-tx",
+      "countyFips": "48253",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.146543,
+        "south": 32.514653,
+        "east": -99.611816,
+        "north": 32.960251
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 684,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "karnes-tx",
+      "countyFips": "48255",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.190991,
+        "south": 28.668027,
+        "east": -97.574639,
+        "north": 29.221748
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1551,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "kaufman-tx",
+      "countyFips": "48257",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.529678,
+        "south": 32.354709,
+        "east": -96.075537,
+        "north": 32.841723
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1903,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "kendall-tx",
+      "countyFips": "48259",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.920799,
+        "south": 29.716359,
+        "east": -98.414018,
+        "north": 30.138954
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1192,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "kenedy-tx",
+      "countyFips": "48261",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.985892,
+        "south": 26.597884,
+        "east": -97.225374,
+        "north": 27.284001
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1546,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "kent-tx",
+      "countyFips": "48263",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.038884,
+        "south": 32.96291,
+        "east": -100.517048,
+        "north": 33.399061
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 542,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "kerr-tx",
+      "countyFips": "48265",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.757621,
+        "south": 29.781398,
+        "east": -98.917725,
+        "north": 30.290698
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 882,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "kimble-tx",
+      "countyFips": "48267",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.116873,
+        "south": 30.286653,
+        "east": -99.301718,
+        "north": 30.711019
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 952,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "king-tx",
+      "countyFips": "48269",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.518691,
+        "south": 33.396997,
+        "east": -99.99098,
+        "north": 33.836147
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 611,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "kinney-tx",
+      "countyFips": "48271",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.797073,
+        "south": 29.084261,
+        "east": -100.111231,
+        "north": 29.623897
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1725,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "kleberg-tx",
+      "countyFips": "48273",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.0598,
+        "south": 27.209271,
+        "east": -97.165097,
+        "north": 27.635982
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2706,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "knox-tx",
+      "countyFips": "48275",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.996434,
+        "south": 33.397404,
+        "east": -99.472444,
+        "north": 33.83608
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2004,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "lamar-tx",
+      "countyFips": "48277",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.857738,
+        "south": 33.377653,
+        "east": -95.308072,
+        "north": 33.943057
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6418,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "lamb-tx",
+      "countyFips": "48279",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.615596,
+        "south": 33.824596,
+        "east": -102.085733,
+        "north": 34.313297
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 741,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "lampasas-tx",
+      "countyFips": "48281",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.569645,
+        "south": 31.029647,
+        "east": -97.9071,
+        "north": 31.463717
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2202,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "la-salle-tx",
+      "countyFips": "48283",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.396681,
+        "south": 28.030419,
+        "east": -98.800064,
+        "north": 28.647487
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1193,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "lavaca-tx",
+      "countyFips": "48285",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.240108,
+        "south": 29.063244,
+        "east": -96.560555,
+        "north": 29.632706
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1056,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "lee-tx",
+      "countyFips": "48287",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.334463,
+        "south": 30.032,
+        "east": -96.640586,
+        "north": 30.557198
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6469,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "leon-tx",
+      "countyFips": "48289",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.331121,
+        "south": 30.973737,
+        "east": -95.655545,
+        "north": 31.654093
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4491,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "liberty-tx",
+      "countyFips": "48291",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.165897,
+        "south": 29.884276,
+        "east": -94.442235,
+        "north": 30.493553
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2341,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "limestone-tx",
+      "countyFips": "48293",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.932215,
+        "south": 31.2209,
+        "east": -96.236629,
+        "north": 31.814887
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 974,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "countyFips": "48295",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.546724,
+        "south": 36.055323,
+        "east": -100.000389,
+        "north": 36.49997
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 378,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "live-oak-tx",
+      "countyFips": "48297",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.335031,
+        "south": 28.056681,
+        "east": -97.808774,
+        "north": 28.786949
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1174,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "llano-tx",
+      "countyFips": "48299",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.964612,
+        "south": 30.486096,
+        "east": -98.351041,
+        "north": 30.922121
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1553,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "loving-tx",
+      "countyFips": "48301",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.98406,
+        "south": 31.650558,
+        "east": -103.326501,
+        "north": 32.000369
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1935,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "lubbock-tx",
+      "countyFips": "48303",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.085768,
+        "south": 33.389586,
+        "east": -101.556884,
+        "north": 33.830451
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 499,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "lynn-tx",
+      "countyFips": "48305",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.076214,
+        "south": 32.959702,
+        "east": -101.556651,
+        "north": 33.39476
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 455,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "countyFips": "48307",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.60371,
+        "south": 30.940553,
+        "east": -99.090603,
+        "north": 31.49372
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1895,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "mclennan-tx",
+      "countyFips": "48309",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.60523,
+        "south": 31.244215,
+        "east": -96.801123,
+        "north": 31.863079
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1093,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "countyFips": "48311",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.803325,
+        "south": 28.057127,
+        "east": -98.334189,
+        "north": 28.648386
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1003,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "madison-tx",
+      "countyFips": "48313",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.24102,
+        "south": 30.822997,
+        "east": -95.61189,
+        "north": 31.094211
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4412,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "marion-tx",
+      "countyFips": "48315",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.709711,
+        "south": 32.687093,
+        "east": -94.04287,
+        "north": 32.881089
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1682,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "martin-tx",
+      "countyFips": "48317",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.21127,
+        "south": 32.086765,
+        "east": -101.688656,
+        "north": 32.525325
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 863,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "mason-tx",
+      "countyFips": "48319",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.484755,
+        "south": 30.498076,
+        "east": -98.963615,
+        "north": 30.941186
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 837,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "matagorda-tx",
+      "countyFips": "48321",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.395198,
+        "south": 28.279736,
+        "east": -95.49565,
+        "north": 29.229702
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2871,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "maverick-tx",
+      "countyFips": "48323",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.667548,
+        "south": 28.196837,
+        "east": -100.111406,
+        "north": 29.086318
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1956,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "medina-tx",
+      "countyFips": "48325",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.41388,
+        "south": 29.09024,
+        "east": -98.804591,
+        "north": 29.690709
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1185,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "menard-tx",
+      "countyFips": "48327",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.116672,
+        "south": 30.710366,
+        "east": -99.483808,
+        "north": 31.087994
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 730,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "midland-tx",
+      "countyFips": "48329",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.287528,
+        "south": 31.651276,
+        "east": -101.775802,
+        "north": 32.086993
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 828,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "milam-tx",
+      "countyFips": "48331",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.315485,
+        "south": 30.457344,
+        "east": -96.61213,
+        "north": 31.110411
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1870,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "mills-tx",
+      "countyFips": "48333",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.995091,
+        "south": 31.230443,
+        "east": -98.266794,
+        "north": 31.723608
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2325,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "mitchell-tx",
+      "countyFips": "48335",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.183997,
+        "south": 32.085386,
+        "east": -100.660626,
+        "north": 32.52812
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 830,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "montague-tx",
+      "countyFips": "48337",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.979046,
+        "south": 33.433681,
+        "east": -97.484136,
+        "north": 33.991553
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1494,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "montgomery-tx",
+      "countyFips": "48339",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.83024,
+        "south": 30.027748,
+        "east": -95.096708,
+        "north": 30.630284
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6828,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "moore-tx",
+      "countyFips": "48341",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.163058,
+        "south": 35.619923,
+        "east": -101.6226,
+        "north": 36.055627
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 437,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "morris-tx",
+      "countyFips": "48343",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.819828,
+        "south": 32.879161,
+        "east": -94.652194,
+        "north": 33.365972
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2197,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "motley-tx",
+      "countyFips": "48345",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.041763,
+        "south": 33.833625,
+        "east": -100.51734,
+        "north": 34.314191
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 721,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "countyFips": "48347",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.97816,
+        "south": 31.222776,
+        "east": -94.300038,
+        "north": 31.845555
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 14150,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "navarro-tx",
+      "countyFips": "48349",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.896209,
+        "south": 31.796191,
+        "east": -96.050758,
+        "north": 32.328929
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4203,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "newton-tx",
+      "countyFips": "48351",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -93.911126,
+        "south": 30.242672,
+        "east": -93.508039,
+        "north": 31.186627
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3541,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "nolan-tx",
+      "countyFips": "48353",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.665353,
+        "south": 32.08133,
+        "east": -100.146543,
+        "north": 32.525354
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 686,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "nueces-tx",
+      "countyFips": "48355",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.942146,
+        "south": 27.558358,
+        "east": -96.984281,
+        "north": 27.995659
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5866,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "countyFips": "48357",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.085745,
+        "south": 36.056536,
+        "east": -100.545979,
+        "north": 36.49994
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 366,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "oldham-tx",
+      "countyFips": "48359",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.042521,
+        "south": 35.183026,
+        "east": -102.162724,
+        "north": 35.627515
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 521,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "orange-tx",
+      "countyFips": "48361",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.118004,
+        "south": 29.865053,
+        "east": -93.688205,
+        "north": 30.244318
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2436,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "countyFips": "48363",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.57626,
+        "south": 32.511626,
+        "east": -98.056094,
+        "north": 33.007913
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1011,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "panola-tx",
+      "countyFips": "48365",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.601853,
+        "south": 31.973193,
+        "east": -94.01563,
+        "north": 32.394137
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1977,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "parker-tx",
+      "countyFips": "48367",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.066836,
+        "south": 32.555297,
+        "east": -97.544172,
+        "north": 33.003332
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1645,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "parmer-tx",
+      "countyFips": "48369",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.043791,
+        "south": 34.312277,
+        "east": -102.525123,
+        "north": 34.747692
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 726,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "pecos-tx",
+      "countyFips": "48371",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.585084,
+        "south": 30.052808,
+        "east": -101.768377,
+        "north": 31.371306
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 10016,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "polk-tx",
+      "countyFips": "48373",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.20018,
+        "south": 30.489002,
+        "east": -94.537926,
+        "north": 31.146578
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3530,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "potter-tx",
+      "countyFips": "48375",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.167471,
+        "south": 35.182753,
+        "east": -101.622714,
+        "north": 35.620198
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 587,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "presidio-tx",
+      "countyFips": "48377",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -104.980778,
+        "south": 29.258437,
+        "east": -103.792703,
+        "north": 30.629258
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 9557,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "rains-tx",
+      "countyFips": "48379",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.987358,
+        "south": 32.711402,
+        "east": -95.634949,
+        "north": 32.980227
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2803,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "randall-tx",
+      "countyFips": "48381",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.168848,
+        "south": 34.747417,
+        "east": -101.622941,
+        "north": 35.183364
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 608,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "reagan-tx",
+      "countyFips": "48383",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.776191,
+        "south": 31.079263,
+        "east": -101.266981,
+        "north": 31.651527
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 822,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "real-tx",
+      "countyFips": "48385",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.063741,
+        "south": 29.623495,
+        "east": -99.602639,
+        "north": 30.082356
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1905,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "red-river-tx",
+      "countyFips": "48387",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.311035,
+        "south": 33.317365,
+        "east": -94.732329,
+        "north": 33.962674
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5438,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "reeves-tx",
+      "countyFips": "48389",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -104.102351,
+        "south": 30.76647,
+        "east": -103.010403,
+        "north": 32.000134
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6297,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "refugio-tx",
+      "countyFips": "48391",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.541071,
+        "south": 28.061396,
+        "east": -96.764125,
+        "north": 28.554821
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5068,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "roberts-tx",
+      "countyFips": "48393",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.086146,
+        "south": 35.61908,
+        "east": -100.539512,
+        "north": 36.05799
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 388,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "robertson-tx",
+      "countyFips": "48395",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.8311,
+        "south": 30.69567,
+        "east": -96.235123,
+        "north": 31.357129
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4234,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "rockwall-tx",
+      "countyFips": "48397",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.51897,
+        "south": 32.813229,
+        "east": -96.297122,
+        "north": 32.982986
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 608,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "runnels-tx",
+      "countyFips": "48399",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.236189,
+        "south": 31.576688,
+        "east": -99.713952,
+        "north": 32.082656
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1227,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "rusk-tx",
+      "countyFips": "48401",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.985957,
+        "south": 31.843718,
+        "east": -94.452391,
+        "north": 32.407625
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3768,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "sabine-tx",
+      "countyFips": "48403",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.048926,
+        "south": 31.134246,
+        "east": -93.59497,
+        "north": 31.611836
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2736,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "countyFips": "48405",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.39984,
+        "south": 31.09928,
+        "east": -93.983231,
+        "north": 31.653596
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5388,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "countyFips": "48407",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.359156,
+        "south": 30.31945,
+        "east": -94.829719,
+        "north": 30.906719
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3226,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "countyFips": "48409",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.908774,
+        "south": 27.821105,
+        "east": -97.135134,
+        "north": 28.179461
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6234,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "san-saba-tx",
+      "countyFips": "48411",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.092431,
+        "south": 30.920343,
+        "east": -98.414508,
+        "north": 31.490579
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2976,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "schleicher-tx",
+      "countyFips": "48413",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.962364,
+        "south": 30.706071,
+        "east": -100.115216,
+        "north": 31.088733
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 771,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "scurry-tx",
+      "countyFips": "48415",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.174726,
+        "south": 32.525188,
+        "east": -100.65587,
+        "north": 32.970225
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 714,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "shackelford-tx",
+      "countyFips": "48417",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.612264,
+        "south": 32.514654,
+        "east": -99.095749,
+        "north": 32.957144
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1126,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "shelby-tx",
+      "countyFips": "48419",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.511471,
+        "south": 31.569419,
+        "east": -93.794462,
+        "north": 31.979856
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 7168,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "sherman-tx",
+      "countyFips": "48421",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.163303,
+        "south": 36.055131,
+        "east": -101.623466,
+        "north": 36.500684
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 384,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "smith-tx",
+      "countyFips": "48423",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.594541,
+        "south": 32.135399,
+        "east": -94.985265,
+        "north": 32.687026
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 6174,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "somervell-tx",
+      "countyFips": "48425",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.945625,
+        "south": 32.087328,
+        "east": -97.615048,
+        "north": 32.318617
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 430,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "starr-tx",
+      "countyFips": "48427",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.171835,
+        "south": 26.235259,
+        "east": -98.32067,
+        "north": 26.785694
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1776,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "stephens-tx",
+      "countyFips": "48429",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.096059,
+        "south": 32.51469,
+        "east": -98.575616,
+        "north": 32.957236
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 917,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "sterling-tx",
+      "countyFips": "48431",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.26771,
+        "south": 31.556462,
+        "east": -100.821594,
+        "north": 32.087323
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 615,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "stonewall-tx",
+      "countyFips": "48433",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.519208,
+        "south": 32.959801,
+        "east": -99.988827,
+        "north": 33.398052
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 603,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "sutton-tx",
+      "countyFips": "48435",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.960824,
+        "south": 30.287477,
+        "east": -100.116161,
+        "north": 30.710366
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1021,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "swisher-tx",
+      "countyFips": "48437",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.998533,
+        "south": 34.312204,
+        "east": -101.471333,
+        "north": 34.748263
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 477,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "tarrant-tx",
+      "countyFips": "48439",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.550582,
+        "south": 32.548666,
+        "east": -97.031007,
+        "north": 32.994194
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1246,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "taylor-tx",
+      "countyFips": "48441",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.151924,
+        "south": 32.081203,
+        "east": -99.629564,
+        "north": 32.523001
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 914,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "terrell-tx",
+      "countyFips": "48443",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.56705,
+        "south": 29.779134,
+        "east": -101.646227,
+        "north": 30.658323
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4189,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "terry-tx",
+      "countyFips": "48445",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.595106,
+        "south": 32.958566,
+        "east": -102.075382,
+        "north": 33.389586
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 705,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "countyFips": "48447",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.472444,
+        "south": 32.956415,
+        "east": -98.950875,
+        "north": 33.399023
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1071,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "titus-tx",
+      "countyFips": "48449",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.12613,
+        "south": 32.982453,
+        "east": -94.808783,
+        "north": 33.39848
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4247,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "tom-green-tx",
+      "countyFips": "48451",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.267947,
+        "south": 31.086122,
+        "east": -100.111234,
+        "north": 31.705418
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1615,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "travis-tx",
+      "countyFips": "48453",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.172977,
+        "south": 30.023451,
+        "east": -97.369539,
+        "north": 30.628249
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1952,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "trinity-tx",
+      "countyFips": "48455",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.434781,
+        "south": 30.824566,
+        "east": -94.842947,
+        "north": 31.38693
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2829,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "tyler-tx",
+      "countyFips": "48457",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -94.657992,
+        "south": 30.526033,
+        "east": -94.05096,
+        "north": 31.059304
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3107,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "upshur-tx",
+      "countyFips": "48459",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.15341,
+        "south": 32.516398,
+        "east": -94.672351,
+        "north": 32.904502
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2423,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "upton-tx",
+      "countyFips": "48461",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -102.31805,
+        "south": 31.079751,
+        "east": -101.77499,
+        "north": 31.651635
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 910,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "uvalde-tx",
+      "countyFips": "48463",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.112309,
+        "south": 29.086318,
+        "east": -99.411725,
+        "north": 29.627691
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 861,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "val-verde-tx",
+      "countyFips": "48465",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -101.760924,
+        "south": 29.237579,
+        "east": -100.699141,
+        "north": 30.288527
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3128,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "countyFips": "48467",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.076801,
+        "south": 32.355097,
+        "east": -95.449093,
+        "north": 32.838507
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5081,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "victoria-tx",
+      "countyFips": "48469",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.305916,
+        "south": 28.485712,
+        "east": -96.642323,
+        "north": 29.104046
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3342,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "walker-tx",
+      "countyFips": "48471",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.863082,
+        "south": 30.504369,
+        "east": -95.32748,
+        "north": 31.058098
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3349,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "waller-tx",
+      "countyFips": "48473",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.192208,
+        "south": 29.727944,
+        "east": -95.80333,
+        "north": 30.245645
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 2954,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "ward-tx",
+      "countyFips": "48475",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.610887,
+        "south": 31.266881,
+        "east": -102.767246,
+        "north": 31.651802
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5326,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "washington-tx",
+      "countyFips": "48477",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.794552,
+        "south": 30.044283,
+        "east": -96.080839,
+        "north": 30.39989
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 5559,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "webb-tx",
+      "countyFips": "48479",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.212189,
+        "south": 27.259562,
+        "east": -98.798087,
+        "north": 28.204627
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3090,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "wharton-tx",
+      "countyFips": "48481",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -96.640315,
+        "south": 28.963291,
+        "east": -95.841948,
+        "north": 29.633806
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 4132,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "wheeler-tx",
+      "countyFips": "48483",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.540215,
+        "south": 35.182466,
+        "east": -99.999628,
+        "north": 35.619897
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1236,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "wichita-tx",
+      "countyFips": "48485",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.953203,
+        "south": 33.834021,
+        "east": -98.422867,
+        "north": 34.212497
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 866,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "countyFips": "48487",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.47565,
+        "south": 33.833799,
+        "east": -98.952296,
+        "north": 34.458802
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1317,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "willacy-tx",
+      "countyFips": "48489",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.004189,
+        "south": 26.299269,
+        "east": -97.167255,
+        "north": 26.611769
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1364,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "williamson-tx",
+      "countyFips": "48491",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.049886,
+        "south": 30.402843,
+        "east": -97.155219,
+        "north": 30.904414
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1628,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "wilson-tx",
+      "countyFips": "48493",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.407336,
+        "south": 28.882333,
+        "east": -97.728443,
+        "north": 29.441751
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1434,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "winkler-tx",
+      "countyFips": "48495",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.327538,
+        "south": 31.651306,
+        "east": -102.797552,
+        "north": 32.08724
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 423,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "wise-tx",
+      "countyFips": "48497",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -97.921642,
+        "south": 32.990839,
+        "east": -97.383015,
+        "north": 33.434057
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1468,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "wood-tx",
+      "countyFips": "48499",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -95.665389,
+        "south": 32.540959,
+        "east": -95.149962,
+        "north": 33.01345
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 3761,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "yoakum-tx",
+      "countyFips": "48501",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -103.064696,
+        "south": 32.958548,
+        "east": -102.594234,
+        "north": 33.388489
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 617,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "young-tx",
+      "countyFips": "48503",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -98.954097,
+        "south": 32.9523,
+        "east": -98.420436,
+        "north": 33.397534
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 947,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "zapata-tx",
+      "countyFips": "48505",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -99.453794,
+        "south": 26.571682,
+        "east": -98.954176,
+        "north": 27.319174
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 1190,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    },
+    {
+      "countyId": "zavala-tx",
+      "countyFips": "48507",
+      "geometryType": "Polygon",
+      "errors": [],
+      "bounds": {
+        "west": -100.114338,
+        "south": 28.640512,
+        "east": -99.408764,
+        "north": 29.091335
+      },
+      "polygonCount": 1,
+      "ringCount": 1,
+      "vertexCount": 909,
+      "topologicalValidator": "not_available_in_repository_environment",
+      "structurallyValid": true,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

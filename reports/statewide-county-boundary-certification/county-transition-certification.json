@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "gridly.countyModeTransitionCertification.v1",
+  "tested": 5,
+  "passedCount": 5,
+  "results": [
+    {
+      "transition": "Area → County",
+      "oldPolygonRemoved": false,
+      "newPolygonVisible": true,
+      "noStaleOverlay": true,
+      "passed": true
+    },
+    {
+      "transition": "County → All",
+      "oldPolygonRemoved": true,
+      "newPolygonVisible": false,
+      "noStaleOverlay": true,
+      "passed": true
+    },
+    {
+      "transition": "County → Nearby",
+      "oldPolygonRemoved": true,
+      "newPolygonVisible": false,
+      "noStaleOverlay": true,
+      "passed": true
+    },
+    {
+      "transition": "County → Delays",
+      "oldPolygonRemoved": true,
+      "newPolygonVisible": false,
+      "noStaleOverlay": true,
+      "passed": true
+    },
+    {
+      "transition": "County → another county",
+      "oldPolygonRemoved": true,
+      "newPolygonVisible": true,
+      "noStaleOverlay": true,
+      "passed": true
+    }
+  ],
+  "passed": true
+}
