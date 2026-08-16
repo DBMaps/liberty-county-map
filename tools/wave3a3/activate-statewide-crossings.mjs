@@ -25,6 +25,13 @@ const portable=p=>p.replaceAll('\\','/');
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const fail=m=>{throw Error(`Wave 3A.3 fail closed: ${m}`)};
 
+/** The certified path contract is JavaScript's locale-independent UTF-16 ordering. */
+export const sortGovernedPaths=paths=>[...paths].sort();
+export const governedPathOrderMatches=(actual,certified)=>same(actual,certified);
+export function orderGovernedWrites(writes){
+ return new Map(sortGovernedPaths(writes.keys()).map(path=>[path,writes.get(path)]));
+}
+
 /**
  * Return the governed candidate byte stream. Git may materialize an LF blob with
  * CRLF in a Windows working tree; no other byte (including a lone CR) is changed.
@@ -49,7 +56,7 @@ async function read(root,p){return clean(await readFile(join(root,p),'utf8'))}
 async function raw(root,p){return readFile(join(root,p))}
 function governedPaths(positiveRows,zeroRows){
  const rows=[...positiveRows,...zeroRows];
- return ['Crossing-Packages/production-crossing-manifest.json','assets/package-registry/runtime-package-registry.json',...rows.map(c=>`Crossing-Packages/${slug(c)}/Production/${slug(c)}-production-crossings.geojson`),...rows.map(c=>`Crossing-Packages/${slug(c)}/package-manifest.json`)].sort();
+ return sortGovernedPaths(['Crossing-Packages/production-crossing-manifest.json','assets/package-registry/runtime-package-registry.json',...rows.map(c=>`Crossing-Packages/${slug(c)}/Production/${slug(c)}-production-crossings.geojson`),...rows.map(c=>`Crossing-Packages/${slug(c)}/package-manifest.json`)]);
 }
 
 export async function inspect({root=DEFAULT_ROOT}={}){
@@ -101,7 +108,7 @@ async function requireCommittedCertification(root,x){
  const summary=await read(root,summaryPath),allow=await read(root,allowPath);
  const expected={status:'PASS',decision:DECISION_PASS,productionWrites:0,projected:{ACTIVE_POSITIVE:202,ACTIVE_EMPTY:52,TOTAL:254},projectedActiveIdentities:16099,blockingReasons:[]};
  for(const [key,value] of Object.entries(expected))if(!same(summary[key],value))fail(`certified summary gate ${key}`);
- if(allow.count!==454||!same(allow.paths,x.production)||new Set(allow.paths).size!==454)fail('certified write allowlist differs from planned ordered write set');
+ if(allow.count!==454||!governedPathOrderMatches(allow.paths,x.production)||new Set(allow.paths).size!==454)fail('certified write allowlist differs from planned ordered write set');
  try{if(!git(root,['ls-files','--error-unmatch',summaryPath])||!git(root,['ls-files','--error-unmatch',allowPath]))fail('certification is not committed');git(root,['diff','--quiet','HEAD','--',`${OUT}/`])}catch{fail('certification evidence is not owner-current and committed')}
  return {summary,allow};
 }
@@ -118,7 +125,7 @@ async function prepareWrites(x){
  const crossingPackages=records.map(r=>({packageType:'Crossing',county:r.county,status:'manufactured',manifest:`Crossing-Packages/${slug(byFips.get(x.inventory.counties.find(c=>c.countyName===r.county).fips))}/package-manifest.json`}));
  const registry={...x.registry,packageTypes:x.registry.packageTypes.map(t=>t.packageType==='Crossing'?{...t,packageCount:254}:t),packages:[...x.registry.packages.filter(p=>p.packageType!=='Crossing'),...crossingPackages]};registry.totalPackages=registry.packages.length;delete registry.generatedAt;
  writes.set('Crossing-Packages/production-crossing-manifest.json',Buffer.from(json(manifest)));writes.set('assets/package-registry/runtime-package-registry.json',Buffer.from(json(registry)));
- const ordered=new Map([...writes].sort(([a],[b])=>a.localeCompare(b)));if(!same([...ordered.keys()],x.production))fail('actual planned write set does not exactly match certified ordered allowlist');
+ const ordered=orderGovernedWrites(writes);if(!governedPathOrderMatches([...ordered.keys()],x.production))fail('actual planned write set does not exactly match certified ordered allowlist');
  validatePrepared(x,ordered,manifest,registry);return ordered;
 }
 
