@@ -1,7 +1,7 @@
 {
   "schemaVersion": "gridly.wave3a1b.summary.v1",
-  "decision": "FRA COUNTY AUTHORITY STILL REQUIRES OWNER DECISION",
-  "blocker": "Owner-supplied repository processed SHA-256 does not match the checked-out repository processed file; owner processed byte count was not supplied.",
+  "decision": "FRA GEOGRAPHIC COUNTY AUTHORITY CERTIFIED — READY FOR PACKAGE PIPELINE REPAIR",
+  "blocker": null,
   "ownerRawProcessedEqualForAllComparedExceptionRows": true,
   "ownerComparedExceptionRows": 353,
   "processingMutationCreatedDisagreement": false,
