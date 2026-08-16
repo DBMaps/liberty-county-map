@@ -27,13 +27,11 @@ function manualFixture() {
   context.getGridlyManualAwarenessAreaOptions = () => Object.freeze(Object.entries(context.GRIDLY_COUNTY_REGISTRY).map(([countyId, county]) => Object.freeze({
     countyValue: countyId,
     countyLabel: county.name,
-    communities: Object.freeze((county.consumerAwarenessAreas || []).map(community => Object.freeze({ key: `${countyId}-${community.displayName.toLowerCase().replace(/ /g, '-')}`, value: `${countyId}-${community.displayName.toLowerCase().replace(/ /g, '-')}`, label: community.displayName })))
+    countyFips: county.countyFips,
+    communities: Object.freeze((county.consumerAwarenessAreas || []).map(community => Object.freeze({ key: `${countyId}-${community.displayName.toLowerCase().replace(/ /g, '-')}`, value: `${countyId}-${community.displayName.toLowerCase().replace(/ /g, '-')}`, label: community.displayName, canonicalLabel: community.displayName, countyId, countyOccurrenceKey: `${countyId}-${community.placeGeoid}`, ...community, countyMemberships: Object.freeze([...community.countyMemberships].map(String).sort()) })))
   })));
-  context.filterGridlyManualAwarenessAreas = query => {
-    const normalized = context.normalizeGridlyAwarenessAreaLookupText(query);
-    return context.getGridlyManualAwarenessAreaOptions().map(group => ({ ...group, communities: group.communities.filter(community => context.normalizeGridlyAwarenessAreaLookupText(community.label).includes(normalized) || context.normalizeGridlyAwarenessAreaLookupText(group.countyLabel).includes(normalized)) })).filter(group => group.communities.length);
-  };
-  vm.runInNewContext(`${manualSearchSource};this.manualSearch=resolveGridlyManualAwarenessAreaSearch`, context);
+  const partialSearchSource = source.match(/function filterGridlyManualAwarenessAreas\([\s\S]*?\n\}/)?.[0];
+  vm.runInNewContext(`${partialSearchSource};${manualSearchSource};this.manualSearch=resolveGridlyManualAwarenessAreaSearch`, context);
   return context;
 }
 
@@ -85,18 +83,25 @@ test('statewide same-GEOID multi-county inventory is deterministic and covers re
   vm.runInContext(`${source.slice(0, range.end)};this.registry=GRIDLY_COUNTY_REGISTRY`, context);
   const grouped = new Map();
   for (const [countyId, county] of Object.entries(context.registry)) for (const community of county.consumerAwarenessAreas || []) {
-    const rows = grouped.get(community.placeGeoid) || []; rows.push({ countyId, label: community.displayName, memberships: [...community.countyMemberships].map(String).sort() }); grouped.set(community.placeGeoid, rows);
+    const rows = grouped.get(community.placeGeoid) || []; rows.push({ countyId, countyFips: String(county.countyFips), label: community.displayName, governedType: community.governedType, canonicalIdentity: community.canonicalIdentity, consumerEligible: community.consumerEligible, memberships: [...community.countyMemberships].map(String).sort() }); grouped.set(community.placeGeoid, rows);
   }
   const inventory = [...grouped].filter(([, rows]) => rows.length > 1).sort(([a], [b]) => a.localeCompare(b));
   assert.equal(inventory.length, 163);
+  assert.equal(inventory.reduce((count, [, rows]) => count + rows.length, 0), 362);
+  assert.equal(inventory.reduce((count, [, rows]) => count + rows.length - 1, 0), 199);
   assert.deepEqual(inventory.map(([geoid]) => geoid), [...inventory.map(([geoid]) => geoid)].sort());
   for (const [geoid, rows] of inventory) {
+    assert.equal(rows.length, rows[0].memberships.length, geoid);
     assert.ok(rows.every(row => row.memberships.join('|') === rows[0].memberships.join('|')), geoid);
     assert.ok(rows.every(row => row.label === rows[0].label), geoid);
+    assert.ok(rows.every(row => row.canonicalIdentity === 'PLACE_GEOID' && row.consumerEligible === true), geoid);
+    assert.ok(rows.every(row => row.governedType === rows[0].governedType), geoid);
   }
   assert.equal(inventory.find(([geoid]) => geoid === '4819000')[1].length, 5);
   assert.equal(inventory.find(([geoid]) => geoid === '4827000')[1].length, 5);
   assert.equal(inventory.find(([geoid]) => geoid === '4805000')[1].length, 4);
+  assert.equal(inventory.find(([geoid]) => geoid === '4817000')[1].length, 4);
+  assert.equal(inventory.find(([geoid]) => geoid === '4835000')[1].length, 4);
   assert.equal(inventory.some(([geoid]) => geoid === '4824000'), false); // El Paso
 });
 
@@ -126,6 +131,48 @@ test('manual home-area pipeline presents one canonical exact PLACE result', () =
     assert.equal(result.groups[0].communities[0].canonicalResolution.placeGeoid, geoid);
     assert.equal(result.groups[0].countyLabel, 'Multi-county community');
   }
+});
+
+test('partial PLACE search collapses by GEOID and preserves the canonical selection token', () => {
+  for (const [query, name, geoid, memberships] of [
+    ['corp', 'Corpus Christi', '4817000', ['48007', '48273', '48355', '48409']],
+    ['aus', 'Austin', '4805000', ['48021', '48055', '48209', '48453']],
+    ['fort', 'Fort Worth', '4827000', ['48121', '48251', '48367', '48439', '48497']],
+    ['hou', 'Houston', '4835000', ['48157', '48201', '48339', '48473']]
+  ]) {
+    const context = manualFixture();
+    const counties = memberships.map((fips, index) => [`county-${index}`, { name: `County ${index}`, countyFips: fips, consumerAwarenessAreas: [{ placeGeoid: geoid, displayName: name, governedType: 'INCORPORATED_PLACE', canonicalIdentity: 'PLACE_GEOID', consumerEligible: true, countyMemberships: memberships }] }]);
+    context.GRIDLY_COUNTY_REGISTRY = Object.fromEntries(counties);
+    context.GRIDLY_AWARENESS_AREA_DEFINITIONS = counties.map(([countyId]) => ({ key: `${countyId}-${geoid}`, label: name, storageValue: name, countyId, placeGeoid: geoid }));
+    context.GRIDLY_AWARENESS_AREA_BY_KEY = Object.fromEntries(context.GRIDLY_AWARENESS_AREA_DEFINITIONS.map(area => [area.key, area]));
+    context.gridlyGetSelectableOperationalCountyIds = () => counties.map(([id]) => id);
+    const partial = context.manualSearch(query);
+    const exact = context.manualSearch(name);
+    assert.equal(partial.groups.length, 1);
+    assert.equal(partial.groups[0].countyLabel, 'Multi-county community');
+    assert.equal(partial.groups[0].communities.length, 1);
+    assert.equal(partial.groups[0].communities[0].key, `place-${geoid}`);
+    assert.equal(partial.groups[0].communities[0].value, `place-${geoid}`);
+    assert.equal(partial.groups[0].communities[0].countyId, null);
+    assert.equal(partial.groups[0].communities[0].canonicalResolution.placeGeoid, geoid);
+    assert.deepEqual([...partial.groups[0].communities[0].countyMemberships], memberships);
+    assert.equal(exact.groups[0].communities[0].canonicalResolution.placeGeoid, geoid);
+  }
+});
+
+test('partial search never name-deduplicates distinct PLACE GEOIDs', () => {
+  const context = manualFixture();
+  context.GRIDLY_COUNTY_REGISTRY = {
+    one: { name: 'One County', countyFips: '48001', consumerAwarenessAreas: [{ placeGeoid: '4800001', displayName: 'Twin Place', governedType: 'INCORPORATED_PLACE', canonicalIdentity: 'PLACE_GEOID', consumerEligible: true, countyMemberships: ['48001'] }] },
+    two: { name: 'Two County', countyFips: '48003', consumerAwarenessAreas: [{ placeGeoid: '4800002', displayName: 'Twin Place', governedType: 'INCORPORATED_PLACE', canonicalIdentity: 'PLACE_GEOID', consumerEligible: true, countyMemberships: ['48003'] }] }
+  };
+  context.GRIDLY_AWARENESS_AREA_DEFINITIONS = [
+    { key: 'one-twin', label: 'Twin Place', storageValue: 'Twin Place', countyId: 'one', placeGeoid: '4800001' },
+    { key: 'two-twin', label: 'Twin Place', storageValue: 'Twin Place', countyId: 'two', placeGeoid: '4800002' }
+  ];
+  context.gridlyGetSelectableOperationalCountyIds = () => ['one', 'two'];
+  const rows = context.manualSearch('twin').groups.flatMap(group => group.communities);
+  assert.equal(rows.map(row => row.placeGeoid).sort().join('|'), '4800001|4800002');
 });
 
 test('Austin exact precedence does not expose Austin County or Bellville, while explicit searches remain available', () => {
