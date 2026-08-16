@@ -49478,7 +49478,10 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
     ? getGridlyAlertsSurfaceActiveCommunityReportRows({ limit: Number(options?.alertsLimit || 8) || 8, skipLocalizedFallback: true })
     : [];
   const userFacingRoadHazardIncidents = getGridlyUserFacingActiveRoadHazardIncidents({ fallbackHazards: sourceHazards, alertVisibleRows: alertsSurfaceRows, alertVisibleOnly: true });
-  const activeHazardItems = userFacingRoadHazardIncidents;
+  // Awareness must not depend circularly on a prior Alerts DOM render.  Loaded,
+  // active coordinate-owned hazards are presentation evidence in their own right.
+  const directActiveHazards = getGridlyAwarenessLifecycleActiveHazards(sourceHazards);
+  const activeHazardItems = userFacingRoadHazardIncidents.length ? userFacingRoadHazardIncidents : directActiveHazards;
   const activeReportItems = getGridlyAwarenessLifecycleActiveReports(sourceReports);
   const crossingsInArea = getGridlyHomeTownCrossings(selectedArea);
   const missingCoordinateRecords = { activeHazards: 0, activeReports: 0 };
@@ -55375,6 +55378,12 @@ async function loadSharedReports(reason = "manual") {
     recentlyClearedRoadHazards = gridlyFilterRecentlyClearedRoadHazardsForVisibility(visibleHazards, lifecycleFilterNow);
     activeHazards = gridlyFilterRoadHazardsByLatestLifecycle(visibleHazards, lifecycleFilterNow);
     activeReports = visibleNormalized.filter((report) => report.reportKind !== "hazard");
+    // The report collections are an authoritative revision boundary.  Cached
+    // unified/canonical models otherwise retain the pre-fetch empty state even
+    // though the newly loaded rows are eligible.
+    gridlyAuthoritativeIncidentSnapshotState.snapshot = null;
+    gridlyV734RefreshReuseState.renderUnifiedSignature = "";
+    gridlyAuthoritativeCommuteIntelligenceRuntime?.values?.clear?.();
     const activeHazardIds = new Set(activeHazards.map((report) => String(report.id || "")));
     gridlyLoadedReportSnapshot = Object.freeze(normalized.map((report, index) => {
       const raw = rawRows[index] || {};
@@ -55514,6 +55523,34 @@ if (typeof window !== "undefined") {
   window.loadSharedReports = loadSharedReports;
 }
 
+// Recover identity for legacy rows whose deployed detail predates structured
+// community metadata.  County membership narrows the governed PLACE authority;
+// a conservative distance guard prevents a nearby town from being invented for
+// rural reports.  Multi-county PLACE identity is retained while the already
+// resolved report coordinate remains the authority for county identity.
+function gridlyRecoverReportPlaceIdentity(row = {}, metadata = {}, countyId = "") {
+  const explicitGeoid = String(metadata?.placeGeoid || metadata?.communityKey || "").trim();
+  if (explicitGeoid) {
+    const explicit = (GRIDLY_COUNTY_REGISTRY?.[countyId]?.consumerAwarenessAreas || []).find((place) => String(place?.placeGeoid || "") === explicitGeoid);
+    return { placeGeoid: explicitGeoid, communityKey: explicitGeoid, communityName: metadata?.communityName || explicit?.displayName || "", recovery: "structured_metadata" };
+  }
+  const lat = Number(row?.lat), lng = Number(row?.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || !countyId) return null;
+  const candidates = (GRIDLY_COUNTY_REGISTRY?.[countyId]?.consumerAwarenessAreas || [])
+    .map((place) => {
+      const target = gridlyPlacePresentationTargets?.[place?.placeGeoid] || place?.focus;
+      const targetLng = Number(target?.lon ?? target?.lng);
+      if (!Number.isFinite(Number(target?.lat)) || !Number.isFinite(targetLng)) return null;
+      return { place, distanceMiles: getDistanceMiles(lat, lng, Number(target.lat), targetLng) };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.distanceMiles - b.distanceMiles);
+  const nearest = candidates[0];
+  if (!nearest || nearest.distanceMiles > 12) return null;
+  const placeGeoid = String(nearest.place.placeGeoid || "");
+  return { placeGeoid, communityKey: placeGeoid, communityName: nearest.place.displayName || "", countyMemberships: [...(nearest.place.countyMemberships || [])], recovery: "governed_place_coordinate" };
+}
+
 function normalizeReports(rows) {
   const normalizedRows = rows.map((row) => {
     const createdAt = row.created_at || new Date().toISOString();
@@ -55540,6 +55577,7 @@ function normalizeReports(rows) {
       report_type: "hazard_cleared"
     }) : "";
     const normalizedReportCountyId = String(gridlyGetReportCountyId(row) || "").trim().toLowerCase();
+    const recoveredPlaceIdentity = gridlyRecoverReportPlaceIdentity(row, otherHazardMetadata, normalizedReportCountyId);
     const copy =
   reportType === "hazard_cleared"
     ? {
@@ -55567,12 +55605,12 @@ function normalizeReports(rows) {
       reportKind: isHazard ? "hazard" : "crossing",
       county_id: gridlyGetReportCountyId(row),
       countyId: gridlyGetReportCountyId(row),
-      countyFips: otherHazardMetadata?.countyFips || "",
+      countyFips: otherHazardMetadata?.countyFips || GRIDLY_COUNTY_REGISTRY[normalizedReportCountyId]?.countyFips || GRIDLY_COUNTY_REGISTRY[normalizedReportCountyId]?.fips || "",
       countyName: otherHazardMetadata?.countyName || GRIDLY_COUNTY_REGISTRY[gridlyGetReportCountyId(row)]?.name || "",
       state: row.state || otherHazardMetadata?.state || GRIDLY_COUNTY_REGISTRY[gridlyGetReportCountyId(row)]?.state || "TX",
-      communityName: otherHazardMetadata?.communityName || "",
-      communityKey: otherHazardMetadata?.communityKey || otherHazardMetadata?.placeGeoid || "",
-      placeGeoid: otherHazardMetadata?.placeGeoid || otherHazardMetadata?.communityKey || "",
+      communityName: otherHazardMetadata?.communityName || recoveredPlaceIdentity?.communityName || "",
+      communityKey: otherHazardMetadata?.communityKey || otherHazardMetadata?.placeGeoid || recoveredPlaceIdentity?.communityKey || "",
+      placeGeoid: otherHazardMetadata?.placeGeoid || otherHazardMetadata?.communityKey || recoveredPlaceIdentity?.placeGeoid || "",
       icon: isHazard ? copy.icon : "",
       severity: row.severity || copy.severity,
       title: isHazard
@@ -71757,10 +71795,17 @@ function renderUnifiedIncidents(reason = "auto") {
     : fallbackHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared");
   const primaryCoordinateCount = primaryIncidents.filter(hasFiniteCoordinates).length;
   const fallbackCoordinateCount = activeFallbackHazards.filter(hasFiniteCoordinates).length;
-  const shouldUseFallbackHazards = primaryCoordinateCount === 0 && fallbackCoordinateCount > 0;
-  const incidents = shouldUseFallbackHazards ? activeFallbackHazards : primaryIncidents;
+  // Generic reports own their coordinates and must be merged, not treated as an
+  // all-or-nothing fallback behind crossing/official unified incidents.
+  const shouldUseFallbackHazards = fallbackCoordinateCount > 0;
+  const primaryKeys = new Set(primaryIncidents.map((incident) => String(incident?.reportId || incident?.report_id || incident?.id || "")));
+  const genericHazardsMissingFromPrimary = activeFallbackHazards.filter((hazard) => {
+    const id = String(hazard?.reportId || hazard?.report_id || hazard?.id || "");
+    return !id || !primaryKeys.has(id);
+  });
+  const incidents = [...primaryIncidents, ...genericHazardsMissingFromPrimary];
   const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, cleared_or_recently_cleared: 0, duplicate_unified_blocked_crossing_marker: 0, missing_marker_layer: 0, render_exception: 0 };
-  const markerSourceUsed = shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents";
+  const markerSourceUsed = genericHazardsMissingFromPrimary.length ? "unifiedIncidents+activeHazards" : "unifiedIncidents";
   const sourceCounts = {
     primaryCount: primaryIncidents.length,
     primaryValidCount: primaryCoordinateCount,
@@ -82054,6 +82099,7 @@ const GRIDLY_REPORTS_BASE_SELECT_COLUMNS = "id,created_at,crossing_id,crossing_n
 let gridlyLastHazardPersistenceDiagnostic = null;
 let gridlyLastReportRetrievalDiagnostic = null;
 let gridlyLoadedReportSnapshot = Object.freeze([]);
+let gridlyLastAlertsRenderedReportIds = new Set();
 
 // A non-enumerable, shared authority for read-only recovery tooling. This does
 // not construct or configure a client; it only points at production's client.
@@ -82093,6 +82139,34 @@ function gridlyGetLoadedReportSnapshot() {
 }
 window.gridlyGetLoadedReportSnapshot = gridlyGetLoadedReportSnapshot;
 exposeGridlyAuditHelper("gridlyGetLoadedReportSnapshot", gridlyGetLoadedReportSnapshot);
+
+function gridlyGetHazardRenderSnapshot() {
+  const layers = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers() : [];
+  const onMap = Boolean(unifiedIncidentLayer && map?.hasLayer?.(unifiedIncidentLayer));
+  return Object.freeze((Array.isArray(activeHazards) ? activeHazards : []).map((report) => {
+    const id = String(report?.id || "");
+    const marker = layers.find((layer) => {
+      const incident = layer?.options?.report || layer?.options?.incident || {};
+      return String(incident?.reportId || incident?.report_id || incident?.id || "") === id;
+    });
+    const eligible = getIncidentLifecycleState(report) === "active" && Number.isFinite(Number(report?.lat)) && Number.isFinite(Number(report?.lng));
+    return Object.freeze({ id: id || null, crossing_id: report?.crossingId || null, countyId: report?.countyId || null, report_type: report?.type || null, eligible, markerCreated: Boolean(marker), markerAddedToMap: Boolean(marker && layers.includes(marker)), markerCurrentlyOnMap: Boolean(marker && onMap), layerOwner: marker ? "unifiedIncidentLayer" : null, removalReason: marker ? null : (eligible ? "not_rendered" : "ineligible") });
+  }));
+}
+window.gridlyGetHazardRenderSnapshot = gridlyGetHazardRenderSnapshot;
+exposeGridlyAuditHelper("gridlyGetHazardRenderSnapshot", gridlyGetHazardRenderSnapshot);
+
+function gridlyGetAlertsRenderSnapshot() {
+  const target = els?.alertsList || null;
+  return Object.freeze((Array.isArray(activeHazards) ? activeHazards : []).map((report) => {
+    const id = String(report?.id || "");
+    const eligible = getIncidentLifecycleState(report) === "active" && Number.isFinite(Number(report?.lat)) && Number.isFinite(Number(report?.lng));
+    const rendered = Boolean(id && gridlyLastAlertsRenderedReportIds.has(id) && [...(target?.querySelectorAll?.("[data-gridly-alert-report-id]") || [])].some((node) => node?.dataset?.gridlyAlertReportId === id));
+    return Object.freeze({ reportId: id || null, countyId: report?.countyId || null, report_type: report?.type || null, eligible, enteredAlertsCollection: eligible, alertItemCreated: Boolean(id && gridlyLastAlertsRenderedReportIds.has(id)), rendered, renderTarget: target?.id ? `#${target.id}` : null, exclusionReason: rendered ? null : (eligible ? "not_rendered" : "ineligible") });
+  }));
+}
+window.gridlyGetAlertsRenderSnapshot = gridlyGetAlertsRenderSnapshot;
+exposeGridlyAuditHelper("gridlyGetAlertsRenderSnapshot", gridlyGetAlertsRenderSnapshot);
 let lastGridlyRoadHazardSubmitShapeAudit = {
   supabaseInsertKeys: [],
   legacyRetryInsertKeys: [],
@@ -107200,7 +107274,11 @@ function renderAlerts() {
   const consequenceIntel = timeSection("intelligence_calculations", () => buildCommuteConsequenceIntelligence({ limit: 10 }));
   const corridors = gridlyFilterAlertCorridorsBySelectedAwarenessArea(consequenceIntel.corridorClusters || []);
   const officialSituationAlertsForLegacy = typeof mergeGridlyOfficialSituationAlerts === "function" ? mergeGridlyOfficialSituationAlerts([]).slice(0, 3) : [];
-  if (!corridors.length && !officialSituationAlertsForLegacy.length) {
+  const genericHazardAlerts = (Array.isArray(activeHazards) ? activeHazards : [])
+    .filter((report) => getIncidentLifecycleState(report) === "active" && Number.isFinite(Number(report?.lat)) && Number.isFinite(Number(report?.lng)))
+    .sort(compareReportsByRecency);
+  gridlyLastAlertsRenderedReportIds = new Set(genericHazardAlerts.map((report) => String(report?.id || "")).filter(Boolean));
+  if (!corridors.length && !officialSituationAlertsForLegacy.length && !genericHazardAlerts.length) {
     timeSection("text_content_updates", () => {
       els.alertsList.innerHTML = `<div class="alert-item corridor-command-status"><strong>Community Awareness</strong><p>Nothing new nearby. Gridly is still watching your area.</p></div>`;
     });
@@ -107224,6 +107302,12 @@ function renderAlerts() {
   const filteredTopStatus = filteredTopItem?.localizedSummary || primaryCorridor?.label || consequenceIntel.topStatus || "No major mobility issues reported nearby";
   const filteredTopDetail = filteredTopItem?.localizedSummary || consequenceIntel.topStatusLocalizedDetail || "Based on community reports.";
   const sections = [];
+  genericHazardAlerts.forEach((report) => {
+    const reportId = String(report?.id || "");
+    const label = report?.communityName || report?.countyName || report?.crossingName || "Reported location";
+    const condition = report?.crossingName || HAZARD_TYPES?.[report?.type]?.label || "Road hazard";
+    sections.push(`<article class="alert-item intelligence-row community-hazard" data-gridly-alert-report-id="${sanitizeText(reportId)}"><div class="alert-row-main"><span class="alert-severity-chip">Community</span><strong>${sanitizeText(condition)}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(label)} · Active community report</p></article>`);
+  });
   officialSituationAlertsForLegacy.forEach((alert) => {
     const source = sanitizeText(alert.sourceLabel || alert.source || "Official");
     const body = sanitizeText(normalizeGridlyUserFacingRoadText([alert.localizedSummary, alert.expectedImpact, alert.timeframe, `Source: ${source}`].filter(Boolean).join(" ")));

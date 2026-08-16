@@ -86,3 +86,25 @@ test("report insert errors remain consumer-visible failures", () => {
   assert.match(source, /firstAttemptMode: "DEPLOYED_BASE_COLUMNS"/);
   assert.match(source, /finalStatus: retry\?\.error \? "NOT_PERSISTED" : "PERSISTED"/);
 });
+
+test("actual production-boundary render harness certifies every county and Waco control", async () => {
+  const { normalizeGenericHazard, exerciseActualRenderPath, createRenderHarness } = await import("../tools/statewide-report-render-runtime.mjs");
+  const result = certify();
+  assert.deepEqual([result.counts.mapRendered, result.counts.alertsRendered, result.counts.awarenessPresented], [254, 254, 254]);
+  for (const row of result.evidence["statewide-reporting-certification.json"].results) {
+    assert.equal(row.actualRender.markerCreated && row.actualRender.markerAddedToLayer && row.actualRender.markerCurrentlyOnMap, true);
+    assert.equal(row.actualRender.alertItemCreated && row.actualRender.alertRendered && row.actualRender.awarenessPresented, true);
+    assert.equal(row.actualRender.crossingDependencies, 0);
+  }
+  const waco = normalizeGenericHazard({ id: "48c70dd1-6b56-45ee-ac2c-d4a1314d7386", report_type: "flooding", lat: 31.5561805244549, lng: -97.1312159299851 }, { countyId: "mclennan-tx", countyFips: "48309", name: "McLennan County" }, { placeGeoid: "4876000", displayName: "Waco", countyMemberships: ["48309"] });
+  const actual = exerciseActualRenderPath(waco, createRenderHarness());
+  assert.equal(actual.markerCurrentlyOnMap && actual.alertRendered && actual.awarenessPresented, true);
+});
+
+test("owner render diagnostics are read-only and production refresh invalidates stale models", () => {
+  const source = fs.readFileSync("js/app.js", "utf8");
+  assert.match(source, /function gridlyGetHazardRenderSnapshot\(\)/);
+  assert.match(source, /function gridlyGetAlertsRenderSnapshot\(\)/);
+  assert.match(source, /gridlyAuthoritativeIncidentSnapshotState\.snapshot = null/);
+  assert.match(source, /unifiedIncidents\+activeHazards/);
+});
