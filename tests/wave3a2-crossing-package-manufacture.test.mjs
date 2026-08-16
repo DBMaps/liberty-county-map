@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { build, validateSourceIdentity } from '../tools/wave3a2/build-crossing-package-manufacture.mjs';
+import { analyzeIdentityConservation, build, validateSourceIdentity } from '../tools/wave3a2/build-crossing-package-manufacture.mjs';
 import { buildReconciliationLookup, selectIndexedFeatures } from '../tools/lp115/manufacture-candidate-crossings.mjs';
 
 const feature={type:'Feature',geometry:{type:'Point',coordinates:[-100,31]},properties:{CROSSING:'X',STCYFIPS:'48001',COUNTYNAME:'ANDERSON'}};
@@ -27,4 +27,21 @@ test('Wave 3A.2 accepts the certified FRA source before manufacture',async()=>{
 
 test('Wave 3A.2 rejects an isolated source with an incorrect identity',()=>{
  assert.throws(()=>validateSourceIdentity(Buffer.from('{}\n')),/FRA source identity changed/);
+});
+
+test('identity diagnostic exposes the historical active-package gap without weakening conservation',async()=>{
+ const load=async path=>JSON.parse((await readFile(new URL(`../${path}`,import.meta.url),'utf8')).replace(/^\uFEFF/,''));
+ const source=await load('Crossing-Packages/Texas/fra-crossings-tx.geojson'), inventory=await load('data/lp104/texas-counties.json'), classifications=await load('evidence/wave3a1b-fra-county-authority/exception-classification.json'), partition=await load('evidence/wave3a1b-fra-county-authority/projected-partition.json'), manifest=await load('Crossing-Packages/production-crossing-manifest.json');
+ const byId=new Map(classifications.rows.map(x=>[x.crossingId,x]));
+ const entries=source.features.map(f=>{const crossingId=String(f.properties.CROSSING).trim(),fra=String(f.properties.STCYFIPS||f.properties.CountyCode||''),exception=byId.get(crossingId);return {crossingId,gridlyCountyFips:exception?.coordinateResolvedCountyFips||(!exception?fra:null),resolution:exception?.classification||'SOURCE_AND_GEOGRAPHY_AGREE'}});
+ const result=await analyzeIdentityConservation({source,entries,candidateFips:partition.countyFipsByClass.SOURCE_OR_GEOGRAPHIC_POSITIVE_INACTIVE,manifest,inventory,partition});
+ assert.deepEqual(result.runtime.missing.ids,['021041M','021042U','021043B','430171M','764992R','765835B','765836H','765839D','765841E','765842L','765843T','765844A','765845G']);
+ assert.equal(result.counts.missingIdentityCount,13);
+ assert.equal(result.counts.extraIdentityCount,0);
+ assert.equal(result.counts.duplicateIdentityCount,0);
+ assert.equal(result.sourcePartition.unionMatchesFra,true);
+ assert.deepEqual(result.sourcePartition.blockedCrossingIds,['019788P','019791X']);
+ assert.equal(result.cohorts.tylerAfterGeographicCount,0);
+ assert.equal(result.cohorts.zeroGeographicInactiveAssignedCount,0);
+ assert.equal(result.candidate.expectedMinusSelected.count,0);
 });
