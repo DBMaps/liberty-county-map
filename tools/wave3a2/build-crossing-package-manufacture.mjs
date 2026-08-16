@@ -26,7 +26,7 @@ export function validateSourceIdentity(sourceBody) {
 async function read(p,raw=false){const b=await readFile(join(ROOT,p));return raw?b:clean(b.toString())}
 async function put(name,value){await mkdir(OUT,{recursive:true});await writeFile(join(OUT,name),json(value));}
 
-export async function analyzeIdentityConservation({source,entries,candidateFips,manifest,inventory,partition,candidateManufacturedIds=[]}) {
+export async function analyzeIdentityConservation({source,entries,candidateFips,manifest,inventory,partition,candidateManufacturedIds=[],activePackageFixtures=null}) {
  const fraValues=source.features.map(f=>String(f.properties.CROSSING||'').trim()), fraIds=new Set(fraValues);
  const assignedEntries=entries.filter(x=>x.gridlyCountyFips), assignedIds=new Set(assignedEntries.map(x=>x.crossingId));
  const blockedIds=new Set(entries.filter(x=>x.resolution==='OUTSIDE_TEXAS_BORDER_REVIEW').map(x=>x.crossingId));
@@ -38,7 +38,7 @@ export async function analyzeIdentityConservation({source,entries,candidateFips,
  const candidateSelectedIds=new Set(candidateSelectedValues), manufacturedValues=[...candidateManufacturedIds], candidateManufacturedSet=new Set(manufacturedValues);
  const invByName=new Map(inventory.counties.map(c=>[c.countyName.toLowerCase(),c]));
  const activeValues=[], activeWrongOwner=[], activeByFips=new Map();
- for(const rec of manifest.records){const owner=invByName.get(String(rec.county).replace(/ County$/i,'').toLowerCase());assert(owner,`active manifest county is unknown: ${rec.county}`);const pkg=await read(rec.packageFile.replaceAll('\\','/')), values=[];activeByFips.set(owner.fips,values);for(const f of pkg.features){const id=String(f.properties.CROSSING||String(f.properties.gridlyId||'').replace(/^FRA-/,'')).trim();values.push(id);activeValues.push(id);const geographicOwner=entryById.get(id)?.gridlyCountyFips||null;if(geographicOwner!==owner.fips)activeWrongOwner.push({crossingId:id,packageCountyFips:owner.fips,geographicCountyFips:geographicOwner,packageFile:rec.packageFile.replaceAll('\\','/')})}}
+ for(const rec of manifest.records){const owner=invByName.get(String(rec.county).replace(/ County$/i,'').toLowerCase());assert(owner,`active manifest county is unknown: ${rec.county}`);const packageFile=rec.packageFile.replaceAll('\\','/'), pkg=activePackageFixtures?.get(packageFile)||await read(packageFile), values=[];activeByFips.set(owner.fips,values);for(const f of pkg.features){const id=String(f.properties.CROSSING||String(f.properties.gridlyId||'').replace(/^FRA-/,'')).trim();values.push(id);activeValues.push(id);const geographicOwner=entryById.get(id)?.gridlyCountyFips||null;if(geographicOwner!==owner.fips)activeWrongOwner.push({crossingId:id,packageCountyFips:owner.fips,geographicCountyFips:geographicOwner,packageFile})}}
  const activeIds=new Set(activeValues), packageableIds=assignedIds;
  const runtimeCandidateIds=manufacturedValues.length?candidateManufacturedSet:candidateSelectedIds;
  const runtimeIds=union(activeIds,runtimeCandidateIds), missing=sorted(difference(packageableIds,runtimeIds)), extra=sorted(difference(runtimeIds,packageableIds));
