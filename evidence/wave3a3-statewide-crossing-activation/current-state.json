@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "gridly.wave3a3.current-state.v1",
+  "activeCounties": 28,
+  "activeIdentities": 3771,
+  "activePositive": 27,
+  "activeEmpty": 1,
+  "tyler": {
+    "countyFips": "48457",
+    "classification": "ACTIVE_EMPTY",
+    "crossingCount": 0
+  },
+  "manifest": "Crossing-Packages/production-crossing-manifest.json",
+  "registry": "assets/package-registry/runtime-package-registry.json"
+}

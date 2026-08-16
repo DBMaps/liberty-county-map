@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "gridly.wave3a3.zero-governance.v1",
+  "status": "DESIGNED_NOT_APPLIED",
+  "existing": {
+    "countyId": "tyler-tx",
+    "countyFips": "48457",
+    "package": "Crossing-Packages/tyler/Production/tyler-production-crossings.geojson",
+    "crossingCount": 0
+  },
+  "additionalCount": 51,
+  "counties": [
+    {
+      "countyId": "andrews",
+      "countyFips": "48003",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/andrews/Production/andrews-production-crossings.geojson"
+    },
+    {
+      "countyId": "archer",
+      "countyFips": "48009",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/archer/Production/archer-production-crossings.geojson"
+    },
+    {
+      "countyId": "bandera",
+      "countyFips": "48019",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/bandera/Production/bandera-production-crossings.geojson"
+    },
+    {
+      "countyId": "baylor",
+      "countyFips": "48023",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/baylor/Production/baylor-production-crossings.geojson"
+    },
+    {
+      "countyId": "bee",
+      "countyFips": "48025",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/bee/Production/bee-production-crossings.geojson"
+    },
+    {
+      "countyId": "borden",
+      "countyFips": "48033",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/borden/Production/borden-production-crossings.geojson"
+    },
+    {
+      "countyId": "briscoe",
+      "countyFips": "48045",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/briscoe/Production/briscoe-production-crossings.geojson"
+    },
+    {
+      "countyId": "brooks",
+      "countyFips": "48047",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/brooks/Production/brooks-production-crossings.geojson"
+    },
+    {
+      "countyId": "coke",
+      "countyFips": "48081",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/coke/Production/coke-production-crossings.geojson"
+    },
+    {
+      "countyId": "collingsworth",
+      "countyFips": "48087",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/collingsworth/Production/collingsworth-production-crossings.geojson"
+    },
+    {
+      "countyId": "concho",
+      "countyFips": "48095",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/concho/Production/concho-production-crossings.geojson"
+    },
+    {
+      "countyId": "cottle",
+      "countyFips": "48101",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/cottle/Production/cottle-production-crossings.geojson"
+    },
+    {
+      "countyId": "crosby",
+      "countyFips": "48107",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/crosby/Production/crosby-production-crossings.geojson"
+    },
+    {
+      "countyId": "dawson",
+      "countyFips": "48115",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/dawson/Production/dawson-production-crossings.geojson"
+    },
+    {
+      "countyId": "delta",
+      "countyFips": "48119",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/delta/Production/delta-production-crossings.geojson"
+    },
+    {
+      "countyId": "dickens",
+      "countyFips": "48125",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/dickens/Production/dickens-production-crossings.geojson"
+    },
+    {
+      "countyId": "dimmit",
+      "countyFips": "48127",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/dimmit/Production/dimmit-production-crossings.geojson"
+    },
+    {
+      "countyId": "edwards",
+      "countyFips": "48137",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/edwards/Production/edwards-production-crossings.geojson"
+    },
+    {
+      "countyId": "foard",
+      "countyFips": "48155",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/foard/Production/foard-production-crossings.geojson"
+    },
+    {
+      "countyId": "gillespie",
+      "countyFips": "48171",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/gillespie/Production/gillespie-production-crossings.geojson"
+    },
+    {
+      "countyId": "glasscock",
+      "countyFips": "48173",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/glasscock/Production/glasscock-production-crossings.geojson"
+    },
+    {
+      "countyId": "haskell",
+      "countyFips": "48207",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/haskell/Production/haskell-production-crossings.geojson"
+    },
+    {
+      "countyId": "jack",
+      "countyFips": "48237",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/jack/Production/jack-production-crossings.geojson"
+    },
+    {
+      "countyId": "jones",
+      "countyFips": "48253",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/jones/Production/jones-production-crossings.geojson"
+    },
+    {
+      "countyId": "karnes",
+      "countyFips": "48255",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/karnes/Production/karnes-production-crossings.geojson"
+    },
+    {
+      "countyId": "kendall",
+      "countyFips": "48259",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/kendall/Production/kendall-production-crossings.geojson"
+    },
+    {
+      "countyId": "kent",
+      "countyFips": "48263",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/kent/Production/kent-production-crossings.geojson"
+    },
+    {
+      "countyId": "kerr",
+      "countyFips": "48265",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/kerr/Production/kerr-production-crossings.geojson"
+    },
+    {
+      "countyId": "kimble",
+      "countyFips": "48267",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/kimble/Production/kimble-production-crossings.geojson"
+    },
+    {
+      "countyId": "king",
+      "countyFips": "48269",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/king/Production/king-production-crossings.geojson"
+    },
+    {
+      "countyId": "knox",
+      "countyFips": "48275",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/knox/Production/knox-production-crossings.geojson"
+    },
+    {
+      "countyId": "loving",
+      "countyFips": "48301",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/loving/Production/loving-production-crossings.geojson"
+    },
+    {
+      "countyId": "lynn",
+      "countyFips": "48305",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/lynn/Production/lynn-production-crossings.geojson"
+    },
+    {
+      "countyId": "mcmullen",
+      "countyFips": "48311",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/mcmullen/Production/mcmullen-production-crossings.geojson"
+    },
+    {
+      "countyId": "mason",
+      "countyFips": "48319",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/mason/Production/mason-production-crossings.geojson"
+    },
+    {
+      "countyId": "menard",
+      "countyFips": "48327",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/menard/Production/menard-production-crossings.geojson"
+    },
+    {
+      "countyId": "motley",
+      "countyFips": "48345",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/motley/Production/motley-production-crossings.geojson"
+    },
+    {
+      "countyId": "rains",
+      "countyFips": "48379",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/rains/Production/rains-production-crossings.geojson"
+    },
+    {
+      "countyId": "real",
+      "countyFips": "48385",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/real/Production/real-production-crossings.geojson"
+    },
+    {
+      "countyId": "red-river",
+      "countyFips": "48387",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/red-river/Production/red-river-production-crossings.geojson"
+    },
+    {
+      "countyId": "schleicher",
+      "countyFips": "48413",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/schleicher/Production/schleicher-production-crossings.geojson"
+    },
+    {
+      "countyId": "shackelford",
+      "countyFips": "48417",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/shackelford/Production/shackelford-production-crossings.geojson"
+    },
+    {
+      "countyId": "sterling",
+      "countyFips": "48431",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/sterling/Production/sterling-production-crossings.geojson"
+    },
+    {
+      "countyId": "stonewall",
+      "countyFips": "48433",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/stonewall/Production/stonewall-production-crossings.geojson"
+    },
+    {
+      "countyId": "sutton",
+      "countyFips": "48435",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/sutton/Production/sutton-production-crossings.geojson"
+    },
+    {
+      "countyId": "throckmorton",
+      "countyFips": "48447",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/throckmorton/Production/throckmorton-production-crossings.geojson"
+    },
+    {
+      "countyId": "wheeler",
+      "countyFips": "48483",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/wheeler/Production/wheeler-production-crossings.geojson"
+    },
+    {
+      "countyId": "yoakum",
+      "countyFips": "48501",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/yoakum/Production/yoakum-production-crossings.geojson"
+    },
+    {
+      "countyId": "young",
+      "countyFips": "48503",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/young/Production/young-production-crossings.geojson"
+    },
+    {
+      "countyId": "zapata",
+      "countyFips": "48505",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/zapata/Production/zapata-production-crossings.geojson"
+    },
+    {
+      "countyId": "zavala",
+      "countyFips": "48507",
+      "crossingCount": 0,
+      "explicitEmptyPackage": "Crossing-Packages/zavala/Production/zavala-production-crossings.geojson"
+    }
+  ],
+  "rules": [
+    "explicit FeatureCollection with crossingCount 0 and features []",
+    "no fallback",
+    "no source-county inference",
+    "no synthetic rows"
+  ]
+}
