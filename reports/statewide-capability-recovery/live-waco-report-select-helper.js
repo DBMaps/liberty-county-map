@@ -17,7 +17,9 @@ function runtimeDeviceId(identity) {
 }
 
 async function execute(identity, recentDeviceOnly = false) {
-  let query = globalThis.supabaseClient.from("reports").select(BASE_FIELDS);
+  const client = globalThis[Symbol.for("gridly.runtime.supabaseClient")];
+  if (!client || typeof client.from !== "function") throw new Error("Gridly production Supabase client is unavailable");
+  let query = client.from("reports").select(BASE_FIELDS);
   let identityMode = "";
   if (!recentDeviceOnly && identity?.insertedRowId) {
     query = query.eq("id", identity.insertedRowId);

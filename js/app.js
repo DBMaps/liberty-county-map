@@ -55375,6 +55375,43 @@ async function loadSharedReports(reason = "manual") {
     recentlyClearedRoadHazards = gridlyFilterRecentlyClearedRoadHazardsForVisibility(visibleHazards, lifecycleFilterNow);
     activeHazards = gridlyFilterRoadHazardsByLatestLifecycle(visibleHazards, lifecycleFilterNow);
     activeReports = visibleNormalized.filter((report) => report.reportKind !== "hazard");
+    const activeHazardIds = new Set(activeHazards.map((report) => String(report.id || "")));
+    gridlyLoadedReportSnapshot = Object.freeze(normalized.map((report, index) => {
+      const raw = rawRows[index] || {};
+      const lifecycleState = getIncidentLifecycleState(report, lifecycleFilterNow);
+      const hasCoordinates = Number.isFinite(report.lat) && Number.isFinite(report.lng);
+      const countyScopeMatch = gridlyReportMatchesActiveCounty(report, activeCountyId);
+      const sourceAllowed = sourceVisibleNormalized.includes(report);
+      const genericHazard = report.reportKind === "hazard";
+      const activeLifecycle = lifecycleState === "active";
+      const activeCollection = genericHazard
+        ? activeHazardIds.has(String(report.id || ""))
+        : activeReports.includes(report);
+      const surfaceEligible = sourceAllowed && countyScopeMatch && activeLifecycle && hasCoordinates && activeCollection;
+      return Object.freeze({
+        id: raw.id ?? report.id ?? null,
+        created_at: raw.created_at ?? report.submittedAt ?? null,
+        device_id: raw.device_id ?? report.deviceId ?? null,
+        crossing_id: raw.crossing_id ?? report.crossingId ?? null,
+        crossing_name: raw.crossing_name ?? report.crossingName ?? null,
+        report_type: raw.report_type ?? report.type ?? null,
+        lat: Number.isFinite(report.lat) ? report.lat : null,
+        lng: Number.isFinite(report.lng) ? report.lng : null,
+        severity: report.severity || null,
+        expires_at: raw.expires_at ?? report.expiresAt ?? null,
+        countyId: report.countyId || null,
+        countyFips: report.countyFips || GRIDLY_COUNTY_REGISTRY[report.countyId]?.fips || null,
+        countyName: report.countyName || null,
+        communityName: report.communityName || null,
+        communityKey: report.communityKey || null,
+        placeGeoid: report.placeGeoid || null,
+        lifecycleState,
+        mapEligible: surfaceEligible,
+        alertsEligible: surfaceEligible,
+        awarenessEligible: surfaceEligible,
+        predicates: Object.freeze({ sourceAllowed, countyScopeMatch, genericHazard, activeLifecycle, hasCoordinates, activeCollection })
+      });
+    }));
     endReportStage(reconcileStage, "completed", { message: `activeHazards=${activeHazards.length}; activeReports=${activeReports.length}; recentlyCleared=${recentlyClearedRoadHazards.length}` });
     const visibilityStage = reportStage("report visibility processing", { dependency: "ownership and local accepted restoration" });
     gridlyReportSubmissionOwnershipState.refreshedCrossingReportCandidateCount = refreshedCrossingReportCandidates.length;
@@ -82016,6 +82053,16 @@ const GRIDLY_REPORTS_ALLOWED_INSERT_KEYS = GRIDLY_REPORTS_BASE_INSERT_KEYS;
 const GRIDLY_REPORTS_BASE_SELECT_COLUMNS = "id,created_at,crossing_id,crossing_name,railroad,lat,lng,report_type,severity,detail,source,confidence,device_id,expires_at";
 let gridlyLastHazardPersistenceDiagnostic = null;
 let gridlyLastReportRetrievalDiagnostic = null;
+let gridlyLoadedReportSnapshot = Object.freeze([]);
+
+// A non-enumerable, shared authority for read-only recovery tooling. This does
+// not construct or configure a client; it only points at production's client.
+if (typeof globalThis !== "undefined" && supabaseClient) {
+  Object.defineProperty(globalThis, Symbol.for("gridly.runtime.supabaseClient"), {
+    value: supabaseClient,
+    configurable: true
+  });
+}
 
 function gridlyPersistenceErrorDiagnostic(error) {
   if (!error) return null;
@@ -82040,6 +82087,12 @@ function gridlyGetLastReportRetrievalDiagnostic() {
 }
 window.gridlyGetLastReportRetrievalDiagnostic = gridlyGetLastReportRetrievalDiagnostic;
 exposeGridlyAuditHelper("gridlyGetLastReportRetrievalDiagnostic", gridlyGetLastReportRetrievalDiagnostic);
+
+function gridlyGetLoadedReportSnapshot() {
+  return Object.freeze(gridlyLoadedReportSnapshot.map((row) => Object.freeze({ ...row })));
+}
+window.gridlyGetLoadedReportSnapshot = gridlyGetLoadedReportSnapshot;
+exposeGridlyAuditHelper("gridlyGetLoadedReportSnapshot", gridlyGetLoadedReportSnapshot);
 let lastGridlyRoadHazardSubmitShapeAudit = {
   supabaseInsertKeys: [],
   legacyRetryInsertKeys: [],
