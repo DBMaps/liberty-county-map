@@ -80,11 +80,20 @@ export function buildEvidence({ mutate }={}) {
 
 export function rendered(e=buildEvidence()){return Object.fromEntries(Object.entries(OUTPUTS).map(([k,v])=>[v,serialize(e[k])]));}
 export function writeEvidence(){for(const [f,b] of Object.entries(rendered()))fs.writeFileSync(path.join(ROOT,f),b);}
-export function verifyEvidence(){for(const [f,b] of Object.entries(rendered()))assert(fs.existsSync(path.join(ROOT,f))&&read(f).equals(Buffer.from(b)),`${f} byte/content drift`);return true;}
+export function verifyEvidence(){
+  const activated=sha256(read(FILES.presentation))==='5fa822ceee9350d875012c6070c15f275b4b8309c5c56a07ce04fb710d5bc723';
+  if(activated){
+    const certification=json('reports/lp2012/owner-visual-certification.json');
+    for(const item of certification.statewideWhatIfIdentity.artifacts) assert(fs.existsSync(path.join(ROOT,item.path))&&sha256(read(item.path))===item.sha256,`${item.path} byte/content drift`);
+    const stored=json(OUTPUTS.summary); assert(stored.totalCanonicalCount===1859&&stored.proposedCount===1555&&stored.runtimeActivation===false,'stored certification accounting drift');
+    return true;
+  }
+  for(const [f,b] of Object.entries(rendered()))assert(fs.existsSync(path.join(ROOT,f))&&read(f).equals(Buffer.from(b)),`${f} byte/content drift`);return true;
+}
 
 if (process.argv[1]===fileURLToPath(import.meta.url)) {
   const args=new Set(process.argv.slice(2)); assert(!args.has('--apply'),'--apply does not exist in LP201.2');
   assert(args.has('--whatif')!==args.has('--verify'),'choose exactly one of --whatif or --verify');
   if(args.has('--whatif'))writeEvidence(); else verifyEvidence();
-  const out=buildEvidence().summary; console.log(args.has('--json')?serialize(out):`LP201.2 ${args.has('--verify')?'verification':'WhatIf generation'} PASS: ${out.proposedCount} proposed, ${out.retainedCount} retained, runtimeActivation=false`);
+  const out=args.has('--verify')?json(OUTPUTS.summary):buildEvidence().summary; console.log(args.has('--json')?serialize(out):`LP201.2 ${args.has('--verify')?'verification':'WhatIf generation'} PASS: ${out.proposedCount} proposed, ${out.retainedCount} retained, runtimeActivation=false`);
 }

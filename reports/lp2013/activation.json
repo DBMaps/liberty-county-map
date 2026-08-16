@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "gridly.lp2013.activation.v1",
+  "activationStatus": "LP201.3 ACTIVATED AND CERTIFIED",
+  "runtimeActivation": true,
+  "sourceCertificationIdentities": {
+    "whatif": "555987c9f2ad6ed5d2b9c3e43b4101af1fff8236cda331c2a4f9fbfbd5eb1aa4",
+    "summary": "8c90981aac56d7a6e9a2ef44cce7c5117bcd24f3fc92f0da62732059a2610e5f",
+    "certification": "dce13bfd36a467a126adec459418c09ec31182ecf6337245455c5d4335ca8e9b"
+  },
+  "preApplyHash": "b4077f9a6532619c92c193a7849545dcc9f59abd5fbd717c0714442a1b86d18e",
+  "targetHash": "5fa822ceee9350d875012c6070c15f275b4b8309c5c56a07ce04fb710d5bc723",
+  "postApplyHash": "5fa822ceee9350d875012c6070c15f275b4b8309c5c56a07ce04fb710d5bc723",
+  "counts": {
+    "recordCount": 1859,
+    "promotedCount": 1555,
+    "changedFromBaselineCount": 1555,
+    "unchangedFromBaselineCount": 304,
+    "lp197RetainedCount": 4,
+    "unresolvedRetainedCount": 300
+  },
+  "lp197Protections": [
+    {
+      "GEOID": "4805000",
+      "name": "Austin",
+      "effectiveAuthority": "LP197_OWNER_APPROVED",
+      "fallbackUnchanged": true
+    },
+    {
+      "GEOID": "4819000",
+      "name": "Dallas",
+      "effectiveAuthority": "LP197_OWNER_APPROVED",
+      "fallbackUnchanged": true
+    },
+    {
+      "GEOID": "4824000",
+      "name": "El Paso",
+      "effectiveAuthority": "LP197_OWNER_APPROVED",
+      "fallbackUnchanged": true
+    },
+    {
+      "GEOID": "4827000",
+      "name": "Fort Worth",
+      "effectiveAuthority": "LP197_OWNER_APPROVED",
+      "fallbackUnchanged": true
+    }
+  ],
+  "unresolvedProtections": {
+    "count": 300,
+    "buckets": [
+      "B_",
+      "D_",
+      "E_",
+      "G_",
+      "H_"
+    ],
+    "examples": [
+      {
+        "GEOID": "4839952",
+        "name": "Kyle",
+        "unchanged": true
+      },
+      {
+        "GEOID": "4856498",
+        "name": "Pecan Plantation",
+        "unchanged": true
+      },
+      {
+        "GEOID": "4863782",
+        "name": "Runaway Bay",
+        "unchanged": true
+      },
+      {
+        "GEOID": "4867554",
+        "name": "Sherwood Shores",
+        "unchanged": true
+      }
+    ]
+  },
+  "daytonTarget": {
+    "GEOID": "4819432",
+    "lat": 30.0473202,
+    "lon": -94.8873913,
+    "zoom": 13
+  },
+  "representativeTargets": [
+    {
+      "name": "Dayton",
+      "GEOID": "4819432",
+      "lat": 30.0473202,
+      "lon": -94.8873913
+    },
+    {
+      "name": "Tyler",
+      "GEOID": "4874144",
+      "lat": 32.3512601,
+      "lon": -95.3010624
+    },
+    {
+      "name": "Waco",
+      "GEOID": "4876000",
+      "lat": 31.5491899,
+      "lon": -97.1474628
+    },
+    {
+      "name": "Corpus Christi",
+      "GEOID": "4817000",
+      "lat": 27.7635302,
+      "lon": -97.4033191
+    },
+    {
+      "name": "Stamford",
+      "GEOID": "4869980",
+      "lat": 32.944882,
+      "lon": -99.802453
+    },
+    {
+      "name": "Galveston",
+      "GEOID": "4828068",
+      "lat": 29.3056996,
+      "lon": -94.7933252
+    },
+    {
+      "name": "Monahans",
+      "GEOID": "4848936",
+      "lat": 31.5890519,
+      "lon": -102.8861902
+    },
+    {
+      "name": "Liberty",
+      "GEOID": "4842568",
+      "lat": 30.0609147,
+      "lon": -94.7971809
+    },
+    {
+      "name": "Abbott",
+      "GEOID": "4800100",
+      "lat": 31.8848809,
+      "lon": -97.0733361
+    },
+    {
+      "name": "Acala",
+      "GEOID": "4801084",
+      "lat": 31.334013,
+      "lon": -105.9144137
+    },
+    {
+      "name": "Houston",
+      "GEOID": "4835000",
+      "lat": 29.7589382,
+      "lon": -95.3676974
+    }
+  ],
+  "regionProtection": {
+    "houston": true,
+    "sanAntonio": true,
+    "regionArtifactsWritten": false
+  },
+  "zoomProtection": {
+    "normalPlaceZoom": 13,
+    "perPlaceZoomAdded": false,
+    "osmDerivedZoom": false
+  },
+  "schemaProtection": {
+    "topLevelUnchanged": true,
+    "placeShape": [
+      "lat",
+      "lon"
+    ],
+    "recordCount": 1859
+  },
+  "idempotenceResult": "PASS_ALREADY_APPLIED_ZERO_WRITES",
+  "writeAllowlist": [
+    "data/generated/gridly-statewide-place-presentation-v1.json"
+  ]
+}
