@@ -174,7 +174,7 @@ export async function verifyPostActivation({root=DEFAULT_ROOT,reinspect=postActi
  if(result.status!=='PASS'||result.decision!==DECISION_APPLIED||result.productionWrites!==454)fail('committed apply result is not the certified applied decision');
  const preflight=e['apply-preflight.json'],plan=e['apply-write-plan.json'];
  if(preflight.status!=='PASS'||preflight.productionWrites!==0||plan.status!=='PASS'||plan.count!==454||plan.files?.length!==454||!governedPathOrderMatches(plan.orderedPaths,plan.files.map(f=>f.path))||new Set(plan.orderedPaths).size!==454)fail('committed apply plan contract');
- for(const file of plan.files){const body=await raw(root,portable(file.path));if(body.length!==file.bytes||sha(body)!==file.sha256)fail(`applied file differs from committed write plan: ${file.path}`)}
+ for(const file of plan.files){const body=canonicalCandidateBytes(await raw(root,portable(file.path)));if(body.length!==file.bytes||sha(body)!==file.sha256)fail(`applied file differs from committed write plan: ${file.path}`)}
  const post=await reinspect(root),expected={
   'post-activation-state.json':{schemaVersion:'gridly.wave3a3.post-state.v1',status:'PASS',...post},
   'post-activation-conservation.json':{schemaVersion:'gridly.wave3a3.post-conservation.v1',status:'PASS',activeIdentities:post.activeIdentities,missing:post.missing,extra:post.extra,duplicates:post.duplicates,ownershipMismatches:post.mismatches,blockedLeakage:post.blockedLeakage},
