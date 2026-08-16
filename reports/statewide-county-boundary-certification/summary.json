@@ -1,0 +1,315 @@
+{
+  "schemaVersion": "gridly.statewideCountyBoundaryCertificationSummary.v1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "source": {
+    "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+    "bytes": 47911048,
+    "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316",
+    "schemaVersion": "gridly.lp1904.authoritativeCountyGeometry.runtime.v1"
+  },
+  "countyCount": 254,
+  "geometryIdentityMatches": 254,
+  "structurallyValidGeometries": 254,
+  "interiorPointContainmentMatches": 254,
+  "polygonRenderPasses": 254,
+  "transitionPasses": 5,
+  "representativeControls": [
+    {
+      "countyId": "el-paso-tx",
+      "countyFips": "48141",
+      "countyName": "El Paso County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -106.645646,
+        "south": 31.38723,
+        "east": -105.954328,
+        "north": 32.00265
+      },
+      "interiorPoint": {
+        "lng": -106.2348354702173,
+        "lat": 31.768647564275756
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "el-paso-tx",
+      "ringCount": 1,
+      "vertexCount": 2428,
+      "passed": true
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "countyFips": "48229",
+      "countyName": "Hudspeth County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -105.998012,
+        "south": 30.629258,
+        "east": -104.907122,
+        "north": 32.002377
+      },
+      "interiorPoint": {
+        "lng": -105.38645271754297,
+        "lat": 31.456142736230376
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "hudspeth-tx",
+      "ringCount": 1,
+      "vertexCount": 6488,
+      "passed": true
+    },
+    {
+      "countyId": "presidio-tx",
+      "countyFips": "48377",
+      "countyName": "Presidio County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -104.980778,
+        "south": 29.258437,
+        "east": -103.792703,
+        "north": 30.629258
+      },
+      "interiorPoint": {
+        "lng": -104.24052167959714,
+        "lat": 29.999802670022532
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "presidio-tx",
+      "ringCount": 1,
+      "vertexCount": 9557,
+      "passed": true
+    },
+    {
+      "countyId": "brewster-tx",
+      "countyFips": "48043",
+      "countyName": "Brewster County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -103.80068,
+        "south": 28.971547,
+        "east": -102.320819,
+        "north": 30.665939
+      },
+      "interiorPoint": {
+        "lng": -103.25175585563359,
+        "lat": 29.811949774320446
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "brewster-tx",
+      "ringCount": 1,
+      "vertexCount": 5443,
+      "passed": true
+    },
+    {
+      "countyId": "cameron-tx",
+      "countyFips": "48061",
+      "countyName": "Cameron County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -97.862325,
+        "south": 25.837048,
+        "east": -97.08934,
+        "north": 26.412715
+      },
+      "interiorPoint": {
+        "lng": -97.45205686392548,
+        "lat": 26.150865919027208
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "cameron-tx",
+      "ringCount": 1,
+      "vertexCount": 4646,
+      "passed": true
+    },
+    {
+      "countyId": "harris-tx",
+      "countyFips": "48201",
+      "countyName": "Harris County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -95.960733,
+        "south": 29.497297,
+        "east": -94.908492,
+        "north": 30.170606
+      },
+      "interiorPoint": {
+        "lng": -95.39226044909176,
+        "lat": 29.857306611984917
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "harris-tx",
+      "ringCount": 1,
+      "vertexCount": 12788,
+      "passed": true
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyFips": "48167",
+      "countyName": "Galveston County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -95.233081,
+        "south": 29.062739,
+        "east": -94.369361,
+        "north": 29.598264
+      },
+      "interiorPoint": {
+        "lng": -94.8627226089706,
+        "lat": 29.37998595081851
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "galveston-tx",
+      "ringCount": 1,
+      "vertexCount": 6062,
+      "passed": true
+    },
+    {
+      "countyId": "bexar-tx",
+      "countyFips": "48029",
+      "countyName": "Bexar County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -98.806552,
+        "south": 29.114435,
+        "east": -98.116902,
+        "north": 29.760713
+      },
+      "interiorPoint": {
+        "lng": -98.52002587325121,
+        "lat": 29.448957831833926
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "bexar-tx",
+      "ringCount": 1,
+      "vertexCount": 5697,
+      "passed": true
+    },
+    {
+      "countyId": "travis-tx",
+      "countyFips": "48453",
+      "countyName": "Travis County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -98.172977,
+        "south": 30.023451,
+        "east": -97.369539,
+        "north": 30.628249
+      },
+      "interiorPoint": {
+        "lng": -97.78195731241627,
+        "lat": 30.334376172087833
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "travis-tx",
+      "ringCount": 1,
+      "vertexCount": 1952,
+      "passed": true
+    },
+    {
+      "countyId": "dallas-tx",
+      "countyFips": "48113",
+      "countyName": "Dallas County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -97.038685,
+        "south": 32.545214,
+        "east": -96.51687,
+        "north": 32.989691
+      },
+      "interiorPoint": {
+        "lng": -96.77776413970456,
+        "lat": 32.76657257731832
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "dallas-tx",
+      "ringCount": 1,
+      "vertexCount": 1405,
+      "passed": true
+    },
+    {
+      "countyId": "tarrant-tx",
+      "countyFips": "48439",
+      "countyName": "Tarrant County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -97.550582,
+        "south": 32.548666,
+        "east": -97.031007,
+        "north": 32.994194
+      },
+      "interiorPoint": {
+        "lng": -97.29113114653872,
+        "lat": 32.771923506123066
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "tarrant-tx",
+      "ringCount": 1,
+      "vertexCount": 1246,
+      "passed": true
+    },
+    {
+      "countyId": "mclennan-tx",
+      "countyFips": "48309",
+      "countyName": "McLennan County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -97.60523,
+        "south": 31.244215,
+        "east": -96.801123,
+        "north": 31.863079
+      },
+      "interiorPoint": {
+        "lng": -97.20178660091672,
+        "lat": 31.552380079966
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "mclennan-tx",
+      "ringCount": 1,
+      "vertexCount": 1093,
+      "passed": true
+    },
+    {
+      "countyId": "liberty-tx",
+      "countyFips": "48291",
+      "countyName": "Liberty County",
+      "geometryType": "Polygon",
+      "bounds": {
+        "west": -95.165897,
+        "south": 29.884276,
+        "east": -94.442235,
+        "north": 30.493553
+      },
+      "interiorPoint": {
+        "lng": -94.81221226927437,
+        "lat": 30.151612133799112
+      },
+      "identityMatched": true,
+      "containmentResolvedCountyId": "liberty-tx",
+      "ringCount": 1,
+      "vertexCount": 2341,
+      "passed": true
+    }
+  ],
+  "mclennan": {
+    "countyId": "mclennan-tx",
+    "countyFips": "48309",
+    "countyName": "McLennan County",
+    "geometryType": "Polygon",
+    "bounds": {
+      "west": -97.60523,
+      "south": 31.244215,
+      "east": -96.801123,
+      "north": 31.863079
+    },
+    "interiorPoint": {
+      "lng": -97.20178660091672,
+      "lat": 31.552380079966
+    },
+    "identityMatched": true,
+    "containmentResolvedCountyId": "mclennan-tx",
+    "ringCount": 1,
+    "vertexCount": 1093,
+    "passed": true
+  },
+  "anomalies": [],
+  "decision": "STATEWIDE COUNTY BOUNDARIES CERTIFIED + VISIBLE — READY FOR OWNER UI RETEST",
+  "passed": true
+}
