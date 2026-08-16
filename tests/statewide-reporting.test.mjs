@@ -98,8 +98,24 @@ test("actual production-boundary render harness certifies every county and Waco 
   }
   const waco = normalizeGenericHazard({ id: "48c70dd1-6b56-45ee-ac2c-d4a1314d7386", crossing_id: "hazard-device-fb254e5c-da39-4ff0-92d1-15c9cc62b57d-1786898439054", report_type: "flooding", lat: 31.5561805244549, lng: -97.1312159299851 }, { countyId: "mclennan-tx", countyFips: "48309", name: "McLennan County" }, { placeGeoid: "4876000", displayName: "Waco", countyMemberships: ["48309"] });
   const actual = exerciseActualRenderPath(waco, createRenderHarness());
-  assert.equal(actual.markerCurrentlyOnMap && actual.alertRendered && actual.awarenessPresented, true);
+  for (const field of ["presentInMergedRenderSource", "presentAfterDeduplication", "presentInMarkerLoop", "coordinateAccepted", "typeAccepted", "identityAccepted", "iconResolved", "markerConstructorReached", "markerCreated", "markerAddedToMap", "markerCurrentlyOnMap"]) {
+    assert.equal(actual[field], true, `Waco production marker stage ${field}`);
+  }
+  assert.equal(actual.firstFailedStage, null);
+  assert.equal(actual.alertRendered && actual.awarenessPresented, true);
   assert.equal(actual.crossingDependencies, 0, "legacy hazard crossing_id is data, never a rendering dependency");
+});
+
+test("generic taxonomy and Dayton crossing identities coexist without collision", async () => {
+  const { normalizeGenericHazard, exerciseActualRenderPath, createRenderHarness } = await import("../tools/statewide-report-render-runtime.mjs");
+  for (const reportType of ["flooding", "road hazard", "other hazard"]) {
+    const report = normalizeGenericHazard({ id: `generic-${reportType}`, crossing_id: `hazard-device-${reportType}`, report_type: reportType, lat: 30.05, lng: -94.89 }, { countyId: "liberty-tx", countyFips: "48291", name: "Liberty County" });
+    const dayton = { id: "rail-dayton", reportKind: "crossing", type: "rail_blocked", status: "active", crossing_id: "DOT-022127B", lat: 30.0466, lng: -94.8852 };
+    const actual = exerciseActualRenderPath(report, { ...createRenderHarness(), unifiedIncidents: [dayton], activeHazards: [report] });
+    assert.equal(actual.markerCurrentlyOnMap, true);
+    assert.equal(actual.firstFailedStage, null);
+    assert.equal(actual.crossingDependencies, 0);
+  }
 });
 
 test("owner render diagnostics are read-only and production refresh invalidates stale models", () => {
@@ -109,6 +125,7 @@ test("owner render diagnostics are read-only and production refresh invalidates 
   assert.match(source, /function gridlyGetAwarenessFinalStateSnapshot\(\)/);
   assert.match(source, /gridlyAuthoritativeIncidentSnapshotState\.snapshot = null/);
   assert.match(source, /unifiedIncidents\+activeHazards/);
+  for (const field of ["presentInActiveHazards", "presentInMergedRenderSource", "presentAfterDeduplication", "presentInMarkerLoop", "coordinateAccepted", "typeAccepted", "identityAccepted", "iconResolved", "markerConstructorReached", "firstFailedStage"]) assert.match(source, new RegExp(field));
 });
 
 test("final presentation owners do not gate generic hazards on crossing, desktop, or popup enrichment", () => {
