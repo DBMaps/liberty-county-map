@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "gridly.wave3a3.consumer-compatibility.v1",
+  "status": "PASS_DESIGN",
+  "checks": {
+    "countyCrossingLoading": "explicit manifest and package",
+    "countySwitching": "registry entry per governed county",
+    "mapCrossingRendering": "unchanged GeoJSON feature contract",
+    "roadRuntimeDependencyIntroduced": false,
+    "reportIdentityMutation": false,
+    "historicalReportLinkageChanged": false,
+    "zeroCountyResolution": "SUPPORTED_EMPTY",
+    "placeOwnershipMutation": false
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "gridly.wave3a3.candidate-input.v1",
+  "status": "BLOCKED",
+  "requiredArtifactRoot": "evidence/wave3a2-crossing-package-manufacture",
+  "requiredArtifacts": [
+    "candidate-cohort.json",
+    "package-certification.json",
+    "package-manufacture-summary.json",
+    "reconciliation-index.json",
+    "reconciliation-summary.json",
+    "cross-package-uniqueness.json",
+    "consumer-compatibility.json",
+    "summary.json"
+  ],
+  "missing": [
+    "candidate-cohort.json",
+    "package-certification.json",
+    "package-manufacture-summary.json",
+    "reconciliation-index.json",
+    "reconciliation-summary.json",
+    "cross-package-uniqueness.json",
+    "consumer-compatibility.json",
+    "summary.json"
+  ],
+  "expected": {
+    "counties": 175,
+    "identities": 12315
+  }
+}
