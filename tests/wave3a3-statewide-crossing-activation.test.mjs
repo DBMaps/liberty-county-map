@@ -38,7 +38,7 @@ test('post-activation applied-file identity accepts LF and CRLF only and remains
   'post-activation-state.json':{schemaVersion:'gridly.wave3a3.post-state.v1',status:'PASS',...post},
   'post-activation-conservation.json':{schemaVersion:'gridly.wave3a3.post-conservation.v1',status:'PASS',activeIdentities:16099,missing:[],extra:[],duplicates:[],ownershipMismatches:[],blockedLeakage:[]},
   'post-activation-registry-certification.json':{schemaVersion:'gridly.wave3a3.post-registry.v1',status:'PASS',manifestRegistryAgree:true,counties:254},
-  'post-activation-package-certification.json':{schemaVersion:'gridly.wave3a3.post-packages.v1',status:'PASS',positive:202,empty:52,total:254,identities:16099,controls:post.controls}
+  'post-activation-package-certification.json':{schemaVersion:'gridly.wave3a3.post-packages.v1',status:'PASS',positive:202,empty:52,total:254,identities:16099,controls:{...post.controls}}
  };
  const verify=()=>verifyPostActivation({root,reinspect:async()=>post});
  try{
@@ -48,6 +48,19 @@ test('post-activation applied-file identity accepts LF and CRLF only and remains
   execFileSync('git',['init','--quiet'],{cwd:root});execFileSync('git',['config','user.email','test@gridly.invalid'],{cwd:root});execFileSync('git',['config','user.name','Gridly Test'],{cwd:root});execFileSync('git',['add','evidence'],{cwd:root});execFileSync('git',['commit','--quiet','-m','fixture evidence'],{cwd:root});
 
   assert.equal((await verify()).status,'PASS','LF applied file matches the committed plan');
+  assert.equal('records' in evidence['post-activation-package-certification.json'],false,'package certification evidence is summary-only');
+  const evidencePath=name=>join(root,'evidence/wave3a3-statewide-crossing-activation',name);
+  evidence['post-activation-package-certification.json'].total=253;
+  await writeFile(evidencePath('post-activation-package-certification.json'),JSON.stringify(evidence['post-activation-package-certification.json'],null,2)+'\n');
+  execFileSync('git',['add','evidence'],{cwd:root});execFileSync('git',['commit','--quiet','-m','wrong summary fixture'],{cwd:root});
+  await assert.rejects(verify(),/post-activation evidence mismatch: post-activation-package-certification\.json/,'wrong summary total fails');
+  evidence['post-activation-package-certification.json'].total=254;evidence['post-activation-package-certification.json'].controls.Brazos=94;
+  await writeFile(evidencePath('post-activation-package-certification.json'),JSON.stringify(evidence['post-activation-package-certification.json'],null,2)+'\n');
+  execFileSync('git',['add','evidence'],{cwd:root});execFileSync('git',['commit','--quiet','-m','wrong control fixture'],{cwd:root});
+  await assert.rejects(verify(),/post-activation evidence mismatch: post-activation-package-certification\.json/,'wrong control count fails');
+  evidence['post-activation-package-certification.json'].controls.Brazos=95;
+  await writeFile(evidencePath('post-activation-package-certification.json'),JSON.stringify(evidence['post-activation-package-certification.json'],null,2)+'\n');
+  execFileSync('git',['add','evidence'],{cwd:root});execFileSync('git',['commit','--quiet','-m','restore summary fixture'],{cwd:root});
   await writeFile(join(root,paths[0]),Buffer.from(governed.toString().replaceAll('\n','\r\n')));
   assert.equal((await verify()).status,'PASS','CRLF materialization has the same governed LF identity');
 
