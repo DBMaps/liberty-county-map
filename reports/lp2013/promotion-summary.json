@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "gridly.lp2013.promotion-summary.v1",
+  "runtimeActivation": false,
+  "applyExecuted": false,
+  "counts": {
+    "canonicalCount": 1859,
+    "certifiedPromotionCount": 1555,
+    "coordinateChangeCount": 1555,
+    "alreadyEquivalentCount": 0,
+    "lp197RetainedCount": 4,
+    "unresolvedRetainedCount": 300,
+    "unchangedRecordCount": 304
+  },
+  "artifactIdentity": {
+    "current": {
+      "path": "data/generated/gridly-statewide-place-presentation-v1.json",
+      "bytes": 137855,
+      "sha256": "b4077f9a6532619c92c193a7849545dcc9f59abd5fbd717c0714442a1b86d18e"
+    },
+    "proposed": {
+      "path": "data/generated/gridly-statewide-place-presentation-v1.json",
+      "bytes": 137736,
+      "sha256": "5fa822ceee9350d875012c6070c15f275b4b8309c5c56a07ce04fb710d5bc723"
+    }
+  },
+  "productionWriteAllowlist": [
+    "data/generated/gridly-statewide-place-presentation-v1.json"
+  ],
+  "zoomContract": "EXISTING_GOVERNED_PLACE_ZOOM_UNCHANGED",
+  "regionSeparation": "CANONICAL_PLACE_ROWS_ONLY",
+  "lifecycleProtection": {
+    "semanticIdentityPersisted": true,
+    "reloadRecomputesCameraFromSemanticIdentity": true,
+    "arbitraryViewportPersistenceAdded": false,
+    "postLoadCompetingRecenterAdded": false,
+    "runtimeFilesModified": false
+  },
+  "futureApply": {
+    "requiredCurrentSha256": "b4077f9a6532619c92c193a7849545dcc9f59abd5fbd717c0714442a1b86d18e",
+    "postWriteSha256": "5fa822ceee9350d875012c6070c15f275b4b8309c5c56a07ce04fb710d5bc723",
+    "idempotentTarget": true,
+    "phase1Authorization": false
+  },
+  "unexpectedAnomalies": []
+}
