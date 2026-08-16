@@ -8210,7 +8210,11 @@ function gridlyGetCountyScopedReportMetadata(countyId = gridlyGetActiveCountyId(
 }
 
 function gridlyGetAvailableCountyAwarenessBounds() {
-  return typeof GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID !== "undefined" ? GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID : Object.freeze({});
+  const legacy = typeof GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID !== "undefined" ? GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID : Object.freeze({});
+  const authoritative = typeof window !== "undefined"
+    ? window.gridlyLp0361cRuntimeCountyGeometryPackageLoader?.getCountyBoundsById?.()
+    : null;
+  return authoritative || legacy;
 }
 
 function gridlyCoordinateInsideCountyBounds(lat, lng, countyId = GRIDLY_DEFAULT_COUNTY_ID) {
@@ -8280,8 +8284,9 @@ function gridlyResolveCountyIdForCoordinate(lat, lng) {
   const boundsMatches = Object.values(GRIDLY_COUNTY_REGISTRY)
     .filter((config) => config?.operational === true && gridlyCoordinateInsideCountyBounds(numericLat, numericLng, config.id));
   const geometryRecords = typeof window !== "undefined" ? window.gridlyLp0361cRuntimeCountyGeometryPackageLoader?.getCandidateGeometries(boundsMatches.map((config) => config.id)) : null;
-  const polygonMatches = Array.isArray(geometryRecords) ? geometryRecords.filter((record) => gridlyAuthoritativePointInGeometry(numericLat, numericLng, record.geometry) === "inside") : [];
-  const selected = polygonMatches.length === 1 ? GRIDLY_COUNTY_REGISTRY[polygonMatches[0].countyId] : null;
+  const polygonMatches = Array.isArray(geometryRecords) ? geometryRecords.filter((record) => ["inside", "boundary"].includes(gridlyAuthoritativePointInGeometry(numericLat, numericLng, record.geometry))) : [];
+  polygonMatches.sort((left, right) => String(left.countyId).localeCompare(String(right.countyId)));
+  const selected = polygonMatches.length ? GRIDLY_COUNTY_REGISTRY[polygonMatches[0].countyId] : null;
   return Object.freeze({
     countyId: selected?.id || null,
     state: selected?.state || null,
@@ -8289,7 +8294,8 @@ function gridlyResolveCountyIdForCoordinate(lat, lng) {
     coordinateInsideSupportedCounty: Boolean(selected),
     matchedBoundsSource: selected ? (gridlyGetAvailableCountyAwarenessBounds()[selected.id]?.source || null) : null,
     authoritativeGeometryAvailable: Array.isArray(geometryRecords) && geometryRecords.length === boundsMatches.length,
-    ambiguousCountyResolution: polygonMatches.length > 1
+    ambiguousCountyResolution: polygonMatches.length > 1,
+    boundaryPolicy: "inclusive-deterministic-lowest-county-id"
   });
 }
 
@@ -46085,8 +46091,9 @@ function resyncGridlyActiveCountyVisibleSurfaces(reason = "active-county-resync"
 function gridlyGetCountyBoundsMetadata(countyId = GRIDLY_DEFAULT_COUNTY_ID) {
   const requested = String(countyId || "").trim().toLowerCase();
   const normalized = gridlyNormalizeCountyId(requested || GRIDLY_DEFAULT_COUNTY_ID);
-  const raw = GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID[normalized] || null;
-  const knownRequestedMissingBounds = requested && gridlyIsKnownCountyId(requested) && !GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID[requested];
+  const availableBounds = gridlyGetAvailableCountyAwarenessBounds();
+  const raw = availableBounds[normalized] || null;
+  const knownRequestedMissingBounds = requested && gridlyIsKnownCountyId(requested) && !availableBounds[requested];
   return {
     requestedCountyId: requested || GRIDLY_DEFAULT_COUNTY_ID,
     countyId: knownRequestedMissingBounds ? requested : normalized,

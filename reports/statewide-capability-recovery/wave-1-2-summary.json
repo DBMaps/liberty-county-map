@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "gridly.statewideCapabilityRecoverySummary.v1",
+  "source": {
+    "artifactPath": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+    "bytes": 47911048,
+    "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316",
+    "schemaVersion": "gridly.lp1904.authoritativeCountyGeometry.runtime.v1",
+    "packageVersion": "lp1904-governed-254-runtime-geometry-v1",
+    "provenance": {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+      "geometryPreservation": "authoritative polygons copied without simplification"
+    }
+  },
+  "capabilityMatrix": {
+    "COUNTY_BOUNDARY_GEOMETRY": 254,
+    "COUNTY_BOUNDS_AVAILABLE_TO_RUNTIME": 254,
+    "COUNTY_CONTAINMENT": 254,
+    "HAZARD_REPORT_PLACEMENT_REPOSITORY_CLIENT_ELIGIBLE": 254,
+    "HAZARD_REPORT_PERSISTENCE_CERTIFIED": false,
+    "CROSSING_RUNTIME": 28,
+    "GOVERNED_ROAD_RUNTIME": 28
+  },
+  "protectedSystemsModified": false,
+  "supabaseModified": false,
+  "persistenceWriteCount": 0,
+  "decision": "STATEWIDE COUNTY CONTAINMENT + HAZARD PLACEMENT UNBLOCK CERTIFIED"
+}

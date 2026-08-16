@@ -10,6 +10,8 @@
   const PARSED_CACHE_LIMIT = 1;
 
   let parsedPackageCache = null;
+  let countyRecordById = null;
+  let countyBoundsById = null;
   let loadPromise = null;
   let lastLoadError = null;
   let loadDiagnostics = null;
@@ -26,6 +28,20 @@
 
   function installRuntimeCountyGeometryPackage(pkg) {
     if (!pkg || !Array.isArray(pkg.counties)) throw new Error("Invalid runtime county geometry package");
+    if (pkg.counties.length !== GOVERNED_COUNTY_COUNT) throw new Error("GEOMETRY_COUNTY_COUNT_MISMATCH");
+    const records = Object.create(null);
+    const bounds = Object.create(null);
+    for (const county of pkg.counties) {
+      const countyId = String(county && county.countyId || "");
+      const value = county && county.bounds;
+      if (!countyId || records[countyId] || !/^48\d{3}$/.test(String(county.countyFips || ""))) throw new Error("GEOMETRY_COUNTY_IDENTITY_INVALID");
+      if (!value || ![value.south, value.west, value.north, value.east].every(Number.isFinite)
+        || value.south >= value.north || value.west >= value.east) throw new Error(`GEOMETRY_BOUNDS_INVALID:${countyId}`);
+      records[countyId] = county;
+      bounds[countyId] = Object.freeze({ ...value, countyId, countyFips: county.countyFips, source: "governed-authoritative-county-geometry-v1" });
+    }
+    countyRecordById = Object.freeze(records);
+    countyBoundsById = Object.freeze(bounds);
     parsedPackageCache = Object.freeze(pkg);
     return parsedPackageCache;
   }
@@ -210,9 +226,11 @@
   window.gridlyLp0361cRuntimeCountyGeometryPackageLoader = Object.freeze({
     load: loadRuntimeCountyGeometryPackage,
     install: installRuntimeCountyGeometryPackage,
-    getCandidateGeometries: (countyIds) => parsedPackageCache && Array.isArray(countyIds)
-      ? countyIds.map((countyId) => parsedPackageCache.counties.find((county) => county.countyId === countyId)).filter(Boolean)
+    getCandidateGeometries: (countyIds) => countyRecordById && Array.isArray(countyIds)
+      ? countyIds.map((countyId) => countyRecordById[countyId]).filter(Boolean)
       : null,
+    getCountyBounds: (countyId) => countyBoundsById && countyBoundsById[countyId] || null,
+    getCountyBoundsById: () => countyBoundsById,
     getState: () => Object.freeze({ cached: Boolean(parsedPackageCache), loading: Boolean(loadPromise), error: lastLoadError ? (lastLoadError.message || String(lastLoadError)) : null, parsedCacheLimit: PARSED_CACHE_LIMIT, ...(loadDiagnostics || {}) })
   });
   window.gridlyLp0361cRuntimeCountyGeometryPackageAudit = auditRuntimeCountyGeometryPackage;
