@@ -1,0 +1,1298 @@
+{
+  "schemaVersion": "gridly.statewideCountyReportingIdentityCertification.v1",
+  "counts": {
+    "countiesTested": 254,
+    "countiesPassed": 254,
+    "countyIds": 254,
+    "uniqueFips": 254,
+    "countyNames": 254,
+    "placesTested": 1859,
+    "placesPassed": 1859,
+    "memberships": 2058,
+    "multiCountyPlaces": 163,
+    "zeroFraCounties": 54,
+    "sourceOnlyCounties": 173,
+    "requiredSourceOnlyCounties": 172,
+    "activeRuntimeCounties": 28,
+    "mapVisible": 254,
+    "alertsVisible": 254,
+    "awarenessActive": 254,
+    "persistenceWrites": 0,
+    "crossingDependencyFailures": 0,
+    "historicalCohortExclusions": 0
+  },
+  "results": [
+    {
+      "countyId": "anderson-tx",
+      "countyFips": "48001",
+      "countyName": "Anderson County"
+    },
+    {
+      "countyId": "andrews-tx",
+      "countyFips": "48003",
+      "countyName": "Andrews County"
+    },
+    {
+      "countyId": "angelina-tx",
+      "countyFips": "48005",
+      "countyName": "Angelina County"
+    },
+    {
+      "countyId": "aransas-tx",
+      "countyFips": "48007",
+      "countyName": "Aransas County"
+    },
+    {
+      "countyId": "archer-tx",
+      "countyFips": "48009",
+      "countyName": "Archer County"
+    },
+    {
+      "countyId": "armstrong-tx",
+      "countyFips": "48011",
+      "countyName": "Armstrong County"
+    },
+    {
+      "countyId": "atascosa-tx",
+      "countyFips": "48013",
+      "countyName": "Atascosa County"
+    },
+    {
+      "countyId": "austin-tx",
+      "countyFips": "48015",
+      "countyName": "Austin County"
+    },
+    {
+      "countyId": "bailey-tx",
+      "countyFips": "48017",
+      "countyName": "Bailey County"
+    },
+    {
+      "countyId": "bandera-tx",
+      "countyFips": "48019",
+      "countyName": "Bandera County"
+    },
+    {
+      "countyId": "bastrop-tx",
+      "countyFips": "48021",
+      "countyName": "Bastrop County"
+    },
+    {
+      "countyId": "baylor-tx",
+      "countyFips": "48023",
+      "countyName": "Baylor County"
+    },
+    {
+      "countyId": "bee-tx",
+      "countyFips": "48025",
+      "countyName": "Bee County"
+    },
+    {
+      "countyId": "bell-tx",
+      "countyFips": "48027",
+      "countyName": "Bell County"
+    },
+    {
+      "countyId": "bexar-tx",
+      "countyFips": "48029",
+      "countyName": "Bexar County"
+    },
+    {
+      "countyId": "blanco-tx",
+      "countyFips": "48031",
+      "countyName": "Blanco County"
+    },
+    {
+      "countyId": "borden-tx",
+      "countyFips": "48033",
+      "countyName": "Borden County"
+    },
+    {
+      "countyId": "bosque-tx",
+      "countyFips": "48035",
+      "countyName": "Bosque County"
+    },
+    {
+      "countyId": "bowie-tx",
+      "countyFips": "48037",
+      "countyName": "Bowie County"
+    },
+    {
+      "countyId": "brazoria-tx",
+      "countyFips": "48039",
+      "countyName": "Brazoria County"
+    },
+    {
+      "countyId": "brazos-tx",
+      "countyFips": "48041",
+      "countyName": "Brazos County"
+    },
+    {
+      "countyId": "brewster-tx",
+      "countyFips": "48043",
+      "countyName": "Brewster County"
+    },
+    {
+      "countyId": "briscoe-tx",
+      "countyFips": "48045",
+      "countyName": "Briscoe County"
+    },
+    {
+      "countyId": "brooks-tx",
+      "countyFips": "48047",
+      "countyName": "Brooks County"
+    },
+    {
+      "countyId": "brown-tx",
+      "countyFips": "48049",
+      "countyName": "Brown County"
+    },
+    {
+      "countyId": "burleson-tx",
+      "countyFips": "48051",
+      "countyName": "Burleson County"
+    },
+    {
+      "countyId": "burnet-tx",
+      "countyFips": "48053",
+      "countyName": "Burnet County"
+    },
+    {
+      "countyId": "caldwell-tx",
+      "countyFips": "48055",
+      "countyName": "Caldwell County"
+    },
+    {
+      "countyId": "calhoun-tx",
+      "countyFips": "48057",
+      "countyName": "Calhoun County"
+    },
+    {
+      "countyId": "callahan-tx",
+      "countyFips": "48059",
+      "countyName": "Callahan County"
+    },
+    {
+      "countyId": "cameron-tx",
+      "countyFips": "48061",
+      "countyName": "Cameron County"
+    },
+    {
+      "countyId": "camp-tx",
+      "countyFips": "48063",
+      "countyName": "Camp County"
+    },
+    {
+      "countyId": "carson-tx",
+      "countyFips": "48065",
+      "countyName": "Carson County"
+    },
+    {
+      "countyId": "cass-tx",
+      "countyFips": "48067",
+      "countyName": "Cass County"
+    },
+    {
+      "countyId": "castro-tx",
+      "countyFips": "48069",
+      "countyName": "Castro County"
+    },
+    {
+      "countyId": "chambers-tx",
+      "countyFips": "48071",
+      "countyName": "Chambers County"
+    },
+    {
+      "countyId": "cherokee-tx",
+      "countyFips": "48073",
+      "countyName": "Cherokee County"
+    },
+    {
+      "countyId": "childress-tx",
+      "countyFips": "48075",
+      "countyName": "Childress County"
+    },
+    {
+      "countyId": "clay-tx",
+      "countyFips": "48077",
+      "countyName": "Clay County"
+    },
+    {
+      "countyId": "cochran-tx",
+      "countyFips": "48079",
+      "countyName": "Cochran County"
+    },
+    {
+      "countyId": "coke-tx",
+      "countyFips": "48081",
+      "countyName": "Coke County"
+    },
+    {
+      "countyId": "coleman-tx",
+      "countyFips": "48083",
+      "countyName": "Coleman County"
+    },
+    {
+      "countyId": "collin-tx",
+      "countyFips": "48085",
+      "countyName": "Collin County"
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "countyFips": "48087",
+      "countyName": "Collingsworth County"
+    },
+    {
+      "countyId": "colorado-tx",
+      "countyFips": "48089",
+      "countyName": "Colorado County"
+    },
+    {
+      "countyId": "comal-tx",
+      "countyFips": "48091",
+      "countyName": "Comal County"
+    },
+    {
+      "countyId": "comanche-tx",
+      "countyFips": "48093",
+      "countyName": "Comanche County"
+    },
+    {
+      "countyId": "concho-tx",
+      "countyFips": "48095",
+      "countyName": "Concho County"
+    },
+    {
+      "countyId": "cooke-tx",
+      "countyFips": "48097",
+      "countyName": "Cooke County"
+    },
+    {
+      "countyId": "coryell-tx",
+      "countyFips": "48099",
+      "countyName": "Coryell County"
+    },
+    {
+      "countyId": "cottle-tx",
+      "countyFips": "48101",
+      "countyName": "Cottle County"
+    },
+    {
+      "countyId": "crane-tx",
+      "countyFips": "48103",
+      "countyName": "Crane County"
+    },
+    {
+      "countyId": "crockett-tx",
+      "countyFips": "48105",
+      "countyName": "Crockett County"
+    },
+    {
+      "countyId": "crosby-tx",
+      "countyFips": "48107",
+      "countyName": "Crosby County"
+    },
+    {
+      "countyId": "culberson-tx",
+      "countyFips": "48109",
+      "countyName": "Culberson County"
+    },
+    {
+      "countyId": "dallam-tx",
+      "countyFips": "48111",
+      "countyName": "Dallam County"
+    },
+    {
+      "countyId": "dallas-tx",
+      "countyFips": "48113",
+      "countyName": "Dallas County"
+    },
+    {
+      "countyId": "dawson-tx",
+      "countyFips": "48115",
+      "countyName": "Dawson County"
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "countyFips": "48117",
+      "countyName": "Deaf Smith County"
+    },
+    {
+      "countyId": "delta-tx",
+      "countyFips": "48119",
+      "countyName": "Delta County"
+    },
+    {
+      "countyId": "denton-tx",
+      "countyFips": "48121",
+      "countyName": "Denton County"
+    },
+    {
+      "countyId": "dewitt-tx",
+      "countyFips": "48123",
+      "countyName": "DeWitt County"
+    },
+    {
+      "countyId": "dickens-tx",
+      "countyFips": "48125",
+      "countyName": "Dickens County"
+    },
+    {
+      "countyId": "dimmit-tx",
+      "countyFips": "48127",
+      "countyName": "Dimmit County"
+    },
+    {
+      "countyId": "donley-tx",
+      "countyFips": "48129",
+      "countyName": "Donley County"
+    },
+    {
+      "countyId": "duval-tx",
+      "countyFips": "48131",
+      "countyName": "Duval County"
+    },
+    {
+      "countyId": "eastland-tx",
+      "countyFips": "48133",
+      "countyName": "Eastland County"
+    },
+    {
+      "countyId": "ector-tx",
+      "countyFips": "48135",
+      "countyName": "Ector County"
+    },
+    {
+      "countyId": "edwards-tx",
+      "countyFips": "48137",
+      "countyName": "Edwards County"
+    },
+    {
+      "countyId": "ellis-tx",
+      "countyFips": "48139",
+      "countyName": "Ellis County"
+    },
+    {
+      "countyId": "el-paso-tx",
+      "countyFips": "48141",
+      "countyName": "El Paso County"
+    },
+    {
+      "countyId": "erath-tx",
+      "countyFips": "48143",
+      "countyName": "Erath County"
+    },
+    {
+      "countyId": "falls-tx",
+      "countyFips": "48145",
+      "countyName": "Falls County"
+    },
+    {
+      "countyId": "fannin-tx",
+      "countyFips": "48147",
+      "countyName": "Fannin County"
+    },
+    {
+      "countyId": "fayette-tx",
+      "countyFips": "48149",
+      "countyName": "Fayette County"
+    },
+    {
+      "countyId": "fisher-tx",
+      "countyFips": "48151",
+      "countyName": "Fisher County"
+    },
+    {
+      "countyId": "floyd-tx",
+      "countyFips": "48153",
+      "countyName": "Floyd County"
+    },
+    {
+      "countyId": "foard-tx",
+      "countyFips": "48155",
+      "countyName": "Foard County"
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "countyFips": "48157",
+      "countyName": "Fort Bend County"
+    },
+    {
+      "countyId": "franklin-tx",
+      "countyFips": "48159",
+      "countyName": "Franklin County"
+    },
+    {
+      "countyId": "freestone-tx",
+      "countyFips": "48161",
+      "countyName": "Freestone County"
+    },
+    {
+      "countyId": "frio-tx",
+      "countyFips": "48163",
+      "countyName": "Frio County"
+    },
+    {
+      "countyId": "gaines-tx",
+      "countyFips": "48165",
+      "countyName": "Gaines County"
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyFips": "48167",
+      "countyName": "Galveston County"
+    },
+    {
+      "countyId": "garza-tx",
+      "countyFips": "48169",
+      "countyName": "Garza County"
+    },
+    {
+      "countyId": "gillespie-tx",
+      "countyFips": "48171",
+      "countyName": "Gillespie County"
+    },
+    {
+      "countyId": "glasscock-tx",
+      "countyFips": "48173",
+      "countyName": "Glasscock County"
+    },
+    {
+      "countyId": "goliad-tx",
+      "countyFips": "48175",
+      "countyName": "Goliad County"
+    },
+    {
+      "countyId": "gonzales-tx",
+      "countyFips": "48177",
+      "countyName": "Gonzales County"
+    },
+    {
+      "countyId": "gray-tx",
+      "countyFips": "48179",
+      "countyName": "Gray County"
+    },
+    {
+      "countyId": "grayson-tx",
+      "countyFips": "48181",
+      "countyName": "Grayson County"
+    },
+    {
+      "countyId": "gregg-tx",
+      "countyFips": "48183",
+      "countyName": "Gregg County"
+    },
+    {
+      "countyId": "grimes-tx",
+      "countyFips": "48185",
+      "countyName": "Grimes County"
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "countyFips": "48187",
+      "countyName": "Guadalupe County"
+    },
+    {
+      "countyId": "hale-tx",
+      "countyFips": "48189",
+      "countyName": "Hale County"
+    },
+    {
+      "countyId": "hall-tx",
+      "countyFips": "48191",
+      "countyName": "Hall County"
+    },
+    {
+      "countyId": "hamilton-tx",
+      "countyFips": "48193",
+      "countyName": "Hamilton County"
+    },
+    {
+      "countyId": "hansford-tx",
+      "countyFips": "48195",
+      "countyName": "Hansford County"
+    },
+    {
+      "countyId": "hardeman-tx",
+      "countyFips": "48197",
+      "countyName": "Hardeman County"
+    },
+    {
+      "countyId": "hardin-tx",
+      "countyFips": "48199",
+      "countyName": "Hardin County"
+    },
+    {
+      "countyId": "harris-tx",
+      "countyFips": "48201",
+      "countyName": "Harris County"
+    },
+    {
+      "countyId": "harrison-tx",
+      "countyFips": "48203",
+      "countyName": "Harrison County"
+    },
+    {
+      "countyId": "hartley-tx",
+      "countyFips": "48205",
+      "countyName": "Hartley County"
+    },
+    {
+      "countyId": "haskell-tx",
+      "countyFips": "48207",
+      "countyName": "Haskell County"
+    },
+    {
+      "countyId": "hays-tx",
+      "countyFips": "48209",
+      "countyName": "Hays County"
+    },
+    {
+      "countyId": "hemphill-tx",
+      "countyFips": "48211",
+      "countyName": "Hemphill County"
+    },
+    {
+      "countyId": "henderson-tx",
+      "countyFips": "48213",
+      "countyName": "Henderson County"
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "countyFips": "48215",
+      "countyName": "Hidalgo County"
+    },
+    {
+      "countyId": "hill-tx",
+      "countyFips": "48217",
+      "countyName": "Hill County"
+    },
+    {
+      "countyId": "hockley-tx",
+      "countyFips": "48219",
+      "countyName": "Hockley County"
+    },
+    {
+      "countyId": "hood-tx",
+      "countyFips": "48221",
+      "countyName": "Hood County"
+    },
+    {
+      "countyId": "hopkins-tx",
+      "countyFips": "48223",
+      "countyName": "Hopkins County"
+    },
+    {
+      "countyId": "houston-tx",
+      "countyFips": "48225",
+      "countyName": "Houston County"
+    },
+    {
+      "countyId": "howard-tx",
+      "countyFips": "48227",
+      "countyName": "Howard County"
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "countyFips": "48229",
+      "countyName": "Hudspeth County"
+    },
+    {
+      "countyId": "hunt-tx",
+      "countyFips": "48231",
+      "countyName": "Hunt County"
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "countyFips": "48233",
+      "countyName": "Hutchinson County"
+    },
+    {
+      "countyId": "irion-tx",
+      "countyFips": "48235",
+      "countyName": "Irion County"
+    },
+    {
+      "countyId": "jack-tx",
+      "countyFips": "48237",
+      "countyName": "Jack County"
+    },
+    {
+      "countyId": "jackson-tx",
+      "countyFips": "48239",
+      "countyName": "Jackson County"
+    },
+    {
+      "countyId": "jasper-tx",
+      "countyFips": "48241",
+      "countyName": "Jasper County"
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "countyFips": "48243",
+      "countyName": "Jeff Davis County"
+    },
+    {
+      "countyId": "jefferson-tx",
+      "countyFips": "48245",
+      "countyName": "Jefferson County"
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "countyFips": "48247",
+      "countyName": "Jim Hogg County"
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "countyFips": "48249",
+      "countyName": "Jim Wells County"
+    },
+    {
+      "countyId": "johnson-tx",
+      "countyFips": "48251",
+      "countyName": "Johnson County"
+    },
+    {
+      "countyId": "jones-tx",
+      "countyFips": "48253",
+      "countyName": "Jones County"
+    },
+    {
+      "countyId": "karnes-tx",
+      "countyFips": "48255",
+      "countyName": "Karnes County"
+    },
+    {
+      "countyId": "kaufman-tx",
+      "countyFips": "48257",
+      "countyName": "Kaufman County"
+    },
+    {
+      "countyId": "kendall-tx",
+      "countyFips": "48259",
+      "countyName": "Kendall County"
+    },
+    {
+      "countyId": "kenedy-tx",
+      "countyFips": "48261",
+      "countyName": "Kenedy County"
+    },
+    {
+      "countyId": "kent-tx",
+      "countyFips": "48263",
+      "countyName": "Kent County"
+    },
+    {
+      "countyId": "kerr-tx",
+      "countyFips": "48265",
+      "countyName": "Kerr County"
+    },
+    {
+      "countyId": "kimble-tx",
+      "countyFips": "48267",
+      "countyName": "Kimble County"
+    },
+    {
+      "countyId": "king-tx",
+      "countyFips": "48269",
+      "countyName": "King County"
+    },
+    {
+      "countyId": "kinney-tx",
+      "countyFips": "48271",
+      "countyName": "Kinney County"
+    },
+    {
+      "countyId": "kleberg-tx",
+      "countyFips": "48273",
+      "countyName": "Kleberg County"
+    },
+    {
+      "countyId": "knox-tx",
+      "countyFips": "48275",
+      "countyName": "Knox County"
+    },
+    {
+      "countyId": "lamar-tx",
+      "countyFips": "48277",
+      "countyName": "Lamar County"
+    },
+    {
+      "countyId": "lamb-tx",
+      "countyFips": "48279",
+      "countyName": "Lamb County"
+    },
+    {
+      "countyId": "lampasas-tx",
+      "countyFips": "48281",
+      "countyName": "Lampasas County"
+    },
+    {
+      "countyId": "la-salle-tx",
+      "countyFips": "48283",
+      "countyName": "La Salle County"
+    },
+    {
+      "countyId": "lavaca-tx",
+      "countyFips": "48285",
+      "countyName": "Lavaca County"
+    },
+    {
+      "countyId": "lee-tx",
+      "countyFips": "48287",
+      "countyName": "Lee County"
+    },
+    {
+      "countyId": "leon-tx",
+      "countyFips": "48289",
+      "countyName": "Leon County"
+    },
+    {
+      "countyId": "liberty-tx",
+      "countyFips": "48291",
+      "countyName": "Liberty County"
+    },
+    {
+      "countyId": "limestone-tx",
+      "countyFips": "48293",
+      "countyName": "Limestone County"
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "countyFips": "48295",
+      "countyName": "Lipscomb County"
+    },
+    {
+      "countyId": "live-oak-tx",
+      "countyFips": "48297",
+      "countyName": "Live Oak County"
+    },
+    {
+      "countyId": "llano-tx",
+      "countyFips": "48299",
+      "countyName": "Llano County"
+    },
+    {
+      "countyId": "loving-tx",
+      "countyFips": "48301",
+      "countyName": "Loving County"
+    },
+    {
+      "countyId": "lubbock-tx",
+      "countyFips": "48303",
+      "countyName": "Lubbock County"
+    },
+    {
+      "countyId": "lynn-tx",
+      "countyFips": "48305",
+      "countyName": "Lynn County"
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "countyFips": "48307",
+      "countyName": "McCulloch County"
+    },
+    {
+      "countyId": "mclennan-tx",
+      "countyFips": "48309",
+      "countyName": "McLennan County"
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "countyFips": "48311",
+      "countyName": "McMullen County"
+    },
+    {
+      "countyId": "madison-tx",
+      "countyFips": "48313",
+      "countyName": "Madison County"
+    },
+    {
+      "countyId": "marion-tx",
+      "countyFips": "48315",
+      "countyName": "Marion County"
+    },
+    {
+      "countyId": "martin-tx",
+      "countyFips": "48317",
+      "countyName": "Martin County"
+    },
+    {
+      "countyId": "mason-tx",
+      "countyFips": "48319",
+      "countyName": "Mason County"
+    },
+    {
+      "countyId": "matagorda-tx",
+      "countyFips": "48321",
+      "countyName": "Matagorda County"
+    },
+    {
+      "countyId": "maverick-tx",
+      "countyFips": "48323",
+      "countyName": "Maverick County"
+    },
+    {
+      "countyId": "medina-tx",
+      "countyFips": "48325",
+      "countyName": "Medina County"
+    },
+    {
+      "countyId": "menard-tx",
+      "countyFips": "48327",
+      "countyName": "Menard County"
+    },
+    {
+      "countyId": "midland-tx",
+      "countyFips": "48329",
+      "countyName": "Midland County"
+    },
+    {
+      "countyId": "milam-tx",
+      "countyFips": "48331",
+      "countyName": "Milam County"
+    },
+    {
+      "countyId": "mills-tx",
+      "countyFips": "48333",
+      "countyName": "Mills County"
+    },
+    {
+      "countyId": "mitchell-tx",
+      "countyFips": "48335",
+      "countyName": "Mitchell County"
+    },
+    {
+      "countyId": "montague-tx",
+      "countyFips": "48337",
+      "countyName": "Montague County"
+    },
+    {
+      "countyId": "montgomery-tx",
+      "countyFips": "48339",
+      "countyName": "Montgomery County"
+    },
+    {
+      "countyId": "moore-tx",
+      "countyFips": "48341",
+      "countyName": "Moore County"
+    },
+    {
+      "countyId": "morris-tx",
+      "countyFips": "48343",
+      "countyName": "Morris County"
+    },
+    {
+      "countyId": "motley-tx",
+      "countyFips": "48345",
+      "countyName": "Motley County"
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "countyFips": "48347",
+      "countyName": "Nacogdoches County"
+    },
+    {
+      "countyId": "navarro-tx",
+      "countyFips": "48349",
+      "countyName": "Navarro County"
+    },
+    {
+      "countyId": "newton-tx",
+      "countyFips": "48351",
+      "countyName": "Newton County"
+    },
+    {
+      "countyId": "nolan-tx",
+      "countyFips": "48353",
+      "countyName": "Nolan County"
+    },
+    {
+      "countyId": "nueces-tx",
+      "countyFips": "48355",
+      "countyName": "Nueces County"
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "countyFips": "48357",
+      "countyName": "Ochiltree County"
+    },
+    {
+      "countyId": "oldham-tx",
+      "countyFips": "48359",
+      "countyName": "Oldham County"
+    },
+    {
+      "countyId": "orange-tx",
+      "countyFips": "48361",
+      "countyName": "Orange County"
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "countyFips": "48363",
+      "countyName": "Palo Pinto County"
+    },
+    {
+      "countyId": "panola-tx",
+      "countyFips": "48365",
+      "countyName": "Panola County"
+    },
+    {
+      "countyId": "parker-tx",
+      "countyFips": "48367",
+      "countyName": "Parker County"
+    },
+    {
+      "countyId": "parmer-tx",
+      "countyFips": "48369",
+      "countyName": "Parmer County"
+    },
+    {
+      "countyId": "pecos-tx",
+      "countyFips": "48371",
+      "countyName": "Pecos County"
+    },
+    {
+      "countyId": "polk-tx",
+      "countyFips": "48373",
+      "countyName": "Polk County"
+    },
+    {
+      "countyId": "potter-tx",
+      "countyFips": "48375",
+      "countyName": "Potter County"
+    },
+    {
+      "countyId": "presidio-tx",
+      "countyFips": "48377",
+      "countyName": "Presidio County"
+    },
+    {
+      "countyId": "rains-tx",
+      "countyFips": "48379",
+      "countyName": "Rains County"
+    },
+    {
+      "countyId": "randall-tx",
+      "countyFips": "48381",
+      "countyName": "Randall County"
+    },
+    {
+      "countyId": "reagan-tx",
+      "countyFips": "48383",
+      "countyName": "Reagan County"
+    },
+    {
+      "countyId": "real-tx",
+      "countyFips": "48385",
+      "countyName": "Real County"
+    },
+    {
+      "countyId": "red-river-tx",
+      "countyFips": "48387",
+      "countyName": "Red River County"
+    },
+    {
+      "countyId": "reeves-tx",
+      "countyFips": "48389",
+      "countyName": "Reeves County"
+    },
+    {
+      "countyId": "refugio-tx",
+      "countyFips": "48391",
+      "countyName": "Refugio County"
+    },
+    {
+      "countyId": "roberts-tx",
+      "countyFips": "48393",
+      "countyName": "Roberts County"
+    },
+    {
+      "countyId": "robertson-tx",
+      "countyFips": "48395",
+      "countyName": "Robertson County"
+    },
+    {
+      "countyId": "rockwall-tx",
+      "countyFips": "48397",
+      "countyName": "Rockwall County"
+    },
+    {
+      "countyId": "runnels-tx",
+      "countyFips": "48399",
+      "countyName": "Runnels County"
+    },
+    {
+      "countyId": "rusk-tx",
+      "countyFips": "48401",
+      "countyName": "Rusk County"
+    },
+    {
+      "countyId": "sabine-tx",
+      "countyFips": "48403",
+      "countyName": "Sabine County"
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "countyFips": "48405",
+      "countyName": "San Augustine County"
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "countyFips": "48407",
+      "countyName": "San Jacinto County"
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "countyFips": "48409",
+      "countyName": "San Patricio County"
+    },
+    {
+      "countyId": "san-saba-tx",
+      "countyFips": "48411",
+      "countyName": "San Saba County"
+    },
+    {
+      "countyId": "schleicher-tx",
+      "countyFips": "48413",
+      "countyName": "Schleicher County"
+    },
+    {
+      "countyId": "scurry-tx",
+      "countyFips": "48415",
+      "countyName": "Scurry County"
+    },
+    {
+      "countyId": "shackelford-tx",
+      "countyFips": "48417",
+      "countyName": "Shackelford County"
+    },
+    {
+      "countyId": "shelby-tx",
+      "countyFips": "48419",
+      "countyName": "Shelby County"
+    },
+    {
+      "countyId": "sherman-tx",
+      "countyFips": "48421",
+      "countyName": "Sherman County"
+    },
+    {
+      "countyId": "smith-tx",
+      "countyFips": "48423",
+      "countyName": "Smith County"
+    },
+    {
+      "countyId": "somervell-tx",
+      "countyFips": "48425",
+      "countyName": "Somervell County"
+    },
+    {
+      "countyId": "starr-tx",
+      "countyFips": "48427",
+      "countyName": "Starr County"
+    },
+    {
+      "countyId": "stephens-tx",
+      "countyFips": "48429",
+      "countyName": "Stephens County"
+    },
+    {
+      "countyId": "sterling-tx",
+      "countyFips": "48431",
+      "countyName": "Sterling County"
+    },
+    {
+      "countyId": "stonewall-tx",
+      "countyFips": "48433",
+      "countyName": "Stonewall County"
+    },
+    {
+      "countyId": "sutton-tx",
+      "countyFips": "48435",
+      "countyName": "Sutton County"
+    },
+    {
+      "countyId": "swisher-tx",
+      "countyFips": "48437",
+      "countyName": "Swisher County"
+    },
+    {
+      "countyId": "tarrant-tx",
+      "countyFips": "48439",
+      "countyName": "Tarrant County"
+    },
+    {
+      "countyId": "taylor-tx",
+      "countyFips": "48441",
+      "countyName": "Taylor County"
+    },
+    {
+      "countyId": "terrell-tx",
+      "countyFips": "48443",
+      "countyName": "Terrell County"
+    },
+    {
+      "countyId": "terry-tx",
+      "countyFips": "48445",
+      "countyName": "Terry County"
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "countyFips": "48447",
+      "countyName": "Throckmorton County"
+    },
+    {
+      "countyId": "titus-tx",
+      "countyFips": "48449",
+      "countyName": "Titus County"
+    },
+    {
+      "countyId": "tom-green-tx",
+      "countyFips": "48451",
+      "countyName": "Tom Green County"
+    },
+    {
+      "countyId": "travis-tx",
+      "countyFips": "48453",
+      "countyName": "Travis County"
+    },
+    {
+      "countyId": "trinity-tx",
+      "countyFips": "48455",
+      "countyName": "Trinity County"
+    },
+    {
+      "countyId": "tyler-tx",
+      "countyFips": "48457",
+      "countyName": "Tyler County"
+    },
+    {
+      "countyId": "upshur-tx",
+      "countyFips": "48459",
+      "countyName": "Upshur County"
+    },
+    {
+      "countyId": "upton-tx",
+      "countyFips": "48461",
+      "countyName": "Upton County"
+    },
+    {
+      "countyId": "uvalde-tx",
+      "countyFips": "48463",
+      "countyName": "Uvalde County"
+    },
+    {
+      "countyId": "val-verde-tx",
+      "countyFips": "48465",
+      "countyName": "Val Verde County"
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "countyFips": "48467",
+      "countyName": "Van Zandt County"
+    },
+    {
+      "countyId": "victoria-tx",
+      "countyFips": "48469",
+      "countyName": "Victoria County"
+    },
+    {
+      "countyId": "walker-tx",
+      "countyFips": "48471",
+      "countyName": "Walker County"
+    },
+    {
+      "countyId": "waller-tx",
+      "countyFips": "48473",
+      "countyName": "Waller County"
+    },
+    {
+      "countyId": "ward-tx",
+      "countyFips": "48475",
+      "countyName": "Ward County"
+    },
+    {
+      "countyId": "washington-tx",
+      "countyFips": "48477",
+      "countyName": "Washington County"
+    },
+    {
+      "countyId": "webb-tx",
+      "countyFips": "48479",
+      "countyName": "Webb County"
+    },
+    {
+      "countyId": "wharton-tx",
+      "countyFips": "48481",
+      "countyName": "Wharton County"
+    },
+    {
+      "countyId": "wheeler-tx",
+      "countyFips": "48483",
+      "countyName": "Wheeler County"
+    },
+    {
+      "countyId": "wichita-tx",
+      "countyFips": "48485",
+      "countyName": "Wichita County"
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "countyFips": "48487",
+      "countyName": "Wilbarger County"
+    },
+    {
+      "countyId": "willacy-tx",
+      "countyFips": "48489",
+      "countyName": "Willacy County"
+    },
+    {
+      "countyId": "williamson-tx",
+      "countyFips": "48491",
+      "countyName": "Williamson County"
+    },
+    {
+      "countyId": "wilson-tx",
+      "countyFips": "48493",
+      "countyName": "Wilson County"
+    },
+    {
+      "countyId": "winkler-tx",
+      "countyFips": "48495",
+      "countyName": "Winkler County"
+    },
+    {
+      "countyId": "wise-tx",
+      "countyFips": "48497",
+      "countyName": "Wise County"
+    },
+    {
+      "countyId": "wood-tx",
+      "countyFips": "48499",
+      "countyName": "Wood County"
+    },
+    {
+      "countyId": "yoakum-tx",
+      "countyFips": "48501",
+      "countyName": "Yoakum County"
+    },
+    {
+      "countyId": "young-tx",
+      "countyFips": "48503",
+      "countyName": "Young County"
+    },
+    {
+      "countyId": "zapata-tx",
+      "countyFips": "48505",
+      "countyName": "Zapata County"
+    },
+    {
+      "countyId": "zavala-tx",
+      "countyFips": "48507",
+      "countyName": "Zavala County"
+    }
+  ],
+  "roundTripPassed": true,
+  "passed": true
+}

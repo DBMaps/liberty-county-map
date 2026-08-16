@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "gridly.statewideReportingRecoverySummary.v1",
+  "counts": {
+    "countiesTested": 254,
+    "countiesPassed": 254,
+    "countyIds": 254,
+    "uniqueFips": 254,
+    "countyNames": 254,
+    "placesTested": 1859,
+    "placesPassed": 1859,
+    "memberships": 2058,
+    "multiCountyPlaces": 163,
+    "zeroFraCounties": 54,
+    "sourceOnlyCounties": 173,
+    "requiredSourceOnlyCounties": 172,
+    "activeRuntimeCounties": 28,
+    "mapVisible": 254,
+    "alertsVisible": 254,
+    "awarenessActive": 254,
+    "persistenceWrites": 0,
+    "crossingDependencyFailures": 0,
+    "historicalCohortExclusions": 0
+  },
+  "anomalies": [
+    "Governed capability matrix contains 173 positive-FRA counties without active runtime; owner-required count is 172."
+  ],
+  "liveBackendCertified": false,
+  "liveReadRequired": true,
+  "repositoryCertified": false,
+  "decision": "STATEWIDE REPORTING CERTIFICATION FAILED — DO NOT CONTINUE"
+}
