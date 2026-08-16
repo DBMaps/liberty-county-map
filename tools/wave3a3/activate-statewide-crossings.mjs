@@ -25,6 +25,25 @@ const portable=p=>p.replaceAll('\\','/');
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const fail=m=>{throw Error(`Wave 3A.3 fail closed: ${m}`)};
 
+/**
+ * Return the governed candidate byte stream. Git may materialize an LF blob with
+ * CRLF in a Windows working tree; no other byte (including a lone CR) is changed.
+ */
+export function canonicalCandidateBytes(body){
+ if(!Buffer.isBuffer(body))throw new TypeError('candidate body must be a Buffer');
+ let crlf=0;for(let i=0;i<body.length-1;i++)if(body[i]===13&&body[i+1]===10){crlf++;i++}
+ if(!crlf)return body;
+ const canonical=Buffer.allocUnsafe(body.length-crlf);let out=0;
+ for(let i=0;i<body.length;i++){if(body[i]===13&&body[i+1]===10)continue;canonical[out++]=body[i]}
+ return canonical;
+}
+
+export function certifiedCandidateBytes(body,record){
+ const canonical=canonicalCandidateBytes(body);
+ if(canonical.length!==record.bytes||sha(canonical)!==record.sha256)fail(`candidate byte identity differs for ${record.countyFips||record.packagePath||'unknown package'}`);
+ return canonical;
+}
+
 function git(root,args){return execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim()}
 async function read(root,p){return clean(await readFile(join(root,p),'utf8'))}
 async function raw(root,p){return readFile(join(root,p))}
@@ -46,7 +65,7 @@ export async function inspect({root=DEFAULT_ROOT}={}){
  let cohort=null,certification=null,reconciliation=null,uniqueness=null,manufacture=null,reconciliationSummary=null;
  if(!missingInputs.length){[cohort,certification,reconciliation,uniqueness,manufacture,reconciliationSummary]=await Promise.all(['candidate-cohort.json','package-certification.json','reconciliation-index.json','cross-package-uniqueness.json','package-manufacture-summary.json','reconciliation-summary.json'].map(n=>read(root,`${WAVE32}/${n}`)))}
  const candidateIds=[],candidateProblems=[];
- if(certification)for(const record of certification.records){const body=await raw(root,record.packagePath),pkg=clean(body.toString());candidateIds.push(...ids(pkg));if(body.length!==record.bytes||sha(body)!==record.sha256||pkg.features.length!==record.crossingCount||record.status!=='PASS'||record.geographicOwnership!==true||record.sourcePropertiesPreserved!==true)candidateProblems.push(record.countyFips)}
+ if(certification)for(const record of certification.records){const body=canonicalCandidateBytes(await raw(root,record.packagePath)),pkg=clean(body.toString());candidateIds.push(...ids(pkg));if(body.length!==record.bytes||sha(body)!==record.sha256||pkg.features.length!==record.crossingCount||record.status!=='PASS'||record.geographicOwnership!==true||record.sourcePropertiesPreserved!==true)candidateProblems.push(record.countyFips)}
  const entries=reconciliation?.entries||[],owner=new Map(entries.map(x=>[x.crossingId,x.gridlyCountyFips]));
  const all=[...active,...candidateIds],duplicates=[...new Set(all.filter((x,i,a)=>a.indexOf(x)!==i))].sort(),overlap=[...new Set(candidateIds.filter(x=>active.includes(x)))].sort();
  const mismatches=[];if(certification)for(const record of certification.records)for(const id of ids(await read(root,record.packagePath)))if(owner.get(id)!==record.countyFips)mismatches.push({crossingId:id,packageCountyFips:record.countyFips,certifiedCountyFips:owner.get(id)||null});
@@ -92,7 +111,7 @@ function zeroPackage(c){return {type:'FeatureCollection',packageType:'Crossing',
 
 async function prepareWrites(x){
  const writes=new Map(),byFips=new Map(x.inventory.counties.map(c=>[c.fips,c])),candidateByFips=new Map(x.certification.records.map(r=>[r.countyFips,r]));
- for(const c of x.positiveRows){const rec=candidateByFips.get(c.fips);if(!rec)fail(`candidate missing for ${c.fips}`);writes.set(`Crossing-Packages/${slug(c)}/Production/${slug(c)}-production-crossings.geojson`,await raw(x.root,rec.packagePath));writes.set(`Crossing-Packages/${slug(c)}/package-manifest.json`,Buffer.from(json(packageManifest(c,rec.crossingCount))))}
+ for(const c of x.positiveRows){const rec=candidateByFips.get(c.fips);if(!rec)fail(`candidate missing for ${c.fips}`);writes.set(`Crossing-Packages/${slug(c)}/Production/${slug(c)}-production-crossings.geojson`,certifiedCandidateBytes(await raw(x.root,rec.packagePath),rec));writes.set(`Crossing-Packages/${slug(c)}/package-manifest.json`,Buffer.from(json(packageManifest(c,rec.crossingCount))))}
  for(const c of x.zeroRows){writes.set(`Crossing-Packages/${slug(c)}/Production/${slug(c)}-production-crossings.geojson`,Buffer.from(json(zeroPackage(c))));writes.set(`Crossing-Packages/${slug(c)}/package-manifest.json`,Buffer.from(json(packageManifest(c,0))))}
  const records=[];for(const c of [...x.inventory.counties].sort((a,b)=>a.fips.localeCompare(b.fips))){const candidate=candidateByFips.get(c.fips),old=x.manifest.records.find(r=>String(r.county).replace(/ County$/,'')===c.countyName),count=candidate?.crossingCount??(x.zeroRows.some(z=>z.fips===c.fips)?0:old?.crossingCount);if(!Number.isInteger(count))fail(`manifest count unavailable for ${c.fips}`);records.push({county:c.countyName,status:'PASS',crossingCount:count,certificationFile:candidate?`${WAVE32}/package-certification.json`:old?.certificationFile||`${OUT}/post-activation-package-certification.json`,packageFile:`Crossing-Packages/${slug(c)}/Production/${slug(c)}-production-crossings.geojson`})}
  const manifest={...x.manifest,status:'active',totalPackages:254,totalCrossings:16099,passCount:254,blockedCount:0,records};delete manifest.generatedAt;
