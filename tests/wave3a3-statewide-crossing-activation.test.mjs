@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
-import {inspect,outputs,run} from '../tools/wave3a3/activate-statewide-crossings.mjs';
+import {mkdtemp,mkdir,readFile,rm,writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {guardedReplace,inspect,outputs,run} from '../tools/wave3a3/activate-statewide-crossings.mjs';
 
 test('projects the exact governed statewide contract and zero cohort',async()=>{
  const e=await outputs(), p=e['projected-254-county-state.json'], z=e['zero-county-governance.json'];
@@ -29,8 +31,32 @@ test('what-if is deterministic and performs no production writes',async()=>{
  for(const [p,b] of before){let after=null;try{after=await readFile(new URL(`../${p}`,import.meta.url))}catch{}assert.deepEqual(after,b,p)}
 });
 
-test('apply always fails closed in the design-only mission',async()=>{
- await assert.rejects(run({mode:'apply'}),/apply is not authorized/);
+test('apply fails before writes when the committed certification or any preflight gate is absent',async()=>{
+ const x=await inspect(),paths=x.production,before=await Promise.all(paths.map(async p=>{try{return [p,await readFile(new URL(`../${p}`,import.meta.url))]}catch{return [p,null]}}));
+ await assert.rejects(run({mode:'apply'}),/fail closed/);
+ for(const [p,b] of before){let after=null;try{after=await readFile(new URL(`../${p}`,import.meta.url))}catch{}assert.deepEqual(after,b,p)}
+});
+
+test('guarded replacement stages valid JSON and rolls every partial replacement back',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'wave3a3-'));
+ try{
+  await mkdir(join(root,'.git'));await mkdir(join(root,'Crossing-Packages/a'),{recursive:true});
+  await writeFile(join(root,'Crossing-Packages/a/one.json'),'{"old":1}\n');
+  const writes=new Map([['Crossing-Packages/a/one.json',Buffer.from('{"new":1}\n')],['Crossing-Packages/a/two.json',Buffer.from('{"new":2}\n')]]);
+  await assert.rejects(guardedReplace(root,writes,{failAfter:1}),/transaction rolled back/);
+  assert.equal(await readFile(join(root,'Crossing-Packages/a/one.json'),'utf8'),'{"old":1}\n');
+  await assert.rejects(readFile(join(root,'Crossing-Packages/a/two.json')),/ENOENT/);
+ }finally{await rm(root,{recursive:true,force:true})}
+});
+
+test('apply implementation preserves immutable domains and performs post-write certification',async()=>{
+ const source=await readFile(new URL('../tools/wave3a3/activate-statewide-crossings.mjs',import.meta.url),'utf8');
+ assert.match(source,/same\(allow\.paths,x\.production\)/);
+ assert.match(source,/body\.length!==record\.bytes\|\|sha\(body\)!==record\.sha256/);
+ assert.match(source,/roadRuntimeDependencyIntroduced:false/);
+ assert.match(source,/reportIdentityMutation:false/);
+ assert.match(source,/postActivation\(root\)/);
+ assert.doesNotMatch(source,/data\/roadway-runtime-manifest\.json[^\n]*writes\.set/);
 });
 
 test('missing owner-certified Wave 3A.2 inputs block rather than fabricate certification',async()=>{
