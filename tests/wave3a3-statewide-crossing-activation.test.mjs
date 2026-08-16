@@ -115,6 +115,26 @@ test('apply implementation preserves immutable domains and performs post-write c
  assert.doesNotMatch(source,/data\/roadway-runtime-manifest\.json[^\n]*writes\.set/);
 });
 
+test('verify dispatches by lifecycle and post-activation verification stays read-only and fail closed',async()=>{
+ const source=await readFile(new URL('../tools/wave3a3/activate-statewide-crossings.mjs',import.meta.url),'utf8');
+ assert.match(source,/mode==='verify'&&existsSync\(join\(root,OUT,'apply-result\.json'\)\).*verifyPostActivation/);
+ assert.match(source,/result\.status!==['"]PASS['"].*result\.decision!==DECISION_APPLIED.*result\.productionWrites!==454/);
+ assert.match(source,/for\(const file of plan\.files\).*raw\(root,portable\(file\.path\)\).*sha\(body\)!==file\.sha256/);
+ assert.match(source,/post-activation evidence mismatch/);
+ assert.match(source,/committed apply evidence is absent/);
+ const verifier=source.slice(source.indexOf('export async function verifyPostActivation'),source.indexOf('\nasync function apply'));
+ assert.doesNotMatch(verifier,/\bapply\s*\(/);
+ assert.doesNotMatch(verifier,/writeFile|rename|guardedReplace|prepareWrites/);
+});
+
+test('post-activation reinspection covers registry, package, identity, FRA, blocked, and control contracts',async()=>{
+ const source=await readFile(new URL('../tools/wave3a3/activate-statewide-crossings.mjs',import.meta.url),'utf8');
+ const inspector=source.slice(source.indexOf('async function postActivation'),source.indexOf('\nasync function requireCommittedFile'));
+ for(const contract of ['production manifest totals','package certification differs','missing','extra','duplicates','mismatches','blockedLeakage','Brazos','Lavaca','Washington','Tyler','fraSource','manifestRegistryAgree'])assert.match(inspector,new RegExp(contract));
+ assert.match(inspector,/packageCount===254/);
+ assert.match(inspector,/reconciliation-index\.json/);
+});
+
 test('missing owner-certified Wave 3A.2 inputs block rather than fabricate certification',async()=>{
  const e=await outputs(), s=e['summary.json'];
  assert.equal(s.productionWrites,0);
