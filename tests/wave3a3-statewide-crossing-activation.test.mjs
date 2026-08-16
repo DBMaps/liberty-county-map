@@ -4,7 +4,7 @@ import {mkdtemp,mkdir,readFile,rm,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {canonicalCandidateBytes,certifiedCandidateBytes,guardedReplace,inspect,outputs,run} from '../tools/wave3a3/activate-statewide-crossings.mjs';
+import {canonicalCandidateBytes,certifiedCandidateBytes,governedPathOrderMatches,guardedReplace,inspect,orderGovernedWrites,outputs,run,sortGovernedPaths} from '../tools/wave3a3/activate-statewide-crossings.mjs';
 
 const sha256=body=>createHash('sha256').update(body).digest('hex');
 
@@ -41,7 +41,31 @@ test('write allowlist is exact, scoped, and covers explicit empty packages',asyn
  const e=await outputs(), a=e['write-allowlist.json'];
  assert.equal(a.count,454); assert.equal(new Set(a.paths).size,a.count);
  assert.deepEqual(a.categories,{positiveProductionPackages:175,emptyProductionPackages:51,countyPackageManifests:226,productionManifest:1,runtimeRegistry:1});
+ assert.equal(a.paths.filter(p=>p.includes('/Production/')&&p.endsWith('.geojson')).length,226);
+ assert.equal(a.paths.filter(p=>p.endsWith('/package-manifest.json')).length,226);
+ assert.equal(a.paths.filter(p=>p==='Crossing-Packages/production-crossing-manifest.json').length,1);
+ assert.equal(a.paths.filter(p=>p==='assets/package-registry/runtime-package-registry.json').length,1);
  assert(a.paths.every(p=>p.startsWith('Crossing-Packages/')||p==='assets/package-registry/runtime-package-registry.json'));
+});
+
+test('prepared writes use the certified locale-independent governed path order',()=>{
+ const fixture=[
+  'Crossing-Packages/anderson/Production/anderson-production-crossings.geojson',
+  'Crossing-Packages/anderson/package-manifest.json',
+  'Crossing-Packages/andrews/Production/andrews-production-crossings.geojson',
+  'assets/package-registry/runtime-package-registry.json'
+ ];
+ const allowlist=sortGovernedPaths(fixture);
+ assert.deepEqual(allowlist,[fixture[0],fixture[1],fixture[2],fixture[3]]);
+ assert.deepEqual(sortGovernedPaths([...fixture].reverse()),allowlist);
+ assert.notDeepEqual([...fixture].sort((a,b)=>a.localeCompare(b,'en')),allowlist);
+
+ const prepared=[...orderGovernedWrites(new Map([...fixture].reverse().map(path=>[path,Buffer.from('{}\n')]))).keys()];
+ assert.deepEqual(prepared,allowlist);
+ assert.equal(governedPathOrderMatches(prepared,allowlist),true);
+ assert.equal(governedPathOrderMatches(prepared.slice(0,-1),allowlist),false);
+ assert.equal(governedPathOrderMatches([...prepared,'Crossing-Packages/extra/package-manifest.json'],allowlist),false);
+ assert.equal(governedPathOrderMatches([prepared[1],prepared[0],...prepared.slice(2)],allowlist),false);
 });
 
 test('what-if is deterministic and performs no production writes',async()=>{
@@ -70,7 +94,7 @@ test('guarded replacement stages valid JSON and rolls every partial replacement 
 
 test('apply implementation preserves immutable domains and performs post-write certification',async()=>{
  const source=await readFile(new URL('../tools/wave3a3/activate-statewide-crossings.mjs',import.meta.url),'utf8');
- assert.match(source,/same\(allow\.paths,x\.production\)/);
+ assert.match(source,/governedPathOrderMatches\(allow\.paths,x\.production\)/);
  assert.match(source,/canonicalCandidateBytes\(await raw\(root,record\.packagePath\)\)/);
  assert.match(source,/certifiedCandidateBytes\(await raw\(x\.root,rec\.packagePath\),rec\)/);
  assert.match(source,/roadRuntimeDependencyIntroduced:false/);
