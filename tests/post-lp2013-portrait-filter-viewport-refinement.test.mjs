@@ -29,11 +29,22 @@ function viewportHarness(filter, visible = []) {
   const countyBounds = { isValid: () => true, owner: 'mclennan-tx' };
   const context = {
     activeGeoFilter: filter,
-    map: { fitBounds: (...args) => calls.push(['fitBounds', ...args]) },
+    map: {
+      setView: (...args) => { calls.push(['setView', ...args]); return true; },
+      fitBounds: (...args) => calls.push(['fitBounds', ...args])
+    },
     L: { latLngBounds: (points) => ({ isValid: () => true, points }) },
     GRIDLY_COUNTY_STARTUP_ZOOM: 9,
     getGridlyHomeTownAwarenessAnchor: () => ({ placeGeoid: '4876000', countyId: 'mclennan-tx', lat: 31.5, lng: -97.1 }),
-    gridlyDispatchSemanticCamera: (...args) => { calls.push(['semanticCamera', ...args]); return true; },
+    gridlyResolveCanonicalPlaceGeoid: () => '4876000',
+    gridlyGetGovernedPlaceConsumerPresentationCamera: () => ({ lat: 31.5491899, lng: -97.1474628, zoom: 13 }),
+    gridlyPlacePresentationTargets: null,
+    GRIDLY_TOWN_STARTUP_ZOOM: 13,
+    gridlyRecordSemanticCameraOperation: (...args) => calls.push(['cameraAudit', ...args]),
+    setGridlyAwarenessView: (center, zoom, options) => {
+      context.map.setView([center.lat, center.lng], zoom, { animate: options.animate });
+      return true;
+    },
     gridlyGetCountyBounds: () => countyBounds,
     gridlyGetActiveCountyId: () => 'mclennan-tx',
     getActiveDelayCrossingsForViewport: () => [],
@@ -46,14 +57,14 @@ function viewportHarness(filter, visible = []) {
   return { calls, countyBounds };
 }
 
-test('zero-crossing local filters reissue the governed semantic presentation camera', () => {
+test('zero-crossing local filters issue a real map movement to the governed presentation camera', () => {
   for (const filter of ['nearby', 'town', 'all']) {
     const { calls } = viewportHarness(filter);
-    assert.equal(calls.length, 1, `${filter} performs exactly one presentation movement`);
-    assert.equal(calls[0][0], 'semanticCamera');
-    assert.equal(calls[0][1].placeGeoid, '4876000');
-    assert.equal(calls[0][1].countyId, 'mclennan-tx');
-    assert.equal(calls[0][3].animate, true);
+    const movement = calls.filter(([kind]) => kind === 'setView');
+    assert.equal(movement.length, 1, `${filter} performs exactly one real presentation movement`);
+    assert.deepEqual(movement[0][1], [31.5491899, -97.1474628]);
+    assert.equal(movement[0][2], 13);
+    assert.equal(calls.some(([kind]) => kind === 'semanticCamera'), false);
   }
 });
 
@@ -61,7 +72,7 @@ test('zero-crossing County uses active county bounds while Delays preserves fram
   const county = viewportHarness('county');
   assert.equal(county.calls[0][0], 'fitBounds');
   assert.equal(county.calls[0][1], county.countyBounds);
-  assert.equal(county.calls.some(([kind]) => kind === 'semanticCamera'), false);
+  assert.equal(county.calls.some(([kind]) => kind === 'setView'), false);
 
   const delays = viewportHarness('active-delays');
   assert.deepEqual(delays.calls, []);
@@ -72,7 +83,7 @@ test('non-empty supported-county behavior remains crossing-fit owned for every c
   for (const filter of ['nearby', 'town', 'all']) {
     const { calls } = viewportHarness(filter, [crossing]);
     assert.equal(calls[0][0], 'fitBounds');
-    assert.equal(calls.some(([kind]) => kind === 'semanticCamera'), false);
+    assert.equal(calls.some(([kind]) => kind === 'setView'), false);
   }
   assert.equal(viewportHarness('county', [crossing]).calls[0][1].owner, 'mclennan-tx');
 });
@@ -84,6 +95,7 @@ test('consumer messaging distinguishes unavailable crossing coverage from a supp
       activeGeoFilter: 'active-delays',
       userLocation: null,
       els: { geoFilterStatus: { textContent: '' } },
+      document: { getElementById: () => null },
       gridlyGetActiveCountyCrossingInventory: () => inventory
     };
     vm.runInNewContext(`${updateSource}; this.update = updateGeoFilterStatus`, context);
@@ -104,6 +116,36 @@ test('filter owner preserves all canonical states, synchronizes both surfaces, a
   const fallbackSource = functionSource('gridlyReissueActiveAreaPresentation') + functionSource('gridlyApplyZeroCrossingViewportContract');
   assert.doesNotMatch(fallbackSource, /localStorage|sessionStorage|save|route|hazard|report/i);
   assert.doesNotMatch(fallbackSource, /crossings?\.(push|splice)|markers?\.(push|add)/i);
+});
+
+test('portrait delays message is mirrored to the visible Portrait V2 status surface', () => {
+  const updateSource = functionSource('updateGeoFilterStatus');
+  const visibleStatus = { textContent: '' };
+  const context = {
+    activeGeoFilter: 'active-delays',
+    userLocation: null,
+    els: { geoFilterStatus: { textContent: '' } },
+    document: { getElementById: (id) => id === 'gridlyV2TopStatusSecondary' ? visibleStatus : null },
+    isPortraitMode: () => true,
+    gridlyGetActiveCountyCrossingInventory: () => []
+  };
+  vm.runInNewContext(`${updateSource}; this.update = updateGeoFilterStatus`, context);
+  context.update([]);
+  assert.equal(context.activeGeoFilter, 'active-delays');
+  assert.equal(visibleStatus.textContent, 'No crossing data available for this area yet.');
+});
+
+test('county bounds fall back to loaded authoritative geometry for statewide counties', () => {
+  const getBoundsSource = functionSource('gridlyGetCountyBounds');
+  const authoritative = { isValid: () => true, owner: 'authoritative-mclennan' };
+  const context = {
+    GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
+    L: { latLngBounds: () => { throw new Error('legacy bounds must not be invented'); } },
+    gridlyGetCountyBoundsMetadata: () => ({ countyId: 'mclennan-tx', rawBounds: null }),
+    gridlyGetAuthoritativeCountyGeometryFocusBounds: (countyId) => countyId === 'mclennan-tx' ? authoritative : null
+  };
+  vm.runInNewContext(`${getBoundsSource}; this.getBounds = gridlyGetCountyBounds`, context);
+  assert.equal(context.getBounds('mclennan-tx'), authoritative);
 });
 
 test('Waco remains governed by PLACE GEOID camera data and McLennan remains zero-crossing capable only', () => {
