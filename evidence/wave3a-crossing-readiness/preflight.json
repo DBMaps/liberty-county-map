@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "gridly.wave3a.preflight.v1",
+  "schemaVersion": "gridly.wave3a.preflight.v2",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "scope": "PREFLIGHT_AND_READINESS_ONLY",
   "activationApplied": false,
@@ -8,7 +8,10 @@
     "source": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
     "sourceManifest": "Crossing-Packages/Texas/package-manifest.json",
     "productionManifest": "Crossing-Packages/production-crossing-manifest.json",
-    "geometry": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json"
+    "geographicPartition": "evidence/wave3a1b-fra-county-authority/projected-partition.json",
+    "geographicCounts": "evidence/wave3a1b-fra-county-authority/geographic-county-counts.json",
+    "geographicExceptions": "evidence/wave3a1b-fra-county-authority/exception-classification.json",
+    "geographicPolicy": "evidence/wave3a1b-fra-county-authority/authority-policy.json"
   },
   "source": {
     "name": "FRA Texas statewide crossing GeoJSON",
@@ -18,16 +21,22 @@
     },
     "format": "GeoJSON FeatureCollection",
     "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
-    "bytes": 67186114,
-    "sha256": "cb31ac3124a89a0d5ad98a675106a6c56de8bced1f86292627088b8d263b453e",
-    "upstreamOwnerPath": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson"
+    "bytes": 68200491,
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c",
+    "identityAuthority": "certified Wave 3A.1B owner-source identity",
+    "upstreamOwnerPath": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+    "role": "PROVENANCE_ONLY_FOR_COUNTY_OWNERSHIP"
+  },
+  "geographicAuthority": {
+    "policy": "evidence/wave3a1b-fra-county-authority/authority-policy.json",
+    "partition": "evidence/wave3a1b-fra-county-authority/projected-partition.json",
+    "status": "CERTIFIED"
   },
   "governedBuildPipeline": {
     "script": "tools/lp115/manufacture-candidate-crossings.mjs",
     "command": "node tools/lp115/manufacture-candidate-crossings.mjs --fips <comma-separated-FIPS> --candidate",
     "arbitraryTexasFips": true,
     "batchCapable": true,
-    "output": "reports/lp115/<FIPS> candidate source, production package, manifest, certification",
     "activationAuthorized": false
   },
   "protectedSystemsModified": []

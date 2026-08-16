@@ -1,23 +1,24 @@
 {
-  "schemaVersion": "gridly.wave3a.summary.v1",
-  "decision": "POSITIVE-SOURCE CROSSING ACTIVATION BLOCKED — REPOSITORY REPAIR REQUIRED",
-  "statewideRows": 16101,
-  "activePositiveRows": 3771,
-  "sourceOnlyPositiveRows": 12330,
-  "zeroSourceRows": 0,
+  "schemaVersion": "gridly.wave3a.summary.v2",
+  "decision": "GEOGRAPHIC-POSITIVE CROSSING ACTIVATION BLOCKED — PACKAGE MANUFACTURE REQUIRED",
+  "statewideIdentities": 16101,
+  "geographicallyAssigned": 16099,
+  "blockedBorderRows": 2,
+  "activePositiveRows": 3784,
+  "inactiveGeographicPositiveRows": 12315,
   "candidateStatistics": {
-    "countyCount": 173,
-    "totalRows": 12330,
+    "countyCount": 175,
+    "totalRows": 12315,
     "minimum": 1,
-    "maximum": 784,
+    "maximum": 789,
     "median": 45
   },
-  "duplicateCrossingIdsStatewide": 0,
-  "duplicateCrossingIdsAcrossCountyBoundaries": 0,
+  "packageReady": 0,
+  "packageBuildRequired": 175,
   "activationApplied": false,
-  "ownerLocalActionsRequired": [],
-  "repositoryRepairsRequired": [
-    "Manufacture, certify, and govern production crossing packages for every PACKAGE_BUILD_REQUIRED county before activation design."
+  "ownerLocalActionsRequired": [
+    "Manufacture and certify 175 geographic-owner packages in Wave 3A.2."
   ],
+  "repositoryRepairsRequired": [],
   "exactProductionWriteAllowlist": "UNDETERMINED_UNTIL_PACKAGES_EXIST"
 }

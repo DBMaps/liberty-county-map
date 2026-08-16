@@ -1,22 +1,21 @@
 {
-  "schemaVersion": "gridly.wave3a.whatif.v1",
+  "schemaVersion": "gridly.wave3a.whatif.v2",
   "mode": "WHAT_IF",
   "applied": false,
   "eligible": false,
   "current": {
     "ACTIVE_POSITIVE": 27,
     "ACTIVE_EMPTY": 1,
-    "SOURCE_ONLY_POSITIVE": 173,
-    "SOURCE_ZERO_NOT_ACTIVATED": 53
+    "SOURCE_OR_GEOGRAPHIC_POSITIVE_INACTIVE": 175,
+    "ZERO_GEOGRAPHIC_SOURCE_INACTIVE": 51
   },
   "target": null,
   "plannedWrites": [],
   "writeAllowlist": [],
   "failClosed": true,
   "blockers": [
-    "MISSING_PACKAGE_ARTIFACTS",
-    "SOURCE_OR_CONTAINMENT_DEFECT"
+    "MISSING_PACKAGE_ARTIFACTS"
   ],
   "tylerActiveEmptyPreserved": true,
-  "zeroSourceCandidatesIncluded": 0
+  "zeroGeographicCandidatesIncluded": 0
 }

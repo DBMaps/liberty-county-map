@@ -1,29 +1,10 @@
 {
-  "schemaVersion": "gridly.wave3a.activation-readiness.v1",
+  "schemaVersion": "gridly.wave3a.activation-readiness.v2",
   "ready": false,
-  "decision": "POSITIVE-SOURCE CROSSING ACTIVATION BLOCKED — REPOSITORY REPAIR REQUIRED",
+  "decision": "GEOGRAPHIC-POSITIVE CROSSING ACTIVATION BLOCKED — PACKAGE MANUFACTURE REQUIRED",
   "blockers": [
-    "MISSING_PACKAGE_ARTIFACTS",
-    "SOURCE_OR_CONTAINMENT_DEFECT"
-  ],
-  "representativeControls": [
-    {
-      "county": "Dallas County",
-      "reason": "major metro/high count"
-    },
-    {
-      "county": "Brewster County",
-      "reason": "rural/border"
-    },
-    {
-      "county": "Cameron County",
-      "reason": "border/coastal"
-    },
-    {
-      "county": "Kenedy County",
-      "reason": "low positive count"
-    }
+    "MISSING_PACKAGE_ARTIFACTS"
   ],
   "guardedExecutorPrepared": false,
-  "reason": "The if-and-only-if repository-ready condition is false; no activation executor or production write surface was implemented."
+  "reason": "All 175 inactive geographic-positive counties require governed packages before activation."
 }
