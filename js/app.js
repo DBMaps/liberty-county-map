@@ -71144,6 +71144,18 @@ function getActiveDelayCrossingsForViewport() {
   });
 }
 
+function gridlyReissueActiveAreaPresentation(source = "geo-filter-empty") {
+  const area = typeof getGridlyHomeTownAwarenessAnchor === "function" ? getGridlyHomeTownAwarenessAnchor() : null;
+  if (!area || typeof gridlyDispatchSemanticCamera !== "function") return false;
+  return gridlyDispatchSemanticCamera(area, area.countyId, { source, animate: true });
+}
+
+function gridlyApplyZeroCrossingViewportContract(filterKey = activeGeoFilter, reason = "unknown") {
+  if (filterKey === "active-delays" || filterKey === "county") return false;
+  if (!["nearby", "town", "all"].includes(filterKey)) return false;
+  return gridlyReissueActiveAreaPresentation(`geo-filter-empty:${filterKey}:${reason}`);
+}
+
 function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
   if (!map) return;
 
@@ -71158,7 +71170,10 @@ function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
   }
 
   if (!targetBounds) {
-    if (!targetCrossings.length) return;
+    if (!targetCrossings.length) {
+      gridlyApplyZeroCrossingViewportContract(activeGeoFilter, "fit-map");
+      return;
+    }
 
     const latLngs = targetCrossings
       .map((crossing) => [Number(crossing.lat), Number(crossing.lng)])
@@ -71183,12 +71198,17 @@ function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
 
 function updateGeoFilterStatus(visibleCrossings = []) {
   if (!els.geoFilterStatus) return;
+  const count = visibleCrossings.length;
+  const crossingCoverageUnavailable = count === 0 && typeof gridlyGetActiveCountyCrossingInventory === "function" && gridlyGetActiveCountyCrossingInventory().length === 0;
+  if (crossingCoverageUnavailable) {
+    els.geoFilterStatus.textContent = "No crossing data available for this area yet.";
+    return;
+  }
   if (activeGeoFilter === "nearby" && userLocation) {
     updateNearestContext();
     return;
   }
 
-  const count = visibleCrossings.length;
   const crossingLabel = count === 1 ? "crossing" : "crossings";
   let message = "All crossings visible: tap markers to confirm route status.";
 
@@ -71202,7 +71222,7 @@ function updateGeoFilterStatus(visibleCrossings = []) {
     const delayLabel = count === 1 ? "delay" : "delays";
     message = count ? `Priority: resolve ${count} active ${delayLabel} affecting routes.` : "Good news: no active delays in this view.";
   } else if (activeGeoFilter === "all") {
-    message = "All crossings visible: tap markers to confirm route status.";
+    message = count ? "All crossings visible: tap markers to confirm route status." : "No crossing data available for this area yet.";
   }
 
   els.geoFilterStatus.textContent = message;
@@ -85731,22 +85751,24 @@ function bindEvents() {
     });
     syncGridlyGeoFilterPillSelectionForTest?.();
 
-    if (activeGeoFilter === selectedFilter) {
+    const filterChanged = activeGeoFilter !== selectedFilter;
+    if (!filterChanged) {
       pushCrossingAuditCall("filter-skip", reason, { selectedFilter, skip: "same-filter" });
-      return;
     }
 
     activeGeoFilter = selectedFilter;
     syncGridlyGeoFilterPillSelectionForTest?.();
-    crossingRenderFilterVersion += 1;
-    renderGridlyAwarenessMapIdentity(`filter-change:${reason}`);
-    scheduleRenderCrossings(`filter-change:${reason}`, { force: true });
+    if (filterChanged) {
+      crossingRenderFilterVersion += 1;
+      renderGridlyAwarenessMapIdentity(`filter-change:${reason}`);
+      scheduleRenderCrossings(`filter-change:${reason}`, { force: true });
+    }
 
     const visibleCrossings = getVisibleCrossingsForFilter(`render:${reason}`).filter((crossing) => {
     const inDefaultSet = getDefaultRelevantCrossings().some((item) => String(item.id) === String(crossing.id));
     return inDefaultSet || shouldShowDistantInactiveCrossing(crossing);
   });
-    if (activeGeoFilter === "active-delays" && !visibleCrossings.length) return;
+    updateGeoFilterStatus(visibleCrossings);
     fitMapToCrossingsForActiveFilter(visibleCrossings);
   };
 

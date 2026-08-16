@@ -42,6 +42,7 @@
     "verify:lp195": "node tools/lp195/build-texas-major-metro-consumer-coverage-audit.mjs --verify",
     "test:lp195": "node --test tests/lp195-texas-major-metro-consumer-coverage-audit.test.mjs",
     "test:lp196": "node --test tests/lp196-multi-county-place-identity-resolution.test.mjs",
+    "test:post-lp2013-filter-viewport": "node --test tests/post-lp2013-portrait-filter-viewport-refinement.test.mjs tests/post-lp2013-nearby-filter-state-repair.test.mjs",
     "lp194:whatif": "node tools/lp194/activate-san-antonio-runtime.mjs --whatif",
     "lp194:apply": "node tools/lp194/activate-san-antonio-runtime.mjs --apply",
     "verify:lp194": "node tools/lp194/activate-san-antonio-runtime.mjs --verify",
