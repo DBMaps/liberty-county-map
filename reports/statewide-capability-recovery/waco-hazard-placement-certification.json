@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "gridly.wacoHazardPlacementCertification.v1",
+  "source": {
+    "artifactPath": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+    "bytes": 47911048,
+    "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316",
+    "schemaVersion": "gridly.lp1904.authoritativeCountyGeometry.runtime.v1",
+    "packageVersion": "lp1904-governed-254-runtime-geometry-v1",
+    "provenance": {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+      "geometryPreservation": "authoritative polygons copied without simplification"
+    }
+  },
+  "coordinate": {
+    "lat": 31.5493,
+    "lng": -97.1467
+  },
+  "countyId": "mclennan-tx",
+  "countyFips": "48309",
+  "community": "Waco",
+  "placeGeoid": "4876000",
+  "countyMetadata": {
+    "county_id": "mclennan-tx",
+    "state": "TX"
+  },
+  "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+  "coverageInvalid": false,
+  "crossingRuntimeAvailable": false,
+  "crossingRuntimeRequired": false,
+  "persistenceWriteAttempted": false,
+  "passed": true
+}

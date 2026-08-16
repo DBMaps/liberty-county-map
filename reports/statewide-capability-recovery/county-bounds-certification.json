@@ -1,0 +1,2052 @@
+{
+  "schemaVersion": "gridly.statewideCountyBoundsCertification.v1",
+  "source": {
+    "artifactPath": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+    "bytes": 47911048,
+    "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316",
+    "schemaVersion": "gridly.lp1904.authoritativeCountyGeometry.runtime.v1",
+    "packageVersion": "lp1904-governed-254-runtime-geometry-v1",
+    "provenance": {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+      "geometryPreservation": "authoritative polygons copied without simplification"
+    }
+  },
+  "countyCount": 254,
+  "duplicateCount": 0,
+  "invalidCount": 0,
+  "bounds": [
+    {
+      "countyId": "anderson-tx",
+      "countyFips": "48001",
+      "west": -96.06486,
+      "south": 31.504056,
+      "east": -95.258791,
+      "north": 32.084482
+    },
+    {
+      "countyId": "andrews-tx",
+      "countyFips": "48003",
+      "west": -103.064788,
+      "south": 32.085795,
+      "east": -102.210843,
+      "north": 32.523371
+    },
+    {
+      "countyId": "angelina-tx",
+      "countyFips": "48005",
+      "west": -95.005566,
+      "south": 31.026088,
+      "east": -94.129632,
+      "north": 31.526916
+    },
+    {
+      "countyId": "aransas-tx",
+      "countyFips": "48007",
+      "west": -97.260818,
+      "south": 27.803783,
+      "east": -96.790437,
+      "north": 28.319238
+    },
+    {
+      "countyId": "archer-tx",
+      "countyFips": "48009",
+      "west": -98.953938,
+      "south": 33.39542,
+      "east": -98.420666,
+      "north": 33.836079
+    },
+    {
+      "countyId": "armstrong-tx",
+      "countyFips": "48011",
+      "west": -101.629396,
+      "south": 34.747416,
+      "east": -101.086281,
+      "north": 35.183239
+    },
+    {
+      "countyId": "atascosa-tx",
+      "countyFips": "48013",
+      "west": -98.804914,
+      "south": 28.612658,
+      "east": -98.098315,
+      "north": 29.250693
+    },
+    {
+      "countyId": "austin-tx",
+      "countyFips": "48015",
+      "west": -96.62198,
+      "south": 29.601658,
+      "east": -96.004525,
+      "north": 30.096833
+    },
+    {
+      "countyId": "bailey-tx",
+      "countyFips": "48017",
+      "west": -103.047409,
+      "south": 33.824627,
+      "east": -102.61515,
+      "north": 34.313015
+    },
+    {
+      "countyId": "bandera-tx",
+      "countyFips": "48019",
+      "west": -99.603323,
+      "south": 29.551695,
+      "east": -98.778782,
+      "north": 29.907679
+    },
+    {
+      "countyId": "bastrop-tx",
+      "countyFips": "48021",
+      "west": -97.64937,
+      "south": 29.786541,
+      "east": -97.024461,
+      "north": 30.419642
+    },
+    {
+      "countyId": "baylor-tx",
+      "countyFips": "48023",
+      "west": -99.47565,
+      "south": 33.397534,
+      "east": -98.95293,
+      "north": 33.834207
+    },
+    {
+      "countyId": "bee-tx",
+      "countyFips": "48025",
+      "west": -98.089764,
+      "south": 28.129683,
+      "east": -97.375579,
+      "north": 28.719648
+    },
+    {
+      "countyId": "bell-tx",
+      "countyFips": "48027",
+      "west": -97.913847,
+      "south": 30.752363,
+      "east": -97.070057,
+      "north": 31.320202
+    },
+    {
+      "countyId": "bexar-tx",
+      "countyFips": "48029",
+      "west": -98.806552,
+      "south": 29.114435,
+      "east": -98.116902,
+      "north": 29.760713
+    },
+    {
+      "countyId": "blanco-tx",
+      "countyFips": "48031",
+      "west": -98.59167,
+      "south": 29.937557,
+      "east": -98.125556,
+      "north": 30.502095
+    },
+    {
+      "countyId": "borden-tx",
+      "countyFips": "48033",
+      "west": -101.69133,
+      "south": 32.52398,
+      "east": -101.173378,
+      "north": 32.963611
+    },
+    {
+      "countyId": "bosque-tx",
+      "countyFips": "48035",
+      "west": -98.005462,
+      "south": 31.587762,
+      "east": -97.276716,
+      "north": 32.207403
+    },
+    {
+      "countyId": "bowie-tx",
+      "countyFips": "48037",
+      "west": -94.747063,
+      "south": 33.237046,
+      "east": -94.042913,
+      "north": 33.71606
+    },
+    {
+      "countyId": "brazoria-tx",
+      "countyFips": "48039",
+      "west": -95.874028,
+      "south": 28.764837,
+      "east": -95.056139,
+      "north": 29.599116
+    },
+    {
+      "countyId": "brazos-tx",
+      "countyFips": "48041",
+      "west": -96.601854,
+      "south": 30.330288,
+      "east": -96.079969,
+      "north": 30.973737
+    },
+    {
+      "countyId": "brewster-tx",
+      "countyFips": "48043",
+      "west": -103.80068,
+      "south": 28.971547,
+      "east": -102.320819,
+      "north": 30.665939
+    },
+    {
+      "countyId": "briscoe-tx",
+      "countyFips": "48045",
+      "west": -101.472076,
+      "south": 34.312217,
+      "east": -100.944906,
+      "north": 34.748377
+    },
+    {
+      "countyId": "brooks-tx",
+      "countyFips": "48047",
+      "west": -98.536646,
+      "south": 26.780917,
+      "east": -97.985457,
+      "north": 27.265249
+    },
+    {
+      "countyId": "brown-tx",
+      "countyFips": "48049",
+      "west": -99.203601,
+      "south": 31.448186,
+      "east": -98.668441,
+      "north": 32.079597
+    },
+    {
+      "countyId": "burleson-tx",
+      "countyFips": "48051",
+      "west": -96.96363,
+      "south": 30.295549,
+      "east": -96.271816,
+      "north": 30.730819
+    },
+    {
+      "countyId": "burnet-tx",
+      "countyFips": "48053",
+      "west": -98.459373,
+      "south": 30.426164,
+      "east": -97.8281,
+      "north": 31.035009
+    },
+    {
+      "countyId": "caldwell-tx",
+      "countyFips": "48055",
+      "west": -97.899291,
+      "south": 29.630718,
+      "east": -97.315823,
+      "north": 30.071564
+    },
+    {
+      "countyId": "calhoun-tx",
+      "countyFips": "48057",
+      "west": -96.930367,
+      "south": 28.022835,
+      "east": -96.322731,
+      "north": 28.730278
+    },
+    {
+      "countyId": "callahan-tx",
+      "countyFips": "48059",
+      "west": -99.631561,
+      "south": 32.079123,
+      "east": -99.114049,
+      "north": 32.51527
+    },
+    {
+      "countyId": "cameron-tx",
+      "countyFips": "48061",
+      "west": -97.862325,
+      "south": 25.837048,
+      "east": -97.08934,
+      "north": 26.412715
+    },
+    {
+      "countyId": "camp-tx",
+      "countyFips": "48063",
+      "west": -95.152619,
+      "south": 32.902444,
+      "east": -94.719926,
+      "north": 33.077419
+    },
+    {
+      "countyId": "carson-tx",
+      "countyFips": "48065",
+      "west": -101.623458,
+      "south": 35.181658,
+      "east": -101.085886,
+      "north": 35.62534
+    },
+    {
+      "countyId": "cass-tx",
+      "countyFips": "48067",
+      "west": -94.654,
+      "south": 32.879499,
+      "east": -94.042863,
+      "north": 33.312057
+    },
+    {
+      "countyId": "castro-tx",
+      "countyFips": "48069",
+      "west": -102.525833,
+      "south": 34.312725,
+      "east": -101.998008,
+      "north": 34.74819
+    },
+    {
+      "countyId": "chambers-tx",
+      "countyFips": "48071",
+      "west": -95.018205,
+      "south": 29.49624,
+      "east": -94.353383,
+      "north": 29.88994
+    },
+    {
+      "countyId": "cherokee-tx",
+      "countyFips": "48073",
+      "west": -95.462242,
+      "south": 31.42571,
+      "east": -94.865857,
+      "north": 32.138053
+    },
+    {
+      "countyId": "childress-tx",
+      "countyFips": "48075",
+      "west": -100.417783,
+      "south": 34.311829,
+      "east": -99.997491,
+      "north": 34.747529
+    },
+    {
+      "countyId": "clay-tx",
+      "countyFips": "48077",
+      "west": -98.423801,
+      "south": 33.466217,
+      "east": -97.94573,
+      "north": 34.157109
+    },
+    {
+      "countyId": "cochran-tx",
+      "countyFips": "48079",
+      "west": -103.056485,
+      "south": 33.388068,
+      "east": -102.594836,
+      "north": 33.825138
+    },
+    {
+      "countyId": "coke-tx",
+      "countyFips": "48081",
+      "west": -100.82537,
+      "south": 31.692514,
+      "east": -100.235137,
+      "north": 32.086722
+    },
+    {
+      "countyId": "coleman-tx",
+      "countyFips": "48083",
+      "west": -99.722403,
+      "south": 31.409778,
+      "east": -99.195871,
+      "north": 32.082089
+    },
+    {
+      "countyId": "collin-tx",
+      "countyFips": "48085",
+      "west": -96.844122,
+      "south": 32.98149,
+      "east": -96.295057,
+      "north": 33.405504
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "countyFips": "48087",
+      "west": -100.540997,
+      "south": 34.746358,
+      "east": -100.00038,
+      "north": 35.183144
+    },
+    {
+      "countyId": "colorado-tx",
+      "countyFips": "48089",
+      "west": -96.874222,
+      "south": 29.247804,
+      "east": -96.175422,
+      "north": 29.961516
+    },
+    {
+      "countyId": "comal-tx",
+      "countyFips": "48091",
+      "west": -98.646244,
+      "south": 29.594473,
+      "east": -97.999271,
+      "north": 30.037994
+    },
+    {
+      "countyId": "comanche-tx",
+      "countyFips": "48093",
+      "west": -98.924401,
+      "south": 31.683989,
+      "east": -98.156568,
+      "north": 32.261436
+    },
+    {
+      "countyId": "concho-tx",
+      "countyFips": "48095",
+      "west": -100.115216,
+      "south": 31.086962,
+      "east": -99.601525,
+      "north": 31.580267
+    },
+    {
+      "countyId": "cooke-tx",
+      "countyFips": "48097",
+      "west": -97.487065,
+      "south": 33.41641,
+      "east": -96.943339,
+      "north": 33.956395
+    },
+    {
+      "countyId": "coryell-tx",
+      "countyFips": "48099",
+      "west": -98.180006,
+      "south": 31.069374,
+      "east": -97.418606,
+      "north": 31.711019
+    },
+    {
+      "countyId": "cottle-tx",
+      "countyFips": "48101",
+      "west": -100.518692,
+      "south": 33.835607,
+      "east": -99.997621,
+      "north": 34.314102
+    },
+    {
+      "countyId": "crane-tx",
+      "countyFips": "48103",
+      "west": -102.767688,
+      "south": 31.086212,
+      "east": -102.300886,
+      "north": 31.651714
+    },
+    {
+      "countyId": "crockett-tx",
+      "countyFips": "48105",
+      "west": -102.390667,
+      "south": 30.287333,
+      "east": -100.960501,
+      "north": 31.087156
+    },
+    {
+      "countyId": "crosby-tx",
+      "countyFips": "48107",
+      "west": -101.56358,
+      "south": 33.39476,
+      "east": -101.038772,
+      "north": 33.833625
+    },
+    {
+      "countyId": "culberson-tx",
+      "countyFips": "48109",
+      "west": -104.918691,
+      "south": 30.663626,
+      "east": -104.024512,
+      "north": 32.000537
+    },
+    {
+      "countyId": "dallam-tx",
+      "countyFips": "48111",
+      "west": -103.041729,
+      "south": 36.054975,
+      "east": -102.162424,
+      "north": 36.500704
+    },
+    {
+      "countyId": "dallas-tx",
+      "countyFips": "48113",
+      "west": -97.038685,
+      "south": 32.545214,
+      "east": -96.51687,
+      "north": 32.989691
+    },
+    {
+      "countyId": "dawson-tx",
+      "countyFips": "48115",
+      "west": -102.20852,
+      "south": 32.52327,
+      "east": -101.688738,
+      "north": 32.961954
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "countyFips": "48117",
+      "west": -103.042982,
+      "south": 34.746024,
+      "east": -102.167444,
+      "north": 35.18725
+    },
+    {
+      "countyId": "delta-tx",
+      "countyFips": "48119",
+      "west": -95.861778,
+      "south": 33.218269,
+      "east": -95.30664,
+      "north": 33.495452
+    },
+    {
+      "countyId": "denton-tx",
+      "countyFips": "48121",
+      "west": -97.398459,
+      "south": 32.987435,
+      "east": -96.83411,
+      "north": 33.43045
+    },
+    {
+      "countyId": "dewitt-tx",
+      "countyFips": "48123",
+      "west": -97.75511,
+      "south": 28.8133,
+      "east": -96.976378,
+      "north": 29.384488
+    },
+    {
+      "countyId": "dickens-tx",
+      "countyFips": "48125",
+      "west": -101.041158,
+      "south": 33.397179,
+      "east": -100.517449,
+      "north": 33.835678
+    },
+    {
+      "countyId": "dimmit-tx",
+      "countyFips": "48127",
+      "west": -100.114345,
+      "south": 28.197819,
+      "east": -99.394177,
+      "north": 28.648122
+    },
+    {
+      "countyId": "donley-tx",
+      "countyFips": "48129",
+      "west": -101.090753,
+      "south": 34.747723,
+      "east": -100.538978,
+      "north": 35.183327
+    },
+    {
+      "countyId": "duval-tx",
+      "countyFips": "48131",
+      "west": -98.803325,
+      "south": 27.262487,
+      "east": -98.232464,
+      "north": 28.057995
+    },
+    {
+      "countyId": "eastland-tx",
+      "countyFips": "48133",
+      "west": -99.118665,
+      "south": 32.078018,
+      "east": -98.474685,
+      "north": 32.515618
+    },
+    {
+      "countyId": "ector-tx",
+      "countyFips": "48135",
+      "west": -102.799086,
+      "south": 31.651085,
+      "east": -102.286971,
+      "north": 32.08721
+    },
+    {
+      "countyId": "edwards-tx",
+      "countyFips": "48137",
+      "west": -100.700845,
+      "south": 29.623263,
+      "east": -99.754142,
+      "north": 30.290698
+    },
+    {
+      "countyId": "ellis-tx",
+      "countyFips": "48139",
+      "west": -97.087067,
+      "south": 32.052087,
+      "east": -96.38291,
+      "north": 32.549296
+    },
+    {
+      "countyId": "el-paso-tx",
+      "countyFips": "48141",
+      "west": -106.645646,
+      "south": 31.38723,
+      "east": -105.954328,
+      "north": 32.00265
+    },
+    {
+      "countyId": "erath-tx",
+      "countyFips": "48143",
+      "west": -98.551158,
+      "south": 31.917511,
+      "east": -97.864864,
+      "north": 32.513039
+    },
+    {
+      "countyId": "falls-tx",
+      "countyFips": "48145",
+      "west": -97.278113,
+      "south": 30.986031,
+      "east": -96.596862,
+      "north": 31.522269
+    },
+    {
+      "countyId": "fannin-tx",
+      "countyFips": "48147",
+      "west": -96.384756,
+      "south": 33.341119,
+      "east": -95.846536,
+      "north": 33.885354
+    },
+    {
+      "countyId": "fayette-tx",
+      "countyFips": "48149",
+      "west": -97.317893,
+      "south": 29.628089,
+      "east": -96.569844,
+      "north": 30.16435
+    },
+    {
+      "countyId": "fisher-tx",
+      "countyFips": "48151",
+      "west": -100.660626,
+      "south": 32.522793,
+      "east": -100.144224,
+      "north": 32.963469
+    },
+    {
+      "countyId": "floyd-tx",
+      "countyFips": "48153",
+      "west": -101.565103,
+      "south": 33.830451,
+      "east": -101.041158,
+      "north": 34.312575
+    },
+    {
+      "countyId": "foard-tx",
+      "countyFips": "48155",
+      "west": -100.04848,
+      "south": 33.733849,
+      "east": -99.474498,
+      "north": 34.242024
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "countyFips": "48157",
+      "west": -96.088912,
+      "south": 29.26259,
+      "east": -95.424196,
+      "north": 29.788616
+    },
+    {
+      "countyId": "franklin-tx",
+      "countyFips": "48159",
+      "west": -95.308957,
+      "south": 32.961829,
+      "east": -95.124491,
+      "north": 33.389456
+    },
+    {
+      "countyId": "freestone-tx",
+      "countyFips": "48161",
+      "west": -96.496713,
+      "south": 31.413392,
+      "east": -95.779678,
+      "north": 32.012526
+    },
+    {
+      "countyId": "frio-tx",
+      "countyFips": "48163",
+      "west": -99.41388,
+      "south": 28.640566,
+      "east": -98.800841,
+      "north": 29.09154
+    },
+    {
+      "countyId": "gaines-tx",
+      "countyFips": "48165",
+      "west": -103.064871,
+      "south": 32.522193,
+      "east": -102.202703,
+      "north": 32.959508
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyFips": "48167",
+      "west": -95.233081,
+      "south": 29.062739,
+      "east": -94.369361,
+      "north": 29.598264
+    },
+    {
+      "countyId": "garza-tx",
+      "countyFips": "48169",
+      "west": -101.557618,
+      "south": 32.961025,
+      "east": -101.03839,
+      "north": 33.397221
+    },
+    {
+      "countyId": "gillespie-tx",
+      "countyFips": "48171",
+      "west": -99.304015,
+      "south": 30.134298,
+      "east": -98.587777,
+      "north": 30.499887
+    },
+    {
+      "countyId": "glasscock-tx",
+      "countyFips": "48173",
+      "west": -101.776085,
+      "south": 31.650854,
+      "east": -101.264216,
+      "north": 32.087533
+    },
+    {
+      "countyId": "goliad-tx",
+      "countyFips": "48175",
+      "west": -97.77853,
+      "south": 28.388684,
+      "east": -97.153588,
+      "north": 28.925316
+    },
+    {
+      "countyId": "gonzales-tx",
+      "countyFips": "48177",
+      "west": -97.858782,
+      "south": 29.109765,
+      "east": -97.130517,
+      "north": 29.784658
+    },
+    {
+      "countyId": "gray-tx",
+      "countyFips": "48179",
+      "west": -101.086438,
+      "south": 35.18214,
+      "east": -100.538144,
+      "north": 35.620485
+    },
+    {
+      "countyId": "grayson-tx",
+      "countyFips": "48181",
+      "west": -96.945126,
+      "south": 33.397826,
+      "east": -96.379452,
+      "north": 33.959579
+    },
+    {
+      "countyId": "gregg-tx",
+      "countyFips": "48183",
+      "west": -94.986963,
+      "south": 32.359948,
+      "east": -94.579219,
+      "north": 32.667572
+    },
+    {
+      "countyId": "grimes-tx",
+      "countyFips": "48185",
+      "west": -96.188314,
+      "south": 30.225187,
+      "east": -95.804197,
+      "north": 30.864125
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "countyFips": "48187",
+      "west": -98.312058,
+      "south": 29.36533,
+      "east": -97.630985,
+      "north": 29.858208
+    },
+    {
+      "countyId": "hale-tx",
+      "countyFips": "48189",
+      "west": -102.090415,
+      "south": 33.824675,
+      "east": -101.56358,
+      "north": 34.313132
+    },
+    {
+      "countyId": "hall-tx",
+      "countyFips": "48191",
+      "west": -100.946372,
+      "south": 34.312759,
+      "east": -100.415748,
+      "north": 34.748356
+    },
+    {
+      "countyId": "hamilton-tx",
+      "countyFips": "48193",
+      "west": -98.463736,
+      "south": 31.416398,
+      "east": -97.766431,
+      "north": 32.017897
+    },
+    {
+      "countyId": "hansford-tx",
+      "countyFips": "48195",
+      "west": -101.623915,
+      "south": 36.05506,
+      "east": -101.084793,
+      "north": 36.499583
+    },
+    {
+      "countyId": "hardeman-tx",
+      "countyFips": "48197",
+      "west": -99.998006,
+      "south": 34.055774,
+      "east": -99.475056,
+      "north": 34.579139
+    },
+    {
+      "countyId": "hardin-tx",
+      "countyFips": "48199",
+      "west": -94.732732,
+      "south": 30.097167,
+      "east": -94.070955,
+      "north": 30.527125
+    },
+    {
+      "countyId": "harris-tx",
+      "countyFips": "48201",
+      "west": -95.960733,
+      "south": 29.497297,
+      "east": -94.908492,
+      "north": 30.170606
+    },
+    {
+      "countyId": "harrison-tx",
+      "countyFips": "48203",
+      "west": -94.702201,
+      "south": 32.326583,
+      "east": -94.042817,
+      "north": 32.793088
+    },
+    {
+      "countyId": "hartley-tx",
+      "countyFips": "48205",
+      "west": -103.041706,
+      "south": 35.622487,
+      "east": -102.162686,
+      "north": 36.055653
+    },
+    {
+      "countyId": "haskell-tx",
+      "countyFips": "48207",
+      "west": -99.991327,
+      "south": 32.956961,
+      "east": -99.471258,
+      "north": 33.399062
+    },
+    {
+      "countyId": "hays-tx",
+      "countyFips": "48209",
+      "west": -98.2976,
+      "south": 29.752444,
+      "east": -97.70879,
+      "north": 30.356312
+    },
+    {
+      "countyId": "hemphill-tx",
+      "countyFips": "48211",
+      "west": -100.54128,
+      "south": 35.619114,
+      "east": -100.000387,
+      "north": 36.056491
+    },
+    {
+      "countyId": "henderson-tx",
+      "countyFips": "48213",
+      "west": -96.454573,
+      "south": 32.005895,
+      "east": -95.428127,
+      "north": 32.358925
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "countyFips": "48215",
+      "west": -98.586444,
+      "south": 26.036268,
+      "east": -97.861684,
+      "north": 26.783081
+    },
+    {
+      "countyId": "hill-tx",
+      "countyFips": "48217",
+      "west": -97.497113,
+      "south": 31.708887,
+      "east": -96.719114,
+      "north": 32.266824
+    },
+    {
+      "countyId": "hockley-tx",
+      "countyFips": "48219",
+      "west": -102.615447,
+      "south": 33.388327,
+      "east": -102.075929,
+      "north": 33.825121
+    },
+    {
+      "countyId": "hood-tx",
+      "countyFips": "48221",
+      "west": -98.068545,
+      "south": 32.233468,
+      "east": -97.615221,
+      "north": 32.558822
+    },
+    {
+      "countyId": "hopkins-tx",
+      "countyFips": "48223",
+      "west": -95.863332,
+      "south": 32.960434,
+      "east": -95.30763,
+      "north": 33.37719
+    },
+    {
+      "countyId": "houston-tx",
+      "countyFips": "48225",
+      "west": -95.777039,
+      "south": 30.925879,
+      "east": -94.95811,
+      "north": 31.592886
+    },
+    {
+      "countyId": "howard-tx",
+      "countyFips": "48227",
+      "west": -101.695011,
+      "south": 32.087097,
+      "east": -101.174534,
+      "north": 32.525228
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "countyFips": "48229",
+      "west": -105.998012,
+      "south": 30.629258,
+      "east": -104.907122,
+      "north": 32.002377
+    },
+    {
+      "countyId": "hunt-tx",
+      "countyFips": "48231",
+      "west": -96.297344,
+      "south": 32.837217,
+      "east": -95.858645,
+      "north": 33.40953
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "countyFips": "48233",
+      "west": -101.623466,
+      "south": 35.624057,
+      "east": -101.085728,
+      "north": 36.055405
+    },
+    {
+      "countyId": "irion-tx",
+      "countyFips": "48235",
+      "west": -101.274799,
+      "south": 31.079379,
+      "east": -100.688764,
+      "north": 31.528746
+    },
+    {
+      "countyId": "jack-tx",
+      "countyFips": "48237",
+      "west": -98.426553,
+      "south": 33.001284,
+      "east": -97.918128,
+      "north": 33.467129
+    },
+    {
+      "countyId": "jackson-tx",
+      "countyFips": "48239",
+      "west": -96.938587,
+      "south": 28.674409,
+      "east": -96.309178,
+      "north": 29.263876
+    },
+    {
+      "countyId": "jasper-tx",
+      "countyFips": "48241",
+      "west": -94.460172,
+      "south": 30.241649,
+      "east": -93.865711,
+      "north": 31.158071
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "countyFips": "48243",
+      "west": -104.979801,
+      "south": 30.41219,
+      "east": -103.439976,
+      "north": 31.105203
+    },
+    {
+      "countyId": "jefferson-tx",
+      "countyFips": "48245",
+      "west": -94.445106,
+      "south": 29.506328,
+      "east": -93.814351,
+      "north": 30.189106
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "countyFips": "48247",
+      "west": -98.954771,
+      "south": 26.783444,
+      "east": -98.417883,
+      "north": 27.359101
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "countyFips": "48249",
+      "west": -98.235497,
+      "south": 27.260981,
+      "east": -97.788988,
+      "north": 28.057966
+    },
+    {
+      "countyId": "johnson-tx",
+      "countyFips": "48251",
+      "west": -97.617053,
+      "south": 32.133765,
+      "east": -97.087028,
+      "north": 32.555484
+    },
+    {
+      "countyId": "jones-tx",
+      "countyFips": "48253",
+      "west": -100.146543,
+      "south": 32.514653,
+      "east": -99.611816,
+      "north": 32.960251
+    },
+    {
+      "countyId": "karnes-tx",
+      "countyFips": "48255",
+      "west": -98.190991,
+      "south": 28.668027,
+      "east": -97.574639,
+      "north": 29.221748
+    },
+    {
+      "countyId": "kaufman-tx",
+      "countyFips": "48257",
+      "west": -96.529678,
+      "south": 32.354709,
+      "east": -96.075537,
+      "north": 32.841723
+    },
+    {
+      "countyId": "kendall-tx",
+      "countyFips": "48259",
+      "west": -98.920799,
+      "south": 29.716359,
+      "east": -98.414018,
+      "north": 30.138954
+    },
+    {
+      "countyId": "kenedy-tx",
+      "countyFips": "48261",
+      "west": -97.985892,
+      "south": 26.597884,
+      "east": -97.225374,
+      "north": 27.284001
+    },
+    {
+      "countyId": "kent-tx",
+      "countyFips": "48263",
+      "west": -101.038884,
+      "south": 32.96291,
+      "east": -100.517048,
+      "north": 33.399061
+    },
+    {
+      "countyId": "kerr-tx",
+      "countyFips": "48265",
+      "west": -99.757621,
+      "south": 29.781398,
+      "east": -98.917725,
+      "north": 30.290698
+    },
+    {
+      "countyId": "kimble-tx",
+      "countyFips": "48267",
+      "west": -100.116873,
+      "south": 30.286653,
+      "east": -99.301718,
+      "north": 30.711019
+    },
+    {
+      "countyId": "king-tx",
+      "countyFips": "48269",
+      "west": -100.518691,
+      "south": 33.396997,
+      "east": -99.99098,
+      "north": 33.836147
+    },
+    {
+      "countyId": "kinney-tx",
+      "countyFips": "48271",
+      "west": -100.797073,
+      "south": 29.084261,
+      "east": -100.111231,
+      "north": 29.623897
+    },
+    {
+      "countyId": "kleberg-tx",
+      "countyFips": "48273",
+      "west": -98.0598,
+      "south": 27.209271,
+      "east": -97.165097,
+      "north": 27.635982
+    },
+    {
+      "countyId": "knox-tx",
+      "countyFips": "48275",
+      "west": -99.996434,
+      "south": 33.397404,
+      "east": -99.472444,
+      "north": 33.83608
+    },
+    {
+      "countyId": "lamar-tx",
+      "countyFips": "48277",
+      "west": -95.857738,
+      "south": 33.377653,
+      "east": -95.308072,
+      "north": 33.943057
+    },
+    {
+      "countyId": "lamb-tx",
+      "countyFips": "48279",
+      "west": -102.615596,
+      "south": 33.824596,
+      "east": -102.085733,
+      "north": 34.313297
+    },
+    {
+      "countyId": "lampasas-tx",
+      "countyFips": "48281",
+      "west": -98.569645,
+      "south": 31.029647,
+      "east": -97.9071,
+      "north": 31.463717
+    },
+    {
+      "countyId": "la-salle-tx",
+      "countyFips": "48283",
+      "west": -99.396681,
+      "south": 28.030419,
+      "east": -98.800064,
+      "north": 28.647487
+    },
+    {
+      "countyId": "lavaca-tx",
+      "countyFips": "48285",
+      "west": -97.240108,
+      "south": 29.063244,
+      "east": -96.560555,
+      "north": 29.632706
+    },
+    {
+      "countyId": "lee-tx",
+      "countyFips": "48287",
+      "west": -97.334463,
+      "south": 30.032,
+      "east": -96.640586,
+      "north": 30.557198
+    },
+    {
+      "countyId": "leon-tx",
+      "countyFips": "48289",
+      "west": -96.331121,
+      "south": 30.973737,
+      "east": -95.655545,
+      "north": 31.654093
+    },
+    {
+      "countyId": "liberty-tx",
+      "countyFips": "48291",
+      "west": -95.165897,
+      "south": 29.884276,
+      "east": -94.442235,
+      "north": 30.493553
+    },
+    {
+      "countyId": "limestone-tx",
+      "countyFips": "48293",
+      "west": -96.932215,
+      "south": 31.2209,
+      "east": -96.236629,
+      "north": 31.814887
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "countyFips": "48295",
+      "west": -100.546724,
+      "south": 36.055323,
+      "east": -100.000389,
+      "north": 36.49997
+    },
+    {
+      "countyId": "live-oak-tx",
+      "countyFips": "48297",
+      "west": -98.335031,
+      "south": 28.056681,
+      "east": -97.808774,
+      "north": 28.786949
+    },
+    {
+      "countyId": "llano-tx",
+      "countyFips": "48299",
+      "west": -98.964612,
+      "south": 30.486096,
+      "east": -98.351041,
+      "north": 30.922121
+    },
+    {
+      "countyId": "loving-tx",
+      "countyFips": "48301",
+      "west": -103.98406,
+      "south": 31.650558,
+      "east": -103.326501,
+      "north": 32.000369
+    },
+    {
+      "countyId": "lubbock-tx",
+      "countyFips": "48303",
+      "west": -102.085768,
+      "south": 33.389586,
+      "east": -101.556884,
+      "north": 33.830451
+    },
+    {
+      "countyId": "lynn-tx",
+      "countyFips": "48305",
+      "west": -102.076214,
+      "south": 32.959702,
+      "east": -101.556651,
+      "north": 33.39476
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "countyFips": "48307",
+      "west": -99.60371,
+      "south": 30.940553,
+      "east": -99.090603,
+      "north": 31.49372
+    },
+    {
+      "countyId": "mclennan-tx",
+      "countyFips": "48309",
+      "west": -97.60523,
+      "south": 31.244215,
+      "east": -96.801123,
+      "north": 31.863079
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "countyFips": "48311",
+      "west": -98.803325,
+      "south": 28.057127,
+      "east": -98.334189,
+      "north": 28.648386
+    },
+    {
+      "countyId": "madison-tx",
+      "countyFips": "48313",
+      "west": -96.24102,
+      "south": 30.822997,
+      "east": -95.61189,
+      "north": 31.094211
+    },
+    {
+      "countyId": "marion-tx",
+      "countyFips": "48315",
+      "west": -94.709711,
+      "south": 32.687093,
+      "east": -94.04287,
+      "north": 32.881089
+    },
+    {
+      "countyId": "martin-tx",
+      "countyFips": "48317",
+      "west": -102.21127,
+      "south": 32.086765,
+      "east": -101.688656,
+      "north": 32.525325
+    },
+    {
+      "countyId": "mason-tx",
+      "countyFips": "48319",
+      "west": -99.484755,
+      "south": 30.498076,
+      "east": -98.963615,
+      "north": 30.941186
+    },
+    {
+      "countyId": "matagorda-tx",
+      "countyFips": "48321",
+      "west": -96.395198,
+      "south": 28.279736,
+      "east": -95.49565,
+      "north": 29.229702
+    },
+    {
+      "countyId": "maverick-tx",
+      "countyFips": "48323",
+      "west": -100.667548,
+      "south": 28.196837,
+      "east": -100.111406,
+      "north": 29.086318
+    },
+    {
+      "countyId": "medina-tx",
+      "countyFips": "48325",
+      "west": -99.41388,
+      "south": 29.09024,
+      "east": -98.804591,
+      "north": 29.690709
+    },
+    {
+      "countyId": "menard-tx",
+      "countyFips": "48327",
+      "west": -100.116672,
+      "south": 30.710366,
+      "east": -99.483808,
+      "north": 31.087994
+    },
+    {
+      "countyId": "midland-tx",
+      "countyFips": "48329",
+      "west": -102.287528,
+      "south": 31.651276,
+      "east": -101.775802,
+      "north": 32.086993
+    },
+    {
+      "countyId": "milam-tx",
+      "countyFips": "48331",
+      "west": -97.315485,
+      "south": 30.457344,
+      "east": -96.61213,
+      "north": 31.110411
+    },
+    {
+      "countyId": "mills-tx",
+      "countyFips": "48333",
+      "west": -98.995091,
+      "south": 31.230443,
+      "east": -98.266794,
+      "north": 31.723608
+    },
+    {
+      "countyId": "mitchell-tx",
+      "countyFips": "48335",
+      "west": -101.183997,
+      "south": 32.085386,
+      "east": -100.660626,
+      "north": 32.52812
+    },
+    {
+      "countyId": "montague-tx",
+      "countyFips": "48337",
+      "west": -97.979046,
+      "south": 33.433681,
+      "east": -97.484136,
+      "north": 33.991553
+    },
+    {
+      "countyId": "montgomery-tx",
+      "countyFips": "48339",
+      "west": -95.83024,
+      "south": 30.027748,
+      "east": -95.096708,
+      "north": 30.630284
+    },
+    {
+      "countyId": "moore-tx",
+      "countyFips": "48341",
+      "west": -102.163058,
+      "south": 35.619923,
+      "east": -101.6226,
+      "north": 36.055627
+    },
+    {
+      "countyId": "morris-tx",
+      "countyFips": "48343",
+      "west": -94.819828,
+      "south": 32.879161,
+      "east": -94.652194,
+      "north": 33.365972
+    },
+    {
+      "countyId": "motley-tx",
+      "countyFips": "48345",
+      "west": -101.041763,
+      "south": 33.833625,
+      "east": -100.51734,
+      "north": 34.314191
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "countyFips": "48347",
+      "west": -94.97816,
+      "south": 31.222776,
+      "east": -94.300038,
+      "north": 31.845555
+    },
+    {
+      "countyId": "navarro-tx",
+      "countyFips": "48349",
+      "west": -96.896209,
+      "south": 31.796191,
+      "east": -96.050758,
+      "north": 32.328929
+    },
+    {
+      "countyId": "newton-tx",
+      "countyFips": "48351",
+      "west": -93.911126,
+      "south": 30.242672,
+      "east": -93.508039,
+      "north": 31.186627
+    },
+    {
+      "countyId": "nolan-tx",
+      "countyFips": "48353",
+      "west": -100.665353,
+      "south": 32.08133,
+      "east": -100.146543,
+      "north": 32.525354
+    },
+    {
+      "countyId": "nueces-tx",
+      "countyFips": "48355",
+      "west": -97.942146,
+      "south": 27.558358,
+      "east": -96.984281,
+      "north": 27.995659
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "countyFips": "48357",
+      "west": -101.085745,
+      "south": 36.056536,
+      "east": -100.545979,
+      "north": 36.49994
+    },
+    {
+      "countyId": "oldham-tx",
+      "countyFips": "48359",
+      "west": -103.042521,
+      "south": 35.183026,
+      "east": -102.162724,
+      "north": 35.627515
+    },
+    {
+      "countyId": "orange-tx",
+      "countyFips": "48361",
+      "west": -94.118004,
+      "south": 29.865053,
+      "east": -93.688205,
+      "north": 30.244318
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "countyFips": "48363",
+      "west": -98.57626,
+      "south": 32.511626,
+      "east": -98.056094,
+      "north": 33.007913
+    },
+    {
+      "countyId": "panola-tx",
+      "countyFips": "48365",
+      "west": -94.601853,
+      "south": 31.973193,
+      "east": -94.01563,
+      "north": 32.394137
+    },
+    {
+      "countyId": "parker-tx",
+      "countyFips": "48367",
+      "west": -98.066836,
+      "south": 32.555297,
+      "east": -97.544172,
+      "north": 33.003332
+    },
+    {
+      "countyId": "parmer-tx",
+      "countyFips": "48369",
+      "west": -103.043791,
+      "south": 34.312277,
+      "east": -102.525123,
+      "north": 34.747692
+    },
+    {
+      "countyId": "pecos-tx",
+      "countyFips": "48371",
+      "west": -103.585084,
+      "south": 30.052808,
+      "east": -101.768377,
+      "north": 31.371306
+    },
+    {
+      "countyId": "polk-tx",
+      "countyFips": "48373",
+      "west": -95.20018,
+      "south": 30.489002,
+      "east": -94.537926,
+      "north": 31.146578
+    },
+    {
+      "countyId": "potter-tx",
+      "countyFips": "48375",
+      "west": -102.167471,
+      "south": 35.182753,
+      "east": -101.622714,
+      "north": 35.620198
+    },
+    {
+      "countyId": "presidio-tx",
+      "countyFips": "48377",
+      "west": -104.980778,
+      "south": 29.258437,
+      "east": -103.792703,
+      "north": 30.629258
+    },
+    {
+      "countyId": "rains-tx",
+      "countyFips": "48379",
+      "west": -95.987358,
+      "south": 32.711402,
+      "east": -95.634949,
+      "north": 32.980227
+    },
+    {
+      "countyId": "randall-tx",
+      "countyFips": "48381",
+      "west": -102.168848,
+      "south": 34.747417,
+      "east": -101.622941,
+      "north": 35.183364
+    },
+    {
+      "countyId": "reagan-tx",
+      "countyFips": "48383",
+      "west": -101.776191,
+      "south": 31.079263,
+      "east": -101.266981,
+      "north": 31.651527
+    },
+    {
+      "countyId": "real-tx",
+      "countyFips": "48385",
+      "west": -100.063741,
+      "south": 29.623495,
+      "east": -99.602639,
+      "north": 30.082356
+    },
+    {
+      "countyId": "red-river-tx",
+      "countyFips": "48387",
+      "west": -95.311035,
+      "south": 33.317365,
+      "east": -94.732329,
+      "north": 33.962674
+    },
+    {
+      "countyId": "reeves-tx",
+      "countyFips": "48389",
+      "west": -104.102351,
+      "south": 30.76647,
+      "east": -103.010403,
+      "north": 32.000134
+    },
+    {
+      "countyId": "refugio-tx",
+      "countyFips": "48391",
+      "west": -97.541071,
+      "south": 28.061396,
+      "east": -96.764125,
+      "north": 28.554821
+    },
+    {
+      "countyId": "roberts-tx",
+      "countyFips": "48393",
+      "west": -101.086146,
+      "south": 35.61908,
+      "east": -100.539512,
+      "north": 36.05799
+    },
+    {
+      "countyId": "robertson-tx",
+      "countyFips": "48395",
+      "west": -96.8311,
+      "south": 30.69567,
+      "east": -96.235123,
+      "north": 31.357129
+    },
+    {
+      "countyId": "rockwall-tx",
+      "countyFips": "48397",
+      "west": -96.51897,
+      "south": 32.813229,
+      "east": -96.297122,
+      "north": 32.982986
+    },
+    {
+      "countyId": "runnels-tx",
+      "countyFips": "48399",
+      "west": -100.236189,
+      "south": 31.576688,
+      "east": -99.713952,
+      "north": 32.082656
+    },
+    {
+      "countyId": "rusk-tx",
+      "countyFips": "48401",
+      "west": -94.985957,
+      "south": 31.843718,
+      "east": -94.452391,
+      "north": 32.407625
+    },
+    {
+      "countyId": "sabine-tx",
+      "countyFips": "48403",
+      "west": -94.048926,
+      "south": 31.134246,
+      "east": -93.59497,
+      "north": 31.611836
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "countyFips": "48405",
+      "west": -94.39984,
+      "south": 31.09928,
+      "east": -93.983231,
+      "north": 31.653596
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "countyFips": "48407",
+      "west": -95.359156,
+      "south": 30.31945,
+      "east": -94.829719,
+      "north": 30.906719
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "countyFips": "48409",
+      "west": -97.908774,
+      "south": 27.821105,
+      "east": -97.135134,
+      "north": 28.179461
+    },
+    {
+      "countyId": "san-saba-tx",
+      "countyFips": "48411",
+      "west": -99.092431,
+      "south": 30.920343,
+      "east": -98.414508,
+      "north": 31.490579
+    },
+    {
+      "countyId": "schleicher-tx",
+      "countyFips": "48413",
+      "west": -100.962364,
+      "south": 30.706071,
+      "east": -100.115216,
+      "north": 31.088733
+    },
+    {
+      "countyId": "scurry-tx",
+      "countyFips": "48415",
+      "west": -101.174726,
+      "south": 32.525188,
+      "east": -100.65587,
+      "north": 32.970225
+    },
+    {
+      "countyId": "shackelford-tx",
+      "countyFips": "48417",
+      "west": -99.612264,
+      "south": 32.514654,
+      "east": -99.095749,
+      "north": 32.957144
+    },
+    {
+      "countyId": "shelby-tx",
+      "countyFips": "48419",
+      "west": -94.511471,
+      "south": 31.569419,
+      "east": -93.794462,
+      "north": 31.979856
+    },
+    {
+      "countyId": "sherman-tx",
+      "countyFips": "48421",
+      "west": -102.163303,
+      "south": 36.055131,
+      "east": -101.623466,
+      "north": 36.500684
+    },
+    {
+      "countyId": "smith-tx",
+      "countyFips": "48423",
+      "west": -95.594541,
+      "south": 32.135399,
+      "east": -94.985265,
+      "north": 32.687026
+    },
+    {
+      "countyId": "somervell-tx",
+      "countyFips": "48425",
+      "west": -97.945625,
+      "south": 32.087328,
+      "east": -97.615048,
+      "north": 32.318617
+    },
+    {
+      "countyId": "starr-tx",
+      "countyFips": "48427",
+      "west": -99.171835,
+      "south": 26.235259,
+      "east": -98.32067,
+      "north": 26.785694
+    },
+    {
+      "countyId": "stephens-tx",
+      "countyFips": "48429",
+      "west": -99.096059,
+      "south": 32.51469,
+      "east": -98.575616,
+      "north": 32.957236
+    },
+    {
+      "countyId": "sterling-tx",
+      "countyFips": "48431",
+      "west": -101.26771,
+      "south": 31.556462,
+      "east": -100.821594,
+      "north": 32.087323
+    },
+    {
+      "countyId": "stonewall-tx",
+      "countyFips": "48433",
+      "west": -100.519208,
+      "south": 32.959801,
+      "east": -99.988827,
+      "north": 33.398052
+    },
+    {
+      "countyId": "sutton-tx",
+      "countyFips": "48435",
+      "west": -100.960824,
+      "south": 30.287477,
+      "east": -100.116161,
+      "north": 30.710366
+    },
+    {
+      "countyId": "swisher-tx",
+      "countyFips": "48437",
+      "west": -101.998533,
+      "south": 34.312204,
+      "east": -101.471333,
+      "north": 34.748263
+    },
+    {
+      "countyId": "tarrant-tx",
+      "countyFips": "48439",
+      "west": -97.550582,
+      "south": 32.548666,
+      "east": -97.031007,
+      "north": 32.994194
+    },
+    {
+      "countyId": "taylor-tx",
+      "countyFips": "48441",
+      "west": -100.151924,
+      "south": 32.081203,
+      "east": -99.629564,
+      "north": 32.523001
+    },
+    {
+      "countyId": "terrell-tx",
+      "countyFips": "48443",
+      "west": -102.56705,
+      "south": 29.779134,
+      "east": -101.646227,
+      "north": 30.658323
+    },
+    {
+      "countyId": "terry-tx",
+      "countyFips": "48445",
+      "west": -102.595106,
+      "south": 32.958566,
+      "east": -102.075382,
+      "north": 33.389586
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "countyFips": "48447",
+      "west": -99.472444,
+      "south": 32.956415,
+      "east": -98.950875,
+      "north": 33.399023
+    },
+    {
+      "countyId": "titus-tx",
+      "countyFips": "48449",
+      "west": -95.12613,
+      "south": 32.982453,
+      "east": -94.808783,
+      "north": 33.39848
+    },
+    {
+      "countyId": "tom-green-tx",
+      "countyFips": "48451",
+      "west": -101.267947,
+      "south": 31.086122,
+      "east": -100.111234,
+      "north": 31.705418
+    },
+    {
+      "countyId": "travis-tx",
+      "countyFips": "48453",
+      "west": -98.172977,
+      "south": 30.023451,
+      "east": -97.369539,
+      "north": 30.628249
+    },
+    {
+      "countyId": "trinity-tx",
+      "countyFips": "48455",
+      "west": -95.434781,
+      "south": 30.824566,
+      "east": -94.842947,
+      "north": 31.38693
+    },
+    {
+      "countyId": "tyler-tx",
+      "countyFips": "48457",
+      "west": -94.657992,
+      "south": 30.526033,
+      "east": -94.05096,
+      "north": 31.059304
+    },
+    {
+      "countyId": "upshur-tx",
+      "countyFips": "48459",
+      "west": -95.15341,
+      "south": 32.516398,
+      "east": -94.672351,
+      "north": 32.904502
+    },
+    {
+      "countyId": "upton-tx",
+      "countyFips": "48461",
+      "west": -102.31805,
+      "south": 31.079751,
+      "east": -101.77499,
+      "north": 31.651635
+    },
+    {
+      "countyId": "uvalde-tx",
+      "countyFips": "48463",
+      "west": -100.112309,
+      "south": 29.086318,
+      "east": -99.411725,
+      "north": 29.627691
+    },
+    {
+      "countyId": "val-verde-tx",
+      "countyFips": "48465",
+      "west": -101.760924,
+      "south": 29.237579,
+      "east": -100.699141,
+      "north": 30.288527
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "countyFips": "48467",
+      "west": -96.076801,
+      "south": 32.355097,
+      "east": -95.449093,
+      "north": 32.838507
+    },
+    {
+      "countyId": "victoria-tx",
+      "countyFips": "48469",
+      "west": -97.305916,
+      "south": 28.485712,
+      "east": -96.642323,
+      "north": 29.104046
+    },
+    {
+      "countyId": "walker-tx",
+      "countyFips": "48471",
+      "west": -95.863082,
+      "south": 30.504369,
+      "east": -95.32748,
+      "north": 31.058098
+    },
+    {
+      "countyId": "waller-tx",
+      "countyFips": "48473",
+      "west": -96.192208,
+      "south": 29.727944,
+      "east": -95.80333,
+      "north": 30.245645
+    },
+    {
+      "countyId": "ward-tx",
+      "countyFips": "48475",
+      "west": -103.610887,
+      "south": 31.266881,
+      "east": -102.767246,
+      "north": 31.651802
+    },
+    {
+      "countyId": "washington-tx",
+      "countyFips": "48477",
+      "west": -96.794552,
+      "south": 30.044283,
+      "east": -96.080839,
+      "north": 30.39989
+    },
+    {
+      "countyId": "webb-tx",
+      "countyFips": "48479",
+      "west": -100.212189,
+      "south": 27.259562,
+      "east": -98.798087,
+      "north": 28.204627
+    },
+    {
+      "countyId": "wharton-tx",
+      "countyFips": "48481",
+      "west": -96.640315,
+      "south": 28.963291,
+      "east": -95.841948,
+      "north": 29.633806
+    },
+    {
+      "countyId": "wheeler-tx",
+      "countyFips": "48483",
+      "west": -100.540215,
+      "south": 35.182466,
+      "east": -99.999628,
+      "north": 35.619897
+    },
+    {
+      "countyId": "wichita-tx",
+      "countyFips": "48485",
+      "west": -98.953203,
+      "south": 33.834021,
+      "east": -98.422867,
+      "north": 34.212497
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "countyFips": "48487",
+      "west": -99.47565,
+      "south": 33.833799,
+      "east": -98.952296,
+      "north": 34.458802
+    },
+    {
+      "countyId": "willacy-tx",
+      "countyFips": "48489",
+      "west": -98.004189,
+      "south": 26.299269,
+      "east": -97.167255,
+      "north": 26.611769
+    },
+    {
+      "countyId": "williamson-tx",
+      "countyFips": "48491",
+      "west": -98.049886,
+      "south": 30.402843,
+      "east": -97.155219,
+      "north": 30.904414
+    },
+    {
+      "countyId": "wilson-tx",
+      "countyFips": "48493",
+      "west": -98.407336,
+      "south": 28.882333,
+      "east": -97.728443,
+      "north": 29.441751
+    },
+    {
+      "countyId": "winkler-tx",
+      "countyFips": "48495",
+      "west": -103.327538,
+      "south": 31.651306,
+      "east": -102.797552,
+      "north": 32.08724
+    },
+    {
+      "countyId": "wise-tx",
+      "countyFips": "48497",
+      "west": -97.921642,
+      "south": 32.990839,
+      "east": -97.383015,
+      "north": 33.434057
+    },
+    {
+      "countyId": "wood-tx",
+      "countyFips": "48499",
+      "west": -95.665389,
+      "south": 32.540959,
+      "east": -95.149962,
+      "north": 33.01345
+    },
+    {
+      "countyId": "yoakum-tx",
+      "countyFips": "48501",
+      "west": -103.064696,
+      "south": 32.958548,
+      "east": -102.594234,
+      "north": 33.388489
+    },
+    {
+      "countyId": "young-tx",
+      "countyFips": "48503",
+      "west": -98.954097,
+      "south": 32.9523,
+      "east": -98.420436,
+      "north": 33.397534
+    },
+    {
+      "countyId": "zapata-tx",
+      "countyFips": "48505",
+      "west": -99.453794,
+      "south": 26.571682,
+      "east": -98.954176,
+      "north": 27.319174
+    },
+    {
+      "countyId": "zavala-tx",
+      "countyFips": "48507",
+      "west": -100.114338,
+      "south": 28.640512,
+      "east": -99.408764,
+      "north": 29.091335
+    }
+  ],
+  "passed": true
+}

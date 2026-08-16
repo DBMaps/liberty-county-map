@@ -1,0 +1,2764 @@
+{
+  "schemaVersion": "gridly.statewideCountyContainmentCertification.v1",
+  "source": {
+    "artifactPath": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+    "bytes": 47911048,
+    "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316",
+    "schemaVersion": "gridly.lp1904.authoritativeCountyGeometry.runtime.v1",
+    "packageVersion": "lp1904-governed-254-runtime-geometry-v1",
+    "provenance": {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+      "geometryPreservation": "authoritative polygons copied without simplification"
+    }
+  },
+  "tested": 254,
+  "correct": 254,
+  "outsideTexasFailsClosed": true,
+  "outsideTexasControl": {
+    "lat": 40,
+    "lng": -100,
+    "resolvedCountyId": null
+  },
+  "boundaryPolicy": "inclusive-deterministic-lowest-county-id",
+  "borderControls": [
+    {
+      "countyId": "el-paso-tx",
+      "clearlyInside": {
+        "lng": -106.2348354702173,
+        "lat": 31.768647564275756
+      },
+      "nearInside": {
+        "lat": 31.89638122535643,
+        "lng": -106.64556292314703
+      },
+      "resolvedCountyId": "el-paso-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "clearlyInside": {
+        "lng": -105.38645271754297,
+        "lat": 31.456142736230376
+      },
+      "nearInside": {
+        "lat": 32.00232237657362,
+        "lng": -105.99795084407175
+      },
+      "resolvedCountyId": "hudspeth-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "presidio-tx",
+      "clearlyInside": {
+        "lng": -104.24052167959714,
+        "lat": 29.999802670022532
+      },
+      "nearInside": {
+        "lat": 30.625457428267005,
+        "lng": -104.98070397436796
+      },
+      "resolvedCountyId": "presidio-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "brewster-tx",
+      "clearlyInside": {
+        "lng": -103.25175585563359,
+        "lat": 29.811949774320446
+      },
+      "nearInside": {
+        "lat": 29.44887431117743,
+        "lng": -102.82384879498557
+      },
+      "resolvedCountyId": "brewster-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "harris-tx",
+      "clearlyInside": {
+        "lng": -95.39226044909176,
+        "lat": 29.857306611984917
+      },
+      "nearInside": {
+        "lat": 29.6767490575612,
+        "lng": -94.97888634154492
+      },
+      "resolvedCountyId": "harris-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "clearlyInside": {
+        "lng": -95.77090938683173,
+        "lat": 29.527562417586434
+      },
+      "nearInside": {
+        "lat": 29.368102947541757,
+        "lng": -95.57709638323868
+      },
+      "resolvedCountyId": "fort-bend-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "bexar-tx",
+      "clearlyInside": {
+        "lng": -98.52002587325121,
+        "lat": 29.448957831833926
+      },
+      "nearInside": {
+        "lat": 29.209891908983185,
+        "lng": -98.32721528298732
+      },
+      "resolvedCountyId": "bexar-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "comal-tx",
+      "clearlyInside": {
+        "lng": -98.278245528079,
+        "lat": 29.808180120231654
+      },
+      "nearInside": {
+        "lat": 29.744060412612022,
+        "lng": -98.6462072001528
+      },
+      "resolvedCountyId": "comal-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "clearlyInside": {
+        "lng": -97.94858474189273,
+        "lat": 29.583050984465356
+      },
+      "nearInside": {
+        "lat": 29.37845646149845,
+        "lng": -97.95608025037419
+      },
+      "resolvedCountyId": "guadalupe-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "medina-tx",
+      "clearlyInside": {
+        "lng": -99.11013099644481,
+        "lat": 29.355696049797476
+      },
+      "nearInside": {
+        "lat": 29.09303326890498,
+        "lng": -99.41383262679965
+      },
+      "resolvedCountyId": "medina-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "dallas-tx",
+      "clearlyInside": {
+        "lng": -96.77776413970456,
+        "lat": 32.76657257731832
+      },
+      "nearInside": {
+        "lat": 32.55443621575773,
+        "lng": -97.03856191761398
+      },
+      "resolvedCountyId": "dallas-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "tarrant-tx",
+      "clearlyInside": {
+        "lng": -97.29113114653872,
+        "lat": 32.771923506123066
+      },
+      "nearInside": {
+        "lat": 32.83694349735062,
+        "lng": -97.03388572711467
+      },
+      "resolvedCountyId": "tarrant-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "cameron-tx",
+      "clearlyInside": {
+        "lng": -97.45205686392548,
+        "lat": 26.150865919027208
+      },
+      "nearInside": {
+        "lat": 25.928878200991903,
+        "lng": -97.34065114168638
+      },
+      "resolvedCountyId": "cameron-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "clearlyInside": {
+        "lng": -98.18111521808156,
+        "lat": 26.396734153573167
+      },
+      "nearInside": {
+        "lat": 26.491900482415357,
+        "lng": -97.99653246012181
+      },
+      "resolvedCountyId": "hidalgo-tx",
+      "crossCountyLeakage": false,
+      "passed": true
+    }
+  ],
+  "results": [
+    {
+      "countyId": "anderson-tx",
+      "countyFips": "48001",
+      "point": {
+        "lng": -95.65254717718128,
+        "lat": 31.813325667224557
+      },
+      "resolvedCountyId": "anderson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "andrews-tx",
+      "countyFips": "48003",
+      "point": {
+        "lng": -102.63781512106534,
+        "lat": 32.305035659604386
+      },
+      "resolvedCountyId": "andrews-tx",
+      "passed": true
+    },
+    {
+      "countyId": "angelina-tx",
+      "countyFips": "48005",
+      "point": {
+        "lng": -94.61186351521725,
+        "lat": 31.254783081493056
+      },
+      "resolvedCountyId": "angelina-tx",
+      "passed": true
+    },
+    {
+      "countyId": "aransas-tx",
+      "countyFips": "48007",
+      "point": {
+        "lng": -96.99143876544358,
+        "lat": 28.084719294194233
+      },
+      "resolvedCountyId": "aransas-tx",
+      "passed": true
+    },
+    {
+      "countyId": "archer-tx",
+      "countyFips": "48009",
+      "point": {
+        "lng": -98.68767480226873,
+        "lat": 33.61529421917034
+      },
+      "resolvedCountyId": "archer-tx",
+      "passed": true
+    },
+    {
+      "countyId": "armstrong-tx",
+      "countyFips": "48011",
+      "point": {
+        "lng": -101.35740433885465,
+        "lat": 34.96492558618824
+      },
+      "resolvedCountyId": "armstrong-tx",
+      "passed": true
+    },
+    {
+      "countyId": "atascosa-tx",
+      "countyFips": "48013",
+      "point": {
+        "lng": -98.52713226963257,
+        "lat": 28.893524978366234
+      },
+      "resolvedCountyId": "atascosa-tx",
+      "passed": true
+    },
+    {
+      "countyId": "austin-tx",
+      "countyFips": "48015",
+      "point": {
+        "lng": -96.27790889071294,
+        "lat": 29.887024099195063
+      },
+      "resolvedCountyId": "austin-tx",
+      "passed": true
+    },
+    {
+      "countyId": "bailey-tx",
+      "countyFips": "48017",
+      "point": {
+        "lng": -102.82991312411478,
+        "lat": 34.0685270236879
+      },
+      "resolvedCountyId": "bailey-tx",
+      "passed": true
+    },
+    {
+      "countyId": "bandera-tx",
+      "countyFips": "48019",
+      "point": {
+        "lng": -99.24624410603741,
+        "lat": 29.747204987821984
+      },
+      "resolvedCountyId": "bandera-tx",
+      "passed": true
+    },
+    {
+      "countyId": "bastrop-tx",
+      "countyFips": "48021",
+      "point": {
+        "lng": -97.31201437399257,
+        "lat": 30.10361086668305
+      },
+      "resolvedCountyId": "bastrop-tx",
+      "passed": true
+    },
+    {
+      "countyId": "baylor-tx",
+      "countyFips": "48023",
+      "point": {
+        "lng": -99.21351514272541,
+        "lat": 33.61648949955506
+      },
+      "resolvedCountyId": "baylor-tx",
+      "passed": true
+    },
+    {
+      "countyId": "bee-tx",
+      "countyFips": "48025",
+      "point": {
+        "lng": -97.74119012922989,
+        "lat": 28.41739322832837
+      },
+      "resolvedCountyId": "bee-tx",
+      "passed": true
+    },
+    {
+      "countyId": "bell-tx",
+      "countyFips": "48027",
+      "point": {
+        "lng": -97.47874404474598,
+        "lat": 31.03734519799816
+      },
+      "resolvedCountyId": "bell-tx",
+      "passed": true
+    },
+    {
+      "countyId": "bexar-tx",
+      "countyFips": "48029",
+      "point": {
+        "lng": -98.52002587325121,
+        "lat": 29.448957831833926
+      },
+      "resolvedCountyId": "bexar-tx",
+      "passed": true
+    },
+    {
+      "countyId": "blanco-tx",
+      "countyFips": "48031",
+      "point": {
+        "lng": -98.39986501908037,
+        "lat": 30.266376875038883
+      },
+      "resolvedCountyId": "blanco-tx",
+      "passed": true
+    },
+    {
+      "countyId": "borden-tx",
+      "countyFips": "48033",
+      "point": {
+        "lng": -101.43174879468816,
+        "lat": 32.743694149965286
+      },
+      "resolvedCountyId": "borden-tx",
+      "passed": true
+    },
+    {
+      "countyId": "bosque-tx",
+      "countyFips": "48035",
+      "point": {
+        "lng": -97.63434295586615,
+        "lat": 31.900416723482312
+      },
+      "resolvedCountyId": "bosque-tx",
+      "passed": true
+    },
+    {
+      "countyId": "bowie-tx",
+      "countyFips": "48037",
+      "point": {
+        "lng": -94.42333243933608,
+        "lat": 33.44575713064375
+      },
+      "resolvedCountyId": "bowie-tx",
+      "passed": true
+    },
+    {
+      "countyId": "brazoria-tx",
+      "countyFips": "48039",
+      "point": {
+        "lng": -95.43426826954502,
+        "lat": 29.167845304021775
+      },
+      "resolvedCountyId": "brazoria-tx",
+      "passed": true
+    },
+    {
+      "countyId": "brazos-tx",
+      "countyFips": "48041",
+      "point": {
+        "lng": -96.3023849442494,
+        "lat": 30.660798972141333
+      },
+      "resolvedCountyId": "brazos-tx",
+      "passed": true
+    },
+    {
+      "countyId": "brewster-tx",
+      "countyFips": "48043",
+      "point": {
+        "lng": -103.25175585563359,
+        "lat": 29.811949774320446
+      },
+      "resolvedCountyId": "brewster-tx",
+      "passed": true
+    },
+    {
+      "countyId": "briscoe-tx",
+      "countyFips": "48045",
+      "point": {
+        "lng": -101.20859330506511,
+        "lat": 34.530264104664745
+      },
+      "resolvedCountyId": "briscoe-tx",
+      "passed": true
+    },
+    {
+      "countyId": "brooks-tx",
+      "countyFips": "48047",
+      "point": {
+        "lng": -98.21872111945576,
+        "lat": 27.03157264378134
+      },
+      "resolvedCountyId": "brooks-tx",
+      "passed": true
+    },
+    {
+      "countyId": "brown-tx",
+      "countyFips": "48049",
+      "point": {
+        "lng": -98.99979417741748,
+        "lat": 31.774262415871696
+      },
+      "resolvedCountyId": "brown-tx",
+      "passed": true
+    },
+    {
+      "countyId": "burleson-tx",
+      "countyFips": "48051",
+      "point": {
+        "lng": -96.62147067386833,
+        "lat": 30.492485137107924
+      },
+      "resolvedCountyId": "burleson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "burnet-tx",
+      "countyFips": "48053",
+      "point": {
+        "lng": -98.18234042891214,
+        "lat": 30.78837267412477
+      },
+      "resolvedCountyId": "burnet-tx",
+      "passed": true
+    },
+    {
+      "countyId": "caldwell-tx",
+      "countyFips": "48055",
+      "point": {
+        "lng": -97.61991937101251,
+        "lat": 29.83684412700395
+      },
+      "resolvedCountyId": "caldwell-tx",
+      "passed": true
+    },
+    {
+      "countyId": "calhoun-tx",
+      "countyFips": "48057",
+      "point": {
+        "lng": -96.61507367412496,
+        "lat": 28.439109268790293
+      },
+      "resolvedCountyId": "calhoun-tx",
+      "passed": true
+    },
+    {
+      "countyId": "callahan-tx",
+      "countyFips": "48059",
+      "point": {
+        "lng": -99.37348808415211,
+        "lat": 32.29765570011102
+      },
+      "resolvedCountyId": "callahan-tx",
+      "passed": true
+    },
+    {
+      "countyId": "cameron-tx",
+      "countyFips": "48061",
+      "point": {
+        "lng": -97.45205686392548,
+        "lat": 26.150865919027208
+      },
+      "resolvedCountyId": "cameron-tx",
+      "passed": true
+    },
+    {
+      "countyId": "camp-tx",
+      "countyFips": "48063",
+      "point": {
+        "lng": -94.97847695445192,
+        "lat": 32.9732247417788
+      },
+      "resolvedCountyId": "camp-tx",
+      "passed": true
+    },
+    {
+      "countyId": "carson-tx",
+      "countyFips": "48065",
+      "point": {
+        "lng": -101.35418302981762,
+        "lat": 35.40350786999828
+      },
+      "resolvedCountyId": "carson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "cass-tx",
+      "countyFips": "48067",
+      "point": {
+        "lng": -94.3435984216982,
+        "lat": 33.07753460304627
+      },
+      "resolvedCountyId": "cass-tx",
+      "passed": true
+    },
+    {
+      "countyId": "castro-tx",
+      "countyFips": "48069",
+      "point": {
+        "lng": -102.2616698935864,
+        "lat": 34.529958229432204
+      },
+      "resolvedCountyId": "castro-tx",
+      "passed": true
+    },
+    {
+      "countyId": "chambers-tx",
+      "countyFips": "48071",
+      "point": {
+        "lng": -94.67135893572771,
+        "lat": 29.708264851628098
+      },
+      "resolvedCountyId": "chambers-tx",
+      "passed": true
+    },
+    {
+      "countyId": "cherokee-tx",
+      "countyFips": "48073",
+      "point": {
+        "lng": -95.16518313754132,
+        "lat": 31.836954638858625
+      },
+      "resolvedCountyId": "cherokee-tx",
+      "passed": true
+    },
+    {
+      "countyId": "childress-tx",
+      "countyFips": "48075",
+      "point": {
+        "lng": -100.20757494708334,
+        "lat": 34.52920145744293
+      },
+      "resolvedCountyId": "childress-tx",
+      "passed": true
+    },
+    {
+      "countyId": "clay-tx",
+      "countyFips": "48077",
+      "point": {
+        "lng": -98.20850330048393,
+        "lat": 33.78553104118029
+      },
+      "resolvedCountyId": "clay-tx",
+      "passed": true
+    },
+    {
+      "countyId": "cochran-tx",
+      "countyFips": "48079",
+      "point": {
+        "lng": -102.82843563078131,
+        "lat": 33.60414244021725
+      },
+      "resolvedCountyId": "cochran-tx",
+      "passed": true
+    },
+    {
+      "countyId": "coke-tx",
+      "countyFips": "48081",
+      "point": {
+        "lng": -100.52991076812842,
+        "lat": 31.88853098713445
+      },
+      "resolvedCountyId": "coke-tx",
+      "passed": true
+    },
+    {
+      "countyId": "coleman-tx",
+      "countyFips": "48083",
+      "point": {
+        "lng": -99.45363765027925,
+        "lat": 31.773206867831153
+      },
+      "resolvedCountyId": "coleman-tx",
+      "passed": true
+    },
+    {
+      "countyId": "collin-tx",
+      "countyFips": "48085",
+      "point": {
+        "lng": -96.57242942695366,
+        "lat": 33.18798980847091
+      },
+      "resolvedCountyId": "collin-tx",
+      "passed": true
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "countyFips": "48087",
+      "point": {
+        "lng": -100.27006592190628,
+        "lat": 34.96488392405681
+      },
+      "resolvedCountyId": "collingsworth-tx",
+      "passed": true
+    },
+    {
+      "countyId": "colorado-tx",
+      "countyFips": "48089",
+      "point": {
+        "lng": -96.52627535368119,
+        "lat": 29.620820931908618
+      },
+      "resolvedCountyId": "colorado-tx",
+      "passed": true
+    },
+    {
+      "countyId": "comal-tx",
+      "countyFips": "48091",
+      "point": {
+        "lng": -98.278245528079,
+        "lat": 29.808180120231654
+      },
+      "resolvedCountyId": "comal-tx",
+      "passed": true
+    },
+    {
+      "countyId": "comanche-tx",
+      "countyFips": "48093",
+      "point": {
+        "lng": -98.55825730159123,
+        "lat": 31.947978106664756
+      },
+      "resolvedCountyId": "comanche-tx",
+      "passed": true
+    },
+    {
+      "countyId": "concho-tx",
+      "countyFips": "48095",
+      "point": {
+        "lng": -99.8639623317341,
+        "lat": 31.326496735930604
+      },
+      "resolvedCountyId": "concho-tx",
+      "passed": true
+    },
+    {
+      "countyId": "cooke-tx",
+      "countyFips": "48097",
+      "point": {
+        "lng": -97.21262612660097,
+        "lat": 33.63920034577274
+      },
+      "resolvedCountyId": "cooke-tx",
+      "passed": true
+    },
+    {
+      "countyId": "coryell-tx",
+      "countyFips": "48099",
+      "point": {
+        "lng": -97.79921973764985,
+        "lat": 31.390905430256698
+      },
+      "resolvedCountyId": "coryell-tx",
+      "passed": true
+    },
+    {
+      "countyId": "cottle-tx",
+      "countyFips": "48101",
+      "point": {
+        "lng": -100.27874380471839,
+        "lat": 34.077648158982015
+      },
+      "resolvedCountyId": "cottle-tx",
+      "passed": true
+    },
+    {
+      "countyId": "crane-tx",
+      "countyFips": "48103",
+      "point": {
+        "lng": -102.51556844253567,
+        "lat": 31.428497464842216
+      },
+      "resolvedCountyId": "crane-tx",
+      "passed": true
+    },
+    {
+      "countyId": "crockett-tx",
+      "countyFips": "48105",
+      "point": {
+        "lng": -101.41214766138425,
+        "lat": 30.72298308599335
+      },
+      "resolvedCountyId": "crockett-tx",
+      "passed": true
+    },
+    {
+      "countyId": "crosby-tx",
+      "countyFips": "48107",
+      "point": {
+        "lng": -101.29995845137458,
+        "lat": 33.614625030361786
+      },
+      "resolvedCountyId": "crosby-tx",
+      "passed": true
+    },
+    {
+      "countyId": "culberson-tx",
+      "countyFips": "48109",
+      "point": {
+        "lng": -104.51736996532489,
+        "lat": 31.447073752005018
+      },
+      "resolvedCountyId": "culberson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "dallam-tx",
+      "countyFips": "48111",
+      "point": {
+        "lng": -102.60218561966953,
+        "lat": 36.27788789084653
+      },
+      "resolvedCountyId": "dallam-tx",
+      "passed": true
+    },
+    {
+      "countyId": "dallas-tx",
+      "countyFips": "48113",
+      "point": {
+        "lng": -96.77776413970456,
+        "lat": 32.76657257731832
+      },
+      "resolvedCountyId": "dallas-tx",
+      "passed": true
+    },
+    {
+      "countyId": "dawson-tx",
+      "countyFips": "48115",
+      "point": {
+        "lng": -101.9476844408639,
+        "lat": 32.74252609937081
+      },
+      "resolvedCountyId": "dawson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "countyFips": "48117",
+      "point": {
+        "lng": -102.60492683763134,
+        "lat": 34.96601903668664
+      },
+      "resolvedCountyId": "deaf-smith-tx",
+      "passed": true
+    },
+    {
+      "countyId": "delta-tx",
+      "countyFips": "48119",
+      "point": {
+        "lng": -95.67227082224055,
+        "lat": 33.3862927411859
+      },
+      "resolvedCountyId": "delta-tx",
+      "passed": true
+    },
+    {
+      "countyId": "denton-tx",
+      "countyFips": "48121",
+      "point": {
+        "lng": -97.11681506040618,
+        "lat": 33.20553124069311
+      },
+      "resolvedCountyId": "denton-tx",
+      "passed": true
+    },
+    {
+      "countyId": "dewitt-tx",
+      "countyFips": "48123",
+      "point": {
+        "lng": -97.3567784440325,
+        "lat": 29.082081292475685
+      },
+      "resolvedCountyId": "dewitt-tx",
+      "passed": true
+    },
+    {
+      "countyId": "dickens-tx",
+      "countyFips": "48125",
+      "point": {
+        "lng": -100.77886065206846,
+        "lat": 33.61661211369113
+      },
+      "resolvedCountyId": "dickens-tx",
+      "passed": true
+    },
+    {
+      "countyId": "dimmit-tx",
+      "countyFips": "48127",
+      "point": {
+        "lng": -99.75672612486777,
+        "lat": 28.42253599818304
+      },
+      "resolvedCountyId": "dimmit-tx",
+      "passed": true
+    },
+    {
+      "countyId": "donley-tx",
+      "countyFips": "48129",
+      "point": {
+        "lng": -100.81399160703415,
+        "lat": 34.96541759563003
+      },
+      "resolvedCountyId": "donley-tx",
+      "passed": true
+    },
+    {
+      "countyId": "duval-tx",
+      "countyFips": "48131",
+      "point": {
+        "lng": -98.50890606152485,
+        "lat": 27.681332988906075
+      },
+      "resolvedCountyId": "duval-tx",
+      "passed": true
+    },
+    {
+      "countyId": "eastland-tx",
+      "countyFips": "48133",
+      "point": {
+        "lng": -98.83232225020141,
+        "lat": 32.32707307055033
+      },
+      "resolvedCountyId": "eastland-tx",
+      "passed": true
+    },
+    {
+      "countyId": "ector-tx",
+      "countyFips": "48135",
+      "point": {
+        "lng": -102.54274920240243,
+        "lat": 31.86917253927263
+      },
+      "resolvedCountyId": "ector-tx",
+      "passed": true
+    },
+    {
+      "countyId": "edwards-tx",
+      "countyFips": "48137",
+      "point": {
+        "lng": -100.30474170158686,
+        "lat": 29.982632944409755
+      },
+      "resolvedCountyId": "edwards-tx",
+      "passed": true
+    },
+    {
+      "countyId": "ellis-tx",
+      "countyFips": "48139",
+      "point": {
+        "lng": -96.79463898808645,
+        "lat": 32.34843520728885
+      },
+      "resolvedCountyId": "ellis-tx",
+      "passed": true
+    },
+    {
+      "countyId": "el-paso-tx",
+      "countyFips": "48141",
+      "point": {
+        "lng": -106.2348354702173,
+        "lat": 31.768647564275756
+      },
+      "resolvedCountyId": "el-paso-tx",
+      "passed": true
+    },
+    {
+      "countyId": "erath-tx",
+      "countyFips": "48143",
+      "point": {
+        "lng": -98.21796670536712,
+        "lat": 32.23625866944045
+      },
+      "resolvedCountyId": "erath-tx",
+      "passed": true
+    },
+    {
+      "countyId": "falls-tx",
+      "countyFips": "48145",
+      "point": {
+        "lng": -96.93585090101045,
+        "lat": 31.25326207520973
+      },
+      "resolvedCountyId": "falls-tx",
+      "passed": true
+    },
+    {
+      "countyId": "fannin-tx",
+      "countyFips": "48147",
+      "point": {
+        "lng": -96.10682768314828,
+        "lat": 33.593809792938586
+      },
+      "resolvedCountyId": "fannin-tx",
+      "passed": true
+    },
+    {
+      "countyId": "fayette-tx",
+      "countyFips": "48149",
+      "point": {
+        "lng": -96.9197617167528,
+        "lat": 29.876786794632576
+      },
+      "resolvedCountyId": "fayette-tx",
+      "passed": true
+    },
+    {
+      "countyId": "fisher-tx",
+      "countyFips": "48151",
+      "point": {
+        "lng": -100.4021681054013,
+        "lat": 32.74282022188556
+      },
+      "resolvedCountyId": "fisher-tx",
+      "passed": true
+    },
+    {
+      "countyId": "floyd-tx",
+      "countyFips": "48153",
+      "point": {
+        "lng": -101.30323451886471,
+        "lat": 34.07242455065481
+      },
+      "resolvedCountyId": "floyd-tx",
+      "passed": true
+    },
+    {
+      "countyId": "foard-tx",
+      "countyFips": "48155",
+      "point": {
+        "lng": -99.77798487847123,
+        "lat": 33.97461509221422
+      },
+      "resolvedCountyId": "foard-tx",
+      "passed": true
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "countyFips": "48157",
+      "point": {
+        "lng": -95.77090938683173,
+        "lat": 29.527562417586434
+      },
+      "resolvedCountyId": "fort-bend-tx",
+      "passed": true
+    },
+    {
+      "countyId": "franklin-tx",
+      "countyFips": "48159",
+      "point": {
+        "lng": -95.21841939750122,
+        "lat": 33.17554867595547
+      },
+      "resolvedCountyId": "franklin-tx",
+      "passed": true
+    },
+    {
+      "countyId": "freestone-tx",
+      "countyFips": "48161",
+      "point": {
+        "lng": -96.14909229519955,
+        "lat": 31.704894073466505
+      },
+      "resolvedCountyId": "freestone-tx",
+      "passed": true
+    },
+    {
+      "countyId": "frio-tx",
+      "countyFips": "48163",
+      "point": {
+        "lng": -99.10826678241882,
+        "lat": 28.867817588188295
+      },
+      "resolvedCountyId": "frio-tx",
+      "passed": true
+    },
+    {
+      "countyId": "gaines-tx",
+      "countyFips": "48165",
+      "point": {
+        "lng": -102.63517378349125,
+        "lat": 32.74072772725478
+      },
+      "resolvedCountyId": "gaines-tx",
+      "passed": true
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyFips": "48167",
+      "point": {
+        "lng": -94.8627226089706,
+        "lat": 29.37998595081851
+      },
+      "resolvedCountyId": "galveston-tx",
+      "passed": true
+    },
+    {
+      "countyId": "garza-tx",
+      "countyFips": "48169",
+      "point": {
+        "lng": -101.2984241012273,
+        "lat": 33.17987570492081
+      },
+      "resolvedCountyId": "garza-tx",
+      "passed": true
+    },
+    {
+      "countyId": "gillespie-tx",
+      "countyFips": "48171",
+      "point": {
+        "lng": -98.94648001878211,
+        "lat": 30.31805480078254
+      },
+      "resolvedCountyId": "gillespie-tx",
+      "passed": true
+    },
+    {
+      "countyId": "glasscock-tx",
+      "countyFips": "48173",
+      "point": {
+        "lng": -101.52080219062152,
+        "lat": 31.86946270537736
+      },
+      "resolvedCountyId": "glasscock-tx",
+      "passed": true
+    },
+    {
+      "countyId": "goliad-tx",
+      "countyFips": "48175",
+      "point": {
+        "lng": -97.426492261433,
+        "lat": 28.657095209044666
+      },
+      "resolvedCountyId": "goliad-tx",
+      "passed": true
+    },
+    {
+      "countyId": "gonzales-tx",
+      "countyFips": "48177",
+      "point": {
+        "lng": -97.49252375095084,
+        "lat": 29.456733334414373
+      },
+      "resolvedCountyId": "gonzales-tx",
+      "passed": true
+    },
+    {
+      "countyId": "gray-tx",
+      "countyFips": "48179",
+      "point": {
+        "lng": -100.81255803406079,
+        "lat": 35.401163256497284
+      },
+      "resolvedCountyId": "gray-tx",
+      "passed": true
+    },
+    {
+      "countyId": "grayson-tx",
+      "countyFips": "48181",
+      "point": {
+        "lng": -96.67772499452987,
+        "lat": 33.62680767239262
+      },
+      "resolvedCountyId": "grayson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "gregg-tx",
+      "countyFips": "48183",
+      "point": {
+        "lng": -94.81694778919429,
+        "lat": 32.480470602520825
+      },
+      "resolvedCountyId": "gregg-tx",
+      "passed": true
+    },
+    {
+      "countyId": "grimes-tx",
+      "countyFips": "48185",
+      "point": {
+        "lng": -95.98550298309826,
+        "lat": 30.54347151084031
+      },
+      "resolvedCountyId": "grimes-tx",
+      "passed": true
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "countyFips": "48187",
+      "point": {
+        "lng": -97.94858474189273,
+        "lat": 29.583050984465356
+      },
+      "resolvedCountyId": "guadalupe-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hale-tx",
+      "countyFips": "48189",
+      "point": {
+        "lng": -101.82688130037398,
+        "lat": 34.07051250964483
+      },
+      "resolvedCountyId": "hale-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hall-tx",
+      "countyFips": "48191",
+      "point": {
+        "lng": -100.6811285988036,
+        "lat": 34.53077914173467
+      },
+      "resolvedCountyId": "hall-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hamilton-tx",
+      "countyFips": "48193",
+      "point": {
+        "lng": -98.11072584777253,
+        "lat": 31.704803052101113
+      },
+      "resolvedCountyId": "hamilton-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hansford-tx",
+      "countyFips": "48195",
+      "point": {
+        "lng": -101.35453921102244,
+        "lat": 36.277454471593174
+      },
+      "resolvedCountyId": "hansford-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hardeman-tx",
+      "countyFips": "48197",
+      "point": {
+        "lng": -99.74571673700409,
+        "lat": 34.29029388438124
+      },
+      "resolvedCountyId": "hardeman-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hardin-tx",
+      "countyFips": "48199",
+      "point": {
+        "lng": -94.39022882951146,
+        "lat": 30.332377297848176
+      },
+      "resolvedCountyId": "hardin-tx",
+      "passed": true
+    },
+    {
+      "countyId": "harris-tx",
+      "countyFips": "48201",
+      "point": {
+        "lng": -95.39226044909176,
+        "lat": 29.857306611984917
+      },
+      "resolvedCountyId": "harris-tx",
+      "passed": true
+    },
+    {
+      "countyId": "harrison-tx",
+      "countyFips": "48203",
+      "point": {
+        "lng": -94.3714865550813,
+        "lat": 32.54813319795277
+      },
+      "resolvedCountyId": "harrison-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hartley-tx",
+      "countyFips": "48205",
+      "point": {
+        "lng": -102.60286278411257,
+        "lat": 35.84002595058839
+      },
+      "resolvedCountyId": "hartley-tx",
+      "passed": true
+    },
+    {
+      "countyId": "haskell-tx",
+      "countyFips": "48207",
+      "point": {
+        "lng": -99.73030000955279,
+        "lat": 33.17823128725513
+      },
+      "resolvedCountyId": "haskell-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hays-tx",
+      "countyFips": "48209",
+      "point": {
+        "lng": -98.03115517978976,
+        "lat": 30.057887498338683
+      },
+      "resolvedCountyId": "hays-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hemphill-tx",
+      "countyFips": "48211",
+      "point": {
+        "lng": -100.27047326590045,
+        "lat": 35.83756992247953
+      },
+      "resolvedCountyId": "hemphill-tx",
+      "passed": true
+    },
+    {
+      "countyId": "henderson-tx",
+      "countyFips": "48213",
+      "point": {
+        "lng": -95.85361287562223,
+        "lat": 32.21190742841152
+      },
+      "resolvedCountyId": "henderson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "countyFips": "48215",
+      "point": {
+        "lng": -98.18111521808156,
+        "lat": 26.396734153573167
+      },
+      "resolvedCountyId": "hidalgo-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hill-tx",
+      "countyFips": "48217",
+      "point": {
+        "lng": -97.13242692352914,
+        "lat": 31.990686521531654
+      },
+      "resolvedCountyId": "hill-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hockley-tx",
+      "countyFips": "48219",
+      "point": {
+        "lng": -102.34319717822626,
+        "lat": 33.60764268469932
+      },
+      "resolvedCountyId": "hockley-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hood-tx",
+      "countyFips": "48221",
+      "point": {
+        "lng": -97.83225706548984,
+        "lat": 32.42992672283198
+      },
+      "resolvedCountyId": "hood-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hopkins-tx",
+      "countyFips": "48223",
+      "point": {
+        "lng": -95.56395016277372,
+        "lat": 33.149555898066225
+      },
+      "resolvedCountyId": "hopkins-tx",
+      "passed": true
+    },
+    {
+      "countyId": "houston-tx",
+      "countyFips": "48225",
+      "point": {
+        "lng": -95.42267715165455,
+        "lat": 31.31773255613089
+      },
+      "resolvedCountyId": "houston-tx",
+      "passed": true
+    },
+    {
+      "countyId": "howard-tx",
+      "countyFips": "48227",
+      "point": {
+        "lng": -101.43550545048069,
+        "lat": 32.306169498866055
+      },
+      "resolvedCountyId": "howard-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "countyFips": "48229",
+      "point": {
+        "lng": -105.38645271754297,
+        "lat": 31.456142736230376
+      },
+      "resolvedCountyId": "hudspeth-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hunt-tx",
+      "countyFips": "48231",
+      "point": {
+        "lng": -96.08545497141363,
+        "lat": 33.123593705065225
+      },
+      "resolvedCountyId": "hunt-tx",
+      "passed": true
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "countyFips": "48233",
+      "point": {
+        "lng": -101.35469939589541,
+        "lat": 35.84002597464035
+      },
+      "resolvedCountyId": "hutchinson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "irion-tx",
+      "countyFips": "48235",
+      "point": {
+        "lng": -100.98241927522743,
+        "lat": 31.303925021045963
+      },
+      "resolvedCountyId": "irion-tx",
+      "passed": true
+    },
+    {
+      "countyId": "jack-tx",
+      "countyFips": "48237",
+      "point": {
+        "lng": -98.17245858386772,
+        "lat": 33.233460602567135
+      },
+      "resolvedCountyId": "jack-tx",
+      "passed": true
+    },
+    {
+      "countyId": "jackson-tx",
+      "countyFips": "48239",
+      "point": {
+        "lng": -96.57768091403835,
+        "lat": 28.954244232844932
+      },
+      "resolvedCountyId": "jackson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "jasper-tx",
+      "countyFips": "48241",
+      "point": {
+        "lng": -94.02508503648141,
+        "lat": 30.74396060735983
+      },
+      "resolvedCountyId": "jasper-tx",
+      "passed": true
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "countyFips": "48243",
+      "point": {
+        "lng": -104.14001978761954,
+        "lat": 30.71547782082932
+      },
+      "resolvedCountyId": "jeff-davis-tx",
+      "passed": true
+    },
+    {
+      "countyId": "jefferson-tx",
+      "countyFips": "48245",
+      "point": {
+        "lng": -94.15343618647945,
+        "lat": 29.853745300304123
+      },
+      "resolvedCountyId": "jefferson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "countyFips": "48247",
+      "point": {
+        "lng": -98.69730506869446,
+        "lat": 27.043397136843627
+      },
+      "resolvedCountyId": "jim-hogg-tx",
+      "passed": true
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "countyFips": "48249",
+      "point": {
+        "lng": -98.08988624353832,
+        "lat": 27.73133803425431
+      },
+      "resolvedCountyId": "jim-wells-tx",
+      "passed": true
+    },
+    {
+      "countyId": "johnson-tx",
+      "countyFips": "48251",
+      "point": {
+        "lng": -97.36654676514728,
+        "lat": 32.37899962312296
+      },
+      "resolvedCountyId": "johnson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "jones-tx",
+      "countyFips": "48253",
+      "point": {
+        "lng": -99.87874425012174,
+        "lat": 32.739903873952066
+      },
+      "resolvedCountyId": "jones-tx",
+      "passed": true
+    },
+    {
+      "countyId": "karnes-tx",
+      "countyFips": "48255",
+      "point": {
+        "lng": -97.85940182931468,
+        "lat": 28.90573896289523
+      },
+      "resolvedCountyId": "karnes-tx",
+      "passed": true
+    },
+    {
+      "countyId": "kaufman-tx",
+      "countyFips": "48257",
+      "point": {
+        "lng": -96.28776533186884,
+        "lat": 32.599290961265254
+      },
+      "resolvedCountyId": "kaufman-tx",
+      "passed": true
+    },
+    {
+      "countyId": "kendall-tx",
+      "countyFips": "48259",
+      "point": {
+        "lng": -98.71155520221396,
+        "lat": 29.944688872544
+      },
+      "resolvedCountyId": "kendall-tx",
+      "passed": true
+    },
+    {
+      "countyId": "kenedy-tx",
+      "countyFips": "48261",
+      "point": {
+        "lng": -97.63646115777335,
+        "lat": 26.928022876401688
+      },
+      "resolvedCountyId": "kenedy-tx",
+      "passed": true
+    },
+    {
+      "countyId": "kent-tx",
+      "countyFips": "48263",
+      "point": {
+        "lng": -100.77756938214165,
+        "lat": 33.18141522807236
+      },
+      "resolvedCountyId": "kent-tx",
+      "passed": true
+    },
+    {
+      "countyId": "kerr-tx",
+      "countyFips": "48265",
+      "point": {
+        "lng": -99.3501597531549,
+        "lat": 30.0614838021134
+      },
+      "resolvedCountyId": "kerr-tx",
+      "passed": true
+    },
+    {
+      "countyId": "kimble-tx",
+      "countyFips": "48267",
+      "point": {
+        "lng": -99.74869558490938,
+        "lat": 30.486778731792715
+      },
+      "resolvedCountyId": "kimble-tx",
+      "passed": true
+    },
+    {
+      "countyId": "king-tx",
+      "countyFips": "48269",
+      "point": {
+        "lng": -100.25585007222635,
+        "lat": 33.61647577888673
+      },
+      "resolvedCountyId": "king-tx",
+      "passed": true
+    },
+    {
+      "countyId": "kinney-tx",
+      "countyFips": "48271",
+      "point": {
+        "lng": -100.41794661808224,
+        "lat": 29.350207578513054
+      },
+      "resolvedCountyId": "kinney-tx",
+      "passed": true
+    },
+    {
+      "countyId": "kleberg-tx",
+      "countyFips": "48273",
+      "point": {
+        "lng": -97.66838777013432,
+        "lat": 27.4267108242156
+      },
+      "resolvedCountyId": "kleberg-tx",
+      "passed": true
+    },
+    {
+      "countyId": "knox-tx",
+      "countyFips": "48275",
+      "point": {
+        "lng": -99.74142704793687,
+        "lat": 33.60612914414575
+      },
+      "resolvedCountyId": "knox-tx",
+      "passed": true
+    },
+    {
+      "countyId": "lamar-tx",
+      "countyFips": "48277",
+      "point": {
+        "lng": -95.5712006964093,
+        "lat": 33.667262047308846
+      },
+      "resolvedCountyId": "lamar-tx",
+      "passed": true
+    },
+    {
+      "countyId": "lamb-tx",
+      "countyFips": "48279",
+      "point": {
+        "lng": -102.35171048610222,
+        "lat": 34.06862309066419
+      },
+      "resolvedCountyId": "lamb-tx",
+      "passed": true
+    },
+    {
+      "countyId": "lampasas-tx",
+      "countyFips": "48281",
+      "point": {
+        "lng": -98.24143966179315,
+        "lat": 31.196233903065032
+      },
+      "resolvedCountyId": "lampasas-tx",
+      "passed": true
+    },
+    {
+      "countyId": "la-salle-tx",
+      "countyFips": "48283",
+      "point": {
+        "lng": -99.09966268727237,
+        "lat": 28.34506930115425
+      },
+      "resolvedCountyId": "la-salle-tx",
+      "passed": true
+    },
+    {
+      "countyId": "lavaca-tx",
+      "countyFips": "48285",
+      "point": {
+        "lng": -96.93015249165708,
+        "lat": 29.384354443939447
+      },
+      "resolvedCountyId": "lavaca-tx",
+      "passed": true
+    },
+    {
+      "countyId": "lee-tx",
+      "countyFips": "48287",
+      "point": {
+        "lng": -96.9657045129652,
+        "lat": 30.31067970564905
+      },
+      "resolvedCountyId": "lee-tx",
+      "passed": true
+    },
+    {
+      "countyId": "leon-tx",
+      "countyFips": "48289",
+      "point": {
+        "lng": -95.99569065209809,
+        "lat": 31.29650680837816
+      },
+      "resolvedCountyId": "leon-tx",
+      "passed": true
+    },
+    {
+      "countyId": "liberty-tx",
+      "countyFips": "48291",
+      "point": {
+        "lng": -94.81221226927437,
+        "lat": 30.151612133799112
+      },
+      "resolvedCountyId": "liberty-tx",
+      "passed": true
+    },
+    {
+      "countyId": "limestone-tx",
+      "countyFips": "48293",
+      "point": {
+        "lng": -96.58052973781331,
+        "lat": 31.54546416200673
+      },
+      "resolvedCountyId": "limestone-tx",
+      "passed": true
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "countyFips": "48295",
+      "point": {
+        "lng": -100.27311543822312,
+        "lat": 36.277716908640976
+      },
+      "resolvedCountyId": "lipscomb-tx",
+      "passed": true
+    },
+    {
+      "countyId": "live-oak-tx",
+      "countyFips": "48297",
+      "point": {
+        "lng": -98.12478564888822,
+        "lat": 28.351371108779926
+      },
+      "resolvedCountyId": "live-oak-tx",
+      "passed": true
+    },
+    {
+      "countyId": "llano-tx",
+      "countyFips": "48299",
+      "point": {
+        "lng": -98.68409734803825,
+        "lat": 30.70574002727739
+      },
+      "resolvedCountyId": "llano-tx",
+      "passed": true
+    },
+    {
+      "countyId": "loving-tx",
+      "countyFips": "48301",
+      "point": {
+        "lng": -103.57989907699462,
+        "lat": 31.849192200543946
+      },
+      "resolvedCountyId": "loving-tx",
+      "passed": true
+    },
+    {
+      "countyId": "lubbock-tx",
+      "countyFips": "48303",
+      "point": {
+        "lng": -101.82054583089679,
+        "lat": 33.61020612041144
+      },
+      "resolvedCountyId": "lubbock-tx",
+      "passed": true
+    },
+    {
+      "countyId": "lynn-tx",
+      "countyFips": "48305",
+      "point": {
+        "lng": -101.8161238394426,
+        "lat": 33.17682443728595
+      },
+      "resolvedCountyId": "lynn-tx",
+      "passed": true
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "countyFips": "48307",
+      "point": {
+        "lng": -99.34747837749731,
+        "lat": 31.198871140657644
+      },
+      "resolvedCountyId": "mcculloch-tx",
+      "passed": true
+    },
+    {
+      "countyId": "mclennan-tx",
+      "countyFips": "48309",
+      "point": {
+        "lng": -97.20178660091672,
+        "lat": 31.552380079966
+      },
+      "resolvedCountyId": "mclennan-tx",
+      "passed": true
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "countyFips": "48311",
+      "point": {
+        "lng": -98.56784111983926,
+        "lat": 28.352687960297175
+      },
+      "resolvedCountyId": "mcmullen-tx",
+      "passed": true
+    },
+    {
+      "countyId": "madison-tx",
+      "countyFips": "48313",
+      "point": {
+        "lng": -95.92841010829962,
+        "lat": 30.965538598221272
+      },
+      "resolvedCountyId": "madison-tx",
+      "passed": true
+    },
+    {
+      "countyId": "marion-tx",
+      "countyFips": "48315",
+      "point": {
+        "lng": -94.35722218927975,
+        "lat": 32.79798178920155
+      },
+      "resolvedCountyId": "marion-tx",
+      "passed": true
+    },
+    {
+      "countyId": "martin-tx",
+      "countyFips": "48317",
+      "point": {
+        "lng": -101.95121677871143,
+        "lat": 32.306030133414325
+      },
+      "resolvedCountyId": "martin-tx",
+      "passed": true
+    },
+    {
+      "countyId": "mason-tx",
+      "countyFips": "48319",
+      "point": {
+        "lng": -99.22612742360077,
+        "lat": 30.717715802455256
+      },
+      "resolvedCountyId": "mason-tx",
+      "passed": true
+    },
+    {
+      "countyId": "matagorda-tx",
+      "countyFips": "48321",
+      "point": {
+        "lng": -96.00398075782229,
+        "lat": 28.78565055364251
+      },
+      "resolvedCountyId": "matagorda-tx",
+      "passed": true
+    },
+    {
+      "countyId": "maverick-tx",
+      "countyFips": "48323",
+      "point": {
+        "lng": -100.31451417126522,
+        "lat": 28.742590130566377
+      },
+      "resolvedCountyId": "maverick-tx",
+      "passed": true
+    },
+    {
+      "countyId": "medina-tx",
+      "countyFips": "48325",
+      "point": {
+        "lng": -99.11013099644481,
+        "lat": 29.355696049797476
+      },
+      "resolvedCountyId": "medina-tx",
+      "passed": true
+    },
+    {
+      "countyId": "menard-tx",
+      "countyFips": "48327",
+      "point": {
+        "lng": -99.82063586078536,
+        "lat": 30.88978200676198
+      },
+      "resolvedCountyId": "menard-tx",
+      "passed": true
+    },
+    {
+      "countyId": "midland-tx",
+      "countyFips": "48329",
+      "point": {
+        "lng": -102.03160927688336,
+        "lat": 31.8691599470378
+      },
+      "resolvedCountyId": "midland-tx",
+      "passed": true
+    },
+    {
+      "countyId": "milam-tx",
+      "countyFips": "48331",
+      "point": {
+        "lng": -96.97682637330048,
+        "lat": 30.78630242773364
+      },
+      "resolvedCountyId": "milam-tx",
+      "passed": true
+    },
+    {
+      "countyId": "mills-tx",
+      "countyFips": "48333",
+      "point": {
+        "lng": -98.5954583668646,
+        "lat": 31.4951911727431
+      },
+      "resolvedCountyId": "mills-tx",
+      "passed": true
+    },
+    {
+      "countyId": "mitchell-tx",
+      "countyFips": "48335",
+      "point": {
+        "lng": -100.92122865392261,
+        "lat": 32.306211752032254
+      },
+      "resolvedCountyId": "mitchell-tx",
+      "passed": true
+    },
+    {
+      "countyId": "montague-tx",
+      "countyFips": "48337",
+      "point": {
+        "lng": -97.72465312130014,
+        "lat": 33.67562655215194
+      },
+      "resolvedCountyId": "montague-tx",
+      "passed": true
+    },
+    {
+      "countyId": "montgomery-tx",
+      "countyFips": "48339",
+      "point": {
+        "lng": -95.50300850413325,
+        "lat": 30.30020781242215
+      },
+      "resolvedCountyId": "montgomery-tx",
+      "passed": true
+    },
+    {
+      "countyId": "moore-tx",
+      "countyFips": "48341",
+      "point": {
+        "lng": -101.89292280950839,
+        "lat": 35.83768725249161
+      },
+      "resolvedCountyId": "moore-tx",
+      "passed": true
+    },
+    {
+      "countyId": "morris-tx",
+      "countyFips": "48343",
+      "point": {
+        "lng": -94.73265037127084,
+        "lat": 33.11348257200743
+      },
+      "resolvedCountyId": "morris-tx",
+      "passed": true
+    },
+    {
+      "countyId": "motley-tx",
+      "countyFips": "48345",
+      "point": {
+        "lng": -100.77982896685812,
+        "lat": 34.07409477686105
+      },
+      "resolvedCountyId": "motley-tx",
+      "passed": true
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "countyFips": "48347",
+      "point": {
+        "lng": -94.61586919353331,
+        "lat": 31.615952196709713
+      },
+      "resolvedCountyId": "nacogdoches-tx",
+      "passed": true
+    },
+    {
+      "countyId": "navarro-tx",
+      "countyFips": "48349",
+      "point": {
+        "lng": -96.47248640689597,
+        "lat": 32.046942857179225
+      },
+      "resolvedCountyId": "navarro-tx",
+      "passed": true
+    },
+    {
+      "countyId": "newton-tx",
+      "countyFips": "48351",
+      "point": {
+        "lng": -93.7447410127137,
+        "lat": 30.786309192593034
+      },
+      "resolvedCountyId": "newton-tx",
+      "passed": true
+    },
+    {
+      "countyId": "nolan-tx",
+      "countyFips": "48353",
+      "point": {
+        "lng": -100.40605246217697,
+        "lat": 32.30349025928805
+      },
+      "resolvedCountyId": "nolan-tx",
+      "passed": true
+    },
+    {
+      "countyId": "nueces-tx",
+      "countyFips": "48355",
+      "point": {
+        "lng": -97.51623565550378,
+        "lat": 27.735048617874913
+      },
+      "resolvedCountyId": "nueces-tx",
+      "passed": true
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "countyFips": "48357",
+      "point": {
+        "lng": -100.81565396954635,
+        "lat": 36.27841371397544
+      },
+      "resolvedCountyId": "ochiltree-tx",
+      "passed": true
+    },
+    {
+      "countyId": "oldham-tx",
+      "countyFips": "48359",
+      "point": {
+        "lng": -102.60287060302659,
+        "lat": 35.40503461818829
+      },
+      "resolvedCountyId": "oldham-tx",
+      "passed": true
+    },
+    {
+      "countyId": "orange-tx",
+      "countyFips": "48361",
+      "point": {
+        "lng": -93.89387611210887,
+        "lat": 30.12131354791171
+      },
+      "resolvedCountyId": "orange-tx",
+      "passed": true
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "countyFips": "48363",
+      "point": {
+        "lng": -98.31302137936157,
+        "lat": 32.75318037868413
+      },
+      "resolvedCountyId": "palo-pinto-tx",
+      "passed": true
+    },
+    {
+      "countyId": "panola-tx",
+      "countyFips": "48365",
+      "point": {
+        "lng": -94.30563985768048,
+        "lat": 32.162355237756344
+      },
+      "resolvedCountyId": "panola-tx",
+      "passed": true
+    },
+    {
+      "countyId": "parker-tx",
+      "countyFips": "48367",
+      "point": {
+        "lng": -97.80509666481127,
+        "lat": 32.777645813411155
+      },
+      "resolvedCountyId": "parker-tx",
+      "passed": true
+    },
+    {
+      "countyId": "parmer-tx",
+      "countyFips": "48369",
+      "point": {
+        "lng": -102.78453885268401,
+        "lat": 34.530112945225774
+      },
+      "resolvedCountyId": "parmer-tx",
+      "passed": true
+    },
+    {
+      "countyId": "pecos-tx",
+      "countyFips": "48371",
+      "point": {
+        "lng": -102.72357033218269,
+        "lat": 30.781060509715644
+      },
+      "resolvedCountyId": "pecos-tx",
+      "passed": true
+    },
+    {
+      "countyId": "polk-tx",
+      "countyFips": "48373",
+      "point": {
+        "lng": -94.83002486127677,
+        "lat": 30.79271976623162
+      },
+      "resolvedCountyId": "polk-tx",
+      "passed": true
+    },
+    {
+      "countyId": "potter-tx",
+      "countyFips": "48375",
+      "point": {
+        "lng": -101.89400489770584,
+        "lat": 35.401275816489196
+      },
+      "resolvedCountyId": "potter-tx",
+      "passed": true
+    },
+    {
+      "countyId": "presidio-tx",
+      "countyFips": "48377",
+      "point": {
+        "lng": -104.24052167959714,
+        "lat": 29.999802670022532
+      },
+      "resolvedCountyId": "presidio-tx",
+      "passed": true
+    },
+    {
+      "countyId": "rains-tx",
+      "countyFips": "48379",
+      "point": {
+        "lng": -95.79337634379043,
+        "lat": 32.87033942306643
+      },
+      "resolvedCountyId": "rains-tx",
+      "passed": true
+    },
+    {
+      "countyId": "randall-tx",
+      "countyFips": "48381",
+      "point": {
+        "lng": -101.8969445302149,
+        "lat": 34.96585699874038
+      },
+      "resolvedCountyId": "randall-tx",
+      "passed": true
+    },
+    {
+      "countyId": "reagan-tx",
+      "countyFips": "48383",
+      "point": {
+        "lng": -101.52300841386517,
+        "lat": 31.36619212920664
+      },
+      "resolvedCountyId": "reagan-tx",
+      "passed": true
+    },
+    {
+      "countyId": "real-tx",
+      "countyFips": "48385",
+      "point": {
+        "lng": -99.8221669208522,
+        "lat": 29.831742937170567
+      },
+      "resolvedCountyId": "real-tx",
+      "passed": true
+    },
+    {
+      "countyId": "red-river-tx",
+      "countyFips": "48387",
+      "point": {
+        "lng": -95.05036072996346,
+        "lat": 33.620681816377264
+      },
+      "resolvedCountyId": "red-river-tx",
+      "passed": true
+    },
+    {
+      "countyId": "reeves-tx",
+      "countyFips": "48389",
+      "point": {
+        "lng": -103.69316726613938,
+        "lat": 31.32318615671694
+      },
+      "resolvedCountyId": "reeves-tx",
+      "passed": true
+    },
+    {
+      "countyId": "refugio-tx",
+      "countyFips": "48391",
+      "point": {
+        "lng": -97.15952146218062,
+        "lat": 28.321575299782317
+      },
+      "resolvedCountyId": "refugio-tx",
+      "passed": true
+    },
+    {
+      "countyId": "roberts-tx",
+      "countyFips": "48393",
+      "point": {
+        "lng": -100.8134440833454,
+        "lat": 35.83849167344701
+      },
+      "resolvedCountyId": "roberts-tx",
+      "passed": true
+    },
+    {
+      "countyId": "robertson-tx",
+      "countyFips": "48395",
+      "point": {
+        "lng": -96.51288117717084,
+        "lat": 31.027013023818814
+      },
+      "resolvedCountyId": "robertson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "rockwall-tx",
+      "countyFips": "48397",
+      "point": {
+        "lng": -96.40788512914412,
+        "lat": 32.897848822697135
+      },
+      "resolvedCountyId": "rockwall-tx",
+      "passed": true
+    },
+    {
+      "countyId": "runnels-tx",
+      "countyFips": "48399",
+      "point": {
+        "lng": -99.97623130387848,
+        "lat": 31.831095248144916
+      },
+      "resolvedCountyId": "runnels-tx",
+      "passed": true
+    },
+    {
+      "countyId": "rusk-tx",
+      "countyFips": "48401",
+      "point": {
+        "lng": -94.76184558766053,
+        "lat": 32.107679205051724
+      },
+      "resolvedCountyId": "rusk-tx",
+      "passed": true
+    },
+    {
+      "countyId": "sabine-tx",
+      "countyFips": "48403",
+      "point": {
+        "lng": -93.85180241443213,
+        "lat": 31.34319986259873
+      },
+      "resolvedCountyId": "sabine-tx",
+      "passed": true
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "countyFips": "48405",
+      "point": {
+        "lng": -94.16819369875341,
+        "lat": 31.394219824275297
+      },
+      "resolvedCountyId": "san-augustine-tx",
+      "passed": true
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "countyFips": "48407",
+      "point": {
+        "lng": -95.1669012010298,
+        "lat": 30.579533583205592
+      },
+      "resolvedCountyId": "san-jacinto-tx",
+      "passed": true
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "countyFips": "48409",
+      "point": {
+        "lng": -97.51830586331921,
+        "lat": 28.008811133453708
+      },
+      "resolvedCountyId": "san-patricio-tx",
+      "passed": true
+    },
+    {
+      "countyId": "san-saba-tx",
+      "countyFips": "48411",
+      "point": {
+        "lng": -98.81755113570635,
+        "lat": 31.155194586185583
+      },
+      "resolvedCountyId": "san-saba-tx",
+      "passed": true
+    },
+    {
+      "countyId": "schleicher-tx",
+      "countyFips": "48413",
+      "point": {
+        "lng": -100.53854604460025,
+        "lat": 30.897452608380814
+      },
+      "resolvedCountyId": "schleicher-tx",
+      "passed": true
+    },
+    {
+      "countyId": "scurry-tx",
+      "countyFips": "48415",
+      "point": {
+        "lng": -100.91640707790039,
+        "lat": 32.74631492949583
+      },
+      "resolvedCountyId": "scurry-tx",
+      "passed": true
+    },
+    {
+      "countyId": "shackelford-tx",
+      "countyFips": "48417",
+      "point": {
+        "lng": -99.35406694144227,
+        "lat": 32.73597287331568
+      },
+      "resolvedCountyId": "shackelford-tx",
+      "passed": true
+    },
+    {
+      "countyId": "shelby-tx",
+      "countyFips": "48419",
+      "point": {
+        "lng": -94.14501755823905,
+        "lat": 31.792408942648862
+      },
+      "resolvedCountyId": "shelby-tx",
+      "passed": true
+    },
+    {
+      "countyId": "sherman-tx",
+      "countyFips": "48421",
+      "point": {
+        "lng": -101.89346700473648,
+        "lat": 36.277666863685276
+      },
+      "resolvedCountyId": "sherman-tx",
+      "passed": true
+    },
+    {
+      "countyId": "smith-tx",
+      "countyFips": "48423",
+      "point": {
+        "lng": -95.26918268173013,
+        "lat": 32.37503542103108
+      },
+      "resolvedCountyId": "smith-tx",
+      "passed": true
+    },
+    {
+      "countyId": "somervell-tx",
+      "countyFips": "48425",
+      "point": {
+        "lng": -97.77455337195623,
+        "lat": 32.2222153280383
+      },
+      "resolvedCountyId": "somervell-tx",
+      "passed": true
+    },
+    {
+      "countyId": "starr-tx",
+      "countyFips": "48427",
+      "point": {
+        "lng": -98.73839874970719,
+        "lat": 26.562148989484918
+      },
+      "resolvedCountyId": "starr-tx",
+      "passed": true
+    },
+    {
+      "countyId": "stephens-tx",
+      "countyFips": "48429",
+      "point": {
+        "lng": -98.836173157186,
+        "lat": 32.73586501750139
+      },
+      "resolvedCountyId": "stephens-tx",
+      "passed": true
+    },
+    {
+      "countyId": "sterling-tx",
+      "countyFips": "48431",
+      "point": {
+        "lng": -101.050008039006,
+        "lat": 31.82787920179517
+      },
+      "resolvedCountyId": "sterling-tx",
+      "passed": true
+    },
+    {
+      "countyId": "stonewall-tx",
+      "countyFips": "48433",
+      "point": {
+        "lng": -100.25330550680455,
+        "lat": 33.179124387282165
+      },
+      "resolvedCountyId": "stonewall-tx",
+      "passed": true
+    },
+    {
+      "countyId": "sutton-tx",
+      "countyFips": "48435",
+      "point": {
+        "lng": -100.53818749476615,
+        "lat": 30.498293027670293
+      },
+      "resolvedCountyId": "sutton-tx",
+      "passed": true
+    },
+    {
+      "countyId": "swisher-tx",
+      "countyFips": "48437",
+      "point": {
+        "lng": -101.7350268457077,
+        "lat": 34.53038499054818
+      },
+      "resolvedCountyId": "swisher-tx",
+      "passed": true
+    },
+    {
+      "countyId": "tarrant-tx",
+      "countyFips": "48439",
+      "point": {
+        "lng": -97.29113114653872,
+        "lat": 32.771923506123066
+      },
+      "resolvedCountyId": "tarrant-tx",
+      "passed": true
+    },
+    {
+      "countyId": "taylor-tx",
+      "countyFips": "48441",
+      "point": {
+        "lng": -99.89012209256923,
+        "lat": 32.30147200681298
+      },
+      "resolvedCountyId": "taylor-tx",
+      "passed": true
+    },
+    {
+      "countyId": "terrell-tx",
+      "countyFips": "48443",
+      "point": {
+        "lng": -102.07648647084534,
+        "lat": 30.224961567030682
+      },
+      "resolvedCountyId": "terrell-tx",
+      "passed": true
+    },
+    {
+      "countyId": "terry-tx",
+      "countyFips": "48445",
+      "point": {
+        "lng": -102.33519655029323,
+        "lat": 33.173812659090096
+      },
+      "resolvedCountyId": "terry-tx",
+      "passed": true
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "countyFips": "48447",
+      "point": {
+        "lng": -99.21236985266736,
+        "lat": 33.17748994202829
+      },
+      "resolvedCountyId": "throckmorton-tx",
+      "passed": true
+    },
+    {
+      "countyId": "titus-tx",
+      "countyFips": "48449",
+      "point": {
+        "lng": -94.96567222635224,
+        "lat": 33.21660303596421
+      },
+      "resolvedCountyId": "titus-tx",
+      "passed": true
+    },
+    {
+      "countyId": "tom-green-tx",
+      "countyFips": "48451",
+      "point": {
+        "lng": -100.46207283749622,
+        "lat": 31.404399316845712
+      },
+      "resolvedCountyId": "tom-green-tx",
+      "passed": true
+    },
+    {
+      "countyId": "travis-tx",
+      "countyFips": "48453",
+      "point": {
+        "lng": -97.78195731241627,
+        "lat": 30.334376172087833
+      },
+      "resolvedCountyId": "travis-tx",
+      "passed": true
+    },
+    {
+      "countyId": "trinity-tx",
+      "countyFips": "48455",
+      "point": {
+        "lng": -95.13551054763106,
+        "lat": 31.088815201609286
+      },
+      "resolvedCountyId": "trinity-tx",
+      "passed": true
+    },
+    {
+      "countyId": "tyler-tx",
+      "countyFips": "48457",
+      "point": {
+        "lng": -94.37659392771755,
+        "lat": 30.771232149051905
+      },
+      "resolvedCountyId": "tyler-tx",
+      "passed": true
+    },
+    {
+      "countyId": "upshur-tx",
+      "countyFips": "48459",
+      "point": {
+        "lng": -94.94148452884743,
+        "lat": 32.73627653540001
+      },
+      "resolvedCountyId": "upshur-tx",
+      "passed": true
+    },
+    {
+      "countyId": "upton-tx",
+      "countyFips": "48461",
+      "point": {
+        "lng": -102.04303489233664,
+        "lat": 31.36873022905282
+      },
+      "resolvedCountyId": "upton-tx",
+      "passed": true
+    },
+    {
+      "countyId": "uvalde-tx",
+      "countyFips": "48463",
+      "point": {
+        "lng": -99.76220527591936,
+        "lat": 29.35733617790992
+      },
+      "resolvedCountyId": "uvalde-tx",
+      "passed": true
+    },
+    {
+      "countyId": "val-verde-tx",
+      "countyFips": "48465",
+      "point": {
+        "lng": -101.15171519752245,
+        "lat": 29.892960136641108
+      },
+      "resolvedCountyId": "val-verde-tx",
+      "passed": true
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "countyFips": "48467",
+      "point": {
+        "lng": -95.83651611152351,
+        "lat": 32.56371670238704
+      },
+      "resolvedCountyId": "van-zandt-tx",
+      "passed": true
+    },
+    {
+      "countyId": "victoria-tx",
+      "countyFips": "48469",
+      "point": {
+        "lng": -96.97152527480871,
+        "lat": 28.79635149135396
+      },
+      "resolvedCountyId": "victoria-tx",
+      "passed": true
+    },
+    {
+      "countyId": "walker-tx",
+      "countyFips": "48471",
+      "point": {
+        "lng": -95.57228392990247,
+        "lat": 30.73904486089396
+      },
+      "resolvedCountyId": "walker-tx",
+      "passed": true
+    },
+    {
+      "countyId": "waller-tx",
+      "countyFips": "48473",
+      "point": {
+        "lng": -95.98763213242204,
+        "lat": 30.010784111256736
+      },
+      "resolvedCountyId": "waller-tx",
+      "passed": true
+    },
+    {
+      "countyId": "ward-tx",
+      "countyFips": "48475",
+      "point": {
+        "lng": -103.10242523856628,
+        "lat": 31.509465550503652
+      },
+      "resolvedCountyId": "ward-tx",
+      "passed": true
+    },
+    {
+      "countyId": "washington-tx",
+      "countyFips": "48477",
+      "point": {
+        "lng": -96.40344376212049,
+        "lat": 30.214530426684682
+      },
+      "resolvedCountyId": "washington-tx",
+      "passed": true
+    },
+    {
+      "countyId": "webb-tx",
+      "countyFips": "48479",
+      "point": {
+        "lng": -99.33156530432676,
+        "lat": 27.761062430038972
+      },
+      "resolvedCountyId": "webb-tx",
+      "passed": true
+    },
+    {
+      "countyId": "wharton-tx",
+      "countyFips": "48481",
+      "point": {
+        "lng": -96.22210423983083,
+        "lat": 29.27786164584623
+      },
+      "resolvedCountyId": "wharton-tx",
+      "passed": true
+    },
+    {
+      "countyId": "wheeler-tx",
+      "countyFips": "48483",
+      "point": {
+        "lng": -100.26964751039732,
+        "lat": 35.401278804793535
+      },
+      "resolvedCountyId": "wheeler-tx",
+      "passed": true
+    },
+    {
+      "countyId": "wichita-tx",
+      "countyFips": "48485",
+      "point": {
+        "lng": -98.70355074786971,
+        "lat": 33.987997042809354
+      },
+      "resolvedCountyId": "wichita-tx",
+      "passed": true
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "countyFips": "48487",
+      "point": {
+        "lng": -99.2410547632518,
+        "lat": 34.08072613294793
+      },
+      "resolvedCountyId": "wilbarger-tx",
+      "passed": true
+    },
+    {
+      "countyId": "willacy-tx",
+      "countyFips": "48489",
+      "point": {
+        "lng": -97.59165763840991,
+        "lat": 26.476966332977252
+      },
+      "resolvedCountyId": "willacy-tx",
+      "passed": true
+    },
+    {
+      "countyId": "williamson-tx",
+      "countyFips": "48491",
+      "point": {
+        "lng": -97.60040382893371,
+        "lat": 30.647522636104934
+      },
+      "resolvedCountyId": "williamson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "wilson-tx",
+      "countyFips": "48493",
+      "point": {
+        "lng": -98.08657328038669,
+        "lat": 29.17400608551904
+      },
+      "resolvedCountyId": "wilson-tx",
+      "passed": true
+    },
+    {
+      "countyId": "winkler-tx",
+      "countyFips": "48495",
+      "point": {
+        "lng": -103.04816905601884,
+        "lat": 31.850044565042094
+      },
+      "resolvedCountyId": "winkler-tx",
+      "passed": true
+    },
+    {
+      "countyId": "wise-tx",
+      "countyFips": "48497",
+      "point": {
+        "lng": -97.65446210858894,
+        "lat": 33.21589956130623
+      },
+      "resolvedCountyId": "wise-tx",
+      "passed": true
+    },
+    {
+      "countyId": "wood-tx",
+      "countyFips": "48499",
+      "point": {
+        "lng": -95.3820619716135,
+        "lat": 32.78640514009717
+      },
+      "resolvedCountyId": "wood-tx",
+      "passed": true
+    },
+    {
+      "countyId": "yoakum-tx",
+      "countyFips": "48501",
+      "point": {
+        "lng": -102.82779607234885,
+        "lat": 33.172974605772644
+      },
+      "resolvedCountyId": "yoakum-tx",
+      "passed": true
+    },
+    {
+      "countyId": "young-tx",
+      "countyFips": "48503",
+      "point": {
+        "lng": -98.6877665582085,
+        "lat": 33.17669577661499
+      },
+      "resolvedCountyId": "young-tx",
+      "passed": true
+    },
+    {
+      "countyId": "zapata-tx",
+      "countyFips": "48505",
+      "point": {
+        "lng": -99.16861279123253,
+        "lat": 27.00077815589589
+      },
+      "resolvedCountyId": "zapata-tx",
+      "passed": true
+    },
+    {
+      "countyId": "zavala-tx",
+      "countyFips": "48507",
+      "point": {
+        "lng": -99.7605956715243,
+        "lat": 28.866211422340243
+      },
+      "resolvedCountyId": "zavala-tx",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

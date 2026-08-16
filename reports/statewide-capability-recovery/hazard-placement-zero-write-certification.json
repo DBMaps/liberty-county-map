@@ -1,0 +1,4341 @@
+{
+  "schemaVersion": "gridly.hazardPlacementZeroWriteCertification.v1",
+  "source": {
+    "artifactPath": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+    "bytes": 47911048,
+    "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316",
+    "schemaVersion": "gridly.lp1904.authoritativeCountyGeometry.runtime.v1",
+    "packageVersion": "lp1904-governed-254-runtime-geometry-v1",
+    "provenance": {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+      "geometryPreservation": "authoritative polygons copied without simplification"
+    }
+  },
+  "tested": 254,
+  "prePersistenceSuccesses": 254,
+  "coverageInvalidCount": 0,
+  "crossingDependencyFailureCount": 0,
+  "identityMismatchCount": 0,
+  "persistenceWriteCount": 0,
+  "results": [
+    {
+      "countyId": "anderson-tx",
+      "countyFips": "48001",
+      "point": {
+        "lng": -95.65254717718128,
+        "lat": 31.813325667224557
+      },
+      "countyMetadata": {
+        "county_id": "anderson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "andrews-tx",
+      "countyFips": "48003",
+      "point": {
+        "lng": -102.63781512106534,
+        "lat": 32.305035659604386
+      },
+      "countyMetadata": {
+        "county_id": "andrews-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "angelina-tx",
+      "countyFips": "48005",
+      "point": {
+        "lng": -94.61186351521725,
+        "lat": 31.254783081493056
+      },
+      "countyMetadata": {
+        "county_id": "angelina-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "aransas-tx",
+      "countyFips": "48007",
+      "point": {
+        "lng": -96.99143876544358,
+        "lat": 28.084719294194233
+      },
+      "countyMetadata": {
+        "county_id": "aransas-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "archer-tx",
+      "countyFips": "48009",
+      "point": {
+        "lng": -98.68767480226873,
+        "lat": 33.61529421917034
+      },
+      "countyMetadata": {
+        "county_id": "archer-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "armstrong-tx",
+      "countyFips": "48011",
+      "point": {
+        "lng": -101.35740433885465,
+        "lat": 34.96492558618824
+      },
+      "countyMetadata": {
+        "county_id": "armstrong-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "atascosa-tx",
+      "countyFips": "48013",
+      "point": {
+        "lng": -98.52713226963257,
+        "lat": 28.893524978366234
+      },
+      "countyMetadata": {
+        "county_id": "atascosa-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "austin-tx",
+      "countyFips": "48015",
+      "point": {
+        "lng": -96.27790889071294,
+        "lat": 29.887024099195063
+      },
+      "countyMetadata": {
+        "county_id": "austin-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "bailey-tx",
+      "countyFips": "48017",
+      "point": {
+        "lng": -102.82991312411478,
+        "lat": 34.0685270236879
+      },
+      "countyMetadata": {
+        "county_id": "bailey-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "bandera-tx",
+      "countyFips": "48019",
+      "point": {
+        "lng": -99.24624410603741,
+        "lat": 29.747204987821984
+      },
+      "countyMetadata": {
+        "county_id": "bandera-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "bastrop-tx",
+      "countyFips": "48021",
+      "point": {
+        "lng": -97.31201437399257,
+        "lat": 30.10361086668305
+      },
+      "countyMetadata": {
+        "county_id": "bastrop-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "baylor-tx",
+      "countyFips": "48023",
+      "point": {
+        "lng": -99.21351514272541,
+        "lat": 33.61648949955506
+      },
+      "countyMetadata": {
+        "county_id": "baylor-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "bee-tx",
+      "countyFips": "48025",
+      "point": {
+        "lng": -97.74119012922989,
+        "lat": 28.41739322832837
+      },
+      "countyMetadata": {
+        "county_id": "bee-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "bell-tx",
+      "countyFips": "48027",
+      "point": {
+        "lng": -97.47874404474598,
+        "lat": 31.03734519799816
+      },
+      "countyMetadata": {
+        "county_id": "bell-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "bexar-tx",
+      "countyFips": "48029",
+      "point": {
+        "lng": -98.52002587325121,
+        "lat": 29.448957831833926
+      },
+      "countyMetadata": {
+        "county_id": "bexar-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "blanco-tx",
+      "countyFips": "48031",
+      "point": {
+        "lng": -98.39986501908037,
+        "lat": 30.266376875038883
+      },
+      "countyMetadata": {
+        "county_id": "blanco-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "borden-tx",
+      "countyFips": "48033",
+      "point": {
+        "lng": -101.43174879468816,
+        "lat": 32.743694149965286
+      },
+      "countyMetadata": {
+        "county_id": "borden-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "bosque-tx",
+      "countyFips": "48035",
+      "point": {
+        "lng": -97.63434295586615,
+        "lat": 31.900416723482312
+      },
+      "countyMetadata": {
+        "county_id": "bosque-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "bowie-tx",
+      "countyFips": "48037",
+      "point": {
+        "lng": -94.42333243933608,
+        "lat": 33.44575713064375
+      },
+      "countyMetadata": {
+        "county_id": "bowie-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "brazoria-tx",
+      "countyFips": "48039",
+      "point": {
+        "lng": -95.43426826954502,
+        "lat": 29.167845304021775
+      },
+      "countyMetadata": {
+        "county_id": "brazoria-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "brazos-tx",
+      "countyFips": "48041",
+      "point": {
+        "lng": -96.3023849442494,
+        "lat": 30.660798972141333
+      },
+      "countyMetadata": {
+        "county_id": "brazos-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "brewster-tx",
+      "countyFips": "48043",
+      "point": {
+        "lng": -103.25175585563359,
+        "lat": 29.811949774320446
+      },
+      "countyMetadata": {
+        "county_id": "brewster-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "briscoe-tx",
+      "countyFips": "48045",
+      "point": {
+        "lng": -101.20859330506511,
+        "lat": 34.530264104664745
+      },
+      "countyMetadata": {
+        "county_id": "briscoe-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "brooks-tx",
+      "countyFips": "48047",
+      "point": {
+        "lng": -98.21872111945576,
+        "lat": 27.03157264378134
+      },
+      "countyMetadata": {
+        "county_id": "brooks-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "brown-tx",
+      "countyFips": "48049",
+      "point": {
+        "lng": -98.99979417741748,
+        "lat": 31.774262415871696
+      },
+      "countyMetadata": {
+        "county_id": "brown-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "burleson-tx",
+      "countyFips": "48051",
+      "point": {
+        "lng": -96.62147067386833,
+        "lat": 30.492485137107924
+      },
+      "countyMetadata": {
+        "county_id": "burleson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "burnet-tx",
+      "countyFips": "48053",
+      "point": {
+        "lng": -98.18234042891214,
+        "lat": 30.78837267412477
+      },
+      "countyMetadata": {
+        "county_id": "burnet-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "caldwell-tx",
+      "countyFips": "48055",
+      "point": {
+        "lng": -97.61991937101251,
+        "lat": 29.83684412700395
+      },
+      "countyMetadata": {
+        "county_id": "caldwell-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "calhoun-tx",
+      "countyFips": "48057",
+      "point": {
+        "lng": -96.61507367412496,
+        "lat": 28.439109268790293
+      },
+      "countyMetadata": {
+        "county_id": "calhoun-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "callahan-tx",
+      "countyFips": "48059",
+      "point": {
+        "lng": -99.37348808415211,
+        "lat": 32.29765570011102
+      },
+      "countyMetadata": {
+        "county_id": "callahan-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "cameron-tx",
+      "countyFips": "48061",
+      "point": {
+        "lng": -97.45205686392548,
+        "lat": 26.150865919027208
+      },
+      "countyMetadata": {
+        "county_id": "cameron-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "camp-tx",
+      "countyFips": "48063",
+      "point": {
+        "lng": -94.97847695445192,
+        "lat": 32.9732247417788
+      },
+      "countyMetadata": {
+        "county_id": "camp-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "carson-tx",
+      "countyFips": "48065",
+      "point": {
+        "lng": -101.35418302981762,
+        "lat": 35.40350786999828
+      },
+      "countyMetadata": {
+        "county_id": "carson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "cass-tx",
+      "countyFips": "48067",
+      "point": {
+        "lng": -94.3435984216982,
+        "lat": 33.07753460304627
+      },
+      "countyMetadata": {
+        "county_id": "cass-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "castro-tx",
+      "countyFips": "48069",
+      "point": {
+        "lng": -102.2616698935864,
+        "lat": 34.529958229432204
+      },
+      "countyMetadata": {
+        "county_id": "castro-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "chambers-tx",
+      "countyFips": "48071",
+      "point": {
+        "lng": -94.67135893572771,
+        "lat": 29.708264851628098
+      },
+      "countyMetadata": {
+        "county_id": "chambers-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "cherokee-tx",
+      "countyFips": "48073",
+      "point": {
+        "lng": -95.16518313754132,
+        "lat": 31.836954638858625
+      },
+      "countyMetadata": {
+        "county_id": "cherokee-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "childress-tx",
+      "countyFips": "48075",
+      "point": {
+        "lng": -100.20757494708334,
+        "lat": 34.52920145744293
+      },
+      "countyMetadata": {
+        "county_id": "childress-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "clay-tx",
+      "countyFips": "48077",
+      "point": {
+        "lng": -98.20850330048393,
+        "lat": 33.78553104118029
+      },
+      "countyMetadata": {
+        "county_id": "clay-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "cochran-tx",
+      "countyFips": "48079",
+      "point": {
+        "lng": -102.82843563078131,
+        "lat": 33.60414244021725
+      },
+      "countyMetadata": {
+        "county_id": "cochran-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "coke-tx",
+      "countyFips": "48081",
+      "point": {
+        "lng": -100.52991076812842,
+        "lat": 31.88853098713445
+      },
+      "countyMetadata": {
+        "county_id": "coke-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "coleman-tx",
+      "countyFips": "48083",
+      "point": {
+        "lng": -99.45363765027925,
+        "lat": 31.773206867831153
+      },
+      "countyMetadata": {
+        "county_id": "coleman-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "collin-tx",
+      "countyFips": "48085",
+      "point": {
+        "lng": -96.57242942695366,
+        "lat": 33.18798980847091
+      },
+      "countyMetadata": {
+        "county_id": "collin-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "countyFips": "48087",
+      "point": {
+        "lng": -100.27006592190628,
+        "lat": 34.96488392405681
+      },
+      "countyMetadata": {
+        "county_id": "collingsworth-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "colorado-tx",
+      "countyFips": "48089",
+      "point": {
+        "lng": -96.52627535368119,
+        "lat": 29.620820931908618
+      },
+      "countyMetadata": {
+        "county_id": "colorado-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "comal-tx",
+      "countyFips": "48091",
+      "point": {
+        "lng": -98.278245528079,
+        "lat": 29.808180120231654
+      },
+      "countyMetadata": {
+        "county_id": "comal-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "comanche-tx",
+      "countyFips": "48093",
+      "point": {
+        "lng": -98.55825730159123,
+        "lat": 31.947978106664756
+      },
+      "countyMetadata": {
+        "county_id": "comanche-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "concho-tx",
+      "countyFips": "48095",
+      "point": {
+        "lng": -99.8639623317341,
+        "lat": 31.326496735930604
+      },
+      "countyMetadata": {
+        "county_id": "concho-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "cooke-tx",
+      "countyFips": "48097",
+      "point": {
+        "lng": -97.21262612660097,
+        "lat": 33.63920034577274
+      },
+      "countyMetadata": {
+        "county_id": "cooke-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "coryell-tx",
+      "countyFips": "48099",
+      "point": {
+        "lng": -97.79921973764985,
+        "lat": 31.390905430256698
+      },
+      "countyMetadata": {
+        "county_id": "coryell-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "cottle-tx",
+      "countyFips": "48101",
+      "point": {
+        "lng": -100.27874380471839,
+        "lat": 34.077648158982015
+      },
+      "countyMetadata": {
+        "county_id": "cottle-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "crane-tx",
+      "countyFips": "48103",
+      "point": {
+        "lng": -102.51556844253567,
+        "lat": 31.428497464842216
+      },
+      "countyMetadata": {
+        "county_id": "crane-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "crockett-tx",
+      "countyFips": "48105",
+      "point": {
+        "lng": -101.41214766138425,
+        "lat": 30.72298308599335
+      },
+      "countyMetadata": {
+        "county_id": "crockett-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "crosby-tx",
+      "countyFips": "48107",
+      "point": {
+        "lng": -101.29995845137458,
+        "lat": 33.614625030361786
+      },
+      "countyMetadata": {
+        "county_id": "crosby-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "culberson-tx",
+      "countyFips": "48109",
+      "point": {
+        "lng": -104.51736996532489,
+        "lat": 31.447073752005018
+      },
+      "countyMetadata": {
+        "county_id": "culberson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "dallam-tx",
+      "countyFips": "48111",
+      "point": {
+        "lng": -102.60218561966953,
+        "lat": 36.27788789084653
+      },
+      "countyMetadata": {
+        "county_id": "dallam-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "dallas-tx",
+      "countyFips": "48113",
+      "point": {
+        "lng": -96.77776413970456,
+        "lat": 32.76657257731832
+      },
+      "countyMetadata": {
+        "county_id": "dallas-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "dawson-tx",
+      "countyFips": "48115",
+      "point": {
+        "lng": -101.9476844408639,
+        "lat": 32.74252609937081
+      },
+      "countyMetadata": {
+        "county_id": "dawson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "countyFips": "48117",
+      "point": {
+        "lng": -102.60492683763134,
+        "lat": 34.96601903668664
+      },
+      "countyMetadata": {
+        "county_id": "deaf-smith-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "delta-tx",
+      "countyFips": "48119",
+      "point": {
+        "lng": -95.67227082224055,
+        "lat": 33.3862927411859
+      },
+      "countyMetadata": {
+        "county_id": "delta-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "denton-tx",
+      "countyFips": "48121",
+      "point": {
+        "lng": -97.11681506040618,
+        "lat": 33.20553124069311
+      },
+      "countyMetadata": {
+        "county_id": "denton-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "dewitt-tx",
+      "countyFips": "48123",
+      "point": {
+        "lng": -97.3567784440325,
+        "lat": 29.082081292475685
+      },
+      "countyMetadata": {
+        "county_id": "dewitt-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "dickens-tx",
+      "countyFips": "48125",
+      "point": {
+        "lng": -100.77886065206846,
+        "lat": 33.61661211369113
+      },
+      "countyMetadata": {
+        "county_id": "dickens-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "dimmit-tx",
+      "countyFips": "48127",
+      "point": {
+        "lng": -99.75672612486777,
+        "lat": 28.42253599818304
+      },
+      "countyMetadata": {
+        "county_id": "dimmit-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "donley-tx",
+      "countyFips": "48129",
+      "point": {
+        "lng": -100.81399160703415,
+        "lat": 34.96541759563003
+      },
+      "countyMetadata": {
+        "county_id": "donley-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "duval-tx",
+      "countyFips": "48131",
+      "point": {
+        "lng": -98.50890606152485,
+        "lat": 27.681332988906075
+      },
+      "countyMetadata": {
+        "county_id": "duval-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "eastland-tx",
+      "countyFips": "48133",
+      "point": {
+        "lng": -98.83232225020141,
+        "lat": 32.32707307055033
+      },
+      "countyMetadata": {
+        "county_id": "eastland-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "ector-tx",
+      "countyFips": "48135",
+      "point": {
+        "lng": -102.54274920240243,
+        "lat": 31.86917253927263
+      },
+      "countyMetadata": {
+        "county_id": "ector-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "edwards-tx",
+      "countyFips": "48137",
+      "point": {
+        "lng": -100.30474170158686,
+        "lat": 29.982632944409755
+      },
+      "countyMetadata": {
+        "county_id": "edwards-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "ellis-tx",
+      "countyFips": "48139",
+      "point": {
+        "lng": -96.79463898808645,
+        "lat": 32.34843520728885
+      },
+      "countyMetadata": {
+        "county_id": "ellis-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "el-paso-tx",
+      "countyFips": "48141",
+      "point": {
+        "lng": -106.2348354702173,
+        "lat": 31.768647564275756
+      },
+      "countyMetadata": {
+        "county_id": "el-paso-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "erath-tx",
+      "countyFips": "48143",
+      "point": {
+        "lng": -98.21796670536712,
+        "lat": 32.23625866944045
+      },
+      "countyMetadata": {
+        "county_id": "erath-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "falls-tx",
+      "countyFips": "48145",
+      "point": {
+        "lng": -96.93585090101045,
+        "lat": 31.25326207520973
+      },
+      "countyMetadata": {
+        "county_id": "falls-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "fannin-tx",
+      "countyFips": "48147",
+      "point": {
+        "lng": -96.10682768314828,
+        "lat": 33.593809792938586
+      },
+      "countyMetadata": {
+        "county_id": "fannin-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "fayette-tx",
+      "countyFips": "48149",
+      "point": {
+        "lng": -96.9197617167528,
+        "lat": 29.876786794632576
+      },
+      "countyMetadata": {
+        "county_id": "fayette-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "fisher-tx",
+      "countyFips": "48151",
+      "point": {
+        "lng": -100.4021681054013,
+        "lat": 32.74282022188556
+      },
+      "countyMetadata": {
+        "county_id": "fisher-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "floyd-tx",
+      "countyFips": "48153",
+      "point": {
+        "lng": -101.30323451886471,
+        "lat": 34.07242455065481
+      },
+      "countyMetadata": {
+        "county_id": "floyd-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "foard-tx",
+      "countyFips": "48155",
+      "point": {
+        "lng": -99.77798487847123,
+        "lat": 33.97461509221422
+      },
+      "countyMetadata": {
+        "county_id": "foard-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "countyFips": "48157",
+      "point": {
+        "lng": -95.77090938683173,
+        "lat": 29.527562417586434
+      },
+      "countyMetadata": {
+        "county_id": "fort-bend-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "franklin-tx",
+      "countyFips": "48159",
+      "point": {
+        "lng": -95.21841939750122,
+        "lat": 33.17554867595547
+      },
+      "countyMetadata": {
+        "county_id": "franklin-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "freestone-tx",
+      "countyFips": "48161",
+      "point": {
+        "lng": -96.14909229519955,
+        "lat": 31.704894073466505
+      },
+      "countyMetadata": {
+        "county_id": "freestone-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "frio-tx",
+      "countyFips": "48163",
+      "point": {
+        "lng": -99.10826678241882,
+        "lat": 28.867817588188295
+      },
+      "countyMetadata": {
+        "county_id": "frio-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "gaines-tx",
+      "countyFips": "48165",
+      "point": {
+        "lng": -102.63517378349125,
+        "lat": 32.74072772725478
+      },
+      "countyMetadata": {
+        "county_id": "gaines-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyFips": "48167",
+      "point": {
+        "lng": -94.8627226089706,
+        "lat": 29.37998595081851
+      },
+      "countyMetadata": {
+        "county_id": "galveston-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "garza-tx",
+      "countyFips": "48169",
+      "point": {
+        "lng": -101.2984241012273,
+        "lat": 33.17987570492081
+      },
+      "countyMetadata": {
+        "county_id": "garza-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "gillespie-tx",
+      "countyFips": "48171",
+      "point": {
+        "lng": -98.94648001878211,
+        "lat": 30.31805480078254
+      },
+      "countyMetadata": {
+        "county_id": "gillespie-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "glasscock-tx",
+      "countyFips": "48173",
+      "point": {
+        "lng": -101.52080219062152,
+        "lat": 31.86946270537736
+      },
+      "countyMetadata": {
+        "county_id": "glasscock-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "goliad-tx",
+      "countyFips": "48175",
+      "point": {
+        "lng": -97.426492261433,
+        "lat": 28.657095209044666
+      },
+      "countyMetadata": {
+        "county_id": "goliad-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "gonzales-tx",
+      "countyFips": "48177",
+      "point": {
+        "lng": -97.49252375095084,
+        "lat": 29.456733334414373
+      },
+      "countyMetadata": {
+        "county_id": "gonzales-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "gray-tx",
+      "countyFips": "48179",
+      "point": {
+        "lng": -100.81255803406079,
+        "lat": 35.401163256497284
+      },
+      "countyMetadata": {
+        "county_id": "gray-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "grayson-tx",
+      "countyFips": "48181",
+      "point": {
+        "lng": -96.67772499452987,
+        "lat": 33.62680767239262
+      },
+      "countyMetadata": {
+        "county_id": "grayson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "gregg-tx",
+      "countyFips": "48183",
+      "point": {
+        "lng": -94.81694778919429,
+        "lat": 32.480470602520825
+      },
+      "countyMetadata": {
+        "county_id": "gregg-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "grimes-tx",
+      "countyFips": "48185",
+      "point": {
+        "lng": -95.98550298309826,
+        "lat": 30.54347151084031
+      },
+      "countyMetadata": {
+        "county_id": "grimes-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "countyFips": "48187",
+      "point": {
+        "lng": -97.94858474189273,
+        "lat": 29.583050984465356
+      },
+      "countyMetadata": {
+        "county_id": "guadalupe-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hale-tx",
+      "countyFips": "48189",
+      "point": {
+        "lng": -101.82688130037398,
+        "lat": 34.07051250964483
+      },
+      "countyMetadata": {
+        "county_id": "hale-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hall-tx",
+      "countyFips": "48191",
+      "point": {
+        "lng": -100.6811285988036,
+        "lat": 34.53077914173467
+      },
+      "countyMetadata": {
+        "county_id": "hall-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hamilton-tx",
+      "countyFips": "48193",
+      "point": {
+        "lng": -98.11072584777253,
+        "lat": 31.704803052101113
+      },
+      "countyMetadata": {
+        "county_id": "hamilton-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hansford-tx",
+      "countyFips": "48195",
+      "point": {
+        "lng": -101.35453921102244,
+        "lat": 36.277454471593174
+      },
+      "countyMetadata": {
+        "county_id": "hansford-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hardeman-tx",
+      "countyFips": "48197",
+      "point": {
+        "lng": -99.74571673700409,
+        "lat": 34.29029388438124
+      },
+      "countyMetadata": {
+        "county_id": "hardeman-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hardin-tx",
+      "countyFips": "48199",
+      "point": {
+        "lng": -94.39022882951146,
+        "lat": 30.332377297848176
+      },
+      "countyMetadata": {
+        "county_id": "hardin-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "harris-tx",
+      "countyFips": "48201",
+      "point": {
+        "lng": -95.39226044909176,
+        "lat": 29.857306611984917
+      },
+      "countyMetadata": {
+        "county_id": "harris-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "harrison-tx",
+      "countyFips": "48203",
+      "point": {
+        "lng": -94.3714865550813,
+        "lat": 32.54813319795277
+      },
+      "countyMetadata": {
+        "county_id": "harrison-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hartley-tx",
+      "countyFips": "48205",
+      "point": {
+        "lng": -102.60286278411257,
+        "lat": 35.84002595058839
+      },
+      "countyMetadata": {
+        "county_id": "hartley-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "haskell-tx",
+      "countyFips": "48207",
+      "point": {
+        "lng": -99.73030000955279,
+        "lat": 33.17823128725513
+      },
+      "countyMetadata": {
+        "county_id": "haskell-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hays-tx",
+      "countyFips": "48209",
+      "point": {
+        "lng": -98.03115517978976,
+        "lat": 30.057887498338683
+      },
+      "countyMetadata": {
+        "county_id": "hays-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hemphill-tx",
+      "countyFips": "48211",
+      "point": {
+        "lng": -100.27047326590045,
+        "lat": 35.83756992247953
+      },
+      "countyMetadata": {
+        "county_id": "hemphill-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "henderson-tx",
+      "countyFips": "48213",
+      "point": {
+        "lng": -95.85361287562223,
+        "lat": 32.21190742841152
+      },
+      "countyMetadata": {
+        "county_id": "henderson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "countyFips": "48215",
+      "point": {
+        "lng": -98.18111521808156,
+        "lat": 26.396734153573167
+      },
+      "countyMetadata": {
+        "county_id": "hidalgo-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hill-tx",
+      "countyFips": "48217",
+      "point": {
+        "lng": -97.13242692352914,
+        "lat": 31.990686521531654
+      },
+      "countyMetadata": {
+        "county_id": "hill-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hockley-tx",
+      "countyFips": "48219",
+      "point": {
+        "lng": -102.34319717822626,
+        "lat": 33.60764268469932
+      },
+      "countyMetadata": {
+        "county_id": "hockley-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hood-tx",
+      "countyFips": "48221",
+      "point": {
+        "lng": -97.83225706548984,
+        "lat": 32.42992672283198
+      },
+      "countyMetadata": {
+        "county_id": "hood-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hopkins-tx",
+      "countyFips": "48223",
+      "point": {
+        "lng": -95.56395016277372,
+        "lat": 33.149555898066225
+      },
+      "countyMetadata": {
+        "county_id": "hopkins-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "houston-tx",
+      "countyFips": "48225",
+      "point": {
+        "lng": -95.42267715165455,
+        "lat": 31.31773255613089
+      },
+      "countyMetadata": {
+        "county_id": "houston-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "howard-tx",
+      "countyFips": "48227",
+      "point": {
+        "lng": -101.43550545048069,
+        "lat": 32.306169498866055
+      },
+      "countyMetadata": {
+        "county_id": "howard-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "countyFips": "48229",
+      "point": {
+        "lng": -105.38645271754297,
+        "lat": 31.456142736230376
+      },
+      "countyMetadata": {
+        "county_id": "hudspeth-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hunt-tx",
+      "countyFips": "48231",
+      "point": {
+        "lng": -96.08545497141363,
+        "lat": 33.123593705065225
+      },
+      "countyMetadata": {
+        "county_id": "hunt-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "countyFips": "48233",
+      "point": {
+        "lng": -101.35469939589541,
+        "lat": 35.84002597464035
+      },
+      "countyMetadata": {
+        "county_id": "hutchinson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "irion-tx",
+      "countyFips": "48235",
+      "point": {
+        "lng": -100.98241927522743,
+        "lat": 31.303925021045963
+      },
+      "countyMetadata": {
+        "county_id": "irion-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "jack-tx",
+      "countyFips": "48237",
+      "point": {
+        "lng": -98.17245858386772,
+        "lat": 33.233460602567135
+      },
+      "countyMetadata": {
+        "county_id": "jack-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "jackson-tx",
+      "countyFips": "48239",
+      "point": {
+        "lng": -96.57768091403835,
+        "lat": 28.954244232844932
+      },
+      "countyMetadata": {
+        "county_id": "jackson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "jasper-tx",
+      "countyFips": "48241",
+      "point": {
+        "lng": -94.02508503648141,
+        "lat": 30.74396060735983
+      },
+      "countyMetadata": {
+        "county_id": "jasper-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "countyFips": "48243",
+      "point": {
+        "lng": -104.14001978761954,
+        "lat": 30.71547782082932
+      },
+      "countyMetadata": {
+        "county_id": "jeff-davis-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "jefferson-tx",
+      "countyFips": "48245",
+      "point": {
+        "lng": -94.15343618647945,
+        "lat": 29.853745300304123
+      },
+      "countyMetadata": {
+        "county_id": "jefferson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "countyFips": "48247",
+      "point": {
+        "lng": -98.69730506869446,
+        "lat": 27.043397136843627
+      },
+      "countyMetadata": {
+        "county_id": "jim-hogg-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "countyFips": "48249",
+      "point": {
+        "lng": -98.08988624353832,
+        "lat": 27.73133803425431
+      },
+      "countyMetadata": {
+        "county_id": "jim-wells-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "johnson-tx",
+      "countyFips": "48251",
+      "point": {
+        "lng": -97.36654676514728,
+        "lat": 32.37899962312296
+      },
+      "countyMetadata": {
+        "county_id": "johnson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "jones-tx",
+      "countyFips": "48253",
+      "point": {
+        "lng": -99.87874425012174,
+        "lat": 32.739903873952066
+      },
+      "countyMetadata": {
+        "county_id": "jones-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "karnes-tx",
+      "countyFips": "48255",
+      "point": {
+        "lng": -97.85940182931468,
+        "lat": 28.90573896289523
+      },
+      "countyMetadata": {
+        "county_id": "karnes-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "kaufman-tx",
+      "countyFips": "48257",
+      "point": {
+        "lng": -96.28776533186884,
+        "lat": 32.599290961265254
+      },
+      "countyMetadata": {
+        "county_id": "kaufman-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "kendall-tx",
+      "countyFips": "48259",
+      "point": {
+        "lng": -98.71155520221396,
+        "lat": 29.944688872544
+      },
+      "countyMetadata": {
+        "county_id": "kendall-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "kenedy-tx",
+      "countyFips": "48261",
+      "point": {
+        "lng": -97.63646115777335,
+        "lat": 26.928022876401688
+      },
+      "countyMetadata": {
+        "county_id": "kenedy-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "kent-tx",
+      "countyFips": "48263",
+      "point": {
+        "lng": -100.77756938214165,
+        "lat": 33.18141522807236
+      },
+      "countyMetadata": {
+        "county_id": "kent-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "kerr-tx",
+      "countyFips": "48265",
+      "point": {
+        "lng": -99.3501597531549,
+        "lat": 30.0614838021134
+      },
+      "countyMetadata": {
+        "county_id": "kerr-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "kimble-tx",
+      "countyFips": "48267",
+      "point": {
+        "lng": -99.74869558490938,
+        "lat": 30.486778731792715
+      },
+      "countyMetadata": {
+        "county_id": "kimble-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "king-tx",
+      "countyFips": "48269",
+      "point": {
+        "lng": -100.25585007222635,
+        "lat": 33.61647577888673
+      },
+      "countyMetadata": {
+        "county_id": "king-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "kinney-tx",
+      "countyFips": "48271",
+      "point": {
+        "lng": -100.41794661808224,
+        "lat": 29.350207578513054
+      },
+      "countyMetadata": {
+        "county_id": "kinney-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "kleberg-tx",
+      "countyFips": "48273",
+      "point": {
+        "lng": -97.66838777013432,
+        "lat": 27.4267108242156
+      },
+      "countyMetadata": {
+        "county_id": "kleberg-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "knox-tx",
+      "countyFips": "48275",
+      "point": {
+        "lng": -99.74142704793687,
+        "lat": 33.60612914414575
+      },
+      "countyMetadata": {
+        "county_id": "knox-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "lamar-tx",
+      "countyFips": "48277",
+      "point": {
+        "lng": -95.5712006964093,
+        "lat": 33.667262047308846
+      },
+      "countyMetadata": {
+        "county_id": "lamar-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "lamb-tx",
+      "countyFips": "48279",
+      "point": {
+        "lng": -102.35171048610222,
+        "lat": 34.06862309066419
+      },
+      "countyMetadata": {
+        "county_id": "lamb-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "lampasas-tx",
+      "countyFips": "48281",
+      "point": {
+        "lng": -98.24143966179315,
+        "lat": 31.196233903065032
+      },
+      "countyMetadata": {
+        "county_id": "lampasas-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "la-salle-tx",
+      "countyFips": "48283",
+      "point": {
+        "lng": -99.09966268727237,
+        "lat": 28.34506930115425
+      },
+      "countyMetadata": {
+        "county_id": "la-salle-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "lavaca-tx",
+      "countyFips": "48285",
+      "point": {
+        "lng": -96.93015249165708,
+        "lat": 29.384354443939447
+      },
+      "countyMetadata": {
+        "county_id": "lavaca-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "lee-tx",
+      "countyFips": "48287",
+      "point": {
+        "lng": -96.9657045129652,
+        "lat": 30.31067970564905
+      },
+      "countyMetadata": {
+        "county_id": "lee-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "leon-tx",
+      "countyFips": "48289",
+      "point": {
+        "lng": -95.99569065209809,
+        "lat": 31.29650680837816
+      },
+      "countyMetadata": {
+        "county_id": "leon-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "liberty-tx",
+      "countyFips": "48291",
+      "point": {
+        "lng": -94.81221226927437,
+        "lat": 30.151612133799112
+      },
+      "countyMetadata": {
+        "county_id": "liberty-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "limestone-tx",
+      "countyFips": "48293",
+      "point": {
+        "lng": -96.58052973781331,
+        "lat": 31.54546416200673
+      },
+      "countyMetadata": {
+        "county_id": "limestone-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "countyFips": "48295",
+      "point": {
+        "lng": -100.27311543822312,
+        "lat": 36.277716908640976
+      },
+      "countyMetadata": {
+        "county_id": "lipscomb-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "live-oak-tx",
+      "countyFips": "48297",
+      "point": {
+        "lng": -98.12478564888822,
+        "lat": 28.351371108779926
+      },
+      "countyMetadata": {
+        "county_id": "live-oak-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "llano-tx",
+      "countyFips": "48299",
+      "point": {
+        "lng": -98.68409734803825,
+        "lat": 30.70574002727739
+      },
+      "countyMetadata": {
+        "county_id": "llano-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "loving-tx",
+      "countyFips": "48301",
+      "point": {
+        "lng": -103.57989907699462,
+        "lat": 31.849192200543946
+      },
+      "countyMetadata": {
+        "county_id": "loving-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "lubbock-tx",
+      "countyFips": "48303",
+      "point": {
+        "lng": -101.82054583089679,
+        "lat": 33.61020612041144
+      },
+      "countyMetadata": {
+        "county_id": "lubbock-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "lynn-tx",
+      "countyFips": "48305",
+      "point": {
+        "lng": -101.8161238394426,
+        "lat": 33.17682443728595
+      },
+      "countyMetadata": {
+        "county_id": "lynn-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "countyFips": "48307",
+      "point": {
+        "lng": -99.34747837749731,
+        "lat": 31.198871140657644
+      },
+      "countyMetadata": {
+        "county_id": "mcculloch-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "mclennan-tx",
+      "countyFips": "48309",
+      "point": {
+        "lng": -97.20178660091672,
+        "lat": 31.552380079966
+      },
+      "countyMetadata": {
+        "county_id": "mclennan-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "countyFips": "48311",
+      "point": {
+        "lng": -98.56784111983926,
+        "lat": 28.352687960297175
+      },
+      "countyMetadata": {
+        "county_id": "mcmullen-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "madison-tx",
+      "countyFips": "48313",
+      "point": {
+        "lng": -95.92841010829962,
+        "lat": 30.965538598221272
+      },
+      "countyMetadata": {
+        "county_id": "madison-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "marion-tx",
+      "countyFips": "48315",
+      "point": {
+        "lng": -94.35722218927975,
+        "lat": 32.79798178920155
+      },
+      "countyMetadata": {
+        "county_id": "marion-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "martin-tx",
+      "countyFips": "48317",
+      "point": {
+        "lng": -101.95121677871143,
+        "lat": 32.306030133414325
+      },
+      "countyMetadata": {
+        "county_id": "martin-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "mason-tx",
+      "countyFips": "48319",
+      "point": {
+        "lng": -99.22612742360077,
+        "lat": 30.717715802455256
+      },
+      "countyMetadata": {
+        "county_id": "mason-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "matagorda-tx",
+      "countyFips": "48321",
+      "point": {
+        "lng": -96.00398075782229,
+        "lat": 28.78565055364251
+      },
+      "countyMetadata": {
+        "county_id": "matagorda-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "maverick-tx",
+      "countyFips": "48323",
+      "point": {
+        "lng": -100.31451417126522,
+        "lat": 28.742590130566377
+      },
+      "countyMetadata": {
+        "county_id": "maverick-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "medina-tx",
+      "countyFips": "48325",
+      "point": {
+        "lng": -99.11013099644481,
+        "lat": 29.355696049797476
+      },
+      "countyMetadata": {
+        "county_id": "medina-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "menard-tx",
+      "countyFips": "48327",
+      "point": {
+        "lng": -99.82063586078536,
+        "lat": 30.88978200676198
+      },
+      "countyMetadata": {
+        "county_id": "menard-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "midland-tx",
+      "countyFips": "48329",
+      "point": {
+        "lng": -102.03160927688336,
+        "lat": 31.8691599470378
+      },
+      "countyMetadata": {
+        "county_id": "midland-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "milam-tx",
+      "countyFips": "48331",
+      "point": {
+        "lng": -96.97682637330048,
+        "lat": 30.78630242773364
+      },
+      "countyMetadata": {
+        "county_id": "milam-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "mills-tx",
+      "countyFips": "48333",
+      "point": {
+        "lng": -98.5954583668646,
+        "lat": 31.4951911727431
+      },
+      "countyMetadata": {
+        "county_id": "mills-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "mitchell-tx",
+      "countyFips": "48335",
+      "point": {
+        "lng": -100.92122865392261,
+        "lat": 32.306211752032254
+      },
+      "countyMetadata": {
+        "county_id": "mitchell-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "montague-tx",
+      "countyFips": "48337",
+      "point": {
+        "lng": -97.72465312130014,
+        "lat": 33.67562655215194
+      },
+      "countyMetadata": {
+        "county_id": "montague-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "montgomery-tx",
+      "countyFips": "48339",
+      "point": {
+        "lng": -95.50300850413325,
+        "lat": 30.30020781242215
+      },
+      "countyMetadata": {
+        "county_id": "montgomery-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "moore-tx",
+      "countyFips": "48341",
+      "point": {
+        "lng": -101.89292280950839,
+        "lat": 35.83768725249161
+      },
+      "countyMetadata": {
+        "county_id": "moore-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "morris-tx",
+      "countyFips": "48343",
+      "point": {
+        "lng": -94.73265037127084,
+        "lat": 33.11348257200743
+      },
+      "countyMetadata": {
+        "county_id": "morris-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "motley-tx",
+      "countyFips": "48345",
+      "point": {
+        "lng": -100.77982896685812,
+        "lat": 34.07409477686105
+      },
+      "countyMetadata": {
+        "county_id": "motley-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "countyFips": "48347",
+      "point": {
+        "lng": -94.61586919353331,
+        "lat": 31.615952196709713
+      },
+      "countyMetadata": {
+        "county_id": "nacogdoches-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "navarro-tx",
+      "countyFips": "48349",
+      "point": {
+        "lng": -96.47248640689597,
+        "lat": 32.046942857179225
+      },
+      "countyMetadata": {
+        "county_id": "navarro-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "newton-tx",
+      "countyFips": "48351",
+      "point": {
+        "lng": -93.7447410127137,
+        "lat": 30.786309192593034
+      },
+      "countyMetadata": {
+        "county_id": "newton-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "nolan-tx",
+      "countyFips": "48353",
+      "point": {
+        "lng": -100.40605246217697,
+        "lat": 32.30349025928805
+      },
+      "countyMetadata": {
+        "county_id": "nolan-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "nueces-tx",
+      "countyFips": "48355",
+      "point": {
+        "lng": -97.51623565550378,
+        "lat": 27.735048617874913
+      },
+      "countyMetadata": {
+        "county_id": "nueces-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "countyFips": "48357",
+      "point": {
+        "lng": -100.81565396954635,
+        "lat": 36.27841371397544
+      },
+      "countyMetadata": {
+        "county_id": "ochiltree-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "oldham-tx",
+      "countyFips": "48359",
+      "point": {
+        "lng": -102.60287060302659,
+        "lat": 35.40503461818829
+      },
+      "countyMetadata": {
+        "county_id": "oldham-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "orange-tx",
+      "countyFips": "48361",
+      "point": {
+        "lng": -93.89387611210887,
+        "lat": 30.12131354791171
+      },
+      "countyMetadata": {
+        "county_id": "orange-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "countyFips": "48363",
+      "point": {
+        "lng": -98.31302137936157,
+        "lat": 32.75318037868413
+      },
+      "countyMetadata": {
+        "county_id": "palo-pinto-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "panola-tx",
+      "countyFips": "48365",
+      "point": {
+        "lng": -94.30563985768048,
+        "lat": 32.162355237756344
+      },
+      "countyMetadata": {
+        "county_id": "panola-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "parker-tx",
+      "countyFips": "48367",
+      "point": {
+        "lng": -97.80509666481127,
+        "lat": 32.777645813411155
+      },
+      "countyMetadata": {
+        "county_id": "parker-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "parmer-tx",
+      "countyFips": "48369",
+      "point": {
+        "lng": -102.78453885268401,
+        "lat": 34.530112945225774
+      },
+      "countyMetadata": {
+        "county_id": "parmer-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "pecos-tx",
+      "countyFips": "48371",
+      "point": {
+        "lng": -102.72357033218269,
+        "lat": 30.781060509715644
+      },
+      "countyMetadata": {
+        "county_id": "pecos-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "polk-tx",
+      "countyFips": "48373",
+      "point": {
+        "lng": -94.83002486127677,
+        "lat": 30.79271976623162
+      },
+      "countyMetadata": {
+        "county_id": "polk-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "potter-tx",
+      "countyFips": "48375",
+      "point": {
+        "lng": -101.89400489770584,
+        "lat": 35.401275816489196
+      },
+      "countyMetadata": {
+        "county_id": "potter-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "presidio-tx",
+      "countyFips": "48377",
+      "point": {
+        "lng": -104.24052167959714,
+        "lat": 29.999802670022532
+      },
+      "countyMetadata": {
+        "county_id": "presidio-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "rains-tx",
+      "countyFips": "48379",
+      "point": {
+        "lng": -95.79337634379043,
+        "lat": 32.87033942306643
+      },
+      "countyMetadata": {
+        "county_id": "rains-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "randall-tx",
+      "countyFips": "48381",
+      "point": {
+        "lng": -101.8969445302149,
+        "lat": 34.96585699874038
+      },
+      "countyMetadata": {
+        "county_id": "randall-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "reagan-tx",
+      "countyFips": "48383",
+      "point": {
+        "lng": -101.52300841386517,
+        "lat": 31.36619212920664
+      },
+      "countyMetadata": {
+        "county_id": "reagan-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "real-tx",
+      "countyFips": "48385",
+      "point": {
+        "lng": -99.8221669208522,
+        "lat": 29.831742937170567
+      },
+      "countyMetadata": {
+        "county_id": "real-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "red-river-tx",
+      "countyFips": "48387",
+      "point": {
+        "lng": -95.05036072996346,
+        "lat": 33.620681816377264
+      },
+      "countyMetadata": {
+        "county_id": "red-river-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "reeves-tx",
+      "countyFips": "48389",
+      "point": {
+        "lng": -103.69316726613938,
+        "lat": 31.32318615671694
+      },
+      "countyMetadata": {
+        "county_id": "reeves-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "refugio-tx",
+      "countyFips": "48391",
+      "point": {
+        "lng": -97.15952146218062,
+        "lat": 28.321575299782317
+      },
+      "countyMetadata": {
+        "county_id": "refugio-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "roberts-tx",
+      "countyFips": "48393",
+      "point": {
+        "lng": -100.8134440833454,
+        "lat": 35.83849167344701
+      },
+      "countyMetadata": {
+        "county_id": "roberts-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "robertson-tx",
+      "countyFips": "48395",
+      "point": {
+        "lng": -96.51288117717084,
+        "lat": 31.027013023818814
+      },
+      "countyMetadata": {
+        "county_id": "robertson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "rockwall-tx",
+      "countyFips": "48397",
+      "point": {
+        "lng": -96.40788512914412,
+        "lat": 32.897848822697135
+      },
+      "countyMetadata": {
+        "county_id": "rockwall-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "runnels-tx",
+      "countyFips": "48399",
+      "point": {
+        "lng": -99.97623130387848,
+        "lat": 31.831095248144916
+      },
+      "countyMetadata": {
+        "county_id": "runnels-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "rusk-tx",
+      "countyFips": "48401",
+      "point": {
+        "lng": -94.76184558766053,
+        "lat": 32.107679205051724
+      },
+      "countyMetadata": {
+        "county_id": "rusk-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "sabine-tx",
+      "countyFips": "48403",
+      "point": {
+        "lng": -93.85180241443213,
+        "lat": 31.34319986259873
+      },
+      "countyMetadata": {
+        "county_id": "sabine-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "countyFips": "48405",
+      "point": {
+        "lng": -94.16819369875341,
+        "lat": 31.394219824275297
+      },
+      "countyMetadata": {
+        "county_id": "san-augustine-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "countyFips": "48407",
+      "point": {
+        "lng": -95.1669012010298,
+        "lat": 30.579533583205592
+      },
+      "countyMetadata": {
+        "county_id": "san-jacinto-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "countyFips": "48409",
+      "point": {
+        "lng": -97.51830586331921,
+        "lat": 28.008811133453708
+      },
+      "countyMetadata": {
+        "county_id": "san-patricio-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "san-saba-tx",
+      "countyFips": "48411",
+      "point": {
+        "lng": -98.81755113570635,
+        "lat": 31.155194586185583
+      },
+      "countyMetadata": {
+        "county_id": "san-saba-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "schleicher-tx",
+      "countyFips": "48413",
+      "point": {
+        "lng": -100.53854604460025,
+        "lat": 30.897452608380814
+      },
+      "countyMetadata": {
+        "county_id": "schleicher-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "scurry-tx",
+      "countyFips": "48415",
+      "point": {
+        "lng": -100.91640707790039,
+        "lat": 32.74631492949583
+      },
+      "countyMetadata": {
+        "county_id": "scurry-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "shackelford-tx",
+      "countyFips": "48417",
+      "point": {
+        "lng": -99.35406694144227,
+        "lat": 32.73597287331568
+      },
+      "countyMetadata": {
+        "county_id": "shackelford-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "shelby-tx",
+      "countyFips": "48419",
+      "point": {
+        "lng": -94.14501755823905,
+        "lat": 31.792408942648862
+      },
+      "countyMetadata": {
+        "county_id": "shelby-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "sherman-tx",
+      "countyFips": "48421",
+      "point": {
+        "lng": -101.89346700473648,
+        "lat": 36.277666863685276
+      },
+      "countyMetadata": {
+        "county_id": "sherman-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "smith-tx",
+      "countyFips": "48423",
+      "point": {
+        "lng": -95.26918268173013,
+        "lat": 32.37503542103108
+      },
+      "countyMetadata": {
+        "county_id": "smith-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "somervell-tx",
+      "countyFips": "48425",
+      "point": {
+        "lng": -97.77455337195623,
+        "lat": 32.2222153280383
+      },
+      "countyMetadata": {
+        "county_id": "somervell-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "starr-tx",
+      "countyFips": "48427",
+      "point": {
+        "lng": -98.73839874970719,
+        "lat": 26.562148989484918
+      },
+      "countyMetadata": {
+        "county_id": "starr-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "stephens-tx",
+      "countyFips": "48429",
+      "point": {
+        "lng": -98.836173157186,
+        "lat": 32.73586501750139
+      },
+      "countyMetadata": {
+        "county_id": "stephens-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "sterling-tx",
+      "countyFips": "48431",
+      "point": {
+        "lng": -101.050008039006,
+        "lat": 31.82787920179517
+      },
+      "countyMetadata": {
+        "county_id": "sterling-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "stonewall-tx",
+      "countyFips": "48433",
+      "point": {
+        "lng": -100.25330550680455,
+        "lat": 33.179124387282165
+      },
+      "countyMetadata": {
+        "county_id": "stonewall-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "sutton-tx",
+      "countyFips": "48435",
+      "point": {
+        "lng": -100.53818749476615,
+        "lat": 30.498293027670293
+      },
+      "countyMetadata": {
+        "county_id": "sutton-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "swisher-tx",
+      "countyFips": "48437",
+      "point": {
+        "lng": -101.7350268457077,
+        "lat": 34.53038499054818
+      },
+      "countyMetadata": {
+        "county_id": "swisher-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "tarrant-tx",
+      "countyFips": "48439",
+      "point": {
+        "lng": -97.29113114653872,
+        "lat": 32.771923506123066
+      },
+      "countyMetadata": {
+        "county_id": "tarrant-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "taylor-tx",
+      "countyFips": "48441",
+      "point": {
+        "lng": -99.89012209256923,
+        "lat": 32.30147200681298
+      },
+      "countyMetadata": {
+        "county_id": "taylor-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "terrell-tx",
+      "countyFips": "48443",
+      "point": {
+        "lng": -102.07648647084534,
+        "lat": 30.224961567030682
+      },
+      "countyMetadata": {
+        "county_id": "terrell-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "terry-tx",
+      "countyFips": "48445",
+      "point": {
+        "lng": -102.33519655029323,
+        "lat": 33.173812659090096
+      },
+      "countyMetadata": {
+        "county_id": "terry-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "countyFips": "48447",
+      "point": {
+        "lng": -99.21236985266736,
+        "lat": 33.17748994202829
+      },
+      "countyMetadata": {
+        "county_id": "throckmorton-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "titus-tx",
+      "countyFips": "48449",
+      "point": {
+        "lng": -94.96567222635224,
+        "lat": 33.21660303596421
+      },
+      "countyMetadata": {
+        "county_id": "titus-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "tom-green-tx",
+      "countyFips": "48451",
+      "point": {
+        "lng": -100.46207283749622,
+        "lat": 31.404399316845712
+      },
+      "countyMetadata": {
+        "county_id": "tom-green-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "travis-tx",
+      "countyFips": "48453",
+      "point": {
+        "lng": -97.78195731241627,
+        "lat": 30.334376172087833
+      },
+      "countyMetadata": {
+        "county_id": "travis-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "trinity-tx",
+      "countyFips": "48455",
+      "point": {
+        "lng": -95.13551054763106,
+        "lat": 31.088815201609286
+      },
+      "countyMetadata": {
+        "county_id": "trinity-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "tyler-tx",
+      "countyFips": "48457",
+      "point": {
+        "lng": -94.37659392771755,
+        "lat": 30.771232149051905
+      },
+      "countyMetadata": {
+        "county_id": "tyler-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "upshur-tx",
+      "countyFips": "48459",
+      "point": {
+        "lng": -94.94148452884743,
+        "lat": 32.73627653540001
+      },
+      "countyMetadata": {
+        "county_id": "upshur-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "upton-tx",
+      "countyFips": "48461",
+      "point": {
+        "lng": -102.04303489233664,
+        "lat": 31.36873022905282
+      },
+      "countyMetadata": {
+        "county_id": "upton-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "uvalde-tx",
+      "countyFips": "48463",
+      "point": {
+        "lng": -99.76220527591936,
+        "lat": 29.35733617790992
+      },
+      "countyMetadata": {
+        "county_id": "uvalde-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "val-verde-tx",
+      "countyFips": "48465",
+      "point": {
+        "lng": -101.15171519752245,
+        "lat": 29.892960136641108
+      },
+      "countyMetadata": {
+        "county_id": "val-verde-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "countyFips": "48467",
+      "point": {
+        "lng": -95.83651611152351,
+        "lat": 32.56371670238704
+      },
+      "countyMetadata": {
+        "county_id": "van-zandt-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "victoria-tx",
+      "countyFips": "48469",
+      "point": {
+        "lng": -96.97152527480871,
+        "lat": 28.79635149135396
+      },
+      "countyMetadata": {
+        "county_id": "victoria-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "walker-tx",
+      "countyFips": "48471",
+      "point": {
+        "lng": -95.57228392990247,
+        "lat": 30.73904486089396
+      },
+      "countyMetadata": {
+        "county_id": "walker-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "waller-tx",
+      "countyFips": "48473",
+      "point": {
+        "lng": -95.98763213242204,
+        "lat": 30.010784111256736
+      },
+      "countyMetadata": {
+        "county_id": "waller-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "ward-tx",
+      "countyFips": "48475",
+      "point": {
+        "lng": -103.10242523856628,
+        "lat": 31.509465550503652
+      },
+      "countyMetadata": {
+        "county_id": "ward-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "washington-tx",
+      "countyFips": "48477",
+      "point": {
+        "lng": -96.40344376212049,
+        "lat": 30.214530426684682
+      },
+      "countyMetadata": {
+        "county_id": "washington-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "webb-tx",
+      "countyFips": "48479",
+      "point": {
+        "lng": -99.33156530432676,
+        "lat": 27.761062430038972
+      },
+      "countyMetadata": {
+        "county_id": "webb-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "wharton-tx",
+      "countyFips": "48481",
+      "point": {
+        "lng": -96.22210423983083,
+        "lat": 29.27786164584623
+      },
+      "countyMetadata": {
+        "county_id": "wharton-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "wheeler-tx",
+      "countyFips": "48483",
+      "point": {
+        "lng": -100.26964751039732,
+        "lat": 35.401278804793535
+      },
+      "countyMetadata": {
+        "county_id": "wheeler-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "wichita-tx",
+      "countyFips": "48485",
+      "point": {
+        "lng": -98.70355074786971,
+        "lat": 33.987997042809354
+      },
+      "countyMetadata": {
+        "county_id": "wichita-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "countyFips": "48487",
+      "point": {
+        "lng": -99.2410547632518,
+        "lat": 34.08072613294793
+      },
+      "countyMetadata": {
+        "county_id": "wilbarger-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "willacy-tx",
+      "countyFips": "48489",
+      "point": {
+        "lng": -97.59165763840991,
+        "lat": 26.476966332977252
+      },
+      "countyMetadata": {
+        "county_id": "willacy-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "williamson-tx",
+      "countyFips": "48491",
+      "point": {
+        "lng": -97.60040382893371,
+        "lat": 30.647522636104934
+      },
+      "countyMetadata": {
+        "county_id": "williamson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "wilson-tx",
+      "countyFips": "48493",
+      "point": {
+        "lng": -98.08657328038669,
+        "lat": 29.17400608551904
+      },
+      "countyMetadata": {
+        "county_id": "wilson-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "winkler-tx",
+      "countyFips": "48495",
+      "point": {
+        "lng": -103.04816905601884,
+        "lat": 31.850044565042094
+      },
+      "countyMetadata": {
+        "county_id": "winkler-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "wise-tx",
+      "countyFips": "48497",
+      "point": {
+        "lng": -97.65446210858894,
+        "lat": 33.21589956130623
+      },
+      "countyMetadata": {
+        "county_id": "wise-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "wood-tx",
+      "countyFips": "48499",
+      "point": {
+        "lng": -95.3820619716135,
+        "lat": 32.78640514009717
+      },
+      "countyMetadata": {
+        "county_id": "wood-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "yoakum-tx",
+      "countyFips": "48501",
+      "point": {
+        "lng": -102.82779607234885,
+        "lat": 33.172974605772644
+      },
+      "countyMetadata": {
+        "county_id": "yoakum-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "young-tx",
+      "countyFips": "48503",
+      "point": {
+        "lng": -98.6877665582085,
+        "lat": 33.17669577661499
+      },
+      "countyMetadata": {
+        "county_id": "young-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "zapata-tx",
+      "countyFips": "48505",
+      "point": {
+        "lng": -99.16861279123253,
+        "lat": 27.00077815589589
+      },
+      "countyMetadata": {
+        "county_id": "zapata-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    },
+    {
+      "countyId": "zavala-tx",
+      "countyFips": "48507",
+      "point": {
+        "lng": -99.7605956715243,
+        "lat": 28.866211422340243
+      },
+      "countyMetadata": {
+        "county_id": "zavala-tx",
+        "state": "TX"
+      },
+      "result": "PRE_PERSISTENCE_BOUNDARY_REACHED",
+      "coverageInvalid": false,
+      "crossingRuntimeRequired": false,
+      "persistenceWriteAttempted": false,
+      "passed": true
+    }
+  ],
+  "passed": true
+}
