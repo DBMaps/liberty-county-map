@@ -542,6 +542,9 @@
     "build:wave3a2-crossing-packages": "node tools/wave3a2/build-crossing-package-manufacture.mjs",
     "diagnose:wave3a2-identity-conservation": "node tools/wave3a2/build-crossing-package-manufacture.mjs --diagnose",
     "test:wave3a2-crossing-packages": "node --test tests/wave3a2-crossing-package-manufacture.test.mjs",
+    "whatif:wave3a3-statewide-crossings": "node tools/wave3a3/activate-statewide-crossings.mjs --whatif",
+    "verify:wave3a3-statewide-crossings": "node tools/wave3a3/activate-statewide-crossings.mjs --verify",
+    "test:wave3a3-statewide-crossings": "node --test tests/wave3a3-statewide-crossing-activation.test.mjs",
     "apply:wave3a2a-active-packages": "node tools/wave3a2a/reconcile-active-crossing-packages.mjs --apply",
     "verify:wave3a2a-active-packages": "node tools/wave3a2a/reconcile-active-crossing-packages.mjs",
     "test:wave3a2a-active-packages": "node --test tests/wave3a2a-active-package-migration.test.mjs"

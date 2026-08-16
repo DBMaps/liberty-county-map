@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "gridly.wave3a3.whatif.v1",
+  "status": "BLOCKED",
+  "applied": false,
+  "productionWrites": 0,
+  "projected": {
+    "ACTIVE_POSITIVE": 202,
+    "ACTIVE_EMPTY": 52,
+    "TOTAL": 254
+  },
+  "activeIdentityCount": 16099,
+  "controls": {
+    "Brazos": 95,
+    "Lavaca": 40,
+    "Washington": 44,
+    "Tyler": 0
+  }
+}

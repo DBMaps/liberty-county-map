@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.wave3a3.identity-conservation.v1",
+  "status": "BLOCKED",
+  "equation": {
+    "existingActive": 3784,
+    "certifiedCandidate": 12315,
+    "projectedActive": 16099
+  },
+  "observed": {
+    "active": 3771,
+    "candidate": 0,
+    "combined": 3771
+  },
+  "missing": null,
+  "extra": null,
+  "duplicates": [],
+  "activeCandidateOverlap": [],
+  "crossCountyOwnershipMismatches": []
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "gridly.wave3a3.preflight.v1",
+  "status": "BLOCKED",
+  "mode": "WHAT_IF",
+  "productionWrites": 0,
+  "gates": {
+    "activeCountyCount": true,
+    "activeIdentityCount": false,
+    "candidateCountyCount": false,
+    "candidateIdentityCount": false,
+    "combinedIdentityCount": false,
+    "positiveCountyCount": true,
+    "zeroCountyCount": true,
+    "blockedIdentitySet": false,
+    "blockedAbsent": true,
+    "certificationPass": false,
+    "noDuplicates": true,
+    "noOverlap": true,
+    "ownership": true,
+    "fraSourceIdentity": false,
+    "protectedRuntimeWorktreeClean": true,
+    "wave32InputsPresent": false,
+    "registryBaseline": true
+  },
+  "missingRequiredWave3a2Inputs": [
+    "candidate-cohort.json",
+    "package-certification.json",
+    "package-manufacture-summary.json",
+    "reconciliation-index.json",
+    "reconciliation-summary.json",
+    "cross-package-uniqueness.json",
+    "consumer-compatibility.json",
+    "summary.json"
+  ],
+  "fraSource": {
+    "expected": {
+      "bytes": 68200491,
+      "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
+    },
+    "observed": {
+      "bytes": 67186117,
+      "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
+    },
+    "unchanged": false
+  },
+  "protectedRuntimeChanges": []
+}

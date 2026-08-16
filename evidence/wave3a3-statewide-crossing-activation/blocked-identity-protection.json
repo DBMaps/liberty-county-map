@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "gridly.wave3a3.blocked-protection.v1",
+  "status": "PASS",
+  "required": [
+    "019788P",
+    "019791X"
+  ],
+  "resolution": "OUTSIDE_TEXAS_BORDER_REVIEW",
+  "gridlyCountyId": null,
+  "gridlyCountyFips": null,
+  "packageLeakage": []
+}
