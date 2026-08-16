@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "gridly.lp2013.activation-summary.v1",
+  "activationStatus": "LP201.3 ACTIVATED AND CERTIFIED",
+  "runtimeActivation": true,
+  "counts": {
+    "recordCount": 1859,
+    "promotedCount": 1555,
+    "changedFromBaselineCount": 1555,
+    "unchangedFromBaselineCount": 304,
+    "lp197RetainedCount": 4,
+    "unresolvedRetainedCount": 300
+  },
+  "postApplyHash": "5fa822ceee9350d875012c6070c15f275b4b8309c5c56a07ce04fb710d5bc723",
+  "idempotenceResult": "PASS_ALREADY_APPLIED_ZERO_WRITES"
+}

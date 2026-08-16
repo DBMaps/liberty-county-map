@@ -521,6 +521,7 @@
     "recover:lp191-west-northwest": "node tools/lp191/recover-west-northwest-artifact.mjs --verify",
     "build:lp193": "node tools/lp193/build-san-antonio-consumer-region-readiness.mjs --build",
     "verify:lp193": "node tools/lp193/build-san-antonio-consumer-region-readiness.mjs",
-    "test:lp193": "node --test tests/lp193/*.test.mjs"
+    "test:lp193": "node --test tests/lp193/*.test.mjs",
+    "lp2013:apply": "node tools/lp2013/promote-named-place-cameras.mjs --apply"
   }
 }
