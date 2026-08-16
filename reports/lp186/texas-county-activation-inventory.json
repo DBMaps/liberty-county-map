@@ -870,7 +870,7 @@
     "productionCrossingPackage": {
       "present": true,
       "certified": true,
-      "crossingCount": 86,
+      "crossingCount": 95,
       "evidence": "Crossing-Packages\\brazos\\Production\\production-certification.json"
     },
     "runtime": {
@@ -6115,7 +6115,7 @@
     "productionCrossingPackage": {
       "present": true,
       "certified": true,
-      "crossingCount": 39,
+      "crossingCount": 40,
       "evidence": "Crossing-Packages\\lavaca\\Production\\production-certification.json"
     },
     "runtime": {
@@ -10246,7 +10246,7 @@
     "productionCrossingPackage": {
       "present": true,
       "certified": true,
-      "crossingCount": 41,
+      "crossingCount": 44,
       "evidence": "Crossing-Packages\\washington\\Production\\production-certification.json"
     },
     "runtime": {

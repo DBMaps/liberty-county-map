@@ -54,6 +54,18 @@ test('LP114 consumes LP115 statuses without authorizing upload, deploy, or activ
   assert.equal(assets.railroadCrossingSource.status, 'GENERATED'); assert.equal(assets.productionCrossings.status, 'GENERATED'); assert.equal(assets.crossingCertification.certificationStatus, 'PASS'); assert.equal(report.uploadEnabled, false); assert.equal(report.deploymentEnabled, false); assert.equal(report.productionActivation, false);
 });
 
-test('checked-in production manifest remains the certified 28-package, 3,771-crossing authority', async () => {
-  const body = await readFile(new URL('../Crossing-Packages/production-crossing-manifest.json', import.meta.url), 'utf8'); const manifest = JSON.parse(body.replace(/^\uFEFF/, '')); assert.equal(manifest.totalPackages, 28); assert.equal(manifest.totalCrossings, 3771); assert.equal(manifest.passCount, 28); assert.equal(createHash('sha256').update(body).digest('hex').length, 64);
+test('checked-in production manifest remains the certified post-Wave-3A.2A authority', async () => {
+  const body = await readFile(new URL('../Crossing-Packages/production-crossing-manifest.json', import.meta.url), 'utf8');
+  const manifest = JSON.parse(body.replace(/^\uFEFF/, ''));
+  const records = new Map(manifest.records.map(record => [record.county, record]));
+  assert.equal(manifest.totalPackages, 28);
+  assert.equal(manifest.totalCrossings, 3784);
+  assert.equal(manifest.passCount, 28);
+  assert.equal(manifest.records.filter(record => record.crossingCount > 0).length, 27);
+  assert.equal(manifest.records.filter(record => record.crossingCount === 0).length, 1);
+  assert.equal(records.get('Tyler')?.crossingCount, 0);
+  assert.equal(records.get('Brazos')?.crossingCount, 95);
+  assert.equal(records.get('Lavaca')?.crossingCount, 40);
+  assert.equal(records.get('Washington')?.crossingCount, 44);
+  assert.equal(createHash('sha256').update(body).digest('hex').length, 64);
 });
