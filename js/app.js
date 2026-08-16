@@ -60874,9 +60874,37 @@ function gridlyCommunityPulseFirstPaintAudit() {
 }
 
 
-function getGridlyHomeCommunityPulseCopy({ quiet = true, activeCount = 0, activityLevel = "quiet" } = {}) {
+function getGridlyAwarenessCoverageState(options = {}) {
+  const countyId = gridlyNormalizeCountyId(options.countyId || (typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : GRIDLY_DEFAULT_COUNTY_ID));
+  const countyConfig = GRIDLY_COUNTY_REGISTRY[countyId] || {};
+  const crossingAvailable = options.crossingAvailable !== undefined
+    ? options.crossingAvailable === true
+    : countyConfig?.runtimeSourceAvailability?.crossings === "available";
+  return Object.freeze({
+    state: crossingAvailable ? "available" : "limited",
+    crossingAvailable,
+    countyId,
+    primary: crossingAvailable ? "" : "Limited local coverage",
+    secondary: crossingAvailable ? "" : "Crossing data isn't available for this area yet."
+  });
+}
+
+function classifyGridlyAwarenessTrustState({ activeCount = 0, recentlyCleared = false, coverage = null } = {}) {
+  if (Math.max(0, Number(activeCount) || 0) > 0) return "active";
+  if (recentlyCleared === true) return "recently_cleared";
+  if ((coverage || getGridlyAwarenessCoverageState()).state === "limited") return "coverage_limited";
+  return "quiet";
+}
+
+function getGridlyHomeCommunityPulseCopy({ quiet = true, activeCount = 0, activityLevel = "quiet", coverage = null } = {}) {
   const count = Math.max(0, Number(activeCount) || 0);
   const level = String(activityLevel || "quiet").toLowerCase();
+  const awarenessCoverage = coverage || getGridlyAwarenessCoverageState();
+  // Active evidence always outranks incomplete coverage. Coverage only guards a
+  // zero-evidence conclusion; absence of one source is not evidence of quiet.
+  if ((quiet || count <= 0 || level === "quiet") && awarenessCoverage.state === "limited") {
+    return { headline: awarenessCoverage.primary, subline: awarenessCoverage.secondary, state: "coverage_limited" };
+  }
   if (quiet || count <= 0 || level === "quiet") {
     return { headline: "Community is quiet.", subline: "Travel normally today.", state: "quiet" };
   }
@@ -61276,7 +61304,8 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const homePulseCopy = getGridlyHomeCommunityPulseCopy({
     quiet: selectedCommunityCount <= 0 && Number(activeAwareness.activeAwarenessCount || 0) <= 0,
     activeCount: Math.max(selectedCommunityCount, Number(activeAwareness.activeAwarenessCount || 0) || 0),
-    activityLevel: mobilityPressureCategory
+    activityLevel: mobilityPressureCategory,
+    coverage: getGridlyAwarenessCoverageState()
   });
   let renderedPulseHeadline = homePulseCopy.headline;
   let renderedPulseSubline = homePulseCopy.subline;
@@ -61336,6 +61365,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
     selectedSublineTemplate,
     dominantCorridorScore: Number(corridorPriority.dominantCorridorScore || 0),
     mobilityPressureCategory,
+    coverageState: getGridlyAwarenessCoverageState(),
     blendedSignalTypes,
     activeAwareness,
     communityAwarenessSummary,
@@ -61416,23 +61446,30 @@ function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
   const combinedCount = Math.max(selectedCount, activeCount);
   const existingText = safeDisplayText([model?.renderedPulseHeadline, model?.renderedPulseSubline, model?.activeAwareness?.headline, model?.activeAwareness?.subline].filter(Boolean).join(" "), "");
   const recentlyCleared = combinedCount <= 0 && /cleared|improving|recently updated|recently cleared/i.test(existingText);
-  let state = "quiet";
+  const coverage = model?.coverageState || (typeof getGridlyAwarenessCoverageState === "function" ? getGridlyAwarenessCoverageState() : { state: "available", primary: "", secondary: "" });
+  let state = typeof classifyGridlyAwarenessTrustState === "function"
+    ? classifyGridlyAwarenessTrustState({ activeCount: combinedCount, recentlyCleared, coverage })
+    : (combinedCount > 0 ? "active" : (recentlyCleared ? "recently_cleared" : (coverage.state === "limited" ? "coverage_limited" : "quiet")));
   let communityStatus = "Quiet conditions.";
   let interpretation = "Travel normally and stay aware.";
   let reason = "No active concerns are reported in the available local intelligence.";
   let confidence = "Quiet conditions";
-  if (recentlyCleared) {
-    state = "recently_cleared";
+  if (state === "recently_cleared") {
     communityStatus = "Conditions improving.";
     interpretation = "Check before leaving.";
     reason = "Conditions may be changing.";
     confidence = "Developing conditions";
-  } else if (combinedCount > 0) {
+  } else if (state === "active") {
     state = combinedCount >= 3 || /building|elevated|high|increasing/i.test(String(model?.mobilityPressureCategory || "")) ? "active" : "developing";
     communityStatus = state === "active" ? "Elevated conditions." : "Developing conditions.";
     interpretation = state === "active" ? "Check your route before leaving." : "Check before leaving.";
     reason = state === "active" ? "Several conditions may affect travel." : "Conditions may be changing.";
     confidence = combinedCount >= 3 ? "Multiple recent signals" : "Developing conditions";
+  } else if (state === "coverage_limited") {
+    communityStatus = "Limited local coverage.";
+    interpretation = coverage.primary;
+    reason = coverage.secondary;
+    confidence = "Community reports remain available";
   }
   const freshness = gridlyCommunityPulseDecisionFreshnessLine(model);
   return Object.freeze({
@@ -61549,6 +61586,8 @@ function gridlyLp062CommunityPulseDecisionAudit(options = {}) {
 }
 
 window.gridlyLp062CommunityPulseDecisionAudit = gridlyLp062CommunityPulseDecisionAudit;
+window.getGridlyAwarenessCoverageState = getGridlyAwarenessCoverageState;
+window.classifyGridlyAwarenessTrustState = classifyGridlyAwarenessTrustState;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp062CommunityPulseDecisionAudit", gridlyLp062CommunityPulseDecisionAudit);
 
 function renderGridlyCommunityPulse(options = {}) {
@@ -71222,11 +71261,9 @@ function updateGeoFilterStatus(visibleCrossings = []) {
   const crossingCoverageUnavailable = count === 0 && typeof gridlyGetActiveCountyCrossingInventory === "function" && gridlyGetActiveCountyCrossingInventory().length === 0;
   const publish = (message) => {
     if (els.geoFilterStatus) els.geoFilterStatus.textContent = message;
-    const portraitStatus = typeof document !== "undefined" ? document.getElementById("gridlyV2TopStatusSecondary") : null;
-    if (portraitStatus && (typeof isPortraitMode !== "function" || isPortraitMode())) portraitStatus.textContent = message;
   };
   if (crossingCoverageUnavailable) {
-    publish("No crossing data available for this area yet.");
+    publish("Crossing data isn't available for this area yet.");
     return;
   }
   if (activeGeoFilter === "nearby" && userLocation) {
@@ -71247,7 +71284,7 @@ function updateGeoFilterStatus(visibleCrossings = []) {
     const delayLabel = count === 1 ? "delay" : "delays";
     message = count ? `Priority: resolve ${count} active ${delayLabel} affecting routes.` : "Good news: no active delays in this view.";
   } else if (activeGeoFilter === "all") {
-    message = count ? "All crossings visible: tap markers to confirm route status." : "No crossing data available for this area yet.";
+    message = count ? "All crossings visible: tap markers to confirm route status." : "Crossing data isn't available for this area yet.";
   }
 
   publish(message);
@@ -105863,6 +105900,22 @@ function buildGridlyLocationFirstTopAwarenessHeadline(activeAwareness = {}, narr
 }
 
 function getGridlyQuietAwarenessBriefCopy() {
+  const coverage = getGridlyAwarenessCoverageState();
+  if (coverage.state === "limited") {
+    return {
+      state: "coverage_limited",
+      greeting: getGridlyAwarenessGreetingText(),
+      primary: coverage.primary,
+      secondary: coverage.secondary,
+      trustLine: "Community reports remain available",
+      microline: "",
+      microlineVisible: false,
+      selectedHeadline: coverage.primary,
+      selectedSource: "awareness_coverage_state",
+      selectedLocationIntelligence: null,
+      fallbackReason: "material_awareness_coverage_unavailable"
+    };
+  }
   return {
     state: "quiet",
     greeting: getGridlyAwarenessGreetingText(),
