@@ -11,8 +11,8 @@
     "candidate": 12315,
     "combined": 16099
   },
-  "missing": 0,
-  "extra": 0,
+  "missing": [],
+  "extra": [],
   "duplicates": [],
   "activeCandidateOverlap": [],
   "crossCountyOwnershipMismatches": []

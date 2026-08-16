@@ -15,12 +15,16 @@
     "blockedAbsent": true,
     "certificationPass": true,
     "noDuplicates": true,
+    "noMissing": true,
+    "noExtra": true,
     "noOverlap": true,
     "ownership": true,
     "fraSourceIdentity": true,
     "protectedRuntimeWorktreeClean": true,
     "wave32InputsPresent": true,
-    "registryBaseline": true
+    "wave32CompleteDeterministic": true,
+    "registryBaseline": true,
+    "writeAllowlistCount": true
   },
   "missingRequiredWave3a2Inputs": [],
   "fraSource": {
