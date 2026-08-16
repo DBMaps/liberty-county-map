@@ -2,8 +2,13 @@
   "schemaVersion": "gridly.wave3a1b.active-impact.v1",
   "activeCountyCount": 28,
   "currentProductionPackageCount": 28,
+  "currentProductionIdentityCount": 3771,
+  "activePositiveExactGeographicOwnerMatches": 24,
+  "activeEmptyPackageCount": 1,
   "currentProductionPackageRowsWithCountyMismatch": 0,
   "rows": [],
+  "activeFraProvenanceDisagreementCount": 0,
+  "activeFraProvenanceDisagreementRows": [],
   "productionMovementApplied": false,
   "migrationRequired": false,
   "migrationPlan": [
