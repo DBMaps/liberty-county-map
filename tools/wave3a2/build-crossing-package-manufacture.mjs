@@ -12,12 +12,17 @@ const expectedSource={bytes:68200491,sha256:'e30bdd2502552fa5e578b2feefc5e2f599c
 const clean=s=>JSON.parse(s.replace(/^\uFEFF/,'')); const json=x=>JSON.stringify(x,null,2)+'\n';
 const hash=b=>createHash('sha256').update(b).digest('hex'); const portable=p=>relative(ROOT,p).replaceAll('\\','/');
 const assert=(v,m)=>{if(!v)throw Error(`Wave 3A.2 fail closed: ${m}`)};
+export function validateSourceIdentity(sourceBody) {
+ assert(sourceBody.length===expectedSource.bytes&&hash(sourceBody)===expectedSource.sha256,'FRA source identity changed');
+ return {...expectedSource};
+}
 async function read(p,raw=false){const b=await readFile(join(ROOT,p));return raw?b:clean(b.toString())}
 async function put(name,value){await mkdir(OUT,{recursive:true});await writeFile(join(OUT,name),json(value));}
 
-export async function build({write=true}={}) {
+export async function build({write=true,sourceValidationOnly=false}={}) {
  const sourceBody=await readFile(SOURCE), source=clean(sourceBody.toString());
- assert(sourceBody.length===expectedSource.bytes&&hash(sourceBody)===expectedSource.sha256,'FRA source identity changed');
+ const sourceIdentity=validateSourceIdentity(sourceBody);
+ if(sourceValidationOnly)return sourceIdentity;
  const inventory=await read('data/lp104/texas-counties.json'), classifications=await read('evidence/wave3a1b-fra-county-authority/exception-classification.json'), counts=await read('evidence/wave3a1b-fra-county-authority/geographic-county-counts.json'), partition=await read('evidence/wave3a1b-fra-county-authority/projected-partition.json'), manifest=await read('Crossing-Packages/production-crossing-manifest.json');
  const invByFips=new Map(inventory.counties.map(c=>[c.fips,c])), exceptions=new Map(classifications.rows.map(r=>[r.crossingId,r]));
  const entries=source.features.map(f=>{const id=String(f.properties.CROSSING||'').trim(), sf=String(f.properties.STCYFIPS||f.properties.CountyCode||''), ex=exceptions.get(id), gf=ex?.coordinateResolvedCountyFips||(!ex?sf:null), county=gf?invByFips.get(gf):null, resolution=ex?.classification||'SOURCE_AND_GEOGRAPHY_AGREE'; return {crossingId:id,fraSourceCountyFips:sf,fraSourceCountyName:String(f.properties.COUNTYNAME||''),gridlyCountyId:county?.countyId||null,gridlyCountyFips:gf||null,resolution,evidence:ex?{authority:'certified 2025 TIGER polygon containment',exceptionType:ex.exceptionType,distanceToSourceCountyBoundaryMeters:ex.distanceToSourceCountyBoundaryMeters??null}:{authority:'FRA source county agrees with certified containment'}}}).sort((a,b)=>a.crossingId.localeCompare(b.crossingId));
