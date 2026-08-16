@@ -8299,6 +8299,59 @@ function gridlyResolveCountyIdForCoordinate(lat, lng) {
   });
 }
 
+let gridlyCountyModeContextResolution = Object.freeze({
+  countyResolutionSource: null,
+  resolvedCountyId: null,
+  persistedAwarenessCountyId: null,
+  stalePersistedContextIgnored: false
+});
+
+function gridlyGetPersistedAwarenessCountyId() {
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  return selected?.countyId ? gridlyNormalizeCountyId(selected.countyId) : null;
+}
+
+// County mode owns a presentation decision, not a Home preference decision.
+// Explicit county-wide identity wins; otherwise the current governed PLACE or
+// local presentation coordinate is resolved through authoritative containment.
+function gridlyResolveCountyModeActiveContext() {
+  const presentation = gridlyActiveGeographicPresentation;
+  const persistedAwarenessCountyId = gridlyGetPersistedAwarenessCountyId();
+  let resolvedCountyId = null;
+  let countyResolutionSource = null;
+  if (presentation?.semanticLevel === "COUNTYWIDE" && presentation.explicitCountyId) {
+    resolvedCountyId = gridlyNormalizeCountyId(presentation.explicitCountyId);
+    countyResolutionSource = "active-countywide-identity";
+  } else {
+    const lat = Number(presentation?.lat);
+    const lng = Number(presentation?.lng);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      resolvedCountyId = gridlyResolveCountyIdForCoordinate(lat, lng)?.countyId || null;
+      countyResolutionSource = presentation?.semanticLevel === "PLACE"
+        ? "active-presentation-coordinate"
+        : "current-coordinate-containment";
+    }
+  }
+  // A map-only context is the final current-context candidate. Persisted state
+  // is intentionally not a fallback when a governed presentation exists.
+  if (!resolvedCountyId && !presentation) {
+    const center = map?.getCenter?.();
+    resolvedCountyId = center ? gridlyResolveCountyIdForCoordinate(center.lat, center.lng)?.countyId || null : null;
+    if (resolvedCountyId) countyResolutionSource = "current-coordinate-containment";
+  }
+  if (!resolvedCountyId) {
+    resolvedCountyId = gridlyGetActiveCountyId();
+    countyResolutionSource = "current-active-county-fallback";
+  }
+  gridlyCountyModeContextResolution = Object.freeze({
+    countyResolutionSource,
+    resolvedCountyId,
+    persistedAwarenessCountyId,
+    stalePersistedContextIgnored: Boolean(persistedAwarenessCountyId && persistedAwarenessCountyId !== resolvedCountyId)
+  });
+  return gridlyCountyModeContextResolution;
+}
+
 function gridlyGetCoordinateScopedReportMetadata(lat, lng) {
   const resolution = gridlyResolveCountyIdForCoordinate(lat, lng);
   if (!resolution.countyId) return null;
@@ -45582,6 +45635,10 @@ let gridlyPlacePresentationTargets = null;
 let gridlyPlacePresentationLoadPromise = null;
 let gridlySemanticCameraSequence = 0;
 let gridlyCommittedSemanticCamera = null;
+// Ephemeral presentation ownership. This is deliberately separate from the
+// persisted Home/Awareness preference: a searched PLACE may be the active map
+// presentation without becoming the user's permanent home.
+let gridlyActiveGeographicPresentation = null;
 let gridlyStartupSemanticContext = null;
 let gridlyPrimaryMapCameraInitialized = false;
 let gridlyStartupContextFinalized = false;
@@ -45650,7 +45707,10 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
     if (!target || !Number.isFinite(Number(target.lat)) || !Number.isFinite(Number(targetLng)) || !Number.isFinite(Number(targetZoom))) return false;
     if (typeof gridlyRecordSemanticCameraOperation === "function") gridlyRecordSemanticCameraOperation("setView", [[Number(target.lat), Number(targetLng)], Number(targetZoom), { animate: options.animate === true }], "PLACE", options.transactionPhase);
     const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(targetLng) }, Number(targetZoom), { animate: options.animate === true, compensateForChrome: false });
-    if (issued) gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid, target: Object.freeze({ lat: Number(target.lat), lng: Number(targetLng) }), zoom: Number(targetZoom), presentationSource: consumerCamera?.source || "STATEWIDE_PLACE_PRESENTATION", source: options.source || "unknown" });
+    if (issued) {
+      gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid, target: Object.freeze({ lat: Number(target.lat), lng: Number(targetLng) }), zoom: Number(targetZoom), presentationSource: consumerCamera?.source || "STATEWIDE_PLACE_PRESENTATION", source: options.source || "unknown" });
+      gridlyActiveGeographicPresentation = Object.freeze({ semanticLevel: "PLACE", placeGeoid, placeLabel: area.label || area.consumerLabel || area.storageValue || null, lat: Number(target.lat), lng: Number(targetLng), explicitCountyId: null });
+    }
     return issued;
   }
   if (area.countyWide !== true && area.fallback !== true) {
@@ -45659,7 +45719,10 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
     const targetZoom = GRIDLY_TOWN_STARTUP_ZOOM;
     if (typeof gridlyRecordSemanticCameraOperation === "function") gridlyRecordSemanticCameraOperation("setView", [[Number(target.lat), Number(target.lng)], targetZoom, { animate: options.animate === true }], "PLACE", options.transactionPhase);
     const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(target.lng) }, targetZoom, { animate: options.animate === true, compensateForChrome: false });
-    if (issued) gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid: null, target: Object.freeze({ lat: Number(target.lat), lng: Number(target.lng) }), zoom: targetZoom, presentationSource: area.source || null, source: options.source || "unknown" });
+    if (issued) {
+      gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid: null, target: Object.freeze({ lat: Number(target.lat), lng: Number(target.lng) }), zoom: targetZoom, presentationSource: area.source || null, source: options.source || "unknown" });
+      gridlyActiveGeographicPresentation = Object.freeze({ semanticLevel: "LOCAL", placeGeoid: null, placeLabel: area.label || area.storageValue || null, lat: Number(target.lat), lng: Number(target.lng), explicitCountyId: null });
+    }
     return issued;
   }
   if (area.countyWide !== true) return false;
@@ -45675,6 +45738,7 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
     if (typeof gridlyRecordSemanticCameraOperation === "function") gridlyRecordSemanticCameraOperation("fitBounds", [bounds, { ...getGridlyAwarenessFitPadding(), animate: false, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM }], "COUNTYWIDE", options.transactionPhase);
     map.fitBounds(bounds, { ...getGridlyAwarenessFitPadding(), animate: false, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM });
     gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "COUNTYWIDE", countyId: canonicalCountyId, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM, source: options.source || "unknown" });
+    gridlyActiveGeographicPresentation = Object.freeze({ semanticLevel: "COUNTYWIDE", placeGeoid: null, placeLabel: area.label || area.storageValue || null, lat: Number(area.lat), lng: Number(area.lng), explicitCountyId: canonicalCountyId });
     return true;
   };
   if (issueCountyFit()) return true;
@@ -46074,7 +46138,7 @@ function gridlySetActiveCountyContext(countyId = GRIDLY_DEFAULT_COUNTY_ID, optio
   if (typeof window !== "undefined") window.GRIDLY_ACTIVE_COUNTY_ID = normalized;
   gridlyPublishValidationIdentity();
   if (previousCountyId !== normalized) {
-    gridlyClearStaleAwarenessAreaForCountyContext(normalized, "active-county-change");
+    if (options.preservePersistedAwareness !== true) gridlyClearStaleAwarenessAreaForCountyContext(normalized, "active-county-change");
     gridlyCrossingInventoryCountyId = null;
     if (Array.isArray(crossings)) crossings = [];
     resetGridlyCrossingRuntimeAuditStateForCounty(normalized, "active-county-change");
@@ -48588,6 +48652,8 @@ function gridlyGetCountyBoundaryRenderSnapshot() {
     ["polygonLayerAdded", polygonLayerAdded],
     ["polygonCurrentlyOnMap", polygonCurrentlyOnMap]
   ];
+  const presentation = gridlyActiveGeographicPresentation || {};
+  const resolution = gridlyCountyModeContextResolution || {};
   return Object.freeze({
     countyId,
     countyFips: getGridlyCountyBoundaryOverlayFeatureGeoid(feature) || gridlyExtractCountyGeoid(county),
@@ -48598,10 +48664,19 @@ function gridlyGetCountyBoundaryRenderSnapshot() {
     polygonLayerCreated,
     polygonLayerAdded,
     polygonCurrentlyOnMap,
+    overlayState: polygonCurrentlyOnMap ? "active" : "inactive-removed",
     fitBoundsSource: activeGeoFilter === "county" && polygonLayerCreated ? "authoritative-county-polygon-layer" : null,
     bounds,
     activeGeoFilter: activeGeoFilter || null,
-    firstFailedStage: stages.find((entry) => !entry[1])?.[0] || null
+    activePlaceGeoid: presentation.placeGeoid || null,
+    activePlaceLabel: presentation.placeLabel || null,
+    activePresentationLat: Number.isFinite(Number(presentation.lat)) ? Number(presentation.lat) : null,
+    activePresentationLng: Number.isFinite(Number(presentation.lng)) ? Number(presentation.lng) : null,
+    countyResolutionSource: resolution.countyResolutionSource || null,
+    resolvedCountyId: resolution.resolvedCountyId || null,
+    persistedAwarenessCountyId: resolution.persistedAwarenessCountyId || null,
+    stalePersistedContextIgnored: resolution.stalePersistedContextIgnored === true,
+    firstFailedStage: activeGeoFilter !== "county" ? "county-overlay-inactive" : (stages.find((entry) => !entry[1])?.[0] || null)
   });
 }
 
@@ -71368,6 +71443,14 @@ function getActiveDelayCrossingsForViewport() {
 }
 
 function gridlyReissueActiveAreaPresentation(source = "geo-filter-empty") {
+  const currentPresentation = gridlyActiveGeographicPresentation;
+  if (currentPresentation && currentPresentation.semanticLevel !== "COUNTYWIDE" && [currentPresentation.lat, currentPresentation.lng].every((value) => Number.isFinite(Number(value)))) {
+    const zoom = gridlyCommittedSemanticCamera?.zoom || GRIDLY_TOWN_STARTUP_ZOOM;
+    if (typeof gridlyRecordSemanticCameraOperation === "function") {
+      gridlyRecordSemanticCameraOperation("setView", [[Number(currentPresentation.lat), Number(currentPresentation.lng)], Number(zoom), { animate: true }], "FILTER_PRESENTATION", source);
+    }
+    return setGridlyAwarenessView({ lat: Number(currentPresentation.lat), lng: Number(currentPresentation.lng) }, Number(zoom), { animate: true, compensateForChrome: false });
+  }
   const area = typeof getGridlyHomeTownAwarenessAnchor === "function" ? getGridlyHomeTownAwarenessAnchor() : null;
   if (!area || !map || area.countyWide === true || area.fallback === true) return false;
 
@@ -71507,7 +71590,10 @@ function getVisibleCrossingsForFilter(reason = "unknown") {
   }
 
   if (activeGeoFilter === "town") {
-    const awarenessAnchor = typeof getGridlyHomeTownAwarenessAnchor === "function" ? getGridlyHomeTownAwarenessAnchor() : null;
+    const presentation = gridlyActiveGeographicPresentation;
+    const awarenessAnchor = presentation && presentation.semanticLevel !== "COUNTYWIDE" && [presentation.lat, presentation.lng].every((value) => Number.isFinite(Number(value)))
+      ? { lat: Number(presentation.lat), lng: Number(presentation.lng), radiusMiles: 10 }
+      : (typeof getGridlyHomeTownAwarenessAnchor === "function" ? getGridlyHomeTownAwarenessAnchor() : null);
     const filtered = awarenessAnchor ? getGridlyHomeTownCrossings(awarenessAnchor) : crossings.filter(
       (crossing) => String(crossing.city || "").toLowerCase() === getMyTownKey()
     );
@@ -86273,6 +86359,15 @@ function bindEvents() {
 
   const applyGeoFilterFromPill = (filterKey, reason = "unknown") => {
     const selectedFilter = filterKey || "all";
+    if (selectedFilter === "county") {
+      const countyContext = gridlyResolveCountyModeActiveContext();
+      if (countyContext.resolvedCountyId !== gridlyGetActiveCountyId()) {
+        gridlySetActiveCountyContext(countyContext.resolvedCountyId, {
+          preserveSemanticCamera: true,
+          preservePersistedAwareness: true
+        });
+      }
+    }
     const matchingPill = document.querySelector(`.geo-filter-pill[data-geo-filter="${selectedFilter}"]`);
 
     document.querySelectorAll(".geo-filter-pill").forEach((pill) => {
