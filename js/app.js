@@ -18693,9 +18693,27 @@ function gridlyGetCountyGroupedAwarenessOptions() {
         const normalized = normalizeGridlyAwarenessAreaLookupText(value);
         if (!normalized || seen.has(normalized)) return;
         seen.add(normalized);
-        communities.push(Object.freeze({ label: area.parentCommunity === "Houston" ? `Houston / ${area.label || value}` : (area.label || value), value, key: area.key, countyWide: false, fallback: area.fallback === true, parentCommunity: area.parentCommunity || null, houstonRegion: area.houstonRegion === true }));
+        const governedCommunity = (config.consumerAwarenessAreas || []).find((community) => String(community?.placeGeoid || "") === String(area.placeGeoid || area.communityId || "")) || null;
+        communities.push(Object.freeze({
+          label: area.parentCommunity === "Houston" ? `Houston / ${area.label || value}` : (area.label || value),
+          canonicalLabel: governedCommunity?.displayName || area.label || value,
+          value,
+          key: area.key,
+          countyId,
+          countyOccurrenceKey: area.key,
+          placeGeoid: governedCommunity?.placeGeoid || area.placeGeoid || null,
+          canonicalIdentity: governedCommunity?.canonicalIdentity || area.canonicalCommunityIdentity || null,
+          governedType: governedCommunity?.governedType || null,
+          consumerEligible: governedCommunity?.consumerEligible === true,
+          countyMemberships: Object.freeze([...(governedCommunity?.countyMemberships || [])].map(String).sort()),
+          countyWide: false,
+          fallback: area.fallback === true,
+          parentCommunity: area.parentCommunity || null,
+          houstonRegion: area.houstonRegion === true
+        }));
       });
-    return Object.freeze({ countyLabel: config.name || countyId, countyValue: countyId, countyId, communities: Object.freeze(communities) });
+    const countyFips = String(config.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[countyId] : "") || "");
+    return Object.freeze({ countyLabel: config.name || countyId, countyValue: countyId, countyId, countyFips, communities: Object.freeze(communities) });
   });
 }
 
@@ -49536,10 +49554,6 @@ function summarizeGridlyAwarenessIntelligenceForDisplay(summary = {}) {
 function applyGridlyHomeTownAwarenessContext({ source = "unknown", fitMap = false } = {}) {
   const homeTownAnchor = getGridlyHomeTownAwarenessAnchor();
   if (!map || !homeTownAnchor) return false;
-  if (activeGeoFilter === "nearby") {
-    activeGeoFilter = homeTownAnchor.countyWide ? "county" : "town";
-    crossingRenderFilterVersion += 1;
-  }
   if (homeTownAnchor.countyWide && activeGeoFilter === "town") {
     activeGeoFilter = "county";
     crossingRenderFilterVersion += 1;
@@ -93889,11 +93903,104 @@ function getGridlyManualAwarenessAreaOptions() {
 function filterGridlyManualAwarenessAreas(query = "") {
   const normalizedQuery = normalizeGridlyAwarenessAreaLookupText(String(query || "").trim());
   if (!normalizedQuery) return [];
-  return getGridlyManualAwarenessAreaOptions().map((group) => {
+  const matchingGroups = getGridlyManualAwarenessAreaOptions().map((group) => {
     const countyMatches = normalizeGridlyAwarenessAreaLookupText(group.countyLabel).includes(normalizedQuery);
     const communities = countyMatches ? group.communities : group.communities.filter((community) => normalizeGridlyAwarenessAreaLookupText(community.label).includes(normalizedQuery));
     return Object.freeze({ ...group, communities: Object.freeze(communities) });
   }).filter((group) => group.communities.length > 0);
+  const occurrencesByPlaceGeoid = new Map();
+  matchingGroups.forEach((group) => group.communities.forEach((community) => {
+    if (!community.placeGeoid || community.canonicalIdentity !== "PLACE_GEOID") return;
+    const occurrences = occurrencesByPlaceGeoid.get(community.placeGeoid) || [];
+    occurrences.push({ group, community });
+    occurrencesByPlaceGeoid.set(community.placeGeoid, occurrences);
+  }));
+  const collapsedGeoids = new Set();
+  const canonicalGroups = [];
+  occurrencesByPlaceGeoid.forEach((occurrences, placeGeoid) => {
+    if (occurrences.length < 2) return;
+    const first = occurrences[0].community;
+    const memberships = [...first.countyMemberships].map(String).sort();
+    const consistent = memberships.length > 1 && occurrences.length === memberships.length
+      && occurrences.every(({ group, community }) =>
+        normalizeGridlyAwarenessAreaLookupText(community.canonicalLabel) === normalizeGridlyAwarenessAreaLookupText(first.canonicalLabel)
+        && community.placeGeoid === placeGeoid
+        && community.canonicalIdentity === first.canonicalIdentity
+        && community.governedType === first.governedType
+        && community.consumerEligible === true
+        && community.countyMemberships.join("|") === memberships.join("|")
+        && memberships.includes(String(group.countyFips || "")));
+    if (!consistent) return;
+    const countyIds = occurrences.map(({ group }) => group.countyId).sort();
+    const cameraOccurrence = occurrences.find(({ community }) => {
+      const area = GRIDLY_AWARENESS_AREA_BY_KEY?.[community.key];
+      return Number.isFinite(Number(area?.lat)) && Number.isFinite(Number(area?.lng));
+    }) || occurrences[0];
+    const cameraArea = GRIDLY_AWARENESS_AREA_BY_KEY?.[cameraOccurrence.community.key] || {};
+    const canonicalArea = Object.freeze({
+      ...cameraArea,
+      key: `place-${placeGeoid}`,
+      storageValue: first.canonicalLabel,
+      label: first.canonicalLabel,
+      countyId: null,
+      countyIds: Object.freeze(countyIds),
+      countyMemberships: Object.freeze([...memberships]),
+      placeGeoid,
+      communityId: placeGeoid,
+      canonicalCommunityIdentity: "PLACE_GEOID",
+      canonicalMultiCountyPlace: true
+    });
+    const canonicalResolution = Object.freeze({
+      status: "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE",
+      matchType: "town",
+      community: first.canonicalLabel,
+      county: null,
+      countyId: null,
+      countyIds: canonicalArea.countyIds,
+      countyMemberships: canonicalArea.countyMemberships,
+      placeGeoid,
+      communityKey: placeGeoid,
+      canonicalIdentity: "PLACE_GEOID",
+      governedType: first.governedType,
+      consumerEligible: true,
+      operational: true,
+      awarenessAreaKey: canonicalArea.key,
+      awarenessArea: canonicalArea,
+      ambiguous: false,
+      candidates: Object.freeze(occurrences.map(({ group, community }) => Object.freeze({
+        awarenessAreaKey: community.key,
+        community: community.canonicalLabel,
+        county: group.countyLabel,
+        countyId: group.countyId,
+        countyFips: group.countyFips,
+        placeGeoid,
+        canonicalIdentity: community.canonicalIdentity,
+        governedType: community.governedType,
+        consumerEligible: community.consumerEligible,
+        countyMemberships: community.countyMemberships,
+        operational: true
+      })))
+    });
+    collapsedGeoids.add(placeGeoid);
+    canonicalGroups.push(Object.freeze({
+      countyValue: "",
+      countyLabel: "Multi-county community",
+      countyId: null,
+      communities: Object.freeze([Object.freeze({
+        ...first,
+        key: `place-${placeGeoid}`,
+        value: `place-${placeGeoid}`,
+        label: first.canonicalLabel,
+        countyId: null,
+        canonicalResolution
+      })])
+    }));
+  });
+  const remainingGroups = matchingGroups.map((group) => Object.freeze({
+    ...group,
+    communities: Object.freeze(group.communities.filter((community) => !collapsedGeoids.has(community.placeGeoid)))
+  })).filter((group) => group.communities.length > 0);
+  return Object.freeze([...canonicalGroups, ...remainingGroups]);
 }
 
 function resolveGridlyManualAwarenessAreaSearch(query = "") {
@@ -93937,7 +94044,7 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
   const pendingOption = groups.flatMap((group) => group.communities).find((community) => community.value === pendingValue) || null;
   const resultHtml = groups.flatMap((group) => group.communities.map((community) => {
       const isCurrent = community.key === selectedArea?.key;
-      const isPending = community.key === pendingArea?.key;
+      const isPending = community.value === pendingValue || community.key === pendingArea?.key;
       const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
       return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
     })).join("");
