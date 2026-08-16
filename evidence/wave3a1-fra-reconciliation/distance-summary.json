@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.wave3a1.distance.v1",
+  "method": "WGS84 longitude/latitude projected per crossing with local equirectangular metric approximation (R=6371008.8m), minimum point-to-TIGER-ring-segment distance",
+  "geometryPath": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+  "geometryVintage": "2025 TIGER/Line certified 254/254",
+  "mismatchCount": 351,
+  "buckets": {
+    "ON_OR_EFFECTIVELY_ON_BOUNDARY": 0,
+    "LE_25_M": 8,
+    "25_TO_100_M": 9,
+    "100_TO_500_M": 25,
+    "500_M_TO_1_KM": 29,
+    "GT_1_KM": 280
+  },
+  "minimumMeters": 0.255,
+  "maximumMeters": 421201.241
+}

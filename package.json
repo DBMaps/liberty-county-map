@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:wave3a1-fra-reconciliation": "node tools/wave3a1/build-fra-reconciliation.mjs --write",
+    "verify:wave3a1-fra-reconciliation": "node tools/wave3a1/build-fra-reconciliation.mjs --verify",
+    "test:wave3a1-fra-reconciliation": "node --test tests/wave3a1-fra-reconciliation.test.mjs",
     "build:wave3a-crossing-readiness": "node tools/wave3a/build-crossing-readiness.mjs --write",
     "verify:wave3a-crossing-readiness": "node tools/wave3a/build-crossing-readiness.mjs --verify",
     "test:wave3a-crossing-readiness": "node --test tests/wave3a-crossing-readiness.test.mjs",

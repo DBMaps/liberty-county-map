@@ -1,0 +1,943 @@
+{
+  "schemaVersion": "gridly.wave3a1.projected-cohort.v1",
+  "mode": "AUDIT_ONLY_NOT_POLICY",
+  "sourceAuthoritative": {
+    "countyCount": 173,
+    "candidateIdentityCount": 12330
+  },
+  "coordinateContainmentWhatIf": {
+    "candidateIdentityCount": 12330,
+    "coordinateAssignedIdentityCount": 12328,
+    "statewideIdentityCount": 16101,
+    "lostIdentities": 0,
+    "duplicatedIdentities": 0,
+    "outsideRowsRetainedButUnassigned": 2
+  },
+  "countyCountChanges": [
+    {
+      "countyFips": "48001",
+      "countyName": "Anderson County",
+      "sourceAuthoritativeCount": 71,
+      "coordinateContainmentWhatIfCount": 70,
+      "delta": -1
+    },
+    {
+      "countyFips": "48007",
+      "countyName": "Aransas County",
+      "sourceAuthoritativeCount": 7,
+      "coordinateContainmentWhatIfCount": 5,
+      "delta": -2
+    },
+    {
+      "countyFips": "48011",
+      "countyName": "Armstrong County",
+      "sourceAuthoritativeCount": 25,
+      "coordinateContainmentWhatIfCount": 24,
+      "delta": -1
+    },
+    {
+      "countyFips": "48013",
+      "countyName": "Atascosa County",
+      "sourceAuthoritativeCount": 59,
+      "coordinateContainmentWhatIfCount": 57,
+      "delta": -2
+    },
+    {
+      "countyFips": "48021",
+      "countyName": "Bastrop County",
+      "sourceAuthoritativeCount": 159,
+      "coordinateContainmentWhatIfCount": 158,
+      "delta": -1
+    },
+    {
+      "countyFips": "48027",
+      "countyName": "Bell County",
+      "sourceAuthoritativeCount": 143,
+      "coordinateContainmentWhatIfCount": 150,
+      "delta": 7
+    },
+    {
+      "countyFips": "48029",
+      "countyName": "Bexar County",
+      "sourceAuthoritativeCount": 378,
+      "coordinateContainmentWhatIfCount": 380,
+      "delta": 2
+    },
+    {
+      "countyFips": "48031",
+      "countyName": "Blanco County",
+      "sourceAuthoritativeCount": 0,
+      "coordinateContainmentWhatIfCount": 7,
+      "delta": 7
+    },
+    {
+      "countyFips": "48035",
+      "countyName": "Bosque County",
+      "sourceAuthoritativeCount": 49,
+      "coordinateContainmentWhatIfCount": 48,
+      "delta": -1
+    },
+    {
+      "countyFips": "48041",
+      "countyName": "Brazos County",
+      "sourceAuthoritativeCount": 0,
+      "coordinateContainmentWhatIfCount": 9,
+      "delta": 9
+    },
+    {
+      "countyFips": "48043",
+      "countyName": "Brewster County",
+      "sourceAuthoritativeCount": 49,
+      "coordinateContainmentWhatIfCount": 55,
+      "delta": 6
+    },
+    {
+      "countyFips": "48049",
+      "countyName": "Brown County",
+      "sourceAuthoritativeCount": 106,
+      "coordinateContainmentWhatIfCount": 97,
+      "delta": -9
+    },
+    {
+      "countyFips": "48053",
+      "countyName": "Burnet County",
+      "sourceAuthoritativeCount": 69,
+      "coordinateContainmentWhatIfCount": 63,
+      "delta": -6
+    },
+    {
+      "countyFips": "48055",
+      "countyName": "Caldwell County",
+      "sourceAuthoritativeCount": 45,
+      "coordinateContainmentWhatIfCount": 47,
+      "delta": 2
+    },
+    {
+      "countyFips": "48059",
+      "countyName": "Callahan County",
+      "sourceAuthoritativeCount": 24,
+      "coordinateContainmentWhatIfCount": 26,
+      "delta": 2
+    },
+    {
+      "countyFips": "48061",
+      "countyName": "Cameron County",
+      "sourceAuthoritativeCount": 287,
+      "coordinateContainmentWhatIfCount": 290,
+      "delta": 3
+    },
+    {
+      "countyFips": "48065",
+      "countyName": "Carson County",
+      "sourceAuthoritativeCount": 58,
+      "coordinateContainmentWhatIfCount": 63,
+      "delta": 5
+    },
+    {
+      "countyFips": "48067",
+      "countyName": "Cass County",
+      "sourceAuthoritativeCount": 47,
+      "coordinateContainmentWhatIfCount": 49,
+      "delta": 2
+    },
+    {
+      "countyFips": "48069",
+      "countyName": "Castro County",
+      "sourceAuthoritativeCount": 30,
+      "coordinateContainmentWhatIfCount": 28,
+      "delta": -2
+    },
+    {
+      "countyFips": "48073",
+      "countyName": "Cherokee County",
+      "sourceAuthoritativeCount": 65,
+      "coordinateContainmentWhatIfCount": 69,
+      "delta": 4
+    },
+    {
+      "countyFips": "48075",
+      "countyName": "Childress County",
+      "sourceAuthoritativeCount": 27,
+      "coordinateContainmentWhatIfCount": 28,
+      "delta": 1
+    },
+    {
+      "countyFips": "48077",
+      "countyName": "Clay County",
+      "sourceAuthoritativeCount": 30,
+      "coordinateContainmentWhatIfCount": 29,
+      "delta": -1
+    },
+    {
+      "countyFips": "48083",
+      "countyName": "Coleman County",
+      "sourceAuthoritativeCount": 66,
+      "coordinateContainmentWhatIfCount": 58,
+      "delta": -8
+    },
+    {
+      "countyFips": "48085",
+      "countyName": "Collin County",
+      "sourceAuthoritativeCount": 186,
+      "coordinateContainmentWhatIfCount": 185,
+      "delta": -1
+    },
+    {
+      "countyFips": "48091",
+      "countyName": "Comal County",
+      "sourceAuthoritativeCount": 100,
+      "coordinateContainmentWhatIfCount": 110,
+      "delta": 10
+    },
+    {
+      "countyFips": "48093",
+      "countyName": "Comanche County",
+      "sourceAuthoritativeCount": 85,
+      "coordinateContainmentWhatIfCount": 80,
+      "delta": -5
+    },
+    {
+      "countyFips": "48097",
+      "countyName": "Cooke County",
+      "sourceAuthoritativeCount": 30,
+      "coordinateContainmentWhatIfCount": 31,
+      "delta": 1
+    },
+    {
+      "countyFips": "48105",
+      "countyName": "Crockett County",
+      "sourceAuthoritativeCount": 0,
+      "coordinateContainmentWhatIfCount": 1,
+      "delta": 1
+    },
+    {
+      "countyFips": "48109",
+      "countyName": "Culberson County",
+      "sourceAuthoritativeCount": 15,
+      "coordinateContainmentWhatIfCount": 17,
+      "delta": 2
+    },
+    {
+      "countyFips": "48113",
+      "countyName": "Dallas County",
+      "sourceAuthoritativeCount": 784,
+      "coordinateContainmentWhatIfCount": 789,
+      "delta": 5
+    },
+    {
+      "countyFips": "48117",
+      "countyName": "Deaf Smith County",
+      "sourceAuthoritativeCount": 27,
+      "coordinateContainmentWhatIfCount": 25,
+      "delta": -2
+    },
+    {
+      "countyFips": "48121",
+      "countyName": "Denton County",
+      "sourceAuthoritativeCount": 232,
+      "coordinateContainmentWhatIfCount": 231,
+      "delta": -1
+    },
+    {
+      "countyFips": "48123",
+      "countyName": "DeWitt County",
+      "sourceAuthoritativeCount": 58,
+      "coordinateContainmentWhatIfCount": 57,
+      "delta": -1
+    },
+    {
+      "countyFips": "48129",
+      "countyName": "Donley County",
+      "sourceAuthoritativeCount": 34,
+      "coordinateContainmentWhatIfCount": 36,
+      "delta": 2
+    },
+    {
+      "countyFips": "48131",
+      "countyName": "Duval County",
+      "sourceAuthoritativeCount": 50,
+      "coordinateContainmentWhatIfCount": 49,
+      "delta": -1
+    },
+    {
+      "countyFips": "48135",
+      "countyName": "Ector County",
+      "sourceAuthoritativeCount": 49,
+      "coordinateContainmentWhatIfCount": 45,
+      "delta": -4
+    },
+    {
+      "countyFips": "48137",
+      "countyName": "Edwards County",
+      "sourceAuthoritativeCount": 1,
+      "coordinateContainmentWhatIfCount": 0,
+      "delta": -1
+    },
+    {
+      "countyFips": "48139",
+      "countyName": "Ellis County",
+      "sourceAuthoritativeCount": 163,
+      "coordinateContainmentWhatIfCount": 164,
+      "delta": 1
+    },
+    {
+      "countyFips": "48141",
+      "countyName": "El Paso County",
+      "sourceAuthoritativeCount": 201,
+      "coordinateContainmentWhatIfCount": 198,
+      "delta": -3
+    },
+    {
+      "countyFips": "48143",
+      "countyName": "Erath County",
+      "sourceAuthoritativeCount": 100,
+      "coordinateContainmentWhatIfCount": 93,
+      "delta": -7
+    },
+    {
+      "countyFips": "48145",
+      "countyName": "Falls County",
+      "sourceAuthoritativeCount": 58,
+      "coordinateContainmentWhatIfCount": 69,
+      "delta": 11
+    },
+    {
+      "countyFips": "48147",
+      "countyName": "Fannin County",
+      "sourceAuthoritativeCount": 76,
+      "coordinateContainmentWhatIfCount": 74,
+      "delta": -2
+    },
+    {
+      "countyFips": "48151",
+      "countyName": "Fisher County",
+      "sourceAuthoritativeCount": 8,
+      "coordinateContainmentWhatIfCount": 10,
+      "delta": 2
+    },
+    {
+      "countyFips": "48153",
+      "countyName": "Floyd County",
+      "sourceAuthoritativeCount": 0,
+      "coordinateContainmentWhatIfCount": 1,
+      "delta": 1
+    },
+    {
+      "countyFips": "48159",
+      "countyName": "Franklin County",
+      "sourceAuthoritativeCount": 21,
+      "coordinateContainmentWhatIfCount": 20,
+      "delta": -1
+    },
+    {
+      "countyFips": "48161",
+      "countyName": "Freestone County",
+      "sourceAuthoritativeCount": 79,
+      "coordinateContainmentWhatIfCount": 75,
+      "delta": -4
+    },
+    {
+      "countyFips": "48163",
+      "countyName": "Frio County",
+      "sourceAuthoritativeCount": 37,
+      "coordinateContainmentWhatIfCount": 36,
+      "delta": -1
+    },
+    {
+      "countyFips": "48177",
+      "countyName": "Gonzales County",
+      "sourceAuthoritativeCount": 44,
+      "coordinateContainmentWhatIfCount": 41,
+      "delta": -3
+    },
+    {
+      "countyFips": "48181",
+      "countyName": "Grayson County",
+      "sourceAuthoritativeCount": 247,
+      "coordinateContainmentWhatIfCount": 240,
+      "delta": -7
+    },
+    {
+      "countyFips": "48183",
+      "countyName": "Gregg County",
+      "sourceAuthoritativeCount": 84,
+      "coordinateContainmentWhatIfCount": 85,
+      "delta": 1
+    },
+    {
+      "countyFips": "48187",
+      "countyName": "Guadalupe County",
+      "sourceAuthoritativeCount": 67,
+      "coordinateContainmentWhatIfCount": 58,
+      "delta": -9
+    },
+    {
+      "countyFips": "48191",
+      "countyName": "Hall County",
+      "sourceAuthoritativeCount": 18,
+      "coordinateContainmentWhatIfCount": 15,
+      "delta": -3
+    },
+    {
+      "countyFips": "48193",
+      "countyName": "Hamilton County",
+      "sourceAuthoritativeCount": 0,
+      "coordinateContainmentWhatIfCount": 1,
+      "delta": 1
+    },
+    {
+      "countyFips": "48195",
+      "countyName": "Hansford County",
+      "sourceAuthoritativeCount": 3,
+      "coordinateContainmentWhatIfCount": 8,
+      "delta": 5
+    },
+    {
+      "countyFips": "48197",
+      "countyName": "Hardeman County",
+      "sourceAuthoritativeCount": 43,
+      "coordinateContainmentWhatIfCount": 39,
+      "delta": -4
+    },
+    {
+      "countyFips": "48203",
+      "countyName": "Harrison County",
+      "sourceAuthoritativeCount": 88,
+      "coordinateContainmentWhatIfCount": 87,
+      "delta": -1
+    },
+    {
+      "countyFips": "48205",
+      "countyName": "Hartley County",
+      "sourceAuthoritativeCount": 41,
+      "coordinateContainmentWhatIfCount": 40,
+      "delta": -1
+    },
+    {
+      "countyFips": "48209",
+      "countyName": "Hays County",
+      "sourceAuthoritativeCount": 54,
+      "coordinateContainmentWhatIfCount": 53,
+      "delta": -1
+    },
+    {
+      "countyFips": "48211",
+      "countyName": "Hemphill County",
+      "sourceAuthoritativeCount": 11,
+      "coordinateContainmentWhatIfCount": 13,
+      "delta": 2
+    },
+    {
+      "countyFips": "48213",
+      "countyName": "Henderson County",
+      "sourceAuthoritativeCount": 89,
+      "coordinateContainmentWhatIfCount": 85,
+      "delta": -4
+    },
+    {
+      "countyFips": "48215",
+      "countyName": "Hidalgo County",
+      "sourceAuthoritativeCount": 267,
+      "coordinateContainmentWhatIfCount": 265,
+      "delta": -2
+    },
+    {
+      "countyFips": "48219",
+      "countyName": "Hockley County",
+      "sourceAuthoritativeCount": 54,
+      "coordinateContainmentWhatIfCount": 52,
+      "delta": -2
+    },
+    {
+      "countyFips": "48221",
+      "countyName": "Hood County",
+      "sourceAuthoritativeCount": 68,
+      "coordinateContainmentWhatIfCount": 56,
+      "delta": -12
+    },
+    {
+      "countyFips": "48223",
+      "countyName": "Hopkins County",
+      "sourceAuthoritativeCount": 111,
+      "coordinateContainmentWhatIfCount": 108,
+      "delta": -3
+    },
+    {
+      "countyFips": "48229",
+      "countyName": "Hudspeth County",
+      "sourceAuthoritativeCount": 27,
+      "coordinateContainmentWhatIfCount": 26,
+      "delta": -1
+    },
+    {
+      "countyFips": "48231",
+      "countyName": "Hunt County",
+      "sourceAuthoritativeCount": 157,
+      "coordinateContainmentWhatIfCount": 162,
+      "delta": 5
+    },
+    {
+      "countyFips": "48233",
+      "countyName": "Hutchinson County",
+      "sourceAuthoritativeCount": 38,
+      "coordinateContainmentWhatIfCount": 34,
+      "delta": -4
+    },
+    {
+      "countyFips": "48235",
+      "countyName": "Irion County",
+      "sourceAuthoritativeCount": 56,
+      "coordinateContainmentWhatIfCount": 55,
+      "delta": -1
+    },
+    {
+      "countyFips": "48243",
+      "countyName": "Jeff Davis County",
+      "sourceAuthoritativeCount": 13,
+      "coordinateContainmentWhatIfCount": 10,
+      "delta": -3
+    },
+    {
+      "countyFips": "48249",
+      "countyName": "Jim Wells County",
+      "sourceAuthoritativeCount": 62,
+      "coordinateContainmentWhatIfCount": 63,
+      "delta": 1
+    },
+    {
+      "countyFips": "48251",
+      "countyName": "Johnson County",
+      "sourceAuthoritativeCount": 148,
+      "coordinateContainmentWhatIfCount": 168,
+      "delta": 20
+    },
+    {
+      "countyFips": "48257",
+      "countyName": "Kaufman County",
+      "sourceAuthoritativeCount": 44,
+      "coordinateContainmentWhatIfCount": 45,
+      "delta": 1
+    },
+    {
+      "countyFips": "48273",
+      "countyName": "Kleberg County",
+      "sourceAuthoritativeCount": 32,
+      "coordinateContainmentWhatIfCount": 30,
+      "delta": -2
+    },
+    {
+      "countyFips": "48277",
+      "countyName": "Lamar County",
+      "sourceAuthoritativeCount": 41,
+      "coordinateContainmentWhatIfCount": 42,
+      "delta": 1
+    },
+    {
+      "countyFips": "48279",
+      "countyName": "Lamb County",
+      "sourceAuthoritativeCount": 28,
+      "coordinateContainmentWhatIfCount": 29,
+      "delta": 1
+    },
+    {
+      "countyFips": "48281",
+      "countyName": "Lampasas County",
+      "sourceAuthoritativeCount": 50,
+      "coordinateContainmentWhatIfCount": 41,
+      "delta": -9
+    },
+    {
+      "countyFips": "48283",
+      "countyName": "La Salle County",
+      "sourceAuthoritativeCount": 45,
+      "coordinateContainmentWhatIfCount": 43,
+      "delta": -2
+    },
+    {
+      "countyFips": "48285",
+      "countyName": "Lavaca County",
+      "sourceAuthoritativeCount": 0,
+      "coordinateContainmentWhatIfCount": 1,
+      "delta": 1
+    },
+    {
+      "countyFips": "48289",
+      "countyName": "Leon County",
+      "sourceAuthoritativeCount": 80,
+      "coordinateContainmentWhatIfCount": 82,
+      "delta": 2
+    },
+    {
+      "countyFips": "48293",
+      "countyName": "Limestone County",
+      "sourceAuthoritativeCount": 51,
+      "coordinateContainmentWhatIfCount": 45,
+      "delta": -6
+    },
+    {
+      "countyFips": "48297",
+      "countyName": "Live Oak County",
+      "sourceAuthoritativeCount": 55,
+      "coordinateContainmentWhatIfCount": 56,
+      "delta": 1
+    },
+    {
+      "countyFips": "48299",
+      "countyName": "Llano County",
+      "sourceAuthoritativeCount": 16,
+      "coordinateContainmentWhatIfCount": 13,
+      "delta": -3
+    },
+    {
+      "countyFips": "48303",
+      "countyName": "Lubbock County",
+      "sourceAuthoritativeCount": 172,
+      "coordinateContainmentWhatIfCount": 173,
+      "delta": 1
+    },
+    {
+      "countyFips": "48307",
+      "countyName": "McCulloch County",
+      "sourceAuthoritativeCount": 35,
+      "coordinateContainmentWhatIfCount": 34,
+      "delta": -1
+    },
+    {
+      "countyFips": "48309",
+      "countyName": "McLennan County",
+      "sourceAuthoritativeCount": 168,
+      "coordinateContainmentWhatIfCount": 169,
+      "delta": 1
+    },
+    {
+      "countyFips": "48313",
+      "countyName": "Madison County",
+      "sourceAuthoritativeCount": 17,
+      "coordinateContainmentWhatIfCount": 16,
+      "delta": -1
+    },
+    {
+      "countyFips": "48329",
+      "countyName": "Midland County",
+      "sourceAuthoritativeCount": 32,
+      "coordinateContainmentWhatIfCount": 35,
+      "delta": 3
+    },
+    {
+      "countyFips": "48331",
+      "countyName": "Milam County",
+      "sourceAuthoritativeCount": 110,
+      "coordinateContainmentWhatIfCount": 109,
+      "delta": -1
+    },
+    {
+      "countyFips": "48333",
+      "countyName": "Mills County",
+      "sourceAuthoritativeCount": 23,
+      "coordinateContainmentWhatIfCount": 50,
+      "delta": 27
+    },
+    {
+      "countyFips": "48335",
+      "countyName": "Mitchell County",
+      "sourceAuthoritativeCount": 23,
+      "coordinateContainmentWhatIfCount": 22,
+      "delta": -1
+    },
+    {
+      "countyFips": "48341",
+      "countyName": "Moore County",
+      "sourceAuthoritativeCount": 67,
+      "coordinateContainmentWhatIfCount": 65,
+      "delta": -2
+    },
+    {
+      "countyFips": "48343",
+      "countyName": "Morris County",
+      "sourceAuthoritativeCount": 41,
+      "coordinateContainmentWhatIfCount": 39,
+      "delta": -2
+    },
+    {
+      "countyFips": "48349",
+      "countyName": "Navarro County",
+      "sourceAuthoritativeCount": 113,
+      "coordinateContainmentWhatIfCount": 116,
+      "delta": 3
+    },
+    {
+      "countyFips": "48357",
+      "countyName": "Ochiltree County",
+      "sourceAuthoritativeCount": 17,
+      "coordinateContainmentWhatIfCount": 8,
+      "delta": -9
+    },
+    {
+      "countyFips": "48359",
+      "countyName": "Oldham County",
+      "sourceAuthoritativeCount": 6,
+      "coordinateContainmentWhatIfCount": 5,
+      "delta": -1
+    },
+    {
+      "countyFips": "48365",
+      "countyName": "Panola County",
+      "sourceAuthoritativeCount": 44,
+      "coordinateContainmentWhatIfCount": 41,
+      "delta": -3
+    },
+    {
+      "countyFips": "48367",
+      "countyName": "Parker County",
+      "sourceAuthoritativeCount": 41,
+      "coordinateContainmentWhatIfCount": 39,
+      "delta": -2
+    },
+    {
+      "countyFips": "48371",
+      "countyName": "Pecos County",
+      "sourceAuthoritativeCount": 36,
+      "coordinateContainmentWhatIfCount": 44,
+      "delta": 8
+    },
+    {
+      "countyFips": "48375",
+      "countyName": "Potter County",
+      "sourceAuthoritativeCount": 118,
+      "coordinateContainmentWhatIfCount": 125,
+      "delta": 7
+    },
+    {
+      "countyFips": "48377",
+      "countyName": "Presidio County",
+      "sourceAuthoritativeCount": 53,
+      "coordinateContainmentWhatIfCount": 44,
+      "delta": -9
+    },
+    {
+      "countyFips": "48383",
+      "countyName": "Reagan County",
+      "sourceAuthoritativeCount": 21,
+      "coordinateContainmentWhatIfCount": 22,
+      "delta": 1
+    },
+    {
+      "countyFips": "48385",
+      "countyName": "Real County",
+      "sourceAuthoritativeCount": 1,
+      "coordinateContainmentWhatIfCount": 0,
+      "delta": -1
+    },
+    {
+      "countyFips": "48391",
+      "countyName": "Refugio County",
+      "sourceAuthoritativeCount": 34,
+      "coordinateContainmentWhatIfCount": 39,
+      "delta": 5
+    },
+    {
+      "countyFips": "48395",
+      "countyName": "Robertson County",
+      "sourceAuthoritativeCount": 169,
+      "coordinateContainmentWhatIfCount": 155,
+      "delta": -14
+    },
+    {
+      "countyFips": "48397",
+      "countyName": "Rockwall County",
+      "sourceAuthoritativeCount": 19,
+      "coordinateContainmentWhatIfCount": 18,
+      "delta": -1
+    },
+    {
+      "countyFips": "48399",
+      "countyName": "Runnels County",
+      "sourceAuthoritativeCount": 42,
+      "coordinateContainmentWhatIfCount": 48,
+      "delta": 6
+    },
+    {
+      "countyFips": "48401",
+      "countyName": "Rusk County",
+      "sourceAuthoritativeCount": 56,
+      "coordinateContainmentWhatIfCount": 58,
+      "delta": 2
+    },
+    {
+      "countyFips": "48405",
+      "countyName": "San Augustine County",
+      "sourceAuthoritativeCount": 13,
+      "coordinateContainmentWhatIfCount": 16,
+      "delta": 3
+    },
+    {
+      "countyFips": "48409",
+      "countyName": "San Patricio County",
+      "sourceAuthoritativeCount": 132,
+      "coordinateContainmentWhatIfCount": 135,
+      "delta": 3
+    },
+    {
+      "countyFips": "48411",
+      "countyName": "San Saba County",
+      "sourceAuthoritativeCount": 67,
+      "coordinateContainmentWhatIfCount": 47,
+      "delta": -20
+    },
+    {
+      "countyFips": "48415",
+      "countyName": "Scurry County",
+      "sourceAuthoritativeCount": 36,
+      "coordinateContainmentWhatIfCount": 37,
+      "delta": 1
+    },
+    {
+      "countyFips": "48419",
+      "countyName": "Shelby County",
+      "sourceAuthoritativeCount": 91,
+      "coordinateContainmentWhatIfCount": 88,
+      "delta": -3
+    },
+    {
+      "countyFips": "48421",
+      "countyName": "Sherman County",
+      "sourceAuthoritativeCount": 41,
+      "coordinateContainmentWhatIfCount": 42,
+      "delta": 1
+    },
+    {
+      "countyFips": "48423",
+      "countyName": "Smith County",
+      "sourceAuthoritativeCount": 119,
+      "coordinateContainmentWhatIfCount": 123,
+      "delta": 4
+    },
+    {
+      "countyFips": "48437",
+      "countyName": "Swisher County",
+      "sourceAuthoritativeCount": 44,
+      "coordinateContainmentWhatIfCount": 45,
+      "delta": 1
+    },
+    {
+      "countyFips": "48439",
+      "countyName": "Tarrant County",
+      "sourceAuthoritativeCount": 610,
+      "coordinateContainmentWhatIfCount": 615,
+      "delta": 5
+    },
+    {
+      "countyFips": "48441",
+      "countyName": "Taylor County",
+      "sourceAuthoritativeCount": 110,
+      "coordinateContainmentWhatIfCount": 106,
+      "delta": -4
+    },
+    {
+      "countyFips": "48443",
+      "countyName": "Terrell County",
+      "sourceAuthoritativeCount": 26,
+      "coordinateContainmentWhatIfCount": 27,
+      "delta": 1
+    },
+    {
+      "countyFips": "48445",
+      "countyName": "Terry County",
+      "sourceAuthoritativeCount": 45,
+      "coordinateContainmentWhatIfCount": 46,
+      "delta": 1
+    },
+    {
+      "countyFips": "48449",
+      "countyName": "Titus County",
+      "sourceAuthoritativeCount": 59,
+      "coordinateContainmentWhatIfCount": 63,
+      "delta": 4
+    },
+    {
+      "countyFips": "48451",
+      "countyName": "Tom Green County",
+      "sourceAuthoritativeCount": 94,
+      "coordinateContainmentWhatIfCount": 97,
+      "delta": 3
+    },
+    {
+      "countyFips": "48453",
+      "countyName": "Travis County",
+      "sourceAuthoritativeCount": 174,
+      "coordinateContainmentWhatIfCount": 176,
+      "delta": 2
+    },
+    {
+      "countyFips": "48459",
+      "countyName": "Upshur County",
+      "sourceAuthoritativeCount": 44,
+      "coordinateContainmentWhatIfCount": 43,
+      "delta": -1
+    },
+    {
+      "countyFips": "48465",
+      "countyName": "Val Verde County",
+      "sourceAuthoritativeCount": 50,
+      "coordinateContainmentWhatIfCount": 47,
+      "delta": -3
+    },
+    {
+      "countyFips": "48469",
+      "countyName": "Victoria County",
+      "sourceAuthoritativeCount": 199,
+      "coordinateContainmentWhatIfCount": 194,
+      "delta": -5
+    },
+    {
+      "countyFips": "48477",
+      "countyName": "Washington County",
+      "sourceAuthoritativeCount": 0,
+      "coordinateContainmentWhatIfCount": 3,
+      "delta": 3
+    },
+    {
+      "countyFips": "48479",
+      "countyName": "Webb County",
+      "sourceAuthoritativeCount": 161,
+      "coordinateContainmentWhatIfCount": 164,
+      "delta": 3
+    },
+    {
+      "countyFips": "48485",
+      "countyName": "Wichita County",
+      "sourceAuthoritativeCount": 121,
+      "coordinateContainmentWhatIfCount": 118,
+      "delta": -3
+    },
+    {
+      "countyFips": "48487",
+      "countyName": "Wilbarger County",
+      "sourceAuthoritativeCount": 36,
+      "coordinateContainmentWhatIfCount": 42,
+      "delta": 6
+    },
+    {
+      "countyFips": "48489",
+      "countyName": "Willacy County",
+      "sourceAuthoritativeCount": 44,
+      "coordinateContainmentWhatIfCount": 43,
+      "delta": -1
+    },
+    {
+      "countyFips": "48491",
+      "countyName": "Williamson County",
+      "sourceAuthoritativeCount": 161,
+      "coordinateContainmentWhatIfCount": 166,
+      "delta": 5
+    },
+    {
+      "countyFips": "48497",
+      "countyName": "Wise County",
+      "sourceAuthoritativeCount": 101,
+      "coordinateContainmentWhatIfCount": 100,
+      "delta": -1
+    }
+  ],
+  "note": "This what-if is not approved and does not manufacture packages. All 12,330 candidate identities remain in the cohort; the two outside rows remain preserved but cannot be coordinate-assigned."
+}

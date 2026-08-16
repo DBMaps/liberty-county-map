@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "gridly.wave3a1.summary.v1",
+  "decision": "FRA COUNTY RECONCILIATION REQUIRES OWNER EVIDENCE",
+  "statewideRows": 16101,
+  "candidateRows": 12330,
+  "exactMatches": 11977,
+  "crossCountyMismatches": 351,
+  "outsideTexas": 2,
+  "boundaryAmbiguities": 0,
+  "unresolved": 0,
+  "exceptionCount": 353,
+  "exceptionIdsUnique": true,
+  "rawComparisonsCompleted": 0,
+  "rawComparisonsBlocked": 353,
+  "rootCauseClassification": {
+    "confirmed": {
+      "coordinateContainedInDifferentTexasCounty": 351,
+      "coordinateOutsideTexas": 2
+    },
+    "notYetDeterministicallyDistinguishable": [
+      "FRA county attribution error",
+      "coordinate precision",
+      "historical attribution",
+      "rail segment boundary",
+      "owner processing/mapping error",
+      "wrong FIPS derivation",
+      "state-border coordinate issue"
+    ]
+  },
+  "activationApplied": false,
+  "packagesManufactured": false,
+  "ownerActionRequired": "node tools/wave3a1/compare-owner-fra-source.mjs --raw 'C:\\GitHub\\Gridly-Source-Data\\FRA\\Raw\\fra-crossings-tx-raw.geojson' --processed Crossing-Packages/Texas/fra-crossings-tx.geojson"
+}

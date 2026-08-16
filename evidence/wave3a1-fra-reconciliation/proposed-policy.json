@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "gridly.wave3a1.policy.v1",
+  "status": "PROPOSAL_NOT_IMPLEMENTED",
+  "decision": "REQUIRE_OWNER_RAW_RECORD EVIDENCE BEFORE CHOOSING SOURCE OR CONTAINMENT AUTHORITY",
+  "currentAuthority": "FRA STCYFIPS remains unchanged",
+  "proposal": [
+    {
+      "condition": "raw and processed identity/coordinates match, and owner confirms FRA county attribution",
+      "outcome": "A_RETAIN_FRA_COUNTY_WITH_PROVENANCE"
+    },
+    {
+      "condition": "raw confirms coordinates but county is demonstrated upstream anomaly",
+      "outcome": "C_GOVERNED_EXCEPTION_TABLE; retain raw fields and explicitly select runtime county"
+    },
+    {
+      "condition": "processing changed county or coordinates",
+      "outcome": "repair processing from governed raw source, then rerun reconciliation"
+    },
+    {
+      "condition": "evidence remains conflicting",
+      "outcome": "D_BLOCK_ROW"
+    }
+  ],
+  "automaticDistanceReassignment": false,
+  "productionWrites": false,
+  "runtimeChanges": false
+}

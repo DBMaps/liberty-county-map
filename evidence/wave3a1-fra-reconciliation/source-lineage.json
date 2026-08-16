@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "gridly.wave3a1.source-lineage.v1",
+  "processedPath": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+  "processedSha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f",
+  "repositoryManifest": "Crossing-Packages/Texas/package-manifest.json",
+  "manifestSource": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+  "manifestPackageFile": "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\Texas\\fra-crossings-tx.geojson",
+  "manifestGenerated": "2026-06-27T11:41:08.4641290-05:00",
+  "countyIdentityUsedByGridly": {
+    "exactField": "STCYFIPS",
+    "fallbackField": "CountyCode",
+    "origin": "fields already present on processed FRA features; not coordinate-derived and not joined in this repository",
+    "consumerScript": "tools/lp115/manufacture-candidate-crossings.mjs",
+    "filterExpression": "feature.properties.STCYFIPS || feature.properties.CountyCode"
+  },
+  "upstream": {
+    "rawOwnerPath": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Raw\\fra-crossings-tx-raw.geojson",
+    "processedOwnerPath": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+    "processingScript": "OWNER-LOCAL / NOT PRESENT IN REPOSITORY; historical capability name Tools/Build-Scripts/Update-FraDataset.ps1 is not evidence of the executed transform",
+    "rawAvailableInRepository": false,
+    "comparisonStatus": "BLOCKED_PENDING_OWNER_SOURCE"
+  },
+  "ownerCommand": "node tools/wave3a1/compare-owner-fra-source.mjs --raw 'C:\\GitHub\\Gridly-Source-Data\\FRA\\Raw\\fra-crossings-tx-raw.geojson' --processed Crossing-Packages/Texas/fra-crossings-tx.geojson"
+}

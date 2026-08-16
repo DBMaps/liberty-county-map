@@ -1,0 +1,1673 @@
+{
+  "schemaVersion": "gridly.wave3a1.county-pairs.v1",
+  "mismatchCount": 351,
+  "uniqueCountyPairCount": 146,
+  "andersonToCherokeeCount": 1,
+  "pairs": [
+    {
+      "sourceCountyFips": "48411",
+      "sourceCountyName": "San Saba County",
+      "resolvedCountyFips": "48333",
+      "resolvedCountyName": "Mills County",
+      "count": 18,
+      "crossingIds": [
+        "024715P",
+        "024716W",
+        "024718K",
+        "024720L",
+        "024721T",
+        "024722A",
+        "024723G",
+        "024725V",
+        "024733M",
+        "024734U",
+        "024736H",
+        "024737P",
+        "024738W",
+        "024739D",
+        "024740X",
+        "024741E",
+        "024742L",
+        "024744A"
+      ]
+    },
+    {
+      "sourceCountyFips": "48221",
+      "sourceCountyName": "Hood County",
+      "resolvedCountyFips": "48251",
+      "resolvedCountyName": "Johnson County",
+      "count": 17,
+      "crossingIds": [
+        "020872U",
+        "020873B",
+        "020878K",
+        "020879S",
+        "020882A",
+        "020884N",
+        "020885V",
+        "020887J",
+        "020889X",
+        "020891Y",
+        "020896H",
+        "020897P",
+        "020898W",
+        "020899D",
+        "020901C",
+        "020902J",
+        "020903R"
+      ]
+    },
+    {
+      "sourceCountyFips": "48377",
+      "sourceCountyName": "Presidio County",
+      "resolvedCountyFips": "48043",
+      "resolvedCountyName": "Brewster County",
+      "count": 12,
+      "crossingIds": [
+        "019025D",
+        "019026K",
+        "019027S",
+        "019029F",
+        "019030A",
+        "019032N",
+        "019034C",
+        "019035J",
+        "019036R",
+        "019037X",
+        "019040F",
+        "019041M"
+      ]
+    },
+    {
+      "sourceCountyFips": "48187",
+      "sourceCountyName": "Guadalupe County",
+      "resolvedCountyFips": "48091",
+      "resolvedCountyName": "Comal County",
+      "count": 10,
+      "crossingIds": [
+        "412457H",
+        "415587P",
+        "415589D",
+        "415590X",
+        "415591E",
+        "415592L",
+        "415596N",
+        "415597V",
+        "924381U",
+        "924383H"
+      ]
+    },
+    {
+      "sourceCountyFips": "48281",
+      "sourceCountyName": "Lampasas County",
+      "resolvedCountyFips": "48333",
+      "resolvedCountyName": "Mills County",
+      "count": 9,
+      "crossingIds": [
+        "024703V",
+        "024704C",
+        "024705J",
+        "024706R",
+        "024707X",
+        "024708E",
+        "024709L",
+        "024711M",
+        "024713B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "resolvedCountyFips": "48041",
+      "resolvedCountyName": "Brazos County",
+      "count": 9,
+      "crossingIds": [
+        "430171M",
+        "765835B",
+        "765836H",
+        "765839D",
+        "765841E",
+        "765842L",
+        "765843T",
+        "765844A",
+        "765845G"
+      ]
+    },
+    {
+      "sourceCountyFips": "48143",
+      "sourceCountyName": "Erath County",
+      "resolvedCountyFips": "48221",
+      "resolvedCountyName": "Hood County",
+      "count": 8,
+      "crossingIds": [
+        "020918F",
+        "020924J",
+        "020925R",
+        "020927E",
+        "020928L",
+        "020929T",
+        "020930M",
+        "020931U"
+      ]
+    },
+    {
+      "sourceCountyFips": "48043",
+      "sourceCountyName": "Brewster County",
+      "resolvedCountyFips": "48371",
+      "resolvedCountyName": "Pecos County",
+      "count": 6,
+      "crossingIds": [
+        "019010N",
+        "019011V",
+        "019012C",
+        "019013J",
+        "019014R",
+        "019017L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48083",
+      "sourceCountyName": "Coleman County",
+      "resolvedCountyFips": "48399",
+      "resolvedCountyName": "Runnels County",
+      "count": 6,
+      "crossingIds": [
+        "021397V",
+        "021398C",
+        "021400B",
+        "021401H",
+        "021403W",
+        "021404D"
+      ]
+    },
+    {
+      "sourceCountyFips": "48293",
+      "sourceCountyName": "Limestone County",
+      "resolvedCountyFips": "48145",
+      "resolvedCountyName": "Falls County",
+      "count": 6,
+      "crossingIds": [
+        "966340F",
+        "966341M",
+        "966342U",
+        "966343B",
+        "966344H",
+        "966345P"
+      ]
+    },
+    {
+      "sourceCountyFips": "48357",
+      "sourceCountyName": "Ochiltree County",
+      "resolvedCountyFips": "48195",
+      "resolvedCountyName": "Hansford County",
+      "count": 6,
+      "crossingIds": [
+        "016492F",
+        "016498W",
+        "016501C",
+        "016503R",
+        "016504X",
+        "016506L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48053",
+      "sourceCountyName": "Burnet County",
+      "resolvedCountyFips": "48031",
+      "resolvedCountyName": "Blanco County",
+      "count": 5,
+      "crossingIds": [
+        "745251D",
+        "930575N",
+        "930576V",
+        "930577C",
+        "976532A"
+      ]
+    },
+    {
+      "sourceCountyFips": "48093",
+      "sourceCountyName": "Comanche County",
+      "resolvedCountyFips": "48027",
+      "resolvedCountyName": "Bell County",
+      "count": 5,
+      "crossingIds": [
+        "021023P",
+        "021024W",
+        "021026K",
+        "021028Y",
+        "021029F"
+      ]
+    },
+    {
+      "sourceCountyFips": "48147",
+      "sourceCountyName": "Fannin County",
+      "resolvedCountyFips": "48231",
+      "resolvedCountyName": "Hunt County",
+      "count": 5,
+      "crossingIds": [
+        "415114L",
+        "977454Y",
+        "977455F",
+        "977855Y",
+        "977856F"
+      ]
+    },
+    {
+      "sourceCountyFips": "48233",
+      "sourceCountyName": "Hutchinson County",
+      "resolvedCountyFips": "48065",
+      "resolvedCountyName": "Carson County",
+      "count": 5,
+      "crossingIds": [
+        "016989V",
+        "016992D",
+        "016993K",
+        "016994S",
+        "016995Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "resolvedCountyFips": "48145",
+      "resolvedCountyName": "Falls County",
+      "count": 5,
+      "crossingIds": [
+        "430233H",
+        "744848U",
+        "744850V",
+        "744851C",
+        "744852J"
+      ]
+    },
+    {
+      "sourceCountyFips": "48453",
+      "sourceCountyName": "Travis County",
+      "resolvedCountyFips": "48491",
+      "resolvedCountyName": "Williamson County",
+      "count": 5,
+      "crossingIds": [
+        "435964F",
+        "439696L",
+        "765664C",
+        "765665J",
+        "925947T"
+      ]
+    },
+    {
+      "sourceCountyFips": "48469",
+      "sourceCountyName": "Victoria County",
+      "resolvedCountyFips": "48391",
+      "resolvedCountyName": "Refugio County",
+      "count": 5,
+      "crossingIds": [
+        "427537V",
+        "427539J",
+        "427540D",
+        "427541K",
+        "427544F"
+      ]
+    },
+    {
+      "sourceCountyFips": "48049",
+      "sourceCountyName": "Brown County",
+      "resolvedCountyFips": "48027",
+      "resolvedCountyName": "Bell County",
+      "count": 4,
+      "crossingIds": [
+        "021053G",
+        "021055V",
+        "021057J",
+        "021058R"
+      ]
+    },
+    {
+      "sourceCountyFips": "48121",
+      "sourceCountyName": "Denton County",
+      "resolvedCountyFips": "48439",
+      "resolvedCountyName": "Tarrant County",
+      "count": 4,
+      "crossingIds": [
+        "795393F",
+        "795425J",
+        "930203W",
+        "967410W"
+      ]
+    },
+    {
+      "sourceCountyFips": "48181",
+      "sourceCountyName": "Grayson County",
+      "resolvedCountyFips": "48147",
+      "resolvedCountyName": "Fannin County",
+      "count": 4,
+      "crossingIds": [
+        "415093V",
+        "765400G",
+        "795195K",
+        "795197Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48197",
+      "sourceCountyName": "Hardeman County",
+      "resolvedCountyFips": "48487",
+      "resolvedCountyName": "Wilbarger County",
+      "count": 4,
+      "crossingIds": [
+        "275161F",
+        "275162M",
+        "275163U",
+        "275165H"
+      ]
+    },
+    {
+      "sourceCountyFips": "48213",
+      "sourceCountyName": "Henderson County",
+      "resolvedCountyFips": "48423",
+      "resolvedCountyName": "Smith County",
+      "count": 4,
+      "crossingIds": [
+        "440149C",
+        "789807R",
+        "790425S",
+        "790435X"
+      ]
+    },
+    {
+      "sourceCountyFips": "48223",
+      "sourceCountyName": "Hopkins County",
+      "resolvedCountyFips": "48449",
+      "resolvedCountyName": "Titus County",
+      "count": 4,
+      "crossingIds": [
+        "789387N",
+        "789388V",
+        "789391D",
+        "789398B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48439",
+      "sourceCountyName": "Tarrant County",
+      "resolvedCountyFips": "48251",
+      "resolvedCountyName": "Johnson County",
+      "count": 4,
+      "crossingIds": [
+        "020861G",
+        "020864C",
+        "020865J",
+        "930196N"
+      ]
+    },
+    {
+      "sourceCountyFips": "48491",
+      "sourceCountyName": "Williamson County",
+      "resolvedCountyFips": "48453",
+      "resolvedCountyName": "Travis County",
+      "count": 4,
+      "crossingIds": [
+        "744811E",
+        "930565H",
+        "930572T",
+        "930573A"
+      ]
+    },
+    {
+      "sourceCountyFips": "48049",
+      "sourceCountyName": "Brown County",
+      "resolvedCountyFips": "48477",
+      "resolvedCountyName": "Washington County",
+      "count": 3,
+      "crossingIds": [
+        "021041M",
+        "021042U",
+        "021043B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48085",
+      "sourceCountyName": "Collin County",
+      "resolvedCountyFips": "48121",
+      "resolvedCountyName": "Denton County",
+      "count": 3,
+      "crossingIds": [
+        "672139M",
+        "675119L",
+        "675230R"
+      ]
+    },
+    {
+      "sourceCountyFips": "48135",
+      "sourceCountyName": "Ector County",
+      "resolvedCountyFips": "48329",
+      "resolvedCountyName": "Midland County",
+      "count": 3,
+      "crossingIds": [
+        "795389R",
+        "796300M",
+        "796302B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48161",
+      "sourceCountyName": "Freestone County",
+      "resolvedCountyFips": "48349",
+      "resolvedCountyName": "Navarro County",
+      "count": 3,
+      "crossingIds": [
+        "765412B",
+        "765414P",
+        "765415W"
+      ]
+    },
+    {
+      "sourceCountyFips": "48221",
+      "sourceCountyName": "Hood County",
+      "resolvedCountyFips": "48139",
+      "resolvedCountyName": "Ellis County",
+      "count": 3,
+      "crossingIds": [
+        "020874H",
+        "020876W",
+        "020877D"
+      ]
+    },
+    {
+      "sourceCountyFips": "48251",
+      "sourceCountyName": "Johnson County",
+      "resolvedCountyFips": "48439",
+      "resolvedCountyName": "Tarrant County",
+      "count": 3,
+      "crossingIds": [
+        "021550J",
+        "021561W",
+        "021563K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48283",
+      "sourceCountyName": "La Salle County",
+      "resolvedCountyFips": "48479",
+      "resolvedCountyName": "Webb County",
+      "count": 3,
+      "crossingIds": [
+        "446671H",
+        "446672P",
+        "446677Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48337",
+      "sourceCountyName": "Montague County",
+      "resolvedCountyFips": "48497",
+      "resolvedCountyName": "Wise County",
+      "count": 3,
+      "crossingIds": [
+        "275048M",
+        "275049U",
+        "275050N"
+      ]
+    },
+    {
+      "sourceCountyFips": "48419",
+      "sourceCountyName": "Shelby County",
+      "resolvedCountyFips": "48405",
+      "resolvedCountyName": "San Augustine County",
+      "count": 3,
+      "crossingIds": [
+        "023922F",
+        "023927P",
+        "023933T"
+      ]
+    },
+    {
+      "sourceCountyFips": "48465",
+      "sourceCountyName": "Val Verde County",
+      "resolvedCountyFips": "48443",
+      "resolvedCountyName": "Terrell County",
+      "count": 3,
+      "crossingIds": [
+        "763870H",
+        "763872W",
+        "763873D"
+      ]
+    },
+    {
+      "sourceCountyFips": "48497",
+      "sourceCountyName": "Wise County",
+      "resolvedCountyFips": "48439",
+      "resolvedCountyName": "Tarrant County",
+      "count": 3,
+      "crossingIds": [
+        "274638F",
+        "274639M",
+        "598303M"
+      ]
+    },
+    {
+      "sourceCountyFips": "48007",
+      "sourceCountyName": "Aransas County",
+      "resolvedCountyFips": "48409",
+      "resolvedCountyName": "San Patricio County",
+      "count": 2,
+      "crossingIds": [
+        "746307Y",
+        "746308F"
+      ]
+    },
+    {
+      "sourceCountyFips": "48021",
+      "sourceCountyName": "Bastrop County",
+      "resolvedCountyFips": "48453",
+      "resolvedCountyName": "Travis County",
+      "count": 2,
+      "crossingIds": [
+        "416276S",
+        "416277Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48049",
+      "sourceCountyName": "Brown County",
+      "resolvedCountyFips": "48073",
+      "resolvedCountyName": "Cherokee County",
+      "count": 2,
+      "crossingIds": [
+        "021050L",
+        "021052A"
+      ]
+    },
+    {
+      "sourceCountyFips": "48065",
+      "sourceCountyName": "Carson County",
+      "resolvedCountyFips": "48375",
+      "resolvedCountyName": "Potter County",
+      "count": 2,
+      "crossingIds": [
+        "016938K",
+        "016939S"
+      ]
+    },
+    {
+      "sourceCountyFips": "48069",
+      "sourceCountyName": "Castro County",
+      "resolvedCountyFips": "48189",
+      "resolvedCountyName": "Hale County",
+      "count": 2,
+      "crossingIds": [
+        "275947W",
+        "275951L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48077",
+      "sourceCountyName": "Clay County",
+      "resolvedCountyFips": "48337",
+      "resolvedCountyName": "Montague County",
+      "count": 2,
+      "crossingIds": [
+        "274702C",
+        "274705X"
+      ]
+    },
+    {
+      "sourceCountyFips": "48083",
+      "sourceCountyName": "Coleman County",
+      "resolvedCountyFips": "48451",
+      "resolvedCountyName": "Tom Green County",
+      "count": 2,
+      "crossingIds": [
+        "021391E",
+        "021392L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48085",
+      "sourceCountyName": "Collin County",
+      "resolvedCountyFips": "48113",
+      "resolvedCountyName": "Dallas County",
+      "count": 2,
+      "crossingIds": [
+        "763376B",
+        "788907S"
+      ]
+    },
+    {
+      "sourceCountyFips": "48093",
+      "sourceCountyName": "Comanche County",
+      "resolvedCountyFips": "48133",
+      "resolvedCountyName": "Eastland County",
+      "count": 2,
+      "crossingIds": [
+        "312392R",
+        "924795V"
+      ]
+    },
+    {
+      "sourceCountyFips": "48113",
+      "sourceCountyName": "Dallas County",
+      "resolvedCountyFips": "48085",
+      "resolvedCountyName": "Collin County",
+      "count": 2,
+      "crossingIds": [
+        "928369B",
+        "971211B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48117",
+      "sourceCountyName": "Deaf Smith County",
+      "resolvedCountyFips": "48375",
+      "resolvedCountyName": "Potter County",
+      "count": 2,
+      "crossingIds": [
+        "014737M",
+        "014738U"
+      ]
+    },
+    {
+      "sourceCountyFips": "48139",
+      "sourceCountyName": "Ellis County",
+      "resolvedCountyFips": "48113",
+      "resolvedCountyName": "Dallas County",
+      "count": 2,
+      "crossingIds": [
+        "763628A",
+        "763630B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48143",
+      "sourceCountyName": "Erath County",
+      "resolvedCountyFips": "48093",
+      "resolvedCountyName": "Comanche County",
+      "count": 2,
+      "crossingIds": [
+        "020981X",
+        "020982E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48177",
+      "sourceCountyName": "Gonzales County",
+      "resolvedCountyFips": "48055",
+      "resolvedCountyName": "Caldwell County",
+      "count": 2,
+      "crossingIds": [
+        "742681D",
+        "742682K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48181",
+      "sourceCountyName": "Grayson County",
+      "resolvedCountyFips": "48085",
+      "resolvedCountyName": "Collin County",
+      "count": 2,
+      "crossingIds": [
+        "763685N",
+        "765309N"
+      ]
+    },
+    {
+      "sourceCountyFips": "48191",
+      "sourceCountyName": "Hall County",
+      "resolvedCountyFips": "48129",
+      "resolvedCountyName": "Donley County",
+      "count": 2,
+      "crossingIds": [
+        "274761E",
+        "274762L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48215",
+      "sourceCountyName": "Hidalgo County",
+      "resolvedCountyFips": "48061",
+      "resolvedCountyName": "Cameron County",
+      "count": 2,
+      "crossingIds": [
+        "448776D",
+        "758567B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48219",
+      "sourceCountyName": "Hockley County",
+      "resolvedCountyFips": "48445",
+      "resolvedCountyName": "Terry County",
+      "count": 2,
+      "crossingIds": [
+        "017637T",
+        "017652V"
+      ]
+    },
+    {
+      "sourceCountyFips": "48243",
+      "sourceCountyName": "Jeff Davis County",
+      "resolvedCountyFips": "48109",
+      "resolvedCountyName": "Culberson County",
+      "count": 2,
+      "crossingIds": [
+        "742886W",
+        "764218E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48243",
+      "sourceCountyName": "Jeff Davis County",
+      "resolvedCountyFips": "48377",
+      "resolvedCountyName": "Presidio County",
+      "count": 2,
+      "crossingIds": [
+        "764216R",
+        "764217X"
+      ]
+    },
+    {
+      "sourceCountyFips": "48299",
+      "sourceCountyName": "Llano County",
+      "resolvedCountyFips": "48031",
+      "resolvedCountyName": "Blanco County",
+      "count": 2,
+      "crossingIds": [
+        "930581S",
+        "976455C"
+      ]
+    },
+    {
+      "sourceCountyFips": "48331",
+      "sourceCountyName": "Milam County",
+      "resolvedCountyFips": "48491",
+      "resolvedCountyName": "Williamson County",
+      "count": 2,
+      "crossingIds": [
+        "446549R",
+        "446550K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48341",
+      "sourceCountyName": "Moore County",
+      "resolvedCountyFips": "48375",
+      "resolvedCountyName": "Potter County",
+      "count": 2,
+      "crossingIds": [
+        "017158N",
+        "017160P"
+      ]
+    },
+    {
+      "sourceCountyFips": "48343",
+      "sourceCountyName": "Morris County",
+      "resolvedCountyFips": "48067",
+      "resolvedCountyName": "Cass County",
+      "count": 2,
+      "crossingIds": [
+        "789612D",
+        "920069K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48353",
+      "sourceCountyName": "Nolan County",
+      "resolvedCountyFips": "48151",
+      "resolvedCountyName": "Fisher County",
+      "count": 2,
+      "crossingIds": [
+        "796098E",
+        "796099L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48357",
+      "sourceCountyName": "Ochiltree County",
+      "resolvedCountyFips": "48211",
+      "resolvedCountyName": "Hemphill County",
+      "count": 2,
+      "crossingIds": [
+        "016466R",
+        "016467X"
+      ]
+    },
+    {
+      "sourceCountyFips": "48359",
+      "sourceCountyName": "Oldham County",
+      "resolvedCountyFips": "48375",
+      "resolvedCountyName": "Potter County",
+      "count": 2,
+      "crossingIds": [
+        "276485L",
+        "276526N"
+      ]
+    },
+    {
+      "sourceCountyFips": "48365",
+      "sourceCountyName": "Panola County",
+      "resolvedCountyFips": "48401",
+      "resolvedCountyName": "Rusk County",
+      "count": 2,
+      "crossingIds": [
+        "024015H",
+        "024017W"
+      ]
+    },
+    {
+      "sourceCountyFips": "48397",
+      "sourceCountyName": "Rockwall County",
+      "resolvedCountyFips": "48113",
+      "resolvedCountyName": "Dallas County",
+      "count": 2,
+      "crossingIds": [
+        "414406E",
+        "748584P"
+      ]
+    },
+    {
+      "sourceCountyFips": "48411",
+      "sourceCountyName": "San Saba County",
+      "resolvedCountyFips": "48143",
+      "resolvedCountyName": "Erath County",
+      "count": 2,
+      "crossingIds": [
+        "024758H",
+        "024759P"
+      ]
+    },
+    {
+      "sourceCountyFips": "48439",
+      "sourceCountyName": "Tarrant County",
+      "resolvedCountyFips": "48113",
+      "resolvedCountyName": "Dallas County",
+      "count": 2,
+      "crossingIds": [
+        "789736W",
+        "789746C"
+      ]
+    },
+    {
+      "sourceCountyFips": "48441",
+      "sourceCountyName": "Taylor County",
+      "resolvedCountyFips": "48059",
+      "resolvedCountyName": "Callahan County",
+      "count": 2,
+      "crossingIds": [
+        "864732Y",
+        "864740R"
+      ]
+    },
+    {
+      "sourceCountyFips": "48441",
+      "sourceCountyName": "Taylor County",
+      "resolvedCountyFips": "48353",
+      "resolvedCountyName": "Nolan County",
+      "count": 2,
+      "crossingIds": [
+        "796092N",
+        "796094C"
+      ]
+    },
+    {
+      "sourceCountyFips": "48443",
+      "sourceCountyName": "Terrell County",
+      "resolvedCountyFips": "48371",
+      "resolvedCountyName": "Pecos County",
+      "count": 2,
+      "crossingIds": [
+        "763855F",
+        "763856M"
+      ]
+    },
+    {
+      "sourceCountyFips": "48485",
+      "sourceCountyName": "Wichita County",
+      "resolvedCountyFips": "48077",
+      "resolvedCountyName": "Clay County",
+      "count": 2,
+      "crossingIds": [
+        "274994B",
+        "415442D"
+      ]
+    },
+    {
+      "sourceCountyFips": "48001",
+      "sourceCountyName": "Anderson County",
+      "resolvedCountyFips": "48073",
+      "resolvedCountyName": "Cherokee County",
+      "count": 1,
+      "crossingIds": [
+        "426590D"
+      ]
+    },
+    {
+      "sourceCountyFips": "48011",
+      "sourceCountyName": "Armstrong County",
+      "resolvedCountyFips": "48065",
+      "resolvedCountyName": "Carson County",
+      "count": 1,
+      "crossingIds": [
+        "275225P"
+      ]
+    },
+    {
+      "sourceCountyFips": "48013",
+      "sourceCountyName": "Atascosa County",
+      "resolvedCountyFips": "48029",
+      "resolvedCountyName": "Bexar County",
+      "count": 1,
+      "crossingIds": [
+        "435414E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48013",
+      "sourceCountyName": "Atascosa County",
+      "resolvedCountyFips": "48325",
+      "resolvedCountyName": "Medina County",
+      "count": 1,
+      "crossingIds": [
+        "427943S"
+      ]
+    },
+    {
+      "sourceCountyFips": "48021",
+      "sourceCountyName": "Bastrop County",
+      "resolvedCountyFips": "48491",
+      "resolvedCountyName": "Williamson County",
+      "count": 1,
+      "crossingIds": [
+        "416273W"
+      ]
+    },
+    {
+      "sourceCountyFips": "48027",
+      "sourceCountyName": "Bell County",
+      "resolvedCountyFips": "48251",
+      "resolvedCountyName": "Johnson County",
+      "count": 1,
+      "crossingIds": [
+        "930217E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48027",
+      "sourceCountyName": "Bell County",
+      "resolvedCountyFips": "48491",
+      "resolvedCountyName": "Williamson County",
+      "count": 1,
+      "crossingIds": [
+        "416230D"
+      ]
+    },
+    {
+      "sourceCountyFips": "48035",
+      "sourceCountyName": "Bosque County",
+      "resolvedCountyFips": "48309",
+      "resolvedCountyName": "McLennan County",
+      "count": 1,
+      "crossingIds": [
+        "023081S"
+      ]
+    },
+    {
+      "sourceCountyFips": "48043",
+      "sourceCountyName": "Brewster County",
+      "resolvedCountyFips": "48377",
+      "resolvedCountyName": "Presidio County",
+      "count": 1,
+      "crossingIds": [
+        "764202H"
+      ]
+    },
+    {
+      "sourceCountyFips": "48049",
+      "sourceCountyName": "Brown County",
+      "resolvedCountyFips": "48331",
+      "resolvedCountyName": "Milam County",
+      "count": 1,
+      "crossingIds": [
+        "021032N"
+      ]
+    },
+    {
+      "sourceCountyFips": "48053",
+      "sourceCountyName": "Burnet County",
+      "resolvedCountyFips": "48453",
+      "resolvedCountyName": "Travis County",
+      "count": 1,
+      "crossingIds": [
+        "744798T"
+      ]
+    },
+    {
+      "sourceCountyFips": "48055",
+      "sourceCountyName": "Caldwell County",
+      "resolvedCountyFips": "48021",
+      "resolvedCountyName": "Bastrop County",
+      "count": 1,
+      "crossingIds": [
+        "415731E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48065",
+      "sourceCountyName": "Carson County",
+      "resolvedCountyFips": "48179",
+      "resolvedCountyName": "Gray County",
+      "count": 1,
+      "crossingIds": [
+        "014634M"
+      ]
+    },
+    {
+      "sourceCountyFips": "48065",
+      "sourceCountyName": "Carson County",
+      "resolvedCountyFips": "48233",
+      "resolvedCountyName": "Hutchinson County",
+      "count": 1,
+      "crossingIds": [
+        "016998U"
+      ]
+    },
+    {
+      "sourceCountyFips": "48077",
+      "sourceCountyName": "Clay County",
+      "resolvedCountyFips": "48487",
+      "resolvedCountyName": "Wilbarger County",
+      "count": 1,
+      "crossingIds": [
+        "275166P"
+      ]
+    },
+    {
+      "sourceCountyFips": "48085",
+      "sourceCountyName": "Collin County",
+      "resolvedCountyFips": "48397",
+      "resolvedCountyName": "Rockwall County",
+      "count": 1,
+      "crossingIds": [
+        "415195N"
+      ]
+    },
+    {
+      "sourceCountyFips": "48093",
+      "sourceCountyName": "Comanche County",
+      "resolvedCountyFips": "48193",
+      "resolvedCountyName": "Hamilton County",
+      "count": 1,
+      "crossingIds": [
+        "849261Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48103",
+      "sourceCountyName": "Crane County",
+      "resolvedCountyFips": "48105",
+      "resolvedCountyName": "Crockett County",
+      "count": 1,
+      "crossingIds": [
+        "018903R"
+      ]
+    },
+    {
+      "sourceCountyFips": "48109",
+      "sourceCountyName": "Culberson County",
+      "resolvedCountyFips": "48243",
+      "resolvedCountyName": "Jeff Davis County",
+      "count": 1,
+      "crossingIds": [
+        "796217L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48113",
+      "sourceCountyName": "Dallas County",
+      "resolvedCountyFips": "48257",
+      "resolvedCountyName": "Kaufman County",
+      "count": 1,
+      "crossingIds": [
+        "794806U"
+      ]
+    },
+    {
+      "sourceCountyFips": "48113",
+      "sourceCountyName": "Dallas County",
+      "resolvedCountyFips": "48439",
+      "resolvedCountyName": "Tarrant County",
+      "count": 1,
+      "crossingIds": [
+        "848970B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48121",
+      "sourceCountyName": "Denton County",
+      "resolvedCountyFips": "48085",
+      "resolvedCountyName": "Collin County",
+      "count": 1,
+      "crossingIds": [
+        "966265W"
+      ]
+    },
+    {
+      "sourceCountyFips": "48123",
+      "sourceCountyName": "DeWitt County",
+      "resolvedCountyFips": "48285",
+      "resolvedCountyName": "Lavaca County",
+      "count": 1,
+      "crossingIds": [
+        "764992R"
+      ]
+    },
+    {
+      "sourceCountyFips": "48131",
+      "sourceCountyName": "Duval County",
+      "resolvedCountyFips": "48249",
+      "resolvedCountyName": "Jim Wells County",
+      "count": 1,
+      "crossingIds": [
+        "793798B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48133",
+      "sourceCountyName": "Eastland County",
+      "resolvedCountyFips": "48093",
+      "resolvedCountyName": "Comanche County",
+      "count": 1,
+      "crossingIds": [
+        "967067E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48133",
+      "sourceCountyName": "Eastland County",
+      "resolvedCountyFips": "48143",
+      "resolvedCountyName": "Erath County",
+      "count": 1,
+      "crossingIds": [
+        "967062V"
+      ]
+    },
+    {
+      "sourceCountyFips": "48135",
+      "sourceCountyName": "Ector County",
+      "resolvedCountyFips": "48103",
+      "resolvedCountyName": "Crane County",
+      "count": 1,
+      "crossingIds": [
+        "796278C"
+      ]
+    },
+    {
+      "sourceCountyFips": "48137",
+      "sourceCountyName": "Edwards County",
+      "resolvedCountyFips": "48043",
+      "resolvedCountyName": "Brewster County",
+      "count": 1,
+      "crossingIds": [
+        "019061Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48141",
+      "sourceCountyName": "El Paso County",
+      "resolvedCountyFips": "48303",
+      "resolvedCountyName": "Lubbock County",
+      "count": 1,
+      "crossingIds": [
+        "019606B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48147",
+      "sourceCountyName": "Fannin County",
+      "resolvedCountyFips": "48277",
+      "resolvedCountyName": "Lamar County",
+      "count": 1,
+      "crossingIds": [
+        "796003U"
+      ]
+    },
+    {
+      "sourceCountyFips": "48159",
+      "sourceCountyName": "Franklin County",
+      "resolvedCountyFips": "48223",
+      "resolvedCountyName": "Hopkins County",
+      "count": 1,
+      "crossingIds": [
+        "980417A"
+      ]
+    },
+    {
+      "sourceCountyFips": "48161",
+      "sourceCountyName": "Freestone County",
+      "resolvedCountyFips": "48289",
+      "resolvedCountyName": "Leon County",
+      "count": 1,
+      "crossingIds": [
+        "598242Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48163",
+      "sourceCountyName": "Frio County",
+      "resolvedCountyFips": "48283",
+      "resolvedCountyName": "La Salle County",
+      "count": 1,
+      "crossingIds": [
+        "448972K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48177",
+      "sourceCountyName": "Gonzales County",
+      "resolvedCountyFips": "48187",
+      "resolvedCountyName": "Guadalupe County",
+      "count": 1,
+      "crossingIds": [
+        "742786S"
+      ]
+    },
+    {
+      "sourceCountyFips": "48179",
+      "sourceCountyName": "Gray County",
+      "resolvedCountyFips": "48065",
+      "resolvedCountyName": "Carson County",
+      "count": 1,
+      "crossingIds": [
+        "014546C"
+      ]
+    },
+    {
+      "sourceCountyFips": "48181",
+      "sourceCountyName": "Grayson County",
+      "resolvedCountyFips": "48097",
+      "resolvedCountyName": "Cooke County",
+      "count": 1,
+      "crossingIds": [
+        "920232E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48189",
+      "sourceCountyName": "Hale County",
+      "resolvedCountyFips": "48153",
+      "resolvedCountyName": "Floyd County",
+      "count": 1,
+      "crossingIds": [
+        "017428K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48189",
+      "sourceCountyName": "Hale County",
+      "resolvedCountyFips": "48437",
+      "resolvedCountyName": "Swisher County",
+      "count": 1,
+      "crossingIds": [
+        "017434N"
+      ]
+    },
+    {
+      "sourceCountyFips": "48191",
+      "sourceCountyName": "Hall County",
+      "resolvedCountyFips": "48075",
+      "resolvedCountyName": "Childress County",
+      "count": 1,
+      "crossingIds": [
+        "982802K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48195",
+      "sourceCountyName": "Hansford County",
+      "resolvedCountyFips": "48421",
+      "resolvedCountyName": "Sherman County",
+      "count": 1,
+      "crossingIds": [
+        "016517Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48203",
+      "sourceCountyName": "Harrison County",
+      "resolvedCountyFips": "48183",
+      "resolvedCountyName": "Gregg County",
+      "count": 1,
+      "crossingIds": [
+        "919130P"
+      ]
+    },
+    {
+      "sourceCountyFips": "48205",
+      "sourceCountyName": "Hartley County",
+      "resolvedCountyFips": "48359",
+      "resolvedCountyName": "Oldham County",
+      "count": 1,
+      "crossingIds": [
+        "276482R"
+      ]
+    },
+    {
+      "sourceCountyFips": "48209",
+      "sourceCountyName": "Hays County",
+      "resolvedCountyFips": "48055",
+      "resolvedCountyName": "Caldwell County",
+      "count": 1,
+      "crossingIds": [
+        "415684Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48229",
+      "sourceCountyName": "Hudspeth County",
+      "resolvedCountyFips": "48109",
+      "resolvedCountyName": "Culberson County",
+      "count": 1,
+      "crossingIds": [
+        "764219L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48235",
+      "sourceCountyName": "Irion County",
+      "resolvedCountyFips": "48451",
+      "resolvedCountyName": "Tom Green County",
+      "count": 1,
+      "crossingIds": [
+        "018791U"
+      ]
+    },
+    {
+      "sourceCountyFips": "48273",
+      "sourceCountyName": "Kleberg County",
+      "resolvedCountyFips": "48355",
+      "resolvedCountyName": "Nueces County",
+      "count": 1,
+      "crossingIds": [
+        "427635L"
+      ]
+    },
+    {
+      "sourceCountyFips": "48273",
+      "sourceCountyName": "Kleberg County",
+      "resolvedCountyFips": "48409",
+      "resolvedCountyName": "San Patricio County",
+      "count": 1,
+      "crossingIds": [
+        "921098Y"
+      ]
+    },
+    {
+      "sourceCountyFips": "48299",
+      "sourceCountyName": "Llano County",
+      "resolvedCountyFips": "48453",
+      "resolvedCountyName": "Travis County",
+      "count": 1,
+      "crossingIds": [
+        "745304A"
+      ]
+    },
+    {
+      "sourceCountyFips": "48307",
+      "sourceCountyName": "McCulloch County",
+      "resolvedCountyFips": "48049",
+      "resolvedCountyName": "Brown County",
+      "count": 1,
+      "crossingIds": [
+        "024809R"
+      ]
+    },
+    {
+      "sourceCountyFips": "48313",
+      "sourceCountyName": "Madison County",
+      "resolvedCountyFips": "48289",
+      "resolvedCountyName": "Leon County",
+      "count": 1,
+      "crossingIds": [
+        "597155S"
+      ]
+    },
+    {
+      "sourceCountyFips": "48325",
+      "sourceCountyName": "Medina County",
+      "resolvedCountyFips": "48029",
+      "resolvedCountyName": "Bexar County",
+      "count": 1,
+      "crossingIds": [
+        "742922P"
+      ]
+    },
+    {
+      "sourceCountyFips": "48335",
+      "sourceCountyName": "Mitchell County",
+      "resolvedCountyFips": "48353",
+      "resolvedCountyName": "Nolan County",
+      "count": 1,
+      "crossingIds": [
+        "796127M"
+      ]
+    },
+    {
+      "sourceCountyFips": "48341",
+      "sourceCountyName": "Moore County",
+      "resolvedCountyFips": "48065",
+      "resolvedCountyName": "Carson County",
+      "count": 1,
+      "crossingIds": [
+        "017063F"
+      ]
+    },
+    {
+      "sourceCountyFips": "48353",
+      "sourceCountyName": "Nolan County",
+      "resolvedCountyFips": "48415",
+      "resolvedCountyName": "Scurry County",
+      "count": 1,
+      "crossingIds": [
+        "018695S"
+      ]
+    },
+    {
+      "sourceCountyFips": "48355",
+      "sourceCountyName": "Nueces County",
+      "resolvedCountyFips": "48409",
+      "resolvedCountyName": "San Patricio County",
+      "count": 1,
+      "crossingIds": [
+        "921099F"
+      ]
+    },
+    {
+      "sourceCountyFips": "48357",
+      "sourceCountyName": "Ochiltree County",
+      "resolvedCountyFips": "48421",
+      "resolvedCountyName": "Sherman County",
+      "count": 1,
+      "crossingIds": [
+        "016495B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48365",
+      "sourceCountyName": "Panola County",
+      "resolvedCountyFips": "48113",
+      "resolvedCountyName": "Dallas County",
+      "count": 1,
+      "crossingIds": [
+        "023985K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48367",
+      "sourceCountyName": "Parker County",
+      "resolvedCountyFips": "48251",
+      "resolvedCountyName": "Johnson County",
+      "count": 1,
+      "crossingIds": [
+        "020867X"
+      ]
+    },
+    {
+      "sourceCountyFips": "48367",
+      "sourceCountyName": "Parker County",
+      "resolvedCountyFips": "48439",
+      "resolvedCountyName": "Tarrant County",
+      "count": 1,
+      "crossingIds": [
+        "839211T"
+      ]
+    },
+    {
+      "sourceCountyFips": "48375",
+      "sourceCountyName": "Potter County",
+      "resolvedCountyFips": "48065",
+      "resolvedCountyName": "Carson County",
+      "count": 1,
+      "crossingIds": [
+        "014166V"
+      ]
+    },
+    {
+      "sourceCountyFips": "48385",
+      "sourceCountyName": "Real County",
+      "resolvedCountyFips": "48389",
+      "resolvedCountyName": "Reeves County",
+      "count": 1,
+      "crossingIds": [
+        "973845E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48389",
+      "sourceCountyName": "Reeves County",
+      "resolvedCountyFips": "48475",
+      "resolvedCountyName": "Ward County",
+      "count": 1,
+      "crossingIds": [
+        "796256C"
+      ]
+    },
+    {
+      "sourceCountyFips": "48409",
+      "sourceCountyName": "San Patricio County",
+      "resolvedCountyFips": "48297",
+      "resolvedCountyName": "Live Oak County",
+      "count": 1,
+      "crossingIds": [
+        "435613G"
+      ]
+    },
+    {
+      "sourceCountyFips": "48421",
+      "sourceCountyName": "Sherman County",
+      "resolvedCountyFips": "48341",
+      "resolvedCountyName": "Moore County",
+      "count": 1,
+      "crossingIds": [
+        "017075A"
+      ]
+    },
+    {
+      "sourceCountyFips": "48423",
+      "sourceCountyName": "Smith County",
+      "resolvedCountyFips": "48073",
+      "resolvedCountyName": "Cherokee County",
+      "count": 1,
+      "crossingIds": [
+        "426628X"
+      ]
+    },
+    {
+      "sourceCountyFips": "48439",
+      "sourceCountyName": "Tarrant County",
+      "resolvedCountyFips": "48121",
+      "resolvedCountyName": "Denton County",
+      "count": 1,
+      "crossingIds": [
+        "020668V"
+      ]
+    },
+    {
+      "sourceCountyFips": "48445",
+      "sourceCountyName": "Terry County",
+      "resolvedCountyFips": "48279",
+      "resolvedCountyName": "Lamb County",
+      "count": 1,
+      "crossingIds": [
+        "017765B"
+      ]
+    },
+    {
+      "sourceCountyFips": "48453",
+      "sourceCountyName": "Travis County",
+      "resolvedCountyFips": "48021",
+      "resolvedCountyName": "Bastrop County",
+      "count": 1,
+      "crossingIds": [
+        "976642K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48459",
+      "sourceCountyName": "Upshur County",
+      "resolvedCountyFips": "48423",
+      "resolvedCountyName": "Smith County",
+      "count": 1,
+      "crossingIds": [
+        "789462X"
+      ]
+    },
+    {
+      "sourceCountyFips": "48461",
+      "sourceCountyName": "Upton County",
+      "resolvedCountyFips": "48383",
+      "resolvedCountyName": "Reagan County",
+      "count": 1,
+      "crossingIds": [
+        "018868E"
+      ]
+    },
+    {
+      "sourceCountyFips": "48475",
+      "sourceCountyName": "Ward County",
+      "resolvedCountyFips": "48461",
+      "resolvedCountyName": "Upton County",
+      "count": 1,
+      "crossingIds": [
+        "864587C"
+      ]
+    },
+    {
+      "sourceCountyFips": "48485",
+      "sourceCountyName": "Wichita County",
+      "resolvedCountyFips": "48487",
+      "resolvedCountyName": "Wilbarger County",
+      "count": 1,
+      "crossingIds": [
+        "274941C"
+      ]
+    },
+    {
+      "sourceCountyFips": "48489",
+      "sourceCountyName": "Willacy County",
+      "resolvedCountyFips": "48061",
+      "resolvedCountyName": "Cameron County",
+      "count": 1,
+      "crossingIds": [
+        "432751K"
+      ]
+    },
+    {
+      "sourceCountyFips": "48497",
+      "sourceCountyName": "Wise County",
+      "resolvedCountyFips": "48337",
+      "resolvedCountyName": "Montague County",
+      "count": 1,
+      "crossingIds": [
+        "598470L"
+      ]
+    }
+  ]
+}
