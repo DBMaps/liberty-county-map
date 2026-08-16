@@ -2,13 +2,716 @@
   "schemaVersion": "gridly.wave3a1b.active-impact.v1",
   "activeCountyCount": 28,
   "currentProductionPackageCount": 28,
-  "currentProductionIdentityCount": 3771,
-  "activePositiveExactGeographicOwnerMatches": 24,
+  "currentProductionIdentityCount": 3784,
+  "activePositiveExactGeographicOwnerMatches": 27,
   "activeEmptyPackageCount": 1,
   "currentProductionPackageRowsWithCountyMismatch": 0,
   "rows": [],
-  "activeFraProvenanceDisagreementCount": 0,
-  "activeFraProvenanceDisagreementRows": [],
+  "activeFraProvenanceDisagreementCount": 13,
+  "activeFraProvenanceDisagreementRows": [
+    {
+      "crossingId": "021041M",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48049",
+      "sourceCountyName": "Brown County",
+      "coordinateResolvedCountyFips": "48477",
+      "coordinateResolvedCountyName": "Washington County",
+      "latitude": 30.2852040002943,
+      "longitude": -96.5014039998565,
+      "railroad": "FWWR",
+      "streetHighway": "PRIVATE ROAD",
+      "sourceLastUpdate": "10/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 259682.169,
+      "distanceToResolvedCountyBoundaryMeters": 4111.718,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48049",
+        "COUNTYNAME": "BROWN",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48049"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5014039998565,
+          30.2852040002943
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.285204,
+          "LATDD": 30.285204
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.501404,
+          "LONGDD": -96.501404
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48477",
+      "currentPackageCountyName": "Washington County",
+      "certifiedGeographicOwnerCountyFips": "48477",
+      "certifiedGeographicOwnerCountyName": "Washington County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "021042U",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48049",
+      "sourceCountyName": "Brown County",
+      "coordinateResolvedCountyFips": "48477",
+      "coordinateResolvedCountyName": "Washington County",
+      "latitude": 30.2737139997463,
+      "longitude": -96.4942629997106,
+      "railroad": "FWWR",
+      "streetHighway": "PRIVATE ROAD",
+      "sourceLastUpdate": "10/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 261008.503,
+      "distanceToResolvedCountyBoundaryMeters": 5495.981,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48049",
+        "COUNTYNAME": "BROWN",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48049"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.4942629997106,
+          30.2737139997463
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.273714,
+          "LATDD": 30.273714
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.494263,
+          "LONGDD": -96.494263
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48477",
+      "currentPackageCountyName": "Washington County",
+      "certifiedGeographicOwnerCountyFips": "48477",
+      "certifiedGeographicOwnerCountyName": "Washington County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "021043B",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48049",
+      "sourceCountyName": "Brown County",
+      "coordinateResolvedCountyFips": "48477",
+      "coordinateResolvedCountyName": "Washington County",
+      "latitude": 30.2372019996658,
+      "longitude": -96.4650270000055,
+      "railroad": "FWWR",
+      "streetHighway": "PRIVATE ROAD",
+      "sourceLastUpdate": "10/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 265725.486,
+      "distanceToResolvedCountyBoundaryMeters": 10135.472,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48049",
+        "COUNTYNAME": "BROWN",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48049"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.4650270000055,
+          30.2372019996658
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.237202,
+          "LATDD": 30.237202
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.465027,
+          "LONGDD": -96.465027
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48477",
+      "currentPackageCountyName": "Washington County",
+      "certifiedGeographicOwnerCountyFips": "48477",
+      "certifiedGeographicOwnerCountyName": "Washington County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "764992R",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48123",
+      "sourceCountyName": "DeWitt County",
+      "coordinateResolvedCountyFips": "48285",
+      "coordinateResolvedCountyName": "Lavaca County",
+      "latitude": 29.2997993000834,
+      "longitude": -97.1497172995825,
+      "railroad": "UP",
+      "streetHighway": "MATHEW STREET",
+      "sourceLastUpdate": "8/27/2025",
+      "distanceToSourceCountyBoundaryMeters": 655.967,
+      "distanceToResolvedCountyBoundaryMeters": 655.967,
+      "distanceBucket": "500_M_TO_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48123",
+        "COUNTYNAME": "DE WITT",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48123"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -97.1497172995825,
+          29.2997993000834
+        ],
+        "latitudeFields": {
+          "LATITUDE": 29.2997993,
+          "LATDD": 29.2997993
+        },
+        "longitudeFields": {
+          "LONGITUD": -97.1497173,
+          "LONGDD": -97.1497173
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48285",
+      "currentPackageCountyName": "Lavaca County",
+      "certifiedGeographicOwnerCountyFips": "48285",
+      "certifiedGeographicOwnerCountyName": "Lavaca County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "430171M",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.7089115003787,
+      "longitude": -96.5211106997737,
+      "railroad": "UP",
+      "streetHighway": "Private Field",
+      "sourceLastUpdate": "8/29/2025",
+      "distanceToSourceCountyBoundaryMeters": 709.672,
+      "distanceToResolvedCountyBoundaryMeters": 709.672,
+      "distanceBucket": "500_M_TO_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5211106997737,
+          30.7089115003787
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.7089115,
+          "LATDD": 30.7089115
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.5211107,
+          "LONGDD": -96.5211107
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "765835B",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.646312599923,
+      "longitude": -96.5423128997046,
+      "railroad": "UP",
+      "streetHighway": "Private",
+      "sourceLastUpdate": "8/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 5973.98,
+      "distanceToResolvedCountyBoundaryMeters": 1898.057,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5423128997046,
+          30.646312599923
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.6463126,
+          "LATDD": 30.6463126
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.5423129,
+          "LONGDD": -96.5423129
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "765836H",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.648538300359,
+      "longitude": -96.5429525998999,
+      "railroad": "UP",
+      "streetHighway": "STEEL STORE ROAD",
+      "sourceLastUpdate": "8/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 5722.59,
+      "distanceToResolvedCountyBoundaryMeters": 2097.266,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5429525998999,
+          30.648538300359
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.6485383,
+          "LATDD": 30.6485383
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.5429526,
+          "LONGDD": -96.5429526
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "765839D",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.6555810999463,
+      "longitude": -96.5450865999596,
+      "railroad": "UP",
+      "streetHighway": "Private",
+      "sourceLastUpdate": "8/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 4925.051,
+      "distanceToResolvedCountyBoundaryMeters": 2744.848,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5450865999596,
+          30.6555810999463
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.6555811,
+          "LATDD": 30.6555811
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.5450866,
+          "LONGDD": -96.5450866
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "765841E",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.6670443998538,
+      "longitude": -96.5485373999701,
+      "railroad": "UP",
+      "streetHighway": "SIMS LANE",
+      "sourceLastUpdate": "8/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 3633.577,
+      "distanceToResolvedCountyBoundaryMeters": 3267.728,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5485373999701,
+          30.6670443998538
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.6670444,
+          "LATDD": 30.6670444
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.5485374,
+          "LONGDD": -96.5485374
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "765842L",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.6739360001478,
+      "longitude": -96.5506360998324,
+      "railroad": "UP",
+      "streetHighway": "FAZZINO ROAD",
+      "sourceLastUpdate": "8/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 2862.213,
+      "distanceToResolvedCountyBoundaryMeters": 2552.168,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5506360998324,
+          30.6739360001478
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.673936,
+          "LATDD": 30.673936
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.5506361,
+          "LONGDD": -96.5506361
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "765843T",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.6802634000977,
+      "longitude": -96.5525644000651,
+      "railroad": "UP",
+      "streetHighway": "SANDY POINT",
+      "sourceLastUpdate": "8/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 2154.054,
+      "distanceToResolvedCountyBoundaryMeters": 1935.74,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5525644000651,
+          30.6802634000977
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.6802634,
+          "LATDD": 30.6802634
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.5525644,
+          "LONGDD": -96.5525644
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "765844A",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.6843931999221,
+      "longitude": -96.5538980003084,
+      "railroad": "UP",
+      "streetHighway": "MOORING LANE",
+      "sourceLastUpdate": "8/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 1687.796,
+      "distanceToResolvedCountyBoundaryMeters": 1568.459,
+      "distanceBucket": "GT_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5538980003084,
+          30.6843931999221
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.6843932,
+          "LATDD": 30.6843932
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.553898,
+          "LONGDD": -96.553898
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    },
+    {
+      "crossingId": "765845G",
+      "exceptionType": "CROSS_COUNTY_MISMATCH",
+      "sourceCountyFips": "48395",
+      "sourceCountyName": "Robertson County",
+      "coordinateResolvedCountyFips": "48041",
+      "coordinateResolvedCountyName": "Brazos County",
+      "latitude": 30.6908710002765,
+      "longitude": -96.5566996004394,
+      "railroad": "UP",
+      "streetHighway": "RED SLOUGH ROAD",
+      "sourceLastUpdate": "8/28/2025",
+      "distanceToSourceCountyBoundaryMeters": 925.142,
+      "distanceToResolvedCountyBoundaryMeters": 925.142,
+      "distanceBucket": "500_M_TO_1_KM",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48395",
+        "COUNTYNAME": "ROBERTSON",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48395"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -96.5566996004394,
+          30.6908710002765
+        ],
+        "latitudeFields": {
+          "LATITUDE": 30.690871,
+          "LATDD": 30.690871
+        },
+        "longitudeFields": {
+          "LONGITUD": -96.5566996,
+          "LONGDD": -96.5566996
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "reviewThresholdMeters": 25,
+      "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only",
+      "currentPackageCountyFips": "48041",
+      "currentPackageCountyName": "Brazos County",
+      "certifiedGeographicOwnerCountyFips": "48041",
+      "certifiedGeographicOwnerCountyName": "Brazos County",
+      "disagreementReason": "FRA_SOURCE_COUNTY_DIFFERS_FROM_CURRENT_CERTIFIED_GEOGRAPHIC_PACKAGE_OWNER"
+    }
+  ],
   "productionMovementApplied": false,
   "migrationRequired": false,
   "migrationPlan": [

@@ -1,21 +1,42 @@
 {
-  "schemaVersion": "gridly.wave3a2a.summary.v1",
-  "status": "BLOCKED",
-  "stopCondition": "FRA_SOURCE_IDENTITY_MISMATCH",
-  "expected": {
+  "schemaVersion": "gridly.wave3a2a.migration-result.v1",
+  "decision": "THREE ACTIVE PACKAGES RECONCILED — WAVE 3A.2 CONSERVATION RESTORED",
+  "affectedCounties": [
+    {
+      "countyId": "brazos",
+      "countyName": "Brazos",
+      "countyFips": "48041",
+      "count": 95
+    },
+    {
+      "countyId": "lavaca",
+      "countyName": "Lavaca",
+      "countyFips": "48285",
+      "count": 40
+    },
+    {
+      "countyId": "washington",
+      "countyName": "Washington",
+      "countyFips": "48477",
+      "count": 44
+    }
+  ],
+  "status": "PASS",
+  "method": "full county selection through LP115 reconciliation-index selectIndexedFeatures; no manual row append",
+  "applied": true,
+  "activeCountyCountBefore": 28,
+  "activeCountyCountAfter": 28,
+  "activeIdentityCountBefore": 3771,
+  "activeIdentityCountAfter": 3784,
+  "delta": 13,
+  "noPreviouslyPackagedIdentityLost": true,
+  "crossingIdsChanged": 0,
+  "inactiveCountiesActivated": 0,
+  "productionRegistryIdentityChanged": false,
+  "source": {
     "bytes": 68200491,
     "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
   },
-  "observed": {
-    "bytes": 67186117,
-    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
-  },
-  "productionPackageWrites": 0,
-  "inactiveCountiesActivated": 0,
-  "activeCountyCount": 28,
-  "decision": "ACTIVE PACKAGE MIGRATION BLOCKED",
   "candidateCohortModified": false,
-  "FraSourceModified": false,
-  "countyGeometryModified": false,
-  "runtimeRegistryModified": false
+  "candidateCountiesActivated": 0
 }

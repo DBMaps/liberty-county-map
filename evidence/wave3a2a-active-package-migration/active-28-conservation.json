@@ -1,18 +1,234 @@
 {
   "schemaVersion": "gridly.wave3a2a.active-conservation.v1",
-  "status": "BLOCKED",
-  "stopCondition": "FRA_SOURCE_IDENTITY_MISMATCH",
-  "expected": {
-    "bytes": 68200491,
-    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
-  },
-  "observed": {
-    "bytes": 67186117,
-    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
-  },
-  "productionPackageWrites": 0,
-  "inactiveCountiesActivated": 0,
-  "activeCountyCount": 28,
-  "decision": "ACTIVE PACKAGE MIGRATION BLOCKED",
-  "postMigrationCertificationAvailable": false
+  "status": "PASS",
+  "activePackages": 28,
+  "activePositivePackages": 27,
+  "activeEmptyPackages": 1,
+  "identities": 3784,
+  "duplicates": 0,
+  "geographicOwnerMismatches": 0,
+  "countyAccounting": [
+    {
+      "countyId": "austin",
+      "countyFips": "48015",
+      "countyName": "Austin",
+      "expected": 101,
+      "packaged": 101,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "brazoria",
+      "countyFips": "48039",
+      "countyName": "Brazoria",
+      "expected": 157,
+      "packaged": 157,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "brazos",
+      "countyFips": "48041",
+      "countyName": "Brazos",
+      "expected": 95,
+      "packaged": 95,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "calhoun",
+      "countyFips": "48057",
+      "countyName": "Calhoun",
+      "expected": 74,
+      "packaged": 74,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "chambers",
+      "countyFips": "48071",
+      "countyName": "Chambers",
+      "expected": 15,
+      "packaged": 15,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "colorado",
+      "countyFips": "48089",
+      "countyName": "Colorado",
+      "expected": 109,
+      "packaged": 109,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "fayette",
+      "countyFips": "48149",
+      "countyName": "Fayette",
+      "expected": 152,
+      "packaged": 152,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "fort-bend",
+      "countyFips": "48157",
+      "countyName": "Fort Bend",
+      "expected": 175,
+      "packaged": 175,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "galveston",
+      "countyFips": "48167",
+      "countyName": "Galveston",
+      "expected": 144,
+      "packaged": 144,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "grimes",
+      "countyFips": "48185",
+      "countyName": "Grimes",
+      "expected": 109,
+      "packaged": 109,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "hardin",
+      "countyFips": "48199",
+      "countyName": "Hardin",
+      "expected": 82,
+      "packaged": 82,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "harris",
+      "countyFips": "48201",
+      "countyName": "Harris",
+      "expected": 1159,
+      "packaged": 1159,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "jackson",
+      "countyFips": "48239",
+      "countyName": "Jackson",
+      "expected": 74,
+      "packaged": 74,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "jasper",
+      "countyFips": "48241",
+      "countyName": "Jasper",
+      "expected": 106,
+      "packaged": 106,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "jefferson",
+      "countyFips": "48245",
+      "countyName": "Jefferson",
+      "expected": 378,
+      "packaged": 378,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "lavaca",
+      "countyFips": "48285",
+      "countyName": "Lavaca",
+      "expected": 40,
+      "packaged": 40,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "liberty",
+      "countyFips": "48291",
+      "countyName": "Liberty",
+      "expected": 115,
+      "packaged": 115,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "matagorda",
+      "countyFips": "48321",
+      "countyName": "Matagorda",
+      "expected": 80,
+      "packaged": 80,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "montgomery",
+      "countyFips": "48339",
+      "countyName": "Montgomery",
+      "expected": 170,
+      "packaged": 170,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "newton",
+      "countyFips": "48351",
+      "countyName": "Newton",
+      "expected": 26,
+      "packaged": 26,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "orange",
+      "countyFips": "48361",
+      "countyName": "Orange",
+      "expected": 149,
+      "packaged": 149,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "polk",
+      "countyFips": "48373",
+      "countyName": "Polk",
+      "expected": 64,
+      "packaged": 64,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "san-jacinto",
+      "countyFips": "48407",
+      "countyName": "San Jacinto",
+      "expected": 12,
+      "packaged": 12,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "walker",
+      "countyFips": "48471",
+      "countyName": "Walker",
+      "expected": 36,
+      "packaged": 36,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "waller",
+      "countyFips": "48473",
+      "countyName": "Waller",
+      "expected": 46,
+      "packaged": 46,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "washington",
+      "countyFips": "48477",
+      "countyName": "Washington",
+      "expected": 44,
+      "packaged": 44,
+      "exactSetMatch": true
+    },
+    {
+      "countyId": "wharton",
+      "countyFips": "48481",
+      "countyName": "Wharton",
+      "expected": 72,
+      "packaged": 72,
+      "exactSetMatch": true
+    }
+  ],
+  "tyler": {
+    "countyFips": "48457",
+    "status": "ACTIVE_EMPTY",
+    "geographicIdentities": 0,
+    "packagedIdentities": 0
+  }
 }

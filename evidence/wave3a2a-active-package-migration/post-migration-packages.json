@@ -1,18 +1,36 @@
 {
   "schemaVersion": "gridly.wave3a2a.post-migration.v1",
-  "status": "BLOCKED",
-  "stopCondition": "FRA_SOURCE_IDENTITY_MISMATCH",
-  "expected": {
-    "bytes": 68200491,
-    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
-  },
-  "observed": {
-    "bytes": 67186117,
-    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
-  },
-  "productionPackageWrites": 0,
-  "inactiveCountiesActivated": 0,
-  "activeCountyCount": 28,
-  "decision": "ACTIVE PACKAGE MIGRATION BLOCKED",
-  "available": false
+  "status": "PASS",
+  "packages": [
+    {
+      "countyId": "brazos",
+      "countyFips": "48041",
+      "packagePath": "Crossing-Packages/brazos/Production/brazos-production-crossings.geojson",
+      "manifestPath": "Crossing-Packages/production-crossing-manifest.json",
+      "crossingCount": 95,
+      "bytes": 197338,
+      "sha256": "a4defe73484a574eccfc4a8b80c30570e805d04d86ca1a0b04aee9ed3023a209",
+      "runtimeStatus": "ACTIVE_POSITIVE"
+    },
+    {
+      "countyId": "lavaca",
+      "countyFips": "48285",
+      "packagePath": "Crossing-Packages/lavaca/Production/lavaca-production-crossings.geojson",
+      "manifestPath": "Crossing-Packages/production-crossing-manifest.json",
+      "crossingCount": 40,
+      "bytes": 82681,
+      "sha256": "6805d6c91a82e698113125bc7d26171619462db9714061fe0ac15b2605930bce",
+      "runtimeStatus": "ACTIVE_POSITIVE"
+    },
+    {
+      "countyId": "washington",
+      "countyFips": "48477",
+      "packagePath": "Crossing-Packages/washington/Production/washington-production-crossings.geojson",
+      "manifestPath": "Crossing-Packages/production-crossing-manifest.json",
+      "crossingCount": 44,
+      "bytes": 91857,
+      "sha256": "fea11be3a1806245394a8a87cda6b77d82f9692b863b35e467977d44adab11b3",
+      "runtimeStatus": "ACTIVE_POSITIVE"
+    }
+  ]
 }

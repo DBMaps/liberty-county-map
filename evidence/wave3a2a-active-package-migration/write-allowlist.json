@@ -1,24 +1,33 @@
 {
   "schemaVersion": "gridly.wave3a2a.write-allowlist.v1",
-  "status": "BLOCKED",
-  "stopCondition": "FRA_SOURCE_IDENTITY_MISMATCH",
-  "expected": {
-    "bytes": 68200491,
-    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
-  },
-  "observed": {
-    "bytes": 67186117,
-    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
-  },
-  "productionPackageWrites": 0,
-  "inactiveCountiesActivated": 0,
-  "activeCountyCount": 28,
-  "decision": "ACTIVE PACKAGE MIGRATION BLOCKED",
-  "authorizedOnSuccessfulPreflight": [
+  "status": "LOCKED",
+  "paths": [
     "Crossing-Packages/brazos/Production/brazos-production-crossings.geojson",
     "Crossing-Packages/lavaca/Production/lavaca-production-crossings.geojson",
     "Crossing-Packages/washington/Production/washington-production-crossings.geojson",
-    "Crossing-Packages/production-crossing-manifest.json"
+    "Crossing-Packages/production-crossing-manifest.json",
+    "package.json",
+    "tools/wave3a2a/reconcile-active-crossing-packages.mjs",
+    "tests/wave3a2a-active-package-migration.test.mjs",
+    "evidence/wave3a2a-active-package-migration/pre-migration-packages.json",
+    "evidence/wave3a2a-active-package-migration/missing-13-certification.json",
+    "evidence/wave3a2a-active-package-migration/write-allowlist.json",
+    "evidence/wave3a2a-active-package-migration/migration-result.json",
+    "evidence/wave3a2a-active-package-migration/post-migration-packages.json",
+    "evidence/wave3a2a-active-package-migration/active-28-conservation.json",
+    "evidence/wave3a2a-active-package-migration/report-linkage-protection.json",
+    "evidence/wave3a2a-active-package-migration/consumer-compatibility.json",
+    "evidence/wave3a2a-active-package-migration/wave3a2-conservation-result.json",
+    "evidence/wave3a2a-active-package-migration/summary.json"
   ],
-  "actualProductionWrites": []
+  "explicitlyExcluded": [
+    "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "county geometry",
+    "geographic authority",
+    "runtime activation registry",
+    "175 candidate cohort",
+    "Supabase report rows",
+    "road runtime",
+    "unrelated active packages"
+  ]
 }

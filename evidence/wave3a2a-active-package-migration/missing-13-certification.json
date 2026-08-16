@@ -1,19 +1,449 @@
 {
   "schemaVersion": "gridly.wave3a2a.missing-certification.v1",
-  "status": "BLOCKED",
-  "stopCondition": "FRA_SOURCE_IDENTITY_MISMATCH",
-  "expected": {
-    "bytes": 68200491,
-    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c"
-  },
-  "observed": {
-    "bytes": 67186117,
-    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
-  },
-  "productionPackageWrites": 0,
-  "inactiveCountiesActivated": 0,
-  "activeCountyCount": 28,
-  "decision": "ACTIVE PACKAGE MIGRATION BLOCKED",
-  "certifiedRows": 0,
-  "reason": "Source identity gate runs before row certification; the 13 rows were not certified against an unauthorized source."
+  "status": "PASS",
+  "count": 13,
+  "rows": [
+    {
+      "crossingId": "021041M",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48049",
+      "fraSourceCountyName": "BROWN",
+      "gridlyGeographicCountyFips": "48477",
+      "gridlyGeographicCountyName": "Washington County",
+      "coordinates": [
+        -96.5014039998565,
+        30.2852040002943
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "PRIVATE ROAD",
+        "highway": ""
+      },
+      "railroad": {
+        "railroad": "FWWR",
+        "operator": "FWWR",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 211469,
+        "effectiveDate": 1761609600000,
+        "lastUpdate": "10/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=021041M",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=021041M"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "021042U",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48049",
+      "fraSourceCountyName": "BROWN",
+      "gridlyGeographicCountyFips": "48477",
+      "gridlyGeographicCountyName": "Washington County",
+      "coordinates": [
+        -96.4942629997106,
+        30.2737139997463
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "PRIVATE ROAD",
+        "highway": ""
+      },
+      "railroad": {
+        "railroad": "FWWR",
+        "operator": "FWWR",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 211476,
+        "effectiveDate": 1761609600000,
+        "lastUpdate": "10/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=021042U",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=021042U"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "021043B",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48049",
+      "fraSourceCountyName": "BROWN",
+      "gridlyGeographicCountyFips": "48477",
+      "gridlyGeographicCountyName": "Washington County",
+      "coordinates": [
+        -96.4650270000055,
+        30.2372019996658
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "PRIVATE ROAD",
+        "highway": ""
+      },
+      "railroad": {
+        "railroad": "FWWR",
+        "operator": "FWWR",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 211477,
+        "effectiveDate": 1761609600000,
+        "lastUpdate": "10/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=021043B",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=021043B"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "430171M",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5211106997737,
+        30.7089115003787
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "Private Field",
+        "highway": "NA"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208520,
+        "effectiveDate": 1756425600000,
+        "lastUpdate": "8/29/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=430171M",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=430171M"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "764992R",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48123",
+      "fraSourceCountyName": "DE WITT",
+      "gridlyGeographicCountyFips": "48285",
+      "gridlyGeographicCountyName": "Lavaca County",
+      "coordinates": [
+        -97.1497172995825,
+        29.2997993000834
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "MATHEW STREET",
+        "highway": "ST 0000"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 209647,
+        "effectiveDate": 1756252800000,
+        "lastUpdate": "8/27/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=764992R",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=764992R"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "765835B",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5423128997046,
+        30.646312599923
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "Private",
+        "highway": "NA"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208030,
+        "effectiveDate": 1756339200000,
+        "lastUpdate": "8/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765835B",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765835B"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "765836H",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5429525998999,
+        30.648538300359
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "STEEL STORE ROAD",
+        "highway": "CO 0310"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208035,
+        "effectiveDate": 1756339200000,
+        "lastUpdate": "8/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765836H",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765836H"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "765839D",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5450865999596,
+        30.6555810999463
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "Private",
+        "highway": "NA"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208036,
+        "effectiveDate": 1756339200000,
+        "lastUpdate": "8/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765839D",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765839D"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "765841E",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5485373999701,
+        30.6670443998538
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "SIMS LANE",
+        "highway": "CO 0307"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208037,
+        "effectiveDate": 1756339200000,
+        "lastUpdate": "8/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765841E",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765841E"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "765842L",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5506360998324,
+        30.6739360001478
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "FAZZINO ROAD",
+        "highway": "CO 0309"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208041,
+        "effectiveDate": 1756339200000,
+        "lastUpdate": "8/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765842L",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765842L"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "765843T",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5525644000651,
+        30.6802634000977
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "SANDY POINT",
+        "highway": "CO 0000"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208042,
+        "effectiveDate": 1756339200000,
+        "lastUpdate": "8/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765843T",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765843T"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "765844A",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5538980003084,
+        30.6843931999221
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "MOORING LANE",
+        "highway": "CO 0296"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208043,
+        "effectiveDate": 1756339200000,
+        "lastUpdate": "8/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765844A",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765844A"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    },
+    {
+      "crossingId": "765845G",
+      "fraExistenceCount": 1,
+      "fraSourceCountyFips": "48395",
+      "fraSourceCountyName": "ROBERTSON",
+      "gridlyGeographicCountyFips": "48041",
+      "gridlyGeographicCountyName": "Brazos County",
+      "coordinates": [
+        -96.5566996004394,
+        30.6908710002765
+      ],
+      "classification": "PUBLIC_ROADWAY",
+      "road": {
+        "street": "RED SLOUGH ROAD",
+        "highway": "CO 0000"
+      },
+      "railroad": {
+        "railroad": "UP",
+        "operator": "UP",
+        "operatorRole": "Primary"
+      },
+      "fraProvenance": {
+        "objectId": 208079,
+        "effectiveDate": 1756339200000,
+        "lastUpdate": "8/28/2025",
+        "inventoryLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765845G",
+        "accidentLink": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765845G"
+      },
+      "reconciliationResolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+      "packageEligibility": "ELIGIBLE",
+      "blocked": false,
+      "presentInAnotherActivePackage": false,
+      "presentInCandidateCohort": false
+    }
+  ]
 }

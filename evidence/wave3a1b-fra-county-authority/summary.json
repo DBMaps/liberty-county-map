@@ -18,10 +18,10 @@
     "SOURCE_OR_GEOGRAPHIC_POSITIVE_INACTIVE": 175,
     "ZERO_GEOGRAPHIC_SOURCE_INACTIVE": 51
   },
-  "currentProductionIdentityCount": 3771,
-  "activePositiveExactGeographicOwnerMatches": 24,
+  "currentProductionIdentityCount": 3784,
+  "activePositiveExactGeographicOwnerMatches": 27,
   "activeMismatchRows": 0,
-  "activeFraProvenanceDisagreementCount": 0,
+  "activeFraProvenanceDisagreementCount": 13,
   "packagesManufactured": false,
   "crossingsActivated": false
 }
