@@ -45,7 +45,7 @@ test("last persisted helper uses deployed columns and strongest retained identit
     if (name === "then") return (resolve) => resolve({ data: [{ id: "waco-fixture", crossing_id: "hazard-device-1" }], error: null });
     return (...args) => { calls.push([name, ...args]); return builder; };
   }});
-  globalThis.supabaseClient = { from(table) { calls.push(["from", table]); return builder; } };
+  globalThis[Symbol.for("gridly.runtime.supabaseClient")] = { from(table) { calls.push(["from", table]); return builder; } };
   globalThis.gridlyGetLastHazardPersistenceDiagnostic = () => ({ finalStatus: "PERSISTED", crossingId: "hazard-device-1", deviceId: "device-1", reportType: "flooding" });
   const { selectLastPersistedHazardReport } = await import("../reports/statewide-capability-recovery/live-waco-report-select-helper.js");
   const result = await selectLastPersistedHazardReport();
@@ -53,8 +53,18 @@ test("last persisted helper uses deployed columns and strongest retained identit
   assert.equal(result.queryMode, "DEPLOYED_BASE_COLUMNS:EXACT_CROSSING_ID");
   assert.ok(calls.some((call) => call[0] === "eq" && call[1] === "crossing_id" && call[2] === "hazard-device-1"));
   assert.ok(!calls.some((call) => call.includes("county_id") || call.includes("state")));
-  delete globalThis.supabaseClient;
+  delete globalThis[Symbol.for("gridly.runtime.supabaseClient")];
   delete globalThis.gridlyGetLastHazardPersistenceDiagnostic;
+});
+
+test("production exposes a sanitized loaded-row trace and retains a statewide retrieval window", () => {
+  const source = fs.readFileSync("js/app.js", "utf8");
+  assert.match(source, /function gridlyGetLoadedReportSnapshot\(\)/);
+  assert.match(source, /\.order\("created_at", \{ ascending: false \}\)\s*\.limit\(300\)/);
+  for (const field of ["lifecycleState", "mapEligible", "alertsEligible", "awarenessEligible", "countyScopeMatch", "activeCollection"]) {
+    assert.match(source, new RegExp(`\\b${field}\\b`));
+  }
+  assert.doesNotMatch(source, /gridlyGetLoadedReportSnapshot[\\s\\S]{0,250}supabaseClient\\s*\.from/);
 });
 
 test("generic hazard policy never depends on crossing runtime", () => {
