@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { certify, genericHazardPolicy, reconcileCrossingCapabilities, deployedReportsInsertKeys } from "../tools/certify-statewide-reporting.mjs";
+import { certify, genericHazardPolicy, reconcileCrossingCapabilities, deployedReportsInsertKeys, deployedReportsSelectKeys } from "../tools/certify-statewide-reporting.mjs";
 
 test("statewide reporting protects all governed identities and crossing cohorts", () => {
   const { counts } = certify();
@@ -14,6 +14,8 @@ test("statewide reporting protects all governed identities and crossing cohorts"
   assert.deepEqual([counts.persistenceShapeCompatible, counts.structuredCountyMetadataPresent, counts.historicalCohortExclusions], [254, 254, 0]);
   for (const row of certify().evidence["statewide-reporting-certification.json"].results) {
     assert.deepEqual(row.deployedInsertKeys, deployedReportsInsertKeys);
+    assert.deepEqual(row.deployedSelectKeys, deployedReportsSelectKeys);
+    assert.equal(row.retrievalShapeCompatible && row.structuredMetadataNormalized, true);
     assert.equal(row.persistenceShapeCompatible && row.structuredCountyMetadataPresent && row.crossingRuntimeRequired === false, true);
   }
 });
@@ -35,21 +37,24 @@ test("crossing source sets reconcile and runtime precedence partitions all count
   assert.ok(!result.classes.SOURCE_ZERO_NOT_ACTIVATED.includes("tyler-tx"), "active runtime takes precedence");
 });
 
-test("Waco helper has a browser-invokable read-only export", async () => {
+test("last persisted helper uses deployed columns and strongest retained identity", async () => {
   const source = fs.readFileSync("reports/statewide-capability-recovery/live-waco-report-select-helper.js", "utf8");
   assert.doesNotMatch(source, /\.(?:insert|update|delete)\s*\(/i);
   const calls = [];
   const builder = new Proxy({}, { get(_target, name) {
-    if (name === "then") return (resolve) => resolve({ data: [{ id: "waco-fixture", created_at: "2026-08-16T00:00:00Z" }], error: null });
+    if (name === "then") return (resolve) => resolve({ data: [{ id: "waco-fixture", crossing_id: "hazard-device-1" }], error: null });
     return (...args) => { calls.push([name, ...args]); return builder; };
   }});
   globalThis.supabaseClient = { from(table) { calls.push(["from", table]); return builder; } };
-  const { selectRecentWacoFloodingReport } = await import("../reports/statewide-capability-recovery/live-waco-report-select-helper.js");
-  assert.equal(typeof selectRecentWacoFloodingReport, "function");
-  assert.equal((await selectRecentWacoFloodingReport()).status, "FOUND");
-  assert.ok(calls.some((call) => call[0] === "eq" && call[1] === "county_id" && call[2] === "mclennan-tx"));
-  assert.ok(calls.some((call) => call[0] === "order" && call[1] === "created_at"));
+  globalThis.gridlyGetLastHazardPersistenceDiagnostic = () => ({ finalStatus: "PERSISTED", crossingId: "hazard-device-1", deviceId: "device-1", reportType: "flooding" });
+  const { selectLastPersistedHazardReport } = await import("../reports/statewide-capability-recovery/live-waco-report-select-helper.js");
+  const result = await selectLastPersistedHazardReport();
+  assert.equal(result.status, "FOUND");
+  assert.equal(result.queryMode, "DEPLOYED_BASE_COLUMNS:EXACT_CROSSING_ID");
+  assert.ok(calls.some((call) => call[0] === "eq" && call[1] === "crossing_id" && call[2] === "hazard-device-1"));
+  assert.ok(!calls.some((call) => call.includes("county_id") || call.includes("state")));
   delete globalThis.supabaseClient;
+  delete globalThis.gridlyGetLastHazardPersistenceDiagnostic;
 });
 
 test("generic hazard policy never depends on crossing runtime", () => {
