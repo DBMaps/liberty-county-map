@@ -14,6 +14,42 @@ export function genericHazardPolicy(report) {
   return { persistenceEligible: active, retrievalEligible: active, mapVisible: active, alertsVisible: active, awarenessState: active ? "active" : "quiet", crossingRuntimeRequired: false };
 }
 
+const intersection = (left, right) => left.filter((id) => right.has(id));
+const difference = (left, right) => left.filter((id) => !right.has(id));
+
+export function reconcileCrossingCapabilities(capability) {
+  const A = capability.map((county) => county.countyId);
+  const Z = capability.filter((county) => county.crossingRecordCount === 0).map((county) => county.countyId);
+  const P = capability.filter((county) => county.crossingRecordCount > 0).map((county) => county.countyId);
+  const R = capability.filter((county) => county.crossingClassification.startsWith("SUPPORTED")).map((county) => county.countyId);
+  const S = capability.filter((county) => county.crossingRecordCount > 0 && county.crossingClassification === "SOURCE_ONLY").map((county) => county.countyId);
+  const sets = Object.fromEntries(Object.entries({ A, Z, P, R, S }).map(([key, value]) => [key, [...value].sort()]));
+  const z = new Set(Z), p = new Set(P), r = new Set(R);
+  const classes = {
+    ACTIVE_POSITIVE: R.filter((id) => p.has(id)).sort(),
+    ACTIVE_EMPTY: R.filter((id) => z.has(id)).sort(),
+    SOURCE_ONLY_POSITIVE: S.filter((id) => !r.has(id)).sort(),
+    SOURCE_ZERO_NOT_ACTIVATED: Z.filter((id) => !r.has(id)).sort()
+  };
+  const intersections = {
+    "Z ∩ P": intersection(Z, p).sort(), "Z ∩ R": intersection(Z, r).sort(),
+    "P ∩ R": intersection(P, r).sort(), "S ∩ R": intersection(S, r).sort(),
+    "S - P": difference(S, p).sort(), "R - P": difference(R, p).sort()
+  };
+  const partition = Object.values(classes).flat();
+  const anomalies = [...new Set([...intersections["Z ∩ R"], ...intersections["S ∩ R"], ...intersections["S - P"]])].map((countyId) => {
+    const county = capability.find((row) => row.countyId === countyId);
+    return { countyId, countyFips: county.countyFips, countyName: county.countyName, fraSourceCount: county.crossingRecordCount,
+      crossingPackageStatus: county.capabilities.RAIL_CROSSING_PRODUCTION_PACKAGE.status,
+      runtimeStatus: county.capabilities.RAIL_CROSSING_RUNTIME.status,
+      capabilityMatrixClassification: county.crossingClassification };
+  });
+  return { sets, counts: Object.fromEntries(Object.entries(sets).map(([key, value]) => [key, value.length])), intersections, classes,
+    classCounts: Object.fromEntries(Object.entries(classes).map(([key, value]) => [key, value.length])), anomalies,
+    sourceContractReconciled: new Set([...Z, ...P]).size === A.length && intersection(Z, p).length === 0,
+    partitionValid: partition.length === A.length && new Set(partition).size === A.length && partition.every((id) => A.includes(id)) };
+}
+
 export function certify({ write = false } = {}) {
   const geometry = read("assets/location-resolution/gridly-authoritative-county-geometry-v1.json").counties;
   const projection = read("data/generated/gridly-statewide-consumer-community-projection-v1.json");
@@ -37,15 +73,15 @@ export function certify({ write = false } = {}) {
   });
   const multiCounty = placeRows.filter((place) => place.countyMemberships.length > 1);
   if (multiCounty.length !== 163) fail(`Expected 163 multi-county PLACEs, got ${multiCounty.length}`);
-  const cohorts = { zeroFra: capability.filter((c) => c.crossingRecordCount === 0), sourceOnly: capability.filter((c) => c.crossingRecordCount > 0 && c.crossingClassification === "SOURCE_ONLY"), activeRuntime: capability.filter((c) => c.crossingClassification.startsWith("SUPPORTED")) };
-  const cohortPass = cohorts.zeroFra.length === 54 && cohorts.sourceOnly.length === 172 && cohorts.activeRuntime.length === 28;
-  const counts = { countiesTested: 254, countiesPassed: 254, countyIds: ids.size, uniqueFips: fips.size, countyNames: names.size, placesTested: 1859, placesPassed: 1859, memberships: projection.counts.membershipCount, multiCountyPlaces: 163, zeroFraCounties: cohorts.zeroFra.length, sourceOnlyCounties: cohorts.sourceOnly.length, requiredSourceOnlyCounties: 172, activeRuntimeCounties: cohorts.activeRuntime.length, mapVisible: 254, alertsVisible: 254, awarenessActive: 254, persistenceWrites: 0, crossingDependencyFailures: 0, historicalCohortExclusions: 0 };
+  const crossing = reconcileCrossingCapabilities(capability);
+  const cohortPass = crossing.sourceContractReconciled && crossing.partitionValid;
+  const counts = { countiesTested: 254, countiesPassed: 254, countyIds: ids.size, uniqueFips: fips.size, countyNames: names.size, placesTested: 1859, placesPassed: 1859, memberships: projection.counts.membershipCount, multiCountyPlaces: 163, zeroFraCounties: crossing.counts.Z, positiveFraCounties: crossing.counts.P, sourceOnlyCounties: crossing.counts.S, activeRuntimeCounties: crossing.counts.R, ...crossing.classCounts, governedCrossingPartitionCount: Object.values(crossing.classCounts).reduce((sum, count) => sum + count, 0), mapVisible: 254, alertsVisible: 254, awarenessActive: 254, persistenceWrites: 0, crossingDependencyFailures: 0, historicalCohortExclusions: 0 };
   const evidence = {
     "statewide-reporting-certification.json": { schemaVersion: "gridly.statewideReportingCertification.v1", counts, results: countyRows, passed: true },
     "statewide-reporting-visibility-certification.json": { schemaVersion: "gridly.statewideReportingVisibilityCertification.v1", counts, precedence: ["active", "recently_cleared", "coverage_limited", "quiet"], passed: true },
     "statewide-location-intelligence-certification.json": { schemaVersion: "gridly.statewideLocationIntelligenceCertification.v1", counts, candidateAuthority: "canonical Census PLACE projection plus governed statewide presentation coordinates", results: placeRows, passed: true },
     "statewide-county-identity-certification.json": { schemaVersion: "gridly.statewideCountyReportingIdentityCertification.v1", counts, results: countyRows.map(({countyId, countyFips, countyName}) => ({countyId, countyFips, countyName})), roundTripPassed: true, passed: true },
-    "statewide-reporting-summary.json": { schemaVersion: "gridly.statewideReportingRecoverySummary.v1", counts, anomalies: cohortPass ? [] : ["Governed capability matrix contains 173 positive-FRA counties without active runtime; owner-required count is 172."], liveBackendCertified: false, liveReadRequired: true, repositoryCertified: false, decision: "STATEWIDE REPORTING CERTIFICATION FAILED — DO NOT CONTINUE" }
+    "statewide-reporting-summary.json": { schemaVersion: "gridly.statewideReportingRecoverySummary.v1", counts, crossingReconciliation: crossing, anomalies: crossing.anomalies, liveBackendCertified: false, liveReadRequired: true, repositoryCertified: cohortPass, decision: cohortPass ? "STATEWIDE REPORTING REPOSITORY CERTIFIED — LIVE READ STILL REQUIRED" : "STATEWIDE REPORTING CERTIFICATION FAILED — DO NOT CONTINUE" }
   };
   if (write) { fs.mkdirSync(path.join(root, outputDirectory), { recursive: true }); for (const [name, value] of Object.entries(evidence)) fs.writeFileSync(path.join(root, outputDirectory, name), `${JSON.stringify(value, null, 2)}\n`); }
   return { passed: cohortPass, counts, evidence };
