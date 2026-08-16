@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.wave3a1b.authority-policy.v1",
-  "status": "RECOMMENDED_BUT_CERTIFICATION_BLOCKED_BY_SOURCE_HASH_CONTRADICTION",
+  "status": "CERTIFIED",
   "sourceProvenanceAuthority": {
     "fields": [
       "STCYFIPS",
