@@ -8,6 +8,19 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (file) => JSON.parse(fs.readFileSync(path.join(root, file)));
 const fail = (message) => { throw new Error(message); };
 const outputDirectory = "reports/statewide-capability-recovery";
+export const deployedReportsInsertKeys = Object.freeze(["crossing_id", "crossing_name", "railroad", "lat", "lng", "report_type", "severity", "detail", "source", "confidence", "device_id", "expires_at"]);
+
+export function buildGenericHazardPersistenceFixture(county, point) {
+  const countyMetadata = { county_id: county.countyId, countyId: county.countyId, countyFips: county.countyFips, countyName: county.name, state: "TX" };
+  const richRow = {
+    crossing_id: `hazard-certification-${county.countyId}`, crossing_name: "Flooding", railroad: "Road hazard",
+    lat: point.lat, lng: point.lng, report_type: "flooding", severity: "high",
+    detail: `Flooding may affect travel. (future_source: community_report) [gridly_meta]${JSON.stringify(countyMetadata)}`,
+    source: "user", confidence: "statewide zero-write certification", device_id: "certification-no-write", expires_at: "2099-01-01T00:00:00.000Z",
+    county_id: county.countyId, state: "TX"
+  };
+  return { richRow, insertRow: Object.fromEntries(deployedReportsInsertKeys.map((key) => [key, richRow[key]])), countyMetadata };
+}
 
 export function genericHazardPolicy(report) {
   const active = report?.reportKind === "hazard" && report?.expired === false && /^48\d{3}$/.test(report?.countyFips || "");
@@ -61,10 +74,13 @@ export function certify({ write = false } = {}) {
     if (ids.has(county.countyId) || fips.has(county.countyFips) || !county.name) fail(`Invalid county identity ${county.countyId}`);
     ids.add(county.countyId); fips.add(county.countyFips); names.add(county.name);
     const point = interiorPoint(county);
+    const persistence = buildGenericHazardPersistenceFixture(county, point);
+    const insertKeys = Object.keys(persistence.insertRow);
+    if (insertKeys.join("|") !== deployedReportsInsertKeys.join("|") || !persistence.insertRow.detail.includes(county.countyFips) || insertKeys.includes("county_id") || insertKeys.includes("state")) fail(`Persistence shape failure ${county.countyId}`);
     const fixture = { reportKind: "hazard", type: "flooding", countyId: county.countyId, countyFips: county.countyFips, lat: point.lat, lng: point.lng, expired: false };
     const policy = genericHazardPolicy(fixture);
     if (!Object.values(policy).every((value) => value === true || value === false || value === "active") || !policy.mapVisible || !policy.alertsVisible || policy.awarenessState !== "active" || policy.crossingRuntimeRequired) fail(`Reporting policy failure ${county.countyId}`);
-    return { countyId: county.countyId, countyFips: county.countyFips, countyName: county.name, point, ...policy, payloadReady: true, passed: true };
+    return { countyId: county.countyId, countyFips: county.countyFips, countyName: county.name, point, ...policy, payloadReady: true, persistenceShapeCompatible: true, structuredCountyMetadataPresent: true, deployedInsertKeys: insertKeys, passed: true };
   });
   const placeRows = projection.communities.map((place) => {
     const target = presentation[place.placeGeoid];
@@ -75,7 +91,7 @@ export function certify({ write = false } = {}) {
   if (multiCounty.length !== 163) fail(`Expected 163 multi-county PLACEs, got ${multiCounty.length}`);
   const crossing = reconcileCrossingCapabilities(capability);
   const cohortPass = crossing.sourceContractReconciled && crossing.partitionValid;
-  const counts = { countiesTested: 254, countiesPassed: 254, countyIds: ids.size, uniqueFips: fips.size, countyNames: names.size, placesTested: 1859, placesPassed: 1859, memberships: projection.counts.membershipCount, multiCountyPlaces: 163, zeroFraCounties: crossing.counts.Z, positiveFraCounties: crossing.counts.P, sourceOnlyCounties: crossing.counts.S, activeRuntimeCounties: crossing.counts.R, ...crossing.classCounts, governedCrossingPartitionCount: Object.values(crossing.classCounts).reduce((sum, count) => sum + count, 0), mapVisible: 254, alertsVisible: 254, awarenessActive: 254, persistenceWrites: 0, crossingDependencyFailures: 0, historicalCohortExclusions: 0 };
+  const counts = { countiesTested: 254, countiesPassed: 254, persistenceShapeCompatible: 254, structuredCountyMetadataPresent: 254, countyIds: ids.size, uniqueFips: fips.size, countyNames: names.size, placesTested: 1859, placesPassed: 1859, memberships: projection.counts.membershipCount, multiCountyPlaces: 163, zeroFraCounties: crossing.counts.Z, positiveFraCounties: crossing.counts.P, sourceOnlyCounties: crossing.counts.S, activeRuntimeCounties: crossing.counts.R, ...crossing.classCounts, governedCrossingPartitionCount: Object.values(crossing.classCounts).reduce((sum, count) => sum + count, 0), mapVisible: 254, alertsVisible: 254, awarenessActive: 254, persistenceWrites: 0, crossingDependencyFailures: 0, historicalCohortExclusions: 0 };
   const evidence = {
     "statewide-reporting-certification.json": { schemaVersion: "gridly.statewideReportingCertification.v1", counts, results: countyRows, passed: true },
     "statewide-reporting-visibility-certification.json": { schemaVersion: "gridly.statewideReportingVisibilityCertification.v1", counts, precedence: ["active", "recently_cleared", "coverage_limited", "quiet"], passed: true },

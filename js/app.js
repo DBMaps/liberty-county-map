@@ -8334,6 +8334,20 @@ function gridlyGetCountyReportingIdentity(countyId) {
   return Object.freeze({ countyId: normalized, countyFips: String(countyFips), countyName: county.name });
 }
 
+function gridlyGetReportSubmissionCommunityMetadata(countyId, lat, lng) {
+  const county = GRIDLY_COUNTY_REGISTRY[gridlyNormalizeCountyId(countyId)];
+  const candidates = Array.isArray(county?.consumerAwarenessAreas) ? county.consumerAwarenessAreas : [];
+  const ranked = candidates.map((community) => {
+    const target = gridlyPlacePresentationTargets?.[community.placeGeoid];
+    const targetLat = Number(target?.lat ?? community?.focus?.lat);
+    const targetLng = Number(target?.lon ?? target?.lng ?? community?.focus?.lng);
+    const distance = Number.isFinite(targetLat) && Number.isFinite(targetLng) ? haversineDistance(lat, lng, targetLat, targetLng) : Infinity;
+    return { community, distance };
+  }).filter((candidate) => Number.isFinite(candidate.distance)).sort((left, right) => left.distance - right.distance);
+  const nearest = ranked[0]?.community;
+  return nearest ? { communityName: nearest.displayName || null, communityKey: nearest.placeGeoid || null, placeGeoid: nearest.placeGeoid || null } : {};
+}
+
 function gridlyGetCountyDisplayContext(record = {}, options = {}) {
   const rawCountyId = options.countyId || options.activeCountyId || record?.county_id || record?.countyId || record?.raw?.county_id || record?.raw?.countyId || record?.source?.county_id || record?.source?.countyId || gridlyGetActiveCountyId();
   const candidateCountyId = String(rawCountyId || "").trim().toLowerCase();
@@ -81989,6 +82003,23 @@ const GRIDLY_REPORTS_BASE_INSERT_KEYS = Object.freeze([
   "expires_at"
 ]);
 const GRIDLY_REPORTS_ALLOWED_INSERT_KEYS = GRIDLY_REPORTS_BASE_INSERT_KEYS;
+let gridlyLastHazardPersistenceDiagnostic = null;
+
+function gridlyPersistenceErrorDiagnostic(error) {
+  if (!error) return null;
+  return Object.freeze({
+    code: safeDisplayText(error?.code || "", "") || null,
+    message: safeDisplayText(error?.message || error?.details || error || "Persistence failed", "Persistence failed").slice(0, 500)
+  });
+}
+
+function gridlyGetLastHazardPersistenceDiagnostic() {
+  return gridlyLastHazardPersistenceDiagnostic
+    ? Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic })
+    : null;
+}
+window.gridlyGetLastHazardPersistenceDiagnostic = gridlyGetLastHazardPersistenceDiagnostic;
+exposeGridlyAuditHelper("gridlyGetLastHazardPersistenceDiagnostic", gridlyGetLastHazardPersistenceDiagnostic);
 let lastGridlyRoadHazardSubmitShapeAudit = {
   supabaseInsertKeys: [],
   legacyRetryInsertKeys: [],
@@ -82195,17 +82226,47 @@ function gridlyBuildRoadHazardDetailLocationMetadata(locationPayload = {}, optio
 
 async function gridlyInsertWithCountyMetadataFallback(client, tableName, row) {
   const insertRow = tableName === "reports" ? gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS) : row;
-  const { error } = await client.from(tableName).insert(insertRow);
-  if (!error) return { error: null, metadataPersisted: tableName !== "reports", insertedRow: insertRow, attemptedRow: insertRow, fallbackRow: null, metadataFallbackUsed: false };
+  const isHazardReport = tableName === "reports" && String(row?.crossing_id || "").startsWith("hazard-");
+  if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({
+    status: "ATTEMPTING", attemptedAt: new Date().toISOString(), reportType: row?.report_type || null,
+    countyId: row?.county_id || null, firstAttemptMode: "DEPLOYED_BASE_COLUMNS", firstAttemptError: null,
+    fallbackAttempted: false, fallbackMode: null, fallbackError: null, finalStatus: "PENDING"
+  });
+  let first;
+  try {
+    first = await client.from(tableName).insert(insertRow);
+  } catch (error) {
+    first = { error };
+  }
+  const error = first?.error || null;
+  if (!error) {
+    if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic, status: "SUCCEEDED", finalStatus: "PERSISTED" });
+    return { data: first?.data || null, error: null, metadataPersisted: tableName !== "reports", insertedRow: insertRow, attemptedRow: insertRow, fallbackRow: null, metadataFallbackUsed: false };
+  }
+  if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic, firstAttemptError: gridlyPersistenceErrorDiagnostic(error) });
   if (!isGridlySupabaseCountyMetadataSchemaError(error) && !isGridlySupabaseMissingColumnSchemaError(error)) {
+    if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic, status: "FAILED", finalStatus: "NOT_PERSISTED" });
     return { error, metadataPersisted: false, insertedRow: null, attemptedRow: insertRow, fallbackRow: null, metadataFallbackUsed: false };
   }
   const fallbackRow = tableName === "reports"
     ? insertRow
     : gridlyStripCountyMetadataFromRow(insertRow);
   console.warn(`[Gridly] ${tableName} insert shape was rejected by Supabase schema cache; retrying legacy insert shape.`, error);
-  const retry = await client.from(tableName).insert(fallbackRow);
+  if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic, fallbackAttempted: true, fallbackMode: "DEPLOYED_BASE_COLUMNS_RETRY" });
+  let retry;
+  try {
+    retry = await client.from(tableName).insert(fallbackRow);
+  } catch (retryError) {
+    retry = { error: retryError };
+  }
+  if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({
+    ...gridlyLastHazardPersistenceDiagnostic,
+    status: retry?.error ? "FAILED" : "SUCCEEDED",
+    fallbackError: gridlyPersistenceErrorDiagnostic(retry?.error),
+    finalStatus: retry?.error ? "NOT_PERSISTED" : "PERSISTED"
+  });
   return {
+    data: retry?.data || null,
     error: retry.error,
     metadataPersisted: false,
     insertedRow: retry.error ? null : fallbackRow,
@@ -83317,6 +83378,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   lastMobileReportSubmitDebug.reportSubmitCounty = countyScopedReportMetadata.county_id;
   const detailLocationMetadata = {
     ...gridlyBuildRoadHazardDetailLocationMetadata(locationPayload, { submittedCoordinate: { lat, lng } }),
+    ...gridlyGetReportSubmissionCommunityMetadata(countyScopedReportMetadata.county_id, lat, lng),
     county_id: countyScopedReportMetadata.county_id,
     countyId: countyScopedReportMetadata.county_id,
     countyFips: gridlyGetCountyReportingIdentity(countyScopedReportMetadata.county_id)?.countyFips || null,
