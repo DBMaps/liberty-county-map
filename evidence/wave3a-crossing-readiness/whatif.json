@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "gridly.wave3a.whatif.v1",
+  "mode": "WHAT_IF",
+  "applied": false,
+  "eligible": false,
+  "current": {
+    "ACTIVE_POSITIVE": 27,
+    "ACTIVE_EMPTY": 1,
+    "SOURCE_ONLY_POSITIVE": 173,
+    "SOURCE_ZERO_NOT_ACTIVATED": 53
+  },
+  "target": null,
+  "plannedWrites": [],
+  "writeAllowlist": [],
+  "failClosed": true,
+  "blockers": [
+    "MISSING_PACKAGE_ARTIFACTS",
+    "SOURCE_OR_CONTAINMENT_DEFECT"
+  ],
+  "tylerActiveEmptyPreserved": true,
+  "zeroSourceCandidatesIncluded": 0
+}
