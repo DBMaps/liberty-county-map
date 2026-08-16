@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { certify, genericHazardPolicy, reconcileCrossingCapabilities } from "../tools/certify-statewide-reporting.mjs";
+import { certify, genericHazardPolicy, reconcileCrossingCapabilities, deployedReportsInsertKeys } from "../tools/certify-statewide-reporting.mjs";
 
 test("statewide reporting protects all governed identities and crossing cohorts", () => {
   const { counts } = certify();
@@ -11,6 +11,11 @@ test("statewide reporting protects all governed identities and crossing cohorts"
   assert.deepEqual([counts.ACTIVE_POSITIVE, counts.ACTIVE_EMPTY, counts.SOURCE_ONLY_POSITIVE, counts.SOURCE_ZERO_NOT_ACTIVATED], [27, 1, 173, 53]);
   assert.equal(counts.governedCrossingPartitionCount, 254);
   assert.deepEqual([counts.mapVisible, counts.alertsVisible, counts.awarenessActive, counts.crossingDependencyFailures], [254, 254, 254, 0]);
+  assert.deepEqual([counts.persistenceShapeCompatible, counts.structuredCountyMetadataPresent, counts.historicalCohortExclusions], [254, 254, 0]);
+  for (const row of certify().evidence["statewide-reporting-certification.json"].results) {
+    assert.deepEqual(row.deployedInsertKeys, deployedReportsInsertKeys);
+    assert.equal(row.persistenceShapeCompatible && row.structuredCountyMetadataPresent && row.crossingRuntimeRequired === false, true);
+  }
 });
 
 test("crossing source sets reconcile and runtime precedence partitions all counties", () => {
@@ -62,4 +67,7 @@ test("report insert errors remain consumer-visible failures", () => {
   const source = fs.readFileSync("js/app.js", "utf8");
   assert.match(source, /if \(error\) throw error/);
   assert.doesNotMatch(source, /gridlyInsertWithCountyMetadataFallback[\s\S]{0,500}catch\s*\([^)]*\)\s*\{\s*return\s*\{\s*error:\s*null/);
+  assert.match(source, /function gridlyGetLastHazardPersistenceDiagnostic\(\)/);
+  assert.match(source, /firstAttemptMode: "DEPLOYED_BASE_COLUMNS"/);
+  assert.match(source, /finalStatus: retry\?\.error \? "NOT_PERSISTED" : "PERSISTED"/);
 });

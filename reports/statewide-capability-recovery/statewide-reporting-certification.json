@@ -3,6 +3,8 @@
   "counts": {
     "countiesTested": 254,
     "countiesPassed": 254,
+    "persistenceShapeCompatible": 254,
+    "structuredCountyMetadataPresent": 254,
     "countyIds": 254,
     "uniqueFips": 254,
     "countyNames": 254,
@@ -42,6 +44,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -59,6 +77,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -76,6 +110,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -93,6 +143,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -110,6 +176,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -127,6 +209,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -144,6 +242,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -161,6 +275,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -178,6 +308,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -195,6 +341,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -212,6 +374,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -229,6 +407,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -246,6 +440,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -263,6 +473,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -280,6 +506,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -297,6 +539,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -314,6 +572,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -331,6 +605,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -348,6 +638,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -365,6 +671,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -382,6 +704,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -399,6 +737,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -416,6 +770,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -433,6 +803,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -450,6 +836,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -467,6 +869,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -484,6 +902,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -501,6 +935,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -518,6 +968,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -535,6 +1001,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -552,6 +1034,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -569,6 +1067,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -586,6 +1100,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -603,6 +1133,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -620,6 +1166,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -637,6 +1199,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -654,6 +1232,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -671,6 +1265,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -688,6 +1298,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -705,6 +1331,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -722,6 +1364,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -739,6 +1397,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -756,6 +1430,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -773,6 +1463,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -790,6 +1496,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -807,6 +1529,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -824,6 +1562,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -841,6 +1595,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -858,6 +1628,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -875,6 +1661,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -892,6 +1694,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -909,6 +1727,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -926,6 +1760,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -943,6 +1793,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -960,6 +1826,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -977,6 +1859,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -994,6 +1892,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1011,6 +1925,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1028,6 +1958,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1045,6 +1991,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1062,6 +2024,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1079,6 +2057,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1096,6 +2090,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1113,6 +2123,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1130,6 +2156,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1147,6 +2189,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1164,6 +2222,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1181,6 +2255,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1198,6 +2288,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1215,6 +2321,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1232,6 +2354,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1249,6 +2387,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1266,6 +2420,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1283,6 +2453,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1300,6 +2486,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1317,6 +2519,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1334,6 +2552,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1351,6 +2585,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1368,6 +2618,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1385,6 +2651,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1402,6 +2684,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1419,6 +2717,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1436,6 +2750,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1453,6 +2783,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1470,6 +2816,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1487,6 +2849,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1504,6 +2882,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1521,6 +2915,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1538,6 +2948,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1555,6 +2981,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1572,6 +3014,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1589,6 +3047,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1606,6 +3080,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1623,6 +3113,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1640,6 +3146,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1657,6 +3179,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1674,6 +3212,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1691,6 +3245,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1708,6 +3278,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1725,6 +3311,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1742,6 +3344,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1759,6 +3377,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1776,6 +3410,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1793,6 +3443,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1810,6 +3476,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1827,6 +3509,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1844,6 +3542,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1861,6 +3575,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1878,6 +3608,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1895,6 +3641,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1912,6 +3674,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1929,6 +3707,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1946,6 +3740,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1963,6 +3773,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1980,6 +3806,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -1997,6 +3839,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2014,6 +3872,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2031,6 +3905,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2048,6 +3938,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2065,6 +3971,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2082,6 +4004,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2099,6 +4037,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2116,6 +4070,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2133,6 +4103,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2150,6 +4136,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2167,6 +4169,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2184,6 +4202,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2201,6 +4235,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2218,6 +4268,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2235,6 +4301,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2252,6 +4334,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2269,6 +4367,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2286,6 +4400,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2303,6 +4433,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2320,6 +4466,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2337,6 +4499,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2354,6 +4532,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2371,6 +4565,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2388,6 +4598,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2405,6 +4631,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2422,6 +4664,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2439,6 +4697,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2456,6 +4730,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2473,6 +4763,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2490,6 +4796,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2507,6 +4829,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2524,6 +4862,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2541,6 +4895,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2558,6 +4928,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2575,6 +4961,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2592,6 +4994,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2609,6 +5027,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2626,6 +5060,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2643,6 +5093,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2660,6 +5126,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2677,6 +5159,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2694,6 +5192,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2711,6 +5225,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2728,6 +5258,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2745,6 +5291,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2762,6 +5324,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2779,6 +5357,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2796,6 +5390,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2813,6 +5423,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2830,6 +5456,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2847,6 +5489,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2864,6 +5522,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2881,6 +5555,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2898,6 +5588,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2915,6 +5621,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2932,6 +5654,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2949,6 +5687,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2966,6 +5720,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -2983,6 +5753,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3000,6 +5786,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3017,6 +5819,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3034,6 +5852,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3051,6 +5885,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3068,6 +5918,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3085,6 +5951,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3102,6 +5984,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3119,6 +6017,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3136,6 +6050,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3153,6 +6083,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3170,6 +6116,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3187,6 +6149,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3204,6 +6182,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3221,6 +6215,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3238,6 +6248,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3255,6 +6281,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3272,6 +6314,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3289,6 +6347,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3306,6 +6380,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3323,6 +6413,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3340,6 +6446,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3357,6 +6479,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3374,6 +6512,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3391,6 +6545,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3408,6 +6578,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3425,6 +6611,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3442,6 +6644,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3459,6 +6677,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3476,6 +6710,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3493,6 +6743,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3510,6 +6776,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3527,6 +6809,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3544,6 +6842,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3561,6 +6875,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3578,6 +6908,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3595,6 +6941,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3612,6 +6974,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3629,6 +7007,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3646,6 +7040,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3663,6 +7073,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3680,6 +7106,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3697,6 +7139,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3714,6 +7172,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3731,6 +7205,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3748,6 +7238,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3765,6 +7271,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3782,6 +7304,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3799,6 +7337,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3816,6 +7370,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3833,6 +7403,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3850,6 +7436,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3867,6 +7469,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3884,6 +7502,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3901,6 +7535,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3918,6 +7568,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3935,6 +7601,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3952,6 +7634,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3969,6 +7667,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -3986,6 +7700,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4003,6 +7733,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4020,6 +7766,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4037,6 +7799,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4054,6 +7832,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4071,6 +7865,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4088,6 +7898,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4105,6 +7931,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4122,6 +7964,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4139,6 +7997,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4156,6 +8030,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4173,6 +8063,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4190,6 +8096,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4207,6 +8129,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4224,6 +8162,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4241,6 +8195,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4258,6 +8228,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4275,6 +8261,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4292,6 +8294,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4309,6 +8327,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4326,6 +8360,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     },
     {
@@ -4343,6 +8393,22 @@
       "awarenessState": "active",
       "crossingRuntimeRequired": false,
       "payloadReady": true,
+      "persistenceShapeCompatible": true,
+      "structuredCountyMetadataPresent": true,
+      "deployedInsertKeys": [
+        "crossing_id",
+        "crossing_name",
+        "railroad",
+        "lat",
+        "lng",
+        "report_type",
+        "severity",
+        "detail",
+        "source",
+        "confidence",
+        "device_id",
+        "expires_at"
+      ],
       "passed": true
     }
   ],

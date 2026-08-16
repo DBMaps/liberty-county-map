@@ -3,6 +3,8 @@
   "counts": {
     "countiesTested": 254,
     "countiesPassed": 254,
+    "persistenceShapeCompatible": 254,
+    "structuredCountyMetadataPresent": 254,
     "countyIds": 254,
     "uniqueFips": 254,
     "countyNames": 254,
