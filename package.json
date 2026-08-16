@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:wave3a-crossing-readiness": "node tools/wave3a/build-crossing-readiness.mjs --write",
+    "verify:wave3a-crossing-readiness": "node tools/wave3a/build-crossing-readiness.mjs --verify",
+    "test:wave3a-crossing-readiness": "node --test tests/wave3a-crossing-readiness.test.mjs",
     "certify:statewide-county-boundaries": "node tools/certify-statewide-county-boundaries.mjs --write",
     "test:statewide-county-boundaries": "node --test tests/statewide-county-boundaries.test.mjs",
     "certify:statewide-reporting": "node tools/certify-statewide-reporting.mjs --write",

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "gridly.wave3a.preflight.v1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "scope": "PREFLIGHT_AND_READINESS_ONLY",
+  "activationApplied": false,
+  "paths": {
+    "counties": "data/lp104/texas-counties.json",
+    "source": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sourceManifest": "Crossing-Packages/Texas/package-manifest.json",
+    "productionManifest": "Crossing-Packages/production-crossing-manifest.json",
+    "geometry": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json"
+  },
+  "source": {
+    "name": "FRA Texas statewide crossing GeoJSON",
+    "vintage": {
+      "manifestGenerated": "2026-06-27T11:41:08.4641290-05:00",
+      "latestSourceLastUpdate": "4/30/2026"
+    },
+    "format": "GeoJSON FeatureCollection",
+    "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "bytes": 67186114,
+    "sha256": "cb31ac3124a89a0d5ad98a675106a6c56de8bced1f86292627088b8d263b453e",
+    "upstreamOwnerPath": "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson"
+  },
+  "governedBuildPipeline": {
+    "script": "tools/lp115/manufacture-candidate-crossings.mjs",
+    "command": "node tools/lp115/manufacture-candidate-crossings.mjs --fips <comma-separated-FIPS> --candidate",
+    "arbitraryTexasFips": true,
+    "batchCapable": true,
+    "output": "reports/lp115/<FIPS> candidate source, production package, manifest, certification",
+    "activationAuthorized": false
+  },
+  "protectedSystemsModified": []
+}

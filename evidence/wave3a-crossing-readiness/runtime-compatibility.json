@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly.wave3a.runtime-compatibility.v1",
+  "controls": [
+    "Liberty County",
+    "Harris County",
+    "Bexar County",
+    "Galveston County"
+  ],
+  "candidateAssessment": "BLOCKED_NO_RUNTIME_PACKAGES",
+  "requiredFields": [
+    "CROSSING",
+    "Point coordinates",
+    "RAILROAD or OPERATINGR",
+    "STREET or HIGHWAY",
+    "gridlyId",
+    "gridlyDisplayName",
+    "gridlyClassification",
+    "gridlyProductionCertified"
+  ],
+  "consumerSurfaces": [
+    "marker rendering",
+    "Nearby",
+    "Area",
+    "County",
+    "Delays",
+    "All"
+  ],
+  "roadRuntimeDependency": false,
+  "protectedSurfaces": [
+    "generic reporting",
+    "Alerts",
+    "Awareness",
+    "Route Watch"
+  ],
+  "schemaChanged": false
+}
