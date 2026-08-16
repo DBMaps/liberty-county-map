@@ -26,6 +26,9 @@
     "mapVisible": 254,
     "alertsVisible": 254,
     "awarenessActive": 254,
+    "mapRendered": 254,
+    "alertsRendered": 254,
+    "awarenessPresented": 254,
     "persistenceWrites": 0,
     "crossingDependencyFailures": 0,
     "historicalCohortExclusions": 0
@@ -80,6 +83,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -131,6 +144,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -182,6 +205,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -233,6 +266,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -284,6 +327,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -335,6 +388,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -386,6 +449,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -437,6 +510,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -488,6 +571,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -539,6 +632,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -590,6 +693,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -641,6 +754,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -692,6 +815,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -743,6 +876,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -794,6 +937,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -845,6 +998,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -896,6 +1059,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -947,6 +1120,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -998,6 +1181,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1049,6 +1242,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1100,6 +1303,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1151,6 +1364,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1202,6 +1425,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1253,6 +1486,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1304,6 +1547,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1355,6 +1608,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1406,6 +1669,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1457,6 +1730,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1508,6 +1791,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1559,6 +1852,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1610,6 +1913,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1661,6 +1974,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1712,6 +2035,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1763,6 +2096,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1814,6 +2157,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1865,6 +2218,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1916,6 +2279,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -1967,6 +2340,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2018,6 +2401,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2069,6 +2462,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2120,6 +2523,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2171,6 +2584,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2222,6 +2645,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2273,6 +2706,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2324,6 +2767,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2375,6 +2828,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2426,6 +2889,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2477,6 +2950,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2528,6 +3011,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2579,6 +3072,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2630,6 +3133,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2681,6 +3194,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2732,6 +3255,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2783,6 +3316,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2834,6 +3377,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2885,6 +3438,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2936,6 +3499,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -2987,6 +3560,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3038,6 +3621,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3089,6 +3682,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3140,6 +3743,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3191,6 +3804,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3242,6 +3865,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3293,6 +3926,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3344,6 +3987,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3395,6 +4048,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3446,6 +4109,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3497,6 +4170,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3548,6 +4231,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3599,6 +4292,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3650,6 +4353,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3701,6 +4414,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3752,6 +4475,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3803,6 +4536,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3854,6 +4597,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3905,6 +4658,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -3956,6 +4719,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4007,6 +4780,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4058,6 +4841,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4109,6 +4902,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4160,6 +4963,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4211,6 +5024,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4262,6 +5085,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4313,6 +5146,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4364,6 +5207,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4415,6 +5268,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4466,6 +5329,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4517,6 +5390,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4568,6 +5451,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4619,6 +5512,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4670,6 +5573,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4721,6 +5634,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4772,6 +5695,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4823,6 +5756,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4874,6 +5817,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4925,6 +5878,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -4976,6 +5939,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5027,6 +6000,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5078,6 +6061,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5129,6 +6122,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5180,6 +6183,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5231,6 +6244,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5282,6 +6305,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5333,6 +6366,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5384,6 +6427,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5435,6 +6488,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5486,6 +6549,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5537,6 +6610,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5588,6 +6671,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5639,6 +6732,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5690,6 +6793,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5741,6 +6854,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5792,6 +6915,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5843,6 +6976,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5894,6 +7037,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5945,6 +7098,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -5996,6 +7159,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6047,6 +7220,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6098,6 +7281,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6149,6 +7342,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6200,6 +7403,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6251,6 +7464,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6302,6 +7525,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6353,6 +7586,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6404,6 +7647,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6455,6 +7708,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6506,6 +7769,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6557,6 +7830,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6608,6 +7891,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6659,6 +7952,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6710,6 +8013,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6761,6 +8074,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6812,6 +8135,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6863,6 +8196,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6914,6 +8257,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -6965,6 +8318,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7016,6 +8379,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7067,6 +8440,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7118,6 +8501,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7169,6 +8562,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7220,6 +8623,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7271,6 +8684,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7322,6 +8745,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7373,6 +8806,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7424,6 +8867,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7475,6 +8928,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7526,6 +8989,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7577,6 +9050,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7628,6 +9111,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7679,6 +9172,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7730,6 +9233,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7781,6 +9294,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7832,6 +9355,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7883,6 +9416,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7934,6 +9477,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -7985,6 +9538,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8036,6 +9599,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8087,6 +9660,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8138,6 +9721,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8189,6 +9782,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8240,6 +9843,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8291,6 +9904,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8342,6 +9965,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8393,6 +10026,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8444,6 +10087,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8495,6 +10148,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8546,6 +10209,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8597,6 +10270,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8648,6 +10331,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8699,6 +10392,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8750,6 +10453,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8801,6 +10514,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8852,6 +10575,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8903,6 +10636,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -8954,6 +10697,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9005,6 +10758,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9056,6 +10819,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9107,6 +10880,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9158,6 +10941,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9209,6 +11002,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9260,6 +11063,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9311,6 +11124,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9362,6 +11185,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9413,6 +11246,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9464,6 +11307,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9515,6 +11368,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9566,6 +11429,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9617,6 +11490,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9668,6 +11551,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9719,6 +11612,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9770,6 +11673,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9821,6 +11734,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9872,6 +11795,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9923,6 +11856,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -9974,6 +11917,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10025,6 +11978,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10076,6 +12039,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10127,6 +12100,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10178,6 +12161,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10229,6 +12222,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10280,6 +12283,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10331,6 +12344,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10382,6 +12405,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10433,6 +12466,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10484,6 +12527,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10535,6 +12588,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10586,6 +12649,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10637,6 +12710,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10688,6 +12771,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10739,6 +12832,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10790,6 +12893,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10841,6 +12954,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10892,6 +13015,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10943,6 +13076,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -10994,6 +13137,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11045,6 +13198,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11096,6 +13259,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11147,6 +13320,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11198,6 +13381,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11249,6 +13442,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11300,6 +13503,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11351,6 +13564,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11402,6 +13625,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11453,6 +13686,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11504,6 +13747,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11555,6 +13808,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11606,6 +13869,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11657,6 +13930,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11708,6 +13991,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11759,6 +14052,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11810,6 +14113,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11861,6 +14174,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11912,6 +14235,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -11963,6 +14296,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12014,6 +14357,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12065,6 +14418,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12116,6 +14479,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12167,6 +14540,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12218,6 +14601,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12269,6 +14662,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12320,6 +14723,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12371,6 +14784,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12422,6 +14845,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12473,6 +14906,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12524,6 +14967,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12575,6 +15028,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12626,6 +15089,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12677,6 +15150,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12728,6 +15211,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12779,6 +15272,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12830,6 +15333,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12881,6 +15394,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12932,6 +15455,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     },
     {
@@ -12983,6 +15516,16 @@
         "device_id",
         "expires_at"
       ],
+      "actualRender": {
+        "eligible": true,
+        "markerCreated": true,
+        "markerAddedToLayer": true,
+        "markerCurrentlyOnMap": true,
+        "alertItemCreated": true,
+        "alertRendered": true,
+        "awarenessPresented": true,
+        "crossingDependencies": 0
+      },
       "passed": true
     }
   ],
