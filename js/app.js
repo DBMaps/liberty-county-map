@@ -8326,6 +8326,14 @@ function gridlyGetReportSubmissionCountyScopedMetadata(lat, lng) {
   return gridlyGetCoordinateScopedReportMetadata(lat, lng);
 }
 
+function gridlyGetCountyReportingIdentity(countyId) {
+  const normalized = gridlyNormalizeCountyId(countyId);
+  const county = GRIDLY_COUNTY_REGISTRY[normalized];
+  const countyFips = county ? gridlyExtractCountyGeoid(county) : "";
+  if (!county || !/^48\d{3}$/.test(String(countyFips || ""))) return null;
+  return Object.freeze({ countyId: normalized, countyFips: String(countyFips), countyName: county.name });
+}
+
 function gridlyGetCountyDisplayContext(record = {}, options = {}) {
   const rawCountyId = options.countyId || options.activeCountyId || record?.county_id || record?.countyId || record?.raw?.county_id || record?.raw?.countyId || record?.source?.county_id || record?.source?.countyId || gridlyGetActiveCountyId();
   const candidateCountyId = String(rawCountyId || "").trim().toLowerCase();
@@ -31626,7 +31634,15 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     return lngDelta >= 0 ? "east" : "west";
   };
   const nearestCommunity = (coords = {}) => {
-    const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS : [];
+    const legacyAreas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS : [];
+    const canonicalNames = new Map();
+    Object.values(GRIDLY_COUNTY_REGISTRY).forEach((county) => (county.consumerAwarenessAreas || []).forEach((area) => {
+      if (area.placeGeoid && area.displayName && !canonicalNames.has(area.placeGeoid)) canonicalNames.set(area.placeGeoid, area.displayName);
+    }));
+    const statewidePlaces = gridlyPlacePresentationTargets
+      ? Object.entries(gridlyPlacePresentationTargets).map(([placeGeoid, target]) => ({ label: canonicalNames.get(placeGeoid), placeGeoid, lat: target.lat, lng: target.lon ?? target.lng }))
+      : [];
+    const areas = statewidePlaces.length === canonicalNames.size ? statewidePlaces : legacyAreas;
     const ranked = areas.map((area) => {
       const distance = Number.isFinite(coords.lat) && Number.isFinite(coords.lng) && typeof haversineDistance === "function"
         ? (perfStats.distanceComputationCount += 1, haversineDistance(coords.lat, coords.lng, Number(area.lat), Number(area.lng))) : Infinity;
@@ -83147,6 +83163,7 @@ function gridlyDiagnoseHazardReportPersistenceBoundary({ hazardType = "flooding"
   const coordinateCountyResolution = gridlyResolveCountyIdForCoordinate(numericLat, numericLng);
   const countyScopedMetadata = gridlyGetReportSubmissionCountyScopedMetadata(numericLat, numericLng);
   const countyConfig = countyScopedMetadata ? GRIDLY_COUNTY_REGISTRY[countyScopedMetadata.county_id] : null;
+  const countyReportingIdentity = countyScopedMetadata ? gridlyGetCountyReportingIdentity(countyScopedMetadata.county_id) : null;
   const awarenessArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   const homeIdentity = typeof gridlyReadHomePersonalizationRecord === "function" ? gridlyReadHomePersonalizationRecord() : null;
   const communityKey = homeIdentity?.communityKey || awarenessArea?.placeGeoid || awarenessArea?.communityKey || awarenessArea?.communityId || null;
@@ -83198,7 +83215,7 @@ function gridlyDiagnoseHazardReportPersistenceBoundary({ hazardType = "flooding"
   const payloadReady = Boolean(persistencePayload && GRIDLY_REPORTS_BASE_INSERT_KEYS.every((key) => Object.prototype.hasOwnProperty.call(persistencePayload, key)));
   return Object.freeze({
     countyId: coordinateCountyResolution.countyId,
-    countyFips: countyConfig ? gridlyExtractCountyGeoid(countyConfig) : null,
+    countyFips: countyReportingIdentity?.countyFips || (countyConfig ? gridlyExtractCountyGeoid(countyConfig) : null),
     communityKey,
     placeGeoid,
     awarenessArea: awarenessArea ? { key: awarenessArea.key || null, label: awarenessArea.label || awarenessArea.storageValue || null } : null,
@@ -83302,6 +83319,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     ...gridlyBuildRoadHazardDetailLocationMetadata(locationPayload, { submittedCoordinate: { lat, lng } }),
     county_id: countyScopedReportMetadata.county_id,
     countyId: countyScopedReportMetadata.county_id,
+    countyFips: gridlyGetCountyReportingIdentity(countyScopedReportMetadata.county_id)?.countyFips || null,
+    countyName: gridlyGetCountyReportingIdentity(countyScopedReportMetadata.county_id)?.countyName || null,
     state: countyScopedReportMetadata.state
   };
   if (locationPayloadResult.audit) {

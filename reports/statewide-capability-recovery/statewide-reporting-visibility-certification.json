@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "gridly.statewideReportingVisibilityCertification.v1",
+  "counts": {
+    "countiesTested": 254,
+    "countiesPassed": 254,
+    "countyIds": 254,
+    "uniqueFips": 254,
+    "countyNames": 254,
+    "placesTested": 1859,
+    "placesPassed": 1859,
+    "memberships": 2058,
+    "multiCountyPlaces": 163,
+    "zeroFraCounties": 54,
+    "sourceOnlyCounties": 173,
+    "requiredSourceOnlyCounties": 172,
+    "activeRuntimeCounties": 28,
+    "mapVisible": 254,
+    "alertsVisible": 254,
+    "awarenessActive": 254,
+    "persistenceWrites": 0,
+    "crossingDependencyFailures": 0,
+    "historicalCohortExclusions": 0
+  },
+  "precedence": [
+    "active",
+    "recently_cleared",
+    "coverage_limited",
+    "quiet"
+  ],
+  "passed": true
+}
