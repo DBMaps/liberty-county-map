@@ -1,45 +1,64 @@
-// Browser-console, read-only RCA helper. It deliberately uses Gridly's existing
-// authenticated runtime client and never accepts credentials or report data.
-const WACO_BOUNDS = Object.freeze({
-  minLat: 31.5488,
-  maxLat: 31.5498,
-  minLng: -97.1472,
-  maxLng: -97.1462
-});
-
-const BASE_FIELDS = "id,created_at,device_id,report_type,lat,lng,crossing_name,severity,expires_at,detail";
-const GOVERNED_FIELDS = `${BASE_FIELDS},county_id,state`;
-
-function isMissingColumn(error) {
-  return error?.code === "42703" || error?.code === "PGRST204" || /column|schema cache/i.test(error?.message || "");
-}
+// Browser-console, read-only report locator. It uses the authenticated Gridly
+// runtime client and the non-secret identity retained by the last successful
+// persistence diagnostic. No write operation is available from this module.
+const BASE_FIELDS = "id,created_at,device_id,crossing_id,crossing_name,report_type,lat,lng,severity,expires_at,detail";
 
 function conciseError(error) {
   if (!error) return null;
-  return { code: error.code || null, message: error.message || "Report lookup failed" };
+  return { code: error.code || null, message: String(error.message || "Report lookup failed").slice(0, 500) };
 }
 
-async function runQuery(fields, includeCounty) {
-  let query = supabaseClient.from("reports").select(fields)
-    .eq("report_type", "flooding")
-    .gte("lat", WACO_BOUNDS.minLat).lte("lat", WACO_BOUNDS.maxLat)
-    .gte("lng", WACO_BOUNDS.minLng).lte("lng", WACO_BOUNDS.maxLng);
-  if (includeCounty) query = query.eq("county_id", "mclennan-tx");
-  return query.order("created_at", { ascending: false }).limit(25);
+function diagnostic() {
+  return globalThis.gridlyGetLastHazardPersistenceDiagnostic?.() || null;
 }
 
-export async function selectRecentWacoFloodingReport() {
-  try {
-    let queryMode = "COUNTY_ID_AND_STATE_COLUMNS";
-    let result = await runQuery(GOVERNED_FIELDS, true);
-    if (result.error && isMissingColumn(result.error)) {
-      queryMode = "DEPLOYED_BASE_COLUMNS_FALLBACK";
-      result = await runQuery(BASE_FIELDS, false);
+function runtimeDeviceId(identity) {
+  return identity?.deviceId || globalThis.localStorage?.getItem?.("gridlyDeviceId") || null;
+}
+
+async function execute(identity, recentDeviceOnly = false) {
+  let query = globalThis.supabaseClient.from("reports").select(BASE_FIELDS);
+  let identityMode = "";
+  if (!recentDeviceOnly && identity?.insertedRowId) {
+    query = query.eq("id", identity.insertedRowId);
+    identityMode = "EXACT_RETURNED_ROW_ID";
+  } else if (!recentDeviceOnly && identity?.crossingId) {
+    query = query.eq("crossing_id", identity.crossingId);
+    identityMode = "EXACT_CROSSING_ID";
+  } else if (runtimeDeviceId(identity)) {
+    query = query.eq("device_id", runtimeDeviceId(identity)).eq("report_type", identity?.reportType || "flooding");
+    if (identity?.attemptedAt) {
+      const attempted = new Date(identity.attemptedAt).getTime();
+      query = query.gte("created_at", new Date(attempted - 120000).toISOString()).lte("created_at", new Date(attempted + 600000).toISOString());
+    } else {
+      query = query.gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
     }
-    if (result.error) return { status: "ERROR", queryMode, rows: [], error: conciseError(result.error) };
-    const rows = Array.isArray(result.data) ? result.data : [];
-    return { status: rows.length ? "FOUND" : "NOT_FOUND", queryMode, rows, error: null };
-  } catch (error) {
-    return { status: "ERROR", queryMode: "CLIENT_ERROR", rows: [], error: conciseError(error) };
+    identityMode = identity?.attemptedAt ? "DEVICE_TYPE_CREATED_WINDOW" : "RECENT_DEVICE_TYPE";
+  } else if (!recentDeviceOnly && Number.isFinite(identity?.lat) && Number.isFinite(identity?.lng)) {
+    query = query.eq("lat", identity.lat).eq("lng", identity.lng).eq("report_type", identity?.reportType || "flooding");
+    identityMode = "EXACT_SUBMITTED_COORDINATE";
+  } else {
+    return { status: "NOT_FOUND", queryMode: "NO_RETAINED_IDENTITY", rows: [], error: null };
   }
+  const result = await query.order("created_at", { ascending: false }).limit(25);
+  if (result.error) return { status: "ERROR", queryMode: `DEPLOYED_BASE_COLUMNS:${identityMode}`, rows: [], error: conciseError(result.error) };
+  const rows = Array.isArray(result.data) ? result.data : [];
+  return { status: rows.length ? "FOUND" : "NOT_FOUND", queryMode: `DEPLOYED_BASE_COLUMNS:${identityMode}`, rows, error: null };
 }
+
+export async function selectLastPersistedHazardReport() {
+  try { return await execute(diagnostic()); }
+  catch (error) { return { status: "ERROR", queryMode: "CLIENT_ERROR", rows: [], error: conciseError(error) }; }
+}
+
+// Recovery path for a report submitted before identity enrichment was deployed.
+export async function selectRecentDeviceFloodingReport() {
+  try { return await execute(diagnostic(), true); }
+  catch (error) { return { status: "ERROR", queryMode: "CLIENT_ERROR", rows: [], error: conciseError(error) }; }
+}
+
+// Backward-compatible name for owner bookmarks; no Waco coordinate is assumed.
+export const selectRecentWacoFloodingReport = selectLastPersistedHazardReport;
+
+globalThis.selectLastPersistedHazardReport = selectLastPersistedHazardReport;
+globalThis.selectRecentDeviceFloodingReport = selectRecentDeviceFloodingReport;

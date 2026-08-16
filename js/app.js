@@ -55305,16 +55305,17 @@ async function loadSharedReports(reason = "manual") {
     const recentRoadClearedCutoffIso = new Date(Date.now() - RECENTLY_CLEARED_WINDOW_MINUTES * 60000).toISOString();
     const lp0534cLoaderGenerationAtStart = gridlyLp0534cClearConvergenceGeneration;
     const fetchStage = reportStage("Supabase report fetch", { network: true, dependency: "reports and recent hazard-cleared reads" });
+    gridlyLastReportRetrievalDiagnostic = Object.freeze({ queryMode: "DEPLOYED_BASE_COLUMNS", error: null, fallbackAttempted: false, finalStatus: "PENDING", rowCount: 0 });
     const [{ data, error }, { data: recentRoadClearedRows, error: recentRoadClearedError }] = await Promise.all([
       supabaseClient
         .from("reports")
-        .select("*")
+        .select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS)
         .gt("expires_at", nowIso)
         .order("created_at", { ascending: false })
         .limit(300),
       supabaseClient
         .from("reports")
-        .select("*")
+        .select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS)
         .eq("report_type", "hazard_cleared")
         .gte("created_at", recentRoadClearedCutoffIso)
         .order("created_at", { ascending: false })
@@ -55322,7 +55323,10 @@ async function loadSharedReports(reason = "manual") {
     ]);
     endReportStage(fetchStage, "completed", { message: `live=${Array.isArray(data) ? data.length : "non-array"}; cleared=${Array.isArray(recentRoadClearedRows) ? recentRoadClearedRows.length : "non-array"}` });
 
-    if (error) throw error;
+    if (error) {
+      gridlyLastReportRetrievalDiagnostic = Object.freeze({ ...gridlyLastReportRetrievalDiagnostic, error: gridlyPersistenceErrorDiagnostic(error), finalStatus: "ERROR" });
+      throw error;
+    }
     if (recentRoadClearedError) console.warn("Gridly recent road-cleared read failed; continuing with live reports only.", recentRoadClearedError);
 
     if (lp0534cLoaderGenerationAtStart < gridlyLp0534cClearConvergenceGeneration && !String(reason || "").includes("clearHazard_success_background_refresh")) {
@@ -55343,6 +55347,7 @@ async function loadSharedReports(reason = "manual") {
       rawRowsByKey.set(key, row);
     });
     const rawRows = [...rawRowsByKey.values()];
+    gridlyLastReportRetrievalDiagnostic = Object.freeze({ ...gridlyLastReportRetrievalDiagnostic, finalStatus: "SUCCEEDED", rowCount: rawRows.length });
 
     const normalizeStage = reportStage("local filtering and normalization", { dependency: "normalizeReports" });
     const normalized = normalizeReports(rawRows);
@@ -55525,7 +55530,12 @@ function normalizeReports(rows) {
       reportKind: isHazard ? "hazard" : "crossing",
       county_id: gridlyGetReportCountyId(row),
       countyId: gridlyGetReportCountyId(row),
-      state: row.state || GRIDLY_COUNTY_REGISTRY[gridlyGetReportCountyId(row)]?.state || "TX",
+      countyFips: otherHazardMetadata?.countyFips || "",
+      countyName: otherHazardMetadata?.countyName || GRIDLY_COUNTY_REGISTRY[gridlyGetReportCountyId(row)]?.name || "",
+      state: row.state || otherHazardMetadata?.state || GRIDLY_COUNTY_REGISTRY[gridlyGetReportCountyId(row)]?.state || "TX",
+      communityName: otherHazardMetadata?.communityName || "",
+      communityKey: otherHazardMetadata?.communityKey || otherHazardMetadata?.placeGeoid || "",
+      placeGeoid: otherHazardMetadata?.placeGeoid || otherHazardMetadata?.communityKey || "",
       icon: isHazard ? copy.icon : "",
       severity: row.severity || copy.severity,
       title: isHazard
@@ -82003,7 +82013,9 @@ const GRIDLY_REPORTS_BASE_INSERT_KEYS = Object.freeze([
   "expires_at"
 ]);
 const GRIDLY_REPORTS_ALLOWED_INSERT_KEYS = GRIDLY_REPORTS_BASE_INSERT_KEYS;
+const GRIDLY_REPORTS_BASE_SELECT_COLUMNS = "id,created_at,crossing_id,crossing_name,railroad,lat,lng,report_type,severity,detail,source,confidence,device_id,expires_at";
 let gridlyLastHazardPersistenceDiagnostic = null;
+let gridlyLastReportRetrievalDiagnostic = null;
 
 function gridlyPersistenceErrorDiagnostic(error) {
   if (!error) return null;
@@ -82020,6 +82032,14 @@ function gridlyGetLastHazardPersistenceDiagnostic() {
 }
 window.gridlyGetLastHazardPersistenceDiagnostic = gridlyGetLastHazardPersistenceDiagnostic;
 exposeGridlyAuditHelper("gridlyGetLastHazardPersistenceDiagnostic", gridlyGetLastHazardPersistenceDiagnostic);
+
+function gridlyGetLastReportRetrievalDiagnostic() {
+  return gridlyLastReportRetrievalDiagnostic
+    ? Object.freeze({ ...gridlyLastReportRetrievalDiagnostic })
+    : null;
+}
+window.gridlyGetLastReportRetrievalDiagnostic = gridlyGetLastReportRetrievalDiagnostic;
+exposeGridlyAuditHelper("gridlyGetLastReportRetrievalDiagnostic", gridlyGetLastReportRetrievalDiagnostic);
 let lastGridlyRoadHazardSubmitShapeAudit = {
   supabaseInsertKeys: [],
   legacyRetryInsertKeys: [],
@@ -82229,7 +82249,12 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row) {
   const isHazardReport = tableName === "reports" && String(row?.crossing_id || "").startsWith("hazard-");
   if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({
     status: "ATTEMPTING", attemptedAt: new Date().toISOString(), reportType: row?.report_type || null,
-    countyId: row?.county_id || null, firstAttemptMode: "DEPLOYED_BASE_COLUMNS", firstAttemptError: null,
+    countyId: row?.county_id || gridlyExtractStructuredMetadata(row)?.county_id || gridlyExtractStructuredMetadata(row)?.countyId || null,
+    deviceId: insertRow?.device_id || null, crossingId: insertRow?.crossing_id || null,
+    lat: Number.isFinite(Number(insertRow?.lat)) ? Number(insertRow.lat) : null,
+    lng: Number.isFinite(Number(insertRow?.lng)) ? Number(insertRow.lng) : null,
+    expiresAt: insertRow?.expires_at || null, insertedRowId: null,
+    firstAttemptMode: "DEPLOYED_BASE_COLUMNS", firstAttemptError: null,
     fallbackAttempted: false, fallbackMode: null, fallbackError: null, finalStatus: "PENDING"
   });
   let first;
@@ -82240,7 +82265,8 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row) {
   }
   const error = first?.error || null;
   if (!error) {
-    if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic, status: "SUCCEEDED", finalStatus: "PERSISTED" });
+    const returnedRow = Array.isArray(first?.data) ? first.data[0] : first?.data;
+    if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic, status: "SUCCEEDED", finalStatus: "PERSISTED", insertedRowId: returnedRow?.id || null });
     return { data: first?.data || null, error: null, metadataPersisted: tableName !== "reports", insertedRow: insertRow, attemptedRow: insertRow, fallbackRow: null, metadataFallbackUsed: false };
   }
   if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic, firstAttemptError: gridlyPersistenceErrorDiagnostic(error) });
@@ -82263,7 +82289,8 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row) {
     ...gridlyLastHazardPersistenceDiagnostic,
     status: retry?.error ? "FAILED" : "SUCCEEDED",
     fallbackError: gridlyPersistenceErrorDiagnostic(retry?.error),
-    finalStatus: retry?.error ? "NOT_PERSISTED" : "PERSISTED"
+    finalStatus: retry?.error ? "NOT_PERSISTED" : "PERSISTED",
+    insertedRowId: (Array.isArray(retry?.data) ? retry.data[0]?.id : retry?.data?.id) || null
   });
   return {
     data: retry?.data || null,
