@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "gridly.wave3a1.outside-texas.v1",
+  "count": 2,
+  "rows": [
+    {
+      "crossingId": "019788P",
+      "exceptionType": "OUTSIDE_TEXAS",
+      "sourceCountyFips": "48141",
+      "sourceCountyName": "El Paso County",
+      "coordinateResolvedCountyFips": null,
+      "coordinateResolvedCountyName": null,
+      "latitude": 31.8075314003773,
+      "longitude": -106.548626400263,
+      "railroad": "BNSF",
+      "streetHighway": "DONIPHAN DRive",
+      "sourceLastUpdate": "1/15/2026",
+      "distanceToSourceCountyBoundaryMeters": 12.149,
+      "distanceToResolvedCountyBoundaryMeters": null,
+      "distanceBucket": "LE_25_M",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48141",
+        "COUNTYNAME": "EL PASO",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48141"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -106.548626400263,
+          31.8075314003773
+        ],
+        "latitudeFields": {
+          "LATITUDE": 31.8075314,
+          "LATDD": 31.8075314
+        },
+        "longitudeFields": {
+          "LONGITUD": -106.5486264,
+          "LONGDD": -106.5486264
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "nearestTexasCountyFips": "48141",
+      "nearestTexasCountyName": "El Paso County",
+      "distanceFromTexasMeters": 12.149,
+      "coordinatePlausibility": "FINITE_LON_LAT_IN_VALID_RANGES",
+      "coordinateSwapAssessment": "SWAP_WOULD_BE_INVALID_LATITUDE; NO SWAP INDICATOR"
+    },
+    {
+      "crossingId": "019791X",
+      "exceptionType": "OUTSIDE_TEXAS",
+      "sourceCountyFips": "48141",
+      "sourceCountyName": "El Paso County",
+      "coordinateResolvedCountyFips": null,
+      "coordinateResolvedCountyName": null,
+      "latitude": 31.8062543000539,
+      "longitude": -106.54649999995,
+      "railroad": "BNSF",
+      "streetHighway": "PRIVATE",
+      "sourceLastUpdate": "12/17/2024",
+      "distanceToSourceCountyBoundaryMeters": 19.25,
+      "distanceToResolvedCountyBoundaryMeters": null,
+      "distanceBucket": "LE_25_M",
+      "rawFraCountyStateFields": {
+        "CountyCode": "48141",
+        "COUNTYNAME": "EL PASO",
+        "STATEAB": "TX",
+        "StateCode": "48",
+        "STATENAME": "TEXAS",
+        "STCYFIPS": "48141"
+      },
+      "processedEvidence": {
+        "geometryCoordinates": [
+          -106.54649999995,
+          31.8062543000539
+        ],
+        "latitudeFields": {
+          "LATITUDE": 31.8062543,
+          "LATDD": 31.8062543
+        },
+        "longitudeFields": {
+          "LONGITUD": -106.5465,
+          "LONGDD": -106.5465
+        }
+      },
+      "rawOwnerComparison": {
+        "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+        "rawRecord": null,
+        "coordinatesChanged": null,
+        "countyIdentityChanged": null,
+        "stateIdentityChanged": null,
+        "crossingIdChanged": null
+      },
+      "nearestTexasCountyFips": "48141",
+      "nearestTexasCountyName": "El Paso County",
+      "distanceFromTexasMeters": 19.25,
+      "coordinatePlausibility": "FINITE_LON_LAT_IN_VALID_RANGES",
+      "coordinateSwapAssessment": "SWAP_WOULD_BE_INVALID_LATITUDE; NO SWAP INDICATOR"
+    }
+  ]
+}

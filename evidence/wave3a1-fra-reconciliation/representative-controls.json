@@ -1,0 +1,367 @@
+{
+  "schemaVersion": "gridly.wave3a1.controls.v1",
+  "controls": [
+    {
+      "role": "requested",
+      "crossingId": "426590D",
+      "evidence": {
+        "crossingId": "426590D",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48001",
+        "sourceCountyName": "Anderson County",
+        "coordinateResolvedCountyFips": "48073",
+        "coordinateResolvedCountyName": "Cherokee County",
+        "latitude": 31.899233200151,
+        "longitude": -95.429023000363,
+        "railroad": "UP",
+        "streetHighway": "CR 3212",
+        "sourceLastUpdate": "8/28/2025",
+        "distanceToSourceCountyBoundaryMeters": 211.995,
+        "distanceToResolvedCountyBoundaryMeters": 211.995,
+        "distanceBucket": "100_TO_500_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48001",
+          "COUNTYNAME": "ANDERSON",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48001"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -95.429023000363,
+            31.899233200151
+          ],
+          "latitudeFields": {
+            "LATITUDE": 31.8992332,
+            "LATDD": 31.8992332
+          },
+          "longitudeFields": {
+            "LONGITUD": -95.429023,
+            "LONGDD": -95.429023
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        }
+      },
+      "rawVsProcessedFinding": "BLOCKED_PENDING_OWNER_RAW_RECORD"
+    },
+    {
+      "role": "largest-distance",
+      "crossingId": "019606B",
+      "evidence": {
+        "crossingId": "019606B",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48141",
+        "sourceCountyName": "El Paso County",
+        "coordinateResolvedCountyFips": "48303",
+        "coordinateResolvedCountyName": "Lubbock County",
+        "latitude": 33.6416240000457,
+        "longitude": -101.934409999885,
+        "railroad": "BNSF",
+        "streetHighway": "PRIVATE ROAD",
+        "sourceLastUpdate": "12/17/2024",
+        "distanceToSourceCountyBoundaryMeters": 421201.241,
+        "distanceToResolvedCountyBoundaryMeters": 13619.704,
+        "distanceBucket": "GT_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48141",
+          "COUNTYNAME": "EL PASO",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48141"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -101.934409999885,
+            33.6416240000457
+          ],
+          "latitudeFields": {
+            "LATITUDE": 33.641624,
+            "LATDD": 33.641624
+          },
+          "longitudeFields": {
+            "LONGITUD": -101.93441,
+            "LONGDD": -101.93441
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        }
+      },
+      "rawVsProcessedFinding": "BLOCKED_PENDING_OWNER_RAW_RECORD"
+    },
+    {
+      "role": "smallest-distance",
+      "crossingId": "416230D",
+      "evidence": {
+        "crossingId": "416230D",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48027",
+        "sourceCountyName": "Bell County",
+        "coordinateResolvedCountyFips": "48491",
+        "coordinateResolvedCountyName": "Williamson County",
+        "latitude": 30.7955289003672,
+        "longitude": -97.4285101998989,
+        "railroad": "UP",
+        "streetHighway": "FM0487 / CLARK STREET",
+        "sourceLastUpdate": "9/26/2025",
+        "distanceToSourceCountyBoundaryMeters": 0.255,
+        "distanceToResolvedCountyBoundaryMeters": 0.255,
+        "distanceBucket": "LE_25_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48027",
+          "COUNTYNAME": "BELL",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48027"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.4285101998989,
+            30.7955289003672
+          ],
+          "latitudeFields": {
+            "LATITUDE": 30.7955289,
+            "LATDD": 30.7955289
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.4285102,
+            "LONGDD": -97.4285102
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        }
+      },
+      "rawVsProcessedFinding": "BLOCKED_PENDING_OWNER_RAW_RECORD"
+    },
+    {
+      "role": "largest-county-pair-cluster",
+      "crossingId": "024715P",
+      "evidence": {
+        "crossingId": "024715P",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48411",
+        "sourceCountyName": "San Saba County",
+        "coordinateResolvedCountyFips": "48333",
+        "coordinateResolvedCountyName": "Mills County",
+        "latitude": 31.3387910000537,
+        "longitude": -98.4926150000185,
+        "railroad": "CTXR",
+        "streetHighway": "PRIVATE ROAD",
+        "sourceLastUpdate": "1/7/2026",
+        "distanceToSourceCountyBoundaryMeters": 9073.263,
+        "distanceToResolvedCountyBoundaryMeters": 5943.105,
+        "distanceBucket": "GT_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48411",
+          "COUNTYNAME": "SAN SABA",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48411"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -98.4926150000185,
+            31.3387910000537
+          ],
+          "latitudeFields": {
+            "LATITUDE": 31.338791,
+            "LATDD": 31.338791
+          },
+          "longitudeFields": {
+            "LONGITUD": -98.492615,
+            "LONGDD": -98.492615
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        }
+      },
+      "rawVsProcessedFinding": "BLOCKED_PENDING_OWNER_RAW_RECORD"
+    },
+    {
+      "role": "metro",
+      "crossingId": "415195N",
+      "evidence": {
+        "crossingId": "415195N",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48085",
+        "sourceCountyName": "Collin County",
+        "coordinateResolvedCountyFips": "48397",
+        "coordinateResolvedCountyName": "Rockwall County",
+        "latitude": 32.9816587997927,
+        "longitude": -96.3189244003251,
+        "railroad": "DGNO",
+        "streetHighway": "EAST COUNTY LINE ROAD",
+        "sourceLastUpdate": "12/1/2025",
+        "distanceToSourceCountyBoundaryMeters": 1.649,
+        "distanceToResolvedCountyBoundaryMeters": 1.649,
+        "distanceBucket": "LE_25_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48085",
+          "COUNTYNAME": "COLLIN",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48085"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -96.3189244003251,
+            32.9816587997927
+          ],
+          "latitudeFields": {
+            "LATITUDE": 32.9816588,
+            "LATDD": 32.9816588
+          },
+          "longitudeFields": {
+            "LONGITUD": -96.3189244,
+            "LONGDD": -96.3189244
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        }
+      },
+      "rawVsProcessedFinding": "BLOCKED_PENDING_OWNER_RAW_RECORD"
+    },
+    {
+      "role": "rural",
+      "crossingId": "435414E",
+      "evidence": {
+        "crossingId": "435414E",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48013",
+        "sourceCountyName": "Atascosa County",
+        "coordinateResolvedCountyFips": "48029",
+        "coordinateResolvedCountyName": "Bexar County",
+        "latitude": 29.1745169999659,
+        "longitude": -98.5029576003286,
+        "railroad": "UP",
+        "streetHighway": "PRIVATE",
+        "sourceLastUpdate": "8/27/2025",
+        "distanceToSourceCountyBoundaryMeters": 2824.347,
+        "distanceToResolvedCountyBoundaryMeters": 2824.347,
+        "distanceBucket": "GT_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48013",
+          "COUNTYNAME": "ATASCOSA",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48013"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -98.5029576003286,
+            29.1745169999659
+          ],
+          "latitudeFields": {
+            "LATITUDE": 29.174517,
+            "LATDD": 29.174517
+          },
+          "longitudeFields": {
+            "LONGITUD": -98.5029576,
+            "LONGDD": -98.5029576
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        }
+      },
+      "rawVsProcessedFinding": "BLOCKED_PENDING_OWNER_RAW_RECORD"
+    },
+    {
+      "role": "border",
+      "crossingId": "019788P",
+      "evidence": {
+        "crossingId": "019788P",
+        "exceptionType": "OUTSIDE_TEXAS",
+        "sourceCountyFips": "48141",
+        "sourceCountyName": "El Paso County",
+        "coordinateResolvedCountyFips": null,
+        "coordinateResolvedCountyName": null,
+        "latitude": 31.8075314003773,
+        "longitude": -106.548626400263,
+        "railroad": "BNSF",
+        "streetHighway": "DONIPHAN DRive",
+        "sourceLastUpdate": "1/15/2026",
+        "distanceToSourceCountyBoundaryMeters": 12.149,
+        "distanceToResolvedCountyBoundaryMeters": null,
+        "distanceBucket": "LE_25_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48141",
+          "COUNTYNAME": "EL PASO",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48141"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -106.548626400263,
+            31.8075314003773
+          ],
+          "latitudeFields": {
+            "LATITUDE": 31.8075314,
+            "LATDD": 31.8075314
+          },
+          "longitudeFields": {
+            "LONGITUD": -106.5486264,
+            "LONGDD": -106.5486264
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "nearestTexasCountyFips": "48141",
+        "nearestTexasCountyName": "El Paso County",
+        "distanceFromTexasMeters": 12.149,
+        "coordinatePlausibility": "FINITE_LON_LAT_IN_VALID_RANGES",
+        "coordinateSwapAssessment": "SWAP_WOULD_BE_INVALID_LATITUDE; NO SWAP INDICATOR"
+      },
+      "rawVsProcessedFinding": "BLOCKED_PENDING_OWNER_RAW_RECORD"
+    }
+  ]
+}
