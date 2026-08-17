@@ -51363,7 +51363,9 @@ async function gridlyDecodeMontgomeryRoadwayPackage(response, roadwaySource) {
 }
 
 async function loadRoadwayDataset(options = {}) {
-  await gridlyEnsureRoadwayRuntimeManifestLoaded();
+  // The activation owner has already awaited the manifest. Do not yield again
+  // here: the load promise and cache key must be reserved atomically before a
+  // second same-county activation can select a newer activation sequence.
   const requestedCountyId = gridlyNormalizeCountyId(options.requestedCountyId || gridlyGetActiveCountyId());
   const activationSequence = Number(options.activationSequence || gridlyRoadwayPackageRuntimeState.activeActivationSequence || 0);
   const roadwaySource = gridlyResolveRoadwayRuntimeSource(requestedCountyId);
