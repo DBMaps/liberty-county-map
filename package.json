@@ -14,6 +14,8 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "verify:lp210": "node tools/lp210/statewide-roadway-publication.mjs --mode=Portable",
+    "test:lp210": "node --test tests/lp210-statewide-roadway-publication.test.mjs",
     "build:lp209": "node tools/lp209/statewide-roadway-candidates.mjs --verify",
     "verify:lp209": "node tools/lp209/statewide-roadway-candidates.mjs --verify",
     "test:lp209": "node --test tests/lp209-statewide-roadway-candidates.test.mjs",

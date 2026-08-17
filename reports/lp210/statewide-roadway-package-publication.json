@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "gridly.lp210.package-publication.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "texasCountyCount": 254,
+  "existingRuntimeRoadwayCount": 28,
+  "publicationCohortCount": 226,
+  "publishedCountyCount": 0,
+  "remoteCertifiedCountyCount": 0,
+  "singlePackageCountyCount": 219,
+  "partitionedCountyCount": 7,
+  "packageObjectCount": 237,
+  "manifestObjectCount": 226,
+  "totalRemoteObjectCount": 463,
+  "totalExpectedBytes": 1861133206,
+  "totalCertifiedBytes": 0,
+  "missingRemoteCount": 463,
+  "failedRemoteCount": 0,
+  "conflictingRemoteCount": 0,
+  "protectedOverlap": 0,
+  "duplicateFips": 0,
+  "duplicateRemotePaths": 0,
+  "supabaseWrites": {
+    "objectsUploaded": 0,
+    "objectsAlreadyExact": 0,
+    "objectsVerified": 0,
+    "uploadFailures": 0,
+    "databaseWrites": 0
+  },
+  "runtimeActivations": 0,
+  "productionRuntimeChanges": 0,
+  "productionRuntimeManifest": {
+    "path": "data/roadway-runtime-manifest.json",
+    "sha256Before": "56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd",
+    "sha256After": "56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd",
+    "countyCountBefore": 28,
+    "countyCountAfter": 28,
+    "unchanged": true
+  },
+  "retrievalContractVerified": false,
+  "readiness": "BLOCKED_FOR_STATEWIDE_ROADWAY_PUBLICATION",
+  "blocker": "Owner WhatIf, Apply, and Verify have not yet supplied local and remote byte evidence."
+}
