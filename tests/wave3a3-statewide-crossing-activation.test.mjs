@@ -6,9 +6,34 @@ import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {canonicalCandidateBytes,certifiedCandidateBytes,governedPathOrderMatches,guardedReplace,inspect,orderGovernedWrites,outputs,run,sortGovernedPaths,verifyPostActivation} from '../tools/wave3a3/activate-statewide-crossings.mjs';
+import {canonicalCandidateBytes,certifiedCandidateBytes,certifyProductionCounty,governedPathOrderMatches,guardedReplace,inspect,orderGovernedWrites,outputs,run,sortGovernedPaths,verifyPostActivation} from '../tools/wave3a3/activate-statewide-crossings.mjs';
 
 const sha256=body=>createHash('sha256').update(body).digest('hex');
+
+test('county certification resolves active packages only from the statewide production manifest',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'wave3a3-legacy-path-'));
+ const cases=[['Austin','48015','austin','AUSTIN-1'],['Brazos','48041','brazos','BRAZOS-1']];
+ const feature=id=>({type:'Feature',properties:{CROSSING:id},geometry:{type:'Point',coordinates:[-96,30]}});
+ try{
+  for(const [countyName,fips,countyId,id] of cases){
+   const productionPath=`Crossing-Packages/${countyId}/Production/${countyId}-production-crossings.geojson`;
+   await mkdir(join(root,`Crossing-Packages/${countyId}/Production`),{recursive:true});
+   await writeFile(join(root,productionPath),JSON.stringify({type:'FeatureCollection',features:[feature(id)]}));
+   await writeFile(join(root,`Crossing-Packages/${countyId}/package-manifest.json`),JSON.stringify({packageType:'Crossing',county:countyName,crossingCount:1,packageFile:`Crossing-Packages/${countyId}/${countyId}-crossings.geojson`}));
+   const county={countyName,fips,countyId:`${countyId}-tx`},record={county:countyName,crossingCount:1,packageFile:productionPath},owner=new Map([[id,fips]]);
+   assert.equal((await certifyProductionCounty({root,record,county,owner})).values.length,1,`${countyName} legacy path is informational`);
+  }
+
+  const [countyName,fips,countyId,id]=cases[0],county={countyName,fips,countyId:`${countyId}-tx`},productionPath=`Crossing-Packages/${countyId}/Production/${countyId}-production-crossings.geojson`,record={county:countyName,crossingCount:1,packageFile:productionPath},owner=new Map([[id,fips]]),manifestPath=join(root,`Crossing-Packages/${countyId}/package-manifest.json`),packagePath=join(root,productionPath);
+  const goodManifest={packageType:'Crossing',county:countyName,crossingCount:1,packageFile:`Crossing-Packages/${countyId}/legacy.geojson`};
+  await writeFile(manifestPath,JSON.stringify({...goodManifest,county:'Wrong'}));await assert.rejects(certifyProductionCounty({root,record,county,owner}),/package certification differs/,'wrong county identity fails');
+  await writeFile(manifestPath,JSON.stringify({...goodManifest,crossingCount:2}));await assert.rejects(certifyProductionCounty({root,record,county,owner}),/package certification differs/,'wrong crossing count fails');
+  await writeFile(manifestPath,JSON.stringify(goodManifest));await rm(packagePath);await assert.rejects(certifyProductionCounty({root,record,county,owner}),/ENOENT/,'missing production package fails');
+  await writeFile(packagePath,JSON.stringify({type:'FeatureCollection',features:[feature(id)]}));await rm(manifestPath);await assert.rejects(certifyProductionCounty({root,record,county,owner}),/ENOENT/,'missing county manifest fails');
+  await writeFile(manifestPath,JSON.stringify(goodManifest));await assert.rejects(certifyProductionCounty({root,record,county,owner:new Map([[id,'48999']])}),/ownership mismatch/);
+  await writeFile(packagePath,JSON.stringify({type:'FeatureCollection',features:[feature('019788P')]}));await assert.rejects(certifyProductionCounty({root,record,county,owner:new Map([['019788P',fips]])}),/blocked identity leakage/);
+ }finally{await rm(root,{recursive:true,force:true})}
+});
 
 test('candidate certification tolerates only CRLF checkout materialization and retains LF identity',()=>{
  const lf=Buffer.from('{\n  "type": "FeatureCollection",\n  "features": [{"properties":{"CROSSING":"A1","name":"Main"},"geometry":{"type":"Point","coordinates":[-95.1,30.2]}}]\n}\n');
