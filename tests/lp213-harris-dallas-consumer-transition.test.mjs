@@ -76,3 +76,62 @@ test('LP213 Harris -> Dallas commits county, storage, awareness and roadway owne
   assert.equal(context.window.GRIDLY_ACTIVE_COUNTY_ID, 'liberty-tx');
   assert.deepEqual(roadwayLoads.at(-1), { countyId: 'liberty-tx', featureCount: 8405 });
 });
+
+test('LP213 startup settings and awareness resolution is bounded and non-reentrant', () => {
+  const dallas = Object.freeze({ key: 'place-4819000', label: 'Dallas', storageValue: 'Dallas', placeGeoid: '4819000', canonicalMultiCountyPlace: true, countyMemberships: Object.freeze(['48085', '48113', '48121', '48257', '48397']), countyId: null });
+  let settingsDepth = 0;
+  let maximumSettingsDepth = 0;
+  let settingsReads = 0;
+  const context = {
+    Object,
+    Set,
+    Map,
+    String,
+    GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
+    GRIDLY_COUNTY_REGISTRY: { 'liberty-tx': { countyFips: '48291' }, 'dallas-tx': { countyFips: '48113' } },
+    GRIDLY_AWARENESS_AREA_DEFINITIONS: [dallas],
+    GRIDLY_AWARENESS_AREA_BY_KEY: { [dallas.key]: dallas },
+    GRIDLY_SETTINGS_DEFAULTS: { notifications: {}, display: { mapStyle: 'standard', theme: 'system', textSize: 'standard' }, personalization: { preferredName: '' } },
+    GRIDLY_SETTINGS_MAP_STYLE_LABELS: { standard: 'Standard' },
+    GRIDLY_SETTINGS_VALID_THEMES: new Set(['system']),
+    GRIDLY_SETTINGS_TEXT_SIZE_ALIASES: {},
+    GRIDLY_SETTINGS_VALID_TEXT_SIZES: new Set(['standard']),
+    gridlyNormalizeCountyId: (value) => String(value || '').toLowerCase(),
+    normalizeGridlyPreferredName: (value) => String(value || ''),
+    gridlyResolveCountyIdForAwarenessArea: () => { throw new Error('explicit county must not fall back to awareness state'); },
+    gridlyUserProfile: {},
+    gridlySelectedAwarenessAreaResolutionCache: { totalGetterCalls: 0, signature: '', area: null, cacheHits: 0, underlyingResolverCalls: 0 },
+    gridlyRecordSelectedAwarenessAreaGetterCaller() {},
+    gridlyLp016RecordAwarenessSwitchEvent() {},
+    gridlyLp016AwarenessAreaLabel: () => 'Dallas',
+    gridlyReadHomePersonalizationRecord: () => null,
+    window: { GRIDLY_ACTIVE_COUNTY_ID: 'dallas-tx' }
+  };
+  vm.createContext(context);
+  vm.runInContext([
+    productionFunction('normalizeGridlyAwarenessAreaLookupText'),
+    productionFunction('resolveGridlyAwarenessArea'),
+    productionFunction('resolveGridlyAwarenessAreaForCounty'),
+    productionFunction('gridlyResolveSettingsAwarenessArea'),
+    productionFunction('gridlyProjectCanonicalPlaceOperationalCounty'),
+    productionFunction('normalizeGridlySettings'),
+    productionFunction('getGridlySelectedAwarenessArea')
+  ].join('\n'), context);
+  context.getGridlySettingsPreferences = () => {
+    settingsReads += 1;
+    settingsDepth += 1;
+    maximumSettingsDepth = Math.max(maximumSettingsDepth, settingsDepth);
+    assert.ok(settingsReads <= 2, 'startup settings resolution remains bounded');
+    try {
+      return context.normalizeGridlySettings({ community: { awarenessArea: 'Dallas', countyId: 'dallas-tx' } });
+    } finally {
+      settingsDepth -= 1;
+    }
+  };
+
+  const selected = context.getGridlySelectedAwarenessArea();
+  assert.equal(maximumSettingsDepth, 1, 'settings normalization never recursively re-enters settings');
+  assert.equal(settingsReads, 1, 'one selected-area lookup performs one settings read');
+  assert.equal(selected.key, 'place-4819000', 'canonical Dallas PLACE identity is retained');
+  assert.equal(selected.countyId, 'dallas-tx', 'operational Dallas county is projected after normalization');
+});
