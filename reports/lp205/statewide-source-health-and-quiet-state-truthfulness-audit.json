@@ -1,0 +1,387 @@
+{
+  "schemaVersion": "gridly.lp205.source-health-quiet-truthfulness.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "auditOnly": true,
+  "productionFilesModified": false,
+  "vocabulary": {
+    "health": [
+      "HEALTHY",
+      "LOADING",
+      "INACTIVE",
+      "NOT_CONFIGURED",
+      "MISSING_CAPABILITY",
+      "FAILED",
+      "STALE",
+      "UNKNOWN",
+      "INTENTIONAL_ZERO",
+      "UNVERIFIED"
+    ],
+    "truthfulness": [
+      "SUPPORTED",
+      "SUPPORTED_WITH_SCOPE",
+      "AMBIGUOUS",
+      "OVERSTATED",
+      "FALSE_UNDER_KNOWN_SOURCE_GAP",
+      "UNRESOLVED"
+    ],
+    "rootCauses": [
+      "NO_SHARED_SOURCE_HEALTH_MODEL",
+      "SOURCE_FAILURE_COLLAPSES_TO_EMPTY",
+      "INACTIVE_SOURCE_COLLAPSES_TO_EMPTY",
+      "MISSING_CAPABILITY_NOT_VISIBLE",
+      "STALE_DATA_NOT_DISTINGUISHED",
+      "STARTUP_UNKNOWN_PRESENTED_AS_QUIET",
+      "QUIET_COPY_SCOPE_OVERSTATEMENT",
+      "TRAVEL_COPY_SCOPE_OVERSTATEMENT",
+      "REPORT_FAILURE_COLLAPSES_TO_ZERO",
+      "OTHER"
+    ],
+    "priorities": [
+      "P0",
+      "P1",
+      "P2",
+      "P3",
+      "P4"
+    ]
+  },
+  "evidence": {
+    "sourceFingerprints": {
+      "app": "3b4e8d8a76ce897a114d8b928d86513e2ecf95ec8acc727a1f4a1169c3734fa4",
+      "driveTexasProvider": "5de12734645d1b195fdf019c709285bdc2e29636799bd7d0d7ed9ee9240011ff",
+      "weatherProvider": "ad0a4fe52df9acaa09bba0d67f58374d073c67552b0f259da6cfdc21661063bf"
+    },
+    "inputs": [
+      "reports/lp204/statewide-functional-coverage-and-source-linkage-audit.json",
+      "Crossing-Packages/production-crossing-manifest.json",
+      "data/roadway-runtime-manifest.json",
+      "data/generated/gridly-statewide-consumer-community-projection-v1.json"
+    ]
+  },
+  "statewide": {
+    "evaluatedCounties": 254,
+    "cohortCounts": {
+      "roadwayPackages": 28,
+      "withoutRoadwayPackages": 226,
+      "activePositiveCrossings": 202,
+      "activeEmptyCrossings": 52,
+      "legacySourceMetadata": 3,
+      "withoutLegacySourceMetadata": 251,
+      "multiCountyPlaceMemberships": 199,
+      "placeContexts": "Both multi-county and ordinary PLACE contexts use the same source-array quiet decisions; canonical county switching protects crossings/reports but does not create official-provider health."
+    },
+    "countySwitchSequence": [
+      "liberty-tx",
+      "sherman-tx",
+      "dallas-tx",
+      "andrews-tx",
+      "tyler-tx"
+    ],
+    "switchFinding": "Crossing requests use county/generation commit guards and reports refilter by active county. Provider health is global/hidden; inactive stays empty rather than explicitly inactive in consumers. Calm copy recalculates from county arrays without a complete health reset contract."
+  },
+  "sharedHealthModel": {
+    "exists": false,
+    "finding": "Provider-specific fields and crossing coverage exist, but no reusable all-source health/freshness object is consumed by quiet presentation."
+  },
+  "sources": [
+    {
+      "id": "reports",
+      "runtimeStatus": "STATEWIDE_CAPABLE_UNVERIFIED",
+      "enabled": "Supabase client dependent",
+      "configured": "client may be unavailable",
+      "fetchAttempt": "observable in a private network audit/startup diagnostics",
+      "success": "lastSuccessAt exists",
+      "failure": "caught and only sync text changes; active arrays are retained",
+      "lastSuccessfulFetch": "network audit lastSuccessAt",
+      "freshness": "no quiet-copy stale threshold",
+      "cacheFallback": "accepted local reports may be restored after successful reads; unavailable/failure does not authoritatively clear collections",
+      "intentionalZero": "successful, county-filtered empty result only",
+      "unavailable": "returns null when client is absent",
+      "unknown": "initial arrays exist before async read",
+      "quietStateVisibility": "No: presentation receives arrays/counts, not report read health",
+      "zeroSemantics": "A rendered zero is not proof that Supabase was queried successfully",
+      "failureSemantics": "Failure can leave startup [] or retained/local data indistinguishable to quiet presentation",
+      "healthStates": [
+        "HEALTHY",
+        "LOADING",
+        "FAILED",
+        "UNKNOWN",
+        "UNVERIFIED"
+      ]
+    },
+    {
+      "id": "crossings",
+      "runtimeStatus": "GOVERNED_254_COUNTIES",
+      "enabled": true,
+      "configured": "254 packages",
+      "fetchAttempt": "hydration attempted/completed fields",
+      "success": "owner-matched completed hydration",
+      "failure": "explicit failure reason and TEMPORARILY_UNAVAILABLE",
+      "lastSuccessfulFetch": "hydration trace, not a reusable wall-clock freshness policy",
+      "freshness": "no age threshold",
+      "cacheFallback": "remote retry/local package fallback",
+      "intentionalZero": "52 ACTIVE_EMPTY counties after hydration; zero-local distinct in 202 ACTIVE_POSITIVE counties",
+      "unavailable": "explicit coverage state",
+      "unknown": "LOADING until hydrated",
+      "quietStateVisibility": "Partial: Community Pulse coverage guard consumes crossing availability only",
+      "zeroSemantics": "governed evidence of no crossings, never all-transportation quiet",
+      "failureSemantics": "does not collapse to crossing quiet",
+      "healthStates": [
+        "HEALTHY",
+        "LOADING",
+        "FAILED",
+        "INTENTIONAL_ZERO"
+      ]
+    },
+    {
+      "id": "drivetexas",
+      "runtimeStatus": "INACTIVE_BY_DEFAULT",
+      "enabled": false,
+      "configured": "requires enabled=true and API key",
+      "fetchAttempt": "none while disabled",
+      "success": "connected/lastRefresh/recordCount provider fields",
+      "failure": "clears normalizedStore and recordCount while runtimeHealthy remains true; lastError holds failure",
+      "lastSuccessfulFetch": "lastRefresh",
+      "freshness": "no consumer stale threshold",
+      "cacheFallback": "provider clears; separate publisher/connector can retain last-successful records without quiet-state age disclosure",
+      "intentionalZero": "not distinguishable in record-array consumers",
+      "unavailable": "disabled returns an empty normalized array",
+      "unknown": "consumer cannot see provider lifecycle",
+      "quietStateVisibility": "No",
+      "zeroSemantics": "inactive and healthy-zero both appear []",
+      "failureSemantics": "failure becomes []",
+      "healthStates": [
+        "INACTIVE",
+        "NOT_CONFIGURED",
+        "HEALTHY",
+        "FAILED",
+        "UNKNOWN"
+      ]
+    },
+    {
+      "id": "nws_alerts",
+      "runtimeStatus": "INACTIVE_BY_DEFAULT",
+      "enabled": false,
+      "configured": "endpoint defaults to statewide NWS alerts; no credential",
+      "fetchAttempt": "none while disabled",
+      "success": "connected/lastRefresh/recordCount provider fields",
+      "failure": "clears normalizedStore and recordCount while runtimeHealthy remains true; lastError holds failure",
+      "lastSuccessfulFetch": "lastRefresh",
+      "freshness": "alert records carry times but quiet consumers receive no source-age gate",
+      "cacheFallback": "provider clears; connector retention is not surfaced to quiet copy",
+      "intentionalZero": "not distinguishable in record-array consumers",
+      "unavailable": "disabled returns an empty normalized array",
+      "unknown": "consumer cannot see provider lifecycle",
+      "quietStateVisibility": "No",
+      "zeroSemantics": "inactive and healthy-zero both appear []",
+      "failureSemantics": "failure becomes []",
+      "healthStates": [
+        "INACTIVE",
+        "HEALTHY",
+        "FAILED",
+        "UNKNOWN"
+      ]
+    },
+    {
+      "id": "weather_products",
+      "runtimeStatus": "NOT_IMPLEMENTED",
+      "enabled": false,
+      "configured": false,
+      "fetchAttempt": "none",
+      "success": "none",
+      "failure": "capability absence",
+      "lastSuccessfulFetch": null,
+      "freshness": "none",
+      "cacheFallback": "none",
+      "intentionalZero": "not applicable",
+      "unavailable": "current conditions, observations, forecast, temperature, precipitation, wind and visibility are missing",
+      "unknown": "presentation often receives null weather",
+      "quietStateVisibility": "No",
+      "zeroSemantics": "null/no impact is rendered as no travel-impacting weather",
+      "failureSemantics": "missing capability is hidden",
+      "healthStates": [
+        "MISSING_CAPABILITY"
+      ]
+    },
+    {
+      "id": "road_geometry",
+      "runtimeStatus": "28_COUNTY_COHORT",
+      "enabled": true,
+      "configured": "28/254 packages",
+      "fetchAttempt": "county package activation",
+      "success": "loaded county and package state",
+      "failure": "blocked_missing_asset or explicit load error",
+      "lastSuccessfulFetch": "no shared quiet freshness timestamp",
+      "freshness": "package identity, not live-condition freshness",
+      "cacheFallback": "county package cache",
+      "intentionalZero": "not an incident-zero source",
+      "unavailable": "226 counties missing",
+      "unknown": "county transitions expose package state separately",
+      "quietStateVisibility": "No broad quiet gate",
+      "zeroSemantics": "absence of geometry says nothing about road conditions",
+      "failureSemantics": "not incorporated into calm claim",
+      "healthStates": [
+        "HEALTHY",
+        "LOADING",
+        "FAILED",
+        "MISSING_CAPABILITY"
+      ]
+    }
+  ],
+  "quietCopy": [
+    {
+      "statement": "Community is quiet.",
+      "owner": "getGridlyHomeCommunityPulseCopy / top Awareness Card and Community Pulse",
+      "evidence": "zero selected community count plus crossing coverage not failed",
+      "missingEvidence": "report query success/freshness; DriveTexas; NWS; weather products",
+      "classification": "AMBIGUOUS",
+      "scope": "Community wording is plausibly community-only, but the zero can be startup/unverified and adjacent travel copy broadens it."
+    },
+    {
+      "statement": "Travel normally today.",
+      "owner": "getGridlyHomeCommunityPulseCopy / top Awareness Card",
+      "evidence": "zero community activity and crossing coverage not failed",
+      "missingEvidence": "inactive DriveTexas/NWS, missing current weather/forecast, report health",
+      "classification": "FALSE_UNDER_KNOWN_SOURCE_GAP",
+      "scope": "Unqualified travel-normal advice claims more than loaded evidence."
+    },
+    {
+      "statement": "No active community reports need attention.",
+      "owner": "gridlyStoryCommunityEvidence / Awareness Brief",
+      "evidence": "community record array length zero",
+      "missingEvidence": "whether Supabase read succeeded and is fresh",
+      "classification": "AMBIGUOUS",
+      "scope": "Explicitly community-scoped, but its data-availability precondition is not carried."
+    },
+    {
+      "statement": "No official roadway advisories nearby.",
+      "owner": "gridlyTravelBriefDriveTexasLines / Travel Brief",
+      "evidence": "DriveTexas record array has no impactful records",
+      "missingEvidence": "provider enabled/connected/fetched successfully",
+      "classification": "FALSE_UNDER_KNOWN_SOURCE_GAP",
+      "scope": "Rendered even when DriveTexas is inactive and has never run."
+    },
+    {
+      "statement": "No travel-impacting weather.",
+      "owner": "gridlyTravelBriefWeatherLines / Travel Brief",
+      "evidence": "no meaningful impact in nullable weather model",
+      "missingEvidence": "inactive NWS alerts and all missing current/forecast products",
+      "classification": "FALSE_UNDER_KNOWN_SOURCE_GAP",
+      "scope": "Capability absence is treated like observed non-impact."
+    },
+    {
+      "statement": "Travel normally and stay aware.",
+      "owner": "Awareness Story, Community Pulse decision, Travel Brief",
+      "evidence": "no active records/recognized official or weather impacts",
+      "missingEvidence": "health, success and freshness of those inputs",
+      "classification": "OVERSTATED",
+      "scope": "Broad travel guidance from partial/unknown sources."
+    },
+    {
+      "statement": "Your area is clear right now",
+      "owner": "Awareness Brief interaction fallback",
+      "evidence": "fallback only when DOM text is unavailable",
+      "missingEvidence": "all source evidence",
+      "classification": "FALSE_UNDER_KNOWN_SOURCE_GAP",
+      "scope": "A comprehensive clear claim can be synthesized without source initialization."
+    },
+    {
+      "statement": "No active local issues reported",
+      "owner": "related local-awareness/microline semantics",
+      "evidence": "available produced records",
+      "missingEvidence": "inactive/failed/missing producer status",
+      "classification": "SUPPORTED_WITH_SCOPE",
+      "scope": "Defensible only when 'reported' is read literally; not an all-clear."
+    },
+    {
+      "statement": "zero alert cards",
+      "owner": "unified incident / alert rendering",
+      "evidence": "no eligible incidents produced",
+      "missingEvidence": "provider health and missing capabilities",
+      "classification": "AMBIGUOUS",
+      "scope": "Absence of cards means no produced alerts, not all sources healthy-zero."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": 1,
+      "result": "Community quiet is conditionally community-scoped; Travel normally today is not justified because official/weather health is absent."
+    },
+    {
+      "id": 2,
+      "result": "Yes. At startup an empty collection can remain; report failure updates sync text but quiet presentation has no health input."
+    },
+    {
+      "id": 3,
+      "result": "Crossing LOADING is modeled and guards the home pulse only where that coverage object is used; aggregate story/travel source health remains partial."
+    },
+    {
+      "id": 4,
+      "result": "ACTIVE_EMPTY is a truthful governed crossing zero, but it can still coexist with an unjustified broad travel-normal state."
+    },
+    {
+      "id": 5,
+      "result": "Source-scoped no-report/no-advisory/no-alert statements are justified; broad normal travel still needs current/forecast weather scope or qualification."
+    },
+    {
+      "id": 6,
+      "result": "Provider failure clears records; connector/publisher last-success retention can remain, and no common stale age reaches quiet decisions."
+    },
+    {
+      "id": 7,
+      "result": "Provider failure clears records and can look like zero alerts; retained connector state has no common quiet freshness gate."
+    },
+    {
+      "id": 8,
+      "result": "The static shell says Loading, and Community Pulse installs a placeholder; however arrays are initialized empty and other builders/fallbacks can derive calm before the non-blocking report read completes."
+    }
+  ],
+  "findings": [
+    {
+      "priority": "P0",
+      "rootCauses": [
+        "INACTIVE_SOURCE_COLLAPSES_TO_EMPTY",
+        "MISSING_CAPABILITY_NOT_VISIBLE",
+        "TRAVEL_COPY_SCOPE_OVERSTATEMENT"
+      ],
+      "finding": "Travel-normal, no-official-advisory, and no-weather-impact copy can render while DriveTexas/NWS are inactive and live weather products do not exist."
+    },
+    {
+      "priority": "P1",
+      "rootCauses": [
+        "NO_SHARED_SOURCE_HEALTH_MODEL",
+        "REPORT_FAILURE_COLLAPSES_TO_ZERO",
+        "STARTUP_UNKNOWN_PRESENTED_AS_QUIET"
+      ],
+      "finding": "Presentation cannot prove a successful fresh report read and cannot combine source lifecycle truth across all 254 counties."
+    },
+    {
+      "priority": "P2",
+      "rootCauses": [
+        "SOURCE_FAILURE_COLLAPSES_TO_EMPTY",
+        "STALE_DATA_NOT_DISTINGUISHED"
+      ],
+      "finding": "Official provider failures clear arrays; provider/connector cache freshness is not a quiet-state input."
+    },
+    {
+      "priority": "P3",
+      "rootCauses": [
+        "QUIET_COPY_SCOPE_OVERSTATEMENT"
+      ],
+      "finding": "Community-scoped wording is semantically narrower, but data availability is not stated and adjacent copy expands its meaning."
+    },
+    {
+      "priority": "P4",
+      "rootCauses": [
+        "MISSING_CAPABILITY_NOT_VISIBLE"
+      ],
+      "finding": "Current conditions and forecast products remain intentionally unimplemented for this audit and must not be inferred quiet."
+    }
+  ],
+  "recommendation": "LP205.1 should make the smallest safety repair first: gate broad travel/all-clear/no-official/no-weather conclusions on an explicit presentation-facing completeness result, while preserving narrowly scoped community zero copy only after report-read state is known. Reuse crossing coverage and provider runtime facts behind that boundary; centralize the durable shared health model immediately afterward. Do not activate providers as part of the copy-scope repair.",
+  "conclusion": {
+    "communityQuiet": "AMBIGUOUS: potentially truthful as community-only after a successful scoped read, but current presentation does not know that precondition.",
+    "travelNormally": "FALSE_UNDER_KNOWN_SOURCE_GAP",
+    "failureOrInactivityCanLookQuiet": true,
+    "p0": "Broad normal/all-clear and source-specific zero statements are produced from empty arrays/null inputs while DriveTexas and NWS are inactive and weather capabilities are missing."
+  }
+}
