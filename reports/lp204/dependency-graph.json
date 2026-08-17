@@ -1,0 +1,38 @@
+{
+  "Awareness Brief": [
+    "Community reports",
+    "Railroad crossings",
+    "DriveTexas",
+    "NWS weather alerts",
+    "trust/freshness"
+  ],
+  "Community Pulse": [
+    "Community reports",
+    "road geometry",
+    "active county/PLACE"
+  ],
+  "Travel Brief": [
+    "DriveTexas",
+    "weather",
+    "reports",
+    "crossings",
+    "destination context"
+  ],
+  "Route Watch": [
+    "location resolution",
+    "road geometry",
+    "crossings",
+    "DriveTexas",
+    "weather",
+    "reports",
+    "alerts"
+  ],
+  "Alerts": [
+    "source ownership",
+    "active county/PLACE",
+    "reports",
+    "crossings",
+    "DriveTexas",
+    "weather"
+  ]
+}

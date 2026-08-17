@@ -1,0 +1,26 @@
+[
+  {
+    "system": "Road geometry",
+    "file": "data/roadway-runtime-manifest.json",
+    "function": "gridlyResolveRoadwayRuntimeSource",
+    "productionActive": true,
+    "kind": "RUNTIME_BLOCKER",
+    "finding": "Active runtime manifest contains 28 counties; 226 fall through to blocked_missing_asset."
+  },
+  {
+    "system": "Awareness definitions",
+    "file": "js/app.js",
+    "function": "GRIDLY_AWARENESS_AREA_DEFINITIONS",
+    "productionActive": true,
+    "kind": "HARMLESS_COMPATIBILITY",
+    "finding": "Legacy Liberty/Houston/Bexar seeds remain, but governed county-wide definitions are appended for selectable operational counties."
+  },
+  {
+    "system": "Directional intelligence",
+    "file": "assets/directional-intelligence",
+    "function": "n/a",
+    "productionActive": false,
+    "kind": "HISTORICAL_EVIDENCE",
+    "finding": "Regional corridor packages are evidence for an intentionally paused feature, not statewide runtime support."
+  }
+]

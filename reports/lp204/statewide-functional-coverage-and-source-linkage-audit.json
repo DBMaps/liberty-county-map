@@ -1,0 +1,757 @@
+{
+  "schemaVersion": "gridly.lp204.statewide-functional-coverage.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "auditOnly": true,
+  "productionFilesModified": false,
+  "inputs": {
+    "counties": {
+      "path": "data/lp104/texas-counties.json",
+      "count": 254
+    },
+    "boundaries": {
+      "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json",
+      "count": 254
+    },
+    "places": {
+      "path": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+      "placeCount": 1859,
+      "membershipCount": 2058
+    },
+    "roads": {
+      "path": "data/roadway-runtime-manifest.json",
+      "count": 28
+    },
+    "crossings": {
+      "path": "reports/lp202/statewide-crossing-consumer-runtime-audit.json",
+      "packages": 254,
+      "identities": 16099
+    },
+    "sourceFingerprints": {
+      "driveProvider": "5de12734645d1b195fdf019c709285bdc2e29636799bd7d0d7ed9ee9240011ff",
+      "weatherIntegration": "3915a5724d91b1d4829cfae4c3131490f384a062ebaddcc068de052778437c47",
+      "app": "3b4e8d8a76ce897a114d8b928d86513e2ecf95ec8acc727a1f4a1169c3734fa4"
+    }
+  },
+  "classificationVocabulary": [
+    "STATEWIDE_CERTIFIED",
+    "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+    "STATEWIDE_SOURCE_PRESENT_NOT_GEO_LINKED",
+    "STATEWIDE_GEO_LINKED_NOT_CONSUMER_CONNECTED",
+    "REGIONAL_ONLY",
+    "LEGACY_COHORT_ONLY",
+    "SOURCE_PRESENT_RUNTIME_INACTIVE",
+    "INTENTIONALLY_INACTIVE",
+    "MISSING",
+    "UNRESOLVED"
+  ],
+  "classificationCounts": {
+    "STATEWIDE_CERTIFIED": 4,
+    "STATEWIDE_PRESENT_BUT_UNCERTIFIED": 9,
+    "STATEWIDE_SOURCE_PRESENT_NOT_GEO_LINKED": 0,
+    "STATEWIDE_GEO_LINKED_NOT_CONSUMER_CONNECTED": 0,
+    "REGIONAL_ONLY": 0,
+    "LEGACY_COHORT_ONLY": 1,
+    "SOURCE_PRESENT_RUNTIME_INACTIVE": 3,
+    "INTENTIONALLY_INACTIVE": 1,
+    "MISSING": 4,
+    "UNRESOLVED": 0
+  },
+  "systemMatrix": [
+    {
+      "systemName": "DriveTexas",
+      "sourceProvider": "DriveTexas conditions GeoJSON",
+      "sourceAuthority": "TxDOT / DriveTexas",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 0,
+      "countiesConsumerCapable": 0,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "DISABLED_BY_DEFAULT",
+      "consumerSurfaces": [
+        "Awareness Brief",
+        "Travel Brief",
+        "alerts"
+      ],
+      "classification": "SOURCE_PRESENT_RUNTIME_INACTIVE",
+      "exactRemainingGap": "Provider defaults disabled and requires an API key; no repository evidence certifies deterministic county/PLACE ownership for all live records.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "gridlyDriveTexasProvider + gridlyDriveTexasLiveConnector",
+      "activeCountyLinkage": "selected awareness area filtering, not a 254-county ownership ledger",
+      "countyIdentityMechanism": "selected awareness area filtering, not a 254-county ownership ledger",
+      "placeCommunityLinkage": "radius/text/authority adapter; not statewide-certified",
+      "geometryOwnershipMethod": "provider geometry then point/radius/text",
+      "knownFallbackBehavior": "retained last-successful connector cache",
+      "zeroNoDataSemantics": "empty records can mean quiet or disabled upstream",
+      "failureSemantics": "connector exposes errors but dependent quiet presentation is not certified",
+      "countySwitchRefresh": "area generation refilters retained statewide cache",
+      "startupBehavior": "no polling without explicit enablement/key",
+      "evidence": [
+        "js/gridlyDriveTexasProvider.js:52-64",
+        "js/gridlyDriveTexasLiveConnector.js:1-30"
+      ]
+    },
+    {
+      "systemName": "NWS weather alerts",
+      "sourceProvider": "api.weather.gov alerts/active?area=TX",
+      "sourceAuthority": "National Weather Service",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 0,
+      "countiesConsumerCapable": 0,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "DISABLED_BY_DEFAULT",
+      "consumerSurfaces": [
+        "Awareness Brief",
+        "alerts"
+      ],
+      "classification": "SOURCE_PRESENT_RUNTIME_INACTIVE",
+      "exactRemainingGap": "Texas-wide feed adapter exists but defaults disabled; ownership mixes polygon/zone/county text/radius and lacks all-county consumer certification.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "gridlyWeatherProvider + gridlyWeatherLiveConnector",
+      "activeCountyLinkage": "selected awareness area",
+      "countyIdentityMechanism": "selected awareness area",
+      "placeCommunityLinkage": "area text/radius with zone and polygon evidence",
+      "geometryOwnershipMethod": "polygon/zone/county-text/radius",
+      "knownFallbackBehavior": "text and radius fallback",
+      "zeroNoDataSemantics": "adapter distinguishes no loaded/expired/filtered records",
+      "failureSemantics": "unavailable copy exists in authority integration",
+      "countySwitchRefresh": "area-change refilter",
+      "startupBehavior": "no polling unless enabled",
+      "evidence": [
+        "js/gridlyWeatherProvider.js:1-95",
+        "js/gridlyWeatherAuthoritySourceIntegration.js:49-50"
+      ]
+    },
+    {
+      "systemName": "Current weather / observations",
+      "sourceProvider": "NWS adapter declarations only",
+      "sourceAuthority": "National Weather Service",
+      "countiesConfigured": 0,
+      "countiesRuntimeCapable": 0,
+      "countiesConsumerCapable": 0,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "NOT_IMPLEMENTED",
+      "consumerSurfaces": [],
+      "classification": "MISSING",
+      "exactRemainingGap": "No observation provider or station owner is integrated.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "none",
+      "activeCountyLinkage": "none",
+      "countyIdentityMechanism": "none",
+      "placeCommunityLinkage": "none",
+      "geometryOwnershipMethod": "none",
+      "knownFallbackBehavior": "none",
+      "zeroNoDataSemantics": "not applicable",
+      "failureSemantics": "unavailable",
+      "countySwitchRefresh": "none",
+      "startupBehavior": "none",
+      "evidence": [
+        "js/gridlyWeatherAuthoritySourceIntegration.js:118-119"
+      ]
+    },
+    {
+      "systemName": "Point/grid forecast",
+      "sourceProvider": "NWS adapter declarations only",
+      "sourceAuthority": "National Weather Service",
+      "countiesConfigured": 0,
+      "countiesRuntimeCapable": 0,
+      "countiesConsumerCapable": 0,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "NOT_IMPLEMENTED",
+      "consumerSurfaces": [],
+      "classification": "MISSING",
+      "exactRemainingGap": "Point/grid/zone adapter declarations exist, but no forecast source is available or integrated.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "none",
+      "activeCountyLinkage": "none",
+      "countyIdentityMechanism": "none",
+      "placeCommunityLinkage": "none",
+      "geometryOwnershipMethod": "none",
+      "knownFallbackBehavior": "none",
+      "zeroNoDataSemantics": "not applicable",
+      "failureSemantics": "unavailable",
+      "countySwitchRefresh": "none",
+      "startupBehavior": "none",
+      "evidence": [
+        "js/gridlyWeatherAuthoritySourceIntegration.js:118-119"
+      ]
+    },
+    {
+      "systemName": "Weather metrics (temperature/precipitation/wind/visibility)",
+      "sourceProvider": "NWS adapter declarations only",
+      "sourceAuthority": "National Weather Service",
+      "countiesConfigured": 0,
+      "countiesRuntimeCapable": 0,
+      "countiesConsumerCapable": 0,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "NOT_IMPLEMENTED",
+      "consumerSurfaces": [],
+      "classification": "MISSING",
+      "exactRemainingGap": "No live current-condition or grid-forecast pipeline supplies these metrics.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "none",
+      "activeCountyLinkage": "none",
+      "countyIdentityMechanism": "none",
+      "placeCommunityLinkage": "none",
+      "geometryOwnershipMethod": "none",
+      "knownFallbackBehavior": "none",
+      "zeroNoDataSemantics": "not applicable",
+      "failureSemantics": "unavailable",
+      "countySwitchRefresh": "none",
+      "startupBehavior": "none",
+      "evidence": [
+        "js/gridlyWeatherAuthoritySourceIntegration.js:118-119"
+      ]
+    },
+    {
+      "systemName": "Community reports / hazards / Supabase",
+      "sourceProvider": "Supabase reports plus county-scoped local fallback",
+      "sourceAuthority": "Gridly community reports",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "map",
+        "Awareness Brief",
+        "Community Pulse",
+        "alerts"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "Code carries county/FIPS and blocks cross-county reads, but repository evidence cannot certify deployed Supabase policies, legacy rows, or live round trips in every county.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "js/app.js report read/write lifecycle",
+      "activeCountyLinkage": "canonical countyId/FIPS plus coordinate resolver",
+      "countyIdentityMechanism": "canonical countyId/FIPS plus coordinate resolver",
+      "placeCommunityLinkage": "nearest governed PLACE presentation target",
+      "geometryOwnershipMethod": "authoritative county polygon; roads when available",
+      "knownFallbackBehavior": "county-scoped local storage and county-aware label",
+      "zeroNoDataSemantics": "empty reports is quiet; remote failure can fall back locally",
+      "failureSemantics": "remote failure is not equivalent to authoritative empty, but dependent surfaces require certification",
+      "countySwitchRefresh": "active county containment/filter rebuild",
+      "startupBehavior": "restores county-scoped storage then syncs",
+      "evidence": [
+        "js/app.js:8142-8425",
+        "tests/statewide-reporting.test.mjs"
+      ]
+    },
+    {
+      "systemName": "County boundary / location resolution",
+      "sourceProvider": "authoritative 254-county geometry package",
+      "sourceAuthority": "Census-derived governed package",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "county selection",
+        "report ownership",
+        "runtime context"
+      ],
+      "classification": "STATEWIDE_CERTIFIED",
+      "exactRemainingGap": "No functional gap found.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "GRIDLY_COUNTY_REGISTRY and coordinate resolver",
+      "activeCountyLinkage": "county ID/FIPS/polygon",
+      "countyIdentityMechanism": "county ID/FIPS/polygon",
+      "placeCommunityLinkage": "multi-county PLACE memberships",
+      "geometryOwnershipMethod": "polygon containment",
+      "knownFallbackBehavior": "default county only during unresolved startup",
+      "zeroNoDataSemantics": "no match is unresolved",
+      "failureSemantics": "explicit unresolved state",
+      "countySwitchRefresh": "active county synchronization",
+      "startupBehavior": "governed package loaded before resolution",
+      "evidence": [
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json",
+        "tests/lp2022-statewide-active-county-runtime-synchronization.test.mjs"
+      ]
+    },
+    {
+      "systemName": "PLACE/CDP awareness geography",
+      "sourceProvider": "1,859 governed Census places",
+      "sourceAuthority": "2025 Census TIGER/Line Places",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "awareness selector",
+        "presentation",
+        "report metadata"
+      ],
+      "classification": "STATEWIDE_CERTIFIED",
+      "exactRemainingGap": "Polygon-aware source ownership by external providers remains provider-specific.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "statewide community projection",
+      "activeCountyLinkage": "2,058 county memberships",
+      "countyIdentityMechanism": "2,058 county memberships",
+      "placeCommunityLinkage": "canonical place GEOID including multi-county memberships",
+      "geometryOwnershipMethod": "governed place geometry/presentation camera",
+      "knownFallbackBehavior": "presentation-center/radius where polygon consumer is not used",
+      "zeroNoDataSemantics": "zero local records is distinct from missing place identity",
+      "failureSemantics": "unresolved provider ownership remains provider failure",
+      "countySwitchRefresh": "selected PLACE updates county context",
+      "startupBehavior": "projection loads with county registry",
+      "evidence": [
+        "data/generated/gridly-statewide-consumer-community-projection-v1.json"
+      ]
+    },
+    {
+      "systemName": "Railroad crossings",
+      "sourceProvider": "254 governed crossing packages",
+      "sourceAuthority": "FRA-derived production manifest",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "map",
+        "Awareness Brief",
+        "alerts",
+        "Route Watch"
+      ],
+      "classification": "STATEWIDE_CERTIFIED",
+      "exactRemainingGap": "No gap; positive control is 202 ACTIVE_POSITIVE, 52 ACTIVE_EMPTY, and 16,099 identities.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "LP202.1/202.2 crossing runtime",
+      "activeCountyLinkage": "active county owner",
+      "countyIdentityMechanism": "active county owner",
+      "placeCommunityLinkage": "statewide awareness ownership",
+      "geometryOwnershipMethod": "governed crossing point geometry",
+      "knownFallbackBehavior": "none for ownership",
+      "zeroNoDataSemantics": "ACTIVE_EMPTY and zero-local are explicit",
+      "failureSemantics": "loading/unavailable are explicit",
+      "countySwitchRefresh": "active-county synchronization and hydration",
+      "startupBehavior": "governed coverage state until hydration",
+      "evidence": [
+        "reports/lp202/statewide-crossing-consumer-runtime-audit.json",
+        "reports/lp2031/statewide-crossing-coverage-state-repair.json"
+      ]
+    },
+    {
+      "systemName": "Road geometry / roadway names",
+      "sourceProvider": "per-county roadway runtime manifest",
+      "sourceAuthority": "mixed local/external governed assets",
+      "countiesConfigured": 28,
+      "countiesRuntimeCapable": 28,
+      "countiesConsumerCapable": 28,
+      "legacyCohortDependencies": [
+        "28-entry data/roadway-runtime-manifest.json"
+      ],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "map roads",
+        "hazard road association",
+        "Route Watch"
+      ],
+      "classification": "LEGACY_COHORT_ONLY",
+      "exactRemainingGap": "Only 28/254 counties have manifest entries; 226 lack roadway geometry, nearest-road, and normalized road-name certification.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "gridlyResolveRoadwayRuntimeSource",
+      "activeCountyLinkage": "manifest keyed countyId",
+      "countyIdentityMechanism": "manifest keyed countyId",
+      "placeCommunityLinkage": "indirect only",
+      "geometryOwnershipMethod": "county package LineString geometry",
+      "knownFallbackBehavior": "county-aware non-road location label",
+      "zeroNoDataSemantics": "missing manifest is blocked_missing_asset",
+      "failureSemantics": "load failure state exists",
+      "countySwitchRefresh": "source resolves per active county",
+      "startupBehavior": "manifest fetched during runtime",
+      "evidence": [
+        "data/roadway-runtime-manifest.json",
+        "js/app.js:2327-2396"
+      ]
+    },
+    {
+      "systemName": "Hazard placement / reporting geography",
+      "sourceProvider": "map tap + county/report identity",
+      "sourceAuthority": "Gridly county and PLACE authorities",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "report composer",
+        "map markers"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "County and PLACE ownership are statewide; exact road association is unavailable in 226 counties and live Supabase round trips are uncertified.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "report submission workflow",
+      "activeCountyLinkage": "coordinate-to-county polygon",
+      "countyIdentityMechanism": "coordinate-to-county polygon",
+      "placeCommunityLinkage": "nearest governed PLACE",
+      "geometryOwnershipMethod": "road package when present",
+      "knownFallbackBehavior": "county/community label without road",
+      "zeroNoDataSemantics": "report can exist without road name",
+      "failureSemantics": "submission persistence failure",
+      "countySwitchRefresh": "active county/report filter",
+      "startupBehavior": "restored draft/location",
+      "evidence": [
+        "js/app.js:8220-8425"
+      ]
+    },
+    {
+      "systemName": "Awareness Brief",
+      "sourceProvider": "composed consumer runtime",
+      "sourceAuthority": "Gridly runtime",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "Awareness Brief"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "Crossings and report geography are statewide, but disabled/absent DriveTexas and weather can make aggregate quiet-state completeness uncertified.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "js/app.js",
+      "activeCountyLinkage": "active county context",
+      "countyIdentityMechanism": "active county context",
+      "placeCommunityLinkage": "selected awareness area",
+      "geometryOwnershipMethod": "dependency-specific",
+      "knownFallbackBehavior": "county-aware labels",
+      "zeroNoDataSemantics": "quiet semantics are dependency-sensitive",
+      "failureSemantics": "partial dependency failure may be under-signaled",
+      "countySwitchRefresh": "render/refresh on context",
+      "startupBehavior": "restored context",
+      "evidence": [
+        "js/app.js"
+      ]
+    },
+    {
+      "systemName": "Community Pulse",
+      "sourceProvider": "composed consumer runtime",
+      "sourceAuthority": "Gridly runtime",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "Community Pulse"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "Statewide report filtering exists, but dominant-corridor output depends on 28-county road geometry and unavailable official sources.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "js/app.js",
+      "activeCountyLinkage": "active county context",
+      "countyIdentityMechanism": "active county context",
+      "placeCommunityLinkage": "selected awareness area",
+      "geometryOwnershipMethod": "dependency-specific",
+      "knownFallbackBehavior": "county-aware labels",
+      "zeroNoDataSemantics": "quiet semantics are dependency-sensitive",
+      "failureSemantics": "partial dependency failure may be under-signaled",
+      "countySwitchRefresh": "render/refresh on context",
+      "startupBehavior": "restored context",
+      "evidence": [
+        "js/app.js"
+      ]
+    },
+    {
+      "systemName": "Travel Brief",
+      "sourceProvider": "composed consumer runtime",
+      "sourceAuthority": "Gridly runtime",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "Travel Brief"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "Required DriveTexas/weather inputs are inactive or missing and road geometry covers only 28 counties.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "js/app.js",
+      "activeCountyLinkage": "active county context",
+      "countyIdentityMechanism": "active county context",
+      "placeCommunityLinkage": "selected awareness area",
+      "geometryOwnershipMethod": "dependency-specific",
+      "knownFallbackBehavior": "county-aware labels",
+      "zeroNoDataSemantics": "quiet semantics are dependency-sensitive",
+      "failureSemantics": "partial dependency failure may be under-signaled",
+      "countySwitchRefresh": "render/refresh on context",
+      "startupBehavior": "restored context",
+      "evidence": [
+        "js/app.js"
+      ]
+    },
+    {
+      "systemName": "Alerts / alert cards",
+      "sourceProvider": "composed consumer runtime",
+      "sourceAuthority": "Gridly runtime",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "alert cards",
+        "history"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "Consumer surface exists, but DriveTexas/weather alert owners are inactive and unified all-source county/PLACE behavior is not certified.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "js/app.js",
+      "activeCountyLinkage": "active county context",
+      "countyIdentityMechanism": "active county context",
+      "placeCommunityLinkage": "selected awareness area",
+      "geometryOwnershipMethod": "dependency-specific",
+      "knownFallbackBehavior": "county-aware labels",
+      "zeroNoDataSemantics": "quiet semantics are dependency-sensitive",
+      "failureSemantics": "partial dependency failure may be under-signaled",
+      "countySwitchRefresh": "render/refresh on context",
+      "startupBehavior": "restored context",
+      "evidence": [
+        "js/app.js"
+      ]
+    },
+    {
+      "systemName": "Route Watch",
+      "sourceProvider": "composed consumer runtime",
+      "sourceAuthority": "Gridly runtime",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "Route Watch"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "Location and crossings are statewide; road geometry is 28-county-only and DriveTexas/weather dependencies are not active/certified.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "js/app.js",
+      "activeCountyLinkage": "active county context",
+      "countyIdentityMechanism": "active county context",
+      "placeCommunityLinkage": "selected awareness area",
+      "geometryOwnershipMethod": "dependency-specific",
+      "knownFallbackBehavior": "county-aware labels",
+      "zeroNoDataSemantics": "quiet semantics are dependency-sensitive",
+      "failureSemantics": "partial dependency failure may be under-signaled",
+      "countySwitchRefresh": "render/refresh on context",
+      "startupBehavior": "restored context",
+      "evidence": [
+        "js/app.js"
+      ]
+    },
+    {
+      "systemName": "Destination / location search",
+      "sourceProvider": "composed consumer runtime",
+      "sourceAuthority": "Gridly runtime",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "destination search",
+        "map search"
+      ],
+      "classification": "STATEWIDE_CERTIFIED",
+      "exactRemainingGap": "No county/PLACE/ZIP reachability gap found; free-form geocoder behavior remains external.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "js/app.js",
+      "activeCountyLinkage": "active county context",
+      "countyIdentityMechanism": "active county context",
+      "placeCommunityLinkage": "selected awareness area",
+      "geometryOwnershipMethod": "dependency-specific",
+      "knownFallbackBehavior": "county-aware labels",
+      "zeroNoDataSemantics": "quiet semantics are dependency-sensitive",
+      "failureSemantics": "partial dependency failure may be under-signaled",
+      "countySwitchRefresh": "render/refresh on context",
+      "startupBehavior": "restored context",
+      "evidence": [
+        "js/app.js"
+      ]
+    },
+    {
+      "systemName": "Saved places / home personalization",
+      "sourceProvider": "composed consumer runtime",
+      "sourceAuthority": "Gridly runtime",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "Home/Work",
+        "startup restoration"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "County/PLACE-capable storage exists, but multi-county PLACE restoration and live startup behavior lack a single statewide certification artifact.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "js/app.js",
+      "activeCountyLinkage": "active county context",
+      "countyIdentityMechanism": "active county context",
+      "placeCommunityLinkage": "selected awareness area",
+      "geometryOwnershipMethod": "dependency-specific",
+      "knownFallbackBehavior": "county-aware labels",
+      "zeroNoDataSemantics": "quiet semantics are dependency-sensitive",
+      "failureSemantics": "partial dependency failure may be under-signaled",
+      "countySwitchRefresh": "render/refresh on context",
+      "startupBehavior": "restored context",
+      "evidence": [
+        "js/app.js"
+      ]
+    },
+    {
+      "systemName": "Directional intelligence",
+      "sourceProvider": "regional governed corridor assets",
+      "sourceAuthority": "OSM-derived governed evidence",
+      "countiesConfigured": 0,
+      "countiesRuntimeCapable": 0,
+      "countiesConsumerCapable": 0,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "INTENTIONALLY_PAUSED",
+      "consumerSurfaces": [],
+      "classification": "INTENTIONALLY_INACTIVE",
+      "exactRemainingGap": "Paused by product direction; do not treat absent NB/SB/EB/WB UI as a defect.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "none",
+      "activeCountyLinkage": "none",
+      "countyIdentityMechanism": "none",
+      "placeCommunityLinkage": "none",
+      "geometryOwnershipMethod": "regional evidence only",
+      "knownFallbackBehavior": "none",
+      "zeroNoDataSemantics": "not applicable",
+      "failureSemantics": "not applicable",
+      "countySwitchRefresh": "none",
+      "startupBehavior": "none",
+      "evidence": [
+        "assets/directional-intelligence/evidence"
+      ]
+    },
+    {
+      "systemName": "Notification preferences",
+      "sourceProvider": "local preference state",
+      "sourceAuthority": "Gridly",
+      "countiesConfigured": 254,
+      "countiesRuntimeCapable": 254,
+      "countiesConsumerCapable": 254,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "ACTIVE",
+      "consumerSurfaces": [
+        "settings"
+      ],
+      "classification": "STATEWIDE_PRESENT_BUT_UNCERTIFIED",
+      "exactRemainingGap": "Preference storage is not delivery certification.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "settings storage",
+      "activeCountyLinkage": "active location context where relevant",
+      "countyIdentityMechanism": "active location context where relevant",
+      "placeCommunityLinkage": "none",
+      "geometryOwnershipMethod": "none",
+      "knownFallbackBehavior": "local storage",
+      "zeroNoDataSemantics": "off is explicit",
+      "failureSemantics": "storage failure",
+      "countySwitchRefresh": "settings update",
+      "startupBehavior": "restored settings",
+      "evidence": [
+        "LP165-STATEWIDE-NOTIFICATION-CERTIFICATION.md"
+      ]
+    },
+    {
+      "systemName": "Local/browser notification delivery",
+      "sourceProvider": "browser Notification API",
+      "sourceAuthority": "browser/OS",
+      "countiesConfigured": 0,
+      "countiesRuntimeCapable": 0,
+      "countiesConsumerCapable": 0,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "NOT_CERTIFIED_ACTIVE",
+      "consumerSurfaces": [],
+      "classification": "SOURCE_PRESENT_RUNTIME_INACTIVE",
+      "exactRemainingGap": "API capability is not evidence of active statewide alert delivery.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "browser capability",
+      "activeCountyLinkage": "none",
+      "countyIdentityMechanism": "none",
+      "placeCommunityLinkage": "none",
+      "geometryOwnershipMethod": "none",
+      "knownFallbackBehavior": "in-app alerts",
+      "zeroNoDataSemantics": "no delivery is not quiet",
+      "failureSemantics": "permission/platform failure",
+      "countySwitchRefresh": "none",
+      "startupBehavior": "permission-dependent",
+      "evidence": [
+        "LP165-STATEWIDE-NOTIFICATION-CERTIFICATION.md"
+      ]
+    },
+    {
+      "systemName": "Push/background alert delivery",
+      "sourceProvider": "none",
+      "sourceAuthority": "none",
+      "countiesConfigured": 0,
+      "countiesRuntimeCapable": 0,
+      "countiesConsumerCapable": 0,
+      "legacyCohortDependencies": [],
+      "activeRuntimeStatus": "NOT_IMPLEMENTED",
+      "consumerSurfaces": [],
+      "classification": "MISSING",
+      "exactRemainingGap": "No certified push service, device-token pipeline, or background delivery infrastructure.",
+      "secondaryFlags": [],
+      "runtimeEntryPoint": "none",
+      "activeCountyLinkage": "none",
+      "countyIdentityMechanism": "none",
+      "placeCommunityLinkage": "none",
+      "geometryOwnershipMethod": "none",
+      "knownFallbackBehavior": "in-app only",
+      "zeroNoDataSemantics": "not applicable",
+      "failureSemantics": "not available",
+      "countySwitchRefresh": "none",
+      "startupBehavior": "none",
+      "evidence": [
+        "LP165-STATEWIDE-NOTIFICATION-CERTIFICATION.md"
+      ]
+    }
+  ],
+  "countyMatrixSummary": {
+    "evaluated": 254,
+    "fullyFunctional": 0,
+    "partiallyFunctional": 28,
+    "materiallyMissing": 226
+  },
+  "priorityGaps": [
+    {
+      "priority": "P0",
+      "gap": "Prevent aggregate Awareness/Travel/Alert quiet states from implying all-source quiet while DriveTexas/weather are inactive or missing."
+    },
+    {
+      "priority": "P1",
+      "gap": "Provide and certify roadway geometry for the 226 counties absent from the runtime manifest."
+    },
+    {
+      "priority": "P1",
+      "gap": "Implement current observations, point/grid forecasts, and temperature/precipitation/wind/visibility consumer pipelines."
+    },
+    {
+      "priority": "P2",
+      "gap": "Activate only through a separately authorized milestone and certify DriveTexas and NWS-alert county/PLACE ownership statewide."
+    },
+    {
+      "priority": "P2",
+      "gap": "Validate deployed Supabase policies, legacy row ownership, and submit/read/clear round trips across representative statewide counties."
+    },
+    {
+      "priority": "P3",
+      "gap": "Certify saved-place multi-county restoration and composed Route Watch/Brief/Alert refresh behavior."
+    },
+    {
+      "priority": "P4",
+      "gap": "Keep directional intelligence and push/background delivery deferred until explicitly authorized."
+    }
+  ],
+  "conclusions": {
+    "driveTexas": "Not statewide operational: Texas-wide source adapter is disabled by default and ownership is uncertified.",
+    "weather": "Only an inactive Texas-wide alerts adapter exists; current conditions, observations, forecasts, and metrics are missing.",
+    "reports": "Statewide-capable in code, but deployed Supabase and legacy-record behavior are not statewide-certified.",
+    "roadGeometry": "Not statewide: 28/254 counties have runtime manifest entries.",
+    "routeWatch": "Not statewide-ready because road, DriveTexas, and weather dependencies are incomplete."
+  }
+}
