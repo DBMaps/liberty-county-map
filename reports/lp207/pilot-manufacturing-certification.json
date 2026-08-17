@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "gridly.lp207.pilot-manufacturing-certification.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "candidateOnly": true,
+  "productionAuthorized": false,
+  "uploadEnabled": false,
+  "activationEnabled": false,
+  "manufacturingTool": "tools/lp118/extract-tiger-roadways.mjs + tools/lp116/manufacture-candidate-roadways.mjs",
+  "partitionLimits": {
+    "targetFeatures": 35000,
+    "hardFeatures": 45000,
+    "targetBytes": 10485760,
+    "hardBytes": 20971520
+  },
+  "contract": {
+    "format": "GeoJSON FeatureCollection",
+    "geometryTypes": [
+      "LineString",
+      "MultiLineString"
+    ],
+    "crs": "EPSG:4326",
+    "coordinatePrecisionDecimals": 7,
+    "featureOrder": "stable source identity then normalized geometry",
+    "primaryRoadName": "FULLNAME",
+    "fallbackRoadName": null,
+    "unnamedRoadBehavior": "preserve null/empty; never fabricate",
+    "casing": "preserved",
+    "aliases": "not synthesized",
+    "classificationFields": [
+      "MTFCC",
+      "RTTYP"
+    ],
+    "classificationSemantics": "TIGER-native provenance; no OSM taxonomy equivalence",
+    "ownershipPolicy": "LP118 retains only features whose every coordinate is contained by the authoritative county polygon; unexplained drops are counted",
+    "canonicalIdentity": "UTF-8 JSON emitted with LF; source ZIP SHA-256 hashes exact binary bytes"
+  },
+  "counties": [
+    {
+      "countyFips": "48287",
+      "countyId": "lee-tx",
+      "countyName": "Lee",
+      "countySlug": "lee",
+      "status": "NOT_RUN",
+      "certificationResult": "BLOCKED",
+      "reason": "Owner source unavailable; GDAL manufacturing not run",
+      "activated": false,
+      "uploaded": false
+    },
+    {
+      "countyFips": "48331",
+      "countyId": "milam-tx",
+      "countyName": "Milam",
+      "countySlug": "milam",
+      "status": "NOT_RUN",
+      "certificationResult": "BLOCKED",
+      "reason": "Owner source unavailable; GDAL manufacturing not run",
+      "activated": false,
+      "uploaded": false
+    },
+    {
+      "countyFips": "48395",
+      "countyId": "robertson-tx",
+      "countyName": "Robertson",
+      "countySlug": "robertson",
+      "status": "NOT_RUN",
+      "certificationResult": "BLOCKED",
+      "reason": "Owner source unavailable; GDAL manufacturing not run",
+      "activated": false,
+      "uploaded": false
+    }
+  ],
+  "downstreamCompatibility": {
+    "status": "NOT_TESTED",
+    "roadwayLoader": "NOT_TESTED",
+    "nearestRoadLookup": "NOT_TESTED",
+    "roadNameExtraction": "NOT_TESTED",
+    "hazardReportRoadAssociation": "NOT_TESTED"
+  }
+}

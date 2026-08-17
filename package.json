@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp207": "node tools/lp207/build-lp207-evidence.mjs",
+    "verify:lp207": "node tools/lp207/build-lp207-evidence.mjs",
+    "test:lp207": "node --test tests/lp207-statewide-roadway-source-acquisition.test.mjs",
     "build:lp206": "node tools/lp206/build-statewide-roadway-geometry-audit.mjs --write",
     "verify:lp206": "node tools/lp206/build-statewide-roadway-geometry-audit.mjs --verify",
     "test:lp206": "node --test tests/lp206-statewide-roadway-geometry-source-and-coverage-audit.test.mjs",
