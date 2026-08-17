@@ -45325,9 +45325,10 @@ function getGridlySelectedAwarenessArea() {
     ? gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity(persistedHome)
     : null;
   if (persistedIdentity?.area) {
+    const projectedArea = gridlyProjectCanonicalPlaceOperationalCounty(persistedIdentity.area, window?.GRIDLY_ACTIVE_COUNTY_ID);
     gridlySelectedAwarenessAreaResolutionCache.signature = `PLACE_GEOID|${persistedIdentity.placeGeoid}|${persistedIdentity.memberships.join("|")}`;
-    gridlySelectedAwarenessAreaResolutionCache.area = persistedIdentity.area;
-    return persistedIdentity.area;
+    gridlySelectedAwarenessAreaResolutionCache.area = projectedArea;
+    return projectedArea;
   }
   const community = typeof getGridlySettingsPreferences === "function" ? (getGridlySettingsPreferences()?.community || {}) : {};
   const settingsTown = community.awarenessArea || community.homeTown || (typeof gridlySafeLocalStorageGet === "function" ? gridlySafeLocalStorageGet("gridlyHomeTown") : "");
@@ -45344,7 +45345,7 @@ function getGridlySelectedAwarenessArea() {
     gridlySelectedAwarenessAreaResolutionCache.cacheHits += 1;
     return gridlySelectedAwarenessAreaResolutionCache.area;
   }
-  const area = resolveGridlyAwarenessArea(requestedTown);
+  const area = gridlyProjectCanonicalPlaceOperationalCounty(resolveGridlyAwarenessArea(requestedTown), community.countyId || gridlyUserProfile?.awarenessAreaCountyId || window?.GRIDLY_ACTIVE_COUNTY_ID);
   if (typeof gridlyLp016RecordAwarenessSwitchEvent === "function") gridlyLp016RecordAwarenessSwitchEvent("canonicalAreaUpdated", { toArea: gridlyLp016AwarenessAreaLabel(area) });
   gridlySelectedAwarenessAreaResolutionCache.signature = signature;
   gridlySelectedAwarenessAreaResolutionCache.area = area;
@@ -45598,6 +45599,28 @@ function resolveGridlyAwarenessAreaForCounty(value = "", countyId = "") {
   return (GRIDLY_AWARENESS_AREA_DEFINITIONS || []).find((candidate) => {
     return gridlyNormalizeCountyId(candidate?.countyId || "") === normalizedCountyId && (candidate.key === dashed || normalizeGridlyAwarenessAreaLookupText(candidate.label) === normalized || normalizeGridlyAwarenessAreaLookupText(candidate.storageValue) === normalized);
   }) || resolveGridlyAwarenessArea(value);
+}
+
+// Settings normalization must remain a pure leaf operation. In particular it
+// must never consult selected awareness state: that getter reads settings as
+// part of its own resolution. Canonical PLACE identity and operational county
+// are joined only from the values supplied by the persisted record.
+function gridlyResolveSettingsAwarenessArea(value = "", countyId = "") {
+  const normalizedCountyId = gridlyNormalizeCountyId(countyId || "");
+  const area = normalizedCountyId
+    ? resolveGridlyAwarenessAreaForCounty(value, normalizedCountyId)
+    : resolveGridlyAwarenessArea(value);
+  if (!area || !normalizedCountyId || area.canonicalMultiCountyPlace !== true) return area;
+  const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || "");
+  return !countyFips || area.countyMemberships?.includes(countyFips) ? area : null;
+}
+
+function gridlyProjectCanonicalPlaceOperationalCounty(area, countyId = "") {
+  if (area?.canonicalMultiCountyPlace !== true) return area;
+  const normalizedCountyId = gridlyNormalizeCountyId(countyId || "");
+  const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || "");
+  if (!normalizedCountyId || !countyFips || !area.countyMemberships?.includes(countyFips)) return area;
+  return Object.freeze({ ...area, countyId: normalizedCountyId });
 }
 
 function normalizeGridlyHomeTown(value = "") {
@@ -94694,11 +94717,12 @@ function normalizeGridlySettings(raw = null) {
   const aliasedTextSize = GRIDLY_SETTINGS_TEXT_SIZE_ALIASES[normalizedTextSize] || normalizedTextSize;
   if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(aliasedTextSize)) base.display.textSize = aliasedTextSize;
   base.personalization.preferredName = normalizeGridlyPreferredName(personalization.preferredName);
-  const resolvedAwarenessArea = resolveGridlyAwarenessArea(community.awarenessArea || community.homeTown);
+  const explicitCountyId = gridlyNormalizeCountyId(community.countyId || "");
+  const resolvedAwarenessArea = gridlyResolveSettingsAwarenessArea(community.awarenessArea || community.homeTown, explicitCountyId);
   base.community.homeTown = resolvedAwarenessArea?.storageValue || "";
   base.community.awarenessArea = resolvedAwarenessArea?.storageValue || "";
   base.community.awarenessAreaKey = resolvedAwarenessArea?.key || "";
-  base.community.countyId = gridlyResolveCountyIdForAwarenessArea(base.community.awarenessArea || base.community.homeTown);
+  base.community.countyId = explicitCountyId || gridlyResolveCountyIdForAwarenessArea(base.community.awarenessArea || base.community.homeTown);
   return base;
 }
 
