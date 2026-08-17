@@ -136,6 +136,65 @@ test('LP213 startup settings and awareness resolution is bounded and non-reentra
   assert.equal(selected.countyId, 'dallas-tx', 'operational Dallas county is projected after normalization');
 });
 
+test('LP213 startup Liberty cancellation is followed by authoritative Dallas roadway activation', async () => {
+  const activations = [];
+  let roadwayOwner = 'liberty-tx';
+  let roadwayFeatureCount = 0;
+  const context = {
+    Object,
+    GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
+    GRIDLY_COUNTY_REGISTRY: {
+      'liberty-tx': { id: 'liberty-tx', countyFips: '48291' },
+      'dallas-tx': { id: 'dallas-tx', countyFips: '48113' }
+    },
+    gridlyPlacePresentationTargets: null,
+    gridlyOperationalCountyResolutionAudit: null,
+    gridlyActiveCountySynchronizationAudit: null,
+    gridlyActiveCountyTransitionGeneration: 0,
+    window: { GRIDLY_ACTIVE_COUNTY_ID: 'liberty-tx' },
+    gridlyGetActiveCountyId: () => context.window.GRIDLY_ACTIVE_COUNTY_ID,
+    gridlyNormalizeCountyId: (id) => String(id || '').toLowerCase(),
+    gridlyIsKnownCountyId: (id) => ['liberty-tx', 'dallas-tx'].includes(id),
+    gridlyResolveCountyIdForCoordinate: () => ({ countyId: 'dallas-tx', authoritativeGeometryAvailable: true }),
+    gridlyGetGovernedPlaceConsumerPresentationCamera: () => null,
+    gridlySetActiveCountyContext: (id) => {
+      context.window.GRIDLY_ACTIVE_COUNTY_ID = id;
+      context.gridlyActiveCountyTransitionGeneration += 1;
+      roadwayOwner = null;
+      activations.push({ countyId: 'liberty-tx', status: 'cancelled' });
+      return id;
+    },
+    gridlyActivateRoadwayDatasetForActiveCounty: async (reason) => {
+      const countyId = context.window.GRIDLY_ACTIVE_COUNTY_ID;
+      activations.push({ countyId, status: 'started', reason });
+      roadwayOwner = countyId;
+      roadwayFeatureCount = countyId === 'dallas-tx' ? 40208 : 8405;
+    },
+    ensureGridlyActiveCountyCrossingInventory() {},
+    getGridlySettingsPreferences: () => ({ community: {} }),
+    saveGridlySettingsPreferences() {},
+    saveGridlyUserProfile() {}
+  };
+  vm.createContext(context);
+  vm.runInContext([
+    productionFunction('gridlyResolveCanonicalPlaceGeoid'),
+    productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext'),
+    productionFunction('gridlyPersistCanonicalPlaceOperationalCounty'),
+    productionFunction('gridlySynchronizeActiveCountyForOperationalContext')
+  ].join('\n'), context);
+
+  const dallas = { key: 'place-4819000', label: 'Dallas', placeGeoid: '4819000', canonicalMultiCountyPlace: true, countyMemberships: ['48085', '48113'], lat: 32.7767, lng: -96.797 };
+  assert.equal(context.gridlySynchronizeActiveCountyForOperationalContext(dallas, 'dallas-tx', 'startup-semantic-hydration'), 'dallas-tx');
+  await Promise.resolve();
+
+  assert.deepEqual(activations.map(({ countyId, status }) => ({ countyId, status })), [
+    { countyId: 'liberty-tx', status: 'cancelled' },
+    { countyId: 'dallas-tx', status: 'started' }
+  ]);
+  assert.equal(roadwayOwner, 'dallas-tx');
+  assert.equal(roadwayFeatureCount, 40208);
+});
+
 test('LP213 canonical Dallas profile defeats stale settings and unrelated runtime at startup', () => {
   const dallas = Object.freeze({ key: 'place-4819000', label: 'Dallas', storageValue: 'Dallas', placeGeoid: '4819000', canonicalMultiCountyPlace: true, countyMemberships: Object.freeze(['48085', '48113', '48121', '48257', '48397']), countyId: null });
   const home = Object.freeze({ identityType: 'PLACE_GEOID', communityKey: '4819000', awarenessAreaKey: 'place-4819000', consumerLabel: 'Dallas', countyId: null, countyMemberships: dallas.countyMemberships });

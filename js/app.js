@@ -45884,6 +45884,15 @@ function gridlySynchronizeActiveCountyForOperationalContext(area, countyId, sour
   if (activeCountyIdAfter === resolvedCountyId) {
     gridlyPersistCanonicalPlaceOperationalCounty(area, resolvedCountyId, source);
     ensureGridlyActiveCountyCrossingInventory(`${source}:county-runtime-invariant`);
+    // The setter's activation is intentionally fire-and-forget. During startup
+    // it can be cancelled with the initial county work before hydration has
+    // established the authoritative owner. Reassert the roadway invariant from
+    // the synchronizer; the roadway loader de-duplicates an activation already
+    // retained for this county, while supplying the missing replacement when
+    // the stale startup activation was discarded.
+    if (typeof gridlyActivateRoadwayDatasetForActiveCounty === "function") {
+      void gridlyActivateRoadwayDatasetForActiveCounty(`${source}:county-runtime-invariant`);
+    }
   }
   gridlyActiveCountySynchronizationAudit = Object.freeze({ synchronizerInvoked: true, source, resolvedGridlyCountyId: resolvedCountyId, activeCountyIdBefore, activeCountyIdAfter, transitionAttempted: resolvedCountyId !== activeCountyIdBefore, transitionCommitted: activeCountyIdAfter === resolvedCountyId, transitionBlockedReason: activeCountyIdAfter === resolvedCountyId ? null : "setter_did_not_commit_resolved_county", setterInvoked, setterResult, transitionGenerationBefore, transitionGenerationAfter: gridlyActiveCountyTransitionGeneration });
   return resolvedCountyId;
