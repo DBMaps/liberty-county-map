@@ -1,0 +1,360 @@
+{
+  "milestone": "LP212",
+  "mode": "CONSUMER_RUNTIME_CERTIFICATION",
+  "productionManifest": {
+    "countyCount": 254,
+    "sha256": "e4c9ac7168ec84dc462695a93ea4561dbd62486131f3f78b70ed05ab5ba39a0c",
+    "identityPass": true
+  },
+  "countyMatrix": [
+    "Liberty",
+    "Chambers",
+    "Harris",
+    "Anderson",
+    "Bexar",
+    "Dallas"
+  ],
+  "countyResults": [
+    {
+      "county": "Liberty",
+      "pass": true,
+      "owner": "liberty-tx",
+      "geometryCount": 8405,
+      "source": "data/liberty-county-road-segments.geojson",
+      "partitionCount": 1,
+      "revision": 2,
+      "representativeRoadName": "Egly Road"
+    },
+    {
+      "county": "Anderson",
+      "pass": true,
+      "owner": "anderson-tx",
+      "geometryCount": 4752,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/anderson-tx/lp210/packages/anderson-tx.roadways.candidate.geojson",
+      "partitionCount": 1,
+      "revision": 4,
+      "representativeRoadName": "Deer Run"
+    },
+    {
+      "county": "Bexar",
+      "pass": true,
+      "owner": "bexar-tx",
+      "geometryCount": 35090,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/bexar-tx/lp210/candidate-roadway-manifest.json",
+      "partitionCount": 2,
+      "revision": 6,
+      "representativeRoadName": "Legend Hill"
+    },
+    {
+      "county": "Dallas",
+      "pass": true,
+      "owner": "dallas-tx",
+      "geometryCount": 40208,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/dallas-tx/lp210/candidate-roadway-manifest.json",
+      "partitionCount": 4,
+      "revision": 8,
+      "representativeRoadName": "Mesa Moor Dr"
+    },
+    {
+      "county": "Harris",
+      "pass": true,
+      "owner": "harris-tx",
+      "geometryCount": 26742,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/dallas-tx/lp210/candidate-roadway-manifest.json",
+      "partitionCount": 1,
+      "revision": 10,
+      "representativeRoadName": "Balfour"
+    },
+    {
+      "county": "Bexar",
+      "pass": true,
+      "owner": "bexar-tx",
+      "geometryCount": 35090,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/bexar-tx/lp210/candidate-roadway-manifest.json",
+      "partitionCount": 2,
+      "revision": 13,
+      "representativeRoadName": "Legend Hill"
+    },
+    {
+      "county": "Chambers",
+      "pass": true,
+      "owner": "chambers-tx",
+      "geometryCount": 8493,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/chambers-tx/lp030-v1/chambers-road-segments.geojson",
+      "partitionCount": 1,
+      "revision": 16,
+      "representativeRoadName": "Mescelero Street"
+    },
+    {
+      "county": "Liberty",
+      "pass": true,
+      "owner": "liberty-tx",
+      "geometryCount": 8405,
+      "source": "data/liberty-county-road-segments.geojson",
+      "partitionCount": 1,
+      "revision": 18,
+      "representativeRoadName": "Egly Road"
+    }
+  ],
+  "transitionSequence": [
+    "Liberty",
+    "Anderson",
+    "Bexar",
+    "Dallas",
+    "Harris",
+    "Bexar",
+    "FAILED_ANDERSON",
+    "Chambers",
+    "Liberty"
+  ],
+  "transitionResults": [
+    {
+      "county": "Liberty",
+      "pass": true,
+      "owner": "liberty-tx",
+      "geometryCount": 8405,
+      "source": "data/liberty-county-road-segments.geojson",
+      "partitionCount": 1,
+      "revision": 2,
+      "representativeRoadName": "Egly Road",
+      "priorGeometryCleared": true,
+      "priorPartitionsCleared": true,
+      "errorClear": true
+    },
+    {
+      "county": "Anderson",
+      "pass": true,
+      "owner": "anderson-tx",
+      "geometryCount": 4752,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/anderson-tx/lp210/packages/anderson-tx.roadways.candidate.geojson",
+      "partitionCount": 1,
+      "revision": 4,
+      "representativeRoadName": "Deer Run",
+      "priorGeometryCleared": true,
+      "priorPartitionsCleared": true,
+      "errorClear": true
+    },
+    {
+      "county": "Bexar",
+      "pass": true,
+      "owner": "bexar-tx",
+      "geometryCount": 35090,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/bexar-tx/lp210/candidate-roadway-manifest.json",
+      "partitionCount": 2,
+      "revision": 6,
+      "representativeRoadName": "Legend Hill",
+      "priorGeometryCleared": true,
+      "priorPartitionsCleared": true,
+      "errorClear": true
+    },
+    {
+      "county": "Dallas",
+      "pass": true,
+      "owner": "dallas-tx",
+      "geometryCount": 40208,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/dallas-tx/lp210/candidate-roadway-manifest.json",
+      "partitionCount": 4,
+      "revision": 8,
+      "representativeRoadName": "Mesa Moor Dr",
+      "priorGeometryCleared": true,
+      "priorPartitionsCleared": true,
+      "errorClear": true
+    },
+    {
+      "county": "Harris",
+      "pass": true,
+      "owner": "harris-tx",
+      "geometryCount": 26742,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/dallas-tx/lp210/candidate-roadway-manifest.json",
+      "partitionCount": 1,
+      "revision": 10,
+      "representativeRoadName": "Balfour",
+      "priorGeometryCleared": true,
+      "priorPartitionsCleared": true,
+      "errorClear": true
+    },
+    {
+      "county": "Bexar",
+      "pass": true,
+      "owner": "bexar-tx",
+      "geometryCount": 35090,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/bexar-tx/lp210/candidate-roadway-manifest.json",
+      "partitionCount": 2,
+      "revision": 13,
+      "representativeRoadName": "Legend Hill",
+      "priorGeometryCleared": true,
+      "priorPartitionsCleared": true,
+      "errorClear": true
+    },
+    {
+      "county": "FAILED_ANDERSON",
+      "pass": true,
+      "error": "Roadway dataset returned 404",
+      "geometryCount": 0,
+      "owner": null
+    },
+    {
+      "county": "Chambers",
+      "pass": true,
+      "owner": "chambers-tx",
+      "geometryCount": 8493,
+      "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/chambers-tx/lp030-v1/chambers-road-segments.geojson",
+      "partitionCount": 1,
+      "revision": 16,
+      "representativeRoadName": "Mescelero Street",
+      "priorGeometryCleared": true,
+      "priorPartitionsCleared": true,
+      "errorClear": true
+    },
+    {
+      "county": "Liberty",
+      "pass": true,
+      "owner": "liberty-tx",
+      "geometryCount": 8405,
+      "source": "data/liberty-county-road-segments.geojson",
+      "partitionCount": 1,
+      "revision": 18,
+      "representativeRoadName": "Egly Road",
+      "priorGeometryCleared": true,
+      "priorPartitionsCleared": true,
+      "errorClear": true
+    }
+  ],
+  "failureIsolation": {
+    "pass": true,
+    "failedCounty": "Anderson",
+    "priorOwner": "bexar-tx",
+    "geometryCleared": true,
+    "noFallback": true,
+    "recoveryCounty": "Chambers"
+  },
+  "lateCompletionGuard": {
+    "pass": true,
+    "lateCounty": "Anderson",
+    "retainedCounty": "Bexar",
+    "staleCompletionIgnored": true
+  },
+  "consumerResolution": {
+    "nearestRoad": {
+      "Liberty": {
+        "nearestRoad": "Egly Road",
+        "roadName": "Egly Road",
+        "reportAssociation": "Egly Road"
+      },
+      "Anderson": {
+        "nearestRoad": "Deer Run",
+        "roadName": "Deer Run",
+        "reportAssociation": "Deer Run"
+      },
+      "Bexar": {
+        "nearestRoad": "Legend Hill",
+        "roadName": "Legend Hill",
+        "reportAssociation": "Legend Hill"
+      },
+      "Dallas": {
+        "nearestRoad": "Mesa Moor Dr",
+        "roadName": "Mesa Moor Dr",
+        "reportAssociation": "Mesa Moor Dr"
+      },
+      "Harris": {
+        "nearestRoad": "Balfour",
+        "roadName": "Balfour",
+        "reportAssociation": "Balfour"
+      },
+      "Chambers": {
+        "nearestRoad": "Mescelero Street",
+        "roadName": "Mescelero Street",
+        "reportAssociation": "Mescelero Street"
+      }
+    },
+    "roadName": {
+      "Liberty": {
+        "nearestRoad": "Egly Road",
+        "roadName": "Egly Road",
+        "reportAssociation": "Egly Road"
+      },
+      "Anderson": {
+        "nearestRoad": "Deer Run",
+        "roadName": "Deer Run",
+        "reportAssociation": "Deer Run"
+      },
+      "Bexar": {
+        "nearestRoad": "Legend Hill",
+        "roadName": "Legend Hill",
+        "reportAssociation": "Legend Hill"
+      },
+      "Dallas": {
+        "nearestRoad": "Mesa Moor Dr",
+        "roadName": "Mesa Moor Dr",
+        "reportAssociation": "Mesa Moor Dr"
+      },
+      "Harris": {
+        "nearestRoad": "Balfour",
+        "roadName": "Balfour",
+        "reportAssociation": "Balfour"
+      },
+      "Chambers": {
+        "nearestRoad": "Mescelero Street",
+        "roadName": "Mescelero Street",
+        "reportAssociation": "Mescelero Street"
+      }
+    },
+    "reportAssociation": {
+      "Liberty": {
+        "nearestRoad": "Egly Road",
+        "roadName": "Egly Road",
+        "reportAssociation": "Egly Road"
+      },
+      "Anderson": {
+        "nearestRoad": "Deer Run",
+        "roadName": "Deer Run",
+        "reportAssociation": "Deer Run"
+      },
+      "Bexar": {
+        "nearestRoad": "Legend Hill",
+        "roadName": "Legend Hill",
+        "reportAssociation": "Legend Hill"
+      },
+      "Dallas": {
+        "nearestRoad": "Mesa Moor Dr",
+        "roadName": "Mesa Moor Dr",
+        "reportAssociation": "Mesa Moor Dr"
+      },
+      "Harris": {
+        "nearestRoad": "Balfour",
+        "roadName": "Balfour",
+        "reportAssociation": "Balfour"
+      },
+      "Chambers": {
+        "nearestRoad": "Mescelero Street",
+        "roadName": "Mescelero Street",
+        "reportAssociation": "Mescelero Street"
+      }
+    }
+  },
+  "architectureCoverage": {
+    "existingLocal": true,
+    "existingRemoteSingle": true,
+    "harrisLegacyPartition": true,
+    "lp210RemoteSingle": true,
+    "lp210TwoPart": true,
+    "lp210FourPart": true
+  },
+  "awarenessCountyOwnership": {
+    "pass": true,
+    "countyContextAuthoritative": true,
+    "incompatibleAreaCannotChangeRoadwayOwner": true
+  },
+  "protectedSystemsMutated": false,
+  "productionDefectsFound": [
+    {
+      "id": "LP212_ROADWAY_IDENTITY_SCHEMA_COMPATIBILITY",
+      "county": "Anderson",
+      "observedGeometryCount": 4752,
+      "existingResolverFieldsPresent": 0,
+      "fallbackField": "FULLNAME",
+      "status": "REPAIRED"
+    }
+  ],
+  "finalDecision": "STATEWIDE_ROADWAY_CONSUMER_RUNTIME_CERTIFIED"
+}
