@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "gridly.lp2021.statewide-crossing-runtime-source-resolution-repair.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "repositoryBaseline": "937de1472f81f321e39dabc26a93847a5e55e2c1",
+  "filesChanged": {
+    "production": [
+      "js/gridlyRuntimeSourceRegistryBridge.js",
+      "js/app.js"
+    ],
+    "tests": [
+      "tests/lp2021-statewide-crossing-runtime-source-resolution.test.mjs"
+    ],
+    "configuration": ["package.json"],
+    "report": ["reports/lp2021/statewide-crossing-runtime-source-resolution-repair.json"]
+  },
+  "architecture": {
+    "before": "Inline county crossing availability and paths gated the loader before registry resolution.",
+    "after": "Selected county identity -> runtime Crossing registry entry -> county manifest authentication -> activated production manifest record -> governed packageFile -> existing crossing provider.",
+    "precedence": [
+      "authoritative statewide governed Crossing resolution",
+      "intentional ACTIVE_EMPTY",
+      "fail closed; no legacy substitution"
+    ]
+  },
+  "statewideAccounting": {
+    "governedCounties": 254,
+    "activePositive": 202,
+    "activeEmpty": 52,
+    "totalGovernedCrossings": 16099,
+    "resolvedPositivePackages": 202,
+    "healthyEmptyPackages": 52,
+    "failures": 0
+  },
+  "controls": {
+    "dallas": {
+      "fips": "48113",
+      "before": "legacy availability not-claimed; zero loaded",
+      "after": "ACTIVE_POSITIVE; Crossing-Packages/dallas/Production/dallas-production-crossings.geojson",
+      "governedCount": 789,
+      "loadedPreFilterCount": 789,
+      "classifications": { "PUBLIC_ROADWAY": 789 }
+    },
+    "liberty": {
+      "fips": "48291",
+      "legacyInlineBypassed": true,
+      "packageFile": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+      "governedCount": 115,
+      "classifications": {
+        "PUBLIC_ROADWAY": 80,
+        "PRIVATE_ROAD": 28,
+        "INDUSTRIAL": 5,
+        "RAIL_YARD": 1,
+        "TEMPORARY_ACCESS": 1
+      }
+    },
+    "activeEmpty": [
+      { "county": "Andrews", "state": "ACTIVE_EMPTY", "count": 0 },
+      { "county": "Archer", "state": "ACTIVE_EMPTY", "count": 0 },
+      { "county": "Bandera", "state": "ACTIVE_EMPTY", "count": 0 }
+    ],
+    "positiveRegional": ["Dallas", "El Paso", "Hidalgo", "Travis", "Smith", "Harris"]
+  },
+  "countySwitching": {
+    "sequences": [
+      "Liberty -> Dallas -> Liberty",
+      "Dallas -> Tarrant -> Andrews -> Dallas"
+    ],
+    "staleInventoryRetained": false,
+    "emptyClearsPositiveSource": true,
+    "countySpecificSourceResolution": true
+  },
+  "staleLegacyAssumptionsBypassed": [
+    "runtimeSourceAvailability.crossings = not-claimed",
+    "localCrossingsPath",
+    "crossingsPath",
+    "pre-activation county packageFile when superseded by activated production manifest"
+  ],
+  "tests": [
+    "npm run test:lp2021 (PASS: 5/5)",
+    "node --check js/gridlyRuntimeSourceRegistryBridge.js (PASS)",
+    "node --check js/app.js (PASS)",
+    "node --test tests/lp0953-crossing-runtime-trace.test.js tests/lp0954a-crossing-post-dispatch-runtime-repair.test.js (PASS)",
+    "tests/lp1894-existing-crossing-runtime-regression.test.mjs (STALE: asserts superseded 28-package and 243-county baselines)"
+  ],
+  "deferredFindings": [
+    "LP189.4 historical regression assertions remain pinned to pre-Wave-3A.3 28-package and 243-county architecture."
+  ]
+}

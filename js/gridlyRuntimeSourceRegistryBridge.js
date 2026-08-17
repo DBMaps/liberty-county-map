@@ -1,8 +1,9 @@
 ﻿(function () {
     "use strict";
 
-    const BRIDGE_VERSION = "GRIDLY_RUNTIME_SOURCE_REGISTRY_BRIDGE_V1_3";
+    const BRIDGE_VERSION = "GRIDLY_RUNTIME_SOURCE_REGISTRY_BRIDGE_V2_0";
     const RUNTIME_REGISTRY_PATH = "assets/package-registry/runtime-package-registry.json";
+    const PRODUCTION_CROSSING_MANIFEST_PATH = "Crossing-Packages/production-crossing-manifest.json";
 
     function normalizeCountyName(county) {
         return String(county || "").trim();
@@ -30,7 +31,9 @@
 
         if (!looksLikeFile) return null;
 
-        return trimmed.replace(/\\/g, "/").replace(/^\/+/, "");
+        const normalized = trimmed.replace(/\\/g, "/").replace(/^\/+/, "");
+        if (/^(?:[a-z]+:)?\/\//i.test(trimmed) || normalized.split("/").includes("..")) return null;
+        return normalized;
     }
 
     function firstManifestPath(manifest, fieldNames) {
@@ -70,6 +73,63 @@
 
     async function loadRuntimeRegistry() {
         return fetchJson(RUNTIME_REGISTRY_PATH);
+    }
+
+    function countyNameFromIdentity(identity) {
+        if (typeof identity === "string") return normalizeCountyName(identity.replace(/\s+county$/i, ""));
+        return normalizeCountyName(identity && (identity.county || identity.name || identity.countyName)).replace(/\s+county$/i, "");
+    }
+
+    async function resolveGovernedCrossingSource(identity) {
+        const county = countyNameFromIdentity(identity);
+        if (!county) throw new Error("Governed crossing county identity is required");
+
+        const registry = await loadRuntimeRegistry();
+        const entry = findPackageEntry(registry, county, "Crossing");
+        if (!entry) throw new Error("Governed Crossing registry entry not found for " + county);
+        const manifestPath = getManifestPathFromEntry(entry);
+        if (!manifestPath) throw new Error("Governed Crossing registry entry has no safe manifest path for " + county);
+
+        const countyManifest = await fetchJson(manifestPath);
+        if (normalizeCountyKey(countyManifest && countyManifest.county) !== normalizeCountyKey(county)) {
+            throw new Error("Governed Crossing manifest county ownership mismatch for " + county);
+        }
+        if (normalizePackageType(countyManifest.packageType) !== "crossing") {
+            throw new Error("Governed Crossing manifest package type mismatch for " + county);
+        }
+
+        // The activation manifest is the conservation authority.  It supersedes
+        // pre-activation packageFile values still present in a few county manifests.
+        const productionManifest = await fetchJson(PRODUCTION_CROSSING_MANIFEST_PATH);
+        const productionRecord = Array.isArray(productionManifest && productionManifest.records)
+            ? productionManifest.records.find(function (record) {
+                return normalizeCountyKey(record.county) === normalizeCountyKey(county);
+            })
+            : null;
+        if (!productionRecord || productionRecord.status !== "PASS") {
+            throw new Error("Governed production Crossing record not found for " + county);
+        }
+        const governedCount = Number(productionRecord.crossingCount);
+        if (!Number.isSafeInteger(governedCount) || governedCount < 0) {
+            throw new Error("Invalid governed Crossing count for " + county);
+        }
+        const state = governedCount === 0 ? "ACTIVE_EMPTY" : "ACTIVE_POSITIVE";
+        const packageFile = cleanPath(productionRecord.packageFile);
+        if (state === "ACTIVE_POSITIVE" && !packageFile) {
+            throw new Error("ACTIVE_POSITIVE governed Crossing packageFile is missing or unsafe for " + county);
+        }
+
+        return Object.freeze({
+            county,
+            countyFips: identity && typeof identity === "object" ? String(identity.countyFips || "") : "",
+            state,
+            governedCount,
+            registryEntryFound: true,
+            manifestPath,
+            packageFile: packageFile || null,
+            sourceResolutionMode: "statewide_governed_registry",
+            legacyInlineSourceBypassed: true
+        });
     }
 
     function findPackageEntry(registry, county, packageType) {
@@ -300,7 +360,8 @@
 
     window.gridlyRuntimeSourceRegistryBridge = {
         version: BRIDGE_VERSION,
-        buildRuntimeSourcesFromPackages
+        buildRuntimeSourcesFromPackages,
+        resolveGovernedCrossingSource
     };
 
     window.gridlyRuntimeSourceRegistryBridgeAudit = auditRuntimeSourceRegistryBridge;

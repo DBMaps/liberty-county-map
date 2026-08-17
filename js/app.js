@@ -51734,21 +51734,46 @@ function gridlyRoadBearingDegrees(startLat, startLng, endLat, endLng) {
 }
 
 async function fetchFraCrossingsWithRetry(countyId = gridlyGetActiveCountyId()) {
-  if (!gridlyCountyRuntimeSourceAvailable("crossings", gridlyNormalizeCountyId(countyId))) {
+  const normalizedCountyId = gridlyNormalizeCountyId(countyId);
+  const countyConfig = GRIDLY_COUNTY_REGISTRY[normalizedCountyId];
+  const governedResolver = window.gridlyRuntimeSourceRegistryBridge?.resolveGovernedCrossingSource;
+  if (typeof governedResolver !== "function") throw new Error("Governed statewide Crossing resolver unavailable");
+  const governedSource = await governedResolver({
+    county: String(countyConfig?.name || "").replace(/\s+County$/i, ""),
+    countyFips: countyConfig?.countyFips
+  });
+  if (governedSource.state === "ACTIVE_EMPTY") {
     return new Response(JSON.stringify({ type: "FeatureCollection", features: [] }), {
       status: 200,
       headers: { "Content-Type": "application/json" }
     });
   }
 
-  const activeSources = gridlyGetCountyRuntimeSources(gridlyNormalizeCountyId(countyId));
+  const activeSources = Object.assign({}, gridlyGetCountyRuntimeSources(normalizedCountyId), {
+    crossingSource: governedSource.packageFile,
+    remoteCrossingSource: null
+  });
 
   if (typeof window !== "undefined" && typeof window.gridlyGetActiveCountyCrossings === "function") {
     try {
       const providerGeojson = await window.gridlyGetActiveCountyCrossings({
-        countyId: gridlyNormalizeCountyId(countyId),
-        sourcePath: activeSources?.crossingSource || null
+        countyId: normalizedCountyId,
+        sourcePath: governedSource.packageFile
       });
+
+      const providerFeatureCount = Array.isArray(providerGeojson?.features) ? providerGeojson.features.length : 0;
+      if (providerFeatureCount !== governedSource.governedCount) {
+        throw new Error(`Governed Crossing count mismatch for ${governedSource.county}: expected ${governedSource.governedCount}, loaded ${providerFeatureCount}`);
+      }
+      const expectedCountyFips = String(governedSource.countyFips || "");
+      const ownershipMismatch = expectedCountyFips && providerGeojson.features.some((feature) => {
+        const properties = feature?.properties || {};
+        const featureCountyFips = String(properties.STCYFIPS || properties.CountyCode || properties.countyFips || "");
+        return !featureCountyFips || featureCountyFips !== expectedCountyFips;
+      });
+      if (ownershipMismatch) {
+        throw new Error(`Governed Crossing package county ownership mismatch for ${governedSource.county}`);
+      }
 
       const providerAudit =
         typeof window.gridlyCrossingProvider?.audit === "function"
@@ -51784,8 +51809,9 @@ async function fetchFraCrossingsWithRetry(countyId = gridlyGetActiveCountyId()) 
       recordGridlyCrossingFallbackAudit("crossingProviderRuntimeSourceFailed", {
         providerRuntimeIntegrationActive: true,
         providerFailureReason: String(providerError?.message || providerError || "unknown_error"),
-        providerFallbackToExistingPath: true
+        providerFallbackToExistingPath: false
       });
+      throw providerError;
     }
   }
 
