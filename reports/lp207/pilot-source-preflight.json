@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "gridly.lp207.pilot-source-preflight.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "sourceRoot": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS",
+  "requested": 3,
+  "valid": 0,
+  "gdalReadable": false,
+  "results": [
+    {
+      "countyFips": "48287",
+      "countyId": "lee-tx",
+      "countyName": "Lee",
+      "countySlug": "lee",
+      "requestedUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48287_roads.zip",
+      "destinationPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48287_roads.zip",
+      "mode": "verify",
+      "existingFile": false,
+      "downloaded": false,
+      "bytes": 0,
+      "sha256": null,
+      "zipValid": false,
+      "requiredMembersPresent": false,
+      "failureReason": null,
+      "status": "SOURCE_MISSING"
+    },
+    {
+      "countyFips": "48331",
+      "countyId": "milam-tx",
+      "countyName": "Milam",
+      "countySlug": "milam",
+      "requestedUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48331_roads.zip",
+      "destinationPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48331_roads.zip",
+      "mode": "verify",
+      "existingFile": false,
+      "downloaded": false,
+      "bytes": 0,
+      "sha256": null,
+      "zipValid": false,
+      "requiredMembersPresent": false,
+      "failureReason": null,
+      "status": "SOURCE_MISSING"
+    },
+    {
+      "countyFips": "48395",
+      "countyId": "robertson-tx",
+      "countyName": "Robertson",
+      "countySlug": "robertson",
+      "requestedUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48395_roads.zip",
+      "destinationPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48395_roads.zip",
+      "mode": "verify",
+      "existingFile": false,
+      "downloaded": false,
+      "bytes": 0,
+      "sha256": null,
+      "zipValid": false,
+      "requiredMembersPresent": false,
+      "failureReason": null,
+      "status": "SOURCE_MISSING"
+    }
+  ],
+  "status": "BLOCKED_MISSING_OWNER_SOURCES"
+}

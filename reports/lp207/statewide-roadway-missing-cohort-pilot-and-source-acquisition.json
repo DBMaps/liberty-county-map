@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "gridly.lp207.statewide-roadway-missing-cohort-pilot-and-source-acquisition.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "acquisitionToolComplete": true,
+  "pilotPassed": false,
+  "readiness": "BLOCKED_FOR_STATEWIDE_ROADWAY",
+  "blockers": [
+    "The three required owner TIGER2025 ZIPs are not materialized in this environment, so ZIP authentication and the real pilot cannot be certified.",
+    "ogr2ogr/GDAL is not installed in this environment, so LP118 cannot read or transform shapefiles."
+  ],
+  "sourceGovernance": {
+    "existing28": "Grandfathered under current governed/certified package identities; LP207 does not migrate or rebuild them.",
+    "newMissingCohort": "U.S. Census Bureau TIGER/Line 2025 All Roads with explicit binary source identity and TIGER-native classification provenance.",
+    "sourceGenerationBoundaryIntentional": true
+  },
+  "conservation": {
+    "pilotRequested": 3,
+    "pilotSourceValid": 0,
+    "pilotManufactured": 0,
+    "pilotCertified": 0,
+    "pilotActivated": 0,
+    "pilotUploaded": 0,
+    "productionRoadwayCountyCountBefore": 28,
+    "productionRoadwayCountyCountAfter": 28,
+    "supabaseRoadwayWrites": 0,
+    "runtimeActivations": 0,
+    "existingGovernedRoadwayPackagesModified": 0,
+    "pilotPackagesPublished": 0
+  },
+  "productionRuntimeManifest": {
+    "path": "data/roadway-runtime-manifest.json",
+    "sha256Before": "56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd",
+    "sha256After": "56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd",
+    "unchanged": true
+  },
+  "statewidePlan": {
+    "missingCohort": 226,
+    "existingRuntimeOverlap": 0,
+    "localValidSourceCount": 0,
+    "acquisitionRequiredCount": 226,
+    "plannedSourceUrls": 226,
+    "duplicateUrls": 0,
+    "duplicateFips": 0
+  },
+  "dallasFutureScaleControl": {
+    "countyFips": "48113",
+    "role": "recommended first larger-county control after pilot",
+    "acquiredOrActivated": false
+  }
+}
