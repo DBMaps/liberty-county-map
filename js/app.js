@@ -45325,9 +45325,14 @@ function getGridlySelectedAwarenessArea() {
     ? gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity(persistedHome)
     : null;
   if (persistedIdentity?.area) {
+    const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyNormalizeCountyId(gridlyGetActiveCountyId()) : null;
+    const activeCountyFips = String(GRIDLY_COUNTY_REGISTRY?.[activeCountyId]?.countyFips || "");
+    const operationalArea = activeCountyId && persistedIdentity.memberships.includes(activeCountyFips)
+      ? Object.freeze({ ...persistedIdentity.area, countyId: activeCountyId })
+      : persistedIdentity.area;
     gridlySelectedAwarenessAreaResolutionCache.signature = `PLACE_GEOID|${persistedIdentity.placeGeoid}|${persistedIdentity.memberships.join("|")}`;
-    gridlySelectedAwarenessAreaResolutionCache.area = persistedIdentity.area;
-    return persistedIdentity.area;
+    gridlySelectedAwarenessAreaResolutionCache.area = operationalArea;
+    return operationalArea;
   }
   const community = typeof getGridlySettingsPreferences === "function" ? (getGridlySettingsPreferences()?.community || {}) : {};
   const settingsTown = community.awarenessArea || community.homeTown || (typeof gridlySafeLocalStorageGet === "function" ? gridlySafeLocalStorageGet("gridlyHomeTown") : "");
@@ -94694,19 +94699,16 @@ function normalizeGridlySettings(raw = null) {
   const aliasedTextSize = GRIDLY_SETTINGS_TEXT_SIZE_ALIASES[normalizedTextSize] || normalizedTextSize;
   if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(aliasedTextSize)) base.display.textSize = aliasedTextSize;
   base.personalization.preferredName = normalizeGridlyPreferredName(personalization.preferredName);
-  const resolvedAwarenessArea = resolveGridlyAwarenessArea(community.awarenessArea || community.homeTown);
+  const requestedCountyId = gridlyNormalizeCountyId(community.countyId || "");
+  const resolvedAwarenessArea = requestedCountyId && gridlyIsKnownCountyId(requestedCountyId)
+    ? resolveGridlyAwarenessAreaForCounty(community.awarenessArea || community.homeTown, requestedCountyId)
+    : resolveGridlyAwarenessArea(community.awarenessArea || community.homeTown);
   base.community.homeTown = resolvedAwarenessArea?.storageValue || "";
   base.community.awarenessArea = resolvedAwarenessArea?.storageValue || "";
   base.community.awarenessAreaKey = resolvedAwarenessArea?.key || "";
-  const requestedCountyId = gridlyNormalizeCountyId(community.countyId || "");
-  const requestedCountyFips = String(GRIDLY_COUNTY_REGISTRY[requestedCountyId]?.countyFips || "");
-  const canonicalPlaceCountyId = resolvedAwarenessArea?.canonicalMultiCountyPlace === true
-    && resolvedAwarenessArea.key === community.awarenessAreaKey
-    && Array.isArray(resolvedAwarenessArea.countyMemberships)
-    && resolvedAwarenessArea.countyMemberships.map(String).includes(requestedCountyFips)
+  base.community.countyId = requestedCountyId && gridlyIsKnownCountyId(requestedCountyId) && gridlyNormalizeCountyId(resolvedAwarenessArea?.countyId || "") === requestedCountyId
     ? requestedCountyId
-    : null;
-  base.community.countyId = canonicalPlaceCountyId || gridlyResolveCountyIdForAwarenessArea(base.community.awarenessArea || base.community.homeTown);
+    : gridlyResolveCountyIdForAwarenessArea(base.community.awarenessArea || base.community.homeTown);
   return base;
 }
 

@@ -93,7 +93,9 @@ test('LP213 canonical PLACE settings retain the authoritative operational county
     normalizeGridlyPreferredName: (value) => value || '',
     resolveGridlyAwarenessArea: () => ({ storageValue: 'Dallas', key: 'place-4819000', canonicalMultiCountyPlace: true, countyMemberships: ['48085', '48113', '48121', '48257', '48397'] }),
     gridlyResolveCountyIdForAwarenessArea: () => 'collin-tx',
-    gridlyNormalizeCountyId: (value) => String(value || '').toLowerCase()
+    gridlyNormalizeCountyId: (value) => String(value || '').toLowerCase(),
+    gridlyIsKnownCountyId: (value) => ['dallas-tx', 'collin-tx'].includes(String(value || '').toLowerCase()),
+    resolveGridlyAwarenessAreaForCounty: (_value, countyId) => ({ storageValue: 'Dallas', key: 'place-4819000', countyId, canonicalMultiCountyPlace: true, countyMemberships: ['48085', '48113', '48121', '48257', '48397'] })
   };
   vm.createContext(context);
   vm.runInContext(productionFunction('normalizeGridlySettings'), context);
@@ -132,4 +134,45 @@ test('LP213 roadway activation does not yield after an installed manifest', () =
   const load = productionFunction('loadRoadwayDataset');
   assert.match(activate, /if \(!gridlyRoadwayRuntimeManifest\) await gridlyEnsureRoadwayRuntimeManifestLoaded\(\)/);
   assert.match(load, /if \(!gridlyRoadwayRuntimeManifest\) await gridlyEnsureRoadwayRuntimeManifestLoaded\(\)/);
+});
+
+test('LP213 repairs the browser settings=collin and awareness=liberty stale consumers', () => {
+  const dallas = Object.freeze({ key: 'dallas', label: 'Dallas', storageValue: 'Dallas', countyId: 'dallas-tx' });
+  const collinDallas = Object.freeze({ key: 'dallas-collin', label: 'Dallas', storageValue: 'Dallas', countyId: 'collin-tx' });
+  const canonicalDallas = Object.freeze({ key: 'place-4819000', label: 'Dallas', storageValue: 'Dallas', countyId: null, canonicalMultiCountyPlace: true });
+  const context = {
+    Object,
+    GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
+    GRIDLY_SETTINGS_DEFAULTS: { notifications: {}, display: {}, personalization: {} },
+    GRIDLY_SETTINGS_MAP_STYLE_LABELS: {},
+    GRIDLY_SETTINGS_VALID_THEMES: new Set(),
+    GRIDLY_SETTINGS_TEXT_SIZE_ALIASES: {},
+    GRIDLY_SETTINGS_VALID_TEXT_SIZES: new Set(),
+    GRIDLY_COUNTY_REGISTRY: {
+      'liberty-tx': { countyFips: '48291' },
+      'collin-tx': { countyFips: '48085' },
+      'dallas-tx': { countyFips: '48113' }
+    },
+    gridlySelectedAwarenessAreaResolutionCache: { totalGetterCalls: 0, signature: 'stale-liberty', area: { label: 'Liberty', countyId: 'liberty-tx' } },
+    gridlyRecordSelectedAwarenessAreaGetterCaller: () => {},
+    gridlyNormalizeCountyId: (value) => String(value || '').toLowerCase(),
+    gridlyIsKnownCountyId: (value) => ['liberty-tx', 'collin-tx', 'dallas-tx'].includes(value),
+    normalizeGridlyPreferredName: (value) => value || '',
+    resolveGridlyAwarenessArea: () => collinDallas,
+    resolveGridlyAwarenessAreaForCounty: (_value, countyId) => countyId === 'dallas-tx' ? dallas : collinDallas,
+    gridlyResolveCountyIdForAwarenessArea: () => 'collin-tx',
+    gridlyReadHomePersonalizationRecord: () => ({ identityType: 'PLACE_GEOID', countyId: null }),
+    gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity: () => ({ placeGeoid: '4819000', memberships: ['48085', '48113', '48121', '48257', '48397'], area: canonicalDallas }),
+    gridlyGetActiveCountyId: () => 'dallas-tx'
+  };
+  vm.createContext(context);
+  vm.runInContext([
+    productionFunction('normalizeGridlySettings'),
+    productionFunction('getGridlySelectedAwarenessArea')
+  ].join('\n'), context);
+
+  assert.equal(context.gridlySelectedAwarenessAreaResolutionCache.area.countyId, 'liberty-tx', 'fixture begins with the observed stale awareness consumer');
+  const settings = context.normalizeGridlySettings({ community: { homeTown: 'Dallas', awarenessArea: 'Dallas', countyId: 'dallas-tx' } });
+  assert.equal(settings.community.countyId, 'dallas-tx', 'explicit operational county defeats the ambiguous Collin label match');
+  assert.equal(context.getGridlySelectedAwarenessArea().countyId, 'dallas-tx', 'canonical awareness consumes the active membership county instead of stale Liberty');
 });
