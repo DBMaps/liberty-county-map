@@ -14,7 +14,9 @@ function functionSource(name, nextName) {
 }
 
 function harness(countyId = 'mclennan-tx') {
+  const governedCount = countyId === 'mclennan-tx' ? 178 : 115;
   const context = {
+    window: { gridlyCrossingCoverageAuthority: { resolve: id => ({ countyId: id, state: 'ACTIVE_POSITIVE', governedCount }) } },
     GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
     GRIDLY_COUNTY_REGISTRY: {
       'liberty-tx': { runtimeSourceAvailability: { crossings: 'available' } },
@@ -22,6 +24,9 @@ function harness(countyId = 'mclennan-tx') {
     },
     gridlyNormalizeCountyId: (value) => value,
     gridlyGetActiveCountyId: () => countyId,
+    gridlyActiveCountyRuntimeAudit: () => ({ runtimeInventoryCounty: countyId, crossingInventoryCount: governedCount, inventoryOwnerMatchesActiveCounty: true, inventoryHydrationCompleted: true, inventoryHydrationState: 'loaded_positive' }),
+    gridlySelectConsumerVisibleCrossings: () => [{}],
+    getGridlySelectedAwarenessArea: () => ({}),
     Object, Number, Math
   };
   vm.createContext(context);
@@ -33,14 +38,14 @@ function harness(countyId = 'mclennan-tx') {
   return context;
 }
 
-test('Waco zero evidence is governed as limited coverage, never quiet', () => {
+test('Waco governed crossing coverage preserves the awareness-first quiet state', () => {
   const api = harness();
   const coverage = api.getGridlyAwarenessCoverageState();
   const copy = api.getGridlyHomeCommunityPulseCopy({ quiet: true, activeCount: 0, coverage });
-  assert.equal(api.classifyGridlyAwarenessTrustState({ activeCount: 0, coverage }), 'coverage_limited');
-  assert.equal(copy.headline, 'Limited local coverage');
-  assert.equal(copy.subline, "Crossing data isn't available for this area yet.");
-  assert.doesNotMatch(`${copy.headline} ${copy.subline}`, /community is quiet|no physical crossings|not-claimed/i);
+  assert.equal(api.classifyGridlyAwarenessTrustState({ activeCount: 0, coverage }), 'quiet');
+  assert.equal(copy.headline, 'Community is quiet.');
+  assert.equal(copy.subline, 'Travel normally today.');
+  assert.doesNotMatch(`${copy.headline} ${copy.subline}`, /limited local coverage|isn't available|not-claimed/i);
 });
 
 test('supported Liberty zero-active control retains quiet state', () => {

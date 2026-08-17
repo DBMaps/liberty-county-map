@@ -61368,23 +61368,65 @@ function gridlyCommunityPulseFirstPaintAudit() {
 
 function getGridlyAwarenessCoverageState(options = {}) {
   const countyId = gridlyNormalizeCountyId(options.countyId || (typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : GRIDLY_DEFAULT_COUNTY_ID));
-  const countyConfig = GRIDLY_COUNTY_REGISTRY[countyId] || {};
-  const crossingAvailable = options.crossingAvailable !== undefined
-    ? options.crossingAvailable === true
-    : countyConfig?.runtimeSourceAvailability?.crossings === "available";
+  const governed = options.governedSource || (typeof window !== "undefined" ? window.gridlyCrossingCoverageAuthority?.resolve(countyId) : null);
+  const runtime = options.runtimeState || (typeof gridlyActiveCountyRuntimeAudit === "function" ? gridlyActiveCountyRuntimeAudit() : {});
+  const awarenessCrossingCount = Math.max(0, Number(options.awarenessCrossingCount !== undefined
+    ? options.awarenessCrossingCount
+    : (typeof gridlySelectConsumerVisibleCrossings === "function" ? gridlySelectConsumerVisibleCrossings(getGridlySelectedAwarenessArea()).length : 0)) || 0);
+  const ownerMatches = runtime.inventoryOwnerMatchesActiveCounty === true && runtime.runtimeInventoryCounty === countyId;
+  const hydrated = ownerMatches && runtime.inventoryHydrationCompleted === true;
+  const failed = Boolean(runtime.inventoryHydrationFailureReason || runtime.failureReason);
+  let semanticCoverageState = "UNAVAILABLE";
+  if (governed) {
+    if (failed) semanticCoverageState = "TEMPORARILY_UNAVAILABLE";
+    else if (!hydrated) semanticCoverageState = "LOADING";
+    else if (governed.state === "ACTIVE_EMPTY" && Number(runtime.crossingInventoryCount) === 0) semanticCoverageState = "AVAILABLE_NO_GOVERNED_CROSSINGS";
+    else if (governed.state === "ACTIVE_POSITIVE" && awarenessCrossingCount === 0) semanticCoverageState = "AVAILABLE_NO_LOCAL_CROSSINGS";
+    else if (governed.state === "ACTIVE_POSITIVE") semanticCoverageState = "AVAILABLE_WITH_CROSSINGS";
+    else semanticCoverageState = "TEMPORARILY_UNAVAILABLE";
+  }
+  const crossingAvailable = semanticCoverageState.startsWith("AVAILABLE_");
+  const copy = semanticCoverageState === "LOADING"
+    ? { primary: "", secondary: "Crossing information is loading" }
+    : semanticCoverageState === "TEMPORARILY_UNAVAILABLE"
+      ? { primary: "Limited local coverage", secondary: "Crossing information is temporarily unavailable" }
+      : semanticCoverageState === "UNAVAILABLE"
+        ? { primary: "Limited local coverage", secondary: "Crossing data isn't available for this area yet." }
+        : { primary: "", secondary: "" };
   return Object.freeze({
-    state: crossingAvailable ? "available" : "limited",
+    state: crossingAvailable ? "available" : semanticCoverageState.toLowerCase(),
+    semanticCoverageState,
     crossingAvailable,
     countyId,
-    primary: crossingAvailable ? "" : "Limited local coverage",
-    secondary: crossingAvailable ? "" : "Crossing data isn't available for this area yet."
+    governedState: governed?.state || null,
+    governedCount: governed?.governedCount ?? null,
+    runtimeInventoryCounty: runtime.runtimeInventoryCounty || null,
+    inventoryCount: Number(runtime.crossingInventoryCount) || 0,
+    hydrationState: runtime.inventoryHydrationState || (failed ? "failed" : "unhydrated"),
+    awarenessCrossingCount,
+    legacyAuthorityUsed: false,
+    primary: copy.primary,
+    secondary: copy.secondary
+  });
+}
+
+function gridlyCrossingCoverageStatusAudit() {
+  const coverage = getGridlyAwarenessCoverageState();
+  const legacyAvailabilityValue = GRIDLY_COUNTY_REGISTRY[coverage.countyId]?.runtimeSourceAvailability?.crossings || null;
+  return Object.freeze({
+    ...coverage,
+    activeCountyId: coverage.countyId,
+    bannerHeadline: coverage.primary,
+    bannerSubline: coverage.secondary,
+    legacyAvailabilityValue,
+    mismatch: legacyAvailabilityValue !== "available" && coverage.crossingAvailable
   });
 }
 
 function classifyGridlyAwarenessTrustState({ activeCount = 0, recentlyCleared = false, coverage = null } = {}) {
   if (Math.max(0, Number(activeCount) || 0) > 0) return "active";
   if (recentlyCleared === true) return "recently_cleared";
-  if ((coverage || getGridlyAwarenessCoverageState()).state === "limited") return "coverage_limited";
+  if (["temporarily_unavailable", "unavailable"].includes((coverage || getGridlyAwarenessCoverageState()).state)) return "coverage_limited";
   return "quiet";
 }
 
@@ -61394,7 +61436,7 @@ function getGridlyHomeCommunityPulseCopy({ quiet = true, activeCount = 0, activi
   const awarenessCoverage = coverage || getGridlyAwarenessCoverageState();
   // Active evidence always outranks incomplete coverage. Coverage only guards a
   // zero-evidence conclusion; absence of one source is not evidence of quiet.
-  if ((quiet || count <= 0 || level === "quiet") && awarenessCoverage.state === "limited") {
+  if ((quiet || count <= 0 || level === "quiet") && ["temporarily_unavailable", "unavailable"].includes(awarenessCoverage.state)) {
     return { headline: awarenessCoverage.primary, subline: awarenessCoverage.secondary, state: "coverage_limited" };
   }
   if (quiet || count <= 0 || level === "quiet") {
@@ -62079,6 +62121,7 @@ function gridlyLp062CommunityPulseDecisionAudit(options = {}) {
 
 window.gridlyLp062CommunityPulseDecisionAudit = gridlyLp062CommunityPulseDecisionAudit;
 window.getGridlyAwarenessCoverageState = getGridlyAwarenessCoverageState;
+window.gridlyCrossingCoverageStatusAudit = gridlyCrossingCoverageStatusAudit;
 window.classifyGridlyAwarenessTrustState = classifyGridlyAwarenessTrustState;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp062CommunityPulseDecisionAudit", gridlyLp062CommunityPulseDecisionAudit);
 
