@@ -1,0 +1,602 @@
+{
+  "milestone": "LP212",
+  "phase": "PHASE_1_RUNTIME_AUDIT",
+  "mode": "AUDIT_ONLY",
+  "productionManifest": {
+    "path": "data/roadway-runtime-manifest.json",
+    "countyCount": 254,
+    "sha256": "e4c9ac7168ec84dc462695a93ea4561dbd62486131f3f78b70ed05ab5ba39a0c",
+    "packageVersion": "276.1.0",
+    "identityPass": true
+  },
+  "preflight": {
+    "executionBranch": "work",
+    "ownerIntendedBranch": "LP212-STATEWIDE-ROADWAY-CONSUMER-RUNTIME-CERTIFICATION",
+    "head": "12878f1ff04d4fe1630863fb314a9b77e98c9655",
+    "gitStatusShort": [
+      "?? android/.gradle/",
+      "?? android/build/",
+      "?? node_modules/"
+    ],
+    "trackedChanges": [],
+    "meaningfulUntracked": [],
+    "generatedUntracked": [
+      "android/.gradle/",
+      "android/build/",
+      "node_modules/"
+    ],
+    "pass": true
+  },
+  "consumerRuntimeTrace": {
+    "activeCountyIdentity": {
+      "functions": [
+        "gridlyGetActiveCountyId",
+        "gridlySetActiveCountyContext"
+      ],
+      "evidence": "js/app.js:8162-8176,46256-46289",
+      "finding": "Window identity, then selected awareness county, then Liberty default; setter updates identity and owns county-change activation."
+    },
+    "manifestLookup": {
+      "functions": [
+        "gridlyEnsureRoadwayRuntimeManifestLoaded",
+        "gridlyInstallRoadwayRuntimeManifest",
+        "gridlyGetRoadwayRuntimeManifestEntry",
+        "gridlyResolveRoadwayRuntimeSource"
+      ],
+      "evidence": "js/app.js:2334-2400",
+      "finding": "Fetches the production manifest no-store, normalizes entries, and resolves only the requested county."
+    },
+    "localSource": {
+      "functions": [
+        "gridlyResolveRoadwayRuntimeSource",
+        "loadRoadwayDataset"
+      ],
+      "evidence": "js/app.js:2371-2380,51264-51358",
+      "finding": "Validated registry roadSegmentsPath wins and is fetched as a single FeatureCollection; Montgomery alone is integrity-checked gzip."
+    },
+    "remoteSingle": {
+      "functions": [
+        "gridlyResolveRoadwayRuntimeSource",
+        "loadRoadwayDataset"
+      ],
+      "evidence": "js/app.js:2377-2380,51316-51358",
+      "finding": "external_runtime HTTPS URL is selected and fetched once, validated as nonempty line geometry, then committed only while request remains active."
+    },
+    "harrisLegacyPartitions": {
+      "functions": [
+        "gridlyActivateHarrisPartitionRuntime",
+        "gridlyLoadHarrisPartitionManifest",
+        "gridlyPumpHarrisPackageQueue",
+        "gridlyCompleteHarrisPackageRequest",
+        "gridlyAssembleHarrisActiveGeometry"
+      ],
+      "evidence": "js/app.js:51061-51217",
+      "finding": "Harris-only LP032.2 manifest, viewport/seed selection, bounded queue/cache, generation guard, stable-segment assembly."
+    },
+    "genericLp210Partitions": {
+      "functions": [
+        "gridlyResolveRoadwayRuntimeSource",
+        "loadRoadwayDataset"
+      ],
+      "evidence": "js/app.js:2396-2398,51301-51315",
+      "finding": "For seven governed counties, fetches the certified manifest and every declared part; any HTTP failure or zero line geometry fails closed before commit."
+    },
+    "runtimeStorage": {
+      "symbols": [
+        "roadwaySegmentFeatures",
+        "roadwayDatasetLoaded",
+        "roadwayDatasetLoadError",
+        "gridlyRoadwayPackageRuntimeState",
+        "gridlyRoadwayDatasetRevision"
+      ],
+      "evidence": "js/app.js:16733,16815,51288-51358"
+    },
+    "countyLifecycle": {
+      "functions": [
+        "gridlySetActiveCountyContext",
+        "gridlyActivateRoadwayDatasetForActiveCounty"
+      ],
+      "evidence": "js/app.js:46256-46289,51219-51252",
+      "finding": "A changed county advances transition generation, clears awareness/crossing ownership, starts roadway activation, and refreshes visible surfaces."
+    },
+    "staleClearing": {
+      "functions": [
+        "gridlyClearRoadwayDatasetForActiveCounty",
+        "gridlyClearHarrisPartitionRenderedGeometry",
+        "loadRoadwayDataset"
+      ],
+      "evidence": "js/app.js:51047-51058,51217,51288-51299,51349-51356",
+      "finding": "Geometry and loaded flag are cleared before every load and on active-request failure; resolver cache is reset."
+    },
+    "nearestRoad": {
+      "functions": [
+        "findNearestRoadwaySegment",
+        "resolveNearestRoadName",
+        "resolveNearbyRoadPair"
+      ],
+      "evidence": "js/app.js:51864-51903,99625-99675,99757-99870",
+      "finding": "Scans active geometry within 1.2 miles, validates name/ref/highway, may pair a nearby road, then uses crossing fallback."
+    },
+    "roadNameExtraction": {
+      "functions": [
+        "evaluateRoadNameCandidate",
+        "resolveNearestRoadName"
+      ],
+      "evidence": "js/app.js:99757-99870",
+      "finding": "Uses feature properties name, ref, highway through county-aware candidate validation."
+    },
+    "hazardReportConsumption": {
+      "functions": [
+        "resolveOtherHazardNarrativeRoadName",
+        "gridlyHazardPlacementAccuracyAudit",
+        "gridlyTapMapPlacementAccuracyAudit"
+      ],
+      "evidence": "js/app.js:9735-9785,19685-19687,77366-77657",
+      "finding": "Coordinate association invokes resolveNearestRoadName; report narratives and placement audits consume its result."
+    },
+    "awarenessContext": {
+      "functions": [
+        "gridlyGetActiveCountyId",
+        "gridlyClearStaleAwarenessAreaForCountyContext",
+        "buildGridlyRoadEvaluationContext"
+      ],
+      "evidence": "js/app.js:8162-8176,46230-46255,8486-8515",
+      "finding": "Selected awareness area can establish county identity; mismatched persisted awareness is moved to the new county-wide area before roadway activation."
+    },
+    "failureAndMalformed": {
+      "functions": [
+        "loadRoadwayDataset",
+        "gridlyFailHarrisPackageRequest"
+      ],
+      "evidence": "js/app.js:51190-51212,51301-51358",
+      "finding": "HTTP, JSON, wrong FeatureCollection, empty/malformed lines, or missing partitions leave geometry empty for an active request; Harris failed entries contain no features."
+    },
+    "priorCountyReusePrevention": {
+      "evidence": "js/app.js:51217-51245,51288-51358",
+      "finding": "Pre-clear plus county-and-sequence requestStillActive guard suppress late commits; Harris uses an independent generation guard."
+    },
+    "wrongCountyFallbackPrevention": {
+      "evidence": "js/app.js:2371-2400,51264-51358",
+      "finding": "Resolver returns a no-URL blocked source rather than Liberty or another county; fallbackUsed is reset false and no fallback fetch exists."
+    }
+  },
+  "existingTestInventory": [
+    {
+      "file": "tests/lp028-4-external-roadway-asset-contract.test.js",
+      "name": "LP028.4 external roadway asset contract",
+      "productionFunctionsExecuted": "gridlyInstallRoadwayRuntimeManifest, gridlyResolveRoadwayRuntimeSource",
+      "runtimeState": "VM with mocked window/state",
+      "network": "none",
+      "counties": "Liberty, Montgomery, San Jacinto, Polk, Harris plus 28 cohort",
+      "assertedBehavior": "Executes source resolution; assertions for URL validation/selection. Loader clearing is static text only."
+    },
+    {
+      "file": "tests/lp028-6-active-county-roadway-activation.test.js",
+      "name": "LP028.6 active-county roadway activation",
+      "productionFunctionsExecuted": "none (source-text inspection)",
+      "runtimeState": "none",
+      "network": "none",
+      "counties": "Liberty, Montgomery, San Jacinto, Polk, Harris",
+      "assertedBehavior": "Static-only checks for hooks, stale guards, and clear statements; explicitly proves audit helper is passive."
+    },
+    {
+      "file": "tests/lp031-external-roadway-runtime-activation.test.js",
+      "name": "LP031 external activation",
+      "productionFunctionsExecuted": "none (source-text inspection)",
+      "runtimeState": "none",
+      "network": "none",
+      "counties": "Jefferson, Fort Bend, Liberty, Harris",
+      "assertedBehavior": "Static-only remote resolver/loader/cache/reset and no-wrong-Liberty assertions."
+    },
+    {
+      "file": "tests/lp032-4-harris-partition-runtime-guardrail.test.js",
+      "name": "LP032.4 Harris guardrail",
+      "productionFunctionsExecuted": "none (source-text inspection)",
+      "runtimeState": "none",
+      "network": "none",
+      "counties": "Harris and original external cohort",
+      "assertedBehavior": "Static-only Harris queue/cache/completion/deactivation/no-Liberty-fallback contracts."
+    },
+    {
+      "file": "tests/lp032-harris-runtime-loading-architecture.test.js",
+      "name": "LP032 Harris loading architecture",
+      "productionFunctionsExecuted": "none (source/manifest inspection)",
+      "runtimeState": "none",
+      "network": "none",
+      "counties": "Harris",
+      "assertedBehavior": "Static architecture and audit-field presence."
+    },
+    {
+      "file": "tests/lp032-5-harris-runtime-certification-guardrail.test.js",
+      "name": "LP032.5 historical guardrail",
+      "productionFunctionsExecuted": "none",
+      "runtimeState": "none",
+      "network": "none",
+      "counties": "Harris",
+      "assertedBehavior": "STATIC_ONLY and stale against current manifest: expects integrated/gated while production is ready/ungated; not runtime proof."
+    },
+    {
+      "file": "tests/lp033-regional-roadway-consumer-certification-audit.test.js",
+      "name": "LP033 regional consumer audit contract",
+      "productionFunctionsExecuted": "none",
+      "runtimeState": "none",
+      "network": "none",
+      "counties": "documented Harris/Liberty/Jefferson sequence",
+      "assertedBehavior": "Static helper-field/document checks; does not execute sequence."
+    },
+    {
+      "file": "tests/lp211-statewide-roadway-runtime-activation.test.mjs",
+      "name": "LP211 statewide activation",
+      "productionFunctionsExecuted": "translateLp210County/buildPlan and read-only activation tooling; production loader only parsed",
+      "runtimeState": "real manifest/file state",
+      "network": "none",
+      "counties": "all 254 structurally; seven LP210 partitions",
+      "assertedBehavior": "Proves identity/translation/preservation and static fail-closed loader tokens, not browser consumption."
+    },
+    {
+      "file": "js/app.js",
+      "name": "gridlyLp032HarrisPartitionRuntimeAudit / gridlyLp032HarrisCertificationAudit",
+      "productionFunctionsExecuted": "live production state readers",
+      "runtimeState": "real browser state",
+      "network": "real network only if runtime previously loaded it",
+      "counties": "Harris",
+      "assertedBehavior": "LIVE_RUNTIME_ONLY passive metrics for partition selection, geometry, queue/cache, cleanup."
+    },
+    {
+      "file": "js/app.js",
+      "name": "gridlyRoadwayGeometryCapabilityAudit / gridlyDirectionalRoadAudit / gridlyRoadNameResolverDebug",
+      "productionFunctionsExecuted": "production geometry/resolvers",
+      "runtimeState": "real browser state",
+      "network": "no direct network; observes loaded state",
+      "counties": "active county, historically Liberty-centric fixtures",
+      "assertedBehavior": "LIVE_RUNTIME_ONLY geometry/name/direction observations; not statewide transitions."
+    },
+    {
+      "file": "js/app.js",
+      "name": "gridlyReferenceRoadResolverAudit / gridlyRoadSnapDebug",
+      "productionFunctionsExecuted": "production resolver/snap functions",
+      "runtimeState": "real current browser state",
+      "network": "no direct network",
+      "counties": "active county",
+      "assertedBehavior": "LIVE_RUNTIME_ONLY resolver evidence/debug; assertions are audit summaries, not certification."
+    },
+    {
+      "file": "js/app.js",
+      "name": "gridlyHazardPlacementAccuracyAudit / gridlyTapMapPlacementAccuracyAudit / gridlyGeometryAwarePlacementAudit / gridlyPlacementPipelineTraceAudit",
+      "productionFunctionsExecuted": "production placement and road-context functions",
+      "runtimeState": "real current browser observations plus embedded synthetic audit cases",
+      "network": "no direct network",
+      "counties": "active county, Liberty-oriented cases",
+      "assertedBehavior": "PARTIAL: traces association/placement but does not establish statewide package ownership or transitions."
+    }
+  ],
+  "behaviorCoverage": [
+    {
+      "id": 1,
+      "behavior": "Correct roadway package selected for county",
+      "status": "STATIC_ONLY",
+      "evidence": "LP028.4 VM executes resolver against real manifest; LP211 proves all mappings structurally."
+    },
+    {
+      "id": 2,
+      "behavior": "Correct remote/local source used",
+      "status": "STATIC_ONLY",
+      "evidence": "Resolver ordering and LP028.4 source cases are executed, but fetch architecture is not."
+    },
+    {
+      "id": 3,
+      "behavior": "Single-package loading",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 4,
+      "behavior": "Partitioned loading",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 5,
+      "behavior": "Road geometry becomes available",
+      "status": "LIVE_RUNTIME_ONLY",
+      "evidence": "Live helpers can observe loaded geometry for current county only."
+    },
+    {
+      "id": 6,
+      "behavior": "Nearest-road lookup",
+      "status": "PARTIALLY_PROVEN",
+      "evidence": "Resolver tests/helpers and production calls exist; current-state proof is not matrix-wide."
+    },
+    {
+      "id": 7,
+      "behavior": "Road-name extraction",
+      "status": "PARTIALLY_PROVEN",
+      "evidence": "Production extraction and debug helpers exist; not matrix-wide."
+    },
+    {
+      "id": 8,
+      "behavior": "Hazard/report road association",
+      "status": "PARTIALLY_PROVEN",
+      "evidence": "Placement helpers trace production association with real/synthetic current state."
+    },
+    {
+      "id": 9,
+      "behavior": "Active county ownership",
+      "status": "PARTIALLY_PROVEN",
+      "evidence": "Runtime state records loadedCounty and live audits compare it with active county; transition matrix absent."
+    },
+    {
+      "id": 10,
+      "behavior": "Awareness-area operating context",
+      "status": "PARTIALLY_PROVEN",
+      "evidence": "Active identity derives from awareness; LP033/live helpers observe context, but no matrix."
+    },
+    {
+      "id": 11,
+      "behavior": "County switching",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 12,
+      "behavior": "Stale roadway geometry cleared",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 13,
+      "behavior": "Existing -> new transition",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 14,
+      "behavior": "New -> existing transition",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 15,
+      "behavior": "New single -> new partitioned",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 16,
+      "behavior": "Partitioned -> single",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 17,
+      "behavior": "Failed retrieval cannot leak another county roads",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 18,
+      "behavior": "Runtime cannot silently fall back to wrong county",
+      "status": "STATIC_ONLY",
+      "evidence": "Static manifests assert non-Liberty URLs and code has no fallback branch; failure runtime not executed."
+    },
+    {
+      "id": 19,
+      "behavior": "Existing 28 behavior remains intact",
+      "status": "STATIC_ONLY",
+      "evidence": "LP211 structurally freezes 28 preserved entries, but actual consumers are not re-run."
+    },
+    {
+      "id": 20,
+      "behavior": "Generic LP210 partition loader exercised",
+      "status": "STATIC_ONLY",
+      "evidence": "LP211 static token assertion only; no production consumer execution."
+    },
+    {
+      "id": 21,
+      "behavior": "Harris legacy partition loader exercised independently",
+      "status": "LIVE_RUNTIME_ONLY",
+      "evidence": "Harris browser helpers exist for independent real runtime observation."
+    },
+    {
+      "id": 22,
+      "behavior": "Local-source architecture exercised",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "id": 23,
+      "behavior": "Remote-source architecture exercised",
+      "status": "NOT_PROVEN"
+    }
+  ],
+  "recommendedCountyMatrix": [
+    {
+      "county": "Liberty",
+      "countyId": "liberty-tx",
+      "class": "existing preserved local source",
+      "whyNecessary": "Small uncompressed local baseline and preserved cohort proof."
+    },
+    {
+      "county": "Chambers",
+      "countyId": "chambers-tx",
+      "class": "existing preserved remote single",
+      "whyNecessary": "Separates preserved external lp030-v1 behavior from new LP210 remote objects."
+    },
+    {
+      "county": "Harris",
+      "countyId": "harris-tx",
+      "class": "LP032.2 legacy adaptive partitions",
+      "whyNecessary": "Only specialized viewport/queue/cache partition architecture."
+    },
+    {
+      "county": "Anderson",
+      "countyId": "anderson-tx",
+      "class": "LP210 new remote single",
+      "whyNecessary": "Small rural representative for all ordinary LP210 single objects."
+    },
+    {
+      "county": "Bexar",
+      "countyId": "bexar-tx",
+      "class": "LP210 generic 2-part",
+      "whyNecessary": "Smallest generic two-part architecture representative."
+    },
+    {
+      "county": "Dallas",
+      "countyId": "dallas-tx",
+      "class": "LP210 generic 4-part",
+      "whyNecessary": "Four-part fan-in is materially different from two-part and must prove complete assembly."
+    }
+  ],
+  "omittedCountyCandidates": {
+    "San Jacinto": "redundant uncompressed local source after Liberty",
+    "Montgomery": "gzip integrity decoding is a pre-existing special case; add only if LP212 explicitly recertifies compression",
+    "Lee/Milam/Robertson/Grayson/McLennan/Smith": "same LP210 remote-single consumer branch as Anderson",
+    "Collin/Denton/Hidalgo/Travis": "same generic two-part branch as Bexar",
+    "Tarrant": "same generic four-part branch as Dallas",
+    "El Paso": "same LP210 remote-single branch as Anderson; metro size does not change consumer code"
+  },
+  "recommendedTransitionMatrix": [
+    {
+      "step": 1,
+      "from": null,
+      "to": "Liberty",
+      "assert": [
+        "local geometry owner liberty-tx",
+        "nearest name from Liberty fixture"
+      ]
+    },
+    {
+      "step": 2,
+      "from": "Liberty",
+      "to": "Anderson",
+      "assert": [
+        "pre-clear observed",
+        "owner becomes anderson-tx",
+        "no Liberty name/candidate survives"
+      ]
+    },
+    {
+      "step": 3,
+      "from": "Anderson",
+      "to": "Bexar",
+      "assert": [
+        "all 2 parts requested",
+        "owner becomes bexar-tx",
+        "single geometry absent"
+      ]
+    },
+    {
+      "step": 4,
+      "from": "Bexar",
+      "to": "Dallas",
+      "assert": [
+        "all 4 parts requested",
+        "no Bexar partition feature/name carryover"
+      ]
+    },
+    {
+      "step": 5,
+      "from": "Dallas",
+      "to": "Harris",
+      "assert": [
+        "generic state replaced by Harris active assembly",
+        "legacy loader metrics independent"
+      ]
+    },
+    {
+      "step": 6,
+      "from": "Harris",
+      "to": "Bexar",
+      "assert": [
+        "Harris queue/in-flight/active geometry deactivated",
+        "generic owner installed"
+      ]
+    },
+    {
+      "step": 7,
+      "from": "Bexar",
+      "to": "Anderson with intentionally failed package response",
+      "assert": [
+        "geometry empty",
+        "loadedCounty null",
+        "nearest result cannot cite Bexar",
+        "no fallback fetch"
+      ]
+    },
+    {
+      "step": 8,
+      "from": "failed Anderson",
+      "to": "Chambers",
+      "assert": [
+        "recovery succeeds",
+        "owner chambers-tx",
+        "failure and prior geometry/name caches absent"
+      ]
+    },
+    {
+      "step": 9,
+      "from": "Chambers",
+      "to": "Liberty",
+      "assert": [
+        "remote-to-local replacement and preserved local recovery"
+      ]
+    }
+  ],
+  "recommendedTestingLayers": [
+    {
+      "behaviors": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "layer": "G: production-function integration plus browser runtime with real production roadway objects",
+      "minimumProof": "Run actual resolver/loader with frozen manifest; real objects prove decoding and geometry, deterministic instrumentation proves exact requests/owner."
+    },
+    {
+      "behaviors": [
+        6,
+        7,
+        8,
+        10
+      ],
+      "layer": "G: browser runtime with real production objects plus existing runtime audit helpers",
+      "minimumProof": "Resolve known coordinates and trace report/awareness consumers after each architecture load."
+    },
+    {
+      "behaviors": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "layer": "C: browser runtime with mocked network",
+      "minimumProof": "Ordered deterministic delayed/success/failure responses are required to prove lifecycle, stale completion, clearing, no fallback, and recovery."
+    }
+  ],
+  "gaps": [
+    "No existing deterministic test executes loadRoadwayDataset for a new LP210 single county.",
+    "No existing deterministic test executes the generic LP210 2/4-part fetch, parse, fan-in, and commit paths.",
+    "No end-to-end ordered county switch proves geometry/name/cache ownership replacement across architecture classes.",
+    "No failed-retrieval browser test proves empty geometry, no prior-county nearest-road result, no wrong-county fetch, and recovery.",
+    "Existing Harris proof is mostly static or manual/live-session observation rather than reproducible consumer certification.",
+    "Existing placement helpers do not bind package ownership and county transition state to report association assertions."
+  ],
+  "productionDefectsFound": [],
+  "productionDefectFinding": "NONE FOUND",
+  "protectedSystems": {
+    "Shared Reports": "no modification required",
+    "Route Watch": "no modification required",
+    "Awareness Filtering": "no modification required",
+    "Hazard Lifecycle": "no modification required",
+    "Alert Generation": "no modification required",
+    "Supabase Sync": "no modification required",
+    "frameworkNeeded": false,
+    "architectureRewriteNeeded": false,
+    "roadwayRepublishingNeeded": false,
+    "reactivationNeeded": false
+  },
+  "nextImplementation": "Add a narrowly scoped LP212 certification harness that executes production resolver/loader/state/resolver/association functions: real-object architecture matrix plus mocked-network ordered transition/failure matrix. Do not patch production unless the harness demonstrates a concrete defect.",
+  "recommendation": "READY_FOR_LP212_CONSUMER_CERTIFICATION_IMPLEMENTATION"
+}
