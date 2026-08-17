@@ -23,6 +23,13 @@ function pointInGeometry(lon, lat, geometry) { const polygons = geometry.type ==
 function countyAt(lat, lon) { return boundaries.features.find(feature => pointInGeometry(lon, lat, feature.geometry))?.properties?.GEOID || null; }
 const ownerCameras = { '4805000': { lat: 30.274931186653326, lon: -97.74415969848634 }, '4819000': { lat: 32.78294501748632, lon: -96.79538726806642 }, '4824000': { lat: 31.765537409484374, lon: -106.48704528808595 }, '4827000': { lat: 32.757685346479455, lon: -97.33182907104494 } };
 
+function productionFunction(name) {
+  const start = source.indexOf(`function ${name}(`);
+  assert.notEqual(start, -1, `${name} exists`);
+  const next = source.indexOf('\nfunction ', start + 10);
+  return source.slice(start, next === -1 ? source.length : next).trim();
+}
+
 class Runtime {
   active = null; generation = 0; inventoryCounty = null; inventory = [];
   transition(countyId) { assert.ok(registry[countyId]); if (countyId === this.active) return false; this.active = countyId; this.generation++; this.inventoryCounty = null; this.inventory = []; return true; }
@@ -123,4 +130,77 @@ test('startup restoration and manual PLACE selection both replace Liberty with D
   }
   assert.match(source, /startup-semantic-hydration:presentation-ready/);
   assert.match(source, /gridlyDispatchSemanticCamera\(validation\.area, null, \{ source \}\)/);
+});
+
+test('production semantic caller retries containment readiness and commits Dallas through the real setter', async () => {
+  const dallas = projection.communities.find(place => place.placeGeoid === '4819000');
+  let geometryReady = false;
+  let loadStartedCounty = null;
+  const sandbox = {
+    Object, Set, Number, Promise,
+    window: null,
+    GRIDLY_COUNTY_REGISTRY: registry,
+    GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
+    GRIDLY_TOWN_STARTUP_ZOOM: 12,
+    GRIDLY_LP194_SAN_ANTONIO_REGION_LOOKUP: {},
+    GRIDLY_AWARENESS_AREA_BY_KEY: {},
+    gridlyPlacePresentationTargets: presentation.places,
+    map: {},
+    crossings: Array.from({ length: 115 }, (_, id) => ({ id, countyId: 'liberty-tx' })),
+    gridlyCrossingInventoryCountyId: 'liberty-tx',
+    gridlyActiveCountyTransitionGeneration: 0,
+    gridlyActiveCountyStaleRequestSuppressions: 0,
+    gridlyStartupContextFinalized: true,
+    gridlySemanticCameraSequence: 0,
+    gridlyConfirmedCameraTransaction: null,
+    gridlyCommittedSemanticCamera: null,
+    gridlyActiveGeographicPresentation: null,
+    activeGeoFilter: 'town',
+    gridlyOperationalCountyResolutionAudit: null,
+    gridlyActiveCountySynchronizationAudit: Object.freeze({ synchronizerInvoked: false }),
+    gridlyNormalizeCountyId: value => String(value || '').trim().toLowerCase(),
+    gridlyIsKnownCountyId: value => Boolean(registry[value]),
+    gridlyGetActiveCountyId() { return sandbox.window.GRIDLY_ACTIVE_COUNTY_ID || 'liberty-tx'; },
+    gridlyGetGovernedPlaceConsumerPresentationCamera: geoid => geoid === '4819000' ? { lat: ownerCameras[geoid].lat, lng: ownerCameras[geoid].lon, zoom: 12, source: 'OWNER' } : null,
+    gridlyResolveCountyIdForCoordinate: () => ({ countyId: geometryReady ? 'dallas-tx' : null }),
+    setGridlyAwarenessView: () => true,
+    gridlyPublishValidationIdentity() {}, gridlyClearStaleAwarenessAreaForCountyContext() {},
+    resetGridlyCrossingRuntimeAuditStateForCounty() {}, gridlyActivateRoadwayDatasetForActiveCounty() {},
+    resyncGridlyActiveCountyVisibleSurfaces() {}, renderGridlyCountyBoundaryOverlay() {},
+    loadGridlyActiveCountyBoundaryIdentity() {}, gridlyFitMapToActiveCountyContext() {},
+    ensureGridlyActiveCountyCrossingInventory() {
+      const countyId = sandbox.window.GRIDLY_ACTIVE_COUNTY_ID;
+      const generation = sandbox.gridlyActiveCountyTransitionGeneration;
+      loadStartedCounty = countyId;
+      Promise.resolve().then(() => {
+        if (sandbox.window.GRIDLY_ACTIVE_COUNTY_ID !== countyId || sandbox.gridlyActiveCountyTransitionGeneration !== generation) return;
+        sandbox.gridlyCrossingInventoryCountyId = countyId;
+        sandbox.crossings = Array.from({ length: recordById.get(countyId).governedCount }, (_, id) => ({ id, countyId }));
+      });
+    }
+  };
+  sandbox.window = sandbox;
+  sandbox.gridlyLp0361cRuntimeCountyGeometryPackageLoader = { load: async () => { geometryReady = true; } };
+  vm.createContext(sandbox);
+  vm.runInContext(`
+    ${productionFunction('gridlyResolveCanonicalPlaceGeoid')}
+    ${productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext')}
+    ${productionFunction('gridlySetActiveCountyContext')}
+    ${productionFunction('gridlySynchronizeActiveCountyForOperationalContext')}
+    ${productionFunction('gridlyDispatchSemanticCamera')}
+    this.dispatch = gridlyDispatchSemanticCamera;
+  `, sandbox);
+  sandbox.GRIDLY_ACTIVE_COUNTY_ID = 'liberty-tx';
+  const area = { placeGeoid: dallas.placeGeoid, label: 'Dallas', canonicalMultiCountyPlace: true, countyMemberships: dallas.countyMemberships };
+  assert.equal(sandbox.dispatch(area, null, { source: 'manual-place-selection' }), true, 'camera may commit before containment package is ready');
+  await new Promise(resolve => setTimeout(resolve, 0));
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(sandbox.GRIDLY_ACTIVE_COUNTY_ID, 'dallas-tx');
+  assert.equal(sandbox.gridlyActiveCountyTransitionGeneration, 1);
+  assert.equal(loadStartedCounty, 'dallas-tx');
+  assert.equal(sandbox.gridlyCrossingInventoryCountyId, 'dallas-tx');
+  assert.equal(sandbox.crossings.length, 789);
+  assert.equal(sandbox.gridlyActiveCountySynchronizationAudit.setterInvoked, true);
+  assert.equal(sandbox.gridlyActiveCountySynchronizationAudit.transitionCommitted, true);
+  assert.equal(sandbox.gridlyActiveCountySynchronizationAudit.transitionBlockedReason, null);
 });

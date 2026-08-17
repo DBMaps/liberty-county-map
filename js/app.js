@@ -45645,6 +45645,14 @@ let gridlyActiveGeographicPresentation = null;
 let gridlyActiveCountyTransitionGeneration = 0;
 let gridlyActiveCountyStaleRequestSuppressions = 0;
 let gridlyOperationalCountyResolutionAudit = null;
+let gridlyActiveCountySynchronizationAudit = Object.freeze({
+  synchronizerInvoked: false,
+  transitionAttempted: false,
+  transitionCommitted: false,
+  transitionBlockedReason: null,
+  setterInvoked: false,
+  setterResult: null
+});
 let gridlyStartupSemanticContext = null;
 let gridlyPrimaryMapCameraInitialized = false;
 let gridlyStartupContextFinalized = false;
@@ -45735,7 +45743,7 @@ function gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId) {
       recordAudit({ operationalResolutionMode: "governed_presentation_coordinate_containment", presentationLat: latitude, presentationLon: longitude, coordinateResolvedCountyFips: resolvedFips, resolvedGridlyCountyId: normalized, membershipValidated: true, failureReason: null });
       return normalized;
     }
-    recordAudit({ operationalResolutionMode: "governed_presentation_coordinate_containment", presentationLat: latitude, presentationLon: longitude, coordinateResolvedCountyFips: resolvedFips, resolvedGridlyCountyId: null, membershipValidated, failureReason: normalized ? "coordinate_county_outside_governed_memberships" : "coordinate_county_unresolved" });
+    recordAudit({ operationalResolutionMode: "governed_presentation_coordinate_containment", presentationLat: latitude, presentationLon: longitude, coordinateResolvedCountyFips: resolvedFips, resolvedGridlyCountyId: null, membershipValidated, authoritativeGeometryAvailable: coordinateResolution?.authoritativeGeometryAvailable === true, failureReason: normalized ? "coordinate_county_outside_governed_memberships" : "coordinate_county_unresolved" });
     return null;
   }
   recordAudit({ operationalResolutionMode: "governed_presentation_coordinate_containment", presentationLat: latitude, presentationLon: longitude, resolvedGridlyCountyId: null, membershipValidated: false, failureReason: "coordinate_containment_unavailable" });
@@ -45743,11 +45751,30 @@ function gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId) {
 }
 
 function gridlySynchronizeActiveCountyForOperationalContext(area, countyId, source = "operational-context") {
+  const activeCountyIdBefore = gridlyGetActiveCountyId();
+  const transitionGenerationBefore = gridlyActiveCountyTransitionGeneration;
   const resolvedCountyId = gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId);
-  if (!resolvedCountyId) return null; // Ambiguous context fails closed.
-  if (resolvedCountyId !== gridlyGetActiveCountyId()) {
-    gridlySetActiveCountyContext(resolvedCountyId, { preserveSemanticCamera: true, preservePersistedAwareness: true, source });
+  if (!resolvedCountyId) {
+    const blockedReason = gridlyOperationalCountyResolutionAudit?.failureReason || "operational_county_unresolved";
+    gridlyActiveCountySynchronizationAudit = Object.freeze({ synchronizerInvoked: true, source, resolvedGridlyCountyId: null, activeCountyIdBefore, activeCountyIdAfter: gridlyGetActiveCountyId(), transitionAttempted: false, transitionCommitted: false, transitionBlockedReason: blockedReason, setterInvoked: false, setterResult: null, transitionGenerationBefore, transitionGenerationAfter: gridlyActiveCountyTransitionGeneration });
+    // The semantic camera can be available before the authoritative statewide
+    // geometry package.  Retry the same transition owner when containment is
+    // ready instead of leaving a successfully presented PLACE on stale county
+    // state. The loader de-duplicates concurrent calls.
+    const geometryLoader = typeof window !== "undefined" ? window.gridlyLp0361cRuntimeCountyGeometryPackageLoader : null;
+    if (gridlyResolveCanonicalPlaceGeoid(area) && gridlyOperationalCountyResolutionAudit?.authoritativeGeometryAvailable !== true && typeof geometryLoader?.load === "function" && ["coordinate_county_unresolved", "coordinate_containment_unavailable"].includes(blockedReason)) {
+      void Promise.resolve(geometryLoader.load()).then(() => gridlySynchronizeActiveCountyForOperationalContext(area, countyId, `${source}:geometry-ready`)).catch(() => {});
+    }
+    return null; // Ambiguous or not-yet-ready context fails closed.
   }
+  let setterInvoked = false;
+  let setterResult = activeCountyIdBefore;
+  if (resolvedCountyId !== activeCountyIdBefore) {
+    setterInvoked = true;
+    setterResult = gridlySetActiveCountyContext(resolvedCountyId, { preserveSemanticCamera: true, preservePersistedAwareness: true, source });
+  }
+  const activeCountyIdAfter = gridlyGetActiveCountyId();
+  gridlyActiveCountySynchronizationAudit = Object.freeze({ synchronizerInvoked: true, source, resolvedGridlyCountyId: resolvedCountyId, activeCountyIdBefore, activeCountyIdAfter, transitionAttempted: resolvedCountyId !== activeCountyIdBefore, transitionCommitted: activeCountyIdAfter === resolvedCountyId, transitionBlockedReason: activeCountyIdAfter === resolvedCountyId ? null : "setter_did_not_commit_resolved_county", setterInvoked, setterResult, transitionGenerationBefore, transitionGenerationAfter: gridlyActiveCountyTransitionGeneration });
   return resolvedCountyId;
 }
 
@@ -46231,6 +46258,7 @@ function gridlyActiveCountyRuntimeAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const sourceCountyId = gridlyGetActiveCountyRuntimeSources()?.countyId || null;
   return Object.freeze({
+    ...gridlyActiveCountySynchronizationAudit,
     authoritativeLocationLabel: selected?.label || selected?.storageValue || gridlyActiveGeographicPresentation?.placeLabel || null,
     authoritativeCountyFips: authoritativeCountyId ? GRIDLY_COUNTY_REGISTRY[authoritativeCountyId]?.countyFips || null : null,
     resolvedGridlyCountyId: authoritativeCountyId,

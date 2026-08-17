@@ -238,5 +238,92 @@
       "lp196": "PASS",
       "statewideMultiCountyCohort": "PASS (163/163; 0 unresolved; 0 membership failures)"
     }
+  },
+  "liveActiveCountyCommitRepair": {
+    "browserFailureEvidence": {
+      "authoritativeLocationLabel": "Dallas",
+      "authoritativeCountyFips": "48113",
+      "resolvedGridlyCountyId": "dallas-tx",
+      "activeCountyId": "liberty-tx",
+      "crossingSourceCounty": "liberty-tx",
+      "runtimeInventoryCounty": "liberty-tx",
+      "crossingInventoryCount": 115,
+      "transitionGeneration": 0,
+      "synchronized": false
+    },
+    "resolvedCountyBeforeRepair": "dallas-tx",
+    "activeCountyBeforeRepair": "liberty-tx",
+    "exactBlockedHandoff": "gridlyDispatchSemanticCamera called the synchronizer while the runtime county geometry package was not ready. Coordinate containment returned coordinate_county_unresolved, the synchronizer failed closed, and the successful semantic camera return prevented the manual caller presentation retry. A later diagnostic resolver call succeeded after geometry readiness, but diagnostics do not invoke the transition owner.",
+    "rootCause": "The synchronizer had no geometry-readiness retry. Its !resolvedCountyId guard returned null before gridlySetActiveCountyContext, even though the same canonical PLACE resolved later. It was synchronous (not an unawaited synchronizer), did not compare nullable awareness countyId, had no startup mutation guard, did not shadow active state, and the setter accepts governed statewide IDs.",
+    "productionCallerRepaired": "gridlySynchronizeActiveCountyForOperationalContext now requests the de-duplicated authoritative geometry load and re-enters itself on readiness; gridlyDispatchSemanticCamera remains the real semantic caller and gridlySetActiveCountyContext remains the sole transition owner.",
+    "synchronizerInvocationProof": {
+      "initial": true,
+      "initialBlockedReason": "coordinate_county_unresolved",
+      "geometryReadyRetry": true,
+      "resolvedGridlyCountyId": "dallas-tx"
+    },
+    "setterInvocationProof": {
+      "invoked": true,
+      "argument": "dallas-tx",
+      "result": "dallas-tx",
+      "singleTransitionOwner": true
+    },
+    "generation": {
+      "before": 0,
+      "after": 1
+    },
+    "crossingInventory": {
+      "before": {
+        "countyId": "liberty-tx",
+        "count": 115
+      },
+      "after": {
+        "countyId": "dallas-tx",
+        "count": 789,
+        "staleLibertyAbsent": true
+      }
+    },
+    "dallasLiveContract": {
+      "resolvedCountyId": "dallas-tx",
+      "activeCountyIdBefore": "liberty-tx",
+      "activeCountyIdAfter": "dallas-tx",
+      "crossingSourceCounty": "dallas-tx",
+      "runtimeInventoryCounty": "dallas-tx",
+      "crossingInventoryCount": 789,
+      "synchronized": true
+    },
+    "statewideTransitionCoverage": {
+      "validSynchronizationTargets": 254,
+      "countySpecificProductionBranches": 0,
+      "sameTransitionOwner": true
+    },
+    "startupResult": "PASS: startup synchronization retries authoritative containment readiness and commits through the setter without user interaction.",
+    "manualSelectionResult": "PASS: the real semantic-camera caller retries containment readiness and commits Dallas without refresh.",
+    "rapidTransitionResult": "PASS: existing county plus monotonic-generation checks suppress stale Liberty and Dallas commits after Tarrant becomes active.",
+    "activeEmptyResult": "PASS: positive to ACTIVE_EMPTY clears and intentionally commits zero; empty to positive reloads governed inventory.",
+    "sameCountyResult": "PASS: resolved active county bypasses the setter, generation increment, clear, and reload.",
+    "liveAuditFields": [
+      "synchronizerInvoked",
+      "resolvedGridlyCountyId",
+      "activeCountyIdBefore",
+      "activeCountyIdAfter",
+      "transitionAttempted",
+      "transitionCommitted",
+      "transitionBlockedReason",
+      "setterInvoked",
+      "setterResult",
+      "transitionGenerationBefore",
+      "transitionGenerationAfter",
+      "crossingSourceCounty",
+      "runtimeInventoryCounty",
+      "crossingInventoryCount",
+      "synchronized"
+    ],
+    "tests": {
+      "lp2022": "PASS (9/9, including production semantic caller -> synchronizer readiness retry -> real setter -> shared runtime state)",
+      "lp2021": "PASS",
+      "lp196": "PASS",
+      "statewideTargets": "PASS (254/254)"
+    }
   }
 }
