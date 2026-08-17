@@ -4,7 +4,7 @@
 
 **BLOCKED_FOR_STATEWIDE_ROADWAY**
 
-The repository-side plan is complete, but this container does not mount the owner TIGER ZIP root or the owner candidate workspace. Accordingly, this evidence does **not** claim that manufacturing happened or that owner files are globally missing. Publication is not authorized.
+The owner reports that the statewide manufacturing wave completed: 226 LP118 checkpoints are `GENERATED`, and all 226 LP116 checkpoints certify `PASS`, including the repaired Anderson retry. This container does not mount those owner files, so their per-county identities have not yet been ingested. Determinism and downstream compatibility remain genuinely unexecuted here; publication is not authorized.
 
 ## Architecture
 
@@ -23,9 +23,9 @@ The PowerShell wrapper defaults to `WhatIf`. `Build` proceeds sequentially count
 | Source identity mismatches | 0 |
 | Missing governed source identities | 0 |
 | Protected overlap | 0 |
-| LP118 successful owner results committed | 0 |
-| LP116 PASS owner results committed | 0 |
-| Pending owner execution | 226 |
+| LP118 successful owner results (authoritative owner result) | 226 |
+| LP116 PASS owner results (authoritative owner result) | 226 |
+| Pending manufacturing | 0 |
 | Failures | 0 |
 | Supabase writes | 0 |
 | Runtime activations | 0 |
@@ -33,7 +33,7 @@ The PowerShell wrapper defaults to `WhatIf`. `Build` proceeds sequentially count
 
 Runtime manifest SHA-256 before/after is `56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd`; county count remains 28 → 28.
 
-Because no manufactured owner evidence is committed, LP118 feature/rejection/geometry totals, LP116 feature/package/partition totals, road-name accounting, the five large-county controls, deterministic reruns, and downstream candidate compatibility remain pending rather than being fabricated.
+The owner reports 463 candidate GeoJSON files totaling 3,661,035,248 bytes. Per-county checkpoint identities, deterministic reruns, and downstream candidate compatibility remain pending ingestion/execution rather than being fabricated.
 
 ## Owner execution
 
@@ -49,6 +49,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools/lp209/Build-LP209State
 ```
 
 The owner must commit the resulting compact evidence only after all 226 candidates, representative deterministic reruns, and downstream compatibility controls pass. Source ZIPs, extracted shapefile members, and candidate package binaries remain uncommitted.
+
+### Final certification only (next command)
+
+This command reads the completed workspace, reruns only the 11 governed controls into a separate workspace, executes isolated compatibility checks for Dallas, Bexar, El Paso, Grayson, and Lee, and writes the four compact reports. It never publishes or activates candidates.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/lp209/Verify-LP209StatewideRoadwayCandidates.ps1
+```
 
 ## Safety boundary
 

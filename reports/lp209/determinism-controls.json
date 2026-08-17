@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp209.determinism-controls.v1",
+  "status": "PENDING_OWNER_RERUN",
+  "controls": [
+    "48287",
+    "48331",
+    "48395",
+    "48113",
+    "48029",
+    "48141",
+    "48181",
+    "48309",
+    "48423",
+    "48439",
+    "48453"
+  ],
+  "workspace": "owner-local/lp209-roadway-determinism",
+  "productionWrites": 0
+}

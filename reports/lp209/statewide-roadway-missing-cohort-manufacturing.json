@@ -3849,11 +3849,11 @@
     "texasCounties": 254,
     "existingRuntimeRoadwayCount": 28,
     "planned": 226,
-    "lp118Successful": 0,
-    "lp116Manufactured": 0,
-    "certified": 0,
+    "lp118Successful": 226,
+    "lp116Manufactured": 226,
+    "certified": 226,
     "failed": 0,
-    "pending": 226,
+    "pending": 0,
     "protectedOverlap": 0,
     "supabaseWrites": 0,
     "runtimeActivations": 0,
@@ -3875,7 +3875,14 @@
   },
   "environment": {
     "ownerSourceMounted": false,
-    "evidenceState": "OWNER_EXECUTION_REQUIRED"
+    "evidenceState": "AUTHORITATIVE_OWNER_MANUFACTURING_RESULT_AWAITING_PER_COUNTY_INGESTION",
+    "ownerWorkspace": "owner-local/lp209-roadway-manufacturing",
+    "lp118Checkpoints": 226,
+    "lp118Generated": 226,
+    "lp116Checkpoints": 226,
+    "lp116Pass": 226,
+    "candidateGeoJsonFiles": 463,
+    "candidateGeoJsonBytes": 3661035248
   },
   "downstreamCompatibility": {
     "status": "PENDING_OWNER_CANDIDATE_TESTS"

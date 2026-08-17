@@ -78,17 +78,19 @@ export async function verifyGdal(gdalExecutable) {
 }
 async function sourceIdentity(row) { const body=await readFile(row.sourceOwnerPath); invariant(body.length===row.sourceBytes,`source byte mismatch ${row.countyFips}`); invariant(sha(body)===row.sourceSha256,`source SHA mismatch ${row.countyFips}`); }
 
-export async function executeOwner({ mode='whatif', sourceRoot=OWNER_SOURCE_ROOT, outputRoot=resolve(ROOT,OWNER_OUTPUT_ROOT), gdal, writeReports=false }={}) {
+export async function executeOwner({ mode='whatif', sourceRoot=OWNER_SOURCE_ROOT, outputRoot=resolve(ROOT,OWNER_OUTPUT_ROOT), gdal, writeReports=false, countyFips=null }={}) {
   invariant(['whatif','build','resume','verify'].includes(mode), `unsupported mode ${mode}`);
   const before=await loadPlan({sourceRoot,outputRoot});
   invariant(!resolve(outputRoot).startsWith(resolve(ROOT,'data')) && !resolve(outputRoot).startsWith(resolve(ROOT,'assets')), 'output root is production-adjacent');
   const ownerMounted=await exists(sourceRoot); let gdalIdentity=null; let gdalConfiguration=null;
   if (ownerMounted) { gdalConfiguration=await resolveGdalConfiguration(gdal); gdalIdentity=await verifyGdal(gdalConfiguration.executable); }
   if (mode==='whatif') return summarize(before.rows,[],before,{ownerMounted,gdalIdentity,writeReports:false});
+  const executionRows=countyFips ? before.rows.filter(row=>countyFips.includes(row.countyFips)) : before.rows;
+  if (countyFips) invariant(executionRows.length===countyFips.length, 'requested execution cohort is not wholly governed');
   if (mode==='build'||mode==='resume') {
     invariant(ownerMounted,'owner source root is not mounted (not classified globally missing)');
     await mkdir(outputRoot,{recursive:true});
-    for (const row of before.rows) {
+    for (const row of executionRows) {
       await sourceIdentity(row);
       const lp118Root=join(outputRoot,'lp118');
       const extracted=await extract({fips:row.countyFips,candidate:true,source:row.sourceOwnerPath,boundaries:BOUNDARIES,gdal:gdalConfiguration.directory,reports:lp118Root,[mode==='resume'?'resume':'force']:true});
@@ -126,6 +128,6 @@ export function summarize(rows,evidence,plan,environment={}) {
 }
 async function writeEvidence(result){await mkdir(REPORTS,{recursive:true}); await writeFile(join(REPORTS,'statewide-roadway-missing-cohort-manufacturing.json'),json({...result,counties:undefined})); await writeFile(join(REPORTS,'statewide-roadway-candidate-manifest.json'),json({schemaVersion:'gridly.lp209.statewide-roadway-candidate-manifest.v1',generatedAt:result.generatedAt,certificationComplete:result.readiness.startsWith('READY_'),counties:result.counties}));}
 export async function writePlan(){const p=await loadPlan(); const result=summarize(p.rows,[],p,{ownerSourceMounted:false,evidenceState:'OWNER_EXECUTION_REQUIRED'}); await writeEvidence(result); return result;}
-export async function verifyCommitted(){const [p,a,m]=await Promise.all([loadPlan(),readFile(join(REPORTS,'statewide-roadway-missing-cohort-manufacturing.json'),'utf8').then(JSON.parse),readFile(join(REPORTS,'statewide-roadway-candidate-manifest.json'),'utf8').then(JSON.parse)]); invariant(m.counties.length===226,'candidate manifest row count'); invariant(a.accounting.planned===226&&a.accounting.protectedOverlap===0,'committed conservation'); invariant(a.productionRuntimeManifest.sha256After===p.runtimeSha256,'runtime manifest changed'); return {readiness:a.readiness,accounting:a.accounting};}
+export async function verifyCommitted(){const [p,a,m]=await Promise.all([loadPlan(),readFile(join(REPORTS,'statewide-roadway-missing-cohort-manufacturing.json'),'utf8').then(JSON.parse),readFile(join(REPORTS,'statewide-roadway-candidate-manifest.json'),'utf8').then(JSON.parse)]); invariant(m.counties.length===226,'candidate manifest row count'); invariant(a.accounting.planned===226&&a.accounting.lp118Successful===226&&a.accounting.lp116Manufactured===226&&a.accounting.certified===226&&a.accounting.pending===0&&a.accounting.protectedOverlap===0,'committed owner manufacturing accounting'); invariant(a.readiness==='BLOCKED_FOR_STATEWIDE_ROADWAY','readiness must remain blocked until final owner evidence is ingested'); invariant(a.productionRuntimeManifest.sha256After===p.runtimeSha256,'runtime manifest changed'); return {readiness:a.readiness,accounting:a.accounting};}
 async function main(){const args=process.argv.slice(2); if(args.includes('--write-plan')){console.log((await writePlan()).readiness);return;} if(args.includes('--verify')){console.log((await verifyCommitted()).readiness);return;} console.log((await executeOwner()).readiness);}
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))main().catch(e=>{console.error(e.message);process.exitCode=1;});
