@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "gridly.lp209.downstream-compatibility.v1",
+  "status": "NOT_CERTIFIED",
+  "execution": "OWNER_CANDIDATES_REQUIRED",
+  "countyFips": [
+    "48113",
+    "48029",
+    "48141",
+    "48181",
+    "48287"
+  ],
+  "roadwayLoader": "NOT_CERTIFIED",
+  "nearestRoadLookup": "NOT_CERTIFIED",
+  "roadNameExtraction": "NOT_CERTIFIED",
+  "hazardReportRoadAssociation": "NOT_CERTIFIED",
+  "activated": false,
+  "published": false
+}
