@@ -14,6 +14,7 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "test:lp212": "node --test tests/lp212-statewide-roadway-consumer-runtime.test.mjs",
     "whatif:lp211": "node tools/lp211/statewide-roadway-runtime-activation.mjs --mode=WhatIf",
     "apply:lp211": "node tools/lp211/statewide-roadway-runtime-activation.mjs --mode=Apply",
     "verify:lp211": "node tools/lp211/statewide-roadway-runtime-activation.mjs --mode=Verify",
