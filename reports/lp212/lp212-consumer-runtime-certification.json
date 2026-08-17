@@ -38,6 +38,15 @@
     "errorMessage": "fetch failed\n+ actual - expected\n\n+ null\n- 'anderson-tx'\n"
   },
   "protectedSystemsMutated": false,
-  "productionDefectsFound": [],
+  "productionDefectsFound": [
+    {
+      "id": "LP212_ROADWAY_IDENTITY_SCHEMA_COMPATIBILITY",
+      "county": "Anderson",
+      "observedGeometryCount": 4752,
+      "existingResolverFieldsPresent": 0,
+      "fallbackField": "FULLNAME",
+      "status": "REPAIRED"
+    }
+  ],
   "finalDecision": "EXECUTION_FAILED"
 }
