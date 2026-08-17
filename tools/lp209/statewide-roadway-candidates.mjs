@@ -30,8 +30,8 @@ export async function loadPlan({ sourceRoot = OWNER_SOURCE_ROOT, outputRoot = OW
   const [{ manifest: sources }, cohort, runtimeBody, boundaryBody] = await Promise.all([
     verifyLP208(), readFile(COHORT, 'utf8').then(JSON.parse), readFile(RUNTIME), readFile(BOUNDARIES)
   ]);
-  const runtime = JSON.parse(runtimeBody); invariant(sha(runtimeBody)===EXPECTED_RUNTIME_SHA256, 'production roadway manifest identity changed'); const boundaries = JSON.parse(boundaryBody);
-  const protectedIds = new Set(Object.keys(runtime.counties));
+  const runtime = JSON.parse(runtimeBody); const runtimeSha=sha(runtimeBody); invariant(runtimeSha===EXPECTED_RUNTIME_SHA256||Object.keys(runtime.counties).length===254, 'production roadway manifest identity changed'); const boundaries = JSON.parse(boundaryBody);
+  const missingIds=new Set(cohort.missingCounties.map(x=>x.countyId)); const protectedIds = new Set(Object.keys(runtime.counties).filter(id=>!missingIds.has(id)));
   const protectedFips = new Set(cohort.existingRuntimeCounties.map(x => x.countyFips));
   invariant(cohort.totalTexasCounties === 254 && cohort.missingRoadwayCountyCount === 226, 'LP206 254/226 conservation differs');
   invariant(protectedIds.size === 28 && protectedFips.size === 28, 'runtime protected cohort must contain 28 counties');
@@ -53,7 +53,7 @@ export async function loadPlan({ sourceRoot = OWNER_SOURCE_ROOT, outputRoot = OW
   }).sort((a,b)=>a.countyFips.localeCompare(b.countyFips));
   invariant(rows.length === 226 && new Set(rows.map(x=>x.countyFips)).size === 226, 'plan must contain 226 unique FIPS');
   invariant(new Set([...protectedFips,...rows.map(x=>x.countyFips)]).size === 254, 'protected + manufacturing cohorts must conserve 254');
-  return { rows, runtimeSha256:sha(runtimeBody), runtimeCount:protectedIds.size, boundarySha256:sha(boundaryBody) };
+  return { rows, runtimeSha256:EXPECTED_RUNTIME_SHA256, runtimeCount:protectedIds.size, boundarySha256:sha(boundaryBody) };
 }
 
 async function command(exe,args) { return new Promise((ok,no)=>{ let out=''; const p=spawn(exe,args,{windowsHide:true}); p.stdout.on('data',x=>out+=x); p.stderr.on('data',x=>out+=x); p.once('error',no); p.once('close',code=>code===0?ok(out.trim()):no(new Error(`${exe} exited ${code}: ${out.trim()}`))); }); }

@@ -54,7 +54,9 @@ export async function verifyCommittedEvidence() {
   requireEqual(acquisition.readiness, 'READY_FOR_STATEWIDE_MISSING_COHORT_MANUFACTURING', 'readiness');
   requireEqual(manifestDocument.certificationComplete, true, 'manifest certificationComplete');
   requireEqual(manifestDocument.counties?.length, 226, 'manifest row count');
-  requireEqual(sha(runtimeBytes), RUNTIME_SHA256, 'production runtime manifest SHA-256');
+  const runtimeSha=sha(runtimeBytes),runtime=JSON.parse(runtimeBytes); let runtimeValid=runtimeSha===RUNTIME_SHA256&&Object.keys(runtime.counties).length===28;
+  if(!runtimeValid){const lp211=await readFile(join(ROOT,'reports/lp211/statewide-roadway-runtime-activation.json'),'utf8').then(JSON.parse).catch(()=>null);runtimeValid=lp211?.readiness==='STATEWIDE_ROADWAY_RUNTIME_ACTIVE'&&lp211.runtimeManifestSha256After===runtimeSha&&Object.keys(runtime.counties).length===254;}
+  if(!runtimeValid) throw new Error(`LP208 committed evidence invalid: production runtime is neither baseline nor certified LP211 activation`);
   for (const field of ['sha256Before', 'sha256After']) requireEqual(acquisition.productionRuntimeManifest?.[field], RUNTIME_SHA256, `productionRuntimeManifest.${field}`);
   requireEqual(acquisition.productionRuntimeManifest?.countyCountBefore, 28, 'productionRuntimeManifest.countyCountBefore');
   requireEqual(acquisition.productionRuntimeManifest?.countyCountAfter, 28, 'productionRuntimeManifest.countyCountAfter');
