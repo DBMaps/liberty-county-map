@@ -22,8 +22,8 @@ export async function buildPlan(){
  if(manufacturing.readiness!=='READY_FOR_STATEWIDE_ROADWAY_PUBLICATION'||!candidates.certificationComplete) throw Error('LP209 is not publication-ready');
  if(!gate.includes('READY_FOR_LP210_STATEWIDE_ROADWAY_PUBLICATION')) throw Error('LP209.1 gate is not ready');
  if(determinism.status!=='PASS'||determinism.controls.length!==11||compatibility.status!=='PASS') throw Error('LP209 supporting gates are not PASS');
- if(candidates.counties.length!==226||runtimeCount(runtime)!==28) throw Error('Cohort conservation failed');
- const active=new Set(Object.keys(runtime.counties)); const seenFips=new Set(),seenPaths=new Set();
+ if(candidates.counties.length!==226||![28,254].includes(runtimeCount(runtime))) throw Error('Cohort conservation failed');
+ const candidateIds=new Set(candidates.counties.map(c=>c.countyId)); const active=new Set(Object.keys(runtime.counties).filter(id=>!candidateIds.has(id))); const seenFips=new Set(),seenPaths=new Set();
  const counties=candidates.counties.map(c=>{
   if(active.has(c.countyId)||seenFips.has(c.countyFips)) throw Error(`Protected overlap or duplicate FIPS: ${c.countyId}`); seenFips.add(c.countyFips);
   if(c.certificationStatus!=='PASS'||c.activated||c.published||c.partitions.length!==c.partitionCount) throw Error(`Uncertified LP209 row: ${c.countyId}`);
@@ -32,7 +32,7 @@ export async function buildPlan(){
   return {countyFips:c.countyFips,countyId:c.countyId,countyName:c.countyName,countySlug:c.countySlug,partitionCount:c.partitionCount,localManifestPath:join('lp116',c.countyFips,'candidate-roadway-manifest.json'),remoteBucket:AUTHORITY.bucket,remoteManifestPath:mp,expectedManifestBytes:c.manifestBytes,expectedManifestSha256:c.manifestSha256,publicationRequired:true,protectedExistingRuntime:false,objects};
  });
  if(new Set([...active,...counties.map(x=>x.countyId)]).size!==254)throw Error('Texas union is not 254');
- return {counties,runtime};
+ return {counties,runtime:{...runtime,counties:Object.fromEntries(Object.entries(runtime.counties).filter(([id])=>active.has(id)))}};
 }
 
 function fips(value){return typeof value==='number'&&Number.isInteger(value)?String(value).padStart(5,'0'):String(value);}
@@ -102,7 +102,9 @@ export async function verifyPortable(){
  for(const [key,value] of Object.entries(FINAL_COUNTS))exact(s[key]===value,`${key} must equal ${value}`);
  exact(s.supabaseWrites?.objectsAlreadyExact===463,'objectsAlreadyExact must equal 463');exact(s.supabaseWrites?.objectsVerified===463,'objectsVerified must equal 463');exact(s.supabaseWrites?.uploadFailures===0,'uploadFailures must equal 0');exact(s.supabaseWrites?.databaseWrites===0,'databaseWrites must equal 0');
  exact(s.retrievalContractVerified===true,'retrievalContractVerified must be true');exact(s.readiness==='READY_FOR_STATEWIDE_ROADWAY_RUNTIME_ACTIVATION','final readiness');
- exact(sha(runtimeBytes)===RUNTIME_SHA,'production runtime manifest SHA-256');const runtime=JSON.parse(runtimeBytes);exact(runtimeCount(runtime)===28,'production runtime county count');
+ const runtime=JSON.parse(runtimeBytes),runtimeSha=sha(runtimeBytes); let validRuntime=runtimeSha===RUNTIME_SHA&&runtimeCount(runtime)===28;
+ if(!validRuntime){const lp211=await json(join(ROOT,'reports/lp211/statewide-roadway-runtime-activation.json')).catch(()=>null);validRuntime=lp211?.readiness==='STATEWIDE_ROADWAY_RUNTIME_ACTIVE'&&lp211.runtimeManifestSha256After===runtimeSha&&runtimeCount(runtime)===254&&lp211.remoteMutations===0;}
+ exact(validRuntime,'production runtime must be the LP210 baseline or certified LP211 activation');
  const safety=s.productionRuntimeManifest;exact(safety?.sha256Before===RUNTIME_SHA&&safety.sha256After===RUNTIME_SHA&&safety.countyCountBefore===28&&safety.countyCountAfter===28&&safety.unchanged===true,'production runtime safety certificate');
  exact(Array.isArray(m.counties)&&m.counties.length===226,'manifest county count');const fipsSeen=new Set(),paths=new Set();let packages=0,bytes=0;
  for(const county of m.counties){exact(county.remoteCertificationStatus==='PASS',`${county.countyFips} certification status`);exact(!fipsSeen.has(county.countyFips),`${county.countyFips} duplicate FIPS`);fipsSeen.add(county.countyFips);exact(county.objects.length===county.partitionCount,`${county.countyFips} partition accounting`);packages+=county.objects.length;

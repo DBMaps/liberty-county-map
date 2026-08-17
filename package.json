@@ -14,6 +14,10 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "whatif:lp211": "node tools/lp211/statewide-roadway-runtime-activation.mjs --mode=WhatIf",
+    "apply:lp211": "node tools/lp211/statewide-roadway-runtime-activation.mjs --mode=Apply",
+    "verify:lp211": "node tools/lp211/statewide-roadway-runtime-activation.mjs --mode=Verify",
+    "test:lp211": "node --test tests/lp211-statewide-roadway-runtime-activation.test.mjs",
     "verify:lp210": "node tools/lp210/statewide-roadway-publication.mjs --mode=Portable",
     "test:lp210": "node --test tests/lp210-statewide-roadway-publication.test.mjs",
     "build:lp209": "node tools/lp209/statewide-roadway-candidates.mjs --verify",

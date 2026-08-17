@@ -2393,6 +2393,9 @@ function gridlyResolveRoadwayRuntimeSource(countyId = gridlyGetActiveCountyId())
       fetchCacheMode: "force-cache"
     });
   }
+  if (manifestStatus === "partition_runtime_ready" && manifestEntry?.runtimeType === "lp210_certified_partition_manifest" && /^https:\/\//.test(manifestEntry?.manifestUrl || "") && Array.isArray(manifestEntry?.partitions) && manifestEntry.partitions.length > 1 && manifestEntry.partitions.every((part) => gridlyValidateRoadwayRuntimeAssetUrl(part?.url))) {
+    return Object.freeze({ countyId: normalizedCountyId, url: null, manifestUrl: manifestEntry.manifestUrl, partitions: Object.freeze(manifestEntry.partitions.map((part) => Object.freeze({ ...part }))), version: manifestEntry.version || "lp210", status: manifestStatus, runtimeType: manifestEntry.runtimeType, external: true, partitioned: true, cacheKey: gridlyBuildRoadwayPackageCacheKey(normalizedCountyId, manifestEntry.version || "lp210", manifestEntry.manifestUrl), fetchCacheMode: "force-cache" });
+  }
   return Object.freeze({ countyId: normalizedCountyId, url: null, version: manifestEntry?.version || null, status: manifestStatus || "blocked_missing_asset", external: false, cacheKey: null, fetchCacheMode: "no-store" });
 }
 
@@ -51295,6 +51298,21 @@ async function loadRoadwayDataset(options = {}) {
     gridlyRoadwayDatasetRevision += 1;
     gridlyResetRoadNameResolverRuntimeCache("roadway_dataset_reset");
     try {
+      if (roadwaySource?.partitioned && roadwaySource.runtimeType === "lp210_certified_partition_manifest") {
+        const manifestResponse = await fetch(roadwaySource.manifestUrl, { cache: roadwaySource.fetchCacheMode || "force-cache" });
+        if (!manifestResponse.ok) throw new Error(`Roadway partition manifest returned ${manifestResponse.status}`);
+        await manifestResponse.json();
+        const responses = await Promise.all(roadwaySource.partitions.map((part) => fetch(part.url, { cache: roadwaySource.fetchCacheMode || "force-cache" })));
+        if (responses.some((response) => !response.ok)) throw new Error("roadway_partition_retrieval_failed");
+        const packages = await Promise.all(responses.map((response) => response.json()));
+        const lineFeatures = packages.flatMap((geojson) => Array.isArray(geojson?.features) ? geojson.features : []).filter((feature) => feature?.type === "Feature" && ["LineString", "MultiLineString"].includes(feature?.geometry?.type) && Array.isArray(feature?.geometry?.coordinates) && feature.geometry.coordinates.length > 0);
+        if (!lineFeatures.length) throw new Error("roadway_dataset_contains_no_line_geometry");
+        if (!requestStillActive()) { gridlyRoadwayPackageRuntimeState.staleCompletionIgnoredCount += 1; return; }
+        roadwaySegmentFeatures = lineFeatures; roadwayDatasetLoaded = true; roadwayDatasetLoadError = null;
+        gridlyRoadwayPackageRuntimeState.loadedCounty = roadwaySource.countyId; gridlyRoadwayPackageRuntimeState.loadedUrl = roadwaySource.manifestUrl; gridlyRoadwayPackageRuntimeState.loadedVersion = roadwaySource.version;
+        gridlyRoadwayDatasetRevision += 1; gridlyResetRoadNameResolverRuntimeCache("lp210_partition_dataset_loaded");
+        return;
+      }
       if (!roadwaySource?.url || !gridlyCountyRuntimeSourceAvailable("roads", roadwaySource.countyId) && roadwaySource.status !== "external_runtime") {
         throw new Error("roadway_dataset_unavailable");
       }
