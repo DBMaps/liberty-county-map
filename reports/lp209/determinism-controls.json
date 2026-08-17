@@ -1,19 +1,338 @@
 {
   "schemaVersion": "gridly.lp209.determinism-controls.v1",
-  "status": "PENDING_OWNER_RERUN",
+  "workspace": "C:\\GitHub\\liberty-county-map\\owner-local\\lp209-roadway-determinism",
+  "mainWorkspace": "C:\\GitHub\\liberty-county-map\\owner-local\\lp209-roadway-manufacturing",
   "controls": [
-    "48287",
-    "48331",
-    "48395",
-    "48113",
-    "48029",
-    "48141",
-    "48181",
-    "48309",
-    "48423",
-    "48439",
-    "48453"
+    {
+      "countyFips": "48029",
+      "countyId": "bexar-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "dff226594f64e3cad3aae3be1391b0e78c5080e77e7ea59b5d1e1277c19fce94",
+        "rerun": "6d86e5132dfa829945f31885538f52367fe67d357ac7aba3e03f22ad04337a9b"
+      },
+      "rawManifestBytes": {
+        "primary": 1510,
+        "rerun": 1508
+      },
+      "canonicalManifestSha256": {
+        "primary": "15ac37694d78dcfb95102b2e95ebd9f18eb983b56d9ecd8fcf57376e25385a64",
+        "rerun": "15ac37694d78dcfb95102b2e95ebd9f18eb983b56d9ecd8fcf57376e25385a64"
+      },
+      "canonicalManifestBytes": {
+        "primary": 1398,
+        "rerun": 1398
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48113",
+      "countyId": "dallas-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "d5aaaa550305b29738ba02cb1c4f32159a681acb00c5b47ab4ffc99325fcdf6a",
+        "rerun": "ecb8388fefdcbf81fcad7599b853aa7eeb72062d180db01452a4a271a508dbf2"
+      },
+      "rawManifestBytes": {
+        "primary": 2254,
+        "rerun": 2252
+      },
+      "canonicalManifestSha256": {
+        "primary": "75861901094a0473a7044464450bcef44fa6b59bb6129265c50685e528175391",
+        "rerun": "75861901094a0473a7044464450bcef44fa6b59bb6129265c50685e528175391"
+      },
+      "canonicalManifestBytes": {
+        "primary": 2141,
+        "rerun": 2141
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48141",
+      "countyId": "el-paso-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "0cc375dec3357ac5df0dda05f0023dd3dce93a85037f6ba0f16dcfa6ae04adc2",
+        "rerun": "066f6a74301068a46c41c0055c29e52eb03dd3d48ec27ef20fe5d89c8b15af33"
+      },
+      "rawManifestBytes": {
+        "primary": 1097,
+        "rerun": 1095
+      },
+      "canonicalManifestSha256": {
+        "primary": "701af65c6fabd9b47496219590ea706b6bfdd606d2e5a7e047bb008c54060c40",
+        "rerun": "701af65c6fabd9b47496219590ea706b6bfdd606d2e5a7e047bb008c54060c40"
+      },
+      "canonicalManifestBytes": {
+        "primary": 983,
+        "rerun": 983
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48181",
+      "countyId": "grayson-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "963e57e85c8acb2c97e683f136cbf7b50295da1cdd3cd6a6d56f2630ce89f4a2",
+        "rerun": "ff28a61213b2846dfa237c780f2cd78ef0e6149425de431f8ec87c17cf1cbcc5"
+      },
+      "rawManifestBytes": {
+        "primary": 1093,
+        "rerun": 1091
+      },
+      "canonicalManifestSha256": {
+        "primary": "b3b0f656e589c70706c42960ddd91e4ec69d2e555873a372534e225b45f20c79",
+        "rerun": "b3b0f656e589c70706c42960ddd91e4ec69d2e555873a372534e225b45f20c79"
+      },
+      "canonicalManifestBytes": {
+        "primary": 979,
+        "rerun": 979
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48287",
+      "countyId": "lee-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "31b1462281fca3aff1c6dcb14658d3ca2a8433d21bf147725aac12946993b74b",
+        "rerun": "b530da1a1a006e2c8f786b5044d87641a578c4b10a5a6cf5fe7dddb3f1125ce9"
+      },
+      "rawManifestBytes": {
+        "primary": 1072,
+        "rerun": 1070
+      },
+      "canonicalManifestSha256": {
+        "primary": "2930f9d897ec5b42eef47f7778efc0a923921203340f33c97643ad4278963187",
+        "rerun": "2930f9d897ec5b42eef47f7778efc0a923921203340f33c97643ad4278963187"
+      },
+      "canonicalManifestBytes": {
+        "primary": 962,
+        "rerun": 962
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48309",
+      "countyId": "mclennan-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "29457c5d07e250aa3c32b86c78bd88ed920a79e933ffc0e44a3f0729b325560b",
+        "rerun": "b2d2f20cf704c35cd4cb2033882f380c55ca3e5ed8d9a266095cbf92bcf0e4fe"
+      },
+      "rawManifestBytes": {
+        "primary": 1097,
+        "rerun": 1095
+      },
+      "canonicalManifestSha256": {
+        "primary": "7eeb1ded6d0169fc7e2e86e9da27848230a99b8651ead8173e23bda8182b57a6",
+        "rerun": "7eeb1ded6d0169fc7e2e86e9da27848230a99b8651ead8173e23bda8182b57a6"
+      },
+      "canonicalManifestBytes": {
+        "primary": 982,
+        "rerun": 982
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48331",
+      "countyId": "milam-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "4b8e9d4cf887acb3ec818a3961e1a4dd1670ecc96614461b4b46ef9776aadd67",
+        "rerun": "5ef86e836a747979bfa2e19928a71a026c1531eb0e8d0571287adfb83e429296"
+      },
+      "rawManifestBytes": {
+        "primary": 1082,
+        "rerun": 1080
+      },
+      "canonicalManifestSha256": {
+        "primary": "a07d259e733deb0b14e4a51f89495eee3f7e713ec2815564501468807d2c4584",
+        "rerun": "a07d259e733deb0b14e4a51f89495eee3f7e713ec2815564501468807d2c4584"
+      },
+      "canonicalManifestBytes": {
+        "primary": 970,
+        "rerun": 970
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48395",
+      "countyId": "robertson-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "b62bd1502dd4e152aaf9456d8a9a3d74459a0313f4056a4982b117ca017149bb",
+        "rerun": "2c70bbf58648e815bf01b6020a00d5f5d47df89ad9350060aefbb0b38154da40"
+      },
+      "rawManifestBytes": {
+        "primary": 1102,
+        "rerun": 1100
+      },
+      "canonicalManifestSha256": {
+        "primary": "417c597a536e24285074ac8561b7ddffa44d2a900b15dc417aff008a7e141373",
+        "rerun": "417c597a536e24285074ac8561b7ddffa44d2a900b15dc417aff008a7e141373"
+      },
+      "canonicalManifestBytes": {
+        "primary": 986,
+        "rerun": 986
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48423",
+      "countyId": "smith-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "1c9a6548ad6fcb0579578e27a2627a418fc6ba6a51fc2d03a8bdf9b41c81c004",
+        "rerun": "2ea7cf87befa8366add0bbddf2ed502313a57dfde0a8a2401e5b182a08477062"
+      },
+      "rawManifestBytes": {
+        "primary": 1083,
+        "rerun": 1081
+      },
+      "canonicalManifestSha256": {
+        "primary": "34a34e764b0504177a2c505b426c6b5681a1b2b1d9f7d7fda53d558fbfc51fd2",
+        "rerun": "34a34e764b0504177a2c505b426c6b5681a1b2b1d9f7d7fda53d558fbfc51fd2"
+      },
+      "canonicalManifestBytes": {
+        "primary": 971,
+        "rerun": 971
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48439",
+      "countyId": "tarrant-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "ec92f1822bbeb30713d82593b388bcff1565b0f31944b207117234ec6a2f4c7b",
+        "rerun": "0ff0b8039dd41b0cde6633032397532d63751fb9c4a028fef44659576f672b4b"
+      },
+      "rawManifestBytes": {
+        "primary": 2266,
+        "rerun": 2264
+      },
+      "canonicalManifestSha256": {
+        "primary": "2345b72c2d1d2741849edea833a89aa8238932f4622cec404d4c8716adcb206e",
+        "rerun": "2345b72c2d1d2741849edea833a89aa8238932f4622cec404d4c8716adcb206e"
+      },
+      "canonicalManifestBytes": {
+        "primary": 2152,
+        "rerun": 2152
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    },
+    {
+      "countyFips": "48453",
+      "countyId": "travis-tx",
+      "sourceIdentityContract": "SHA256_AND_BYTES",
+      "sourceIdentityMatch": true,
+      "lp118CandidateIdentityContract": "SHA256_AND_BYTES",
+      "lp118CandidateIdentityMatch": true,
+      "lp116PackageIdentityContract": "ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256",
+      "lp116PackageIdentityMatch": true,
+      "manifestIdentityContract": "CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES",
+      "rawManifestSha256": {
+        "primary": "b0fe41e4db2ea740786911a87ff11252657b92adae43da64b3445c8eacf07c19",
+        "rerun": "af593e073d7713077c110851d5f344c10760d39ac751ba8c49f3ac4903103dec"
+      },
+      "rawManifestBytes": {
+        "primary": 1516,
+        "rerun": 1514
+      },
+      "canonicalManifestSha256": {
+        "primary": "c49de7f769608e844e4b457cd813ee455937ecf86e5233097157894137f259c0",
+        "rerun": "c49de7f769608e844e4b457cd813ee455937ecf86e5233097157894137f259c0"
+      },
+      "canonicalManifestBytes": {
+        "primary": 1403,
+        "rerun": 1403
+      },
+      "manifestIdentityMatch": true,
+      "certificationStatus": "PASS",
+      "determinismStatus": "PASS"
+    }
   ],
-  "workspace": "owner-local/lp209-roadway-determinism",
-  "productionWrites": 0
+  "status": "PASS"
 }

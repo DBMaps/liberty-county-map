@@ -1,18 +1,64 @@
 {
   "schemaVersion": "gridly.lp209.downstream-compatibility.v1",
-  "status": "NOT_CERTIFIED",
-  "execution": "OWNER_CANDIDATES_REQUIRED",
-  "countyFips": [
-    "48113",
-    "48029",
-    "48141",
-    "48181",
-    "48287"
-  ],
-  "roadwayLoader": "NOT_CERTIFIED",
-  "nearestRoadLookup": "NOT_CERTIFIED",
-  "roadNameExtraction": "NOT_CERTIFIED",
-  "hazardReportRoadAssociation": "NOT_CERTIFIED",
+  "execution": "ISOLATED_OWNER_CANDIDATE_HARNESS",
   "activated": false,
-  "published": false
+  "published": false,
+  "counties": [
+    {
+      "countyFips": "48113",
+      "candidatePath": "C:\\GitHub\\liberty-county-map\\owner-local\\lp209-roadway-manufacturing\\lp118\\48113\\dallas-48113.tiger-roadways.candidate.geojson",
+      "candidateBytes": 48853403,
+      "candidateSha256": "e06528afa68b14d6fa88d610d2effe1990f356bf4d0ea07ac88875345a1ec819",
+      "roadwayLoader": "PASS",
+      "nearestRoadLookup": "PASS",
+      "roadNameExtraction": "PASS",
+      "hazardReportRoadAssociation": "PASS",
+      "status": "PASS"
+    },
+    {
+      "countyFips": "48029",
+      "candidatePath": "C:\\GitHub\\liberty-county-map\\owner-local\\lp209-roadway-manufacturing\\lp118\\48029\\bexar-48029.tiger-roadways.candidate.geojson",
+      "candidateBytes": 41946702,
+      "candidateSha256": "182c76573c3dc47227c4c087106eb8bb7bac433b99cf02fe27f4cf045bb25049",
+      "roadwayLoader": "PASS",
+      "nearestRoadLookup": "PASS",
+      "roadNameExtraction": "PASS",
+      "hazardReportRoadAssociation": "PASS",
+      "status": "PASS"
+    },
+    {
+      "countyFips": "48141",
+      "candidatePath": "C:\\GitHub\\liberty-county-map\\owner-local\\lp209-roadway-manufacturing\\lp118\\48141\\el-paso-48141.tiger-roadways.candidate.geojson",
+      "candidateBytes": 21529268,
+      "candidateSha256": "6e39b3a4f14b8b5c8805dd32ad1f388f2ccf00ff13aa9d4565d4290e096e7dec",
+      "roadwayLoader": "PASS",
+      "nearestRoadLookup": "PASS",
+      "roadNameExtraction": "PASS",
+      "hazardReportRoadAssociation": "PASS",
+      "status": "PASS"
+    },
+    {
+      "countyFips": "48181",
+      "candidatePath": "C:\\GitHub\\liberty-county-map\\owner-local\\lp209-roadway-manufacturing\\lp118\\48181\\grayson-48181.tiger-roadways.candidate.geojson",
+      "candidateBytes": 14718142,
+      "candidateSha256": "db4df4029c8965a5254daead552bd73f22472f3f996289d798103fb2082da67b",
+      "roadwayLoader": "PASS",
+      "nearestRoadLookup": "PASS",
+      "roadNameExtraction": "PASS",
+      "hazardReportRoadAssociation": "PASS",
+      "status": "PASS"
+    },
+    {
+      "countyFips": "48287",
+      "candidatePath": "C:\\GitHub\\liberty-county-map\\owner-local\\lp209-roadway-manufacturing\\lp118\\48287\\lee-48287.tiger-roadways.candidate.geojson",
+      "candidateBytes": 4710026,
+      "candidateSha256": "a9d589e476caaf128cb7a8777ccbe9f8d39ad7421e3e073c1d680d8556a55a33",
+      "roadwayLoader": "PASS",
+      "nearestRoadLookup": "PASS",
+      "roadNameExtraction": "PASS",
+      "hazardReportRoadAssociation": "PASS",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
 }
