@@ -45621,14 +45621,14 @@ function gridlyResolveSettingsAwarenessArea(value = "", countyId = "") {
     ? resolveGridlyAwarenessAreaForCounty(value, normalizedCountyId)
     : resolveGridlyAwarenessArea(value);
   if (!area || !normalizedCountyId || area.canonicalMultiCountyPlace !== true) return area;
-  const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || "");
+  const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[normalizedCountyId] : "") || "");
   return !countyFips || area.countyMemberships?.includes(countyFips) ? area : null;
 }
 
 function gridlyProjectCanonicalPlaceOperationalCounty(area, countyId = "") {
   if (area?.canonicalMultiCountyPlace !== true) return area;
   const normalizedCountyId = gridlyNormalizeCountyId(countyId || "");
-  const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || "");
+  const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[normalizedCountyId] : "") || "");
   if (!normalizedCountyId || !countyFips || !area.countyMemberships?.includes(countyFips)) return area;
   return Object.freeze({ ...area, countyId: normalizedCountyId });
 }
@@ -45638,7 +45638,7 @@ function gridlyResolvePersistedCanonicalPlaceOperationalCounty(area, homeRecord 
   const memberships = new Set((area.countyMemberships || []).map(String));
   const validateMemberCounty = (value) => {
     const normalizedCountyId = gridlyNormalizeCountyId(value || "");
-    const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || "");
+    const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[normalizedCountyId] : "") || "");
     return normalizedCountyId && countyFips && memberships.has(countyFips) ? normalizedCountyId : null;
   };
   const canonicalKey = String(area.key || `place-${gridlyResolveCanonicalPlaceGeoid(area)}`);
@@ -45790,14 +45790,25 @@ function gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId) {
   const explicit = String(countyId || area?.countyId || "").trim();
   if (explicit && gridlyIsKnownCountyId(gridlyNormalizeCountyId(explicit))) {
     const resolved = gridlyNormalizeCountyId(explicit);
-    recordAudit({ operationalResolutionMode: "explicit_county_id", resolvedGridlyCountyId: resolved, membershipValidated: null, failureReason: null });
+    const resolvedFips = String(GRIDLY_COUNTY_REGISTRY[resolved]?.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[resolved] : "") || "");
+    const membershipValidated = !memberships.length || memberships.includes(resolvedFips);
+    if (!membershipValidated) {
+      recordAudit({ operationalResolutionMode: "explicit_county_id", coordinateResolvedCountyFips: resolvedFips || null, resolvedGridlyCountyId: null, membershipValidated: false, failureReason: "explicit_county_outside_governed_memberships" });
+      return null;
+    }
+    recordAudit({ operationalResolutionMode: "explicit_county_id", coordinateResolvedCountyFips: resolvedFips || null, resolvedGridlyCountyId: resolved, membershipValidated: memberships.length ? true : null, failureReason: null });
     return resolved;
   }
   const fips = String(area?.countyFips || area?.countyGeoid || "").trim();
   if (/^48\d{3}$/.test(fips)) {
-    const match = Object.values(GRIDLY_COUNTY_REGISTRY).find((county) => String(county?.countyFips || "") === fips);
+    const match = Object.values(GRIDLY_COUNTY_REGISTRY).find((county) => String(county?.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[county?.id] : "") || "") === fips);
     if (match) {
-      recordAudit({ operationalResolutionMode: "explicit_county_fips", coordinateResolvedCountyFips: fips, resolvedGridlyCountyId: match.id, membershipValidated: null, failureReason: null });
+      const membershipValidated = !memberships.length || memberships.includes(fips);
+      if (!membershipValidated) {
+        recordAudit({ operationalResolutionMode: "explicit_county_fips", coordinateResolvedCountyFips: fips, resolvedGridlyCountyId: null, membershipValidated: false, failureReason: "explicit_county_outside_governed_memberships" });
+        return null;
+      }
+      recordAudit({ operationalResolutionMode: "explicit_county_fips", coordinateResolvedCountyFips: fips, resolvedGridlyCountyId: match.id, membershipValidated: memberships.length ? true : null, failureReason: null });
       return match.id;
     }
   }
@@ -45817,7 +45828,7 @@ function gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId) {
     const coordinateResolution = gridlyResolveCountyIdForCoordinate(latitude, longitude);
     const resolved = String(coordinateResolution?.countyId || "").trim();
     const normalized = resolved && gridlyIsKnownCountyId(gridlyNormalizeCountyId(resolved)) ? gridlyNormalizeCountyId(resolved) : null;
-    const resolvedFips = normalized ? String(GRIDLY_COUNTY_REGISTRY[normalized]?.countyFips || "") : null;
+    const resolvedFips = normalized ? String(GRIDLY_COUNTY_REGISTRY[normalized]?.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[normalized] : "") || "") : null;
     const membershipValidated = Boolean(resolvedFips && (!memberships.length || memberships.includes(resolvedFips)));
     if (normalized && membershipValidated) {
       recordAudit({ operationalResolutionMode: "governed_presentation_coordinate_containment", presentationLat: latitude, presentationLon: longitude, coordinateResolvedCountyFips: resolvedFips, resolvedGridlyCountyId: normalized, membershipValidated: true, failureReason: null });
