@@ -1,0 +1,59 @@
+{
+  "milestone": "LP203.1",
+  "status": "PASS",
+  "rcaReference": "reports/lp203/statewide-crossing-coverage-status-rca.json",
+  "oldAuthority": "GRIDLY_COUNTY_REGISTRY[activeCountyId].runtimeSourceAvailability.crossings === 'available'",
+  "newAuthority": {
+    "precedence": ["governed county Crossing state", "LP202.2 runtime inventory/hydration state and owner", "awareness-area crossing count", "consumer semantic classification"],
+    "governedSource": "Crossing-Packages/production-crossing-manifest.json via js/gridlyCrossingCoverageAuthority.js",
+    "legacyAvailabilityIsDecisionInput": false
+  },
+  "semanticStateModel": {
+    "AVAILABLE_WITH_CROSSINGS": "ACTIVE_POSITIVE plus successfully hydrated active-county-owned inventory and a nonzero awareness-area count",
+    "AVAILABLE_NO_GOVERNED_CROSSINGS": "ACTIVE_EMPTY plus successfully hydrated active-county-owned intentional zero inventory",
+    "AVAILABLE_NO_LOCAL_CROSSINGS": "ACTIVE_POSITIVE plus successfully hydrated active-county-owned inventory and zero awareness-area crossings",
+    "LOADING": "governed county exists and its active-county inventory is not yet successfully hydrated, without failure",
+    "TEMPORARILY_UNAVAILABLE": "governed county exists but source resolution or hydration failed",
+    "UNAVAILABLE": "no governed county Crossing source exists"
+  },
+  "bannerPrecedence": {
+    "before": "A stale legacy crossing flag replaced healthy quiet community copy with Limited local coverage.",
+    "after": "All healthy available states preserve normal awareness-first quiet/active copy; only actual temporary or unsupported failure may supply coverage warning copy."
+  },
+  "controls": {
+    "sherman": { "countyId": "grayson-tx", "governedState": "ACTIVE_POSITIVE", "governedCount": 240, "before": "legacy limited/unavailable", "after": "AVAILABLE_WITH_CROSSINGS; normal awareness banner" },
+    "dallas": { "countyId": "dallas-tx", "governedState": "ACTIVE_POSITIVE", "governedCount": 789, "after": "AVAILABLE_WITH_CROSSINGS" },
+    "liberty": { "countyId": "liberty-tx", "governedState": "ACTIVE_POSITIVE", "governedCount": 115, "after": "AVAILABLE_WITH_CROSSINGS even when legacy value is forced missing" },
+    "otherPositive": {
+      "elPaso": { "countyId": "el-paso-tx", "result": "AVAILABLE_WITH_CROSSINGS" },
+      "waco": { "countyId": "mclennan-tx", "result": "AVAILABLE_WITH_CROSSINGS" },
+      "tyler": { "countyId": "smith-tx", "result": "AVAILABLE_WITH_CROSSINGS" }
+    },
+    "activeEmpty": {
+      "andrews-tx": "AVAILABLE_NO_GOVERNED_CROSSINGS",
+      "archer-tx": "AVAILABLE_NO_GOVERNED_CROSSINGS",
+      "bandera-tx": "AVAILABLE_NO_GOVERNED_CROSSINGS"
+    }
+  },
+  "startupLoadingState": { "semanticState": "LOADING", "consumerCopy": "Crossing information is loading", "legacyWarningShown": false },
+  "simulatedFailureState": { "semanticState": "TEMPORARILY_UNAVAILABLE", "consumerCopy": "Crossing information is temporarily unavailable" },
+  "statewideClassification": {
+    "governedCounties": 254,
+    "activePositive": 202,
+    "activeEmpty": 52,
+    "governedIdentities": 16099,
+    "runtimeRegistryEntries": 254,
+    "falseUnavailablePositiveBefore": 175,
+    "falseUnavailableEmptyBefore": 51,
+    "falseUnavailablePositiveAfter": 0,
+    "falseUnavailableEmptyAfter": 0,
+    "trulyUnsupportedTexasCounties": 0
+  },
+  "legacyAuthorityDependenceCount": 0,
+  "tests": {
+    "focused": "node --test tests/lp2031-statewide-crossing-coverage-state-repair.test.mjs",
+    "lp2021": "npm run test:lp2021",
+    "lp2022": "npm run test:lp2022",
+    "postLp2013": "node --test tests/post-lp2013-awareness-coverage-state-repair.test.mjs"
+  }
+}
