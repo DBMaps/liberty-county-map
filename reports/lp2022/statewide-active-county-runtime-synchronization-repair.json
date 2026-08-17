@@ -1,0 +1,20 @@
+{
+  "milestone": "LP202.2",
+  "status": "COMPLETE_STATEWIDE",
+  "baseline": { "governedCountyCount": 254, "activePositiveCount": 202, "activeEmptyCount": 52, "governedCrossingCount": 16099, "observedDefect": "A semantic PLACE camera and awareness selection could move to Dallas while GRIDLY_ACTIVE_COUNTY_ID and its Liberty inventory remained unchanged." },
+  "rootCause": { "file": "js/app.js", "function": "gridlyDispatchSemanticCamera", "condition": "PLACE and canonical multi-county PLACE branches committed presentation state without invoking gridlySetActiveCountyContext; startup canonical PLACE restoration likewise bypassed the transition owner." },
+  "runtimeOwnerBefore": "gridlySetActiveCountyContext owned reload behavior, but not every authoritative semantic-location path called it.",
+  "runtimeOwnerAfter": "gridlySynchronizeActiveCountyForOperationalContext resolves governed identity and delegates changed counties exactly once to gridlySetActiveCountyContext.",
+  "canonicalCountyIdentitySource": "Explicit governed county ID/FIPS where present; otherwise the established gridlyResolveLocationContext statewide coordinate containment result. Multi-county membership order is never used.",
+  "transitionLifecycle": ["authoritative operational area", "canonical county resolution", "gridlySetActiveCountyContext", "generation increment and stale inventory clear", "LP202.1 governed crossing resolution/load", "county-matched render and awareness selectors"],
+  "asyncProtection": { "mechanism": "county ID plus monotonic transition generation checked before commit", "crossingReviewOverridesCommitProtected": true, "staleRequestSuppressionsAudited": true },
+  "cacheBehavior": { "countyScoped": true, "positiveToEmpty": "old inventory cleared; zero-length inventory is treated as loaded", "sameCounty": "no transition, generation increment, or reload" },
+  "statewideValidation": { "governed": 254, "synchronized": 254, "failed": 0, "activePositiveLifecycle": 202, "activeEmptyLifecycle": 52 },
+  "dallasControl": { "before": { "authoritativeCountyFips": "48113", "activeCountyId": "liberty-tx", "crossingSourceCounty": "liberty-tx", "inventoryCount": 115 }, "after": { "authoritativeCountyFips": "48113", "activeCountyId": "dallas-tx", "crossingSourceCounty": "dallas-tx", "inventoryCount": 789, "staleLibertyPresent": false } },
+  "libertyControl": { "returnActiveCountyId": "liberty-tx", "inventoryCount": 115, "governedSourceRestored": true },
+  "activeEmptyControls": { "positiveToEmptyClears": true, "intentionalZeroCommitted": true, "emptyToPositiveReloads": true },
+  "rapidSwitchResults": { "sequence": ["liberty-tx", "dallas-tx", "tarrant-tx"], "finalCounty": "tarrant-tx", "earlierCommitsSuppressed": 2, "pass": true },
+  "sameCountyResults": { "transition": false, "reloadAvoided": true, "pass": true },
+  "tests": { "lp2022": "PASS (5/5)", "lp2021": "PASS (5/5)", "lp196": "PASS (13/13)", "relatedHistoricalStaticAssertions": "2 pre-existing string-shape assertions fail against current implementation and are not LP202.2 behavioral regressions" },
+  "deferredFindings": ["Legacy profile/home-town fields can remain intentionally distinct from operational county authority.", "Two historical county-runtime tests assert obsolete source strings and should be rebaselined separately without weakening behavioral coverage."]
+}
