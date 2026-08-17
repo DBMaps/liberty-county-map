@@ -45777,6 +45777,29 @@ function gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId) {
   return null;
 }
 
+function gridlyPersistCanonicalPlaceOperationalCounty(area, countyId, source = "operational-context") {
+  if (area?.canonicalMultiCountyPlace !== true || !countyId) return false;
+  const normalizedCountyId = gridlyNormalizeCountyId(countyId);
+  const county = GRIDLY_COUNTY_REGISTRY[normalizedCountyId];
+  if (!county) return false;
+  const homeTown = area.storageValue || area.label || "";
+  const settings = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : null;
+  if (settings && typeof saveGridlySettingsPreferences === "function") {
+    saveGridlySettingsPreferences({ ...settings, community: { ...(settings.community || {}), homeTown, awarenessArea: homeTown, awarenessAreaKey: area.key, countyId: normalizedCountyId } }, { applyDisplay: false, render: false, source });
+  }
+  if (typeof saveGridlyUserProfile === "function") {
+    saveGridlyUserProfile({
+      homeTown,
+      homeTownLabel: area.label || homeTown,
+      awarenessArea: homeTown,
+      awarenessAreaKey: area.key,
+      awarenessAreaLabel: area.label || homeTown,
+      awarenessAreaCountyId: normalizedCountyId
+    });
+  }
+  return true;
+}
+
 function gridlySynchronizeActiveCountyForOperationalContext(area, countyId, source = "operational-context") {
   const activeCountyIdBefore = gridlyGetActiveCountyId();
   const transitionGenerationBefore = gridlyActiveCountyTransitionGeneration;
@@ -45806,6 +45829,7 @@ function gridlySynchronizeActiveCountyForOperationalContext(area, countyId, sour
   // subsystem has loaded. Re-enter the existing, de-duplicated LP202.1 loader
   // even on a same-county pass when ownership is missing or stale.
   if (activeCountyIdAfter === resolvedCountyId) {
+    gridlyPersistCanonicalPlaceOperationalCounty(area, resolvedCountyId, source);
     ensureGridlyActiveCountyCrossingInventory(`${source}:county-runtime-invariant`);
   }
   gridlyActiveCountySynchronizationAudit = Object.freeze({ synchronizerInvoked: true, source, resolvedGridlyCountyId: resolvedCountyId, activeCountyIdBefore, activeCountyIdAfter, transitionAttempted: resolvedCountyId !== activeCountyIdBefore, transitionCommitted: activeCountyIdAfter === resolvedCountyId, transitionBlockedReason: activeCountyIdAfter === resolvedCountyId ? null : "setter_did_not_commit_resolved_county", setterInvoked, setterResult, transitionGenerationBefore, transitionGenerationAfter: gridlyActiveCountyTransitionGeneration });
@@ -45980,7 +46004,9 @@ function gridlyLp0361ReadStorageLocationState() {
 function gridlyLp0361SnapshotAuthoritativeState() {
   const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   const storage = gridlyLp0361ReadStorageLocationState();
-  return { activeCountyRuntimeId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, selectedCountyId: selected?.countyId || storage.selectedCountyPreference || null, activeCommunity: selected?.label || null, selectedCommunity: selected?.label || storage.selectedCommunityPreference || null, selectedAwarenessArea: selected ? { id: selected.key || null, name: selected.label || selected.storageValue || null, countyId: selected.countyId || null, regionId: selected.awarenessRegionId || null } : null, houstonParent: selected?.parentCommunity === "Houston" || selected?.label === "Houston" ? "houston" : null, houstonChildRegion: selected?.awarenessRegionId || null, roadwayRuntimeCounty: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, storageLocationState: storage };
+  const activeCountyRuntimeId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
+  const selectedCountyId = selected?.countyId || storage.selectedCountyPreference || (selected?.canonicalMultiCountyPlace === true ? activeCountyRuntimeId : null);
+  return { activeCountyRuntimeId, selectedCountyId, activeCommunity: selected?.label || null, selectedCommunity: selected?.label || storage.selectedCommunityPreference || null, selectedAwarenessArea: selected ? { id: selected.key || null, name: selected.label || selected.storageValue || null, countyId: selectedCountyId, regionId: selected.awarenessRegionId || null } : null, houstonParent: selected?.parentCommunity === "Houston" || selected?.label === "Houston" ? "houston" : null, houstonChildRegion: selected?.awarenessRegionId || null, roadwayRuntimeCounty: activeCountyRuntimeId, storageLocationState: storage };
 }
 
 function gridlyLp0361CompareResolution(result, state) {
