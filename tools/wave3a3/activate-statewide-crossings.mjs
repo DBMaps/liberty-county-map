@@ -155,10 +155,25 @@ async function postActivation(root){
  const inventory=await read(root,'data/lp104/texas-counties.json'),manifest=await read(root,'Crossing-Packages/production-crossing-manifest.json'),registry=await read(root,'assets/package-registry/runtime-package-registry.json'),reconciliation=await read(root,`${WAVE32}/reconciliation-index.json`),owner=new Map(reconciliation.entries.map(e=>[e.crossingId,e.gridlyCountyFips]));
  const seen=new Set(),duplicates=[],mismatches=[],leakage=[],counts={};let positive=0,empty=0;
  if(manifest.records.length!==254||manifest.totalPackages!==254||manifest.totalCrossings!==16099||manifest.passCount!==254||manifest.blockedCount!==0)fail('post-activation production manifest totals');
- for(const r of manifest.records){const c=inventory.counties.find(x=>x.countyName===r.county);if(!c)fail(`unknown manifest county ${r.county}`);const pkg=await read(root,portable(r.packageFile)),values=ids(pkg),countyManifest=await read(root,`Crossing-Packages/${slug(c)}/package-manifest.json`);if(pkg.type!=='FeatureCollection'||!Array.isArray(pkg.features)||(pkg.crossingCount!==undefined&&pkg.crossingCount!==values.length)||(pkg.county!==undefined&&pkg.county!==c.countyName)||r.crossingCount!==values.length||countyManifest.crossingCount!==values.length||countyManifest.county!==c.countyName)fail(`package certification differs for ${c.fips}`);counts[c.countyName]=values.length;values.length?positive++:empty++;for(const id of values){if(seen.has(id))duplicates.push(id);seen.add(id);if(owner.get(id)!==c.fips)mismatches.push(id);if(BLOCKED.includes(id))leakage.push(id)}}
+ for(const r of manifest.records){const c=inventory.counties.find(x=>x.countyName===r.county);if(!c)fail(`unknown manifest county ${r.county}`);const {values}=await certifyProductionCounty({root,record:r,county:c,owner});counts[c.countyName]=values.length;values.length?positive++:empty++;for(const id of values){if(seen.has(id))duplicates.push(id);seen.add(id)}}
  const assigned=new Set(reconciliation.entries.filter(e=>e.gridlyCountyFips).map(e=>e.crossingId)),missing=[...assigned].filter(id=>!seen.has(id)),extra=[...seen].filter(id=>!assigned.has(id)),crossing=registry.packages.filter(p=>p.packageType==='Crossing');
  const result={classification:{ACTIVE_POSITIVE:positive,ACTIVE_EMPTY:empty,TOTAL:manifest.records.length},activeIdentities:seen.size,missing,extra,duplicates,mismatches,blockedLeakage:leakage,controls:{Brazos:counts.Brazos,Lavaca:counts.Lavaca,Washington:counts.Washington,Tyler:counts.Tyler},fraSource:{expected:FRA,observed:{bytes:(await raw(root,'Crossing-Packages/Texas/fra-crossings-tx.geojson')).length,sha256:sha(await raw(root,'Crossing-Packages/Texas/fra-crossings-tx.geojson'))}},manifestRegistryAgree:crossing.length===254&&registry.packageTypes.find(p=>p.packageType==='Crossing')?.packageCount===254&&same(crossing.map(p=>p.county),manifest.records.map(r=>r.county))};
  const expected={classification:{ACTIVE_POSITIVE:202,ACTIVE_EMPTY:52,TOTAL:254},activeIdentities:16099,missing:[],extra:[],duplicates:[],mismatches:[],blockedLeakage:[],controls:{Brazos:95,Lavaca:40,Washington:44,Tyler:0},fraSource:{expected:FRA,observed:FRA},manifestRegistryAgree:true};if(!same(result,expected))fail(`post-write certification failed: ${JSON.stringify(result)}`);return result;
+}
+
+/**
+ * Certify one county using the active path governed by
+ * Crossing-Packages/production-crossing-manifest.json. A county package
+ * manifest's packageFile may be a legacy informational value; it is not an
+ * authority for active package resolution and is deliberately not compared.
+ */
+export async function certifyProductionCounty({root=DEFAULT_ROOT,record,county,owner}){
+ const pkg=await read(root,portable(record.packageFile));
+ const countyManifest=await read(root,`Crossing-Packages/${slug(county)}/package-manifest.json`);
+ const values=ids(pkg);
+ if(pkg.type!=='FeatureCollection'||!Array.isArray(pkg.features)||(pkg.crossingCount!==undefined&&pkg.crossingCount!==values.length)||(pkg.county!==undefined&&pkg.county!==county.countyName)||record.crossingCount!==values.length||countyManifest.packageType!=='Crossing'||countyManifest.crossingCount!==values.length||countyManifest.county!==county.countyName)fail(`package certification differs for ${county.fips}`);
+ for(const id of values){if(owner.get(id)!==county.fips)fail(`ownership mismatch ${id}`);if(BLOCKED.includes(id))fail(`blocked identity leakage ${id}`)}
+ return {pkg,countyManifest,values};
 }
 
 async function requireCommittedFile(root,path){
