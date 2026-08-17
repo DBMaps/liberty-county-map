@@ -1,14 +1,53 @@
-import test from "node:test";
-import assert from "node:assert/strict";
-import fs from "node:fs";
-import {execFileSync} from "node:child_process";
-const read=p=>JSON.parse(fs.readFileSync(p,"utf8"));
-const audit=read("reports/lp206/statewide-roadway-geometry-source-and-coverage-audit.json");
-const matrix=read("reports/lp206/county-roadway-coverage-matrix.json");
-test("254 county accounting retains LP204 authority",()=>{assert.equal(matrix.count,254);assert.equal(audit.accounting.activeRuntimePackages,28);assert.equal(audit.accounting.missingActiveRuntimeCoverage,226);const lp204=read("reports/lp204/statewide-functional-coverage-and-source-linkage-audit.json");assert.equal(lp204.inputs.roads.count,28);});
-test("manifest membership is the exact runtime gate",()=>{const m=read("data/roadway-runtime-manifest.json");assert.equal(Object.keys(m.counties).length,28);assert.deepEqual(audit.runtimeAuthority.activeCountyIds,Object.keys(m.counties));assert.ok(audit.runtimeGates.some(x=>x.classification==="PRODUCTION_ACTIVE"&&x.file==="data/roadway-runtime-manifest.json"));assert.ok(audit.runtimeGates.some(x=>x.classification==="HISTORICAL_EVIDENCE"));});
-test("local and remote evidence is explicit without false absence",()=>{assert.equal(audit.accounting.localPackagesFound,2);assert.equal(audit.remoteInventory.directAccess,"UNAVAILABLE_NETWORK_PROXY_403");assert.equal(audit.remoteInventory.absenceInferenceAllowed,false);assert.equal(audit.accounting.trueMissingPackages,null);assert.equal(audit.accounting.rebuildRequired,null);assert.equal(audit.statewideDecision,"UNRESOLVED");assert.ok(matrix.rows.filter(x=>!x.runtimeRoadwayActive).every(x=>x.exactBlocker!=="PACKAGE_MISSING"&&x.exactBlocker!=="SOURCE_REBUILD_REQUIRED"));});
-test("matrix vocabulary, controls, schema and consumers are governed",()=>{assert.equal(matrix.rows.length,254);assert.ok(matrix.rows.every(x=>audit.blockerVocabulary.includes(x.exactBlocker)));assert.equal(audit.controls.length,10);assert.ok(audit.controls.every(Boolean));assert.ok(audit.consumers.some(x=>x.consumer.includes("nearest-road")));assert.ok(audit.consumers.some(x=>x.consumer==="Route Watch"));assert.ok(audit.consumers.some(x=>x.consumer==="DriveTexas linkage"));assert.match(audit.sourceProvenance.schema.geoJsonType,/FeatureCollection/);});
-test("audit builder verifies deterministic artifacts",()=>{assert.doesNotThrow(()=>execFileSync(process.execPath,["tools/lp206/build-statewide-roadway-geometry-audit.mjs","--verify"],{stdio:"pipe"}));});
-test("owner probe fails closed and what-if uses GET only",()=>{const env={...process.env};delete env.SUPABASE_SERVICE_ROLE_KEY;delete env.SUPABASE_READ_ONLY_KEY;assert.throws(()=>execFileSync(process.execPath,["tools/lp206/owner-supabase-roadway-inventory.mjs"],{env,stdio:"pipe"}));const p=JSON.parse(execFileSync(process.execPath,["tools/lp206/owner-supabase-roadway-inventory.mjs","--whatif"],{env,encoding:"utf8"}));assert.deepEqual(p.httpMethods,["GET"]);});
-test("LP206 changes are audit-only",()=>{assert.equal(audit.auditOnly,true);assert.equal(audit.productionFilesModified,false);assert.match(fs.readFileSync("reports/lp206/LP206-STATEWIDE-ROADWAY-GEOMETRY-SOURCE-AND-COVERAGE-AUDIT.md","utf8"),/No runtime, Supabase, package, registry, or consumer file was changed/);});
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
+
+const read = p => JSON.parse(fs.readFileSync(p, 'utf8'));
+const audit = read('reports/lp206/statewide-roadway-geometry-source-and-coverage-audit.json');
+const cohort = read('reports/lp206/statewide-roadway-missing-build-cohort.json');
+
+test('freezes and conserves the governed 28 / missing 226', () => {
+  assert.equal(cohort.totalTexasCounties, 254);
+  assert.equal(cohort.existingRuntimeRoadwayCountyCount, 28);
+  assert.equal(cohort.missingRoadwayCountyCount, 226);
+  assert.deepEqual(cohort.conservation, { existingCount: 28, missingCount: 226, intersectionCount: 0, unionCount: 254, duplicateFipsCount: 0, unknownFipsCount: 0, missingTexasCountyCount: 0, extraNonTexasIdentityCount: 0 });
+  const manifest = read('data/roadway-runtime-manifest.json');
+  assert.deepEqual(cohort.existingRuntimeCounties.map(x => x.countyId).sort(), Object.keys(manifest.counties).sort());
+  assert.ok(cohort.missingCounties.every(x => !x.currentRuntimeRoadway && x.requiredAction === 'MANUFACTURE_AND_CERTIFY'));
+});
+
+test('represents owner evidence without misclassifying artifacts', () => {
+  assert.equal(audit.ownerEvidence.lp1883.communityIdentityPackageCount, 254);
+  assert.equal(audit.ownerEvidence.lp1883.classifiedAsRoadwayPackages, false);
+  assert.equal(audit.ownerEvidence.osmRaw.uniqueCountyCount, 26);
+  assert.equal(audit.ownerEvidence.extractedTiger2025.shapefileCount, 6);
+  assert.equal(audit.ownerEvidence.newerTiger2025Zips.zipCount, 3);
+  assert.equal(audit.ownerEvidence.productionSupabase.totalObjectCount, 29);
+  assert.equal(audit.ownerEvidence.productionSupabase.hiddenStatewideInventory, false);
+});
+
+test('closes source acquisition and manufacturing readiness explicitly', () => {
+  const allowed = ['EXISTING_AUTOMATED_ACQUISITION_READY', 'EXISTING_ACQUISITION_NEEDS_REPAIR', 'NO_EXISTING_ACQUISITION_TOOLING', 'SOURCE_CONTRACT_UNRESOLVED'];
+  assert.ok(allowed.includes(audit.decisions.sourceAcquisition));
+  assert.equal(audit.decisions.sourceAcquisition, 'NO_EXISTING_ACQUISITION_TOOLING');
+  assert.equal(audit.acquisitionTooling.reusableDownloaderExists, false);
+  assert.equal(audit.manufacturingTooling.identified, true);
+  assert.ok(audit.manufacturingTooling.scripts.includes('tools/lp118/extract-tiger-roadways.mjs'));
+  assert.match(audit.sourceConsistency.conclusion, /SOURCE_GOVERNANCE/);
+  assert.equal(audit.decisions.lp207Readiness, 'READY_FOR_LP207_PILOT');
+});
+
+test('three source controls are pilot-ready and existing 28 are protected', () => {
+  assert.deepEqual(audit.zipControls.map(x => x.fips), ['48287', '48331', '48395']);
+  assert.ok(audit.zipControls.every(x => x.zipOpens && x.expectedMembersPresent && x.schemaReadableByLp118 && x.pilotSuitable));
+  assert.equal(audit.existing28Protection.excludedFips.length, 28);
+  assert.equal(audit.existing28Protection.overwriteAllowed, false);
+  assert.equal(audit.existing28Protection.preserveHarrisPartitions, true);
+  assert.equal(audit.existing28Protection.preserveLibertySanJacintoLocalBehavior, true);
+});
+
+test('LP206 is audit-only and deterministic', () => {
+  assert.deepEqual(audit.controls, { productionRuntimeFilesModified: false, roadwayPackagesManufactured: false, sourceFilesDownloaded: false, supabaseWritesPerformed: false });
+  assert.doesNotThrow(() => execFileSync(process.execPath, ['tools/lp206/build-statewide-roadway-geometry-audit.mjs', '--verify'], { stdio: 'pipe' }));
+});
