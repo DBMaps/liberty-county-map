@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "gridly.lp214.drivetexas-source-health-certification.v1",
+  "milestone": "LP214_PHASE_2_2",
+  "generatedAtPolicy": "deterministic-no-wall-clock",
+  "repairBoundary": "E_AWARENESS_CONSUMER_BRIDGE_WITH_SHARED_SOURCE_STATUS_ENVELOPE",
+  "before": [
+    "SOURCE_FAILURE",
+    "ARRAY_EMPTY",
+    "HEALTHY_EMPTY_POSSIBLE",
+    "FALSE_QUIET_POSSIBLE"
+  ],
+  "after": [
+    "SOURCE_FAILURE",
+    "SOURCE_STATUS_ENVELOPE",
+    "UNAVAILABLE_OR_RETAINED",
+    "HEALTHY_EMPTY_IMPOSSIBLE",
+    "FALSE_QUIET_BLOCKED"
+  ],
+  "sourceStatuses": [
+    "HEALTHY_WITH_DATA",
+    "HEALTHY_EMPTY",
+    "SOURCE_FAILED_NO_RETAINED_DATA",
+    "SOURCE_FAILED_WITH_RETAINED_DATA",
+    "SOURCE_UNAVAILABLE",
+    "UNKNOWN"
+  ],
+  "affectedConsumerPaths": [
+    "shared envelope -> Awareness Brief official roadway enrichment",
+    "shared envelope -> Community Pulse shared summary and quiet-state warning",
+    "shared envelope -> Travel Brief / Know Before You Go Official Roadways section",
+    "shared envelope -> destination awareness travel model",
+    "shared envelope -> awareness summary alert/awareness rows"
+  ],
+  "statewideApplicability": {
+    "canonicalCommunityCount": 1859,
+    "sharedContractCommunityCount": 1859,
+    "communitySpecificOverrideCount": 0,
+    "multiCountyCommunityCount": 163,
+    "dallasControl": {
+      "placeGeoid": "4819000",
+      "preserved": true,
+      "memberCountyFips": [
+        "48085",
+        "48113",
+        "48121",
+        "48257",
+        "48397"
+      ]
+    }
+  },
+  "protectedProductionFilesModified": false,
+  "browserCertificationStatus": "OWNER_CONTROLS_REQUIRED"
+}

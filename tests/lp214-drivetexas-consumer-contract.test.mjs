@@ -41,8 +41,8 @@ test("Dallas remains a multi-county browser control", () => {
   assert.equal(dallas.geography, "multi-county");
 });
 
-test("audit modifies no production source", () => {
+test("Phase 2.1 artifact remains immutable while Phase 2.2 stays at its authorized boundary", () => {
   assert.equal(artifact.productionSourceModified, false);
-  const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim();
-  assert.equal(changed, "");
+  const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
+  assert.deepEqual(changed.sort(), ["js/app.js", "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js"]);
 });
