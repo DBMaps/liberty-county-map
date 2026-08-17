@@ -16,6 +16,7 @@ const BOUNDARIES = join(ROOT, 'assets/boundaries/texas-counties-boundaries.geojs
 const REPORTS = join(ROOT, 'reports/lp209');
 export const OWNER_SOURCE_ROOT = 'C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS';
 export const OWNER_OUTPUT_ROOT = 'owner-local/lp209-roadway-manufacturing';
+export const EXPECTED_RUNTIME_SHA256 = '56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd';
 export const DEFAULT_GDAL_EXECUTABLE = 'C:\\Program Files\\QGIS 3.44.11\\bin\\ogr2ogr.exe';
 export const CONTROL_FIPS = Object.freeze(['48287','48331','48395','48113','48029','48141','48181','48309','48423','48439','48453']);
 const sha = b => createHash('sha256').update(b).digest('hex');
@@ -28,7 +29,7 @@ export async function loadPlan({ sourceRoot = OWNER_SOURCE_ROOT, outputRoot = OW
   const [{ manifest: sources }, cohort, runtimeBody, boundaryBody] = await Promise.all([
     verifyLP208(), readFile(COHORT, 'utf8').then(JSON.parse), readFile(RUNTIME), readFile(BOUNDARIES)
   ]);
-  const runtime = JSON.parse(runtimeBody); const boundaries = JSON.parse(boundaryBody);
+  const runtime = JSON.parse(runtimeBody); invariant(sha(runtimeBody)===EXPECTED_RUNTIME_SHA256, 'production roadway manifest identity changed'); const boundaries = JSON.parse(boundaryBody);
   const protectedIds = new Set(Object.keys(runtime.counties));
   const protectedFips = new Set(cohort.existingRuntimeCounties.map(x => x.countyFips));
   invariant(cohort.totalTexasCounties === 254 && cohort.missingRoadwayCountyCount === 226, 'LP206 254/226 conservation differs');
@@ -78,6 +79,15 @@ export async function verifyGdal(gdalExecutable) {
 }
 async function sourceIdentity(row) { const body=await readFile(row.sourceOwnerPath); invariant(body.length===row.sourceBytes,`source byte mismatch ${row.countyFips}`); invariant(sha(body)===row.sourceSha256,`source SHA mismatch ${row.countyFips}`); }
 
+export function assertManufacturingComplete(result,{expectedCount=226,subset=false}={}) {
+  const a=result.accounting, runtime=result.productionRuntimeManifest;
+  const complete=a.planned===226&&a.lp118Successful===expectedCount&&a.lp116Manufactured===expectedCount&&a.certified===expectedCount&&a.failed===0&&a.pending===(subset?226-expectedCount:0)&&a.protectedOverlap===0;
+  invariant(complete, subset?'requested manufacturing subset is incomplete':'statewide manufacturing is incomplete');
+  invariant(runtime.unchanged&&runtime.countyCountBefore===28&&runtime.countyCountAfter===28, 'production runtime changed during manufacturing');
+  invariant(a.supabaseWrites===0&&a.runtimeActivations===0&&a.productionPackageModifications===0, 'production mutation occurred during manufacturing');
+  return result;
+}
+
 export async function executeOwner({ mode='whatif', sourceRoot=OWNER_SOURCE_ROOT, outputRoot=resolve(ROOT,OWNER_OUTPUT_ROOT), gdal, writeReports=false, countyFips=null }={}) {
   invariant(['whatif','build','resume','verify'].includes(mode), `unsupported mode ${mode}`);
   const before=await loadPlan({sourceRoot,outputRoot});
@@ -102,7 +112,7 @@ export async function executeOwner({ mode='whatif', sourceRoot=OWNER_SOURCE_ROOT
   const evidence=await collectEvidence(before.rows,outputRoot);
   const result=summarize(before.rows,evidence,before,{ownerMounted,gdalIdentity,writeReports});
   if(writeReports) await writeEvidence(result);
-  if (mode!=='verify') invariant(result.readiness==='READY_FOR_STATEWIDE_ROADWAY_PUBLICATION','committed/local evidence is incomplete');
+  if (mode!=='verify') assertManufacturingComplete(result,{expectedCount:executionRows.length,subset:Boolean(countyFips)});
   return result;
 }
 
