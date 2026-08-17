@@ -140,6 +140,8 @@ test('LP213 startup Liberty cancellation is followed by authoritative Dallas roa
   const activations = [];
   let roadwayOwner = 'liberty-tx';
   let roadwayFeatureCount = 0;
+  let activeSequence = 1;
+  let currentLoad = { countyId: 'liberty-tx', sequence: 1 };
   const context = {
     Object,
     GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
@@ -162,13 +164,26 @@ test('LP213 startup Liberty cancellation is followed by authoritative Dallas roa
       context.gridlyActiveCountyTransitionGeneration += 1;
       roadwayOwner = null;
       activations.push({ countyId: 'liberty-tx', status: 'cancelled' });
+      void context.gridlyActivateRoadwayDatasetForActiveCounty('active-county-change');
       return id;
     },
     gridlyActivateRoadwayDatasetForActiveCounty: async (reason) => {
       const countyId = context.window.GRIDLY_ACTIVE_COUNTY_ID;
+      if (currentLoad?.countyId === countyId) {
+        activations.push({ countyId, status: 'deduplicated', reason });
+        return currentLoad.promise;
+      }
+      const sequence = ++activeSequence;
+      const promise = Promise.resolve().then(() => {
+        if (context.window.GRIDLY_ACTIVE_COUNTY_ID !== countyId || activeSequence !== sequence) return;
+        roadwayOwner = countyId;
+        roadwayFeatureCount = countyId === 'dallas-tx' ? 40208 : 8405;
+      });
+      // This reservation intentionally occurs before the first asynchronous
+      // yield, matching loadRoadwayDataset's startup replacement contract.
+      currentLoad = { countyId, sequence, promise };
       activations.push({ countyId, status: 'started', reason });
-      roadwayOwner = countyId;
-      roadwayFeatureCount = countyId === 'dallas-tx' ? 40208 : 8405;
+      return promise;
     },
     ensureGridlyActiveCountyCrossingInventory() {},
     getGridlySettingsPreferences: () => ({ community: {} }),
@@ -189,10 +204,13 @@ test('LP213 startup Liberty cancellation is followed by authoritative Dallas roa
 
   assert.deepEqual(activations.map(({ countyId, status }) => ({ countyId, status })), [
     { countyId: 'liberty-tx', status: 'cancelled' },
-    { countyId: 'dallas-tx', status: 'started' }
+    { countyId: 'dallas-tx', status: 'started' },
+    { countyId: 'dallas-tx', status: 'deduplicated' }
   ]);
   assert.equal(roadwayOwner, 'dallas-tx');
   assert.equal(roadwayFeatureCount, 40208);
+  const loaderBody = productionFunction('loadRoadwayDataset');
+  assert.ok(!loaderBody.includes('await gridlyEnsureRoadwayRuntimeManifestLoaded()'), 'replacement load reservation cannot yield after activation sequencing');
 });
 
 test('LP213 canonical Dallas profile defeats stale settings and unrelated runtime at startup', () => {
