@@ -19,6 +19,7 @@ export const OWNER_OUTPUT_ROOT = 'owner-local/lp209-roadway-manufacturing';
 export const EXPECTED_RUNTIME_SHA256 = '56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd';
 export const DEFAULT_GDAL_EXECUTABLE = 'C:\\Program Files\\QGIS 3.44.11\\bin\\ogr2ogr.exe';
 export const CONTROL_FIPS = Object.freeze(['48287','48331','48395','48113','48029','48141','48181','48309','48423','48439','48453']);
+export const PARTITIONED_FIPS = Object.freeze(['48029','48085','48113','48121','48215','48439','48453']);
 const sha = b => createHash('sha256').update(b).digest('hex');
 const json = x => `${JSON.stringify(x, null, 2)}\n`;
 const exists = p => access(p).then(() => true, () => false);
@@ -141,7 +142,42 @@ export function summarize(rows,evidence,plan,environment={}) {
   return {schemaVersion:'gridly.lp209.statewide-roadway-manufacturing.v1',generatedAt:'2026-08-17T00:00:00.000Z',plan:rows, counties, accounting:{texasCounties:254,existingRuntimeRoadwayCount:28,planned:226,lp118Successful:lp118,lp116Manufactured:pass,certified:pass,failed:counties.filter(x=>x.certificationStatus==='FAIL').length,pending:226-pass,protectedOverlap:0,supabaseWrites:0,runtimeActivations:0,productionPackageModifications:0},productionRuntimeManifest:{path:'data/roadway-runtime-manifest.json',sha256Before:plan.runtimeSha256,sha256After:plan.runtimeSha256,countyCountBefore:28,countyCountAfter:28,unchanged:true},partitionLimits:PARTITION_LIMITS,environment,downstreamCompatibility:{status:'PENDING_OWNER_CANDIDATE_TESTS'},determinism:{status:'PENDING_OWNER_RERUN',controls:CONTROL_FIPS},readiness};
 }
 async function writeEvidence(result){await mkdir(REPORTS,{recursive:true}); await writeFile(join(REPORTS,'statewide-roadway-missing-cohort-manufacturing.json'),json({...result,counties:undefined})); await writeFile(join(REPORTS,'statewide-roadway-candidate-manifest.json'),json({schemaVersion:'gridly.lp209.statewide-roadway-candidate-manifest.v1',generatedAt:result.generatedAt,certificationComplete:result.readiness.startsWith('READY_'),counties:result.counties}));}
-export async function writePlan(){const p=await loadPlan(); const result=summarize(p.rows,[],p,{ownerSourceMounted:false,evidenceState:'OWNER_EXECUTION_REQUIRED'}); await writeEvidence(result); return result;}
-export async function verifyCommitted(){const [p,a,m]=await Promise.all([loadPlan(),readFile(join(REPORTS,'statewide-roadway-missing-cohort-manufacturing.json'),'utf8').then(JSON.parse),readFile(join(REPORTS,'statewide-roadway-candidate-manifest.json'),'utf8').then(JSON.parse)]); invariant(m.counties.length===226,'candidate manifest row count'); invariant(a.accounting.planned===226&&a.accounting.lp118Successful===226&&a.accounting.lp116Manufactured===226&&a.accounting.certified===226&&a.accounting.pending===0&&a.accounting.protectedOverlap===0,'committed owner manufacturing accounting'); invariant(a.readiness==='BLOCKED_FOR_STATEWIDE_ROADWAY','readiness must remain blocked until final owner evidence is ingested'); invariant(a.productionRuntimeManifest.sha256After===p.runtimeSha256,'runtime manifest changed'); return {readiness:a.readiness,accounting:a.accounting};}
+export async function writePlan(){
+  const committed=await readFile(join(REPORTS,'statewide-roadway-candidate-manifest.json'),'utf8').then(JSON.parse,()=>null);
+  if(committed?.certificationComplete===true) return verifyCommitted();
+  const p=await loadPlan(); const result=summarize(p.rows,[],p,{ownerSourceMounted:false,evidenceState:'OWNER_EXECUTION_REQUIRED'}); await writeEvidence(result); return result;
+}
+const validSha=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+export function validateFinalEvidence({plan,manufacturing,candidateManifest,determinism,compatibility}) {
+  const rows=candidateManifest.counties;
+  invariant(candidateManifest.certificationComplete===true,'candidate certification must be complete');
+  invariant(rows.length===226&&new Set(rows.map(row=>row.countyFips)).size===226,'candidate manifest must contain 226 unique FIPS');
+  const governed=new Map(plan.rows.map(row=>[row.countyFips,row]));
+  for(const row of rows){
+    const source=governed.get(row.countyFips);
+    invariant(source&&['countyId','countyName','countySlug','sourceFilename','sourceBytes','sourceSha256','sourceAuthority','sourceProduct','sourceVintage'].every(key=>row[key]===source[key]),`governed source identity mismatch ${row.countyFips}`);
+    invariant(['GENERATED','RESUMED'].includes(row.lp118Status)&&row.sourceFeatureCount>=0&&row.retainedFeatureCount>=0&&row.rejectedFeatureCount>=0,`invalid LP118 evidence ${row.countyFips}`);
+    invariant(row.candidateSourceBytes>0&&validSha(row.candidateSourceSha256),`invalid candidate identity ${row.countyFips}`);
+    invariant(['GENERATED','RESUMED'].includes(row.lp116Status)&&Number.isInteger(row.partitionCount)&&row.partitionCount>0,`invalid LP116 evidence ${row.countyFips}`);
+    invariant(Array.isArray(row.partitions)&&row.partitions.length===row.partitionCount,`partition count mismatch ${row.countyFips}`);
+    invariant(row.partitions.every(part=>typeof part.fileName==='string'&&part.fileName&&Number.isInteger(part.featureCount)&&part.featureCount>=0&&Number.isInteger(part.bytes)&&part.bytes>0&&validSha(part.sha256)),`invalid partition identity ${row.countyFips}`);
+    invariant(row.partitions.reduce((sum,part)=>sum+part.bytes,0)===row.packageBytes,`partition byte accounting mismatch ${row.countyFips}`);
+    if(row.partitionCount===1) invariant(validSha(row.packageSha256)&&row.packageSha256===row.partitions[0].sha256&&row.packageBytes===row.partitions[0].bytes,`single-package identity mismatch ${row.countyFips}`);
+    else invariant(row.packageSha256==null,`partitioned county must use per-partition identity ${row.countyFips}`);
+    invariant(row.manifestBytes>0&&validSha(row.manifestSha256)&&row.certificationStatus==='PASS'&&row.activated===false&&row.published===false,`invalid certification evidence ${row.countyFips}`);
+  }
+  invariant(JSON.stringify(rows.filter(row=>row.partitionCount>1).map(row=>row.countyFips))===JSON.stringify(PARTITIONED_FIPS),'partitioned county cohort mismatch');
+  const a=manufacturing.accounting, runtime=manufacturing.productionRuntimeManifest;
+  invariant(a.planned===226&&a.lp118Successful===226&&a.lp116Manufactured===226&&a.certified===226&&a.failed===0&&a.pending===0&&a.protectedOverlap===0,'committed owner manufacturing accounting');
+  invariant(a.existingRuntimeRoadwayCount===28&&a.supabaseWrites===0&&a.runtimeActivations===0&&a.productionPackageModifications===0,'production safety accounting');
+  invariant(runtime.unchanged===true&&runtime.countyCountBefore===28&&runtime.countyCountAfter===28&&runtime.sha256Before===plan.runtimeSha256&&runtime.sha256After===plan.runtimeSha256,'production runtime changed');
+  invariant(manufacturing.readiness==='READY_FOR_STATEWIDE_ROADWAY_PUBLICATION','final readiness');
+  invariant(determinism.status==='PASS'&&determinism.controls.length===CONTROL_FIPS.length&&new Set(determinism.controls.map(x=>x.countyFips)).size===CONTROL_FIPS.length,'determinism control accounting');
+  for(const fips of CONTROL_FIPS){const control=determinism.controls.find(x=>x.countyFips===fips);invariant(control&&control.sourceIdentityMatch===true&&control.lp118CandidateIdentityMatch===true&&control.lp116PackageIdentityMatch===true&&control.manifestIdentityMatch===true&&control.certificationStatus==='PASS'&&control.determinismStatus==='PASS',`determinism control failed ${fips}`);}
+  invariant(compatibility.status==='PASS'&&compatibility.activated===false&&compatibility.published===false&&compatibility.counties.length===5&&new Set(compatibility.counties.map(x=>x.countyFips)).size===5,'downstream compatibility accounting');
+  for(const row of compatibility.counties) invariant(['roadwayLoader','nearestRoadLookup','roadNameExtraction','hazardReportRoadAssociation','status'].every(key=>row[key]==='PASS'),`downstream compatibility failed ${row.countyFips}`);
+  return {readiness:manufacturing.readiness,accounting:a,partitionedCount:rows.filter(row=>row.partitionCount>1).length,determinismControls:determinism.controls.length,compatibilityCount:compatibility.counties.length};
+}
+export async function verifyCommitted(){const [plan,manufacturing,candidateManifest,determinism,compatibility]=await Promise.all([loadPlan(),...['statewide-roadway-missing-cohort-manufacturing.json','statewide-roadway-candidate-manifest.json','determinism-controls.json','downstream-compatibility.json'].map(file=>readFile(join(REPORTS,file),'utf8').then(JSON.parse))]);return validateFinalEvidence({plan,manufacturing,candidateManifest,determinism,compatibility});}
 async function main(){const args=process.argv.slice(2); if(args.includes('--write-plan')){console.log((await writePlan()).readiness);return;} if(args.includes('--verify')){console.log((await verifyCommitted()).readiness);return;} console.log((await executeOwner()).readiness);}
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))main().catch(e=>{console.error(e.message);process.exitCode=1;});

@@ -10,8 +10,7 @@ $repo = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 if (-not $OutputRoot) { $OutputRoot = Join-Path $repo 'owner-local/lp209-roadway-manufacturing' }
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) { throw 'Node.js is required.' }
 if (($Mode -eq 'Build' -or $Mode -eq 'Resume') -and -not $PSCmdlet.ShouldProcess($OutputRoot, "$Mode 226 inactive roadway candidates")) { return }
-$writeReports = 'false'
-if ($Mode -eq 'Build' -or $Mode -eq 'Resume') { $writeReports = 'true' }
+$writeReports = 'false' # Final committed certificates are immutable; owner builds write only owner-local checkpoints.
 $js = @"
 import { executeOwner } from './tools/lp209/statewide-roadway-candidates.mjs';
 const result=await executeOwner({mode:'$($Mode.ToLowerInvariant())',sourceRoot:String.raw`$SourceRoot`,outputRoot:String.raw`$OutputRoot`,gdal:String.raw`$GdalExecutable`,writeReports:$writeReports}); console.log(result.readiness);
