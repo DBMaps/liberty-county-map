@@ -1,0 +1,5495 @@
+{
+  "schemaVersion": "gridly.lp205.source-health-matrix.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "sources": [
+    {
+      "id": "reports",
+      "runtimeStatus": "STATEWIDE_CAPABLE_UNVERIFIED",
+      "enabled": "Supabase client dependent",
+      "configured": "client may be unavailable",
+      "fetchAttempt": "observable in a private network audit/startup diagnostics",
+      "success": "lastSuccessAt exists",
+      "failure": "caught and only sync text changes; active arrays are retained",
+      "lastSuccessfulFetch": "network audit lastSuccessAt",
+      "freshness": "no quiet-copy stale threshold",
+      "cacheFallback": "accepted local reports may be restored after successful reads; unavailable/failure does not authoritatively clear collections",
+      "intentionalZero": "successful, county-filtered empty result only",
+      "unavailable": "returns null when client is absent",
+      "unknown": "initial arrays exist before async read",
+      "quietStateVisibility": "No: presentation receives arrays/counts, not report read health",
+      "zeroSemantics": "A rendered zero is not proof that Supabase was queried successfully",
+      "failureSemantics": "Failure can leave startup [] or retained/local data indistinguishable to quiet presentation",
+      "healthStates": [
+        "HEALTHY",
+        "LOADING",
+        "FAILED",
+        "UNKNOWN",
+        "UNVERIFIED"
+      ]
+    },
+    {
+      "id": "crossings",
+      "runtimeStatus": "GOVERNED_254_COUNTIES",
+      "enabled": true,
+      "configured": "254 packages",
+      "fetchAttempt": "hydration attempted/completed fields",
+      "success": "owner-matched completed hydration",
+      "failure": "explicit failure reason and TEMPORARILY_UNAVAILABLE",
+      "lastSuccessfulFetch": "hydration trace, not a reusable wall-clock freshness policy",
+      "freshness": "no age threshold",
+      "cacheFallback": "remote retry/local package fallback",
+      "intentionalZero": "52 ACTIVE_EMPTY counties after hydration; zero-local distinct in 202 ACTIVE_POSITIVE counties",
+      "unavailable": "explicit coverage state",
+      "unknown": "LOADING until hydrated",
+      "quietStateVisibility": "Partial: Community Pulse coverage guard consumes crossing availability only",
+      "zeroSemantics": "governed evidence of no crossings, never all-transportation quiet",
+      "failureSemantics": "does not collapse to crossing quiet",
+      "healthStates": [
+        "HEALTHY",
+        "LOADING",
+        "FAILED",
+        "INTENTIONAL_ZERO"
+      ]
+    },
+    {
+      "id": "drivetexas",
+      "runtimeStatus": "INACTIVE_BY_DEFAULT",
+      "enabled": false,
+      "configured": "requires enabled=true and API key",
+      "fetchAttempt": "none while disabled",
+      "success": "connected/lastRefresh/recordCount provider fields",
+      "failure": "clears normalizedStore and recordCount while runtimeHealthy remains true; lastError holds failure",
+      "lastSuccessfulFetch": "lastRefresh",
+      "freshness": "no consumer stale threshold",
+      "cacheFallback": "provider clears; separate publisher/connector can retain last-successful records without quiet-state age disclosure",
+      "intentionalZero": "not distinguishable in record-array consumers",
+      "unavailable": "disabled returns an empty normalized array",
+      "unknown": "consumer cannot see provider lifecycle",
+      "quietStateVisibility": "No",
+      "zeroSemantics": "inactive and healthy-zero both appear []",
+      "failureSemantics": "failure becomes []",
+      "healthStates": [
+        "INACTIVE",
+        "NOT_CONFIGURED",
+        "HEALTHY",
+        "FAILED",
+        "UNKNOWN"
+      ]
+    },
+    {
+      "id": "nws_alerts",
+      "runtimeStatus": "INACTIVE_BY_DEFAULT",
+      "enabled": false,
+      "configured": "endpoint defaults to statewide NWS alerts; no credential",
+      "fetchAttempt": "none while disabled",
+      "success": "connected/lastRefresh/recordCount provider fields",
+      "failure": "clears normalizedStore and recordCount while runtimeHealthy remains true; lastError holds failure",
+      "lastSuccessfulFetch": "lastRefresh",
+      "freshness": "alert records carry times but quiet consumers receive no source-age gate",
+      "cacheFallback": "provider clears; connector retention is not surfaced to quiet copy",
+      "intentionalZero": "not distinguishable in record-array consumers",
+      "unavailable": "disabled returns an empty normalized array",
+      "unknown": "consumer cannot see provider lifecycle",
+      "quietStateVisibility": "No",
+      "zeroSemantics": "inactive and healthy-zero both appear []",
+      "failureSemantics": "failure becomes []",
+      "healthStates": [
+        "INACTIVE",
+        "HEALTHY",
+        "FAILED",
+        "UNKNOWN"
+      ]
+    },
+    {
+      "id": "weather_products",
+      "runtimeStatus": "NOT_IMPLEMENTED",
+      "enabled": false,
+      "configured": false,
+      "fetchAttempt": "none",
+      "success": "none",
+      "failure": "capability absence",
+      "lastSuccessfulFetch": null,
+      "freshness": "none",
+      "cacheFallback": "none",
+      "intentionalZero": "not applicable",
+      "unavailable": "current conditions, observations, forecast, temperature, precipitation, wind and visibility are missing",
+      "unknown": "presentation often receives null weather",
+      "quietStateVisibility": "No",
+      "zeroSemantics": "null/no impact is rendered as no travel-impacting weather",
+      "failureSemantics": "missing capability is hidden",
+      "healthStates": [
+        "MISSING_CAPABILITY"
+      ]
+    },
+    {
+      "id": "road_geometry",
+      "runtimeStatus": "28_COUNTY_COHORT",
+      "enabled": true,
+      "configured": "28/254 packages",
+      "fetchAttempt": "county package activation",
+      "success": "loaded county and package state",
+      "failure": "blocked_missing_asset or explicit load error",
+      "lastSuccessfulFetch": "no shared quiet freshness timestamp",
+      "freshness": "package identity, not live-condition freshness",
+      "cacheFallback": "county package cache",
+      "intentionalZero": "not an incident-zero source",
+      "unavailable": "226 counties missing",
+      "unknown": "county transitions expose package state separately",
+      "quietStateVisibility": "No broad quiet gate",
+      "zeroSemantics": "absence of geometry says nothing about road conditions",
+      "failureSemantics": "not incorporated into calm claim",
+      "healthStates": [
+        "HEALTHY",
+        "LOADING",
+        "FAILED",
+        "MISSING_CAPABILITY"
+      ]
+    }
+  ],
+  "cohortCounts": {
+    "roadwayPackages": 28,
+    "withoutRoadwayPackages": 226,
+    "activePositiveCrossings": 202,
+    "activeEmptyCrossings": 52,
+    "legacySourceMetadata": 3,
+    "withoutLegacySourceMetadata": 251,
+    "multiCountyPlaceMemberships": 199,
+    "placeContexts": "Both multi-county and ordinary PLACE contexts use the same source-array quiet decisions; canonical county switching protects crossings/reports but does not create official-provider health."
+  },
+  "counties": [
+    {
+      "countyFips": "48001",
+      "countyId": "anderson-tx",
+      "countyName": "Anderson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48003",
+      "countyId": "andrews-tx",
+      "countyName": "Andrews",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48005",
+      "countyId": "angelina-tx",
+      "countyName": "Angelina",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48007",
+      "countyId": "aransas-tx",
+      "countyName": "Aransas",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48009",
+      "countyId": "archer-tx",
+      "countyName": "Archer",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48011",
+      "countyId": "armstrong-tx",
+      "countyName": "Armstrong",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48013",
+      "countyId": "atascosa-tx",
+      "countyName": "Atascosa",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48015",
+      "countyId": "austin-tx",
+      "countyName": "Austin",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48017",
+      "countyId": "bailey-tx",
+      "countyName": "Bailey",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48019",
+      "countyId": "bandera-tx",
+      "countyName": "Bandera",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48021",
+      "countyId": "bastrop-tx",
+      "countyName": "Bastrop",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48023",
+      "countyId": "baylor-tx",
+      "countyName": "Baylor",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48025",
+      "countyId": "bee-tx",
+      "countyName": "Bee",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48027",
+      "countyId": "bell-tx",
+      "countyName": "Bell",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48029",
+      "countyId": "bexar-tx",
+      "countyName": "Bexar",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": true
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48031",
+      "countyId": "blanco-tx",
+      "countyName": "Blanco",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48033",
+      "countyId": "borden-tx",
+      "countyName": "Borden",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48035",
+      "countyId": "bosque-tx",
+      "countyName": "Bosque",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48037",
+      "countyId": "bowie-tx",
+      "countyName": "Bowie",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48039",
+      "countyId": "brazoria-tx",
+      "countyName": "Brazoria",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48041",
+      "countyId": "brazos-tx",
+      "countyName": "Brazos",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48043",
+      "countyId": "brewster-tx",
+      "countyName": "Brewster",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48045",
+      "countyId": "briscoe-tx",
+      "countyName": "Briscoe",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48047",
+      "countyId": "brooks-tx",
+      "countyName": "Brooks",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48049",
+      "countyId": "brown-tx",
+      "countyName": "Brown",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48051",
+      "countyId": "burleson-tx",
+      "countyName": "Burleson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48053",
+      "countyId": "burnet-tx",
+      "countyName": "Burnet",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48055",
+      "countyId": "caldwell-tx",
+      "countyName": "Caldwell",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48057",
+      "countyId": "calhoun-tx",
+      "countyName": "Calhoun",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48059",
+      "countyId": "callahan-tx",
+      "countyName": "Callahan",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48061",
+      "countyId": "cameron-tx",
+      "countyName": "Cameron",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48063",
+      "countyId": "camp-tx",
+      "countyName": "Camp",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48065",
+      "countyId": "carson-tx",
+      "countyName": "Carson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48067",
+      "countyId": "cass-tx",
+      "countyName": "Cass",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48069",
+      "countyId": "castro-tx",
+      "countyName": "Castro",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48071",
+      "countyId": "chambers-tx",
+      "countyName": "Chambers",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48073",
+      "countyId": "cherokee-tx",
+      "countyName": "Cherokee",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48075",
+      "countyId": "childress-tx",
+      "countyName": "Childress",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48077",
+      "countyId": "clay-tx",
+      "countyName": "Clay",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48079",
+      "countyId": "cochran-tx",
+      "countyName": "Cochran",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48081",
+      "countyId": "coke-tx",
+      "countyName": "Coke",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48083",
+      "countyId": "coleman-tx",
+      "countyName": "Coleman",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48085",
+      "countyId": "collin-tx",
+      "countyName": "Collin",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48087",
+      "countyId": "collingsworth-tx",
+      "countyName": "Collingsworth",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48089",
+      "countyId": "colorado-tx",
+      "countyName": "Colorado",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48091",
+      "countyId": "comal-tx",
+      "countyName": "Comal",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48093",
+      "countyId": "comanche-tx",
+      "countyName": "Comanche",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48095",
+      "countyId": "concho-tx",
+      "countyName": "Concho",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48097",
+      "countyId": "cooke-tx",
+      "countyName": "Cooke",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48099",
+      "countyId": "coryell-tx",
+      "countyName": "Coryell",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48101",
+      "countyId": "cottle-tx",
+      "countyName": "Cottle",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48103",
+      "countyId": "crane-tx",
+      "countyName": "Crane",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48105",
+      "countyId": "crockett-tx",
+      "countyName": "Crockett",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48107",
+      "countyId": "crosby-tx",
+      "countyName": "Crosby",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48109",
+      "countyId": "culberson-tx",
+      "countyName": "Culberson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48111",
+      "countyId": "dallam-tx",
+      "countyName": "Dallam",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48113",
+      "countyId": "dallas-tx",
+      "countyName": "Dallas",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48115",
+      "countyId": "dawson-tx",
+      "countyName": "Dawson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48117",
+      "countyId": "deaf-smith-tx",
+      "countyName": "Deaf Smith",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48119",
+      "countyId": "delta-tx",
+      "countyName": "Delta",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48121",
+      "countyId": "denton-tx",
+      "countyName": "Denton",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48123",
+      "countyId": "dewitt-tx",
+      "countyName": "DeWitt",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48125",
+      "countyId": "dickens-tx",
+      "countyName": "Dickens",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48127",
+      "countyId": "dimmit-tx",
+      "countyName": "Dimmit",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48129",
+      "countyId": "donley-tx",
+      "countyName": "Donley",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48131",
+      "countyId": "duval-tx",
+      "countyName": "Duval",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48133",
+      "countyId": "eastland-tx",
+      "countyName": "Eastland",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48135",
+      "countyId": "ector-tx",
+      "countyName": "Ector",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48137",
+      "countyId": "edwards-tx",
+      "countyName": "Edwards",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48139",
+      "countyId": "ellis-tx",
+      "countyName": "Ellis",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48141",
+      "countyId": "el-paso-tx",
+      "countyName": "El Paso",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48143",
+      "countyId": "erath-tx",
+      "countyName": "Erath",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48145",
+      "countyId": "falls-tx",
+      "countyName": "Falls",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48147",
+      "countyId": "fannin-tx",
+      "countyName": "Fannin",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48149",
+      "countyId": "fayette-tx",
+      "countyName": "Fayette",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48151",
+      "countyId": "fisher-tx",
+      "countyName": "Fisher",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48153",
+      "countyId": "floyd-tx",
+      "countyName": "Floyd",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48155",
+      "countyId": "foard-tx",
+      "countyName": "Foard",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48157",
+      "countyId": "fort-bend-tx",
+      "countyName": "Fort Bend",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48159",
+      "countyId": "franklin-tx",
+      "countyName": "Franklin",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48161",
+      "countyId": "freestone-tx",
+      "countyName": "Freestone",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48163",
+      "countyId": "frio-tx",
+      "countyName": "Frio",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48165",
+      "countyId": "gaines-tx",
+      "countyName": "Gaines",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48167",
+      "countyId": "galveston-tx",
+      "countyName": "Galveston",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48169",
+      "countyId": "garza-tx",
+      "countyName": "Garza",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48171",
+      "countyId": "gillespie-tx",
+      "countyName": "Gillespie",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48173",
+      "countyId": "glasscock-tx",
+      "countyName": "Glasscock",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48175",
+      "countyId": "goliad-tx",
+      "countyName": "Goliad",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48177",
+      "countyId": "gonzales-tx",
+      "countyName": "Gonzales",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48179",
+      "countyId": "gray-tx",
+      "countyName": "Gray",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48181",
+      "countyId": "grayson-tx",
+      "countyName": "Grayson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48183",
+      "countyId": "gregg-tx",
+      "countyName": "Gregg",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48185",
+      "countyId": "grimes-tx",
+      "countyName": "Grimes",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48187",
+      "countyId": "guadalupe-tx",
+      "countyName": "Guadalupe",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48189",
+      "countyId": "hale-tx",
+      "countyName": "Hale",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48191",
+      "countyId": "hall-tx",
+      "countyName": "Hall",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48193",
+      "countyId": "hamilton-tx",
+      "countyName": "Hamilton",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48195",
+      "countyId": "hansford-tx",
+      "countyName": "Hansford",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48197",
+      "countyId": "hardeman-tx",
+      "countyName": "Hardeman",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48199",
+      "countyId": "hardin-tx",
+      "countyName": "Hardin",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48201",
+      "countyId": "harris-tx",
+      "countyName": "Harris",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": true
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48203",
+      "countyId": "harrison-tx",
+      "countyName": "Harrison",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48205",
+      "countyId": "hartley-tx",
+      "countyName": "Hartley",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48207",
+      "countyId": "haskell-tx",
+      "countyName": "Haskell",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48209",
+      "countyId": "hays-tx",
+      "countyName": "Hays",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48211",
+      "countyId": "hemphill-tx",
+      "countyName": "Hemphill",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48213",
+      "countyId": "henderson-tx",
+      "countyName": "Henderson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48215",
+      "countyId": "hidalgo-tx",
+      "countyName": "Hidalgo",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48217",
+      "countyId": "hill-tx",
+      "countyName": "Hill",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48219",
+      "countyId": "hockley-tx",
+      "countyName": "Hockley",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48221",
+      "countyId": "hood-tx",
+      "countyName": "Hood",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48223",
+      "countyId": "hopkins-tx",
+      "countyName": "Hopkins",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48225",
+      "countyId": "houston-tx",
+      "countyName": "Houston",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48227",
+      "countyId": "howard-tx",
+      "countyName": "Howard",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48229",
+      "countyId": "hudspeth-tx",
+      "countyName": "Hudspeth",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48231",
+      "countyId": "hunt-tx",
+      "countyName": "Hunt",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48233",
+      "countyId": "hutchinson-tx",
+      "countyName": "Hutchinson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48235",
+      "countyId": "irion-tx",
+      "countyName": "Irion",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48237",
+      "countyId": "jack-tx",
+      "countyName": "Jack",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48239",
+      "countyId": "jackson-tx",
+      "countyName": "Jackson",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48241",
+      "countyId": "jasper-tx",
+      "countyName": "Jasper",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48243",
+      "countyId": "jeff-davis-tx",
+      "countyName": "Jeff Davis",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48245",
+      "countyId": "jefferson-tx",
+      "countyName": "Jefferson",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48247",
+      "countyId": "jim-hogg-tx",
+      "countyName": "Jim Hogg",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48249",
+      "countyId": "jim-wells-tx",
+      "countyName": "Jim Wells",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48251",
+      "countyId": "johnson-tx",
+      "countyName": "Johnson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48253",
+      "countyId": "jones-tx",
+      "countyName": "Jones",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48255",
+      "countyId": "karnes-tx",
+      "countyName": "Karnes",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48257",
+      "countyId": "kaufman-tx",
+      "countyName": "Kaufman",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48259",
+      "countyId": "kendall-tx",
+      "countyName": "Kendall",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48261",
+      "countyId": "kenedy-tx",
+      "countyName": "Kenedy",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48263",
+      "countyId": "kent-tx",
+      "countyName": "Kent",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48265",
+      "countyId": "kerr-tx",
+      "countyName": "Kerr",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48267",
+      "countyId": "kimble-tx",
+      "countyName": "Kimble",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48269",
+      "countyId": "king-tx",
+      "countyName": "King",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48271",
+      "countyId": "kinney-tx",
+      "countyName": "Kinney",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48273",
+      "countyId": "kleberg-tx",
+      "countyName": "Kleberg",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48275",
+      "countyId": "knox-tx",
+      "countyName": "Knox",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48277",
+      "countyId": "lamar-tx",
+      "countyName": "Lamar",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48279",
+      "countyId": "lamb-tx",
+      "countyName": "Lamb",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48281",
+      "countyId": "lampasas-tx",
+      "countyName": "Lampasas",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48283",
+      "countyId": "la-salle-tx",
+      "countyName": "La Salle",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48285",
+      "countyId": "lavaca-tx",
+      "countyName": "Lavaca",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48287",
+      "countyId": "lee-tx",
+      "countyName": "Lee",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48289",
+      "countyId": "leon-tx",
+      "countyName": "Leon",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48291",
+      "countyId": "liberty-tx",
+      "countyName": "Liberty",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": true
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48293",
+      "countyId": "limestone-tx",
+      "countyName": "Limestone",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48295",
+      "countyId": "lipscomb-tx",
+      "countyName": "Lipscomb",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48297",
+      "countyId": "live-oak-tx",
+      "countyName": "Live Oak",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48299",
+      "countyId": "llano-tx",
+      "countyName": "Llano",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48301",
+      "countyId": "loving-tx",
+      "countyName": "Loving",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48303",
+      "countyId": "lubbock-tx",
+      "countyName": "Lubbock",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48305",
+      "countyId": "lynn-tx",
+      "countyName": "Lynn",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48307",
+      "countyId": "mcculloch-tx",
+      "countyName": "McCulloch",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48309",
+      "countyId": "mclennan-tx",
+      "countyName": "McLennan",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48311",
+      "countyId": "mcmullen-tx",
+      "countyName": "McMullen",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48313",
+      "countyId": "madison-tx",
+      "countyName": "Madison",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48315",
+      "countyId": "marion-tx",
+      "countyName": "Marion",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48317",
+      "countyId": "martin-tx",
+      "countyName": "Martin",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48319",
+      "countyId": "mason-tx",
+      "countyName": "Mason",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48321",
+      "countyId": "matagorda-tx",
+      "countyName": "Matagorda",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48323",
+      "countyId": "maverick-tx",
+      "countyName": "Maverick",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48325",
+      "countyId": "medina-tx",
+      "countyName": "Medina",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48327",
+      "countyId": "menard-tx",
+      "countyName": "Menard",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48329",
+      "countyId": "midland-tx",
+      "countyName": "Midland",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48331",
+      "countyId": "milam-tx",
+      "countyName": "Milam",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48333",
+      "countyId": "mills-tx",
+      "countyName": "Mills",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48335",
+      "countyId": "mitchell-tx",
+      "countyName": "Mitchell",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48337",
+      "countyId": "montague-tx",
+      "countyName": "Montague",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48339",
+      "countyId": "montgomery-tx",
+      "countyName": "Montgomery",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48341",
+      "countyId": "moore-tx",
+      "countyName": "Moore",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48343",
+      "countyId": "morris-tx",
+      "countyName": "Morris",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48345",
+      "countyId": "motley-tx",
+      "countyName": "Motley",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48347",
+      "countyId": "nacogdoches-tx",
+      "countyName": "Nacogdoches",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48349",
+      "countyId": "navarro-tx",
+      "countyName": "Navarro",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48351",
+      "countyId": "newton-tx",
+      "countyName": "Newton",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48353",
+      "countyId": "nolan-tx",
+      "countyName": "Nolan",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48355",
+      "countyId": "nueces-tx",
+      "countyName": "Nueces",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48357",
+      "countyId": "ochiltree-tx",
+      "countyName": "Ochiltree",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48359",
+      "countyId": "oldham-tx",
+      "countyName": "Oldham",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48361",
+      "countyId": "orange-tx",
+      "countyName": "Orange",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48363",
+      "countyId": "palo-pinto-tx",
+      "countyName": "Palo Pinto",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48365",
+      "countyId": "panola-tx",
+      "countyName": "Panola",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48367",
+      "countyId": "parker-tx",
+      "countyName": "Parker",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48369",
+      "countyId": "parmer-tx",
+      "countyName": "Parmer",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48371",
+      "countyId": "pecos-tx",
+      "countyName": "Pecos",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48373",
+      "countyId": "polk-tx",
+      "countyName": "Polk",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48375",
+      "countyId": "potter-tx",
+      "countyName": "Potter",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48377",
+      "countyId": "presidio-tx",
+      "countyName": "Presidio",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48379",
+      "countyId": "rains-tx",
+      "countyName": "Rains",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48381",
+      "countyId": "randall-tx",
+      "countyName": "Randall",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48383",
+      "countyId": "reagan-tx",
+      "countyName": "Reagan",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48385",
+      "countyId": "real-tx",
+      "countyName": "Real",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48387",
+      "countyId": "red-river-tx",
+      "countyName": "Red River",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48389",
+      "countyId": "reeves-tx",
+      "countyName": "Reeves",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48391",
+      "countyId": "refugio-tx",
+      "countyName": "Refugio",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48393",
+      "countyId": "roberts-tx",
+      "countyName": "Roberts",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48395",
+      "countyId": "robertson-tx",
+      "countyName": "Robertson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48397",
+      "countyId": "rockwall-tx",
+      "countyName": "Rockwall",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48399",
+      "countyId": "runnels-tx",
+      "countyName": "Runnels",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48401",
+      "countyId": "rusk-tx",
+      "countyName": "Rusk",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48403",
+      "countyId": "sabine-tx",
+      "countyName": "Sabine",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48405",
+      "countyId": "san-augustine-tx",
+      "countyName": "San Augustine",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48407",
+      "countyId": "san-jacinto-tx",
+      "countyName": "San Jacinto",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48409",
+      "countyId": "san-patricio-tx",
+      "countyName": "San Patricio",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48411",
+      "countyId": "san-saba-tx",
+      "countyName": "San Saba",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48413",
+      "countyId": "schleicher-tx",
+      "countyName": "Schleicher",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48415",
+      "countyId": "scurry-tx",
+      "countyName": "Scurry",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48417",
+      "countyId": "shackelford-tx",
+      "countyName": "Shackelford",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48419",
+      "countyId": "shelby-tx",
+      "countyName": "Shelby",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48421",
+      "countyId": "sherman-tx",
+      "countyName": "Sherman",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48423",
+      "countyId": "smith-tx",
+      "countyName": "Smith",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48425",
+      "countyId": "somervell-tx",
+      "countyName": "Somervell",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48427",
+      "countyId": "starr-tx",
+      "countyName": "Starr",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48429",
+      "countyId": "stephens-tx",
+      "countyName": "Stephens",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48431",
+      "countyId": "sterling-tx",
+      "countyName": "Sterling",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48433",
+      "countyId": "stonewall-tx",
+      "countyName": "Stonewall",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48435",
+      "countyId": "sutton-tx",
+      "countyName": "Sutton",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48437",
+      "countyId": "swisher-tx",
+      "countyName": "Swisher",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48439",
+      "countyId": "tarrant-tx",
+      "countyName": "Tarrant",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48441",
+      "countyId": "taylor-tx",
+      "countyName": "Taylor",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48443",
+      "countyId": "terrell-tx",
+      "countyName": "Terrell",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48445",
+      "countyId": "terry-tx",
+      "countyName": "Terry",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48447",
+      "countyId": "throckmorton-tx",
+      "countyName": "Throckmorton",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48449",
+      "countyId": "titus-tx",
+      "countyName": "Titus",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48451",
+      "countyId": "tom-green-tx",
+      "countyName": "Tom Green",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48453",
+      "countyId": "travis-tx",
+      "countyName": "Travis",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48455",
+      "countyId": "trinity-tx",
+      "countyName": "Trinity",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48457",
+      "countyId": "tyler-tx",
+      "countyName": "Tyler",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48459",
+      "countyId": "upshur-tx",
+      "countyName": "Upshur",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48461",
+      "countyId": "upton-tx",
+      "countyName": "Upton",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48463",
+      "countyId": "uvalde-tx",
+      "countyName": "Uvalde",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48465",
+      "countyId": "val-verde-tx",
+      "countyName": "Val Verde",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48467",
+      "countyId": "van-zandt-tx",
+      "countyName": "Van Zandt",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48469",
+      "countyId": "victoria-tx",
+      "countyName": "Victoria",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48471",
+      "countyId": "walker-tx",
+      "countyName": "Walker",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48473",
+      "countyId": "waller-tx",
+      "countyName": "Waller",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48475",
+      "countyId": "ward-tx",
+      "countyName": "Ward",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48477",
+      "countyId": "washington-tx",
+      "countyName": "Washington",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48479",
+      "countyId": "webb-tx",
+      "countyName": "Webb",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48481",
+      "countyId": "wharton-tx",
+      "countyName": "Wharton",
+      "cohorts": {
+        "roadwayPackage": true,
+        "noRoadwayPackage": false,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "HEALTHY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48483",
+      "countyId": "wheeler-tx",
+      "countyName": "Wheeler",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48485",
+      "countyId": "wichita-tx",
+      "countyName": "Wichita",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48487",
+      "countyId": "wilbarger-tx",
+      "countyName": "Wilbarger",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48489",
+      "countyId": "willacy-tx",
+      "countyName": "Willacy",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48491",
+      "countyId": "williamson-tx",
+      "countyName": "Williamson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48493",
+      "countyId": "wilson-tx",
+      "countyName": "Wilson",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48495",
+      "countyId": "winkler-tx",
+      "countyName": "Winkler",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48497",
+      "countyId": "wise-tx",
+      "countyName": "Wise",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48499",
+      "countyId": "wood-tx",
+      "countyName": "Wood",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_POSITIVE",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_POSITIVE",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48501",
+      "countyId": "yoakum-tx",
+      "countyName": "Yoakum",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48503",
+      "countyId": "young-tx",
+      "countyName": "Young",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48505",
+      "countyId": "zapata-tx",
+      "countyName": "Zapata",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    },
+    {
+      "countyFips": "48507",
+      "countyId": "zavala-tx",
+      "countyName": "Zavala",
+      "cohorts": {
+        "roadwayPackage": false,
+        "noRoadwayPackage": true,
+        "crossingState": "ACTIVE_EMPTY",
+        "legacySourceMetadata": false
+      },
+      "sourceHealth": {
+        "crossings": "ACTIVE_EMPTY",
+        "reports": "UNVERIFIED",
+        "driveTexas": "INACTIVE",
+        "nwsAlerts": "INACTIVE",
+        "currentWeather": "MISSING_CAPABILITY",
+        "forecastWeather": "MISSING_CAPABILITY",
+        "roadGeometry": "MISSING_CAPABILITY"
+      },
+      "quietPresentationCanDistinguishAllSources": false
+    }
+  ]
+}
