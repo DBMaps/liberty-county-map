@@ -1,0 +1,208 @@
+{
+  "schemaVersion": "gridly.lp202.statewide-crossing-consumer-runtime-audit.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "observationalOnly": true,
+  "productionManifest": {
+    "totalPackages": 254,
+    "totalCrossings": 16099,
+    "passCount": 254,
+    "blockedCount": 0
+  },
+  "runtimePackageRegistry": {
+    "totalPackages": 508,
+    "crossingEntryCount": 254,
+    "declaredCrossingPackageCount": 254
+  },
+  "counties": {
+    "dallas": {
+      "identity": {
+        "name": "Dallas",
+        "fips": "48113",
+        "countyId": "dallas-tx",
+        "slug": "dallas"
+      },
+      "productionManifest": {
+        "status": "PASS",
+        "state": "ACTIVE_POSITIVE",
+        "crossingCount": 789,
+        "packageFile": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson",
+        "certificationFile": "evidence/wave3a2-crossing-package-manufacture/package-certification.json"
+      },
+      "runtimePackageRegistry": {
+        "key": "Dallas|Crossing",
+        "packageType": "Crossing",
+        "county": "Dallas",
+        "status": "manufactured",
+        "manifest": "Crossing-Packages/dallas/package-manifest.json",
+        "packageManifest": {
+          "packageType": "Crossing",
+          "county": "Dallas",
+          "status": "manufactured",
+          "source": "FRA/Processed/fra-crossings-tx.geojson",
+          "packageFile": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson",
+          "crossingCount": 789
+        },
+        "resolvedPackagePath": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson"
+      },
+      "governedPayload": {
+        "fileLoadCount": 789,
+        "parsedFeatureCount": 789,
+        "normalizedIfLoadedCount": 789,
+        "classifications": {
+          "PUBLIC_ROADWAY": 789,
+          "PRIVATE_ROAD": 0,
+          "INDUSTRIAL": 0,
+          "RAIL_YARD": 0,
+          "TEMPORARY_ACCESS": 0,
+          "UNKNOWN_UNCLASSIFIED": 0
+        },
+        "consumerPolicyVisibleIfLoaded": 789
+      },
+      "consumerRuntime": {
+        "countyRegistryId": "dallas-tx",
+        "configuredCrossingSource": null,
+        "runtimeSourceAvailability": "not-claimed",
+        "sourceAvailabilityGatePass": false,
+        "statewidePackageLookupAttempted": false,
+        "statewidePackagePathResolutionAttempted": false,
+        "configuredSourceFetchAttempted": false,
+        "configuredSourceParseAttempted": false,
+        "loadedCount": 0,
+        "normalizedCount": 0,
+        "consumerVisibleCountywide": 0,
+        "awarenessFilteredCount": 0,
+        "awarenessFilteredCountQualification": "zero propagated from empty inventory",
+        "mapBoundsFilteredCount": 0,
+        "markerInputCount": 0,
+        "leafletMarkerCreationCount": 0,
+        "crossingsWatchedCountywide": 0
+      }
+    },
+    "liberty": {
+      "identity": {
+        "name": "Liberty",
+        "fips": "48291",
+        "countyId": "liberty-tx",
+        "slug": "liberty"
+      },
+      "productionManifest": {
+        "status": "PASS",
+        "state": "ACTIVE_POSITIVE",
+        "crossingCount": 115,
+        "packageFile": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+        "certificationFile": "Crossing-Packages\\liberty\\Production\\production-certification.json"
+      },
+      "runtimePackageRegistry": {
+        "key": "Liberty|Crossing",
+        "packageType": "Crossing",
+        "county": "Liberty",
+        "status": "manufactured",
+        "manifest": "Crossing-Packages/liberty/package-manifest.json",
+        "packageManifest": {
+          "packageType": "Crossing",
+          "county": "Liberty",
+          "status": "manufactured",
+          "source": "FRA/Processed/fra-crossings-tx.geojson",
+          "packageFile": "Crossing-Packages/liberty/liberty-crossings.geojson",
+          "crossingCount": 115,
+          "generatedAt": "2026-06-27T13:27:49.5359885-05:00"
+        },
+        "resolvedPackagePath": "Crossing-Packages/liberty/liberty-crossings.geojson"
+      },
+      "governedPayload": {
+        "fileLoadCount": 115,
+        "parsedFeatureCount": 115,
+        "normalizedIfLoadedCount": 115,
+        "classifications": {
+          "PUBLIC_ROADWAY": 80,
+          "PRIVATE_ROAD": 28,
+          "INDUSTRIAL": 5,
+          "RAIL_YARD": 1,
+          "TEMPORARY_ACCESS": 1,
+          "UNKNOWN_UNCLASSIFIED": 0
+        },
+        "consumerPolicyVisibleIfLoaded": 80
+      },
+      "consumerRuntime": {
+        "countyRegistryId": "liberty-tx",
+        "configuredCrossingSource": "Crossing-Packages/liberty/liberty-crossings.geojson",
+        "runtimeSourceAvailability": "available",
+        "sourceAvailabilityGatePass": true,
+        "statewidePackageLookupAttempted": false,
+        "statewidePackagePathResolutionAttempted": false,
+        "configuredSourceFetchAttempted": true,
+        "configuredSourceParseAttempted": true,
+        "loadedCount": 115,
+        "normalizedCount": 115,
+        "consumerVisibleCountywide": 115,
+        "awarenessFilteredCount": null,
+        "awarenessFilteredCountQualification": "selected-area geometry required; countywide selector count is reported separately",
+        "mapBoundsFilteredCount": null,
+        "markerInputCount": null,
+        "leafletMarkerCreationCount": null,
+        "crossingsWatchedCountywide": 115
+      }
+    }
+  },
+  "firstDivergence": {
+    "stage": "inline consumer runtime source availability/path resolution",
+    "dallas": "crossings:not-claimed; no localCrossingsPath/crossingsPath",
+    "liberty": "crossings:available; Crossing-Packages/liberty/liberty-crossings.geojson",
+    "consequence": "Dallas is converted to an empty FeatureCollection by fetchFraCrossingsWithRetry before the statewide registry is consulted."
+  },
+  "rootCause": {
+    "classifications": [
+      "LEGACY_ALLOWLIST",
+      "PACKAGE_LOOKUP_FAILURE"
+    ],
+    "file": "js/app.js",
+    "functions": [
+      "GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY initializer",
+      "gridlyCountyRuntimeSourceAvailable",
+      "fetchFraCrossingsWithRetry"
+    ],
+    "condition": "!gridlyCountyRuntimeSourceAvailable(\"crossings\", gridlyNormalizeCountyId(countyId))",
+    "assumption": "Only counties carrying legacy inline crossing source metadata are consumer-loadable; activation updated the authoritative manifest and package registry but not this independent inline source registry."
+  },
+  "crossingsWatched": {
+    "owner": "summarizeGridlyAwarenessIntelligenceForDisplay -> getGridlyBottomPanelAwarenessCrossingCount -> gridlySelectConsumerVisibleCrossings",
+    "sourceMeaning": "deduplicated, policy-visible and awareness-area-owned crossings from the active in-memory county inventory (not registry/package totals and not marker count)",
+    "dallasZeroReason": "The active in-memory Dallas inventory is empty because the early availability gate synthesizes an empty payload."
+  },
+  "downstreamQualification": "Dallas downstream stages are zero by propagation and are not independently healthy. With its governed payload connected, 789 PUBLIC_ROADWAY records are eligible before awareness geometry and viewport filtering.",
+  "legacyHits": [
+    {
+      "file": "js/app.js",
+      "finding": "GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY is built only from inline GRIDLY_COUNTY_REGISTRY localCrossingsPath/crossingsPath and runtimeSourceAvailability."
+    },
+    {
+      "file": "js/app.js",
+      "finding": "Dallas declares crossings:not-claimed and has no crossing path, while Liberty declares an available local legacy crossing path."
+    },
+    {
+      "file": "js/app.js",
+      "finding": "fetchFraCrossingsWithRetry returns an empty FeatureCollection before provider, package registry, manifest, URL resolution, or fetch when availability is not available."
+    },
+    {
+      "file": "js/gridlyRuntimeSourceRegistryBridge.js",
+      "finding": "A 254-package registry/manifest bridge exists, but it is audit-only and does not install its result into the app runtime source registry."
+    },
+    {
+      "file": "js/gridlyCrossingProvider.js",
+      "finding": "Production provider can load an explicit source, but cannot discover a package when app runtime sources supply null."
+    },
+    {
+      "file": "tools/wave3a/build-crossing-readiness.mjs",
+      "finding": "Pre-activation assertion still expects 28 production packages (historical tooling, not consumer runtime)."
+    },
+    {
+      "file": "tools/wave3a2a/reconcile-active-crossing-packages.mjs",
+      "finding": "Pre-activation reconciliation assertion still expects 28 active packages (historical tooling, not consumer runtime)."
+    },
+    {
+      "file": "tools/lp18811/provision-protected-environment.mjs",
+      "finding": "Protected environment identity assertion still expects 28 crossing packages and 282 total packages (stale tooling)."
+    }
+  ],
+  "recommendedRepair": "Smallest production repair surface: make the consumer runtime source resolver consult the authoritative runtime package registry and crossing package manifest for every active county (or install an equivalent generated 254-county crossing-source map), and derive availability from the governed package state. Keep provider, normalization, visibility policy, awareness filtering, renderer, and count semantics unchanged."
+}
