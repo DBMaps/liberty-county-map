@@ -394,5 +394,158 @@
       "inFlightDeduplication": "PASS",
       "staleCommitProtection": "PASS"
     }
+  },
+  "productionHydrationRootCauseAnalysis": {
+    "liveFailureState": {
+      "authoritativeCountyFips": "48113",
+      "resolvedGridlyCountyId": "dallas-tx",
+      "activeCountyId": "dallas-tx",
+      "crossingSourceCounty": "dallas-tx",
+      "transitionGeneration": 1,
+      "runtimeInventoryCounty": null,
+      "crossingInventoryCount": 0,
+      "inventoryOwnerMatchesActiveCounty": false,
+      "inventoryHydrationCompleted": false,
+      "synchronized": false
+    },
+    "exactFirstFailedCondition": "fetchFraCrossingsWithRetry received the governed Dallas package with 789 records, then rejected it before returning a Response because 9 governed package rows retain a source-reported non-48113 FIPS.",
+    "rootCauseClassification": "OTHER: POST_FETCH_LEGACY_DIAGNOSTIC_GUARDS",
+    "exactFileFunctionGuard": "js/app.js fetchFraCrossingsWithRetry: the per-feature county-FIPS ownershipMismatch guard was the first rejection. Once removed, the awaited gridlyCrossingProvider.audit() would perform a second optionless load through legacy runtimeSourceAvailability (Dallas crossings=not-claimed) and reject the already-successful governed load.",
+    "eventTraceBeforeRepair": [
+      {
+        "event": "HYDRATION_ENSURE_ENTER",
+        "countyId": "dallas-tx",
+        "generation": 1,
+        "inventoryOwner": null,
+        "recordCount": 0
+      },
+      {
+        "event": "HYDRATION_LOAD_STARTED",
+        "countyId": "dallas-tx",
+        "generation": 1,
+        "inventoryOwner": null,
+        "recordCount": 0
+      },
+      {
+        "event": "GOVERNED_SOURCE_RESOLVED",
+        "countyId": "dallas-tx",
+        "generation": 1,
+        "sourcePath": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson",
+        "recordCount": 789
+      },
+      {
+        "event": "PACKAGE_FETCH_STARTED",
+        "countyId": "dallas-tx",
+        "generation": 1,
+        "sourcePath": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson"
+      },
+      {
+        "event": "PACKAGE_FETCH_SUCCEEDED",
+        "countyId": "dallas-tx",
+        "generation": 1,
+        "recordCount": 789
+      },
+      {
+        "event": "HYDRATION_FAILURE",
+        "countyId": "dallas-tx",
+        "generation": 1,
+        "reason": "Governed Crossing package county ownership mismatch for Dallas"
+      }
+    ],
+    "smallestRepair": "Honor LP202.1 package-level authority (registry entry, manifest ownership/type, production PASS record, exact package path, exact governed count) instead of rejecting assigned packages by raw row FIPS; remove the full historical provider audit from the operational fetch/commit path and read mode from the completed provider load trace.",
+    "boundedObservationalTrace": {
+      "limit": 40,
+      "accessor": "window.gridlyCrossingHydrationTrace()",
+      "fields": [
+        "event",
+        "countyId",
+        "generation",
+        "inventoryOwner",
+        "recordCount",
+        "sourcePath",
+        "reason"
+      ]
+    },
+    "eventTraceAfterRepair": [
+      "HYDRATION_ENSURE_ENTER",
+      "HYDRATION_LOAD_STARTED",
+      "GOVERNED_SOURCE_RESOLVED",
+      "PACKAGE_FETCH_STARTED",
+      "PACKAGE_FETCH_SUCCEEDED",
+      "PACKAGE_PARSE_SUCCEEDED",
+      "NORMALIZATION_COMPLETE",
+      "COMMIT_GUARD_ENTER",
+      "INVENTORY_COMMIT",
+      "INVENTORY_OWNER_SET",
+      "POST_COMMIT_REFRESH"
+    ],
+    "dallasBeforeAfter": {
+      "before": {
+        "activeCountyId": "dallas-tx",
+        "runtimeInventoryCounty": null,
+        "crossingInventoryCount": 0,
+        "synchronized": false
+      },
+      "after": {
+        "activeCountyId": "dallas-tx",
+        "runtimeInventoryCounty": "dallas-tx",
+        "crossingInventoryCount": 789,
+        "crossingSourceCounty": "dallas-tx",
+        "inventoryOwnerMatchesActiveCounty": true,
+        "inventoryHydrationCompleted": true,
+        "synchronized": true
+      }
+    },
+    "statewideValidation": {
+      "governed": 254,
+      "activePositive": 202,
+      "activeEmpty": 52,
+      "governedIdentities": 16099,
+      "positiveHydrationFailures": 0,
+      "emptyHydrationFailures": 0
+    },
+    "emptyStateValidation": {
+      "runtimeOwnerMatchesActiveCounty": true,
+      "inventory": [],
+      "intentionalZeroLoaded": true,
+      "repeatHydrationLoop": false
+    },
+    "raceProtectionValidation": {
+      "countyAndGenerationGuardPreserved": true,
+      "dallasCannotCommitAfterTarrantActivation": true
+    },
+    "readinessAndPromiseAnswers": {
+      "ensureCalled": true,
+      "arguments": {
+        "reason": "startup-semantic-hydration:county-runtime-invariant",
+        "countyId": "dallas-tx",
+        "generation": 1,
+        "owner": null,
+        "count": 0
+      },
+      "loadStarted": true,
+      "existingPromiseReused": false,
+      "healthyEarlyReturn": false,
+      "sourceResolved": true,
+      "packageFetchAttempted": true,
+      "packageFetchSucceeded": true,
+      "parsingReachedBeforeRepair": false,
+      "normalizationReachedBeforeRepair": false,
+      "commitGuardReachedBeforeRepair": false,
+      "ownerAssignedBeforeRepair": false,
+      "laterClear": false,
+      "exceptionHandledByLoadCrossings": true,
+      "promiseRetained": true,
+      "promiseAwaitedByOperationalSynchronizer": false,
+      "startupReadinessBlocked": false,
+      "legacyGuardBlocked": true
+    },
+    "tests": {
+      "lp2022": "PASS",
+      "lp2021": "PASS",
+      "statewide": "PASS",
+      "activeEmpty": "PASS",
+      "staleRace": "PASS"
+    }
   }
 }
