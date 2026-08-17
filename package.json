@@ -14,7 +14,7 @@
     "fflate": "0.8.3"
   },
   "scripts": {
-    "build:lp209": "node tools/lp209/statewide-roadway-candidates.mjs --write-plan",
+    "build:lp209": "node tools/lp209/statewide-roadway-candidates.mjs --verify",
     "verify:lp209": "node tools/lp209/statewide-roadway-candidates.mjs --verify",
     "test:lp209": "node --test tests/lp209-statewide-roadway-candidates.test.mjs",
     "owner:certify:lp209": "node tools/lp209/final-certification.mjs",

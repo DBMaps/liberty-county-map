@@ -14,11 +14,12 @@ test('LP209 plan binds all LP206 counties to certified LP208 identities and prot
   assert.equal(p.rows.every(x=>!x.protectedExistingRuntime&&x.manufacturingRequired),true);
   assert.deepEqual(await readFile('data/roadway-runtime-manifest.json'),before);
 });
-test('committed evidence records complete owner manufacturing but stays blocked for final owner checks',async()=>{
+test('committed owner evidence portably certifies final readiness without owner-local inputs',async()=>{
   const v=await verifyCommitted(); assert.equal(v.accounting.planned,226); assert.equal(v.accounting.protectedOverlap,0);
   assert.equal(v.accounting.lp118Successful,226); assert.equal(v.accounting.lp116Manufactured,226); assert.equal(v.accounting.certified,226); assert.equal(v.accounting.pending,0);
   assert.equal(v.accounting.supabaseWrites,0); assert.equal(v.accounting.runtimeActivations,0);
-  assert.equal(v.readiness,'BLOCKED_FOR_STATEWIDE_ROADWAY');
+  assert.equal(v.partitionedCount,7); assert.equal(v.determinismControls,11); assert.equal(v.compatibilityCount,5);
+  assert.equal(v.readiness,'READY_FOR_STATEWIDE_ROADWAY_PUBLICATION');
 });
 test('aggregate requires every owner result and never infers certification',async()=>{
   const p=await loadPlan(); const a=summarize(p.rows,[],p); assert.equal(a.accounting.lp118Successful,0); assert.equal(a.accounting.lp116Manufactured,0); assert.equal(a.accounting.pending,226); assert.equal(a.counties.length,226);
