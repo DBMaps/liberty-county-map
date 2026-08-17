@@ -120,7 +120,11 @@ export async function collectEvidence(rows,outputRoot) {
   const all=[];
   for(const row of rows){ const xp=join(outputRoot,'lp118',row.countyFips,'checkpoint.json'), mp=join(outputRoot,'lp116',row.countyFips,'checkpoint.json'); if(!await exists(xp)||!await exists(mp)) continue;
     const [x,m]=await Promise.all([readFile(xp,'utf8').then(JSON.parse),readFile(mp,'utf8').then(JSON.parse)]);
-    all.push({row,x,m});
+    const manifestPath=resolve(ROOT,m?.manifest?.path||'');
+    invariant(m?.manifest?.path&&await exists(manifestPath),`missing LP116 manifest ${row.countyFips}`);
+    const manifestBody=await readFile(manifestPath);
+    invariant(manifestBody.length===m.manifest.sizeBytes&&sha(manifestBody)===m.manifest.sha256,`LP116 manifest checkpoint identity mismatch ${row.countyFips}`);
+    all.push({row,x,m,manifestBody});
   } return all;
 }
 export function summarize(rows,evidence,plan,environment={}) {

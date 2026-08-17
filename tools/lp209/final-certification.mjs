@@ -14,13 +14,24 @@ const sha=b=>createHash('sha256').update(b).digest('hex');
 const invariant=(v,m)=>{if(!v)throw new Error(`LP209 final certification failed closed: ${m}`);};
 const packageIdentity=m=>(m?.packages||[]).map(p=>({fileName:p.fileName,featureCount:p.featureCount,bytes:p.byteLength,sha256:p.sha256}));
 
+const stable=x=>Array.isArray(x)?x.map(stable):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,stable(x[k])])):x;
+/** Canonical cross-workspace identity: only the proven materialization field source.path is removed. */
+export function canonicalManifestIdentity(body){
+  const parsed=JSON.parse(ArrayBuffer.isView(body)?Buffer.from(body.buffer,body.byteOffset,body.byteLength).toString('utf8'):body);
+  invariant(parsed?.source&&Object.hasOwn(parsed.source,'path'),'candidate manifest must contain governed source.path');
+  const canonical=structuredClone(parsed); delete canonical.source.path;
+  const bytes=Buffer.from(`${JSON.stringify(stable(canonical),null,2)}\n`);
+  return {bytes:bytes.length,sha256:sha(bytes),body:bytes};
+}
+
 export function compareControl(row,baseline,rerun){
   const sourceIdentityMatch=row.sourceSha256===baseline.row.sourceSha256&&row.sourceBytes===baseline.row.sourceBytes;
   const candidateIdentityMatch=baseline.x?.output?.sha256===rerun.x?.output?.sha256&&baseline.x?.output?.sizeBytes===rerun.x?.output?.sizeBytes;
   const packageIdentityMatch=JSON.stringify(packageIdentity(baseline.m))===JSON.stringify(packageIdentity(rerun.m));
-  const manifestIdentityMatch=baseline.m?.manifest?.sha256===rerun.m?.manifest?.sha256&&baseline.m?.manifest?.sizeBytes===rerun.m?.manifest?.sizeBytes;
+  const baselineCanonical=canonicalManifestIdentity(baseline.manifestBody), rerunCanonical=canonicalManifestIdentity(rerun.manifestBody);
+  const manifestIdentityMatch=baselineCanonical.sha256===rerunCanonical.sha256&&baselineCanonical.bytes===rerunCanonical.bytes;
   const certificationPass=rerun.m?.certificationStatus==='PASS';
-  return {countyFips:row.countyFips,countyId:row.countyId,sourceIdentityContract:'SHA256_AND_BYTES',sourceIdentityMatch,lp118CandidateIdentityContract:'SHA256_AND_BYTES',lp118CandidateIdentityMatch:candidateIdentityMatch,lp116PackageIdentityContract:'ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256',lp116PackageIdentityMatch:packageIdentityMatch,manifestIdentityContract:'SHA256_AND_BYTES',manifestIdentityMatch,certificationStatus:certificationPass?'PASS':'FAIL',determinismStatus:[sourceIdentityMatch,candidateIdentityMatch,packageIdentityMatch,manifestIdentityMatch,certificationPass].every(Boolean)?'PASS':'FAIL'};
+  return {countyFips:row.countyFips,countyId:row.countyId,sourceIdentityContract:'SHA256_AND_BYTES',sourceIdentityMatch,lp118CandidateIdentityContract:'SHA256_AND_BYTES',lp118CandidateIdentityMatch:candidateIdentityMatch,lp116PackageIdentityContract:'ORDERED_FILE_NAME_FEATURE_COUNT_BYTES_SHA256',lp116PackageIdentityMatch:packageIdentityMatch,manifestIdentityContract:'CANONICAL_JSON_EXCLUDING_SOURCE_PATH_SHA256_AND_BYTES',rawManifestSha256:{primary:baseline.m.manifest.sha256,rerun:rerun.m.manifest.sha256},rawManifestBytes:{primary:baseline.m.manifest.sizeBytes,rerun:rerun.m.manifest.sizeBytes},canonicalManifestSha256:{primary:baselineCanonical.sha256,rerun:rerunCanonical.sha256},canonicalManifestBytes:{primary:baselineCanonical.bytes,rerun:rerunCanonical.bytes},manifestIdentityMatch,certificationStatus:certificationPass?'PASS':'FAIL',determinismStatus:[sourceIdentityMatch,candidateIdentityMatch,packageIdentityMatch,manifestIdentityMatch,certificationPass].every(Boolean)?'PASS':'FAIL'};
 }
 
 const segments=geometry=>geometry.type==='LineString'?[geometry.coordinates]:geometry.type==='MultiLineString'?geometry.coordinates:[];
@@ -53,7 +64,7 @@ export async function runCertificationChecks({manufacturing,runDeterminism,runCo
   return {controls,compatibility,readinessAfterDeterminism,readiness:finalReadiness(manufacturing,controls,compatibility)};
 }
 
-export async function runOwnerFinal({sourceRoot=OWNER_SOURCE_ROOT,outputRoot=resolve(ROOT,OWNER_OUTPUT_ROOT),determinismRoot=resolve(ROOT,'owner-local/lp209-roadway-determinism'),gdal=DEFAULT_GDAL_EXECUTABLE}={}){
+export async function runOwnerFinal({sourceRoot=OWNER_SOURCE_ROOT,outputRoot=resolve(ROOT,OWNER_OUTPUT_ROOT),determinismRoot=resolve(ROOT,'owner-local/lp209-roadway-determinism'),gdal=DEFAULT_GDAL_EXECUTABLE,rebuildDeterminism=false}={}){
   invariant(resolve(determinismRoot)!==resolve(outputRoot),'determinism workspace must be separate');
   const plan=await loadPlan({sourceRoot,outputRoot}); const baseline=await collectEvidence(plan.rows,outputRoot);
   invariant(baseline.length===226,'main owner workspace must contain 226 LP118/LP116 checkpoints');
@@ -63,8 +74,9 @@ export async function runOwnerFinal({sourceRoot=OWNER_SOURCE_ROOT,outputRoot=res
   const baseMap=new Map(baseline.map(x=>[x.row.countyFips,x]));
   const {controls,compatibility,readiness}=await runCertificationChecks({manufacturing,
     runDeterminism:async()=>{
-      await executeOwner({mode:'build',sourceRoot,outputRoot:determinismRoot,gdal,countyFips:CONTROL_FIPS});
+      if(rebuildDeterminism)await executeOwner({mode:'build',sourceRoot,outputRoot:determinismRoot,gdal,countyFips:CONTROL_FIPS});
       const reruns=await collectEvidence(controlRows,determinismRoot); const rerunMap=new Map(reruns.map(x=>[x.row.countyFips,x]));
+      invariant(reruns.length===CONTROL_FIPS.length,'determinism workspace must contain all 11 existing control outputs (use rebuildDeterminism only for an intentional owner rerun)');
       return controlRows.map(row=>compareControl(row,baseMap.get(row.countyFips),rerunMap.get(row.countyFips)));
     },
     runCompatibility:async()=>{const results=[];for(const fips of COMPATIBILITY_FIPS){const x=baseMap.get(fips);invariant(x,`missing compatibility county ${fips}`);results.push(await certifyCandidate(resolve(x.x.output.path),fips));}return results;}
@@ -78,4 +90,4 @@ export async function runOwnerFinal({sourceRoot=OWNER_SOURCE_ROOT,outputRoot=res
     writeFile(join(REPORTS,'downstream-compatibility.json'),json({schemaVersion:'gridly.lp209.downstream-compatibility.v1',execution:'ISOLATED_OWNER_CANDIDATE_HARNESS',activated:false,published:false,counties:compatibility,status:compatibility.every(x=>x.status==='PASS')?'PASS':'FAIL'}))]);
   console.log(readiness); return {readiness,controls,compatibility};
 }
-if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))runOwnerFinal().catch(e=>{console.error(e.message);process.exitCode=1;});
+if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))runOwnerFinal({rebuildDeterminism:process.argv.includes('--rebuild-determinism')}).catch(e=>{console.error(e.message);process.exitCode=1;});

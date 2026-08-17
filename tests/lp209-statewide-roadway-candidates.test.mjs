@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { CONTROL_FIPS, assertManufacturingComplete, loadPlan, resolveGdalConfiguration, summarize, verifyCommitted, verifyGdal } from '../tools/lp209/statewide-roadway-candidates.mjs';
-import { COMPATIBILITY_FIPS, certifyCandidate, compareControl, finalReadiness, runCertificationChecks } from '../tools/lp209/final-certification.mjs';
+import { COMPATIBILITY_FIPS, canonicalManifestIdentity, certifyCandidate, compareControl, finalReadiness, runCertificationChecks } from '../tools/lp209/final-certification.mjs';
 
 test('LP209 plan binds all LP206 counties to certified LP208 identities and protects runtime 28', async()=>{
   const before=await readFile('data/roadway-runtime-manifest.json'); const p=await loadPlan();
@@ -89,10 +90,29 @@ test('final readiness requires manufacturing, determinism, compatibility, and pr
 
 test('control comparison uses governed hashes/bytes and ordered LP116 package identity',()=>{
   const row={countyFips:'48287',countyId:'lee',sourceSha256:'a'.repeat(64),sourceBytes:10};
-  const checkpoint={row,x:{output:{sha256:'b'.repeat(64),sizeBytes:20}},m:{certificationStatus:'PASS',packages:[{fileName:'p.geojson',featureCount:2,byteLength:30,sha256:'c'.repeat(64)}],manifest:{sha256:'d'.repeat(64),sizeBytes:40}}};
+  const manifestBody=Buffer.from(JSON.stringify({schemaVersion:'v1',county:{fips:'48287'},source:{path:'primary/lp118/48287/source.geojson',sha256:'s'.repeat(64),bytes:10},featureCount:2,packages:[{fileName:'p.geojson',featureCount:2,bytes:30,sha256:'c'.repeat(64)}]},null,2)+'\n');
+  const checkpoint={row,manifestBody,x:{output:{sha256:'b'.repeat(64),sizeBytes:20}},m:{certificationStatus:'PASS',packages:[{fileName:'p.geojson',featureCount:2,byteLength:30,sha256:'c'.repeat(64)}],manifest:{sha256:'d'.repeat(64),sizeBytes:manifestBody.length}}};
   assert.equal(compareControl(row,checkpoint,structuredClone(checkpoint)).determinismStatus,'PASS');
   const changed=structuredClone(checkpoint); changed.m.packages[0].sha256='e'.repeat(64);
   assert.equal(compareControl(row,checkpoint,changed).determinismStatus,'FAIL');
+});
+
+test('manifest identity canonicalizes only source.path and preserves raw evidence',()=>{
+  const manifest={schemaVersion:'v1',county:{id:'bexar',fips:'48029'},source:{path:'owner-local/primary/lp118/48029/a.geojson',sha256:'a'.repeat(64),bytes:100,authority:'Census',vintage:2025},featureCount:7,partitionCount:1,packages:[{fileName:'part.geojson',featureCount:7,bytes:200,sha256:'b'.repeat(64)}]};
+  const primary=Buffer.from(JSON.stringify(manifest,null,2)+'\n');
+  manifest.source.path='owner-local/determinism/lp118/48029/a.geojson';
+  const rerun=Buffer.from(JSON.stringify(manifest,null,2)+'\n');
+  assert.notEqual(createHash('sha256').update(primary).digest('hex'),createHash('sha256').update(rerun).digest('hex'));
+  assert.deepEqual(canonicalManifestIdentity(primary),canonicalManifestIdentity(rerun));
+});
+
+test('manifest canonical identity fails closed for every semantic or unexpected field change',()=>{
+  const base={schemaVersion:'v1',county:{id:'bexar',fips:'48029'},source:{path:'workspace/a',sha256:'a'.repeat(64),bytes:100},featureCount:7,packages:[{fileName:'part.geojson',featureCount:7,bytes:200,sha256:'b'.repeat(64)}]};
+  const identity=x=>canonicalManifestIdentity(JSON.stringify(x)).sha256;
+  for(const mutate of [
+    x=>x.source.sha256='c'.repeat(64), x=>x.packages[0].sha256='d'.repeat(64), x=>x.featureCount=8,
+    x=>x.county.fips='48113', x=>x.outputPath='different/workspace/path'
+  ]){const changed=structuredClone(base);mutate(changed);assert.notEqual(identity(base),identity(changed));}
 });
 
 test('isolated compatibility harness loads, finds, names, and associates an owner-shaped candidate',async t=>{
