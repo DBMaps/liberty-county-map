@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp208": "node tools/lp208/statewide-tiger2025-roadway-source.mjs --whatif --write",
+    "verify:lp208": "node --test tests/lp208-statewide-tiger2025-roadway-source.test.mjs",
+    "test:lp208": "node --test tests/lp208-statewide-tiger2025-roadway-source.test.mjs",
     "build:lp207": "node tools/lp207/build-lp207-evidence.mjs",
     "verify:lp207": "node tools/lp207/build-lp207-evidence.mjs",
     "test:lp207": "node --test tests/lp207-statewide-roadway-source-acquisition.test.mjs",
