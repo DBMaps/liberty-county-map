@@ -7,6 +7,7 @@ const ROOT=resolve(fileURLToPath(new URL('../..',import.meta.url)));
 const REPORTS=join(ROOT,'reports/lp210');
 export const AUTHORITY={projectRef:'nhwhkbkludzkuyxmkkcj',baseUrl:'https://nhwhkbkludzkuyxmkkcj.supabase.co',bucket:'gridly-roadways',prefix:'roadways',version:'lp210',public:true,cacheControl:'3600'};
 export const RUNTIME_SHA='56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd';
+export const LP116_MANIFEST_SCHEMA='gridly-lp116-roadway-manifest-v1';
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const json=p=>readFile(p,'utf8').then(JSON.parse);
 const runtimeCount=m=>Object.keys(m.counties).length;
@@ -34,7 +35,35 @@ export async function buildPlan(){
  return {counties,runtime};
 }
 
-async function localCertify(plan,workspace){for(const c of plan.counties){for(const o of c.objects){const p=join(workspace,o.localPath);const b=await readFile(p);if(b.length!==o.expectedBytes||sha(b)!==o.expectedSha256)throw Error(`Local package identity mismatch: ${p}`);o.bytes=b;}const p=join(workspace,c.localManifestPath),b=await readFile(p);if(b.length!==c.expectedManifestBytes||sha(b)!==c.expectedManifestSha256)throw Error(`Local manifest identity mismatch: ${p}`);const m=JSON.parse(b);if(m.countyId!==c.countyId||m.packages.length!==c.partitionCount)throw Error(`Local manifest semantics mismatch: ${p}`);c.manifestBytes=b;}}
+function fips(value){return typeof value==='number'&&Number.isInteger(value)?String(value).padStart(5,'0'):String(value);}
+export function validateLocalManifest(m,c){
+ const fail=reason=>{throw Error(`Local manifest semantics mismatch: ${reason}`);};
+ if(m?.schemaVersion!==LP116_MANIFEST_SCHEMA)fail('schemaVersion');
+ if(fips(m.fips)!==fips(c.countyFips))fail('fips');
+ // LP116 uses the maintained inventory slug. LP209's separate "-tx" countyId
+ // remains the remote/runtime path authority.
+ if(m.countyId!==c.countySlug)fail('countyId/countySlug');
+ if(m.candidate!==true)fail('candidate');
+ if(m.activated!==false)fail('activated');
+ if(m.productionAuthorization!==false)fail('productionAuthorization');
+ if(m.packageCount!==c.partitionCount)fail('packageCount');
+ if(!Array.isArray(m.packages)||m.packages.length!==c.partitionCount)fail('packages.length');
+ const objects=new Map(c.objects.map(o=>[o.fileName,o]));
+ if(objects.size!==c.partitionCount)fail('governed partition identities');
+ const matched=new Set();
+ for(const pkg of m.packages){
+  const object=objects.get(pkg?.fileName);
+  if(!object||matched.has(pkg.fileName))fail('package fileName');
+  matched.add(pkg.fileName);
+  if(pkg.featureCount!==object.featureCount)fail('package featureCount');
+  if(pkg.byteLength!==object.expectedBytes)fail('package byteLength');
+  if(pkg.sha256!==object.expectedSha256)fail('package sha256');
+  const expectedPackageId=basename(object.fileName,'.roadways.candidate.geojson');
+  if(pkg.packageId!==expectedPackageId)fail('packageId');
+ }
+ if(matched.size!==objects.size)fail('missing package');
+}
+async function localCertify(plan,workspace){for(const c of plan.counties){for(const o of c.objects){const p=join(workspace,o.localPath);const b=await readFile(p);if(b.length!==o.expectedBytes||sha(b)!==o.expectedSha256)throw Error(`Local package identity mismatch: ${p}`);o.bytes=b;}const p=join(workspace,c.localManifestPath),b=await readFile(p);if(b.length!==c.expectedManifestBytes||sha(b)!==c.expectedManifestSha256)throw Error(`Local manifest identity mismatch: ${p}`);const m=JSON.parse(b);try{validateLocalManifest(m,c);}catch(error){throw Error(`${error.message}: ${p}`);}c.manifestBytes=b;}}
 async function getRemote(path,token){const headers=token?{Authorization:`Bearer ${token}`,apikey:token}:{};const u=`${AUTHORITY.baseUrl}/storage/v1/object/public/${AUTHORITY.bucket}/${path}`;const r=await fetch(u,{headers});if(r.status===404)return null;if(!r.ok)throw Error(`Remote GET ${path}: HTTP ${r.status}`);return Buffer.from(await r.arrayBuffer());}
 async function certifyObject(item,local,token,apply,contentType){let remote=await getRemote(item.remotePath,token);if(remote){if(remote.length!==local.length||sha(remote)!==sha(local))throw Error(`REMOTE_OBJECT_CONFLICT: ${item.remotePath}`);return {uploaded:false,actualBytes:remote.length,actualSha256:sha(remote),status:'REMOTE_OBJECT_EXACT_MATCH'};}if(!apply)return {uploaded:false,actualBytes:null,actualSha256:null,status:'REMOTE_OBJECT_ABSENT'};if(!token)throw Error('Apply requires SUPABASE_SERVICE_ROLE_KEY or GRIDLY_ROADWAY_STORAGE_TOKEN');const r=await fetch(`${AUTHORITY.baseUrl}/storage/v1/object/${AUTHORITY.bucket}/${item.remotePath}`,{method:'POST',headers:{Authorization:`Bearer ${token}`,apikey:token,'Content-Type':contentType,'Cache-Control':`max-age=${AUTHORITY.cacheControl}`,'x-upsert':'false'},body:local});if(!r.ok)throw Error(`Upload failed ${item.remotePath}: HTTP ${r.status}`);remote=await getRemote(item.remotePath,token);if(!remote||remote.length!==local.length||sha(remote)!==sha(local))throw Error(`Independent remote verification failed: ${item.remotePath}`);return {uploaded:true,actualBytes:remote.length,actualSha256:sha(remote),status:'REMOTE_OBJECT_EXACT_MATCH'};}
 export async function execute({mode='WhatIf',workspace=process.env.LP209_OWNER_WORKSPACE,write=true}={}){
