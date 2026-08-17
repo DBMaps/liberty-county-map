@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp204": "node tools/lp204/build-statewide-functional-coverage-audit.mjs --write",
+    "verify:lp204": "node tools/lp204/build-statewide-functional-coverage-audit.mjs --verify",
+    "test:lp204": "node --test tests/lp204-statewide-functional-coverage-audit.test.mjs",
     "test:lp2022": "node --test tests/lp2022-statewide-active-county-runtime-synchronization.test.mjs",
     "test:lp2021": "node --test tests/lp2021-statewide-crossing-runtime-source-resolution.test.mjs",
     "build:wave3a1b-fra-county-authority": "node tools/wave3a1b/build-fra-county-authority.mjs --write",
