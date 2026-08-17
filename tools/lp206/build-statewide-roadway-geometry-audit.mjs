@@ -1,56 +1,102 @@
 #!/usr/bin/env node
-import fs from "node:fs";
-import path from "node:path";
-import crypto from "node:crypto";
-import { fileURLToPath } from "node:url";
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const WRITE = process.argv.includes("--write");
-const VERIFY = process.argv.includes("--verify");
-const read = p => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8"));
-const relStat = p => { try { const b=fs.readFileSync(path.join(ROOT,p)); return {exists:true,bytes:b.length,sha256:crypto.createHash("sha256").update(b).digest("hex")}; } catch { return {exists:false,bytes:null,sha256:null}; } };
-const json = v => `${JSON.stringify(v,null,2)}\n`;
-const counties = read("data/lp104/texas-counties.json").counties;
-const manifestPath = "data/roadway-runtime-manifest.json";
-const manifest = read(manifestPath);
-const entries = manifest.counties;
-const allowedBlockers = ["ACTIVE_AND_CERTIFIED","CERTIFIED_REMOTE_NOT_ACTIVATED","CERTIFIED_LOCAL_NOT_ACTIVATED","REMOTE_PRESENT_UNCERTIFIED","LOCAL_PRESENT_UNCERTIFIED","RUNTIME_REGISTRY_MISSING","MANIFEST_MISSING","PACKAGE_MISSING","IDENTITY_MISMATCH","SCHEMA_INCOMPATIBLE","SOURCE_REBUILD_REQUIRED","UNRESOLVED"];
-if(counties.length!==254) throw new Error(`Expected 254 counties, found ${counties.length}`);
-if(Object.keys(entries).length!==28) throw new Error(`Expected 28 roadway entries, found ${Object.keys(entries).length}`);
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const read = p => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'));
+const json = value => `${JSON.stringify(value, null, 2)}\n`;
+const WRITE = process.argv.includes('--write');
+const VERIFY = process.argv.includes('--verify');
+const GENERATED_AT = '2026-08-17T00:00:00.000Z';
 
-const remoteReferences = Object.entries(entries).filter(([,e])=>e.url?.startsWith("http")||e.manifestUrl).map(([countyId,e])=>({countyId,kind:e.manifestUrl?"partition_manifest":"package",bucket:"gridly-roadways",objectPath:new URL(e.url||e.manifestUrl).pathname.split("/gridly-roadways/")[1],url:e.url||e.manifestUrl,accessState:"NOT_PROBED_ENVIRONMENT_NETWORK_DENIED",exists:null,bytes:null,sha256:null,identityStatus:"UNKNOWN"}));
-const remoteById = new Map(remoteReferences.map(x=>[x.countyId,x]));
-const local = Object.entries(entries).map(([countyId,e])=>({countyId,path:e.url?.startsWith("http")?null:e.url, ...(!e.url||e.url.startsWith("http")?{exists:false,bytes:null,sha256:null}:relStat(e.url)), governedExpectedSha256:e.sha256||null})).filter(x=>x.path);
-const localById = new Map(local.map(x=>[x.countyId,x]));
-const matrix = counties.map(c=>{
- const countyId=`${c.countyId}-tx`, e=entries[countyId], l=localById.get(countyId), r=remoteById.get(countyId);
- const certified=!!(l?.exists&&e?.sha256&&l.sha256===e.sha256);
- let blocker="UNRESOLVED", action="Run the read-only owner Supabase inventory before deciding recovery or build.";
- if(certified){blocker="ACTIVE_AND_CERTIFIED";action="No LP206 action; retain unchanged.";}
- else if(l?.exists){blocker="LOCAL_PRESENT_UNCERTIFIED";action="Certify existing local package; do not rebuild by default.";}
- else if(r){blocker="REMOTE_PRESENT_UNCERTIFIED";action="Inventory and authenticate referenced remote object/partition manifest.";}
- return {countyFips:c.fips,countyId,countyName:c.countyName,runtimeRoadwayActive:!!e,localPackageExists:!!l?.exists,localPackageClassification:l?.exists?(certified?"PRODUCTION_ACTIVE":"PRODUCTION_ACTIVE_UNCERTIFIED"):"NONE",localPackagePath:l?.path||null,localBytes:l?.bytes??null,localSha256:l?.sha256??null,remotePackageExists:r?.exists??null,remoteManifestExists:r?.kind==="partition_manifest"?r.exists:null,expectedRemoteObject:r?.objectPath||null,remoteIdentityStatus:r?.identityStatus||"UNKNOWN",runtimeRegistryEntryExists:!!e,packageSchemaCompatible:l?.exists?true:null,certificationStatus:certified?"EXACT_CERTIFIED_MATCH":l?.exists||r?"UNCERTIFIED":"UNKNOWN",exactBlocker:blocker,recommendedAction:action};
-});
-const sizes=local.filter(x=>x.exists).map(x=>x.bytes).sort((a,b)=>a-b); const sum=sizes.reduce((a,b)=>a+b,0);
-const controls=["liberty-tx","dallas-tx","harris-tx","bexar-tx","el-paso-tx","travis-tx","grayson-tx","mclennan-tx","smith-tx","andrews-tx"].map(id=>matrix.find(x=>x.countyId===id));
-const gates=[
- {classification:"PRODUCTION_ACTIVE",file:manifestPath,symbol:"GRIDLY_ROADWAY_RUNTIME_MANIFEST_URL / manifest.counties",finding:"The runtime authority has exactly 28 county keys; an absent key resolves blocked_missing_asset."},
- {classification:"PRODUCTION_ACTIVE",file:"js/app.js",symbol:"gridlyResolveRoadwayRuntimeSource",finding:"Generic per-county resolver consumes the manifest; there is no numeric 28 constant, but membership is the gate."},
- {classification:"PRODUCTION_ACTIVE",file:"js/app.js",symbol:"GRIDLY_HARRIS_PARTITION_RUNTIME_MANIFEST_URL",finding:"Harris alone has a dedicated partition-manifest/package-prefix path."},
- {classification:"HISTORICAL_EVIDENCE",file:"assets/directional-intelligence/source/osm",symbol:null,finding:"Regional OSM corridor evidence is not the production county roadway registry."}
-];
-const consumers=[
- {consumer:"nearest-road lookup / report road label / hazard association",dependency:"Direct: loaded county GeoJSON is indexed; absent manifest leaves county-aware non-road fallback.",ownCohortGate:false},
- {consumer:"Route Watch",dependency:"Composed dependency: roadway context is limited by current manifest; generic county packages are accepted by resolver.",ownCohortGate:false},
- {consumer:"Travel Brief",dependency:"Composed roadway-name/context dependency; also independently constrained by inactive official providers.",ownCohortGate:false},
- {consumer:"DriveTexas linkage",dependency:"Official record geometry/name does not prove county-road package ownership; no separate 28 list found.",ownCohortGate:false},
- {consumer:"directional intelligence",dependency:"Separate regional OSM evidence; intentionally inactive, not driven by the 28-entry manifest.",ownCohortGate:false},
- {consumer:"map road context",dependency:"Lazy active-county package loading directly uses runtime source resolution.",ownCohortGate:false}
-];
-const counts=Object.fromEntries(allowedBlockers.map(b=>[b,matrix.filter(x=>x.exactBlocker===b).length]));
-const audit={schemaVersion:"gridly.lp206.statewide-roadway-audit.v1",generatedAt:"2026-08-17T00:00:00.000Z",auditOnly:true,productionFilesModified:false,statewideDecision:"UNRESOLVED",decisionReason:"The repository proves 28 runtime entries and 3 local runtime packages, and references 25 Supabase objects/manifests, but this environment cannot list/authenticate the bucket. Unknown remote state must not be treated as absence or rebuild need.",accounting:{texasCounties:254,activeRuntimePackages:28,missingActiveRuntimeCoverage:226,localPackagesFound:local.filter(x=>x.exists).length,remoteSupabasePackagesVerifiedFound:0,remoteSupabaseReferences:remoteReferences.length,certifiedPackagesFound:matrix.filter(x=>x.certificationStatus==="EXACT_CERTIFIED_MATCH").length,uncertifiedKnownPackagesOrReferences:matrix.filter(x=>x.exactBlocker==="LOCAL_PRESENT_UNCERTIFIED"||x.exactBlocker==="REMOTE_PRESENT_UNCERTIFIED").length,trueMissingPackages:null,runtimeLinkageMissing:226,rebuildRequired:null},runtimeAuthority:{manifestPath,contractVersion:manifest.contractVersion,provider:manifest.provider,entryCount:28,reasonFor28:"Manifest membership: 28 keys (3 local, 24 single-object external, 1 Harris partition runtime); resolver blocks counties without keys.",activeCountyIds:Object.keys(entries),activeFips:matrix.filter(x=>x.runtimeRoadwayActive).map(x=>x.countyFips)},sourceProvenance:{provider:"U.S. Census Bureau TIGER/Line county roads",vintage:"2025 for retained source shapefiles and LP118 workflow; legacy Liberty/San Jacinto package metadata is incomplete",sourceIdentityPattern:"tl_2025_48{county3}_roads.zip / tl_2025_{FIPS}_roads.shp",statewideSourceAvailable:"Download workflow is parameterized for arbitrary Texas FIPS; owner-local statewide possession is not proven.",tooling:["tools/lp118/extract-tiger-roadways.mjs","tools/lp116/manufacture-candidate-roadways.mjs"],schema:{geoJsonType:"FeatureCollection",geometryTypes:["LineString","MultiLineString"],coordinateSystem:"WGS84 / RFC 7946 longitude-latitude",observedRoadNameFields:["FULLNAME","name"],observedClassFields:["MTFCC"],countyIdentity:"manifest key/path and county-scoped extraction; not consistently embedded in each feature",provenance:"manifest/source sidecar; incomplete for legacy packages",minimumRuntimeContract:"Readable GeoJSON FeatureCollection (or declared gzip) with line geometry and a loadable manifest URL/path; useful nearest-road naming additionally requires a populated supported name field."}},localInventory:local,remoteInventory:{projectRef:"nhwhkbkludzkuyxmkkcj",bucket:"gridly-roadways",prefix:"roadways/",directAccess:"UNAVAILABLE_NETWORK_PROXY_403",verifiedObjectCount:0,referencedObjectOrManifestCount:remoteReferences.length,absenceInferenceAllowed:false,ownerProbe:"node tools/lp206/owner-supabase-roadway-inventory.mjs --write reports/lp206/remote-roadway-inventory.owner.json",references:remoteReferences},blockerVocabulary:allowedBlockers,blockerCounts:counts,countyMatrix:matrix,controls,runtimeGates:gates,consumers,sizeAccounting:{knownLocalRuntimeBytes:sum,knownLocalAverageBytes:sizes.length?Math.round(sum/sizes.length):0,knownLocalMedianBytes:sizes.length?sizes[Math.floor(sizes.length/2)]:0,knownLocalLargestBytes:sizes.at(-1)||0,projected254BytesFromKnownAverage:sizes.length?Math.round(sum/sizes.length*254):null,caveat:"Projection excludes 24 remote single packages and Harris partitions and is therefore directional only.",transportFinding:"Runtime already resolves and loads the active county lazily. All 254 bundled locally would expand PWA/repository payload; existing external object plus lazy-fetch architecture is the evidenced transport pattern."},toolingReadiness:{build:"LP118 supports one arbitrary FIPS and --all with TIGER downloads, GDAL ogr2ogr, deterministic normalization/checks; LP116 manufactures candidate packages. No build was executed.",certification:"Existing tooling checks feature/line counts, bounds, name/class fields and hashes in parts, but there is no single 254-package production certificate/registry compatibility verifier.",gap:"Remote inventory authentication and unified production certification manifest are required before any recovery/build decision."},recommendedNextMilestone:"Owner runs read-only inventory; ingest deterministic object metadata; compare bytes/SHA-256 to governed evidence where available; classify every unknown. Do not activate or rebuild in that milestone."};
-const md=`# LP206 — Statewide Roadway Geometry Source and Coverage Audit\n\n## Executive conclusion\n\n**Decision: UNRESOLVED.** Repository evidence does not prove that the 226 inactive packages are absent. It proves 28 runtime registry entries, 2 locally materialized runtime packages (plus one missing local-runtime target with retained raw source), and 25 Supabase object/manifest references. Bucket listing and identity authentication were unavailable (network proxy returned 403), so the remote count is **unknown**, not zero. No 226-package rebuild is justified yet.\n\n## Statewide accounting\n\n| Measure | Result |\n|---|---:|\n| Texas counties | 254 |\n| Active roadway runtime packages | 28 |\n| Missing active runtime coverage | 226 |\n| Local runtime packages found | ${audit.accounting.localPackagesFound} |\n| Remote packages verified found | 0 (access unavailable) |\n| Supabase package/manifest references | ${remoteReferences.length} |\n| Exact certified local matches | ${audit.accounting.certifiedPackagesFound} |\n| Known uncertified local/reference identities | ${audit.accounting.uncertifiedKnownPackagesOrReferences} |\n| True missing packages | unknown |\n| Runtime linkage missing | 226 |\n| Rebuild required | unknown |\n\n## Current 28-county architecture\n\nThe production authority is \`${manifestPath}\`, fetched by \`GRIDLY_ROADWAY_RUNTIME_MANIFEST_URL\` and resolved by \`gridlyResolveRoadwayRuntimeSource\`. Its 28 keys—not a numeric constant or statewide source-availability flag—are the effective allowlist: 3 local packages, 24 external single-object URLs, and Harris's partition manifest. Missing keys fail closed as \`blocked_missing_asset\`.\n\nActive county IDs: ${Object.keys(entries).map(x=>`\`${x}\``).join(", ")}.\n\nActive FIPS: ${audit.runtimeAuthority.activeFips.join(", ")}.\n\n## Source and package contract\n\nRetained working source and LP118 identify 2025 Census TIGER/Line county roads. The parameterized extraction convention is \`tl_2025_48CCC_roads\`; it can address arbitrary FIPS and all counties, but does not prove that owner storage already contains every output. Runtime packages are RFC 7946/WGS84 FeatureCollections of LineString/MultiLineString features. Observed source naming/classification fields are \`FULLNAME\` and \`MTFCC\`; legacy package provenance is incomplete.\n\n## Local and remote evidence\n\nLocally materialized runtime packages: ${local.filter(x=>x.exists).map(x=>`${x.countyId} (${x.bytes} bytes)`).join(", ")}. Additional TIGER shapefile source directories and OSM directional artifacts are source/review evidence, not interchangeable production packages.\n\nSupabase project \`nhwhkbkludzkuyxmkkcj\`, bucket \`gridly-roadways\`, prefix \`roadways/\` is encoded by the manifest. Direct read-only HTTP checks were denied by the environment proxy, and no listing credential is present. Therefore remote existence, total count, manifests, duplicates, sizes, and hashes remain unknown. Run:\n\n\`SUPABASE_URL=https://nhwhkbkludzkuyxmkkcj.supabase.co SUPABASE_SERVICE_ROLE_KEY=<read-capable-key> node tools/lp206/owner-supabase-roadway-inventory.mjs --write reports/lp206/remote-roadway-inventory.owner.json\`\n\n## Blockers and controls\n\n${Object.entries(counts).filter(([,n])=>n).map(([b,n])=>`- ${b}: ${n}`).join("\n")}\n\nThe required controls (Liberty, Dallas, Harris, Bexar, El Paso, Travis, Grayson, McLennan, Smith, Andrews) are present in the 254-row JSON matrix and cover local, referenced-remote, metro, rural, and inactive-roadway cases. Unknown remote access never becomes \`PACKAGE_MISSING\` or \`SOURCE_REBUILD_REQUIRED\`.\n\n## Runtime consumers and transport\n\nNearest-road/report labels/hazard association and map road context directly consume the active county source. Route Watch and Travel Brief compose that context; DriveTexas has its own official geometry/name pipeline and no separate 28-array was found. Directional OSM evidence is historical/paused. The loader is per-active-county/lazy, so statewide activation need not imply a 254-package initial client payload. Known local bytes total ${sum}; average ${audit.sizeAccounting.knownLocalAverageBytes}; median ${audit.sizeAccounting.knownLocalMedianBytes}; largest ${audit.sizeAccounting.knownLocalLargestBytes}; a naïve average projection is ${audit.sizeAccounting.projected254BytesFromKnownAverage}, explicitly excluding remote/Harris evidence.\n\n## Tooling and next milestone\n\nLP118 can extract arbitrary/all county TIGER sources and LP116 can manufacture candidates, but LP206 did not execute them. Certification capabilities are fragmented; a unified remote identity and 254-package production certificate is missing. The smallest next step is read-only owner inventory and governed identity reconciliation. Only after that evidence can Gridly choose recovery, mixed recovery/build, or rebuild. No runtime, Supabase, package, registry, or consumer file was changed.\n`;
-const outputs={"reports/lp206/statewide-roadway-geometry-source-and-coverage-audit.json":json(audit),"reports/lp206/county-roadway-coverage-matrix.json":json({schemaVersion:"gridly.lp206.county-roadway-matrix.v1",count:matrix.length,rows:matrix}),"reports/lp206/remote-roadway-inventory.json":json(audit.remoteInventory),"reports/lp206/legacy-runtime-gates.json":json({schemaVersion:"gridly.lp206.runtime-gates.v1",gates}),"reports/lp206/LP206-STATEWIDE-ROADWAY-GEOMETRY-SOURCE-AND-COVERAGE-AUDIT.md":md};
-if(WRITE) for(const [p,v] of Object.entries(outputs)){fs.mkdirSync(path.dirname(path.join(ROOT,p)),{recursive:true});fs.writeFileSync(path.join(ROOT,p),v);}
-if(VERIFY) for(const [p,v] of Object.entries(outputs)){if(!fs.existsSync(path.join(ROOT,p))||fs.readFileSync(path.join(ROOT,p),"utf8")!==v) throw new Error(`Stale artifact: ${p}`);}
-console.log(JSON.stringify({mode:WRITE?"write":VERIFY?"verify":"whatif",counties:254,active:28,missing:226,decision:audit.statewideDecision,outputs:Object.keys(outputs)},null,2));
+const authority = read('data/lp104/texas-counties.json').counties;
+const manifest = read('data/roadway-runtime-manifest.json');
+const byId = new Map(authority.map(c => [`${c.countyId}-tx`, c]));
+const extractedTiger = new Set(['48071', '48201', '48245', '48339', '48373', '48407']);
+const tigerZips = new Set(['48287', '48331', '48395']);
+// The owner supplied the reconciled count and zero unmatched slugs; the raw identities are
+// historical evidence only, so they intentionally do not participate in cohort membership.
+
+if (authority.length !== 254 || new Set(authority.map(c => c.fips)).size !== 254) throw new Error('Texas authority must contain 254 unique FIPS');
+const existingRuntimeCounties = Object.entries(manifest.counties).map(([countyId, entry]) => {
+  const county = byId.get(countyId);
+  if (!county) throw new Error(`Unknown runtime county: ${countyId}`);
+  const remote = Boolean(entry.url?.startsWith('http') || entry.manifestUrl?.startsWith('http'));
+  return { countyFips: county.fips, countyId, countyName: county.countyName, countySlug: county.countyId,
+    runtimePackageMode: entry.manifestUrl ? 'PARTITIONED' : 'SINGLE_COUNTY', runtimeSourcePath: entry.manifestUrl || entry.url,
+    transportMode: remote ? 'REMOTE_PUBLIC_SUPABASE' : 'LOCAL_RUNTIME', runtimeStatus: entry.status };
+}).sort((a, b) => a.countyFips.localeCompare(b.countyFips));
+const existingFips = new Set(existingRuntimeCounties.map(c => c.countyFips));
+const missingCounties = authority.filter(c => !existingFips.has(c.fips)).map(c => ({
+  countyFips: c.fips, countyId: `${c.countyId}-tx`, countyName: c.countyName, countySlug: c.countyId,
+  currentRuntimeRoadway: false, requiredAction: 'MANUFACTURE_AND_CERTIFY',
+  ownerOsmRawExists: false, extractedTiger2025Exists: extractedTiger.has(c.fips), tiger2025ZipExists: tigerZips.has(c.fips), productionRemoteRoadwayExists: false
+})).sort((a, b) => a.countyFips.localeCompare(b.countyFips));
+const union = new Set([...existingFips, ...missingCounties.map(c => c.countyFips)]);
+if (existingRuntimeCounties.length !== 28 || missingCounties.length !== 226 || union.size !== 254 || missingCounties.some(c => existingFips.has(c.countyFips))) throw new Error('Roadway cohort conservation failed');
+
+const cohort = { schemaVersion: 'gridly.lp206.statewide-roadway-missing-build-cohort.v1', generatedAt: GENERATED_AT,
+  totalTexasCounties: 254, existingRuntimeRoadwayCountyCount: 28, missingRoadwayCountyCount: 226,
+  existingRuntimeCounties, missingCounties,
+  conservation: { existingCount: 28, missingCount: 226, intersectionCount: 0, unionCount: 254, duplicateFipsCount: 0, unknownFipsCount: 0, missingTexasCountyCount: 0, extraNonTexasIdentityCount: 0 }
+};
+
+const audit = {
+  schemaVersion: 'gridly.lp206.statewide-roadway-audit.v2', generatedAt: GENERATED_AT, auditOnly: true,
+  controls: { productionRuntimeFilesModified: false, roadwayPackagesManufactured: false, sourceFilesDownloaded: false, supabaseWritesPerformed: false },
+  decisions: { roadwayRuntimeGap: 'MISSING_COHORT_MANUFACTURING_REQUIRED', sourceAcquisition: 'NO_EXISTING_ACQUISITION_TOOLING', lp207Readiness: 'READY_FOR_LP207_PILOT' },
+  accounting: { texasCounties: 254, governedRuntimeRoadwayCounties: 28, missingRuntimeRoadwayCounties: 226 },
+  cohortArtifact: 'reports/lp206/statewide-roadway-missing-build-cohort.json',
+  ownerEvidence: {
+    lp1883: { communityIdentityPackageCount: 254, expectedPlaces: 1863, expectedMemberships: 2062, expectedMultiCountyPlaces: 163, roadwayRelatedFileCount: 0, classifiedAsRoadwayPackages: false },
+    osmRaw: { fileCount: 26, uniqueCountyCount: 26, absentArtifactCount: 228, unmatchedSlugCount: 0, cohortAuthority: false },
+    extractedTiger2025: { shapefileCount: 6, fips: [...extractedTiger], statewideCollection: false },
+    newerTiger2025Zips: { zipCount: 3, fips: [...tigerZips], statewideCollection: false },
+    productionSupabase: { projectRef: 'nhwhkbkludzkuyxmkkcj', bucket: 'gridly-roadways', public: true, totalObjectCount: 29, singleCountyLp030Objects: 24, harrisManifestCount: 1, harrisPartitionCount: 4, placeholderCount: 1, hiddenStatewideInventory: false }
+  },
+  sourceContract: {
+    authority: 'U.S. Census Bureau TIGER/Line', vintage: 2025, product: 'All Roads by county', oneZipPerCounty: true,
+    filenameConvention: 'tl_2025_<FIPS>_roads.zip', urlConvention: 'https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_<FIPS>_roads.zip',
+    requiredMembers: ['.shp', '.shx', '.dbf', '.prj', '.cpg'], documentationMembersObserved: ['.shp.ea.iso.xml', '.shp.iso.xml'],
+    governedToday: { httpStatusChecked: false, zipIntegrityCheckedByAcquisition: false, sourceBytesHashedByLp118: true, extractedOutputHashedByLp118: true, extractedCountyIdentityChecked: true },
+    repositoryEvidence: ['docs/doccleanup/GRIDLY-MANUAL-MULTI-COUNTY-ASSET-ACQUISITION-INSTRUCTIONS-V601.md', 'assets/county-implementation/harris/runtime-assets/source/tl_2025_48201_roads.shp.iso.xml']
+  },
+  acquisitionTooling: {
+    classification: 'NO_EXISTING_ACQUISITION_TOOLING', reusableDownloaderExists: false,
+    finding: 'Repository documentation governs the official URL, but no reusable road-ZIP downloader exists. LP118 only discovers owner-supplied .zip/.shp/.geojson and invokes ogr2ogr; curl examples are manual probes and LP030 scripts upload runtime output.',
+    inspected: ['tools/lp118/extract-tiger-roadways.mjs', 'docs/doccleanup/GRIDLY-MANUAL-MULTI-COUNTY-ASSET-ACQUISITION-INSTRUCTIONS-V601.md', 'scripts/Deploy-Lp030RoadwayAssets.ps1']
+  },
+  manufacturingTooling: {
+    identified: true, scripts: ['tools/lp118/extract-tiger-roadways.mjs', 'tools/lp116/manufacture-candidate-roadways.mjs'],
+    input: 'TIGER .zip/.shp or controlled GeoJSON -> normalized candidate GeoJSON', arbitraryTexasFips: true, batchFips: true,
+    output: 'reports/lp118 and reports/lp116 candidate-only artifacts', schema: 'RFC 7946 FeatureCollection; LineString/MultiLineString; countyFips/countyId/stableSegmentId',
+    normalization: 'EPSG:4269 to EPSG:4326, seven-decimal coordinates, geometry/containment/deduplication checks and stable sorting',
+    roadNameHandling: 'TIGER properties including FULLNAME are retained; LP116 does not unify OSM and TIGER name semantics',
+    partitioning: { targetFeatureCount: 35000, hardFeatureCount: 45000, targetBytes: 10485760, hardBytes: 20971520, harrisExistingStructureProtected: true },
+    manifestsAndCertification: 'LP116 creates candidate manifest, per-package SHA-256, source SHA-256 and certification; no production apply or upload mode',
+    modes: { whatIfCandidateOnly: true, verify: 'checkpoint/hash checks on resume plus certification checks', applyWriteProduction: false }
+  },
+  sourceConsistency: {
+    conclusion: 'PILOT_ONLY_SOURCE_GOVERNANCE_REVIEW_REQUIRED',
+    currentLp030Source: 'Historical LP030 packages were manufactured from county-scoped raw OSM GeoJSON; six retained TIGER shapefiles supported later/historical county workflows and Harris partitioning, not proof that all LP030 objects share TIGER semantics.',
+    osmRole: 'Raw input for the 26 historical roadway artifacts and LP030 normalization.', tigerRole: 'Official intended source for new county candidates and existing later county/Harris workflows.',
+    tiger2025IntendedForMissingCohort: true, runtimeShapeCompatible: true,
+    mismatchRisk: 'TIGER and OSM differ in attributes, classification and naming semantics. Geometry normalizes to the same line FeatureCollection envelope, but source semantics are not unified. LP207 must certify a source-vintage/name/class mapping and explicitly grandfather the protected 28 before statewide execution.'
+  },
+  zipControls: [...tigerZips].map(fips => ({ fips, county: authority.find(c => c.fips === fips).countyName, zipOpens: true, expectedMembersPresent: true, filenameIdentityAgrees: true, schemaReadableByLp118: true, consumableByLp116AfterLp118: true, evidence: 'LP120 owner rerun technical manufacturing/certification PASS', pilotSuitable: true })),
+  pilot: { recommendedFips: [...tigerZips], laterScaleValidation: { countyFips: '48113', countyName: 'Dallas', acquireOrBuildNow: false } },
+  transportContract: { certifyLocalCandidateFirst: true, publishRemoteAfterCertificationOnly: true, lazyPerCountyRetrieval: true, partitionOnlyAboveEstablishedLp116Limits: true, architectureChange: false },
+  existing28Protection: { enforcedByCohortSubtraction: true, excludedFips: [...existingFips].sort(), preservePackageIdentities: true, preserveHarrisPartitions: true, preserveLibertySanJacintoLocalBehavior: true, overwriteAllowed: false }
+};
+
+const md = `# LP206 — Statewide Roadway Geometry Source and Coverage Audit\n\n## Closure decision\n\nLP206 freezes **28 existing governed/runtime counties** and the exact **226-county missing-cohort roadway manufacturing** boundary. Statewide roadway geometry was not previously manufactured.\n\n- **ROADWAY_RUNTIME_GAP:** \`MISSING_COHORT_MANUFACTURING_REQUIRED\`\n- **SOURCE_ACQUISITION:** \`NO_EXISTING_ACQUISITION_TOOLING\`\n- **LP207_READINESS:** \`READY_FOR_LP207_PILOT\`\n\nFull statewide execution is not ready: a fail-closed downloader and a governed TIGER-to-runtime name/class/source-vintage contract remain required.\n\n## Exact existing 28 / missing 226\n\nThe builder derives both sets from \`data/lp104/texas-counties.json\` minus the keys of \`data/roadway-runtime-manifest.json\`; no county list is hardcoded. Conservation passes: existing 28, missing 226, intersection 0, union 254, duplicates 0, unknowns 0, omitted Texas counties 0, and non-Texas identities 0. The complete ordered records, including package/transport paths for the 28, are frozen in \`statewide-roadway-missing-build-cohort.json\`.\n\n## Prior-work reconciliation\n\nLP188.3's 254 files are community identity packages (1,863 places, 2,062 memberships, 163 multi-county places), with zero road-related files. The owner's 26 OSM raw artifacts are historical source inputs; their 228 complement is not this cohort. The six extracted TIGER shapefiles and three newer ZIPs are partial source holdings. Production Supabase contains 29 objects: 24 LP030 county objects, Harris's manifest and four partitions, plus a placeholder. None is a hidden statewide inventory.\n\n## Official source and acquisition\n\nThe repository governs U.S. Census Bureau TIGER/Line 2025 All Roads, one ZIP per county: \`https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_<FIPS>_roads.zip\`. Required shapefile data members are SHP, SHX, DBF, PRJ and CPG. LP118 hashes supplied bytes/output and validates identity/geometry, but it does **not download**, check HTTP status, or independently test ZIP integrity. No reusable acquisition script exists; manual curl examples and upload tooling are not download automation.\n\n## Manufacturing and certification\n\nLP118 accepts arbitrary/batched Texas FIPS and owner-supplied ZIP/SHP/GeoJSON, runs GDAL, checks containment and line geometry, rounds coordinates, deduplicates and sorts. LP116 creates inactive candidate packages, adaptive deterministic partitions, manifests, hashes and certification. It has no production apply/upload mode. Existing partition thresholds are 35,000 target/45,000 hard features and 10/20 MiB target/hard bytes.\n\n## Source consistency closure\n\nHistorical LP030 work used county OSM raw GeoJSON, while later retained TIGER sources and Harris workflows establish TIGER2025 as the intended missing-cohort source. Both normalize to the runtime line-FeatureCollection envelope, but OSM/TIGER naming and classification semantics are materially different. LP207 may pilot TIGER, but must govern the source-vintage/name/class mapping and grandfather the untouched 28 before statewide execution.\n\n## ZIP controls and pilot\n\nLP120 owner rerun evidence shows Lee (48287), Milam (48331), and Robertson (48395) ZIP identity/preflight and candidate roadway manufacturing/certification passed. They are the recommended LP207 pilot controls. Dallas (48113), which is missing from runtime, is the later scale control; do not acquire it yet.\n\n## Transport and protection\n\nLP207 should manufacture and certify local candidates first, publish remotely only after certification, and preserve lazy per-county retrieval. Partition only above established thresholds. The cohort subtraction excludes all current 28, forbids overwrite, and preserves their identities, Harris's four-part structure, and Liberty/San Jacinto local behavior.\n\n## Audit-only attestation\n\nNo production runtime file was modified; no roadway package was manufactured; no source file was downloaded; and no Supabase write occurred. Statewide roadway coverage remains incomplete.\n`;
+
+const outputs = {
+  'reports/lp206/statewide-roadway-missing-build-cohort.json': json(cohort),
+  'reports/lp206/statewide-roadway-geometry-source-and-coverage-audit.json': json(audit),
+  'reports/lp206/LP206-STATEWIDE-ROADWAY-GEOMETRY-SOURCE-AND-COVERAGE-AUDIT.md': md
+};
+if (WRITE) for (const [p, body] of Object.entries(outputs)) { fs.mkdirSync(path.dirname(path.join(ROOT, p)), { recursive: true }); fs.writeFileSync(path.join(ROOT, p), body); }
+if (VERIFY) for (const [p, body] of Object.entries(outputs)) if (!fs.existsSync(path.join(ROOT, p)) || fs.readFileSync(path.join(ROOT, p), 'utf8') !== body) throw new Error(`Stale LP206 artifact: ${p}`);
+console.log(JSON.stringify({ mode: WRITE ? 'write' : VERIFY ? 'verify' : 'whatif', existing: 28, missing: 226, acquisition: audit.decisions.sourceAcquisition, readiness: audit.decisions.lp207Readiness }, null, 2));
