@@ -45639,6 +45639,11 @@ let gridlyCommittedSemanticCamera = null;
 // persisted Home/Awareness preference: a searched PLACE may be the active map
 // presentation without becoming the user's permanent home.
 let gridlyActiveGeographicPresentation = null;
+// Monotonic ownership token for county-scoped asynchronous work.  Presentation
+// state can change independently from the map, but it must never change county
+// runtime state independently.
+let gridlyActiveCountyTransitionGeneration = 0;
+let gridlyActiveCountyStaleRequestSuppressions = 0;
 let gridlyStartupSemanticContext = null;
 let gridlyPrimaryMapCameraInitialized = false;
 let gridlyStartupContextFinalized = false;
@@ -45687,8 +45692,41 @@ function gridlyResolveCanonicalPlaceGeoid(area) {
   return /^48\d{5}$/.test(geoid) ? geoid : null;
 }
 
+function gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId) {
+  const explicit = String(countyId || area?.countyId || "").trim();
+  if (explicit && gridlyIsKnownCountyId(gridlyNormalizeCountyId(explicit))) return gridlyNormalizeCountyId(explicit);
+  const fips = String(area?.countyFips || area?.countyGeoid || "").trim();
+  if (/^48\d{3}$/.test(fips)) {
+    const match = Object.values(GRIDLY_COUNTY_REGISTRY).find((county) => String(county?.countyFips || "") === fips);
+    if (match) return match.id;
+  }
+  // A canonical multi-county PLACE does not select the first membership.  Its
+  // governed presentation point is resolved by the established statewide
+  // location resolver, which yields the single operational county containing
+  // that point.
+  const latitude = Number(area?.lat ?? area?.focus?.lat);
+  const longitude = Number(area?.lng ?? area?.lon ?? area?.focus?.lng);
+  if (Number.isFinite(latitude) && Number.isFinite(longitude) && typeof gridlyResolveLocationContext === "function") {
+    const resolution = gridlyResolveLocationContext({ latitude, longitude, source: "active-operational-context" });
+    const resolved = String(resolution?.county?.id || "").trim();
+    if (resolution?.status === "resolved" && resolved && gridlyIsKnownCountyId(gridlyNormalizeCountyId(resolved))) return gridlyNormalizeCountyId(resolved);
+  }
+  return null;
+}
+
+function gridlySynchronizeActiveCountyForOperationalContext(area, countyId, source = "operational-context") {
+  const resolvedCountyId = gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId);
+  if (!resolvedCountyId) return null; // Ambiguous context fails closed.
+  if (resolvedCountyId !== gridlyGetActiveCountyId()) {
+    gridlySetActiveCountyContext(resolvedCountyId, { preserveSemanticCamera: true, preservePersistedAwareness: true, source });
+  }
+  return resolvedCountyId;
+}
+
 function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
-  if (!map || !area) return false;
+  if (!area) return false;
+  gridlySynchronizeActiveCountyForOperationalContext(area, countyId, options.source || "semantic-camera");
+  if (!map) return false;
   const sequence = ++gridlySemanticCameraSequence;
   const governedSanAntonioRegion = area.sanAntonioRegion === true ? GRIDLY_LP194_SAN_ANTONIO_REGION_LOOKUP?.[String(area.key || area.awarenessRegionId || "")] : null;
   const canonicalSanAntonioArea = governedSanAntonioRegion ? GRIDLY_AWARENESS_AREA_BY_KEY?.[governedSanAntonioRegion.id] : null;
@@ -45760,7 +45798,7 @@ function gridlyResolvePersistedSemanticContextForStartup() {
 
 function gridlyHydratePersistedSemanticContextOnStartup(context = gridlyStartupSemanticContext) {
   if (!context?.area || (!context?.countyId && context.area.canonicalMultiCountyPlace !== true)) return { restored: false, reason: "no_valid_home_personalization" };
-  if (typeof window !== "undefined" && context.countyId) window.GRIDLY_ACTIVE_COUNTY_ID = context.countyId;
+  gridlySynchronizeActiveCountyForOperationalContext(context.area, context.countyId, "startup-semantic-hydration");
   activeGeoFilter = (context.area.fallback || context.area.countyWide) ? "county" : "town";
   invalidateGridlySelectedAwarenessAreaResolutionCache?.("startup-semantic-hydration");
   return { restored: true, record: context.record, result: { success: true, persisted: false, mapFocused: gridlyPrimaryMapCameraInitialized, onboardingCompleted: false, routeIntelligenceTouched: false } };
@@ -46138,6 +46176,7 @@ function gridlySetActiveCountyContext(countyId = GRIDLY_DEFAULT_COUNTY_ID, optio
   if (typeof window !== "undefined") window.GRIDLY_ACTIVE_COUNTY_ID = normalized;
   gridlyPublishValidationIdentity();
   if (previousCountyId !== normalized) {
+    gridlyActiveCountyTransitionGeneration += 1;
     if (options.preservePersistedAwareness !== true) gridlyClearStaleAwarenessAreaForCountyContext(normalized, "active-county-change");
     gridlyCrossingInventoryCountyId = null;
     if (Array.isArray(crossings)) crossings = [];
@@ -46152,6 +46191,28 @@ function gridlySetActiveCountyContext(countyId = GRIDLY_DEFAULT_COUNTY_ID, optio
   if (options.preserveSemanticCamera !== true) gridlyFitMapToActiveCountyContext(normalized, "active-county-change");
   return normalized;
 }
+
+function gridlyActiveCountyRuntimeAudit() {
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const authoritativeCountyId = gridlyResolveCanonicalCountyIdForOperationalContext(selected, selected?.countyId);
+  const activeCountyId = gridlyGetActiveCountyId();
+  const sourceCountyId = gridlyGetActiveCountyRuntimeSources()?.countyId || null;
+  return Object.freeze({
+    authoritativeLocationLabel: selected?.label || selected?.storageValue || gridlyActiveGeographicPresentation?.placeLabel || null,
+    authoritativeCountyFips: authoritativeCountyId ? GRIDLY_COUNTY_REGISTRY[authoritativeCountyId]?.countyFips || null : null,
+    resolvedGridlyCountyId: authoritativeCountyId,
+    activeCountyId,
+    crossingSourceCounty: sourceCountyId,
+    runtimeInventoryCounty: gridlyCrossingInventoryCountyId,
+    crossingInventoryCount: Array.isArray(crossings) ? crossings.length : 0,
+    awarenessAreaKey: selected?.key || null,
+    transitionGeneration: gridlyActiveCountyTransitionGeneration,
+    staleRequestSuppressions: gridlyActiveCountyStaleRequestSuppressions,
+    synchronized: Boolean(authoritativeCountyId && authoritativeCountyId === activeCountyId && sourceCountyId === activeCountyId && (!gridlyCrossingInventoryCountyId || gridlyCrossingInventoryCountyId === activeCountyId))
+  });
+}
+
+if (typeof window !== "undefined") window.gridlyActiveCountyRuntimeAudit = gridlyActiveCountyRuntimeAudit;
 
 function resyncGridlyActiveCountyVisibleSurfaces(reason = "active-county-resync") {
   const activeCountyId = gridlyGetActiveCountyId();
@@ -50734,6 +50795,7 @@ function renderUserLocationDot() {
 
 async function loadCrossings() {
   const requestedCountyId = gridlyGetActiveCountyId();
+  const requestedGeneration = gridlyActiveCountyTransitionGeneration;
   const isExpectedCountySwitchCancellation = (error) => {
     return /Active county changed during crossing load/i.test(String(error?.message || error || ""));
   };
@@ -50742,7 +50804,7 @@ async function loadCrossings() {
     safeText("dataStatus", "Crossing data: loading");
     safeText("mapTrustNote", "Loading curated Gridly crossing dataset...");
 
-    crossingReviewOverrides = await loadCrossingReviewOverrides();
+    const requestedCrossingReviewOverrides = await loadCrossingReviewOverrides();
 
     const response = await fetchFraCrossingsWithRetry(requestedCountyId);
 
@@ -50761,14 +50823,16 @@ async function loadCrossings() {
 
     const rawCrossings = normalizeGridlyCrossingFeatures(data.features || [], {
       source: crossingDataSource,
-      overrides: crossingReviewOverrides,
+      overrides: requestedCrossingReviewOverrides,
       countyId: requestedCountyId
     });
 
-    if (requestedCountyId !== gridlyGetActiveCountyId()) {
+    if (requestedCountyId !== gridlyGetActiveCountyId() || requestedGeneration !== gridlyActiveCountyTransitionGeneration) {
+      gridlyActiveCountyStaleRequestSuppressions += 1;
       throw new Error(`Active county changed during crossing load: ${requestedCountyId} -> ${gridlyGetActiveCountyId()}`);
     }
 
+    crossingReviewOverrides = requestedCrossingReviewOverrides;
     crossings = rawCrossings.filter((crossing) => {
       return shouldShowCrossingInLaunchMode(crossing);
     });
@@ -51912,7 +51976,8 @@ async function fetchFraCrossingsWithRetry(countyId = gridlyGetActiveCountyId()) 
 
 function ensureGridlyActiveCountyCrossingInventory(reason = "unspecified") {
   const activeCountyId = gridlyGetActiveCountyId();
-  if (gridlyCrossingInventoryCountyId === activeCountyId && Array.isArray(crossings) && crossings.length > 0) return false;
+  // An empty governed inventory is loaded state, not a cache miss.
+  if (gridlyCrossingInventoryCountyId === activeCountyId && Array.isArray(crossings)) return false;
   if (gridlyCrossingInventoryReloadPromise && gridlyCrossingInventoryReloadPromise.gridlyTargetCountyId === activeCountyId) return true;
   if (Array.isArray(crossings) && crossings.length && gridlyCrossingInventoryCountyId !== activeCountyId) {
     crossings = [];
