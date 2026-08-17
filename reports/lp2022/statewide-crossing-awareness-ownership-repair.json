@@ -1,0 +1,2636 @@
+{
+  "schemaVersion": "gridly.lp2022.statewide-crossing-awareness-ownership-repair.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "rcaCommit": "8b68112",
+  "productionContract": {
+    "precedence": [
+      "GOVERNED_PLACE_GEOMETRY",
+      "GOVERNED_CANONICAL_LOCALITY",
+      "EXPLICIT_FOCUS_RADIUS",
+      "FAIL_CLOSED"
+    ],
+    "countywideSemanticsChanged": false,
+    "classificationPolicyChanged": false
+  },
+  "statewideImpact": {
+    "activePositiveCountiesEvaluated": 202,
+    "previouslyVulnerableWithoutLegacyBounds": 175,
+    "legacyBoundsEntries": 28,
+    "governedContextsWithPositiveSelection": 194,
+    "zeroCountCases": 8,
+    "legitimateNoCrossingGeography": 0,
+    "unresolvedGeometryCases": 202,
+    "selectorFailures": 0,
+    "qualification": "One deterministic governed PLACE context per ACTIVE_POSITIVE county was selected by the greatest exact canonical CITYNAME membership. Runtime polygon bytes are not committed; all audited contexts therefore exercise the required governed locality fallback."
+  },
+  "controls": {
+    "grayson": {
+      "county": "Grayson",
+      "countyFips": "48181",
+      "eligibleCrossings": 240,
+      "selectedGovernedContext": {
+        "placeGeoid": "4867496",
+        "community": "Sherman",
+        "count": 83
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    "dallas": {
+      "county": "Dallas",
+      "countyFips": "48113",
+      "eligibleCrossings": 789,
+      "selectedGovernedContext": {
+        "placeGeoid": "4819000",
+        "community": "Dallas",
+        "count": 392
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    "liberty": {
+      "county": "Liberty",
+      "countyFips": "48291",
+      "eligibleCrossings": 80,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815436",
+        "community": "Cleveland",
+        "count": 35
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    "el_paso": {
+      "county": "El Paso",
+      "countyFips": "48141",
+      "eligibleCrossings": 198,
+      "selectedGovernedContext": {
+        "placeGeoid": "4824000",
+        "community": "El Paso",
+        "count": 149
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    "bexar": {
+      "county": "Bexar",
+      "countyFips": "48029",
+      "eligibleCrossings": 380,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865000",
+        "community": "San Antonio",
+        "count": 331
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    "mclennan": {
+      "county": "McLennan",
+      "countyFips": "48309",
+      "eligibleCrossings": 169,
+      "selectedGovernedContext": {
+        "placeGeoid": "4876000",
+        "community": "Waco",
+        "count": 59
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    "smith": {
+      "county": "Smith",
+      "countyFips": "48423",
+      "eligibleCrossings": 123,
+      "selectedGovernedContext": {
+        "placeGeoid": "4874144",
+        "community": "Tyler",
+        "count": 76
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    }
+  },
+  "zeroCountCases": [
+    {
+      "county": "Blanco",
+      "countyFips": "48031",
+      "eligibleCrossings": 7,
+      "selectedGovernedContext": {
+        "placeGeoid": "4808536",
+        "community": "Blanco",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Crane",
+      "countyFips": "48103",
+      "eligibleCrossings": 3,
+      "selectedGovernedContext": {
+        "placeGeoid": "4817516",
+        "community": "Crane",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Crockett",
+      "countyFips": "48105",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4854552",
+        "community": "Ozona",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Fisher",
+      "countyFips": "48151",
+      "eligibleCrossings": 10,
+      "selectedGovernedContext": {
+        "placeGeoid": "4831964",
+        "community": "Hamlin",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Floyd",
+      "countyFips": "48153",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4826268",
+        "community": "Floydada",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Goliad",
+      "countyFips": "48175",
+      "eligibleCrossings": 9,
+      "selectedGovernedContext": {
+        "placeGeoid": "4830080",
+        "community": "Goliad",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hamilton",
+      "countyFips": "48193",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4812904",
+        "community": "Carlton",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Stephens",
+      "countyFips": "48429",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4810132",
+        "community": "Breckenridge",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    }
+  ],
+  "evaluated": [
+    {
+      "county": "Anderson",
+      "countyFips": "48001",
+      "eligibleCrossings": 70,
+      "selectedGovernedContext": {
+        "placeGeoid": "4854708",
+        "community": "Palestine",
+        "count": 46
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Angelina",
+      "countyFips": "48005",
+      "eligibleCrossings": 100,
+      "selectedGovernedContext": {
+        "placeGeoid": "4845072",
+        "community": "Lufkin",
+        "count": 74
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Aransas",
+      "countyFips": "48007",
+      "eligibleCrossings": 5,
+      "selectedGovernedContext": {
+        "placeGeoid": "4803600",
+        "community": "Aransas Pass",
+        "count": 5
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Armstrong",
+      "countyFips": "48011",
+      "eligibleCrossings": 24,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815196",
+        "community": "Claude",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Atascosa",
+      "countyFips": "48013",
+      "eligibleCrossings": 57,
+      "selectedGovernedContext": {
+        "placeGeoid": "4858280",
+        "community": "Pleasanton",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Austin",
+      "countyFips": "48015",
+      "eligibleCrossings": 101,
+      "selectedGovernedContext": {
+        "placeGeoid": "4866464",
+        "community": "Sealy",
+        "count": 47
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Bailey",
+      "countyFips": "48017",
+      "eligibleCrossings": 21,
+      "selectedGovernedContext": {
+        "placeGeoid": "4849968",
+        "community": "Muleshoe",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Bastrop",
+      "countyFips": "48021",
+      "eligibleCrossings": 158,
+      "selectedGovernedContext": {
+        "placeGeoid": "4823044",
+        "community": "Elgin",
+        "count": 44
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Bell",
+      "countyFips": "48027",
+      "eligibleCrossings": 150,
+      "selectedGovernedContext": {
+        "placeGeoid": "4872176",
+        "community": "Temple",
+        "count": 61
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Bexar",
+      "countyFips": "48029",
+      "eligibleCrossings": 380,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865000",
+        "community": "San Antonio",
+        "count": 331
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Blanco",
+      "countyFips": "48031",
+      "eligibleCrossings": 7,
+      "selectedGovernedContext": {
+        "placeGeoid": "4808536",
+        "community": "Blanco",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Bosque",
+      "countyFips": "48035",
+      "eligibleCrossings": 48,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815472",
+        "community": "Clifton",
+        "count": 23
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Bowie",
+      "countyFips": "48037",
+      "eligibleCrossings": 119,
+      "selectedGovernedContext": {
+        "placeGeoid": "4872368",
+        "community": "Texarkana",
+        "count": 63
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Brazoria",
+      "countyFips": "48039",
+      "eligibleCrossings": 157,
+      "selectedGovernedContext": {
+        "placeGeoid": "4827420",
+        "community": "Freeport",
+        "count": 38
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Brazos",
+      "countyFips": "48041",
+      "eligibleCrossings": 95,
+      "selectedGovernedContext": {
+        "placeGeoid": "4810912",
+        "community": "Bryan",
+        "count": 55
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Brewster",
+      "countyFips": "48043",
+      "eligibleCrossings": 55,
+      "selectedGovernedContext": {
+        "placeGeoid": "4802104",
+        "community": "Alpine",
+        "count": 33
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Brown",
+      "countyFips": "48049",
+      "eligibleCrossings": 97,
+      "selectedGovernedContext": {
+        "placeGeoid": "4810780",
+        "community": "Brownwood",
+        "count": 59
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Burleson",
+      "countyFips": "48051",
+      "eligibleCrossings": 67,
+      "selectedGovernedContext": {
+        "placeGeoid": "4811836",
+        "community": "Caldwell",
+        "count": 28
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Burnet",
+      "countyFips": "48053",
+      "eligibleCrossings": 63,
+      "selectedGovernedContext": {
+        "placeGeoid": "4807864",
+        "community": "Bertram",
+        "count": 20
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Caldwell",
+      "countyFips": "48055",
+      "eligibleCrossings": 47,
+      "selectedGovernedContext": {
+        "placeGeoid": "4843240",
+        "community": "Lockhart",
+        "count": 13
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Calhoun",
+      "countyFips": "48057",
+      "eligibleCrossings": 74,
+      "selectedGovernedContext": {
+        "placeGeoid": "4858916",
+        "community": "Port Lavaca",
+        "count": 28
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Callahan",
+      "countyFips": "48059",
+      "eligibleCrossings": 26,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815676",
+        "community": "Clyde",
+        "count": 11
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Cameron",
+      "countyFips": "48061",
+      "eligibleCrossings": 290,
+      "selectedGovernedContext": {
+        "placeGeoid": "4810768",
+        "community": "Brownsville",
+        "count": 113
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Camp",
+      "countyFips": "48063",
+      "eligibleCrossings": 55,
+      "selectedGovernedContext": {
+        "placeGeoid": "4857908",
+        "community": "Pittsburg",
+        "count": 39
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Carson",
+      "countyFips": "48065",
+      "eligibleCrossings": 63,
+      "selectedGovernedContext": {
+        "placeGeoid": "4854960",
+        "community": "Panhandle",
+        "count": 39
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Cass",
+      "countyFips": "48067",
+      "eligibleCrossings": 49,
+      "selectedGovernedContext": {
+        "placeGeoid": "4804516",
+        "community": "Atlanta",
+        "count": 8
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Castro",
+      "countyFips": "48069",
+      "eligibleCrossings": 28,
+      "selectedGovernedContext": {
+        "placeGeoid": "4832576",
+        "community": "Hart",
+        "count": 16
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Chambers",
+      "countyFips": "48071",
+      "eligibleCrossings": 9,
+      "selectedGovernedContext": {
+        "placeGeoid": "4806128",
+        "community": "Baytown",
+        "count": 5
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Cherokee",
+      "countyFips": "48073",
+      "eligibleCrossings": 69,
+      "selectedGovernedContext": {
+        "placeGeoid": "4837216",
+        "community": "Jacksonville",
+        "count": 30
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Childress",
+      "countyFips": "48075",
+      "eligibleCrossings": 28,
+      "selectedGovernedContext": {
+        "placeGeoid": "4814668",
+        "community": "Childress",
+        "count": 12
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Clay",
+      "countyFips": "48077",
+      "eligibleCrossings": 29,
+      "selectedGovernedContext": {
+        "placeGeoid": "4833284",
+        "community": "Henrietta",
+        "count": 16
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Cochran",
+      "countyFips": "48079",
+      "eligibleCrossings": 4,
+      "selectedGovernedContext": {
+        "placeGeoid": "4878328",
+        "community": "Whiteface",
+        "count": 4
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Coleman",
+      "countyFips": "48083",
+      "eligibleCrossings": 58,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815916",
+        "community": "Coleman",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Collin",
+      "countyFips": "48085",
+      "eligibleCrossings": 185,
+      "selectedGovernedContext": {
+        "placeGeoid": "4858016",
+        "community": "Plano",
+        "count": 39
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Colorado",
+      "countyFips": "48089",
+      "eligibleCrossings": 109,
+      "selectedGovernedContext": {
+        "placeGeoid": "4821844",
+        "community": "Eagle Lake",
+        "count": 47
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Comal",
+      "countyFips": "48091",
+      "eligibleCrossings": 110,
+      "selectedGovernedContext": {
+        "placeGeoid": "4850820",
+        "community": "New Braunfels",
+        "count": 85
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Comanche",
+      "countyFips": "48093",
+      "eligibleCrossings": 80,
+      "selectedGovernedContext": {
+        "placeGeoid": "4816192",
+        "community": "Comanche",
+        "count": 30
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Cooke",
+      "countyFips": "48097",
+      "eligibleCrossings": 31,
+      "selectedGovernedContext": {
+        "placeGeoid": "4827984",
+        "community": "Gainesville",
+        "count": 25
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Coryell",
+      "countyFips": "48099",
+      "eligibleCrossings": 12,
+      "selectedGovernedContext": {
+        "placeGeoid": "4816624",
+        "community": "Copperas Cove",
+        "count": 12
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Crane",
+      "countyFips": "48103",
+      "eligibleCrossings": 3,
+      "selectedGovernedContext": {
+        "placeGeoid": "4817516",
+        "community": "Crane",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Crockett",
+      "countyFips": "48105",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4854552",
+        "community": "Ozona",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Culberson",
+      "countyFips": "48109",
+      "eligibleCrossings": 17,
+      "selectedGovernedContext": {
+        "placeGeoid": "4875032",
+        "community": "Van Horn",
+        "count": 12
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Dallam",
+      "countyFips": "48111",
+      "eligibleCrossings": 51,
+      "selectedGovernedContext": {
+        "placeGeoid": "4818524",
+        "community": "Dalhart",
+        "count": 32
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Dallas",
+      "countyFips": "48113",
+      "eligibleCrossings": 789,
+      "selectedGovernedContext": {
+        "placeGeoid": "4819000",
+        "community": "Dallas",
+        "count": 392
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Deaf Smith",
+      "countyFips": "48117",
+      "eligibleCrossings": 25,
+      "selectedGovernedContext": {
+        "placeGeoid": "4833320",
+        "community": "Hereford",
+        "count": 25
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Denton",
+      "countyFips": "48121",
+      "eligibleCrossings": 231,
+      "selectedGovernedContext": {
+        "placeGeoid": "4819972",
+        "community": "Denton",
+        "count": 72
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "DeWitt",
+      "countyFips": "48123",
+      "eligibleCrossings": 57,
+      "selectedGovernedContext": {
+        "placeGeoid": "4818092",
+        "community": "Cuero",
+        "count": 31
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Donley",
+      "countyFips": "48129",
+      "eligibleCrossings": 36,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815112",
+        "community": "Clarendon",
+        "count": 16
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Duval",
+      "countyFips": "48131",
+      "eligibleCrossings": 49,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865180",
+        "community": "San Diego",
+        "count": 17
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Eastland",
+      "countyFips": "48133",
+      "eligibleCrossings": 34,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815004",
+        "community": "Cisco",
+        "count": 10
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Ector",
+      "countyFips": "48135",
+      "eligibleCrossings": 45,
+      "selectedGovernedContext": {
+        "placeGeoid": "4853388",
+        "community": "Odessa",
+        "count": 44
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Ellis",
+      "countyFips": "48139",
+      "eligibleCrossings": 164,
+      "selectedGovernedContext": {
+        "placeGeoid": "4876816",
+        "community": "Waxahachie",
+        "count": 52
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "El Paso",
+      "countyFips": "48141",
+      "eligibleCrossings": 198,
+      "selectedGovernedContext": {
+        "placeGeoid": "4824000",
+        "community": "El Paso",
+        "count": 149
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Erath",
+      "countyFips": "48143",
+      "eligibleCrossings": 93,
+      "selectedGovernedContext": {
+        "placeGeoid": "4870208",
+        "community": "Stephenville",
+        "count": 60
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Falls",
+      "countyFips": "48145",
+      "eligibleCrossings": 69,
+      "selectedGovernedContext": {
+        "placeGeoid": "4846740",
+        "community": "Marlin",
+        "count": 49
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Fannin",
+      "countyFips": "48147",
+      "eligibleCrossings": 74,
+      "selectedGovernedContext": {
+        "placeGeoid": "4820680",
+        "community": "Dodd City",
+        "count": 14
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Fayette",
+      "countyFips": "48149",
+      "eligibleCrossings": 152,
+      "selectedGovernedContext": {
+        "placeGeoid": "4826028",
+        "community": "Flatonia",
+        "count": 38
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Fisher",
+      "countyFips": "48151",
+      "eligibleCrossings": 10,
+      "selectedGovernedContext": {
+        "placeGeoid": "4831964",
+        "community": "Hamlin",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Floyd",
+      "countyFips": "48153",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4826268",
+        "community": "Floydada",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Fort Bend",
+      "countyFips": "48157",
+      "eligibleCrossings": 175,
+      "selectedGovernedContext": {
+        "placeGeoid": "4863284",
+        "community": "Rosenberg",
+        "count": 44
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Franklin",
+      "countyFips": "48159",
+      "eligibleCrossings": 20,
+      "selectedGovernedContext": {
+        "placeGeoid": "4849860",
+        "community": "Mount Vernon",
+        "count": 10
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Freestone",
+      "countyFips": "48161",
+      "eligibleCrossings": 75,
+      "selectedGovernedContext": {
+        "placeGeoid": "4825104",
+        "community": "Fairfield",
+        "count": 16
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Frio",
+      "countyFips": "48163",
+      "eligibleCrossings": 36,
+      "selectedGovernedContext": {
+        "placeGeoid": "4856384",
+        "community": "Pearsall",
+        "count": 17
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Gaines",
+      "countyFips": "48165",
+      "eligibleCrossings": 5,
+      "selectedGovernedContext": {
+        "placeGeoid": "4866440",
+        "community": "Seagraves",
+        "count": 5
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Galveston",
+      "countyFips": "48167",
+      "eligibleCrossings": 144,
+      "selectedGovernedContext": {
+        "placeGeoid": "4872392",
+        "community": "Texas City",
+        "count": 67
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Garza",
+      "countyFips": "48169",
+      "eligibleCrossings": 18,
+      "selectedGovernedContext": {
+        "placeGeoid": "4859012",
+        "community": "Post",
+        "count": 15
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Goliad",
+      "countyFips": "48175",
+      "eligibleCrossings": 9,
+      "selectedGovernedContext": {
+        "placeGeoid": "4830080",
+        "community": "Goliad",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Gonzales",
+      "countyFips": "48177",
+      "eligibleCrossings": 41,
+      "selectedGovernedContext": {
+        "placeGeoid": "4876024",
+        "community": "Waelder",
+        "count": 11
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Gray",
+      "countyFips": "48179",
+      "eligibleCrossings": 25,
+      "selectedGovernedContext": {
+        "placeGeoid": "4854912",
+        "community": "Pampa",
+        "count": 24
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Grayson",
+      "countyFips": "48181",
+      "eligibleCrossings": 240,
+      "selectedGovernedContext": {
+        "placeGeoid": "4867496",
+        "community": "Sherman",
+        "count": 83
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Gregg",
+      "countyFips": "48183",
+      "eligibleCrossings": 85,
+      "selectedGovernedContext": {
+        "placeGeoid": "4843888",
+        "community": "Longview",
+        "count": 56
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Grimes",
+      "countyFips": "48185",
+      "eligibleCrossings": 109,
+      "selectedGovernedContext": {
+        "placeGeoid": "4850472",
+        "community": "Navasota",
+        "count": 54
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Guadalupe",
+      "countyFips": "48187",
+      "eligibleCrossings": 58,
+      "selectedGovernedContext": {
+        "placeGeoid": "4866644",
+        "community": "Seguin",
+        "count": 23
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hale",
+      "countyFips": "48189",
+      "eligibleCrossings": 129,
+      "selectedGovernedContext": {
+        "placeGeoid": "4857980",
+        "community": "Plainview",
+        "count": 96
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hall",
+      "countyFips": "48191",
+      "eligibleCrossings": 15,
+      "selectedGovernedContext": {
+        "placeGeoid": "4847616",
+        "community": "Memphis",
+        "count": 11
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hamilton",
+      "countyFips": "48193",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4812904",
+        "community": "Carlton",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hansford",
+      "countyFips": "48195",
+      "eligibleCrossings": 8,
+      "selectedGovernedContext": {
+        "placeGeoid": "4869476",
+        "community": "Spearman",
+        "count": 6
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hardeman",
+      "countyFips": "48197",
+      "eligibleCrossings": 39,
+      "selectedGovernedContext": {
+        "placeGeoid": "4860044",
+        "community": "Quanah",
+        "count": 24
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hardin",
+      "countyFips": "48199",
+      "eligibleCrossings": 82,
+      "selectedGovernedContext": {
+        "placeGeoid": "4867832",
+        "community": "Silsbee",
+        "count": 50
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Harris",
+      "countyFips": "48201",
+      "eligibleCrossings": 1159,
+      "selectedGovernedContext": {
+        "placeGeoid": "4835000",
+        "community": "Houston",
+        "count": 740
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Harrison",
+      "countyFips": "48203",
+      "eligibleCrossings": 87,
+      "selectedGovernedContext": {
+        "placeGeoid": "4846776",
+        "community": "Marshall",
+        "count": 33
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hartley",
+      "countyFips": "48205",
+      "eligibleCrossings": 40,
+      "selectedGovernedContext": {
+        "placeGeoid": "4832612",
+        "community": "Hartley",
+        "count": 14
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hays",
+      "countyFips": "48209",
+      "eligibleCrossings": 53,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865600",
+        "community": "San Marcos",
+        "count": 41
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hemphill",
+      "countyFips": "48211",
+      "eligibleCrossings": 13,
+      "selectedGovernedContext": {
+        "placeGeoid": "4812412",
+        "community": "Canadian",
+        "count": 10
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Henderson",
+      "countyFips": "48213",
+      "eligibleCrossings": 85,
+      "selectedGovernedContext": {
+        "placeGeoid": "4804504",
+        "community": "Athens",
+        "count": 31
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hidalgo",
+      "countyFips": "48215",
+      "eligibleCrossings": 265,
+      "selectedGovernedContext": {
+        "placeGeoid": "4848768",
+        "community": "Mission",
+        "count": 67
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hill",
+      "countyFips": "48217",
+      "eligibleCrossings": 45,
+      "selectedGovernedContext": {
+        "placeGeoid": "4834088",
+        "community": "Hillsboro",
+        "count": 19
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hockley",
+      "countyFips": "48219",
+      "eligibleCrossings": 52,
+      "selectedGovernedContext": {
+        "placeGeoid": "4842448",
+        "community": "Levelland",
+        "count": 19
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hood",
+      "countyFips": "48221",
+      "eligibleCrossings": 56,
+      "selectedGovernedContext": {
+        "placeGeoid": "4830416",
+        "community": "Granbury",
+        "count": 25
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hopkins",
+      "countyFips": "48223",
+      "eligibleCrossings": 108,
+      "selectedGovernedContext": {
+        "placeGeoid": "4870904",
+        "community": "Sulphur Springs",
+        "count": 53
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Houston",
+      "countyFips": "48225",
+      "eligibleCrossings": 44,
+      "selectedGovernedContext": {
+        "placeGeoid": "4817744",
+        "community": "Crockett",
+        "count": 15
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Howard",
+      "countyFips": "48227",
+      "eligibleCrossings": 32,
+      "selectedGovernedContext": {
+        "placeGeoid": "4808236",
+        "community": "Big Spring",
+        "count": 26
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hudspeth",
+      "countyFips": "48229",
+      "eligibleCrossings": 26,
+      "selectedGovernedContext": {
+        "placeGeoid": "4867772",
+        "community": "Sierra Blanca",
+        "count": 20
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hunt",
+      "countyFips": "48231",
+      "eligibleCrossings": 162,
+      "selectedGovernedContext": {
+        "placeGeoid": "4830920",
+        "community": "Greenville",
+        "count": 75
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Hutchinson",
+      "countyFips": "48233",
+      "eligibleCrossings": 34,
+      "selectedGovernedContext": {
+        "placeGeoid": "4809556",
+        "community": "Borger",
+        "count": 29
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Irion",
+      "countyFips": "48235",
+      "eligibleCrossings": 55,
+      "selectedGovernedContext": {
+        "placeGeoid": "4847832",
+        "community": "Mertzon",
+        "count": 43
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Jackson",
+      "countyFips": "48239",
+      "eligibleCrossings": 74,
+      "selectedGovernedContext": {
+        "placeGeoid": "4843432",
+        "community": "Lolita",
+        "count": 23
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Jasper",
+      "countyFips": "48241",
+      "eligibleCrossings": 106,
+      "selectedGovernedContext": {
+        "placeGeoid": "4811236",
+        "community": "Buna",
+        "count": 55
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Jeff Davis",
+      "countyFips": "48243",
+      "eligibleCrossings": 10,
+      "selectedGovernedContext": {
+        "placeGeoid": "4874648",
+        "community": "Valentine",
+        "count": 9
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Jefferson",
+      "countyFips": "48245",
+      "eligibleCrossings": 378,
+      "selectedGovernedContext": {
+        "placeGeoid": "4807000",
+        "community": "Beaumont",
+        "count": 211
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Jim Hogg",
+      "countyFips": "48247",
+      "eligibleCrossings": 17,
+      "selectedGovernedContext": {
+        "placeGeoid": "4833008",
+        "community": "Hebbronville",
+        "count": 17
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Jim Wells",
+      "countyFips": "48249",
+      "eligibleCrossings": 63,
+      "selectedGovernedContext": {
+        "placeGeoid": "4801852",
+        "community": "Alice",
+        "count": 44
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Johnson",
+      "countyFips": "48251",
+      "eligibleCrossings": 168,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815364",
+        "community": "Cleburne",
+        "count": 44
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Kaufman",
+      "countyFips": "48257",
+      "eligibleCrossings": 45,
+      "selectedGovernedContext": {
+        "placeGeoid": "4872284",
+        "community": "Terrell",
+        "count": 26
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Kenedy",
+      "countyFips": "48261",
+      "eligibleCrossings": 22,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865876",
+        "community": "Sarita",
+        "count": 6
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Kinney",
+      "countyFips": "48271",
+      "eligibleCrossings": 20,
+      "selectedGovernedContext": {
+        "placeGeoid": "4869560",
+        "community": "Spofford",
+        "count": 15
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Kleberg",
+      "countyFips": "48273",
+      "eligibleCrossings": 30,
+      "selectedGovernedContext": {
+        "placeGeoid": "4839352",
+        "community": "Kingsville",
+        "count": 19
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Lamar",
+      "countyFips": "48277",
+      "eligibleCrossings": 42,
+      "selectedGovernedContext": {
+        "placeGeoid": "4855080",
+        "community": "Paris",
+        "count": 36
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Lamb",
+      "countyFips": "48279",
+      "eligibleCrossings": 29,
+      "selectedGovernedContext": {
+        "placeGeoid": "4870772",
+        "community": "Sudan",
+        "count": 12
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Lampasas",
+      "countyFips": "48281",
+      "eligibleCrossings": 41,
+      "selectedGovernedContext": {
+        "placeGeoid": "4843516",
+        "community": "Lometa",
+        "count": 20
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "La Salle",
+      "countyFips": "48283",
+      "eligibleCrossings": 43,
+      "selectedGovernedContext": {
+        "placeGeoid": "4817216",
+        "community": "Cotulla",
+        "count": 25
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Lavaca",
+      "countyFips": "48285",
+      "eligibleCrossings": 40,
+      "selectedGovernedContext": {
+        "placeGeoid": "4867640",
+        "community": "Shiner",
+        "count": 18
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Lee",
+      "countyFips": "48287",
+      "eligibleCrossings": 47,
+      "selectedGovernedContext": {
+        "placeGeoid": "4829432",
+        "community": "Giddings",
+        "count": 39
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Leon",
+      "countyFips": "48289",
+      "eligibleCrossings": 82,
+      "selectedGovernedContext": {
+        "placeGeoid": "4837648",
+        "community": "Jewett",
+        "count": 30
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Liberty",
+      "countyFips": "48291",
+      "eligibleCrossings": 80,
+      "selectedGovernedContext": {
+        "placeGeoid": "4815436",
+        "community": "Cleveland",
+        "count": 35
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Limestone",
+      "countyFips": "48293",
+      "eligibleCrossings": 45,
+      "selectedGovernedContext": {
+        "placeGeoid": "4847916",
+        "community": "Mexia",
+        "count": 15
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Lipscomb",
+      "countyFips": "48295",
+      "eligibleCrossings": 21,
+      "selectedGovernedContext": {
+        "placeGeoid": "4819288",
+        "community": "Darrouzett",
+        "count": 8
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Live Oak",
+      "countyFips": "48297",
+      "eligibleCrossings": 56,
+      "selectedGovernedContext": {
+        "placeGeoid": "4829348",
+        "community": "George West",
+        "count": 20
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Llano",
+      "countyFips": "48299",
+      "eligibleCrossings": 13,
+      "selectedGovernedContext": {
+        "placeGeoid": "4839304",
+        "community": "Kingsland",
+        "count": 7
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Lubbock",
+      "countyFips": "48303",
+      "eligibleCrossings": 173,
+      "selectedGovernedContext": {
+        "placeGeoid": "4845000",
+        "community": "Lubbock",
+        "count": 119
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "McCulloch",
+      "countyFips": "48307",
+      "eligibleCrossings": 34,
+      "selectedGovernedContext": {
+        "placeGeoid": "4809916",
+        "community": "Brady",
+        "count": 32
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "McLennan",
+      "countyFips": "48309",
+      "eligibleCrossings": 169,
+      "selectedGovernedContext": {
+        "placeGeoid": "4876000",
+        "community": "Waco",
+        "count": 59
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Madison",
+      "countyFips": "48313",
+      "eligibleCrossings": 16,
+      "selectedGovernedContext": {
+        "placeGeoid": "4851840",
+        "community": "Normangee",
+        "count": 7
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Marion",
+      "countyFips": "48315",
+      "eligibleCrossings": 44,
+      "selectedGovernedContext": {
+        "placeGeoid": "4837528",
+        "community": "Jefferson",
+        "count": 39
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Martin",
+      "countyFips": "48317",
+      "eligibleCrossings": 12,
+      "selectedGovernedContext": {
+        "placeGeoid": "4870040",
+        "community": "Stanton",
+        "count": 12
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Matagorda",
+      "countyFips": "48321",
+      "eligibleCrossings": 80,
+      "selectedGovernedContext": {
+        "placeGeoid": "4805984",
+        "community": "Bay City",
+        "count": 50
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Maverick",
+      "countyFips": "48323",
+      "eligibleCrossings": 26,
+      "selectedGovernedContext": {
+        "placeGeoid": "4821892",
+        "community": "Eagle Pass",
+        "count": 26
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Medina",
+      "countyFips": "48325",
+      "eligibleCrossings": 72,
+      "selectedGovernedContext": {
+        "placeGeoid": "4834676",
+        "community": "Hondo",
+        "count": 19
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Midland",
+      "countyFips": "48329",
+      "eligibleCrossings": 35,
+      "selectedGovernedContext": {
+        "placeGeoid": "4848072",
+        "community": "Midland",
+        "count": 31
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Milam",
+      "countyFips": "48331",
+      "eligibleCrossings": 109,
+      "selectedGovernedContext": {
+        "placeGeoid": "4812040",
+        "community": "Cameron",
+        "count": 37
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Mills",
+      "countyFips": "48333",
+      "eligibleCrossings": 50,
+      "selectedGovernedContext": {
+        "placeGeoid": "4830056",
+        "community": "Goldthwaite",
+        "count": 10
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Mitchell",
+      "countyFips": "48335",
+      "eligibleCrossings": 22,
+      "selectedGovernedContext": {
+        "placeGeoid": "4816120",
+        "community": "Colorado City",
+        "count": 8
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Montague",
+      "countyFips": "48337",
+      "eligibleCrossings": 64,
+      "selectedGovernedContext": {
+        "placeGeoid": "4809640",
+        "community": "Bowie",
+        "count": 43
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Montgomery",
+      "countyFips": "48339",
+      "eligibleCrossings": 138,
+      "selectedGovernedContext": {
+        "placeGeoid": "4816432",
+        "community": "Conroe",
+        "count": 52
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Moore",
+      "countyFips": "48341",
+      "eligibleCrossings": 65,
+      "selectedGovernedContext": {
+        "placeGeoid": "4871180",
+        "community": "Sunray",
+        "count": 31
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Morris",
+      "countyFips": "48343",
+      "eligibleCrossings": 39,
+      "selectedGovernedContext": {
+        "placeGeoid": "4818464",
+        "community": "Daingerfield",
+        "count": 12
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Nacogdoches",
+      "countyFips": "48347",
+      "eligibleCrossings": 52,
+      "selectedGovernedContext": {
+        "placeGeoid": "4850256",
+        "community": "Nacogdoches",
+        "count": 35
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Navarro",
+      "countyFips": "48349",
+      "eligibleCrossings": 116,
+      "selectedGovernedContext": {
+        "placeGeoid": "4817060",
+        "community": "Corsicana",
+        "count": 59
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Newton",
+      "countyFips": "48351",
+      "eligibleCrossings": 26,
+      "selectedGovernedContext": {
+        "placeGeoid": "4820212",
+        "community": "Deweyville",
+        "count": 2
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Nolan",
+      "countyFips": "48353",
+      "eligibleCrossings": 83,
+      "selectedGovernedContext": {
+        "placeGeoid": "4871540",
+        "community": "Sweetwater",
+        "count": 60
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Nueces",
+      "countyFips": "48355",
+      "eligibleCrossings": 196,
+      "selectedGovernedContext": {
+        "placeGeoid": "4817000",
+        "community": "Corpus Christi",
+        "count": 119
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Ochiltree",
+      "countyFips": "48357",
+      "eligibleCrossings": 8,
+      "selectedGovernedContext": {
+        "placeGeoid": "4856912",
+        "community": "Perryton",
+        "count": 5
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Oldham",
+      "countyFips": "48359",
+      "eligibleCrossings": 5,
+      "selectedGovernedContext": {
+        "placeGeoid": "4809796",
+        "community": "Boys Ranch",
+        "count": 4
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Orange",
+      "countyFips": "48361",
+      "eligibleCrossings": 149,
+      "selectedGovernedContext": {
+        "placeGeoid": "4854132",
+        "community": "Orange",
+        "count": 69
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Palo Pinto",
+      "countyFips": "48363",
+      "eligibleCrossings": 29,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865780",
+        "community": "Santo",
+        "count": 8
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Panola",
+      "countyFips": "48365",
+      "eligibleCrossings": 41,
+      "selectedGovernedContext": {
+        "placeGeoid": "4813108",
+        "community": "Carthage",
+        "count": 18
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Parker",
+      "countyFips": "48367",
+      "eligibleCrossings": 39,
+      "selectedGovernedContext": {
+        "placeGeoid": "4876864",
+        "community": "Weatherford",
+        "count": 17
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Parmer",
+      "countyFips": "48369",
+      "eligibleCrossings": 37,
+      "selectedGovernedContext": {
+        "placeGeoid": "4825548",
+        "community": "Farwell",
+        "count": 17
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Pecos",
+      "countyFips": "48371",
+      "eligibleCrossings": 44,
+      "selectedGovernedContext": {
+        "placeGeoid": "4826808",
+        "community": "Fort Stockton",
+        "count": 31
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Polk",
+      "countyFips": "48373",
+      "eligibleCrossings": 64,
+      "selectedGovernedContext": {
+        "placeGeoid": "4843132",
+        "community": "Livingston",
+        "count": 26
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Potter",
+      "countyFips": "48375",
+      "eligibleCrossings": 125,
+      "selectedGovernedContext": {
+        "placeGeoid": "4803000",
+        "community": "Amarillo",
+        "count": 114
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Presidio",
+      "countyFips": "48377",
+      "eligibleCrossings": 44,
+      "selectedGovernedContext": {
+        "placeGeoid": "4859396",
+        "community": "Presidio",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Randall",
+      "countyFips": "48381",
+      "eligibleCrossings": 45,
+      "selectedGovernedContext": {
+        "placeGeoid": "4812532",
+        "community": "Canyon",
+        "count": 30
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Reagan",
+      "countyFips": "48383",
+      "eligibleCrossings": 22,
+      "selectedGovernedContext": {
+        "placeGeoid": "4808212",
+        "community": "Big Lake",
+        "count": 19
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Reeves",
+      "countyFips": "48389",
+      "eligibleCrossings": 67,
+      "selectedGovernedContext": {
+        "placeGeoid": "4873496",
+        "community": "Toyah",
+        "count": 10
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Refugio",
+      "countyFips": "48391",
+      "eligibleCrossings": 39,
+      "selectedGovernedContext": {
+        "placeGeoid": "4861436",
+        "community": "Refugio",
+        "count": 28
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Roberts",
+      "countyFips": "48393",
+      "eligibleCrossings": 10,
+      "selectedGovernedContext": {
+        "placeGeoid": "4847988",
+        "community": "Miami",
+        "count": 10
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Robertson",
+      "countyFips": "48395",
+      "eligibleCrossings": 155,
+      "selectedGovernedContext": {
+        "placeGeoid": "4832972",
+        "community": "Hearne",
+        "count": 69
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Rockwall",
+      "countyFips": "48397",
+      "eligibleCrossings": 18,
+      "selectedGovernedContext": {
+        "placeGeoid": "4863668",
+        "community": "Royse City",
+        "count": 9
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Runnels",
+      "countyFips": "48399",
+      "eligibleCrossings": 48,
+      "selectedGovernedContext": {
+        "placeGeoid": "4805456",
+        "community": "Ballinger",
+        "count": 22
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Rusk",
+      "countyFips": "48401",
+      "eligibleCrossings": 58,
+      "selectedGovernedContext": {
+        "placeGeoid": "4833212",
+        "community": "Henderson",
+        "count": 19
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Sabine",
+      "countyFips": "48403",
+      "eligibleCrossings": 16,
+      "selectedGovernedContext": {
+        "placeGeoid": "4857644",
+        "community": "Pineland",
+        "count": 16
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "San Augustine",
+      "countyFips": "48405",
+      "eligibleCrossings": 16,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865024",
+        "community": "San Augustine",
+        "count": 13
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "San Jacinto",
+      "countyFips": "48407",
+      "eligibleCrossings": 6,
+      "selectedGovernedContext": {
+        "placeGeoid": "4867424",
+        "community": "Shepherd",
+        "count": 6
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "San Patricio",
+      "countyFips": "48409",
+      "eligibleCrossings": 135,
+      "selectedGovernedContext": {
+        "placeGeoid": "4831064",
+        "community": "Gregory",
+        "count": 28
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "San Saba",
+      "countyFips": "48411",
+      "eligibleCrossings": 47,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865648",
+        "community": "San Saba",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Scurry",
+      "countyFips": "48415",
+      "eligibleCrossings": 37,
+      "selectedGovernedContext": {
+        "placeGeoid": "4868624",
+        "community": "Snyder",
+        "count": 35
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Shelby",
+      "countyFips": "48419",
+      "eligibleCrossings": 88,
+      "selectedGovernedContext": {
+        "placeGeoid": "4872188",
+        "community": "Tenaha",
+        "count": 31
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Sherman",
+      "countyFips": "48421",
+      "eligibleCrossings": 42,
+      "selectedGovernedContext": {
+        "placeGeoid": "4870544",
+        "community": "Stratford",
+        "count": 30
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Smith",
+      "countyFips": "48423",
+      "eligibleCrossings": 123,
+      "selectedGovernedContext": {
+        "placeGeoid": "4874144",
+        "community": "Tyler",
+        "count": 76
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Somervell",
+      "countyFips": "48425",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4829876",
+        "community": "Glen Rose",
+        "count": 1
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Starr",
+      "countyFips": "48427",
+      "eligibleCrossings": 28,
+      "selectedGovernedContext": {
+        "placeGeoid": "4862168",
+        "community": "Rio Grande City",
+        "count": 13
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Stephens",
+      "countyFips": "48429",
+      "eligibleCrossings": 1,
+      "selectedGovernedContext": {
+        "placeGeoid": "4810132",
+        "community": "Breckenridge",
+        "count": 0
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Swisher",
+      "countyFips": "48437",
+      "eligibleCrossings": 45,
+      "selectedGovernedContext": {
+        "placeGeoid": "4873868",
+        "community": "Tulia",
+        "count": 19
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Tarrant",
+      "countyFips": "48439",
+      "eligibleCrossings": 615,
+      "selectedGovernedContext": {
+        "placeGeoid": "4827000",
+        "community": "Fort Worth",
+        "count": 380
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Taylor",
+      "countyFips": "48441",
+      "eligibleCrossings": 106,
+      "selectedGovernedContext": {
+        "placeGeoid": "4801000",
+        "community": "Abilene",
+        "count": 50
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Terrell",
+      "countyFips": "48443",
+      "eligibleCrossings": 27,
+      "selectedGovernedContext": {
+        "placeGeoid": "4865084",
+        "community": "Sanderson",
+        "count": 22
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Terry",
+      "countyFips": "48445",
+      "eligibleCrossings": 46,
+      "selectedGovernedContext": {
+        "placeGeoid": "4810720",
+        "community": "Brownfield",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Titus",
+      "countyFips": "48449",
+      "eligibleCrossings": 63,
+      "selectedGovernedContext": {
+        "placeGeoid": "4849800",
+        "community": "Mount Pleasant",
+        "count": 31
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Tom Green",
+      "countyFips": "48451",
+      "eligibleCrossings": 97,
+      "selectedGovernedContext": {
+        "placeGeoid": "4864472",
+        "community": "San Angelo",
+        "count": 82
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Travis",
+      "countyFips": "48453",
+      "eligibleCrossings": 176,
+      "selectedGovernedContext": {
+        "placeGeoid": "4805000",
+        "community": "Austin",
+        "count": 137
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Trinity",
+      "countyFips": "48455",
+      "eligibleCrossings": 13,
+      "selectedGovernedContext": {
+        "placeGeoid": "4873664",
+        "community": "Trinity",
+        "count": 13
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Upshur",
+      "countyFips": "48459",
+      "eligibleCrossings": 43,
+      "selectedGovernedContext": {
+        "placeGeoid": "4829564",
+        "community": "Gilmer",
+        "count": 20
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Upton",
+      "countyFips": "48461",
+      "eligibleCrossings": 22,
+      "selectedGovernedContext": {
+        "placeGeoid": "4845432",
+        "community": "McCamey",
+        "count": 13
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Uvalde",
+      "countyFips": "48463",
+      "eligibleCrossings": 44,
+      "selectedGovernedContext": {
+        "placeGeoid": "4839664",
+        "community": "Knippa",
+        "count": 13
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Val Verde",
+      "countyFips": "48465",
+      "eligibleCrossings": 47,
+      "selectedGovernedContext": {
+        "placeGeoid": "4819792",
+        "community": "Del Rio",
+        "count": 26
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Van Zandt",
+      "countyFips": "48467",
+      "eligibleCrossings": 29,
+      "selectedGovernedContext": {
+        "placeGeoid": "4830476",
+        "community": "Grand Saline",
+        "count": 9
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Victoria",
+      "countyFips": "48469",
+      "eligibleCrossings": 194,
+      "selectedGovernedContext": {
+        "placeGeoid": "4875428",
+        "community": "Victoria",
+        "count": 117
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Walker",
+      "countyFips": "48471",
+      "eligibleCrossings": 36,
+      "selectedGovernedContext": {
+        "placeGeoid": "4835528",
+        "community": "Huntsville",
+        "count": 13
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Waller",
+      "countyFips": "48473",
+      "eligibleCrossings": 46,
+      "selectedGovernedContext": {
+        "placeGeoid": "4833200",
+        "community": "Hempstead",
+        "count": 17
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Ward",
+      "countyFips": "48475",
+      "eligibleCrossings": 23,
+      "selectedGovernedContext": {
+        "placeGeoid": "4848936",
+        "community": "Monahans",
+        "count": 9
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Washington",
+      "countyFips": "48477",
+      "eligibleCrossings": 44,
+      "selectedGovernedContext": {
+        "placeGeoid": "4810156",
+        "community": "Brenham",
+        "count": 38
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Webb",
+      "countyFips": "48479",
+      "eligibleCrossings": 164,
+      "selectedGovernedContext": {
+        "placeGeoid": "4841464",
+        "community": "Laredo",
+        "count": 133
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Wharton",
+      "countyFips": "48481",
+      "eligibleCrossings": 72,
+      "selectedGovernedContext": {
+        "placeGeoid": "4822864",
+        "community": "El Campo",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Wichita",
+      "countyFips": "48485",
+      "eligibleCrossings": 118,
+      "selectedGovernedContext": {
+        "placeGeoid": "4879000",
+        "community": "Wichita Falls",
+        "count": 70
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Wilbarger",
+      "countyFips": "48487",
+      "eligibleCrossings": 42,
+      "selectedGovernedContext": {
+        "placeGeoid": "4875308",
+        "community": "Vernon",
+        "count": 21
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Willacy",
+      "countyFips": "48489",
+      "eligibleCrossings": 43,
+      "selectedGovernedContext": {
+        "placeGeoid": "4860836",
+        "community": "Raymondville",
+        "count": 24
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Williamson",
+      "countyFips": "48491",
+      "eligibleCrossings": 166,
+      "selectedGovernedContext": {
+        "placeGeoid": "4871948",
+        "community": "Taylor",
+        "count": 33
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Wilson",
+      "countyFips": "48493",
+      "eligibleCrossings": 2,
+      "selectedGovernedContext": {
+        "placeGeoid": "4823272",
+        "community": "Elmendorf",
+        "count": 2
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Winkler",
+      "countyFips": "48495",
+      "eligibleCrossings": 21,
+      "selectedGovernedContext": {
+        "placeGeoid": "4839004",
+        "community": "Kermit",
+        "count": 17
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Wise",
+      "countyFips": "48497",
+      "eligibleCrossings": 100,
+      "selectedGovernedContext": {
+        "placeGeoid": "4814620",
+        "community": "Chico",
+        "count": 18
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    },
+    {
+      "county": "Wood",
+      "countyFips": "48499",
+      "eligibleCrossings": 37,
+      "selectedGovernedContext": {
+        "placeGeoid": "4848648",
+        "community": "Mineola",
+        "count": 17
+      },
+      "geometryAvailableAtAuditRuntime": false,
+      "ownershipMethod": "GOVERNED_CANONICAL_LOCALITY_FALLBACK"
+    }
+  ]
+}

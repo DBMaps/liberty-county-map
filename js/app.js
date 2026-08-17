@@ -49529,6 +49529,12 @@ function gridlyRecordTextMatchesAwarenessArea(record = {}, area = {}) {
   return Boolean(crossingCity && crossingCity === areaName);
 }
 
+function gridlyGetGovernedAwarenessGeometry(area = {}) {
+  const direct = area?.geometry || area?.boundaryGeometry || area?.governedGeometry;
+  if (direct?.type && Array.isArray(direct.coordinates)) return direct;
+  return null;
+}
+
 function isGridlyRecordInAwarenessArea(record = {}, area = getGridlySelectedAwarenessArea()) {
   if (!area) return false;
   if (area.countyWide || area.fallback) {
@@ -49545,9 +49551,16 @@ function isGridlyRecordInAwarenessArea(record = {}, area = getGridlySelectedAwar
     if (recordRegionId && recordRegionId === area.awarenessRegionId) return true;
     if (recordRegionLabel && recordRegionLabel === normalizeGridlyAwarenessAreaLookupText(area.awarenessRegionLabel || area.label)) return true;
   }
+  const governedGeometry = gridlyGetGovernedAwarenessGeometry(area);
+  if (governedGeometry) {
+    const coords = getGridlyAwarenessIntelligenceRecordCoordinate(record);
+    if (!coords) return false;
+    return gridlyAuthoritativePointInGeometry(coords.lat, coords.lng, governedGeometry) !== "outside";
+  }
   if (gridlyRecordTextMatchesAwarenessArea(record, area)) return true;
   const coords = getGridlyAwarenessIntelligenceRecordCoordinate(record);
   if (!coords) return false;
+  if (!Number.isFinite(Number(area.lat)) || !Number.isFinite(Number(area.lng))) return false;
   const radiusMiles = Number(area.radiusMiles) || DEFAULT_NEARBY_RADIUS_MILES;
   return getDistanceMiles(area.lat, area.lng, coords.lat, coords.lng) <= radiusMiles;
 }
@@ -52136,15 +52149,11 @@ function wait(ms) {
 }
 
 function inferCrossingCity(crossingName, props = {}) {
+  const localityValues = [props.city, props.cityname, props.CITYNAME, props.community, props.place, props.inc_city, props.nearcity, props.municipality]
+    .filter((value) => value && !/^unassigned$/i.test(String(value).trim()));
   const valuePool = [
     crossingName,
-    props.city,
-    props.cityname,
-    props.community,
-    props.place,
-    props.inc_city,
-    props.nearcity,
-    props.municipality
+    ...localityValues
   ]
     .filter(Boolean)
     .map((value) => String(value).toLowerCase());
@@ -52155,6 +52164,9 @@ function inferCrossingCity(crossingName, props = {}) {
     }
   }
 
+  if (localityValues.length) {
+    return String(localityValues[0]).trim().toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
+  }
   return "Unassigned";
 }
 
