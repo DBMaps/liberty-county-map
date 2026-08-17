@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "gridly.lp206.runtime-gates.v1",
+  "gates": [
+    {
+      "classification": "PRODUCTION_ACTIVE",
+      "file": "data/roadway-runtime-manifest.json",
+      "symbol": "GRIDLY_ROADWAY_RUNTIME_MANIFEST_URL / manifest.counties",
+      "finding": "The runtime authority has exactly 28 county keys; an absent key resolves blocked_missing_asset."
+    },
+    {
+      "classification": "PRODUCTION_ACTIVE",
+      "file": "js/app.js",
+      "symbol": "gridlyResolveRoadwayRuntimeSource",
+      "finding": "Generic per-county resolver consumes the manifest; there is no numeric 28 constant, but membership is the gate."
+    },
+    {
+      "classification": "PRODUCTION_ACTIVE",
+      "file": "js/app.js",
+      "symbol": "GRIDLY_HARRIS_PARTITION_RUNTIME_MANIFEST_URL",
+      "finding": "Harris alone has a dedicated partition-manifest/package-prefix path."
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "file": "assets/directional-intelligence/source/osm",
+      "symbol": null,
+      "finding": "Regional OSM corridor evidence is not the production county roadway registry."
+    }
+  ]
+}
