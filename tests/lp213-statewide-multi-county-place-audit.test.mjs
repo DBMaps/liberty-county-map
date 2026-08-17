@@ -21,7 +21,7 @@ function productionFunction(name) {
 test('LP213 governed inventory covers every canonical multi-county PLACE', () => {
   assert.equal(report.totalCanonicalMultiCountyPlaceCount, 163);
   assert.equal(report.inventory.length, 163);
-  assert.deepEqual(report.classificationTotals, { PASS: 163, SAME_DEFECT_CLASS: 0, DIFFERENT_DEFECT: 0, OWNER_REVIEW_REQUIRED: 0 });
+  assert.deepEqual(report.classificationTotals, { PASS: 163, SAME_COLD_START_DEFECT: 0, DIFFERENT_DEFECT: 0, OWNER_REVIEW_REQUIRED: 0 });
   assert.equal(new Set(report.inventory.map(row => row.placeGeoid)).size, 163);
   for (const row of report.inventory) {
     assert.match(row.placeGeoid, /^48\d{5}$/);
@@ -32,6 +32,11 @@ test('LP213 governed inventory covers every canonical multi-county PLACE', () =>
     assert.ok(row.members.some(member => member.fips === row.selectedTestOperationalCounty.countyFips));
     assert.equal(row.classification, 'PASS', `${row.label}: ${row.failureReason}`);
     assert.equal(row.roadwayRuntime.automaticallyActivated, true);
+    assert.equal(row.coldStart.inMemoryProfileBeforeHydration, 'EMPTY_DEFAULT');
+    assert.equal(row.coldStart.persistedProfileAwarenessKey, row.canonicalAwarenessKey);
+    assert.equal(row.coldStart.persistedProfileCounty, row.selectedTestOperationalCounty.countyId);
+    assert.equal(row.coldStart.hydrationCompletedBeforeCanonicalStartupResolution, true);
+    assert.equal(row.coldStart.settingsCanonicalKeyRepairedWithoutLabelIdentityInference, true);
   }
 });
 
