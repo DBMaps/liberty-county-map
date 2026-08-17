@@ -6,16 +6,38 @@
     "sha256": "e4c9ac7168ec84dc462695a93ea4561dbd62486131f3f78b70ed05ab5ba39a0c",
     "identityPass": true
   },
-  "countyMatrix": ["Liberty", "Chambers", "Harris", "Anderson", "Bexar", "Dallas"],
-  "countyResults": [],
-  "transitionSequence": ["Liberty", "Anderson", "Bexar", "Dallas", "Harris", "Bexar", "FAILED_ANDERSON", "Chambers", "Liberty"],
-  "transitionResults": [],
-  "failureIsolation": { "pass": false, "blockedBy": "public production roadway objects unreachable: CONNECT tunnel failed with HTTP 403" },
-  "lateCompletionGuard": { "pass": false, "blockedBy": "normal production-object success precondition unavailable" },
-  "consumerResolution": { "nearestRoad": {}, "roadName": {}, "reportAssociation": {} },
-  "architectureCoverage": { "existingLocal": false, "existingRemoteSingle": false, "harrisLegacyPartition": false, "lp210RemoteSingle": false, "lp210TwoPart": false, "lp210FourPart": false },
+  "countyMatrix": [
+    "Liberty",
+    "Chambers",
+    "Harris",
+    "Anderson",
+    "Bexar",
+    "Dallas"
+  ],
+  "transitionSequence": [
+    "Liberty",
+    "Anderson",
+    "Bexar",
+    "Dallas",
+    "Harris",
+    "Bexar",
+    "FAILED_ANDERSON",
+    "Chambers",
+    "Liberty"
+  ],
+  "executionFailure": {
+    "county": "Anderson",
+    "owner": null,
+    "geometryCount": 0,
+    "source": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/anderson-tx/lp210/packages/anderson-tx.roadways.candidate.geojson",
+    "partitionCount": 1,
+    "selectedFeatureProperties": null,
+    "selectedPoint": null,
+    "resolverReturnValue": null,
+    "errorName": "AssertionError",
+    "errorMessage": "fetch failed\n+ actual - expected\n\n+ null\n- 'anderson-tx'\n"
+  },
   "protectedSystemsMutated": false,
   "productionDefectsFound": [],
-  "environmentLimitations": ["Public Supabase storage requests are rejected by the execution environment CONNECT proxy with HTTP 403; no fabricated success fixtures were substituted."],
-  "finalDecision": "BLOCKED_FOR_STATEWIDE_ROADWAY_CONSUMER_RUNTIME"
+  "finalDecision": "EXECUTION_FAILED"
 }
