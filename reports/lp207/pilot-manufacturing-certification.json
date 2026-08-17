@@ -6,33 +6,22 @@
   "uploadEnabled": false,
   "activationEnabled": false,
   "manufacturingTool": "tools/lp118/extract-tiger-roadways.mjs + tools/lp116/manufacture-candidate-roadways.mjs",
-  "partitionLimits": {
-    "targetFeatures": 35000,
-    "hardFeatures": 45000,
-    "targetBytes": 10485760,
-    "hardBytes": 20971520
+  "ownerEnvironment": {
+    "platform": "Windows",
+    "qgisVersion": "3.44.11",
+    "gdalVersion": "3.13.0 \"Iowa City\"",
+    "ogr2ogr": "C:\\Program Files\\QGIS 3.44.11\\bin\\ogr2ogr.exe"
   },
-  "contract": {
+  "boundaryAuthority": {
+    "path": "assets/boundaries/texas-counties-boundaries.geojson",
     "format": "GeoJSON FeatureCollection",
-    "geometryTypes": [
-      "LineString",
-      "MultiLineString"
-    ],
-    "crs": "EPSG:4326",
-    "coordinatePrecisionDecimals": 7,
-    "featureOrder": "stable source identity then normalized geometry",
-    "primaryRoadName": "FULLNAME",
-    "fallbackRoadName": null,
-    "unnamedRoadBehavior": "preserve null/empty; never fabricate",
-    "casing": "preserved",
-    "aliases": "not synthesized",
-    "classificationFields": [
-      "MTFCC",
-      "RTTYP"
-    ],
-    "classificationSemantics": "TIGER-native provenance; no OSM taxonomy equivalence",
-    "ownershipPolicy": "LP118 retains only features whose every coordinate is contained by the authoritative county polygon; unexplained drops are counted",
-    "canonicalIdentity": "UTF-8 JSON emitted with LF; source ZIP SHA-256 hashes exact binary bytes"
+    "featureCount": 254
+  },
+  "invocationHistory": {
+    "failedBoundaryPath": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+    "classification": "INVOCATION_ERROR",
+    "reason": "LP118 requires a top-level FeatureCollection.features array.",
+    "supersededByPassingRun": true
   },
   "counties": [
     {
@@ -40,40 +29,105 @@
       "countyId": "lee-tx",
       "countyName": "Lee",
       "countySlug": "lee",
-      "status": "NOT_RUN",
-      "certificationResult": "BLOCKED",
-      "reason": "Owner source unavailable; GDAL manufacturing not run",
+      "status": "GENERATED",
+      "certificationResult": "PASS",
+      "sourceFeatureCount": 3004,
+      "retainedFeatureCount": 3004,
+      "rejectedFeatureCount": 0,
+      "outOfCountyRejectionCount": 0,
+      "duplicateCount": 0,
+      "candidateBytes": 4710026,
+      "candidateSha256": "a9d589e476caaf128cb7a8777ccbe9f8d39ad7421e3e073c1d680d8556a55a33",
+      "runs": [
+        {
+          "run": 1,
+          "certification": "PASS",
+          "evidenceOutputFileCount": 5
+        },
+        {
+          "run": 2,
+          "certification": "PASS",
+          "evidenceOutputFileCount": 5
+        }
+      ],
+      "sharedDeterministicArtifacts": 3,
+      "deterministicHashes": true,
       "activated": false,
-      "uploaded": false
+      "uploaded": false,
+      "published": false
     },
     {
       "countyFips": "48331",
       "countyId": "milam-tx",
       "countyName": "Milam",
       "countySlug": "milam",
-      "status": "NOT_RUN",
-      "certificationResult": "BLOCKED",
-      "reason": "Owner source unavailable; GDAL manufacturing not run",
+      "status": "GENERATED",
+      "certificationResult": "PASS",
+      "sourceFeatureCount": 4292,
+      "retainedFeatureCount": 4292,
+      "rejectedFeatureCount": 0,
+      "outOfCountyRejectionCount": 0,
+      "duplicateCount": 0,
+      "candidateBytes": 6719460,
+      "candidateSha256": "374ae91f11f30e0227065ab7704fd96f424edb40f2098b89c95acd98126386a9",
+      "runs": [
+        {
+          "run": 1,
+          "certification": "PASS",
+          "evidenceOutputFileCount": 5
+        },
+        {
+          "run": 2,
+          "certification": "PASS",
+          "evidenceOutputFileCount": 5
+        }
+      ],
+      "sharedDeterministicArtifacts": 3,
+      "deterministicHashes": true,
       "activated": false,
-      "uploaded": false
+      "uploaded": false,
+      "published": false
     },
     {
       "countyFips": "48395",
       "countyId": "robertson-tx",
       "countyName": "Robertson",
       "countySlug": "robertson",
-      "status": "NOT_RUN",
-      "certificationResult": "BLOCKED",
-      "reason": "Owner source unavailable; GDAL manufacturing not run",
+      "status": "GENERATED",
+      "certificationResult": "PASS",
+      "sourceFeatureCount": 3391,
+      "retainedFeatureCount": 3391,
+      "rejectedFeatureCount": 0,
+      "outOfCountyRejectionCount": 0,
+      "duplicateCount": 0,
+      "candidateBytes": 6503023,
+      "candidateSha256": "40c20e284e68e43b8051ccca6fd1a2d044be4d3ad46eb789698c96863587ecba",
+      "runs": [
+        {
+          "run": 1,
+          "certification": "PASS",
+          "evidenceOutputFileCount": 5
+        },
+        {
+          "run": 2,
+          "certification": "PASS",
+          "evidenceOutputFileCount": 5
+        }
+      ],
+      "sharedDeterministicArtifacts": 3,
+      "deterministicHashes": true,
       "activated": false,
-      "uploaded": false
+      "uploaded": false,
+      "published": false
     }
   ],
   "downstreamCompatibility": {
-    "status": "NOT_TESTED",
-    "roadwayLoader": "NOT_TESTED",
-    "nearestRoadLookup": "NOT_TESTED",
-    "roadNameExtraction": "NOT_TESTED",
-    "hazardReportRoadAssociation": "NOT_TESTED"
+    "status": "NOT_CERTIFIED",
+    "classification": "OWNER_CANDIDATE_ARTIFACTS_NOT_COMMITTED",
+    "roadwayLoader": "NOT_CERTIFIED",
+    "nearestRoadLookup": "NOT_CERTIFIED",
+    "roadNameExtraction": "NOT_CERTIFIED",
+    "hazardReportRoadAssociation": "NOT_CERTIFIED",
+    "reason": "LP116 certified candidate manufacture and determinism, but its five-file owner outputs were intentionally not committed. Existing consumer audit tooling cannot execute against hashes and counts alone; no production consumer was altered and no compatibility pass is invented."
   }
 }

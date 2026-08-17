@@ -2,12 +2,13 @@
   "schemaVersion": "gridly.lp207.statewide-source-acquisition-plan.v1",
   "generatedAt": "2026-08-17T00:00:00.000Z",
   "executionAuthorized": false,
+  "acquisitionExecuted": false,
   "sourceRoot": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS",
   "aggregates": {
     "missingCohort": 226,
     "existingRuntimeOverlap": 0,
-    "localValidSourceCount": 0,
-    "acquisitionRequiredCount": 226,
+    "localValidSourceCount": 3,
+    "acquisitionRequiredCount": 223,
     "plannedSourceUrls": 226,
     "duplicateUrls": 0,
     "duplicateFips": 0
@@ -23,6 +24,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48001_roads.zip"
     },
@@ -36,6 +38,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48003_roads.zip"
     },
@@ -49,6 +52,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48005_roads.zip"
     },
@@ -62,6 +66,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48007_roads.zip"
     },
@@ -75,6 +80,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48009_roads.zip"
     },
@@ -88,6 +94,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48011_roads.zip"
     },
@@ -101,6 +108,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48013_roads.zip"
     },
@@ -114,6 +122,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48017_roads.zip"
     },
@@ -127,6 +136,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48019_roads.zip"
     },
@@ -140,6 +150,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48021_roads.zip"
     },
@@ -153,6 +164,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48023_roads.zip"
     },
@@ -166,6 +178,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48025_roads.zip"
     },
@@ -179,6 +192,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48027_roads.zip"
     },
@@ -192,6 +206,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48029_roads.zip"
     },
@@ -205,6 +220,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48031_roads.zip"
     },
@@ -218,6 +234,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48033_roads.zip"
     },
@@ -231,6 +248,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48035_roads.zip"
     },
@@ -244,6 +262,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48037_roads.zip"
     },
@@ -257,6 +276,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48043_roads.zip"
     },
@@ -270,6 +290,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48045_roads.zip"
     },
@@ -283,6 +304,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48047_roads.zip"
     },
@@ -296,6 +318,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48049_roads.zip"
     },
@@ -309,6 +332,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48051_roads.zip"
     },
@@ -322,6 +346,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48053_roads.zip"
     },
@@ -335,6 +360,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48055_roads.zip"
     },
@@ -348,6 +374,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48059_roads.zip"
     },
@@ -361,6 +388,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48061_roads.zip"
     },
@@ -374,6 +402,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48063_roads.zip"
     },
@@ -387,6 +416,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48065_roads.zip"
     },
@@ -400,6 +430,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48067_roads.zip"
     },
@@ -413,6 +444,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48069_roads.zip"
     },
@@ -426,6 +458,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48073_roads.zip"
     },
@@ -439,6 +472,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48075_roads.zip"
     },
@@ -452,6 +486,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48077_roads.zip"
     },
@@ -465,6 +500,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48079_roads.zip"
     },
@@ -478,6 +514,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48081_roads.zip"
     },
@@ -491,6 +528,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48083_roads.zip"
     },
@@ -504,6 +542,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48085_roads.zip"
     },
@@ -517,6 +556,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48087_roads.zip"
     },
@@ -530,6 +570,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48091_roads.zip"
     },
@@ -543,6 +584,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48093_roads.zip"
     },
@@ -556,6 +598,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48095_roads.zip"
     },
@@ -569,6 +612,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48097_roads.zip"
     },
@@ -582,6 +626,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48099_roads.zip"
     },
@@ -595,6 +640,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48101_roads.zip"
     },
@@ -608,6 +654,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48103_roads.zip"
     },
@@ -621,6 +668,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48105_roads.zip"
     },
@@ -634,6 +682,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48107_roads.zip"
     },
@@ -647,6 +696,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48109_roads.zip"
     },
@@ -660,6 +710,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48111_roads.zip"
     },
@@ -673,6 +724,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48113_roads.zip"
     },
@@ -686,6 +738,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48115_roads.zip"
     },
@@ -699,6 +752,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48117_roads.zip"
     },
@@ -712,6 +766,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48119_roads.zip"
     },
@@ -725,6 +780,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48121_roads.zip"
     },
@@ -738,6 +794,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48123_roads.zip"
     },
@@ -751,6 +808,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48125_roads.zip"
     },
@@ -764,6 +822,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48127_roads.zip"
     },
@@ -777,6 +836,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48129_roads.zip"
     },
@@ -790,6 +850,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48131_roads.zip"
     },
@@ -803,6 +864,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48133_roads.zip"
     },
@@ -816,6 +878,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48135_roads.zip"
     },
@@ -829,6 +892,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48137_roads.zip"
     },
@@ -842,6 +906,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48139_roads.zip"
     },
@@ -855,6 +920,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48141_roads.zip"
     },
@@ -868,6 +934,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48143_roads.zip"
     },
@@ -881,6 +948,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48145_roads.zip"
     },
@@ -894,6 +962,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48147_roads.zip"
     },
@@ -907,6 +976,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48151_roads.zip"
     },
@@ -920,6 +990,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48153_roads.zip"
     },
@@ -933,6 +1004,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48155_roads.zip"
     },
@@ -946,6 +1018,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48159_roads.zip"
     },
@@ -959,6 +1032,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48161_roads.zip"
     },
@@ -972,6 +1046,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48163_roads.zip"
     },
@@ -985,6 +1060,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48165_roads.zip"
     },
@@ -998,6 +1074,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48169_roads.zip"
     },
@@ -1011,6 +1088,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48171_roads.zip"
     },
@@ -1024,6 +1102,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48173_roads.zip"
     },
@@ -1037,6 +1116,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48175_roads.zip"
     },
@@ -1050,6 +1130,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48177_roads.zip"
     },
@@ -1063,6 +1144,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48179_roads.zip"
     },
@@ -1076,6 +1158,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48181_roads.zip"
     },
@@ -1089,6 +1172,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48183_roads.zip"
     },
@@ -1102,6 +1186,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48187_roads.zip"
     },
@@ -1115,6 +1200,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48189_roads.zip"
     },
@@ -1128,6 +1214,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48191_roads.zip"
     },
@@ -1141,6 +1228,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48193_roads.zip"
     },
@@ -1154,6 +1242,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48195_roads.zip"
     },
@@ -1167,6 +1256,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48197_roads.zip"
     },
@@ -1180,6 +1270,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48203_roads.zip"
     },
@@ -1193,6 +1284,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48205_roads.zip"
     },
@@ -1206,6 +1298,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48207_roads.zip"
     },
@@ -1219,6 +1312,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48209_roads.zip"
     },
@@ -1232,6 +1326,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48211_roads.zip"
     },
@@ -1245,6 +1340,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48213_roads.zip"
     },
@@ -1258,6 +1354,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48215_roads.zip"
     },
@@ -1271,6 +1368,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48217_roads.zip"
     },
@@ -1284,6 +1382,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48219_roads.zip"
     },
@@ -1297,6 +1396,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48221_roads.zip"
     },
@@ -1310,6 +1410,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48223_roads.zip"
     },
@@ -1323,6 +1424,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48225_roads.zip"
     },
@@ -1336,6 +1438,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48227_roads.zip"
     },
@@ -1349,6 +1452,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48229_roads.zip"
     },
@@ -1362,6 +1466,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48231_roads.zip"
     },
@@ -1375,6 +1480,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48233_roads.zip"
     },
@@ -1388,6 +1494,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48235_roads.zip"
     },
@@ -1401,6 +1508,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48237_roads.zip"
     },
@@ -1414,6 +1522,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48243_roads.zip"
     },
@@ -1427,6 +1536,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48247_roads.zip"
     },
@@ -1440,6 +1550,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48249_roads.zip"
     },
@@ -1453,6 +1564,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48251_roads.zip"
     },
@@ -1466,6 +1578,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48253_roads.zip"
     },
@@ -1479,6 +1592,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48255_roads.zip"
     },
@@ -1492,6 +1606,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48257_roads.zip"
     },
@@ -1505,6 +1620,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48259_roads.zip"
     },
@@ -1518,6 +1634,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48261_roads.zip"
     },
@@ -1531,6 +1648,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48263_roads.zip"
     },
@@ -1544,6 +1662,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48265_roads.zip"
     },
@@ -1557,6 +1676,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48267_roads.zip"
     },
@@ -1570,6 +1690,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48269_roads.zip"
     },
@@ -1583,6 +1704,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48271_roads.zip"
     },
@@ -1596,6 +1718,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48273_roads.zip"
     },
@@ -1609,6 +1732,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48275_roads.zip"
     },
@@ -1622,6 +1746,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48277_roads.zip"
     },
@@ -1635,6 +1760,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48279_roads.zip"
     },
@@ -1648,6 +1774,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48281_roads.zip"
     },
@@ -1661,6 +1788,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48283_roads.zip"
     },
@@ -1671,9 +1799,10 @@
       "countySlug": "lee",
       "expectedSourceFilename": "tl_2025_48287_roads.zip",
       "expectedOfficialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48287_roads.zip",
-      "localValidSourceExists": false,
-      "acquisitionRequired": true,
-      "acquisitionStatus": "SOURCE_MISSING",
+      "localValidSourceExists": true,
+      "acquisitionRequired": false,
+      "acquisitionStatus": "EXISTING_VALID_SOURCE",
+      "sourceCertificationAuthority": "OWNER_VERIFIED_LP207_ACQUISITION_TOOL",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48287_roads.zip"
     },
@@ -1687,6 +1816,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48289_roads.zip"
     },
@@ -1700,6 +1830,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48293_roads.zip"
     },
@@ -1713,6 +1844,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48295_roads.zip"
     },
@@ -1726,6 +1858,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48297_roads.zip"
     },
@@ -1739,6 +1872,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48299_roads.zip"
     },
@@ -1752,6 +1886,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48301_roads.zip"
     },
@@ -1765,6 +1900,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48303_roads.zip"
     },
@@ -1778,6 +1914,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48305_roads.zip"
     },
@@ -1791,6 +1928,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48307_roads.zip"
     },
@@ -1804,6 +1942,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48309_roads.zip"
     },
@@ -1817,6 +1956,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48311_roads.zip"
     },
@@ -1830,6 +1970,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48313_roads.zip"
     },
@@ -1843,6 +1984,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48315_roads.zip"
     },
@@ -1856,6 +1998,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48317_roads.zip"
     },
@@ -1869,6 +2012,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48319_roads.zip"
     },
@@ -1882,6 +2026,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48323_roads.zip"
     },
@@ -1895,6 +2040,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48325_roads.zip"
     },
@@ -1908,6 +2054,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48327_roads.zip"
     },
@@ -1921,6 +2068,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48329_roads.zip"
     },
@@ -1931,9 +2079,10 @@
       "countySlug": "milam",
       "expectedSourceFilename": "tl_2025_48331_roads.zip",
       "expectedOfficialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48331_roads.zip",
-      "localValidSourceExists": false,
-      "acquisitionRequired": true,
-      "acquisitionStatus": "SOURCE_MISSING",
+      "localValidSourceExists": true,
+      "acquisitionRequired": false,
+      "acquisitionStatus": "EXISTING_VALID_SOURCE",
+      "sourceCertificationAuthority": "OWNER_VERIFIED_LP207_ACQUISITION_TOOL",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48331_roads.zip"
     },
@@ -1947,6 +2096,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48333_roads.zip"
     },
@@ -1960,6 +2110,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48335_roads.zip"
     },
@@ -1973,6 +2124,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48337_roads.zip"
     },
@@ -1986,6 +2138,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48341_roads.zip"
     },
@@ -1999,6 +2152,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48343_roads.zip"
     },
@@ -2012,6 +2166,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48345_roads.zip"
     },
@@ -2025,6 +2180,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48347_roads.zip"
     },
@@ -2038,6 +2194,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48349_roads.zip"
     },
@@ -2051,6 +2208,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48353_roads.zip"
     },
@@ -2064,6 +2222,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48355_roads.zip"
     },
@@ -2077,6 +2236,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48357_roads.zip"
     },
@@ -2090,6 +2250,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48359_roads.zip"
     },
@@ -2103,6 +2264,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48363_roads.zip"
     },
@@ -2116,6 +2278,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48365_roads.zip"
     },
@@ -2129,6 +2292,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48367_roads.zip"
     },
@@ -2142,6 +2306,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48369_roads.zip"
     },
@@ -2155,6 +2320,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48371_roads.zip"
     },
@@ -2168,6 +2334,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48375_roads.zip"
     },
@@ -2181,6 +2348,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48377_roads.zip"
     },
@@ -2194,6 +2362,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48379_roads.zip"
     },
@@ -2207,6 +2376,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48381_roads.zip"
     },
@@ -2220,6 +2390,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48383_roads.zip"
     },
@@ -2233,6 +2404,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48385_roads.zip"
     },
@@ -2246,6 +2418,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48387_roads.zip"
     },
@@ -2259,6 +2432,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48389_roads.zip"
     },
@@ -2272,6 +2446,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48391_roads.zip"
     },
@@ -2285,6 +2460,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48393_roads.zip"
     },
@@ -2295,9 +2471,10 @@
       "countySlug": "robertson",
       "expectedSourceFilename": "tl_2025_48395_roads.zip",
       "expectedOfficialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48395_roads.zip",
-      "localValidSourceExists": false,
-      "acquisitionRequired": true,
-      "acquisitionStatus": "SOURCE_MISSING",
+      "localValidSourceExists": true,
+      "acquisitionRequired": false,
+      "acquisitionStatus": "EXISTING_VALID_SOURCE",
+      "sourceCertificationAuthority": "OWNER_VERIFIED_LP207_ACQUISITION_TOOL",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48395_roads.zip"
     },
@@ -2311,6 +2488,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48397_roads.zip"
     },
@@ -2324,6 +2502,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48399_roads.zip"
     },
@@ -2337,6 +2516,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48401_roads.zip"
     },
@@ -2350,6 +2530,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48403_roads.zip"
     },
@@ -2363,6 +2544,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48405_roads.zip"
     },
@@ -2376,6 +2558,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48409_roads.zip"
     },
@@ -2389,6 +2572,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48411_roads.zip"
     },
@@ -2402,6 +2586,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48413_roads.zip"
     },
@@ -2415,6 +2600,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48415_roads.zip"
     },
@@ -2428,6 +2614,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48417_roads.zip"
     },
@@ -2441,6 +2628,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48419_roads.zip"
     },
@@ -2454,6 +2642,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48421_roads.zip"
     },
@@ -2467,6 +2656,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48423_roads.zip"
     },
@@ -2480,6 +2670,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48425_roads.zip"
     },
@@ -2493,6 +2684,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48427_roads.zip"
     },
@@ -2506,6 +2698,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48429_roads.zip"
     },
@@ -2519,6 +2712,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48431_roads.zip"
     },
@@ -2532,6 +2726,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48433_roads.zip"
     },
@@ -2545,6 +2740,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48435_roads.zip"
     },
@@ -2558,6 +2754,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48437_roads.zip"
     },
@@ -2571,6 +2768,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48439_roads.zip"
     },
@@ -2584,6 +2782,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48441_roads.zip"
     },
@@ -2597,6 +2796,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48443_roads.zip"
     },
@@ -2610,6 +2810,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48445_roads.zip"
     },
@@ -2623,6 +2824,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48447_roads.zip"
     },
@@ -2636,6 +2838,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48449_roads.zip"
     },
@@ -2649,6 +2852,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48451_roads.zip"
     },
@@ -2662,6 +2866,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48453_roads.zip"
     },
@@ -2675,6 +2880,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48455_roads.zip"
     },
@@ -2688,6 +2894,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48459_roads.zip"
     },
@@ -2701,6 +2908,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48461_roads.zip"
     },
@@ -2714,6 +2922,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48463_roads.zip"
     },
@@ -2727,6 +2936,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48465_roads.zip"
     },
@@ -2740,6 +2950,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48467_roads.zip"
     },
@@ -2753,6 +2964,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48469_roads.zip"
     },
@@ -2766,6 +2978,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48475_roads.zip"
     },
@@ -2779,6 +2992,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48479_roads.zip"
     },
@@ -2792,6 +3006,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48483_roads.zip"
     },
@@ -2805,6 +3020,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48485_roads.zip"
     },
@@ -2818,6 +3034,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48487_roads.zip"
     },
@@ -2831,6 +3048,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48489_roads.zip"
     },
@@ -2844,6 +3062,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48491_roads.zip"
     },
@@ -2857,6 +3076,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48493_roads.zip"
     },
@@ -2870,6 +3090,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48495_roads.zip"
     },
@@ -2883,6 +3104,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48497_roads.zip"
     },
@@ -2896,6 +3118,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48499_roads.zip"
     },
@@ -2909,6 +3132,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48501_roads.zip"
     },
@@ -2922,6 +3146,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48503_roads.zip"
     },
@@ -2935,6 +3160,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48505_roads.zip"
     },
@@ -2948,6 +3174,7 @@
       "localValidSourceExists": false,
       "acquisitionRequired": true,
       "acquisitionStatus": "SOURCE_MISSING",
+      "sourceCertificationAuthority": "LOCAL_PLAN_INSPECTION",
       "protectedExistingRuntimeCounty": false,
       "plannedSourceLocation": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS/tl_2025_48507_roads.zip"
     }

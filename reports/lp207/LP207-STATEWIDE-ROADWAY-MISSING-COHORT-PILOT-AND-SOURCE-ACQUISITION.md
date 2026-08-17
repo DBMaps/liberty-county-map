@@ -2,30 +2,38 @@
 
 ## Decision
 
-**BLOCKED_FOR_STATEWIDE_ROADWAY**
+**READY_FOR_STATEWIDE_SOURCE_ACQUISITION**
 
-The governed acquisition mechanism is implemented and fail-closed. The pilot is not certified: this execution environment does not contain the three owner-controlled TIGER ZIPs and does not provide GDAL. LP207 therefore does not claim pilot success or statewide readiness.
+The real owner pilot passed on QGIS 3.44.11 / GDAL 3.13.0 "Iowa City". The earlier environment-only block is preserved as superseded history: it described repository-container limitations, not a source or tool failure. Statewide manufacturing is not ready because only 3 of 226 missing-cohort sources are valid; 223 still require acquisition.
 
-## Governed source contract
+## Owner source certification
 
-New missing-cohort roadways use **U.S. Census Bureau, TIGER/Line 2025 All Roads** at `https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_<FIPS>_roads.zip`. Exact ZIP bytes receive a Gridly-observed SHA-256. Existing 28 roadway counties remain grandfathered without migration or rebuild. This is an intentional source-generation boundary, not a fallback or a claim that TIGER and OSM classifications are equivalent.
+The LP207 acquisition tool verified the three existing ZIPs under `C:\GitHub\Gridly-Source-Data\Census\TIGER2025\ROADS`. Every ZIP was valid, contained required members, and was neither downloaded nor overwritten. LP118 used the 254-feature FeatureCollection at `assets/boundaries/texas-counties-boundaries.geojson`. The earlier alternative-boundary invocation failed its input contract and is classified as a superseded invocation error.
 
-Road names preserve `FULLNAME` as supplied. Empty names remain unnamed; no names, aliases, or casing transformations are fabricated. `MTFCC` and `RTTYP` remain TIGER-native classifications.
+## Pilot manufacturing
+
+| County | FIPS | Source features | Retained | Candidate bytes | Candidate SHA-256 | LP116 (twice) |
+|---|---:|---:|---:|---:|---|---|
+| Lee | 48287 | 3004 | 3004 | 4710026 | `a9d589e476caaf128cb7a8777ccbe9f8d39ad7421e3e073c1d680d8556a55a33` | PASS |
+| Milam | 48331 | 4292 | 4292 | 6719460 | `374ae91f11f30e0227065ab7704fd96f424edb40f2098b89c95acd98126386a9` | PASS |
+| Robertson | 48395 | 3391 | 3391 | 6503023 | `40c20e284e68e43b8051ccca6fd1a2d044be4d3ad46eb789698c96863587ecba` | PASS |
+
+All counties had zero rejected, out-of-county, and duplicate features. Both LP116 runs passed per county, produced five files per run, shared three deterministic artifacts, and had deterministic hashes.
+
+## Downstream compatibility
+
+Roadway loader, nearest-road lookup, road-name extraction, and hazard/report road association are **NOT_CERTIFIED** in LP207. The real owner outputs were intentionally not committed, so existing consumer tooling cannot run against hashes/counts alone. LP116 manufacture and determinism passed, but this report does not invent downstream passes or alter production consumers.
 
 ## Safety conservation
 
-- Production roadway counties before: 28
-- Production roadway counties after: 28
+- Pilot requested/source valid/manufactured/certified: 3 / 3 / 3 / 3
+- Pilot activated/uploaded/published: 0 / 0 / 0
+- Production roadway counties before/after: 28 / 28
 - Supabase roadway writes: 0
 - Runtime activations: 0
 - Existing governed roadway packages modified: 0
-- Pilot counties activated: 0
-- Pilot packages published: 0
-
-## Pilot
-
-Lee (48287), Milam (48331), and Robertson (48395) are confirmed members of the frozen LP206 cohort. Their source and manufacturing results are explicitly `NOT_RUN/BLOCKED`, not synthetic passes. Supply the three ZIPs through `GRIDLY_TIGER2025_ROADS_ROOT` and install GDAL before rerunning the pilot.
+- Runtime manifest SHA-256 before/after: `56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd` / `56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd`
 
 ## Statewide plan
 
-The plan contains 226 deterministic, non-executed entries: 0 locally valid and 226 requiring acquisition in this environment. Dallas (48113) is the recommended later scale control. No all-226 apply mode exists in LP207.
+The deterministic, non-executing plan contains 226 missing-cohort entries, 3 owner/local-valid sources, 223 acquisitions required, and zero existing-runtime overlap. No acquisition executed. Dallas (48113) remains the recommended later scale control.
