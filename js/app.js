@@ -46005,7 +46005,7 @@ function gridlyLp0361SnapshotAuthoritativeState() {
   const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   const storage = gridlyLp0361ReadStorageLocationState();
   const activeCountyRuntimeId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
-  const selectedCountyId = selected?.countyId || storage.selectedCountyPreference || (selected?.canonicalMultiCountyPlace === true ? activeCountyRuntimeId : null);
+  const selectedCountyId = selected?.countyId || (selected?.canonicalMultiCountyPlace === true ? activeCountyRuntimeId : null) || storage.selectedCountyPreference;
   return { activeCountyRuntimeId, selectedCountyId, activeCommunity: selected?.label || null, selectedCommunity: selected?.label || storage.selectedCommunityPreference || null, selectedAwarenessArea: selected ? { id: selected.key || null, name: selected.label || selected.storageValue || null, countyId: selectedCountyId, regionId: selected.awarenessRegionId || null } : null, houstonParent: selected?.parentCommunity === "Houston" || selected?.label === "Houston" ? "houston" : null, houstonChildRegion: selected?.awarenessRegionId || null, roadwayRuntimeCounty: activeCountyRuntimeId, storageLocationState: storage };
 }
 
@@ -51243,7 +51243,7 @@ function gridlyDeactivateHarrisPartitionRuntimeState(reason = "county_switch") {
 function gridlyClearHarrisPartitionRenderedGeometry(reason = "county_switch") { if (gridlyRoadwayPackageRuntimeState.loadedCounty === GRIDLY_HARRIS_PARTITION_RUNTIME_COUNTY_ID || gridlyGetActiveCountyId() !== GRIDLY_HARRIS_PARTITION_RUNTIME_COUNTY_ID) { roadwaySegmentFeatures = []; roadwayDatasetLoaded = false; gridlyRoadwayDatasetRevision += 1; gridlyResetRoadNameResolverRuntimeCache("harris_partition_geometry_cleared"); } gridlyHarrisPartitionRuntimeState.activeGeneration += 1; gridlyHarrisPartitionRuntimeState.queue = []; gridlyHarrisPartitionRuntimeState.inFlight.clear(); gridlyDeactivateHarrisPartitionRuntimeState(reason); gridlyHarrisPartitionRuntimeState.requestHistory.push({ reason, cancelledAt: new Date().toISOString() }); }
 
 async function gridlyActivateRoadwayDatasetForActiveCounty(reason = "active-county-activation") {
-  await gridlyEnsureRoadwayRuntimeManifestLoaded();
+  if (!gridlyRoadwayRuntimeManifest) await gridlyEnsureRoadwayRuntimeManifestLoaded();
   const requestedCountyId = gridlyGetActiveCountyId();
   const roadwaySource = gridlyResolveRoadwayRuntimeSource(requestedCountyId);
   if (requestedCountyId === GRIDLY_HARRIS_PARTITION_RUNTIME_COUNTY_ID && roadwaySource?.partitioned) {
@@ -51292,7 +51292,7 @@ async function gridlyDecodeMontgomeryRoadwayPackage(response, roadwaySource) {
 }
 
 async function loadRoadwayDataset(options = {}) {
-  await gridlyEnsureRoadwayRuntimeManifestLoaded();
+  if (!gridlyRoadwayRuntimeManifest) await gridlyEnsureRoadwayRuntimeManifestLoaded();
   const requestedCountyId = gridlyNormalizeCountyId(options.requestedCountyId || gridlyGetActiveCountyId());
   const activationSequence = Number(options.activationSequence || gridlyRoadwayPackageRuntimeState.activeActivationSequence || 0);
   const roadwaySource = gridlyResolveRoadwayRuntimeSource(requestedCountyId);
@@ -94698,7 +94698,15 @@ function normalizeGridlySettings(raw = null) {
   base.community.homeTown = resolvedAwarenessArea?.storageValue || "";
   base.community.awarenessArea = resolvedAwarenessArea?.storageValue || "";
   base.community.awarenessAreaKey = resolvedAwarenessArea?.key || "";
-  base.community.countyId = gridlyResolveCountyIdForAwarenessArea(base.community.awarenessArea || base.community.homeTown);
+  const requestedCountyId = gridlyNormalizeCountyId(community.countyId || "");
+  const requestedCountyFips = String(GRIDLY_COUNTY_REGISTRY[requestedCountyId]?.countyFips || "");
+  const canonicalPlaceCountyId = resolvedAwarenessArea?.canonicalMultiCountyPlace === true
+    && resolvedAwarenessArea.key === community.awarenessAreaKey
+    && Array.isArray(resolvedAwarenessArea.countyMemberships)
+    && resolvedAwarenessArea.countyMemberships.map(String).includes(requestedCountyFips)
+    ? requestedCountyId
+    : null;
+  base.community.countyId = canonicalPlaceCountyId || gridlyResolveCountyIdForAwarenessArea(base.community.awarenessArea || base.community.homeTown);
   return base;
 }
 

@@ -76,3 +76,60 @@ test('LP213 Harris -> Dallas commits county, storage, awareness and roadway owne
   assert.equal(context.window.GRIDLY_ACTIVE_COUNTY_ID, 'liberty-tx');
   assert.deepEqual(roadwayLoads.at(-1), { countyId: 'liberty-tx', featureCount: 8405 });
 });
+
+test('LP213 canonical PLACE settings retain the authoritative operational county', () => {
+  const context = {
+    GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
+    GRIDLY_COUNTY_REGISTRY: { 'dallas-tx': { id: 'dallas-tx', countyFips: '48113' }, 'collin-tx': { id: 'collin-tx', countyFips: '48085' } },
+    GRIDLY_SETTINGS_DEFAULTS: {
+      notifications: {},
+      display: { mapStyle: 'standard', theme: 'system', textSize: 'standard' },
+      personalization: { preferredName: '' }
+    },
+    GRIDLY_SETTINGS_MAP_STYLE_LABELS: { standard: 'Standard' },
+    GRIDLY_SETTINGS_VALID_THEMES: new Set(['system']),
+    GRIDLY_SETTINGS_TEXT_SIZE_ALIASES: {},
+    GRIDLY_SETTINGS_VALID_TEXT_SIZES: new Set(['standard']),
+    normalizeGridlyPreferredName: (value) => value || '',
+    resolveGridlyAwarenessArea: () => ({ storageValue: 'Dallas', key: 'place-4819000', canonicalMultiCountyPlace: true, countyMemberships: ['48085', '48113', '48121', '48257', '48397'] }),
+    gridlyResolveCountyIdForAwarenessArea: () => 'collin-tx',
+    gridlyNormalizeCountyId: (value) => String(value || '').toLowerCase()
+  };
+  vm.createContext(context);
+  vm.runInContext(productionFunction('normalizeGridlySettings'), context);
+  const settings = context.normalizeGridlySettings({ community: {
+    homeTown: 'Dallas', awarenessArea: 'Dallas', awarenessAreaKey: 'place-4819000', countyId: 'dallas-tx'
+  } });
+  assert.equal(settings.community.countyId, 'dallas-tx');
+  assert.equal(settings.community.awarenessAreaKey, 'place-4819000');
+});
+
+test('LP213 canonical awareness county uses active runtime before stale legacy storage', () => {
+  const context = {
+    localStorage: { getItem: (key) => ({
+      gridlySelectedCounty: 'liberty-tx',
+      gridlySettingsV1: JSON.stringify({ community: { countyId: 'dallas-tx', homeTown: 'Dallas', awarenessArea: 'Dallas', awarenessAreaKey: 'place-4819000' } }),
+      gridlyUserProfileV1: JSON.stringify({ awarenessAreaCountyId: 'dallas-tx', homeTown: 'Dallas', awarenessArea: 'Dallas', awarenessAreaKey: 'place-4819000' })
+    })[key] || null },
+    getGridlySelectedAwarenessArea: () => ({ key: 'place-4819000', label: 'Dallas', canonicalMultiCountyPlace: true, countyId: null }),
+    getGridlySettingsPreferences: () => ({ community: { countyId: 'dallas-tx', homeTown: 'Dallas', awarenessArea: 'Dallas', awarenessAreaKey: 'place-4819000' } }),
+    getGridlyUserProfile: () => ({ awarenessAreaCountyId: 'dallas-tx', homeTown: 'Dallas', awarenessArea: 'Dallas', awarenessAreaKey: 'place-4819000' }),
+    gridlyGetActiveCountyId: () => 'dallas-tx'
+  };
+  vm.createContext(context);
+  vm.runInContext(`${productionFunction('gridlyLp0361ReadStorageLocationState')}\n${productionFunction('gridlyLp0361SnapshotAuthoritativeState')}`, context);
+  const state = context.gridlyLp0361SnapshotAuthoritativeState();
+  assert.equal(state.activeCountyRuntimeId, 'dallas-tx');
+  assert.equal(state.selectedCountyId, 'dallas-tx');
+  assert.equal(state.roadwayRuntimeCounty, 'dallas-tx');
+  assert.equal(state.storageLocationState.settingsLocation.countyId, 'dallas-tx');
+  assert.equal(state.storageLocationState.profileLocation.countyId, 'dallas-tx');
+  assert.equal(state.selectedAwarenessArea.countyId, 'dallas-tx');
+});
+
+test('LP213 roadway activation does not yield after an installed manifest', () => {
+  const activate = productionFunction('gridlyActivateRoadwayDatasetForActiveCounty');
+  const load = productionFunction('loadRoadwayDataset');
+  assert.match(activate, /if \(!gridlyRoadwayRuntimeManifest\) await gridlyEnsureRoadwayRuntimeManifestLoaded\(\)/);
+  assert.match(load, /if \(!gridlyRoadwayRuntimeManifest\) await gridlyEnsureRoadwayRuntimeManifestLoaded\(\)/);
+});
