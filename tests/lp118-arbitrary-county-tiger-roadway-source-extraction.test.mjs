@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -11,7 +11,7 @@ const inventoryPath = new URL('../data/lp104/texas-counties.json', import.meta.u
 const inventory = JSON.parse(await readFile(inventoryPath));
 const feature = (type, coordinates, id = 'A') => ({ type: 'Feature', id, properties: { LINEARID: id, FULLNAME: 'Fixture Road', RTTYP: 'M', MTFCC: 'S1400' }, geometry: type ? { type, coordinates } : null });
 const boundary = (fips, name, x) => ({ type: 'Feature', properties: { GEOID: fips, NAME: name }, geometry: { type: 'Polygon', coordinates: [[[x, 29], [x + 1, 29], [x + 1, 31], [x, 31], [x, 29]]] } });
-async function fixtures() { const root = await mkdtemp(join(tmpdir(), 'lp118-')); const reports = join(root, 'reports'); const sources = join(root, 'sources'); await mkdir(sources); const boundaries = join(root, 'boundaries.geojson'); await writeFile(boundaries, JSON.stringify({ type: 'FeatureCollection', features: [boundary('48051', 'Burleson', -97), boundary('48455', 'Trinity', -96), boundary('48469', 'Victoria', -98)] })); return { root, reports, sources, boundaries }; }
+async function fixtures() { const root = await mkdtemp(join(tmpdir(), 'lp118-')); const reports = join(root, 'reports'); const sources = join(root, 'sources'); await mkdir(sources); const boundaries = join(root, 'boundaries.geojson'); await writeFile(boundaries, JSON.stringify({ type: 'FeatureCollection', features: [boundary('48001', 'Anderson', -96), boundary('48051', 'Burleson', -97), boundary('48455', 'Trinity', -96), boundary('48469', 'Victoria', -98)] })); return { root, reports, sources, boundaries }; }
 const hash = body => createHash('sha256').update(body).digest('hex');
 
 test('FIPS and CLI governance reject ambiguity and sort maintained counties', () => {
@@ -45,6 +45,17 @@ test('determinism, resume binding, invalidation, missing/invalid sources, and co
   await writeFile(join(f.sources, 'tl_2025_48051_roads.geojson'), JSON.stringify({ type: 'FeatureCollection', features: [feature('LineString', [[-96.8, 30], [-96.6, 30.2]], 'changed')] })); const changed = await extract({ ...options, resume: true }); assert.equal(changed.counties[0].status, 'GENERATED'); assert.notEqual(changed.counties[0].source.sha256, first.counties[0].source.sha256); assert.equal(changed.counties[1].status, 'RESUMED');
   const missing = await extract({ fips: '48469', candidate: true, tiger_root: f.sources, boundaries: f.boundaries, reports: join(f.root, 'missing'), inventoryPath }); assert.equal(missing.counties[0].status, 'REQUIRES_OWNER_SOURCE');
   await writeFile(join(f.sources, 'tl_2025_48469_roads.geojson'), '{bad'); const invalid = await extract({ fips: '48469,48455', candidate: true, tiger_root: f.sources, boundaries: f.boundaries, reports: join(f.root, 'invalid'), inventoryPath }); assert.equal(invalid.counties.find(x => x.fips === '48469').status, 'FAILED'); assert.equal(invalid.counties.find(x => x.fips === '48455').status, 'GENERATED'); assert.ok((await stat(join(f.root, 'invalid/48455/checkpoint.json'))).isFile());
+  await writeFile(join(f.reports,'48051/checkpoint.json'),JSON.stringify({status:'FAILED',failures:['prior GDAL handoff']}));
+  const retried=await extract({...options,fips:'48051',resume:true}); assert.equal(retried.counties[0].status,'GENERATED');
+});
+
+test('LP118 reaches configured GDAL directory without a bare PATH fallback', async t => {
+  const f=await fixtures(); t.after(()=>rm(f.root,{recursive:true,force:true})); const bin=join(f.root,'gdal-bin'); await mkdir(bin);
+  const invoked=join(f.root,'invoked.json'); const ogr=join(bin,'ogr2ogr');
+  await writeFile(ogr,`#!/bin/sh\nprintf '["%s"]' "$0" > '${invoked}'\nprintf '{"type":"FeatureCollection","features":[]}' > "\${9}"\n`); await chmod(ogr,0o755);
+  const source=join(f.sources,'tl_2025_48001_roads.zip'); await writeFile(source,'Anderson-equivalent ZIP fixture');
+  const result=(await extract({fips:'48001',candidate:true,source,boundaries:f.boundaries,reports:f.reports,inventoryPath,gdal:bin})).counties[0];
+  assert.equal(result.status,'GENERATED'); const invocation=JSON.parse(await readFile(invoked,'utf8')); assert.equal(invocation[0],ogr); assert.notEqual(invocation[0],'ogr2ogr');
 });
 
 test('LP114 contains the LP118 integration contract without production file targets', async () => {
