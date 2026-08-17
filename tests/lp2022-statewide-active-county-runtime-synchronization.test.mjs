@@ -76,6 +76,98 @@ test('production lifecycle is generic and retains LP202.1 authority', () => {
   assert.match(fs.readFileSync('js/gridlyRuntimeSourceRegistryBridge.js', 'utf8'), /resolveGovernedCrossingSource/);
 });
 
+function sameCountyHydrationSandbox({ countyId, inventoryCounty = null, inventory = [], delay = 0 }) {
+  let loadCount = 0;
+  let renderRefreshCount = 0;
+  const sandbox = {
+    Object, Set, Number, Promise, Map,
+    GRIDLY_COUNTY_REGISTRY: registry,
+    crossings: [...inventory],
+    crossingMarkers: new Map(), crossingLayer: null,
+    gridlyCrossingInventoryCountyId: inventoryCounty,
+    gridlyCrossingInventoryReloadPromise: null,
+    gridlyCrossingInventoryHydrationState: { countyId: null, attempted: false, completed: false, failureReason: null, reason: null },
+    gridlyActiveCountyTransitionGeneration: 7,
+    gridlyOperationalCountyResolutionAudit: null,
+    gridlyActiveCountySynchronizationAudit: Object.freeze({ synchronizerInvoked: false }),
+    gridlyGetActiveCountyId: () => sandbox.activeCountyId,
+    gridlyNormalizeCountyId: value => String(value || '').trim().toLowerCase(),
+    gridlyIsKnownCountyId: value => Boolean(registry[value]),
+    gridlyResolveCanonicalPlaceGeoid: () => null,
+    gridlyGetGovernedPlaceConsumerPresentationCamera: () => null,
+    gridlySetActiveCountyContext() { throw new Error('same-county hydration must not invoke setter'); },
+    safeText() {},
+    async loadCrossings() {
+      const requestedCountyId = sandbox.activeCountyId;
+      const requestedGeneration = sandbox.gridlyActiveCountyTransitionGeneration;
+      loadCount++;
+      await new Promise(resolve => setTimeout(resolve, delay));
+      if (requestedCountyId !== sandbox.activeCountyId || requestedGeneration !== sandbox.gridlyActiveCountyTransitionGeneration) return;
+      const governedCount = recordById.get(requestedCountyId).governedCount;
+      sandbox.crossings = Array.from({ length: governedCount }, (_, id) => ({ id, countyId: requestedCountyId }));
+      sandbox.gridlyCrossingInventoryCountyId = requestedCountyId;
+      sandbox.gridlyCrossingInventoryHydrationState = { ...sandbox.gridlyCrossingInventoryHydrationState, completed: true };
+      renderRefreshCount++;
+    }
+  };
+  sandbox.activeCountyId = countyId;
+  vm.createContext(sandbox);
+  vm.runInContext(`
+    ${productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext')}
+    ${productionFunction('ensureGridlyActiveCountyCrossingInventory')}
+    ${productionFunction('gridlySynchronizeActiveCountyForOperationalContext')}
+    this.synchronize = gridlySynchronizeActiveCountyForOperationalContext;
+  `, sandbox);
+  return { sandbox, get loadCount() { return loadCount; }, get renderRefreshCount() { return renderRefreshCount; } };
+}
+
+test('live-equivalent same-county Dallas null-owner state hydrates the shared 789-record inventory', async () => {
+  const runtime = sameCountyHydrationSandbox({ countyId: 'dallas-tx', inventoryCounty: null, inventory: [] });
+  assert.equal(runtime.sandbox.activeCountyId, 'dallas-tx');
+  assert.equal(runtime.sandbox.gridlyCrossingInventoryCountyId, null);
+  assert.equal(runtime.sandbox.crossings.length, 0);
+  const generationBefore = runtime.sandbox.gridlyActiveCountyTransitionGeneration;
+  assert.equal(runtime.sandbox.synchronize({ countyId: 'dallas-tx' }, 'dallas-tx', 'live-equivalent'), 'dallas-tx');
+  assert.equal(runtime.sandbox.gridlyActiveCountySynchronizationAudit.setterInvoked, false);
+  assert.equal(runtime.sandbox.gridlyActiveCountySynchronizationAudit.transitionAttempted, false);
+  assert.equal(runtime.sandbox.gridlyCrossingInventoryHydrationState.attempted, true);
+  await runtime.sandbox.gridlyCrossingInventoryReloadPromise;
+  assert.equal(runtime.sandbox.gridlyActiveCountyTransitionGeneration, generationBefore);
+  assert.equal(runtime.sandbox.gridlyCrossingInventoryCountyId, 'dallas-tx');
+  assert.equal(runtime.sandbox.crossings.length, 789);
+  assert.ok(runtime.sandbox.crossings.every(row => row.countyId === 'dallas-tx'));
+  assert.equal(runtime.sandbox.gridlyCrossingInventoryHydrationState.completed, true);
+  assert.equal(runtime.loadCount, 1);
+  assert.equal(runtime.renderRefreshCount, 1);
+  runtime.sandbox.synchronize({ countyId: 'dallas-tx' }, 'dallas-tx', 'healthy-repeat');
+  assert.equal(runtime.loadCount, 1, 'healthy same-county inventory is a true no-op');
+});
+
+test('wrong owners, intentional empty owners, and in-flight same-county requests obey hydration invariant', async () => {
+  const wrong = sameCountyHydrationSandbox({ countyId: 'dallas-tx', inventoryCounty: 'liberty-tx', inventory: [{ countyId: 'liberty-tx' }], delay: 5 });
+  wrong.sandbox.synchronize({ countyId: 'dallas-tx' }, 'dallas-tx', 'wrong-owner');
+  const firstPromise = wrong.sandbox.gridlyCrossingInventoryReloadPromise;
+  wrong.sandbox.synchronize({ countyId: 'dallas-tx' }, 'dallas-tx', 'wrong-owner-repeat');
+  assert.equal(wrong.sandbox.gridlyCrossingInventoryReloadPromise, firstPromise);
+  assert.equal(wrong.loadCount, 1, 'in-flight hydration is de-duplicated');
+  await firstPromise;
+  assert.equal(wrong.sandbox.gridlyCrossingInventoryCountyId, 'dallas-tx');
+  assert.equal(wrong.sandbox.crossings.length, 789);
+
+  const emptyControls = [...recordById.entries()].filter(([, record]) => record.state === 'ACTIVE_EMPTY').map(([id]) => id).sort().slice(0, 3);
+  assert.equal(emptyControls.length, 3);
+  for (const countyId of emptyControls) {
+    assert.equal(recordById.get(countyId).state, 'ACTIVE_EMPTY');
+    const empty = sameCountyHydrationSandbox({ countyId });
+    empty.sandbox.synchronize({ countyId }, countyId, 'empty-null-owner');
+    await empty.sandbox.gridlyCrossingInventoryReloadPromise;
+    assert.equal(empty.sandbox.gridlyCrossingInventoryCountyId, countyId);
+    assert.equal(empty.sandbox.crossings.length, 0);
+    empty.sandbox.synchronize({ countyId }, countyId, 'empty-healthy-repeat');
+    assert.equal(empty.loadCount, 1, `${countyId} intentional zero does not reload`);
+  }
+});
+
 test('all 163 governed multi-county PLACE cameras resolve inside a governed membership', () => {
   const cohort = projection.communities.filter(place => place.countyMemberships.length > 1);
   assert.equal(cohort.length, 163);
