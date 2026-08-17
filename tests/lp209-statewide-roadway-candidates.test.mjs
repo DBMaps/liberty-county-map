@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { CONTROL_FIPS, loadPlan, resolveGdalConfiguration, summarize, verifyCommitted, verifyGdal } from '../tools/lp209/statewide-roadway-candidates.mjs';
-import { COMPATIBILITY_FIPS, certifyCandidate, compareControl, finalReadiness } from '../tools/lp209/final-certification.mjs';
+import { CONTROL_FIPS, assertManufacturingComplete, loadPlan, resolveGdalConfiguration, summarize, verifyCommitted, verifyGdal } from '../tools/lp209/statewide-roadway-candidates.mjs';
+import { COMPATIBILITY_FIPS, certifyCandidate, compareControl, finalReadiness, runCertificationChecks } from '../tools/lp209/final-certification.mjs';
 
 test('LP209 plan binds all LP206 counties to certified LP208 identities and protects runtime 28', async()=>{
   const before=await readFile('data/roadway-runtime-manifest.json'); const p=await loadPlan();
@@ -35,6 +35,48 @@ test('owner ogr2ogr executable handoff verifies the exact file and yields the LP
   assert.match(await verifyGdal(configuration.executable),/^GDAL 3\.13\.0/);
   assert.equal(await readFile(marker,'utf8'),executable);
   await assert.rejects(resolveGdalConfiguration(join(root,'missing','ogr2ogr.exe')),/does not exist/);
+});
+
+test('manufacturing completion is independent from pending final certification and remains fail closed',()=>{
+  const manufacturing={
+    readiness:'BLOCKED_FOR_STATEWIDE_ROADWAY',
+    accounting:{planned:226,lp118Successful:226,lp116Manufactured:226,certified:226,failed:0,pending:0,protectedOverlap:0,supabaseWrites:0,runtimeActivations:0,productionPackageModifications:0},
+    productionRuntimeManifest:{unchanged:true,countyCountBefore:28,countyCountAfter:28}
+  };
+  assert.equal(assertManufacturingComplete(manufacturing),manufacturing);
+  assert.equal(finalReadiness(manufacturing,[],[]),'BLOCKED_FOR_STATEWIDE_ROADWAY');
+  const controls=CONTROL_FIPS.map(countyFips=>({countyFips,determinismStatus:'PASS'}));
+  assert.equal(finalReadiness(manufacturing,controls,[]),'BLOCKED_FOR_STATEWIDE_ROADWAY');
+  const compatibility=COMPATIBILITY_FIPS.map(countyFips=>({countyFips,status:'PASS'}));
+  assert.equal(finalReadiness(manufacturing,controls,compatibility),'READY_FOR_STATEWIDE_ROADWAY_PUBLICATION');
+
+  const subset=structuredClone(manufacturing);
+  Object.assign(subset.accounting,{lp118Successful:11,lp116Manufactured:11,certified:11,pending:215});
+  assert.equal(assertManufacturingComplete(subset,{expectedCount:11,subset:true}),subset);
+
+  for(const patch of [
+    {lp118Successful:225,lp116Manufactured:225,certified:225,pending:1},
+    {lp118Successful:226,lp116Manufactured:225,certified:225,failed:1,pending:1}
+  ]) {
+    const incomplete=structuredClone(manufacturing); Object.assign(incomplete.accounting,patch);
+    assert.throws(()=>assertManufacturingComplete(incomplete),/manufacturing is incomplete/);
+  }
+  const changed=structuredClone(manufacturing); changed.productionRuntimeManifest.unchanged=false;
+  assert.throws(()=>assertManufacturingComplete(changed),/production runtime changed/);
+  const mutatedSubset=structuredClone(subset); mutatedSubset.accounting.productionPackageModifications=1;
+  assert.throws(()=>assertManufacturingComplete(mutatedSubset,{expectedCount:11,subset:true}),/production mutation occurred/);
+});
+
+test('final certification runs determinism before compatibility and gates readiness at each stage',async()=>{
+  const events=[];
+  const manufacturing={accounting:{lp118Successful:226,lp116Manufactured:226,certified:226,failed:0,pending:0,supabaseWrites:0,runtimeActivations:0,productionPackageModifications:0},productionRuntimeManifest:{unchanged:true,countyCountAfter:28}};
+  const result=await runCertificationChecks({manufacturing,
+    runDeterminism:async()=>{events.push('determinism');return CONTROL_FIPS.map(countyFips=>({countyFips,determinismStatus:'PASS'}));},
+    runCompatibility:async()=>{events.push('compatibility');return COMPATIBILITY_FIPS.map(countyFips=>({countyFips,status:'PASS'}));}
+  });
+  assert.deepEqual(events,['determinism','compatibility']);
+  assert.equal(result.readinessAfterDeterminism,'BLOCKED_FOR_STATEWIDE_ROADWAY');
+  assert.equal(result.readiness,'READY_FOR_STATEWIDE_ROADWAY_PUBLICATION');
 });
 
 test('final readiness requires manufacturing, determinism, compatibility, and production safety together',()=>{

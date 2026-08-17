@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CONTROL_FIPS, DEFAULT_GDAL_EXECUTABLE, OWNER_OUTPUT_ROOT, OWNER_SOURCE_ROOT, collectEvidence, executeOwner, loadPlan, summarize } from './statewide-roadway-candidates.mjs';
+import { CONTROL_FIPS, DEFAULT_GDAL_EXECUTABLE, OWNER_OUTPUT_ROOT, OWNER_SOURCE_ROOT, assertManufacturingComplete, collectEvidence, executeOwner, loadPlan, summarize } from './statewide-roadway-candidates.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const REPORTS=join(ROOT,'reports/lp209');
@@ -41,7 +41,16 @@ export async function certifyCandidate(path,countyFips){
 
 export function finalReadiness(manufacturing,controls,compatibility){
   const a=manufacturing.accounting, runtime=manufacturing.productionRuntimeManifest;
-  return a.lp118Successful===226&&a.lp116Manufactured===226&&a.certified===226&&a.failed===0&&a.pending===0&&controls.every(x=>x.determinismStatus==='PASS')&&compatibility.every(x=>x.status==='PASS')&&runtime.unchanged&&runtime.countyCountAfter===28&&a.supabaseWrites===0&&a.runtimeActivations===0&&a.productionPackageModifications===0?'READY_FOR_STATEWIDE_ROADWAY_PUBLICATION':'BLOCKED_FOR_STATEWIDE_ROADWAY';
+  return a.lp118Successful===226&&a.lp116Manufactured===226&&a.certified===226&&a.failed===0&&a.pending===0&&controls.length===CONTROL_FIPS.length&&new Set(controls.map(x=>x.countyFips)).size===CONTROL_FIPS.length&&CONTROL_FIPS.every(fips=>controls.some(x=>x.countyFips===fips&&x.determinismStatus==='PASS'))&&compatibility.length===COMPATIBILITY_FIPS.length&&new Set(compatibility.map(x=>x.countyFips)).size===COMPATIBILITY_FIPS.length&&COMPATIBILITY_FIPS.every(fips=>compatibility.some(x=>x.countyFips===fips&&x.status==='PASS'))&&runtime.unchanged&&runtime.countyCountAfter===28&&a.supabaseWrites===0&&a.runtimeActivations===0&&a.productionPackageModifications===0?'READY_FOR_STATEWIDE_ROADWAY_PUBLICATION':'BLOCKED_FOR_STATEWIDE_ROADWAY';
+}
+
+export async function runCertificationChecks({manufacturing,runDeterminism,runCompatibility}) {
+  invariant(finalReadiness(manufacturing,[],[])==='BLOCKED_FOR_STATEWIDE_ROADWAY','final readiness must begin blocked');
+  const controls=await runDeterminism();
+  const readinessAfterDeterminism=finalReadiness(manufacturing,controls,[]);
+  invariant(readinessAfterDeterminism==='BLOCKED_FOR_STATEWIDE_ROADWAY','final readiness must remain blocked before compatibility');
+  const compatibility=await runCompatibility();
+  return {controls,compatibility,readinessAfterDeterminism,readiness:finalReadiness(manufacturing,controls,compatibility)};
 }
 
 export async function runOwnerFinal({sourceRoot=OWNER_SOURCE_ROOT,outputRoot=resolve(ROOT,OWNER_OUTPUT_ROOT),determinismRoot=resolve(ROOT,'owner-local/lp209-roadway-determinism'),gdal=DEFAULT_GDAL_EXECUTABLE}={}){
@@ -49,15 +58,19 @@ export async function runOwnerFinal({sourceRoot=OWNER_SOURCE_ROOT,outputRoot=res
   const plan=await loadPlan({sourceRoot,outputRoot}); const baseline=await collectEvidence(plan.rows,outputRoot);
   invariant(baseline.length===226,'main owner workspace must contain 226 LP118/LP116 checkpoints');
   const manufacturing=summarize(plan.rows,baseline,plan,{ownerWorkspace:outputRoot,evidenceState:'OWNER_MANUFACTURING_COMPLETE'});
-  invariant(manufacturing.accounting.lp118Successful===226&&manufacturing.accounting.certified===226&&manufacturing.accounting.pending===0,'owner manufacturing is incomplete');
-  await executeOwner({mode:'build',sourceRoot,outputRoot:determinismRoot,gdal,countyFips:CONTROL_FIPS});
-  const controlRows=plan.rows.filter(x=>CONTROL_FIPS.includes(x.countyFips)); const reruns=await collectEvidence(controlRows,determinismRoot);
-  const baseMap=new Map(baseline.map(x=>[x.row.countyFips,x])),rerunMap=new Map(reruns.map(x=>[x.row.countyFips,x]));
-  const controls=controlRows.map(row=>compareControl(row,baseMap.get(row.countyFips),rerunMap.get(row.countyFips)));
-  const compatibility=[]; for(const fips of COMPATIBILITY_FIPS){const x=baseMap.get(fips);invariant(x,`missing compatibility county ${fips}`);compatibility.push(await certifyCandidate(resolve(x.x.output.path),fips));}
-  const readiness=finalReadiness(manufacturing,controls,compatibility);
+  assertManufacturingComplete(manufacturing);
+  const controlRows=plan.rows.filter(x=>CONTROL_FIPS.includes(x.countyFips));
+  const baseMap=new Map(baseline.map(x=>[x.row.countyFips,x]));
+  const {controls,compatibility,readiness}=await runCertificationChecks({manufacturing,
+    runDeterminism:async()=>{
+      await executeOwner({mode:'build',sourceRoot,outputRoot:determinismRoot,gdal,countyFips:CONTROL_FIPS});
+      const reruns=await collectEvidence(controlRows,determinismRoot); const rerunMap=new Map(reruns.map(x=>[x.row.countyFips,x]));
+      return controlRows.map(row=>compareControl(row,baseMap.get(row.countyFips),rerunMap.get(row.countyFips)));
+    },
+    runCompatibility:async()=>{const results=[];for(const fips of COMPATIBILITY_FIPS){const x=baseMap.get(fips);invariant(x,`missing compatibility county ${fips}`);results.push(await certifyCandidate(resolve(x.x.output.path),fips));}return results;}
+  });
   for(const county of manufacturing.counties){const control=controls.find(x=>x.countyFips===county.countyFips);if(control)county.determinismStatus=control.determinismStatus;}
-  const candidateManifest={schemaVersion:'gridly.lp209.statewide-roadway-candidate-manifest.v1',generatedAt:new Date().toISOString(),certificationComplete:true,counties:manufacturing.counties};
+  const candidateManifest={schemaVersion:'gridly.lp209.statewide-roadway-candidate-manifest.v1',generatedAt:new Date().toISOString(),certificationComplete:readiness==='READY_FOR_STATEWIDE_ROADWAY_PUBLICATION',counties:manufacturing.counties};
   const manufacturingReport={...manufacturing,counties:undefined,determinism:{status:controls.every(x=>x.determinismStatus==='PASS')?'PASS':'FAIL',controls:CONTROL_FIPS},downstreamCompatibility:{status:compatibility.every(x=>x.status==='PASS')?'PASS':'FAIL',counties:COMPATIBILITY_FIPS},readiness};
   await mkdir(REPORTS,{recursive:true}); await Promise.all([
     writeFile(join(REPORTS,'statewide-roadway-candidate-manifest.json'),json(candidateManifest)),writeFile(join(REPORTS,'statewide-roadway-missing-cohort-manufacturing.json'),json(manufacturingReport)),
