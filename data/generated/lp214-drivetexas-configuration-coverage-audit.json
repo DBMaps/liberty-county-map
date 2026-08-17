@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "gridly.lp214.drivetexas-configuration-coverage-audit.v1",
+  "milestone": "LP214_PHASE_2.3",
+  "mode": "STATIC_REPOSITORY_AUDIT_NO_NETWORK_NO_PRODUCTION_CHANGE",
+  "answer": "DriveTexas is not runtime-registered by county or community. The live connector is a statewide shared in-memory feed, spatially projected after fetch. A browser can show records only when the shared key was supplied to that page and a fetch succeeded (including records retained in memory after a later failure), or through the separate legacy TxDOT runtime store; repository snapshots and fixtures are audit-only and cannot render. A fresh Dallas page with configurationSource none had none of the three accepted script-global sources, so it could not fetch.",
+  "configuration": {
+    "sourcesInPrecedenceOrder": [
+      "GRIDLY_CONFIG.driveTexas.apiKey",
+      "GRIDLY_CONFIG.txdot.apiKey",
+      "GRIDLY_TXDOT_API_KEY"
+    ],
+    "endpointTemplatePrecedence": [
+      "GRIDLY_CONFIG.driveTexas.endpointTemplate",
+      "GRIDLY_CONFIG.txdot.endpointTemplate",
+      "built-in DriveTexas conditions GeoJSON endpoint template"
+    ],
+    "substitution": "The selected key is URL-encoded into the {api_key} placeholder.",
+    "noneMeaning": "All three accepted key values were absent, non-string, empty, or whitespace when runtime diagnostics were read.",
+    "environmentVariablesReadDirectlyByBrowser": [],
+    "supabaseConfigurationSources": [],
+    "generatedRuntimeConfigurationSources": [],
+    "urlKeyOrQueryConfigurationSources": [],
+    "countyOrCommunityKeySources": [],
+    "browserPersistence": {
+      "keyPersisted": false,
+      "localStorage": "No key or record persistence. localStorage may only opt in loading js/gridly.local.js through gridlyLocal=true.",
+      "sessionStorage": "Not used.",
+      "indexedDB": "Not used.",
+      "cookies": "Not used.",
+      "cacheStorage": "Not used; connector requests use cache no-store.",
+      "inPrivateConclusion": "Private browsing does not erase a DriveTexas key because Gridly never stores it in browser storage. It can remove the optional gridlyLocal loader opt-in flag, but the key must still come from the local script/global, not storage. InPrivate is therefore not the direct cause of configurationSource none."
+    },
+    "localDevelopment": "Unconfigured by default. An owner may create the gitignored js/gridly.local.js using the documented PowerShell setup and opt in to loading it with the gridlyLocal URL/localStorage flag or GRIDLY_ENABLE_LOCAL_OVERRIDES global.",
+    "deployment": "No tracked build, GitHub workflow, GitHub Pages, preview, production, Supabase, or hosting configuration injects a DriveTexas key. Repository evidence does not support claiming deployed Gridly is configured differently. A deployment may serve an untracked/generated local override only through an external process not evidenced here.",
+    "secretValuesIncluded": false
+  },
+  "activation": {
+    "scope": "global page runtime",
+    "path": "gridlyOfficialProviderActivation schedules activate, which calls the same gridlyDriveTexasConnector.startPolling for every selected area",
+    "activationDoesNotProveConfiguration": true,
+    "dallasExplanation": "activated and driveTexasActivated only prove startPolling existed and was invoked. startPolling schedules fetchNow; buildEndpoint then fails because no accepted key source exists."
+  },
+  "geographicApplicability": {
+    "classification": "STATEWIDE_SHARED",
+    "countyAllowlist": false,
+    "communityAllowlist": false,
+    "placeGeoidAllowlist": false,
+    "fipsAllowlist": false,
+    "activationCohortOrRolloutGate": false,
+    "selectionBehavior": "One complete statewide normalized array is filtered/proven against the selected awareness area by coordinates, geometry, radius, and limited text fallback.",
+    "legacyMetadata": "The intelligence.drivetexas package lists eleven Southeast Texas supportedCommunities, but explicitly marks runtimeActivationPerformed and transportationIntelligenceActivated false and behavior/read-path changes false. It is controlled-migration metadata, not a live connector gate."
+  },
+  "visibleDataPaths": [
+    {
+      "path": "live DriveTexas connector -> complete in-memory records -> LP039 authority -> consumer projection",
+      "visibleWithApiKeyConfiguredFalse": false,
+      "qualification": "A new fetch cannot start without a key."
+    },
+    {
+      "path": "connector retained last-successful records after a later fetch/configuration failure",
+      "visibleWithApiKeyConfiguredFalse": true,
+      "qualification": "Only within the same loaded page because the complete and awareness arrays are module memory; no reload/browser persistence."
+    },
+    {
+      "path": "provider normalizedStore fallback",
+      "visibleWithApiKeyConfiguredFalse": "ONLY_IF_ALREADY_POPULATED_IN_MEMORY",
+      "qualification": "The authority resolver prefers connector records; provider storage is also page memory and has no static or persistent seed."
+    },
+    {
+      "path": "legacy gridlyTxdot service -> gridlyExternalRoadConditions -> futureTxdotIncidents/futureTxdotConstruction/map and unified incident consumers",
+      "visibleWithApiKeyConfiguredFalse": "POSSIBLE_DIAGNOSTIC_MISMATCH_ONLY",
+      "qualification": "This is a separate official-roadway runtime path sharing GRIDLY_CONFIG.txdot.apiKey/GRIDLY_TXDOT_API_KEY. If its page-memory store was prepopulated or its configuration timing differed, TxDOT-labelled records can render even when the newer connector audit is unconfigured; it has no browser persistence and clears its arrays on its own missing-key/fetch failure."
+    },
+    {
+      "path": "LP039 authority snapshot",
+      "visibleWithApiKeyConfiguredFalse": false,
+      "qualification": "It derives from loaded connector/provider records; injected records exist for audit/test calls, not normal production loading."
+    },
+    {
+      "path": "static exports, replay fixtures, LP044 inventory, county evidence, or package evidence",
+      "visibleWithApiKeyConfiguredFalse": false,
+      "qualification": "All discovered material is audit-only/non-production or passive generated evidence and is not loaded into consumer stores."
+    },
+    {
+      "path": "Supabase, community reports, weather, crossings, county packages, or another official-source layer",
+      "visibleWithApiKeyConfiguredFalse": false,
+      "qualification": "These can independently show their own information but do not manufacture DriveTexas connector records."
+    }
+  ],
+  "representativeCounties": [
+    {
+      "county": "Dallas",
+      "community": "Dallas",
+      "profileKey": "place-4819000",
+      "connector": "shared gridlyDriveTexasConnector",
+      "keyMechanism": "same three-source global precedence",
+      "activation": "same global activation",
+      "provider": "shared gridlyDriveTexasProvider",
+      "authority": "shared LP039 spatial authority",
+      "countyRegistration": false,
+      "staticOrRetainedExplanation": "No renderable static fallback; only same-page retained memory after an earlier success. Owner evidence instead proves no key and no retained data."
+    },
+    {
+      "county": "Liberty",
+      "community": "county/community selections including Dayton",
+      "connector": "same",
+      "keyMechanism": "same",
+      "activation": "same",
+      "provider": "same",
+      "authority": "same",
+      "countyRegistration": false,
+      "staticOrRetainedExplanation": "Numerous Liberty DriveTexas fixtures/exports and historical evidence exist, but are audit-only and cannot render. Same-page live retained memory or the separate TxDOT runtime store can explain an observation."
+    },
+    {
+      "county": "Harris",
+      "community": "Houston",
+      "profileKey": "place-4835000",
+      "connector": "same",
+      "keyMechanism": "same",
+      "activation": "same",
+      "provider": "same",
+      "authority": "same",
+      "countyRegistration": false,
+      "staticOrRetainedExplanation": "Legacy package metadata names harris-tx but is not a runtime gate or fallback. Only live/page-memory paths can render."
+    },
+    {
+      "county": "Montgomery",
+      "community": "representative additional county appearing in repository DriveTexas fixtures/metadata",
+      "connector": "same",
+      "keyMechanism": "same",
+      "activation": "same",
+      "provider": "same",
+      "authority": "same",
+      "countyRegistration": false,
+      "staticOrRetainedExplanation": "Repository export samples mention Montgomery but are explicitly audit-only/non-production; county evidence also says DriveTexas paused. They do not prove consumer-visible production records."
+    }
+  ],
+  "defectsAndRisks": [
+    "No tracked deployment-time key injection exists, so an ordinary fresh checkout/deployment is unconfigured unless an external owner process supplies a script global.",
+    "The optional local override loader is opt-in and its dynamic script is not a documented deployment injection mechanism.",
+    "Two shared live paths (the newer DriveTexas connector and legacy TxDOT service) consume overlapping globals but maintain separate in-memory stores and diagnostics, which can make owner observations appear inconsistent.",
+    "Legacy Southeast Texas supportedCommunities metadata resembles an allowlist despite being explicitly non-activating; it can mislead audits but does not restrict runtime.",
+    "Retained records survive connector failure in page memory, so visible data does not prove the current fetch or current configuration succeeded."
+  ],
+  "recommendation": "Treat Dallas as a shared configuration/deployment failure, not a county-registration defect. First identify the exact deployed script/global injection process and capture both the DriveTexas connector audit and legacy gridlyTxdot diagnostics in the same page. Do not add county registrations or patch runtime in LP214 Phase 2.3."
+}
