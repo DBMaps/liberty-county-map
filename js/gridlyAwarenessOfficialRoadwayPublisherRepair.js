@@ -120,7 +120,17 @@
 
   function readConsumerVisibleRecords(fallbackRecords) {
     try {
-      const selection = globalScope.gridlySelectConsumerVisibleDriveTexasSituations?.();
+      // The connector getter is the current-awareness view.  Inject that view
+      // into the authority selector so the consumer bridge does not silently
+      // re-resolve the connector's statewide retained cache (or a differently
+      // scoped provider cache) while classifying the current community.
+      const selectionInput = {
+        records: Array.isArray(fallbackRecords) ? fallbackRecords : []
+      };
+      if (typeof globalScope.getGridlySelectedAwarenessArea === "function") {
+        selectionInput.selectedAwarenessArea = globalScope.getGridlySelectedAwarenessArea();
+      }
+      const selection = globalScope.gridlySelectConsumerVisibleDriveTexasSituations?.(selectionInput);
       if (Array.isArray(selection?.consumerVisibleSituations)) return selection.consumerVisibleSituations;
     } catch (_error) {}
     return Array.isArray(fallbackRecords) ? fallbackRecords : [];
