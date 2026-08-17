@@ -99452,6 +99452,12 @@ function evaluateRoadNameCandidate(value = "", roadEvaluationContext = null) {
   return { normalized, valid: true, reason: "ok" };
 }
 
+function getRoadwayFeatureNameCandidates(feature, roadEvaluationContext = null) {
+  const properties = feature?.properties || {};
+  return [properties.name, properties.ref, properties.highway, properties.FULLNAME]
+    .map((value) => evaluateRoadNameCandidate(value, roadEvaluationContext));
+}
+
 
 function normalizeRoadDisplayCase(value = "") {
   const text = normalizeRoadNameCandidate(value);
@@ -99566,8 +99572,7 @@ function collectNearbyRoadCandidates(lat, lng, maxDistanceMiles = 0.45, maxCandi
   const evaluationContext = roadEvaluationContext || buildGridlyRoadEvaluationContext();
   const bestByRoadKey = new Map();
   for (const feature of roadwaySegmentFeatures) {
-    const props = feature?.properties || {};
-    const candidates = [props?.name, props?.ref, props?.highway].map((value) => evaluateRoadNameCandidate(value, evaluationContext));
+    const candidates = getRoadwayFeatureNameCandidates(feature, evaluationContext);
     const selected = candidates.find((entry) => entry.valid);
     if (!selected?.normalized) continue;
     const roadName = selected.normalized;
@@ -99827,8 +99832,7 @@ function resolveNearestRoadName(lat, lng) {
     resolverCache.resolveNearestRoadNameMaxCandidateScanDurationMs = Math.max(Number(resolverCache.resolveNearestRoadNameMaxCandidateScanDurationMs || 0), Number(stageTimings.roadway_segment_scan || 0));
   }
   if (nearestSegmentMatch?.feature) {
-    const props = nearestSegmentMatch.feature?.properties || {};
-    const segmentCandidates = [props?.name, props?.ref, props?.highway].map((value) => evaluateRoadNameCandidate(value, roadEvaluationContext));
+    const segmentCandidates = getRoadwayFeatureNameCandidates(nearestSegmentMatch.feature, roadEvaluationContext);
     const selectedSegment = runNestedLookupOperation({ functionName: "resolveNearestRoadName", collectionName: "segmentCandidates", collectionLength: segmentCandidates.length, lookupType: "find" }, () => segmentCandidates.find((entry) => entry.valid));
     const rejectedSegments = runNestedLookupOperation({ functionName: "resolveNearestRoadName", collectionName: "segmentCandidates", collectionLength: segmentCandidates.length, lookupType: "filter" }, () => segmentCandidates.filter((entry) => entry.normalized && !entry.valid));
     debugState.rejectedCandidates.push(...rejectedSegments.map((entry) => entry.normalized));
