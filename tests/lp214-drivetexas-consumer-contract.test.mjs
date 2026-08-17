@@ -1,0 +1,48 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import test from "node:test";
+import { execFileSync } from "node:child_process";
+import { buildAudit } from "../tools/lp214/audit-drivetexas-consumer-contract.mjs";
+
+const artifact = JSON.parse(fs.readFileSync("data/generated/lp214-drivetexas-consumer-contract-audit.json", "utf8"));
+const taxonomy = new Set(["HEALTH_AWARE", "ARRAY_ONLY_AMBIGUOUS", "ARRAY_ONLY_SAFE_BY_UPSTREAM_GATE", "RETAINED_DATA_WITH_HEALTH", "NOT_USER_VISIBLE", "LEGACY_OR_UNUSED", "UNKNOWN"]);
+const surfaceTaxonomy = new Set(["VISIBLE_FALSE_QUIET_POSSIBLE", "VISIBLE_STALE_WITHOUT_WARNING_POSSIBLE", "VISIBLE_FAILURE_DISCLOSED", "NOT_AFFECTED", "NOT_CONNECTED_TO_DRIVETEXAS", "OWNER_RUNTIME_CONFIRMATION_REQUIRED"]);
+
+test("artifact is deterministic and current", () => {
+  assert.deepEqual(artifact, buildAudit());
+  execFileSync(process.execPath, ["tools/lp214/audit-drivetexas-consumer-contract.mjs", "--verify"]);
+});
+
+test("every discovered consumer has one valid classification", () => {
+  const ids = artifact.implementationCallGraph.map((entry) => entry.id);
+  assert.equal(new Set(ids).size, ids.length);
+  assert(ids.length > 0);
+  for (const entry of artifact.implementationCallGraph) {
+    assert(entry.file && entry.function && entry.consumerSurface && entry.dataAccessor);
+    assert(taxonomy.has(entry.classification));
+    if (entry.classification === "ARRAY_ONLY_AMBIGUOUS") assert.equal(entry.sourceHealthConsulted, false);
+    if (entry.contract === "records-only" && entry.sourceHealthConsulted === false) assert.notEqual(entry.classification, "HEALTH_AWARE");
+  }
+});
+
+test("risk, retention, LP043 and repair classifications are stable", () => {
+  assert.equal(artifact.quietStateRisk.classification, "VISIBLE_FALSE_QUIET_POSSIBLE");
+  assert.equal(artifact.quietStateRisk.actualPathExists, true);
+  assert.equal(artifact.retainedDataRisk.classification, "VISIBLE_STALE_WITHOUT_WARNING_POSSIBLE");
+  assert.equal(artifact.lp043Classification.classification, "STALE_FIXTURE");
+  assert(artifact.lp043Classification.evidence.length >= 3);
+  assert.equal(artifact.recommendedRepairBoundary.boundary, "E_AWARENESS_CONSUMER_BRIDGE_WITH_SHARED_SOURCE_STATUS_ENVELOPE");
+  for (const entry of artifact.consumerSurfaceClassifications) assert(surfaceTaxonomy.has(entry.classification));
+});
+
+test("Dallas remains a multi-county browser control", () => {
+  const dallas = artifact.laterCertificationPlan.representativeBrowserControls.find((item) => item.placeGeoid === "4819000");
+  assert(dallas);
+  assert.equal(dallas.geography, "multi-county");
+});
+
+test("audit modifies no production source", () => {
+  assert.equal(artifact.productionSourceModified, false);
+  const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim();
+  assert.equal(changed, "");
+});
