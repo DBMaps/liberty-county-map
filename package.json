@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp209": "node tools/lp209/statewide-roadway-candidates.mjs --write-plan",
+    "verify:lp209": "node tools/lp209/statewide-roadway-candidates.mjs --verify",
+    "test:lp209": "node --test tests/lp209-statewide-roadway-candidates.test.mjs",
     "build:lp208": "node tools/lp208/statewide-tiger2025-roadway-source.mjs --verify",
     "verify:lp208": "node --test tests/lp208-statewide-tiger2025-roadway-source.test.mjs",
     "test:lp208": "node --test tests/lp208-statewide-tiger2025-roadway-source.test.mjs",
