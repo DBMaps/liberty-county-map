@@ -1,0 +1,623 @@
+{
+  "schemaVersion": "gridly.lp2022.consumer-selector-rca.v1",
+  "generatedAt": "2026-08-17T00:00:00.000Z",
+  "observationalOnly": true,
+  "results": {
+    "grayson": {
+      "countyId": "grayson-tx",
+      "community": "Sherman",
+      "area": {
+        "lat": null,
+        "lng": null,
+        "source": "none"
+      },
+      "classifications": {
+        "PUBLIC_ROADWAY": 240,
+        "PRIVATE_ROAD": 0,
+        "INDUSTRIAL": 0,
+        "RAIL_YARD": 0,
+        "TEMPORARY_ACCESS": 0,
+        "UNKNOWN_UNCLASSIFIED": 0
+      },
+      "stages": {
+        "input": 240,
+        "countyMatch": 240,
+        "classificationEligible": 240,
+        "reportable": 240,
+        "awarenessOwned": 0,
+        "localityEligible": 0,
+        "geometryEligible": 0,
+        "fraIdentityValidAndDeduped": 0,
+        "hiddenLegacyEligibility": 0,
+        "final": 0
+      },
+      "rejection": {
+        "county": 0,
+        "classification": 0,
+        "reportability": 0,
+        "awarenessOwnership": 240,
+        "duplicateFraIdentity": 0
+      },
+      "representative": [
+        {
+          "id": "763684G",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "SHERMAN",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 33.5253219999236,
+          "lng": -96.604599000284
+        },
+        {
+          "id": "765401N",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "SHERMAN",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 33.4879379998386,
+          "lng": -96.6047289999803
+        },
+        {
+          "id": "672068T",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "SHERMAN",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 33.6289559997878,
+          "lng": -96.6018769998702
+        }
+      ]
+    },
+    "dallas": {
+      "countyId": "dallas-tx",
+      "community": "Dallas",
+      "area": {
+        "lat": 32.7767,
+        "lng": -96.797,
+        "source": "consumerAwarenessAreas.focus"
+      },
+      "classifications": {
+        "PUBLIC_ROADWAY": 789,
+        "PRIVATE_ROAD": 0,
+        "INDUSTRIAL": 0,
+        "RAIL_YARD": 0,
+        "TEMPORARY_ACCESS": 0,
+        "UNKNOWN_UNCLASSIFIED": 0
+      },
+      "stages": {
+        "input": 789,
+        "countyMatch": 789,
+        "classificationEligible": 789,
+        "reportable": 789,
+        "awarenessOwned": 263,
+        "localityEligible": 263,
+        "geometryEligible": 263,
+        "fraIdentityValidAndDeduped": 263,
+        "hiddenLegacyEligibility": 263,
+        "final": 263
+      },
+      "rejection": {
+        "county": 0,
+        "classification": 0,
+        "reportability": 0,
+        "awarenessOwnership": 526,
+        "duplicateFraIdentity": 0
+      },
+      "representative": [
+        {
+          "id": "021991G",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "DALLAS",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 32.7498469997839,
+          "lng": -96.8028789999742
+        },
+        {
+          "id": "788402K",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "DALLAS",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 32.8138960003744,
+          "lng": -96.9029079995739
+        },
+        {
+          "id": "788400W",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "DALLAS",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 32.8140489998601,
+          "lng": -96.9091109995614
+        }
+      ]
+    },
+    "liberty": {
+      "countyId": "liberty-tx",
+      "community": "Liberty",
+      "area": {
+        "lat": 30.0579,
+        "lng": -94.7955,
+        "source": "consumerAwarenessAreas.focus"
+      },
+      "classifications": {
+        "PUBLIC_ROADWAY": 80,
+        "PRIVATE_ROAD": 28,
+        "INDUSTRIAL": 5,
+        "RAIL_YARD": 1,
+        "TEMPORARY_ACCESS": 1,
+        "UNKNOWN_UNCLASSIFIED": 0
+      },
+      "stages": {
+        "input": 115,
+        "countyMatch": 115,
+        "classificationEligible": 80,
+        "reportable": 80,
+        "awarenessOwned": 25,
+        "localityEligible": 25,
+        "geometryEligible": 25,
+        "fraIdentityValidAndDeduped": 25,
+        "hiddenLegacyEligibility": 25,
+        "final": 25
+      },
+      "rejection": {
+        "county": 0,
+        "classification": 35,
+        "reportability": 0,
+        "awarenessOwnership": 55,
+        "duplicateFraIdentity": 0
+      },
+      "representative": [
+        {
+          "id": "024381J",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "CLEVELAND",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 30.3383840003665,
+          "lng": -95.1107550003252
+        },
+        {
+          "id": "024383X",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "CLEVELAND",
+          "classification": "PRIVATE_ROAD",
+          "lat": 30.3145619996584,
+          "lng": -95.2056270000509
+        },
+        {
+          "id": "024384E",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "CLEVELAND",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 30.3477549997396,
+          "lng": -95.0872539999042
+        }
+      ]
+    },
+    "el_paso": {
+      "countyId": "el-paso-tx",
+      "community": "El Paso",
+      "area": {
+        "lat": null,
+        "lng": null,
+        "source": "none"
+      },
+      "classifications": {
+        "PUBLIC_ROADWAY": 198,
+        "PRIVATE_ROAD": 0,
+        "INDUSTRIAL": 0,
+        "RAIL_YARD": 0,
+        "TEMPORARY_ACCESS": 0,
+        "UNKNOWN_UNCLASSIFIED": 0
+      },
+      "stages": {
+        "input": 198,
+        "countyMatch": 198,
+        "classificationEligible": 198,
+        "reportable": 198,
+        "awarenessOwned": 0,
+        "localityEligible": 0,
+        "geometryEligible": 0,
+        "fraIdentityValidAndDeduped": 0,
+        "hiddenLegacyEligibility": 0,
+        "final": 0
+      },
+      "rejection": {
+        "county": 0,
+        "classification": 0,
+        "reportability": 0,
+        "awarenessOwnership": 198,
+        "duplicateFraIdentity": 0
+      },
+      "representative": [
+        {
+          "id": "310731L",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "FORT BLISS",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 31.8290899997289,
+          "lng": -106.432235999914
+        },
+        {
+          "id": "310744M",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "FORT BLISS",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 31.8400989998771,
+          "lng": -106.425697000366
+        },
+        {
+          "id": "310745U",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "FORT BLISS",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 31.8400989998771,
+          "lng": -106.425697000366
+        }
+      ]
+    },
+    "bexar": {
+      "countyId": "bexar-tx",
+      "community": "San Antonio",
+      "area": {
+        "lat": 29.4241,
+        "lng": -98.4936,
+        "source": "consumerAwarenessAreas.focus"
+      },
+      "classifications": {
+        "PUBLIC_ROADWAY": 380,
+        "PRIVATE_ROAD": 0,
+        "INDUSTRIAL": 0,
+        "RAIL_YARD": 0,
+        "TEMPORARY_ACCESS": 0,
+        "UNKNOWN_UNCLASSIFIED": 0
+      },
+      "stages": {
+        "input": 380,
+        "countyMatch": 380,
+        "classificationEligible": 380,
+        "reportable": 380,
+        "awarenessOwned": 234,
+        "localityEligible": 234,
+        "geometryEligible": 234,
+        "fraIdentityValidAndDeduped": 234,
+        "hiddenLegacyEligibility": 234,
+        "final": 234
+      },
+      "rejection": {
+        "county": 0,
+        "classification": 0,
+        "reportability": 0,
+        "awarenessOwnership": 146,
+        "duplicateFraIdentity": 0
+      },
+      "representative": [
+        {
+          "id": "441034L",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "CONVERSE",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 29.518276299696,
+          "lng": -98.3143854001649
+        },
+        {
+          "id": "311228J",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "SAN ANTONIO",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 29.3798820003594,
+          "lng": -98.6178790000659
+        },
+        {
+          "id": "311227C",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "SAN ANTONIO",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 29.2693000000368,
+          "lng": -98.6878970000087
+        }
+      ]
+    },
+    "mclennan": {
+      "countyId": "mclennan-tx",
+      "community": "Waco",
+      "area": {
+        "lat": null,
+        "lng": null,
+        "source": "none"
+      },
+      "classifications": {
+        "PUBLIC_ROADWAY": 169,
+        "PRIVATE_ROAD": 0,
+        "INDUSTRIAL": 0,
+        "RAIL_YARD": 0,
+        "TEMPORARY_ACCESS": 0,
+        "UNKNOWN_UNCLASSIFIED": 0
+      },
+      "stages": {
+        "input": 169,
+        "countyMatch": 169,
+        "classificationEligible": 169,
+        "reportable": 169,
+        "awarenessOwned": 0,
+        "localityEligible": 0,
+        "geometryEligible": 0,
+        "fraIdentityValidAndDeduped": 0,
+        "hiddenLegacyEligibility": 0,
+        "final": 0
+      },
+      "rejection": {
+        "county": 0,
+        "classification": 0,
+        "reportability": 0,
+        "awarenessOwnership": 169,
+        "duplicateFraIdentity": 0
+      },
+      "representative": [
+        {
+          "id": "023055C",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "MCGREGOR",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 31.3880654002333,
+          "lng": -97.3818039999068
+        },
+        {
+          "id": "023051A",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "MOODY",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 31.321350599719,
+          "lng": -97.35767999987
+        },
+        {
+          "id": "023054V",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "MOODY",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 31.3630320999907,
+          "lng": -97.381362000041
+        }
+      ]
+    },
+    "smith": {
+      "countyId": "smith-tx",
+      "community": "Tyler",
+      "area": {
+        "lat": null,
+        "lng": null,
+        "source": "none"
+      },
+      "classifications": {
+        "PUBLIC_ROADWAY": 123,
+        "PRIVATE_ROAD": 0,
+        "INDUSTRIAL": 0,
+        "RAIL_YARD": 0,
+        "TEMPORARY_ACCESS": 0,
+        "UNKNOWN_UNCLASSIFIED": 0
+      },
+      "stages": {
+        "input": 123,
+        "countyMatch": 123,
+        "classificationEligible": 123,
+        "reportable": 123,
+        "awarenessOwned": 0,
+        "localityEligible": 0,
+        "geometryEligible": 0,
+        "fraIdentityValidAndDeduped": 0,
+        "hiddenLegacyEligibility": 0,
+        "final": 0
+      },
+      "rejection": {
+        "county": 0,
+        "classification": 0,
+        "reportability": 0,
+        "awarenessOwnership": 123,
+        "duplicateFraIdentity": 0
+      },
+      "representative": [
+        {
+          "id": "426775K",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "TYLER",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 32.3864142000015,
+          "lng": -95.3194853002432
+        },
+        {
+          "id": "789795Y",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "TYLER",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 32.3406871998351,
+          "lng": -95.3262230996587
+        },
+        {
+          "id": "426728C",
+          "normalizedCity": "Unassigned",
+          "governedCITYNAME": "TYLER",
+          "classification": "PUBLIC_ROADWAY",
+          "lat": 32.2847177996596,
+          "lng": -95.2425539000098
+        }
+      ]
+    }
+  },
+  "statewideImpact": {
+    "activePositiveCounties": 202,
+    "countiesWithoutLegacyAwarenessBounds": 175,
+    "qualification": "Guaranteed vulnerable cohort when a selected PLACE has no explicit focus: normalized production rows expose city=Unassigned and the generated area has no coordinate fallback.",
+    "counties": [
+      "Anderson",
+      "Angelina",
+      "Aransas",
+      "Armstrong",
+      "Atascosa",
+      "Bailey",
+      "Bastrop",
+      "Bell",
+      "Bexar",
+      "Blanco",
+      "Bosque",
+      "Bowie",
+      "Brewster",
+      "Brown",
+      "Burleson",
+      "Burnet",
+      "Caldwell",
+      "Callahan",
+      "Cameron",
+      "Camp",
+      "Carson",
+      "Cass",
+      "Castro",
+      "Cherokee",
+      "Childress",
+      "Clay",
+      "Cochran",
+      "Coleman",
+      "Collin",
+      "Comal",
+      "Comanche",
+      "Cooke",
+      "Coryell",
+      "Crane",
+      "Crockett",
+      "Culberson",
+      "Dallam",
+      "Dallas",
+      "Deaf Smith",
+      "Denton",
+      "DeWitt",
+      "Donley",
+      "Duval",
+      "Eastland",
+      "Ector",
+      "Ellis",
+      "El Paso",
+      "Erath",
+      "Falls",
+      "Fannin",
+      "Fisher",
+      "Floyd",
+      "Franklin",
+      "Freestone",
+      "Frio",
+      "Gaines",
+      "Garza",
+      "Goliad",
+      "Gonzales",
+      "Gray",
+      "Grayson",
+      "Gregg",
+      "Guadalupe",
+      "Hale",
+      "Hall",
+      "Hamilton",
+      "Hansford",
+      "Hardeman",
+      "Harrison",
+      "Hartley",
+      "Hays",
+      "Hemphill",
+      "Henderson",
+      "Hidalgo",
+      "Hill",
+      "Hockley",
+      "Hood",
+      "Hopkins",
+      "Houston",
+      "Howard",
+      "Hudspeth",
+      "Hunt",
+      "Hutchinson",
+      "Irion",
+      "Jeff Davis",
+      "Jim Hogg",
+      "Jim Wells",
+      "Johnson",
+      "Kaufman",
+      "Kenedy",
+      "Kinney",
+      "Kleberg",
+      "Lamar",
+      "Lamb",
+      "Lampasas",
+      "La Salle",
+      "Lee",
+      "Leon",
+      "Limestone",
+      "Lipscomb",
+      "Live Oak",
+      "Llano",
+      "Lubbock",
+      "McCulloch",
+      "McLennan",
+      "Madison",
+      "Marion",
+      "Martin",
+      "Maverick",
+      "Medina",
+      "Midland",
+      "Milam",
+      "Mills",
+      "Mitchell",
+      "Montague",
+      "Moore",
+      "Morris",
+      "Nacogdoches",
+      "Navarro",
+      "Nolan",
+      "Nueces",
+      "Ochiltree",
+      "Oldham",
+      "Palo Pinto",
+      "Panola",
+      "Parker",
+      "Parmer",
+      "Pecos",
+      "Potter",
+      "Presidio",
+      "Randall",
+      "Reagan",
+      "Reeves",
+      "Refugio",
+      "Roberts",
+      "Robertson",
+      "Rockwall",
+      "Runnels",
+      "Rusk",
+      "Sabine",
+      "San Augustine",
+      "San Patricio",
+      "San Saba",
+      "Scurry",
+      "Shelby",
+      "Sherman",
+      "Smith",
+      "Somervell",
+      "Starr",
+      "Stephens",
+      "Swisher",
+      "Tarrant",
+      "Taylor",
+      "Terrell",
+      "Terry",
+      "Titus",
+      "Tom Green",
+      "Travis",
+      "Trinity",
+      "Upshur",
+      "Upton",
+      "Uvalde",
+      "Val Verde",
+      "Van Zandt",
+      "Victoria",
+      "Ward",
+      "Webb",
+      "Wichita",
+      "Wilbarger",
+      "Willacy",
+      "Williamson",
+      "Wilson",
+      "Winkler",
+      "Wise",
+      "Wood"
+    ]
+  }
+}
