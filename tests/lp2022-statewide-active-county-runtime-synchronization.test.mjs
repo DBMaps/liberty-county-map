@@ -14,6 +14,14 @@ const normalizedName = value => String(value || '').replace(/ County$/i, '').tri
 const byFips = new Map(Object.values(registry).filter(county => county.countyFips).map(county => [String(county.countyFips), county.id]));
 const byName = new Map(Object.values(registry).map(county => [normalizedName(county.name), county.id]));
 const recordById = new Map(production.records.map(record => [byName.get(normalizedName(record.county)), { ...record, governedCount: record.crossingCount, state: record.crossingCount ? 'ACTIVE_POSITIVE' : 'ACTIVE_EMPTY' }]));
+const projection = JSON.parse(fs.readFileSync('data/generated/gridly-statewide-consumer-community-projection-v1.json', 'utf8'));
+const presentation = JSON.parse(fs.readFileSync('data/generated/gridly-statewide-place-presentation-v1.json', 'utf8'));
+const boundaries = JSON.parse(fs.readFileSync('assets/boundaries/texas-counties-boundaries.geojson', 'utf8'));
+
+function pointInRing(lon, lat, ring) { let inside = false; for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const [xi, yi] = ring[i], [xj, yj] = ring[j]; if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) inside = !inside; } return inside; }
+function pointInGeometry(lon, lat, geometry) { const polygons = geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.coordinates; return polygons.some(polygon => pointInRing(lon, lat, polygon[0]) && !polygon.slice(1).some(hole => pointInRing(lon, lat, hole))); }
+function countyAt(lat, lon) { return boundaries.features.find(feature => pointInGeometry(lon, lat, feature.geometry))?.properties?.GEOID || null; }
+const ownerCameras = { '4805000': { lat: 30.274931186653326, lon: -97.74415969848634 }, '4819000': { lat: 32.78294501748632, lon: -96.79538726806642 }, '4824000': { lat: 31.765537409484374, lon: -106.48704528808595 }, '4827000': { lat: 32.757685346479455, lon: -97.33182907104494 } };
 
 class Runtime {
   active = null; generation = 0; inventoryCounty = null; inventory = [];
@@ -59,4 +67,60 @@ test('production lifecycle is generic and retains LP202.1 authority', () => {
   const productionLogic = source.match(/function gridlyResolveCanonicalCountyIdForOperationalContext[\s\S]*?\n\}/)[0] + source.match(/function gridlySynchronizeActiveCountyForOperationalContext[\s\S]*?\n\}/)[0];
   assert.doesNotMatch(productionLogic, /dallas|liberty/i);
   assert.match(fs.readFileSync('js/gridlyRuntimeSourceRegistryBridge.js', 'utf8'), /resolveGovernedCrossingSource/);
+});
+
+test('all 163 governed multi-county PLACE cameras resolve inside a governed membership', () => {
+  const cohort = projection.communities.filter(place => place.countyMemberships.length > 1);
+  assert.equal(cohort.length, 163);
+  for (const place of cohort) {
+    const camera = ownerCameras[place.placeGeoid] || presentation.places[place.placeGeoid];
+    const fips = countyAt(Number(camera.lat), Number(camera.lon ?? camera.lng));
+    assert.ok(fips, `${place.displayName} coordinate resolves`);
+    assert.ok(place.countyMemberships.includes(fips), `${place.displayName} resolves to governed membership ${fips}`);
+    const countyName = boundaries.features.find(feature => feature.properties.GEOID === fips)?.properties?.NAME;
+    assert.ok(byName.get(normalizedName(countyName)), `${place.displayName} resolves to canonical Gridly county`);
+  }
+});
+
+test('live canonical resolver uses governed presentation containment and fails closed safely', () => {
+  const resolver = source.match(/function gridlyResolveCanonicalCountyIdForOperationalContext[\s\S]*?\n\}/)[0];
+  const audit = { value: null };
+  const sandbox = {
+    Object, Set, Number,
+    GRIDLY_COUNTY_REGISTRY: registry,
+    gridlyPlacePresentationTargets: presentation.places,
+    gridlyOperationalCountyResolutionAudit: null,
+    gridlyResolveCanonicalPlaceGeoid: area => /^48\d{5}$/.test(String(area?.placeGeoid || '')) ? String(area.placeGeoid) : null,
+    gridlyGetGovernedPlaceConsumerPresentationCamera: geoid => ownerCameras[geoid] ? { ...ownerCameras[geoid], lng: ownerCameras[geoid].lon } : null,
+    gridlyNormalizeCountyId: value => value,
+    gridlyIsKnownCountyId: value => Boolean(registry[value]),
+    gridlyResolveCountyIdForCoordinate: (lat, lon) => ({ countyId: byFips.get(countyAt(lat, lon)) || null })
+  };
+  vm.createContext(sandbox); vm.runInContext(`${resolver};this.resolve=gridlyResolveCanonicalCountyIdForOperationalContext`, sandbox);
+  const dallas = projection.communities.find(place => place.placeGeoid === '4819000');
+  const area = { placeGeoid: dallas.placeGeoid, canonicalMultiCountyPlace: true, countyMemberships: dallas.countyMemberships };
+  assert.equal(sandbox.resolve(area, null), 'dallas-tx');
+  assert.equal(sandbox.gridlyOperationalCountyResolutionAudit.coordinateResolvedCountyFips, '48113');
+  assert.equal(sandbox.gridlyOperationalCountyResolutionAudit.membershipValidated, true);
+  assert.notEqual(dallas.countyMemberships[0], '48113', 'first membership is not selected');
+  assert.equal(sandbox.resolve({ ...area, countyMemberships: ['48085'] }, null), null, 'out-of-membership containment fails closed');
+  sandbox.gridlyGetGovernedPlaceConsumerPresentationCamera = () => null; sandbox.gridlyPlacePresentationTargets = {};
+  assert.equal(sandbox.resolve(area, null), null, 'missing governed coordinate fails closed');
+  assert.equal(sandbox.resolve({ countyId: 'liberty-tx' }, null), 'liberty-tx', 'single-county explicit fast path remains');
+});
+
+test('startup restoration and manual PLACE selection both replace Liberty with Dallas runtime', async () => {
+  for (const lifecycle of ['startup-semantic-hydration', 'manual-place-selection']) {
+    const runtime = new Runtime(); runtime.transition('liberty-tx'); await runtime.load('liberty-tx');
+    assert.equal(runtime.inventory.length, 115, lifecycle);
+    runtime.transition('dallas-tx');
+    assert.equal(runtime.inventory.length, 0, `${lifecycle} synchronously clears stale Liberty inventory`);
+    await runtime.load('dallas-tx');
+    assert.equal(runtime.active, 'dallas-tx', lifecycle);
+    assert.equal(runtime.inventoryCounty, 'dallas-tx', lifecycle);
+    assert.equal(runtime.inventory.length, 789, lifecycle);
+    assert.ok(runtime.inventory.every(row => row.countyId !== 'liberty-tx'), lifecycle);
+  }
+  assert.match(source, /startup-semantic-hydration:presentation-ready/);
+  assert.match(source, /gridlyDispatchSemanticCamera\(validation\.area, null, \{ source \}\)/);
 });

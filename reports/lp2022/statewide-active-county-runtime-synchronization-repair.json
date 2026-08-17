@@ -1,20 +1,242 @@
 {
   "milestone": "LP202.2",
   "status": "COMPLETE_STATEWIDE",
-  "baseline": { "governedCountyCount": 254, "activePositiveCount": 202, "activeEmptyCount": 52, "governedCrossingCount": 16099, "observedDefect": "A semantic PLACE camera and awareness selection could move to Dallas while GRIDLY_ACTIVE_COUNTY_ID and its Liberty inventory remained unchanged." },
-  "rootCause": { "file": "js/app.js", "function": "gridlyDispatchSemanticCamera", "condition": "PLACE and canonical multi-county PLACE branches committed presentation state without invoking gridlySetActiveCountyContext; startup canonical PLACE restoration likewise bypassed the transition owner." },
+  "baseline": {
+    "governedCountyCount": 254,
+    "activePositiveCount": 202,
+    "activeEmptyCount": 52,
+    "governedCrossingCount": 16099,
+    "observedDefect": "A semantic PLACE camera and awareness selection could move to Dallas while GRIDLY_ACTIVE_COUNTY_ID and its Liberty inventory remained unchanged."
+  },
+  "rootCause": {
+    "file": "js/app.js",
+    "function": "gridlyDispatchSemanticCamera",
+    "condition": "PLACE and canonical multi-county PLACE branches committed presentation state without invoking gridlySetActiveCountyContext; startup canonical PLACE restoration likewise bypassed the transition owner."
+  },
   "runtimeOwnerBefore": "gridlySetActiveCountyContext owned reload behavior, but not every authoritative semantic-location path called it.",
   "runtimeOwnerAfter": "gridlySynchronizeActiveCountyForOperationalContext resolves governed identity and delegates changed counties exactly once to gridlySetActiveCountyContext.",
   "canonicalCountyIdentitySource": "Explicit governed county ID/FIPS where present; otherwise the established gridlyResolveLocationContext statewide coordinate containment result. Multi-county membership order is never used.",
-  "transitionLifecycle": ["authoritative operational area", "canonical county resolution", "gridlySetActiveCountyContext", "generation increment and stale inventory clear", "LP202.1 governed crossing resolution/load", "county-matched render and awareness selectors"],
-  "asyncProtection": { "mechanism": "county ID plus monotonic transition generation checked before commit", "crossingReviewOverridesCommitProtected": true, "staleRequestSuppressionsAudited": true },
-  "cacheBehavior": { "countyScoped": true, "positiveToEmpty": "old inventory cleared; zero-length inventory is treated as loaded", "sameCounty": "no transition, generation increment, or reload" },
-  "statewideValidation": { "governed": 254, "synchronized": 254, "failed": 0, "activePositiveLifecycle": 202, "activeEmptyLifecycle": 52 },
-  "dallasControl": { "before": { "authoritativeCountyFips": "48113", "activeCountyId": "liberty-tx", "crossingSourceCounty": "liberty-tx", "inventoryCount": 115 }, "after": { "authoritativeCountyFips": "48113", "activeCountyId": "dallas-tx", "crossingSourceCounty": "dallas-tx", "inventoryCount": 789, "staleLibertyPresent": false } },
-  "libertyControl": { "returnActiveCountyId": "liberty-tx", "inventoryCount": 115, "governedSourceRestored": true },
-  "activeEmptyControls": { "positiveToEmptyClears": true, "intentionalZeroCommitted": true, "emptyToPositiveReloads": true },
-  "rapidSwitchResults": { "sequence": ["liberty-tx", "dallas-tx", "tarrant-tx"], "finalCounty": "tarrant-tx", "earlierCommitsSuppressed": 2, "pass": true },
-  "sameCountyResults": { "transition": false, "reloadAvoided": true, "pass": true },
-  "tests": { "lp2022": "PASS (5/5)", "lp2021": "PASS (5/5)", "lp196": "PASS (13/13)", "relatedHistoricalStaticAssertions": "2 pre-existing string-shape assertions fail against current implementation and are not LP202.2 behavioral regressions" },
-  "deferredFindings": ["Legacy profile/home-town fields can remain intentionally distinct from operational county authority.", "Two historical county-runtime tests assert obsolete source strings and should be rebaselined separately without weakening behavioral coverage."]
+  "transitionLifecycle": [
+    "authoritative operational area",
+    "canonical county resolution",
+    "gridlySetActiveCountyContext",
+    "generation increment and stale inventory clear",
+    "LP202.1 governed crossing resolution/load",
+    "county-matched render and awareness selectors"
+  ],
+  "asyncProtection": {
+    "mechanism": "county ID plus monotonic transition generation checked before commit",
+    "crossingReviewOverridesCommitProtected": true,
+    "staleRequestSuppressionsAudited": true
+  },
+  "cacheBehavior": {
+    "countyScoped": true,
+    "positiveToEmpty": "old inventory cleared; zero-length inventory is treated as loaded",
+    "sameCounty": "no transition, generation increment, or reload"
+  },
+  "statewideValidation": {
+    "governed": 254,
+    "synchronized": 254,
+    "failed": 0,
+    "activePositiveLifecycle": 202,
+    "activeEmptyLifecycle": 52
+  },
+  "dallasControl": {
+    "before": {
+      "authoritativeCountyFips": "48113",
+      "activeCountyId": "liberty-tx",
+      "crossingSourceCounty": "liberty-tx",
+      "inventoryCount": 115
+    },
+    "after": {
+      "authoritativeCountyFips": "48113",
+      "activeCountyId": "dallas-tx",
+      "crossingSourceCounty": "dallas-tx",
+      "inventoryCount": 789,
+      "staleLibertyPresent": false
+    }
+  },
+  "libertyControl": {
+    "returnActiveCountyId": "liberty-tx",
+    "inventoryCount": 115,
+    "governedSourceRestored": true
+  },
+  "activeEmptyControls": {
+    "positiveToEmptyClears": true,
+    "intentionalZeroCommitted": true,
+    "emptyToPositiveReloads": true
+  },
+  "rapidSwitchResults": {
+    "sequence": [
+      "liberty-tx",
+      "dallas-tx",
+      "tarrant-tx"
+    ],
+    "finalCounty": "tarrant-tx",
+    "earlierCommitsSuppressed": 2,
+    "pass": true
+  },
+  "sameCountyResults": {
+    "transition": false,
+    "reloadAvoided": true,
+    "pass": true
+  },
+  "tests": {
+    "lp2022": "PASS (5/5)",
+    "lp2021": "PASS (5/5)",
+    "lp196": "PASS (13/13)",
+    "relatedHistoricalStaticAssertions": "2 pre-existing string-shape assertions fail against current implementation and are not LP202.2 behavioral regressions"
+  },
+  "deferredFindings": [
+    "Legacy profile/home-town fields can remain intentionally distinct from operational county authority.",
+    "Two historical county-runtime tests assert obsolete source strings and should be rebaselined separately without weakening behavioral coverage."
+  ],
+  "multiCountyPlaceOperationalResolution": {
+    "originalLiveFailure": {
+      "placeGeoid": "4819000",
+      "awarenessAreaKey": "place-4819000",
+      "activeCountyId": "liberty-tx",
+      "crossingSourceCounty": "liberty-tx",
+      "inventoryCount": 115,
+      "resolvedGridlyCountyId": null,
+      "synchronized": false
+    },
+    "rootCause": "gridlyDispatchSemanticCamera invoked active-county synchronization before it resolved the governed PLACE presentation target. The operational resolver only inspected coordinates already attached to the awareness-area object; LP196 canonical multi-county areas intentionally have countyId null and carry no lat/lng, so Dallas failed closed before the same function later looked up its governed camera.",
+    "resolutionMode": "canonical PLACE GEOID -> governed consumer override or statewide presentation target -> gridlyResolveCountyIdForCoordinate authoritative containment -> governed membership validation -> canonical Gridly county ID -> existing synchronization owner",
+    "statewideCohortCount": 163,
+    "resolvedCount": 163,
+    "unresolvedCount": 0,
+    "membershipValidationFailures": 0,
+    "dallasControl": {
+      "placeGeoid": "4819000",
+      "label": "Dallas",
+      "countyMemberships": [
+        "48085",
+        "48113",
+        "48121",
+        "48257",
+        "48397"
+      ],
+      "presentationCoordinate": {
+        "lat": 32.78294501748632,
+        "lon": -96.79538726806642
+      },
+      "resolvedCountyFips": "48113",
+      "resolvedGridlyCountyId": "dallas-tx",
+      "activeCountyId": "dallas-tx",
+      "crossingSourceCounty": "dallas-tx",
+      "runtimeCrossingInventory": 789,
+      "staleLibertyInventoryPresent": false,
+      "membershipValidated": true,
+      "synchronized": true
+    },
+    "additionalControls": [
+      {
+        "placeGeoid": "4805000",
+        "label": "Austin",
+        "countyMemberships": [
+          "48021",
+          "48209",
+          "48453",
+          "48491"
+        ],
+        "presentationCoordinate": {
+          "lat": 30.274931186653326,
+          "lon": -97.74415969848634
+        },
+        "resolvedCountyFips": "48453",
+        "resolvedGridlyCountyId": "travis-tx",
+        "membershipValidated": true
+      },
+      {
+        "placeGeoid": "4827000",
+        "label": "Fort Worth",
+        "countyMemberships": [
+          "48121",
+          "48251",
+          "48367",
+          "48439",
+          "48497"
+        ],
+        "presentationCoordinate": {
+          "lat": 32.757685346479455,
+          "lon": -97.33182907104494
+        },
+        "resolvedCountyFips": "48439",
+        "resolvedGridlyCountyId": "tarrant-tx",
+        "membershipValidated": true
+      },
+      {
+        "placeGeoid": "4803000",
+        "label": "Amarillo",
+        "countyMemberships": [
+          "48375",
+          "48381"
+        ],
+        "presentationCoordinate": {
+          "lat": 35.20729,
+          "lon": -101.8371192
+        },
+        "resolvedCountyFips": "48375",
+        "resolvedGridlyCountyId": "potter-tx",
+        "membershipValidated": true
+      },
+      {
+        "placeGeoid": "4817000",
+        "label": "Corpus Christi",
+        "countyMemberships": [
+          "48007",
+          "48273",
+          "48355",
+          "48409"
+        ],
+        "presentationCoordinate": {
+          "lat": 27.7635302,
+          "lon": -97.4033191
+        },
+        "resolvedCountyFips": "48355",
+        "resolvedGridlyCountyId": "nueces-tx",
+        "membershipValidated": true
+      },
+      {
+        "placeGeoid": "4835000",
+        "label": "Houston",
+        "countyMemberships": [
+          "48157",
+          "48201",
+          "48339",
+          "48473"
+        ],
+        "presentationCoordinate": {
+          "lat": 29.7589382,
+          "lon": -95.3676974
+        },
+        "resolvedCountyFips": "48201",
+        "resolvedGridlyCountyId": "harris-tx",
+        "membershipValidated": true
+      }
+    ],
+    "startupResult": "PASS: unresolved startup PLACE contexts wait for the governed presentation artifact and then run the same synchronizer; Liberty inventory is cleared before Dallas package commit.",
+    "manualSelectionResult": "PASS: semantic dispatch resolves the governed camera and synchronizes Dallas without refresh or viewport dependence.",
+    "liveAuditFields": [
+      "canonicalPlaceGeoid",
+      "canonicalMultiCountyPlace",
+      "countyMemberships",
+      "operationalResolutionMode",
+      "presentationLat",
+      "presentationLon",
+      "coordinateResolvedCountyFips",
+      "membershipValidated",
+      "resolvedGridlyCountyId",
+      "activeCountyId",
+      "synchronized",
+      "failureReason"
+    ],
+    "tests": {
+      "lp2022": "PASS (8/8)",
+      "lp2021": "PASS",
+      "lp196": "PASS",
+      "statewideMultiCountyCohort": "PASS (163/163; 0 unresolved; 0 membership failures)"
+    }
+  }
 }
