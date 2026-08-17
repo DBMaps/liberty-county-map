@@ -5,7 +5,9 @@ const path = require('path');
 const source = fs.readFileSync(path.join(__dirname, '..', '..', 'js', 'app.js'), 'utf8');
 
 function bodyOf(functionName) {
-  const marker = `function ${functionName}`;
+  // Match the complete declaration name. A prefix match can inspect a sibling
+  // such as resolveGridlyAwarenessAreaQuery instead of resolveGridlyAwarenessArea.
+  const marker = `function ${functionName}(`;
   const start = source.indexOf(marker);
   assert.notStrictEqual(start, -1, `${functionName} exists`);
   const signatureEnd = source.indexOf(') {', start);
