@@ -3367,7 +3367,7 @@ function gridlyStoryTransportationEvidence(records = []) {
 }
 
 function gridlyStoryCommunityEvidence(records = []) {
-  if (!records.length) return Object.freeze({ label: "Community", available: true, count: 0, detail: "No active community reports need attention." });
+  if (!records.length) return Object.freeze({ label: "Community", available: true, count: 0, detail: "No active local issues reported." });
   return Object.freeze({ label: "Community", available: true, count: records.length, detail: records.length === 1 ? "One recent community report needs attention." : `${records.length} recent community reports need attention.` });
 }
 
@@ -3382,6 +3382,7 @@ function gridlyStoryConfidence(records = [], evidence = {}) {
 function buildGridlyAwarenessStory(input = {}) {
   const presentationContext = input.awarenessContext || (typeof getGridlyCanonicalAwarenessPresentationContext === "function" ? getGridlyCanonicalAwarenessPresentationContext() : {});
   const records = Array.isArray(input.records) ? input.records : gridlyStoryActiveRecords();
+  const completeness = input.completeness || gridlyGetAwarenessEvidenceCompleteness({ communityReportCount: records.length });
   const transportationRecords = Array.isArray(input.transportationRecords) ? input.transportationRecords : gridlyStoryTransportationConnectorRecords();
   const storyRecords = records.concat(transportationRecords);
   const texts = storyRecords.map((record) => gridlyStoryRecordText(record)).join(" ");
@@ -3409,9 +3410,9 @@ function buildGridlyAwarenessStory(input = {}) {
   const hasTransport = Boolean(evidence.transportation && !hasFlooding);
   const activeCount = records.length;
   const concernKinds = [hasRailBlock, hasFlooding, hasHeavyRain, hasTransport, hasMeaningfulWeather && !hasHeavyRain && !hasFlooding, activeCount >= 2].filter(Boolean).length;
-  let situation = "Community is quiet.";
-  let recommendation = "No significant travel concerns reported.";
-  let template = "quiet_conditions";
+  let situation = completeness.canStateCommunityQuiet ? "Community is quiet." : "Local awareness";
+  let recommendation = completeness.canStateCommunityQuiet ? "No active local issues reported." : "Monitoring nearby conditions";
+  let template = completeness.canStateCommunityQuiet ? "quiet_conditions" : "awareness_loading";
   if (concernKinds >= 2) {
     situation = "Several conditions may affect travel.";
     recommendation = hasFlooding ? "Avoid flooded roads and check your route before leaving." : "Check your route before leaving and allow extra travel time.";
@@ -3440,9 +3441,9 @@ function buildGridlyAwarenessStory(input = {}) {
     situation = activeCount >= 2 ? "Community activity is increasing." : "A local report may affect travel.";
     recommendation = "Check the map before leaving.";
     template = activeCount >= 2 ? "community_activity_increasing" : "community_report";
-  } else if (/clear|quiet|calm|no active/.test(combined)) {
-    situation = "No active concerns are showing right now.";
-    recommendation = "Travel normally and stay aware.";
+  } else if (/clear|quiet|calm|no active/.test(combined) && completeness.canStateCommunityQuiet) {
+    situation = "Community is quiet.";
+    recommendation = completeness.canStateTravelNormal ? "Travel normally today." : "No active local issues reported.";
     template = "no_active_concerns";
   }
   const confidence = gridlyStoryConfidence(records, evidence);
@@ -3523,7 +3524,7 @@ function gridlyBuildEvidenceExperienceModel(storyInput) {
   const sections = [];
   const community = evidence.community;
   if (community && (community.count > 0 || !evidence.weather && !evidence.transportation && !evidence.rail)) {
-    sections.push({ category: "community", title: "Community", line: community.count > 0 ? "Recent reports support this awareness." : "No active community reports need attention.", meta: community.count > 0 ? (community.count === 1 ? "1 recent report" : `${community.count} recent reports`) : "Area looks quiet" });
+    sections.push({ category: "community", title: "Community", line: community.count > 0 ? "Recent reports support this awareness." : "No active local issues reported.", meta: community.count > 0 ? (community.count === 1 ? "1 recent report" : `${community.count} recent reports`) : "Area looks quiet" });
   }
   if (evidence.weather) sections.push({ category: "weather", title: "Weather", line: gridlyEvidenceExperienceSafeText(evidence.weather.detail) || "Travel conditions may deteriorate.", meta: "Weather evidence" });
   if (evidence.transportation) sections.push({ category: "transportation", title: "Transportation", line: gridlyEvidenceExperienceSafeText(evidence.transportation.detail) || "Official roadway information supports this awareness.", meta: evidence.transportation.count === 1 ? "1 nearby travel concern" : `${evidence.transportation.count || "Nearby"} travel concerns` });
@@ -3595,8 +3596,8 @@ window.gridlyEvidenceExperienceAudit = gridlyEvidenceExperienceAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyEvidenceExperienceAudit", gridlyEvidenceExperienceAudit);
 
 function gridlyWeatherEvidencePromotionAudit() {
-  const quietStory = buildGridlyAwarenessStory({ records: [], primary: "Community is quiet.", secondary: "No active community reports need attention.", weather: { summary: "Sunny and pleasant", temperature: "76" } });
-  const weatherStory = buildGridlyAwarenessStory({ records: [], primary: "Community is quiet.", secondary: "No active community reports need attention.", weather: { summary: "Heavy rain in the area" } });
+  const quietStory = buildGridlyAwarenessStory({ records: [], primary: "Community is quiet.", secondary: "No active local issues reported.", weather: { summary: "Sunny and pleasant", temperature: "76" } });
+  const weatherStory = buildGridlyAwarenessStory({ records: [], primary: "Community is quiet.", secondary: "No active local issues reported.", weather: { summary: "Heavy rain in the area" } });
   const weatherEvidenceModel = gridlyBuildEvidenceExperienceModel(weatherStory);
   const providerNamesExposed = gridlyStoryConsumerLanguageFindTerms(weatherStory, GRIDLY_STORY_PROVIDER_TERMS).concat(gridlyEvidenceExperienceFindTerms(weatherEvidenceModel, GRIDLY_EVIDENCE_PROVIDER_TERMS));
   const technicalTermsDetected = gridlyStoryConsumerLanguageFindTerms(weatherStory, GRIDLY_STORY_TECHNICAL_TERMS).concat(gridlyEvidenceExperienceFindTerms(weatherEvidenceModel, GRIDLY_EVIDENCE_TECHNICAL_TERMS));
@@ -4126,11 +4127,11 @@ function gridlyAwarenessSourceLabel(sourceKind) {
   return "Gridly awareness";
 }
 
-function gridlyTravelBriefDriveTexasLines(records = []) {
+function gridlyTravelBriefDriveTexasLines(records = [], completeness = gridlyGetAwarenessEvidenceCompleteness()) {
   const impacted = (Array.isArray(records) ? records : [])
     .map((record) => ({ record, impact: gridlyStoryTransportationImpact(record) }))
     .filter((entry) => entry.impact);
-  if (!impacted.length) return ["No official roadway advisories nearby."];
+  if (!impacted.length) return completeness.canStateNoOfficialRoadwayAdvisories ? ["No official roadway advisories nearby."] : [];
   const lines = impacted.map(({ record, impact }) => {
     const line = gridlyTravelBriefRecordLine(record, impact?.detail || "Roadway advisory may affect travel.");
     if (/construction|work zone/i.test(line)) return { record, line: line.replace(/construction(?: activity)? may affect nearby roads\.?/i, "Construction may affect travel.") };
@@ -4140,9 +4141,9 @@ function gridlyTravelBriefDriveTexasLines(records = []) {
   return gridlyTravelBriefConsolidateRoadwayLines(lines).slice(0, 2);
 }
 
-function gridlyTravelBriefWeatherLines(weather) {
+function gridlyTravelBriefWeatherLines(weather, completeness = gridlyGetAwarenessEvidenceCompleteness()) {
   const impact = gridlyStoryWeatherMeaningfulImpact(weather);
-  if (!impact) return ["No travel-impacting weather."];
+  if (!impact) return completeness.canStateNoWeatherImpact ? ["No travel-impacting weather."] : [];
   const alert = gridlyTravelBriefCleanLine(weather?.alertTitle || weather?.event || weather?.headline || weather?.title || "");
   const lines = [];
   if (alert && gridlyBriefInteractionLooksLikeWeatherAlert(alert)) lines.push(alert);
@@ -4221,6 +4222,7 @@ function gridlyUnifiedEvidenceCountLine(count, singular, plural) {
 
 function buildGridlyUnifiedEvidencePresentation(input = {}) {
   const quiet = Boolean(input.quiet);
+  const completeness = input.completeness || (typeof gridlyGetAwarenessEvidenceCompleteness === "function" ? gridlyGetAwarenessEvidenceCompleteness({ communityReportCount: input.communityCount }) : null);
   const items = [];
   const add = (category, text, strength = "supporting") => {
     const consumerText = gridlyTravelBriefCleanLine(text);
@@ -4232,11 +4234,11 @@ function buildGridlyUnifiedEvidencePresentation(input = {}) {
   const weatherActive = Boolean(input.weatherActive);
   const railCount = Math.max(0, Number(input.railCount || 0));
   if (communityCount) add("community", "Community reports support this.", communityCount > 1 ? "strong" : "supporting");
-  else if (quiet || input.explainQuietCommunity) add("community", "No nearby community travel issues are being reported.", "quiet");
+  else if ((quiet || input.explainQuietCommunity) && completeness?.canStateCommunityQuiet) add("community", "No nearby community travel issues are being reported.", "quiet");
   if (officialCount) add("official-roadways", "Official roadway information supports this.", officialCount > 1 ? "strong" : "supporting");
-  else if (quiet || input.explainQuietOfficial) add("official-roadways", "No official roadway concerns are showing nearby.", "quiet");
+  else if ((quiet || input.explainQuietOfficial) && completeness?.canStateNoOfficialRoadwayAdvisories) add("official-roadways", "No official roadway concerns are showing nearby.", "quiet");
   if (weatherActive) add("weather", "Weather conditions support this.", "supporting");
-  else if (quiet || input.explainQuietWeather) add("weather", "No travel-impacting weather is showing nearby.", "quiet");
+  else if ((quiet || input.explainQuietWeather) && completeness?.canStateNoWeatherImpact) add("weather", "No travel-impacting weather is showing nearby.", "quiet");
   if (railCount) add("rail-crossing", "Crossing reports support this.", railCount > 1 ? "strong" : "supporting");
   else if (quiet || input.explainQuietRail) add("rail-crossing", "No active crossing delays are being reported nearby.", "quiet");
   add("confidence", input.confidence || (quiet ? "Quiet conditions." : "Developing conditions."), quiet ? "quiet" : "supporting");
@@ -4307,7 +4309,7 @@ function gridlyTravelBriefConfidenceLine(story = {}) {
 
 function gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecords }) {
   const evidence = story?.evidence || {};
-  const interpretation = gridlyTravelBriefCleanLine(story?.recommendation || (records.length || driveTexasRecords.length ? "Check before leaving." : "Travel normally and stay aware."));
+  const interpretation = gridlyTravelBriefCleanLine(story?.recommendation || (records.length || driveTexasRecords.length ? "Check before leaving." : "Stay aware while traveling."));
   const reason = gridlyTravelBriefDecisionReason(story, evidence);
   const confidence = gridlyTravelBriefConfidenceLine(story);
   const freshness = gridlyTravelBriefFreshnessLine(records, driveTexasRecords);
@@ -4835,8 +4837,8 @@ window.gridlyLp028TravelBriefOfficialSourceTrace = gridlyLp028TravelBriefOfficia
 function gridlyBriefInteractionBuildModel() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
-  const primary = gridlyBriefInteractionText("#gridlyV2TopStatusPrimary") || "Your area is clear right now";
-  const secondary = gridlyBriefInteractionText("#gridlyV2TopStatusSecondary") || "No active community reports need attention.";
+  const primary = gridlyBriefInteractionText("#gridlyV2TopStatusPrimary") || "Local awareness";
+  const secondary = gridlyBriefInteractionText("#gridlyV2TopStatusSecondary") || "Monitoring nearby conditions";
   const trust = gridlyBriefInteractionText("#gridlyV2TopStatusTrust") || "Monitoring nearby conditions";
   const presentationContext = getGridlyCanonicalAwarenessPresentationContext();
   const quietBrief = (/your area is clear right now|area is clear|conditions? (?:are )?calm|area is quiet/i.test(primary)
@@ -39586,7 +39588,7 @@ function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence
     + Math.max(0, Number(existingAudit?.reportsConsidered || 0));
   const quiet = impactLevel === "none" || conditionCount === 0;
   const multiple = !quiet && conditionCount > 1;
-  let interpretation = "Travel normally and stay aware.";
+  let interpretation = "Stay aware while traveling.";
   let reason = "No active concerns are reported in the available local intelligence.";
   if (multiple) {
     interpretation = "Check your route before leaving.";
@@ -39891,7 +39893,7 @@ function gridlyLp063DestinationDecisionAudit() {
     confidencePresent: Boolean(quiet.confidence && active.confidence && multiple.confidence),
     freshnessPresent: [quiet, active, multiple].every((item) => /^(?:Checked|Updated) /.test(item.freshness)),
     existingDestinationIntelligencePreserved: [quiet, active, multiple].every((item) => item.existingDestinationIntelligencePreserved),
-    quietStateWordingValidated: quiet.interpretation === "Travel normally and stay aware." && quiet.reason === "No active concerns are reported in the available local intelligence." && quiet.confidence === "Quiet conditions",
+    quietStateWordingValidated: quiet.interpretation === "Stay aware while traveling." && quiet.reason === "No active concerns are reported in the available local intelligence." && quiet.confidence === "Quiet conditions",
     activeStateWordingValidated: active.interpretation === "Allow extra travel time." && active.reason === "A blocked crossing may delay your trip to your destination." && active.confidence === "Strong supporting evidence",
     multiConditionWordingValidated: multiple.interpretation === "Check your route before leaving." && multiple.reason === "Multiple nearby conditions may affect travel." && multiple.confidence === "Multiple recent signals",
     protectedSystemsUnchanged: Object.values(protectedSystems).every((value) => value === "unchanged")
@@ -39960,7 +39962,7 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 // presentations. This table is presentation metadata only; it does not select or
 // reinterpret intelligence.
 const GRIDLY_LP065_DECISION_LANGUAGE = Object.freeze({
-  quiet: Object.freeze({ decision: "Travel normally and stay aware.", context: "No active concerns are reported in the available local intelligence.", confidence: "Quiet conditions." }),
+  quiet: Object.freeze({ decision: "Stay aware while traveling.", context: "No active concerns are reported in the available local intelligence.", confidence: "Quiet conditions." }),
   developing: Object.freeze({ decision: "Check before leaving.", context: "Conditions may be changing.", confidence: "Developing conditions." }),
   moderate: Object.freeze({ decision: "Allow extra travel time.", context: "Community reports indicate travel impacts.", confidence: "Multiple recent signals." }),
   elevated: Object.freeze({ decision: "Check your route before leaving.", context: "Several conditions may affect travel.", confidence: "Strong supporting evidence." }),
@@ -39983,7 +39985,7 @@ function gridlyLp065DecisionLanguageConsistencyAudit() {
   });
   const checks = Object.freeze({
     decisionLanguageStandardized: Object.keys(language).length === 6,
-    quietWordingConsistent: language.quiet.decision === "Travel normally and stay aware." && language.quiet.confidence === "Quiet conditions.",
+    quietWordingConsistent: language.quiet.decision === "Stay aware while traveling." && language.quiet.confidence === "Quiet conditions.",
     developingWordingConsistent: language.developing.decision === "Check before leaving." && language.developing.confidence === "Developing conditions.",
     moderateWordingConsistent: language.moderate.decision === "Allow extra travel time." && language.moderate.confidence === "Multiple recent signals.",
     elevatedWordingConsistent: language.elevated.context === "Several conditions may affect travel." && language.elevated.decision === "Check your route before leaving.",
@@ -55625,6 +55627,7 @@ function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage, sourceTa
 }
 
 async function loadSharedReports(reason = "manual") {
+  gridlyReportReadPresentationState = Object.freeze({ state: "loading", countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, completedAt: null });
   const gridlyPostPaintPhase = window.gridlyStartupDiagnostics?.beginPostPaintPhase?.(`loadSharedReports:${String(reason || "manual")}`, "loadSharedReports");
   const startupParentStage = reason === "initial_bootstrap" ? "initial report and incident loading" : null;
   const startupDiag = window.gridlyStartupDiagnostics;
@@ -55658,6 +55661,7 @@ async function loadSharedReports(reason = "manual") {
   if (!supabaseClient) {
     endReportStage(availabilityStage, "degraded", { message: "Supabase client unavailable; live sync skipped", startupContinued: true });
     setSync(`Live sync unavailable · Build ${APP_BUILD}`);
+    gridlyReportReadPresentationState = Object.freeze({ state: "failed", countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, completedAt: Date.now() });
     return null;
   }
   endReportStage(availabilityStage);
@@ -55861,6 +55865,7 @@ async function loadSharedReports(reason = "manual") {
 
     const successAt = Date.now();
     audit.lastSuccessAt = successAt;
+    gridlyReportReadPresentationState = Object.freeze({ state: "succeeded", countyId: activeCountyId, completedAt: successAt });
     if (reason === "post_submit_refresh") {
       audit.lastPostSubmitSuccessAt = successAt;
     }
@@ -55869,6 +55874,7 @@ async function loadSharedReports(reason = "manual") {
       const stage = startupParentStage ? startupDiag?.state?.stages?.find?.((candidate) => candidate.name === `initial reports: ${name}` && candidate.status === "running") : null;
       if (stage) endReportStage(stage, "failed", { error, startupContinued: true });
     });
+    gridlyReportReadPresentationState = Object.freeze({ state: "failed", countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, completedAt: Date.now() });
     console.error("Gridly report sync failed:", error);
     setSync("Live sync read failed");
   }
@@ -61423,6 +61429,48 @@ function gridlyCrossingCoverageStatusAudit() {
   });
 }
 
+const GRIDLY_AWARENESS_SOURCE_STATE = Object.freeze({
+  HEALTHY_WITH_RESULTS: "HEALTHY_WITH_RESULTS", HEALTHY_ZERO: "HEALTHY_ZERO",
+  LOADING_OR_UNKNOWN: "LOADING_OR_UNKNOWN", INACTIVE: "INACTIVE", FAILED: "FAILED",
+  MISSING_CAPABILITY: "MISSING_CAPABILITY", STALE_OR_UNVERIFIED: "STALE_OR_UNVERIFIED"
+});
+
+let gridlyReportReadPresentationState = Object.freeze({ state: "not_started", countyId: null, completedAt: null });
+
+function gridlyGetAwarenessEvidenceCompleteness(input = {}) {
+  const reportReadState = String(input.reportReadState || gridlyReportReadPresentationState.state || "not_started");
+  const communityReportCount = Math.max(0, Number(input.communityReportCount ?? ((typeof activeReports !== "undefined" ? activeReports.length : 0) + (typeof activeHazards !== "undefined" ? activeHazards.length : 0))) || 0);
+  const crossingsState = input.crossingsState || input.coverage?.semanticCoverageState || (typeof getGridlyAwarenessCoverageState === "function" ? getGridlyAwarenessCoverageState().semanticCoverageState : GRIDLY_AWARENESS_SOURCE_STATE.LOADING_OR_UNKNOWN);
+  // Provider capability defaults describe current production without activating or pretending to query either provider.
+  const driveTexasState = input.driveTexasState || window.gridlyDriveTexasPresentationState || GRIDLY_AWARENESS_SOURCE_STATE.INACTIVE;
+  const nwsAlertState = input.nwsAlertState || window.gridlyNwsAlertPresentationState || GRIDLY_AWARENESS_SOURCE_STATE.INACTIVE;
+  const weatherConditionsState = input.weatherConditionsState || window.gridlyWeatherConditionsPresentationState || GRIDLY_AWARENESS_SOURCE_STATE.MISSING_CAPABILITY;
+  const weatherForecastState = input.weatherForecastState || window.gridlyWeatherForecastPresentationState || GRIDLY_AWARENESS_SOURCE_STATE.MISSING_CAPABILITY;
+  const healthy = (state) => state === GRIDLY_AWARENESS_SOURCE_STATE.HEALTHY_ZERO || state === GRIDLY_AWARENESS_SOURCE_STATE.HEALTHY_WITH_RESULTS;
+  const communityReportsKnown = reportReadState === "succeeded";
+  const officialRoadwayKnown = healthy(driveTexasState);
+  const weatherAlertsKnown = healthy(nwsAlertState);
+  const weatherConditionsKnown = healthy(weatherConditionsState);
+  const weatherForecastKnown = healthy(weatherForecastState);
+  const crossingsKnown = /^AVAILABLE_/.test(crossingsState) || healthy(crossingsState);
+  const canStateCommunityQuiet = communityReportsKnown && communityReportCount === 0;
+  const canStateNoOfficialRoadwayAdvisories = driveTexasState === GRIDLY_AWARENESS_SOURCE_STATE.HEALTHY_ZERO;
+  const canStateNoActiveWeatherAlerts = nwsAlertState === GRIDLY_AWARENESS_SOURCE_STATE.HEALTHY_ZERO;
+  const canStateNoWeatherImpact = canStateNoActiveWeatherAlerts && weatherConditionsState === GRIDLY_AWARENESS_SOURCE_STATE.HEALTHY_ZERO && weatherForecastState === GRIDLY_AWARENESS_SOURCE_STATE.HEALTHY_ZERO;
+  const canStateTravelNormal = canStateCommunityQuiet && crossingsKnown && canStateNoOfficialRoadwayAdvisories && canStateNoWeatherImpact;
+  const canStateAreaClear = canStateTravelNormal;
+  const blockedClaims = [];
+  if (!canStateCommunityQuiet) blockedClaims.push("Community is quiet.");
+  if (!canStateNoOfficialRoadwayAdvisories) blockedClaims.push("No official roadway advisories nearby.");
+  if (!canStateNoWeatherImpact) blockedClaims.push("No travel-impacting weather.");
+  if (!canStateTravelNormal) blockedClaims.push("Travel normally today.");
+  if (!canStateAreaClear) blockedClaims.push("Your area is clear right now");
+  return Object.freeze({ reportReadState, communityReportCount, crossingsState, driveTexasState, nwsAlertState, weatherConditionsState, weatherForecastState, communityReportsKnown, officialRoadwayKnown, weatherAlertsKnown, weatherConditionsKnown, weatherForecastKnown, crossingsKnown, canStateCommunityQuiet, canStateNoOfficialRoadwayAdvisories, canStateNoActiveWeatherAlerts, canStateNoWeatherImpact, canStateTravelNormal, canStateAreaClear, presentationScope: canStateTravelNormal ? "complete" : canStateCommunityQuiet ? "community_scoped" : "neutral", blockedClaims: Object.freeze(blockedClaims) });
+}
+
+window.gridlyGetAwarenessEvidenceCompleteness = gridlyGetAwarenessEvidenceCompleteness;
+window.gridlyAwarenessCompletenessAudit = () => Object.freeze({ activeCountyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, ...gridlyGetAwarenessEvidenceCompleteness() });
+
 function classifyGridlyAwarenessTrustState({ activeCount = 0, recentlyCleared = false, coverage = null } = {}) {
   if (Math.max(0, Number(activeCount) || 0) > 0) return "active";
   if (recentlyCleared === true) return "recently_cleared";
@@ -61430,17 +61478,19 @@ function classifyGridlyAwarenessTrustState({ activeCount = 0, recentlyCleared = 
   return "quiet";
 }
 
-function getGridlyHomeCommunityPulseCopy({ quiet = true, activeCount = 0, activityLevel = "quiet", coverage = null } = {}) {
+function getGridlyHomeCommunityPulseCopy({ quiet = true, activeCount = 0, activityLevel = "quiet", coverage = null, completeness = null } = {}) {
   const count = Math.max(0, Number(activeCount) || 0);
   const level = String(activityLevel || "quiet").toLowerCase();
   const awarenessCoverage = coverage || getGridlyAwarenessCoverageState();
+  const awarenessCompleteness = completeness || gridlyGetAwarenessEvidenceCompleteness({ communityReportCount: count, coverage: awarenessCoverage });
   // Active evidence always outranks incomplete coverage. Coverage only guards a
   // zero-evidence conclusion; absence of one source is not evidence of quiet.
   if ((quiet || count <= 0 || level === "quiet") && ["temporarily_unavailable", "unavailable"].includes(awarenessCoverage.state)) {
     return { headline: awarenessCoverage.primary, subline: awarenessCoverage.secondary, state: "coverage_limited" };
   }
   if (quiet || count <= 0 || level === "quiet") {
-    return { headline: "Community is quiet.", subline: "Travel normally today.", state: "quiet" };
+    if (!awarenessCompleteness.canStateCommunityQuiet) return { headline: "Local awareness", subline: "Monitoring nearby conditions", state: "loading" };
+    return { headline: "Community is quiet.", subline: awarenessCompleteness.canStateTravelNormal ? "Travel normally today." : "No active local issues reported.", state: "quiet" };
   }
   if (count >= 4 || /high|building|severe/.test(level)) {
     return { headline: "Community activity increasing.", subline: "Use extra caution today.", state: "high" };
@@ -61829,7 +61879,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const sublinePhrase = selectedCommunityCount > 0
     ? buildGridlyCommunityPulseSubline(phraseContext)
     : {
-        text: "No active community reports need attention right now.",
+        text: "No active local issues reported right now.",
         selectedSublineTemplate: "subline_quiet",
         repetitionAvoidanceApplied: false
       };
@@ -61985,7 +62035,7 @@ function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
     ? classifyGridlyAwarenessTrustState({ activeCount: combinedCount, recentlyCleared, coverage })
     : (combinedCount > 0 ? "active" : (recentlyCleared ? "recently_cleared" : (coverage.state === "limited" ? "coverage_limited" : "quiet")));
   let communityStatus = "Quiet conditions.";
-  let interpretation = "Travel normally and stay aware.";
+  let interpretation = "Stay aware while traveling.";
   let reason = "No active concerns are reported in the available local intelligence.";
   let confidence = "Quiet conditions";
   if (state === "recently_cleared") {
@@ -62098,7 +62148,7 @@ function gridlyLp062CommunityPulseDecisionAudit(options = {}) {
     confidencePresent: Boolean(/quiet conditions|multiple recent signals|developing conditions|strong supporting evidence/i.test(combinedText)),
     freshnessPresent: Boolean(/(?:checked|updated) (?:just now|\d+ minutes ago)/i.test(combinedText)),
     existingCommunityPulseIntelligencePreserved: Boolean(model && Object.prototype.hasOwnProperty.call(model, "selectedCommunityCount") && model.activeAwareness !== undefined && model.communityAwarenessSummary !== undefined),
-    quietStateWordingValidated: quietDecision.headline === "Travel normally and stay aware." && /No active concerns are reported in the available local intelligence\. Quiet conditions · Checked just now\./.test(quietDecision.subline),
+    quietStateWordingValidated: quietDecision.headline === "Stay aware while traveling." && /No active concerns are reported in the available local intelligence\. Quiet conditions · Checked just now\./.test(quietDecision.subline),
     activeStateWordingValidated: activeDecision.headline === "Check your route before leaving." && /Several conditions may affect travel\. Multiple recent signals · Updated just now\./.test(activeDecision.subline),
     recentlyClearedWordingValidated: clearedDecision.headline === "Check before leaving." && /Conditions may be changing\. Developing conditions · Checked just now\./.test(clearedDecision.subline) && !/safe|guaranteed|all clear|certain/i.test(`${clearedDecision.headline} ${clearedDecision.subline}`),
     protectedSystemsUnchanged: Object.values(protectedSystems).every((value) => value === "unchanged")
@@ -106763,12 +106813,12 @@ function getGridlyQuietAwarenessBriefCopy() {
   return {
     state: "quiet",
     greeting: getGridlyAwarenessGreetingText(),
-    primary: "Your area is clear right now",
-    secondary: "No active community reports need attention.",
+    primary: "Local awareness",
+    secondary: "No active local issues reported.",
     trustLine: "Monitoring nearby conditions",
     microline: "",
     microlineVisible: false,
-    selectedHeadline: "Your area is clear right now",
+    selectedHeadline: "Local awareness",
     selectedSource: "calm_community_summary",
     selectedLocationIntelligence: null,
     fallbackReason: "specific_incident_headlines_suppressed"

@@ -1,0 +1,112 @@
+{
+  "lp205RcaReference": "Authoritative LP205 quiet-state RCA supplied by LP205.1; not reopened.",
+  "oldQuietStateContract": "Empty arrays and null provider values could be presented as healthy absence across community, roadway, and weather scopes.",
+  "newCompletenessContract": "Only known, current, healthy evidence permits an absence claim; incomplete evidence narrows or omits consumer copy.",
+  "sourceStateInputs": {
+    "reports": "lifecycle: not_started | loading | succeeded | failed; zero is known only after succeeded for the active context",
+    "crossings": "existing semantic coverage state: AVAILABLE_WITH_CROSSINGS | AVAILABLE_NO_GOVERNED_CROSSINGS | AVAILABLE_NO_LOCAL_CROSSINGS | LOADING | TEMPORARILY_UNAVAILABLE | UNAVAILABLE",
+    "driveTexas": "INACTIVE in current production; future HEALTHY_WITH_RESULTS/HEALTHY_ZERO accepted",
+    "nwsAlerts": "INACTIVE in current production; future HEALTHY_WITH_RESULTS/HEALTHY_ZERO accepted",
+    "weatherConditions": "MISSING_CAPABILITY in current production",
+    "weatherForecast": "MISSING_CAPABILITY in current production"
+  },
+  "claimPermissions": {
+    "currentProduction": {
+      "communityQuiet": "conditional: true only after successful zero report read",
+      "noOfficialRoadwayAdvisories": false,
+      "noWeatherImpact": false,
+      "travelNormal": false,
+      "areaClear": false
+    }
+  },
+  "reportReadLifecycle": [
+    "not_started",
+    "loading",
+    "succeeded",
+    "failed"
+  ],
+  "currentProductionCapabilityResult": {
+    "driveTexas": "INACTIVE",
+    "nwsAlerts": "INACTIVE",
+    "weatherConditions": "MISSING_CAPABILITY",
+    "weatherForecast": "MISSING_CAPABILITY",
+    "broadClaimsSuppressed": true
+  },
+  "deterministicScenarios": {
+    "A": {
+      "communityQuiet": true,
+      "officialRoadwayClear": false,
+      "weatherClear": false,
+      "travelNormal": false,
+      "areaClear": false
+    },
+    "B": {
+      "communityQuiet": false,
+      "travelNormal": false,
+      "presentation": "neutral"
+    },
+    "C": {
+      "communityQuiet": false,
+      "travelNormal": false,
+      "presentation": "neutral"
+    },
+    "D": {
+      "activeReportPresentation": "preserved",
+      "communityQuiet": false
+    },
+    "E": {
+      "crossings": "AVAILABLE_NO_GOVERNED_CROSSINGS",
+      "communityQuiet": true,
+      "travelNormal": false,
+      "areaClear": false
+    },
+    "F": {
+      "officialRoadwayClear": true,
+      "noActiveWeatherAlerts": true,
+      "weatherImpactClear": false,
+      "travelNormal": false
+    },
+    "G": {
+      "allRequiredSources": "HEALTHY_ZERO",
+      "travelNormal": true,
+      "areaClear": true
+    }
+  },
+  "startupResult": "Neutral Local awareness / Monitoring nearby conditions until report-read success; no premature quiet conclusion.",
+  "reportFailureResult": "Failed status denies community quiet and broad claims without exposing a technical error to consumer copy.",
+  "statewideValidation": {
+    "countyCount": 254,
+    "uniformSemantics": true,
+    "roadwayPackageCohortSpecialPermission": false,
+    "legacyMetadataSpecialPermission": false,
+    "multiCountyPlaceChangesSemantics": false,
+    "activeEmptyCrossingsAuthorizeBroadClear": false
+  },
+  "consumerCopyChanges": [
+    {
+      "previous": "Community is quiet.",
+      "result": "Preserved only after successful zero report read"
+    },
+    {
+      "previous": "Travel normally today.",
+      "result": "Replaced by No active local issues reported. under current partial evidence"
+    },
+    {
+      "previous": "No official roadway advisories nearby.",
+      "result": "Omitted unless DriveTexas is current HEALTHY_ZERO"
+    },
+    {
+      "previous": "No travel-impacting weather.",
+      "result": "Omitted unless alerts, conditions, and forecast are current HEALTHY_ZERO"
+    },
+    {
+      "previous": "Your area is clear right now",
+      "result": "Neutral startup fallback; permitted only with complete healthy evidence"
+    }
+  ],
+  "tests": [
+    "tests/lp2051-statewide-awareness-completeness-and-quiet-state-repair.test.mjs",
+    "LP202.1, LP202.2, LP203.1, LP204 regression suites",
+    "LP205 audit regression"
+  ]
+}

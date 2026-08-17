@@ -99,7 +99,7 @@ test('Liberty to Sherman to Dallas to empty to Tyler refreshes semantic ownershi
 test('healthy coverage preserves awareness-first quiet banner precedence', () => {
   const coverage = classify('grayson-tx');
   assert.equal(sandbox.classifyGridlyAwarenessTrustState({ coverage }), 'quiet');
-  assert.equal(sandbox.getGridlyHomeCommunityPulseCopy({ quiet: true, coverage }).headline, 'Community is quiet.');
+  assert.equal(sandbox.getGridlyHomeCommunityPulseCopy({ quiet: true, coverage, completeness: { canStateCommunityQuiet: true, canStateTravelNormal: false } }).headline, 'Community is quiet.');
 });
 
 test('production coverage decision has no county special cases or legacy decision authority', () => {

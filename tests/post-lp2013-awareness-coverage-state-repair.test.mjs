@@ -41,10 +41,10 @@ function harness(countyId = 'mclennan-tx') {
 test('Waco governed crossing coverage preserves the awareness-first quiet state', () => {
   const api = harness();
   const coverage = api.getGridlyAwarenessCoverageState();
-  const copy = api.getGridlyHomeCommunityPulseCopy({ quiet: true, activeCount: 0, coverage });
+  const copy = api.getGridlyHomeCommunityPulseCopy({ quiet: true, activeCount: 0, coverage, completeness: { canStateCommunityQuiet: true, canStateTravelNormal: false } });
   assert.equal(api.classifyGridlyAwarenessTrustState({ activeCount: 0, coverage }), 'quiet');
   assert.equal(copy.headline, 'Community is quiet.');
-  assert.equal(copy.subline, 'Travel normally today.');
+  assert.equal(copy.subline, 'No active local issues reported.');
   assert.doesNotMatch(`${copy.headline} ${copy.subline}`, /limited local coverage|isn't available|not-claimed/i);
 });
 
@@ -52,7 +52,7 @@ test('supported Liberty zero-active control retains quiet state', () => {
   const api = harness('liberty-tx');
   const coverage = api.getGridlyAwarenessCoverageState();
   assert.equal(api.classifyGridlyAwarenessTrustState({ activeCount: 0, coverage }), 'quiet');
-  assert.equal(api.getGridlyHomeCommunityPulseCopy({ quiet: true, coverage }).headline, 'Community is quiet.');
+  assert.equal(api.getGridlyHomeCommunityPulseCopy({ quiet: true, coverage, completeness: { canStateCommunityQuiet: true, canStateTravelNormal: false } }).headline, 'Community is quiet.');
 });
 
 test('active and recently-cleared evidence outrank limited coverage', () => {
