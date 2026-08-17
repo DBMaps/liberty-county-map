@@ -1,7 +1,7 @@
 {
   "schemaVersion": "gridly.lp208.statewide-tiger2025-roadway-source-manifest.v1",
   "generatedAt": "2026-08-17T00:00:00.000Z",
-  "certificationComplete": false,
+  "certificationComplete": true,
   "counties": [
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -15,12 +15,12 @@
       "filename": "tl_2025_48001_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48001_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48001_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1236802,
+      "sha256": "f7d742efc845396ae8136c7648a8295afdbc9240fe6b57694f6fa85d24934315",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -34,12 +34,12 @@
       "filename": "tl_2025_48003_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48003_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48003_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1096707,
+      "sha256": "d3b8713570eeb05ff5da5eed4074c2e0aa4aac07d0f5b60224c99ffd39e9eb15",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -53,12 +53,12 @@
       "filename": "tl_2025_48005_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48005_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48005_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1628593,
+      "sha256": "826adf8bbc7b21046d3283829fcf61b47630197304b83d5742f1343836c37e3f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -72,12 +72,12 @@
       "filename": "tl_2025_48007_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48007_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48007_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 382224,
+      "sha256": "8aff6a8ae156591feaea65ff3b1e4673faaf59d005bd8a5ff3ed4e80cd8ba315",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -91,12 +91,12 @@
       "filename": "tl_2025_48009_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48009_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48009_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 477076,
+      "sha256": "e0c973bc4fa4614b48e1eb711b8c855fdd1c3d2f5261ce383bfa90bd39021f9a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -110,12 +110,12 @@
       "filename": "tl_2025_48011_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48011_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48011_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 273509,
+      "sha256": "19faca643f69f48f639d2da72b7ad36f1f16a5283f06b95ea48358ac0b972ea8",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -129,12 +129,12 @@
       "filename": "tl_2025_48013_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48013_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48013_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1098552,
+      "sha256": "eb47c8564643ad7e1d30548a42a95fef24f929f7a570be6a8b2caa488d6c17b5",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -148,12 +148,12 @@
       "filename": "tl_2025_48017_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48017_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48017_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 427908,
+      "sha256": "11f72255c0e0c9ec10c5cd87da8f2b2906d6e7932ebf38903b829fec67bffa0a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -167,12 +167,12 @@
       "filename": "tl_2025_48019_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48019_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48019_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1329143,
+      "sha256": "4a2defa6e02d9e9d3f9efa6b0aa58c434ae77c920fadd1a41a132b085d970d8e",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -186,12 +186,12 @@
       "filename": "tl_2025_48021_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48021_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48021_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1485093,
+      "sha256": "b2fd26fedc3cfc4240c6f1457aed22da8a10be97236b5bcf69d9469761a1b46f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -205,12 +205,12 @@
       "filename": "tl_2025_48023_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48023_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48023_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 324236,
+      "sha256": "825d58e52ac80d2fc7a718c07762caee8cf0524e3f0d4ca8cdc81761a16fc1e4",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -224,12 +224,12 @@
       "filename": "tl_2025_48025_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48025_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48025_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 728066,
+      "sha256": "3e620446b78335b89743ba559d1e44ec1541d0e5804b5d1381832e69a08d884a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -243,12 +243,12 @@
       "filename": "tl_2025_48027_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48027_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48027_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2181743,
+      "sha256": "e134b19b26352afb52408665e4072326b89f523444d913f40e3bb3f35d7b7482",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -262,12 +262,12 @@
       "filename": "tl_2025_48029_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48029_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48029_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 5496601,
+      "sha256": "67b5686a91f1f0748bde16f9bb3decb3aae0b5b50f72a47bbe8c05d467067b82",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -281,12 +281,12 @@
       "filename": "tl_2025_48031_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48031_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48031_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1011583,
+      "sha256": "db5b0bc8c630b056715f22cc0c646ba69ab27b791a01f4c529e89320fdd13f7d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -300,12 +300,12 @@
       "filename": "tl_2025_48033_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48033_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48033_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 511743,
+      "sha256": "4e989deb7f44e095704901c8a32707fb18fd95daa41ff4d9bc995589a4de1244",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -319,12 +319,12 @@
       "filename": "tl_2025_48035_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48035_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48035_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 948123,
+      "sha256": "71f1d1897ef1cb2954007db1384a993fb498c1fbe39568acd399483af4a89d4d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -338,12 +338,12 @@
       "filename": "tl_2025_48037_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48037_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48037_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 842194,
+      "sha256": "f7ba2374cdba2f6c6a00169bc9e3895a909641d6cfab55a3e3a3f4027eadc489",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -357,12 +357,12 @@
       "filename": "tl_2025_48043_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48043_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48043_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2059982,
+      "sha256": "3a44cdf654fe1940ba878568be25dd958d8a745ff8a1c860383308272e376c86",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -376,12 +376,12 @@
       "filename": "tl_2025_48045_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48045_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48045_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 710253,
+      "sha256": "e15444c5249800b971a96a62b9383a2dd15fec9a9e59a64d205d8f70cdb9b7eb",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -395,12 +395,12 @@
       "filename": "tl_2025_48047_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48047_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48047_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 957968,
+      "sha256": "01b89ddb59e4a4718ae98d52f02db9bff3fdc92c809de92fe5fffeb25354cd9f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -414,12 +414,12 @@
       "filename": "tl_2025_48049_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48049_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48049_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1209497,
+      "sha256": "4d48b79e6a923cf75bd056fc0e8076bd92207b167eb92576008258d341687768",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -433,12 +433,12 @@
       "filename": "tl_2025_48051_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48051_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48051_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 666613,
+      "sha256": "0c675f46360c1eb177d2857f3316d6eec121e65903812a5bd205dd58dbb1f7e1",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -452,12 +452,12 @@
       "filename": "tl_2025_48053_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48053_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48053_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1195068,
+      "sha256": "1794109c9229eea3bce4c1156e3b3ea06e94af9fc790840f088af1ca893fa9f6",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -471,12 +471,12 @@
       "filename": "tl_2025_48055_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48055_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48055_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 769081,
+      "sha256": "8e16116cc109dbc5912eeca74f0c19988a8c054c4026023c8e23a5295d52b9fb",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -490,12 +490,12 @@
       "filename": "tl_2025_48059_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48059_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48059_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 814345,
+      "sha256": "269db036438a6a06720569add9972dd6602493da149c356778fe72d58fcf230b",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -509,12 +509,12 @@
       "filename": "tl_2025_48061_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48061_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48061_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1697379,
+      "sha256": "e06277f1e1d93e10890dd78399d29831b6256c2a385a65c34710ac3366cc7700",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -528,12 +528,12 @@
       "filename": "tl_2025_48063_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48063_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48063_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 214582,
+      "sha256": "8fb24ee07786b6d8f21533bdf75b3a6f8e7cc07968595cbbf07be3e135258f4e",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -547,12 +547,12 @@
       "filename": "tl_2025_48065_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48065_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48065_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 566956,
+      "sha256": "57db7b2460269d4df3301aed5f60f868a4151d7ee4a74fcf9cf2153386006810",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -566,12 +566,12 @@
       "filename": "tl_2025_48067_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48067_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48067_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 681284,
+      "sha256": "fe57f66c61861bd3771831b5e98bc63e6c2143b8d53baee0c0bf9a5ef4430c9c",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -585,12 +585,12 @@
       "filename": "tl_2025_48069_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48069_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48069_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 440011,
+      "sha256": "233f4e17534a550cbe4bdebb5d3368f68f6fd9cbeed4f41d2232ddf264f68cea",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -604,12 +604,12 @@
       "filename": "tl_2025_48073_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48073_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48073_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1533325,
+      "sha256": "457a4ad1f3abb1b69504479e8600229e383b8a4ae89f06ffc5dfe368f6b050e1",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -623,12 +623,12 @@
       "filename": "tl_2025_48075_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48075_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48075_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 726456,
+      "sha256": "a965dbabc5165b712323201c3c687a4142ade9f55f015190a3ff40125c6ee1b6",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -642,12 +642,12 @@
       "filename": "tl_2025_48077_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48077_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48077_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 475949,
+      "sha256": "f7347c68b55d69b2b3ddbb68bed8cd2ad4abb03187e1bc278622f99c25cf6bf7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -661,12 +661,12 @@
       "filename": "tl_2025_48079_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48079_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48079_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 540802,
+      "sha256": "65cae875dc9924982ee5b4e015902dab7a3549eee7838b64c7dbe7e7f8f6f18a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -680,12 +680,12 @@
       "filename": "tl_2025_48081_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48081_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48081_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 522579,
+      "sha256": "4558670a0455a5bdb45be980069d96f690241a2377b5756743e46627b94c2c01",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -699,12 +699,12 @@
       "filename": "tl_2025_48083_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48083_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48083_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1098935,
+      "sha256": "7c8c4fc801c01b214decdd0101b340bc8a6d92ceacd3fc5a73f3eeb342970671",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -718,12 +718,12 @@
       "filename": "tl_2025_48085_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48085_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48085_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 4500248,
+      "sha256": "0f141a1c89e0d2634d20d1a9d5c382a7b22667913a683856c07b41c45350f6e7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -737,12 +737,12 @@
       "filename": "tl_2025_48087_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48087_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48087_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 443887,
+      "sha256": "3ed98fe824be3a98e2e9af5d0b3014a9f8dd62311e9237b989c389fd3b2e0d3f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -756,12 +756,12 @@
       "filename": "tl_2025_48091_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48091_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48091_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1446881,
+      "sha256": "0519ef44abd80f554e0d4f080b68926ce508f5c10d3d7365ce707205c871cad8",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -775,12 +775,12 @@
       "filename": "tl_2025_48093_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48093_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48093_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 818099,
+      "sha256": "841ee1aa6272466b1ddb79822ce830420939b17e7ebd72d6472f39fddd6580c8",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -794,12 +794,12 @@
       "filename": "tl_2025_48095_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48095_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48095_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 562077,
+      "sha256": "2715b8db8e8bf1126c33e7d582f50445715d80bd93cb1192ae82f745587d2ddc",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -813,12 +813,12 @@
       "filename": "tl_2025_48097_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48097_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48097_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1329243,
+      "sha256": "17bede0d3f437b2545d16fa18f14b4d17ccd82969af1f64043a24685e7b53c60",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -832,12 +832,12 @@
       "filename": "tl_2025_48099_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48099_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48099_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1434731,
+      "sha256": "e247238f1cf1edb3659382644cd400d8ed0888d0fdfbdef25cefa006ae10ce92",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -851,12 +851,12 @@
       "filename": "tl_2025_48101_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48101_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48101_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 430491,
+      "sha256": "ee734fca9456992d7ce1bc2e5c0a4ca8da0bc08326360f9499b24fd9fb2bb69a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -870,12 +870,12 @@
       "filename": "tl_2025_48103_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48103_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48103_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 469731,
+      "sha256": "b9f2a7617e4cec1a4a770a932c009231bbae4fdb9562e98d781ac1a90d9e2d23",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -889,12 +889,12 @@
       "filename": "tl_2025_48105_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48105_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48105_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2738025,
+      "sha256": "d81e12ed853c09f3e4b49c5f391d17f09470db01f06973982bb4a44d40d81e4f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -908,12 +908,12 @@
       "filename": "tl_2025_48107_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48107_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48107_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 487365,
+      "sha256": "3341db5f5a154654688b107c57d041f410df1f3d2c94771d092d36aa5bc205be",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -927,12 +927,12 @@
       "filename": "tl_2025_48109_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48109_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48109_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1931841,
+      "sha256": "273613b80ac4e7307f2240db95f441cc48e62c5d649005b9239e32c0009256ec",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -946,12 +946,12 @@
       "filename": "tl_2025_48111_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48111_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48111_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 336012,
+      "sha256": "bbdbf4060893d8d0d4693f50efea0acb30a771767a24cca75068e0e10b4c1f57",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -965,12 +965,12 @@
       "filename": "tl_2025_48113_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48113_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48113_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 6288731,
+      "sha256": "09f2aa5cf036b74d1af4d3dd1f925bee1ebd93504c44f87491b36bfff4897d72",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -984,12 +984,12 @@
       "filename": "tl_2025_48115_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48115_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48115_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 579344,
+      "sha256": "d71c6b910515dda28ce00a17618057e3adc5bf8777e280b356da62923aeadee6",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1003,12 +1003,12 @@
       "filename": "tl_2025_48117_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48117_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48117_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 453791,
+      "sha256": "c31ec5178773bd5838ab78af22d5a7810d7ad90db752a399a798c672af402744",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1022,12 +1022,12 @@
       "filename": "tl_2025_48119_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48119_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48119_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 206075,
+      "sha256": "884247e204e5b118ec1cfd5a208b9eaa4acc44e01b92fcb7a8f4e8a54c6ff1cf",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1041,12 +1041,12 @@
       "filename": "tl_2025_48121_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48121_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48121_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 3362618,
+      "sha256": "241291a62b34e376406728f24e19ad87b8dac11ed31335ee36347b92a9afc12a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1060,12 +1060,12 @@
       "filename": "tl_2025_48123_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48123_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48123_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 721582,
+      "sha256": "647e2fdc2a5003f3ffc94e3bbb45d452cfaceda4ad08be3c0e12a6b14070c209",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1079,12 +1079,12 @@
       "filename": "tl_2025_48125_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48125_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48125_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 402719,
+      "sha256": "da167adf0ea9f54d34ed7a254b8b5e5d5a475b5be0a0d0686c441b0d00fcc52d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1098,12 +1098,12 @@
       "filename": "tl_2025_48127_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48127_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48127_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 842708,
+      "sha256": "e7483facdf290543fb3c2d8d134d898f219e81ca8089706e6dd3bf9fb08aa78b",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1117,12 +1117,12 @@
       "filename": "tl_2025_48129_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48129_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48129_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 550177,
+      "sha256": "938fb47bd1e73ca8b5b3eac9e416e56a18e09160c67642f9dee66e1fae1b2c50",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1136,12 +1136,12 @@
       "filename": "tl_2025_48131_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48131_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48131_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1903212,
+      "sha256": "9df287a84e01f3ece3663cb271af1ddb908fae58122626947b62db0c684c6784",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1155,12 +1155,12 @@
       "filename": "tl_2025_48133_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48133_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48133_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 805055,
+      "sha256": "0c686e4886230e5f3c09504d2203cc39308088c1c36b19c302b7466c82a0c294",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1174,12 +1174,12 @@
       "filename": "tl_2025_48135_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48135_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48135_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 635305,
+      "sha256": "c1a299944c38506737d8d3ec44b2a3e56dfdb90beb7a284c8f7df33d912b0367",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1193,12 +1193,12 @@
       "filename": "tl_2025_48137_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48137_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48137_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1494322,
+      "sha256": "3620813a3d1751ac812c88964cdb185ef855da573231a80a9a49081cef6c43c6",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1212,12 +1212,12 @@
       "filename": "tl_2025_48139_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48139_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48139_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1645736,
+      "sha256": "3c74ee87b46ad228b2c4377b4e609f86795fae069ef447709a79af4610108a49",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1231,12 +1231,12 @@
       "filename": "tl_2025_48141_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48141_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48141_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2806287,
+      "sha256": "11f5c01082ca883b4e19240ee10c56b74da355db2f8dc3db02c4ce6b4f0c7c3a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1250,12 +1250,12 @@
       "filename": "tl_2025_48143_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48143_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48143_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1951270,
+      "sha256": "dbab8040b57b3e3a71c45f7274115eb702eca180caf72955dd326371c2f02ca1",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1269,12 +1269,12 @@
       "filename": "tl_2025_48145_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48145_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48145_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 499989,
+      "sha256": "76316218d623f480686d2018a94ddc713b1a1e249b069ee349f2254c0330a76f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1288,12 +1288,12 @@
       "filename": "tl_2025_48147_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48147_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48147_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 913097,
+      "sha256": "44efd6d04b26f56e255fc9099981811603cb1d5e86db40ab0cd3af7f3fb8e45b",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1307,12 +1307,12 @@
       "filename": "tl_2025_48151_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48151_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48151_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 546397,
+      "sha256": "ab38a9fd0094891d127384ab11ed2845925c3c81a5e2a03e602ff5d994132f7d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1326,12 +1326,12 @@
       "filename": "tl_2025_48153_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48153_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48153_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 504447,
+      "sha256": "8740d48f4c00fbc542112a8ea2a42c7a4774940773db2813b929438486203ad4",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1345,12 +1345,12 @@
       "filename": "tl_2025_48155_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48155_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48155_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 313401,
+      "sha256": "8c30fe3973fd58f842a2d49c832f87911ee6c1483600dc08ffb8b12241880e2b",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1364,12 +1364,12 @@
       "filename": "tl_2025_48159_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48159_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48159_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 390942,
+      "sha256": "f46af0be63c33e272cb031cbe52ffb21ebd34d4d6ac833b8af4d9c284617b066",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1383,12 +1383,12 @@
       "filename": "tl_2025_48161_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48161_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48161_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 973138,
+      "sha256": "715cb03a61eef4abf2103c5c3e5d72478aafec9826d5f851ca47711aef632cb7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1402,12 +1402,12 @@
       "filename": "tl_2025_48163_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48163_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48163_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1471610,
+      "sha256": "46b0493ecf656607ba8ec4fdce5abd6c9658671f9e9d78254aa034a3193a0fba",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1421,12 +1421,12 @@
       "filename": "tl_2025_48165_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48165_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48165_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 871629,
+      "sha256": "be8653c2c3bcf6db69f749a7fbed4ae8c37b6a44429f818274650ea6d56cd1fc",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1440,12 +1440,12 @@
       "filename": "tl_2025_48169_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48169_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48169_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 572962,
+      "sha256": "7c6727614357276335323063d44ea322988efeaab7945e7c7b2c872456eea15b",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1459,12 +1459,12 @@
       "filename": "tl_2025_48171_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48171_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48171_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 985871,
+      "sha256": "889bd69e605a250943136892381ba34d3c84451794a47c44f2cba35357feafa3",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1478,12 +1478,12 @@
       "filename": "tl_2025_48173_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48173_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48173_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 392736,
+      "sha256": "f089b599eb080eeaadc550a40b73e61bc5a01f081ab02f4ac5e92ff80679ae58",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1497,12 +1497,12 @@
       "filename": "tl_2025_48175_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48175_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48175_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 300078,
+      "sha256": "999c8fa48ffa332ca137a7baee4422d13b384a68188da75c657374d1710a7320",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1516,12 +1516,12 @@
       "filename": "tl_2025_48177_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48177_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48177_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 790544,
+      "sha256": "f2e36c94adf99fa0820fa0bfda10b1e98bb48808f94543060a28484ebf2a03d2",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1535,12 +1535,12 @@
       "filename": "tl_2025_48179_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48179_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48179_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 847308,
+      "sha256": "8a3b4ba997535099780fcfd694eeaba3a9c2452e868844605e1746ccc7e95f9c",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1554,12 +1554,12 @@
       "filename": "tl_2025_48181_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48181_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48181_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1979256,
+      "sha256": "444cea2ee60f38a02d6a02d3fab2507adc21571946624771580dd31a4041429c",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1573,12 +1573,12 @@
       "filename": "tl_2025_48183_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48183_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48183_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1450162,
+      "sha256": "d72309d8f9fe0149e6b23816cdfb739f934fa984e47ef78e7c018fc91c13cd74",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1592,12 +1592,12 @@
       "filename": "tl_2025_48187_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48187_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48187_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1132602,
+      "sha256": "dba4146513621cdbfa0af4fa2d10887409bc9dd4f1e0a1ce4f28ae7ed9ce1c25",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1611,12 +1611,12 @@
       "filename": "tl_2025_48189_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48189_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48189_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 731634,
+      "sha256": "43a5ec794460df14a650edf31811fdf1758e4a0099d04e67d3b9ef4e8eb110f3",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1630,12 +1630,12 @@
       "filename": "tl_2025_48191_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48191_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48191_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 966854,
+      "sha256": "d50d115cb51e0516b900059a8d4c298a3f7a7cc45a7c14f34052d60be5e9e55c",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1649,12 +1649,12 @@
       "filename": "tl_2025_48193_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48193_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48193_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 367163,
+      "sha256": "ca4573d27ec5dec51d2a5ab90cdfd0dc69aa89e16f126d3808ee359c78b5f0a4",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1668,12 +1668,12 @@
       "filename": "tl_2025_48195_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48195_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48195_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 319145,
+      "sha256": "377832cd82f0230134696e33e5a35debeacbef28cdb9c47b39e4cc9435647a23",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1687,12 +1687,12 @@
       "filename": "tl_2025_48197_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48197_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48197_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 336728,
+      "sha256": "b7374c4718ef05f20c7abb4d345ded00ebec3320aeec76ec6596a61fd7a4dd74",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1706,12 +1706,12 @@
       "filename": "tl_2025_48203_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48203_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48203_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1182599,
+      "sha256": "34501cee3bfcb2f1f1be04c616b01b83b1923e8236b6647b98493b7806b4dcaa",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1725,12 +1725,12 @@
       "filename": "tl_2025_48205_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48205_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48205_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 386915,
+      "sha256": "0bc21b8c5117f817d360eaff10de8e0c6255121cdec42e51d6ee071703dfe0d0",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1744,12 +1744,12 @@
       "filename": "tl_2025_48207_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48207_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48207_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 592938,
+      "sha256": "2b1c103dacf0a771fef25b52e56044940bf57833367b92c467c977cbf00282f3",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1763,12 +1763,12 @@
       "filename": "tl_2025_48209_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48209_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48209_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1626010,
+      "sha256": "0d612f968133fcb09e3224d7d284224d6341c792ec86efc361b70b13b7b511ab",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1782,12 +1782,12 @@
       "filename": "tl_2025_48211_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48211_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48211_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 442363,
+      "sha256": "a0ee324b405eb06f04f3dc7b70d315d956a6e2aef03370a756f12fe748007003",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1801,12 +1801,12 @@
       "filename": "tl_2025_48213_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48213_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48213_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1675647,
+      "sha256": "5829942bface040b5ec8933410a3d1301d50c4891050a83d1bdd38e0203e7fac",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1820,12 +1820,12 @@
       "filename": "tl_2025_48215_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48215_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48215_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 3968905,
+      "sha256": "2690f24d54f286d4ea990f8eac32a3371c3ef3d8df11a952909a9bfc4d17ce8e",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1839,12 +1839,12 @@
       "filename": "tl_2025_48217_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48217_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48217_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 846681,
+      "sha256": "dcf1941f17c72c14817d192eb23cac31e6fb250178a448a14c442bb2d0bd59b7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1858,12 +1858,12 @@
       "filename": "tl_2025_48219_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48219_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48219_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 819738,
+      "sha256": "d907cc7f0fd0175aad9309e756aeb62eed4b3d14264d16de574e14a326728e4a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1877,12 +1877,12 @@
       "filename": "tl_2025_48221_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48221_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48221_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1121856,
+      "sha256": "a5cd10f0dd3cce27ba7ee2b687094eb7b84246bda15b5e9b7200198b1b400975",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1896,12 +1896,12 @@
       "filename": "tl_2025_48223_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48223_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48223_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 700683,
+      "sha256": "85c34d9be6d920e7657b23aade8fc5f3720f403e8b1ecd9614e0ba4b44571882",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1915,12 +1915,12 @@
       "filename": "tl_2025_48225_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48225_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48225_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1301615,
+      "sha256": "c4d8d4d311a892ad57193a55a5b768a8dd27d739dcbb6e73fc0d9f0fb1bcb308",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1934,12 +1934,12 @@
       "filename": "tl_2025_48227_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48227_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48227_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 537039,
+      "sha256": "004ff214b015e528ac0d7a44ef69f6e2a06409ffcd8e619f7e6ec605db887bb1",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1953,12 +1953,12 @@
       "filename": "tl_2025_48229_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48229_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48229_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2168925,
+      "sha256": "d94689ed094c18a14985782b1929181f9b0bb5cf7d5f51c62df25b7272bbd471",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1972,12 +1972,12 @@
       "filename": "tl_2025_48231_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48231_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48231_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1348170,
+      "sha256": "3842020d504a0136ea8f3e3dca5e3c993acd5df50c46a1982ff14495973092bf",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -1991,12 +1991,12 @@
       "filename": "tl_2025_48233_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48233_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48233_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 794083,
+      "sha256": "7ef3b690ff95e80ac81228c0e07cbd38b5905b316c04a72526f4e273d995e37d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2010,12 +2010,12 @@
       "filename": "tl_2025_48235_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48235_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48235_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1038746,
+      "sha256": "80b4c0fd786a0def796599fc98b2034b1242625e46d4e2ef4ef4fdddb1c2d25d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2029,12 +2029,12 @@
       "filename": "tl_2025_48237_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48237_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48237_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 700738,
+      "sha256": "336c858300aec2ae4fa73b264943d9c042c9e657139e9512a3e926fba4edaf6f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2048,12 +2048,12 @@
       "filename": "tl_2025_48243_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48243_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48243_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1315322,
+      "sha256": "0c7fd9638791ad5af722f4d291f4790c3632312bf2cc78bcf4b50e348471023f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2067,12 +2067,12 @@
       "filename": "tl_2025_48247_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48247_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48247_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 583185,
+      "sha256": "43b08e17dbc54e7fa447717342b624af8e85019aca7b4628dae2389d0ae81969",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2086,12 +2086,12 @@
       "filename": "tl_2025_48249_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48249_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48249_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1038869,
+      "sha256": "7f7104b74c38dbd8579ec0a5a606c0a2bffdff61aaaf5e9159706a85b60090da",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2105,12 +2105,12 @@
       "filename": "tl_2025_48251_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48251_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48251_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1165631,
+      "sha256": "08939763a834123fe49556b46cd167a134e44260a905d14002d81928d7ab6fcf",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2124,12 +2124,12 @@
       "filename": "tl_2025_48253_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48253_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48253_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 552612,
+      "sha256": "e01080bd5d461f7ab20f0c656e11e0ce1e7cc202ebd3abb23a245e828fab1fa5",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2143,12 +2143,12 @@
       "filename": "tl_2025_48255_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48255_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48255_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 396931,
+      "sha256": "de772d17be72c3c8dc60ec864eb56d91b9db06f5ca603f9551c977eebc615f39",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2162,12 +2162,12 @@
       "filename": "tl_2025_48257_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48257_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48257_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1321862,
+      "sha256": "4db65d068458e61191c2bc96020a810a474dc5d554790858b25096e93cae5a14",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2181,12 +2181,12 @@
       "filename": "tl_2025_48259_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48259_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48259_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 999514,
+      "sha256": "67ed05f21f637aa2878eb0bb34b9a5f4205d4f2898151df3360c5e65ead226b2",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2200,12 +2200,12 @@
       "filename": "tl_2025_48261_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48261_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48261_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 881092,
+      "sha256": "60e1fca3acda70f2990683f1d4d2f43c6196b5d4a13e2fd7c38c08dc46ab3c18",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2219,12 +2219,12 @@
       "filename": "tl_2025_48263_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48263_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48263_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 509154,
+      "sha256": "2489474f79057f8f24671e9a32290609554a4f87e43fe5346bf334761d8dfb29",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2238,12 +2238,12 @@
       "filename": "tl_2025_48265_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48265_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48265_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1693298,
+      "sha256": "4591671c2ae46cb224128c6e2ce91af309621531751732a28d29b26c3a69c075",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2257,12 +2257,12 @@
       "filename": "tl_2025_48267_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48267_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48267_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1375199,
+      "sha256": "263ed7e864ec3b3ad8b2b0acbe3073485db3ef8117d5aa1b5f1b1e4520b380c9",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2276,12 +2276,12 @@
       "filename": "tl_2025_48269_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48269_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48269_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 492122,
+      "sha256": "60c3ae69600f352d45c0d08b271842d7c4cf2b03b279e795bd67bf969c90b0e9",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2295,12 +2295,12 @@
       "filename": "tl_2025_48271_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48271_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48271_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1062524,
+      "sha256": "ae630ff05b5c35e25e40e572e26c4573d25a50dea1f2dd88fb377cae8dbf8831",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2314,12 +2314,12 @@
       "filename": "tl_2025_48273_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48273_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48273_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 813039,
+      "sha256": "385016c80afa8b61189869d744f3ef6dd4ff5db77fe54c678d306bf227b43bbf",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2333,12 +2333,12 @@
       "filename": "tl_2025_48275_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48275_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48275_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 486357,
+      "sha256": "c2979f1722f19206f4deef4e1c3c97bc9c13d41024790ae8505790914d4b1311",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2352,12 +2352,12 @@
       "filename": "tl_2025_48277_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48277_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48277_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 881666,
+      "sha256": "62720d53b58c0b8bee41f61b9100626574e2705de252adc82bad6ca7fe5aa47c",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2371,12 +2371,12 @@
       "filename": "tl_2025_48279_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48279_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48279_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 640305,
+      "sha256": "5a523a9b6793d52e1cfabf2f686dcef90613eb197c8e4926079a90c725deea8f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2390,12 +2390,12 @@
       "filename": "tl_2025_48281_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48281_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48281_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 708970,
+      "sha256": "d4653ea121263390aba36e56d5250c65dcfb3223b4d264a478318dad07eb77f6",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2409,12 +2409,12 @@
       "filename": "tl_2025_48283_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48283_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48283_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 815259,
+      "sha256": "96d18db5c96cd1750063144709a02d31bff71e9d424d17cb46a1b23be70ddec5",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2447,12 +2447,12 @@
       "filename": "tl_2025_48289_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48289_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48289_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1081212,
+      "sha256": "02092999cc0782856512edc3e90fd46f928d968483f707d30fc4d9fa0e7bb454",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2466,12 +2466,12 @@
       "filename": "tl_2025_48293_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48293_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48293_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 649881,
+      "sha256": "0d5bd6a6afd729d5c3530c286a6e6a9cf4bd665c0a208f93dbd1b0eacb54da94",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2485,12 +2485,12 @@
       "filename": "tl_2025_48295_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48295_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48295_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 352896,
+      "sha256": "3656f1b4e2fe4e1f4cbea9d1d5c65c59301e085ff49a9bb93830be27ad2cd6c7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2504,12 +2504,12 @@
       "filename": "tl_2025_48297_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48297_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48297_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1295246,
+      "sha256": "0ec76c3a9a7e3f59fae634f3e4f5f252ae76440cb33f2bb542e2391e9e847531",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2523,12 +2523,12 @@
       "filename": "tl_2025_48299_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48299_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48299_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1313058,
+      "sha256": "5a98202cb5a35ea311435a952a4653d310f6f01bf25f682a5e1c8f7bb233d986",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2542,12 +2542,12 @@
       "filename": "tl_2025_48301_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48301_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48301_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 128892,
+      "sha256": "fa9090219caf8516d7c96c32765ec310d1d31a0427557ab93e6a3c04d145d3cb",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2561,12 +2561,12 @@
       "filename": "tl_2025_48303_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48303_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48303_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1510411,
+      "sha256": "ff1a6ad5edb50c449d891b0d5a4ca76a7a8d44ef7722b2f9e71641dc28ac9971",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2580,12 +2580,12 @@
       "filename": "tl_2025_48305_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48305_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48305_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 423610,
+      "sha256": "0f4da1e95567d3e60466879bf85b71f2e91b988057d74aab4aef9207acc67190",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2599,12 +2599,12 @@
       "filename": "tl_2025_48307_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48307_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48307_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 662172,
+      "sha256": "19a9513a5f2d019cda906dae7499faac2eb441798c26cfcc6ab3a6f69fe9fc99",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2618,12 +2618,12 @@
       "filename": "tl_2025_48309_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48309_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48309_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1227156,
+      "sha256": "b6b5374e4bbeee63333f9fc4d9a2e8d95f56318e6af93bf8dbe3fec77dc93b85",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2637,12 +2637,12 @@
       "filename": "tl_2025_48311_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48311_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48311_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 984750,
+      "sha256": "e577ac0c652f137a982232a6612d56ab95d09f74d727a4e23d516b9705ae71e4",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2656,12 +2656,12 @@
       "filename": "tl_2025_48313_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48313_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48313_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 328484,
+      "sha256": "561a43d45b1092d572b0ae6278689cf2ed33883d33608c214a6058f1a122b1dd",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2675,12 +2675,12 @@
       "filename": "tl_2025_48315_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48315_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48315_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 414508,
+      "sha256": "76698225b562b24b7d92e813d7611339d58bc9a83db109a75b2360b0f3e97ca6",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2694,12 +2694,12 @@
       "filename": "tl_2025_48317_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48317_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48317_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 384922,
+      "sha256": "bc4fe0e43b82e9a57e56ff78c52e7be0073777fa73f689ace6cfd39d1dbbbd84",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2713,12 +2713,12 @@
       "filename": "tl_2025_48319_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48319_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48319_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 746655,
+      "sha256": "daa13b60f09d74849d512cd7f951a5e0444c0103b3b28d6abc5560a0a699ede9",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2732,12 +2732,12 @@
       "filename": "tl_2025_48323_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48323_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48323_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1039818,
+      "sha256": "f831bc6963a9d49c949d4740c875432daa599e99f5e43f90357417b0255da6fd",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2751,12 +2751,12 @@
       "filename": "tl_2025_48325_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48325_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48325_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1354429,
+      "sha256": "4147569b6f9cdcd311318c93fbef1ad0ac7e40845aa401b22fe8fb822106a9c6",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2770,12 +2770,12 @@
       "filename": "tl_2025_48327_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48327_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48327_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 372838,
+      "sha256": "77f1b6ee8d335884e9ed1d34ff6e6a6188d7a51814c93c50ac9677787611d1da",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2789,12 +2789,12 @@
       "filename": "tl_2025_48329_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48329_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48329_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 889604,
+      "sha256": "9bc0b5e394bc3da64dac67a9f693b59efc582b2c0145b66548815e85cee261d4",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2827,12 +2827,12 @@
       "filename": "tl_2025_48333_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48333_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48333_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 439423,
+      "sha256": "f454a8b8d90f2854ce230ca92ce64aee894c1c27d3595765fb85a897c55defcc",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2846,12 +2846,12 @@
       "filename": "tl_2025_48335_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48335_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48335_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 623936,
+      "sha256": "40cad1feab98913f0b21051e314d1847c982083257e82a827cf3fafecc9809de",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2865,12 +2865,12 @@
       "filename": "tl_2025_48337_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48337_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48337_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1141430,
+      "sha256": "cc951304645aaf5a04656949f8957333080e2aa1336e022b9429d678e8febef3",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2884,12 +2884,12 @@
       "filename": "tl_2025_48341_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48341_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48341_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 421216,
+      "sha256": "5e9b0bf6094cd6ae275cc0bff038c0fd1c3fd7ab5f542fddab1ee5de4f08c9f7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2903,12 +2903,12 @@
       "filename": "tl_2025_48343_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48343_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48343_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 278152,
+      "sha256": "1abbaf983cb2431d1c48116035feb119c7506ba0aa9de6f25e18fea5f9f8c817",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2922,12 +2922,12 @@
       "filename": "tl_2025_48345_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48345_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48345_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 529030,
+      "sha256": "622fac1d753929a8a338db3ee6c4a3955c045d5760838ae62cfb7f3f441aaa22",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2941,12 +2941,12 @@
       "filename": "tl_2025_48347_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48347_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48347_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1443813,
+      "sha256": "85021a31a27ea16b86e2ee38137135ba01921a28662fe806193ed99a226af221",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2960,12 +2960,12 @@
       "filename": "tl_2025_48349_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48349_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48349_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1334831,
+      "sha256": "68f056287981a7c29c38e2a5d9ddec7a1cd2f649e607febe146a1b7304232d8d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2979,12 +2979,12 @@
       "filename": "tl_2025_48353_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48353_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48353_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 911009,
+      "sha256": "cb1910316a122a3eff11019c7a46e4d5c4c044c9d2b443eeae34232e6be3ff4d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -2998,12 +2998,12 @@
       "filename": "tl_2025_48355_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48355_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48355_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2009676,
+      "sha256": "676debfdc8e5b70aa0433591d3ffac3091c3729afae88c4158ce1f11f771dfb7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3017,12 +3017,12 @@
       "filename": "tl_2025_48357_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48357_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48357_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 191938,
+      "sha256": "91696c70322e4dda77ad9e9e5fcf9a991cf4177c9557fa7235de4a4e4398fe01",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3036,12 +3036,12 @@
       "filename": "tl_2025_48359_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48359_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48359_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 533202,
+      "sha256": "f36de0535ead14690156027165fe21de02cfd7a73b9a9d983fef9ca14df476b4",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3055,12 +3055,12 @@
       "filename": "tl_2025_48363_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48363_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48363_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1581796,
+      "sha256": "66ff6a8155f50c0c5dcc30e947303aa63a3f7fa8ef1a83f511e92d72eb8606b7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3074,12 +3074,12 @@
       "filename": "tl_2025_48365_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48365_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48365_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 927749,
+      "sha256": "29eedcd9d6c683fc6dc565562952f967bbadbcc7e9a526e3b508425fbf2a00ae",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3093,12 +3093,12 @@
       "filename": "tl_2025_48367_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48367_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48367_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1986655,
+      "sha256": "3f70a54e69ed9bc22ae32514a7e256e93080f5160316d56f21659e9ab4ea1352",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3112,12 +3112,12 @@
       "filename": "tl_2025_48369_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48369_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48369_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 456259,
+      "sha256": "f706edc93e39762aaa4ad78dbfdf7f83593403beee603040085f625a3d21cd89",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3131,12 +3131,12 @@
       "filename": "tl_2025_48371_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48371_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48371_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 3311494,
+      "sha256": "62d6272c98e2e4217924dca529cba61ae9a472b2a05675895a3ccf0509f20163",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3150,12 +3150,12 @@
       "filename": "tl_2025_48375_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48375_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48375_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 848795,
+      "sha256": "32bca69a5ee966e68c530d91066f682460d0b461ce353abdc79725103b005129",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3169,12 +3169,12 @@
       "filename": "tl_2025_48377_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48377_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48377_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2554408,
+      "sha256": "d25874d16a7925d092987c0394673f07548b24b482bde716a4c487e9cedf7198",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3188,12 +3188,12 @@
       "filename": "tl_2025_48379_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48379_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48379_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 337601,
+      "sha256": "bb3da20480478d9cebae93e9079bd7b1f41cef762d8dad80c375bddb7ed3b206",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3207,12 +3207,12 @@
       "filename": "tl_2025_48381_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48381_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48381_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 713795,
+      "sha256": "2024c76d9c4e410799234ca4120acc92f9c59e8930f917bc01b4d02b81c94b62",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3226,12 +3226,12 @@
       "filename": "tl_2025_48383_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48383_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48383_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 960591,
+      "sha256": "5b505c5a7f118d3bc64e8df6d832b117c58a42067cf43401f892f5561545fae0",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3245,12 +3245,12 @@
       "filename": "tl_2025_48385_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48385_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48385_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 589779,
+      "sha256": "db56d15a74eb7fc3bbce61617b6a752fed6487aec250b117815527cfceb17d06",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3264,12 +3264,12 @@
       "filename": "tl_2025_48387_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48387_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48387_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 606862,
+      "sha256": "968d91cb540e112ff3eed5fc6ebd182b74f7779b0c8d8b8803f6f620b5c60286",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3283,12 +3283,12 @@
       "filename": "tl_2025_48389_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48389_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48389_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1349959,
+      "sha256": "5748e990e8169bee0c6d3d56921ad8ee009cd3cb5266d1ce163c84165bd205a9",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3302,12 +3302,12 @@
       "filename": "tl_2025_48391_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48391_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48391_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 282890,
+      "sha256": "cf222984a2367d7c9b565582190f07b85012cf483329055e77cdc697e25b8104",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3321,12 +3321,12 @@
       "filename": "tl_2025_48393_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48393_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48393_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 435654,
+      "sha256": "efbb267c4400c0a658d48c4e0e01e941534eba7c65dfda477740b736a9a3fca3",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3359,12 +3359,12 @@
       "filename": "tl_2025_48397_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48397_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48397_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 666032,
+      "sha256": "e23e49b036658ec5439b745c890a9479fb045327bcb107660e3f66ec69a69f3f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3378,12 +3378,12 @@
       "filename": "tl_2025_48399_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48399_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48399_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 683940,
+      "sha256": "210929f6723cd842bb202bc103c2ea788fdc2a396ccfcbd26609e8bf915eb4d1",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3397,12 +3397,12 @@
       "filename": "tl_2025_48401_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48401_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48401_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1466790,
+      "sha256": "aceaa54281b7d20f5fbca201afac540e8f81a9f1017bd5f1c0d13d6eb2adcfbc",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3416,12 +3416,12 @@
       "filename": "tl_2025_48403_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48403_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48403_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 804332,
+      "sha256": "6c098ad110fd8b6870f7629e797f0633696a467f83458cb489b4eafa9b503415",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3435,12 +3435,12 @@
       "filename": "tl_2025_48405_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48405_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48405_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 742772,
+      "sha256": "8c783efd0eb90f7aaadd7f3f8e45b8ee101f25ca9aa1c4a82b95cf0891237a42",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3454,12 +3454,12 @@
       "filename": "tl_2025_48409_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48409_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48409_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 847301,
+      "sha256": "5fd7967e3d64708e29c3bf5455324d5192269f866bd3f8c4ba5125291f0c84be",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3473,12 +3473,12 @@
       "filename": "tl_2025_48411_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48411_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48411_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 757441,
+      "sha256": "f379ae2558f7eb49feeef4cfb63a870b261028309e3a1f7eb70fba5ac5babb84",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3492,12 +3492,12 @@
       "filename": "tl_2025_48413_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48413_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48413_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 921859,
+      "sha256": "907e0f04f85075d314760382fc6ff141881d839cfa9f4aeb5ed1dd6448f8a1fa",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3511,12 +3511,12 @@
       "filename": "tl_2025_48415_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48415_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48415_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 740356,
+      "sha256": "61fc4e03679757ddf5971880173d86479d33dfff9d1f5f59b068fed0c6e563c1",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3530,12 +3530,12 @@
       "filename": "tl_2025_48417_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48417_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48417_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 946138,
+      "sha256": "a59b56a1ef91be28d2a3bceda4c0674164c74a57227915a255e535e8811bdaba",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3549,12 +3549,12 @@
       "filename": "tl_2025_48419_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48419_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48419_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1142613,
+      "sha256": "a92cc41f044aefcf70031630133636b22effe6fdad0ccf89574edb1765a6a61c",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3568,12 +3568,12 @@
       "filename": "tl_2025_48421_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48421_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48421_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 276309,
+      "sha256": "38f981ecb41a198cfeb2bd2d05103d08ce6849d356c60bfe3c58598288fc6284",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3587,12 +3587,12 @@
       "filename": "tl_2025_48423_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48423_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48423_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2208343,
+      "sha256": "518fe694e0f11723cd6e9ebd017ea9b1483932a41840860c36837c2fc00cdfc7",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3606,12 +3606,12 @@
       "filename": "tl_2025_48425_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48425_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48425_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 591541,
+      "sha256": "d24f1e76fc9b3fb68de2d89130e61ee04017689b02e3354a273f491dbb6e488b",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3625,12 +3625,12 @@
       "filename": "tl_2025_48427_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48427_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48427_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1773708,
+      "sha256": "8185b8d327cc8b6385541be65a5dc083ae5383783fbec84c629b5e2d702eca0f",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3644,12 +3644,12 @@
       "filename": "tl_2025_48429_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48429_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48429_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 898813,
+      "sha256": "bb7606b40cf56cfe48d358bfb049f404dd804e7722743da26b66fc8c7e04d471",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3663,12 +3663,12 @@
       "filename": "tl_2025_48431_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48431_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48431_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 661243,
+      "sha256": "82aedb161523d5d6e6a21001c9013757627590374b184d0f252658063f33d22d",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3682,12 +3682,12 @@
       "filename": "tl_2025_48433_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48433_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48433_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 545590,
+      "sha256": "95dd2d738f6b05b5f7ab07553f1e5664aa8a52a4b71491cb26e1d0ffd2256a15",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3701,12 +3701,12 @@
       "filename": "tl_2025_48435_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48435_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48435_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1549855,
+      "sha256": "903b1371c91b46abc11c2f2d1d0ff33258be7f2b6a38111364e3ad2c7a97f834",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3720,12 +3720,12 @@
       "filename": "tl_2025_48437_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48437_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48437_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 499911,
+      "sha256": "ae40cd118ecd46cdc476e9423bb033f1b5cef3fdb1bf81822a5a7ed00b14fc0a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3739,12 +3739,12 @@
       "filename": "tl_2025_48439_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48439_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48439_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 6261956,
+      "sha256": "921245f43dc66aea8669604bd61510373b0ecea1117a83b45bc6eadc9cc3107c",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3758,12 +3758,12 @@
       "filename": "tl_2025_48441_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48441_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48441_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1181547,
+      "sha256": "ddf531dd31dd0b4f606733d6a21638a2ecbce9b69c09f9da0024db9bb2e3ba5e",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3777,12 +3777,12 @@
       "filename": "tl_2025_48443_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48443_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48443_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1621053,
+      "sha256": "2d72ab539676ca7eae53267297f2cd5e2dd0ca63e9940e46c9dcb0b832cc6de8",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3796,12 +3796,12 @@
       "filename": "tl_2025_48445_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48445_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48445_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 377282,
+      "sha256": "2a976d69fa5d0787a6486091a6dce3d5c382ef2b0bb2391b4d49dd718fded8e1",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3815,12 +3815,12 @@
       "filename": "tl_2025_48447_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48447_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48447_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 726894,
+      "sha256": "9932d89f093bd18214c63cbbbb45188c2f5548cf12d02464bcf3e2203a090265",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3834,12 +3834,12 @@
       "filename": "tl_2025_48449_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48449_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48449_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 519532,
+      "sha256": "1abf8729be06c7b78f2f68dcd798fab7a5eee30b3ceb71bef884ec29820c8695",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3853,12 +3853,12 @@
       "filename": "tl_2025_48451_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48451_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48451_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2230113,
+      "sha256": "1c3b27af3af33137e09357add63da510bdb7096b990f9e0db96aa40eefc037a2",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3872,12 +3872,12 @@
       "filename": "tl_2025_48453_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48453_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48453_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 3783221,
+      "sha256": "bdf25640c53babb2916e1c1a20c083145aa57fbcdf5630de410f2319aea1e599",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3891,12 +3891,12 @@
       "filename": "tl_2025_48455_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48455_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48455_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 911563,
+      "sha256": "7b0ca6fcc65ab91192f7493e9410b67cdabcc03eeffe2fac468f2350788e1a6a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3910,12 +3910,12 @@
       "filename": "tl_2025_48459_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48459_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48459_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 543857,
+      "sha256": "92985c5b09cc04be16ae1ce4c2e044b528ad8f10bbe84d76d6a395aef05c0b19",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3929,12 +3929,12 @@
       "filename": "tl_2025_48461_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48461_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48461_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 761199,
+      "sha256": "f21a7cb3d2805472a1b2bd9b8de072a351f23accafbe441f3c7d25a149d6d796",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3948,12 +3948,12 @@
       "filename": "tl_2025_48463_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48463_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48463_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1270636,
+      "sha256": "3b4d841719d08548921276f6ca7d3bb2cb55bab9693beae6a52dc051a50728b8",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3967,12 +3967,12 @@
       "filename": "tl_2025_48465_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48465_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48465_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2228976,
+      "sha256": "357c9cf133d163e219c983391e8497bc5b24b1defc839afd2a537033a64cfcab",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -3986,12 +3986,12 @@
       "filename": "tl_2025_48467_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48467_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48467_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 896175,
+      "sha256": "0d5ac41c87e27ef4387b21c498c79e89e82096342066ba0cf2dcc2e3536aa4a2",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4005,12 +4005,12 @@
       "filename": "tl_2025_48469_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48469_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48469_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 771084,
+      "sha256": "6875d5e71454133e588434a9e106a6f218bace36ed5d075cdd621d2b98c2fa48",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4024,12 +4024,12 @@
       "filename": "tl_2025_48475_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48475_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48475_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 418917,
+      "sha256": "f81dd2afc879870b27e568eab0021b576212ff045b30a2022230dc27c6de71f5",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4043,12 +4043,12 @@
       "filename": "tl_2025_48479_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48479_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48479_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 3309563,
+      "sha256": "d25145fc4951c4d893fff77a37b2d7edd3d7546a208551e19677dcae6edf9fa2",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4062,12 +4062,12 @@
       "filename": "tl_2025_48483_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48483_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48483_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 494535,
+      "sha256": "b98ef5c68383e728432f62e9b4b85724011b640250b81e15a05ae60e260e1d51",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4081,12 +4081,12 @@
       "filename": "tl_2025_48485_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48485_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48485_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 878904,
+      "sha256": "77d90549a12d195e80cc4e8cfd7eaf291f5d7ec773424656ed7bd7af4a7b79c4",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4100,12 +4100,12 @@
       "filename": "tl_2025_48487_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48487_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48487_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 399242,
+      "sha256": "af3047823a2159b76ea7cdcc9b20f34e9fe83685dbd6a7cd74ce55514df5f3ad",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4119,12 +4119,12 @@
       "filename": "tl_2025_48489_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48489_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48489_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 507487,
+      "sha256": "eb31b426992949ca224c6540d30b49f9ec215d2d9d1b0e4cfb40b1ef254b6092",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4138,12 +4138,12 @@
       "filename": "tl_2025_48491_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48491_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48491_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2776047,
+      "sha256": "266e2b292677569dfec7af6189d6cc1d67d0f1c7dc2196944277c52ad7c89293",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4157,12 +4157,12 @@
       "filename": "tl_2025_48493_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48493_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48493_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 741972,
+      "sha256": "6e5b55de8aab575d0802680b511b1a6218ae6b30c3927f15594c0b73722242b9",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4176,12 +4176,12 @@
       "filename": "tl_2025_48495_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48495_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48495_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 176405,
+      "sha256": "a0e565bb282ec50bcfa4fbf07fcbecc99fe758e99446a132d3671ae53362b55b",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4195,12 +4195,12 @@
       "filename": "tl_2025_48497_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48497_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48497_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 2331047,
+      "sha256": "4360162366c24a59fd3b5207076c84b9ca2d4ae947869e7d26728df0062c056c",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4214,12 +4214,12 @@
       "filename": "tl_2025_48499_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48499_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48499_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1000365,
+      "sha256": "ceef335f8cc424cb433f52a4f50442ecaec1e91517dfc85ac30264effa82ccfa",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4233,12 +4233,12 @@
       "filename": "tl_2025_48501_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48501_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48501_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 468990,
+      "sha256": "328811e0dafe8311c52ee1b1efa46d7ff05a6bdff0675b1bc560be5e8d442401",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4252,12 +4252,12 @@
       "filename": "tl_2025_48503_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48503_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48503_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 622741,
+      "sha256": "785f3d18b257997055cc62ee3a9bf8a3d3376310f48bed9773069c60e5b472b9",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4271,12 +4271,12 @@
       "filename": "tl_2025_48505_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48505_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48505_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 1092102,
+      "sha256": "904ab3e261e370bb929e0cbf6448190f98561e4a9ccf713c53f0d18c84a7191a",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     },
     {
       "schemaVersion": "gridly.lp208.tiger2025-roadway-source.v1",
@@ -4290,12 +4290,12 @@
       "filename": "tl_2025_48507_roads.zip",
       "officialUrl": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48507_roads.zip",
       "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS\\tl_2025_48507_roads.zip",
-      "bytes": null,
-      "sha256": null,
-      "zipValid": false,
-      "requiredMembersPresent": false,
-      "acquisitionStatus": null,
-      "certificationStatus": "PENDING_OWNER_ACQUISITION"
+      "bytes": 923090,
+      "sha256": "3a171567dcb6cc51eefafb8867ffadd546ef7e46a98ad7a23087126acbe5aa96",
+      "zipValid": true,
+      "requiredMembersPresent": true,
+      "acquisitionStatus": "ACQUIRED_NEW_SOURCE",
+      "certificationStatus": "PASS"
     }
   ]
 }
