@@ -135,3 +135,79 @@ test('LP213 startup settings and awareness resolution is bounded and non-reentra
   assert.equal(selected.key, 'place-4819000', 'canonical Dallas PLACE identity is retained');
   assert.equal(selected.countyId, 'dallas-tx', 'operational Dallas county is projected after normalization');
 });
+
+test('LP213 canonical Dallas profile defeats stale settings and unrelated runtime at startup', () => {
+  const dallas = Object.freeze({ key: 'place-4819000', label: 'Dallas', storageValue: 'Dallas', placeGeoid: '4819000', canonicalMultiCountyPlace: true, countyMemberships: Object.freeze(['48085', '48113', '48121', '48257', '48397']), countyId: null });
+  const home = Object.freeze({ identityType: 'PLACE_GEOID', communityKey: '4819000', awarenessAreaKey: 'place-4819000', consumerLabel: 'Dallas', countyId: null, countyMemberships: dallas.countyMemberships });
+  const settingsWrites = [];
+  const profileWrites = [];
+  const roadwayLoads = [];
+  let settingsReads = 0;
+  let settingsDepth = 0;
+  let maximumSettingsDepth = 0;
+  const staleSettings = { community: { homeTown: 'Dallas', awarenessArea: 'Dallas', awarenessAreaKey: 'collin-tx-dallas', countyId: 'collin-tx' } };
+  const context = {
+    Object, Set, String,
+    GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
+    GRIDLY_COUNTY_REGISTRY: {
+      'liberty-tx': { id: 'liberty-tx', countyFips: '48291' },
+      'collin-tx': { id: 'collin-tx', countyFips: '48085' },
+      'dallas-tx': { id: 'dallas-tx', countyFips: '48113' }
+    },
+    gridlyUserProfile: { homeTown: 'Dallas', awarenessArea: 'Dallas', awarenessAreaKey: 'place-4819000', awarenessAreaCountyId: 'dallas-tx' },
+    gridlyActiveCountyTransitionGeneration: 0,
+    gridlyOperationalCountyResolutionAudit: null,
+    gridlyActiveCountySynchronizationAudit: null,
+    gridlyStartupSemanticContext: null,
+    gridlyPrimaryMapCameraInitialized: false,
+    activeGeoFilter: 'county',
+    window: { GRIDLY_ACTIVE_COUNTY_ID: 'liberty-tx' },
+    gridlyNormalizeCountyId: (value) => String(value || '').toLowerCase(),
+    gridlyIsKnownCountyId: (value) => ['liberty-tx', 'collin-tx', 'dallas-tx'].includes(value),
+    gridlyReadHomePersonalizationRecord: () => home,
+    gridlyLp0517ValidateHomeRecord: () => ({ valid: true, area: dallas }),
+    gridlyGetActiveCountyId: () => context.window.GRIDLY_ACTIVE_COUNTY_ID,
+    getGridlySettingsPreferences: () => {
+      settingsReads += 1;
+      settingsDepth += 1;
+      maximumSettingsDepth = Math.max(maximumSettingsDepth, settingsDepth);
+      try { return structuredClone(staleSettings); } finally { settingsDepth -= 1; }
+    },
+    saveGridlySettingsPreferences: (value) => settingsWrites.push(value),
+    saveGridlyUserProfile: (value) => profileWrites.push(value),
+    gridlySetActiveCountyContext: (countyId) => {
+      context.window.GRIDLY_ACTIVE_COUNTY_ID = countyId;
+      context.gridlyActiveCountyTransitionGeneration += 1;
+      roadwayLoads.push({ countyId, featureCount: countyId === 'dallas-tx' ? 40208 : 8405 });
+      return countyId;
+    },
+    ensureGridlyActiveCountyCrossingInventory() {},
+    invalidateGridlySelectedAwarenessAreaResolutionCache() {},
+    gridlyResolveCanonicalPlaceGeoid: undefined
+  };
+  vm.createContext(context);
+  vm.runInContext([
+    productionFunction('gridlyResolveCanonicalPlaceGeoid'),
+    productionFunction('gridlyResolvePersistedCanonicalPlaceOperationalCounty'),
+    productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext'),
+    productionFunction('gridlyPersistCanonicalPlaceOperationalCounty'),
+    productionFunction('gridlySynchronizeActiveCountyForOperationalContext'),
+    productionFunction('gridlyResolvePersistedSemanticContextForStartup'),
+    productionFunction('gridlyHydratePersistedSemanticContextOnStartup')
+  ].join('\n'), context);
+
+  const startup = context.gridlyResolvePersistedSemanticContextForStartup();
+  assert.equal(startup.countyId, 'dallas-tx', 'canonical profile operational county has first persisted precedence');
+  const restored = context.gridlyHydratePersistedSemanticContextOnStartup(startup);
+  assert.equal(restored.restored, true);
+  assert.equal(context.window.GRIDLY_ACTIVE_COUNTY_ID, 'dallas-tx');
+  assert.equal(settingsWrites.at(-1).community.countyId, 'dallas-tx');
+  assert.equal(settingsWrites.at(-1).community.awarenessAreaKey, 'place-4819000');
+  assert.equal(profileWrites.at(-1).awarenessAreaCountyId, 'dallas-tx');
+  assert.deepEqual(roadwayLoads.at(-1), { countyId: 'dallas-tx', featureCount: 40208 });
+  assert.equal(maximumSettingsDepth, 1, 'settings reads never recursively re-enter');
+  assert.equal(settingsReads, 2, 'startup resolution and convergence each perform one bounded settings read');
+
+  context.gridlySynchronizeActiveCountyForOperationalContext({ label: 'Liberty', countyId: 'liberty-tx' }, 'liberty-tx', 'lp213_return');
+  assert.deepEqual(roadwayLoads.at(-1), { countyId: 'liberty-tx', featureCount: 8405 });
+});
