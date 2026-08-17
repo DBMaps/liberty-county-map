@@ -3,7 +3,7 @@ param(
   [ValidateSet('WhatIf','Build','Resume','Verify')] [string] $Mode = 'WhatIf',
   [string] $SourceRoot = 'C:\GitHub\Gridly-Source-Data\Census\TIGER2025\ROADS',
   [string] $OutputRoot = '',
-  [string] $Gdal = 'C:\Program Files\QGIS 3.44.11\bin\ogr2ogr.exe'
+  [string] $GdalExecutable = 'C:\Program Files\QGIS 3.44.11\bin\ogr2ogr.exe'
 )
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
@@ -14,7 +14,7 @@ $writeReports = 'false'
 if ($Mode -eq 'Build' -or $Mode -eq 'Resume') { $writeReports = 'true' }
 $js = @"
 import { executeOwner } from './tools/lp209/statewide-roadway-candidates.mjs';
-const result=await executeOwner({mode:'$($Mode.ToLowerInvariant())',sourceRoot:String.raw`$SourceRoot`,outputRoot:String.raw`$OutputRoot`,gdal:String.raw`$Gdal`,writeReports:$writeReports}); console.log(result.readiness);
+const result=await executeOwner({mode:'$($Mode.ToLowerInvariant())',sourceRoot:String.raw`$SourceRoot`,outputRoot:String.raw`$OutputRoot`,gdal:String.raw`$GdalExecutable`,writeReports:$writeReports}); console.log(result.readiness);
 "@
 $js | & node --input-type=module
 if ($LASTEXITCODE -ne 0) { throw "LP209 $Mode failed closed (exit $LASTEXITCODE)." }

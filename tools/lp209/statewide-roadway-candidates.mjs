@@ -3,7 +3,7 @@
 import { createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { access, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
-import { dirname, join, relative, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { extract } from '../lp118/extract-tiger-roadways.mjs';
 import { manufacture, PARTITION_LIMITS } from '../lp116/manufacture-candidate-roadways.mjs';
@@ -16,6 +16,7 @@ const BOUNDARIES = join(ROOT, 'assets/boundaries/texas-counties-boundaries.geojs
 const REPORTS = join(ROOT, 'reports/lp209');
 export const OWNER_SOURCE_ROOT = 'C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS';
 export const OWNER_OUTPUT_ROOT = 'owner-local/lp209-roadway-manufacturing';
+export const DEFAULT_GDAL_EXECUTABLE = 'C:\\Program Files\\QGIS 3.44.11\\bin\\ogr2ogr.exe';
 export const CONTROL_FIPS = Object.freeze(['48287','48331','48395','48113','48029','48141','48181','48309','48423','48439','48453']);
 const sha = b => createHash('sha256').update(b).digest('hex');
 const json = x => `${JSON.stringify(x, null, 2)}\n`;
@@ -54,8 +55,24 @@ export async function loadPlan({ sourceRoot = OWNER_SOURCE_ROOT, outputRoot = OW
 }
 
 async function command(exe,args) { return new Promise((ok,no)=>{ let out=''; const p=spawn(exe,args,{windowsHide:true}); p.stdout.on('data',x=>out+=x); p.stderr.on('data',x=>out+=x); p.once('error',no); p.once('close',code=>code===0?ok(out.trim()):no(new Error(`${exe} exited ${code}: ${out.trim()}`))); }); }
-export async function verifyGdal(gdal='C:\\Program Files\\QGIS 3.44.11\\bin\\ogr2ogr.exe') {
-  const identity=await command(gdal,['--version']);
+export async function resolveGdalConfiguration(configured = DEFAULT_GDAL_EXECUTABLE) {
+  invariant(typeof configured === 'string' && configured.trim(), 'GDAL executable or directory is required');
+  const configuredPath = resolve(configured);
+  let information;
+  try { information = await stat(configuredPath); } catch { invariant(false, `GDAL path does not exist: ${configured}`); }
+  const executable = information.isDirectory()
+    ? join(configuredPath, process.platform === 'win32' ? 'ogr2ogr.exe' : 'ogr2ogr')
+    : configuredPath;
+  invariant(information.isDirectory() || information.isFile(), `GDAL path is neither a file nor directory: ${configured}`);
+  invariant(/^ogr2ogr(?:\.exe)?$/i.test(basename(executable)), `GDAL executable must be ogr2ogr: ${configured}`);
+  let executableInformation;
+  try { executableInformation = await stat(executable); } catch { invariant(false, `ogr2ogr executable does not exist: ${executable}`); }
+  invariant(executableInformation.isFile(), `ogr2ogr executable is not a file: ${executable}`);
+  return { executable, directory: dirname(executable) };
+}
+export async function verifyGdal(gdalExecutable) {
+  invariant(gdalExecutable, 'resolved GDAL executable is required');
+  const identity=await command(gdalExecutable,['--version']);
   invariant(/GDAL 3\.13\./i.test(identity), `GDAL 3.13.x required; received ${identity}`);
   return identity;
 }
@@ -65,8 +82,8 @@ export async function executeOwner({ mode='whatif', sourceRoot=OWNER_SOURCE_ROOT
   invariant(['whatif','build','resume','verify'].includes(mode), `unsupported mode ${mode}`);
   const before=await loadPlan({sourceRoot,outputRoot});
   invariant(!resolve(outputRoot).startsWith(resolve(ROOT,'data')) && !resolve(outputRoot).startsWith(resolve(ROOT,'assets')), 'output root is production-adjacent');
-  const ownerMounted=await exists(sourceRoot); let gdalIdentity=null;
-  if (ownerMounted) gdalIdentity=await verifyGdal(gdal);
+  const ownerMounted=await exists(sourceRoot); let gdalIdentity=null; let gdalConfiguration=null;
+  if (ownerMounted) { gdalConfiguration=await resolveGdalConfiguration(gdal); gdalIdentity=await verifyGdal(gdalConfiguration.executable); }
   if (mode==='whatif') return summarize(before.rows,[],before,{ownerMounted,gdalIdentity,writeReports:false});
   if (mode==='build'||mode==='resume') {
     invariant(ownerMounted,'owner source root is not mounted (not classified globally missing)');
@@ -74,7 +91,7 @@ export async function executeOwner({ mode='whatif', sourceRoot=OWNER_SOURCE_ROOT
     for (const row of before.rows) {
       await sourceIdentity(row);
       const lp118Root=join(outputRoot,'lp118');
-      const extracted=await extract({fips:row.countyFips,candidate:true,source:row.sourceOwnerPath,boundaries:BOUNDARIES,gdal,reports:lp118Root,[mode==='resume'?'resume':'force']:true});
+      const extracted=await extract({fips:row.countyFips,candidate:true,source:row.sourceOwnerPath,boundaries:BOUNDARIES,gdal:gdalConfiguration.directory,reports:lp118Root,[mode==='resume'?'resume':'force']:true});
       const x=extracted.counties[0]; invariant(['GENERATED','RESUMED'].includes(x.status),`LP118 ${row.countyFips}: ${x.status}`);
       const made=await manufacture({fips:row.countyFips,candidate:true,source:resolve(x.output.path),boundaries:BOUNDARIES,reports:join(outputRoot,'lp116'),[mode==='resume'?'resume':'force']:true});
       invariant(made.counties[0].certificationStatus==='PASS',`LP116 ${row.countyFips} did not PASS`);
