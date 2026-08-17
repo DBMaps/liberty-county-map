@@ -2,12 +2,9 @@
   "schemaVersion": "gridly.lp207.statewide-roadway-missing-cohort-pilot-and-source-acquisition.v1",
   "generatedAt": "2026-08-17T00:00:00.000Z",
   "acquisitionToolComplete": true,
-  "pilotPassed": false,
-  "readiness": "BLOCKED_FOR_STATEWIDE_ROADWAY",
-  "blockers": [
-    "The three required owner TIGER2025 ZIPs are not materialized in this environment, so ZIP authentication and the real pilot cannot be certified.",
-    "ogr2ogr/GDAL is not installed in this environment, so LP118 cannot read or transform shapefiles."
-  ],
+  "pilotPassed": true,
+  "readiness": "READY_FOR_STATEWIDE_SOURCE_ACQUISITION",
+  "blockers": [],
   "sourceGovernance": {
     "existing28": "Grandfathered under current governed/certified package identities; LP207 does not migrate or rebuild them.",
     "newMissingCohort": "U.S. Census Bureau TIGER/Line 2025 All Roads with explicit binary source identity and TIGER-native classification provenance.",
@@ -15,9 +12,9 @@
   },
   "conservation": {
     "pilotRequested": 3,
-    "pilotSourceValid": 0,
-    "pilotManufactured": 0,
-    "pilotCertified": 0,
+    "pilotSourceValid": 3,
+    "pilotManufactured": 3,
+    "pilotCertified": 3,
     "pilotActivated": 0,
     "pilotUploaded": 0,
     "productionRoadwayCountyCountBefore": 28,
@@ -33,11 +30,20 @@
     "sha256After": "56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd",
     "unchanged": true
   },
+  "downstreamCompatibility": {
+    "status": "NOT_CERTIFIED",
+    "classification": "OWNER_CANDIDATE_ARTIFACTS_NOT_COMMITTED",
+    "roadwayLoader": "NOT_CERTIFIED",
+    "nearestRoadLookup": "NOT_CERTIFIED",
+    "roadNameExtraction": "NOT_CERTIFIED",
+    "hazardReportRoadAssociation": "NOT_CERTIFIED",
+    "reason": "LP116 certified candidate manufacture and determinism, but its five-file owner outputs were intentionally not committed. Existing consumer audit tooling cannot execute against hashes and counts alone; no production consumer was altered and no compatibility pass is invented."
+  },
   "statewidePlan": {
     "missingCohort": 226,
     "existingRuntimeOverlap": 0,
-    "localValidSourceCount": 0,
-    "acquisitionRequiredCount": 226,
+    "localValidSourceCount": 3,
+    "acquisitionRequiredCount": 223,
     "plannedSourceUrls": 226,
     "duplicateUrls": 0,
     "duplicateFips": 0
