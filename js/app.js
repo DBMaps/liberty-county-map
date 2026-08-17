@@ -8698,6 +8698,13 @@ const FRA_URL = gridlyGetActiveCountyRuntimeSources().remoteCrossingSource;
 const LOCAL_CROSSINGS_URL = gridlyGetActiveCountyRuntimeSources().crossingSource;
 let gridlyCrossingInventoryCountyId = null;
 let gridlyCrossingInventoryReloadPromise = null;
+let gridlyCrossingInventoryHydrationState = {
+  countyId: null,
+  attempted: false,
+  completed: false,
+  failureReason: null,
+  reason: null
+};
 const CROSSING_REVIEW_OVERRIDES_URL = gridlyGetActiveCountyRuntimeSources().crossingOverridesSource;
 const ROADWAY_SEGMENTS_URL = gridlyGetActiveCountyRuntimeSources().roadSource;
 const LIBERTY_COUNTY_BOUNDARY_URL = gridlyGetActiveCountyRuntimeSources().boundarySource;
@@ -45774,6 +45781,13 @@ function gridlySynchronizeActiveCountyForOperationalContext(area, countyId, sour
     setterResult = gridlySetActiveCountyContext(resolvedCountyId, { preserveSemanticCamera: true, preservePersistedAwareness: true, source });
   }
   const activeCountyIdAfter = gridlyGetActiveCountyId();
+  // County identity and county inventory are separate runtime invariants. In
+  // particular, semantic startup can establish identity before the crossing
+  // subsystem has loaded. Re-enter the existing, de-duplicated LP202.1 loader
+  // even on a same-county pass when ownership is missing or stale.
+  if (activeCountyIdAfter === resolvedCountyId) {
+    ensureGridlyActiveCountyCrossingInventory(`${source}:county-runtime-invariant`);
+  }
   gridlyActiveCountySynchronizationAudit = Object.freeze({ synchronizerInvoked: true, source, resolvedGridlyCountyId: resolvedCountyId, activeCountyIdBefore, activeCountyIdAfter, transitionAttempted: resolvedCountyId !== activeCountyIdBefore, transitionCommitted: activeCountyIdAfter === resolvedCountyId, transitionBlockedReason: activeCountyIdAfter === resolvedCountyId ? null : "setter_did_not_commit_resolved_county", setterInvoked, setterResult, transitionGenerationBefore, transitionGenerationAfter: gridlyActiveCountyTransitionGeneration });
   return resolvedCountyId;
 }
@@ -46240,6 +46254,7 @@ function gridlySetActiveCountyContext(countyId = GRIDLY_DEFAULT_COUNTY_ID, optio
     if (options.preservePersistedAwareness !== true) gridlyClearStaleAwarenessAreaForCountyContext(normalized, "active-county-change");
     gridlyCrossingInventoryCountyId = null;
     if (Array.isArray(crossings)) crossings = [];
+    gridlyCrossingInventoryHydrationState = { countyId: normalized, attempted: false, completed: false, failureReason: null, reason: "active-county-change" };
     resetGridlyCrossingRuntimeAuditStateForCounty(normalized, "active-county-change");
     if (gridlyStartupContextFinalized) ensureGridlyActiveCountyCrossingInventory("active-county-change");
     if (typeof gridlyActivateRoadwayDatasetForActiveCounty === "function") gridlyActivateRoadwayDatasetForActiveCounty("active-county-change");
@@ -46257,6 +46272,10 @@ function gridlyActiveCountyRuntimeAudit() {
   const authoritativeCountyId = gridlyResolveCanonicalCountyIdForOperationalContext(selected, selected?.countyId);
   const activeCountyId = gridlyGetActiveCountyId();
   const sourceCountyId = gridlyGetActiveCountyRuntimeSources()?.countyId || null;
+  const inventoryOwnerMatchesActiveCounty = gridlyCrossingInventoryCountyId === activeCountyId;
+  const inventoryHydrationInFlight = Boolean(gridlyCrossingInventoryReloadPromise?.gridlyTargetCountyId === activeCountyId);
+  const inventoryHydrationCompleted = Boolean(inventoryOwnerMatchesActiveCounty && Array.isArray(crossings));
+  const activeEmptyIntentionalZero = Boolean(inventoryHydrationCompleted && crossings.length === 0);
   return Object.freeze({
     ...gridlyActiveCountySynchronizationAudit,
     authoritativeLocationLabel: selected?.label || selected?.storageValue || gridlyActiveGeographicPresentation?.placeLabel || null,
@@ -46266,6 +46285,15 @@ function gridlyActiveCountyRuntimeAudit() {
     crossingSourceCounty: sourceCountyId,
     runtimeInventoryCounty: gridlyCrossingInventoryCountyId,
     crossingInventoryCount: Array.isArray(crossings) ? crossings.length : 0,
+    inventoryHydrationRequired: !inventoryHydrationCompleted,
+    inventoryHydrationAttempted: gridlyCrossingInventoryHydrationState.countyId === activeCountyId && gridlyCrossingInventoryHydrationState.attempted,
+    inventoryHydrationInFlight,
+    inventoryHydrationCompleted,
+    inventoryHydrationFailureReason: gridlyCrossingInventoryHydrationState.countyId === activeCountyId ? gridlyCrossingInventoryHydrationState.failureReason : null,
+    inventoryHydrationState: inventoryHydrationInFlight ? "loading" : (inventoryHydrationCompleted ? (activeEmptyIntentionalZero ? "loaded_intentional_zero" : "loaded_positive") : "unhydrated"),
+    inventoryHydrationSource: inventoryHydrationCompleted ? (gridlyCrossingFallbackAuditState.sourceUsed || gridlyCrossingFallbackAuditState.lastFetchSource || null) : null,
+    inventoryOwnerMatchesActiveCounty,
+    activeEmptyIntentionalZero,
     awarenessAreaKey: selected?.key || null,
     canonicalPlaceGeoid: gridlyOperationalCountyResolutionAudit?.canonicalPlaceGeoid || gridlyResolveCanonicalPlaceGeoid(selected),
     canonicalMultiCountyPlace: gridlyOperationalCountyResolutionAudit?.canonicalMultiCountyPlace || selected?.canonicalMultiCountyPlace === true,
@@ -46278,7 +46306,7 @@ function gridlyActiveCountyRuntimeAudit() {
     failureReason: gridlyOperationalCountyResolutionAudit?.failureReason || null,
     transitionGeneration: gridlyActiveCountyTransitionGeneration,
     staleRequestSuppressions: gridlyActiveCountyStaleRequestSuppressions,
-    synchronized: Boolean(authoritativeCountyId && authoritativeCountyId === activeCountyId && sourceCountyId === activeCountyId && (!gridlyCrossingInventoryCountyId || gridlyCrossingInventoryCountyId === activeCountyId))
+    synchronized: Boolean(authoritativeCountyId && authoritativeCountyId === activeCountyId && sourceCountyId === activeCountyId && inventoryHydrationCompleted)
   });
 }
 
@@ -50907,6 +50935,7 @@ async function loadCrossings() {
       return shouldShowCrossingInLaunchMode(crossing);
     });
     gridlyCrossingInventoryCountyId = requestedCountyId;
+    gridlyCrossingInventoryHydrationState = { ...gridlyCrossingInventoryHydrationState, countyId: requestedCountyId, attempted: true, completed: true, failureReason: null };
     const normalizationCountMismatch = Number(coordinateDiagnostics.diagnosticNormalizedCount || 0) !== rawCrossings.length;
     const normalizationAssignmentMissing = rawCrossings.length > 0 && crossings.length === 0;
     recordGridlyCrossingFallbackAudit("normalizationAssignment", {
@@ -50961,7 +50990,10 @@ async function loadCrossings() {
       safeText("crossingCount", "Loading");
       return;
     }
-    if (requestedCountyId === gridlyGetActiveCountyId()) gridlyCrossingInventoryCountyId = null;
+    if (requestedCountyId === gridlyGetActiveCountyId()) {
+      gridlyCrossingInventoryCountyId = null;
+      gridlyCrossingInventoryHydrationState = { ...gridlyCrossingInventoryHydrationState, countyId: requestedCountyId, attempted: true, completed: false, failureReason: String(error?.message || error || "crossing_load_failed") };
+    }
     crossingLoadFailed = true;
     console.error("Gridly crossing load failed:", error);
     safeText("dataStatus", "Crossing data failed");
@@ -52049,6 +52081,7 @@ function ensureGridlyActiveCountyCrossingInventory(reason = "unspecified") {
   // An empty governed inventory is loaded state, not a cache miss.
   if (gridlyCrossingInventoryCountyId === activeCountyId && Array.isArray(crossings)) return false;
   if (gridlyCrossingInventoryReloadPromise && gridlyCrossingInventoryReloadPromise.gridlyTargetCountyId === activeCountyId) return true;
+  gridlyCrossingInventoryHydrationState = { countyId: activeCountyId, attempted: true, completed: false, failureReason: null, reason };
   if (Array.isArray(crossings) && crossings.length && gridlyCrossingInventoryCountyId !== activeCountyId) {
     crossings = [];
     if (crossingMarkers instanceof Map) {

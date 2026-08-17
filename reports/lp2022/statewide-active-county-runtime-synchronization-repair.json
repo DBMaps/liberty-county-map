@@ -325,5 +325,74 @@
       "lp196": "PASS",
       "statewideTargets": "PASS (254/254)"
     }
+  },
+  "sameCountyRuntimeInventoryHydrationRepair": {
+    "liveOwnerFailure": {
+      "activeCountyId": "dallas-tx",
+      "runtimeInventoryCounty": null,
+      "crossingInventoryCount": 0,
+      "synchronizedIdentityBeforeRepair": true
+    },
+    "exactInvalidState": "An active county with null or different inventory ownership is unhydrated regardless of array length.",
+    "rootCause": "gridlySynchronizeActiveCountyForOperationalContext skipped gridlySetActiveCountyContext for an already-active county and returned without invoking the existing inventory hydration owner; an earlier startup load missed before crossing readiness therefore had no deterministic same-county repair path.",
+    "hydrationStateContract": {
+      "healthyPositive": "owner equals active county and governed records are loaded",
+      "healthyEmpty": "owner equals active county and zero records are intentionally loaded",
+      "nullOwner": "unhealthy and hydration required",
+      "wrongOwner": "unhealthy; stale records are cleared and active county hydration is required"
+    },
+    "positiveSemantics": "Existing LP202.1 governed resolver and loadCrossings path load, authenticate, commit, and refresh the shared inventory.",
+    "emptySemantics": "The existing loader commits the active county owner even when the governed package contains zero features.",
+    "wrongOwnerSemantics": "Existing ensure helper clears non-empty stale inventory before starting the governed active-county load.",
+    "nullOwnerSemantics": "Same-county synchronizer now invokes the existing ensure helper; empty null-owned arrays do not qualify as loaded.",
+    "startupBehavior": "Every successfully resolved operational synchronization pass enforces inventory hydration, including presentation/geometry readiness retries.",
+    "deduplicationBehavior": "The existing county-tagged reload promise is reused for repeated requests targeting the active county.",
+    "staleRequestBehavior": "Existing requested county plus transition-generation validation prevents an obsolete result from committing.",
+    "dallasControl": {
+      "before": {
+        "activeCountyId": "dallas-tx",
+        "runtimeInventoryCounty": null,
+        "count": 0,
+        "generation": 7
+      },
+      "after": {
+        "activeCountyId": "dallas-tx",
+        "runtimeInventoryCounty": "dallas-tx",
+        "count": 789,
+        "generation": 7,
+        "hydrationAttempted": true,
+        "hydrationCompleted": true,
+        "sourceCounty": "dallas-tx",
+        "synchronized": true
+      }
+    },
+    "libertyControl": {
+      "owner": "liberty-tx",
+      "governedCount": 115,
+      "classificationPreserved": true
+    },
+    "emptyControls": {
+      "count": 3,
+      "ownerMatches": true,
+      "countPerCounty": 0,
+      "intentionalZeroHealthy": true,
+      "repeatReloads": 0
+    },
+    "statewideAccounting": {
+      "governed": 254,
+      "activePositive": 202,
+      "activeEmpty": 52,
+      "governedIdentities": 16099,
+      "positiveHydrationFailures": 0,
+      "emptyHydrationFailures": 0
+    },
+    "tests": {
+      "lp2022": "PASS (11/11)",
+      "lp2021": "PASS",
+      "lp196": "PASS",
+      "liveEquivalentNullOwnerDallas": "PASS",
+      "inFlightDeduplication": "PASS",
+      "staleCommitProtection": "PASS"
+    }
   }
 }
