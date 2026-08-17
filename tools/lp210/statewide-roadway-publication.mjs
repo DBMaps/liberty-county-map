@@ -64,8 +64,27 @@ export function validateLocalManifest(m,c){
  if(matched.size!==objects.size)fail('missing package');
 }
 async function localCertify(plan,workspace){for(const c of plan.counties){for(const o of c.objects){const p=join(workspace,o.localPath);const b=await readFile(p);if(b.length!==o.expectedBytes||sha(b)!==o.expectedSha256)throw Error(`Local package identity mismatch: ${p}`);o.bytes=b;}const p=join(workspace,c.localManifestPath),b=await readFile(p);if(b.length!==c.expectedManifestBytes||sha(b)!==c.expectedManifestSha256)throw Error(`Local manifest identity mismatch: ${p}`);const m=JSON.parse(b);try{validateLocalManifest(m,c);}catch(error){throw Error(`${error.message}: ${p}`);}c.manifestBytes=b;}}
-async function getRemote(path,token){const headers=token?{Authorization:`Bearer ${token}`,apikey:token}:{};const u=`${AUTHORITY.baseUrl}/storage/v1/object/public/${AUTHORITY.bucket}/${path}`;const r=await fetch(u,{headers});if(r.status===404)return null;if(!r.ok)throw Error(`Remote GET ${path}: HTTP ${r.status}`);return Buffer.from(await r.arrayBuffer());}
-async function certifyObject(item,local,token,apply,contentType){let remote=await getRemote(item.remotePath,token);if(remote){if(remote.length!==local.length||sha(remote)!==sha(local))throw Error(`REMOTE_OBJECT_CONFLICT: ${item.remotePath}`);return {uploaded:false,actualBytes:remote.length,actualSha256:sha(remote),status:'REMOTE_OBJECT_EXACT_MATCH'};}if(!apply)return {uploaded:false,actualBytes:null,actualSha256:null,status:'REMOTE_OBJECT_ABSENT'};if(!token)throw Error('Apply requires SUPABASE_SERVICE_ROLE_KEY or GRIDLY_ROADWAY_STORAGE_TOKEN');const r=await fetch(`${AUTHORITY.baseUrl}/storage/v1/object/${AUTHORITY.bucket}/${item.remotePath}`,{method:'POST',headers:{Authorization:`Bearer ${token}`,apikey:token,'Content-Type':contentType,'Cache-Control':`max-age=${AUTHORITY.cacheControl}`,'x-upsert':'false'},body:local});if(!r.ok)throw Error(`Upload failed ${item.remotePath}: HTTP ${r.status}`);remote=await getRemote(item.remotePath,token);if(!remote||remote.length!==local.length||sha(remote)!==sha(local))throw Error(`Independent remote verification failed: ${item.remotePath}`);return {uploaded:true,actualBytes:remote.length,actualSha256:sha(remote),status:'REMOTE_OBJECT_EXACT_MATCH'};}
+function storageErrorDetail(body){
+ if(!body||typeof body!=='object'||Array.isArray(body))return '';
+ return [['code',body.code],['error',body.error],['message',body.message]].filter(([,v])=>typeof v==='string'&&v).map(([k,v])=>`${k}=${v}`).join(', ');
+}
+function isMissingStorageObject(status,body){
+ if(status===404)return true;
+ if(!body||typeof body!=='object'||Array.isArray(body))return false;
+ return body.code==='NoSuchKey'||(body.error==='not_found'&&String(body.statusCode)==='404');
+}
+export async function getRemote(path,token){
+ const headers=token?{Authorization:`Bearer ${token}`,apikey:token}:{};
+ const u=`${AUTHORITY.baseUrl}/storage/v1/object/public/${AUTHORITY.bucket}/${path}`;
+ const r=await fetch(u,{headers});
+ if(r.ok)return Buffer.from(await r.arrayBuffer());
+ const errorText=await r.text().catch(()=>'');
+ let errorBody=null;try{errorBody=JSON.parse(errorText);}catch{}
+ if(isMissingStorageObject(r.status,errorBody))return null;
+ const detail=storageErrorDetail(errorBody);
+ throw Error(`Remote GET ${path}: HTTP ${r.status}${detail?`; ${detail}`:''}`);
+}
+export async function certifyObject(item,local,token,apply,contentType){let remote=await getRemote(item.remotePath,token);if(remote){if(remote.length!==local.length||sha(remote)!==sha(local))throw Error(`REMOTE_OBJECT_CONFLICT: ${item.remotePath}`);return {uploaded:false,actualBytes:remote.length,actualSha256:sha(remote),status:'REMOTE_OBJECT_EXACT_MATCH'};}if(!apply)return {uploaded:false,actualBytes:null,actualSha256:null,status:'REMOTE_OBJECT_ABSENT'};if(!token)throw Error('Apply requires SUPABASE_SERVICE_ROLE_KEY or GRIDLY_ROADWAY_STORAGE_TOKEN');const r=await fetch(`${AUTHORITY.baseUrl}/storage/v1/object/${AUTHORITY.bucket}/${item.remotePath}`,{method:'POST',headers:{Authorization:`Bearer ${token}`,apikey:token,'Content-Type':contentType,'Cache-Control':`max-age=${AUTHORITY.cacheControl}`,'x-upsert':'false'},body:local});if(!r.ok)throw Error(`Upload failed ${item.remotePath}: HTTP ${r.status}`);remote=await getRemote(item.remotePath,token);if(!remote||remote.length!==local.length||sha(remote)!==sha(local))throw Error(`Independent remote verification failed: ${item.remotePath}`);return {uploaded:true,actualBytes:remote.length,actualSha256:sha(remote),status:'REMOTE_OBJECT_EXACT_MATCH'};}
 export async function execute({mode='WhatIf',workspace=process.env.LP209_OWNER_WORKSPACE,write=true}={}){
  const plan=await buildPlan(), apply=mode==='Apply', token=process.env.SUPABASE_SERVICE_ROLE_KEY||process.env.GRIDLY_ROADWAY_STORAGE_TOKEN;
  if(!['WhatIf','Apply','Verify'].includes(mode))throw Error('Mode must be WhatIf, Apply, or Verify');if(!workspace)throw Error('LP209 owner workspace is required for local pre-publication certification');await localCertify(plan,workspace);
