@@ -7,7 +7,10 @@ import { acquireOne, AUTHORITY, inspectSource, loadAuthorities, officialUrl, PRO
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const REPORT_ROOT = join(ROOT, 'reports/lp208');
+const ACQUISITION_REPORT = join(REPORT_ROOT, 'statewide-tiger2025-roadway-source-acquisition.json');
+const SOURCE_MANIFEST = join(REPORT_ROOT, 'statewide-tiger2025-roadway-source-manifest.json');
 const RUNTIME = join(ROOT, 'data/roadway-runtime-manifest.json');
+const RUNTIME_SHA256 = '56549d67569f2c74cd202a1e93a30f79591b119ef1fdf58c8d138ffdefaad7bd';
 export const OWNER_ROOT = 'C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\ROADS';
 const PILOT_EVIDENCE = join(ROOT, 'reports/lp207/pilot-source-preflight.json');
 const SPOTS = new Set(['48287', '48331', '48395', '48113', '48029', '48141', '48181', '48309', '48423', '48439', '48453']);
@@ -28,6 +31,65 @@ export async function inventory(options = {}) {
   return { authorities, counties, duplicateFips, duplicateUrls, overlap };
 }
 
+const requireEqual = (actual, expected, label) => {
+  if (actual !== expected) throw new Error(`LP208 committed evidence invalid: ${label} must be ${expected}, received ${actual}`);
+};
+
+/** Verify the committed owner certificate without requiring the out-of-repository ZIP directory. */
+export async function verifyCommittedEvidence() {
+  const [acquisition, manifestDocument, runtimeBytes, inv] = await Promise.all([
+    readFile(ACQUISITION_REPORT, 'utf8').then(JSON.parse),
+    readFile(SOURCE_MANIFEST, 'utf8').then(JSON.parse),
+    readFile(RUNTIME),
+    inventory()
+  ]);
+  const expectedAccounting = {
+    missingCohortCount: 226, existingValidAtStart: 3, acquisitionRequiredAtStart: 223,
+    newlyAcquired: 223, finalValidSources: 226, missingSources: 0, failedAcquisitions: 0,
+    invalidExistingSources: 0, duplicateFips: 0, duplicateUrls: 0, existingRuntimeOverlap: 0,
+    texasCountyCount: 254, existingRuntimeRoadwayCount: 28, supabaseWrites: 0,
+    runtimeActivations: 0, roadwayPackagesManufactured: 0, productionRoadwayPackageModifications: 0
+  };
+  for (const [field, expected] of Object.entries(expectedAccounting)) requireEqual(acquisition[field], expected, field);
+  requireEqual(acquisition.readiness, 'READY_FOR_STATEWIDE_MISSING_COHORT_MANUFACTURING', 'readiness');
+  requireEqual(manifestDocument.certificationComplete, true, 'manifest certificationComplete');
+  requireEqual(manifestDocument.counties?.length, 226, 'manifest row count');
+  requireEqual(sha(runtimeBytes), RUNTIME_SHA256, 'production runtime manifest SHA-256');
+  for (const field of ['sha256Before', 'sha256After']) requireEqual(acquisition.productionRuntimeManifest?.[field], RUNTIME_SHA256, `productionRuntimeManifest.${field}`);
+  requireEqual(acquisition.productionRuntimeManifest?.countyCountBefore, 28, 'productionRuntimeManifest.countyCountBefore');
+  requireEqual(acquisition.productionRuntimeManifest?.countyCountAfter, 28, 'productionRuntimeManifest.countyCountAfter');
+  requireEqual(acquisition.productionRuntimeManifest?.unchanged, true, 'productionRuntimeManifest.unchanged');
+
+  const expectedByFips = new Map(inv.counties.map(county => [county.countyFips, county]));
+  const fips = new Set(); const urls = new Set();
+  for (const [index, row] of manifestDocument.counties.entries()) {
+    const prefix = `manifest row ${index + 1}`;
+    for (const field of ['countyFips', 'countyId', 'countyName', 'countySlug', 'sourceAuthority', 'sourceProduct', 'sourceVintage', 'filename', 'officialUrl', 'ownerPath', 'bytes', 'sha256']) {
+      if (row[field] === null || row[field] === undefined || row[field] === '') throw new Error(`LP208 committed evidence invalid: ${prefix} lacks ${field}`);
+    }
+    const county = expectedByFips.get(row.countyFips);
+    if (!county) throw new Error(`LP208 committed evidence invalid: ${prefix} is outside the frozen missing cohort`);
+    for (const field of ['countyId', 'countyName', 'countySlug']) requireEqual(row[field], county[field], `${prefix}.${field}`);
+    requireEqual(row.sourceAuthority, AUTHORITY, `${prefix}.sourceAuthority`);
+    requireEqual(row.sourceProduct, PRODUCT, `${prefix}.sourceProduct`);
+    requireEqual(row.sourceVintage, 2025, `${prefix}.sourceVintage`);
+    requireEqual(row.filename, sourceFilename(row.countyFips), `${prefix}.filename`);
+    requireEqual(row.officialUrl, officialUrl(row.countyFips), `${prefix}.officialUrl`);
+    if (!Number.isInteger(row.bytes) || row.bytes <= 0) throw new Error(`LP208 committed evidence invalid: ${prefix}.bytes must be a positive integer`);
+    if (!/^[a-f0-9]{64}$/.test(row.sha256)) throw new Error(`LP208 committed evidence invalid: ${prefix}.sha256 is not SHA-256`);
+    requireEqual(row.zipValid, true, `${prefix}.zipValid`);
+    requireEqual(row.requiredMembersPresent, true, `${prefix}.requiredMembersPresent`);
+    if (!['EXISTING_VALID_SOURCE', 'ACQUIRED_NEW_SOURCE'].includes(row.acquisitionStatus)) throw new Error(`LP208 committed evidence invalid: ${prefix}.acquisitionStatus is not certified`);
+    requireEqual(row.certificationStatus, 'PASS', `${prefix}.certificationStatus`);
+    fips.add(row.countyFips); urls.add(row.officialUrl);
+  }
+  requireEqual(fips.size, 226, 'unique manifest FIPS count');
+  requireEqual(urls.size, 226, 'unique manifest URL count');
+  requireEqual(manifestDocument.counties.filter(row => row.acquisitionStatus === 'EXISTING_VALID_SOURCE').length, 3, 'existing manifest source count');
+  requireEqual(manifestDocument.counties.filter(row => row.acquisitionStatus === 'ACQUIRED_NEW_SOURCE').length, 223, 'new manifest source count');
+  return { acquisition, manifest: manifestDocument.counties, results: manifestDocument.counties };
+}
+
 async function pilotMap() {
   const evidence = JSON.parse(await readFile(PILOT_EVIDENCE, 'utf8'));
   return new Map(evidence.results.filter(x => x.status === 'EXISTING_VALID_SOURCE' && x.zipValid && x.requiredMembersPresent).map(x => [x.countyFips, x]));
@@ -46,6 +108,10 @@ async function retryAcquire(root, county, options) {
 
 export async function execute({ mode = 'whatif', sourceRoot = OWNER_ROOT, write = false, attempts = 3, retryDelayMs = 1000, interCountyDelayMs = 250, fetchImpl } = {}) {
   if (!['whatif', 'acquire', 'verify'].includes(mode)) throw new Error(`Unsupported LP208 mode: ${mode}`);
+  if (mode === 'verify') {
+    if (write) throw new Error('LP208 verify mode is read-only');
+    return verifyCommittedEvidence();
+  }
   const runtimeBefore = await readFile(RUNTIME);
   const { counties, duplicateFips, duplicateUrls, overlap, authorities } = await inventory();
   const pilots = await pilotMap();
