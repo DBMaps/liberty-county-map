@@ -76,6 +76,42 @@ test('production lifecycle is generic and retains LP202.1 authority', () => {
   assert.match(fs.readFileSync('js/gridlyRuntimeSourceRegistryBridge.js', 'utf8'), /resolveGovernedCrossingSource/);
 });
 
+test('Dallas governed package success is not invalidated by the legacy provider audit', async () => {
+  const bridgeSource = fs.readFileSync('js/gridlyRuntimeSourceRegistryBridge.js', 'utf8');
+  const adapterSource = fs.readFileSync('js/gridlyCrossingPackageAdapter.js', 'utf8');
+  const providerSource = fs.readFileSync('js/gridlyCrossingProvider.js', 'utf8');
+  const fetchJsonFile = async (input) => {
+    try {
+      const body = await fs.promises.readFile(String(input).replace(/^\.?\//, ''));
+      return new Response(body, { status: 200, headers: { 'Content-Type': 'application/json' } });
+    } catch { return new Response('not found', { status: 404 }); }
+  };
+  const trace = [];
+  const sandbox = { window: null, fetch: fetchJsonFile, Response, Object, Array, String, Number, Date, JSON, RegExp, Error, Promise, console };
+  sandbox.window = sandbox;
+  vm.createContext(sandbox);
+  vm.runInContext(bridgeSource, sandbox); vm.runInContext(adapterSource, sandbox); vm.runInContext(providerSource, sandbox);
+  Object.assign(sandbox, {
+    GRIDLY_COUNTY_REGISTRY: registry,
+    gridlyNormalizeCountyId: value => String(value || '').trim().toLowerCase(),
+    gridlyGetActiveCountyId: () => 'dallas-tx',
+    gridlyGetCountyRuntimeSources: () => ({ crossingSource: null }),
+    recordGridlyCrossingFallbackAudit() {},
+    gridlyRecordCrossingHydrationTrace: (event, detail) => trace.push({ event, ...detail }),
+    GRIDLY_REMOTE_CROSSING_FETCH_OPTIONS: {}, GRIDLY_LOCAL_CROSSING_FETCH_OPTIONS: {},
+    CROSSING_FETCH_RETRY_ATTEMPTS: 1, CROSSING_FETCH_RETRY_DELAY_MS: 0,
+    isGridlyExplicitDebugModeEnabled: () => false, wait: async () => {}
+  });
+  vm.runInContext(`async ${productionFunction('fetchFraCrossingsWithRetry')};this.fetchDallas=fetchFraCrossingsWithRetry`, sandbox);
+  await assert.rejects(sandbox.gridlyCrossingProvider.audit(), /Active county crossing source unavailable/);
+  const response = await sandbox.fetchDallas('dallas-tx');
+  const geojson = await response.json();
+  assert.equal(geojson.features.length, 789);
+  assert.equal(response.gridlyCrossingSourcePath, 'Crossing-Packages/dallas/Production/dallas-production-crossings.geojson');
+  assert.deepEqual(trace.map(entry => entry.event), ['GOVERNED_SOURCE_RESOLVED', 'PACKAGE_FETCH_STARTED', 'PACKAGE_FETCH_SUCCEEDED']);
+  assert.equal(sandbox.gridlyCrossingProvider.getLastLoadTrace().mode, 'production');
+});
+
 function sameCountyHydrationSandbox({ countyId, inventoryCounty = null, inventory = [], delay = 0 }) {
   let loadCount = 0;
   let renderRefreshCount = 0;
@@ -90,6 +126,7 @@ function sameCountyHydrationSandbox({ countyId, inventoryCounty = null, inventor
     gridlyActiveCountyTransitionGeneration: 7,
     gridlyOperationalCountyResolutionAudit: null,
     gridlyActiveCountySynchronizationAudit: Object.freeze({ synchronizerInvoked: false }),
+    gridlyRecordCrossingHydrationTrace() {},
     gridlyGetActiveCountyId: () => sandbox.activeCountyId,
     gridlyNormalizeCountyId: value => String(value || '').trim().toLowerCase(),
     gridlyIsKnownCountyId: value => Boolean(registry[value]),
