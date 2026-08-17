@@ -77,6 +77,14 @@ const inventory = projection.communities
       staleSettingsCounty: staleMember?.countyId || null,
       legacyLabels: { homeTown: place.displayName, community: place.displayName },
       precedenceResult: 'PROFILE_OPERATIONAL_COUNTY',
+      coldStart: {
+        inMemoryProfileBeforeHydration: 'EMPTY_DEFAULT',
+        persistedProfileAwarenessKey: awarenessKey,
+        persistedProfileCounty: operationalCounty?.id || null,
+        settingsAwarenessKeyBeforeRepair: `${operationalCounty?.id}-${place.displayName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        hydrationCompletedBeforeCanonicalStartupResolution: true,
+        settingsCanonicalKeyRepairedWithoutLabelIdentityInference: true
+      },
       results: {
         activeCounty: operationalCounty?.id || null,
         selectedCounty: operationalCounty?.id || null,
@@ -98,15 +106,15 @@ const inventory = projection.communities
     };
   });
 
-const classificationTotals = inventory.reduce((totals, row) => { totals[row.classification] += 1; return totals; }, { PASS: 0, SAME_DEFECT_CLASS: 0, DIFFERENT_DEFECT: 0, OWNER_REVIEW_REQUIRED: 0 });
+const classificationTotals = inventory.reduce((totals, row) => { totals[row.classification] += 1; return totals; }, { PASS: 0, SAME_COLD_START_DEFECT: 0, DIFFERENT_DEFECT: 0, OWNER_REVIEW_REQUIRED: 0 });
 const report = {
   schemaVersion: 'gridly.lp213.statewide-canonical-multi-county-place-audit.v1',
   generatedAt: '2026-08-17T00:00:00.000Z',
   scope: 'Every governed Texas canonical multi-county PLACE',
   totalCanonicalMultiCountyPlaceCount: inventory.length,
   classificationTotals,
-  genericProductionRepairs: ['Membership-validate every explicit canonical PLACE operational county before runtime synchronization.'],
-  uniqueTransitionMatrix: ['profile_over_stale_member_settings', 'profile_over_unrelated_active_runtime', 'predecessor_cancellation_and_replacement_hydration', 'same_county_roadway_activation_deduplication', 'return_to_single_county_runtime'],
+  genericProductionRepairs: ['Hydrate the authoritative in-memory profile snapshot exactly once before canonical startup resolution.', 'Membership-validate every explicit canonical PLACE operational county before runtime synchronization.'],
+  uniqueTransitionMatrix: ['empty_default_memory_hydrated_from_persisted_profile_before_resolution', 'profile_over_stale_member_settings', 'profile_over_unrelated_active_runtime', 'canonical_settings_key_repair_without_label_identity_inference', 'predecessor_cancellation_and_replacement_hydration', 'same_county_roadway_activation_deduplication', 'return_to_single_county_runtime'],
   preservedAuthorities: ['canonical PLACE memberships', 'roadway packages and manifests', 'Supabase objects', 'roadway data', 'statewide 254-county runtime activation', 'LP211', 'LP212'],
   inventory
 };

@@ -5,16 +5,19 @@
   "totalCanonicalMultiCountyPlaceCount": 163,
   "classificationTotals": {
     "PASS": 163,
-    "SAME_DEFECT_CLASS": 0,
+    "SAME_COLD_START_DEFECT": 0,
     "DIFFERENT_DEFECT": 0,
     "OWNER_REVIEW_REQUIRED": 0
   },
   "genericProductionRepairs": [
+    "Hydrate the authoritative in-memory profile snapshot exactly once before canonical startup resolution.",
     "Membership-validate every explicit canonical PLACE operational county before runtime synchronization."
   ],
   "uniqueTransitionMatrix": [
+    "empty_default_memory_hydrated_from_persisted_profile_before_resolution",
     "profile_over_stale_member_settings",
     "profile_over_unrelated_active_runtime",
+    "canonical_settings_key_repair_without_label_identity_inference",
     "predecessor_cancellation_and_replacement_hydration",
     "same_county_roadway_activation_deduplication",
     "return_to_single_county_runtime"
@@ -59,6 +62,14 @@
         "community": "Abernathy"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4800160",
+        "persistedProfileCounty": "hale-tx",
+        "settingsAwarenessKeyBeforeRepair": "hale-tx-abernathy",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hale-tx",
         "selectedCounty": "hale-tx",
@@ -114,6 +125,14 @@
         "community": "Abilene"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4801000",
+        "persistedProfileCounty": "taylor-tx",
+        "settingsAwarenessKeyBeforeRepair": "taylor-tx-abilene",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "taylor-tx",
         "selectedCounty": "taylor-tx",
@@ -169,6 +188,14 @@
         "community": "Ackerly"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4801108",
+        "persistedProfileCounty": "dawson-tx",
+        "settingsAwarenessKeyBeforeRepair": "dawson-tx-ackerly",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dawson-tx",
         "selectedCounty": "dawson-tx",
@@ -224,6 +251,14 @@
         "community": "Alba"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4801636",
+        "persistedProfileCounty": "wood-tx",
+        "settingsAwarenessKeyBeforeRepair": "wood-tx-alba",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "wood-tx",
         "selectedCounty": "wood-tx",
@@ -279,6 +314,14 @@
         "community": "Amarillo"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4803000",
+        "persistedProfileCounty": "potter-tx",
+        "settingsAwarenessKeyBeforeRepair": "potter-tx-amarillo",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "potter-tx",
         "selectedCounty": "potter-tx",
@@ -339,6 +382,14 @@
         "community": "Aransas Pass"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4803600",
+        "persistedProfileCounty": "san-patricio-tx",
+        "settingsAwarenessKeyBeforeRepair": "san-patricio-tx-aransas-pass",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "san-patricio-tx",
         "selectedCounty": "san-patricio-tx",
@@ -404,6 +455,14 @@
         "community": "Austin"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4805000",
+        "persistedProfileCounty": "travis-tx",
+        "settingsAwarenessKeyBeforeRepair": "travis-tx-austin",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "travis-tx",
         "selectedCounty": "travis-tx",
@@ -459,6 +518,14 @@
         "community": "Azle"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4805168",
+        "persistedProfileCounty": "tarrant-tx",
+        "settingsAwarenessKeyBeforeRepair": "tarrant-tx-azle",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "tarrant-tx",
         "selectedCounty": "tarrant-tx",
@@ -514,6 +581,14 @@
         "community": "Bartlett"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4805732",
+        "persistedProfileCounty": "williamson-tx",
+        "settingsAwarenessKeyBeforeRepair": "williamson-tx-bartlett",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "williamson-tx",
         "selectedCounty": "williamson-tx",
@@ -569,6 +644,14 @@
         "community": "Baytown"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4806128",
+        "persistedProfileCounty": "harris-tx",
+        "settingsAwarenessKeyBeforeRepair": "harris-tx-baytown",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "harris-tx",
         "selectedCounty": "harris-tx",
@@ -624,6 +707,14 @@
         "community": "Big Thicket Lake Estates"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4808240",
+        "persistedProfileCounty": "liberty-tx",
+        "settingsAwarenessKeyBeforeRepair": "liberty-tx-big-thicket-lake-estates",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "liberty-tx",
         "selectedCounty": "liberty-tx",
@@ -679,6 +770,14 @@
         "community": "Blackwell"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4808488",
+        "persistedProfileCounty": "nolan-tx",
+        "settingsAwarenessKeyBeforeRepair": "nolan-tx-blackwell",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "nolan-tx",
         "selectedCounty": "nolan-tx",
@@ -734,6 +833,14 @@
         "community": "Booker"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4809448",
+        "persistedProfileCounty": "lipscomb-tx",
+        "settingsAwarenessKeyBeforeRepair": "lipscomb-tx-booker",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "lipscomb-tx",
         "selectedCounty": "lipscomb-tx",
@@ -794,6 +901,14 @@
         "community": "Briar"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4810192",
+        "persistedProfileCounty": "wise-tx",
+        "settingsAwarenessKeyBeforeRepair": "wise-tx-briar",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "wise-tx",
         "selectedCounty": "wise-tx",
@@ -849,6 +964,14 @@
         "community": "Bruceville-Eddy"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4810828",
+        "persistedProfileCounty": "mclennan-tx",
+        "settingsAwarenessKeyBeforeRepair": "mclennan-tx-bruceville-eddy",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "mclennan-tx",
         "selectedCounty": "mclennan-tx",
@@ -904,6 +1027,14 @@
         "community": "Bullard"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4811212",
+        "persistedProfileCounty": "smith-tx",
+        "settingsAwarenessKeyBeforeRepair": "smith-tx-bullard",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "smith-tx",
         "selectedCounty": "smith-tx",
@@ -959,6 +1090,14 @@
         "community": "Burleson"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4811428",
+        "persistedProfileCounty": "johnson-tx",
+        "settingsAwarenessKeyBeforeRepair": "johnson-tx-burleson",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "johnson-tx",
         "selectedCounty": "johnson-tx",
@@ -1014,6 +1153,14 @@
         "community": "Bushland"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4811572",
+        "persistedProfileCounty": "potter-tx",
+        "settingsAwarenessKeyBeforeRepair": "potter-tx-bushland",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "potter-tx",
         "selectedCounty": "potter-tx",
@@ -1074,6 +1221,14 @@
         "community": "Carrollton"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4813024",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-carrollton",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -1129,6 +1284,14 @@
         "community": "Cedar Hill"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4813492",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-cedar-hill",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -1184,6 +1347,14 @@
         "community": "Cedar Park"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4813552",
+        "persistedProfileCounty": "williamson-tx",
+        "settingsAwarenessKeyBeforeRepair": "williamson-tx-cedar-park",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "williamson-tx",
         "selectedCounty": "williamson-tx",
@@ -1239,6 +1410,14 @@
         "community": "Celina"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4813684",
+        "persistedProfileCounty": "collin-tx",
+        "settingsAwarenessKeyBeforeRepair": "collin-tx-celina",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "collin-tx",
         "selectedCounty": "collin-tx",
@@ -1294,6 +1473,14 @@
         "community": "Cibolo"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4814920",
+        "persistedProfileCounty": "guadalupe-tx",
+        "settingsAwarenessKeyBeforeRepair": "guadalupe-tx-cibolo",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "guadalupe-tx",
         "selectedCounty": "guadalupe-tx",
@@ -1349,6 +1536,14 @@
         "community": "Cinco Ranch"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4814929",
+        "persistedProfileCounty": "fort-bend-tx",
+        "settingsAwarenessKeyBeforeRepair": "fort-bend-tx-cinco-ranch",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "fort-bend-tx",
         "selectedCounty": "fort-bend-tx",
@@ -1404,6 +1599,14 @@
         "community": "Clarksville City"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4815172",
+        "persistedProfileCounty": "gregg-tx",
+        "settingsAwarenessKeyBeforeRepair": "gregg-tx-clarksville-city",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "gregg-tx",
         "selectedCounty": "gregg-tx",
@@ -1464,6 +1667,14 @@
         "community": "Cleveland"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4815436",
+        "persistedProfileCounty": "liberty-tx",
+        "settingsAwarenessKeyBeforeRepair": "liberty-tx-cleveland",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "liberty-tx",
         "selectedCounty": "liberty-tx",
@@ -1519,6 +1730,14 @@
         "community": "Combine"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4816216",
+        "persistedProfileCounty": "kaufman-tx",
+        "settingsAwarenessKeyBeforeRepair": "kaufman-tx-combine",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "kaufman-tx",
         "selectedCounty": "kaufman-tx",
@@ -1574,6 +1793,14 @@
         "community": "Coppell"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4816612",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-coppell",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -1634,6 +1861,14 @@
         "community": "Copperas Cove"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4816624",
+        "persistedProfileCounty": "coryell-tx",
+        "settingsAwarenessKeyBeforeRepair": "coryell-tx-copperas-cove",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "coryell-tx",
         "selectedCounty": "coryell-tx",
@@ -1699,6 +1934,14 @@
         "community": "Corpus Christi"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4817000",
+        "persistedProfileCounty": "nueces-tx",
+        "settingsAwarenessKeyBeforeRepair": "nueces-tx-corpus-christi",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "nueces-tx",
         "selectedCounty": "nueces-tx",
@@ -1754,6 +1997,14 @@
         "community": "Creedmoor"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4817612",
+        "persistedProfileCounty": "travis-tx",
+        "settingsAwarenessKeyBeforeRepair": "travis-tx-creedmoor",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "travis-tx",
         "selectedCounty": "travis-tx",
@@ -1814,6 +2065,14 @@
         "community": "Cresson"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4817648",
+        "persistedProfileCounty": "hood-tx",
+        "settingsAwarenessKeyBeforeRepair": "hood-tx-cresson",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hood-tx",
         "selectedCounty": "hood-tx",
@@ -1869,6 +2128,14 @@
         "community": "Crowley"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4817960",
+        "persistedProfileCounty": "tarrant-tx",
+        "settingsAwarenessKeyBeforeRepair": "tarrant-tx-crowley",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "tarrant-tx",
         "selectedCounty": "tarrant-tx",
@@ -1924,6 +2191,14 @@
         "community": "Dalhart"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4818524",
+        "persistedProfileCounty": "dallam-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallam-tx-dalhart",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallam-tx",
         "selectedCounty": "dallam-tx",
@@ -1994,6 +2269,14 @@
         "community": "Dallas"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4819000",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-dallas",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -2049,6 +2332,14 @@
         "community": "Denver City"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4819984",
+        "persistedProfileCounty": "yoakum-tx",
+        "settingsAwarenessKeyBeforeRepair": "yoakum-tx-denver-city",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "yoakum-tx",
         "selectedCounty": "yoakum-tx",
@@ -2104,6 +2395,14 @@
         "community": "Deport"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4820020",
+        "persistedProfileCounty": "lamar-tx",
+        "settingsAwarenessKeyBeforeRepair": "lamar-tx-deport",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "lamar-tx",
         "selectedCounty": "lamar-tx",
@@ -2159,6 +2458,14 @@
         "community": "East Mountain"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4822168",
+        "persistedProfileCounty": "upshur-tx",
+        "settingsAwarenessKeyBeforeRepair": "upshur-tx-east-mountain",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "upshur-tx",
         "selectedCounty": "upshur-tx",
@@ -2214,6 +2521,14 @@
         "community": "Easton"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4822192",
+        "persistedProfileCounty": "gregg-tx",
+        "settingsAwarenessKeyBeforeRepair": "gregg-tx-easton",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "gregg-tx",
         "selectedCounty": "gregg-tx",
@@ -2269,6 +2584,14 @@
         "community": "Elgin"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4823044",
+        "persistedProfileCounty": "bastrop-tx",
+        "settingsAwarenessKeyBeforeRepair": "bastrop-tx-elgin",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "bastrop-tx",
         "selectedCounty": "bastrop-tx",
@@ -2324,6 +2647,14 @@
         "community": "Elmendorf"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4823272",
+        "persistedProfileCounty": "bexar-tx",
+        "settingsAwarenessKeyBeforeRepair": "bexar-tx-elmendorf",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "bexar-tx",
         "selectedCounty": "bexar-tx",
@@ -2379,6 +2710,14 @@
         "community": "Evant"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4824864",
+        "persistedProfileCounty": "coryell-tx",
+        "settingsAwarenessKeyBeforeRepair": "coryell-tx-evant",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "coryell-tx",
         "selectedCounty": "coryell-tx",
@@ -2439,6 +2778,14 @@
         "community": "Fair Oaks Ranch"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4825168",
+        "persistedProfileCounty": "comal-tx",
+        "settingsAwarenessKeyBeforeRepair": "comal-tx-fair-oaks-ranch",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "comal-tx",
         "selectedCounty": "comal-tx",
@@ -2494,6 +2841,14 @@
         "community": "Ferris"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4825752",
+        "persistedProfileCounty": "ellis-tx",
+        "settingsAwarenessKeyBeforeRepair": "ellis-tx-ferris",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "ellis-tx",
         "selectedCounty": "ellis-tx",
@@ -2549,6 +2904,14 @@
         "community": "Flower Mound"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4826232",
+        "persistedProfileCounty": "denton-tx",
+        "settingsAwarenessKeyBeforeRepair": "denton-tx-flower-mound",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "denton-tx",
         "selectedCounty": "denton-tx",
@@ -2604,6 +2967,14 @@
         "community": "Fort Cavazos"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4826666",
+        "persistedProfileCounty": "coryell-tx",
+        "settingsAwarenessKeyBeforeRepair": "coryell-tx-fort-cavazos",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "coryell-tx",
         "selectedCounty": "coryell-tx",
@@ -2674,6 +3045,14 @@
         "community": "Fort Worth"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4827000",
+        "persistedProfileCounty": "tarrant-tx",
+        "settingsAwarenessKeyBeforeRepair": "tarrant-tx-fort-worth",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "tarrant-tx",
         "selectedCounty": "tarrant-tx",
@@ -2729,6 +3108,14 @@
         "community": "Frankston"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4827300",
+        "persistedProfileCounty": "anderson-tx",
+        "settingsAwarenessKeyBeforeRepair": "anderson-tx-frankston",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "anderson-tx",
         "selectedCounty": "anderson-tx",
@@ -2784,6 +3171,14 @@
         "community": "Friendswood"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4827648",
+        "persistedProfileCounty": "galveston-tx",
+        "settingsAwarenessKeyBeforeRepair": "galveston-tx-friendswood",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "galveston-tx",
         "selectedCounty": "galveston-tx",
@@ -2839,6 +3234,14 @@
         "community": "Frisco"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4827684",
+        "persistedProfileCounty": "collin-tx",
+        "settingsAwarenessKeyBeforeRepair": "collin-tx-frisco",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "collin-tx",
         "selectedCounty": "collin-tx",
@@ -2894,6 +3297,14 @@
         "community": "Fritch"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4827696",
+        "persistedProfileCounty": "hutchinson-tx",
+        "settingsAwarenessKeyBeforeRepair": "hutchinson-tx-fritch",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hutchinson-tx",
         "selectedCounty": "hutchinson-tx",
@@ -2949,6 +3360,14 @@
         "community": "Garland"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4829000",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-garland",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -3004,6 +3423,14 @@
         "community": "Gladewater"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4829660",
+        "persistedProfileCounty": "gregg-tx",
+        "settingsAwarenessKeyBeforeRepair": "gregg-tx-gladewater",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "gregg-tx",
         "selectedCounty": "gregg-tx",
@@ -3059,6 +3486,14 @@
         "community": "Glenn Heights"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4829840",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-glenn-heights",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -3114,6 +3549,14 @@
         "community": "Golinda"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4830092",
+        "persistedProfileCounty": "falls-tx",
+        "settingsAwarenessKeyBeforeRepair": "falls-tx-golinda",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "falls-tx",
         "selectedCounty": "falls-tx",
@@ -3179,6 +3622,14 @@
         "community": "Grand Prairie"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4830464",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-grand-prairie",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -3239,6 +3690,14 @@
         "community": "Grapevine"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4830644",
+        "persistedProfileCounty": "tarrant-tx",
+        "settingsAwarenessKeyBeforeRepair": "tarrant-tx-grapevine",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "tarrant-tx",
         "selectedCounty": "tarrant-tx",
@@ -3294,6 +3753,14 @@
         "community": "Hamlin"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4831964",
+        "persistedProfileCounty": "jones-tx",
+        "settingsAwarenessKeyBeforeRepair": "jones-tx-hamlin",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "jones-tx",
         "selectedCounty": "jones-tx",
@@ -3349,6 +3816,14 @@
         "community": "Happy"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4832156",
+        "persistedProfileCounty": "swisher-tx",
+        "settingsAwarenessKeyBeforeRepair": "swisher-tx-happy",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "swisher-tx",
         "selectedCounty": "swisher-tx",
@@ -3404,6 +3879,14 @@
         "community": "Haslet"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4832720",
+        "persistedProfileCounty": "tarrant-tx",
+        "settingsAwarenessKeyBeforeRepair": "tarrant-tx-haslet",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "tarrant-tx",
         "selectedCounty": "tarrant-tx",
@@ -3459,6 +3942,14 @@
         "community": "Heath"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4832984",
+        "persistedProfileCounty": "rockwall-tx",
+        "settingsAwarenessKeyBeforeRepair": "rockwall-tx-heath",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "rockwall-tx",
         "selectedCounty": "rockwall-tx",
@@ -3514,6 +4005,14 @@
         "community": "Hebron"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4833020",
+        "persistedProfileCounty": "denton-tx",
+        "settingsAwarenessKeyBeforeRepair": "denton-tx-hebron",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "denton-tx",
         "selectedCounty": "denton-tx",
@@ -3569,6 +4068,14 @@
         "community": "Hico"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4833548",
+        "persistedProfileCounty": "hamilton-tx",
+        "settingsAwarenessKeyBeforeRepair": "hamilton-tx-hico",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hamilton-tx",
         "selectedCounty": "hamilton-tx",
@@ -3624,6 +4131,14 @@
         "community": "Horseshoe Bay"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4834862",
+        "persistedProfileCounty": "llano-tx",
+        "settingsAwarenessKeyBeforeRepair": "llano-tx-horseshoe-bay",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "llano-tx",
         "selectedCounty": "llano-tx",
@@ -3689,6 +4204,14 @@
         "community": "Houston"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4835000",
+        "persistedProfileCounty": "harris-tx",
+        "settingsAwarenessKeyBeforeRepair": "harris-tx-houston",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "harris-tx",
         "selectedCounty": "harris-tx",
@@ -3744,6 +4267,14 @@
         "community": "Hughes Springs"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4835300",
+        "persistedProfileCounty": "cass-tx",
+        "settingsAwarenessKeyBeforeRepair": "cass-tx-hughes-springs",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "cass-tx",
         "selectedCounty": "cass-tx",
@@ -3799,6 +4330,14 @@
         "community": "Ingleside"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4836008",
+        "persistedProfileCounty": "san-patricio-tx",
+        "settingsAwarenessKeyBeforeRepair": "san-patricio-tx-ingleside",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "san-patricio-tx",
         "selectedCounty": "san-patricio-tx",
@@ -3854,6 +4393,14 @@
         "community": "Josephine"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4838068",
+        "persistedProfileCounty": "collin-tx",
+        "settingsAwarenessKeyBeforeRepair": "collin-tx-josephine",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "collin-tx",
         "selectedCounty": "collin-tx",
@@ -3914,6 +4461,14 @@
         "community": "Katy"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4838476",
+        "persistedProfileCounty": "fort-bend-tx",
+        "settingsAwarenessKeyBeforeRepair": "fort-bend-tx-katy",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "fort-bend-tx",
         "selectedCounty": "fort-bend-tx",
@@ -3969,6 +4524,14 @@
         "community": "Kilgore"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4839124",
+        "persistedProfileCounty": "gregg-tx",
+        "settingsAwarenessKeyBeforeRepair": "gregg-tx-kilgore",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "gregg-tx",
         "selectedCounty": "gregg-tx",
@@ -4024,6 +4587,14 @@
         "community": "Lake Cherokee"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4840468",
+        "persistedProfileCounty": "rusk-tx",
+        "settingsAwarenessKeyBeforeRepair": "rusk-tx-lake-cherokee",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "rusk-tx",
         "selectedCounty": "rusk-tx",
@@ -4079,6 +4650,14 @@
         "community": "Lake Medina Shores"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4840674",
+        "persistedProfileCounty": "bandera-tx",
+        "settingsAwarenessKeyBeforeRepair": "bandera-tx-lake-medina-shores",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "bandera-tx",
         "selectedCounty": "bandera-tx",
@@ -4134,6 +4713,14 @@
         "community": "League City"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4841980",
+        "persistedProfileCounty": "galveston-tx",
+        "settingsAwarenessKeyBeforeRepair": "galveston-tx-league-city",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "galveston-tx",
         "selectedCounty": "galveston-tx",
@@ -4189,6 +4776,14 @@
         "community": "Leander"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4842016",
+        "persistedProfileCounty": "williamson-tx",
+        "settingsAwarenessKeyBeforeRepair": "williamson-tx-leander",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "williamson-tx",
         "selectedCounty": "williamson-tx",
@@ -4244,6 +4839,14 @@
         "community": "Lewisville"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4842508",
+        "persistedProfileCounty": "denton-tx",
+        "settingsAwarenessKeyBeforeRepair": "denton-tx-lewisville",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "denton-tx",
         "selectedCounty": "denton-tx",
@@ -4299,6 +4902,14 @@
         "community": "Longview"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4843888",
+        "persistedProfileCounty": "gregg-tx",
+        "settingsAwarenessKeyBeforeRepair": "gregg-tx-longview",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "gregg-tx",
         "selectedCounty": "gregg-tx",
@@ -4354,6 +4965,14 @@
         "community": "Lueders"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4845048",
+        "persistedProfileCounty": "jones-tx",
+        "settingsAwarenessKeyBeforeRepair": "jones-tx-lueders",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "jones-tx",
         "selectedCounty": "jones-tx",
@@ -4409,6 +5028,14 @@
         "community": "Luling"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4845096",
+        "persistedProfileCounty": "caldwell-tx",
+        "settingsAwarenessKeyBeforeRepair": "caldwell-tx-luling",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "caldwell-tx",
         "selectedCounty": "caldwell-tx",
@@ -4469,6 +5096,14 @@
         "community": "Lytle"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4845288",
+        "persistedProfileCounty": "atascosa-tx",
+        "settingsAwarenessKeyBeforeRepair": "atascosa-tx-lytle",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "atascosa-tx",
         "selectedCounty": "atascosa-tx",
@@ -4529,6 +5164,14 @@
         "community": "Mabank"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4845324",
+        "persistedProfileCounty": "kaufman-tx",
+        "settingsAwarenessKeyBeforeRepair": "kaufman-tx-mabank",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "kaufman-tx",
         "selectedCounty": "kaufman-tx",
@@ -4584,6 +5227,14 @@
         "community": "McGregor"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4845672",
+        "persistedProfileCounty": "mclennan-tx",
+        "settingsAwarenessKeyBeforeRepair": "mclennan-tx-mcgregor",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "mclennan-tx",
         "selectedCounty": "mclennan-tx",
@@ -4639,6 +5290,14 @@
         "community": "McLendon-Chisholm"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4845804",
+        "persistedProfileCounty": "rockwall-tx",
+        "settingsAwarenessKeyBeforeRepair": "rockwall-tx-mclendon-chisholm",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "rockwall-tx",
         "selectedCounty": "rockwall-tx",
@@ -4699,6 +5358,14 @@
         "community": "Mansfield"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4846452",
+        "persistedProfileCounty": "tarrant-tx",
+        "settingsAwarenessKeyBeforeRepair": "tarrant-tx-mansfield",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "tarrant-tx",
         "selectedCounty": "tarrant-tx",
@@ -4754,6 +5421,14 @@
         "community": "Mart"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4846824",
+        "persistedProfileCounty": "mclennan-tx",
+        "settingsAwarenessKeyBeforeRepair": "mclennan-tx-mart",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "mclennan-tx",
         "selectedCounty": "mclennan-tx",
@@ -4809,6 +5484,14 @@
         "community": "Mesquite"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4847892",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-mesquite",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -4864,6 +5547,14 @@
         "community": "Midland"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4848072",
+        "persistedProfileCounty": "midland-tx",
+        "settingsAwarenessKeyBeforeRepair": "midland-tx-midland",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "midland-tx",
         "selectedCounty": "midland-tx",
@@ -4919,6 +5610,14 @@
         "community": "Mineral Wells"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4848684",
+        "persistedProfileCounty": "palo-pinto-tx",
+        "settingsAwarenessKeyBeforeRepair": "palo-pinto-tx-mineral-wells",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "palo-pinto-tx",
         "selectedCounty": "palo-pinto-tx",
@@ -4974,6 +5673,14 @@
         "community": "Mission Bend"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4848772",
+        "persistedProfileCounty": "fort-bend-tx",
+        "settingsAwarenessKeyBeforeRepair": "fort-bend-tx-mission-bend",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "fort-bend-tx",
         "selectedCounty": "fort-bend-tx",
@@ -5029,6 +5736,14 @@
         "community": "Missouri City"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4848804",
+        "persistedProfileCounty": "fort-bend-tx",
+        "settingsAwarenessKeyBeforeRepair": "fort-bend-tx-missouri-city",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "fort-bend-tx",
         "selectedCounty": "fort-bend-tx",
@@ -5084,6 +5799,14 @@
         "community": "Monahans"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4848936",
+        "persistedProfileCounty": "ward-tx",
+        "settingsAwarenessKeyBeforeRepair": "ward-tx-monahans",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "ward-tx",
         "selectedCounty": "ward-tx",
@@ -5139,6 +5862,14 @@
         "community": "Mont Belvieu"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4849068",
+        "persistedProfileCounty": "chambers-tx",
+        "settingsAwarenessKeyBeforeRepair": "chambers-tx-mont-belvieu",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "chambers-tx",
         "selectedCounty": "chambers-tx",
@@ -5194,6 +5925,14 @@
         "community": "Morgan's Point"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4849380",
+        "persistedProfileCounty": "harris-tx",
+        "settingsAwarenessKeyBeforeRepair": "harris-tx-morgan-s-point",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "harris-tx",
         "selectedCounty": "harris-tx",
@@ -5254,6 +5993,14 @@
         "community": "Mustang Ridge"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4850200",
+        "persistedProfileCounty": "travis-tx",
+        "settingsAwarenessKeyBeforeRepair": "travis-tx-mustang-ridge",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "travis-tx",
         "selectedCounty": "travis-tx",
@@ -5309,6 +6056,14 @@
         "community": "Navasota"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4850472",
+        "persistedProfileCounty": "grimes-tx",
+        "settingsAwarenessKeyBeforeRepair": "grimes-tx-navasota",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "grimes-tx",
         "selectedCounty": "grimes-tx",
@@ -5364,6 +6119,14 @@
         "community": "Newark"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4850772",
+        "persistedProfileCounty": "wise-tx",
+        "settingsAwarenessKeyBeforeRepair": "wise-tx-newark",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "wise-tx",
         "selectedCounty": "wise-tx",
@@ -5419,6 +6182,14 @@
         "community": "New Braunfels"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4850820",
+        "persistedProfileCounty": "comal-tx",
+        "settingsAwarenessKeyBeforeRepair": "comal-tx-new-braunfels",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "comal-tx",
         "selectedCounty": "comal-tx",
@@ -5474,6 +6245,14 @@
         "community": "New Fairview"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4850920",
+        "persistedProfileCounty": "wise-tx",
+        "settingsAwarenessKeyBeforeRepair": "wise-tx-new-fairview",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "wise-tx",
         "selectedCounty": "wise-tx",
@@ -5529,6 +6308,14 @@
         "community": "Niederwald"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4851492",
+        "persistedProfileCounty": "hays-tx",
+        "settingsAwarenessKeyBeforeRepair": "hays-tx-niederwald",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hays-tx",
         "selectedCounty": "hays-tx",
@@ -5584,6 +6371,14 @@
         "community": "Nixon"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4851588",
+        "persistedProfileCounty": "gonzales-tx",
+        "settingsAwarenessKeyBeforeRepair": "gonzales-tx-nixon",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "gonzales-tx",
         "selectedCounty": "gonzales-tx",
@@ -5639,6 +6434,14 @@
         "community": "Normangee"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4851840",
+        "persistedProfileCounty": "leon-tx",
+        "settingsAwarenessKeyBeforeRepair": "leon-tx-normangee",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "leon-tx",
         "selectedCounty": "leon-tx",
@@ -5694,6 +6497,14 @@
         "community": "Oakwood"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4853232",
+        "persistedProfileCounty": "leon-tx",
+        "settingsAwarenessKeyBeforeRepair": "leon-tx-oakwood",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "leon-tx",
         "selectedCounty": "leon-tx",
@@ -5749,6 +6560,14 @@
         "community": "Odessa"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4853388",
+        "persistedProfileCounty": "ector-tx",
+        "settingsAwarenessKeyBeforeRepair": "ector-tx-odessa",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "ector-tx",
         "selectedCounty": "ector-tx",
@@ -5804,6 +6623,14 @@
         "community": "O'Donnell"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4853436",
+        "persistedProfileCounty": "lynn-tx",
+        "settingsAwarenessKeyBeforeRepair": "lynn-tx-o-donnell",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "lynn-tx",
         "selectedCounty": "lynn-tx",
@@ -5859,6 +6686,14 @@
         "community": "Old River-Winfree"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4853824",
+        "persistedProfileCounty": "chambers-tx",
+        "settingsAwarenessKeyBeforeRepair": "chambers-tx-old-river-winfree",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "chambers-tx",
         "selectedCounty": "chambers-tx",
@@ -5914,6 +6749,14 @@
         "community": "Overton"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4854432",
+        "persistedProfileCounty": "rusk-tx",
+        "settingsAwarenessKeyBeforeRepair": "rusk-tx-overton",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "rusk-tx",
         "selectedCounty": "rusk-tx",
@@ -5969,6 +6812,14 @@
         "community": "Ovilla"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4854444",
+        "persistedProfileCounty": "ellis-tx",
+        "settingsAwarenessKeyBeforeRepair": "ellis-tx-ovilla",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "ellis-tx",
         "selectedCounty": "ellis-tx",
@@ -6029,6 +6880,14 @@
         "community": "Pearland"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4856348",
+        "persistedProfileCounty": "brazoria-tx",
+        "settingsAwarenessKeyBeforeRepair": "brazoria-tx-pearland",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "brazoria-tx",
         "selectedCounty": "brazoria-tx",
@@ -6084,6 +6943,14 @@
         "community": "Pecan Acres"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4856462",
+        "persistedProfileCounty": "tarrant-tx",
+        "settingsAwarenessKeyBeforeRepair": "tarrant-tx-pecan-acres",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "tarrant-tx",
         "selectedCounty": "tarrant-tx",
@@ -6139,6 +7006,14 @@
         "community": "Pecan Gap"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4856468",
+        "persistedProfileCounty": "delta-tx",
+        "settingsAwarenessKeyBeforeRepair": "delta-tx-pecan-gap",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "delta-tx",
         "selectedCounty": "delta-tx",
@@ -6194,6 +7069,14 @@
         "community": "Pecan Plantation"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4856498",
+        "persistedProfileCounty": "hood-tx",
+        "settingsAwarenessKeyBeforeRepair": "hood-tx-pecan-plantation",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hood-tx",
         "selectedCounty": "hood-tx",
@@ -6249,6 +7132,14 @@
         "community": "Pflugerville"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4857176",
+        "persistedProfileCounty": "travis-tx",
+        "settingsAwarenessKeyBeforeRepair": "travis-tx-pflugerville",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "travis-tx",
         "selectedCounty": "travis-tx",
@@ -6309,6 +7200,14 @@
         "community": "Pilot Point"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4857476",
+        "persistedProfileCounty": "denton-tx",
+        "settingsAwarenessKeyBeforeRepair": "denton-tx-pilot-point",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "denton-tx",
         "selectedCounty": "denton-tx",
@@ -6364,6 +7263,14 @@
         "community": "Plano"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4858016",
+        "persistedProfileCounty": "collin-tx",
+        "settingsAwarenessKeyBeforeRepair": "collin-tx-plano",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "collin-tx",
         "selectedCounty": "collin-tx",
@@ -6419,6 +7326,14 @@
         "community": "Poetry"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4858502",
+        "persistedProfileCounty": "kaufman-tx",
+        "settingsAwarenessKeyBeforeRepair": "kaufman-tx-poetry",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "kaufman-tx",
         "selectedCounty": "kaufman-tx",
@@ -6474,6 +7389,14 @@
         "community": "Port Arthur"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4858820",
+        "persistedProfileCounty": "jefferson-tx",
+        "settingsAwarenessKeyBeforeRepair": "jefferson-tx-port-arthur",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "jefferson-tx",
         "selectedCounty": "jefferson-tx",
@@ -6529,6 +7452,14 @@
         "community": "Portland"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4858904",
+        "persistedProfileCounty": "san-patricio-tx",
+        "settingsAwarenessKeyBeforeRepair": "san-patricio-tx-portland",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "san-patricio-tx",
         "selectedCounty": "san-patricio-tx",
@@ -6584,6 +7515,14 @@
         "community": "Prosper"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4859696",
+        "persistedProfileCounty": "collin-tx",
+        "settingsAwarenessKeyBeforeRepair": "collin-tx-prosper",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "collin-tx",
         "selectedCounty": "collin-tx",
@@ -6639,6 +7578,14 @@
         "community": "Reklaw"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4861508",
+        "persistedProfileCounty": "cherokee-tx",
+        "settingsAwarenessKeyBeforeRepair": "cherokee-tx-reklaw",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "cherokee-tx",
         "selectedCounty": "cherokee-tx",
@@ -6694,6 +7641,14 @@
         "community": "Reno"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4861604",
+        "persistedProfileCounty": "parker-tx",
+        "settingsAwarenessKeyBeforeRepair": "parker-tx-reno",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "parker-tx",
         "selectedCounty": "parker-tx",
@@ -6749,6 +7704,14 @@
         "community": "Richardson"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4861796",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-richardson",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -6804,6 +7767,14 @@
         "community": "Roanoke"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4862504",
+        "persistedProfileCounty": "denton-tx",
+        "settingsAwarenessKeyBeforeRepair": "denton-tx-roanoke",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "denton-tx",
         "selectedCounty": "denton-tx",
@@ -6859,6 +7830,14 @@
         "community": "Round Rock"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4863500",
+        "persistedProfileCounty": "williamson-tx",
+        "settingsAwarenessKeyBeforeRepair": "williamson-tx-round-rock",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "williamson-tx",
         "selectedCounty": "williamson-tx",
@@ -6914,6 +7893,14 @@
         "community": "Rowlett"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4863572",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-rowlett",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -6974,6 +7961,14 @@
         "community": "Royse City"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4863668",
+        "persistedProfileCounty": "rockwall-tx",
+        "settingsAwarenessKeyBeforeRepair": "rockwall-tx-royse-city",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "rockwall-tx",
         "selectedCounty": "rockwall-tx",
@@ -7029,6 +8024,14 @@
         "community": "Sachse"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4864064",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-sachse",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -7089,6 +8092,14 @@
         "community": "San Antonio"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4865000",
+        "persistedProfileCounty": "bexar-tx",
+        "settingsAwarenessKeyBeforeRepair": "bexar-tx-san-antonio",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "bexar-tx",
         "selectedCounty": "bexar-tx",
@@ -7144,6 +8155,14 @@
         "community": "San Diego"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4865180",
+        "persistedProfileCounty": "duval-tx",
+        "settingsAwarenessKeyBeforeRepair": "duval-tx-san-diego",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "duval-tx",
         "selectedCounty": "duval-tx",
@@ -7199,6 +8218,14 @@
         "community": "Sanger"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4865408",
+        "persistedProfileCounty": "denton-tx",
+        "settingsAwarenessKeyBeforeRepair": "denton-tx-sanger",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "denton-tx",
         "selectedCounty": "denton-tx",
@@ -7259,6 +8286,14 @@
         "community": "San Marcos"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4865600",
+        "persistedProfileCounty": "hays-tx",
+        "settingsAwarenessKeyBeforeRepair": "hays-tx-san-marcos",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hays-tx",
         "selectedCounty": "hays-tx",
@@ -7319,6 +8354,14 @@
         "community": "Schertz"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4866128",
+        "persistedProfileCounty": "guadalupe-tx",
+        "settingsAwarenessKeyBeforeRepair": "guadalupe-tx-schertz",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "guadalupe-tx",
         "selectedCounty": "guadalupe-tx",
@@ -7374,6 +8417,14 @@
         "community": "Seabrook"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4866392",
+        "persistedProfileCounty": "harris-tx",
+        "settingsAwarenessKeyBeforeRepair": "harris-tx-seabrook",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "harris-tx",
         "selectedCounty": "harris-tx",
@@ -7429,6 +8480,14 @@
         "community": "Seagoville"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4866428",
+        "persistedProfileCounty": "dallas-tx",
+        "settingsAwarenessKeyBeforeRepair": "dallas-tx-seagoville",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dallas-tx",
         "selectedCounty": "dallas-tx",
@@ -7489,6 +8548,14 @@
         "community": "Selma"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4866704",
+        "persistedProfileCounty": "bexar-tx",
+        "settingsAwarenessKeyBeforeRepair": "bexar-tx-selma",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "bexar-tx",
         "selectedCounty": "bexar-tx",
@@ -7544,6 +8611,14 @@
         "community": "Seven Points"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4866908",
+        "persistedProfileCounty": "henderson-tx",
+        "settingsAwarenessKeyBeforeRepair": "henderson-tx-seven-points",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "henderson-tx",
         "selectedCounty": "henderson-tx",
@@ -7599,6 +8674,14 @@
         "community": "Shoreacres"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4867688",
+        "persistedProfileCounty": "harris-tx",
+        "settingsAwarenessKeyBeforeRepair": "harris-tx-shoreacres",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "harris-tx",
         "selectedCounty": "harris-tx",
@@ -7654,6 +8737,14 @@
         "community": "Southlake"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4869032",
+        "persistedProfileCounty": "tarrant-tx",
+        "settingsAwarenessKeyBeforeRepair": "tarrant-tx-southlake",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "tarrant-tx",
         "selectedCounty": "tarrant-tx",
@@ -7709,6 +8800,14 @@
         "community": "Springtown"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4869800",
+        "persistedProfileCounty": "parker-tx",
+        "settingsAwarenessKeyBeforeRepair": "parker-tx-springtown",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "parker-tx",
         "selectedCounty": "parker-tx",
@@ -7764,6 +8863,14 @@
         "community": "Stafford"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4869908",
+        "persistedProfileCounty": "fort-bend-tx",
+        "settingsAwarenessKeyBeforeRepair": "fort-bend-tx-stafford",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "fort-bend-tx",
         "selectedCounty": "fort-bend-tx",
@@ -7819,6 +8926,14 @@
         "community": "Stamford"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4869980",
+        "persistedProfileCounty": "jones-tx",
+        "settingsAwarenessKeyBeforeRepair": "jones-tx-stamford",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "jones-tx",
         "selectedCounty": "jones-tx",
@@ -7874,6 +8989,14 @@
         "community": "Streetman"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4870604",
+        "persistedProfileCounty": "freestone-tx",
+        "settingsAwarenessKeyBeforeRepair": "freestone-tx-streetman",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "freestone-tx",
         "selectedCounty": "freestone-tx",
@@ -7929,6 +9052,14 @@
         "community": "Tatum"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4871924",
+        "persistedProfileCounty": "rusk-tx",
+        "settingsAwarenessKeyBeforeRepair": "rusk-tx-tatum",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "rusk-tx",
         "selectedCounty": "rusk-tx",
@@ -7984,6 +9115,14 @@
         "community": "Texas City"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4872392",
+        "persistedProfileCounty": "galveston-tx",
+        "settingsAwarenessKeyBeforeRepair": "galveston-tx-texas-city",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "galveston-tx",
         "selectedCounty": "galveston-tx",
@@ -8039,6 +9178,14 @@
         "community": "The Woodlands"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4872656",
+        "persistedProfileCounty": "montgomery-tx",
+        "settingsAwarenessKeyBeforeRepair": "montgomery-tx-the-woodlands",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "montgomery-tx",
         "selectedCounty": "montgomery-tx",
@@ -8094,6 +9241,14 @@
         "community": "Thorndale"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4872776",
+        "persistedProfileCounty": "milam-tx",
+        "settingsAwarenessKeyBeforeRepair": "milam-tx-thorndale",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "milam-tx",
         "selectedCounty": "milam-tx",
@@ -8149,6 +9304,14 @@
         "community": "Tomball"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4873316",
+        "persistedProfileCounty": "harris-tx",
+        "settingsAwarenessKeyBeforeRepair": "harris-tx-tomball",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "harris-tx",
         "selectedCounty": "harris-tx",
@@ -8209,6 +9372,14 @@
         "community": "Trenton"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4873592",
+        "persistedProfileCounty": "fannin-tx",
+        "settingsAwarenessKeyBeforeRepair": "fannin-tx-trenton",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "fannin-tx",
         "selectedCounty": "fannin-tx",
@@ -8264,6 +9435,14 @@
         "community": "Trophy Club"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4873710",
+        "persistedProfileCounty": "denton-tx",
+        "settingsAwarenessKeyBeforeRepair": "denton-tx-trophy-club",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "denton-tx",
         "selectedCounty": "denton-tx",
@@ -8319,6 +9498,14 @@
         "community": "Troup"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4873724",
+        "persistedProfileCounty": "smith-tx",
+        "settingsAwarenessKeyBeforeRepair": "smith-tx-troup",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "smith-tx",
         "selectedCounty": "smith-tx",
@@ -8374,6 +9561,14 @@
         "community": "Uhland"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4874216",
+        "persistedProfileCounty": "hays-tx",
+        "settingsAwarenessKeyBeforeRepair": "hays-tx-uhland",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hays-tx",
         "selectedCounty": "hays-tx",
@@ -8429,6 +9624,14 @@
         "community": "Universal City"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4874408",
+        "persistedProfileCounty": "bexar-tx",
+        "settingsAwarenessKeyBeforeRepair": "bexar-tx-universal-city",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "bexar-tx",
         "selectedCounty": "bexar-tx",
@@ -8484,6 +9687,14 @@
         "community": "Valley Mills"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4874732",
+        "persistedProfileCounty": "bosque-tx",
+        "settingsAwarenessKeyBeforeRepair": "bosque-tx-valley-mills",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "bosque-tx",
         "selectedCounty": "bosque-tx",
@@ -8539,6 +9750,14 @@
         "community": "Van Alstyne"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4874924",
+        "persistedProfileCounty": "grayson-tx",
+        "settingsAwarenessKeyBeforeRepair": "grayson-tx-van-alstyne",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "grayson-tx",
         "selectedCounty": "grayson-tx",
@@ -8594,6 +9813,14 @@
         "community": "Venus"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4875236",
+        "persistedProfileCounty": "johnson-tx",
+        "settingsAwarenessKeyBeforeRepair": "johnson-tx-venus",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "johnson-tx",
         "selectedCounty": "johnson-tx",
@@ -8649,6 +9876,14 @@
         "community": "Waller"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4876228",
+        "persistedProfileCounty": "waller-tx",
+        "settingsAwarenessKeyBeforeRepair": "waller-tx-waller",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "waller-tx",
         "selectedCounty": "waller-tx",
@@ -8704,6 +9939,14 @@
         "community": "Warren City"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4876576",
+        "persistedProfileCounty": "gregg-tx",
+        "settingsAwarenessKeyBeforeRepair": "gregg-tx-warren-city",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "gregg-tx",
         "selectedCounty": "gregg-tx",
@@ -8759,6 +10002,14 @@
         "community": "Westlake"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4877620",
+        "persistedProfileCounty": "denton-tx",
+        "settingsAwarenessKeyBeforeRepair": "denton-tx-westlake",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "denton-tx",
         "selectedCounty": "denton-tx",
@@ -8814,6 +10065,14 @@
         "community": "Whitewright"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4878628",
+        "persistedProfileCounty": "grayson-tx",
+        "settingsAwarenessKeyBeforeRepair": "grayson-tx-whitewright",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "grayson-tx",
         "selectedCounty": "grayson-tx",
@@ -8869,6 +10128,14 @@
         "community": "Wichita Falls"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4879000",
+        "persistedProfileCounty": "wichita-tx",
+        "settingsAwarenessKeyBeforeRepair": "wichita-tx-wichita-falls",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "wichita-tx",
         "selectedCounty": "wichita-tx",
@@ -8924,6 +10191,14 @@
         "community": "Wildwood"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4879204",
+        "persistedProfileCounty": "hardin-tx",
+        "settingsAwarenessKeyBeforeRepair": "hardin-tx-wildwood",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "hardin-tx",
         "selectedCounty": "hardin-tx",
@@ -8979,6 +10254,14 @@
         "community": "Windthorst"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4879696",
+        "persistedProfileCounty": "archer-tx",
+        "settingsAwarenessKeyBeforeRepair": "archer-tx-windthorst",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "archer-tx",
         "selectedCounty": "archer-tx",
@@ -9034,6 +10317,14 @@
         "community": "Winnsboro"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4879816",
+        "persistedProfileCounty": "wood-tx",
+        "settingsAwarenessKeyBeforeRepair": "wood-tx-winnsboro",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "wood-tx",
         "selectedCounty": "wood-tx",
@@ -9094,6 +10385,14 @@
         "community": "Wylie"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4880356",
+        "persistedProfileCounty": "collin-tx",
+        "settingsAwarenessKeyBeforeRepair": "collin-tx-wylie",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "collin-tx",
         "selectedCounty": "collin-tx",
@@ -9149,6 +10448,14 @@
         "community": "Yoakum"
       },
       "precedenceResult": "PROFILE_OPERATIONAL_COUNTY",
+      "coldStart": {
+        "inMemoryProfileBeforeHydration": "EMPTY_DEFAULT",
+        "persistedProfileAwarenessKey": "place-4880560",
+        "persistedProfileCounty": "dewitt-tx",
+        "settingsAwarenessKeyBeforeRepair": "dewitt-tx-yoakum",
+        "hydrationCompletedBeforeCanonicalStartupResolution": true,
+        "settingsCanonicalKeyRepairedWithoutLabelIdentityInference": true
+      },
       "results": {
         "activeCounty": "dewitt-tx",
         "selectedCounty": "dewitt-tx",

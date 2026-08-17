@@ -43927,7 +43927,9 @@ let v1370ViewRouteDebugState = {
   routePreviewFocusApplied: false,
   viewRouteFallbackReason: ""
 };
-let gridlyUserProfile = getGridlyUserProfile();
+// Profile persistence has one cold-start ingress. Hydrate the process-local
+// snapshot before any startup semantic resolver is allowed to consume it.
+let gridlyUserProfile = gridlyHydrateUserProfileFromPersistence();
 let movementIntelligence = getMovementIntelligence();
 let mapBaseLayersByName = {};
 let mapStyleClassByName = {};
@@ -44640,26 +44642,14 @@ function getDefaultGridlyProfile() {
     setupSkipped: false
   };
 }
-function getGridlyUserProfile() {
+function gridlyHydrateUserProfileFromPersistence() {
   try {
-    const rectsOverlap = (a, b) => {
-      if (!a || !b) return false;
-      return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-    };
-    const zoomControl = document.querySelector("#map .leaflet-control-zoom");
-    const zoomIn = document.querySelector("#map .leaflet-control-zoom-in");
-    const zoomOut = document.querySelector("#map .leaflet-control-zoom-out");
-    const toggleNode = menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle") || null;
-    const zoomControlRect = zoomControl?.getBoundingClientRect?.()?.toJSON?.() || null;
-    const zoomInRect = zoomIn?.getBoundingClientRect?.()?.toJSON?.() || null;
-    const zoomOutRect = zoomOut?.getBoundingClientRect?.()?.toJSON?.() || null;
-    const toggleRect = toggleNode?.getBoundingClientRect?.()?.toJSON?.() || null;
-
     return { ...getDefaultGridlyProfile(), ...JSON.parse(localStorage.getItem(GRIDLY_PROFILE_STORAGE_KEY) || "{}") };
   } catch (error) {
     return getDefaultGridlyProfile();
   }
 }
+function getGridlyUserProfile() { return { ...gridlyUserProfile }; }
 function getGridlyProfile() { return getGridlyUserProfile(); }
 function saveGridlyUserProfile(nextProfile = {}) {
   gridlyUserProfile = { ...getDefaultGridlyProfile(), ...gridlyUserProfile, ...nextProfile };
