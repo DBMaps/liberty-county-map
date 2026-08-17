@@ -1,0 +1,355 @@
+{
+  "schemaVersion": "gridly.lp214.drivetexas-consumer-contract-audit.v1",
+  "milestone": "LP214_PHASE_2_1",
+  "generatedAtPolicy": "deterministic-no-wall-clock",
+  "productionSourceModified": false,
+  "summary": {
+    "productionConsumerBoundaryCount": 11,
+    "healthAwareCount": 2,
+    "ambiguousArrayOnlyCount": 4,
+    "retainedDataConsumerCount": 4,
+    "legacyOrUnusedCount": 1,
+    "actualFalseQuietPathExists": true
+  },
+  "implementationCallGraph": [
+    {
+      "id": "travel-brief",
+      "file": "js/app.js",
+      "function": "gridlyStoryTransportationConnectorRecords",
+      "consumerSurface": "Travel Brief / Know Before You Go / destination awareness",
+      "dataAccessor": "gridlySelectConsumerVisibleDriveTexasSituations().consumerVisibleSituations; connector getNormalizedRecords fallback",
+      "contract": "records-only",
+      "retainedFallbackPossible": false,
+      "emptyCanMeanSourceFailure": true,
+      "sourceHealthConsulted": false,
+      "classification": "ARRAY_ONLY_AMBIGUOUS",
+      "visibleUserConsequence": "The preferred selector computes source health, but this bridge returns only its situation array; a failed cold start is therefore indistinguishable from no official transportation situations and can produce quiet travel copy."
+    },
+    {
+      "id": "official-publisher-connector",
+      "file": "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
+      "function": "readOfficialSourceRecords",
+      "consumerSurface": "Awareness Brief official roadway enrichment",
+      "dataAccessor": "gridlyDriveTexasConnector.getNormalizedRecords",
+      "contract": "records-only",
+      "retainedFallbackPossible": true,
+      "emptyCanMeanSourceFailure": true,
+      "sourceHealthConsulted": false,
+      "classification": "ARRAY_ONLY_AMBIGUOUS",
+      "visibleUserConsequence": "An empty failed source adds no official roadway hazard; source state is not added to consumer presentation."
+    },
+    {
+      "id": "official-publisher-provider",
+      "file": "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
+      "function": "readOfficialSourceRecords",
+      "consumerSurface": "Awareness Brief provider fallback",
+      "dataAccessor": "gridlyDriveTexasProvider.getNormalizedRecords",
+      "contract": "records-only",
+      "retainedFallbackPossible": true,
+      "emptyCanMeanSourceFailure": true,
+      "sourceHealthConsulted": false,
+      "classification": "ARRAY_ONLY_AMBIGUOUS",
+      "visibleUserConsequence": "Provider fallback also collapses failure and healthy-empty to the same array."
+    },
+    {
+      "id": "community-pulse",
+      "file": "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
+      "function": "enrichSummary",
+      "consumerSurface": "Community Pulse and shared awareness summary",
+      "dataAccessor": "readOfficialSourceRecords -> activeHazardsInArea",
+      "contract": "records-only",
+      "retainedFallbackPossible": true,
+      "emptyCanMeanSourceFailure": true,
+      "sourceHealthConsulted": false,
+      "classification": "ARRAY_ONLY_AMBIGUOUS",
+      "visibleUserConsequence": "Zero DriveTexas rows lower the shared activity count and permit the visible quiet state."
+    },
+    {
+      "id": "authority-source",
+      "file": "js/gridlyDriveTexasAuthoritySourceIntegration.js",
+      "function": "gridlyGetLoadedDriveTexasAuthoritySourceRecords",
+      "consumerSurface": "Authority/source-health model",
+      "dataAccessor": "connector getAllNormalizedRecords/getNormalizedRecords then provider getNormalizedRecords plus runtime state",
+      "contract": "records+health",
+      "retainedFallbackPossible": true,
+      "emptyCanMeanSourceFailure": false,
+      "sourceHealthConsulted": true,
+      "classification": "RETAINED_DATA_WITH_HEALTH",
+      "visibleUserConsequence": "Audit/authority state discloses availability, fetch failure, last refresh and retained fallback, but this state is not the publisher input."
+    },
+    {
+      "id": "authority-consumer-projection",
+      "file": "js/gridlyDriveTexasAuthoritySourceIntegration.js",
+      "function": "gridlySelectConsumerVisibleDriveTexasSituations",
+      "consumerSurface": "Authority marker/alert/travel projection (not migrated)",
+      "dataAccessor": "gridlyGetDriveTexasAuthoritySnapshot",
+      "contract": "records+health",
+      "retainedFallbackPossible": true,
+      "emptyCanMeanSourceFailure": false,
+      "sourceHealthConsulted": true,
+      "classification": "NOT_USER_VISIBLE",
+      "visibleUserConsequence": "Produces classified marker, alert and travel inputs, but current audit explicitly says consumer migration was not performed."
+    },
+    {
+      "id": "unified-intelligence",
+      "file": "js/gridlyUnifiedIntelligence.js",
+      "function": "collectNormalizedRecords",
+      "consumerSurface": "Unified Intelligence dormant collector",
+      "dataAccessor": "gridlyDriveTexasProvider.getNormalizedRecords",
+      "contract": "records-only",
+      "retainedFallbackPossible": false,
+      "emptyCanMeanSourceFailure": true,
+      "sourceHealthConsulted": false,
+      "classification": "LEGACY_OR_UNUSED",
+      "visibleUserConsequence": "No UI consequence because enabled and activated are hard false and consumer rendering is inactive."
+    },
+    {
+      "id": "lp044-inventory",
+      "file": "js/gridlyLp044DriveTexasCommunityAuthorityInventory.js",
+      "function": "sourceRecords",
+      "consumerSurface": "LP044 passive authority inventory",
+      "dataAccessor": "connector getAllNormalizedRecords/getNormalizedRecords then provider getNormalizedRecords",
+      "contract": "records-only",
+      "retainedFallbackPossible": true,
+      "emptyCanMeanSourceFailure": true,
+      "sourceHealthConsulted": false,
+      "classification": "NOT_USER_VISIBLE",
+      "visibleUserConsequence": "Audit-only inventory; an empty array affects evidence availability, not consumer UI."
+    },
+    {
+      "id": "cross-provider-audit",
+      "file": "js/gridlyCrossProviderEvaluationAudit.js",
+      "function": "readConnector",
+      "consumerSurface": "Cross-provider passive evaluation",
+      "dataAccessor": "gridlyDriveTexasConnector.getNormalizedRecords",
+      "contract": "records-only",
+      "retainedFallbackPossible": false,
+      "emptyCanMeanSourceFailure": true,
+      "sourceHealthConsulted": false,
+      "classification": "NOT_USER_VISIBLE",
+      "visibleUserConsequence": "Audit-only evaluation; no rendering ownership."
+    },
+    {
+      "id": "activation-readiness",
+      "file": "js/gridlyIntelligenceActivationReadiness.js",
+      "function": "providerSummary",
+      "consumerSurface": "Provider activation readiness audit",
+      "dataAccessor": "gridlyDriveTexasProvider.getNormalizedRecords/getRuntimeState",
+      "contract": "records+health",
+      "retainedFallbackPossible": false,
+      "emptyCanMeanSourceFailure": false,
+      "sourceHealthConsulted": true,
+      "classification": "HEALTH_AWARE",
+      "visibleUserConsequence": "Readiness classification only; it consults runtime state and does not render incidents."
+    },
+    {
+      "id": "connector-endpoint-audit",
+      "file": "js/gridlyDriveTexasConnectorEndpointAudit.js",
+      "function": "gridlyDriveTexasConnectorEndpointAudit",
+      "consumerSurface": "Connector endpoint audit",
+      "dataAccessor": "gridlyDriveTexasProvider.getRuntimeState",
+      "contract": "health-only",
+      "retainedFallbackPossible": false,
+      "emptyCanMeanSourceFailure": false,
+      "sourceHealthConsulted": true,
+      "classification": "HEALTH_AWARE",
+      "visibleUserConsequence": "Diagnostic source status only; no incident presentation."
+    }
+  ],
+  "consumerSurfaceClassifications": [
+    {
+      "surface": "Awareness Brief",
+      "classification": "VISIBLE_FALSE_QUIET_POSSIBLE",
+      "path": "publisher readOfficialSourceRecords -> enrichSummary -> activeHazardsInArea",
+      "evidence": "No health is propagated with the array."
+    },
+    {
+      "surface": "Community Pulse / quiet state",
+      "classification": "VISIBLE_FALSE_QUIET_POSSIBLE",
+      "path": "enrichSummary -> community activity count -> pulse presentation",
+      "evidence": "Official roadway count can be zero after failure and permits quiet status."
+    },
+    {
+      "surface": "Travel Brief / Know Before You Go / destination awareness",
+      "classification": "VISIBLE_FALSE_QUIET_POSSIBLE",
+      "path": "gridlyStoryTransportationConnectorRecords -> gridlyBuildTravelBriefModel",
+      "evidence": "Direct connector array has no lifecycle state."
+    },
+    {
+      "surface": "Alert cards and awareness hazard rows",
+      "classification": "VISIBLE_FALSE_QUIET_POSSIBLE",
+      "path": "activeHazardsInArea -> alert consumers",
+      "evidence": "Missing official rows are not accompanied by failure disclosure."
+    },
+    {
+      "surface": "Map markers and hazard popups",
+      "classification": "NOT_CONNECTED_TO_DRIVETEXAS",
+      "path": "map presentation",
+      "evidence": "The authority selector exposes markerInputSituations, but its own audit says consumer migration was not performed and no production renderer reference was discovered."
+    },
+    {
+      "surface": "Authority marker/alert/travel projection",
+      "classification": "VISIBLE_FAILURE_DISCLOSED",
+      "path": "gridlyGetLoadedDriveTexasAuthoritySourceRecords -> authority snapshot",
+      "evidence": "Health exists in authority state, but consumer migration is explicitly incomplete."
+    },
+    {
+      "surface": "Crossing popups",
+      "classification": "NOT_CONNECTED_TO_DRIVETEXAS",
+      "path": "crossing-owned presentation",
+      "evidence": "No production DriveTexas record reference discovered."
+    },
+    {
+      "surface": "Route intelligence",
+      "classification": "NOT_CONNECTED_TO_DRIVETEXAS",
+      "path": "route runtime",
+      "evidence": "Travel brief has destination awareness, but route intelligence itself has no DriveTexas record consumer."
+    },
+    {
+      "surface": "County/community status",
+      "classification": "OWNER_RUNTIME_CONFIRMATION_REQUIRED",
+      "path": "shared awareness summary",
+      "evidence": "No independent DriveTexas-specific status owner; effect is indirect through shared hazard counts."
+    }
+  ],
+  "quietStateRisk": {
+    "classification": "VISIBLE_FALSE_QUIET_POSSIBLE",
+    "actualPathExists": true,
+    "path": [
+      "connector fetch failure sets connected=false and retains/returns its current normalized arrays",
+      "array-only accessor yields [] on cold start or previously healthy empty cache",
+      "publisher/travel consumers count zero official roadway situations",
+      "shared awareness and travel presentation may select quiet/no-issue language",
+      "no DriveTexas failure field reaches that presentation"
+    ],
+    "healthyEmptyIndistinguishableAtAffectedBoundary": true,
+    "failClosedSurfaces": [
+      "authority/source integration audit state",
+      "activation and endpoint readiness diagnostics"
+    ],
+    "caveat": "Other community reports, weather, or crossings may independently prevent a quiet screen; the DriveTexas contract nevertheless permits false quiet when those inputs are also empty."
+  },
+  "retainedDataRisk": {
+    "classification": "VISIBLE_STALE_WITHOUT_WARNING_POSSIBLE",
+    "connector": {
+      "preservesPreviousEmptyAfterFailure": true,
+      "preservesPreviousNonEmptyAfterFailure": true,
+      "sourceRefreshTimestamped": true,
+      "currentDisconnectKnownInRuntimeState": true
+    },
+    "publisher": {
+      "separatelyRetainsOnlyNonEmptyRecords": true,
+      "lastSuccessfulAtTimestamped": true,
+      "retainedFlagRecordedInSourceBreakdown": true,
+      "retainedOrDisconnectedWarningRenderedToUser": false
+    },
+    "consumerKnowledge": {
+      "recordsCanRemainVisible": true,
+      "knowsRetainedInternally": true,
+      "knowsDisconnected": false,
+      "communicatesStaleness": false,
+      "emptyRetainedCanAppearCurrent": true
+    },
+    "freshnessBasis": {
+      "authority": "incident timestamps for eligibility plus source refresh timestamps in source state",
+      "publisherAndTravel": "incident lifecycle fields where present; source refresh freshness is not presented"
+    }
+  },
+  "lp043Classification": {
+    "classification": "STALE_FIXTURE",
+    "failingAssertion": "fixture trace reports final eligibility",
+    "evidence": [
+      "The fixture fixes nowMs at 2026-07-21T12:00:00Z and its crossing endTime at 2026-07-21T18:00:00Z.",
+      "Injected select/audit calls pass because they forward nowMs.",
+      "gridlyLp043TraceSingleAuthorityRecord accepts only sourceId and rebuilds snapshot/consumer projection without nowMs, so current wall-clock freshness expires the fixture.",
+      "Geometry intersection and ownership assertions immediately preceding finalEligibility still pass; the failure is freshness, not identity or geometry."
+    ],
+    "authoritativeBehavior": "Current LP039.2 freshness eligibility correctly rejects an incident whose endTime is in the past.",
+    "productionDefect": false,
+    "testChangePerformed": false
+  },
+  "recommendedRepairBoundary": {
+    "boundary": "E_AWARENESS_CONSUMER_BRIDGE_WITH_SHARED_SOURCE_STATUS_ENVELOPE",
+    "rationale": "The affected production paths converge at the official-roadway awareness publisher and story/travel bridge, while existing provider/connector arrays and retained caches are compatibility-sensitive. A shared read-only envelope at this bridge can carry records, connected/fetchFailed, retained, lastSuccessfulAt and healthyEmpty without changing provider normalization or forcing presentation surfaces to infer health.",
+    "likelyLaterFiles": [
+      "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
+      "js/app.js",
+      "focused consumer-contract tests"
+    ],
+    "shouldNotNeedModification": [
+      "js/gridlyDriveTexasProvider.js",
+      "js/gridlyDriveTexasLiveConnector.js",
+      "js/gridlyDriveTexasAuthoritySourceIntegration.js",
+      "weather/NWS",
+      "crossing runtime",
+      "canonical PLACE memberships"
+    ],
+    "compatibilityRisks": [
+      "Changing existing array return types would break callers",
+      "Retained non-empty records must remain usable while visibly marked stale/disconnected",
+      "Healthy zero must remain distinct from failure without manufacturing incidents",
+      "Travel and shared-awareness bridges must use the same status semantics"
+    ],
+    "eventualTests": [
+      "healthy non-empty",
+      "healthy empty",
+      "failed cold start",
+      "failed after healthy empty",
+      "failed after healthy non-empty retained",
+      "status propagation into quiet copy",
+      "legacy array compatibility"
+    ]
+  },
+  "laterCertificationPlan": {
+    "exhaustiveAutomatedChecks": {
+      "communityCount": 1859,
+      "checks": [
+        "Every canonical community resolves through the same source-status envelope",
+        "Failure never produces healthy-empty presentation classification",
+        "Healthy empty remains truthful quiet",
+        "Retained records carry stale/disconnected disclosure",
+        "All 163 multi-county memberships and transitions retain canonical identity",
+        "No community-specific DriveTexas patches"
+      ]
+    },
+    "representativeBrowserControls": [
+      {
+        "community": "Dallas",
+        "placeGeoid": "4819000",
+        "scale": "large-metro",
+        "geography": "multi-county",
+        "scenarios": [
+          "healthy-with-data",
+          "healthy-zero",
+          "failed-source",
+          "retained-data",
+          "county-transition",
+          "community-transition",
+          "fresh-browser-cold-start"
+        ]
+      },
+      {
+        "community": "Houston",
+        "placeGeoid": "4835000",
+        "scale": "large-metro",
+        "geography": "multi-county",
+        "scenarios": [
+          "healthy-with-data",
+          "failed-source"
+        ]
+      },
+      {
+        "community": "Talco",
+        "placeGeoid": "4871732",
+        "scale": "small-rural",
+        "geography": "single-county",
+        "scenarios": [
+          "healthy-zero",
+          "failed-source",
+          "fresh-browser-cold-start"
+        ]
+      }
+    ],
+    "browserToolingImplemented": false
+  }
+}
