@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { zipSync } from 'fflate';
 import { acquireOne, loadAuthorities, officialUrl, requiredMembers, selectRequests, sourceFilename, validateZipBytes } from '../tools/lp207/acquire-tiger2025-roadway-source.mjs';
-import { execute, inventory } from '../tools/lp208/statewide-tiger2025-roadway-source.mjs';
+import { execute, inventory, verifyCommittedEvidence } from '../tools/lp208/statewide-tiger2025-roadway-source.mjs';
 
 const zip = (fips, omit = null) => Buffer.from(zipSync(Object.fromEntries(requiredMembers(fips).filter(x => !x.endsWith(`.${omit}`)).map(x => [x, new Uint8Array([1, 2, 3])]))));
 const response = (body, status = 200) => ({ ok: status >= 200 && status < 300, status, statusText: status === 200 ? 'OK' : 'Nope', headers: new Headers({ 'content-type': 'application/zip' }), arrayBuffer: async () => body.buffer.slice(body.byteOffset, body.byteOffset + body.byteLength) });
@@ -30,6 +30,17 @@ test('LP208 conserves frozen cohorts, URLs, pilots, and production safety', asyn
   assert.equal(result.acquisition.roadwayPackagesManufactured, 0);
   assert.equal(result.acquisition.productionRuntimeManifest.unchanged, true);
   assert.deepEqual(await readFile('data/roadway-runtime-manifest.json'), before);
+});
+
+test('committed owner evidence closes all 226 sources without a mounted owner directory', async () => {
+  const { acquisition, manifest } = await verifyCommittedEvidence();
+  assert.equal(manifest.length, 226);
+  assert.equal(manifest.every(row => row.certificationStatus === 'PASS'), true);
+  assert.equal(manifest.some(row => String(row.certificationStatus).includes('PENDING')), false);
+  assert.equal(acquisition.finalValidSources, 226);
+  assert.equal(acquisition.readiness, 'READY_FOR_STATEWIDE_MISSING_COHORT_MANUFACTURING');
+  const viaCliMode = await execute({ mode: 'verify', sourceRoot: join(tmpdir(), 'definitely-not-mounted') });
+  assert.deepEqual(viaCliMode.acquisition, acquisition);
 });
 
 test('existing valid source skips without overwrite and records SHA-256', async () => {
