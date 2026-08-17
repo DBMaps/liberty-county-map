@@ -85,3 +85,6 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 /evidence/lp1901/owner-remote-payload-probe.local.json
 /evidence/lp1901/recovered-payloads.local/
 /owner-local/lp1883-community-packages/
+
+# Owner-only execution artifacts must never be committed.
+/owner-local/
