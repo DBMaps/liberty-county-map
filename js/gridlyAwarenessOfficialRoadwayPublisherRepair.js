@@ -13,6 +13,7 @@
     originalConsumerRefresh: null,
     lastSuccessfulRecords: [],
     lastSuccessfulAt: null,
+    hasSuccessfulDataset: false,
     lastEnrichment: null,
     initialConnectorSyncStarted: false,
     initialConnectorSyncCompleted: false,
@@ -90,36 +91,108 @@
 
   function rememberSuccessfulConnectorRecords(records) {
     state.lastSuccessfulRecords = cloneRecords(records);
-    state.lastSuccessfulAt = new Date().toISOString();
+    state.hasSuccessfulDataset = true;
+    let sourceTimestamp = null;
+    try {
+      sourceTimestamp = globalScope.gridlyDriveTexasConnector?.areaLifecycleAudit?.()?.lastSuccessfulFetchTimestamp || null;
+    } catch (_error) {}
+    state.lastSuccessfulAt = sourceTimestamp || new Date().toISOString();
   }
 
-  function readOfficialSourceRecords() {
+  const SOURCE_STATUS = Object.freeze({
+    HEALTHY_WITH_DATA: "HEALTHY_WITH_DATA",
+    HEALTHY_EMPTY: "HEALTHY_EMPTY",
+    SOURCE_FAILED_NO_RETAINED_DATA: "SOURCE_FAILED_NO_RETAINED_DATA",
+    SOURCE_FAILED_WITH_RETAINED_DATA: "SOURCE_FAILED_WITH_RETAINED_DATA",
+    SOURCE_UNAVAILABLE: "SOURCE_UNAVAILABLE",
+    UNKNOWN: "UNKNOWN"
+  });
+
+  function readRuntimeHealth() {
+    let connectorRuntime = null;
+    let providerRuntime = null;
+    let lifecycle = null;
+    try { connectorRuntime = globalScope.gridlyDriveTexasConnectorRuntimeAudit?.() || null; } catch (_error) {}
+    try { providerRuntime = globalScope.gridlyDriveTexasProvider?.getRuntimeState?.() || null; } catch (_error) {}
+    try { lifecycle = globalScope.gridlyDriveTexasConnector?.areaLifecycleAudit?.() || null; } catch (_error) {}
+    return { connectorRuntime, providerRuntime, lifecycle };
+  }
+
+  function readConsumerVisibleRecords(fallbackRecords) {
+    try {
+      const selection = globalScope.gridlySelectConsumerVisibleDriveTexasSituations?.();
+      if (Array.isArray(selection?.consumerVisibleSituations)) return selection.consumerVisibleSituations;
+    } catch (_error) {}
+    return Array.isArray(fallbackRecords) ? fallbackRecords : [];
+  }
+
+  function readOfficialSourceEnvelope() {
     const connectorRecords = readProviderRecords("gridlyDriveTexasConnector");
-    if (connectorRecords.length) {
-      rememberSuccessfulConnectorRecords(connectorRecords);
+    const providerRecords = readProviderRecords("gridlyDriveTexasProvider");
+    const currentRecords = readConsumerVisibleRecords(connectorRecords);
+    const health = readRuntimeHealth();
+    const connected = health.connectorRuntime?.connected === true || health.providerRuntime?.connected === true;
+    const explicitFailure = health.connectorRuntime?.connected === false && Boolean(
+      health.lifecycle?.lastFetchError || health.providerRuntime?.lastError || state.initialConnectorSyncReason === "timeout"
+    );
+    const sourceAvailable = Boolean(globalScope.gridlyDriveTexasConnector || globalScope.gridlyDriveTexasProvider);
+
+    if (connected) {
+      rememberSuccessfulConnectorRecords(currentRecords);
       return {
-        records: connectorRecords,
+        records: currentRecords,
         source: "gridlyDriveTexasConnector",
-        retainedLastSuccessful: false
+        connected: true,
+        fetchFailed: false,
+        healthyEmpty: currentRecords.length === 0,
+        retained: false,
+        retainedLastSuccessful: false,
+        lastSuccessfulAt: state.lastSuccessfulAt,
+        sourceStatus: currentRecords.length ? SOURCE_STATUS.HEALTHY_WITH_DATA : SOURCE_STATUS.HEALTHY_EMPTY,
+        quietEligible: currentRecords.length === 0,
+        consumerDisclosure: null
       };
     }
 
-    const providerRecords = readProviderRecords("gridlyDriveTexasProvider");
-    if (providerRecords.length) {
+    const retainedRecords = connectorRecords.length
+      ? connectorRecords
+      : providerRecords.length
+        ? providerRecords
+        : cloneRecords(state.lastSuccessfulRecords);
+    const retained = state.hasSuccessfulDataset || retainedRecords.length > 0;
+    if (explicitFailure) {
       return {
-        records: providerRecords,
-        source: "gridlyDriveTexasProvider",
-        retainedLastSuccessful: false
+        records: retainedRecords,
+        source: retained ? "gridlyDriveTexasConnector_last_successful" : "gridlyDriveTexasConnector",
+        connected: false,
+        fetchFailed: true,
+        healthyEmpty: false,
+        retained,
+        retainedLastSuccessful: retained,
+        lastSuccessfulAt: health.lifecycle?.lastSuccessfulFetchTimestamp || state.lastSuccessfulAt || null,
+        sourceStatus: retained ? SOURCE_STATUS.SOURCE_FAILED_WITH_RETAINED_DATA : SOURCE_STATUS.SOURCE_FAILED_NO_RETAINED_DATA,
+        quietEligible: false,
+        consumerDisclosure: retained ? "Official roadway updates may be delayed" : "Official roadway updates temporarily unavailable"
       };
     }
 
     return {
-      records: cloneRecords(state.lastSuccessfulRecords),
-      source: state.lastSuccessfulRecords.length
-        ? "gridlyDriveTexasConnector_last_successful"
-        : "gridlyDriveTexasProvider",
-      retainedLastSuccessful: state.lastSuccessfulRecords.length > 0
+      records: retainedRecords,
+      source: sourceAvailable ? "gridlyDriveTexasProvider" : "unavailable",
+      connected: false,
+      fetchFailed: false,
+      healthyEmpty: false,
+      retained,
+      retainedLastSuccessful: retained,
+      lastSuccessfulAt: health.lifecycle?.lastSuccessfulFetchTimestamp || state.lastSuccessfulAt || null,
+      sourceStatus: sourceAvailable ? SOURCE_STATUS.UNKNOWN : SOURCE_STATUS.SOURCE_UNAVAILABLE,
+      quietEligible: false,
+      consumerDisclosure: sourceAvailable ? "Official roadway update status is being confirmed" : "Official roadway updates temporarily unavailable"
     };
+  }
+
+  function readOfficialSourceRecords() {
+    return readOfficialSourceEnvelope();
   }
 
   function enrichSummary(summary) {
@@ -155,9 +228,23 @@
       matchedOfficialRoadwayCount: officialInArea.length,
       retainedLastSuccessful: officialSource.retainedLastSuccessful,
       lastSuccessfulAt: state.lastSuccessfulAt,
+      officialRoadwaySourceStatus: officialSource.sourceStatus,
+      officialRoadwayHealthyEmpty: officialSource.healthyEmpty,
+      officialRoadwayConnected: officialSource.connected,
+      officialRoadwayFetchFailed: officialSource.fetchFailed,
+      officialRoadwayQuietEligible: officialSource.quietEligible,
       activeConsidered: summary.activeHazardsInArea.length,
       matchedInArea: summary.activeHazardsInArea.length
     };
+    summary.officialRoadwaySourceStatus = { ...officialSource, records: cloneRecords(officialSource.records) };
+    if (officialSource.consumerDisclosure) {
+      summary.warnings = Array.isArray(summary.warnings) ? summary.warnings : [];
+      if (!summary.warnings.includes(officialSource.consumerDisclosure)) summary.warnings.push(officialSource.consumerDisclosure);
+      if (!officialSource.quietEligible && summary.activeHazardsInArea.length === 0) {
+        summary.awarenessStatus = "Status being confirmed";
+        summary.awarenessStatusReason = officialSource.consumerDisclosure;
+      }
+    }
 
     state.lastEnrichment = {
       at: new Date().toISOString(),
@@ -314,6 +401,7 @@
       connectorAvailable: Boolean(globalScope.gridlyDriveTexasConnector),
       lastSuccessfulRecordCount: state.lastSuccessfulRecords.length,
       lastSuccessfulAt: state.lastSuccessfulAt,
+      sourceStatusEnvelope: readOfficialSourceEnvelope(),
       consumerRefreshBridgeInstalled: Boolean(
         globalScope.gridlyOfficialProviderConsumerRefresh?.__gridlyOfficialRoadwayRetentionBridge
       ),
@@ -323,4 +411,6 @@
       initialConnectorSyncReason: state.initialConnectorSyncReason
     };
   };
+  globalScope.gridlyGetDriveTexasConsumerSourceStatusEnvelope = readOfficialSourceEnvelope;
+  globalScope.GRIDLY_DRIVETEXAS_CONSUMER_SOURCE_STATUS = SOURCE_STATUS;
 })(window);

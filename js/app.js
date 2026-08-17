@@ -3340,6 +3340,8 @@ function gridlyStoryCrossingEvidence(records = []) {
 }
 
 function gridlyStoryTransportationConnectorRecords() {
+  const envelope = gridlyStoryTransportationSourceStatusEnvelope();
+  if (envelope) return Array.isArray(envelope.records) ? envelope.records : [];
   if (typeof window.gridlySelectConsumerVisibleDriveTexasSituations === "function") {
     const consumer = window.gridlySelectConsumerVisibleDriveTexasSituations();
     return Array.isArray(consumer?.consumerVisibleSituations) ? consumer.consumerVisibleSituations : [];
@@ -3348,6 +3350,16 @@ function gridlyStoryTransportationConnectorRecords() {
     ? window.gridlyDriveTexasConnector.getNormalizedRecords()
     : [];
   return Array.isArray(records) ? records : [];
+}
+
+function gridlyStoryTransportationSourceStatusEnvelope() {
+  if (typeof window.gridlyGetDriveTexasConsumerSourceStatusEnvelope !== "function") return null;
+  try {
+    const envelope = window.gridlyGetDriveTexasConsumerSourceStatusEnvelope();
+    return envelope && typeof envelope === "object" ? envelope : null;
+  } catch (_error) {
+    return null;
+  }
 }
 
 function gridlyStoryTransportationImpact(record) {
@@ -4130,18 +4142,23 @@ function gridlyAwarenessSourceLabel(sourceKind) {
   return "Gridly awareness";
 }
 
-function gridlyTravelBriefDriveTexasLines(records = [], completeness = gridlyGetAwarenessEvidenceCompleteness()) {
+function gridlyTravelBriefDriveTexasLines(records = [], completeness = gridlyGetAwarenessEvidenceCompleteness(), sourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope()) {
   const impacted = (Array.isArray(records) ? records : [])
     .map((record) => ({ record, impact: gridlyStoryTransportationImpact(record) }))
     .filter((entry) => entry.impact);
-  if (!impacted.length) return completeness.canStateNoOfficialRoadwayAdvisories ? ["No official roadway advisories nearby."] : [];
+  if (!impacted.length) {
+    if (sourceEnvelope && sourceEnvelope.healthyEmpty !== true) return sourceEnvelope.consumerDisclosure ? [sourceEnvelope.consumerDisclosure] : [];
+    return completeness.canStateNoOfficialRoadwayAdvisories ? ["No official roadway advisories nearby."] : [];
+  }
   const lines = impacted.map(({ record, impact }) => {
     const line = gridlyTravelBriefRecordLine(record, impact?.detail || "Roadway advisory may affect travel.");
     if (/construction|work zone/i.test(line)) return { record, line: line.replace(/construction(?: activity)? may affect nearby roads\.?/i, "Construction may affect travel.") };
     if (/lane|restriction/i.test(line)) return { record, line: line.replace(/roadway restrictions may affect local travel\.?/i, "Lane closure may affect travel.") };
     return { record, line };
   }).filter((entry) => entry.line);
-  return gridlyTravelBriefConsolidateRoadwayLines(lines).slice(0, 2);
+  const consolidated = gridlyTravelBriefConsolidateRoadwayLines(lines).slice(0, sourceEnvelope?.retained ? 1 : 2);
+  if (sourceEnvelope?.retained && sourceEnvelope.consumerDisclosure) consolidated.push(sourceEnvelope.consumerDisclosure);
+  return consolidated;
 }
 
 function gridlyTravelBriefWeatherLines(weather, completeness = gridlyGetAwarenessEvidenceCompleteness()) {
@@ -4289,11 +4306,11 @@ function renderGridlyUnifiedEvidence(container, presentation, options = {}) {
   return true;
 }
 
-function gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather }) {
+function gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather, sourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope() }) {
   const railCount = records.filter((record) => /rail|train|crossing/i.test([record?.type, record?.category, record?.title, record?.description].join(" "))).length;
   const communityCount = Math.max(0, records.length - railCount);
   const weatherImpact = gridlyStoryWeatherMeaningfulImpact(weather);
-  const quiet = communityCount === 0 && driveTexasRecords.length === 0 && !weatherImpact && railCount === 0;
+  const quiet = communityCount === 0 && driveTexasRecords.length === 0 && !weatherImpact && railCount === 0 && (!sourceEnvelope || sourceEnvelope.healthyEmpty === true);
   return buildGridlyUnifiedEvidencePresentation({
     quiet, communityCount, officialCount: driveTexasRecords.length, weatherActive: Boolean(weatherImpact),
     weatherText: weatherImpact?.detail || "Weather conditions support this travel concern.", railCount,
@@ -4327,6 +4344,7 @@ function gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecor
 
 function gridlyBuildTravelBriefModel(storyInput) {
   const records = gridlyStoryActiveRecords();
+  const driveTexasSourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope();
   const driveTexasRecords = gridlyStoryTransportationConnectorRecords();
   const weather = gridlyBriefInteractionWeatherModel();
   const story = storyInput?.evidence ? storyInput : (typeof buildGridlyAwarenessStory === "function" ? buildGridlyAwarenessStory({ records, transportationRecords: driveTexasRecords, weather }) : null);
@@ -4337,10 +4355,11 @@ function gridlyBuildTravelBriefModel(storyInput) {
     sections: Object.freeze([
       gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecords }),
       Object.freeze({ key: "community", title: "Community", sourceLine: gridlyAwarenessSourceLabel("community"), lines: Object.freeze(gridlyTravelBriefCommunityLines(records)) }),
-      Object.freeze({ key: "drivetexas", title: "Official Roadways", sourceLine: gridlyAwarenessSourceLabel("official-roadways"), lines: Object.freeze(gridlyTravelBriefDriveTexasLines(driveTexasRecords)) }),
+      Object.freeze({ key: "drivetexas", title: "Official Roadways", sourceLine: gridlyAwarenessSourceLabel("official-roadways"), lines: Object.freeze(gridlyTravelBriefDriveTexasLines(driveTexasRecords, gridlyGetAwarenessEvidenceCompleteness(), driveTexasSourceEnvelope)) }),
       Object.freeze({ key: "weather", title: "Weather", sourceLine: gridlyAwarenessSourceLabel("weather"), lines: Object.freeze(gridlyTravelBriefWeatherLines(weather)) })
     ]),
-    unifiedEvidence: gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather }),
+    unifiedEvidence: gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather, sourceEnvelope: driveTexasSourceEnvelope }),
+    officialRoadwaySourceStatus: driveTexasSourceEnvelope,
     storyConnected: Boolean(story?.evidence)
   });
 }
