@@ -3343,7 +3343,14 @@ function gridlyStoryTransportationConnectorRecords() {
   const envelope = gridlyStoryTransportationSourceStatusEnvelope();
   if (envelope) return Array.isArray(envelope.records) ? envelope.records : [];
   if (typeof window.gridlySelectConsumerVisibleDriveTexasSituations === "function") {
-    const consumer = window.gridlySelectConsumerVisibleDriveTexasSituations();
+    const currentAwarenessRecords = typeof window.gridlyDriveTexasConnector?.getNormalizedRecords === "function"
+      ? window.gridlyDriveTexasConnector.getNormalizedRecords()
+      : [];
+    const selectionInput = { records: Array.isArray(currentAwarenessRecords) ? currentAwarenessRecords : [] };
+    if (typeof window.getGridlySelectedAwarenessArea === "function") {
+      selectionInput.selectedAwarenessArea = window.getGridlySelectedAwarenessArea();
+    }
+    const consumer = window.gridlySelectConsumerVisibleDriveTexasSituations(selectionInput);
     return Array.isArray(consumer?.consumerVisibleSituations) ? consumer.consumerVisibleSituations : [];
   }
   const records = typeof window.gridlyDriveTexasConnector?.getNormalizedRecords === "function"

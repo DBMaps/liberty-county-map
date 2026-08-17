@@ -6,7 +6,7 @@ import vm from "node:vm";
 const publisherSource = fs.readFileSync("js/gridlyAwarenessOfficialRoadwayPublisherRepair.js", "utf8");
 const appSource = fs.readFileSync("js/app.js", "utf8");
 
-function harness({ records = [], connected = true, error = null, sourceAvailable = true } = {}) {
+function harness({ records = [], allRecords = [], connected = true, error = null, sourceAvailable = true, area = { id: "place-4819000", countyId: "48113" }, select } = {}) {
   let currentRecords = records;
   let runtime = { connected };
   let lifecycle = { lastFetchError: error, lastSuccessfulFetchTimestamp: connected ? "2026-08-17T12:00:00.000Z" : null };
@@ -15,9 +15,12 @@ function harness({ records = [], connected = true, error = null, sourceAvailable
     gridlyDriveTexasConnectorRuntimeAudit: () => runtime,
     gridlyDriveTexasConnector: sourceAvailable ? {
       getNormalizedRecords: () => currentRecords,
+      getAllNormalizedRecords: () => allRecords,
       areaLifecycleAudit: () => lifecycle
     } : undefined,
-    gridlyDriveTexasProvider: sourceAvailable ? { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected: false, lastError: error }) } : undefined
+    gridlyDriveTexasProvider: sourceAvailable ? { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected: false, lastError: error }) } : undefined,
+    getGridlySelectedAwarenessArea: () => area,
+    gridlySelectConsumerVisibleDriveTexasSituations: select
   };
   vm.runInNewContext(publisherSource, { window, console, Date, JSON, Object, Array, String, Boolean, Promise });
   return {
@@ -27,6 +30,51 @@ function harness({ records = [], connected = true, error = null, sourceAvailable
     records(value) { currentRecords = value; }
   };
 }
+
+test("healthy current-awareness records enter the governed consumer selector instead of the statewide cache", () => {
+  const dallasRecords = Array.from({ length: 8 }, (_, index) => ({ id: `dallas-${index + 1}`, eligible: true }));
+  const statewideRecords = Array.from({ length: 623 }, (_, index) => ({ id: `statewide-${index + 1}` }));
+  let selectorInput;
+  const value = harness({
+    records: dallasRecords,
+    allRecords: statewideRecords,
+    select(input) {
+      selectorInput = input;
+      return { consumerVisibleSituations: input.records.filter((record) => record.eligible) };
+    }
+  }).envelope();
+  assert.equal(selectorInput.records.length, 8);
+  assert.equal(selectorInput.selectedAwarenessArea.id, "place-4819000");
+  assert.equal(value.records.length, 8);
+  assert.equal(value.sourceStatus, "HEALTHY_WITH_DATA");
+  assert.equal(value.healthyEmpty, false);
+  assert.equal(value.quietEligible, false);
+});
+
+test("authority eligibility, not connector raw count, governs healthy empty", () => {
+  const value = harness({
+    records: [{ id: "expired-dallas", eligible: false }],
+    select: (input) => ({ consumerVisibleSituations: input.records.filter((record) => record.eligible) })
+  }).envelope();
+  assert.equal(value.sourceStatus, "HEALTHY_EMPTY");
+  assert.equal(value.records.length, 0);
+  assert.equal(value.healthyEmpty, true);
+  assert.equal(value.quietEligible, true);
+});
+
+test("multi-county identity and community transitions use only the current awareness view", () => {
+  let area = { id: "place-4819000", countyId: "48113", memberCountyFips: ["48085", "48113", "48257"] };
+  const h = harness({
+    records: [{ id: "dallas-current", eligible: true }],
+    area,
+    select: (input) => ({ consumerVisibleSituations: input.records.filter((record) => record.eligible) })
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(h.envelope().records.map((record) => record.id))), ["dallas-current"]);
+  area = { id: "place-4827000", countyId: "48201" };
+  h.window.getGridlySelectedAwarenessArea = () => area;
+  h.records([{ id: "houston-current", eligible: true }]);
+  assert.deepEqual(JSON.parse(JSON.stringify(h.envelope().records.map((record) => record.id))), ["houston-current"]);
+});
 
 test("healthy data and healthy empty remain distinct, compatible outcomes", () => {
   const data = harness({ records: [{ id: "road-1" }], connected: true }).envelope();
