@@ -26275,6 +26275,7 @@ function gridlyV734BuildRefreshReuseSignature(extra = {}, context = {}) {
     activeReports: gridlyV734CollectionSignature(typeof activeReports !== "undefined" ? activeReports : []),
     crossings: gridlyV734CollectionSignature(typeof crossings !== "undefined" ? crossings : [], 120),
     latestAlerts: typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender) ? gridlyV734CollectionSignature(window.__gridlyLatestAlertsForRender, 40) : "",
+    officialRoadwayAwarenessRevision: typeof window !== "undefined" ? Number(window.gridlyOfficialRoadwayAwarenessRevision || 0) : 0,
     ...extra
   });
 }
@@ -40261,6 +40262,7 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
     currentVisibleIncidentCount = 0;
   }
   return Math.max(
+    safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount),
     safeNumber(counts.activeIssueCount),
     safeNumber(counts.hazardCount),
     safeNumber(counts.reportCount),
@@ -61986,6 +61988,18 @@ function buildGridlyCommunityPulseModel(options = {}) {
       communityActivityCount: selectedCommunityCount,
       communityActivitySource: "community_presence_dataset.selectedCommunityCount"
     });
+  const sharedActiveIssueCount = Math.max(0, Number(communityAwarenessSummary?.sharedActiveIssueContract?.activeIssueCount ?? communityAwarenessSummary?.activeIssueCount ?? 0) || 0);
+  const sharedOfficialRoadwayCount = Math.max(0, Number(communityAwarenessSummary?.sharedActiveIssueContract?.activeOfficialRoadwayCount || 0) || 0);
+  if (sharedActiveIssueCount > Number(activeAwareness.activeAwarenessCount || 0)) {
+    activeAwareness.activeAwarenessCount = sharedActiveIssueCount;
+    activeAwareness.activeHazardCount = Math.max(Number(activeAwareness.activeHazardCount || 0), sharedOfficialRoadwayCount + Number(communityAwarenessSummary?.sharedActiveIssueContract?.activeOtherHazardCount || 0));
+    activeAwareness.sharedActiveIssueContract = communityAwarenessSummary.sharedActiveIssueContract;
+    activeAwareness.activityLevel = sharedActiveIssueCount >= 4 ? "elevated" : "active";
+  }
+  if (communityAwarenessSummary?.sharedActiveIssueContract?.quietEligible === false && sharedActiveIssueCount === 0) {
+    activeAwareness.sharedActiveIssueContract = communityAwarenessSummary.sharedActiveIssueContract;
+    activeAwareness.activityLevel = "uncertain";
+  }
   const communityPhraseCount = Number(dataset.communityPhraseCount || 0);
   const corridorPriority = scoreGridlyDominantCorridor(dataset);
   const dominantCorridor = corridorPriority.dominantCorridor || dataset.dominantCorridor || null;
@@ -62176,6 +62190,7 @@ function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
   const existingText = safeDisplayText([model?.renderedPulseHeadline, model?.renderedPulseSubline, model?.activeAwareness?.headline, model?.activeAwareness?.subline].filter(Boolean).join(" "), "");
   const recentlyCleared = combinedCount <= 0 && /cleared|improving|recently updated|recently cleared/i.test(existingText);
   const coverage = model?.coverageState || (typeof getGridlyAwarenessCoverageState === "function" ? getGridlyAwarenessCoverageState() : { state: "available", primary: "", secondary: "" });
+  const officialRoadwayUncertain = model?.communityAwarenessSummary?.sharedActiveIssueContract?.quietEligible === false && combinedCount <= 0;
   let state = typeof classifyGridlyAwarenessTrustState === "function"
     ? classifyGridlyAwarenessTrustState({ activeCount: combinedCount, recentlyCleared, coverage })
     : (combinedCount > 0 ? "active" : (recentlyCleared ? "recently_cleared" : (coverage.state === "limited" ? "coverage_limited" : "quiet")));
@@ -62183,7 +62198,13 @@ function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
   let interpretation = "Stay aware while traveling.";
   let reason = "No active concerns are reported in the available local intelligence.";
   let confidence = "Quiet conditions";
-  if (state === "recently_cleared") {
+  if (officialRoadwayUncertain) {
+    state = "coverage_limited";
+    communityStatus = "Official roadway status is being confirmed.";
+    interpretation = "Check conditions before leaving.";
+    reason = "Official roadway updates are temporarily uncertain; no all-clear is implied.";
+    confidence = "Source status pending";
+  } else if (state === "recently_cleared") {
     communityStatus = "Conditions improving.";
     interpretation = "Check before leaving.";
     reason = "Conditions may be changing.";
@@ -107448,16 +107469,17 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
     : null;
   const alertsSurfaceUserFacingClear = isGridlyAlertsSurfaceUserFacingClear(alertsSurfaceSnapshot);
   const alertVisibleActiveIncidentCount = getGridlyAlertsSurfaceVisibleActiveIncidentCount(alertsSurfaceSnapshot);
-  const activeCountRaw = alertsSurfaceUserFacingClear ? 0 : (Number.isFinite(Number(alertVisibleActiveIncidentCount))
-    ? Math.max(0, Number(alertVisibleActiveIncidentCount) || 0)
-    : Math.max(
+  const authoritativeSharedCount = Number(sharedSummary?.sharedActiveIssueContract?.activeIssueCount ?? summary?.activeIssueCount);
+  const activeCountRaw = Math.max(
       0,
+      Number.isFinite(authoritativeSharedCount) ? authoritativeSharedCount : 0,
+      alertsSurfaceUserFacingClear ? 0 : (Number.isFinite(Number(alertVisibleActiveIncidentCount)) ? Number(alertVisibleActiveIncidentCount) : 0),
       Number(activeAwareness?.activeAwarenessCount ?? 0) || 0,
       Number(summary?.activeIssueCount ?? 0) || 0,
       Number(visibleCountModel?.bottomAwarenessDisplayedHazardCount ?? 0) || 0,
       Number(visibleCountModel?.renderedMarkerCount ?? 0) || 0,
       Number(visibleCountModel?.visibleAlertIncidentCount ?? 0) || 0
-    ));
+    );
   const activeCount = Number.isFinite(activeCountRaw) ? activeCountRaw : 0;
   const effectiveQuiet = quiet && activeCount <= 0;
   const crossingsWatchedLine = crossingContextCount !== null ? `${crossingContextCount} crossings monitored.` : "Crossings monitored.";
@@ -116315,6 +116337,15 @@ function gridlyAwarenessAlertsCountSyncAudit() {
   const homeLocationContextReportCount = homeReportMatch ? Number(homeReportMatch[1]) : (homeLocationContextIssueCount === 0 ? 0 : null);
   const alertsSheetActiveAlertCount = /^no\b/i.test(visibleAlertsHeaderText) ? 0 : (parseLeadingCount(visibleAlertsHeaderText) ?? countModel.groupedAlertCount);
   const alertsSheetCommunityReportCount = countModel.communityReportCount;
+  const sharedSummary = gridlyCommunityPulseAuditState?.communityAwarenessSummary
+    || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
+    || null;
+  const sharedActiveIssueValue = sharedSummary?.sharedActiveIssueContract?.activeIssueCount;
+  const sharedActiveIssueCount = Number.isFinite(Number(sharedActiveIssueValue)) ? Math.max(0, Number(sharedActiveIssueValue)) : null;
+  const locationContextCertificationStatus = sharedActiveIssueCount === null || homeLocationContextIssueCount === null
+    ? "CERTIFICATION_INDETERMINATE"
+    : (homeLocationContextIssueCount === sharedActiveIssueCount ? "PASS" : "FAIL");
+  const locationContextPass = locationContextCertificationStatus === "PASS";
   const mismatchDetected = Number.isFinite(homeLocationContextIssueCount)
     ? homeLocationContextIssueCount !== alertsSheetActiveAlertCount
     : false;
@@ -116333,6 +116364,9 @@ function gridlyAwarenessAlertsCountSyncAudit() {
     homeLocationContextReportCount,
     alertsSheetActiveAlertCount,
     alertsSheetCommunityReportCount,
+    sharedActiveIssueCount,
+    locationContextCertificationStatus,
+    locationContextPass,
     groupedAlertCount: countModel.groupedAlertCount,
     rawAlertRecordCount: countModel.rawAlertRecordCount,
     duplicateGroupCount: countModel.duplicateGroupCount,
