@@ -151,6 +151,7 @@
   const SOURCE_STATUS = Object.freeze({
     HEALTHY_WITH_DATA: "HEALTHY_WITH_DATA",
     HEALTHY_EMPTY: "HEALTHY_EMPTY",
+    PROJECTION_DEFECT: "PROJECTION_DEFECT",
     SOURCE_FAILED_NO_RETAINED_DATA: "SOURCE_FAILED_NO_RETAINED_DATA",
     SOURCE_FAILED_WITH_RETAINED_DATA: "SOURCE_FAILED_WITH_RETAINED_DATA",
     SOURCE_UNAVAILABLE: "SOURCE_UNAVAILABLE",
@@ -167,7 +168,7 @@
     return { connectorRuntime, providerRuntime, lifecycle };
   }
 
-  function readConsumerVisibleRecords(fallbackRecords) {
+  function readGovernedConsumerEvaluation(fallbackRecords) {
     try {
       // The connector getter is the current-awareness view.  Inject that view
       // into the authority selector so the consumer bridge does not silently
@@ -179,16 +180,34 @@
       if (typeof globalScope.getGridlySelectedAwarenessArea === "function") {
         selectionInput.selectedAwarenessArea = globalScope.getGridlySelectedAwarenessArea();
       }
-      const selection = globalScope.gridlySelectConsumerVisibleDriveTexasSituations?.(selectionInput);
-      if (Array.isArray(selection?.consumerVisibleSituations)) return selection.consumerVisibleSituations;
+      // Capture LP039.2 once, then give that very object to LP039.3.  Counts
+      // and status below consequently describe one evaluation, not two calls
+      // that may straddle an area transition or connector refresh.
+      const authoritySnapshot = globalScope.gridlyGetDriveTexasAuthoritySnapshot?.(selectionInput) || null;
+      const selection = globalScope.gridlySelectConsumerVisibleDriveTexasSituations?.({
+        ...selectionInput,
+        authoritySnapshot
+      });
+      if (Array.isArray(selection?.consumerVisibleSituations)) {
+        const authority = authoritySnapshot?.authority || {};
+        return {
+          records: selection.consumerVisibleSituations,
+          authoritySnapshot,
+          selection,
+          authorityEligibleCount: Number(authority.authorityEligibleRecordCount ?? authoritySnapshot?.counts?.authorityEligibleRecordCount ?? selection.authorityEligibleCount ?? selection.lp0393ConsumerProjectionInputCount ?? selection.consumerVisibleSituations.length),
+          projectionInputCount: Number(selection.lp0393ConsumerProjectionInputCount ?? selection.authorityEligibleCount ?? selection.consumerVisibleSituations.length)
+        };
+      }
     } catch (_error) {}
-    return Array.isArray(fallbackRecords) ? fallbackRecords : [];
+    const records = Array.isArray(fallbackRecords) ? fallbackRecords : [];
+    return { records, authoritySnapshot: null, selection: null, authorityEligibleCount: records.length, projectionInputCount: records.length };
   }
 
   function readOfficialSourceEnvelope() {
     const connectorRecords = readProviderRecords("gridlyDriveTexasConnector");
     const providerRecords = readProviderRecords("gridlyDriveTexasProvider");
-    const currentRecords = readConsumerVisibleRecords(connectorRecords);
+    const governed = readGovernedConsumerEvaluation(connectorRecords);
+    const currentRecords = governed.records;
     const health = readRuntimeHealth();
     const connected = health.connectorRuntime?.connected === true || health.providerRuntime?.connected === true;
     const explicitFailure = health.connectorRuntime?.connected === false && Boolean(
@@ -198,18 +217,36 @@
 
     if (connected) {
       rememberSuccessfulConnectorRecords(currentRecords);
+      const projectionDefect = governed.authorityEligibleCount !== governed.projectionInputCount
+        || governed.projectionInputCount !== currentRecords.length;
+      const geographicEvaluationState = governed.authoritySnapshot?.selectedAwarenessArea?.geographicEvaluationState
+        || health.lifecycle?.geographicEvaluationState
+        || "AVAILABLE";
+      const evaluationRevision = governed.authoritySnapshot?.evaluationRevision
+        || [canonicalAreaKey(governed.authoritySnapshot?.selectedAwarenessArea), health.lifecycle?.lastFetchGeneration ?? "", health.lifecycle?.lastAreaViewGeneration ?? "", connectorRecords.length].join(":");
       return {
         records: currentRecords,
         source: "gridlyDriveTexasConnector",
         connected: true,
         fetchFailed: false,
-        healthyEmpty: currentRecords.length === 0,
+        healthyEmpty: !projectionDefect && geographicEvaluationState === "AVAILABLE" && governed.authorityEligibleCount === 0 && currentRecords.length === 0,
         retained: false,
         retainedLastSuccessful: false,
         lastSuccessfulAt: state.lastSuccessfulAt,
-        sourceStatus: currentRecords.length ? SOURCE_STATUS.HEALTHY_WITH_DATA : SOURCE_STATUS.HEALTHY_EMPTY,
-        quietEligible: currentRecords.length === 0,
-        consumerDisclosure: null
+        sourceStatus: projectionDefect
+          ? SOURCE_STATUS.PROJECTION_DEFECT
+          : (currentRecords.length ? SOURCE_STATUS.HEALTHY_WITH_DATA : (geographicEvaluationState === "AVAILABLE" ? SOURCE_STATUS.HEALTHY_EMPTY : SOURCE_STATUS.UNKNOWN)),
+        quietEligible: !projectionDefect && geographicEvaluationState === "AVAILABLE" && governed.authorityEligibleCount === 0 && currentRecords.length === 0,
+        consumerDisclosure: projectionDefect ? "Official roadway projection is temporarily unavailable" : null,
+        geographicEvaluationState,
+        evaluationRevision,
+        authorityInputCount: connectorRecords.length,
+        authorityEligibleCount: governed.authorityEligibleCount,
+        lp0393ProjectionInputCount: governed.projectionInputCount,
+        lp0393ProjectedCount: currentRecords.length,
+        consumerVisibleCount: currentRecords.length,
+        consumerEnvelopeCount: currentRecords.length,
+        countConverged: governed.authorityEligibleCount === governed.projectionInputCount && governed.projectionInputCount === currentRecords.length
       };
     }
 
