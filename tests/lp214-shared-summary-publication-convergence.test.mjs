@@ -200,8 +200,8 @@ test('publication bridge is shared and fails closed when evidence is absent', ()
   assert.match(app, /const authoritativeCommunityAwarenessSummary = gridlyCommunityPulseAuditState\?\.communityAwarenessSummary/);
   assert.match(app, /communityAwarenessSummary: authoritativeCommunityAwarenessSummary/);
   assert.match(app, /refreshPortraitV2LocalizedIntelligence/);
-  assert.match(app, /locationContextCertificationStatus = sharedActiveIssueCount === null \|\| homeLocationContextIssueCount === null/);
-  assert.match(app, /locationContextDatasetCount \?\? parseLeadingCount\(visibleHomeCountText\)/);
+  assert.match(app, /const governedQuietZero = sharedActiveIssueCount === 0/);
+  assert.match(app, /"AUTHORITATIVE_ZERO_QUIET_PRESENTATION"/);
   assert.match(app, /hasAuthoritativeSharedCount \? "" : mobileOwnership\?\.meta/);
   assert.match(app, /"CERTIFICATION_INDETERMINATE"/);
   assert.doesNotMatch(source, /Dallas|Houston|place-4819000|place-4835000/);
