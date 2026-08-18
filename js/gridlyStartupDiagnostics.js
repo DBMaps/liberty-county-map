@@ -8,6 +8,31 @@
   const postPaintAuditState = {
     available: true, architectureOnly: true, protectedSystemsChanged: false, scriptStartAt: nowMs(), domContentLoadedAt: null, mobilePortraitVisibleAt: null, dockHandlersInstalledAt: null, startupWorkCompletedAt: null, firstResponsiveInteractionAt: null, firstPointerEventTimestamp: null, firstPointerCaptureObservedAt: null, firstPointerHandlerEnteredAt: null, firstClickEventTimestamp: null, firstClickCaptureObservedAt: null, firstClickHandlerEnteredAt: null, firstSurfaceOpenAt: null, activeStage: null, activeFunction: null, phases: [], longTasks: []
   };
+  // Installed before the restored parser-blocking application stack. These
+  // buffers are observation-only: they never wrap timers, fetch, or script
+  // execution and therefore cannot change startup ordering.
+  const latencyEvidence = { longTasks: [], longAnimationFrames: [] };
+  function compactUrl(value) {
+    try { const url = new URL(String(value || ""), document.baseURI); return url.origin === location.origin ? `${url.pathname}${url.search}` : `${url.origin}${url.pathname}`; } catch (_) { return String(value || "").replace(/[?#].*$/, ""); }
+  }
+  function roundMs(value) { return Number.isFinite(Number(value)) ? Math.round(Number(value) * 100) / 100 : null; }
+  function installLatencyObservers() {
+    if (typeof PerformanceObserver !== "function") return;
+    try {
+      new PerformanceObserver((list) => list.getEntries().forEach((entry) => push(latencyEvidence.longTasks, {
+        start: roundMs(entry.startTime), duration: roundMs(entry.duration),
+        scriptUrl: compactUrl(entry.attribution?.[0]?.containerSrc || ""),
+        source: entry.attribution?.[0]?.containerName || entry.name || "self"
+      }, 200))).observe({ type: "longtask", buffered: true });
+    } catch (_) {}
+    try {
+      new PerformanceObserver((list) => list.getEntries().forEach((entry) => push(latencyEvidence.longAnimationFrames, {
+        start: roundMs(entry.startTime), duration: roundMs(entry.duration), blockingDuration: roundMs(entry.blockingDuration),
+        scripts: Array.from(entry.scripts || []).slice(0, 8).map((script) => ({ sourceUrl: compactUrl(script.sourceURL), functionName: script.sourceFunctionName || null, duration: roundMs(script.duration), invoker: script.invoker || null }))
+      }, 100))).observe({ type: "long-animation-frame", buffered: true });
+    } catch (_) {}
+  }
+  installLatencyObservers();
   const isoNow = () => new Date().toISOString();
   const state = {
     available: true, version: VERSION, startupStartedAt: isoNow(), startupStartedAtMs: nowMs(), startupCompletedAt: null,
@@ -157,9 +182,80 @@
       longestBlockingStage, totalStartupMs: ms("mobileShellVisible") ?? state.uiUsableAtMs ?? null, milestones: clone(state.milestones), stages, resourceRequests, longTasks: clone(postPaintAuditState.longTasks)
     });
   }
+  function startupLatencyAudit() {
+    const nav = performance?.getEntriesByType?.("navigation")?.[0] || null;
+    const paints = performance?.getEntriesByType?.("paint") || [];
+    const usableAt = state.uiUsableAtMs ?? state.milestones.mobileShellReady?.atMs ?? null;
+    const scripts = Array.from(document.scripts || []);
+    const scriptByUrl = new Map(scripts.filter((script) => script.src).map((script) => [compactUrl(script.src), script]));
+    const classifyScript = (name) => {
+      if (/app\.js|leaflet|StartupReadiness|DestinationSearchLocality|CrossingProvider(?:\.js)?|PackageRegistry|RuntimeEnvironmentConfig/i.test(name)) return "CORE_FIRST_SHELL";
+      if (/Audit|Simulation|Prototype|history-capture|EndToEndPerformance/i.test(name)) return "AUDIT_ONLY";
+      if (/Weather|DriveTexas|Crossing|Roadway|Txdot|lp09[789]|lp10[124]/i.test(name)) return "SECONDARY_CAN_LOAD_AFTER_SHELL";
+      return "UNKNOWN_REQUIRES_REVIEW";
+    };
+    const resources = (performance?.getEntriesByType?.("resource") || [])
+      .filter((entry) => usableAt === null || entry.startTime <= usableAt)
+      .map((entry) => {
+        const name = compactUrl(entry.name); const script = scriptByUrl.get(name); const classification = script ? classifyScript(name) : null;
+        return { resource: name, type: entry.initiatorType || "other", start: roundMs(entry.startTime), duration: roundMs(entry.duration), transferSize: Number(entry.transferSize || 0), decodedSize: Number(entry.decodedBodySize || 0), initiator: entry.initiatorType || null, awaited: null, required: classification === "CORE_FIRST_SHELL", parserBlocking: script ? !script.async && !script.defer && script.type !== "module" : false, classification };
+      });
+    const scriptEvaluation = resources.filter((entry) => entry.type === "script").map((entry) => ({
+      name: entry.resource, bytes: entry.decodedSize || entry.transferSize, fetchDuration: entry.duration,
+      evaluationDuration: null, parserBlocking: entry.parserBlocking, requiredForFirstShell: entry.required,
+      classification: entry.classification,
+      attribution: "Resource Timing measures fetch; use longAnimationFrames.scripts or a DevTools trace for parse/evaluation duration."
+    }));
+    scripts.filter((script) => !script.src).forEach((script, index) => scriptEvaluation.push({ name: `inline-script-${index + 1}`, bytes: script.textContent?.length || 0, fetchDuration: 0, evaluationDuration: null, parserBlocking: true, requiredForFirstShell: null, classification: "UNKNOWN_REQUIRES_REVIEW", attribution: "Inline evaluation requires a DevTools trace." }));
+    const beforeUsable = (entry) => usableAt === null || Number(entry.start ?? entry.startTime) <= usableAt;
+    const longTasks = latencyEvidence.longTasks.filter(beforeUsable).sort((a, b) => b.duration - a.duration).slice(0, 20);
+    const longAnimationFrames = latencyEvidence.longAnimationFrames.filter(beforeUsable).sort((a, b) => b.duration - a.duration).slice(0, 20);
+    const stages = state.stages.map((stage) => ({ name: stage.name, start: roundMs(stage.startedAtMs), duration: stage.durationMs, status: stage.status, blocking: stage.blocking, dependency: stage.dependency })).sort((a, b) => Number(b.duration || 0) - Number(a.duration || 0));
+    const safeAudit = (name) => { try { return typeof window[name] === "function" ? window[name]() : null; } catch (_) { return null; } };
+    const background = safeAudit("gridlyBackgroundLoopAudit");
+    const repeatedWork = {
+      activeIntervals: background?.activeIntervals?.length ?? null, activeTimeouts: background?.activeTimeouts?.length ?? null,
+      activeAnimationFrames: background?.activeAnimationFrames?.length ?? null, portraitRefreshCount: background?.portraitRefreshCount ?? null,
+      dailyHabitUpdateCount: background?.dailyHabitUpdateCount ?? null, repeatedSameValueWrites: background?.repeatedSameValueWrites ?? null
+    };
+    const milestone = (name) => state.milestones[name]?.atMs ?? null;
+    const milestones = {
+      navigationStart: 0, firstPaint: paints.find((entry) => entry.name === "first-paint")?.startTime ?? null,
+      firstContentfulPaint: paints.find((entry) => entry.name === "first-contentful-paint")?.startTime ?? null,
+      domContentLoaded: nav?.domContentLoadedEventStart ?? milestone("domContentLoaded"), windowLoad: nav?.loadEventEnd || null,
+      appEvaluationComplete: milestone("appEvaluated"), appDOMContentLoadedListenerRegistered: milestone("appDOMContentLoadedListenerRegistered"), domContentLoadedHandlerStart: milestone("appBootstrapStart"), mobileModeDetected: milestone("mobileModeDetected"),
+      marketingSurfaceHidden: milestone("marketingSurfaceHidden"), portraitShellVisible: milestone("mobileShellVisible"), mapContainerVisible: milestone("mobileShellVisible"),
+      mapInstanceCreated: milestone("mapInitializationEnd"), locationContextShellVisible: milestone("mobileShellReady"), coreControlsBound: milestone("mobileShellReady"),
+      firstUsableConsumerShell: state.uiUsableAtMs, lp201Ready: milestone("LP201Ready"), crossingProviderStart: stages.find((entry) => entry.name.includes("crossing package loading"))?.start ?? null,
+      crossingProviderEnd: milestone("crossingReady"), driveTexasStart: stages.find((entry) => /DriveTexas/i.test(entry.name))?.start ?? null, driveTexasEnd: milestone("DriveTexasReady"),
+      destinationSearchHelperReadiness: milestone("destinationSearchReady") ?? milestone("destinationLocalityHelperEvaluated"), fullBootstrapComplete: state.startupCompletedAtMs
+    };
+    const startupGate = {
+      function: "primary app.js DOMContentLoaded handler",
+      predicate: "prepaint lock released AND core map/mobile controls initialized",
+      lastSatisfied: state.uiUsable ? (milestones.coreControlsBound >= milestones.marketingSurfaceHidden ? "core map/mobile controls initialized" : "prepaint lock released") : state.currentStage || "not yet observed",
+      prerequisites: [
+        { name: "DOMContentLoaded", classification: "TRULY_REQUIRED", at: milestones.domContentLoaded },
+        { name: "persisted county geometry when selected", classification: "LEGACY_COUPLING", at: stages.find((entry) => entry.name.includes("county geometry"))?.start ?? null },
+        { name: "map initialization", classification: "TRULY_REQUIRED", at: milestones.mapInstanceCreated },
+        { name: "core controls binding", classification: "TRULY_REQUIRED", at: milestones.coreControlsBound },
+        { name: "LP201/crossings/DriveTexas/destination providers", classification: "SHOULD_NOT_BLOCK_SHELL", at: null }
+      ]
+    };
+    const owners = [...stages.filter((entry) => entry.duration), ...longTasks.map((entry) => ({ name: entry.scriptUrl || entry.source || "long task", duration: entry.duration, start: entry.start }))]
+      .sort((a, b) => Number(b.duration || 0) - Number(a.duration || 0)).slice(0, 20);
+    const findings = [
+      "Read-only capture; no startup execution order or readiness predicate was changed.",
+      scriptEvaluation.some((entry) => entry.name.includes("/js/app.js") && entry.parserBlocking) ? "app.js remains parser-blocking in the restored safe order." : "app.js parser-blocking status was not observed.",
+      "Resource Timing does not expose JavaScript parse/evaluation duration; Long Animation Frame attribution is included when Chromium supports it.",
+      startupGate.lastSatisfied ? `Last observed first-shell prerequisite: ${startupGate.lastSatisfied}.` : "First-shell prerequisite is pending browser evidence."
+    ];
+    return Object.freeze({ milestones, resources, scriptEvaluation, longTasks, longAnimationFrames, startupGate, repeatedWork, topOwners: owners, findings });
+  }
   window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markMilestone, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe };
   window.gridlyPostPaintBlockingAudit = postPaintBlockingAudit;
   window.gridlyStartupTimingAudit = timingAudit;
+  window.gridlyStartupLatencyAudit = startupLatencyAudit;
   replayEarlyStartupEvents();
   window.gridlyStartupAudit = audit; window.gridlyStartupSummary = summary; window.gridlyRunStartupDiagnosticsValidation = validate; window.gridlyStartupDiagnosticsValidationSummary = async () => { const r = await validate(); return { safeForBeta: r.safeForBeta, failures: r.failures, warnings: r.warnings, timeoutCapture: r.timeoutCapture, timeoutStatusDurable: r.timeoutStatusDurable, noProductionWrites: r.noProductionWrites }; };
 }());

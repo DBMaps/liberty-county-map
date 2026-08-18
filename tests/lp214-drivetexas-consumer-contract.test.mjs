@@ -46,6 +46,9 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
   const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
   const allowedConsumerBoundaries = new Set([
     "js/app.js",
+    // Read-only startup timing observes the restored runtime and does not
+    // modify DriveTexas provider fetching, normalization, or publication.
+    "js/gridlyStartupDiagnostics.js",
     "js/gridlyAlertSemanticContract.js",
     "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
     // LP214's governed projection repair supplies one LP039.2 snapshot to

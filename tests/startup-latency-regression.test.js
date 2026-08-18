@@ -5,6 +5,7 @@ const path = require("node:path");
 
 const readiness = require("../js/gridlyStartupReadiness.js");
 const appSource = fs.readFileSync(path.join(__dirname, "../js/app.js"), "utf8");
+const diagnosticsSource = fs.readFileSync(path.join(__dirname, "../js/gridlyStartupDiagnostics.js"), "utf8");
 
 function deferred() {
   let resolve;
@@ -46,4 +47,14 @@ test("production shell checkpoint precedes secondary crossing wait", () => {
 test("destination search retains its fail-closed LP201 execution wait", () => {
   assert.match(appSource, /async function gridlySearchAddress[\s\S]*?await gridlyLoadStatewidePlacePresentation\(\)\.catch\(\(\) => null\)/);
   assert.match(appSource, /CANONICAL_PLACE_PRESENTATION_COORDINATES_UNAVAILABLE/);
+});
+
+test("startup latency audit is read-only and preserves script ordering", () => {
+  assert.match(diagnosticsSource, /window\.gridlyStartupLatencyAudit = startupLatencyAudit/);
+  for (const field of ["milestones", "resources", "scriptEvaluation", "longTasks", "longAnimationFrames", "startupGate", "repeatedWork", "topOwners", "findings"]) {
+    assert.match(diagnosticsSource, new RegExp(`\\b${field}\\b`));
+  }
+  assert.doesNotMatch(diagnosticsSource, /\.setAttribute\(["'](?:async|defer)["']/);
+  assert.doesNotMatch(diagnosticsSource, /document\.write\s*\(/);
+  assert.ok(appSource.lastIndexOf('markMilestone?.("appEvaluated")') > appSource.indexOf('markMilestone?.("appDOMContentLoadedListenerRegistered")'));
 });

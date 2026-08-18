@@ -44031,7 +44031,7 @@ localStorage.setItem("gridlyDeviceId", deviceId);
 
 const els = {};
 
-window.gridlyStartupDiagnostics?.markMilestone?.("appEvaluated");
+window.gridlyStartupDiagnostics?.markMilestone?.("appDOMContentLoadedListenerRegistered");
 
 document.addEventListener("DOMContentLoaded", async () => {
   const startupDiagnostics = window.gridlyStartupDiagnostics;
@@ -119962,3 +119962,7 @@ window.gridlyRecordLp097BrowserCertification = function gridlyRecordLp097Browser
   gridlyLp097BrowserCertification = Object.freeze({ ...record });
   return gridlyLp097AddressResolutionAudit();
 };
+
+// Keep this final and observation-only so it measures complete top-level
+// evaluation without changing the restored parser-blocking script order.
+window.gridlyStartupDiagnostics?.markMilestone?.("appEvaluated");
