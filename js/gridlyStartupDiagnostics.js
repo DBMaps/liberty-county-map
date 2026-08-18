@@ -182,7 +182,7 @@
       longestBlockingStage, totalStartupMs: ms("mobileShellVisible") ?? state.uiUsableAtMs ?? null, milestones: clone(state.milestones), stages, resourceRequests, longTasks: clone(postPaintAuditState.longTasks)
     });
   }
-  function startupLatencyAudit() {
+  async function startupLatencyAudit() {
     const nav = performance?.getEntriesByType?.("navigation")?.[0] || null;
     const paints = performance?.getEntriesByType?.("paint") || [];
     const usableAt = state.uiUsableAtMs ?? state.milestones.mobileShellReady?.atMs ?? null;
@@ -200,6 +200,16 @@
         const name = compactUrl(entry.name); const script = scriptByUrl.get(name); const classification = script ? classifyScript(name) : null;
         return { resource: name, type: entry.initiatorType || "other", start: roundMs(entry.startTime), duration: roundMs(entry.duration), transferSize: Number(entry.transferSize || 0), decodedSize: Number(entry.decodedBodySize || 0), initiator: entry.initiatorType || null, awaited: null, required: classification === "CORE_FIRST_SHELL", parserBlocking: script ? !script.async && !script.defer && script.type !== "module" : false, classification };
       });
+    const allResources = (performance?.getEntriesByType?.("resource") || []).slice().sort((a, b) => a.startTime - b.startTime);
+    const resourceDetail = (entry) => ({
+      name: compactUrl(entry.name), initiatorType: entry.initiatorType || "other", startTime: roundMs(entry.startTime),
+      fetchStart: roundMs(entry.fetchStart), requestStart: roundMs(entry.requestStart), responseStart: roundMs(entry.responseStart),
+      responseEnd: roundMs(entry.responseEnd), duration: roundMs(entry.duration), transferSize: Number(entry.transferSize || 0),
+      encodedBodySize: Number(entry.encodedBodySize || 0), decodedBodySize: Number(entry.decodedBodySize || 0),
+      deliveryType: entry.deliveryType || null,
+      cacheStatus: entry.deliveryType || (entry.transferSize > 0 ? "network-or-revalidated" : entry.decodedBodySize > 0 ? "memory-or-disk-cache" : "not-exposed-or-cross-origin")
+    });
+    const earliestResources = allResources.slice(0, 20).map(resourceDetail);
     const scriptEvaluation = resources.filter((entry) => entry.type === "script").map((entry) => ({
       name: entry.resource, bytes: entry.decodedSize || entry.transferSize, fetchDuration: entry.duration,
       evaluationDuration: null, parserBlocking: entry.parserBlocking, requiredForFirstShell: entry.required,
@@ -230,6 +240,86 @@
       crossingProviderEnd: milestone("crossingReady"), driveTexasStart: stages.find((entry) => /DriveTexas/i.test(entry.name))?.start ?? null, driveTexasEnd: milestone("DriveTexasReady"),
       destinationSearchHelperReadiness: milestone("destinationSearchReady") ?? milestone("destinationLocalityHelperEvaluated"), fullBootstrapComplete: state.startupCompletedAtMs
     };
+    const navFields = ["startTime", "fetchStart", "domainLookupStart", "domainLookupEnd", "connectStart", "secureConnectionStart", "connectEnd", "requestStart", "responseStart", "responseEnd", "domInteractive", "domContentLoadedEventStart", "domContentLoadedEventEnd", "domComplete", "loadEventStart", "loadEventEnd", "transferSize", "encodedBodySize", "decodedBodySize", "redirectStart", "redirectEnd", "workerStart"];
+    const navigationTiming = Object.fromEntries(navFields.map((field) => [field, nav ? roundMs(nav[field]) : null]));
+    const firstResourceStart = earliestResources[0]?.startTime ?? null;
+    const firstPaint = milestones.firstPaint ?? milestones.firstContentfulPaint;
+    Object.assign(navigationTiming, {
+      navigationToFetchStart: nav ? roundMs(nav.fetchStart - nav.startTime) : null,
+      fetchToRequest: nav ? roundMs(nav.requestStart - nav.fetchStart) : null,
+      requestToResponseStart: nav ? roundMs(nav.responseStart - nav.requestStart) : null,
+      responseTransferDuration: nav ? roundMs(nav.responseEnd - nav.responseStart) : null,
+      responseEndToFirstResource: nav && firstResourceStart !== null ? roundMs(firstResourceStart - nav.responseEnd) : null,
+      responseEndToFirstPaint: nav && firstPaint !== null ? roundMs(firstPaint - nav.responseEnd) : null,
+      responseEndToDOMContentLoaded: nav ? roundMs(nav.domContentLoadedEventStart - nav.responseEnd) : null
+    });
+    const documentDelivery = {
+      url: compactUrl(nav?.name || location.href), requestStart: navigationTiming.requestStart, responseStart: navigationTiming.responseStart,
+      responseEnd: navigationTiming.responseEnd, responseTransferDuration: navigationTiming.responseTransferDuration,
+      transferSize: navigationTiming.transferSize, encodedBodySize: navigationTiming.encodedBodySize, decodedBodySize: navigationTiming.decodedBodySize,
+      nextHopProtocol: nav?.nextHopProtocol || null, deliveryType: nav?.deliveryType || null,
+      cacheStatus: nav?.deliveryType || (nav?.transferSize > 0 ? "network-or-revalidated" : nav?.decodedBodySize > 0 ? "memory-or-disk-cache" : "not-exposed"),
+      liveReloadAttribution: "Navigation Timing cannot identify server buffering, filesystem watching, or live-reload injection; correlate the request/response intervals with the Live Server log or a network trace."
+    };
+    const html = document.documentElement?.outerHTML || "";
+    const linesBefore = (offset) => offset < 0 ? null : html.slice(0, offset).split("\n").length;
+    const position = (selector) => {
+      const element = document.querySelector(selector); if (!element) return null;
+      const token = element.outerHTML; const byteOffset = new TextEncoder().encode(html.slice(0, html.indexOf(token))).length;
+      return { selector, byteOffset, line: linesBefore(html.indexOf(token)), documentOrder: Array.from(document.querySelectorAll("link,script")).indexOf(element) + 1 };
+    };
+    const firstStylesheet = document.querySelector('link[rel="stylesheet"]');
+    const firstExternalScript = document.querySelector("script[src]");
+    const appScript = Array.from(document.scripts).find((script) => /\/app\.js(?:[?#]|$)/.test(script.src));
+    const documentStructure = {
+      sourceNote: "Byte offsets describe the live DOM serialization (including any Live Server injection), not unavailable original response bytes.",
+      serializedDocumentBytes: new TextEncoder().encode(html).length, serializedDocumentLines: html.split("\n").length,
+      bytesBeforeFirstStylesheet: firstStylesheet ? new TextEncoder().encode(html.slice(0, html.indexOf(firstStylesheet.outerHTML))).length : null,
+      linesBeforeFirstStylesheet: firstStylesheet ? linesBefore(html.indexOf(firstStylesheet.outerHTML)) : null,
+      bytesBeforeFirstExternalScript: firstExternalScript ? new TextEncoder().encode(html.slice(0, html.indexOf(firstExternalScript.outerHTML))).length : null,
+      linesBeforeFirstExternalScript: firstExternalScript ? linesBefore(html.indexOf(firstExternalScript.outerHTML)) : null,
+      bytesBeforeAppScript: appScript ? new TextEncoder().encode(html.slice(0, html.indexOf(appScript.outerHTML))).length : null,
+      linesBeforeAppScript: appScript ? linesBefore(html.indexOf(appScript.outerHTML)) : null,
+      criticalResourcePositions: {
+        leafletCss: position('link[href*="leaflet"][rel="stylesheet"]'), stylesCss: position('link[href*="styles.css"]'),
+        startupDiagnostics: position('script[src*="gridlyStartupDiagnostics.js"]'), leafletJs: position('script[src*="leaflet.js"]'),
+        supabase: position('script[src*="supabase"]'), packageRegistry: position('script[src*="gridlyPackageRegistry.js"]'), appJs: position('script[src*="/app.js"]')
+      },
+      inlineScriptsBeforeFirstResource: Array.from(document.scripts).filter((script) => !script.src && firstStylesheet && (script.compareDocumentPosition(firstStylesheet) & Node.DOCUMENT_POSITION_FOLLOWING)).map((script, index) => {
+        const source = script.textContent || "";
+        return { name: script.id || `inline-script-${index + 1}`, bytes: new TextEncoder().encode(source).length, parserBlocking: true,
+          purpose: /theme/i.test(script.id) ? "prepaint theme selection" : /HostnameGate/.test(source) ? "hostname access gate" : /ReleasePrepaintLock/.test(source) ? "prepaint lock release scheduling" : "unclassified inline startup logic",
+          synchronousCpu: true, networkAccess: /\bfetch\s*\(|XMLHttpRequest|sendBeacon/.test(source), storageAccess: /localStorage|sessionStorage|indexedDB/.test(source),
+          loopsOrTraversals: /\b(?:for|while)\s*\(|\.forEach\s*\(|querySelectorAll/.test(source) };
+      })
+    };
+    const controller = navigator.serviceWorker?.controller || null;
+    let registration = null; let navigationPreload = null; let serviceWorkerError = null;
+    if (navigator.serviceWorker) {
+      try {
+        registration = await navigator.serviceWorker.getRegistration();
+        if (registration?.navigationPreload) navigationPreload = await registration.navigationPreload.getState();
+      } catch (error) { serviceWorkerError = String(error?.message || error); }
+    }
+    const serviceWorker = { supported: "serviceWorker" in navigator, controlled: Boolean(controller), controller: controller ? { scriptURL: controller.scriptURL, state: controller.state } : null,
+      activeRegistration: Boolean(registration?.active), scope: registration?.scope || null, scriptURL: registration?.active?.scriptURL || null, navigationPreload,
+      workerStart: navigationTiming.workerStart, error: serviceWorkerError };
+    const legacyNavigationStart = performance?.timing?.navigationStart || null;
+    const timeOriginValidation = { timeOrigin: roundMs(performance.timeOrigin), performanceNow: roundMs(performance.now()), navigationStartTime: navigationTiming.startTime,
+      legacyNavigationStart, originMinusLegacyNavigationStart: legacyNavigationStart ? roundMs(performance.timeOrigin - legacyNavigationStart) : null,
+      earliestResourceStart: firstResourceStart, firstPaint: roundMs(firstPaint), domInteractive: navigationTiming.domInteractive,
+      sameMonotonicClock: navigationTiming.startTime === 0 && (firstResourceStart === null || firstResourceStart >= 0) && performance.now() >= (firstResourceStart || 0) };
+    const preResourceGap = { navigationStart: navigationTiming.startTime, firstResourceStart,
+      navigationToFirstResource: firstResourceStart === null ? null : roundMs(firstResourceStart - navigationTiming.startTime),
+      responseEndToFirstResource: navigationTiming.responseEndToFirstResource };
+    let classification = "INSUFFICIENT_OWNER_BROWSER_EVIDENCE";
+    if (!timeOriginValidation.sameMonotonicClock) classification = "INSTRUMENTATION_CLOCK_ERROR";
+    else if (nav && nav.workerStart > 0 && nav.responseStart - nav.workerStart > 1000) classification = "SERVICE_WORKER_DELAY";
+    else if (nav && nav.requestStart - nav.startTime > 1000) classification = "NAVIGATION_PRE_REQUEST_DELAY";
+    else if (nav && nav.responseStart - nav.requestStart > 1000) classification = "SERVER_RESPONSE_DELAY";
+    else if (nav && nav.responseEnd - nav.responseStart > 1000) classification = "DOCUMENT_TRANSFER_DELAY";
+    else if (nav && firstResourceStart !== null && firstResourceStart - nav.responseEnd > 1000) classification = "EARLY_PARSER_BLOCK";
+    else if (nav && firstResourceStart !== null) classification = "NO_MATERIAL_PRE_RESOURCE_GAP_IN_THIS_CAPTURE";
     const startupGate = {
       function: "primary app.js DOMContentLoaded handler",
       predicate: "prepaint lock released AND core map/mobile controls initialized",
@@ -250,7 +340,7 @@
       "Resource Timing does not expose JavaScript parse/evaluation duration; Long Animation Frame attribution is included when Chromium supports it.",
       startupGate.lastSatisfied ? `Last observed first-shell prerequisite: ${startupGate.lastSatisfied}.` : "First-shell prerequisite is pending browser evidence."
     ];
-    return Object.freeze({ milestones, resources, scriptEvaluation, longTasks, longAnimationFrames, startupGate, repeatedWork, topOwners: owners, findings });
+    return Object.freeze({ navigationTiming, documentDelivery, earliestResources, serviceWorker, timeOriginValidation, documentStructure, preResourceGap, classification, milestones, resources, scriptEvaluation, longTasks, longAnimationFrames, startupGate, repeatedWork, topOwners: owners, findings });
   }
   window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markMilestone, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe };
   window.gridlyPostPaintBlockingAudit = postPaintBlockingAudit;
