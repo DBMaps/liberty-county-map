@@ -62289,8 +62289,11 @@ function buildGridlyCommunityPulseModel(options = {}) {
     });
   const sharedActiveIssueCount = Math.max(0, Number(communityAwarenessSummary?.sharedActiveIssueContract?.activeIssueCount ?? communityAwarenessSummary?.activeIssueCount ?? 0) || 0);
   const sharedOfficialRoadwayCount = Math.max(0, Number(communityAwarenessSummary?.sharedActiveIssueContract?.activeOfficialRoadwayCount || 0) || 0);
-  if (sharedActiveIssueCount > Number(activeAwareness.activeAwarenessCount || 0)) {
-    activeAwareness.activeAwarenessCount = sharedActiveIssueCount;
+  const activeAwarenessConvergence = typeof reconcileGridlyActiveAwarenessWithSharedContract === "function"
+    ? reconcileGridlyActiveAwarenessWithSharedContract(activeAwareness, communityAwarenessSummary)
+    : { activeAwareness, governed: false, activeIssueCount: Number(activeAwareness.activeAwarenessCount || 0), quietEligible: false };
+  Object.assign(activeAwareness, activeAwarenessConvergence.activeAwareness);
+  if (sharedActiveIssueCount > 0) {
     activeAwareness.activeHazardCount = Math.max(Number(activeAwareness.activeHazardCount || 0), sharedOfficialRoadwayCount + Number(communityAwarenessSummary?.sharedActiveIssueContract?.activeOtherHazardCount || 0));
     activeAwareness.sharedActiveIssueContract = communityAwarenessSummary.sharedActiveIssueContract;
     activeAwareness.activityLevel = sharedActiveIssueCount >= 4 ? "elevated" : "active";
@@ -62343,15 +62346,18 @@ function buildGridlyCommunityPulseModel(options = {}) {
       };
 
   const communityAwarenessDisplay = summarizeGridlyAwarenessIntelligenceForDisplay(communityAwarenessSummary);
+  const governedPresentationCount = activeAwarenessConvergence.governed ? sharedActiveIssueCount : Math.max(selectedCommunityCount, Number(activeAwareness.activeAwarenessCount || 0) || 0);
+  const quietPresentationState = activeAwarenessConvergence.governed
+    ? activeAwarenessConvergence.quietEligible
+    : selectedCommunityCount <= 0 && Number(activeAwareness.activeAwarenessCount || 0) <= 0;
   const homePulseCopy = getGridlyHomeCommunityPulseCopy({
-    quiet: selectedCommunityCount <= 0 && Number(activeAwareness.activeAwarenessCount || 0) <= 0,
-    activeCount: Math.max(selectedCommunityCount, Number(activeAwareness.activeAwarenessCount || 0) || 0),
+    quiet: quietPresentationState,
+    activeCount: governedPresentationCount,
     activityLevel: mobilityPressureCategory,
     coverage: getGridlyAwarenessCoverageState()
   });
   let renderedPulseHeadline = homePulseCopy.headline;
   let renderedPulseSubline = homePulseCopy.subline;
-  const quietPresentationState = selectedCommunityCount <= 0 && Number(activeAwareness.activeAwarenessCount || 0) <= 0;
   const storyPresentation = buildGridlyCommunityPulseStoryPresentation({
     story: typeof buildGridlyAwarenessStory === "function" ? buildGridlyAwarenessStory() : null,
     activeAwareness,
@@ -62367,9 +62373,9 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const pulseSummaryReuseApplied = Boolean(activeAwareness.lightweightSummaryReuseApplied && activeAwareness.reusedAlertText && renderedPulseHeadline === activeAwareness.reusedAlertText);
   const pulseSummarySource = pulseSummaryReuseApplied ? activeAwareness.reusedAlertSource : "";
   const pulseSummaryText = pulseSummaryReuseApplied ? activeAwareness.reusedAlertText : "";
-  const selectedHeadlineTemplate = activeAwareness.headline ? "headline_lightweight_active_awareness" : headlinePhrase.selectedHeadlineTemplate;
-  const selectedSublineTemplate = activeAwareness.subline ? "subline_lightweight_active_awareness" : sublinePhrase.selectedSublineTemplate;
-  const phraseGenerationMode = activeAwareness.headline ? "lightweight_active_awareness" : (headlinePhrase.phraseGenerationMode || "category_mobility");
+  const selectedHeadlineTemplate = quietPresentationState ? "headline_lp214_shared_quiet" : (activeAwareness.headline ? "headline_lightweight_active_awareness" : headlinePhrase.selectedHeadlineTemplate);
+  const selectedSublineTemplate = quietPresentationState ? "subline_lp214_shared_quiet" : (activeAwareness.subline ? "subline_lightweight_active_awareness" : sublinePhrase.selectedSublineTemplate);
+  const phraseGenerationMode = quietPresentationState ? "lp214_shared_contract_quiet" : (activeAwareness.headline ? "lightweight_active_awareness" : (headlinePhrase.phraseGenerationMode || "category_mobility"));
   const repetitionAvoidanceApplied = Boolean(headlinePhrase.repetitionAvoidanceApplied || sublinePhrase.repetitionAvoidanceApplied);
 
   let pulseVisible = awarenessMode === "community" && Boolean(activeAwareness.loaded);
@@ -62380,8 +62386,8 @@ function buildGridlyCommunityPulseModel(options = {}) {
   } else if (awarenessMode !== "community") {
     pulseVisible = false;
     pulseSuppressedReason = `awareness mode ${awarenessMode || "unknown"} does not show Community Pulse`;
-  } else if (selectedCommunityCount <= 0 && activeAwareness.activeAwarenessCount <= 0) {
-    pulseSuppressedReason = "quiet lightweight active awareness state";
+  } else if (quietPresentationState) {
+    pulseSuppressedReason = "quiet governed shared active-issue state";
   }
 
   if (pulseVisible) {
@@ -62485,7 +62491,8 @@ function gridlyCommunityPulseDecisionFreshnessLine(model = {}) {
 function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
   const selectedCount = Number(model?.selectedCommunityCount || 0);
   const activeCount = Number(model?.activeAwareness?.activeAwarenessCount || 0);
-  const combinedCount = Math.max(selectedCount, activeCount);
+  const authoritativeCount = Number(model?.communityAwarenessSummary?.sharedActiveIssueContract?.activeIssueCount);
+  const combinedCount = Number.isFinite(authoritativeCount) ? Math.max(0, authoritativeCount) : Math.max(selectedCount, activeCount);
   const existingText = safeDisplayText([model?.renderedPulseHeadline, model?.renderedPulseSubline, model?.activeAwareness?.headline, model?.activeAwareness?.subline].filter(Boolean).join(" "), "");
   const recentlyCleared = combinedCount <= 0 && /cleared|improving|recently updated|recently cleared/i.test(existingText);
   const coverage = model?.coverageState || (typeof getGridlyAwarenessCoverageState === "function" ? getGridlyAwarenessCoverageState() : { state: "available", primary: "", secondary: "" });
@@ -106868,9 +106875,12 @@ function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = n
   counts.v735HazardCountModelReuseApplied = distinctHazardCountModel?.v735SignatureReuseApplied ? 1 : 0;
   counts.v735HazardCountModelReuseCount = Number(distinctHazardCountModel?.v735SignatureReuseCount || 0);
   const activeHazardCount = Math.max(0, Number(distinctHazardCountModel?.bottomAwarenessDisplayedHazardCount ?? summaryActiveHazardCount ?? activeAwareness.activeHazardCount ?? quietFastPathStatus?.activeHazardCount ?? (Array.isArray(activeHazards) ? getGridlyAwarenessLifecycleActiveHazards(activeHazards).length : 0)) || 0);
+  const authoritativeSharedActiveCount = Number(communityAwarenessSummary?.sharedActiveIssueContract?.activeIssueCount);
   const areaScopedActiveCount = summaryHasAreaScopedLists ? activeReportCount + activeHazardCount : null;
-  const activeAwarenessCount = summaryHasAreaScopedLists
-    ? areaScopedActiveCount
+  const activeAwarenessCount = Number.isFinite(authoritativeSharedActiveCount)
+    ? Math.max(0, authoritativeSharedActiveCount)
+    : summaryHasAreaScopedLists
+      ? areaScopedActiveCount
     : Math.max(
       0,
       Number(activeAwareness.activeAwarenessCount || 0),
