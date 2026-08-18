@@ -28,6 +28,13 @@
     currentAreaIdentity: null,
     transitionRevision: 0
   };
+  const referenceIds = new WeakMap();
+  let nextReferenceId = 1;
+  function objectId(value) {
+    if (!value || typeof value !== "object") return null;
+    if (!referenceIds.has(value)) referenceIds.set(value, nextReferenceId++);
+    return referenceIds.get(value);
+  }
 
   function cloneRecords(records) {
     try {
@@ -631,6 +638,7 @@
     const officialCount = (summary) => Number(summary?.sharedActiveIssueContract?.activeOfficialRoadwayCount || 0);
     const sharedCount = (summary) => Number(summary?.sharedActiveIssueContract?.activeIssueCount || 0);
     const locationContextCount = Number(globalScope.document?.querySelector?.('[data-v2-location-awareness="panel"]')?.dataset?.activeAwarenessCount);
+    const authoritativeSummary = state.lastPublishedSummary;
     return {
       available: true,
       installed: state.installed,
@@ -665,7 +673,21 @@
       portraitAreaIdentity: globalScope.document?.querySelector?.('[data-v2-location-awareness="panel"]')?.dataset?.areaIdentity || null,
       previousAreaIdentity: state.previousAreaIdentity,
       transitionRevision: state.transitionRevision,
-      sameSummaryReference: Boolean(state.lastPublishedSummary && pulseSummary === state.lastPublishedSummary && (!microlineSummary || microlineSummary === state.lastPublishedSummary)),
+      sameSummaryReference: Boolean(state.lastPublishedSummary && pulseSummary === state.lastPublishedSummary && microlineSummary === state.lastPublishedSummary),
+      authoritativeObjectId: objectId(authoritativeSummary),
+      pulseObjectId: objectId(pulseSummary),
+      microlineObjectId: objectId(microlineSummary),
+      sameAuthoritativePulseReference: Boolean(authoritativeSummary && pulseSummary === authoritativeSummary),
+      sameAuthoritativeMicrolineReference: Boolean(authoritativeSummary && microlineSummary === authoritativeSummary),
+      writeSiteReferenceAudit: globalScope.gridlyAuthoritativeCommunityAwarenessReferenceAudit || null,
+      windowPulseStateDescriptor: Object.getOwnPropertyDescriptor(globalScope, "gridlyCommunityPulseAuditState") || null,
+      windowMicrolineStateDescriptor: Object.getOwnPropertyDescriptor(globalScope, "gridlyTopAwarenessMicrolineState") || null,
+      pulseSummaryDescriptor: pulseSummary && globalScope.gridlyCommunityPulseAuditState
+        ? Object.getOwnPropertyDescriptor(globalScope.gridlyCommunityPulseAuditState, "communityAwarenessSummary") || null
+        : null,
+      microlineSummaryDescriptor: microlineSummary && globalScope.gridlyTopAwarenessMicrolineState
+        ? Object.getOwnPropertyDescriptor(globalScope.gridlyTopAwarenessMicrolineState, "communityAwarenessSummary") || null
+        : null,
       authoritativeSummaryRevision: Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || state.awarenessRevision || 0),
       authoritativeSummaryAreaIdentity: state.lastPublishedSummary?.sharedActiveIssueContract?.areaIdentity || null,
       pulseSummaryRevision: Number(globalScope.gridlyCommunityPulseAuditState?.communityAwarenessSummaryRevision || 0),
@@ -686,6 +708,7 @@
       lastRevisionReason: state.lastRevisionReason
     };
   };
+  globalScope.gridlyGetAuthoritativeCommunityAwarenessSummary = () => state.lastPublishedSummary;
   globalScope.gridlyGetDriveTexasConsumerSourceStatusEnvelope = readOfficialSourceEnvelope;
   globalScope.gridlyPublishCanonicalAreaTransitionSummary = publishCanonicalAreaTransitionSummary;
   globalScope.gridlyBuildSharedActiveIssueContract = buildSharedActiveIssueContract;
