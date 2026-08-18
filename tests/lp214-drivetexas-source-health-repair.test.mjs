@@ -6,7 +6,7 @@ import vm from "node:vm";
 const publisherSource = fs.readFileSync("js/gridlyAwarenessOfficialRoadwayPublisherRepair.js", "utf8");
 const appSource = fs.readFileSync("js/app.js", "utf8");
 
-function harness({ records = [], allRecords = [], connected = true, error = null, sourceAvailable = true, area = { id: "place-4819000", countyId: "48113" }, select, authoritySnapshot } = {}) {
+function harness({ records = [], allRecords = [], connected = true, error = null, sourceAvailable = true, area = { id: "place-4819000", countyId: "48113" }, canonicalArea = area, select, authoritySnapshot } = {}) {
   let currentRecords = records;
   let runtime = { connected };
   let lifecycle = { lastFetchError: error, lastSuccessfulFetchTimestamp: connected ? "2026-08-17T12:00:00.000Z" : null };
@@ -20,6 +20,7 @@ function harness({ records = [], allRecords = [], connected = true, error = null
     } : undefined,
     gridlyDriveTexasProvider: sourceAvailable ? { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected: false, lastError: error }) } : undefined,
     getGridlySelectedAwarenessArea: () => area,
+    getGridlyCanonicalAwarenessPresentationContext: () => canonicalArea,
     gridlyGetDriveTexasAuthoritySnapshot: authoritySnapshot ? (input) => authoritySnapshot(input) : undefined,
     gridlySelectConsumerVisibleDriveTexasSituations: select
   };
@@ -52,40 +53,65 @@ test("healthy current-awareness records enter the governed consumer selector ins
   assert.equal(value.quietEligible, false);
 });
 
-test("Houston-shaped governed records use one LP039.2 snapshot through projection and envelope", () => {
-  const area = { key: "place-4835000", placeGeoid: "4835000", countyId: "48201", lat: 29.7589382, lng: -95.3676974, radiusMiles: 7, geographicEvaluationState: "AVAILABLE" };
-  const records = Array.from({ length: 6 }, (_, index) => ({
+test("Houston LineStrings use the canonical focus and retain identical direct/envelope LP039.2 proofs", () => {
+  const selectedArea = { key: "place-4835000", placeGeoid: "4835000", countyId: "48201", label: "Houston" };
+  const canonicalArea = { ...selectedArea, canonicalKey: "place-4835000", lat: 29.7589382, lng: -95.3676974, radiusMiles: 7, focusAuthority: "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1", geographicEvaluationState: "AVAILABLE" };
+  const categories = ["Lane Closure", "Bridge Restriction", "Road Closure", "Lane Closure", "Road Closure", "Bridge Restriction"];
+  const records = categories.map((category, index) => ({
+    id: `houston-${index + 1}`,
+    consumerSituationId: `drivetexas:provider:houston-${index + 1}`,
+    providerId: `provider:houston-${index + 1}`,
     sourceId: `provider:houston-${index + 1}`,
     sourceProviderRecordId: `houston-${index + 1}`,
     authorityIdentity: `provider:houston-${index + 1}`,
-    category: index % 2 ? "Construction" : "Lane Closure",
+    category,
     headline: `Houston governed roadway situation ${index + 1}`,
+    startTime: "2026-08-18T10:00:00.000Z",
+    updatedTime: "2026-08-18T11:00:00.000Z",
+    endTime: "2026-09-18T10:00:00.000Z",
     status: "active",
     freshnessStatus: "active",
-    ownershipMethod: "valid_source_point_inside_awareness_radius_miles",
+    sourceCoordinates: null,
+    sourceGeometry: { type: "LineString", coordinates: [[-95.38 + index * 0.001, 29.75], [-95.36 + index * 0.001, 29.77]] },
+    geometry: { type: "LineString", coordinates: [[-95.38 + index * 0.001, 29.75], [-95.36 + index * 0.001, 29.77]] },
+    ownershipMethod: "trusted_source_geometry_intersects_awareness_radius",
     distanceFromSelectedAwarenessMiles: index + 0.25,
-    geometryType: "Point",
-    canonicalIdentity: { key: area.key, placeGeoid: area.placeGeoid },
-    retained: false
+    geometryType: "LineString",
+    canonicalIdentity: { key: canonicalArea.key, placeGeoid: canonicalArea.placeGeoid },
+    retained: false,
+    sourceStatus: "HEALTHY_WITH_DATA"
   }));
-  const snapshot = Object.freeze({
-    evaluationRevision: "place-4835000|fetch-17|6",
-    selectedAwarenessArea: area,
-    counts: { authorityEligibleRecordCount: 6 },
-    authority: { authorityEligibleRecordCount: 6, consumerEligibleSituations: records }
-  });
+  const calls = [];
+  const authoritySnapshot = (input) => {
+    const focusAvailable = Number.isFinite(input.selectedAwarenessArea?.lat) && Number.isFinite(input.selectedAwarenessArea?.lng) && input.selectedAwarenessArea?.radiusMiles === 7;
+    const proof = input.records.map((record) => ({ authorityIdentity: record.authorityIdentity, freshnessStatus: record.freshnessStatus, categoryAllowed: true, coordinateValid: false, geometryQualified: focusAvailable, ownershipMethod: focusAvailable ? record.ownershipMethod : "not_established", distanceFromAwarenessMiles: focusAvailable ? record.distanceFromSelectedAwarenessMiles : null, duplicateIdentity: false, finalEligibility: focusAvailable, ineligibilityReasons: focusAvailable ? [] : ["awareness_anchor_unavailable"] }));
+    const eligible = input.records.filter((_record, index) => proof[index].finalEligibility);
+    const snapshot = Object.freeze({ evaluationRevision: `${input.selectedAwarenessArea?.key}|unversioned|${input.records.length}|${eligible.map((record) => record.authorityIdentity).join(",")}`, selectedAwarenessArea: input.selectedAwarenessArea, counts: { authorityEligibleRecordCount: eligible.length }, authority: { authorityEligibleRecordCount: eligible.length, consumerEligibleSituations: eligible, recordProof: proof, eligibleRecordProof: proof.filter((entry) => entry.finalEligibility) } });
+    calls.push({ input, snapshot });
+    return snapshot;
+  };
+  const directSnapshot = authoritySnapshot({ records, selectedAwarenessArea: canonicalArea });
+  const legacyEnvelopeSnapshot = authoritySnapshot({ records, selectedAwarenessArea: selectedArea });
+  assert.equal(legacyEnvelopeSnapshot.counts.authorityEligibleRecordCount, 0, "identity-only selected area reproduces the pre-repair envelope loss");
+  assert.ok(legacyEnvelopeSnapshot.authority.recordProof.every((entry) => entry.ineligibilityReasons.includes("awareness_anchor_unavailable")));
   let projectedSnapshot;
   const value = harness({
     records,
-    area,
-    authoritySnapshot: () => snapshot,
+    area: selectedArea,
+    canonicalArea,
+    authoritySnapshot,
     select(input) {
       projectedSnapshot = input.authoritySnapshot;
-      return { consumerVisibleSituations: input.authoritySnapshot.authority.consumerEligibleSituations, lp0393ConsumerProjectionInputCount: 6 };
+      return { consumerVisibleSituations: input.authoritySnapshot.authority.consumerEligibleSituations, lp0393ConsumerProjectionInputCount: input.authoritySnapshot.authority.consumerEligibleSituations.length };
     }
   }).envelope();
-  assert.strictEqual(projectedSnapshot, snapshot);
-  assert.equal(value.evaluationRevision, snapshot.evaluationRevision);
+  const envelopeCall = calls[2];
+  assert.strictEqual(envelopeCall.input.records, records, "envelope passes the connector array without presentation normalization");
+  records.forEach((record, index) => assert.strictEqual(envelopeCall.input.records[index], record));
+  assert.strictEqual(envelopeCall.input.selectedAwarenessArea, canonicalArea);
+  assert.deepEqual(envelopeCall.snapshot.authority.recordProof, directSnapshot.authority.recordProof);
+  assert.strictEqual(projectedSnapshot, envelopeCall.snapshot);
+  assert.equal(value.evaluationRevision, envelopeCall.snapshot.evaluationRevision);
   assert.deepEqual([value.authorityInputCount, value.authorityEligibleCount, value.lp0393ProjectionInputCount, value.lp0393ProjectedCount, value.consumerVisibleCount, value.consumerEnvelopeCount], [6, 6, 6, 6, 6, 6]);
   assert.equal(value.countConverged, true);
   assert.equal(value.sourceStatus, "HEALTHY_WITH_DATA");
