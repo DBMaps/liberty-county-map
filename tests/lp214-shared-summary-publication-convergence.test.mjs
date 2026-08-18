@@ -30,6 +30,17 @@ function harness() {
     gridlyDriveTexasProvider: { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected, lastError: error }) },
     gridlyDriveTexasConnectorRuntimeAudit: () => ({ connected }),
     gridlySelectConsumerVisibleDriveTexasSituations: ({ records: input }) => ({ consumerVisibleSituations: input }),
+    buildGridlyOfficialSituationAlert(record) {
+      // The production presentation projection does not carry lifecycle or
+      // governed consumer identity unless the publisher preserves it.
+      return { id: `display-${record.id || record.category}`, providerId: record.providerId, category: record.category, title: record.headline, description: record.description };
+    },
+    getGridlyAwarenessLifecycleActiveHazards(input) {
+      // Reproduces the incompatible raw-hazard expectation that caused the
+      // live governed consumer records (which have no lifecycleState) to be
+      // rejected before Phase 2.2J.
+      return input.filter((record) => record.lifecycleState === 'active');
+    },
     buildGridlyCommunityAwarenessIntelligenceSummary: baseSummary,
     gridlyCommunityPulseAuditState: { communityAwarenessSummary: baseSummary() },
     gridlyTopAwarenessMicrolineState: { communityAwarenessSummary: baseSummary() },
@@ -62,7 +73,14 @@ function harness() {
 test('governed snapshot is published as one Pulse, microline and Location Context reference', () => {
   const h = harness();
   const stale = h.window.gridlyCommunityPulseAuditState.communityAwarenessSummary;
-  const summary = h.publish(Array.from({ length: 8 }, (_, index) => ({ id: `dallas-${index}` })));
+  const governedDallasRecords = Array.from({ length: 8 }, (_, index) => ({
+    consumerSituationId: `drivetexas:dallas:${index + 1}`,
+    providerId: 'drivetexas',
+    category: 'Construction',
+    headline: `Dallas roadway condition ${index + 1}`,
+    description: 'Governed consumer-visible roadway condition.'
+  }));
+  const summary = h.publish(governedDallasRecords);
   assert.notEqual(summary, stale);
   assert.equal(summary.sharedActiveIssueContract.areaIdentity, 'place-4819000');
   assert.equal(summary.sharedActiveIssueContract.activeOfficialRoadwayCount, 8);
@@ -71,6 +89,13 @@ test('governed snapshot is published as one Pulse, microline and Location Contex
   assert.equal(h.window.locationContextCount, summary.sharedActiveIssueContract.activeIssueCount);
   const audit = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit();
   assert.equal(audit.sourceEnvelopeCount, 8);
+  assert.equal(audit.officialNormalizationInputCount, 8);
+  assert.equal(audit.officialNormalizedCount, 8);
+  assert.equal(audit.officialLifecycleActiveCount, 8);
+  assert.equal(audit.officialInAreaCount, 8);
+  assert.equal(audit.sharedContractOfficialInputCount, 8);
+  assert.equal(audit.sharedContractOfficialUniqueCount, 8);
+  assert.equal(audit.enrichedSummaryOfficialCount, 8);
   assert.equal(audit.publishedPulseOfficialCount, 8);
   assert.equal(audit.publishedMicrolineOfficialCount, 8);
   assert.equal(audit.sameSummaryReference, true);

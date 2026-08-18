@@ -44,5 +44,5 @@ test("Dallas remains a multi-county browser control", () => {
 test("Phase 2.1 artifact remains immutable while Phase 2.2F changes only shared-awareness consumers", () => {
   assert.equal(artifact.productionSourceModified, false);
   const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
-  assert.deepEqual(changed.sort(), ["js/app.js", "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js"]);
+  assert.deepEqual(changed.sort(), ["js/gridlyAwarenessOfficialRoadwayPublisherRepair.js"]);
 });
