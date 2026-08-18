@@ -56,7 +56,11 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
     "js/gridlyDriveTexasLiveConnector.js",
     // LP214 cold-start closure governs configuration readiness before the
     // existing connector activation/fetch lifecycle; provider normalization is unchanged.
-    "js/gridlyOfficialProviderActivation.js"
+    "js/gridlyOfficialProviderActivation.js",
+    // LP214 crossing transport repair is isolated from DriveTexas fetching
+    // and prevents diagnostic provider modes from overriding governed packages.
+    "js/gridlyCrossingProvider.js",
+    "js/gridlyCrossingProviderActivationAudit.js"
   ]);
   assert(changed.every((file) => allowedConsumerBoundaries.has(file)), `unexpected protected JavaScript change: ${changed.join(", ")}`);
   assert(!changed.some((file) => /DriveTexasProvider|Weather/i.test(file)));

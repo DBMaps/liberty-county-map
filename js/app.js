@@ -50077,7 +50077,14 @@ function summarizeGridlyAwarenessIntelligenceForDisplay(summary = {}) {
   });
   const hazardCount = Array.isArray(summary.activeHazardsInArea) ? summary.activeHazardsInArea.length : Number(summary.activeHazardsInArea || 0);
   const reportCount = Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea.length : Number(summary.activeReportsInArea || 0);
-  const crossingsPhrase = crossingsCount === 1 ? "1 crossing watched" : `${crossingsCount} crossings watched`;
+  const activeCountyId = gridlyGetActiveCountyId();
+  const crossingInventoryComplete = gridlyCrossingInventoryHydrationState.countyId === activeCountyId
+    && gridlyCrossingInventoryHydrationState.completed === true
+    && !gridlyCrossingInventoryHydrationState.failureReason
+    && gridlyCrossingInventoryCountyId === activeCountyId;
+  const crossingsPhrase = crossingInventoryComplete
+    ? (crossingsCount === 1 ? "1 crossing watched" : `${crossingsCount} crossings watched`)
+    : "Crossing inventory unavailable";
 
   if (hazardCount <= 0 && reportCount <= 0) {
     return {
@@ -52178,6 +52185,14 @@ async function fetchFraCrossingsWithRetry(countyId = gridlyGetActiveCountyId()) 
       const providerFeatureCount = Array.isArray(providerGeojson?.features) ? providerGeojson.features.length : 0;
       if (providerFeatureCount !== governedSource.governedCount) {
         throw new Error(`Governed Crossing count mismatch for ${governedSource.county}: expected ${governedSource.governedCount}, loaded ${providerFeatureCount}`);
+      }
+      const providerCrossingIds = providerGeojson.features.map((feature, index) => {
+        const properties = feature?.properties && typeof feature.properties === "object" ? feature.properties : {};
+        const identity = properties.CROSSING || properties.crossing || properties.crossing_id || properties.crossingId || properties.id || feature?.id;
+        return identity !== undefined && identity !== null && String(identity).trim() ? String(identity).trim() : `index:${index}`;
+      });
+      if (new Set(providerCrossingIds).size !== providerCrossingIds.length) {
+        throw new Error(`Governed Crossing duplicate identity for ${governedSource.county}`);
       }
       // LP202.1's governed registry entry, county manifest, production record,
       // package path, and exact count jointly own package assignment. Individual
@@ -55762,6 +55777,43 @@ async function gridlyCrossingLoadTraceAudit(countyId = gridlyGetActiveCountyId()
 }
 
 window.gridlyCrossingLoadTraceAudit = gridlyCrossingLoadTraceAudit;
+window.gridlySafeBrowserCrossingAudit = async function gridlySafeBrowserCrossingAudit() {
+  const canonicalCommunity = getGridlySelectedAwarenessArea();
+  const countyId = gridlyGetActiveCountyId();
+  const countyConfig = GRIDLY_COUNTY_REGISTRY[countyId] || {};
+  const governed = await window.gridlyRuntimeSourceRegistryBridge.resolveGovernedCrossingSource({
+    county: String(countyConfig.name || "").replace(/\s+County$/i, ""),
+    countyFips: countyConfig.countyFips
+  });
+  const trace = await gridlyCrossingLoadTraceAudit(countyId);
+  const inventory = gridlyGetActiveCountyCrossingInventory();
+  const summary = buildGridlyCommunityAwarenessIntelligenceSummary();
+  const complete = gridlyCrossingInventoryHydrationState.countyId === countyId
+    && gridlyCrossingInventoryHydrationState.completed === true
+    && gridlyCrossingInventoryCountyId === countyId;
+  return Object.freeze({
+    audit: "LP214 safe browser crossing audit",
+    canonicalCommunity: canonicalCommunity?.key || (canonicalCommunity?.placeGeoid ? `place-${canonicalCommunity.placeGeoid}` : null),
+    operationalCrossingCounties: [countyId],
+    counties: [Object.freeze({
+      countyId,
+      countyFips: String(countyConfig.countyFips || governed.countyFips || ""),
+      countyName: governed.county,
+      expectedGovernedCount: governed.governedCount,
+      requestSource: governed.sourceResolutionMode,
+      requestTransportIdentity: governed.packageFile,
+      transportReturnedCount: Number(trace.stages.find((stage) => stage.stage === "raw_fetch")?.count || 0),
+      normalizedCount: Number(gridlyCrossingFallbackAuditState.normalizedCrossingCount || 0),
+      validationStatus: complete ? "VALID_COMPLETE_INVENTORY" : "INVENTORY_LOAD_FAILED_OR_INCOMPLETE",
+      publishedRegistryCount: inventory.length,
+      awarenessAreaCrossingCount: summary.crossingsInArea.length,
+      renderedCrossingMarkerCount: getGridlyCurrentRenderedCrossingMarkerCount(),
+      crossingsWatchedConsumerCount: complete ? getGridlyBottomPanelAwarenessCrossingCount(summary) : null,
+      inventoryStatus: complete ? "VALID_COMPLETE_INVENTORY" : "INVENTORY_LOAD_FAILED_OR_INCOMPLETE",
+      failureReason: gridlyCrossingInventoryHydrationState.failureReason || null
+    })]
+  });
+};
 window.gridlyCrossingPipelineAudit = function gridlyCrossingPipelineAudit() {
   updateCrossingPipelineAudit("manual_window_call");
   return {
