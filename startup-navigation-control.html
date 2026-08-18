@@ -10,11 +10,14 @@
     h1 { color: #43e6a0; font-size: clamp(1.5rem, 7vw, 2.5rem); }
     output { display: block; padding: 1rem; border: 1px solid #447; border-radius: .75rem; white-space: pre-wrap; }
     .pass { color: #43e6a0; } .delay { color: #ffcc66; }
+    .open-gridly { display: inline-block; margin: 1rem 0; padding: .8rem 1.1rem; border-radius: .6rem; background: #43e6a0; color: #071426; font-weight: 800; text-decoration: none; }
   </style>
 </head>
 <body>
   <h1>GRIDLY NAVIGATION CONTROL</h1>
   <p>This development-only page has no Gridly runtime or external resources.</p>
+  <a class="open-gridly" href="./index.html?gridlyLifecycleControl=navigate">OPEN GRIDLY</a>
+  <p>After Gridly opens, reload it once. Its startup audit will show the fresh-navigation and reload timing together with previous-document lifecycle evidence.</p>
   <output id="results">Reading navigation timing…</output>
   <script>
     addEventListener("load", async function () {
