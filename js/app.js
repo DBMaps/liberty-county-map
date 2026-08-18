@@ -8742,6 +8742,9 @@ let gridlyCrossingInventoryHydrationState = {
   failureReason: null,
   reason: null
 };
+// Monotonic publication revision for the active county crossing owner. Consumer
+// presentation snapshots must be rebuilt after this value advances.
+let gridlyCrossingInventoryRevision = 0;
 const GRIDLY_CROSSING_HYDRATION_TRACE_LIMIT = 40;
 const gridlyCrossingHydrationTrace = [];
 function gridlyRecordCrossingHydrationTrace(event, detail = {}) {
@@ -40284,6 +40287,31 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
   );
 }
 
+function buildGridlyCrossingWatchPresentationModel(summary = {}) {
+  const canonicalArea = summary?.selectedAwarenessArea || getGridlySelectedAwarenessArea();
+  const operationalCountyId = gridlyGetActiveCountyId();
+  const inventoryComplete = gridlyCrossingInventoryHydrationState.countyId === operationalCountyId
+    && gridlyCrossingInventoryHydrationState.completed === true
+    && !gridlyCrossingInventoryHydrationState.failureReason
+    && gridlyCrossingInventoryCountyId === operationalCountyId;
+  const crossingsWatchedCount = inventoryComplete
+    ? getGridlyBottomPanelAwarenessCrossingCount({ ...summary, selectedAwarenessArea: canonicalArea })
+    : null;
+  return Object.freeze({
+    canonicalAreaIdentity: canonicalArea?.key || (canonicalArea?.placeGeoid ? `place-${canonicalArea.placeGeoid}` : null),
+    operationalCountyId,
+    crossingInventoryStatus: inventoryComplete ? "VALID_COMPLETE_INVENTORY" : "INVENTORY_UNAVAILABLE",
+    publishedRegistryCount: gridlyGetActiveCountyCrossingInventory().length,
+    crossingsWatchedCount,
+    crossingRevision: gridlyCrossingInventoryRevision,
+    crossingGeneration: gridlyActiveCountyTransitionGeneration,
+    failureReason: gridlyCrossingInventoryHydrationState.failureReason || null,
+    displayText: inventoryComplete
+      ? `${crossingsWatchedCount} crossing${crossingsWatchedCount === 1 ? "" : "s"} watched`
+      : "Crossing inventory unavailable"
+  });
+}
+
 function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const safeSummary = summary || {};
   const canonicalContext = getGridlyCanonicalAwarenessPresentationContext(safeSummary.selectedAwarenessArea ? { awarenessArea: safeSummary.selectedAwarenessArea } : {});
@@ -40292,7 +40320,8 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
     const rawCount = Array.isArray(primaryValue) ? primaryValue.length : Number(primaryValue ?? fallbackValue ?? 0);
     return Number.isFinite(rawCount) ? Math.max(0, rawCount) : 0;
   };
-  const crossingsCount = safeCount(safeSummary.crossingsInArea, safeSummary.crossingsCount);
+  const crossingWatchModel = buildGridlyCrossingWatchPresentationModel(safeSummary);
+  const crossingsCount = crossingWatchModel.crossingsWatchedCount;
   const bottomHazardCountModel = getGridlyBottomAwarenessHazardCountModel(safeSummary);
   const hazardCount = bottomHazardCountModel.bottomHazardCount;
   const activeReportRows = Array.isArray(safeSummary.activeReportsInArea) ? safeSummary.activeReportsInArea : [];
@@ -40311,28 +40340,33 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
     ? alertsCommunityReportCount
     : (reportCount + crossingReportCount || activeIssueCount);
   const quietState = activeIssueCount === 0;
-  const quietMapContextMeta = getGridlyLocationContextMapMeta(crossingsCount);
+  const quietMapContextMeta = crossingsCount === null ? crossingWatchModel.displayText : getGridlyLocationContextMapMeta(crossingsCount);
   const activeStatus = crossingReportCount > 0
     ? "Active crossing report nearby"
     : (hazardCount > 0 ? "Active hazards reported nearby" : "Active reports posted nearby");
-  const quietCrossingsLine = "";
+  const quietCrossingsLine = crossingWatchModel.displayText;
   const reportEvidenceSuffix = evidenceReportCount > activeIssueCount
     ? ` · ${evidenceReportCount} community reports`
     : "";
-  const activeCrossingsLine = `${activeIssueCount} active issue${activeIssueCount === 1 ? "" : "s"} nearby${reportEvidenceSuffix} · ${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched`;
+  const activeCrossingsLine = `${activeIssueCount} active issue${activeIssueCount === 1 ? "" : "s"} nearby${reportEvidenceSuffix} · ${crossingWatchModel.displayText}`;
   return {
     ...safeSummary,
     areaName,
     panelTitle: quietState ? areaName : safeDisplayText(safeSummary.panelTitle, `${areaName} Context`),
     status: quietState ? quietMapContextMeta : safeDisplayText(safeSummary.status || safeSummary.awarenessStatus, activeStatus),
-    crossingsLine: quietState
-      ? quietCrossingsLine
-      : safeDisplayText(safeSummary.crossingsLine, activeCrossingsLine),
+    // Never allow a cached/pre-hydration crossingsLine to override the current
+    // committed inventory owner. Active-issue copy and crossing copy converge
+    // here into the actual Location Context DOM model.
+    crossingsLine: quietState ? quietCrossingsLine : activeCrossingsLine,
     activeIssueCount,
     activeIssuesLine: safeDisplayText(safeSummary.activeIssuesLine, ""),
     bottomHazardCountSource: bottomHazardCountModel.bottomHazardCountSource,
     homeLocationContextIssueCount: activeIssueCount,
     homeLocationContextReportCount: evidenceReportCount,
+    crossingWatchModel,
+    crossingInventoryStatus: crossingWatchModel.crossingInventoryStatus,
+    crossingsWatchedCount: crossingWatchModel.crossingsWatchedCount,
+    crossingRevision: crossingWatchModel.crossingRevision,
     bottomHazardCount: bottomHazardCountModel.bottomHazardCount,
     classificationActiveRoadHazardCount: bottomHazardCountModel.classificationActiveRoadHazardCount,
     bottomCountMatchesClassification: bottomHazardCountModel.bottomCountMatchesClassification
@@ -51166,6 +51200,7 @@ async function loadCrossings() {
       return shouldShowCrossingInLaunchMode(crossing);
     });
     gridlyCrossingInventoryCountyId = requestedCountyId;
+    gridlyCrossingInventoryRevision += 1;
     gridlyRecordCrossingHydrationTrace("INVENTORY_COMMIT", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: crossings.length });
     gridlyRecordCrossingHydrationTrace("INVENTORY_OWNER_SET", { countyId: requestedCountyId, generation: requestedGeneration, inventoryOwner: requestedCountyId, recordCount: crossings.length });
     gridlyCrossingInventoryHydrationState = { ...gridlyCrossingInventoryHydrationState, countyId: requestedCountyId, attempted: true, completed: true, failureReason: null };
@@ -51199,6 +51234,12 @@ async function loadCrossings() {
     applyGridlyHomeTownAwarenessContext({ source: "crossings_loaded", fitMap: true });
     scheduleRenderCrossings("state-change", { force: true });
     gridlyRecordCrossingHydrationTrace("POST_COMMIT_REFRESH", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: crossings.length });
+    // Crossing publication is an explicit presentation invalidation boundary.
+    // Rebuild all shared awareness consumers from the newly committed revision;
+    // do not wait for a timer, map interaction, or DriveTexas refresh.
+    if (typeof syncGridlyAwarenessAreaSurfacesImmediately === "function") {
+      syncGridlyAwarenessAreaSurfacesImmediately("crossing-inventory-committed", { refreshMapMarkers: false });
+    }
     if (evaluateLayoutMode() === "desktop") {
       updateRouteIntelligence();
       updateTrustStats();
@@ -55777,6 +55818,17 @@ async function gridlyCrossingLoadTraceAudit(countyId = gridlyGetActiveCountyId()
 }
 
 window.gridlyCrossingLoadTraceAudit = gridlyCrossingLoadTraceAudit;
+function gridlyReadLocationContextCrossingDom() {
+  const element = typeof document !== "undefined" ? document.getElementById("mobileAwarenessPanelCrossings") : null;
+  const text = String(element?.textContent || "").trim();
+  if (!element || !text) return Object.freeze({ state: "missing", value: null, text });
+  if (/Crossing inventory unavailable/i.test(text)) return Object.freeze({ state: "unavailable", value: null, text });
+  const match = text.match(/(?:^|\b)(\d+)\s+crossings?\s+watched\b/i);
+  return Object.freeze(match
+    ? { state: "numeric", value: Number(match[1]), text }
+    : { state: "missing", value: null, text });
+}
+window.gridlyReadLocationContextCrossingDom = gridlyReadLocationContextCrossingDom;
 window.gridlySafeBrowserCrossingAudit = async function gridlySafeBrowserCrossingAudit() {
   const canonicalCommunity = getGridlySelectedAwarenessArea();
   const countyId = gridlyGetActiveCountyId();
@@ -55791,6 +55843,8 @@ window.gridlySafeBrowserCrossingAudit = async function gridlySafeBrowserCrossing
   const complete = gridlyCrossingInventoryHydrationState.countyId === countyId
     && gridlyCrossingInventoryHydrationState.completed === true
     && gridlyCrossingInventoryCountyId === countyId;
+  const consumerModel = buildGridlyCrossingWatchPresentationModel(summary);
+  const visibleDom = gridlyReadLocationContextCrossingDom();
   return Object.freeze({
     audit: "LP214 safe browser crossing audit",
     canonicalCommunity: canonicalCommunity?.key || (canonicalCommunity?.placeGeoid ? `place-${canonicalCommunity.placeGeoid}` : null),
@@ -55808,7 +55862,14 @@ window.gridlySafeBrowserCrossingAudit = async function gridlySafeBrowserCrossing
       publishedRegistryCount: inventory.length,
       awarenessAreaCrossingCount: summary.crossingsInArea.length,
       renderedCrossingMarkerCount: getGridlyCurrentRenderedCrossingMarkerCount(),
-      crossingsWatchedConsumerCount: complete ? getGridlyBottomPanelAwarenessCrossingCount(summary) : null,
+      crossingsWatchedConsumerCount: consumerModel.crossingsWatchedCount,
+      consumerModelCrossingCount: consumerModel.crossingsWatchedCount,
+      visibleDomCrossingCount: visibleDom.value,
+      visibleDomCrossingState: visibleDom.state,
+      visibleDomText: visibleDom.text,
+      crossingRevision: consumerModel.crossingRevision,
+      crossingGeneration: consumerModel.crossingGeneration,
+      countParity: complete && visibleDom.state === "numeric" && visibleDom.value === consumerModel.crossingsWatchedCount,
       inventoryStatus: complete ? "VALID_COMPLETE_INVENTORY" : "INVENTORY_LOAD_FAILED_OR_INCOMPLETE",
       failureReason: gridlyCrossingInventoryHydrationState.failureReason || null
     })]
