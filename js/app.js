@@ -107965,6 +107965,7 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
     () => { if (routeActionEl) { routeActionEl.hidden = true; routeActionEl.toggleAttribute("hidden", true); } },
     () => { panel.dataset.awarenessState = effectiveQuiet ? "quiet" : "active"; },
     () => { panel.dataset.awarenessAreaName = areaName; },
+    () => { panel.dataset.awarenessAreaIdentity = safeDisplayText(sharedSummary?.sharedActiveIssueContract?.areaIdentity, ""); },
     () => { panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0)); },
     () => { panel.dataset.routeContext = routeContext.hasRouteContext ? "true" : "false"; },
     () => { panel.dataset.bottomSurfaceOwner = "mobile-destination-command"; },
@@ -116770,10 +116771,10 @@ exposeGridlyAuditHelper("gridlyAlertsHierarchyAudit", gridlyAlertsHierarchyAudit
 function gridlyAwarenessAlertsCountSyncAudit() {
   const doc = typeof document !== "undefined" ? document : null;
   const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
-  const parseLeadingCount = (value) => {
+  const parseIssueCount = (value) => {
     const text = normalize(value);
-    if (/^no\b/i.test(text)) return 0;
-    const match = text.match(/\b(\d+)\b/);
+    if (/\bno active issues? nearby\b/i.test(text)) return 0;
+    const match = text.match(/\b(\d+)\s+active issues? nearby\b/i);
     return match ? Number(match[1]) : null;
   };
   const selectedAwarenessAreaForCountSync = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
@@ -116797,29 +116798,31 @@ function gridlyAwarenessAlertsCountSyncAudit() {
   const visibleAlertEvidenceTexts = Array.from(doc?.querySelectorAll?.("#gridlyPortraitV2Sheet[data-active-sheet='alerts'] [data-gridly-alert-evidence], #gridlyPortraitV2Sheet[data-active-sheet='alerts'] [data-gridly-alerts-panel-heading-evidence]") || [])
     .map((node) => normalize(node.textContent))
     .filter(Boolean);
-  const locationContextCountValue = doc?.querySelector?.('[data-v2-location-awareness="panel"]')?.dataset?.activeAwarenessCount;
-  const locationContextDatasetCount = locationContextCountValue !== undefined && locationContextCountValue !== "" && Number.isFinite(Number(locationContextCountValue))
-    ? Math.max(0, Number(locationContextCountValue))
+  const locationContextSurface = doc?.querySelector?.('#gridlyPortraitLocationAwarenessPanel, [data-v2-location-awareness="panel"]') || null;
+  const locationContextCountValue = locationContextSurface?.dataset?.activeAwarenessCount;
+  const locationContextDatasetCount = locationContextCountValue !== undefined && locationContextCountValue !== ""
+    && Number.isInteger(Number(locationContextCountValue)) && Number(locationContextCountValue) >= 0
+    ? Number(locationContextCountValue)
     : null;
-  // Quiet-state copy need not contain a numeral. The panel's governed count
-  // is the certification value and, importantly, preserves authoritative 0.
-  const homeLocationContextIssueCount = locationContextDatasetCount ?? parseLeadingCount(visibleHomeCountText);
-  const homeReportMatch = visibleHomeCountText.match(/(\d+)\s+community reports?/i);
-  const homeLocationContextReportCount = homeReportMatch ? Number(homeReportMatch[1]) : (homeLocationContextIssueCount === 0 ? 0 : null);
-  const alertsSheetActiveAlertCount = /^no\b/i.test(visibleAlertsHeaderText) ? 0 : (parseLeadingCount(visibleAlertsHeaderText) ?? countModel.groupedAlertCount);
+  const visibleIssueCount = parseIssueCount(visibleHomeCountText);
+  const visibleIssuePhrasePresent = /active issues? nearby/i.test(visibleHomeCountText);
+  const visibleIssueCountMalformed = visibleIssuePhrasePresent && visibleIssueCount === null;
+  const alertsSheetActiveAlertCount = /^no\b/i.test(visibleAlertsHeaderText) ? 0 : ((visibleAlertsHeaderText.match(/\b(\d+)\s+active alerts?\b/i)?.[1] !== undefined) ? Number(visibleAlertsHeaderText.match(/\b(\d+)\s+active alerts?\b/i)[1]) : countModel.groupedAlertCount);
   const alertsSheetCommunityReportCount = countModel.communityReportCount;
   const sharedSummary = gridlyCommunityPulseAuditState?.communityAwarenessSummary
     || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
     || null;
   const sharedActiveIssueValue = sharedSummary?.sharedActiveIssueContract?.activeIssueCount;
   const sharedActiveIssueCount = Number.isFinite(Number(sharedActiveIssueValue)) ? Math.max(0, Number(sharedActiveIssueValue)) : null;
-  const locationContextCertificationStatus = sharedActiveIssueCount === null || homeLocationContextIssueCount === null
-    ? "CERTIFICATION_INDETERMINATE"
-    : (homeLocationContextIssueCount === sharedActiveIssueCount ? "PASS" : "FAIL");
-  const locationContextPass = locationContextCertificationStatus === "PASS";
-  const mismatchDetected = Number.isFinite(homeLocationContextIssueCount)
-    ? homeLocationContextIssueCount !== alertsSheetActiveAlertCount
-    : false;
+  const sharedAreaIdentity = normalize(sharedSummary?.sharedActiveIssueContract?.areaIdentity);
+  const selectedAreaIdentity = normalize(selectedAwarenessAreaForCountSync?.key || selectedAwarenessAreaForCountSync?.id || selectedAwarenessAreaForCountSync?.canonicalKey);
+  const locationContextAreaIdentity = normalize(locationContextSurface?.dataset?.awarenessAreaIdentity);
+  const identityCurrent = Boolean(sharedAreaIdentity && selectedAreaIdentity && locationContextAreaIdentity
+    && sharedAreaIdentity === selectedAreaIdentity && locationContextAreaIdentity === sharedAreaIdentity);
+  const locationContextSurfacePresent = Boolean(locationContextSurface);
+  const locationContextQuiet = locationContextSurface?.dataset?.awarenessState === "quiet";
+  const candidateHomeCount = visibleIssueCount ?? locationContextDatasetCount;
+  const mismatchDetected = Number.isFinite(candidateHomeCount) ? candidateHomeCount !== alertsSheetActiveAlertCount : false;
   let mismatchReason = "Counts are conceptually aligned: active issues are grouped alerts and community reports are evidence.";
   if (mismatchDetected && countModel.duplicateGroupCount > 0 && countModel.rawAlertRecordCount !== countModel.groupedAlertCount) {
     mismatchReason = "Home appears to be showing individual community reports while Alerts is showing grouped active alerts.";
@@ -116829,6 +116832,26 @@ function gridlyAwarenessAlertsCountSyncAudit() {
   const presentationConsistent = !mismatchDetected
     && alertsSheetActiveAlertCount === countModel.groupedAlertCount
     && alertsSheetCommunityReportCount >= alertsSheetActiveAlertCount;
+  const governedQuietZero = sharedActiveIssueCount === 0
+    && locationContextDatasetCount === 0
+    && locationContextSurfacePresent
+    && locationContextQuiet
+    && identityCurrent
+    && !visibleIssuePhrasePresent
+    && alertsSheetActiveAlertCount === 0
+    && !mismatchDetected
+    && presentationConsistent;
+  const homeLocationContextIssueCount = governedQuietZero ? 0 : candidateHomeCount;
+  const homeReportMatch = visibleHomeCountText.match(/(\d+)\s+community reports?/i);
+  const homeLocationContextReportCount = homeReportMatch ? Number(homeReportMatch[1]) : (homeLocationContextIssueCount === 0 ? 0 : null);
+  const identityMismatch = locationContextSurfacePresent && Boolean(sharedAreaIdentity && selectedAreaIdentity && locationContextAreaIdentity) && !identityCurrent;
+  const comparableCountsPresent = sharedActiveIssueCount !== null && homeLocationContextIssueCount !== null;
+  const locationContextCertificationStatus = identityMismatch || visibleIssueCountMalformed
+    ? "FAIL"
+    : (!locationContextSurfacePresent || !identityCurrent || !comparableCountsPresent || !presentationConsistent)
+      ? "CERTIFICATION_INDETERMINATE"
+      : (homeLocationContextIssueCount === sharedActiveIssueCount ? "PASS" : "FAIL");
+  const locationContextPass = locationContextCertificationStatus === "PASS";
   return {
     activeAwarenessArea,
     homeLocationContextIssueCount,
@@ -116847,6 +116870,13 @@ function gridlyAwarenessAlertsCountSyncAudit() {
     mismatchDetected,
     mismatchReason,
     presentationConsistent,
+    locationContextCountSource: governedQuietZero ? "AUTHORITATIVE_ZERO_QUIET_PRESENTATION" : (visibleIssueCount !== null ? "VISIBLE_ISSUE_PHRASE" : (visibleIssueCountMalformed ? "COUNT_UNREADABLE_OR_MALFORMED" : "COUNT_NOT_RENDERED_BECAUSE_PRESENTATION_NOT_READY")),
+    locationContextSurfacePresent,
+    locationContextQuiet,
+    sharedAreaIdentity,
+    selectedAreaIdentity,
+    locationContextAreaIdentity,
+    identityCurrent,
     protectedSystemsUnchanged: true
   };
 }
