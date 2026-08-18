@@ -61527,6 +61527,37 @@ function publishGridlyCommunityPulseAuditState(patch = {}) {
   if (authoritativeSummary && Object.prototype.hasOwnProperty.call(normalizedPatch, "communityAwarenessSummary")) {
     normalizedPatch.communityAwarenessSummary = authoritativeSummary;
   }
+  // Every Pulse/portrait refresh comes through this publication boundary. A
+  // reconstructed V179.5 model can retain its raw signal, but it cannot take
+  // consumer-count or narrative ownership back from the current LP214
+  // contract. Applying this on *every* publication also governs writers whose
+  // patch does not mention activeAwareness but would otherwise preserve a
+  // stale secondary object from the prior area or refresh cycle.
+  const previousAwareness = gridlyCommunityPulseAuditState?.activeAwareness || {};
+  const proposedAwareness = Object.prototype.hasOwnProperty.call(normalizedPatch, "activeAwareness")
+    ? (normalizedPatch.activeAwareness || {})
+    : previousAwareness;
+  const convergence = authoritativeSummary && typeof reconcileGridlyActiveAwarenessWithSharedContract === "function"
+    ? reconcileGridlyActiveAwarenessWithSharedContract(proposedAwareness, authoritativeSummary)
+    : null;
+  if (convergence?.governed) {
+    normalizedPatch.activeAwareness = convergence.activeAwareness;
+    const selected = proposedAwareness?.topAwarenessSelectedRawDetail;
+    if (typeof recordGridlyActiveAwarenessWrite === "function") {
+      recordGridlyActiveAwarenessWrite({
+        writer: normalizedPatch.portraitTopStatusWriter || normalizedPatch.communityAwarenessSummaryWriter || "publishGridlyCommunityPulseAuditState",
+        previousValue: previousAwareness?.activeAwarenessCount,
+        nextValue: convergence.activeIssueCount,
+        canonicalAreaIdentity: convergence.contract?.areaIdentity,
+        sharedActiveIssueCount: convergence.activeIssueCount,
+        rawLightweightCount: convergence.activeAwareness.rawLightweightActiveAwarenessCount,
+        sourceType: selected?.sourceKind || "lightweight_active_awareness",
+        sourceIdentity: selected?.item?.id || selected?.item?.reportId || selected?.item?.crossingId || null,
+        revision: normalizedPatch.communityAwarenessSummaryRevision || normalizedPatch.communityAwarenessPublicationRevision || 0,
+        reason: normalizedPatch.phraseGenerationMode || normalizedPatch.portraitTopStatusCopySource || normalizedPatch.communityAwarenessSummaryWriter || "consumer-publication-boundary"
+      });
+    }
+  }
   const nextState = {
     ...(gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object" ? gridlyCommunityPulseAuditState : {}),
     ...normalizedPatch

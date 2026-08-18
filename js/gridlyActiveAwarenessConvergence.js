@@ -1,8 +1,38 @@
 (function attachGridlyActiveAwarenessConvergence(root) {
   "use strict";
 
+  const writerHistory = [];
+  const WRITER_HISTORY_LIMIT = 80;
+
   function safeCount(value) {
     return Math.max(0, Number(value) || 0);
+  }
+
+  function freezeWriterEntry(entry) {
+    return Object.freeze({ ...entry });
+  }
+
+  function recordGridlyActiveAwarenessWrite(details = {}) {
+    const entry = freezeWriterEntry({
+      timestamp: details.timestamp || new Date().toISOString(),
+      writer: details.writer || "unknown",
+      previousValue: safeCount(details.previousValue),
+      nextValue: safeCount(details.nextValue),
+      canonicalAreaIdentity: details.canonicalAreaIdentity || null,
+      sharedActiveIssueCount: details.sharedActiveIssueCount == null ? null : safeCount(details.sharedActiveIssueCount),
+      rawLightweightCount: safeCount(details.rawLightweightCount),
+      sourceType: details.sourceType || "presentation_state",
+      sourceIdentity: details.sourceIdentity || null,
+      revision: Number(details.revision || 0),
+      reason: details.reason || "unspecified"
+    });
+    writerHistory.push(entry);
+    if (writerHistory.length > WRITER_HISTORY_LIMIT) writerHistory.splice(0, writerHistory.length - WRITER_HISTORY_LIMIT);
+    return entry;
+  }
+
+  function gridlyActiveAwarenessWriterAudit() {
+    return Object.freeze(writerHistory.map((entry) => freezeWriterEntry(entry)));
   }
 
   /**
@@ -24,7 +54,10 @@
 
     const activeIssueCount = safeCount(contract.activeIssueCount);
     const quietEligible = contract.quietEligible === true && activeIssueCount === 0;
-    const rawLightweightCount = safeCount(lightweight?.activeAwarenessCount);
+    // A previously governed presentation can pass through this boundary more
+    // than once. Preserve the original secondary-model observation rather
+    // than mistaking the already-governed consumer count for new raw input.
+    const rawLightweightCount = safeCount(lightweight?.rawLightweightActiveAwarenessCount ?? lightweight?.activeAwarenessCount);
     const sourceBreakdownAvailable = Boolean(summary?.sourceBreakdown && typeof summary.sourceBreakdown === "object");
     const suppressed = rawLightweightCount > activeIssueCount;
     const quietCopy = {
@@ -99,5 +132,12 @@
 
   root.reconcileGridlyActiveAwarenessWithSharedContract = reconcileGridlyActiveAwarenessWithSharedContract;
   root.gridlyActiveAwarenessConvergenceAudit = gridlyActiveAwarenessConvergenceAudit;
-  if (typeof module !== "undefined" && module.exports) module.exports = { reconcileGridlyActiveAwarenessWithSharedContract, gridlyActiveAwarenessConvergenceAudit };
+  root.recordGridlyActiveAwarenessWrite = recordGridlyActiveAwarenessWrite;
+  root.gridlyActiveAwarenessWriterAudit = gridlyActiveAwarenessWriterAudit;
+  if (typeof module !== "undefined" && module.exports) module.exports = {
+    reconcileGridlyActiveAwarenessWithSharedContract,
+    gridlyActiveAwarenessConvergenceAudit,
+    recordGridlyActiveAwarenessWrite,
+    gridlyActiveAwarenessWriterAudit
+  };
 })(typeof window !== "undefined" ? window : globalThis);

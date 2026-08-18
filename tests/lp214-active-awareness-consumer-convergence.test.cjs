@@ -1,7 +1,11 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 
-const { reconcileGridlyActiveAwarenessWithSharedContract } = require('../js/gridlyActiveAwarenessConvergence.js');
+const {
+  reconcileGridlyActiveAwarenessWithSharedContract,
+  recordGridlyActiveAwarenessWrite,
+  gridlyActiveAwarenessWriterAudit
+} = require('../js/gridlyActiveAwarenessConvergence.js');
 
 function summary({ active = 0, crossing = 0, reports = 0, hazards = 0, official = 0, crossings = 70, area = 'place-4806128' } = {}) {
   return {
@@ -57,4 +61,23 @@ test('canonical PLACE ownership is unchanged for a multi-county community', () =
   const result = reconcileGridlyActiveAwarenessWithSharedContract(legacyRail, summary({ area: 'place-4819000', crossings: 250 }));
   assert.equal(result.contract.areaIdentity, 'place-4819000');
   assert.equal(result.activeAwareness.activeAwarenessCount, 0);
+});
+
+test('post-portrait and scheduled late writers preserve raw evidence but cannot regain consumer ownership', () => {
+  const governed = summary();
+  let consumer = reconcileGridlyActiveAwarenessWithSharedContract(legacyRail, governed).activeAwareness;
+  for (const writer of ['post-portrait-refresh', 'timer-refresh', 'request-animation-frame']) {
+    const proposed = { ...legacyRail, rawLightweightActiveAwarenessCount: 1 };
+    const result = reconcileGridlyActiveAwarenessWithSharedContract(proposed, governed);
+    recordGridlyActiveAwarenessWrite({ writer, previousValue: consumer.activeAwarenessCount, nextValue: result.activeIssueCount, canonicalAreaIdentity: result.contract.areaIdentity, sharedActiveIssueCount: result.activeIssueCount, rawLightweightCount: result.activeAwareness.rawLightweightActiveAwarenessCount, sourceType: 'rail_inventory', sourceIdentity: 'legacy-rail-signal', revision: 7, reason: 'deterministic late writer control' });
+    consumer = result.activeAwareness;
+    assert.equal(consumer.activeAwarenessCount, 0);
+    assert.equal(consumer.rawLightweightActiveAwarenessCount, 1);
+    assert.doesNotMatch(`${consumer.headline} ${consumer.subline}`, /Train blocking crossing/i);
+  }
+  const history = gridlyActiveAwarenessWriterAudit();
+  assert.equal(history.at(-1).writer, 'request-animation-frame');
+  assert.equal(history.at(-1).sharedActiveIssueCount, 0);
+  assert.equal(history.at(-1).rawLightweightCount, 1);
+  assert.ok(Object.isFrozen(history));
 });
