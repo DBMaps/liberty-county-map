@@ -3,6 +3,19 @@
 <head>
 
   <script id="gridly-early-theme">
+    window.gridlyParserProgress = window.gridlyParserProgress || [];
+    window.gridlyParserProgress.push({ name: "DOCUMENT_INLINE_1_START", at: performance.now() });
+    window.gridlyEarlyLifecycle = window.gridlyEarlyLifecycle || [];
+    window.gridlyEarlyLifecycle.push({ type: "initial-visibility", at: performance.now(), visibilityState: document.visibilityState });
+    document.addEventListener("visibilitychange", function () {
+      window.gridlyEarlyLifecycle.push({ type: "visibilitychange", at: performance.now(), visibilityState: document.visibilityState });
+    });
+    window.addEventListener("pageshow", function (event) {
+      window.gridlyEarlyLifecycle.push({ type: "pageshow", at: performance.now(), persisted: event.persisted });
+    });
+    window.addEventListener("pagehide", function (event) {
+      window.gridlyEarlyLifecycle.push({ type: "pagehide", at: performance.now(), persisted: event.persisted });
+    });
     /* Presentation-only prepaint hint. gridlySettingsV1 remains authoritative. */
     (function initializeGridlyThemeBeforePaint() {
       var preference = "system";
@@ -31,9 +44,11 @@
         });
       } catch (error) {}
     })();
+    window.gridlyParserProgress.push({ name: "DOCUMENT_INLINE_1_END", at: performance.now() });
   </script>
 
   <script>
+    window.gridlyParserProgress.push({ name: "DOCUMENT_INLINE_2_START", at: performance.now() });
     (function gridlyHostnameGate() {
       var hostname = String(window.location.hostname || "").toLowerCase();
       var isLocalHost =
@@ -60,6 +75,7 @@
 
       window.location.replace(target);
     })();
+    window.gridlyParserProgress.push({ name: "DOCUMENT_INLINE_2_END", at: performance.now() });
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
@@ -132,6 +148,7 @@
     }
   </style>
   <script>
+    window.gridlyParserProgress.push({ name: "DOCUMENT_INLINE_3_START", at: performance.now() });
     document.documentElement.classList.add("gridly-prepaint-lock");
     (function gridlyReleasePrepaintLock() {
       var released = false;
@@ -192,6 +209,8 @@
       });
       window.setTimeout(release, 1400);
     })();
+    window.gridlyParserProgress.push({ name: "DOCUMENT_INLINE_3_END", at: performance.now() });
+    window.gridlyParserProgress.push({ name: "FIRST_STYLESHEET_BOUNDARY", at: performance.now() });
   </script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css?v=132" />
@@ -1405,6 +1424,7 @@
     </section>
   </div>
 
+  <script>window.gridlyParserProgress.push({ name: "FIRST_EXTERNAL_SCRIPT_BOUNDARY", at: performance.now() });</script>
   <script src="js/gridlyStartupDiagnostics.js?v=929"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1528,6 +1548,7 @@
   <script src="js/gridlyAlertSemanticContract.js?v=214"></script>
   <script src="js/gridlyOfficialRoadwayMarkerPublication.js?v=214"></script>
   <script src="js/gridlyActiveAwarenessConvergence.js?v=1785340800"></script>
+  <script>window.gridlyParserProgress.push({ name: "APP_SCRIPT_BOUNDARY", at: performance.now() });</script>
   <script src="js/app.js?v=1785340800"></script>
   <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
   <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=0392"></script>

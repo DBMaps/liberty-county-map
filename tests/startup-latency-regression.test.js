@@ -6,6 +6,7 @@ const path = require("node:path");
 const readiness = require("../js/gridlyStartupReadiness.js");
 const appSource = fs.readFileSync(path.join(__dirname, "../js/app.js"), "utf8");
 const diagnosticsSource = fs.readFileSync(path.join(__dirname, "../js/gridlyStartupDiagnostics.js"), "utf8");
+const documentSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
 
 function deferred() {
   let resolve;
@@ -51,7 +52,7 @@ test("destination search retains its fail-closed LP201 execution wait", () => {
 
 test("startup latency audit is read-only and preserves script ordering", () => {
   assert.match(diagnosticsSource, /window\.gridlyStartupLatencyAudit = startupLatencyAudit/);
-  for (const field of ["navigationTiming", "documentDelivery", "earliestResources", "serviceWorker", "timeOriginValidation", "documentStructure", "preResourceGap", "classification", "milestones", "resources", "scriptEvaluation", "longTasks", "longAnimationFrames", "startupGate", "repeatedWork", "topOwners", "findings"]) {
+  for (const field of ["navigationTiming", "documentDelivery", "earliestResources", "serviceWorker", "timeOriginValidation", "documentStructure", "preResourceGap", "classification", "classifications", "parserProgress", "inlineScriptTimings", "parserGapAttribution", "lifecycle", "trackingPrevention", "milestones", "resources", "scriptEvaluation", "longTasks", "longAnimationFrames", "startupGate", "repeatedWork", "topOwners", "findings"]) {
     assert.match(diagnosticsSource, new RegExp(`\\b${field}\\b`));
   }
   for (const field of ["requestStart", "responseStart", "responseEnd", "responseTransferDuration", "responseEndToFirstResource", "workerStart", "decodedBodySize"]) {
@@ -59,8 +60,35 @@ test("startup latency audit is read-only and preserves script ordering", () => {
   }
   assert.match(diagnosticsSource, /allResources\.slice\(0, 20\)/);
   assert.match(diagnosticsSource, /navigator\.serviceWorker\.getRegistration\(\)/);
+  assert.match(diagnosticsSource, /nav\?\.type/);
+  assert.match(diagnosticsSource, /notRestoredReasons/);
+  assert.match(diagnosticsSource, /document\.wasDiscarded/);
+  assert.match(diagnosticsSource, /classifications\.push\("NAVIGATION_PRE_REQUEST_DELAY"\)/);
+  assert.match(diagnosticsSource, /classifications\.push\("EARLY_PARSER_BLOCK"\)/);
   assert.doesNotMatch(diagnosticsSource, /\.setAttribute\(["'](?:async|defer)["']/);
   assert.doesNotMatch(diagnosticsSource, /serviceWorker\.getRegistrations\(\)[\s\S]*unregister/);
   assert.doesNotMatch(diagnosticsSource, /document\.write\s*\(/);
   assert.ok(appSource.lastIndexOf('markMilestone?.("appEvaluated")') > appSource.indexOf('markMilestone?.("appDOMContentLoadedListenerRegistered")'));
+});
+
+test("early parser and lifecycle evidence brackets startup without reordering resources", () => {
+  const marks = [
+    "DOCUMENT_INLINE_1_START", "DOCUMENT_INLINE_1_END",
+    "DOCUMENT_INLINE_2_START", "DOCUMENT_INLINE_2_END",
+    "DOCUMENT_INLINE_3_START", "DOCUMENT_INLINE_3_END",
+    "FIRST_STYLESHEET_BOUNDARY", "FIRST_EXTERNAL_SCRIPT_BOUNDARY", "APP_SCRIPT_BOUNDARY"
+  ];
+  let previous = -1;
+  for (const mark of marks) {
+    const position = documentSource.indexOf(`name: "${mark}"`);
+    assert.ok(position > previous, `${mark} must follow the preceding parser mark`);
+    previous = position;
+  }
+  assert.ok(documentSource.indexOf("FIRST_STYLESHEET_BOUNDARY") < documentSource.indexOf('<link rel="stylesheet"'));
+  assert.ok(documentSource.indexOf("FIRST_EXTERNAL_SCRIPT_BOUNDARY") < documentSource.indexOf('<script src="js/gridlyStartupDiagnostics.js'));
+  assert.ok(documentSource.indexOf("APP_SCRIPT_BOUNDARY") < documentSource.indexOf('<script src="js/app.js'));
+  assert.match(documentSource, /visibilitychange/);
+  assert.match(documentSource, /pageshow/);
+  assert.match(documentSource, /pagehide/);
+  assert.doesNotMatch(documentSource, /<(?:script|link)[^>]+\b(?:async|defer)\b/);
 });

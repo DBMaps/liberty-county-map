@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  const VERSION = "V929R1-startup-diagnostics-and-resilience";
+  const VERSION = "V929R2-multi-gap-parser-attribution";
   const MAX_STAGES = 240;
   const WATCHDOG_MS = 30000;
   const SLOW_STARTUP_MS = 30000;
@@ -240,11 +240,13 @@
       crossingProviderEnd: milestone("crossingReady"), driveTexasStart: stages.find((entry) => /DriveTexas/i.test(entry.name))?.start ?? null, driveTexasEnd: milestone("DriveTexasReady"),
       destinationSearchHelperReadiness: milestone("destinationSearchReady") ?? milestone("destinationLocalityHelperEvaluated"), fullBootstrapComplete: state.startupCompletedAtMs
     };
-    const navFields = ["startTime", "fetchStart", "domainLookupStart", "domainLookupEnd", "connectStart", "secureConnectionStart", "connectEnd", "requestStart", "responseStart", "responseEnd", "domInteractive", "domContentLoadedEventStart", "domContentLoadedEventEnd", "domComplete", "loadEventStart", "loadEventEnd", "transferSize", "encodedBodySize", "decodedBodySize", "redirectStart", "redirectEnd", "workerStart"];
+    const navFields = ["startTime", "fetchStart", "domainLookupStart", "domainLookupEnd", "connectStart", "secureConnectionStart", "connectEnd", "requestStart", "responseStart", "responseEnd", "domInteractive", "domContentLoadedEventStart", "domContentLoadedEventEnd", "domComplete", "loadEventStart", "loadEventEnd", "transferSize", "encodedBodySize", "decodedBodySize", "redirectStart", "redirectEnd", "unloadEventStart", "unloadEventEnd", "workerStart", "activationStart"];
     const navigationTiming = Object.fromEntries(navFields.map((field) => [field, nav ? roundMs(nav[field]) : null]));
     const firstResourceStart = earliestResources[0]?.startTime ?? null;
     const firstPaint = milestones.firstPaint ?? milestones.firstContentfulPaint;
     Object.assign(navigationTiming, {
+      type: nav?.type || null,
+      notRestoredReasons: nav?.notRestoredReasons ? clone(nav.notRestoredReasons) : null,
       navigationToFetchStart: nav ? roundMs(nav.fetchStart - nav.startTime) : null,
       fetchToRequest: nav ? roundMs(nav.requestStart - nav.fetchStart) : null,
       requestToResponseStart: nav ? roundMs(nav.responseStart - nav.requestStart) : null,
@@ -259,6 +261,7 @@
       transferSize: navigationTiming.transferSize, encodedBodySize: navigationTiming.encodedBodySize, decodedBodySize: navigationTiming.decodedBodySize,
       nextHopProtocol: nav?.nextHopProtocol || null, deliveryType: nav?.deliveryType || null,
       cacheStatus: nav?.deliveryType || (nav?.transferSize > 0 ? "network-or-revalidated" : nav?.decodedBodySize > 0 ? "memory-or-disk-cache" : "not-exposed"),
+      devToolsDisableCache: "unknown-browser-apis-do-not-expose-this-devtools-setting",
       liveReloadAttribution: "Navigation Timing cannot identify server buffering, filesystem watching, or live-reload injection; correlate the request/response intervals with the Live Server log or a network trace."
     };
     const html = document.documentElement?.outerHTML || "";
@@ -312,14 +315,45 @@
     const preResourceGap = { navigationStart: navigationTiming.startTime, firstResourceStart,
       navigationToFirstResource: firstResourceStart === null ? null : roundMs(firstResourceStart - navigationTiming.startTime),
       responseEndToFirstResource: navigationTiming.responseEndToFirstResource };
-    let classification = "INSUFFICIENT_OWNER_BROWSER_EVIDENCE";
-    if (!timeOriginValidation.sameMonotonicClock) classification = "INSTRUMENTATION_CLOCK_ERROR";
-    else if (nav && nav.workerStart > 0 && nav.responseStart - nav.workerStart > 1000) classification = "SERVICE_WORKER_DELAY";
-    else if (nav && nav.requestStart - nav.startTime > 1000) classification = "NAVIGATION_PRE_REQUEST_DELAY";
-    else if (nav && nav.responseStart - nav.requestStart > 1000) classification = "SERVER_RESPONSE_DELAY";
-    else if (nav && nav.responseEnd - nav.responseStart > 1000) classification = "DOCUMENT_TRANSFER_DELAY";
-    else if (nav && firstResourceStart !== null && firstResourceStart - nav.responseEnd > 1000) classification = "EARLY_PARSER_BLOCK";
-    else if (nav && firstResourceStart !== null) classification = "NO_MATERIAL_PRE_RESOURCE_GAP_IN_THIS_CAPTURE";
+    const parserProgress = clone(window.gridlyParserProgress || []).map((entry, index, entries) => ({
+      ...entry, at: roundMs(entry.at), sincePrevious: index ? roundMs(entry.at - entries[index - 1].at) : null
+    }));
+    const parserMark = (name) => parserProgress.find((entry) => entry.name === name)?.at ?? null;
+    const inlineScriptTimings = [1, 2, 3].map((number) => {
+      const start = parserMark(`DOCUMENT_INLINE_${number}_START`); const end = parserMark(`DOCUMENT_INLINE_${number}_END`);
+      return { name: ["theme initialization", "hostname gate", "prepaint scheduler"][number - 1], start, end, duration: start === null || end === null ? null : roundMs(end - start) };
+    });
+    const parserSegments = parserProgress.map((entry, index) => {
+      const previous = index ? parserProgress[index - 1] : { name: "DOCUMENT_RESPONSE_END", at: navigationTiming.responseEnd };
+      return { from: previous.name, to: entry.name, start: previous.at, end: entry.at, duration: previous.at === null ? null : roundMs(entry.at - previous.at) };
+    });
+    const parserGapAttribution = {
+      segments: parserSegments,
+      longestSegment: parserSegments.filter((segment) => segment.duration !== null).sort((a, b) => b.duration - a.duration)[0] || null,
+      interpretation: "The longest measured segment locates parser unavailability; it does not by itself identify browser-extension or security work."
+    };
+    const lifecycle = {
+      documentWasDiscarded: typeof document.wasDiscarded === "boolean" ? document.wasDiscarded : null,
+      events: clone(window.gridlyEarlyLifecycle || []),
+      previousDocumentUnloadExposed: Boolean(nav && (nav.unloadEventStart > 0 || nav.unloadEventEnd > 0))
+    };
+    const trackingPrevention = {
+      browserConsoleMessagesObservable: false,
+      causalStatus: "unattributed-until-owner-correlates-console-timestamps-with-parserProgress",
+      resourceOrigins: Array.from(new Set(allResources.map((entry) => { try { return new URL(entry.name).origin; } catch (_) { return null; } }).filter(Boolean)))
+    };
+    const classifications = [];
+    if (!timeOriginValidation.sameMonotonicClock) classifications.push("INSTRUMENTATION_CLOCK_ERROR");
+    else {
+      if (nav && nav.workerStart > 0 && nav.responseStart - nav.workerStart > 1000) classifications.push("SERVICE_WORKER_DELAY");
+      if (nav && nav.fetchStart - nav.startTime > 1000) classifications.push("NAVIGATION_PRE_REQUEST_DELAY");
+      if (nav && nav.responseStart - nav.requestStart > 1000) classifications.push("SERVER_RESPONSE_DELAY");
+      if (nav && nav.responseEnd - nav.responseStart > 1000) classifications.push("DOCUMENT_TRANSFER_DELAY");
+      if (nav && firstResourceStart !== null && firstResourceStart - nav.responseEnd > 1000) classifications.push("EARLY_PARSER_BLOCK");
+      if (!classifications.length && nav && firstResourceStart !== null) classifications.push("NO_MATERIAL_PRE_RESOURCE_GAP_IN_THIS_CAPTURE");
+    }
+    if (!classifications.length) classifications.push("INSUFFICIENT_OWNER_BROWSER_EVIDENCE");
+    const classification = classifications[0];
     const startupGate = {
       function: "primary app.js DOMContentLoaded handler",
       predicate: "prepaint lock released AND core map/mobile controls initialized",
@@ -340,7 +374,7 @@
       "Resource Timing does not expose JavaScript parse/evaluation duration; Long Animation Frame attribution is included when Chromium supports it.",
       startupGate.lastSatisfied ? `Last observed first-shell prerequisite: ${startupGate.lastSatisfied}.` : "First-shell prerequisite is pending browser evidence."
     ];
-    return Object.freeze({ navigationTiming, documentDelivery, earliestResources, serviceWorker, timeOriginValidation, documentStructure, preResourceGap, classification, milestones, resources, scriptEvaluation, longTasks, longAnimationFrames, startupGate, repeatedWork, topOwners: owners, findings });
+    return Object.freeze({ navigationTiming, documentDelivery, earliestResources, serviceWorker, timeOriginValidation, documentStructure, preResourceGap, classification, classifications, parserProgress, inlineScriptTimings, parserGapAttribution, lifecycle, trackingPrevention, milestones, resources, scriptEvaluation, longTasks, longAnimationFrames, startupGate, repeatedWork, topOwners: owners, findings });
   }
   window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markMilestone, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe };
   window.gridlyPostPaintBlockingAudit = postPaintBlockingAudit;
