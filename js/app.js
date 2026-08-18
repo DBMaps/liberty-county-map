@@ -44031,10 +44031,13 @@ localStorage.setItem("gridlyDeviceId", deviceId);
 
 const els = {};
 
+window.gridlyStartupDiagnostics?.markMilestone?.("appEvaluated");
+
 document.addEventListener("DOMContentLoaded", async () => {
   const startupDiagnostics = window.gridlyStartupDiagnostics;
   startupDiagnostics?.markPostPaintLifecycle?.("domContentLoaded");
   const runStartupStage = startupDiagnostics?.runStage || (async (_name, work) => work());
+  startupDiagnostics?.markMilestone?.("appBootstrapStart");
   await runStartupStage("DOMContentLoaded application bootstrap", async () => {
   reportLifecycleDiag("DOMContentLoaded init start", { readyState: document.readyState });
   ensureGridlySearchState();
@@ -44045,6 +44048,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   scanGridlyCommunityPulsePersistedFirstPaintSources();
   showGridlyCommunityPulseFirstPaintPlaceholder("domcontentloaded-before-data-hydration");
   syncAuthoritativeLayoutMode();
+  startupDiagnostics?.markMilestone?.("mobileModeDetected", { layoutMode: evaluateLayoutMode() });
   const startupLayoutModeIsDesktop = evaluateLayoutMode() === "desktop";
   gridlyHealthCheck();
   setManualFallbackDefaultState();
@@ -44058,7 +44062,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateLastUpdated();
   const initialHomeTownAnchor = getGridlyHomeTownAwarenessAnchor();
   activeGeoFilter = initialHomeTownAnchor ? ((initialHomeTownAnchor.countyWide || initialHomeTownAnchor.fallback) ? "county" : "town") : activeGeoFilter;
-  await runStartupStage("statewide PLACE presentation loading", gridlyLoadStatewidePlacePresentation, { blocking: true, dependency: "governed Census PLACE presentation targets", degradeOnFailure: true });
+  // LP201 is authoritative for canonical PLACE focus, but the statewide
+  // artifact is not a prerequisite for a usable map shell. Keep its promise
+  // fail-closed for destination search while hydration continues off the
+  // critical presentation path.
+  const lp201Readiness = window.GRIDLY_STARTUP_READINESS.startSecondary(
+    () => runStartupStage("statewide PLACE presentation loading", gridlyLoadStatewidePlacePresentation, { blocking: false, network: true, dependency: "governed Census PLACE presentation targets", degradeOnFailure: true }),
+    () => { startupDiagnostics?.markMilestone?.("LP201Ready"); startupDiagnostics?.markMilestone?.("destinationSearchReady"); }
+  );
   gridlyStartupSemanticContext = gridlyResolvePersistedSemanticContextForStartup();
   if (gridlyStartupSemanticContext) {
     if (gridlyStartupSemanticContext.countyId) {
@@ -44067,6 +44078,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
   await runStartupStage("map initialization", async () => { initMap(); }, { blocking: true, dependency: "Leaflet map shell" });
+  startupDiagnostics?.markMilestone?.("mapInitializationEnd");
   {
     const mapReadyStage = startupDiagnostics?.beginStage?.("map initialized", { blocking: true, dependency: "Leaflet map shell" });
     startupDiagnostics?.endStage?.(mapReadyStage, "completed", { message: "map initialized; waiting for prepaint release before uiUsable" });
@@ -44087,7 +44099,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateProfileUI();
   maybeOpenFirstRunSetup();
 
-  await runStartupStage("crossing package loading and initial marker rendering", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("crossing package loading and initial marker rendering", "loadCrossings", () => loadCrossings()) : loadCrossings(), { blocking: true, network: true, dependency: "curated/FRA crossing package", timeoutMs: 20000, degradeOnFailure: true, cachedOrFallbackUsed: true });
+  // The portrait shell owns first usability here. Crossing, roadway, live
+  // reports, and destination-provider readiness hydrate truthfully afterward.
+  startupDiagnostics?.markMilestone?.("mobileShellReady");
+  startupDiagnostics?.markUiUsable?.("core map and mobile controls initialized");
+
+  const crossingReadiness = runStartupStage("crossing package loading and initial marker rendering", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("crossing package loading and initial marker rendering", "loadCrossings", () => loadCrossings()) : loadCrossings(), { blocking: false, network: true, dependency: "curated/FRA crossing package", timeoutMs: 20000, degradeOnFailure: true, cachedOrFallbackUsed: true });
+  crossingReadiness.then(() => startupDiagnostics?.markMilestone?.("crossingReady")).catch(() => {});
+  await crossingReadiness;
   await runStartupStage("roadway dataset loading", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("roadway dataset loading", "gridlyActivateRoadwayDatasetForActiveCounty", () => gridlyActivateRoadwayDatasetForActiveCounty("startup")) : gridlyActivateRoadwayDatasetForActiveCounty("startup"), { blocking: false, network: true, dependency: "county roadway dataset", timeoutMs: 12000, degradeOnFailure: true });
   const initialReportHydration = runStartupStage("initial report and incident loading", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("initial report and incident loading", "loadSharedReports(initial_bootstrap)", () => loadSharedReports("initial_bootstrap")) : loadSharedReports("initial_bootstrap"), { blocking: false, network: true, dependency: "Supabase reports", timeoutMs: 15000, degradeOnFailure: true });
   initialReportHydration.catch((error) => console.warn("Initial report hydration continued after startup unlock and failed", error));
@@ -44100,7 +44119,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const skipped = startupDiagnostics?.beginStage?.("initial Community Pulse and awareness preview render", { blocking: false, dependency: "desktop awareness UI" });
     startupDiagnostics?.endStage?.(skipped, "skipped", { message: "non-desktop startup layout" });
   }
-  startupDiagnostics?.markUiUsable?.("DOMContentLoaded bootstrap reached visible unlock checkpoint");
   startupDiagnostics?.completeStartup?.();
   }, { blocking: true, dependency: "primary app.js DOMContentLoaded handler" });
 

@@ -15,13 +15,20 @@
     degradedStartup: false, stalled: false, previouslyStalled: false, slowStartup: false, slowStartupThresholdMs: SLOW_STARTUP_MS,
     watchdogTriggered: false, watchdogTriggeredAt: null, watchdogStage: null, maximumObservedBlockingStageMs: 0, lateCompletedStages: [],
     currentStage: null, lastCompletedStage: null, failedStage: null, stages: [], warnings: [], failures: [], cacheOrFallbackUsed: false,
-    watchdog: { thresholdMs: WATCHDOG_MS, fired: false, stageAtThreshold: null, resolved: false }, counters: { requestsIntroduced: 0, duplicateCompletions: 0 }
+    watchdog: { thresholdMs: WATCHDOG_MS, fired: false, stageAtThreshold: null, resolved: false }, counters: { requestsIntroduced: 0, duplicateCompletions: 0 }, milestones: {}
   };
+  function markMilestone(name, details) {
+    if (!name || state.milestones[name]) return state.milestones[name] || null;
+    const milestone = { name, atMs: nowMs(), at: isoNow(), ...(details || {}) };
+    state.milestones[name] = milestone;
+    return milestone;
+  }
   function clone(x) { try { return JSON.parse(JSON.stringify(x)); } catch (_) { return x; } }
   function restoreState(snapshot) { Object.keys(state).forEach((key) => { delete state[key]; }); Object.assign(state, clone(snapshot)); }
   function push(list, item, cap) { list.push(item); if (list.length > cap) list.splice(0, list.length - cap); }
   function markPostPaintLifecycle(name) {
     const t = nowMs();
+    markMilestone(name);
     if (name === "domContentLoaded" && postPaintAuditState.domContentLoadedAt === null) postPaintAuditState.domContentLoadedAt = t;
     if (name === "mobilePortraitVisible" && postPaintAuditState.mobilePortraitVisibleAt === null) postPaintAuditState.mobilePortraitVisibleAt = t;
     if (name === "dockHandlersInstalled" && postPaintAuditState.dockHandlersInstalledAt === null) postPaintAuditState.dockHandlersInstalledAt = t;
@@ -95,8 +102,8 @@
     if (state.currentStage === stage.name) state.currentStage = null;
     return stage;
   }
-  function markPrepaintReleased(reason) { if (state.prepaintLockReleased) return; state.prepaintLockReleased = true; const s = beginStage("prepaint/startup lock released", { blocking: true }); endStage(s, "completed", { message: reason || "prepaint lock removed" }); }
-  function markFirstVisibleFrame(reason) { if (state.firstVisibleFrame) return; state.firstVisibleFrame = true; markPostPaintLifecycle("mobilePortraitVisible"); const s = beginStage("first visible Gridly frame", { blocking: true }); endStage(s, "completed", { message: reason || "visible frame painted" }); }
+  function markPrepaintReleased(reason) { if (state.prepaintLockReleased) return; state.prepaintLockReleased = true; markMilestone("marketingSurfaceHidden", { reason }); const s = beginStage("prepaint/startup lock released", { blocking: true }); endStage(s, "completed", { message: reason || "prepaint lock removed" }); }
+  function markFirstVisibleFrame(reason) { if (state.firstVisibleFrame) return; state.firstVisibleFrame = true; markPostPaintLifecycle("mobilePortraitVisible"); markMilestone("mobileShellVisible", { reason }); const s = beginStage("first visible Gridly frame", { blocking: true }); endStage(s, "completed", { message: reason || "visible frame painted" }); }
   function markUiUsable(reason) { if (!state.prepaintLockReleased) return false; if (!state.uiUsable) { state.uiUsable = true; state.uiUsableAt = isoNow(); state.uiUsableAtMs = nowMs(); state.firstInteractiveUI = true; const stage = beginStage("first interactive UI", { blocking: true }); endStage(stage, "completed", { message: reason || "startup shell visible and usable" }); } state.watchdog.resolved = true; return true; }
   function completeStartup() { if (state.startupCompleted) return; markPostPaintLifecycle("startupWorkCompleted"); state.startupCompleted = true; state.startupCompletedAt = isoNow(); state.startupCompletedAtMs = nowMs(); const d = state.startupCompletedAtMs - state.startupStartedAtMs; if (d > state.slowStartupThresholdMs || state.watchdogTriggered) { state.slowStartup = true; state.previouslyStalled = state.watchdogTriggered || state.stalled; state.stalled = state.stalled || state.watchdogTriggered; state.degradedStartup = true; } state.watchdog.resolved = true; }
   async function runStage(name, work, options) { const stage = beginStage(name, options); let settled = false; let timeoutId = null; const timeoutMs = options?.timeoutMs; const timeout = timeoutMs ? new Promise((resolve) => { timeoutId = setTimeout(() => { if (settled) return; endStage(stage, "timed-out", { message: `${name} exceeded ${timeoutMs} ms startup timeout`, startupContinued: true }); resolve(options?.fallbackValue); }, timeoutMs); }) : null; const op = Promise.resolve().then(work).then((result) => { settled = true; if (timeoutId) clearTimeout(timeoutId); endStage(stage, "completed", options); return result; }, (error) => { settled = true; if (timeoutId) clearTimeout(timeoutId); endStage(stage, "failed", { error, startupContinued: options?.blocking === false }); if (options?.degradeOnFailure) return options?.fallbackValue; throw error; }); return timeout ? Promise.race([op, timeout]) : op; }
@@ -137,8 +144,22 @@
       evidenceConfidence: longest ? "browser-measured-longtask" : "architecture-only-pending-browser-validation", protectedSystemsChanged: false
     };
   }
-  window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe };
+  function timingAudit() {
+    const nav = performance?.getEntriesByType?.("navigation")?.[0] || null;
+    const resourceRequests = (performance?.getEntriesByType?.("resource") || []).map((entry) => ({ name: String(entry.name || "").replace(/[?#].*$/, ""), startMs: Math.round(entry.startTime * 100) / 100, endMs: Math.round((entry.responseEnd || 0) * 100) / 100, durationMs: Math.round(entry.duration * 100) / 100, transferSize: entry.transferSize || 0 }));
+    const stages = state.stages.map((stage) => ({ name: stage.name, startMs: Math.round(stage.startedAtMs * 100) / 100, endMs: stage.completedAtMs === null ? null : Math.round(stage.completedAtMs * 100) / 100, durationMs: stage.durationMs, blocking: stage.blocking, network: stage.network, status: stage.status }));
+    const longestBlockingStage = stages.filter((stage) => stage.blocking && Number.isFinite(stage.durationMs)).sort((a, b) => b.durationMs - a.durationMs)[0] || null;
+    const ms = (name) => state.milestones[name]?.atMs ?? null;
+    return Object.freeze({
+      navigationStart: performance?.timeOrigin || null, domContentLoadedMs: nav?.domContentLoadedEventEnd ?? ms("domContentLoaded"), windowLoadMs: nav?.loadEventEnd || null,
+      appBootstrapStartMs: ms("appBootstrapStart"), mobileShellReadyMs: ms("mobileShellReady"), mobileShellVisibleMs: ms("mobileShellVisible"), firstInteractiveMs: state.uiUsableAtMs,
+      destinationSearchReadyMs: ms("destinationSearchReady"), LP201ReadyMs: ms("LP201Ready"), DriveTexasReadyMs: ms("DriveTexasReady"), crossingReadyMs: ms("crossingReady"),
+      longestBlockingStage, totalStartupMs: ms("mobileShellVisible") ?? state.uiUsableAtMs ?? null, milestones: clone(state.milestones), stages, resourceRequests, longTasks: clone(postPaintAuditState.longTasks)
+    });
+  }
+  window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markMilestone, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe };
   window.gridlyPostPaintBlockingAudit = postPaintBlockingAudit;
+  window.gridlyStartupTimingAudit = timingAudit;
   replayEarlyStartupEvents();
   window.gridlyStartupAudit = audit; window.gridlyStartupSummary = summary; window.gridlyRunStartupDiagnosticsValidation = validate; window.gridlyStartupDiagnosticsValidationSummary = async () => { const r = await validate(); return { safeForBeta: r.safeForBeta, failures: r.failures, warnings: r.warnings, timeoutCapture: r.timeoutCapture, timeoutStatusDurable: r.timeoutStatusDurable, noProductionWrites: r.noProductionWrites }; };
 }());
