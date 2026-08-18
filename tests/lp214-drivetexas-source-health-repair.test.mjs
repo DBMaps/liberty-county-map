@@ -6,7 +6,7 @@ import vm from "node:vm";
 const publisherSource = fs.readFileSync("js/gridlyAwarenessOfficialRoadwayPublisherRepair.js", "utf8");
 const appSource = fs.readFileSync("js/app.js", "utf8");
 
-function harness({ records = [], allRecords = [], connected = true, error = null, sourceAvailable = true, area = { id: "place-4819000", countyId: "48113" }, select } = {}) {
+function harness({ records = [], allRecords = [], connected = true, error = null, sourceAvailable = true, area = { id: "place-4819000", countyId: "48113" }, select, authoritySnapshot } = {}) {
   let currentRecords = records;
   let runtime = { connected };
   let lifecycle = { lastFetchError: error, lastSuccessfulFetchTimestamp: connected ? "2026-08-17T12:00:00.000Z" : null };
@@ -20,6 +20,7 @@ function harness({ records = [], allRecords = [], connected = true, error = null
     } : undefined,
     gridlyDriveTexasProvider: sourceAvailable ? { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected: false, lastError: error }) } : undefined,
     getGridlySelectedAwarenessArea: () => area,
+    gridlyGetDriveTexasAuthoritySnapshot: authoritySnapshot ? (input) => authoritySnapshot(input) : undefined,
     gridlySelectConsumerVisibleDriveTexasSituations: select
   };
   vm.runInNewContext(publisherSource, { window, console, Date, JSON, Object, Array, String, Boolean, Promise });
@@ -49,6 +50,59 @@ test("healthy current-awareness records enter the governed consumer selector ins
   assert.equal(value.sourceStatus, "HEALTHY_WITH_DATA");
   assert.equal(value.healthyEmpty, false);
   assert.equal(value.quietEligible, false);
+});
+
+test("Houston-shaped governed records use one LP039.2 snapshot through projection and envelope", () => {
+  const area = { key: "place-4835000", placeGeoid: "4835000", countyId: "48201", lat: 29.7589382, lng: -95.3676974, radiusMiles: 7, geographicEvaluationState: "AVAILABLE" };
+  const records = Array.from({ length: 6 }, (_, index) => ({
+    sourceId: `provider:houston-${index + 1}`,
+    sourceProviderRecordId: `houston-${index + 1}`,
+    authorityIdentity: `provider:houston-${index + 1}`,
+    category: index % 2 ? "Construction" : "Lane Closure",
+    headline: `Houston governed roadway situation ${index + 1}`,
+    status: "active",
+    freshnessStatus: "active",
+    ownershipMethod: "valid_source_point_inside_awareness_radius_miles",
+    distanceFromSelectedAwarenessMiles: index + 0.25,
+    geometryType: "Point",
+    canonicalIdentity: { key: area.key, placeGeoid: area.placeGeoid },
+    retained: false
+  }));
+  const snapshot = Object.freeze({
+    evaluationRevision: "place-4835000|fetch-17|6",
+    selectedAwarenessArea: area,
+    counts: { authorityEligibleRecordCount: 6 },
+    authority: { authorityEligibleRecordCount: 6, consumerEligibleSituations: records }
+  });
+  let projectedSnapshot;
+  const value = harness({
+    records,
+    area,
+    authoritySnapshot: () => snapshot,
+    select(input) {
+      projectedSnapshot = input.authoritySnapshot;
+      return { consumerVisibleSituations: input.authoritySnapshot.authority.consumerEligibleSituations, lp0393ConsumerProjectionInputCount: 6 };
+    }
+  }).envelope();
+  assert.strictEqual(projectedSnapshot, snapshot);
+  assert.equal(value.evaluationRevision, snapshot.evaluationRevision);
+  assert.deepEqual([value.authorityInputCount, value.authorityEligibleCount, value.lp0393ProjectionInputCount, value.lp0393ProjectedCount, value.consumerVisibleCount, value.consumerEnvelopeCount], [6, 6, 6, 6, 6, 6]);
+  assert.equal(value.countConverged, true);
+  assert.equal(value.sourceStatus, "HEALTHY_WITH_DATA");
+  assert.equal(value.healthyEmpty, false);
+  assert.equal(value.quietEligible, false);
+});
+
+test("authority-positive projection loss fails closed instead of certifying healthy empty", () => {
+  const value = harness({
+    records: [{ sourceId: "provider:lost" }],
+    authoritySnapshot: () => ({ evaluationRevision: "same-snapshot", selectedAwarenessArea: { geographicEvaluationState: "AVAILABLE" }, counts: { authorityEligibleRecordCount: 1 }, authority: { authorityEligibleRecordCount: 1, consumerEligibleSituations: [{ sourceId: "provider:lost" }] } }),
+    select: () => ({ consumerVisibleSituations: [], lp0393ConsumerProjectionInputCount: 1 })
+  }).envelope();
+  assert.equal(value.sourceStatus, "PROJECTION_DEFECT");
+  assert.equal(value.healthyEmpty, false);
+  assert.equal(value.quietEligible, false);
+  assert.equal(value.countConverged, false);
 });
 
 test("authority eligibility, not connector raw count, governs healthy empty", () => {

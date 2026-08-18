@@ -48,6 +48,9 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
     "js/app.js",
     "js/gridlyAlertSemanticContract.js",
     "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
+    // LP214's governed projection repair supplies one LP039.2 snapshot to
+    // LP039.3; it does not modify provider fetching or normalization.
+    "js/gridlyDriveTexasAuthoritySourceIntegration.js",
     // LP214's subsequently authorized canonical-focus bridge changes only the
     // connector's awareness-context input; source fetch/normalization remain protected.
     "js/gridlyDriveTexasLiveConnector.js"
