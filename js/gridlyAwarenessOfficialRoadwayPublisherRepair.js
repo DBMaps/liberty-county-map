@@ -80,6 +80,41 @@
     ).toLowerCase();
   }
 
+  function buildSharedActiveIssueContract(summary, officialInArea, officialSource) {
+    const hazards = Array.isArray(summary.activeHazardsInArea) ? summary.activeHazardsInArea : [];
+    const reports = Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea : [];
+    const officialKeys = new Set(officialInArea.map(recordKey));
+    const crossingReports = reports.filter((record) => {
+      try { return globalScope.isGridlyCrossingReportRecord?.(record) === true; } catch (_error) { return false; }
+    });
+    const communityReports = reports.filter((record) => !crossingReports.includes(record));
+    const officialRecords = hazards.filter((record) => officialKeys.has(recordKey(record)));
+    const otherHazards = hazards.filter((record) => !officialKeys.has(recordKey(record)));
+    const unique = new Set();
+    const countUnique = (records, prefix) => records.reduce((count, record) => {
+      const key = `${prefix}:${recordKey(record)}`;
+      if (unique.has(key)) return count;
+      unique.add(key);
+      return count + 1;
+    }, 0);
+    const activeOfficialRoadwayCount = countUnique(officialRecords, "official");
+    const activeCommunityReportCount = countUnique(communityReports, "community");
+    const activeCrossingIssueCount = countUnique(crossingReports, "crossing");
+    const activeOtherHazardCount = countUnique(otherHazards, "hazard");
+    return Object.freeze({
+      version: "LP214_PHASE_2_2F",
+      activeIssueCount: activeOfficialRoadwayCount + activeCommunityReportCount + activeCrossingIssueCount + activeOtherHazardCount,
+      activeOfficialRoadwayCount,
+      activeCommunityReportCount,
+      activeCrossingIssueCount,
+      activeOtherHazardCount,
+      officialRoadwaySourceStatus: officialSource.sourceStatus,
+      quietEligible: officialSource.quietEligible !== false,
+      areaIdentity: String(summary.selectedAwarenessArea?.id || summary.awarenessAreaName || ""),
+      countRule: "distinct lifecycle-active, area-eligible records by governed source ownership"
+    });
+  }
+
   function inAwarenessArea(record, selectedArea) {
     if (typeof globalScope.isGridlyRecordInAwarenessArea !== "function") return true;
     try {
@@ -247,6 +282,13 @@
       matchedInArea: summary.activeHazardsInArea.length
     };
     summary.officialRoadwaySourceStatus = { ...officialSource, records: cloneRecords(officialSource.records) };
+    summary.sharedActiveIssueContract = buildSharedActiveIssueContract(summary, officialInArea, officialSource);
+    summary.activeIssueCount = summary.sharedActiveIssueContract.activeIssueCount;
+    if (summary.activeIssueCount > 0) {
+      summary.activityLevel = summary.activeIssueCount >= 4 ? "Elevated" : "Active";
+      summary.awarenessStatus = "Active local conditions";
+      summary.awarenessStatusReason = `${summary.activeIssueCount} governed active issue${summary.activeIssueCount === 1 ? "" : "s"} in this awareness area.`;
+    }
     if (officialSource.consumerDisclosure) {
       summary.warnings = Array.isArray(summary.warnings) ? summary.warnings : [];
       if (!summary.warnings.includes(officialSource.consumerDisclosure)) summary.warnings.push(officialSource.consumerDisclosure);
@@ -362,6 +404,7 @@
       const result = state.originalConsumerRefresh.apply(this, arguments);
 
       if (providerId === "drivetexas") {
+        globalScope.gridlyOfficialRoadwayAwarenessRevision = Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || 0) + 1;
         globalScope.setTimeout(enrichPublishedState, 0);
       }
 
@@ -422,5 +465,6 @@
     };
   };
   globalScope.gridlyGetDriveTexasConsumerSourceStatusEnvelope = readOfficialSourceEnvelope;
+  globalScope.gridlyBuildSharedActiveIssueContract = buildSharedActiveIssueContract;
   globalScope.GRIDLY_DRIVETEXAS_CONSUMER_SOURCE_STATUS = SOURCE_STATUS;
 })(window);
