@@ -41,8 +41,8 @@ assert.ok(
 );
 
 assert.ok(
-  appSource.includes('sourcePath: activeSources?.crossingSource || null'),
-  'runtime provider invocation passes the active county crossing source path'
+  appSource.includes('sourcePath: governedSource.packageFile'),
+  'runtime provider invocation passes the governed county crossing source path'
 );
 assert.ok(
   appSource.includes('await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(runtimeCrossingSourcePath, rawGeojson)'),
