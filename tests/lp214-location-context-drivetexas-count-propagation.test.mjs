@@ -17,9 +17,10 @@ test('Alerts narrower grouped count cannot mask a larger shared awareness count'
   assert.match(normalize, /const rawActiveIssueCount = hazardCount \+ reportCount \+ crossingReportCount/);
 });
 
-test('official publisher lifecycle excludes cleared records, deduplicates, and refreshes statewide shared state', () => {
+test('official publisher trusts governed lifecycle eligibility, deduplicates, and refreshes statewide shared state', () => {
   const publisher = fs.readFileSync('js/gridlyAwarenessOfficialRoadwayPublisherRepair.js','utf8');
-  assert.match(publisher, /cleared\|expired\|inactive\|historical\|removed\|resolved/);
+  assert.match(publisher, /final, governed consumer boundary/);
+  assert.doesNotMatch(publisher, /getGridlyAwarenessLifecycleActiveHazards/);
   assert.match(publisher, /const seen = new Set\(existing\.map\(recordKey\)\)/);
   assert.match(publisher, /providerId === "drivetexas"/);
   assert.match(publisher, /refreshGridlyCommunityPulseSharedModel/);

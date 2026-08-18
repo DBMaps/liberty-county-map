@@ -45,28 +45,24 @@
     }
   }
 
-  function lifecycleActive(records) {
-    const safeRecords = Array.isArray(records) ? records : [];
-    if (typeof globalScope.getGridlyAwarenessLifecycleActiveHazards === "function") {
-      try {
-        return globalScope.getGridlyAwarenessLifecycleActiveHazards(safeRecords);
-      } catch (_error) {}
-    }
-    return safeRecords.filter((record) => {
-      if (!record || record.expired || record.isExpired || record.archived || record.hidden) return false;
-      const lifecycle = String(
-        record.lifecycleState || record.lifecycle || record.status || record.state || "active"
-      ).toLowerCase();
-      return !/(^|[_\s-])(cleared|expired|inactive|historical|removed|resolved|cancelled|canceled)([_\s-]|$)/.test(lifecycle);
-    });
-  }
-
   function normalizeOfficialRecords(records) {
     return records
       .map((record) => {
         if (typeof globalScope.buildGridlyOfficialSituationAlert !== "function") return record;
         try {
-          return globalScope.buildGridlyOfficialSituationAlert(record, "official-roadways");
+          const normalized = globalScope.buildGridlyOfficialSituationAlert(record, "official-roadways");
+          if (!normalized) return null;
+          // Consumer situation identity belongs to the governed envelope and
+          // is intentionally not reconstructed by the presentation builder.
+          // Carry it across normalization so distinct official situations do
+          // not collapse merely because their display copy is alike.
+          return {
+            ...normalized,
+            consumerSituationId: record.consumerSituationId || normalized.consumerSituationId,
+            sourceProviderRecordId: record.sourceProviderRecordId || normalized.sourceProviderRecordId,
+            retained: record.retained ?? normalized.retained,
+            sourceStatus: record.sourceStatus || normalized.sourceStatus
+          };
         } catch (_error) {
           return record;
         }
@@ -76,6 +72,8 @@
 
   function recordKey(record = {}) {
     return String(
+      record.consumerSituationId ||
+      record.sourceProviderRecordId ||
       record.id ||
       record.incidentId ||
       record.report_id ||
@@ -252,7 +250,15 @@
 
     const officialSource = readOfficialSourceRecords();
     const sourceRecords = officialSource.records;
-    const officialRecords = lifecycleActive(normalizeOfficialRecords(sourceRecords));
+    const officialNormalizationInputCount = sourceRecords.length;
+    const officialRecords = normalizeOfficialRecords(sourceRecords);
+    // readOfficialSourceEnvelope is the final, governed consumer boundary:
+    // its records have already passed DriveTexas authority selection,
+    // geographic selection, lifecycle/freshness eligibility and
+    // deduplication. Running the generic raw-hazard lifecycle pipeline here
+    // was both redundant and incompatible with the smaller consumer
+    // projection (which intentionally has no raw lifecycle fields).
+    const officialLifecycleActiveCount = officialRecords.length;
 
     const selectedArea = typeof globalScope.getGridlySelectedAwarenessArea === "function"
       ? globalScope.getGridlySelectedAwarenessArea()
@@ -313,6 +319,14 @@
     state.lastEnrichment = {
       at: new Date().toISOString(),
       sourceRecordCount: sourceRecords.length,
+      sourceEnvelopeCount: sourceRecords.length,
+      officialNormalizationInputCount,
+      officialNormalizedCount: officialRecords.length,
+      officialLifecycleActiveCount,
+      officialInAreaCount: officialInArea.length,
+      sharedContractOfficialInputCount: officialInArea.length,
+      sharedContractOfficialUniqueCount: summary.sharedActiveIssueContract.activeOfficialRoadwayCount,
+      enrichedSummaryOfficialCount: summary.sharedActiveIssueContract.activeOfficialRoadwayCount,
       officialActiveCount: officialRecords.length,
       officialMatchedCount: officialInArea.length,
       recordsAdded: added.length,
@@ -512,6 +526,12 @@
       available: true,
       installed: state.installed,
       lastEnrichment: state.lastEnrichment,
+      officialNormalizationInputCount: Number(state.lastEnrichment?.officialNormalizationInputCount || 0),
+      officialNormalizedCount: Number(state.lastEnrichment?.officialNormalizedCount || 0),
+      officialLifecycleActiveCount: Number(state.lastEnrichment?.officialLifecycleActiveCount || 0),
+      officialInAreaCount: Number(state.lastEnrichment?.officialInAreaCount || 0),
+      sharedContractOfficialInputCount: Number(state.lastEnrichment?.sharedContractOfficialInputCount || 0),
+      sharedContractOfficialUniqueCount: Number(state.lastEnrichment?.sharedContractOfficialUniqueCount || 0),
       providerAvailable: Boolean(globalScope.gridlyDriveTexasProvider),
       connectorAvailable: Boolean(globalScope.gridlyDriveTexasConnector),
       lastSuccessfulRecordCount: state.lastSuccessfulRecords.length,
