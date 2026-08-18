@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gridly navigation control</title>
+  <style>
+    :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; background: #071426; color: #f4f8fb; }
+    body { box-sizing: border-box; margin: 0 auto; max-width: 44rem; padding: 2rem 1rem; }
+    h1 { color: #43e6a0; font-size: clamp(1.5rem, 7vw, 2.5rem); }
+    output { display: block; padding: 1rem; border: 1px solid #447; border-radius: .75rem; white-space: pre-wrap; }
+    .pass { color: #43e6a0; } .delay { color: #ffcc66; }
+  </style>
+</head>
+<body>
+  <h1>GRIDLY NAVIGATION CONTROL</h1>
+  <p>This development-only page has no Gridly runtime or external resources.</p>
+  <output id="results">Reading navigation timing…</output>
+  <script>
+    addEventListener("load", async function () {
+      var navigation = performance.getEntriesByType("navigation")[0];
+      var fetchDelay = navigation ? navigation.fetchStart : 0;
+      var delayed = fetchDelay >= 1000;
+      var registration = null;
+      if (navigator.serviceWorker) registration = await navigator.serviceWorker.getRegistration();
+      var lines = [
+        "Navigation type: " + (navigation ? navigation.type : "unavailable"),
+        "Navigation start: 0.0 ms",
+        "Fetch start: " + fetchDelay.toFixed(1) + " ms",
+        "Request start: " + (navigation ? navigation.requestStart.toFixed(1) : "unavailable") + " ms",
+        "Response start: " + (navigation ? navigation.responseStart.toFixed(1) : "unavailable") + " ms",
+        "Response end: " + (navigation ? navigation.responseEnd.toFixed(1) : "unavailable") + " ms",
+        "DOMContentLoaded: " + (navigation ? navigation.domContentLoadedEventEnd.toFixed(1) : "unavailable") + " ms",
+        "Load: " + (navigation ? navigation.loadEventEnd.toFixed(1) : "unavailable") + " ms",
+        "Service worker registration present: " + Boolean(registration),
+        "Service worker controller present: " + Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
+        "Worker start: " + (navigation ? navigation.workerStart.toFixed(1) : "unavailable") + " ms",
+        "",
+        "PRE-FETCH DELAY: " + (fetchDelay / 1000).toFixed(3) + " seconds",
+        delayed ? "ENVIRONMENT DELAY — navigation waited before this page could be fetched." : "CONTROL PASS — no material pre-fetch delay on this load."
+      ];
+      var output = document.getElementById("results");
+      output.textContent = lines.join("\n");
+      output.className = delayed ? "delay" : "pass";
+    });
+  </script>
+</body>
+</html>
