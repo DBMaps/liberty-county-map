@@ -45401,6 +45401,8 @@ function getGridlyCanonicalAwarenessPresentationContext(options = {}) {
   const label = safeDisplayText(selectedArea?.label || selectedArea?.storageValue || countyConfig.name, "Liberty County");
   const storageValue = safeDisplayText(selectedArea?.storageValue || label, label);
   const isCountyWide = selectedArea?.countyWide === true;
+  const canonicalFocus = isCountyWide ? null : resolveGridlyCanonicalPlacePresentationFocus(selectedArea);
+  const hasCanonicalPlaceIdentity = Boolean(/^place-48\d{5}$/.test(String(selectedArea?.canonicalKey || selectedArea?.key || "").trim()) || /^48\d{5}$/.test(String(selectedArea?.placeGeoid || selectedArea?.communityId || "").trim()));
   const stateLabel = safeDisplayText(countyConfig.state || "Texas", "Texas");
   return Object.freeze({
     owner: "awareness_area",
@@ -45418,9 +45420,13 @@ function getGridlyCanonicalAwarenessPresentationContext(options = {}) {
     filterMode: (isCountyWide || selectedArea?.fallback === true) ? "county" : "town",
     countyWide: isCountyWide,
     fallback: selectedArea?.fallback === true,
-    lat: Number.isFinite(Number(selectedArea?.lat)) ? Number(selectedArea.lat) : null,
-    lng: Number.isFinite(Number(selectedArea?.lng)) ? Number(selectedArea.lng) : null,
-    radiusMiles: Number.isFinite(Number(selectedArea?.radiusMiles)) ? Number(selectedArea.radiusMiles) : null
+    canonicalKey: canonicalFocus?.canonicalKey || selectedArea?.key || null,
+    placeGeoid: canonicalFocus?.placeGeoid || gridlyResolveCanonicalPlaceGeoid(selectedArea),
+    focusAuthority: canonicalFocus?.authority || null,
+    geographicEvaluationState: hasCanonicalPlaceIdentity && !canonicalFocus ? "CANONICAL_FOCUS_UNAVAILABLE" : "AVAILABLE",
+    lat: canonicalFocus?.lat ?? (hasCanonicalPlaceIdentity ? null : (Number.isFinite(Number(selectedArea?.lat)) ? Number(selectedArea.lat) : null)),
+    lng: canonicalFocus?.lng ?? (hasCanonicalPlaceIdentity ? null : (Number.isFinite(Number(selectedArea?.lng)) ? Number(selectedArea.lng) : null)),
+    radiusMiles: canonicalFocus?.radiusMiles ?? (Number.isFinite(Number(selectedArea?.radiusMiles)) ? Number(selectedArea.radiusMiles) : null)
   });
   }, { hasProvidedAwarenessArea: Boolean(options?.awarenessArea) });
 }
@@ -45434,17 +45440,21 @@ function getMyTownKey() {
 function getGridlyHomeTownAwarenessAnchor() {
   const area = getGridlySelectedAwarenessArea();
   if (!area) return null;
+  const canonicalFocus = resolveGridlyCanonicalPlacePresentationFocus(area);
+  const hasCanonicalPlaceIdentity = Boolean(gridlyResolveCanonicalPlaceGeoid(area));
   return {
     key: area.key,
     label: area.label,
     storageValue: area.storageValue,
     countyId: area.countyId || GRIDLY_DEFAULT_COUNTY_ID,
-    lat: area.lat,
-    lng: area.lng,
-    radiusMiles: area.radiusMiles,
+    lat: canonicalFocus?.lat ?? (hasCanonicalPlaceIdentity ? null : area.lat),
+    lng: canonicalFocus?.lng ?? (hasCanonicalPlaceIdentity ? null : area.lng),
+    radiusMiles: canonicalFocus?.radiusMiles ?? area.radiusMiles,
     placeGeoid: area.placeGeoid || area.communityId || null,
     startupZoom: area.startupZoom,
-    source: area.countyWide ? "awareness_county" : (area.fallback ? "awareness_fallback" : "awareness_area"),
+    source: canonicalFocus?.authority || (area.countyWide ? "awareness_county" : (area.fallback ? "awareness_fallback" : "awareness_area")),
+    focusAuthority: canonicalFocus?.authority || null,
+    geographicEvaluationState: hasCanonicalPlaceIdentity && !canonicalFocus ? "CANONICAL_FOCUS_UNAVAILABLE" : "AVAILABLE",
     countyWide: area.countyWide === true,
     fallback: area.fallback === true
   };
@@ -45797,15 +45807,54 @@ async function gridlyLoadStatewidePlacePresentation() {
         if (artifact?.schemaVersion !== "gridly.statewide-place-presentation.v1" || artifact?.counts?.presentationTargetCount !== 1859 || !artifact?.places) {
           throw new Error("Invalid governed PLACE presentation artifact");
         }
-        gridlyPlacePresentationTargets = Object.freeze(artifact.places);
+        const entries = Object.entries(artifact.places);
+        if (entries.length !== 1859 || entries.some(([placeGeoid, target]) => !/^48\d{5}$/.test(placeGeoid) || !gridlyIsValidCanonicalPlacePresentationTarget(target))) {
+          throw new Error("Invalid governed PLACE presentation coordinates");
+        }
+        gridlyPlacePresentationTargets = Object.freeze(Object.fromEntries(entries.map(([placeGeoid, target]) => [placeGeoid, Object.freeze(target)])));
         return gridlyPlacePresentationTargets;
       });
   }
   return gridlyPlacePresentationLoadPromise;
 }
 
+const GRIDLY_CANONICAL_PLACE_FOCUS_AUTHORITY = "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1";
+const GRIDLY_CANONICAL_PLACE_AWARENESS_RADIUS_MILES = 7;
+
+function gridlyIsValidCanonicalPlacePresentationTarget(target) {
+  const lat = Number(target?.lat);
+  const lng = Number(target?.lon ?? target?.lng);
+  return Number.isFinite(lat) && lat >= -90 && lat <= 90 && Number.isFinite(lng) && lng >= -180 && lng <= 180;
+}
+
+// The sole runtime identity -> LP201 presentation-authority bridge.  Consumers
+// receive an ephemeral focus and do not persist coordinates on identity state.
+function resolveGridlyCanonicalPlacePresentationFocus(identity) {
+  const direct = typeof identity === "string" ? identity.trim() : "";
+  const canonicalKey = direct.startsWith("place-") ? direct : String(identity?.canonicalKey || identity?.key || "").trim();
+  const explicitGeoid = /^48\d{5}$/.test(direct) ? direct : String(identity?.placeGeoid || identity?.communityId || "").trim();
+  const keyMatch = /^place-(48\d{5})$/.exec(canonicalKey);
+  const placeGeoid = keyMatch?.[1] || (/^48\d{5}$/.test(explicitGeoid) ? explicitGeoid : null);
+  if (!placeGeoid || (keyMatch && explicitGeoid && explicitGeoid !== placeGeoid)) return null;
+  const target = gridlyPlacePresentationTargets?.[placeGeoid];
+  if (!gridlyIsValidCanonicalPlacePresentationTarget(target)) return null;
+  return Object.freeze({
+    canonicalKey: `place-${placeGeoid}`,
+    placeGeoid,
+    lat: Number(target.lat),
+    lng: Number(target.lon ?? target.lng),
+    zoom: Number.isFinite(Number(target.zoom)) ? Number(target.zoom) : GRIDLY_TOWN_STARTUP_ZOOM,
+    radiusMiles: GRIDLY_CANONICAL_PLACE_AWARENESS_RADIUS_MILES,
+    authority: GRIDLY_CANONICAL_PLACE_FOCUS_AUTHORITY,
+    provenance: GRIDLY_PLACE_PRESENTATION_URL
+  });
+}
+
 function gridlyResolveCanonicalPlaceGeoid(area) {
-  const geoid = String(area?.placeGeoid || area?.communityId || "").trim();
+  const explicit = String(area?.placeGeoid || area?.communityId || "").trim();
+  const keyGeoid = /^place-(48\d{5})$/.exec(String(area?.canonicalKey || area?.key || "").trim())?.[1] || null;
+  if (keyGeoid && explicit && keyGeoid !== explicit) return null;
+  const geoid = keyGeoid || explicit;
   return /^48\d{5}$/.test(geoid) ? geoid : null;
 }
 

@@ -47,8 +47,11 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
   const allowedConsumerBoundaries = new Set([
     "js/app.js",
     "js/gridlyAlertSemanticContract.js",
-    "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js"
+    "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
+    // LP214's subsequently authorized canonical-focus bridge changes only the
+    // connector's awareness-context input; source fetch/normalization remain protected.
+    "js/gridlyDriveTexasLiveConnector.js"
   ]);
   assert(changed.every((file) => allowedConsumerBoundaries.has(file)), `unexpected protected JavaScript change: ${changed.join(", ")}`);
-  assert(!changed.some((file) => /DriveTexas(?:Connector|Provider)|Weather/i.test(file)));
+  assert(!changed.some((file) => /DriveTexasProvider|Weather/i.test(file)));
 });
