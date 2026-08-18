@@ -61,9 +61,54 @@ test('community transitions and source refresh cannot leak the prior area count'
 
 test('Location Context uses the authoritative shared count and null evidence cannot pass certification', () => {
   assert.match(app, /const authoritativeSharedCount = Number\(sharedSummary\?\.sharedActiveIssueContract\?\.activeIssueCount/);
-  assert.match(app, /Math\.max\([\s\S]*authoritativeSharedCount[\s\S]*alertVisibleActiveIncidentCount/);
+  assert.match(app, /Number\.isFinite\(authoritativeSharedCount\)[\s\S]*\? Math\.max\(0, authoritativeSharedCount\)/);
+  assert.match(app, /Alerts remains[\s\S]*must not inflate this[\s\S]*count/);
   assert.match(app, /"CERTIFICATION_INDETERMINATE"/);
   assert.match(app, /const locationContextPass = locationContextCertificationStatus === "PASS"/);
+});
+
+test('official count and status come directly from one governed envelope snapshot', () => {
+  const official = Array.from({ length: 8 }, (_, i) => ({ id: `snapshot-${i}`, areaId: 'place-4819000' }));
+  const instance = runtime({ official });
+  const envelope = instance.window.gridlyGetDriveTexasConsumerSourceStatusEnvelope();
+  const contract = instance.summary().sharedActiveIssueContract;
+  assert.equal(envelope.sourceStatus, 'HEALTHY_WITH_DATA');
+  assert.equal(envelope.records.length, 8);
+  assert.equal(contract.officialRoadwaySourceStatus, envelope.sourceStatus);
+  assert.equal(contract.activeOfficialRoadwayCount, envelope.records.length);
+  assert.match(source, /const officialRecords = officialInArea/);
+});
+
+test('DriveTexas refresh advances revision before shared consumer refresh without reselection', () => {
+  const official = [];
+  let revisionObservedByConsumer = null;
+  const intervals = [];
+  const window = {
+    setInterval(fn) { intervals.push(fn); return intervals.length; }, clearInterval() {}, setTimeout(fn) { fn(); },
+    gridlyDriveTexasConnector: { getNormalizedRecords: () => official, areaLifecycleAudit: () => ({ lastFetchError: null }) },
+    gridlyDriveTexasProvider: { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected: true }) },
+    gridlyDriveTexasConnectorRuntimeAudit: () => ({ connected: true }),
+    gridlySelectConsumerVisibleDriveTexasSituations: ({ records }) => ({ consumerVisibleSituations: records }),
+    getGridlySelectedAwarenessArea: () => ({ id: 'place-4819000' }),
+    isGridlyRecordInAwarenessArea: record => record.areaId === 'place-4819000',
+    buildGridlyCommunityAwarenessIntelligenceSummary: () => ({ selectedAwarenessArea: { id: 'place-4819000' }, activeHazardsInArea: [], activeReportsInArea: [] }),
+    gridlyOfficialProviderConsumerRefresh() { revisionObservedByConsumer = window.gridlyOfficialRoadwayAwarenessRevision; }
+  };
+  vm.runInNewContext(source, { window, console, Date, JSON, Object, Array, String, Boolean, Number, Set, Promise });
+  intervals[0]();
+  official.push(...Array.from({ length: 8 }, (_, i) => ({ id: `live-${i}`, areaId: 'place-4819000' })));
+  window.gridlyOfficialProviderConsumerRefresh({ providerId: 'drivetexas', evidenceChanged: true, reason: 'fetch-success' });
+  assert.equal(revisionObservedByConsumer, 1);
+  assert.equal(window.buildGridlyCommunityAwarenessIntelligenceSummary().sharedActiveIssueContract.activeOfficialRoadwayCount, 8);
+});
+
+test('retained failure preserves records while blocking quiet', () => {
+  const official = Array.from({ length: 8 }, (_, i) => ({ id: `retained-${i}`, areaId: 'place-4819000' }));
+  const summary = runtime({ official, connected: false, error: 'network failure' }).summary();
+  assert.equal(summary.sharedActiveIssueContract.activeOfficialRoadwayCount, 8);
+  assert.equal(summary.sharedActiveIssueContract.officialRoadwaySourceStatus, 'SOURCE_FAILED_WITH_RETAINED_DATA');
+  assert.equal(summary.sharedActiveIssueContract.quietEligible, false);
+  assert.match(summary.warnings.join(' '), /may be delayed/);
 });
 
 test('statewide canonical inventory uses one community-independent contract', () => {

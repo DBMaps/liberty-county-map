@@ -18,7 +18,9 @@
     initialConnectorSyncStarted: false,
     initialConnectorSyncCompleted: false,
     initialConnectorSyncAttempts: 0,
-    initialConnectorSyncReason: null
+    initialConnectorSyncReason: null,
+    awarenessRevision: 0,
+    lastRevisionReason: null
   };
 
   function cloneRecords(records) {
@@ -88,7 +90,12 @@
       try { return globalScope.isGridlyCrossingReportRecord?.(record) === true; } catch (_error) { return false; }
     });
     const communityReports = reports.filter((record) => !crossingReports.includes(record));
-    const officialRecords = hazards.filter((record) => officialKeys.has(recordKey(record)));
+    // `officialInArea` and `officialSource` are deliberately supplied by the
+    // same envelope read in enrichSummary.  Do not derive the official count
+    // by intersecting that snapshot with the older activeHazards publisher:
+    // on connector convergence that publisher can still represent the
+    // pre-fetch (empty) cycle even though the governed envelope has records.
+    const officialRecords = officialInArea;
     const otherHazards = hazards.filter((record) => !officialKeys.has(recordKey(record)));
     const unique = new Set();
     const countUnique = (records, prefix) => records.reduce((count, record) => {
@@ -347,6 +354,14 @@
     }
   }
 
+  function advanceAwarenessRevision(reason) {
+    const nextRevision = Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || 0) + 1;
+    globalScope.gridlyOfficialRoadwayAwarenessRevision = nextRevision;
+    state.awarenessRevision = nextRevision;
+    state.lastRevisionReason = reason || "drivetexas-snapshot-changed";
+    return nextRevision;
+  }
+
   function startInitialConnectorSynchronization() {
     if (state.initialConnectorSyncStarted) return;
     state.initialConnectorSyncStarted = true;
@@ -381,6 +396,10 @@
         rememberSuccessfulConnectorRecords(connectorRecords);
       }
 
+      // The initial fetch can settle before the consumer-refresh bridge is
+      // installed.  Advance the same revision used by the shared-model cache
+      // before requesting its cold-start rebuild.
+      advanceAwarenessRevision(`initial-drivetexas-${state.initialConnectorSyncReason}`);
       rebuildSharedAwarenessAfterInitialConnector(
         `initial-drivetexas-${state.initialConnectorSyncReason}`
       );
@@ -401,10 +420,14 @@
         rememberSuccessfulConnectorRecords(readProviderRecords("gridlyDriveTexasConnector"));
       }
 
+      // The original refresh is animation-frame/timer scheduled.  Revision
+      // must change before it captures the shared-model reuse signature.
+      if (providerId === "drivetexas") {
+        advanceAwarenessRevision(reason || "drivetexas-provider-refresh");
+      }
       const result = state.originalConsumerRefresh.apply(this, arguments);
 
       if (providerId === "drivetexas") {
-        globalScope.gridlyOfficialRoadwayAwarenessRevision = Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || 0) + 1;
         globalScope.setTimeout(enrichPublishedState, 0);
       }
 
@@ -461,7 +484,9 @@
       initialConnectorSyncStarted: state.initialConnectorSyncStarted,
       initialConnectorSyncCompleted: state.initialConnectorSyncCompleted,
       initialConnectorSyncAttempts: state.initialConnectorSyncAttempts,
-      initialConnectorSyncReason: state.initialConnectorSyncReason
+      initialConnectorSyncReason: state.initialConnectorSyncReason,
+      awarenessRevision: Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || state.awarenessRevision || 0),
+      lastRevisionReason: state.lastRevisionReason
     };
   };
   globalScope.gridlyGetDriveTexasConsumerSourceStatusEnvelope = readOfficialSourceEnvelope;
