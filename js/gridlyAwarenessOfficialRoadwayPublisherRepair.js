@@ -82,7 +82,11 @@
     ).toLowerCase();
   }
 
-  function buildSharedActiveIssueContract(summary, officialInArea, officialSource) {
+  function canonicalAreaKey(area) {
+    return String(area?.key || area?.canonicalKey || "").trim();
+  }
+
+  function buildSharedActiveIssueContract(summary, officialInArea, officialSource, selectedArea) {
     const hazards = Array.isArray(summary.activeHazardsInArea) ? summary.activeHazardsInArea : [];
     const reports = Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea : [];
     const officialKeys = new Set(officialInArea.map(recordKey));
@@ -109,7 +113,7 @@
     const activeCrossingIssueCount = countUnique(crossingReports, "crossing");
     const activeOtherHazardCount = countUnique(otherHazards, "hazard");
     return Object.freeze({
-      version: "LP214_PHASE_2_2F",
+      version: "LP214_PHASE_2_2H",
       activeIssueCount: activeOfficialRoadwayCount + activeCommunityReportCount + activeCrossingIssueCount + activeOtherHazardCount,
       activeOfficialRoadwayCount,
       activeCommunityReportCount,
@@ -117,18 +121,12 @@
       activeOtherHazardCount,
       officialRoadwaySourceStatus: officialSource.sourceStatus,
       quietEligible: officialSource.quietEligible !== false,
-      areaIdentity: String(summary.selectedAwarenessArea?.id || summary.awarenessAreaName || ""),
+      // Summary.selectedAwarenessArea is a presentation/debug projection and
+      // its historical `id` field is not a stable identity owner. Publish the
+      // key from the exact canonical selection used to obtain the envelope.
+      areaIdentity: canonicalAreaKey(selectedArea),
       countRule: "distinct lifecycle-active, area-eligible records by governed source ownership"
     });
-  }
-
-  function inAwarenessArea(record, selectedArea) {
-    if (typeof globalScope.isGridlyRecordInAwarenessArea !== "function") return true;
-    try {
-      return globalScope.isGridlyRecordInAwarenessArea(record, selectedArea);
-    } catch (_error) {
-      return true;
-    }
   }
 
   function rememberSuccessfulConnectorRecords(records) {
@@ -258,7 +256,12 @@
       ? globalScope.getGridlySelectedAwarenessArea()
       : summary.selectedAwarenessArea || null;
 
-    const officialInArea = officialRecords.filter((record) => inAwarenessArea(record, selectedArea));
+    // readOfficialSourceEnvelope has already asked the DriveTexas consumer
+    // selector for the current canonical area. Re-filtering its normalized
+    // records here can reject records whose consumer projection intentionally
+    // omits geometry/locality fields. The envelope and count therefore remain
+    // one area-scoped snapshot, with no label re-resolution or second filter.
+    const officialInArea = officialRecords;
     const existing = Array.isArray(summary.activeHazardsInArea)
       ? summary.activeHazardsInArea
       : [];
@@ -289,7 +292,7 @@
       matchedInArea: summary.activeHazardsInArea.length
     };
     summary.officialRoadwaySourceStatus = { ...officialSource, records: cloneRecords(officialSource.records) };
-    summary.sharedActiveIssueContract = buildSharedActiveIssueContract(summary, officialInArea, officialSource);
+    summary.sharedActiveIssueContract = buildSharedActiveIssueContract(summary, officialInArea, officialSource, selectedArea);
     summary.activeIssueCount = summary.sharedActiveIssueContract.activeIssueCount;
     if (summary.activeIssueCount > 0) {
       summary.activityLevel = summary.activeIssueCount >= 4 ? "Elevated" : "Active";

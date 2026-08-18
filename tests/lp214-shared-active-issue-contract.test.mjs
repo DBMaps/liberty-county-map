@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const source = fs.readFileSync('js/gridlyAwarenessOfficialRoadwayPublisherRepair.js', 'utf8');
 const app = fs.readFileSync('js/app.js', 'utf8');
 
-function runtime({ official = [], reports = [], connected = true, error = null, areaId = 'place-4819000' } = {}) {
+function runtime({ official = [], reports = [], connected = true, error = null, areaId = 'place-4819000', areaLabel = 'Dallas' } = {}) {
   const intervals = [];
   const baseSummary = () => ({ selectedAwarenessArea: { id: areaId }, awarenessAreaName: areaId, activeHazardsInArea: [], activeReportsInArea: reports.slice(), warnings: [], sourceBreakdown: {} });
   const window = {
@@ -14,8 +14,12 @@ function runtime({ official = [], reports = [], connected = true, error = null, 
     gridlyDriveTexasConnector: { getNormalizedRecords: () => official, areaLifecycleAudit: () => ({ lastFetchError: error }) },
     gridlyDriveTexasProvider: { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected, lastError: error }) },
     gridlyDriveTexasConnectorRuntimeAudit: () => ({ connected }),
-    gridlySelectConsumerVisibleDriveTexasSituations: ({ records }) => ({ consumerVisibleSituations: records }),
-    getGridlySelectedAwarenessArea: () => ({ id: areaId }),
+    gridlySelectConsumerVisibleDriveTexasSituations: ({ records, selectedAwarenessArea }) => ({
+      consumerVisibleSituations: records.some((record) => record.areaId)
+        ? records.filter((record) => record.areaId === selectedAwarenessArea?.key)
+        : records
+    }),
+    getGridlySelectedAwarenessArea: () => ({ key: areaId, label: areaLabel, storageValue: areaLabel }),
     isGridlyRecordInAwarenessArea: record => record.areaId === areaId,
     isGridlyCrossingReportRecord: record => record.kind === 'crossing',
     buildGridlyCommunityAwarenessIntelligenceSummary: baseSummary
@@ -38,7 +42,16 @@ test('official and community/crossing evidence remain distinct and additive with
   const official = Array.from({ length: 8 }, (_, i) => ({ id: `dt-${i}`, areaId: 'place-4819000' }));
   const reports = [...Array.from({ length: 4 }, (_, i) => ({ id: `community-${i}` })), { id: 'crossing-1', kind: 'crossing' }];
   const contract = runtime({ official, reports }).summary().sharedActiveIssueContract;
-  assert.deepEqual(JSON.parse(JSON.stringify(contract)), { version: 'LP214_PHASE_2_2F', activeIssueCount: 13, activeOfficialRoadwayCount: 8, activeCommunityReportCount: 4, activeCrossingIssueCount: 1, activeOtherHazardCount: 0, officialRoadwaySourceStatus: 'HEALTHY_WITH_DATA', quietEligible: false, areaIdentity: 'place-4819000', countRule: 'distinct lifecycle-active, area-eligible records by governed source ownership' });
+  assert.deepEqual(JSON.parse(JSON.stringify(contract)), { version: 'LP214_PHASE_2_2H', activeIssueCount: 13, activeOfficialRoadwayCount: 8, activeCommunityReportCount: 4, activeCrossingIssueCount: 1, activeOtherHazardCount: 0, officialRoadwaySourceStatus: 'HEALTHY_WITH_DATA', quietEligible: false, areaIdentity: 'place-4819000', countRule: 'distinct lifecycle-active, area-eligible records by governed source ownership' });
+});
+
+test('canonical key owns identity while Dallas remains presentation only', () => {
+  const official = Array.from({ length: 8 }, (_, i) => ({ id: `dt-${i}`, areaId: 'place-4819000' }));
+  const contract = runtime({ official, areaId: 'place-4819000', areaLabel: 'Dallas' }).summary().sharedActiveIssueContract;
+  assert.equal(contract.areaIdentity, 'place-4819000');
+  assert.notEqual(contract.areaIdentity, 'Dallas');
+  assert.equal(contract.activeOfficialRoadwayCount, 8);
+  assert.ok(contract.activeIssueCount >= 8);
 });
 
 test('healthy empty permits quiet; failed empty creates uncertainty', () => {
@@ -89,7 +102,7 @@ test('DriveTexas refresh advances revision before shared consumer refresh withou
     gridlyDriveTexasProvider: { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected: true }) },
     gridlyDriveTexasConnectorRuntimeAudit: () => ({ connected: true }),
     gridlySelectConsumerVisibleDriveTexasSituations: ({ records }) => ({ consumerVisibleSituations: records }),
-    getGridlySelectedAwarenessArea: () => ({ id: 'place-4819000' }),
+    getGridlySelectedAwarenessArea: () => ({ key: 'place-4819000', label: 'Dallas' }),
     isGridlyRecordInAwarenessArea: record => record.areaId === 'place-4819000',
     buildGridlyCommunityAwarenessIntelligenceSummary: () => ({ selectedAwarenessArea: { id: 'place-4819000' }, activeHazardsInArea: [], activeReportsInArea: [] }),
     gridlyOfficialProviderConsumerRefresh() { revisionObservedByConsumer = window.gridlyOfficialRoadwayAwarenessRevision; }
@@ -115,5 +128,22 @@ test('statewide canonical inventory uses one community-independent contract', ()
   const inventory = JSON.parse(fs.readFileSync('data/generated/lp214-county-community-inventory.json', 'utf8'));
   assert.equal(inventory.summary.uniqueCanonicalCommunityCount, 1859);
   assert.equal(inventory.summary.multiCountyCommunityCount, 163);
+  const communities = inventory.counties.flatMap((county) => county.communities);
+  const canonical = new Map(communities.map((community) => [community.canonicalKey, community]));
+  assert.equal(canonical.size, 1859);
+  for (const community of canonical.values()) {
+    assert.match(community.canonicalKey, /^place-\d{7}$/);
+    assert.notEqual(community.canonicalKey, community.consumerLabel);
+  }
+  assert.deepEqual(canonical.get('place-4819000').memberCountyFips, ['48085', '48113', '48121', '48257', '48397']);
   assert.doesNotMatch(source, /Dallas|Houston|place-4819000|county allowlist/i);
+});
+
+test('portrait rail keeps governed offset for closed/open KBYG without changing desktop', () => {
+  assert.match(app, /const governedPortraitTop = 188/);
+  assert.match(app, /Math\.max\(governedPortraitTop, Math\.round\(mapRect\.top \+ 18\)/);
+  assert.match(app, /gridlyBriefInteractionSetExpanded[\s\S]*requestAnimationFrame\?\.\(gridlyPortraitSpatialOwnershipSync\)[\s\S]*setTimeout\(gridlyPortraitSpatialOwnershipSync, 340\)/);
+  const styles = fs.readFileSync('css/styles.css', 'utf8');
+  assert.match(styles, /data-gridly-brief-state="expanded"[\s\S]*data-gridly-brief-state="collapsed"[\s\S]*top: var\(--gridly-v2-control-rail-top, 188px\)/);
+  assert.doesNotMatch(styles, /@media \(min-width:[^}]*governedPortraitTop/);
 });

@@ -5117,7 +5117,11 @@ function gridlyPortraitSpatialOwnershipSync() {
   const mapRect = (document.querySelector("#map") || mapFrame)?.getBoundingClientRect?.();
   const filterRect = filterStrip?.getBoundingClientRect?.();
   if (mapRect) {
-    const top = Math.max(Math.round(mapRect.top + 18), Math.round((filterRect?.bottom || mapRect.top) + 16));
+    // V867's governed portrait fallback is 188px. During cold-start awareness
+    // rendering the map/filter rects can briefly report a top-edge layout;
+    // never let that transient measurement replace the established offset.
+    const governedPortraitTop = 188;
+    const top = Math.max(governedPortraitTop, Math.round(mapRect.top + 18), Math.round((filterRect?.bottom || mapRect.top) + 16));
     rail.style.setProperty("--gridly-v2-control-rail-top", `${top}px`);
     rail.style.setProperty("--gridly-v2-control-rail-right", "10px");
   }
