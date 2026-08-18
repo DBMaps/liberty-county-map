@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const marker = require('../js/gridlyOfficialRoadwayMarkerPublication.js');
+const fs = require('node:fs');
 
 const records = [
   { consumerSituationId:'drivetexas:a', category:'Lane Closure', lat:29.779, lng:-95.375 },
@@ -23,4 +24,12 @@ test('a marker-ready record can never disappear without an auditable outcome', (
   const missing = marker.build([{consumerSituationId:'x'}]);
   assert.equal(missing[0].outcome, marker.OUTCOME.EXPLICITLY_SUPPRESSED_BY_CONTRACT);
   assert.equal(missing[0].suppressionReason, 'MISSING_GOVERNED_PRESENTATION_COORDINATE');
+});
+
+test('browser audit exposes the canonical read-only marker publication summary', () => {
+  const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
+  for (const field of ['sourceRecordCount','eligibleMarkerModelCount','renderedMarkerCount','governedAggregatedCount','explicitlySuppressedCount','silentDropCount','representedRecordCount','publicationRevision']) {
+    assert.match(app, new RegExp(`\\b${field}\\b`), field);
+  }
+  assert.match(app, /new Set\(outcomes\.flatMap\(row => row\.representedConsumerSituationIds \|\| \[\]\)\)\.size/);
 });
