@@ -135,6 +135,7 @@
 
   function activeAwarenessArea() {
     try {
+      if (typeof globalScope.getGridlyCanonicalAwarenessPresentationContext === "function") return globalScope.getGridlyCanonicalAwarenessPresentationContext();
       if (typeof globalScope.getGridlySelectedAwarenessArea === "function") return globalScope.getGridlySelectedAwarenessArea();
       if (typeof globalScope.getGridlyHomeTownAwarenessAnchor === "function") return globalScope.getGridlyHomeTownAwarenessAnchor();
     } catch (error) {}
@@ -152,6 +153,10 @@
       lat: Number.isFinite(Number(area.lat)) ? Number(area.lat) : null,
       lng: Number.isFinite(Number(area.lng)) ? Number(area.lng) : null,
       radiusMiles: Number.isFinite(Number(area.radiusMiles)) ? Number(area.radiusMiles) : null,
+      canonicalKey: toSafeString(area.canonicalKey || area.key),
+      placeGeoid: toSafeString(area.placeGeoid),
+      focusAuthority: toSafeString(area.focusAuthority),
+      geographicEvaluationState: toSafeString(area.geographicEvaluationState) || "AVAILABLE",
       mode: area.countyWide === true ? "county" : "area",
       countyWide: area.countyWide === true,
       textFallbackTerms: [area.label, area.storageValue, area.key, area.countyId]
@@ -167,6 +172,7 @@
 
   function matchesAwarenessArea(record, awareness) {
     if (!awareness) return false;
+    if (awareness.geographicEvaluationState === "CANONICAL_FOCUS_UNAVAILABLE") return false;
     const rawLat = record?.latitude;
     const rawLng = record?.longitude;
     const lat = rawLat == null || rawLat === "" ? NaN : Number(rawLat);
@@ -193,7 +199,8 @@
     }
     const input = Array.isArray(records) ? records : [];
     let pointRadiusMatchCount = 0, textFallbackMatchCount = 0, includedByBothCount = 0, includedByPointOnlyCount = 0, includedByTextOnlyCount = 0, invalidCoordinateCount = 0, routeCommunityTextExcluded = 0, noTextMatchEvidence = 0;
-    const output = input.filter((record) => {
+    const canonicalFocusUnavailable = awareness?.geographicEvaluationState === "CANONICAL_FOCUS_UNAVAILABLE";
+    const output = canonicalFocusUnavailable ? [] : input.filter((record) => {
       const rawLat = record?.latitude;
       const rawLng = record?.longitude;
       const lat = rawLat == null || rawLat === "" ? NaN : Number(rawLat);
@@ -216,7 +223,7 @@
       if (!point && textMatch) routeCommunityTextExcluded += 0;
       return matchesAwarenessArea(record, awareness);
     });
-    const trace = freeze({ inputCount: input.length, selectedCounty: awareness?.countyId || null, selectedAwareness: awareness?.community || awareness?.label || null, anchor: awareness ? freeze({ lat: awareness.lat, lng: awareness.lng }) : null, radiusMiles: awareness?.radiusMiles ?? null, pointRadiusMatchCount, textFallbackMatchCount, uniqueUnionCount: output.length, includedByPointOnlyCount, includedByTextOnlyCount, includedByBothCount, outputCount: output.length, excludedByPointRadiusCount: input.length - pointRadiusMatchCount, recordsExcludedDespiteMatchingRouteCommunityText: routeCommunityTextExcluded, invalidCoordinateCount, noTextMatchEvidenceCount: noTextMatchEvidence, fallbackMethodNames: freeze(["awareness.textFallbackTerms", "recordText"]), diagnosticOnly: "diagnostic source scoping", certifiedAuthorityOwner: false, excludedCount: input.length - output.length });
+    const trace = freeze({ inputCount: input.length, selectedCounty: awareness?.countyId || null, selectedAwareness: awareness?.community || awareness?.label || null, canonicalKey: awareness?.canonicalKey || null, placeGeoid: awareness?.placeGeoid || null, focusAuthority: awareness?.focusAuthority || null, geographicEvaluationState: awareness?.geographicEvaluationState || "AVAILABLE", anchor: awareness ? freeze({ lat: awareness.lat, lng: awareness.lng }) : null, radiusMiles: awareness?.radiusMiles ?? null, pointRadiusMatchCount, textFallbackMatchCount, uniqueUnionCount: output.length, includedByPointOnlyCount, includedByTextOnlyCount, includedByBothCount, outputCount: output.length, excludedByPointRadiusCount: input.length - pointRadiusMatchCount, recordsExcludedDespiteMatchingRouteCommunityText: routeCommunityTextExcluded, invalidCoordinateCount, noTextMatchEvidenceCount: noTextMatchEvidence, fallbackMethodNames: freeze(["awareness.textFallbackTerms", "recordText"]), diagnosticOnly: "diagnostic source scoping", certifiedAuthorityOwner: false, excludedCount: input.length - output.length });
     lp041LastFilterTrace = trace;
     if (lp041LatestEvidence) lp041LatestEvidence = freeze(Object.assign({}, lp041LatestEvidence, { connectorFilterTrace: trace }));
     return output;
@@ -565,6 +572,9 @@
       lastFilteredCommunity: lastFilterContext?.community || null,
       lastFilterCoordinates: lastFilterContext ? { lat: lastFilterContext.lat, lng: lastFilterContext.lng } : null,
       lastFilterRadius: lastFilterContext?.radiusMiles ?? null,
+      lastFilterCanonicalKey: lastFilterContext?.canonicalKey || null,
+      lastFilterFocusAuthority: lastFilterContext?.focusAuthority || null,
+      geographicEvaluationState: lastFilterContext?.geographicEvaluationState || "AVAILABLE",
       lastAreaViewGeneration: areaViewGeneration,
       lastFetchGeneration: fetchGeneration,
       lastInstalledFetchGeneration,
