@@ -8755,7 +8755,6 @@ function gridlyRecordCrossingHydrationTrace(event, detail = {}) {
     generation: detail.generation ?? gridlyActiveCountyTransitionGeneration,
     inventoryOwner: gridlyCrossingInventoryCountyId,
     recordCount: Array.isArray(crossings) ? crossings.length : null,
-    atMs: typeof performance !== "undefined" && performance.now ? Math.round(performance.now() * 100) / 100 : Date.now(),
     ...detail
   }));
   if (gridlyCrossingHydrationTrace.length > GRIDLY_CROSSING_HYDRATION_TRACE_LIMIT) gridlyCrossingHydrationTrace.splice(0, gridlyCrossingHydrationTrace.length - GRIDLY_CROSSING_HYDRATION_TRACE_LIMIT);
@@ -44039,8 +44038,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   startupDiagnostics?.markPostPaintLifecycle?.("domContentLoaded");
   const runStartupStage = startupDiagnostics?.runStage || (async (_name, work) => work());
   startupDiagnostics?.markMilestone?.("appBootstrapStart");
-  await runStartupStage("DOMContentLoaded lifecycle (core plus secondary hydration)", async () => {
-  const coreBootstrapStage = startupDiagnostics?.beginStage?.("consumer shell core bootstrap", { blocking: true, dependency: "map and core controls" });
+  await runStartupStage("DOMContentLoaded application bootstrap", async () => {
   reportLifecycleDiag("DOMContentLoaded init start", { readyState: document.readyState });
   ensureGridlySearchState();
   initGridlySearchUI();
@@ -44103,11 +44101,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // The portrait shell owns first usability here. Crossing, roadway, live
   // reports, and destination-provider readiness hydrate truthfully afterward.
-  startupDiagnostics?.markMilestone?.("coreControlsBound");
-  startupDiagnostics?.markMilestone?.("consumerShellInteractive");
   startupDiagnostics?.markMilestone?.("mobileShellReady");
   startupDiagnostics?.markUiUsable?.("core map and mobile controls initialized");
-  startupDiagnostics?.endStage?.(coreBootstrapStage, "completed", { message: "consumer shell visible and controls bound" });
 
   const crossingReadiness = runStartupStage("crossing package loading and initial marker rendering", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("crossing package loading and initial marker rendering", "loadCrossings", () => loadCrossings()) : loadCrossings(), { blocking: false, network: true, dependency: "curated/FRA crossing package", timeoutMs: 20000, degradeOnFailure: true, cachedOrFallbackUsed: true });
   crossingReadiness.then(() => startupDiagnostics?.markMilestone?.("crossingReady")).catch(() => {});
@@ -44125,7 +44120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     startupDiagnostics?.endStage?.(skipped, "skipped", { message: "non-desktop startup layout" });
   }
   startupDiagnostics?.completeStartup?.();
-  }, { blocking: false, dependency: "primary app.js DOMContentLoaded handler including secondary hydration" });
+  }, { blocking: true, dependency: "primary app.js DOMContentLoaded handler" });
 
   setInterval(() => {
     if (document.hidden) {
@@ -51199,11 +51194,8 @@ async function loadCrossings() {
 
     const requestedCrossingReviewOverrides = await loadCrossingReviewOverrides();
 
-    gridlyRecordCrossingHydrationTrace("PACKAGE_REQUEST_STARTED", { countyId: requestedCountyId, generation: requestedGeneration });
     const response = await fetchFraCrossingsWithRetry(requestedCountyId);
-    gridlyRecordCrossingHydrationTrace("PACKAGE_REQUEST_COMPLETED", { countyId: requestedCountyId, generation: requestedGeneration, sourcePath: response?.gridlyCrossingSourcePath || response?.url || null });
 
-    gridlyRecordCrossingHydrationTrace("PACKAGE_PARSE_STARTED", { countyId: requestedCountyId, generation: requestedGeneration });
     const data = await response.json();
     gridlyRecordCrossingHydrationTrace("PACKAGE_PARSE_SUCCEEDED", { countyId: requestedCountyId, generation: requestedGeneration, sourcePath: response?.gridlyCrossingSourcePath || null, recordCount: Array.isArray(data?.features) ? data.features.length : 0 });
     const crossingFeatureCount = Array.isArray(data?.features) ? data.features.length : 0;
@@ -51218,7 +51210,6 @@ async function loadCrossings() {
     const coordinateDiagnostics = buildGridlyCrossingCoordinateDiagnostics(data.features || [], { countyId: requestedCountyId });
     recordGridlyCrossingFallbackAudit("crossingCoordinateDiagnostics", coordinateDiagnostics);
 
-    gridlyRecordCrossingHydrationTrace("NORMALIZATION_STARTED", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: Array.isArray(data?.features) ? data.features.length : 0 });
     const rawCrossings = normalizeGridlyCrossingFeatures(data.features || [], {
       source: crossingDataSource,
       overrides: requestedCrossingReviewOverrides,
@@ -51234,11 +51225,9 @@ async function loadCrossings() {
     }
 
     crossingReviewOverrides = requestedCrossingReviewOverrides;
-    gridlyRecordCrossingHydrationTrace("VISIBILITY_FILTER_STARTED", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: rawCrossings.length });
     crossings = rawCrossings.filter((crossing) => {
       return shouldShowCrossingInLaunchMode(crossing);
     });
-    gridlyRecordCrossingHydrationTrace("VISIBILITY_FILTER_COMPLETE", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: crossings.length });
     gridlyCrossingInventoryCountyId = requestedCountyId;
     gridlyCrossingInventoryRevision += 1;
     gridlyRecordCrossingHydrationTrace("INVENTORY_COMMIT", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: crossings.length });
@@ -51272,9 +51261,7 @@ async function loadCrossings() {
     gridlyResetRoadNameResolverRuntimeCache("crossings_loaded");
     populateCrossingSelect();
     applyGridlyHomeTownAwarenessContext({ source: "crossings_loaded", fitMap: true });
-    gridlyRecordCrossingHydrationTrace("MARKER_MODEL_RENDER_STARTED", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: crossings.length });
     scheduleRenderCrossings("state-change", { force: true });
-    gridlyRecordCrossingHydrationTrace("MARKER_MODEL_RENDER_SCHEDULED", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: crossings.length });
     gridlyRecordCrossingHydrationTrace("POST_COMMIT_REFRESH", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: crossings.length });
     // Crossing publication is an explicit presentation invalidation boundary.
     // Rebuild all shared awareness consumers from the newly committed revision;
@@ -51292,7 +51279,6 @@ async function loadCrossings() {
 
     safeText("dataStatus", `${crossings.length} curated crossings loaded`);
     safeText("crossingCount", gridlySelectConsumerVisibleCrossings(getGridlySelectedAwarenessArea()).length);
-    gridlyRecordCrossingHydrationTrace("LOCATION_CONTEXT_COUNT_PUBLISHED", { countyId: requestedCountyId, generation: requestedGeneration, recordCount: crossings.length });
 
     safeText(
       "mapTrustNote",
