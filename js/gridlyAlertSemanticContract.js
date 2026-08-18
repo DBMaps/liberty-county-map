@@ -8,7 +8,7 @@
   const ROADWAY_TYPES = Object.freeze([
     ["bridge_restriction", "Bridge Restriction", /bridge[ _-]*(?:restriction|closed|closure)|weight[ _-]*limit|height[ _-]*limit/],
     ["lane_closure", "Lane Closure", /lane[ _-]*(?:closure|closed|blocked)|shoulder[ _-]*(?:closure|closed)/],
-    ["road_closed", "Road Closed", /road[ _-]*(?:closure|closed)|full[ _-]*closure/],
+    ["road_closure", "Road Closed", /^(?:closure|road[ _-]*(?:closure|closed)|full[ _-]*closure)$/],
     ["construction", "Construction", /construction|work[ _-]*zone|road[ _-]*work|maintenance/],
     ["crash", "Crash", /crash|collision|wreck|accident/],
     ["flooding", "Flooding", /flood|high[ _-]*water|standing[ _-]*water/]
@@ -23,7 +23,11 @@
     const provider = token(record.providerId || record.provider || raw.providerId || raw.provider || record.sourceLabel || record.source || raw.source);
     const kind = token(record.sourceKind || record.reportKind || record.report_kind || raw.sourceKind || raw.reportKind || raw.report_kind);
     const workflow = token(record.reportSource || record.sourceWorkflow || raw.reportSource || raw.sourceWorkflow);
-    if (/drivetexas|txdot|official_roadways|official_roadway/.test(`${provider}_${kind}_${workflow}`)) return "OFFICIAL_ROADWAY";
+    // The governed consumer projection deliberately replaces the upstream
+    // provider id with its authority identity. Its namespaced situation id is
+    // therefore the minimum surviving, non-descriptive source provenance.
+    const consumerIdentity = token(record.consumerSituationId || raw.consumerSituationId);
+    if (/drivetexas|txdot|official_roadways|official_roadway/.test(`${provider}_${kind}_${workflow}_${consumerIdentity}`)) return "OFFICIAL_ROADWAY";
     if (/weather|nws|noaa/.test(`${provider}_${kind}_${workflow}`)) return "WEATHER";
     if (/crossing|rail/.test(kind) || /crossing|rail/.test(workflow) || record.isCrossingReport === true || raw.isCrossingReport === true || record.explicitCrossingReport === true || raw.explicitCrossingReport === true) return "CROSSING";
     return "COMMUNITY";

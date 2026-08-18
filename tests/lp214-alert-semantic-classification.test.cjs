@@ -1,12 +1,13 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const contract = require("../js/gridlyAlertSemanticContract.js");
 
 const official = (category, extra = {}) => ({ providerId: "drivetexas", reportKind: "official-situation", category, status: "Active", ...extra });
 
 test("DriveTexas roadway taxonomy cannot manufacture crossing evidence", () => {
   const matrix = [
-    ["Road Closure", "road_closed", "Road Closed"],
+    ["Road Closure", "road_closure", "Road Closed"],
     ["Lane Closure", "lane_closure", "Lane Closure"],
     ["Bridge Restriction", "bridge_restriction", "Bridge Restriction"],
     ["Construction", "construction", "Construction"],
@@ -32,7 +33,7 @@ test("crossing blockage is fail-closed and lifecycle governed", () => {
 
 test("community crossing semantics require crossing ownership and explicit category", () => {
   assert.equal(contract.classify({ reportKind: "crossing", report_type: "crossing_blocked" }).classification, "crossing_blocked");
-  assert.equal(contract.classify({ reportKind: "hazard", report_type: "road_closed", crossingId: "nearby-rail", description: "Road closure near a railroad crossing" }).classification, "road_closed");
+  assert.equal(contract.classify({ reportKind: "hazard", report_type: "road_closed", crossingId: "nearby-rail", description: "Road closure near a railroad crossing" }).classification, "road_closure");
   assert.equal(contract.classify({ reportKind: "hazard", report_type: "other_hazard", description: "Use the next crossing" }).classification, "community_report");
 });
 
@@ -63,4 +64,45 @@ test("weather remains audited but separately owned", () => {
   const result = contract.classify({ providerId: "nws", reportKind: "official-situation", category: "Flash Flood Warning" });
   assert.equal(result.ownership, "WEATHER");
   assert.equal(result.classification, "weather_alert");
+});
+
+test("governed DriveTexas projection retains official ownership through its consumer identity", () => {
+  const governed = (category, extra = {}) => ({
+    consumerSituationId: "drivetexas:provider:live-record",
+    providerId: "provider:live-record",
+    category,
+    headline: `${category} on IH0030`,
+    ...extra
+  });
+  const matrix = [
+    ["Bridge Restriction", "bridge_restriction", "Bridge Restriction"],
+    ["Lane Closure", "lane_closure", "Lane Closure"],
+    ["Closure", "road_closure", "Road Closed"],
+    ["Unmapped official condition", "travel_advisory", "Travel Advisory"]
+  ];
+  for (const [category, classification, title] of matrix) {
+    const result = contract.classify(governed(category));
+    assert.equal(result.ownership, "OFFICIAL_ROADWAY");
+    assert.equal(result.classification, classification);
+    assert.equal(result.title, title);
+    assert.notEqual(result.classification, "community_report");
+  }
+  const prose = contract.classify(governed("Construction", { description: "Use the next crossing during work." }));
+  assert.equal(prose.ownership, "OFFICIAL_ROADWAY");
+  assert.notEqual(prose.ownership, "CROSSING");
+  assert.notEqual(prose.classification, "crossing_blocked");
+});
+
+test("ownership remains governed for community, crossing, and weather records", () => {
+  assert.equal(contract.classify({ reportKind: "hazard", report_type: "other_hazard" }).ownership, "COMMUNITY");
+  assert.equal(contract.classify({ reportKind: "crossing", report_type: "crossing_blocked" }).ownership, "CROSSING");
+  assert.equal(contract.classify({ providerId: "nws", category: "Warning" }).ownership, "WEATHER");
+});
+
+test("LP214 statewide community denominator is unchanged", () => {
+  const inventory = JSON.parse(fs.readFileSync("data/generated/lp214-county-community-inventory.json", "utf8"));
+  assert.equal(inventory.summary.countyCount, 254);
+  assert.equal(inventory.summary.uniqueCanonicalCommunityCount, 1859);
+  assert.equal(inventory.summary.countyCommunityMembershipCount, 2058);
+  assert.equal(inventory.summary.multiCountyCommunityCount, 163);
 });
