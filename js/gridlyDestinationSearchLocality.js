@@ -1,4 +1,5 @@
 (function initGridlyDestinationSearchLocality(root, factory) {
+  root.gridlyStartupDiagnostics?.markMilestone?.("destinationLocalityHelperEvaluated");
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.GRIDLY_DESTINATION_SEARCH_LOCALITY = Object.freeze(api);
