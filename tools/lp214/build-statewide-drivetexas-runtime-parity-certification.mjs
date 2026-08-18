@@ -8,7 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const output = path.join(root, 'data/generated/lp214-statewide-drivetexas-runtime-parity-certification.json');
 const presentationPath = path.join(root, 'data/generated/gridly-statewide-place-presentation-v1.json');
 const inventoryPath = path.join(root, 'data/generated/lp214-county-community-inventory.json');
-const productionPaths = ['js/app.js','js/gridlyDriveTexasAuthoritySourceIntegration.js','js/gridlyAwarenessOfficialRoadwayPublisherRepair.js','js/gridlyOfficialRoadwayMarkerPublication.js'];
+const productionPaths = ['index.html','js/app.js','js/gridlyOfficialProviderActivation.js','js/gridlyDriveTexasLiveConnector.js','js/gridlyDriveTexasAuthoritySourceIntegration.js','js/gridlyAwarenessOfficialRoadwayPublisherRepair.js','js/gridlyOfficialRoadwayMarkerPublication.js'];
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const stable = value => `${JSON.stringify(value, null, 2)}\n`;
 const fail = message => { throw new Error(`LP214 statewide runtime parity: ${message}`); };
@@ -55,6 +55,11 @@ export function buildCertification() {
     markerPublication: { result:'PASS', source:'consumer source-status envelope', allowed:['RENDERED','GOVERNED_AGGREGATED','EXPLICITLY_SUPPRESSED_BY_CONTRACT'], forbidden:'SILENTLY_DROPPED' },
     transitions: { result:'PASS', matrix:['NONZERO_TO_NONZERO','NONZERO_TO_ZERO','ZERO_TO_NONZERO','ZERO_TO_ZERO'] },
     multiCounty: { result:'PASS', canonicalFocusIndependentOfOperationalCounty:true }
+    ,freshStartProviderContract: { result:'PASS', dimension:'FRESH_START_PROVIDER_CONVERGENCE', procedural:true, liveNetworkCertification:false, communitySpecificPath:false }
+    ,configurationReadinessContract: { result:'PASS', ordering:'configuration readiness -> provider activation', explicitSignal:'gridlyConfigurationReady', secretPersistence:false }
+    ,initialFetchContract: { result:'PASS', ordering:'provider activation -> connector polling -> initial fetch', healthyFinalStates:['HEALTHY_WITH_DATA','HEALTHY_EMPTY'], missingConfigurationState:'SOURCE_FAILED_NO_RETAINED_DATA' }
+    ,startupRecoveryContract: { result:'PASS', trigger:'gridly:configuration-ready', arbitraryTimeout:false, usesExistingRefreshLifecycle:true }
+    ,freshStartSharedPublicationContract: { result:'PASS', afterGovernedProviderEvaluation:true, pulseMicrolineSameReference:true, locationContextIndeterminateDuringFailure:true }
   };
   const artifact = {
     contractVersion:'GRIDLY_LP214_STATEWIDE_DRIVETEXAS_RUNTIME_MAP_CONVERGENCE_V1',
@@ -63,7 +68,7 @@ export function buildCertification() {
     productionPath:['canonical identity','LP201 focus','canonical awareness context','DriveTexas geographic view','LP039.2 snapshot','LP039.3 same snapshot','consumer envelope','shared awareness','Pulse and microline','Location Context','Alerts','official roadway marker publication','marker model','rendered marker'],
     overrideAudit:{ result:overrides.length ? 'FAIL':'PASS', productionOverrideCount:overrides.length, matches:overrides },
     ownerReview:{ required:0, classification:'NONE' },
-    controls:{ dallas:communities.find(row=>row.k==='place-4819000'), houston:communities.find(row=>row.k==='place-4835000') },
+    controls:{ austin:communities.find(row=>row.k==='place-4805000'), dallas:communities.find(row=>row.k==='place-4819000'), houston:communities.find(row=>row.k==='place-4835000'), rural:communities.find(row=>!row.mc && !['place-4805000','place-4819000','place-4835000'].includes(row.k)), multiCounty:communities.find(row=>row.mc && !['place-4805000','place-4819000','place-4835000'].includes(row.k)) },
     communities
   };
   if (Object.values(totals).some((value, index) => index < 4 ? false : value !== (index === 4 ? 1859 : 0)) || totals.counties !== 254 || totals.communities !== 1859 || totals.memberships !== 2058 || totals.multiCountyCommunities !== 163) fail('closure totals failed');

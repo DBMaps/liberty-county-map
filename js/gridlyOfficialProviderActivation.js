@@ -21,6 +21,19 @@
     duplicateConsumerRefreshPrevented: false
   };
 
+  const stages = Object.create(null);
+  function stage(name, status, reason) {
+    stages[name] = freeze({
+      started: status === "started",
+      completed: status === "completed",
+      failed: status === "failed",
+      skipped: status === "skipped",
+      waiting: status === "waiting",
+      reason: reason || null,
+      timestamp: new Date().toISOString()
+    });
+  }
+
   let consumerRefreshTimer = null;
 
   function freeze(value) {
@@ -117,10 +130,13 @@
 
   function activate() {
     if (state.activated) return audit();
+    stage("providerActivation", "started", "configuration readiness satisfied");
     state.activated = true;
     state.lastActivationAt = new Date().toISOString();
     state.driveTexasActivated = startConnector("gridlyDriveTexasConnector");
     state.weatherActivated = startConnector("gridlyWeatherConnector");
+    stage("driveTexasConnectorActivation", state.driveTexasActivated ? "completed" : "failed", state.driveTexasActivated ? "polling requested" : "connector unavailable");
+    stage("providerActivation", "completed", "official providers activated");
     refreshConsumers();
     return audit();
   }
@@ -143,15 +159,39 @@
       consumerRefreshSkippedUnchanged: state.consumerRefreshSkippedUnchanged === true,
       lastConsumerRefreshDurationMs: state.lastConsumerRefreshDurationMs,
       broadPortraitRefreshInvoked: state.broadPortraitRefreshInvoked === true,
-      duplicateConsumerRefreshPrevented: state.duplicateConsumerRefreshPrevented === true
+      duplicateConsumerRefreshPrevented: state.duplicateConsumerRefreshPrevented === true,
+      configurationReadiness: freeze(Object.assign({}, globalScope.gridlyConfigurationReadiness || {})),
+      stages: freeze(Object.assign({}, stages))
     });
   }
 
-  globalScope.gridlyOfficialProviderActivation = freeze({ activate, audit, requestConsumerRefresh });
+  function recoverConfiguration() {
+    const connector = globalScope.gridlyDriveTexasConnector;
+    const runtime = typeof globalScope.gridlyDriveTexasConnectorRuntimeAudit === "function" ? globalScope.gridlyDriveTexasConnectorRuntimeAudit() : null;
+    if (!state.activated) return activate();
+    if (!runtime?.apiKeyConfigured) {
+      stage("configurationResolution", "failed", "DriveTexas API key is not configured");
+      return audit();
+    }
+    stage("configurationResolution", "completed", runtime.configurationSource || "configured");
+    if (!state.driveTexasActivated) state.driveTexasActivated = startConnector("gridlyDriveTexasConnector");
+    else if (connector && typeof connector.fetchNow === "function" && runtime.lastFetchSucceeded !== true) connector.fetchNow();
+    return audit();
+  }
+
+  globalScope.gridlyOfficialProviderActivation = freeze({ activate, audit, requestConsumerRefresh, recoverConfiguration });
   globalScope.gridlyOfficialProviderConsumerRefresh = requestConsumerRefresh;
   globalScope.gridlyOfficialProviderActivationAudit = audit;
 
-  if (typeof globalScope.setTimeout === "function") {
+  stage("configurationResolution", "waiting", "waiting for explicit configuration readiness");
+  if (globalScope.gridlyConfigurationReady && typeof globalScope.gridlyConfigurationReady.then === "function") {
+    globalScope.gridlyConfigurationReady.then(function () {
+      const runtime = typeof globalScope.gridlyDriveTexasConnectorRuntimeAudit === "function" ? globalScope.gridlyDriveTexasConnectorRuntimeAudit() : null;
+      stage("configurationResolution", runtime?.apiKeyConfigured ? "completed" : "failed", runtime?.configurationSource || "DriveTexas API key is not configured");
+      activate();
+    });
+    globalScope.addEventListener?.("gridly:configuration-ready", recoverConfiguration);
+  } else if (typeof globalScope.setTimeout === "function") {
     globalScope.setTimeout(activate, 0);
   } else {
     activate();

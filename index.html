@@ -1411,6 +1411,26 @@
   <script>
     (function loadGridlyLocalOverrides() {
       var enabled = false;
+      var readiness = window.gridlyConfigurationReadiness = {
+        started: true,
+        completed: false,
+        failed: false,
+        localOverridesEnabled: false,
+        localOverrideLoaded: false,
+        reason: "configuration-bootstrap-started",
+        startedAt: new Date().toISOString(),
+        completedAt: null
+      };
+      var resolveReady;
+      window.gridlyConfigurationReady = new Promise(function (resolve) { resolveReady = resolve; });
+      function complete(reason, failed) {
+        readiness.completed = true;
+        readiness.failed = failed === true;
+        readiness.reason = reason;
+        readiness.completedAt = new Date().toISOString();
+        resolveReady(readiness);
+        window.dispatchEvent(new CustomEvent("gridly:configuration-ready", { detail: { reason: reason } }));
+      }
       try {
         var params = new URLSearchParams(window.location.search || "");
         enabled = window.GRIDLY_ENABLE_LOCAL_OVERRIDES === true
@@ -1419,12 +1439,23 @@
       } catch (error) {
         enabled = window.GRIDLY_ENABLE_LOCAL_OVERRIDES === true;
       }
-      if (!enabled) return;
+      readiness.localOverridesEnabled = enabled;
+      if (!enabled) {
+        complete("tracked-or-external-configuration-ready; local overrides not opted in", false);
+        return;
+      }
       var script = document.createElement("script");
       script.src = "js/gridly.local.js";
       script.async = false;
       script.setAttribute("data-gridly-local", "true");
-      script.onerror = function () { script.remove(); };
+      script.onload = function () {
+        readiness.localOverrideLoaded = true;
+        complete("owner-local-configuration-loaded", false);
+      };
+      script.onerror = function () {
+        script.remove();
+        complete("owner-local-configuration-load-failed", true);
+      };
       document.head.appendChild(script);
     })();
   </script>

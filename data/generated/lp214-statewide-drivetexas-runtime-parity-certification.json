@@ -3,7 +3,10 @@
   "authoritativeSources": [
     "data/generated/gridly-statewide-place-presentation-v1.json",
     "data/generated/lp214-county-community-inventory.json",
+    "index.html",
     "js/app.js",
+    "js/gridlyOfficialProviderActivation.js",
+    "js/gridlyDriveTexasLiveConnector.js",
     "js/gridlyDriveTexasAuthoritySourceIntegration.js",
     "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
     "js/gridlyOfficialRoadwayMarkerPublication.js"
@@ -94,6 +97,40 @@
     "multiCounty": {
       "result": "PASS",
       "canonicalFocusIndependentOfOperationalCounty": true
+    },
+    "freshStartProviderContract": {
+      "result": "PASS",
+      "dimension": "FRESH_START_PROVIDER_CONVERGENCE",
+      "procedural": true,
+      "liveNetworkCertification": false,
+      "communitySpecificPath": false
+    },
+    "configurationReadinessContract": {
+      "result": "PASS",
+      "ordering": "configuration readiness -> provider activation",
+      "explicitSignal": "gridlyConfigurationReady",
+      "secretPersistence": false
+    },
+    "initialFetchContract": {
+      "result": "PASS",
+      "ordering": "provider activation -> connector polling -> initial fetch",
+      "healthyFinalStates": [
+        "HEALTHY_WITH_DATA",
+        "HEALTHY_EMPTY"
+      ],
+      "missingConfigurationState": "SOURCE_FAILED_NO_RETAINED_DATA"
+    },
+    "startupRecoveryContract": {
+      "result": "PASS",
+      "trigger": "gridly:configuration-ready",
+      "arbitraryTimeout": false,
+      "usesExistingRefreshLifecycle": true
+    },
+    "freshStartSharedPublicationContract": {
+      "result": "PASS",
+      "afterGovernedProviderEvaluation": true,
+      "pulseMicrolineSameReference": true,
+      "locationContextIndeterminateDuringFailure": true
     }
   },
   "productionPath": [
@@ -122,6 +159,27 @@
     "classification": "NONE"
   },
   "controls": {
+    "austin": {
+      "k": "place-4805000",
+      "g": "4805000",
+      "lat": 30.2986219,
+      "lng": -97.7541339,
+      "z": null,
+      "r": 7,
+      "a": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+      "m": [
+        "48021",
+        "48209",
+        "48453",
+        "48491"
+      ],
+      "mc": true,
+      "focus": "PASS",
+      "lp039": "SAME_CANONICAL_CONTEXT",
+      "projection": "SAME_SNAPSHOT",
+      "marker": "EXPLICIT_OUTCOME_REQUIRED",
+      "transition": "REPLACE"
+    },
     "dallas": {
       "k": "place-4819000",
       "g": "4819000",
@@ -157,6 +215,43 @@
         "48201",
         "48339",
         "48473"
+      ],
+      "mc": true,
+      "focus": "PASS",
+      "lp039": "SAME_CANONICAL_CONTEXT",
+      "projection": "SAME_SNAPSHOT",
+      "marker": "EXPLICIT_OUTCOME_REQUIRED",
+      "transition": "REPLACE"
+    },
+    "rural": {
+      "k": "place-4800100",
+      "g": "4800100",
+      "lat": 31.8848809,
+      "lng": -97.0733361,
+      "z": null,
+      "r": 7,
+      "a": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+      "m": [
+        "48217"
+      ],
+      "mc": false,
+      "focus": "PASS",
+      "lp039": "SAME_CANONICAL_CONTEXT",
+      "projection": "SAME_SNAPSHOT",
+      "marker": "EXPLICIT_OUTCOME_REQUIRED",
+      "transition": "REPLACE"
+    },
+    "multiCounty": {
+      "k": "place-4800160",
+      "g": "4800160",
+      "lat": 33.8323812,
+      "lng": -101.8430151,
+      "z": null,
+      "r": 7,
+      "a": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+      "m": [
+        "48189",
+        "48303"
       ],
       "mc": true,
       "focus": "PASS",
