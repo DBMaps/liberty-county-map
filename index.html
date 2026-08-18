@@ -168,7 +168,6 @@
         (window.gridlyStartupDiagnostics?.markPrepaintReleased || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "prepaintReleased", reason: reason }); })("inline prepaint release");
         window.requestAnimationFrame(function () {
           (window.gridlyStartupDiagnostics?.markFirstVisibleFrame || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "firstVisibleFrame", reason: reason }); })("first frame after prepaint release");
-          (window.gridlyStartupDiagnostics?.markUiUsable || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "uiUsable", reason: reason }); })("prepaint lock released and visible UI painted");
         });
         if (document.body) {
           document.body.classList.remove("gridly-startup-guard");
@@ -1405,9 +1404,10 @@
     </section>
   </div>
 
-  <script src="js/gridlyStartupDiagnostics.js?v=929"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="js/gridlyStartupDiagnostics.js?v=929"></script>
+  <script defer src="gridly-startup-latency-rca.js?v=1"></script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     (function loadGridlyLocalOverrides() {
       var enabled = false;
@@ -1459,87 +1459,87 @@
       document.head.appendChild(script);
     })();
   </script>
-  <script src="js/gridlyPackageRegistry.js?v=745"></script>
-  <script src="js/gridlyDriveTexasProvider.js?v=831"></script>
-  <script src="js/gridlyWeatherProvider.js?v=832"></script>
-  <script src="js/gridlyWeatherAuthorityFoundation.js?v=0381"></script>
-  <script src="js/gridlyUnifiedIntelligence.js?v=833"></script>
-  <script src="js/gridlyIntelligenceActivationReadiness.js?v=834"></script>
-  <script src="js/gridlyUnifiedIntelligenceSimulation.js?v=835"></script>
-  <script src="js/gridlyOfficialProviderSourceEvaluation.js?v=836"></script>
-  <script src="js/gridlyDriveTexasConnectorEndpointAudit.js?v=837"></script>
-  <script src="js/gridlyWeatherConnectorEndpointAudit.js?v=838"></script>
-  <script src="js/gridlyLiveConnectorDesignReadinessAudit.js?v=839"></script>
-  <script src="js/gridlyDriveTexasLiveConnector.js?v=840"></script>
-  <script src="js/gridlyWeatherLiveConnector.js?v=841"></script>
-  <script src="js/gridlyWeatherAuthoritySourceIntegration.js?v=0382"></script>
-  <script src="js/gridlyOfficialProviderActivation.js?v=003"></script>
-  <script src="js/gridlyCrossProviderEvaluationAudit.js?v=845"></script>
-  <script src="js/gridlyUnifiedIntelligenceReadinessAudit.js?v=847"></script>
-  <script src="js/gridlyUnifiedIntelligencePrototype.js?v=853"></script>
-  <script src="js/gridlyUnifiedIntelligenceObservationAudit.js?v=849"></script>
-  <script src="js/gridlyTxdotService.js?v=1710"></script>
-  <script src="js/gridlyTxdotGeometryRetentionPrototype.js?v=296"></script>
-  <script src="js/gridlyRouteWatchGeometryRuntimeShadowAudit.js?v=3083"></script>
-  <script src="js/gridlyDirectionalRuntimeCandidatePrototype.js?v=695"></script>
-  <script src="js/gridlyDirectionalServiceLayer.js?v=697"></script>
-  <script src="js/gridlyDirectionalServiceConsumer.js?v=698"></script>
-  <script src="js/history-capture/historyCaptureFlags.js?v=415"></script>
-  <script src="js/history-capture/historyIdentity.js?v=415"></script>
-  <script src="js/history-capture/historyCaptureEnvelope.js?v=415"></script>
-  <script src="js/history-capture/historyCaptureIdempotency.js?v=415"></script>
-  <script src="js/history-capture/historyCaptureMonitoring.js?v=415"></script>
-  <script src="js/history-capture/historyCaptureWriter.js?v=415"></script>
-  <script src="js/history-capture/historyCapturePhase1A.js?v=415"></script>
-  <script src="js/history-capture/historyEpisodeResolver.js?v=534"></script>
-  <script src="js/history-capture/historyEpisodeRuntimeBridge.js?v=541"></script>
-  <script src="js/history-capture/historyAggregationEngine.js?v=535"></script>
-  <script src="js/history-capture/historyPatternQualificationEngine.js?v=536"></script>
-  <script src="js/history-capture/historyPatternRegistry.js?v=537"></script>
-  <script src="js/history-capture/historyEvidenceInterpretationAdapter.js?v=538"></script>
-  <script src="js/history-capture/historyIntelligenceReadinessIndex.js?v=539"></script>
-  <script src="js/history-capture/historyIntelligenceRuntimeIntegration.js?v=540"></script>
-  <script src="js/history-capture/historyIntelligenceEngine.js?v=430"></script>
-  <script src="js/history-capture/historyAwarenessAdapter.js?v=439"></script>  <script src="js/gridlyPackageDiscovery.js"></script>
-<script src="js/gridlyPackageLoader.js"></script>
-    <script src="js/gridlyRuntimeSourceRegistryBridge.js"></script>
-    <script src="js/gridlyCrossingCoverageAuthority.js"></script>
+  <script defer src="js/gridlyPackageRegistry.js?v=745"></script>
+  <script defer src="js/gridlyDriveTexasProvider.js?v=831"></script>
+  <script defer src="js/gridlyWeatherProvider.js?v=832"></script>
+  <script defer src="js/gridlyWeatherAuthorityFoundation.js?v=0381"></script>
+  <script defer src="js/gridlyUnifiedIntelligence.js?v=833"></script>
+  <script defer src="js/gridlyIntelligenceActivationReadiness.js?v=834"></script>
+  <script defer src="js/gridlyUnifiedIntelligenceSimulation.js?v=835"></script>
+  <script defer src="js/gridlyOfficialProviderSourceEvaluation.js?v=836"></script>
+  <script defer src="js/gridlyDriveTexasConnectorEndpointAudit.js?v=837"></script>
+  <script defer src="js/gridlyWeatherConnectorEndpointAudit.js?v=838"></script>
+  <script defer src="js/gridlyLiveConnectorDesignReadinessAudit.js?v=839"></script>
+  <script defer src="js/gridlyDriveTexasLiveConnector.js?v=840"></script>
+  <script defer src="js/gridlyWeatherLiveConnector.js?v=841"></script>
+  <script defer src="js/gridlyWeatherAuthoritySourceIntegration.js?v=0382"></script>
+  <script defer src="js/gridlyOfficialProviderActivation.js?v=003"></script>
+  <script defer src="js/gridlyCrossProviderEvaluationAudit.js?v=845"></script>
+  <script defer src="js/gridlyUnifiedIntelligenceReadinessAudit.js?v=847"></script>
+  <script defer src="js/gridlyUnifiedIntelligencePrototype.js?v=853"></script>
+  <script defer src="js/gridlyUnifiedIntelligenceObservationAudit.js?v=849"></script>
+  <script defer src="js/gridlyTxdotService.js?v=1710"></script>
+  <script defer src="js/gridlyTxdotGeometryRetentionPrototype.js?v=296"></script>
+  <script defer src="js/gridlyRouteWatchGeometryRuntimeShadowAudit.js?v=3083"></script>
+  <script defer src="js/gridlyDirectionalRuntimeCandidatePrototype.js?v=695"></script>
+  <script defer src="js/gridlyDirectionalServiceLayer.js?v=697"></script>
+  <script defer src="js/gridlyDirectionalServiceConsumer.js?v=698"></script>
+  <script defer src="js/history-capture/historyCaptureFlags.js?v=415"></script>
+  <script defer src="js/history-capture/historyIdentity.js?v=415"></script>
+  <script defer src="js/history-capture/historyCaptureEnvelope.js?v=415"></script>
+  <script defer src="js/history-capture/historyCaptureIdempotency.js?v=415"></script>
+  <script defer src="js/history-capture/historyCaptureMonitoring.js?v=415"></script>
+  <script defer src="js/history-capture/historyCaptureWriter.js?v=415"></script>
+  <script defer src="js/history-capture/historyCapturePhase1A.js?v=415"></script>
+  <script defer src="js/history-capture/historyEpisodeResolver.js?v=534"></script>
+  <script defer src="js/history-capture/historyEpisodeRuntimeBridge.js?v=541"></script>
+  <script defer src="js/history-capture/historyAggregationEngine.js?v=535"></script>
+  <script defer src="js/history-capture/historyPatternQualificationEngine.js?v=536"></script>
+  <script defer src="js/history-capture/historyPatternRegistry.js?v=537"></script>
+  <script defer src="js/history-capture/historyEvidenceInterpretationAdapter.js?v=538"></script>
+  <script defer src="js/history-capture/historyIntelligenceReadinessIndex.js?v=539"></script>
+  <script defer src="js/history-capture/historyIntelligenceRuntimeIntegration.js?v=540"></script>
+  <script defer src="js/history-capture/historyIntelligenceEngine.js?v=430"></script>
+  <script defer src="js/history-capture/historyAwarenessAdapter.js?v=439"></script>  <script defer src="js/gridlyPackageDiscovery.js"></script>
+<script defer src="js/gridlyPackageLoader.js"></script>
+    <script defer src="js/gridlyRuntimeSourceRegistryBridge.js"></script>
+    <script defer src="js/gridlyCrossingCoverageAuthority.js"></script>
     <!-- The V783 crossing provider must exist before app.js registers its
          DOMContentLoaded production inventory load. Keep this provider stack
          in dependency order: validation -> adapter -> provider. -->
-    <script src="js/gridlyCrossingPackageValidationAudit.js"></script>
-    <script src="js/gridlyCrossingPackageAdapter.js"></script>
-    <script src="js/gridlyCrossingProvider.js"></script>
+    <script defer src="js/gridlyCrossingPackageValidationAudit.js"></script>
+    <script defer src="js/gridlyCrossingPackageAdapter.js"></script>
+    <script defer src="js/gridlyCrossingProvider.js"></script>
 
-  <script src="js/gridlyRuntimeEnvironmentConfig.js"></script>
-  <script src="js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js"></script>
-  <script src="js/lp097-curated-destinations.js?v=097"></script>
-  <script src="js/lp098-curated-destinations.js?v=098"></script>
-  <script src="js/lp097-search-governance.js?v=0972"></script>
-  <script src="js/lp099-business-search.js?v=099"></script>
-  <script src="js/lp101-search-quality.js?v=1012"></script>
-  <script src="js/gridlyStartupReadiness.js?v=1"></script>
-  <script src="js/gridlyDestinationSearchLocality.js?v=1"></script>
-  <script src="js/gridly-geocoding-client.js?v=1022"></script>
-  <script src="js/lp102-rural-address-cases.js?v=1021"></script>
-  <script src="js/lp104-regional-rural-address-audit.js?v=104"></script>
-  <script src="js/gridlyIncidentLocationIdentity.js?v=1854000000"></script>
-  <script src="js/gridly-statewide-zip-resolver.js?v=1"></script>
-  <script src="js/gridlyAlertSemanticContract.js?v=214"></script>
-  <script src="js/gridlyOfficialRoadwayMarkerPublication.js?v=214"></script>
-  <script src="js/app.js?v=1785340800"></script>
-  <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
-  <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=0392"></script>
-  <script src="js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044"></script>
-  <script src="js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js?v=0371"></script>
-  <script src="js/gridlyEndToEndPerformanceAudit.js?v=919"></script>
-  <script src="js/gridlyDirectionalAwarenessLayer.js?v=704"></script>
+  <script defer src="js/gridlyRuntimeEnvironmentConfig.js"></script>
+  <script defer src="js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js"></script>
+  <script defer src="js/lp097-curated-destinations.js?v=097"></script>
+  <script defer src="js/lp098-curated-destinations.js?v=098"></script>
+  <script defer src="js/lp097-search-governance.js?v=0972"></script>
+  <script defer src="js/lp099-business-search.js?v=099"></script>
+  <script defer src="js/lp101-search-quality.js?v=1012"></script>
+  <script defer src="js/gridlyStartupReadiness.js?v=1"></script>
+  <script defer src="js/gridlyDestinationSearchLocality.js?v=1"></script>
+  <script defer src="js/gridly-geocoding-client.js?v=1022"></script>
+  <script defer src="js/lp102-rural-address-cases.js?v=1021"></script>
+  <script defer src="js/lp104-regional-rural-address-audit.js?v=104"></script>
+  <script defer src="js/gridlyIncidentLocationIdentity.js?v=1854000000"></script>
+  <script defer src="js/gridly-statewide-zip-resolver.js?v=1"></script>
+  <script defer src="js/gridlyAlertSemanticContract.js?v=214"></script>
+  <script defer src="js/gridlyOfficialRoadwayMarkerPublication.js?v=214"></script>
+  <script defer src="js/app.js?v=1785340800"></script>
+  <script defer src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
+  <script defer src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=0392"></script>
+  <script defer src="js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044"></script>
+  <script defer src="js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js?v=0371"></script>
+  <script defer src="js/gridlyEndToEndPerformanceAudit.js?v=919"></script>
+  <script defer src="js/gridlyDirectionalAwarenessLayer.js?v=704"></script>
 
-    <script src="js/gridlyRuntimeSourceComparisonAudit.js"></script>
-    <script src="js/gridlyRuntimeSourceBridgeActivation.js"></script>
-  <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
-  <script src="js/gridlyLp0941LaunchSurfaceAudit.js"></script>
-  <script src="js/gridlyLp095UnifiedPresentationAudit.js"></script>
-  <script src="js/gridlyLp0952CrossingAlertInteractionAudit.js"></script>
+    <script defer src="js/gridlyRuntimeSourceComparisonAudit.js"></script>
+    <script defer src="js/gridlyRuntimeSourceBridgeActivation.js"></script>
+  <script defer src="js/gridlyCrossingProviderActivationAudit.js"></script>
+  <script defer src="js/gridlyLp0941LaunchSurfaceAudit.js"></script>
+  <script defer src="js/gridlyLp095UnifiedPresentationAudit.js"></script>
+  <script defer src="js/gridlyLp0952CrossingAlertInteractionAudit.js"></script>
 </body>
 </html>

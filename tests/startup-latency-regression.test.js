@@ -47,3 +47,21 @@ test("destination search retains its fail-closed LP201 execution wait", () => {
   assert.match(appSource, /async function gridlySearchAddress[\s\S]*?await gridlyLoadStatewidePlacePresentation\(\)\.catch\(\(\) => null\)/);
   assert.match(appSource, /CANONICAL_PLACE_PRESENTATION_COORDINATES_UNAVAILABLE/);
 });
+
+test("startup resources download in parallel without parser-blocking the first shell", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+  const externalScripts = [...html.matchAll(/<script\b([^>]*\bsrc=[^>]*)>/g)].map((match) => match[1]);
+  assert.ok(externalScripts.length > 50, "fixture must cover the full production startup stack");
+  assert.equal(externalScripts.filter((attributes) => !/\b(?:defer|async)\b/.test(attributes)).length, 0);
+  assert.doesNotMatch(html, /markUiUsable[^\n]+prepaint lock released and visible UI painted/);
+});
+
+test("RCA helper separates browser paints, resources, tasks, lifecycle stages, and crossing hydration", () => {
+  const diagnostics = fs.readFileSync(path.join(__dirname, "../gridly-startup-latency-rca.js"), "utf8");
+  assert.match(diagnostics, /window\.gridlyStartupLatencyRcaAudit = audit/);
+  for (const field of ["firstPaintMs", "firstContentfulPaintMs", "consumerShellInteractiveMs", "longAnimationFrames", "bootstrapStages", "crossingStages", "topOwners"]) {
+    assert.match(diagnostics, new RegExp(field));
+  }
+  assert.match(appSource, /DOMContentLoaded lifecycle \(core plus secondary hydration\)[\s\S]*blocking: false/);
+  assert.match(appSource, /consumer shell core bootstrap[\s\S]*blocking: true/);
+});
