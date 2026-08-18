@@ -41,8 +41,8 @@ test("Dallas remains a multi-county browser control", () => {
   assert.equal(dallas.geography, "multi-county");
 });
 
-test("Phase 2.1 artifact remains immutable while Phase 2.2 stays at its authorized boundary", () => {
+test("Phase 2.1 artifact remains immutable while Phase 2.2D stays at its focused authority boundary", () => {
   assert.equal(artifact.productionSourceModified, false);
   const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
-  assert.deepEqual(changed.sort(), ["js/app.js", "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js"]);
+  assert.deepEqual(changed.sort(), ["js/gridlyDriveTexasAuthoritySourceIntegration.js", "js/gridlyDriveTexasGeometryAuthority.js"]);
 });
