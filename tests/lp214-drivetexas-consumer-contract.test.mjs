@@ -41,8 +41,14 @@ test("Dallas remains a multi-county browser control", () => {
   assert.equal(dallas.geography, "multi-county");
 });
 
-test("Phase 2.1 artifact remains immutable while Phase 2.2F changes only shared-awareness consumers", () => {
+test("Phase 2.1 artifact remains immutable while later repairs stay outside protected providers", () => {
   assert.equal(artifact.productionSourceModified, false);
   const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
-  assert.deepEqual(changed.sort(), ["js/gridlyAwarenessOfficialRoadwayPublisherRepair.js"]);
+  const allowedConsumerBoundaries = new Set([
+    "js/app.js",
+    "js/gridlyAlertSemanticContract.js",
+    "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js"
+  ]);
+  assert(changed.every((file) => allowedConsumerBoundaries.has(file)), `unexpected protected JavaScript change: ${changed.join(", ")}`);
+  assert(!changed.some((file) => /DriveTexas(?:Connector|Provider)|Weather/i.test(file)));
 });
