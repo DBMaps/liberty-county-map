@@ -2,9 +2,12 @@
 
 ## 1. Incident and quick summary
 
-**OPEN — INTERMITTENT DEVELOPMENT/BROWSER NAVIGATION DELAY AFFECTING GRIDLY
-USABILITY.** The narrower finding `GRIDLY_APPLICATION_OWNERSHIP_NOT_SUPPORTED`
-remains valid. Static analysis proves that the service worker can intercept every
+**OWNER CONTROL COMPLETE — STARTUP REPAIR WORK STOPPED.** The intermittent
+development/browser navigation delay remains open for observation, but the
+completed controlled/uncontrolled experiment did not establish a deterministic
+relationship between service-worker control and the delay. The narrower finding
+`GRIDLY_APPLICATION_OWNERSHIP_NOT_SUPPORTED` remains valid. Static analysis
+proves that the service worker can intercept every
 same-origin navigation in its `./` scope, including the tiny control page. The
 observed `workerStart` immediately before `fetchStart` is therefore consistent
 with a controlled navigation waiting for worker startup/dispatch before its
@@ -154,9 +157,9 @@ The existing startup audit can timestamp observed resource/error evidence, but
 console wording alone supplies no causal or precise timing relationship. Tracking
 Prevention remains enabled and unmodified.
 
-## 11. Owner control and exact test
+## 11. Completed owner controlled/uncontrolled experiment
 
-`startup-navigation-control.html` now shows controller identity, registration
+`startup-navigation-control.html` shows controller identity, registration
 scope/update policy, installing/waiting/active state, navigation/worker/fetch
 timings, navigation preload, observed lifecycle transitions, and read-only cache
 inventory. It has no production runtime or external dependency. Exact
@@ -164,23 +167,51 @@ controlled/uncontrolled isolation within the same scope requires removing the
 registration; therefore a localhost-only, explicit temporary unregister control
 is available and clearly labeled.
 
-1. Open `http://127.0.0.1:5500/startup-navigation-control.html` and take a screenshot.
-2. Click **RELOAD CONTROL PAGE** once and take a screenshot if a delay appears.
-3. Click **TEMPORARILY UNREGISTER SERVICE WORKER FOR THIS LOCALHOST TEST**; the page reloads itself uncontrolled.
-4. Click **RELOAD CONTROL PAGE** once and take a screenshot.
-5. Click **OPEN GRIDLY** to let Gridly register the worker normally again; send the screenshots.
+The owner completed the prescribed five-step localhost experiment. The control
+page was loaded and reloaded, the localhost service worker was explicitly
+unregistered with the development-only diagnostic, the control page was reloaded
+without service-worker control, and **OPEN GRIDLY** restored the normal
+application and registration lifecycle.
+
+The final Gridly run was a valid mobile control:
+
+| Signal | Observed value |
+| --- | ---: |
+| Viewport width | 430 |
+| Viewport height | 932 |
+| Device pixel ratio | 3 |
+| Mobile media query | `true` |
+| Layout type | `mobile` |
+| Mobile consumer surface detected | `true` |
+| Gridly pre-fetch delay | approximately 91.4 ms |
+
+Previous Gridly lifecycle evidence was present and lifecycle events were
+normally clustered. No multi-second outgoing Gridly lifecycle stall was
+observed. The controlled/uncontrolled sequence did not produce a deterministic
+association between service-worker control state and the intermittent
+multi-second pre-fetch delay.
+
+This result is consistent with the earlier live browser control, which captured
+an active controller in the `activated` state with `workerStart = 65.8 ms` and
+`fetchStart = 93.4 ms`. That capture was classified
+`NO_MATERIAL_PRE_RESOURCE_GAP_IN_THIS_CAPTURE`. Together, the controls
+demonstrate that an active, controlling service worker can coexist with normal
+Gridly navigation.
 
 ## 12. Root-cause and repair status
 
-**Root cause remains open and intermittent.** Current classifications:
+**RCA evidence collection is complete; the intermittent development-browser
+navigation delay remains open without an assigned code owner.** Final
+classifications:
 
-* `GRIDLY_APPLICATION_OWNERSHIP_NOT_SUPPORTED`
 * `SERVICE_WORKER_NAVIGATION_INTERCEPTION_PROVEN`
 * `SERVICE_WORKER_DELAY_OWNERSHIP_NOT_PROVEN`
+* `GRIDLY_APPLICATION_OWNERSHIP_NOT_SUPPORTED`
 * `INTERMITTENT_DEVELOPMENT_BROWSER_NAVIGATION_DELAY_OPEN`
 
 No deterministic `SERVICE_WORKER_STARTUP_DELAY`, `SERVICE_WORKER_UPDATE_DELAY`,
 `SERVICE_WORKER_FETCH_INTERCEPTION_DELAY`, or
-`SERVICE_WORKER_CACHE_MAINTENANCE_DELAY` has been reproduced. A production repair
-is therefore **not justified**. Stop at RCA and collect the controlled versus
-explicitly uncontrolled owner evidence; do not merge automatically.
+`SERVICE_WORKER_CACHE_MAINTENANCE_DELAY` has been reproduced. A production
+performance repair is therefore **not justified**. Startup repair work stops
+here unless future evidence provides a deterministic reproduction. Product work
+may resume. `service-worker.js` remains unchanged.
