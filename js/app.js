@@ -102545,12 +102545,26 @@ function renderGridlyDriveTexasOfficialMarkers(reason = "unspecified") {
 
 window.gridlyLp214OfficialRoadwayMarkerPublicationAudit = function () {
   const outcomes = Array.from(gridlyLp214OfficialRoadwayMarkerOutcomes);
+  const eligibleMarkerModelCount = outcomes.filter(row => row.markerPublicationEligible).length;
+  const renderedMarkerCount = outcomes.filter(row => row.outcome === "RENDERED").length;
+  const governedAggregatedCount = outcomes.filter(row => row.outcome === "GOVERNED_AGGREGATED").length;
+  const explicitlySuppressedCount = outcomes.filter(row => row.outcome === "EXPLICITLY_SUPPRESSED_BY_CONTRACT").length;
+  const silentDropCount = outcomes.filter(row => row.outcome === "SILENTLY_DROPPED").length;
+  const representedRecordCount = new Set(outcomes.flatMap(row => row.representedConsumerSituationIds || [])).size;
+  const publicationRevision = Number(window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit?.()?.publicationRevision || 0);
   return Object.freeze({
     available: true,
     sourceRecordCount: outcomes.length,
-    markerModelCount: outcomes.filter(row => row.markerPublicationEligible).length,
-    renderedMarkerCount: outcomes.filter(row => row.outcome === "RENDERED").length,
-    silentMarkerDropCount: outcomes.filter(row => row.outcome === "SILENTLY_DROPPED").length,
+    eligibleMarkerModelCount,
+    renderedMarkerCount,
+    governedAggregatedCount,
+    explicitlySuppressedCount,
+    silentDropCount,
+    representedRecordCount,
+    publicationRevision,
+    // Compatibility aliases for owner diagnostics written before the canonical summary schema.
+    markerModelCount: eligibleMarkerModelCount,
+    silentMarkerDropCount: silentDropCount,
     outcomes
   });
 };
