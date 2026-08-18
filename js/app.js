@@ -18933,6 +18933,7 @@ let crossingMarkers = new Map();
 let gridlyDriveTexasOfficialMarkers = new Map();
 let gridlyDriveTexasOfficialLayer;
 let gridlyLp019DriveTexasRenderState = { lastEligibleCount: 0, lastWithoutGeometryCount: 0, lastOutOfAreaCount: 0, lastDuplicateCount: 0, lastRenderedCount: 0, perRecordAwarenessLookupCount: 0, lastRenderAt: null };
+let gridlyLp214OfficialRoadwayMarkerOutcomes = Object.freeze([]);
 let gridlyLp019CrossingVisibilityState = { beforeOfficialRefresh: null, afterOfficialRefresh: null, beforeFocus: null, afterFocus: null };
 let savedRouteLayer;
 let destinationRoutePreviewLayer;
@@ -102439,17 +102440,29 @@ function renderGridlyDriveTexasOfficialMarkers(reason = "unspecified") {
   gridlyLp045EnsureOfficialMarkerLayerAttached();
   gridlyLp019CrossingVisibilityState.beforeOfficialRefresh = gridlyLp019ReadCrossingVisibilitySnapshot(`before_official_refresh:${reason}`);
   const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
-  const consumerSelection = typeof window.gridlySelectConsumerVisibleDriveTexasSituations === "function" ? window.gridlySelectConsumerVisibleDriveTexasSituations() : null;
-  const records = Array.isArray(consumerSelection?.consumerVisibleSituations) ? consumerSelection.consumerVisibleSituations : gridlyLp019ReadDriveTexasRecords();
+  // Markers consume the same final envelope as Alerts and shared awareness.
+  // Re-running LP039 here could observe a different connector revision and was
+  // the shared boundary that allowed marker-ready records to disappear.
+  const consumerEnvelope = typeof window.gridlyGetDriveTexasConsumerSourceStatusEnvelope === "function"
+    ? window.gridlyGetDriveTexasConsumerSourceStatusEnvelope() : null;
+  const consumerSelection = !consumerEnvelope && typeof window.gridlySelectConsumerVisibleDriveTexasSituations === "function" ? window.gridlySelectConsumerVisibleDriveTexasSituations() : null;
+  const records = Array.isArray(consumerEnvelope?.records)
+    ? consumerEnvelope.records
+    : (Array.isArray(consumerSelection?.consumerVisibleSituations) ? consumerSelection.consumerVisibleSituations : gridlyLp019ReadDriveTexasRecords());
+  const canonicalContext = typeof getGridlyCanonicalAwarenessPresentationContext === "function" ? getGridlyCanonicalAwarenessPresentationContext() : selectedArea;
+  const publicationModels = window.gridlyOfficialRoadwayMarkerPublication?.build(records, {
+    canonicalKey: canonicalContext?.canonicalKey || canonicalContext?.key || canonicalContext?.id || ""
+  }) || [];
   const desired = new Map();
   let withoutGeometry = 0;
   let outOfArea = 0;
   let duplicates = 0;
-  records.forEach((record, index) => {
-    const id = String(gridlyLp045OfficialMarkerIdentity(record, `drivetexas-${index}`) || "");
-    const coords = gridlyLp045OfficialMarkerCoords(record) || gridlyLp019OfficialCoords(record);
+  publicationModels.forEach((publication, index) => {
+    const record = publication.record;
+    const id = publication.markerModelIdentity || String(gridlyLp045OfficialMarkerIdentity(record, `drivetexas-${index}`) || "");
+    const coords = publication.markerCoordinate || gridlyLp045OfficialMarkerCoords(record) || gridlyLp019OfficialCoords(record);
     if (!coords) { withoutGeometry += 1; return; }
-    if (!consumerSelection && !gridlyLp019OfficialRecordMatchesSelectedArea(record, selectedArea)) { outOfArea += 1; return; }
+    if (!consumerEnvelope && !consumerSelection && !gridlyLp019OfficialRecordMatchesSelectedArea(record, selectedArea)) { outOfArea += 1; return; }
     const key = id || `${coords.lat.toFixed(5)},${coords.lng.toFixed(5)}`;
     if (desired.has(key)) { duplicates += 1; return; }
     desired.set(key, { record, coords, id: key });
@@ -102523,8 +102536,24 @@ function renderGridlyDriveTexasOfficialMarkers(reason = "unspecified") {
     lastRenderAt: new Date().toISOString(),
     reason
   };
+  gridlyLp214OfficialRoadwayMarkerOutcomes = window.gridlyOfficialRoadwayMarkerPublication?.reconcile(
+    publicationModels,
+    Array.from(gridlyDriveTexasOfficialMarkers.keys())
+  ) || Object.freeze([]);
   return true;
 }
+
+window.gridlyLp214OfficialRoadwayMarkerPublicationAudit = function () {
+  const outcomes = Array.from(gridlyLp214OfficialRoadwayMarkerOutcomes);
+  return Object.freeze({
+    available: true,
+    sourceRecordCount: outcomes.length,
+    markerModelCount: outcomes.filter(row => row.markerPublicationEligible).length,
+    renderedMarkerCount: outcomes.filter(row => row.outcome === "RENDERED").length,
+    silentMarkerDropCount: outcomes.filter(row => row.outcome === "SILENTLY_DROPPED").length,
+    outcomes
+  });
+};
 
 function findGridlyAlertMarker(coords, options = {}) {
   const requestedCoords = normalizeCoordinatePair(coords?.lat, coords?.lng) || normalizeCoordinatePair(options?.lat, options?.lng);
