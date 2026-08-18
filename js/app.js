@@ -107470,16 +107470,20 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
   const alertsSurfaceUserFacingClear = isGridlyAlertsSurfaceUserFacingClear(alertsSurfaceSnapshot);
   const alertVisibleActiveIncidentCount = getGridlyAlertsSurfaceVisibleActiveIncidentCount(alertsSurfaceSnapshot);
   const authoritativeSharedCount = Number(sharedSummary?.sharedActiveIssueContract?.activeIssueCount ?? summary?.activeIssueCount);
-  const activeCountRaw = Math.max(
-      0,
-      Number.isFinite(authoritativeSharedCount) ? authoritativeSharedCount : 0,
-      alertsSurfaceUserFacingClear ? 0 : (Number.isFinite(Number(alertVisibleActiveIncidentCount)) ? Number(alertVisibleActiveIncidentCount) : 0),
-      Number(activeAwareness?.activeAwarenessCount ?? 0) || 0,
-      Number(summary?.activeIssueCount ?? 0) || 0,
-      Number(visibleCountModel?.bottomAwarenessDisplayedHazardCount ?? 0) || 0,
-      Number(visibleCountModel?.renderedMarkerCount ?? 0) || 0,
-      Number(visibleCountModel?.visibleAlertIncidentCount ?? 0) || 0
-    );
+  // Once the shared contract exists it owns Location Context. Alerts remains
+  // a narrower, independently governed surface and must not inflate this
+  // count from a different snapshot.
+  const activeCountRaw = Number.isFinite(authoritativeSharedCount)
+    ? Math.max(0, authoritativeSharedCount)
+    : Math.max(
+        0,
+        alertsSurfaceUserFacingClear ? 0 : (Number.isFinite(Number(alertVisibleActiveIncidentCount)) ? Number(alertVisibleActiveIncidentCount) : 0),
+        Number(activeAwareness?.activeAwarenessCount ?? 0) || 0,
+        Number(summary?.activeIssueCount ?? 0) || 0,
+        Number(visibleCountModel?.bottomAwarenessDisplayedHazardCount ?? 0) || 0,
+        Number(visibleCountModel?.renderedMarkerCount ?? 0) || 0,
+        Number(visibleCountModel?.visibleAlertIncidentCount ?? 0) || 0
+      );
   const activeCount = Number.isFinite(activeCountRaw) ? activeCountRaw : 0;
   const effectiveQuiet = quiet && activeCount <= 0;
   const crossingsWatchedLine = crossingContextCount !== null ? `${crossingContextCount} crossings monitored.` : "Crossings monitored.";
