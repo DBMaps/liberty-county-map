@@ -102,6 +102,16 @@ test('governed snapshot is published as one Pulse, microline and Location Contex
   assert.equal(audit.publishedPulseOfficialCount, 8);
   assert.equal(audit.publishedMicrolineOfficialCount, 8);
   assert.equal(audit.sameSummaryReference, true);
+  assert.equal(audit.sameAuthoritativePulseReference, true);
+  assert.equal(audit.sameAuthoritativeMicrolineReference, true);
+  assert.equal(audit.authoritativeObjectId, audit.pulseObjectId);
+  assert.equal(audit.authoritativeObjectId, audit.microlineObjectId);
+  assert.equal(audit.windowPulseStateDescriptor.get, undefined);
+  assert.equal(audit.windowPulseStateDescriptor.set, undefined);
+  assert.equal(audit.windowMicrolineStateDescriptor.get, undefined);
+  assert.equal(audit.windowMicrolineStateDescriptor.set, undefined);
+  assert.equal(audit.pulseSummaryDescriptor.get, undefined);
+  assert.equal(audit.microlineSummaryDescriptor.get, undefined);
   assert.equal(audit.authoritativeSummaryAreaIdentity, 'place-4819000');
   assert.equal(audit.lastReferenceDivergenceReason, null);
 });
@@ -183,6 +193,9 @@ test('zero-to-zero and nonzero-to-nonzero transitions still replace canonical id
 test('publication bridge is shared and fails closed when evidence is absent', () => {
   const app = fs.readFileSync('js/app.js', 'utf8');
   assert.match(app, /function gridlyPublishAuthoritativeCommunityAwarenessSummary/);
+  assert.match(app, /gridlyGetAuthoritativeCommunityAwarenessSummary/);
+  assert.match(app, /normalizedPatch\.communityAwarenessSummary = authoritativeSummary/);
+  assert.match(app, /pulseMicrolineReadbackSameReference: pulseReadbackSummary === microlineReadbackSummary/);
   assert.match(app, /communityAwarenessSummary: summary/);
   assert.match(app, /const authoritativeCommunityAwarenessSummary = gridlyCommunityPulseAuditState\?\.communityAwarenessSummary/);
   assert.match(app, /communityAwarenessSummary: authoritativeCommunityAwarenessSummary/);
@@ -224,4 +237,35 @@ test('stable post-publication portrait and provider refreshes preserve the autho
   assert.equal(h.window.gridlyCommunityPulseAuditState.communityAwarenessSummary, refreshed);
   assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, refreshed);
   assert.equal(h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit().sameSummaryReference, true);
+});
+
+test('fresh Austin lifecycle reaches publication revision 4 at meaningful summary revision 2 with one global reference', async () => {
+  const h = harness();
+  const austinRecords = Array.from({ length: 21 }, (_, index) => ({
+    consumerSituationId: `drivetexas:austin:fresh:${index + 1}`,
+    id: `austin-fresh-${index + 1}`
+  }));
+
+  // Installation performs two governed publications at revision zero. The
+  // first successful provider activation is publication three/revision one;
+  // the periodic successful refresh is publication four/revision two.
+  h.publish(austinRecords, {
+    area: { key: 'place-4805000', label: 'Austin' },
+    reason: 'first-fetch-success'
+  });
+  await Promise.resolve();
+  h.publish(austinRecords, { reason: 'periodic-fetch-success' });
+  await new Promise(resolve => h.window.setTimeout(resolve, 0));
+
+  const audit = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit();
+  const authoritative = h.window.gridlyGetAuthoritativeCommunityAwarenessSummary();
+  assert.equal(audit.publicationRevision, 4);
+  assert.equal(audit.summaryRevision, 2);
+  assert.equal(audit.sourceEnvelopeCount, 21);
+  assert.equal(audit.areaIdentity, 'place-4805000');
+  assert.equal(h.window.gridlyCommunityPulseAuditState.communityAwarenessSummary, authoritative);
+  assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, authoritative);
+  assert.equal(audit.authoritativeObjectId, audit.pulseObjectId);
+  assert.equal(audit.authoritativeObjectId, audit.microlineObjectId);
+  assert.equal(audit.sameSummaryReference, true);
 });

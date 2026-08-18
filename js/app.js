@@ -61357,15 +61357,37 @@ let gridlyCommunityPulseAuditState = {
   phraseGenerationMode: "not_rendered_yet",
   repetitionAvoidanceApplied: false
 };
+let gridlyLastAuthoritativeCommunityAwarenessSummary = null;
+const gridlyCommunityAwarenessReferenceIds = new WeakMap();
+let gridlyCommunityAwarenessNextReferenceId = 1;
+function gridlyCommunityAwarenessObjectId(value) {
+  if (!value || typeof value !== "object") return null;
+  if (!gridlyCommunityAwarenessReferenceIds.has(value)) {
+    gridlyCommunityAwarenessReferenceIds.set(value, gridlyCommunityAwarenessNextReferenceId++);
+  }
+  return gridlyCommunityAwarenessReferenceIds.get(value);
+}
 let gridlyCommunityPulseTemplateMemory = {
   lastHeadlineTemplate: "",
   lastSublineTemplate: ""
 };
 
 function publishGridlyCommunityPulseAuditState(patch = {}) {
+  const publisherAuthoritativeSummary = typeof window !== "undefined"
+    && typeof window.gridlyGetAuthoritativeCommunityAwarenessSummary === "function"
+    ? window.gridlyGetAuthoritativeCommunityAwarenessSummary()
+    : null;
+  const authoritativeSummary = publisherAuthoritativeSummary || gridlyLastAuthoritativeCommunityAwarenessSummary;
+  const normalizedPatch = patch && typeof patch === "object" ? { ...patch } : {};
+  // Pulse presentation models are routinely reconstructed (and may contain a
+  // cloned summary). Once the official publisher has an authority, a generic
+  // state refresh may carry that reference forward but may not replace it.
+  if (authoritativeSummary && Object.prototype.hasOwnProperty.call(normalizedPatch, "communityAwarenessSummary")) {
+    normalizedPatch.communityAwarenessSummary = authoritativeSummary;
+  }
   const nextState = {
     ...(gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object" ? gridlyCommunityPulseAuditState : {}),
-    ...(patch && typeof patch === "object" ? patch : {})
+    ...normalizedPatch
   };
   gridlyCommunityPulseAuditState = nextState;
   if (typeof window !== "undefined") window.gridlyCommunityPulseAuditState = gridlyCommunityPulseAuditState;
@@ -61378,6 +61400,7 @@ if (typeof window !== "undefined") window.gridlyCommunityPulseAuditState = gridl
 // input is the governed snapshot already enriched by the official publisher.
 function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {
   if (!summary || typeof summary !== "object") return null;
+  gridlyLastAuthoritativeCommunityAwarenessSummary = summary;
   const pulseState = publishGridlyCommunityPulseAuditState({
     communityAwarenessSummary: summary,
     communityAwarenessSummaryWriter: "gridlyPublishAuthoritativeCommunityAwarenessSummary",
@@ -61392,6 +61415,8 @@ function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publicatio
     communityAwarenessSummaryRevision: Number(publication.summaryRevision || 0),
     communityAwarenessPublicationRevision: Number(publication.publicationRevision || 0)
   };
+  const pulseAssignedSummary = pulseState.communityAwarenessSummary;
+  const microlineAssignedSummary = window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary;
 
   // Portrait presentation models are copies of the Pulse model. Invalidate
   // only those presentation caches, then render from the same summary so a
@@ -61420,6 +61445,22 @@ function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publicatio
     ...(window.gridlyTopAwarenessMicrolineState && typeof window.gridlyTopAwarenessMicrolineState === "object" ? window.gridlyTopAwarenessMicrolineState : {}),
     communityAwarenessSummary: summary,
     communityAwarenessSummaryWriter: "gridlyPublishAuthoritativeCommunityAwarenessSummary:post-portrait-convergence"
+  };
+  const pulseReadbackSummary = gridlyCommunityPulseAuditState.communityAwarenessSummary;
+  const microlineReadbackSummary = window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary;
+  window.gridlyAuthoritativeCommunityAwarenessReferenceAudit = {
+    writer: "gridlyPublishAuthoritativeCommunityAwarenessSummary:post-portrait-convergence",
+    authoritativeObjectId: gridlyCommunityAwarenessObjectId(summary),
+    pulseAssignedObjectId: gridlyCommunityAwarenessObjectId(pulseAssignedSummary),
+    microlineAssignedObjectId: gridlyCommunityAwarenessObjectId(microlineAssignedSummary),
+    pulseReadbackObjectId: gridlyCommunityAwarenessObjectId(pulseReadbackSummary),
+    microlineReadbackObjectId: gridlyCommunityAwarenessObjectId(microlineReadbackSummary),
+    authoritativePulseAssignedSameReference: summary === pulseAssignedSummary,
+    authoritativeMicrolineAssignedSameReference: summary === microlineAssignedSummary,
+    pulseMicrolineAssignedSameReference: pulseAssignedSummary === microlineAssignedSummary,
+    pulseReadbackSameReference: summary === pulseReadbackSummary,
+    microlineReadbackSameReference: summary === microlineReadbackSummary,
+    pulseMicrolineReadbackSameReference: pulseReadbackSummary === microlineReadbackSummary
   };
   return summary;
 }
