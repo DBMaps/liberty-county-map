@@ -38319,7 +38319,12 @@ function classifyGridlyDestinationSearchIntent(query = "") {
 function getGridlySelectedHomeTownAnchor() {
   const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   if (!area) return null;
-  return { label: area.label, lat: area.lat, lng: area.lng, source: area.countyWide ? "awareness_county" : (area.fallback ? "awareness_fallback" : "canonical_place_presentation"), canonicalCommunityKey: area.storageValue || area.key || area.placeGeoid || area.label, placeGeoid: area.placeGeoid || null, countyWide: area.countyWide === true, fallback: area.fallback === true, radiusMiles: area.radiusMiles ?? null };
+  if (area.countyWide !== true && area.fallback !== true) {
+    const governed = window.GRIDLY_DESTINATION_SEARCH_LOCALITY?.resolveCanonicalAnchor?.(area, resolveGridlyCanonicalPlacePresentationFocus);
+    if (governed) return governed;
+    return { label: area.label, lat: null, lng: null, source: "canonical_place_presentation_unavailable", geographicAuthority: null, canonicalCommunityKey: area.canonicalKey || area.key || null, placeGeoid: area.placeGeoid || null, failure: "CANONICAL_PLACE_PRESENTATION_COORDINATES_UNAVAILABLE" };
+  }
+  return { label: area.label, lat: area.lat, lng: area.lng, source: area.countyWide ? "awareness_county" : "awareness_fallback", geographicAuthority: area.countyWide ? "awareness_county" : "awareness_fallback", canonicalCommunityKey: area.storageValue || area.key || area.label, placeGeoid: null, countyWide: area.countyWide === true, fallback: area.fallback === true, radiusMiles: area.radiusMiles ?? null };
 }
 
 function getGridlySearchAnchorContext(searchContext = null) {
@@ -89468,7 +89473,8 @@ function recordGridlyDestinationProviderEvent(diagnostics, event = {}) {
     registryOutcome: event.registryOutcome || "not_invoked",
     sourceClassification: event.sourceClassification || "none",
     fallbackCandidateDiagnostics: Array.isArray(event.fallbackCandidateDiagnostics)
-      ? event.fallbackCandidateDiagnostics.map((entry) => ({ ...entry })) : []
+      ? event.fallbackCandidateDiagnostics.map((entry) => ({ ...entry })) : [],
+    request: event.request ? { ...event.request } : null
   });
   if (event.attempted) diagnostics.providerAttempted = true;
   if (event.attempted) gridlyLp097RuntimeEvidence.requestAttempted = true;
@@ -89529,7 +89535,7 @@ function finalizeGridlyDestinationProviderDiagnostics(diagnostics, providerResul
   return diagnostics;
 }
 
-async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0", diagnostics = null, structured = null, variantIndex = 0 } = {}) {
+async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0", diagnostics = null, structured = null, variantIndex = 0, requestVariant = null } = {}) {
   const intent = structured ? "address" : "business_place";
   const viewbox = String(searchContext?.viewbox || "").split(",").map(Number);
   const request = {
@@ -89542,6 +89548,7 @@ async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchCo
       state: structured.state || "", postalCode: structured.postalcode || "", country: structured.country || "United States"
     } } : {}),
     context: {
+      ...(searchContext?.canonicalCommunityKey ? { communityId: searchContext.canonicalCommunityKey } : {}),
       ...(searchContext?.activeCounty ? { countyId: searchContext.activeCounty } : {}),
       ...(viewbox.length === 4 && viewbox.every(Number.isFinite) ? { viewbox } : {})
     }
@@ -89570,7 +89577,8 @@ async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchCo
     registryOutcome: response.diagnostics?.registryOutcome || "not_invoked",
     sourceClassification: response.diagnostics?.sourceClassification || "none",
     fallbackCandidateDiagnostics: Array.isArray(response.diagnostics?.fallbackCandidateDiagnostics)
-      ? response.diagnostics.fallbackCandidateDiagnostics : []
+      ? response.diagnostics.fallbackCandidateDiagnostics : [],
+    request: { sequence: variantIndex + 1, normalizedQuery: normalizeGridlySearchDisplayLabel(query), provider: "gridly-geocode/nominatim", locality: requestVariant?.locality || null, lat: requestVariant?.lat ?? null, lng: requestVariant?.lng ?? null, viewbox: request.context.viewbox || null, countryCodes: countryCodes || "us", state: requestVariant?.state || null, county: requestVariant?.county || null, radius: null, bounded: requestVariant?.bounded === true, limit: request.limit, variant: requestVariant?.variant || "legacy" }
   };
   if (!response.ok) {
     if (response.status === "no_results") {
@@ -89595,10 +89603,15 @@ async function gridlySearchAddress(query, options = {}) {
   const parsedLimit = Number(options.limit);
   const limit = Number.isFinite(parsedLimit) ? Math.min(Math.max(Math.floor(parsedLimit), 1), 10) : 5;
   const countryCodes = String(options.countryCodes || "us").trim() || "us";
+  // Materialize LP201 before identity is converted to a ranking/provider anchor.
+  // A selected canonical PLACE must never borrow the manually panned map center.
+  await gridlyLoadStatewidePlacePresentation().catch(() => null);
   const searchContext = getGridlyDestinationSearchContainmentContext(getGridlySearchMapContext());
   const intent = classifyGridlyDestinationSearchIntent(rawQuery);
   const addressModel = buildGridlyLp097AddressModel(rawQuery);
-  const queryVariants = buildGridlySearchQueryVariants(rawQuery, { intent });
+  const anchor = getGridlySearchAnchorContext(searchContext);
+  const canonicalPlan = window.GRIDLY_DESTINATION_SEARCH_LOCALITY?.buildProviderRequestPlan?.(rawQuery, anchor) || [];
+  const queryVariants = canonicalPlan.length ? canonicalPlan : buildGridlySearchQueryVariants(rawQuery, { intent }).map((query) => ({ variant: "legacy", query, viewbox: searchContext.viewbox || null }));
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
   const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, seedResults.length);
   const providerResults = [...seedResults];
@@ -89606,18 +89619,21 @@ async function gridlySearchAddress(query, options = {}) {
   setGridlyLp101PipelineStage(lp101CaseName, "localCandidates", seedResults, rawQuery);
   let remoteProviderResultCount = 0;
 
-  for (const [variantIndex, variant] of queryVariants.entries()) {
+  for (const [variantIndex, requestVariant] of queryVariants.entries()) {
+    const variant = typeof requestVariant === "string" ? requestVariant : requestVariant.query;
+    const variantContext = typeof requestVariant === "string" ? searchContext : { ...searchContext, viewbox: Array.isArray(requestVariant.viewbox) ? requestVariant.viewbox.join(",") : "", activeTown: requestVariant.locality || null, activeCounty: requestVariant.county || null, canonicalCommunityKey: anchor?.canonicalCommunityKey || null };
     const variantResults = await fetchGridlyNominatimSearch(variant, {
       limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT,
       countryCodes,
-      searchContext,
+      searchContext: variantContext,
       bounded: options.bounded === "1" ? "1" : "0",
       diagnostics,
       variantIndex,
+      requestVariant: typeof requestVariant === "string" ? { variant: "legacy", query: variant } : requestVariant,
       structured: intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && variantIndex === 0 ? addressModel.structured : null
     });
     remoteProviderResultCount += variantResults.length;
-    providerResults.push(...variantResults);
+    providerResults.push(...variantResults.map((result, rawProviderOrder) => ({ ...result, requestProvenance: { requestSequence: variantIndex + 1, requestVariant: requestVariant.variant || "legacy", rawProviderOrder } })));
     setGridlyLp101PipelineStage(lp101CaseName, "providerCandidates", providerResults.slice(seedResults.length), rawQuery);
     const exactInAttempt = variantResults.map((item) => normalizeGridlySearchResult(item)).filter(Boolean)
       .map((item) => ({ ...item, ...classifyGridlyLp097Result(item, addressModel) }))
@@ -89681,19 +89697,41 @@ async function gridlySearchAddress(query, options = {}) {
   diagnostics.normalizedCandidateCount = prioritizedResults.length;
   diagnostics.deduplicatedCandidateCount = dedupedResults.length;
   diagnostics.anchor = getGridlySearchAnchorContext(searchContext);
-  diagnostics.pipeline = Object.freeze({ retrieval: providerResults.length, normalization: prioritizedResults.length, geographicEligibility: containmentFilteredResults.length, ranking: prioritizedResults.length, deduplication: dedupedResults.length, truncation: finalResults.length });
+  const canonicalLocalityKey = normalizeGridlySearchDisplayLabel(diagnostics.anchor?.label || "");
+  const isCanonicalLocalCandidate = (candidate) => canonicalLocalityKey && [candidate?.raw?.address?.city, candidate?.raw?.address?.town, candidate?.raw?.address?.village, candidate?.raw?.city, candidate?.city]
+    .some((value) => normalizeGridlySearchDisplayLabel(value || "") === canonicalLocalityKey);
+  const coordinateValidCount = prioritizedResults.filter((candidate) => Number.isFinite(candidate?.lat) && Number.isFinite(candidate?.lng)).length;
+  const queryRelevantCount = prioritizedResults.filter((candidate) => getGridlySearchResultTitleMatchScore(candidate, rawQuery) > 0).length;
+  diagnostics.pipeline = Object.freeze({ retrieval: providerResults.length, normalization: prioritizedResults.length, coordinateValid: coordinateValidCount, queryRelevant: queryRelevantCount, geographicEligibility: containmentFilteredResults.length, ranking: prioritizedResults.length, deduplication: dedupedResults.length, truncation: finalResults.length });
+  const countTrace = Object.freeze({
+    requests: diagnostics.variants.map((entry) => ({ sequence: entry.request?.sequence || entry.variantIndex + 1, responseCount: entry.canonicalResultCount, canonicalLocalCandidateCount: 0 })),
+    combinedRaw: { count: providerResults.length, canonicalLocalCandidateCount: providerResults.filter(isCanonicalLocalCandidate).length },
+    normalized: { count: prioritizedResults.length, canonicalLocalCandidateCount: prioritizedResults.filter(isCanonicalLocalCandidate).length },
+    coordinateValid: { count: coordinateValidCount, canonicalLocalCandidateCount: prioritizedResults.filter((candidate) => isCanonicalLocalCandidate(candidate) && Number.isFinite(candidate?.lat) && Number.isFinite(candidate?.lng)).length },
+    queryRelevant: { count: queryRelevantCount, canonicalLocalCandidateCount: prioritizedResults.filter((candidate) => isCanonicalLocalCandidate(candidate) && getGridlySearchResultTitleMatchScore(candidate, rawQuery) > 0).length },
+    preRanking: { count: providerResults.length, canonicalLocalCandidateCount: providerResults.filter(isCanonicalLocalCandidate).length },
+    ranked: { count: prioritizedResults.length, canonicalLocalCandidateCount: prioritizedResults.filter(isCanonicalLocalCandidate).length },
+    deduplicated: { count: dedupedResults.length, canonicalLocalCandidateCount: dedupedResults.filter(isCanonicalLocalCandidate).length },
+    visible: { count: finalResults.length, canonicalLocalCandidateCount: finalResults.filter(isCanonicalLocalCandidate).length }
+  });
+  countTrace.requests.forEach((request, index) => { request.canonicalLocalCandidateCount = providerResults.filter((candidate) => candidate.requestProvenance?.requestSequence === index + 1 && isCanonicalLocalCandidate(candidate)).length; });
   gridlySearchUiState.lastGovernedSearchAudit = Object.freeze({
     query: normalizeGridlyBrandSearchText(rawQuery),
     canonicalCommunity: diagnostics.anchor?.label || null,
     canonicalCommunityKey: diagnostics.anchor?.canonicalCommunityKey || null,
     placeGeoid: diagnostics.anchor?.placeGeoid || null,
-    geographicAuthority: diagnostics.anchor?.source || "default_center",
+    geographicAuthority: diagnostics.anchor?.geographicAuthority || (diagnostics.anchor?.source === "canonical_place_presentation" ? "canonical_place_presentation" : diagnostics.anchor?.source || "default_center"),
     anchor: diagnostics.anchor ? { lat: diagnostics.anchor.lat, lng: diagnostics.anchor.lng } : null,
+    anchorSource: diagnostics.anchor?.anchorSource || diagnostics.anchor?.source || null,
+    providerRequestVariants: diagnostics.variants.map((entry) => ({ ...entry.request, responseCount: entry.canonicalResultCount })),
+    providerCoverageStatus: countTrace.requests.some((entry) => entry.canonicalLocalCandidateCount > 0) ? "LOCAL_PROVIDER_CANDIDATE_RECEIVED" : "LIVE_PROVIDER_CANDIDATE_COVERAGE_FAILURE",
+    countTrace,
+    firstCanonicalLocalCandidateAbsenceBoundary: countTrace.requests[0]?.canonicalLocalCandidateCount > 0 ? null : "canonical_local_provider_response",
     source: "local seeds + Gridly geocoding provider",
     preRankingCandidateCount: providerResults.length,
     rankedCandidateCount: prioritizedResults.length,
     visibleResultCount: finalResults.length,
-    candidates: prioritizedResults.map((candidate) => ({ identity: candidate.providerId || candidate.id || null, deduplicationIdentity: `${normalizeGridlySearchDisplayLabel(candidate.title || candidate.label)}|${Number(candidate.lat).toFixed(3)},${Number(candidate.lng).toFixed(3)}`, name: candidate.title || candidate.label, locality: candidate.raw?.address?.city || candidate.raw?.address?.town || candidate.raw?.address?.village || candidate.raw?.city || "", source: candidate.provider || candidate.source || "unknown", lat: candidate.lat, lng: candidate.lng, distanceMiles: candidate.searchRank?.anchorDistanceMiles ?? null, textRelevance: candidate.searchRank?.components?.textRelevance ?? 0, scoreComponents: candidate.searchRank?.components || {}, rankScore: candidate.searchRank?.score ?? null, finalRank: candidate.searchRank?.rank ?? null, visible: finalResults.includes(candidate), suppressed: !finalResults.includes(candidate), reason: finalResults.includes(candidate) ? "governed_best_match" : "deduplicated_filtered_or_below_visible_limit" }))
+    candidates: prioritizedResults.map((candidate) => ({ identity: candidate.providerId || candidate.id || null, deduplicationIdentity: `${normalizeGridlySearchDisplayLabel(candidate.title || candidate.label)}|${Number(candidate.lat).toFixed(3)},${Number(candidate.lng).toFixed(3)}`, name: candidate.title || candidate.label, locality: candidate.raw?.address?.city || candidate.raw?.address?.town || candidate.raw?.address?.village || candidate.raw?.city || "", source: candidate.provider || candidate.source || "unknown", lat: candidate.lat, lng: candidate.lng, distanceMiles: candidate.searchRank?.anchorDistanceMiles ?? null, requestProvenance: candidate.requestProvenance || null, textRelevance: candidate.searchRank?.components?.textRelevance ?? 0, scoreComponents: candidate.searchRank?.components || {}, rankScore: candidate.searchRank?.score ?? null, finalRank: candidate.searchRank?.rank ?? null, visible: finalResults.includes(candidate), suppressed: !finalResults.includes(candidate), reason: finalResults.includes(candidate) ? "governed_best_match" : "deduplicated_filtered_or_below_visible_limit" }))
   });
   finalizeGridlyDestinationProviderDiagnostics(diagnostics, remoteProviderResultCount, finalResults.length);
   Object.defineProperty(finalResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
