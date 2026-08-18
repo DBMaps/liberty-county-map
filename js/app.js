@@ -3167,6 +3167,8 @@ function gridlyLp0541bNormalizeTextToken(value = "") {
 }
 
 function gridlyLp0541bCanonicalHazardLabel(record = {}) {
+  const governedSemantic = typeof globalThis !== "undefined" ? globalThis.gridlyAlertSemanticContract?.classify?.(record) : null;
+  if (governedSemantic && governedSemantic.ownership !== "COMMUNITY") return governedSemantic.title;
   const raw = record?.canonicalSourceRecord || record?.raw || record?.source || record?.latestReport || {};
   const normalize = gridlyLp0541bNormalizeTextToken;
   const sourceKind = normalize(record?.sourceKind || record?.reportKind || raw?.sourceKind || raw?.reportKind || "");
@@ -59086,6 +59088,11 @@ function getGridlyHeaderRailTextRejectionReason(text = "", activeCategory = "") 
 
 
 function isGridlyAlertRailOrCrossingRelated(alert = {}) {
+  const semanticContract = typeof globalThis !== "undefined" ? globalThis.gridlyAlertSemanticContract : null;
+  if (semanticContract?.sourceOwnership) {
+    if (semanticContract.sourceOwnership(alert) !== "CROSSING") return false;
+    return semanticContract.crossingBlockedEvidence(alert);
+  }
   const reportKind = normalizeGridlyLightweightCategoryValue(alert?.reportKind || alert?.report_kind || alert?.kind || "");
   const categoryText = normalizeGridlyLightweightCategoryValue([
     alert?.normalizedCategory,
@@ -79158,6 +79165,8 @@ function stripGridlyAlertCardLocationFromTitle(value = "") {
 }
 
 function normalizeGridlyAlertCardTitleCandidate(alert = {}, fallbackTitle = "") {
+  const governedSemantic = typeof globalThis !== "undefined" ? globalThis.gridlyAlertSemanticContract?.classify?.(alert) : null;
+  if (governedSemantic && governedSemantic.ownership !== "COMMUNITY") return governedSemantic.title;
   if (isGridlyAlertCardCrossingRelated(alert)) {
     const crossingTypeText = [alert?.report_type, alert?.reportType, alert?.type, alert?.eventType, alert?.title, alert?.headline, alert?.resolvedHeadline].map((value) => String(value || "")).join(" ");
     return /\b(?:train|rail_delay|delay|delayed|blocked|blocking)\b/i.test(crossingTypeText) ? "Train Blocking Crossing" : "Crossing Blocked";
@@ -79174,6 +79183,8 @@ function normalizeGridlyAlertCardTitleCandidate(alert = {}, fallbackTitle = "") 
     .find(Boolean) || "";
   const normalized = String(rawEvent || "").toLowerCase();
   const eventMap = [
+    { test: /bridge\s+(?:restriction|closed|closure)|weight\s+limit|height\s+limit/, label: "Bridge Restriction" },
+    { test: /lane[_\s-]*(?:closure|closed|blocked)|shoulder[_\s-]*(?:closure|closed)/, label: "Lane Closure" },
     { test: /downed\s+power|power\s+line/, label: "Downed Power Line" },
     { test: /livestock|animal/, label: "Livestock on Road" },
     { test: /road[_\s-]*(?:closed|closure)|\bclosure\b|\bclosed\b/, label: "Road Closed" },
@@ -111486,6 +111497,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function getGridlyAlertSituationType(alert = {}) {
+    const governedSemantic = typeof globalThis !== "undefined" ? globalThis.gridlyAlertSemanticContract?.classify?.(alert) : null;
+    if (governedSemantic) return governedSemantic.classification;
     const sourceText = [
       alert?.situationType,
       alert?.hazardType,
@@ -111531,9 +111544,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function getAlertClusterKey(alert = {}) {
     const kind = getGridlyAlertSituationType(alert);
+    const ownership = typeof globalThis !== "undefined" ? globalThis.gridlyAlertSemanticContract?.sourceOwnership?.(alert) || "unknown" : "unknown";
     const corridor = pickFirstNonEmptyText([alert?.corridor, alert?.roadName, alert?.primaryRoad, alert?.route, alert?.titleRoad]).toLowerCase();
     const locationCluster = getAlertLocationClusterLabel(alert).toLowerCase();
-    return `${kind}|${corridor}|${locationCluster}`;
+    return `${ownership}|${kind}|${corridor}|${locationCluster}`;
   }
 
   function gridlyGetAlertClusterKeyWithContext(alert = {}, context = null, audit = null) {
