@@ -40265,6 +40265,7 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
     safeNumber(counts.hazardCount),
     safeNumber(counts.reportCount),
     safeLength(safeSummary.activeReportsInArea),
+    safeLength(safeSummary.activeHazardsInArea),
     safeNumber(safeSummary.reportCount),
     safeNumber(safeSummary.activeReportsInAreaCount),
     safeNumber(visibleCountModel?.visibleAlertIncidentCount),
@@ -40295,7 +40296,7 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const alertsCommunityReportCount = Number(alertsSnapshot?.communityReportCount ?? alertsSnapshot?.rawAlertRecordCount);
   const reconciledActiveIssueCount = getGridlyReconciledAwarenessActiveIssueCount(safeSummary, { activeIssueCount: rawActiveIssueCount, hazardCount, reportCount: reportCount + crossingReportCount });
   const activeIssueCount = Number.isFinite(alertsGroupedIssueCount) && alertsGroupedIssueCount > 0
-    ? Math.max(0, alertsGroupedIssueCount)
+    ? Math.max(0, alertsGroupedIssueCount, reconciledActiveIssueCount)
     : reconciledActiveIssueCount;
   const evidenceReportCount = Number.isFinite(alertsCommunityReportCount) && alertsCommunityReportCount > 0
     ? alertsCommunityReportCount
