@@ -20,6 +20,7 @@
     lastFetchSucceeded: false,
     lastError: null,
     lastRequestAt: null,
+    initialFetchAttempted: false,
     refreshIntervalMs: REFRESH_INTERVAL_MS
   };
 
@@ -465,6 +466,7 @@
   }
 
   async function fetchNowInternal() {
+    state.initialFetchAttempted = true;
     state.networkingAvailable = typeof globalScope.fetch === "function";
     state.lastRequestAt = new Date().toISOString();
     let attempt = 0;
@@ -865,7 +867,12 @@
       normalizedRecordCount: state.normalizedRecordCount,
       refreshIntervalMs: REFRESH_INTERVAL_MS,
       apiKeyConfigured: Boolean(getConnectorConfig().apiKey),
-      configurationSource: getConnectorConfig().configurationSource
+      configurationSource: getConnectorConfig().configurationSource,
+      initialFetchAttempted: state.initialFetchAttempted === true,
+      lastFetchSucceeded: state.lastFetchSucceeded === true,
+      lastSuccessfulAt: lastSuccessfulFetchAt,
+      retainedRecordCount: allNormalizedRecords.length,
+      lastError: state.lastError
     });
   }
 

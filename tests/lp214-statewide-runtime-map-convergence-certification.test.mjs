@@ -9,6 +9,11 @@ test('LP214 statewide runtime and map convergence closes every denominator', () 
   assert.equal(artifact.totals.runtimeResolved,1859);
   assert.equal(artifact.communities.length,1859);
   assert.equal(artifact.contracts.markerPublication.forbidden,'SILENTLY_DROPPED');
+  assert.equal(artifact.contracts.freshStartProviderContract.dimension,'FRESH_START_PROVIDER_CONVERGENCE');
+  assert.equal(artifact.contracts.configurationReadinessContract.explicitSignal,'gridlyConfigurationReady');
+  assert.equal(artifact.contracts.startupRecoveryContract.arbitraryTimeout,false);
+  assert.deepEqual(Object.keys(artifact.controls).sort(),['austin','dallas','houston','multiCounty','rural']);
+  assert(Object.values(artifact.controls).every(control => control?.focus === 'PASS'));
 });
 
 test('committed statewide runtime parity artifact is deterministic', () => assert.doesNotThrow(() => run({verify:true})));

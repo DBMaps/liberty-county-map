@@ -53,7 +53,10 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
     "js/gridlyDriveTexasAuthoritySourceIntegration.js",
     // LP214's subsequently authorized canonical-focus bridge changes only the
     // connector's awareness-context input; source fetch/normalization remain protected.
-    "js/gridlyDriveTexasLiveConnector.js"
+    "js/gridlyDriveTexasLiveConnector.js",
+    // LP214 cold-start closure governs configuration readiness before the
+    // existing connector activation/fetch lifecycle; provider normalization is unchanged.
+    "js/gridlyOfficialProviderActivation.js"
   ]);
   assert(changed.every((file) => allowedConsumerBoundaries.has(file)), `unexpected protected JavaScript change: ${changed.join(", ")}`);
   assert(!changed.some((file) => /DriveTexasProvider|Weather/i.test(file)));
