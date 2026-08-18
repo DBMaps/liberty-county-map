@@ -54,6 +54,9 @@ function harness() {
       window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary = summary;
       window.locationContextCount = summary.sharedActiveIssueContract.activeIssueCount;
       window.lastPublication = publication;
+      // Reproduce the production portrait normalization that used to leave
+      // the microline with an equal-but-distinct post-publication copy.
+      window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary = { ...summary };
       return summary;
     }
   };
@@ -136,6 +139,8 @@ test('Dallas 8 -> Houston 0 -> Dallas 8 atomically replaces identity, counts and
   assert.equal(audit.publishedPulseOfficialCount, 0);
   assert.equal(audit.publishedMicrolineOfficialCount, 0);
   assert.equal(audit.sameSummaryReference, true);
+  assert.equal(audit.previousAreaIdentity, 'place-4819000');
+  assert.equal(audit.transitionRevision, 1);
 
   const dallasAgain = h.publish(dallasRecords, { area: { key: 'place-4819000', label: 'Dallas' } });
   assert.equal(dallasAgain.sharedActiveIssueContract.areaIdentity, 'place-4819000');
@@ -143,6 +148,7 @@ test('Dallas 8 -> Houston 0 -> Dallas 8 atomically replaces identity, counts and
   assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, dallasAgain);
   audit = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit();
   assert.equal(audit.sameSummaryReference, true);
+  assert.equal(audit.previousAreaIdentity, 'place-4835000');
 });
 
 test('area transition never treats prior-area retained records as current evidence', () => {
@@ -164,6 +170,8 @@ test('zero-to-zero and nonzero-to-nonzero transitions still replace canonical id
   const dallasZero = h.publish([]);
   const houstonZero = h.publish([], { area: { key: 'place-4835000', label: 'Houston' } });
   assert.notEqual(dallasZero.sharedActiveIssueContract.areaIdentity, houstonZero.sharedActiveIssueContract.areaIdentity);
+  assert.notEqual(dallasZero, houstonZero);
+  assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, houstonZero);
   const communityA = h.publish([{ id: 'houston-1' }, { id: 'houston-2' }]);
   const communityB = h.publish([{ id: 'dallas-1' }], { area: { key: 'place-4819000', label: 'Dallas' } });
   assert.equal(communityA.sharedActiveIssueContract.activeOfficialRoadwayCount, 2);
@@ -176,6 +184,8 @@ test('publication bridge is shared and fails closed when evidence is absent', ()
   assert.match(app, /communityAwarenessSummary: summary/);
   assert.match(app, /refreshPortraitV2LocalizedIntelligence/);
   assert.match(app, /locationContextCertificationStatus = sharedActiveIssueCount === null \|\| homeLocationContextIssueCount === null/);
+  assert.match(app, /locationContextDatasetCount \?\? parseLeadingCount\(visibleHomeCountText\)/);
+  assert.match(app, /hasAuthoritativeSharedCount \? "" : mobileOwnership\?\.meta/);
   assert.match(app, /"CERTIFICATION_INDETERMINATE"/);
   assert.doesNotMatch(source, /Dallas|Houston|place-4819000|place-4835000/);
   const inventory = JSON.parse(fs.readFileSync('data/generated/lp214-county-community-inventory.json', 'utf8'));
