@@ -119,6 +119,57 @@ test('cold start, refresh, healthy empty, failure retention and community transi
   assert.equal(dallas.sharedActiveIssueContract.activeOfficialRoadwayCount, 1);
 });
 
+test('Dallas 8 -> Houston 0 -> Dallas 8 atomically replaces identity, counts and references', () => {
+  const h = harness();
+  const dallasRecords = Array.from({ length: 8 }, (_, i) => ({ id: `dallas-${i}` }));
+  const dallas = h.publish(dallasRecords);
+  assert.equal(dallas.sharedActiveIssueContract.activeOfficialRoadwayCount, 8);
+
+  const houston = h.publish([], { area: { key: 'place-4835000', label: 'Houston' } });
+  assert.equal(houston.sharedActiveIssueContract.areaIdentity, 'place-4835000');
+  assert.equal(houston.sharedActiveIssueContract.activeOfficialRoadwayCount, 0);
+  assert.equal(houston.sharedActiveIssueContract.activeIssueCount, 0);
+  assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, houston);
+  assert.equal(h.window.locationContextCount, 0);
+  let audit = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit();
+  assert.equal(audit.enrichedSummaryOfficialCount, 0);
+  assert.equal(audit.publishedPulseOfficialCount, 0);
+  assert.equal(audit.publishedMicrolineOfficialCount, 0);
+  assert.equal(audit.sameSummaryReference, true);
+
+  const dallasAgain = h.publish(dallasRecords, { area: { key: 'place-4819000', label: 'Dallas' } });
+  assert.equal(dallasAgain.sharedActiveIssueContract.areaIdentity, 'place-4819000');
+  assert.equal(dallasAgain.sharedActiveIssueContract.activeOfficialRoadwayCount, 8);
+  assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, dallasAgain);
+  audit = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit();
+  assert.equal(audit.sameSummaryReference, true);
+});
+
+test('area transition never treats prior-area retained records as current evidence', () => {
+  const h = harness();
+  h.publish(Array.from({ length: 8 }, (_, i) => ({ id: `dallas-${i}` })));
+  const failedHouston = h.publish([], {
+    area: { key: 'place-4835000', label: 'Houston' },
+    connected: false,
+    error: 'network failure',
+    reason: 'fetch-failure'
+  });
+  assert.equal(failedHouston.sharedActiveIssueContract.areaIdentity, 'place-4835000');
+  assert.equal(failedHouston.sharedActiveIssueContract.activeOfficialRoadwayCount, 0);
+  assert.equal(failedHouston.sharedActiveIssueContract.officialRoadwaySourceStatus, 'SOURCE_FAILED_NO_RETAINED_DATA');
+});
+
+test('zero-to-zero and nonzero-to-nonzero transitions still replace canonical identity', () => {
+  const h = harness();
+  const dallasZero = h.publish([]);
+  const houstonZero = h.publish([], { area: { key: 'place-4835000', label: 'Houston' } });
+  assert.notEqual(dallasZero.sharedActiveIssueContract.areaIdentity, houstonZero.sharedActiveIssueContract.areaIdentity);
+  const communityA = h.publish([{ id: 'houston-1' }, { id: 'houston-2' }]);
+  const communityB = h.publish([{ id: 'dallas-1' }], { area: { key: 'place-4819000', label: 'Dallas' } });
+  assert.equal(communityA.sharedActiveIssueContract.activeOfficialRoadwayCount, 2);
+  assert.equal(communityB.sharedActiveIssueContract.activeOfficialRoadwayCount, 1);
+});
+
 test('publication bridge is shared and fails closed when evidence is absent', () => {
   const app = fs.readFileSync('js/app.js', 'utf8');
   assert.match(app, /function gridlyPublishAuthoritativeCommunityAwarenessSummary/);

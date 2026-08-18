@@ -12,6 +12,7 @@
     originalBuilder: null,
     originalConsumerRefresh: null,
     lastSuccessfulRecords: [],
+    lastSuccessfulAreaIdentity: null,
     lastSuccessfulAt: null,
     hasSuccessfulDataset: false,
     lastEnrichment: null,
@@ -22,7 +23,10 @@
     awarenessRevision: 0,
     lastRevisionReason: null,
     publicationRevision: 0,
-    lastPublishedSummary: null
+    lastPublishedSummary: null,
+    previousAreaIdentity: null,
+    currentAreaIdentity: null,
+    transitionRevision: 0
   };
 
   function cloneRecords(records) {
@@ -83,7 +87,7 @@
   }
 
   function canonicalAreaKey(area) {
-    return String(area?.key || area?.canonicalKey || "").trim();
+    return String(area?.key || area?.canonicalKey || area?.id || "").trim();
   }
 
   function buildSharedActiveIssueContract(summary, officialInArea, officialSource, selectedArea) {
@@ -129,8 +133,13 @@
     });
   }
 
+  function selectedAreaIdentity() {
+    try { return canonicalAreaKey(globalScope.getGridlySelectedAwarenessArea?.()); } catch (_error) { return ""; }
+  }
+
   function rememberSuccessfulConnectorRecords(records) {
     state.lastSuccessfulRecords = cloneRecords(records);
+    state.lastSuccessfulAreaIdentity = selectedAreaIdentity() || null;
     state.hasSuccessfulDataset = true;
     let sourceTimestamp = null;
     try {
@@ -204,12 +213,14 @@
       };
     }
 
-    const retainedRecords = connectorRecords.length
-      ? connectorRecords
-      : providerRecords.length
-        ? providerRecords
-        : cloneRecords(state.lastSuccessfulRecords);
-    const retained = state.hasSuccessfulDataset || retainedRecords.length > 0;
+    const retentionMatchesArea = !state.lastSuccessfulAreaIdentity || state.lastSuccessfulAreaIdentity === selectedAreaIdentity();
+    // Connector/provider caches are retained source snapshots too. They are
+    // eligible during failure only when the last successful fetch belonged
+    // to this same canonical area.
+    const retainedRecords = retentionMatchesArea
+      ? (connectorRecords.length ? connectorRecords : (providerRecords.length ? providerRecords : cloneRecords(state.lastSuccessfulRecords)))
+      : [];
+    const retained = retentionMatchesArea && (state.hasSuccessfulDataset || retainedRecords.length > 0);
     if (explicitFailure) {
       return {
         records: retainedRecords,
@@ -263,6 +274,13 @@
     const selectedArea = typeof globalScope.getGridlySelectedAwarenessArea === "function"
       ? globalScope.getGridlySelectedAwarenessArea()
       : summary.selectedAwarenessArea || null;
+    const currentIdentity = canonicalAreaKey(selectedArea);
+    const summaryIdentity = canonicalAreaKey(summary?.sharedActiveIssueContract) || canonicalAreaKey(summary?.selectedAwarenessArea);
+    if (summaryIdentity && currentIdentity && summaryIdentity !== currentIdentity && state.originalBuilder) {
+      // Never enrich a previous community's lists in place. Zero is a valid
+      // current-area publication, not permission to retain the old snapshot.
+      return enrichSummary(state.originalBuilder({ awarenessArea: selectedArea }));
+    }
 
     // readOfficialSourceEnvelope has already asked the DriveTexas consumer
     // selector for the current canonical area. Re-filtering its normalized
@@ -347,9 +365,14 @@
       // every shared consumer.  Enriching the Pulse and microline copies in
       // isolation left portrait normalization and Location Context holding a
       // pre-enrichment snapshot, and did not cause either surface to render.
-      const candidate = pulseState?.communityAwarenessSummary
+      let candidate = pulseState?.communityAwarenessSummary
         || globalScope.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
         || null;
+      const currentIdentity = selectedAreaIdentity();
+      const candidateIdentity = canonicalAreaKey(candidate?.sharedActiveIssueContract) || canonicalAreaKey(candidate?.selectedAwarenessArea);
+      if ((!candidate || (candidateIdentity && currentIdentity && candidateIdentity !== currentIdentity)) && state.originalBuilder) {
+        candidate = state.originalBuilder({ awarenessArea: globalScope.getGridlySelectedAwarenessArea?.() });
+      }
       if (!candidate) return null;
       const authoritativeSummary = enrichSummary(candidate);
       state.publicationRevision += 1;
@@ -372,6 +395,28 @@
       return authoritativeSummary;
     } catch (_error) {}
     return null;
+  }
+
+  function publishCanonicalAreaTransitionSummary(summary, reason = "canonical-area-change") {
+    const nextIdentity = selectedAreaIdentity();
+    if (nextIdentity && nextIdentity !== state.currentAreaIdentity) {
+      state.previousAreaIdentity = state.currentAreaIdentity;
+      state.currentAreaIdentity = nextIdentity;
+      state.transitionRevision += 1;
+      state.lastPublishedSummary = null;
+      advanceAwarenessRevision(reason);
+    }
+    const authoritativeSummary = enrichSummary(summary || state.originalBuilder?.({ awarenessArea: globalScope.getGridlySelectedAwarenessArea?.() }));
+    if (!authoritativeSummary) return null;
+    state.publicationRevision += 1;
+    state.lastPublishedSummary = authoritativeSummary;
+    globalScope.gridlyPublishAuthoritativeCommunityAwarenessSummary?.(authoritativeSummary, {
+      publicationRevision: state.publicationRevision,
+      summaryRevision: state.awarenessRevision,
+      transitionRevision: state.transitionRevision,
+      reason
+    });
+    return authoritativeSummary;
   }
 
   function rebuildSharedAwarenessAfterInitialConnector(reason) {
@@ -521,6 +566,7 @@
     const microlineSummary = globalScope.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary || null;
     const sourceStatusEnvelope = readOfficialSourceEnvelope();
     const officialCount = (summary) => Number(summary?.sharedActiveIssueContract?.activeOfficialRoadwayCount || 0);
+    const sharedCount = (summary) => Number(summary?.sharedActiveIssueContract?.activeIssueCount || 0);
     const locationContextCount = Number(globalScope.document?.querySelector?.('[data-v2-location-awareness="panel"]')?.dataset?.activeAwarenessCount);
     return {
       available: true,
@@ -541,10 +587,21 @@
       enrichedSummaryOfficialCount: officialCount(state.lastPublishedSummary),
       publishedPulseOfficialCount: officialCount(pulseSummary),
       publishedMicrolineOfficialCount: officialCount(microlineSummary),
+      enrichedCount: sharedCount(state.lastPublishedSummary),
+      pulseCount: sharedCount(pulseSummary),
+      microlineCount: sharedCount(microlineSummary),
+      sharedCount: sharedCount(state.lastPublishedSummary),
       publishedLocationContextCount: Number.isFinite(locationContextCount) ? locationContextCount : null,
       summaryRevision: Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || state.awarenessRevision || 0),
       publicationRevision: state.publicationRevision,
       areaIdentity: state.lastPublishedSummary?.sharedActiveIssueContract?.areaIdentity || null,
+      selectedAreaIdentity: selectedAreaIdentity() || null,
+      publisherAreaIdentity: state.lastPublishedSummary?.sharedActiveIssueContract?.areaIdentity || null,
+      pulseAreaIdentity: pulseSummary?.sharedActiveIssueContract?.areaIdentity || null,
+      microlineAreaIdentity: microlineSummary?.sharedActiveIssueContract?.areaIdentity || null,
+      portraitAreaIdentity: globalScope.document?.querySelector?.('[data-v2-location-awareness="panel"]')?.dataset?.areaIdentity || null,
+      previousAreaIdentity: state.previousAreaIdentity,
+      transitionRevision: state.transitionRevision,
       sameSummaryReference: Boolean(state.lastPublishedSummary && pulseSummary === state.lastPublishedSummary && (!microlineSummary || microlineSummary === state.lastPublishedSummary)),
       consumerRefreshBridgeInstalled: Boolean(
         globalScope.gridlyOfficialProviderConsumerRefresh?.__gridlyOfficialRoadwayRetentionBridge
@@ -558,6 +615,7 @@
     };
   };
   globalScope.gridlyGetDriveTexasConsumerSourceStatusEnvelope = readOfficialSourceEnvelope;
+  globalScope.gridlyPublishCanonicalAreaTransitionSummary = publishCanonicalAreaTransitionSummary;
   globalScope.gridlyBuildSharedActiveIssueContract = buildSharedActiveIssueContract;
   globalScope.GRIDLY_DRIVETEXAS_CONSUMER_SOURCE_STATUS = SOURCE_STATUS;
 })(window);

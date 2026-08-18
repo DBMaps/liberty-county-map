@@ -40339,12 +40339,12 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
 }
 
 function getGridlyAwarenessSummaryAreaIdentity(summary = {}) {
-  return normalizeGridlyAwarenessAreaLookupText(summary?.awarenessAreaName || summary?.areaName || summary?.selectedAwarenessArea?.label || summary?.selectedAwarenessArea?.storageValue || "");
+  return normalizeGridlyAwarenessAreaLookupText(summary?.sharedActiveIssueContract?.areaIdentity || summary?.selectedAwarenessArea?.key || summary?.awarenessAreaName || summary?.areaName || summary?.selectedAwarenessArea?.label || summary?.selectedAwarenessArea?.storageValue || "");
 }
 
 function getGridlyCurrentSelectedAwarenessAreaIdentity() {
   const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
-  return normalizeGridlyAwarenessAreaLookupText(selectedArea?.label || selectedArea?.storageValue || selectedArea?.key || "");
+  return normalizeGridlyAwarenessAreaLookupText(selectedArea?.key || selectedArea?.label || selectedArea?.storageValue || "");
 }
 
 function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {
@@ -40516,14 +40516,17 @@ function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-cha
   const summary = typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
     ? buildGridlyCommunityAwarenessIntelligenceSummary(options?.summaryOptions || {})
     : null;
+  const authoritativeSummary = typeof window.gridlyPublishCanonicalAreaTransitionSummary === "function"
+    ? window.gridlyPublishCanonicalAreaTransitionSummary(summary, reason)
+    : summary;
   const awarenessAreaName = safeDisplayText(summary?.awarenessAreaName, gridlyGetActiveCountyConfig()?.name || "selected county");
   const scopedPulseOptions = {
     ...(options?.pulseOptions || {}),
     ...(options?.summaryOptions || {}),
-    activeReports: Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea : options?.pulseOptions?.activeReports,
-    activeHazards: Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea : options?.pulseOptions?.activeHazards,
-    communityAwarenessSummary: summary,
-    communityActivityCount: (Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea.length : 0) + (Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea.length : 0),
+    activeReports: Array.isArray(authoritativeSummary?.activeReportsInArea) ? authoritativeSummary.activeReportsInArea : options?.pulseOptions?.activeReports,
+    activeHazards: Array.isArray(authoritativeSummary?.activeHazardsInArea) ? authoritativeSummary.activeHazardsInArea : options?.pulseOptions?.activeHazards,
+    communityAwarenessSummary: authoritativeSummary,
+    communityActivityCount: (Array.isArray(authoritativeSummary?.activeReportsInArea) ? authoritativeSummary.activeReportsInArea.length : 0) + (Array.isArray(authoritativeSummary?.activeHazardsInArea) ? authoritativeSummary.activeHazardsInArea.length : 0),
     communityActivitySource: "awareness_area_immediate_sync.area_scoped_active_items",
     reason
   };
@@ -40540,7 +40543,7 @@ function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-cha
   if (typeof refreshPortraitV2LocalizedIntelligence === "function" && options?.refreshPortrait !== false) {
     portraitRefreshResult = refreshPortraitV2LocalizedIntelligence({
       pulseModel: communityPulseState,
-      communityAwarenessSummary: summary
+      communityAwarenessSummary: authoritativeSummary
     });
   }
   if (typeof renderUnifiedIncidents === "function" && options?.refreshMapMarkers !== false) {
