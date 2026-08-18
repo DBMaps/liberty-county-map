@@ -177,7 +177,13 @@
       const selectionInput = {
         records: Array.isArray(fallbackRecords) ? fallbackRecords : []
       };
-      if (typeof globalScope.getGridlySelectedAwarenessArea === "function") {
+      // LP039.2 geographic predicates require the governed presentation
+      // focus, not the identity/operational-county object returned by the
+      // raw selection accessor.  In particular, canonical place selections
+      // can carry their certified lat/lng/radius only on this context.
+      if (typeof globalScope.getGridlyCanonicalAwarenessPresentationContext === "function") {
+        selectionInput.selectedAwarenessArea = globalScope.getGridlyCanonicalAwarenessPresentationContext();
+      } else if (typeof globalScope.getGridlySelectedAwarenessArea === "function") {
         selectionInput.selectedAwarenessArea = globalScope.getGridlySelectedAwarenessArea();
       }
       // Capture LP039.2 once, then give that very object to LP039.3.  Counts
