@@ -7,6 +7,7 @@ const readiness = require("../js/gridlyStartupReadiness.js");
 const appSource = fs.readFileSync(path.join(__dirname, "../js/app.js"), "utf8");
 const diagnosticsSource = fs.readFileSync(path.join(__dirname, "../js/gridlyStartupDiagnostics.js"), "utf8");
 const documentSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+const controlSource = fs.readFileSync(path.join(__dirname, "../startup-navigation-control.html"), "utf8");
 
 function deferred() {
   let resolve;
@@ -35,6 +36,23 @@ test("mobile core readiness does not await LP201, provider, or geocoder readines
   assert.deepEqual(await Promise.all(secondary), ["canonical-anchor", "provider-ready", "boundary-ready"]);
   await Promise.resolve();
   assert.deepEqual(ready, [0, 1, 2]);
+});
+
+test("development lifecycle attribution is tiny, bounded, and read-only", () => {
+  assert.match(diagnosticsSource, /isDevelopmentHost/);
+  assert.match(diagnosticsSource, /previousDocumentLifecycle/);
+  assert.match(diagnosticsSource, /beforeunload/);
+  assert.match(diagnosticsSource, /pagehide/);
+  assert.match(diagnosticsSource, /visibilitychange/);
+  assert.match(diagnosticsSource, /\[window, "unload"\]/);
+  assert.match(diagnosticsSource, /\[document, "freeze"\]/);
+  assert.match(diagnosticsSource, /\[document, "resume"\]/);
+  assert.match(diagnosticsSource, /record\.events\.length > 24/);
+  assert.match(diagnosticsSource, /DEVELOPMENT — NAVIGATION LIFECYCLE EVIDENCE/);
+  assert.match(diagnosticsSource, /RELOAD GRIDLY/);
+  assert.doesNotMatch(diagnosticsSource, /sendBeacon\s*\(/);
+  assert.match(controlSource, />OPEN GRIDLY</);
+  assert.match(controlSource, /gridlyLifecycleControl=navigate/);
 });
 
 test("production shell checkpoint precedes secondary crossing wait", () => {

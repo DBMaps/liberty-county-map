@@ -1,10 +1,72 @@
 (function () {
   "use strict";
-  const VERSION = "V929R2-multi-gap-parser-attribution";
+  const VERSION = "V929R3-outgoing-document-lifecycle-attribution";
   const MAX_STAGES = 240;
   const WATCHDOG_MS = 30000;
   const SLOW_STARTUP_MS = 30000;
   const nowMs = () => (typeof performance !== "undefined" && performance.now ? performance.now() : Date.now());
+  const OUTGOING_LIFECYCLE_KEY = "gridlyDevelopmentLifecycleV1";
+  const isDevelopmentHost = /^(?:localhost|127\.0\.0\.1)$/.test(String(location.hostname || "").toLowerCase());
+  let previousDocumentLifecycle = null;
+  function installOutgoingDocumentLifecycleProbe() {
+    if (!isDevelopmentHost) return;
+    try { previousDocumentLifecycle = JSON.parse(sessionStorage.getItem(OUTGOING_LIFECYCLE_KEY) || "null"); } catch (_) { previousDocumentLifecycle = null; }
+    const record = {
+      version: 1,
+      documentTimeOrigin: Math.round(performance.timeOrigin * 100) / 100,
+      navigationType: performance.getEntriesByType("navigation")[0]?.type || null,
+      fetchStart: Math.round((performance.getEntriesByType("navigation")[0]?.fetchStart || 0) * 100) / 100,
+      events: []
+    };
+    const persist = (name, phase, event) => {
+      const relativeMs = nowMs();
+      record.events.push({
+        name,
+        phase,
+        relativeMs: Math.round(relativeMs * 100) / 100,
+        epochMs: Math.round((performance.timeOrigin + relativeMs) * 100) / 100,
+        visibilityState: name === "visibilitychange" ? document.visibilityState : undefined,
+        persisted: event && typeof event.persisted === "boolean" ? event.persisted : undefined
+      });
+      if (record.events.length > 24) record.events.splice(0, record.events.length - 24);
+      try { sessionStorage.setItem(OUTGOING_LIFECYCLE_KEY, JSON.stringify(record)); } catch (_) {}
+    };
+    [
+      [window, "beforeunload"], [window, "pagehide"], [document, "visibilitychange"],
+      [window, "unload"], [document, "freeze"], [document, "resume"]
+    ].forEach(([target, name]) => target.addEventListener(name, (event) => {
+      persist(name, "start", event);
+      persist(name, "end", event);
+    }, { capture: true }));
+    window.gridlyPreviousDocumentLifecycle = previousDocumentLifecycle;
+    const showEvidence = () => {
+      if (!document.body || document.getElementById("gridlyLifecycleEvidence")) return;
+      const navigation = performance.getEntriesByType("navigation")[0];
+      const panel = document.createElement("aside");
+      panel.id = "gridlyLifecycleEvidence";
+      panel.setAttribute("aria-label", "Development lifecycle timing evidence");
+      panel.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:2147483647;max-width:min(430px,calc(100vw - 24px));max-height:45vh;overflow:auto;padding:12px;border:1px solid #43e6a0;border-radius:8px;background:#071426;color:#f4f8fb;font:12px/1.4 monospace;white-space:pre-wrap;box-shadow:0 8px 30px #000a";
+      const prior = previousDocumentLifecycle;
+      panel.textContent = [
+        "DEVELOPMENT — NAVIGATION LIFECYCLE EVIDENCE",
+        `Current: ${navigation?.type || "unavailable"}; pre-fetch ${(navigation?.fetchStart || 0).toFixed(1)} ms`,
+        prior ? `Previous Gridly: ${prior.navigationType || "unknown"}; pre-fetch ${Number(prior.fetchStart || 0).toFixed(1)} ms` : "Previous Gridly: no evidence (expected after control-page navigation)",
+        `Previous lifecycle: ${prior?.events?.length ? prior.events.map((entry) => `${entry.name} ${entry.phase} @ ${entry.epochMs}`).join(" | ") : "none"}`,
+        "",
+        "Reload Gridly once to compare against the control-page navigation."
+      ].join("\n");
+      const reload = document.createElement("button");
+      reload.type = "button";
+      reload.textContent = "RELOAD GRIDLY";
+      reload.style.cssText = "display:block;margin-top:8px;padding:7px 10px;border:0;border-radius:5px;background:#43e6a0;color:#071426;font-weight:800";
+      reload.addEventListener("click", () => location.reload());
+      panel.appendChild(reload);
+      document.body.appendChild(panel);
+    };
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", showEvidence, { once: true });
+    else showEvidence();
+  }
+  installOutgoingDocumentLifecycleProbe();
   const postPaintAuditState = {
     available: true, architectureOnly: true, protectedSystemsChanged: false, scriptStartAt: nowMs(), domContentLoadedAt: null, mobilePortraitVisibleAt: null, dockHandlersInstalledAt: null, startupWorkCompletedAt: null, firstResponsiveInteractionAt: null, firstPointerEventTimestamp: null, firstPointerCaptureObservedAt: null, firstPointerHandlerEnteredAt: null, firstClickEventTimestamp: null, firstClickCaptureObservedAt: null, firstClickHandlerEnteredAt: null, firstSurfaceOpenAt: null, activeStage: null, activeFunction: null, phases: [], longTasks: []
   };
@@ -333,6 +395,7 @@
       interpretation: "The longest measured segment locates parser unavailability; it does not by itself identify browser-extension or security work."
     };
     const lifecycle = {
+      previousDocumentLifecycle,
       documentWasDiscarded: typeof document.wasDiscarded === "boolean" ? document.wasDiscarded : null,
       events: clone(window.gridlyEarlyLifecycle || []),
       previousDocumentUnloadExposed: Boolean(nav && (nav.unloadEventStart > 0 || nav.unloadEventEnd > 0))
