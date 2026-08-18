@@ -38131,7 +38131,8 @@ const gridlySearchUiState = {
   debugWarningsSeen: new Set(),
   lastContextDiagnostics: null,
   lastSearchShellOpenSource: "",
-  lastLiveSearchAudit: null
+  lastLiveSearchAudit: null,
+  lastGovernedSearchAudit: null
 };
 
 const GRIDLY_SEARCH_RENDER_LIMIT = 5;
@@ -38318,7 +38319,7 @@ function classifyGridlyDestinationSearchIntent(query = "") {
 function getGridlySelectedHomeTownAnchor() {
   const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   if (!area) return null;
-  return { label: area.label, lat: area.lat, lng: area.lng, source: area.countyWide ? "awareness_county" : (area.fallback ? "awareness_fallback" : "awareness_area"), countyWide: area.countyWide === true, fallback: area.fallback === true, radiusMiles: area.radiusMiles ?? null };
+  return { label: area.label, lat: area.lat, lng: area.lng, source: area.countyWide ? "awareness_county" : (area.fallback ? "awareness_fallback" : "canonical_place_presentation"), canonicalCommunityKey: area.storageValue || area.key || area.placeGeoid || area.label, placeGeoid: area.placeGeoid || null, countyWide: area.countyWide === true, fallback: area.fallback === true, radiusMiles: area.radiusMiles ?? null };
 }
 
 function getGridlySearchAnchorContext(searchContext = null) {
@@ -38739,6 +38740,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
   const searchContext = getGridlyDestinationSearchContainmentContext(getGridlySearchMapContext());
   const intent = options.intent || classifyGridlyDestinationSearchIntent(options.query || ensureGridlySearchState().activeQuery || "");
   const isGenericLocalSearch = intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL;
+  const isLocalityGovernedSearch = isGenericLocalSearch || intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE;
   const anchor = getGridlySearchAnchorContext(searchContext);
   if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
     gridlyLp097RuntimeEvidence.geographicConflictCandidateCount = 0;
@@ -38781,7 +38783,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
     if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && getGridlySearchResultTitleMatchScore(result, options.query || "") >= 20) score += 900;
     if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) score += 1000;
     if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += getGridlyLocalDiscoveryUsefulnessBoost(result);
-    if (isGenericLocalSearch) {
+    if (isLocalityGovernedSearch) {
       if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += 18;
       if (Number.isFinite(anchorDistanceMiles)) {
         if (anchorDistanceMiles <= 10) score += 135;
@@ -38791,9 +38793,12 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
         else if (anchorDistanceMiles <= 150) score += 12;
       }
       if (inBounds) score += 70;
-      if (isLibertyCounty) score += 55;
       if (isLocality) score += 40;
       if (isTexas) score += 25;
+      // Continuous locality component makes equal text matches deterministically
+      // prefer the closer candidate, without making distance the only signal.
+      const distanceScore = Number.isFinite(anchorDistanceMiles) ? Math.max(-120, 150 - (anchorDistanceMiles * 3)) : -120;
+      score += distanceScore;
       if (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles > 250) score -= 40;
     } else {
       if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && isLocality) score += 8;
@@ -38820,12 +38825,13 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
         isLocality,
         distanceMiles,
         anchorDistanceMiles,
-        anchor: anchor ? { label: anchor.label, source: anchor.source } : null
+        anchor: anchor ? { label: anchor.label, source: anchor.source, canonicalCommunityKey: anchor.canonicalCommunityKey || null, placeGeoid: anchor.placeGeoid || null, lat: anchor.lat, lng: anchor.lng } : null,
+        components: { textRelevance: getGridlySearchResultTitleMatchScore(result, options.query || ""), distanceMiles: anchorDistanceMiles, sourceConfidence: result?.provider === "saved_place" ? 1000 : (result?.provider === "local_poi_seed" ? 18 : 0), validity: hasCoordinates ? "coordinate_valid" : "coordinate_missing" }
       }
     };
     return { result: rankedResult, score, index, inBounds, isTexas, isLibertyCounty, isLocality, distanceMiles, anchorDistanceMiles };
   });
-  if (isGenericLocalSearch) {
+  if (isLocalityGovernedSearch) {
     const hasNearbyMatch = scored.some((entry) => Number.isFinite(entry.anchorDistanceMiles) && entry.anchorDistanceMiles <= 50);
     if (hasNearbyMatch) {
       scored.forEach((entry) => {
@@ -89360,10 +89366,9 @@ function buildGridlySearchQueryVariants(rawQuery = "", options = {}) {
   if (shouldAddGridlyLocalSearchExpansions(query, intent)) {
     const searchContext = getGridlySearchMapContext();
     const anchor = getGridlySearchAnchorContext(searchContext);
-    if (anchor?.label && anchor.label !== "Map center") variants.push(`${query} near ${anchor.label} Texas`);
-    const containmentContext = getGridlyDestinationSearchContainmentContext(searchContext);
-    if (containmentContext.activeCounty === "montgomery-tx") variants.push(`${query} Montgomery County Texas`);
-    else variants.push(`${query} Liberty County Texas`);
+    // Canonical PLACE context owns locality.  County/default inventory must not
+    // narrow a consumer search, particularly for multi-county and border places.
+    if (anchor?.label && anchor.label !== "Map center") variants.unshift(`${query} near ${anchor.label} Texas`);
     variants.push(`${query} Texas`);
   }
   const seen = new Set();
@@ -89606,7 +89611,7 @@ async function gridlySearchAddress(query, options = {}) {
       limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT,
       countryCodes,
       searchContext,
-      bounded: options.bounded === "1" || (intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL && searchContext.boundedSearchEnabled) ? "1" : "0",
+      bounded: options.bounded === "1" ? "1" : "0",
       diagnostics,
       variantIndex,
       structured: intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && variantIndex === 0 ? addressModel.structured : null
@@ -89672,10 +89677,36 @@ async function gridlySearchAddress(query, options = {}) {
     : localityReservedResults;
   const finalResults = truthfulResults.slice(0, limit);
   setGridlyLp101PipelineStage(lp101CaseName, "finalRenderInput", finalResults, rawQuery);
+  diagnostics.candidatePoolCount = providerResults.length;
+  diagnostics.normalizedCandidateCount = prioritizedResults.length;
+  diagnostics.deduplicatedCandidateCount = dedupedResults.length;
+  diagnostics.anchor = getGridlySearchAnchorContext(searchContext);
+  diagnostics.pipeline = Object.freeze({ retrieval: providerResults.length, normalization: prioritizedResults.length, geographicEligibility: containmentFilteredResults.length, ranking: prioritizedResults.length, deduplication: dedupedResults.length, truncation: finalResults.length });
+  gridlySearchUiState.lastGovernedSearchAudit = Object.freeze({
+    query: normalizeGridlyBrandSearchText(rawQuery),
+    canonicalCommunity: diagnostics.anchor?.label || null,
+    canonicalCommunityKey: diagnostics.anchor?.canonicalCommunityKey || null,
+    placeGeoid: diagnostics.anchor?.placeGeoid || null,
+    geographicAuthority: diagnostics.anchor?.source || "default_center",
+    anchor: diagnostics.anchor ? { lat: diagnostics.anchor.lat, lng: diagnostics.anchor.lng } : null,
+    source: "local seeds + Gridly geocoding provider",
+    preRankingCandidateCount: providerResults.length,
+    rankedCandidateCount: prioritizedResults.length,
+    visibleResultCount: finalResults.length,
+    candidates: prioritizedResults.map((candidate) => ({ identity: candidate.providerId || candidate.id || null, deduplicationIdentity: `${normalizeGridlySearchDisplayLabel(candidate.title || candidate.label)}|${Number(candidate.lat).toFixed(3)},${Number(candidate.lng).toFixed(3)}`, name: candidate.title || candidate.label, locality: candidate.raw?.address?.city || candidate.raw?.address?.town || candidate.raw?.address?.village || candidate.raw?.city || "", source: candidate.provider || candidate.source || "unknown", lat: candidate.lat, lng: candidate.lng, distanceMiles: candidate.searchRank?.anchorDistanceMiles ?? null, textRelevance: candidate.searchRank?.components?.textRelevance ?? 0, scoreComponents: candidate.searchRank?.components || {}, rankScore: candidate.searchRank?.score ?? null, finalRank: candidate.searchRank?.rank ?? null, visible: finalResults.includes(candidate), suppressed: !finalResults.includes(candidate), reason: finalResults.includes(candidate) ? "governed_best_match" : "deduplicated_filtered_or_below_visible_limit" }))
+  });
   finalizeGridlyDestinationProviderDiagnostics(diagnostics, remoteProviderResultCount, finalResults.length);
   Object.defineProperty(finalResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
   return finalResults;
 }
+
+window.gridlyDestinationSearchAudit = function gridlyDestinationSearchAudit(query = "") {
+  const audit = gridlySearchUiState.lastGovernedSearchAudit;
+  if (!audit) return Object.freeze({ available: false, reason: "no_completed_search" });
+  const normalized = normalizeGridlyBrandSearchText(query);
+  if (normalized && normalized !== audit.query) return Object.freeze({ available: false, reason: "query_not_last_completed_search", requestedQuery: normalized, completedQuery: audit.query });
+  return structuredClone(audit);
+};
 
 window.gridlyAggregateAddressVariantOutcomes = aggregateGridlyAddressVariantOutcomes;
 window.gridlyLp101AddressProviderRca = async function gridlyLp101AddressProviderRca() {
