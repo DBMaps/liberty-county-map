@@ -370,6 +370,18 @@
         || null;
       const currentIdentity = selectedAreaIdentity();
       const candidateIdentity = canonicalAreaKey(candidate?.sharedActiveIssueContract) || canonicalAreaKey(candidate?.selectedAwarenessArea);
+      // Provider refresh is the production transition path as well as the
+      // explicit canonical-transition API. Capture the identity before the
+      // stale candidate is replaced so completed-transition audit evidence
+      // does not start at null.
+      if (!state.currentAreaIdentity) {
+        state.currentAreaIdentity = candidateIdentity || currentIdentity || null;
+      }
+      if (currentIdentity && currentIdentity !== state.currentAreaIdentity) {
+        state.previousAreaIdentity = state.currentAreaIdentity;
+        state.currentAreaIdentity = currentIdentity;
+        state.transitionRevision += 1;
+      }
       if ((!candidate || (candidateIdentity && currentIdentity && candidateIdentity !== currentIdentity)) && state.originalBuilder) {
         candidate = state.originalBuilder({ awarenessArea: globalScope.getGridlySelectedAwarenessArea?.() });
       }
@@ -391,6 +403,14 @@
         if (globalScope.gridlyTopAwarenessMicrolineState) {
           globalScope.gridlyTopAwarenessMicrolineState.communityAwarenessSummary = authoritativeSummary;
         }
+      }
+      // Portrait refresh is allowed to rebuild presentation models, but the
+      // two shared consumers retain the publisher's authoritative reference.
+      // Reassert it after the synchronous publication callback returns.
+      const publishedPulseState = globalScope.gridlyCommunityPulseAuditState;
+      if (publishedPulseState) publishedPulseState.communityAwarenessSummary = authoritativeSummary;
+      if (globalScope.gridlyTopAwarenessMicrolineState) {
+        globalScope.gridlyTopAwarenessMicrolineState.communityAwarenessSummary = authoritativeSummary;
       }
       return authoritativeSummary;
     } catch (_error) {}

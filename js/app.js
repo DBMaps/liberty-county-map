@@ -61357,6 +61357,14 @@ function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publicatio
       communityAwarenessSummary: summary
     });
   }
+  // Portrait normalization may replace either presentation state while it
+  // renders. The publisher contract is reference identity, not merely value
+  // equality, so converge both consumers again after that synchronous work.
+  publishGridlyCommunityPulseAuditState({ communityAwarenessSummary: summary });
+  window.gridlyTopAwarenessMicrolineState = {
+    ...(window.gridlyTopAwarenessMicrolineState && typeof window.gridlyTopAwarenessMicrolineState === "object" ? window.gridlyTopAwarenessMicrolineState : {}),
+    communityAwarenessSummary: summary
+  };
   return summary;
 }
 if (typeof window !== "undefined") window.gridlyPublishAuthoritativeCommunityAwarenessSummary = gridlyPublishAuthoritativeCommunityAwarenessSummary;
@@ -107545,8 +107553,9 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
   const crossingsWatchedLine = crossingContextCount !== null ? `${crossingContextCount} crossings monitored.` : "Crossings monitored.";
   const activeStatus = "Watching your surrounding area.";
   const activeMeta = `${crossingsWatchedLine} ${activeCount} active issue${activeCount === 1 ? "" : "s"} nearby.`;
+  const hasAuthoritativeSharedCount = Number.isFinite(authoritativeSharedCount);
   const meta = safeDisplayText(
-    mobileOwnership?.meta,
+    hasAuthoritativeSharedCount ? "" : mobileOwnership?.meta,
     effectiveQuiet
       ? crossingsWatchedLine
       : activeMeta
@@ -116395,7 +116404,13 @@ function gridlyAwarenessAlertsCountSyncAudit() {
   const visibleAlertEvidenceTexts = Array.from(doc?.querySelectorAll?.("#gridlyPortraitV2Sheet[data-active-sheet='alerts'] [data-gridly-alert-evidence], #gridlyPortraitV2Sheet[data-active-sheet='alerts'] [data-gridly-alerts-panel-heading-evidence]") || [])
     .map((node) => normalize(node.textContent))
     .filter(Boolean);
-  const homeLocationContextIssueCount = parseLeadingCount(visibleHomeCountText);
+  const locationContextCountValue = doc?.querySelector?.('[data-v2-location-awareness="panel"]')?.dataset?.activeAwarenessCount;
+  const locationContextDatasetCount = locationContextCountValue !== undefined && locationContextCountValue !== "" && Number.isFinite(Number(locationContextCountValue))
+    ? Math.max(0, Number(locationContextCountValue))
+    : null;
+  // Quiet-state copy need not contain a numeral. The panel's governed count
+  // is the certification value and, importantly, preserves authoritative 0.
+  const homeLocationContextIssueCount = locationContextDatasetCount ?? parseLeadingCount(visibleHomeCountText);
   const homeReportMatch = visibleHomeCountText.match(/(\d+)\s+community reports?/i);
   const homeLocationContextReportCount = homeReportMatch ? Number(homeReportMatch[1]) : (homeLocationContextIssueCount === 0 ? 0 : null);
   const alertsSheetActiveAlertCount = /^no\b/i.test(visibleAlertsHeaderText) ? 0 : (parseLeadingCount(visibleAlertsHeaderText) ?? countModel.groupedAlertCount);
