@@ -61380,6 +61380,7 @@ function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publicatio
   if (!summary || typeof summary !== "object") return null;
   const pulseState = publishGridlyCommunityPulseAuditState({
     communityAwarenessSummary: summary,
+    communityAwarenessSummaryWriter: "gridlyPublishAuthoritativeCommunityAwarenessSummary",
     communityAwarenessSummaryRevision: Number(publication.summaryRevision || 0),
     communityAwarenessPublicationRevision: Number(publication.publicationRevision || 0)
   });
@@ -61387,6 +61388,7 @@ function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publicatio
   window.gridlyTopAwarenessMicrolineState = {
     ...(priorMicroline && typeof priorMicroline === "object" ? priorMicroline : {}),
     communityAwarenessSummary: summary,
+    communityAwarenessSummaryWriter: "gridlyPublishAuthoritativeCommunityAwarenessSummary",
     communityAwarenessSummaryRevision: Number(publication.summaryRevision || 0),
     communityAwarenessPublicationRevision: Number(publication.publicationRevision || 0)
   };
@@ -61410,10 +61412,14 @@ function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publicatio
   // Portrait normalization may replace either presentation state while it
   // renders. The publisher contract is reference identity, not merely value
   // equality, so converge both consumers again after that synchronous work.
-  publishGridlyCommunityPulseAuditState({ communityAwarenessSummary: summary });
+  publishGridlyCommunityPulseAuditState({
+    communityAwarenessSummary: summary,
+    communityAwarenessSummaryWriter: "gridlyPublishAuthoritativeCommunityAwarenessSummary:post-portrait-convergence"
+  });
   window.gridlyTopAwarenessMicrolineState = {
     ...(window.gridlyTopAwarenessMicrolineState && typeof window.gridlyTopAwarenessMicrolineState === "object" ? window.gridlyTopAwarenessMicrolineState : {}),
-    communityAwarenessSummary: summary
+    communityAwarenessSummary: summary,
+    communityAwarenessSummaryWriter: "gridlyPublishAuthoritativeCommunityAwarenessSummary:post-portrait-convergence"
   };
   return summary;
 }
@@ -107896,7 +107902,19 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
       gridlyV923PortraitRefreshOptimizationState.skippedDomWrites += 1;
       return;
     }
+    // The portrait model is presentation-specific and can be reconstructed by
+    // a later animation-frame/provider refresh.  It must not make that copy a
+    // second shared-summary authority.  Pulse owns the summary installed by
+    // gridlyPublishAuthoritativeCommunityAwarenessSummary, so every microline
+    // refresh carries that exact reference forward (including healthy-empty
+    // and source-failure snapshots).
+    const authoritativeCommunityAwarenessSummary = gridlyCommunityPulseAuditState?.communityAwarenessSummary
+      || textModel.communityAwarenessSummary
+      || null;
     window.gridlyTopAwarenessMicrolineState = {
+      ...(window.gridlyTopAwarenessMicrolineState && typeof window.gridlyTopAwarenessMicrolineState === "object"
+        ? window.gridlyTopAwarenessMicrolineState
+        : {}),
       text: textModel.awarenessBrief.microline,
       visible: textModel.awarenessBrief.microlineVisible,
       state: textModel.awarenessBrief.state,
@@ -107908,7 +107926,8 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
       activeReportCount: quietAwarenessState ? 0 : getGridlyAwarenessCommunityCount(intel, activeAwareness),
       activeHazardCount: quietAwarenessState ? 0 : (activeAwareness.activeHazardCount ?? 0),
       activityLevel: quietAwarenessState ? "quiet" : (textModel.pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "active"),
-      communityAwarenessSummary: textModel.communityAwarenessSummary || null,
+      communityAwarenessSummary: authoritativeCommunityAwarenessSummary,
+      communityAwarenessSummaryWriter: "refreshGridlyPortraitV2LocalizedIntelligence:microline-presentation-refresh",
       quietTopAwarenessFastPathApplied: false,
       quietLocalizedIntelligenceBuildSkipped: true,
       portraitSharedModelReuseApplied: true,

@@ -60,6 +60,7 @@ export function buildCertification() {
     ,initialFetchContract: { result:'PASS', ordering:'provider activation -> connector polling -> initial fetch', healthyFinalStates:['HEALTHY_WITH_DATA','HEALTHY_EMPTY'], missingConfigurationState:'SOURCE_FAILED_NO_RETAINED_DATA' }
     ,startupRecoveryContract: { result:'PASS', trigger:'gridly:configuration-ready', arbitraryTimeout:false, usesExistingRefreshLifecycle:true }
     ,freshStartSharedPublicationContract: { result:'PASS', afterGovernedProviderEvaluation:true, pulseMicrolineSameReference:true, locationContextIndeterminateDuringFailure:true }
+    ,freshStartSameSummaryReferenceContract: { result:'PASS', stablePostPublicationLifecycle:true, identityComparison:'OBJECT_REFERENCE', appliesTo:['HEALTHY_WITH_DATA','HEALTHY_EMPTY','SOURCE_FAILURE_RETENTION'], communitySpecificPath:false }
   };
   const artifact = {
     contractVersion:'GRIDLY_LP214_STATEWIDE_DRIVETEXAS_RUNTIME_MAP_CONVERGENCE_V1',

@@ -102,6 +102,8 @@ test('governed snapshot is published as one Pulse, microline and Location Contex
   assert.equal(audit.publishedPulseOfficialCount, 8);
   assert.equal(audit.publishedMicrolineOfficialCount, 8);
   assert.equal(audit.sameSummaryReference, true);
+  assert.equal(audit.authoritativeSummaryAreaIdentity, 'place-4819000');
+  assert.equal(audit.lastReferenceDivergenceReason, null);
 });
 
 test('cold start, refresh, healthy empty, failure retention and community transitions republish', () => {
@@ -182,6 +184,8 @@ test('publication bridge is shared and fails closed when evidence is absent', ()
   const app = fs.readFileSync('js/app.js', 'utf8');
   assert.match(app, /function gridlyPublishAuthoritativeCommunityAwarenessSummary/);
   assert.match(app, /communityAwarenessSummary: summary/);
+  assert.match(app, /const authoritativeCommunityAwarenessSummary = gridlyCommunityPulseAuditState\?\.communityAwarenessSummary/);
+  assert.match(app, /communityAwarenessSummary: authoritativeCommunityAwarenessSummary/);
   assert.match(app, /refreshPortraitV2LocalizedIntelligence/);
   assert.match(app, /locationContextCertificationStatus = sharedActiveIssueCount === null \|\| homeLocationContextIssueCount === null/);
   assert.match(app, /locationContextDatasetCount \?\? parseLeadingCount\(visibleHomeCountText\)/);
@@ -190,4 +194,34 @@ test('publication bridge is shared and fails closed when evidence is absent', ()
   assert.doesNotMatch(source, /Dallas|Houston|place-4819000|place-4835000/);
   const inventory = JSON.parse(fs.readFileSync('data/generated/lp214-county-community-inventory.json', 'utf8'));
   assert.equal(inventory.summary.uniqueCanonicalCommunityCount, 1859);
+});
+
+test('stable post-publication portrait and provider refreshes preserve the authoritative reference', async () => {
+  const h = harness();
+  const austinRecords = Array.from({ length: 21 }, (_, index) => ({
+    consumerSituationId: `drivetexas:austin:${index + 1}`,
+    id: `austin-${index + 1}`
+  }));
+  const authoritative = h.publish(austinRecords, {
+    area: { key: 'place-4805000', label: 'Austin' },
+    reason: 'initial-fetch-success'
+  });
+
+  // Model the later requestAnimationFrame/portrait callback: presentation is
+  // copied, but its shared-summary field is resolved from authoritative Pulse.
+  await Promise.resolve();
+  const copiedPresentationModel = { communityAwarenessSummary: { ...authoritative } };
+  h.window.gridlyTopAwarenessMicrolineState = {
+    ...h.window.gridlyTopAwarenessMicrolineState,
+    presentationModel: copiedPresentationModel,
+    communityAwarenessSummary: h.window.gridlyCommunityPulseAuditState.communityAwarenessSummary
+  };
+  assert.notEqual(copiedPresentationModel.communityAwarenessSummary, authoritative);
+  assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, authoritative);
+
+  const refreshed = h.publish(austinRecords, { reason: 'subsequent-provider-refresh' });
+  await new Promise(resolve => h.window.setTimeout(resolve, 0));
+  assert.equal(h.window.gridlyCommunityPulseAuditState.communityAwarenessSummary, refreshed);
+  assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, refreshed);
+  assert.equal(h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit().sameSummaryReference, true);
 });
