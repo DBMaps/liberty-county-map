@@ -1,12 +1,13 @@
 (function () {
   "use strict";
-  const VERSION = "V929R3-outgoing-document-lifecycle-attribution";
+  const VERSION = "V929R4-mobile-control-validation";
   const MAX_STAGES = 240;
   const WATCHDOG_MS = 30000;
   const SLOW_STARTUP_MS = 30000;
   const nowMs = () => (typeof performance !== "undefined" && performance.now ? performance.now() : Date.now());
   const OUTGOING_LIFECYCLE_KEY = "gridlyDevelopmentLifecycleV1";
   const isDevelopmentHost = /^(?:localhost|127\.0\.0\.1)$/.test(String(location.hostname || "").toLowerCase());
+  const lifecycleControlRequested = new URLSearchParams(location.search).has("gridlyLifecycleControl");
   let previousDocumentLifecycle = null;
   function installOutgoingDocumentLifecycleProbe() {
     if (!isDevelopmentHost) return;
@@ -40,16 +41,34 @@
     }, { capture: true }));
     window.gridlyPreviousDocumentLifecycle = previousDocumentLifecycle;
     const showEvidence = () => {
-      if (!document.body || document.getElementById("gridlyLifecycleEvidence")) return;
+      if (!lifecycleControlRequested || !document.body || document.getElementById("gridlyLifecycleEvidence")) return;
       const navigation = performance.getEntriesByType("navigation")[0];
+      const viewportWidth = window.visualViewport?.width || window.innerWidth || document.documentElement.clientWidth || 0;
+      const viewportHeight = window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0;
+      const mobileMediaQueryMatch = Boolean(window.matchMedia?.("(max-width: 980px)").matches);
+      const layoutMode = document.body.getAttribute("data-layout-mode");
+      const mobileSurface = document.querySelector(".app-shell");
+      const desktopSurface = document.getElementById("gridlyDesktopGate");
+      const isRendered = (element) => Boolean(element && getComputedStyle(element).display !== "none" && getComputedStyle(element).visibility !== "hidden");
+      const mobileConsumerSurfaceDetected = ["portrait", "tactical-landscape"].includes(layoutMode)
+        && isRendered(mobileSurface)
+        && !isRendered(desktopSurface);
       const panel = document.createElement("aside");
       panel.id = "gridlyLifecycleEvidence";
       panel.setAttribute("aria-label", "Development lifecycle timing evidence");
-      panel.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:2147483647;max-width:min(430px,calc(100vw - 24px));max-height:45vh;overflow:auto;padding:12px;border:1px solid #43e6a0;border-radius:8px;background:#071426;color:#f4f8fb;font:12px/1.4 monospace;white-space:pre-wrap;box-shadow:0 8px 30px #000a";
+      panel.style.cssText = `position:fixed;right:12px;bottom:12px;z-index:2147483647;max-width:min(430px,calc(100vw - 24px));max-height:55vh;overflow:auto;padding:12px;border:3px solid ${mobileConsumerSurfaceDetected ? "#43e6a0" : "#ff4d67"};border-radius:8px;background:#071426;color:#f4f8fb;font:12px/1.4 monospace;white-space:pre-wrap;box-shadow:0 8px 30px #000a`;
       const prior = previousDocumentLifecycle;
       panel.textContent = [
+        ...(mobileConsumerSurfaceDetected ? [] : ["INVALID MOBILE CONTROL", "Gridly did not open in the emulated mobile consumer environment.", ""]),
         "DEVELOPMENT — NAVIGATION LIFECYCLE EVIDENCE",
-        `Current: ${navigation?.type || "unavailable"}; pre-fetch ${(navigation?.fetchStart || 0).toFixed(1)} ms`,
+        `viewportWidth: ${viewportWidth}`,
+        `viewportHeight: ${viewportHeight}`,
+        `devicePixelRatio: ${window.devicePixelRatio}`,
+        `mobileMediaQueryMatch: ${mobileMediaQueryMatch}`,
+        `navigationType: ${navigation?.type || "unavailable"}`,
+        `preFetchDelay: ${(navigation?.fetchStart || 0).toFixed(1)} ms`,
+        `mobileConsumerSurfaceDetected: ${mobileConsumerSurfaceDetected}`,
+        "",
         prior ? `Previous Gridly: ${prior.navigationType || "unknown"}; pre-fetch ${Number(prior.fetchStart || 0).toFixed(1)} ms` : "Previous Gridly: no evidence (expected after control-page navigation)",
         `Previous lifecycle: ${prior?.events?.length ? prior.events.map((entry) => `${entry.name} ${entry.phase} @ ${entry.epochMs}`).join(" | ") : "none"}`,
         "",

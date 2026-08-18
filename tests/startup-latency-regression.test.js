@@ -53,6 +53,21 @@ test("development lifecycle attribution is tiny, bounded, and read-only", () => 
   assert.doesNotMatch(diagnosticsSource, /sendBeacon\s*\(/);
   assert.match(controlSource, />OPEN GRIDLY</);
   assert.match(controlSource, /gridlyLifecycleControl=navigate/);
+  assert.match(controlSource, /location\.assign\("\.\/index\.html\?gridlyLifecycleControl=navigate"\)/);
+  assert.doesNotMatch(controlSource, /target=["']_blank["']/i);
+  assert.doesNotMatch(controlSource, /window\.open\s*\(/);
+  assert.match(diagnosticsSource, /lifecycleControlRequested/);
+  assert.match(diagnosticsSource, /viewportWidth:/);
+  assert.match(diagnosticsSource, /viewportHeight:/);
+  assert.match(diagnosticsSource, /devicePixelRatio:/);
+  assert.match(diagnosticsSource, /mobileMediaQueryMatch:/);
+  assert.match(diagnosticsSource, /navigationType:/);
+  assert.match(diagnosticsSource, /preFetchDelay:/);
+  assert.match(diagnosticsSource, /mobileConsumerSurfaceDetected:/);
+  assert.match(diagnosticsSource, /INVALID MOBILE CONTROL/);
+  assert.match(diagnosticsSource, /Gridly did not open in the emulated mobile consumer environment\./);
+  assert.doesNotMatch(documentSource, /gridlyLifecycleControl/);
+  assert.doesNotMatch(appSource, /gridlyLifecycleControl/);
 });
 
 test("production shell checkpoint precedes secondary crossing wait", () => {
