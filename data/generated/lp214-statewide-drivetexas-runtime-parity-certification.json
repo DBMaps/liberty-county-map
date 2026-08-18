@@ -131,6 +131,17 @@
       "afterGovernedProviderEvaluation": true,
       "pulseMicrolineSameReference": true,
       "locationContextIndeterminateDuringFailure": true
+    },
+    "freshStartSameSummaryReferenceContract": {
+      "result": "PASS",
+      "stablePostPublicationLifecycle": true,
+      "identityComparison": "OBJECT_REFERENCE",
+      "appliesTo": [
+        "HEALTHY_WITH_DATA",
+        "HEALTHY_EMPTY",
+        "SOURCE_FAILURE_RETENTION"
+      ],
+      "communitySpecificPath": false
     }
   },
   "productionPath": [

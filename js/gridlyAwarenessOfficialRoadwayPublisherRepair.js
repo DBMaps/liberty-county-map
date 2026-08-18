@@ -666,6 +666,15 @@
       previousAreaIdentity: state.previousAreaIdentity,
       transitionRevision: state.transitionRevision,
       sameSummaryReference: Boolean(state.lastPublishedSummary && pulseSummary === state.lastPublishedSummary && (!microlineSummary || microlineSummary === state.lastPublishedSummary)),
+      authoritativeSummaryRevision: Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || state.awarenessRevision || 0),
+      authoritativeSummaryAreaIdentity: state.lastPublishedSummary?.sharedActiveIssueContract?.areaIdentity || null,
+      pulseSummaryRevision: Number(globalScope.gridlyCommunityPulseAuditState?.communityAwarenessSummaryRevision || 0),
+      microlineSummaryRevision: Number(globalScope.gridlyTopAwarenessMicrolineState?.communityAwarenessSummaryRevision || 0),
+      lastPulseSummaryWriter: globalScope.gridlyCommunityPulseAuditState?.communityAwarenessSummaryWriter || "official-roadway-publisher",
+      lastMicrolineSummaryWriter: globalScope.gridlyTopAwarenessMicrolineState?.communityAwarenessSummaryWriter || "official-roadway-publisher",
+      lastReferenceDivergenceReason: pulseSummary && microlineSummary && pulseSummary !== microlineSummary
+        ? "microline-summary-reference-does-not-match-authoritative-pulse-summary"
+        : null,
       consumerRefreshBridgeInstalled: Boolean(
         globalScope.gridlyOfficialProviderConsumerRefresh?.__gridlyOfficialRoadwayRetentionBridge
       ),
