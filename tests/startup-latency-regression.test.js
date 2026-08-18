@@ -51,10 +51,16 @@ test("destination search retains its fail-closed LP201 execution wait", () => {
 
 test("startup latency audit is read-only and preserves script ordering", () => {
   assert.match(diagnosticsSource, /window\.gridlyStartupLatencyAudit = startupLatencyAudit/);
-  for (const field of ["milestones", "resources", "scriptEvaluation", "longTasks", "longAnimationFrames", "startupGate", "repeatedWork", "topOwners", "findings"]) {
+  for (const field of ["navigationTiming", "documentDelivery", "earliestResources", "serviceWorker", "timeOriginValidation", "documentStructure", "preResourceGap", "classification", "milestones", "resources", "scriptEvaluation", "longTasks", "longAnimationFrames", "startupGate", "repeatedWork", "topOwners", "findings"]) {
     assert.match(diagnosticsSource, new RegExp(`\\b${field}\\b`));
   }
+  for (const field of ["requestStart", "responseStart", "responseEnd", "responseTransferDuration", "responseEndToFirstResource", "workerStart", "decodedBodySize"]) {
+    assert.match(diagnosticsSource, new RegExp(`\\b${field}\\b`));
+  }
+  assert.match(diagnosticsSource, /allResources\.slice\(0, 20\)/);
+  assert.match(diagnosticsSource, /navigator\.serviceWorker\.getRegistration\(\)/);
   assert.doesNotMatch(diagnosticsSource, /\.setAttribute\(["'](?:async|defer)["']/);
+  assert.doesNotMatch(diagnosticsSource, /serviceWorker\.getRegistrations\(\)[\s\S]*unregister/);
   assert.doesNotMatch(diagnosticsSource, /document\.write\s*\(/);
   assert.ok(appSource.lastIndexOf('markMilestone?.("appEvaluated")') > appSource.indexOf('markMilestone?.("appDOMContentLoadedListenerRegistered")'));
 });
