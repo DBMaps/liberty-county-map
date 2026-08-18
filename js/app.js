@@ -61313,6 +61313,44 @@ function publishGridlyCommunityPulseAuditState(patch = {}) {
 }
 if (typeof window !== "undefined") window.gridlyCommunityPulseAuditState = gridlyCommunityPulseAuditState;
 
+// LP214 Phase 2.2I: install the publisher-enriched summary as the single
+// consumer snapshot. This bridge deliberately performs no provider read; its
+// input is the governed snapshot already enriched by the official publisher.
+function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {
+  if (!summary || typeof summary !== "object") return null;
+  const pulseState = publishGridlyCommunityPulseAuditState({
+    communityAwarenessSummary: summary,
+    communityAwarenessSummaryRevision: Number(publication.summaryRevision || 0),
+    communityAwarenessPublicationRevision: Number(publication.publicationRevision || 0)
+  });
+  const priorMicroline = window.gridlyTopAwarenessMicrolineState;
+  window.gridlyTopAwarenessMicrolineState = {
+    ...(priorMicroline && typeof priorMicroline === "object" ? priorMicroline : {}),
+    communityAwarenessSummary: summary,
+    communityAwarenessSummaryRevision: Number(publication.summaryRevision || 0),
+    communityAwarenessPublicationRevision: Number(publication.publicationRevision || 0)
+  };
+
+  // Portrait presentation models are copies of the Pulse model. Invalidate
+  // only those presentation caches, then render from the same summary so a
+  // cold-start/refresh does not require user interaction to converge.
+  if (typeof gridlyV923PortraitRefreshOptimizationState === "object" && gridlyV923PortraitRefreshOptimizationState) {
+    gridlyV923PortraitRefreshOptimizationState.presentationModelSignature = "";
+    gridlyV923PortraitRefreshOptimizationState.presentationModel = null;
+    gridlyV923PortraitRefreshOptimizationState.locationAwarenessPanelSignature = "";
+    gridlyV923PortraitRefreshOptimizationState.panelCopySignature = "";
+  }
+  if (typeof refreshPortraitV2LocalizedIntelligence === "function") {
+    refreshPortraitV2LocalizedIntelligence({
+      reason: publication.reason || "official-roadway-summary-publication",
+      pulseModel: pulseState,
+      communityAwarenessSummary: summary
+    });
+  }
+  return summary;
+}
+if (typeof window !== "undefined") window.gridlyPublishAuthoritativeCommunityAwarenessSummary = gridlyPublishAuthoritativeCommunityAwarenessSummary;
+
 function gridlyCommunityPulseFirstPaintNow() {
   return Date.now();
 }

@@ -1,0 +1,107 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
+import vm from 'node:vm';
+
+const source = fs.readFileSync('js/gridlyAwarenessOfficialRoadwayPublisherRepair.js', 'utf8');
+
+function harness() {
+  let records = [];
+  let connected = true;
+  let error = null;
+  let area = { key: 'place-4819000', label: 'Dallas' };
+  const intervals = [];
+  const baseSummary = () => ({
+    selectedAwarenessArea: area,
+    activeHazardsInArea: [],
+    activeReportsInArea: [],
+    sourceBreakdown: {},
+    warnings: []
+  });
+  const window = {
+    setInterval(fn) { intervals.push(fn); return intervals.length; },
+    clearInterval() {},
+    setTimeout(fn) { fn(); },
+    getGridlySelectedAwarenessArea: () => area,
+    gridlyDriveTexasConnector: {
+      getNormalizedRecords: () => records,
+      areaLifecycleAudit: () => ({ lastFetchError: error, lastSuccessfulFetchTimestamp: '2026-08-18T00:00:00.000Z' })
+    },
+    gridlyDriveTexasProvider: { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected, lastError: error }) },
+    gridlyDriveTexasConnectorRuntimeAudit: () => ({ connected }),
+    gridlySelectConsumerVisibleDriveTexasSituations: ({ records: input }) => ({ consumerVisibleSituations: input }),
+    buildGridlyCommunityAwarenessIntelligenceSummary: baseSummary,
+    gridlyCommunityPulseAuditState: { communityAwarenessSummary: baseSummary() },
+    gridlyTopAwarenessMicrolineState: { communityAwarenessSummary: baseSummary() },
+    gridlyOfficialProviderConsumerRefresh() {
+      // Production refresh replaces the former Pulse summary with a newly
+      // built object before the publisher convergence callback runs.
+      window.gridlyCommunityPulseAuditState = { communityAwarenessSummary: window.buildGridlyCommunityAwarenessIntelligenceSummary() };
+    },
+    gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication) {
+      window.gridlyCommunityPulseAuditState.communityAwarenessSummary = summary;
+      window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary = summary;
+      window.locationContextCount = summary.sharedActiveIssueContract.activeIssueCount;
+      window.lastPublication = publication;
+      return summary;
+    }
+  };
+  vm.runInNewContext(source, { window, console, Date, JSON, Object, Array, String, Boolean, Number, Set, Promise });
+  intervals[0]();
+  const publish = (nextRecords, next = {}) => {
+    records = nextRecords;
+    connected = next.connected ?? true;
+    error = next.error ?? null;
+    if (next.area) area = next.area;
+    window.gridlyOfficialProviderConsumerRefresh({ providerId: 'drivetexas', reason: next.reason || 'fetch-success' });
+    return window.gridlyCommunityPulseAuditState.communityAwarenessSummary;
+  };
+  return { window, publish };
+}
+
+test('governed snapshot is published as one Pulse, microline and Location Context reference', () => {
+  const h = harness();
+  const stale = h.window.gridlyCommunityPulseAuditState.communityAwarenessSummary;
+  const summary = h.publish(Array.from({ length: 8 }, (_, index) => ({ id: `dallas-${index}` })));
+  assert.notEqual(summary, stale);
+  assert.equal(summary.sharedActiveIssueContract.areaIdentity, 'place-4819000');
+  assert.equal(summary.sharedActiveIssueContract.activeOfficialRoadwayCount, 8);
+  assert.ok(summary.sharedActiveIssueContract.activeIssueCount >= 8);
+  assert.equal(h.window.gridlyTopAwarenessMicrolineState.communityAwarenessSummary, summary);
+  assert.equal(h.window.locationContextCount, summary.sharedActiveIssueContract.activeIssueCount);
+  const audit = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit();
+  assert.equal(audit.sourceEnvelopeCount, 8);
+  assert.equal(audit.publishedPulseOfficialCount, 8);
+  assert.equal(audit.publishedMicrolineOfficialCount, 8);
+  assert.equal(audit.sameSummaryReference, true);
+});
+
+test('cold start, refresh, healthy empty, failure retention and community transitions republish', () => {
+  const h = harness();
+  assert.equal(h.publish([]).sharedActiveIssueContract.activeOfficialRoadwayCount, 0);
+  assert.equal(h.publish(Array.from({ length: 8 }, (_, i) => ({ id: `d-${i}` }))).sharedActiveIssueContract.activeOfficialRoadwayCount, 8);
+  assert.equal(h.publish(Array.from({ length: 3 }, (_, i) => ({ id: `d2-${i}` }))).sharedActiveIssueContract.activeOfficialRoadwayCount, 3);
+  assert.equal(h.publish([]).sharedActiveIssueContract.officialRoadwaySourceStatus, 'HEALTHY_EMPTY');
+  h.publish(Array.from({ length: 8 }, (_, i) => ({ id: `retained-${i}` })));
+  const retained = h.publish([], { connected: false, error: 'network failure', reason: 'fetch-failure' });
+  assert.equal(retained.sharedActiveIssueContract.activeOfficialRoadwayCount, 8);
+  assert.equal(retained.sharedActiveIssueContract.quietEligible, false);
+  const houston = h.publish([{ id: 'houston' }], { area: { key: 'place-4835000', label: 'Houston' } });
+  assert.equal(houston.sharedActiveIssueContract.areaIdentity, 'place-4835000');
+  assert.equal(houston.sharedActiveIssueContract.activeOfficialRoadwayCount, 1);
+  const dallas = h.publish([{ id: 'dallas-current' }], { area: { key: 'place-4819000', label: 'Dallas' } });
+  assert.equal(dallas.sharedActiveIssueContract.areaIdentity, 'place-4819000');
+  assert.equal(dallas.sharedActiveIssueContract.activeOfficialRoadwayCount, 1);
+});
+
+test('publication bridge is shared and fails closed when evidence is absent', () => {
+  const app = fs.readFileSync('js/app.js', 'utf8');
+  assert.match(app, /function gridlyPublishAuthoritativeCommunityAwarenessSummary/);
+  assert.match(app, /communityAwarenessSummary: summary/);
+  assert.match(app, /refreshPortraitV2LocalizedIntelligence/);
+  assert.match(app, /locationContextCertificationStatus = sharedActiveIssueCount === null \|\| homeLocationContextIssueCount === null/);
+  assert.match(app, /"CERTIFICATION_INDETERMINATE"/);
+  assert.doesNotMatch(source, /Dallas|Houston|place-4819000|place-4835000/);
+  const inventory = JSON.parse(fs.readFileSync('data/generated/lp214-county-community-inventory.json', 'utf8'));
+  assert.equal(inventory.summary.uniqueCanonicalCommunityCount, 1859);
+});

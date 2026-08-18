@@ -20,7 +20,9 @@
     initialConnectorSyncAttempts: 0,
     initialConnectorSyncReason: null,
     awarenessRevision: 0,
-    lastRevisionReason: null
+    lastRevisionReason: null,
+    publicationRevision: 0,
+    lastPublishedSummary: null
   };
 
   function cloneRecords(records) {
@@ -327,13 +329,35 @@
       const pulseState = typeof globalScope.gridlyCommunityPulseAuditState !== "undefined"
         ? globalScope.gridlyCommunityPulseAuditState
         : null;
-      if (pulseState?.communityAwarenessSummary) {
-        enrichSummary(pulseState.communityAwarenessSummary);
+      // Enrich exactly one consumer summary and publish that same reference to
+      // every shared consumer.  Enriching the Pulse and microline copies in
+      // isolation left portrait normalization and Location Context holding a
+      // pre-enrichment snapshot, and did not cause either surface to render.
+      const candidate = pulseState?.communityAwarenessSummary
+        || globalScope.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
+        || null;
+      if (!candidate) return null;
+      const authoritativeSummary = enrichSummary(candidate);
+      state.publicationRevision += 1;
+      state.lastPublishedSummary = authoritativeSummary;
+      const publication = {
+        publicationRevision: state.publicationRevision,
+        summaryRevision: Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || state.awarenessRevision || 0),
+        reason: state.lastRevisionReason || "official-roadway-enrichment"
+      };
+      if (typeof globalScope.gridlyPublishAuthoritativeCommunityAwarenessSummary === "function") {
+        globalScope.gridlyPublishAuthoritativeCommunityAwarenessSummary(authoritativeSummary, publication);
+      } else {
+        // Compatibility fallback for test/early startup environments. This is
+        // reference publication, not a second state store or source read.
+        if (pulseState) pulseState.communityAwarenessSummary = authoritativeSummary;
+        if (globalScope.gridlyTopAwarenessMicrolineState) {
+          globalScope.gridlyTopAwarenessMicrolineState.communityAwarenessSummary = authoritativeSummary;
+        }
       }
-      if (globalScope.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary) {
-        enrichSummary(globalScope.gridlyTopAwarenessMicrolineState.communityAwarenessSummary);
-      }
+      return authoritativeSummary;
     } catch (_error) {}
+    return null;
   }
 
   function rebuildSharedAwarenessAfterInitialConnector(reason) {
@@ -431,7 +455,14 @@
       const result = state.originalConsumerRefresh.apply(this, arguments);
 
       if (providerId === "drivetexas") {
-        globalScope.setTimeout(enrichPublishedState, 0);
+        // The activation owner schedules its narrow refresh on animation
+        // frame. Queue convergence on that same scheduler so it runs after
+        // the newly built Pulse model, rather than enriching the old model
+        // before the scheduled refresh replaces it.
+        const schedulePublication = typeof globalScope.requestAnimationFrame === "function"
+          ? globalScope.requestAnimationFrame.bind(globalScope)
+          : (callback) => globalScope.setTimeout(callback, 0);
+        schedulePublication(enrichPublishedState);
       }
 
       return result;
@@ -472,6 +503,11 @@
   }, 50);
 
   globalScope.gridlyAwarenessOfficialRoadwayPublisherRepairAudit = function () {
+    const pulseSummary = globalScope.gridlyCommunityPulseAuditState?.communityAwarenessSummary || null;
+    const microlineSummary = globalScope.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary || null;
+    const sourceStatusEnvelope = readOfficialSourceEnvelope();
+    const officialCount = (summary) => Number(summary?.sharedActiveIssueContract?.activeOfficialRoadwayCount || 0);
+    const locationContextCount = Number(globalScope.document?.querySelector?.('[data-v2-location-awareness="panel"]')?.dataset?.activeAwarenessCount);
     return {
       available: true,
       installed: state.installed,
@@ -480,7 +516,16 @@
       connectorAvailable: Boolean(globalScope.gridlyDriveTexasConnector),
       lastSuccessfulRecordCount: state.lastSuccessfulRecords.length,
       lastSuccessfulAt: state.lastSuccessfulAt,
-      sourceStatusEnvelope: readOfficialSourceEnvelope(),
+      sourceStatusEnvelope,
+      sourceEnvelopeCount: sourceStatusEnvelope.records.length,
+      enrichedSummaryOfficialCount: officialCount(state.lastPublishedSummary),
+      publishedPulseOfficialCount: officialCount(pulseSummary),
+      publishedMicrolineOfficialCount: officialCount(microlineSummary),
+      publishedLocationContextCount: Number.isFinite(locationContextCount) ? locationContextCount : null,
+      summaryRevision: Number(globalScope.gridlyOfficialRoadwayAwarenessRevision || state.awarenessRevision || 0),
+      publicationRevision: state.publicationRevision,
+      areaIdentity: state.lastPublishedSummary?.sharedActiveIssueContract?.areaIdentity || null,
+      sameSummaryReference: Boolean(state.lastPublishedSummary && pulseSummary === state.lastPublishedSummary && (!microlineSummary || microlineSummary === state.lastPublishedSummary)),
       consumerRefreshBridgeInstalled: Boolean(
         globalScope.gridlyOfficialProviderConsumerRefresh?.__gridlyOfficialRoadwayRetentionBridge
       ),
