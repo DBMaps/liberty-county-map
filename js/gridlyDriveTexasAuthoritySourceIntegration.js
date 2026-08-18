@@ -160,11 +160,8 @@
 
   function validSourcePair(pair) {
     if (!Array.isArray(pair) || pair.length < 2) return null;
-    const first = num(pair[0]), second = num(pair[1]);
-    if (!Number.isFinite(first) || !Number.isFinite(second)) return null;
-    if (inTexas(second, first)) return [first, second];
-    if (inTexas(first, second)) return [second, first];
-    return null;
+    const lng = num(pair[0]), lat = num(pair[1]);
+    return inTexas(lat, lng) ? [lng, lat] : null;
   }
   function geometryBounds(geometry) {
     const pairs = []; iterateGeometrySegments(geometry, (a, b) => { pairs.push(a, b); });
@@ -310,7 +307,15 @@
       const cp = coordinateProof(record), distance = cp.valid && anchor.valid ? haversineMiles(anchor.lat, anchor.lng, cp.latitude, cp.longitude) : null;
       const pointInside = Number.isFinite(distance) && distance <= anchor.radiusMiles;
       const authorityGeometry = record.sourceGeometry || record.geometry || record.roadwayGeometry || record.routeGeometry || null;
-      const sharedGeometryAuthorityInput = { communities: area ? [area] : [], counties: [], selectedAwarenessArea: area };
+      // selectedAnchor owns the LP039 radius default.  Supply that governed
+      // interpretation to the shared authority rather than the raw selector
+      // object, whose statewide PLACE shape may intentionally omit radiusMiles.
+      // Otherwise the anchor is valid to LP039 while normalizeCommunity drops
+      // it, causing every trusted geometry to fail geographic ownership.
+      const governedAuthorityArea = area && anchor.valid
+        ? Object.assign({}, area, { lat: anchor.lat, lng: anchor.lng, radiusMiles: anchor.radiusMiles })
+        : area;
+      const sharedGeometryAuthorityInput = { communities: governedAuthorityArea ? [governedAuthorityArea] : [], counties: [], selectedAwarenessArea: governedAuthorityArea };
       const sharedGeometryAuthority = globalScope.gridlyQualifyDriveTexasGeometryAuthority(record, sharedGeometryAuthorityInput);
       const trustedGeometry = sharedGeometryAuthority.normalizedGeometry || cloneTrustedAuthorityGeometry(authorityGeometry);
       const trustedRoadwayGeometryAvailable = trustedGeometry && (trustedGeometry.type === "LineString" || trustedGeometry.type === "MultiLineString");
