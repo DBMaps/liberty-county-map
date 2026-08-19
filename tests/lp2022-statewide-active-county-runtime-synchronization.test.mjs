@@ -327,7 +327,7 @@ test('production semantic caller retries containment readiness and commits Dalla
   await new Promise(resolve => setTimeout(resolve, 0));
   await new Promise(resolve => setTimeout(resolve, 0));
   assert.equal(sandbox.GRIDLY_ACTIVE_COUNTY_ID, 'dallas-tx');
-  assert.equal(sandbox.gridlyActiveCountyTransitionGeneration, 1);
+  assert.equal(sandbox.gridlyActiveCountyTransitionGeneration, 2, 'pending geometry invalidates Liberty work before Dallas commits');
   assert.equal(loadStartedCounty, 'dallas-tx');
   assert.equal(sandbox.gridlyCrossingInventoryCountyId, 'dallas-tx');
   assert.equal(sandbox.crossings.length, 789);

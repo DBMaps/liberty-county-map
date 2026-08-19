@@ -66,6 +66,18 @@ test('cross-county controls replace current inventory in both directions', () =>
   }
 });
 
+test('owner transition acceptance counts remain exact in every required direction', () => {
+  for (const [journey, countyId, governed, awareness] of [
+    ['Baytown -> Dallas', 'dallas-tx', 789, 417],
+    ['Baytown -> Austin', 'travis-tx', 176, 135],
+    ['Dallas -> Baytown', 'harris-tx', 1159, 70],
+    ['Baytown -> Liberty', 'liberty-tx', 115, 30]
+  ]) {
+    assert.equal(counts.get(countyId), governed, `${journey} governed inventory`);
+    assert.equal(awareness, { 'dallas-tx': 417, 'travis-tx': 135, 'harris-tx': 70, 'liberty-tx': 30 }[countyId], `${journey} awareness acceptance`);
+  }
+});
+
 test('same-county community transition retains healthy governed inventory', () => {
   const runtime = new CrossingRuntime('harris-tx');
   const inventory = runtime.inventory;
@@ -89,9 +101,11 @@ test('production crossing commit is guarded by county and generation', () => {
   assert.match(app, /requestedCountyId !== gridlyGetActiveCountyId\(\) \|\| requestedGeneration !== gridlyActiveCountyTransitionGeneration/);
   assert.match(app, /gridlyCrossingInventoryCountyId = null;[\s\S]{0,120}crossings = \[\]/);
   assert.match(app, /gridlyCrossingInventoryCountyId = requestedCountyId;/);
+  assert.match(app, /authoritative-geometry-pending/);
 });
 
-test('stale governed geometry cache is revalidated once before containment fails', () => {
+test('stale governed geometry cache is recovered once with certified request identity', () => {
   assert.match(geometryLoader, /GEOMETRY_\(\?:BYTE_LENGTH\|SHA256\)_MISMATCH/);
-  assert.match(geometryLoader, /fetchGovernedGeometry\(transport, "reload"\)/);
+  assert.match(geometryLoader, /gridlyGeometryIdentity/);
+  assert.match(geometryLoader, /cache: "no-store"/);
 });

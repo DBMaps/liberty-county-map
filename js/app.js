@@ -45983,13 +45983,26 @@ function gridlySynchronizeActiveCountyForOperationalContext(area, countyId, sour
   const resolvedCountyId = gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId);
   if (!resolvedCountyId) {
     const blockedReason = gridlyOperationalCountyResolutionAudit?.failureReason || "operational_county_unresolved";
+    const waitingForAuthoritativeGeometry = Boolean(gridlyResolveCanonicalPlaceGeoid(area)
+      && gridlyOperationalCountyResolutionAudit?.authoritativeGeometryAvailable !== true
+      && ["coordinate_county_unresolved", "coordinate_containment_unavailable"].includes(blockedReason));
+    // A newly selected canonical PLACE cannot inherit the previous county's
+    // inventory while its owner is unresolved. Keep county synchronization
+    // pending, synchronously withdraw stale crossings, and let the governed
+    // loader re-enter this exact transition after certified installation.
+    if (waitingForAuthoritativeGeometry && typeof gridlyCrossingInventoryCountyId !== "undefined" && gridlyCrossingInventoryCountyId !== null) {
+      gridlyActiveCountyTransitionGeneration += 1;
+      gridlyCrossingInventoryCountyId = null;
+      crossings = [];
+      if (typeof renderCrossings === "function") renderCrossings({ reason: `${source}:authoritative-geometry-pending`, force: true });
+    }
     gridlyActiveCountySynchronizationAudit = Object.freeze({ synchronizerInvoked: true, source, resolvedGridlyCountyId: null, activeCountyIdBefore, activeCountyIdAfter: gridlyGetActiveCountyId(), transitionAttempted: false, transitionCommitted: false, transitionBlockedReason: blockedReason, setterInvoked: false, setterResult: null, transitionGenerationBefore, transitionGenerationAfter: gridlyActiveCountyTransitionGeneration });
     // The semantic camera can be available before the authoritative statewide
     // geometry package.  Retry the same transition owner when containment is
     // ready instead of leaving a successfully presented PLACE on stale county
     // state. The loader de-duplicates concurrent calls.
     const geometryLoader = typeof window !== "undefined" ? window.gridlyLp0361cRuntimeCountyGeometryPackageLoader : null;
-    if (gridlyResolveCanonicalPlaceGeoid(area) && gridlyOperationalCountyResolutionAudit?.authoritativeGeometryAvailable !== true && typeof geometryLoader?.load === "function" && ["coordinate_county_unresolved", "coordinate_containment_unavailable"].includes(blockedReason)) {
+    if (waitingForAuthoritativeGeometry && typeof geometryLoader?.load === "function") {
       void Promise.resolve(geometryLoader.load()).then(() => gridlySynchronizeActiveCountyForOperationalContext(area, countyId, `${source}:geometry-ready`)).catch(() => {});
     }
     return null; // Ambiguous or not-yet-ready context fails closed.
