@@ -26856,6 +26856,7 @@ const GRIDLY_CROSSING_RENDER_DEBUG = false;
 const gridlyCrossingRenderAuditState = {
   renderCallCount: 0,
   filterApplyCallCount: 0,
+  unchangedSemanticRenderSkipCount: 0,
   lastCalls: [],
   lastFilterApply: { key: "", visibleCount: -1, signature: "", at: 0 },
   lastRender: { signature: "", at: 0, visibleCount: 0, renderedCount: 0, skippedCount: 0, firstSkipReason: null, skipReasonBreakdown: {}, hardCapActive: false, hardCapLimit: null, viewportFilteringActive: false, displayPolicy: "none", policyReason: "" }
@@ -27780,6 +27781,7 @@ window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
   return {
     renderCrossingsCallCount: gridlyCrossingRenderAuditState.renderCallCount,
     filterApplyCallCount: gridlyCrossingRenderAuditState.filterApplyCallCount,
+    unchangedSemanticRenderSkipCount: gridlyCrossingRenderAuditState.unchangedSemanticRenderSkipCount,
     lastCalls: [...gridlyCrossingRenderAuditState.lastCalls],
     ...gridlyGetActiveCrossingSourceDiagnostics(),
     remoteAttempted: gridlyGetActiveCrossingSourceDiagnostics().remoteAttempted,
@@ -56937,6 +56939,27 @@ function renderCrossings(reason = "unspecified", options = {}) {
     bounds,
     activeCountyId
   });
+  const preliminaryViewportSignature = buildCrossingViewportSignature(visibilityPolicy, bounds);
+  if (
+    crossingDataChangeSignature === gridlyLastCrossingRenderDataSignature
+    && preliminaryViewportSignature === gridlyLastCrossingRenderViewportSignature
+  ) {
+    gridlyCrossingRenderAuditState.unchangedSemanticRenderSkipCount += 1;
+    gridlyRecordCrossingRenderLifecycle("suppressed", reasonText, {
+      caller: "unchanged-semantic-crossing-state",
+      forcedRequest: Boolean(options?.force),
+      crossingDataChangeSignature,
+      viewportSignature: preliminaryViewportSignature,
+      skippedBeforeInventoryFilter: true
+    });
+    pushCrossingAuditCall("semantic-render-skipped", reasonText, {
+      activeCountyId,
+      inventoryCount: renderCrossingsInputCount,
+      forcedRequest: Boolean(options?.force),
+      skippedBeforeInventoryFilter: true
+    });
+    return;
+  }
   const visibleCrossings = gridlyV921Phase("awareness/public-roadway/visibility/bounds filtering", () => getGridlyPolicyVisibleCrossings({
     activeCountyCrossings,
     activeCountyId,
@@ -56978,7 +57001,13 @@ function renderCrossings(reason = "unspecified", options = {}) {
   const renderNow = pushCrossingAuditCall("render", reason, { activeGeoFilter, visibleCount: prioritizedVisibleCrossings.length, signature: renderSignature, renderCrossingsInputCount, ...renderCoverageDiagnostics });
   const lastRender = gridlyCrossingRenderAuditState.lastRender;
   const gridlyV921SignatureDiff = gridlyV921Phase("previous-signature comparison", () => gridlyV921RecordSignatureDiff(lastRender.signature || "", renderSignature, { current: { awarenessArea: activeCountyId, zoom: visibilityPolicy.currentZoom, viewport: viewportSignature, selectedCrossing: gridlyCrossingRenderLifecycleAuditState.selectedCrossingId || "" } }));
-  if (!options.force && renderSignature === lastRender.signature) {
+  // `force` means that the caller needs the latest semantic crossing state; it
+  // does not make an already-current state different. Transition refreshes can
+  // arrive from several owners after the same county, filter, report revision,
+  // zoom and bounds have settled. Do not let those forced publications repeat
+  // marker/status work (and its downstream consumer fan-out).
+  if (renderSignature === lastRender.signature) {
+    gridlyCrossingRenderAuditState.unchangedSemanticRenderSkipCount += 1;
     const v921CrossingSkipCall = { timestamp: Date.now(), reason: normalizedV921Reason, caller: inferGridlyCrossingRenderCaller(getGridlyTrimmedStack()), inputRecordCount: renderCrossingsInputCount, filteredRecordCount: visibleCrossings.length, visibleRecordCount: prioritizedVisibleCrossings.length, markerCountBefore: crossingMarkers.size, markerCountAfter: crossingMarkers.size, currentSignature: renderSignature, previousSignature: lastRender.signature || "", signatureEqual: true, skippedBeforeModelWork: false, skippedAfterModelWork: true, layerCleared: false, markersCreated: 0, markersReused: crossingMarkers.size, markersRemoved: 0, popupContentBuilt: 0, listenersAttached: 0, duration: Number((gridlyV921Now() - gridlyV921RenderStartedAt).toFixed(2)), longestPhase: Object.entries(gridlyV921Phases).sort((a,b)=>b[1]-a[1])[0] || null, popupOpenState: typeof isGridlyCrossingPopupInteractionActive === "function" && isGridlyCrossingPopupInteractionActive(), selectedCrossing: gridlyCrossingRenderLifecycleAuditState.selectedCrossingId || "", awarenessArea: activeCountyId, mapZoom: visibilityPolicy.currentZoom, viewportSignature, renderMode: "unchanged-skip", phases: gridlyV921Phases };
     gridlyV921RecordPipelineCall("crossings", v921CrossingSkipCall);
     if (typeof gridlyV922RecordCall === "function") gridlyV922RecordCall("crossings", { owner: "renderCrossings", caller: v921CrossingSkipCall.caller, phases: { ...gridlyV921Phases }, totalMs: v921CrossingSkipCall.duration, breakdown: gridlyV922ClassifyPhases(gridlyV921Phases), refreshChain: ["scheduleRenderCrossings", "renderCrossings"], renderMode: "unchanged-skip" });
