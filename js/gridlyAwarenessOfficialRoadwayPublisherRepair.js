@@ -591,7 +591,12 @@
         const schedulePublication = typeof globalScope.requestAnimationFrame === "function"
           ? globalScope.requestAnimationFrame.bind(globalScope)
           : (callback) => globalScope.setTimeout(callback, 0);
-        schedulePublication(enrichPublishedState);
+        schedulePublication(() => {
+          if (typeof globalScope.gridlyRecordMainThreadAttribution === "function") {
+            return globalScope.gridlyRecordMainThreadAttribution("official-roadway-publisher:enrich-published-state", "requestAnimationFrame", enrichPublishedState);
+          }
+          return enrichPublishedState();
+        });
       }
 
       return result;
