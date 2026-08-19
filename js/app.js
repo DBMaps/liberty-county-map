@@ -40196,9 +40196,8 @@ function getGridlyLocationAwarenessCardKicker(areaName = "") {
   return `LOCATION CONTEXT • ${getGridlyContextLabelText(formatGridlyAwarenessAreaContextLabel(areaName))}`;
 }
 
-function getGridlyLocationContextMapMeta(crossingsCount = 0) {
-  const safeCrossingsCount = Number.isFinite(Number(crossingsCount)) ? Math.max(0, Number(crossingsCount)) : 0;
-  return `Map ready · ${safeCrossingsCount} crossing${safeCrossingsCount === 1 ? "" : "s"} watched`;
+function getGridlyLocationContextMapMeta() {
+  return "Map ready";
 }
 
 function getGridlyRouteContextTitle(destinationLabel = "") {
@@ -40340,7 +40339,7 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
     ? alertsCommunityReportCount
     : (reportCount + crossingReportCount || activeIssueCount);
   const quietState = activeIssueCount === 0;
-  const quietMapContextMeta = crossingsCount === null ? crossingWatchModel.displayText : getGridlyLocationContextMapMeta(crossingsCount);
+  const quietMapContextMeta = getGridlyLocationContextMapMeta();
   const activeStatus = crossingReportCount > 0
     ? "Active crossing report nearby"
     : (hazardCount > 0 ? "Active hazards reported nearby" : "Active reports posted nearby");
