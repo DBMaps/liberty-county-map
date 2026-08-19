@@ -56,9 +56,9 @@
     return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
   }
 
-  async function fetchGovernedGeometry(transport) {
+  async function fetchGovernedGeometry(transport, cacheMode = "force-cache") {
     loadDiagnostics = { selectedTransportMode: transport.mode, selectedUrl: transport.url, expectedBytes: transport.expectedBytes, actualBytes: null, expectedSha256: transport.expectedSha256, actualSha256: null, expectedCountyCount: transport.expectedCountyCount, actualCountyCount: null, integrityPassed: false, sourceClassification: transport.sourceClassification, loadError: null };
-    const options = { cache: "force-cache" };
+    const options = { cache: cacheMode };
     if (transport.mode === "REMOTE_PUBLIC_IMMUTABLE_OBJECT") options.mode = "cors";
     const response = await fetch(transport.url, options);
     if (!response || !response.ok) throw new Error(`Unable to load ${transport.url}: ${response ? response.status : "no response"}`);
@@ -88,7 +88,16 @@
     let transport;
     try { transport = selectedGeometryTransport(); }
     catch (error) { lastLoadError = error; return Promise.reject(error); }
+    // A previously deployed package can survive in the browser HTTP cache after
+    // the governed package identity changes.  That leaves canonical PLACE
+    // containment unavailable and, in turn, prevents the active county from
+    // advancing. Retry an identity mismatch once against the network; all
+    // integrity checks still have to pass before the package is installed.
     loadPromise = fetchGovernedGeometry(transport)
+      .catch((error) => {
+        if (!/^GEOMETRY_(?:BYTE_LENGTH|SHA256)_MISMATCH:/.test(String(error?.message || error))) throw error;
+        return fetchGovernedGeometry(transport, "reload");
+      })
       .then((pkg) => {
         return installRuntimeCountyGeometryPackage(pkg);
       })

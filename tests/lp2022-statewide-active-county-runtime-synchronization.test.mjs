@@ -151,6 +151,7 @@ function sameCountyHydrationSandbox({ countyId, inventoryCounty = null, inventor
   vm.createContext(sandbox);
   vm.runInContext(`
     ${productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext')}
+    ${productionFunction('gridlyPersistCanonicalPlaceOperationalCounty')}
     ${productionFunction('ensureGridlyActiveCountyCrossingInventory')}
     ${productionFunction('gridlySynchronizeActiveCountyForOperationalContext')}
     this.synchronize = gridlySynchronizeActiveCountyForOperationalContext;
@@ -314,6 +315,7 @@ test('production semantic caller retries containment readiness and commits Dalla
   vm.runInContext(`
     ${productionFunction('gridlyResolveCanonicalPlaceGeoid')}
     ${productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext')}
+    ${productionFunction('gridlyPersistCanonicalPlaceOperationalCounty')}
     ${productionFunction('gridlySetActiveCountyContext')}
     ${productionFunction('gridlySynchronizeActiveCountyForOperationalContext')}
     ${productionFunction('gridlyDispatchSemanticCamera')}

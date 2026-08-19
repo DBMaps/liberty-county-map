@@ -46,7 +46,7 @@
         entry.after = snapshot();
       }
     };
-    globalScope.gridlyMainThreadAttributionAudit = () => Object.freeze({
+    globalScope.gridlyRepair002MainThreadAttributionAudit = () => Object.freeze({
       enabled: true,
       localhostOnly: true,
       limit,

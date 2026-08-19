@@ -57,6 +57,9 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
     // LP214 cold-start closure governs configuration readiness before the
     // existing connector activation/fetch lifecycle; provider normalization is unchanged.
     "js/gridlyOfficialProviderActivation.js",
+    // Recovery Repair 003 retries a stale cached governed geometry package so
+    // canonical county containment can complete; DriveTexas is not involved.
+    "js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js",
     // LP214 crossing transport repair is isolated from DriveTexas fetching
     // and prevents diagnostic provider modes from overriding governed packages.
     "js/gridlyCrossingProvider.js",

@@ -23,9 +23,9 @@ function load(hostname) {
 
 test('localhost audit is bounded and records the activation RAF without changing scheduling', () => {
   const { window, runFrame } = load('localhost');
-  assert.equal(typeof window.gridlyMainThreadAttributionAudit, 'function');
+  assert.equal(typeof window.gridlyRepair002MainThreadAttributionAudit, 'function');
   runFrame();
-  const audit = window.gridlyMainThreadAttributionAudit();
+  const audit = window.gridlyRepair002MainThreadAttributionAudit();
   assert.equal(audit.entries.length, 1);
   assert.equal(audit.entries[0].writer, 'official-provider-activation:narrow-consumer-refresh');
   assert.equal(audit.entries[0].scheduler, 'requestAnimationFrame');
@@ -34,6 +34,12 @@ test('localhost audit is bounded and records the activation RAF without changing
 
 test('production host exposes no attribution recorder', () => {
   const { window } = load('gridly.example');
-  assert.equal(window.gridlyMainThreadAttributionAudit, undefined);
+  assert.equal(window.gridlyRepair002MainThreadAttributionAudit, undefined);
   assert.equal(window.gridlyRecordMainThreadAttribution, undefined);
+});
+
+test('Repair 002 does not overwrite the pre-existing V920 diagnostic name', () => {
+  const { window } = load('localhost');
+  assert.equal(window.gridlyMainThreadAttributionAudit, undefined);
+  assert.equal(typeof window.gridlyRepair002MainThreadAttributionAudit, 'function');
 });
