@@ -8,6 +8,7 @@
   const MANIFEST_PATH = "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json";
   const CONTRACT_PATH = "evidence/lp138/county-geometry-membership-contract.baseline.json";
   const PARSED_CACHE_LIMIT = 1;
+  const RECOVERY_IDENTITY_PARAMETER = "gridlyGeometryIdentity";
 
   let parsedPackageCache = null;
   let countyRecordById = null;
@@ -56,29 +57,40 @@
     return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
   }
 
-  async function fetchGovernedGeometry(transport, cacheMode = "force-cache") {
-    loadDiagnostics = { selectedTransportMode: transport.mode, selectedUrl: transport.url, expectedBytes: transport.expectedBytes, actualBytes: null, expectedSha256: transport.expectedSha256, actualSha256: null, expectedCountyCount: transport.expectedCountyCount, actualCountyCount: null, integrityPassed: false, sourceClassification: transport.sourceClassification, loadError: null };
-    const options = { cache: cacheMode };
+  function recoveryUrl(transport) {
+    const separator = transport.url.includes("?") ? "&" : "?";
+    return `${transport.url}${separator}${RECOVERY_IDENTITY_PARAMETER}=${encodeURIComponent(transport.expectedSha256)}`;
+  }
+
+  async function fetchGovernedGeometry(transport, { url = transport.url, cache = "force-cache", attempt = "initial" } = {}) {
+    if (!loadDiagnostics) loadDiagnostics = { selectedTransportMode: transport.mode, selectedUrl: transport.url, expectedBytes: transport.expectedBytes, actualBytes: null, expectedSha256: transport.expectedSha256, actualSha256: null, expectedCountyCount: transport.expectedCountyCount, actualCountyCount: null, integrityPassed: false, sourceClassification: transport.sourceClassification, loadError: null, status: "loading", finalUnavailable: false, recoveryAttempted: false, attempts: [] };
+    const attemptDiagnostic = { attempt, url, cache, actualBytes: null, actualSha256: null, error: null };
+    loadDiagnostics.attempts.push(attemptDiagnostic);
+    const options = { cache };
     if (transport.mode === "REMOTE_PUBLIC_IMMUTABLE_OBJECT") options.mode = "cors";
-    const response = await fetch(transport.url, options);
-    if (!response || !response.ok) throw new Error(`Unable to load ${transport.url}: ${response ? response.status : "no response"}`);
-    const buffer = await response.arrayBuffer();
-    loadDiagnostics.actualBytes = buffer.byteLength;
-    if (buffer.byteLength !== transport.expectedBytes) throw new Error(`GEOMETRY_BYTE_LENGTH_MISMATCH:${buffer.byteLength}`);
-    const digest = hex(new Uint8Array(await crypto.subtle.digest("SHA-256", buffer)));
-    loadDiagnostics.actualSha256 = digest;
-    if (digest !== transport.expectedSha256) throw new Error(`GEOMETRY_SHA256_MISMATCH:${digest}`);
-    let text;
-    try { text = new TextDecoder("utf-8", { fatal: true }).decode(buffer); }
-    catch (error) { throw new Error(`GEOMETRY_UTF8_INVALID:${error && error.message ? error.message : String(error)}`); }
-    let pkg;
-    try { pkg = JSON.parse(text); }
-    catch (error) { throw new Error(`GEOMETRY_JSON_INVALID:${error && error.message ? error.message : String(error)}`); }
-    if (!pkg || typeof pkg !== "object" || Array.isArray(pkg) || !Array.isArray(pkg.counties)) throw new Error("GEOMETRY_SCHEMA_INVALID");
-    loadDiagnostics.actualCountyCount = pkg.counties.length;
-    if (pkg.counties.length !== transport.expectedCountyCount) throw new Error(`GEOMETRY_COUNTY_COUNT_MISMATCH:${pkg.counties.length}`);
-    loadDiagnostics.integrityPassed = true;
-    return pkg;
+    try {
+      const response = await fetch(url, options);
+      if (!response || !response.ok) throw new Error(`Unable to load ${url}: ${response ? response.status : "no response"}`);
+      const buffer = await response.arrayBuffer();
+      loadDiagnostics.actualBytes = attemptDiagnostic.actualBytes = buffer.byteLength;
+      if (buffer.byteLength !== transport.expectedBytes) throw new Error(`GEOMETRY_BYTE_LENGTH_MISMATCH:${buffer.byteLength}`);
+      const digest = hex(new Uint8Array(await crypto.subtle.digest("SHA-256", buffer)));
+      loadDiagnostics.actualSha256 = attemptDiagnostic.actualSha256 = digest;
+      if (digest !== transport.expectedSha256) throw new Error(`GEOMETRY_SHA256_MISMATCH:${digest}`);
+      let text;
+      try { text = new TextDecoder("utf-8", { fatal: true }).decode(buffer); }
+      catch (error) { throw new Error(`GEOMETRY_UTF8_INVALID:${error && error.message ? error.message : String(error)}`); }
+      let pkg;
+      try { pkg = JSON.parse(text); }
+      catch (error) { throw new Error(`GEOMETRY_JSON_INVALID:${error && error.message ? error.message : String(error)}`); }
+      if (!pkg || typeof pkg !== "object" || Array.isArray(pkg) || !Array.isArray(pkg.counties)) throw new Error("GEOMETRY_SCHEMA_INVALID");
+      loadDiagnostics.actualCountyCount = pkg.counties.length;
+      if (pkg.counties.length !== transport.expectedCountyCount) throw new Error(`GEOMETRY_COUNTY_COUNT_MISMATCH:${pkg.counties.length}`);
+      return pkg;
+    } catch (error) {
+      attemptDiagnostic.error = error && error.message ? error.message : String(error);
+      throw error;
+    }
   }
 
   async function loadRuntimeCountyGeometryPackage() {
@@ -88,6 +100,7 @@
     let transport;
     try { transport = selectedGeometryTransport(); }
     catch (error) { lastLoadError = error; return Promise.reject(error); }
+    loadDiagnostics = null;
     // A previously deployed package can survive in the browser HTTP cache after
     // the governed package identity changes.  That leaves canonical PLACE
     // containment unavailable and, in turn, prevents the active county from
@@ -96,14 +109,22 @@
     loadPromise = fetchGovernedGeometry(transport)
       .catch((error) => {
         if (!/^GEOMETRY_(?:BYTE_LENGTH|SHA256)_MISMATCH:/.test(String(error?.message || error))) throw error;
-        return fetchGovernedGeometry(transport, "reload");
+        loadDiagnostics.recoveryAttempted = true;
+        return fetchGovernedGeometry(transport, { url: recoveryUrl(transport), cache: "no-store", attempt: "certified-identity-recovery" });
       })
       .then((pkg) => {
-        return installRuntimeCountyGeometryPackage(pkg);
+        const installed = installRuntimeCountyGeometryPackage(pkg);
+        loadDiagnostics.integrityPassed = true;
+        loadDiagnostics.status = "installed";
+        return installed;
       })
       .catch((error) => {
         lastLoadError = error;
-        if (loadDiagnostics) loadDiagnostics.loadError = error && error.message ? error.message : String(error);
+        if (loadDiagnostics) {
+          loadDiagnostics.loadError = error && error.message ? error.message : String(error);
+          loadDiagnostics.status = "geometry-unavailable";
+          loadDiagnostics.finalUnavailable = true;
+        }
         throw error;
       })
       .finally(() => {
