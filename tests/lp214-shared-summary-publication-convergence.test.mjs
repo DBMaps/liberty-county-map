@@ -10,6 +10,7 @@ function harness() {
   let connected = true;
   let error = null;
   let area = { key: 'place-4819000', label: 'Dallas' };
+  let connectorAreaIdentity = area.key;
   const intervals = [];
   const baseSummary = () => ({
     selectedAwarenessArea: area,
@@ -25,7 +26,13 @@ function harness() {
     getGridlySelectedAwarenessArea: () => area,
     gridlyDriveTexasConnector: {
       getNormalizedRecords: () => records,
-      areaLifecycleAudit: () => ({ lastFetchError: error, lastSuccessfulFetchTimestamp: '2026-08-18T00:00:00.000Z' })
+      areaLifecycleAudit: () => ({
+        lastFetchError: error,
+        lastSuccessfulFetchTimestamp: '2026-08-18T00:00:00.000Z',
+        currentAwarenessViewIdentity: connectorAreaIdentity,
+        lastFilterCanonicalKey: connectorAreaIdentity,
+        currentAwarenessViewMatchesSelectedArea: connectorAreaIdentity === area.key
+      })
     },
     gridlyDriveTexasProvider: { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected, lastError: error }) },
     gridlyDriveTexasConnectorRuntimeAudit: () => ({ connected }),
@@ -67,6 +74,7 @@ function harness() {
     connected = next.connected ?? true;
     error = next.error ?? null;
     if (next.area) area = next.area;
+    connectorAreaIdentity = next.connectorAreaIdentity ?? area.key;
     window.gridlyOfficialProviderConsumerRefresh({ providerId: 'drivetexas', reason: next.reason || 'fetch-success' });
     return window.gridlyCommunityPulseAuditState.communityAwarenessSummary;
   };
@@ -175,6 +183,24 @@ test('area transition never treats prior-area retained records as current eviden
   assert.equal(failedHouston.sharedActiveIssueContract.areaIdentity, 'place-4835000');
   assert.equal(failedHouston.sharedActiveIssueContract.activeOfficialRoadwayCount, 0);
   assert.equal(failedHouston.sharedActiveIssueContract.officialRoadwaySourceStatus, 'SOURCE_FAILED_NO_RETAINED_DATA');
+});
+
+test('publisher rejects a connector envelope still owned by the prior canonical area', () => {
+  const h = harness();
+  h.publish(Array.from({ length: 47 }, (_, i) => ({ id: `dallas-${i}` })));
+  const baytown = h.publish(Array.from({ length: 47 }, (_, i) => ({ id: `dallas-${i}` })), {
+    area: { key: 'place-4806128', label: 'Baytown' },
+    connectorAreaIdentity: 'place-4819000',
+    connected: false,
+    error: 'network failure',
+    reason: 'fetch-failure'
+  });
+  assert.equal(baytown.sharedActiveIssueContract.areaIdentity, 'place-4806128');
+  assert.equal(baytown.sharedActiveIssueContract.activeOfficialRoadwayCount, 0);
+  const envelope = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit().sourceStatusEnvelope;
+  assert.equal(envelope.areaOwnershipMatches, false);
+  assert.equal(envelope.areaIdentity, 'place-4819000');
+  assert.equal(envelope.selectedAreaIdentity, 'place-4806128');
 });
 
 test('zero-to-zero and nonzero-to-nonzero transitions still replace canonical identity', () => {
