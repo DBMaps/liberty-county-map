@@ -45,6 +45,8 @@
   let completeSourceDatasetPreservedAcrossAreaChange = true;
   let lastRefetchRequired = false;
   let lastRetainedDataReused = false;
+  let currentAreaViewIdentity = null;
+  let currentAreaViewCounty = null;
 
 
   const LP041_MAX_HISTORY = 3;
@@ -240,7 +242,32 @@
     awarenessRecordsUpdatedAt = new Date().toISOString();
     lastFilterReason = reason || "drivetexas-awareness-filter";
     lastFilterContext = context ? clone(context) : null;
+    currentAreaViewIdentity = toSafeString(context?.canonicalKey || context?.key) || null;
+    currentAreaViewCounty = toSafeString(context?.countyId) || null;
     state.normalizedRecordCount = awarenessNormalizedRecords.length;
+    return true;
+  }
+
+  function areaIdentity(context) {
+    return toSafeString(context?.canonicalKey || context?.key) || null;
+  }
+
+  function ensureCurrentAwarenessView(reason) {
+    const selectedContext = awarenessContextFrom(activeAwarenessArea());
+    const selectedIdentity = areaIdentity(selectedContext);
+    const selectedCounty = toSafeString(selectedContext?.countyId) || null;
+    if (selectedIdentity === currentAreaViewIdentity && selectedCounty === currentAreaViewCounty) return false;
+
+    // A derived awareness view is owned by exactly one canonical area.  The
+    // complete provider cache remains reusable, but its prior projection
+    // stops being current as soon as selection identity changes.
+    awarenessNormalizedRecords = [];
+    normalizedRecords = awarenessNormalizedRecords;
+    state.normalizedRecordCount = 0;
+    lastFilterContext = selectedContext ? clone(selectedContext) : null;
+    currentAreaViewIdentity = selectedIdentity;
+    currentAreaViewCounty = selectedCounty;
+    deriveAwarenessView(reason || "drivetexas-canonical-area-changed");
     return true;
   }
 
@@ -547,6 +574,7 @@
   }
 
   function getNormalizedRecords() {
+    ensureCurrentAwarenessView("drivetexas-current-view-read");
     return freeze(awarenessNormalizedRecords.map(clone).filter(Boolean));
   }
 
@@ -559,6 +587,10 @@
   }
 
   function areaLifecycleAudit() {
+    ensureCurrentAwarenessView("drivetexas-area-lifecycle-audit");
+    const selectedContext = awarenessContextFrom(activeAwarenessArea());
+    const selectedIdentity = areaIdentity(selectedContext);
+    const selectedCounty = toSafeString(selectedContext?.countyId) || null;
     return freeze({
       activeCounty: lastFilterContext?.countyId || null,
       activeCommunity: lastFilterContext?.community || null,
@@ -583,7 +615,11 @@
       staleAreaViewCompletionIgnoredCount,
       staleFetchCompletionIgnoredCount,
       completeSourceDatasetPreservedAcrossAreaChange,
-      currentAwarenessViewMatchesSelectedArea: true,
+      currentAwarenessViewIdentity: currentAreaViewIdentity,
+      currentAwarenessViewCounty: currentAreaViewCounty,
+      selectedAreaIdentity: selectedIdentity,
+      selectedAreaCounty: selectedCounty,
+      currentAwarenessViewMatchesSelectedArea: Boolean(selectedIdentity && selectedIdentity === currentAreaViewIdentity && selectedCounty === currentAreaViewCounty),
       selectedRecordIds: awarenessNormalizedRecords.map((record) => record.id || record.incidentId || record.GLOBALID || null),
       selectedRecordCounties: awarenessNormalizedRecords.map((record) => record.county || record.countyName || record.countyId || record.raw?.county || null),
       selectedRecordCommunities: awarenessNormalizedRecords.map((record) => record.city || record.locality || record.community || record.raw?.city || null),

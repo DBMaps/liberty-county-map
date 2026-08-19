@@ -227,6 +227,29 @@
       health.lifecycle?.lastFetchError || health.providerRuntime?.lastError || state.initialConnectorSyncReason === "timeout"
     );
     const sourceAvailable = Boolean(globalScope.gridlyDriveTexasConnector || globalScope.gridlyDriveTexasProvider);
+    const selectedIdentity = selectedAreaIdentity();
+    const envelopeIdentity = canonicalAreaKey({ key: health.lifecycle?.currentAwarenessViewIdentity || health.lifecycle?.lastFilterCanonicalKey });
+    const ownershipEvidenceAvailable = Boolean(envelopeIdentity);
+    const areaOwnershipMatches = ownershipEvidenceAvailable
+      ? Boolean(selectedIdentity && envelopeIdentity && selectedIdentity === envelopeIdentity && health.lifecycle?.currentAwarenessViewMatchesSelectedArea === true)
+      : true;
+
+    // The publisher may consume only a projection owned by the selected
+    // canonical area. Never relabel an older area's records with the current
+    // summary identity, even when source-health retention is in effect.
+    if (connectorRecords.length && !areaOwnershipMatches) {
+      return {
+        records: [], source: "gridlyDriveTexasConnector", connected: false,
+        fetchFailed: false, healthyEmpty: false, retained: false,
+        retainedLastSuccessful: false, lastSuccessfulAt: state.lastSuccessfulAt,
+        sourceStatus: SOURCE_STATUS.UNKNOWN, quietEligible: false,
+        consumerDisclosure: "Official roadway area is being confirmed",
+        areaIdentity: envelopeIdentity || null,
+        selectedAreaIdentity: selectedIdentity || null,
+        ownershipEvidenceAvailable,
+        areaOwnershipMatches: false
+      };
+    }
 
     if (connected) {
       rememberSuccessfulConnectorRecords(currentRecords);
@@ -259,11 +282,15 @@
         lp0393ProjectedCount: currentRecords.length,
         consumerVisibleCount: currentRecords.length,
         consumerEnvelopeCount: currentRecords.length,
-        countConverged: governed.authorityEligibleCount === governed.projectionInputCount && governed.projectionInputCount === currentRecords.length
+        countConverged: governed.authorityEligibleCount === governed.projectionInputCount && governed.projectionInputCount === currentRecords.length,
+        areaIdentity: envelopeIdentity,
+        selectedAreaIdentity: selectedIdentity,
+        ownershipEvidenceAvailable,
+        areaOwnershipMatches
       };
     }
 
-    const retentionMatchesArea = !state.lastSuccessfulAreaIdentity || state.lastSuccessfulAreaIdentity === selectedAreaIdentity();
+    const retentionMatchesArea = areaOwnershipMatches && (!state.lastSuccessfulAreaIdentity || state.lastSuccessfulAreaIdentity === selectedIdentity);
     // Connector/provider caches are retained source snapshots too. They are
     // eligible during failure only when the last successful fetch belonged
     // to this same canonical area.
