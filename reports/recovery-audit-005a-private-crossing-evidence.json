@@ -1,0 +1,2599 @@
+{
+  "awarenessDiagnostics": {
+    "Austin": {
+      "certifiedBaseline": 135,
+      "hypotheticalExcludeGroups3And4": 133,
+      "method": "nearest-anchor composition diagnostic; not persisted runtime membership",
+      "privateByGroup": {
+        "GROUP 2": 8,
+        "GROUP 4": 2,
+        "GROUP 5": 6
+      }
+    },
+    "Baytown": {
+      "certifiedBaseline": 70,
+      "hypotheticalExcludeGroups3And4": 69,
+      "method": "nearest-anchor composition diagnostic; not persisted runtime membership",
+      "privateByGroup": {
+        "GROUP 2": 6,
+        "GROUP 4": 1,
+        "GROUP 5": 5
+      }
+    },
+    "Dallas": {
+      "certifiedBaseline": 417,
+      "hypotheticalExcludeGroups3And4": 407,
+      "method": "nearest-anchor composition diagnostic; not persisted runtime membership",
+      "privateByGroup": {
+        "GROUP 2": 16,
+        "GROUP 3": 7,
+        "GROUP 4": 3,
+        "GROUP 5": 32
+      }
+    },
+    "Liberty": {
+      "certifiedBaseline": 30,
+      "hypotheticalExcludeGroups3And4": 30,
+      "method": "nearest-anchor composition diagnostic; not persisted runtime membership",
+      "privateByGroup": {
+        "GROUP 2": 1,
+        "GROUP 5": 5
+      }
+    }
+  },
+  "decisionGroups": {
+    "GROUP 1": {
+      "Dallas": 0,
+      "Harris": 0,
+      "Liberty": 0,
+      "Travis": 0,
+      "samples": [
+        {
+          "COUNTYNAME": "BOWIE",
+          "CROSSING": "795844G",
+          "HIGHWAY": "county road",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "bowie Parkway",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "BOWIE",
+          "CROSSING": "795850K",
+          "HIGHWAY": "county road",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "James Calow Dr",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "BOWIE",
+          "CROSSING": "795845N",
+          "HIGHWAY": "county road",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "LONE STAR AMMO",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        }
+      ],
+      "statewide": 33
+    },
+    "GROUP 2": {
+      "Dallas": 27,
+      "Harris": 82,
+      "Liberty": 2,
+      "Travis": 17,
+      "samples": [
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970869H",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "UNNAMED ROAD",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970872R",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "PEDESTRAIN WEST LEG OF WYE PALESTINE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "3",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970871J",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "TOP OF WYE PALESTINE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        }
+      ],
+      "statewide": 848
+    },
+    "GROUP 3": {
+      "Dallas": 9,
+      "Harris": 24,
+      "Liberty": 1,
+      "Travis": 1,
+      "samples": [
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970866M",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "FARM ROAD",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970867U",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "FARM ROAD",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970870C",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "FARM ROAD",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        }
+      ],
+      "statewide": 240
+    },
+    "GROUP 4": {
+      "Dallas": 6,
+      "Harris": 15,
+      "Liberty": 1,
+      "Travis": 3,
+      "samples": [
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "440977S",
+          "HIGHWAY": "NA",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "ALL PRIVATE IN Yard - PALESTINE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "BASTROP",
+          "CROSSING": "440979F",
+          "HIGHWAY": "NA",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "ALL PRIVATE IN Yard - SMITHVILLE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "BELL",
+          "CROSSING": "967157D",
+          "HIGHWAY": "none",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "RR USE ONLY",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        }
+      ],
+      "statewide": 146
+    },
+    "GROUP 5": {
+      "Dallas": 58,
+      "Harris": 153,
+      "Liberty": 32,
+      "Travis": 11,
+      "samples": [
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970868B",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "PRIVATE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "432213D",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "PRIVATE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "432214K",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "PRIVATE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        }
+      ],
+      "statewide": 3635
+    }
+  },
+  "matrix": {
+    "path": "reports/recovery-audit-005a-private-combination-matrix.csv",
+    "uniqueCombinations": 179
+  },
+  "nonPublicPrivateBreakdown": {
+    "INDUSTRIAL": {
+      "combinations": [
+        {
+          "count": 7,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "INDUSTRIAL"
+          }
+        }
+      ],
+      "count": 7,
+      "samples": [
+        {
+          "COUNTYNAME": "LIBERTY",
+          "CROSSING": "748392X",
+          "HIGHWAY": "NA",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "PRIVATE HUNTSMAN",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "INDUSTRIAL"
+        },
+        {
+          "COUNTYNAME": "LIBERTY",
+          "CROSSING": "440199F",
+          "HIGHWAY": "NA",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "Private Industry National Timber",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "INDUSTRIAL"
+        },
+        {
+          "COUNTYNAME": "LIBERTY",
+          "CROSSING": "978451G",
+          "HIGHWAY": "TBD",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "ALL PRIVATE IN INDUSTRY - RAIL LOGIX",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "INDUSTRIAL"
+        }
+      ]
+    },
+    "PRIVATE_ROAD": {
+      "combinations": [
+        {
+          "count": 44,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PRIVATE_ROAD"
+          }
+        },
+        {
+          "count": 21,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PRIVATE_ROAD"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PRIVATE_ROAD"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PRIVATE_ROAD"
+          }
+        }
+      ],
+      "count": 67,
+      "samples": [
+        {
+          "COUNTYNAME": "CHAMBERS",
+          "CROSSING": "762801W",
+          "HIGHWAY": "NA",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "Private",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PRIVATE_ROAD"
+        },
+        {
+          "COUNTYNAME": "CHAMBERS",
+          "CROSSING": "762813R",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "PRIVATE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PRIVATE_ROAD"
+        },
+        {
+          "COUNTYNAME": "CHAMBERS",
+          "CROSSING": "762815E",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "Private Field",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PRIVATE_ROAD"
+        }
+      ]
+    },
+    "PUBLIC_ROADWAY": {
+      "combinations": [
+        {
+          "count": 1937,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 863,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 247,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 192,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 188,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 128,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 109,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 68,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 67,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 64,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 58,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 48,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 48,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 47,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 44,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 38,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 33,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 29,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 29,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 28,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 24,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 21,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 18,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 18,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 17,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PUBLIC_ROAD",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 17,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 16,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE+FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 14,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 13,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "22",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 13,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 12,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 10,
+          "fields": {
+            "HIGHWAY_category": "PUBLIC_ROAD",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 10,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 10,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 9,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 9,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 9,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 9,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE+PUBLIC_ROAD",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 8,
+          "fields": {
+            "HIGHWAY_category": "FARM",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 8,
+          "fields": {
+            "HIGHWAY_category": "PUBLIC_ROAD",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 8,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 8,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 7,
+          "fields": {
+            "HIGHWAY_category": "INDUSTRIAL",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 7,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 7,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 6,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 6,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "PUBLIC_ROAD",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PUBLIC_ROAD",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 5,
+          "fields": {
+            "HIGHWAY_category": "PUBLIC_ROAD",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "FARM",
+            "POSXING": "At Grade",
+            "PRVCAT": "22",
+            "STREET_category": "FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "22",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 4,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PLACEHOLDER/UNKNOWN",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Under",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "19",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "19",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "22",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 3,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PUBLIC_ROAD",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "INDUSTRIAL+DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+PUBLIC_ROAD",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+YARD/RAIL_ONLY+DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "RESIDENTIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE+PUBLIC_ROAD",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+PUBLIC_ROAD",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "SERVICE/ACCESS",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "YARD/RAIL_ONLY",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "YARD/RAIL_ONLY",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Under",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Under",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "RR Under",
+            "PRVCAT": "14",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "19",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "YARD/RAIL_ONLY+SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Over",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE+DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "PRIVATE+INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "21",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 2,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "3",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+FARM",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "RESIDENTIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "COMMERCIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "INDUSTRIAL+SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+INDUSTRIAL+SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE+INDUSTRIAL+YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PUBLIC_ROAD",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE+DRIVEWAY",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE+DRIVEWAY",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE+PUBLIC_ROAD",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PUBLIC_ROAD",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Under",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "DRIVEWAY",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "15",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Over",
+            "PRVCAT": "15",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "19",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "19",
+            "STREET_category": "PLACEHOLDER/UNKNOWN",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "19",
+            "STREET_category": "PRIVATE+YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PUBLIC_ROAD",
+            "POSXING": "At Grade",
+            "PRVCAT": "19",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "FARM",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "PLACEHOLDER/UNKNOWN",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "PUBLIC_ROAD",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "20",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "RR Over",
+            "PRVCAT": "20",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "RR Over",
+            "PRVCAT": "20",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "BLANK",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "PLACEHOLDER/UNKNOWN",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "STREET_category": "PLACEHOLDER/UNKNOWN",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Under",
+            "PRVCAT": "21",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Under",
+            "PRVCAT": "21",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "22",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "22",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "22",
+            "STREET_category": "PRIVATE+DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "22",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "22",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "DRIVEWAY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "PRIVATE+INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Under",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Under",
+            "PRVCAT": "14",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Over",
+            "PRVCAT": "15",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Under",
+            "PRVCAT": "15",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "RR Under",
+            "PRVCAT": "20",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "RR Under",
+            "PRVCAT": "22",
+            "STREET_category": "PRIVATE",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "2",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "NAMED/UNSPECIFIED",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "INDUSTRIAL",
+            "TYPEXING": "Private",
+            "XPURPOSE": "3",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "YARD/RAIL_ONLY",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "3",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        },
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "STREET_category": "NAMED/UNSPECIFIED",
+            "TYPEXING": "Private",
+            "XPURPOSE": "3",
+            "gridlyClassification": "PUBLIC_ROADWAY"
+          }
+        }
+      ],
+      "count": 4826,
+      "samples": [
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970866M",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "FARM ROAD",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970867U",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "FARM ROAD",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        },
+        {
+          "COUNTYNAME": "ANDERSON",
+          "CROSSING": "970868B",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "20",
+          "STREET": "PRIVATE",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "PUBLIC_ROADWAY"
+        }
+      ]
+    },
+    "RAIL_YARD": {
+      "combinations": [
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PRIVATE",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "YARD/RAIL_ONLY",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "RAIL_YARD"
+          }
+        }
+      ],
+      "count": 1,
+      "samples": [
+        {
+          "COUNTYNAME": "LIBERTY",
+          "CROSSING": "930212V",
+          "HIGHWAY": "PRIVATE",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "RRYARD",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "RAIL_YARD"
+        }
+      ]
+    },
+    "TEMPORARY_ACCESS": {
+      "combinations": [
+        {
+          "count": 1,
+          "fields": {
+            "HIGHWAY_category": "PLACEHOLDER/UNKNOWN",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "STREET_category": "SERVICE/ACCESS",
+            "TYPEXING": "Private",
+            "XPURPOSE": "1",
+            "gridlyClassification": "TEMPORARY_ACCESS"
+          }
+        }
+      ],
+      "count": 1,
+      "samples": [
+        {
+          "COUNTYNAME": "LIBERTY",
+          "CROSSING": "975462J",
+          "HIGHWAY": "NA",
+          "POSXING": "At Grade",
+          "PRVCAT": "14",
+          "STREET": "Temp Haul Road TX 99",
+          "TYPEXING": "Private",
+          "XPURPOSE": "1",
+          "gridlyClassification": "TEMPORARY_ACCESS"
+        }
+      ]
+    }
+  },
+  "privateNormalizedClassification": {
+    "INDUSTRIAL": 7,
+    "PRIVATE_ROAD": 67,
+    "PUBLIC_ROADWAY": 4826,
+    "RAIL_YARD": 1,
+    "TEMPORARY_ACCESS": 1
+  },
+  "publicRoadwayNameEvidence": {
+    "STREET only": 420,
+    "both": 4406,
+    "driveway": 36,
+    "industrial access": 71,
+    "private access/road": 4244,
+    "public access/road": 65,
+    "service road/access": 25
+  },
+  "purposeDistribution": {
+    "COMMERCIAL (name evidence)": 1,
+    "FARM/AGRICULTURAL (name evidence)": 116,
+    "INDUSTRIAL (name evidence)": 69,
+    "MAINTENANCE/SERVICE/ACCESS (name evidence)": 22,
+    "ORDINARY/UNSPECIFIED HIGHWAY PURPOSE (XPURPOSE=1)": 4509,
+    "PEDESTRIAN/PATHWAY (XPURPOSE=2)": 34,
+    "PRIVATE DRIVEWAY (name evidence)": 32,
+    "RAIL YARD/FACILITY (name evidence)": 111,
+    "RESIDENTIAL (name evidence)": 3,
+    "STATION (XPURPOSE=3)": 5
+  },
+  "scope": {
+    "governed": 16099,
+    "packages": 254,
+    "sourcePrivate": 4902
+  }
+}
