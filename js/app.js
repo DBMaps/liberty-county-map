@@ -95738,8 +95738,16 @@ function renderGridlySettingsAwarenessSearchResult(result) {
   container.hidden = false;
 }
 
-function gridlySaveCanonicalMultiCountyPlaceHome(result = {}, source = "canonical_multi_county_place_search") {
+function gridlySaveCanonicalMultiCountyPlaceHome(result = {}, source = "canonical_multi_county_place_search", requestedOperationalCountyId = null) {
   if (result.status !== "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE" || result.canonicalIdentity !== "PLACE_GEOID") return false;
+  const requestedCountyToken = String(requestedOperationalCountyId || "").trim().toLowerCase();
+  const requestedCountyId = gridlyNormalizeCountyId(requestedCountyToken);
+  const requestedCounty = GRIDLY_COUNTY_REGISTRY?.[requestedCountyId];
+  const requestedCountyFips = String(requestedCounty?.countyFips || GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[requestedCountyId] || "");
+  // Canonical PLACE identity and operational ownership are independent.  A
+  // multi-county save is therefore incomplete without an explicit, governed
+  // county; never derive it from membership order or prior runtime state.
+  if (!requestedCountyToken || requestedCountyId !== requestedCountyToken || !requestedCounty || !(result.countyMemberships || []).map(String).includes(requestedCountyFips)) return false;
   const record = { zip: "", countyId: null, countyName: null, countyMemberships: [...(result.countyMemberships || [])], communityKey: result.placeGeoid, communityLabel: result.community, awarenessAreaKey: `place-${result.placeGeoid}`, consumerLabel: result.community, identityType: "PLACE_GEOID", canonicalRegionId: null, resolutionStatus: "manual_confirmed", resolutionMethod: source, sourceVersion: "LP196", confirmedAt: new Date().toISOString(), schemaVersion: GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION };
   const validation = gridlyLp0517ValidateHomeRecord(record);
   if (!validation.valid) return false;
@@ -95748,9 +95756,11 @@ function gridlySaveCanonicalMultiCountyPlaceHome(result = {}, source = "canonica
     gridlySafeLocalStorageSet("gridlyHomeTown", result.community);
     invalidateGridlySelectedAwarenessAreaResolutionCache?.(`${source}:canonical-place`);
     activeGeoFilter = "town";
+    const synchronizedCountyId = gridlySynchronizeActiveCountyForOperationalContext?.(validation.area, requestedCountyId, `${source}:canonical-place-owner`);
+    if (synchronizedCountyId !== requestedCountyId) return false;
     if (validation.area && typeof gridlyDispatchSemanticCamera === "function") {
-      const focused = gridlyDispatchSemanticCamera(validation.area, null, { source });
-      if (!focused && typeof gridlyLoadStatewidePlacePresentation === "function") void gridlyLoadStatewidePlacePresentation().then(() => gridlyDispatchSemanticCamera(validation.area, null, { source })).catch(() => {});
+      const focused = gridlyDispatchSemanticCamera(validation.area, requestedCountyId, { source });
+      if (!focused && typeof gridlyLoadStatewidePlacePresentation === "function") void gridlyLoadStatewidePlacePresentation().then(() => gridlyDispatchSemanticCamera(validation.area, requestedCountyId, { source })).catch(() => {});
     }
     syncGridlyAwarenessAreaSurfacesImmediately?.(source, { summaryOptions: { awarenessArea: validation.area }, refreshMapMarkers: true });
     renderGridlySettingsPanel?.();

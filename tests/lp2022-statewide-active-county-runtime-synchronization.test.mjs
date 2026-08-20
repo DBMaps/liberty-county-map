@@ -259,7 +259,8 @@ test('startup restoration and manual PLACE selection both replace Liberty with D
     assert.ok(runtime.inventory.every(row => row.countyId !== 'liberty-tx'), lifecycle);
   }
   assert.match(source, /startup-semantic-hydration:presentation-ready/);
-  assert.match(source, /gridlyDispatchSemanticCamera\(validation\.area, null, \{ source \}\)/);
+  assert.match(source, /gridlySynchronizeActiveCountyForOperationalContext\?\.\(validation\.area, requestedCountyId/);
+  assert.match(source, /gridlyDispatchSemanticCamera\(validation\.area, requestedCountyId, \{ source \}\)/);
 });
 
 test('production semantic caller retries containment readiness and commits Dallas through the real setter', async () => {
