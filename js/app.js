@@ -55886,6 +55886,44 @@ function gridlyReadLocationContextCrossingDom() {
     : { state: "missing", value: null, text });
 }
 window.gridlyReadLocationContextCrossingDom = gridlyReadLocationContextCrossingDom;
+
+// Audit-only identity comparison for the two deliberately independent rail
+// presentation contracts.  Map identities come from the authoritative marker
+// registry, never from a DOM recount; Location Context identities come from the
+// shared consumer-awareness selector that owns "crossings watched".
+function gridlyRailLocationContextParityAudit(summary = buildGridlyCommunityAwarenessIntelligenceSummary()) {
+  const mapVisibleIds = Array.from(crossingMarkers instanceof Map ? crossingMarkers.keys() : [])
+    .map((id) => String(id || "").trim())
+    .filter(Boolean);
+  const locationContextIds = gridlySelectConsumerVisibleCrossings(
+    summary?.selectedAwarenessArea || getGridlySelectedAwarenessArea()
+  ).map(gridlyGetConsumerCrossingFraId).filter(Boolean);
+  const mapSet = new Set(mapVisibleIds.map((id) => id.toLowerCase()));
+  const contextSet = new Set(locationContextIds.map((id) => id.toLowerCase()));
+  const intersectionIds = mapVisibleIds.filter((id) => contextSet.has(id.toLowerCase()));
+  const mapOnlyIds = mapVisibleIds.filter((id) => !contextSet.has(id.toLowerCase()));
+  const locationContextOnlyIds = locationContextIds.filter((id) => !mapSet.has(id.toLowerCase()));
+  return Object.freeze({
+    audit: "Rail Location Context / map identity parity",
+    mapCountOwner: "renderCrossings -> crossingMarkers",
+    locationContextCountOwner: "gridlySelectConsumerVisibleCrossings",
+    crossingsWatchedSemantics: "certified, reportable, consumer-visible crossings geographically owned by the selected awareness area; independent of marker viewport and clustering",
+    countMismatchExpectedByDesign: true,
+    mapVisibleIds: Object.freeze(mapVisibleIds),
+    locationContextIds: Object.freeze(locationContextIds),
+    intersectionIds: Object.freeze(intersectionIds),
+    mapOnlyIds: Object.freeze(mapOnlyIds),
+    locationContextOnlyIds: Object.freeze(locationContextOnlyIds),
+    counts: Object.freeze({
+      mapVisible: mapVisibleIds.length,
+      locationContext: locationContextIds.length,
+      intersection: intersectionIds.length,
+      mapOnly: mapOnlyIds.length,
+      locationContextOnly: locationContextOnlyIds.length
+    })
+  });
+}
+window.gridlyRailLocationContextParityAudit = gridlyRailLocationContextParityAudit;
 window.gridlySafeBrowserCrossingAudit = async function gridlySafeBrowserCrossingAudit() {
   const canonicalCommunity = getGridlySelectedAwarenessArea();
   const countyId = gridlyGetActiveCountyId();
