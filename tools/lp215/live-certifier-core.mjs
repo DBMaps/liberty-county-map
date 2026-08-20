@@ -7,17 +7,15 @@ export function normalizeIds(values = []) {
   return [...new Set((Array.isArray(values) ? values : []).map(String).filter(Boolean))].sort();
 }
 
-/**
- * Proves that a disabled picker option is the itinerary's current governed
+/** Proves that the wraparound predecessor is already the current governed
  * selection. PLACE identity comes from the runtime audit's authoritative
- * fields; picker keys and labels are deliberately not identity fallbacks.
- */
+ * fields; registry keys and labels are deliberately not identity fallbacks. */
 export function currentOptionContextMatches(selected = {}, expected = {}) {
   const expectedCounty = expected.operationalActiveCounty || expected.countyId || null;
   const activeCounty = selected.activeCountyId || selected.activeCounty || null;
   if (!expectedCounty || activeCounty !== expectedCounty) return false;
 
-  if (selected.canonicalCommunityIdentity === 'PLACE_GEOID') {
+  if (expected.placeGeoid) {
     const selectedPlaceGeoid = selected.selectedPlaceGeoid || selected.placeGeoid
       || selected.selectedCommunityId || selected.communityId || selected.canonicalPlaceGeoid || null;
     const selectedCounty = selected.selectedCountyId || selected.countyId

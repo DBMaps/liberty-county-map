@@ -18,8 +18,8 @@
     const expectedCounty = expected.operationalActiveCounty || expected.countyId || null;
     const activeCounty = selected.activeCountyId || selected.activeCounty || null;
     if (!expectedCounty || activeCounty !== expectedCounty) return false;
-    if (selected.canonicalCommunityIdentity === 'PLACE_GEOID') {
-      // These are authoritative runtime-audit identities. The picker key is a
+    if (expected.placeGeoid) {
+      // These are authoritative runtime-audit identities. The registry key is a
       // registry identity and must not override an explicit governed GEOID.
       const selectedPlaceGeoid = selected.selectedPlaceGeoid || selected.placeGeoid || selected.selectedCommunityId || selected.communityId || selected.canonicalPlaceGeoid || null;
       const selectedCounty = selected.selectedCountyId || selected.countyId || selected.resolvedGridlyCountyId || null;
@@ -46,45 +46,13 @@
     return { settled: false, value, elapsedMs: Math.round(performance.now() - started) };
   }
 
-  async function selectThroughProductionUi(row) {
-    const settings = document.querySelector('[data-v2-sheet="settings"], #mobileDockSettingsBtn');
-    if (!settings) throw new Error('PRODUCTION_SETTINGS_OPEN_CONTROL_NOT_AVAILABLE');
-    settings.click(); await sleep(250);
-    const pickerToggle = document.querySelector('[data-v2-action="settings-choose-available-areas"], [data-v2-action="settings-change-awareness-area"], #settingsChooseCommunityManuallyBtn');
-    if (!pickerToggle) throw new Error('PRODUCTION_AWARENESS_PICKER_OPEN_CONTROL_NOT_AVAILABLE');
-    if (pickerToggle.getAttribute('aria-expanded') !== 'true') pickerToggle.click();
-    await sleep(250);
-    const input = document.querySelector('[data-gridly-manual-awareness-search]');
-    if (!input) throw new Error('PRODUCTION_AWARENESS_PICKER_SEARCH_NOT_AVAILABLE');
-    input.value = row.representativeCommunity;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    await sleep(300);
-    const choices = [...document.querySelectorAll('[data-gridly-manual-awareness-value]')];
-    const countyName = row.countyId.replace(/-tx$/, '').replace(/-/g, ' ');
-    const choice = choices.find(node => node.querySelector('span')?.textContent?.trim() === row.representativeCommunity && node.querySelector('small')?.textContent?.toLowerCase().includes(countyName)) || choices.find(node => node.querySelector('span')?.textContent?.trim() === row.representativeCommunity);
-    if (!choice) throw new Error('REPRESENTATIVE_NOT_FOUND_IN_PRODUCTION_AWARENESS_PICKER');
-
-    // Production deliberately disables the current community. In that state a
-    // user has nothing to confirm and the pending-selection apply control is
-    // therefore not rendered. Accept it only when production's public audit
-    // proves both canonical community and active-county ownership already match.
-    if (choice.disabled) {
-      const current = call('gridlyActiveCountyRuntimeAudit', {});
-      if (!currentOptionContextMatches(current, row)) {
-        throw new Error('PRODUCTION_AWARENESS_PICKER_CURRENT_OPTION_CONTEXT_MISMATCH');
-      }
-    } else {
-      choice.click();
-      const pending = await waitFor(
-        () => document.querySelector('[data-gridly-manual-awareness-apply]'),
-        node => Boolean(node),
-        1500
-      );
-      const apply = pending.value;
-      if (!pending.settled || !apply) throw new Error('PRODUCTION_AWARENESS_PICKER_PENDING_APPLY_NOT_RENDERED');
-      if (apply.disabled) throw new Error('PRODUCTION_AWARENESS_PICKER_PENDING_APPLY_DISABLED');
-      apply.click(); await sleep(300);
+  async function selectThroughCanonicalProductionAction(row) {
+    if (typeof global.selectGridlySettingsAwarenessArea !== 'function') {
+      throw new Error('CANONICAL_PRODUCTION_SELECTION_ACTION_NOT_AVAILABLE');
     }
+    const selected = global.selectGridlySettingsAwarenessArea(row.canonicalKey, 'lp215_live_certification', null);
+    if (selected !== true) throw new Error('CANONICAL_PRODUCTION_SELECTION_ACTION_REJECTED');
+    await sleep(300);
     // Open the actual consumer surface so displayed-card evidence is captured,
     // rather than inferring presentation from records while Alerts is closed.
     document.querySelector('[data-v2-sheet="alerts"], #mobileDockAlertsBtn, [data-section="alerts"]')?.click();
@@ -156,8 +124,8 @@
   function saveCheckpoint() { sessionStorage.setItem(CHECKPOINT_KEY, JSON.stringify({ schemaVersion:'gridly.lp215.live-checkpoint.v1', startedAt:state.startedAt, results:state.results })); }
   function summary() { const completed=state.results.length, pass=state.results.filter(r=>r.pass).length, fail=state.results.filter(r=>r.complete&&!r.pass).length, incomplete=254-pass-fail; return { expected:254, completed, pass, fail, incomplete }; }
   const previousFrom = (result, liveIds = result.currentAreaRecordIds || []) => ({selectedCommunity:result.selectedCommunityAfterTransition,activeCounty:result.activeCountyAfterTransition,roadwaySourceCounty:result.liveRoadwayCounty,driveTexasRecordIds:ids(liveIds),railSourceCounty:result.liveRailSourceCounty,railMarkerIds:result.leafletMarkerIds||[],alertCardIds:result.alertCardIds||[]});
-  async function seedWraparoundPredecessor(){const row=state.itinerary[253];console.log('[seed] Presettling 254/254 predecessor for row 001 stale-state comparison');await selectThroughProductionUi(row);const started=performance.now();const settled=await waitFor(()=>{const s=snapshot(row,performance.now()-started>=SEED_SOURCE_TIMEOUT_MS);return {snapshot:s,report:seedSettlement(row,s)};},value=>value.report.settled,45000);state.seedSettlementReport=settled.value?.report||null;if(!settled.settled){console.error('[seed] Unsatisfied predecessor settlement conditions',state.seedSettlementReport?.unsatisfied);console.table(state.seedSettlementReport?.conditions||{});console.error('[seed] Settlement evidence',state.seedSettlementReport?.evidence);throw new Error('WRAPAROUND_PREDECESSOR_SETTLEMENT_TIMEOUT');}console.table(state.seedSettlementReport.conditions);console.info('[seed] Settlement evidence',state.seedSettlementReport.evidence);const s=settled.value.snapshot;state.previous={selectedCommunity:s.context.awarenessAreaKey,activeCounty:s.context.activeCountyId,roadwaySourceCounty:s.road.loadedRoadwayCounty,driveTexasRecordIds:ids((s.envelope?.records||[]).map(r=>r.consumerSituationId||r.id)),railSourceCounty:s.context.runtimeInventoryCounty||s.rail.runtimeInventoryCounty||s.rail.sourceCountyId||s.rail.activeCountyId,railMarkerIds:s.leafletIds,alertCardIds:s.alertIds};}
-  async function run() { if(state.running)return; state.running=true; state.stopped=false;try{if(state.index===0&&!state.previous)await seedWraparoundPredecessor();}catch(error){state.running=false;console.error(error);throw error;} while(state.index<state.itinerary.length&&!state.stopped){ const row=state.itinerary[state.index]; console.log(`[${String(row.sequence).padStart(3,'0')}/254] ${row.countyId.replace(/-tx$/,'')} / ${row.representativeCommunity}`); const started=performance.now(); try{await selectThroughProductionUi(row); const settled=await waitFor(()=>snapshot(row,false),s=>s.settled,45000); const result=buildResult(row,settled,started); result.alertCardIds=settled.value?.alertIds||[]; state.results.push(result); state.previous=previousFrom(result,(settled.value?.envelope?.records||[]).map(r=>r.consumerSituationId||r.id)); console.log(`CONTEXT ${result.contextPass?'PASS':'FAIL'} | ROADWAY ${result.roadwayLivePass?'PASS':'FAIL'} | DRIVETEXAS ${result.sourceHealthState} | ALERTS ${result.alertsPass?'PASS':'FAIL'} | RAIL ${result.railPass?'PASS':'FAIL'} | STALE ${result.staleStatePass?'PASS':'FAIL'}`); }catch(error){ state.results.push({...row,complete:false,pass:false,reasons:['CONTEXT_FAILURE',error.message||String(error)]}); console.error(row.countyId,error); } state.index++; saveCheckpoint(); } state.running=false; if(state.index===254)state.completedAt=new Date().toISOString(); console.table(summary()); return global.gridlyLp215Status(); }
+  async function seedWraparoundPredecessor(){const row=state.itinerary[253];console.log('[seed] Presettling 254/254 predecessor for row 001 stale-state comparison');const current=call('gridlyActiveCountyRuntimeAudit',{});if(currentOptionContextMatches(current,row))console.info('[seed] Authoritative PLACE GEOID and selected/active county already match predecessor');else await selectThroughCanonicalProductionAction(row);const started=performance.now();const settled=await waitFor(()=>{const s=snapshot(row,performance.now()-started>=SEED_SOURCE_TIMEOUT_MS);return {snapshot:s,report:seedSettlement(row,s)};},value=>value.report.settled,45000);state.seedSettlementReport=settled.value?.report||null;if(!settled.settled){console.error('[seed] Unsatisfied predecessor settlement conditions',state.seedSettlementReport?.unsatisfied);console.table(state.seedSettlementReport?.conditions||{});console.error('[seed] Settlement evidence',state.seedSettlementReport?.evidence);throw new Error('WRAPAROUND_PREDECESSOR_SETTLEMENT_TIMEOUT');}console.table(state.seedSettlementReport.conditions);console.info('[seed] Settlement evidence',state.seedSettlementReport.evidence);const s=settled.value.snapshot;state.previous={selectedCommunity:s.context.awarenessAreaKey,activeCounty:s.context.activeCountyId,roadwaySourceCounty:s.road.loadedRoadwayCounty,driveTexasRecordIds:ids((s.envelope?.records||[]).map(r=>r.consumerSituationId||r.id)),railSourceCounty:s.context.runtimeInventoryCounty||s.rail.runtimeInventoryCounty||s.rail.sourceCountyId||s.rail.activeCountyId,railMarkerIds:s.leafletIds,alertCardIds:s.alertIds};}
+  async function run() { if(state.running)return; state.running=true; state.stopped=false;try{if(state.index===0&&!state.previous)await seedWraparoundPredecessor();}catch(error){state.running=false;console.error(error);throw error;} while(state.index<state.itinerary.length&&!state.stopped){ const row=state.itinerary[state.index]; console.log(`[${String(row.sequence).padStart(3,'0')}/254] ${row.countyId.replace(/-tx$/,'')} / ${row.representativeCommunity}`); const started=performance.now(); try{await selectThroughCanonicalProductionAction(row); const settled=await waitFor(()=>snapshot(row,false),s=>s.settled,45000); const result=buildResult(row,settled,started); result.alertCardIds=settled.value?.alertIds||[]; state.results.push(result); state.previous=previousFrom(result,(settled.value?.envelope?.records||[]).map(r=>r.consumerSituationId||r.id)); console.log(`CONTEXT ${result.contextPass?'PASS':'FAIL'} | ROADWAY ${result.roadwayLivePass?'PASS':'FAIL'} | DRIVETEXAS ${result.sourceHealthState} | ALERTS ${result.alertsPass?'PASS':'FAIL'} | RAIL ${result.railPass?'PASS':'FAIL'} | STALE ${result.staleStatePass?'PASS':'FAIL'}`); }catch(error){ state.results.push({...row,complete:false,pass:false,reasons:['CONTEXT_FAILURE',error.message||String(error)]}); console.error(row.countyId,error); } state.index++; saveCheckpoint(); } state.running=false; if(state.index===254)state.completedAt=new Date().toISOString(); console.table(summary()); return global.gridlyLp215Status(); }
   function payload(){const s=summary();return {metadata:{schemaVersion:'gridly.lp215.live-certification.v1',auditOnly:true,itineraryUrl:REPORT_URL,expectedCount:254,repositoryAuditHead:'2db0b02b4455606947d211313203924d645c4e03'},checkpointHead:{completedSequence:state.index,countyFips:state.results.at(-1)?.countyFips||null},startedAt:state.startedAt,completedAt:state.completedAt,browserRuntime:{userAgent:navigator.userAgent,language:navigator.language,href:location.href},results:state.results,summary:s,failingCounties:state.results.filter(r=>r.complete&&!r.pass).map(r=>({countyId:r.countyId,reasons:r.reasons})),incompleteCounties:state.itinerary.filter((_,i)=>!state.results[i]?.complete).map((r,i)=>({countyId:r.countyId,reasons:state.results[i]?.reasons||['NOT_RUN']}))};}
   global.gridlyLp215Status=()=>({running:state.running,stopped:state.stopped,index:state.index,seedSettlementReport:state.seedSettlementReport||null,...summary()}); global.gridlyLp215Stop=()=>{state.stopped=true;return global.gridlyLp215Status();}; global.gridlyLp215Export=(download=true)=>{const out=JSON.stringify(payload(),null,2)+'\n';if(download){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out],{type:'application/json'}));a.download='gridly-lp215-live-certification.json';a.click();URL.revokeObjectURL(a.href);}return out;}; global.gridlyLp215ClearAuditCheckpoint=()=>{Object.keys(sessionStorage).filter(k=>k.startsWith(PREFIX)).forEach(k=>sessionStorage.removeItem(k));return true;}; global.gridlyLp215Resume=()=>run();
   global.gridlyLp215Start=async()=>{const response=await fetch(REPORT_URL,{cache:'no-store'});if(!response.ok)throw new Error(`LP215 itinerary fetch failed: ${response.status}`);const report=await response.json();state.itinerary=report.rows;if(state.itinerary.length!==254||new Set(state.itinerary.map(r=>r.countyFips)).size!==254)throw new Error('LP215 itinerary is not 254 unique counties');const checkpoint=safe(()=>JSON.parse(sessionStorage.getItem(CHECKPOINT_KEY)),null);state.results=checkpoint?.results||[];state.index=state.results.length;state.startedAt=checkpoint?.startedAt||new Date().toISOString();if(state.index>0)state.previous=previousFrom(state.results[state.index-1]);return run();};
