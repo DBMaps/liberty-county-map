@@ -322,12 +322,39 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
     })
     .join("");
 
+  const rankedHeading = typeof resolveGridlyAlertsPanelHeadingCandidate === "function"
+    ? resolveGridlyAlertsPanelHeadingCandidate({
+        activeHazards: safeRecords,
+        activeReports: [],
+        limit: safeRecords.length
+      })
+    : null;
+  const publishedHeading = gridlyPublishedAwarenessCleanConsumerText(
+    rankedHeading?.selectedAlertsPanelHeadingCandidate ||
+      rankedHeading?.text ||
+      safeRecords[0]?.title ||
+      safeRecords[0]?.headline ||
+      safeRecords[0]?.localizedSummary ||
+      "Active Alerts"
+  );
+  const publishedHeadingSource = gridlyPublishedAwarenessCleanConsumerText(
+    rankedHeading?.selectedAlertsPanelHeadingSource ||
+      rankedHeading?.source ||
+      "published-awareness.first-record"
+  );
+
   return `
     <div
       class="gridly-alerts-active"
       data-gridly-alerts-phase="published-awareness"
       style="padding:0 1px;"
     >
+      <h3
+        class="gridly-alert-headline"
+        data-gridly-alerts-panel-heading
+        data-gridly-alerts-panel-heading-source="${esc(publishedHeadingSource)}"
+        style="margin:0 0 10px;font-size:16px;line-height:1.3;color:#fff;"
+      >${esc(publishedHeading)}</h3>
       <div class="gridly-v2-list">
         ${rows}
       </div>

@@ -47,6 +47,9 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
   const allowedConsumerBoundaries = new Set([
     "js/app.js",
     "js/gridlyAlertSemanticContract.js",
+    // Alerts publication-to-presentation convergence consumes the already
+    // governed shared summary and does not alter provider normalization.
+    "js/gridlyAlertsPublishedAwareness.js",
     "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
     // LP214's governed projection repair supplies one LP039.2 snapshot to
     // LP039.3; it does not modify provider fetching or normalization.

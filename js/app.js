@@ -34326,12 +34326,39 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
     })
     .join("");
 
+  const rankedHeading = typeof resolveGridlyAlertsPanelHeadingCandidate === "function"
+    ? resolveGridlyAlertsPanelHeadingCandidate({
+        activeHazards: safeRecords,
+        activeReports: [],
+        limit: safeRecords.length
+      })
+    : null;
+  const publishedHeading = gridlyPublishedAwarenessCleanConsumerText(
+    rankedHeading?.selectedAlertsPanelHeadingCandidate ||
+      rankedHeading?.text ||
+      safeRecords[0]?.title ||
+      safeRecords[0]?.headline ||
+      safeRecords[0]?.localizedSummary ||
+      "Active Alerts"
+  );
+  const publishedHeadingSource = gridlyPublishedAwarenessCleanConsumerText(
+    rankedHeading?.selectedAlertsPanelHeadingSource ||
+      rankedHeading?.source ||
+      "published-awareness.first-record"
+  );
+
   return `
     <div
       class="gridly-alerts-active"
       data-gridly-alerts-phase="published-awareness"
       style="padding:0 1px;"
     >
+      <h3
+        class="gridly-alert-headline"
+        data-gridly-alerts-panel-heading
+        data-gridly-alerts-panel-heading-source="${esc(publishedHeadingSource)}"
+        style="margin:0 0 10px;font-size:16px;line-height:1.3;color:#fff;"
+      >${esc(publishedHeading)}</h3>
       <div class="gridly-v2-list">
         ${rows}
       </div>
@@ -59793,7 +59820,23 @@ function resolveGridlyV313RoadHazardCommunityDistance(coords = {}) {
   const lat = Number(coords?.lat);
   const lng = Number(coords?.lng);
   if (!Number.isFinite(lat) || !Number.isFinite(lng) || typeof haversineDistance !== "function") return { community: "", distance: null, direction: "", text: "" };
-  const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS : [];
+  const canonicalContext = typeof getGridlyCanonicalAwarenessPresentationContext === "function"
+    ? getGridlyCanonicalAwarenessPresentationContext()
+    : null;
+  const selectedArea = typeof getGridlySelectedAwarenessArea === "function"
+    ? getGridlySelectedAwarenessArea()
+    : null;
+  const currentArea = canonicalContext || selectedArea;
+  const currentAreaLat = Number(currentArea?.lat ?? currentArea?.latitude ?? currentArea?.center?.lat);
+  const currentAreaLng = Number(currentArea?.lng ?? currentArea?.lon ?? currentArea?.longitude ?? currentArea?.center?.lng ?? currentArea?.center?.lon);
+  const currentAreaLabel = String(currentArea?.label || currentArea?.consumerLabel || currentArea?.name || currentArea?.storageValue || "").trim();
+  // Community-distance wording is presentation context, not an invitation to
+  // search every statewide awareness anchor.  Only the current canonical area
+  // may own this metadata; otherwise omit it rather than leaking a previous or
+  // merely-nearest community into the current area's alert candidate.
+  const areas = currentAreaLabel && Number.isFinite(currentAreaLat) && Number.isFinite(currentAreaLng)
+    ? [{ label: currentAreaLabel, lat: currentAreaLat, lng: currentAreaLng }]
+    : [];
   const ranked = areas.map((area) => {
     const areaLat = Number(area?.lat);
     const areaLng = Number(area?.lng);
@@ -60744,6 +60787,17 @@ function getGridlyAlertsSurfaceActiveCommunityReportRows(options = {}) {
   const canonicalActiveRecords = !options?.skipCanonicalSource && typeof gridlyGetCanonicalActiveCommunityState === "function"
     ? safeRows(gridlyGetCanonicalActiveCommunityState().activeRecords)
     : null;
+  if (canonicalActiveRecords?.length) return canonicalActiveRecords;
+  // The shared publication is identity-checked by its producer and is the
+  // source used by the cache-only Alerts open path.  An empty canonical
+  // projection must not mask a non-empty publication for the same current
+  // area while the two projections converge after a provider refresh.
+  const publishedCurrentAreaRecords = typeof gridlyGetPublishedAwarenessAlertRecordsForCurrentArea === "function"
+    ? gridlyGetPublishedAwarenessAlertRecordsForCurrentArea()
+    : null;
+  if (Array.isArray(publishedCurrentAreaRecords) && publishedCurrentAreaRecords.length) {
+    return safeRows(publishedCurrentAreaRecords);
+  }
   if (canonicalActiveRecords) return canonicalActiveRecords;
   const activeAlertsRenderContext = typeof gridlyAlertsGetActiveRenderContext === "function" ? gridlyAlertsGetActiveRenderContext() : null;
   const contextAlerts = Array.isArray(options?.presentationModel?.alerts)
