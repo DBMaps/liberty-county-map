@@ -1,9 +1,9 @@
 (function installGridlyStatewideCohortHarness(global) {
   'use strict';
 
-  const AUDIT_VERSION = 'gridly.statewide-live-cohort-audit.v6';
+  const AUDIT_VERSION = 'gridly.statewide-live-cohort-audit.v7';
   const COHORT_URL = '/reports/statewide-audit/gridly-live-certification-cohort-v1.json';
-  const CHECKPOINT_KEY = 'GRIDLY_STATEWIDE_COHORT_AUDIT_V6';
+  const CHECKPOINT_KEY = 'GRIDLY_STATEWIDE_COHORT_AUDIT_V7';
   const REPOSITORY_HEAD = 'b1b5707';
   const CLASS_STATUSES = new Set(['NOT_REQUIRED', 'PASS', 'FAIL', 'INCOMPLETE']);
   const DRIVE_TERMINAL = new Set(['HEALTHY_WITH_DATA', 'HEALTHY_EMPTY', 'SOURCE_FAILURE', 'RETAINED_DATA', 'UNAVAILABLE', 'TIMEOUT']);
@@ -354,7 +354,7 @@
       finalResolvedProductionAwarenessValue: null,
       finalRejectionCondition: null
     };
-    const reject = condition => { trace.finalRejectionCondition = condition; console.warn('[GRIDLY V6 IDENTITY BRIDGE TRACE]', trace); return null; };
+    const reject = condition => { trace.finalRejectionCondition = condition; console.warn('[GRIDLY V7 IDENTITY BRIDGE TRACE]', trace); return null; };
     if (governed.length !== 1) return reject('GOVERNED_IDENTITY_COUNT_EXACTLY_ONE');
     const identity = governed[0];
     if (identity.canonicalIdentity !== 'PLACE_GEOID') return reject('GOVERNED_IDENTITY_IS_PLACE_GEOID');
@@ -386,12 +386,12 @@
     trace.finalResolvedProductionAwarenessValue = area.storageValue;
     if (row.multiCounty) {
       if (memberships.length < 2 || !['RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', 'AMBIGUOUS'].includes(consumerResult?.status)) return reject('MULTI_COUNTY_QUERY_CONTRACT_MATCHES');
-      console.log('[GRIDLY V6 IDENTITY BRIDGE TRACE]', trace);
+      console.log('[GRIDLY V7 IDENTITY BRIDGE TRACE]', trace);
       return { multiCounty: true, bridge, resolution: consumerResult.status === 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE' ? consumerResult : { ...consumerResult, status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', operational: true, placeGeoid: geoid, awarenessArea: { ...area, key: `place-${geoid}`, placeGeoid: geoid, communityId: geoid, countyMemberships: memberships } } };
     }
     if (memberships.length !== 1) return reject('SINGLE_COUNTY_MEMBERSHIP_COUNT_EXACTLY_ONE');
     if (consumerResult?.operational !== true) return reject('PRODUCTION_QUERY_IS_OPERATIONAL');
-    console.log('[GRIDLY V6 IDENTITY BRIDGE TRACE]', trace);
+    console.log('[GRIDLY V7 IDENTITY BRIDGE TRACE]', trace);
     return { multiCounty: false, bridge, resolution: { ...consumerResult, status: 'RESOLVED_OPERATIONAL', operational: true, placeGeoid: geoid, countyId, awarenessAreaKey: area.key, awarenessArea: { ...area, placeGeoid: geoid, communityId: geoid, canonicalCommunityIdentity: 'PLACE_GEOID' }, candidates } };
   }
 
@@ -462,7 +462,7 @@
     result.manualActionEvidence.push({ confirmedAt: new Date().toISOString(), action: 'SHOW_ON_MAP', ...handshake }); result.liveClassResults.SHOW_ON_MAP_LIVE_BROWSER_REQUIRED = passed ? 'PASS' : 'INCOMPLETE'; result.incompleteReasons = result.incompleteReasons.filter(reason => reason !== 'SHOW_ON_MAP_LIVE_BROWSER_REQUIRED_INCOMPLETE'); if (!passed) result.incompleteReasons.push('OWNER_ACTION_NOT_PROVEN'); state.manualActionStatus = handshake.status; state.waiting = null; saveCheckpoint(); return run(); };
   global.gridlyStatewideCohortStop = () => { state.stopped = true; return global.gridlyStatewideCohortStatus(); };
   global.gridlyStatewideCohortResume = () => run();
-  global.gridlyStatewideCohortExport = (download = true) => { const output = JSON.stringify(payload(), null, 2) + '\n'; if (download) { const anchor = document.createElement('a'); anchor.href = URL.createObjectURL(new Blob([output], { type: 'application/json' })); anchor.download = 'gridly-statewide-live-cohort-audit-v6.json'; anchor.click(); URL.revokeObjectURL(anchor.href); } return output; };
+  global.gridlyStatewideCohortExport = (download = true) => { const output = JSON.stringify(payload(), null, 2) + '\n'; if (download) { const anchor = document.createElement('a'); anchor.href = URL.createObjectURL(new Blob([output], { type: 'application/json' })); anchor.download = 'gridly-statewide-live-cohort-audit-v7.json'; anchor.click(); URL.revokeObjectURL(anchor.href); } return output; };
   global.gridlyStatewideCohortClearCheckpoint = () => { sessionStorage.removeItem(CHECKPOINT_KEY); return true; };
   global.gridlyStatewideCohortStart = async () => { const response = await fetch(COHORT_URL, { cache: 'no-store' }); if (!response.ok) throw new Error(`COHORT_FETCH_FAILED_${response.status}`); state.cohort = await response.json(); state.rows = validateCohort(state.cohort); const checkpoint = safe(() => JSON.parse(sessionStorage.getItem(CHECKPOINT_KEY)), null); state.results = validateCheckpoint(checkpoint); state.index = state.results.length; state.startedAt = checkpoint?.startedAt || new Date().toISOString(); state.previous = state.results.length ? priorFrom(state.results.at(-1)) : null; return run(); };
 

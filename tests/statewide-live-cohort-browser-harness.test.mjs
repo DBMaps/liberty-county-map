@@ -71,7 +71,7 @@ test('manual actions pause and require the explicit continue command', () => {
 });
 test('checkpoint resume validates the completed artifact prefix', () => {
   harness.state.cohort = artifact; harness.state.rows = artifact.itinerary;
-  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v6', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
+  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v7', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
   assert.equal(harness.validateCheckpoint(checkpoint).length, 1);
   assert.throws(() => harness.validateCheckpoint({ ...checkpoint, completedPrefix: [{ ...checkpoint.completedPrefix[0], stateVectorId: 'wrong' }] }), /PREFIX_MISMATCH/);
 });
@@ -97,11 +97,19 @@ test('export is deterministic for unchanged audit state and supports no-download
 });
 
 
-test('V6 checkpoint namespace rejects V5 certification', () => {
-  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V6');
-  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V3'), false);
-  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V5'), false);
-  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v5', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
+test('V7 checkpoint namespace rejects V6 and earlier certification', () => {
+  storage.set('GRIDLY_STATEWIDE_COHORT_AUDIT_V6', JSON.stringify({ auditVersion: 'gridly.statewide-live-cohort-audit.v6' }));
+  storage.set('GRIDLY_STATEWIDE_COHORT_AUDIT_V5', JSON.stringify({ auditVersion: 'gridly.statewide-live-cohort-audit.v5' }));
+  assert.equal(harness.AUDIT_VERSION, 'gridly.statewide-live-cohort-audit.v7');
+  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V7');
+  assert.equal(storage.has(harness.CHECKPOINT_KEY), false);
+  assert.equal(harness.state.index, 0);
+  assert.equal(harness.state.rows.length, 14);
+  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v6', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
+  for (let version = 1; version <= 5; version += 1) {
+    assert.throws(() => harness.validateCheckpoint({ auditVersion: `gridly.statewide-live-cohort-audit.v${version}`, artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
+  }
+  assert.match(source, /gridly-statewide-live-cohort-audit-v7\.json/);
 });
 
 async function exerciseSelection(row, configure = () => {}) {
@@ -296,7 +304,7 @@ test('stale failure exports exact predecessor/current operands and first false n
   assert.deepEqual(result.operands.currentAlertsIds, ['stale']);
 });
 
-test('Baytown V6 control converges canonical PLACE and both operational source counties', () => {
+test('Baytown V7 control converges canonical PLACE and both operational source counties', () => {
   const row = artifact.itinerary.find(row => row.placeGeoid === '4806128');
   assert.equal(row.countyId, 'chambers-tx');
   const observation = { context: { activeCountyId: 'chambers-tx', canonicalPlaceGeoid: '4806128', runtimeInventoryCounty: 'chambers-tx' }, roadway: { loadedRoadwayCounty: 'chambers-tx', activeCountyPackageLoaded: true }, roadwayFeatureCount: 1, rail: { runtimeCrossingInventoryCount: 1 }, railPolicyIds: ['r'], railLeafletIds: ['r'], railDomIds: ['r'], driveTexasState: 'HEALTHY_EMPTY' };
