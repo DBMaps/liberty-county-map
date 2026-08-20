@@ -101195,7 +101195,7 @@ function gridlyLp019IdentityCandidates(...sources) {
     if (!source) return;
     if (typeof source !== "object") { push(source); return; }
     [
-      source.id, source.incidentId, source.incident_id, source.reportId, source.report_id, source.alertId, source.alert_id,
+      source.consumerSituationId, source.consumer_situation_id, source.id, source.incidentId, source.incident_id, source.reportId, source.report_id, source.alertId, source.alert_id,
       source.sourceId, source.source_id, source.crossingId, source.crossing_id, source.providerId, source.provider_id,
       source.providerRecordId, source.provider_record_id, source.recordId, source.record_id, source.uuid, source.key,
       source.canonicalIncidentId, source.canonical_incident_id, source.canonicalId, source.canonical_id,
@@ -102867,7 +102867,7 @@ function findGridlyAlertMarker(coords, options = {}) {
       debug.matchedRegistry = registry;
       return true;
     }
-    if (requestedCoords && coordinateMatches(marker)) {
+    if (!options?.requireIdentityMatch && requestedCoords && coordinateMatches(marker)) {
       debug.matchedIdentity = gridlyLp019CoordinateKey(requestedCoords);
       debug.markerMatchMethod = "bounded_coordinate";
       debug.matchedRegistry = registry;
@@ -103394,7 +103394,7 @@ function focusGridlyAlertIncident(focus = {}) {
   const incidentId = String(focus?.incidentId || focus?.id || "").trim();
   const mapRef = getGridlyAlertMapInstance();
   const mapCenterActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
-  const markerOptions = { incidentId, id: incidentId, record: focus?.record, lat: coords?.lat, lng: coords?.lng };
+  const markerOptions = { incidentId, id: incidentId, record: focus?.record, lat: coords?.lat, lng: coords?.lng, requireIdentityMatch: focus?.markerResolved === true };
   const marker = coords ? findGridlyAlertMarker(coords, markerOptions) : null;
   if (focus?.record) {
     const record = focus.record;
@@ -103507,12 +103507,15 @@ function focusGridlyAlertIncident(focus = {}) {
       try {
         debug.sheetCloseCompleted = !isGridlyAlertSurfaceVisible();
         if (typeof mapRef.invalidateSize === "function") { debug.mapInvalidateRequested = true; gridlyLp021FocusLifecycleRecord("focusGridlyAlertIncident", "before_invalidateSize", mapRef, coords, marker); mapRef.invalidateSize({ pan: false }); debug.mapInvalidateCompleted = true; gridlyLp021FocusLifecycleRecord("focusGridlyAlertIncident", "after_invalidateSize", mapRef, coords, marker); }
-        const targetZoom = gridlyLp019ConditionFocusZoom(mapRef);
+        const preserveZoom = focus?.source === "alerts_show_on_map";
+        const targetZoom = preserveZoom ? Number(mapRef?.getZoom?.() || gridlyLp019ConditionFocusZoom(mapRef)) : gridlyLp019ConditionFocusZoom(mapRef);
         debug.targetZoom = targetZoom;
         debug.mapMovementRequested = true;
         gridlyLp019CrossingVisibilityState.beforeFocus = gridlyLp019ReadCrossingVisibilitySnapshot("before_focus");
         const offset = gridlyLp019UsableViewportOffset(mapRef);
         debug.viewportOffsetApplied = offset;
+        const alreadyVisible = preserveZoom && gridlyLp019UsableViewportVisibility(mapRef, coords).markerInsideUsableViewport === true;
+        debug.alreadyVisibleNoCameraMove = alreadyVisible;
         let focusCompletionRecorded = false;
         let baseMoveCompleted = false;
         const finishAfterPanSettle = () => {
@@ -103544,6 +103547,11 @@ function focusGridlyAlertIncident(focus = {}) {
             } else finishAfterPanSettle();
           }, 0);
         };
+        if (alreadyVisible) {
+          debug.mapMovementRequested = false;
+          finishAfterPanSettle();
+          return;
+        }
         if (typeof mapRef.once === "function") {
           gridlyLp0953Record("Focus completion callback registered", { focusCompletionCallbackRegistered: true, mapEvent: "moveend" });
           mapRef.once("moveend", finishAfterMove);
@@ -103579,6 +103587,35 @@ function gridlyLp019ResolveAlertRecord(id = "") {
   }) || null;
 }
 
+function gridlyResolveAlertShowOnMapTarget(record = null, id = "") {
+  const resolvedRecord = record || gridlyLp019ResolveAlertRecord(id);
+  if (!resolvedRecord || gridlyLp019ResolveAlertRecord(id) !== resolvedRecord) return null;
+  const coords = gridlyLp019OfficialCoords(resolvedRecord);
+  if (!coords) return null;
+  const markerOptions = { incidentId: id, id, record: resolvedRecord, lat: coords.lat, lng: coords.lng, requireIdentityMatch: true };
+  const marker = findGridlyAlertMarker(coords, markerOptions);
+  return Object.freeze({ id, record: resolvedRecord, coords, marker, markerDebug: markerOptions.debug || null });
+}
+
+function gridlyDecorateAlertShowOnMapActions(root = document) {
+  const rows = Array.from(root?.querySelectorAll?.("[data-gridly-alert-row='true'], [data-gridly-alert-id]") || []);
+  rows.forEach((row) => {
+    if (!(row instanceof HTMLElement) || row.querySelector("[data-gridly-show-on-map='true']")) return;
+    const id = gridlyLp019SafeText(row.getAttribute("data-gridly-alert-id"));
+    const target = gridlyResolveAlertShowOnMapTarget(gridlyLp019ResolveAlertRecord(id), id);
+    if (!target) return;
+    const content = row.lastElementChild || row;
+    const action = document.createElement("button");
+    action.type = "button";
+    action.className = "gridly-alert-show-on-map";
+    action.dataset.gridlyShowOnMap = "true";
+    action.setAttribute("aria-label", `Show ${gridlyLp019SafeText(row.getAttribute("data-gridly-alert-title")) || "this alert"} on map`);
+    action.textContent = "Show on map";
+    content.appendChild(action);
+  });
+  return rows.filter((row) => row.querySelector?.("[data-gridly-show-on-map='true']")).length;
+}
+
 function gridlyLp0952AlertCardInteractionAttributes(crossingId, escapeAttribute = gridlyLp019SafeText) {
   const canonicalCrossingId = gridlyLp019SafeText(crossingId);
   return ` role="button" tabindex="0" data-gridly-alert-focus="true" data-gridly-alert-row="true" data-gridly-alert-crossing-id="${escapeAttribute(canonicalCrossingId)}"`;
@@ -103611,6 +103648,7 @@ function gridlyLp0952ResolveCrossingAlertTarget(record = {}, row = null) {
 function gridlyLp019BindAlertFocusHandlers(root = document) {
   const panels = Array.from(root?.querySelectorAll?.(".gridly-alerts-active, #alertsList, #gridlyPortraitV2SheetBody") || []);
   panels.forEach((panel) => {
+    gridlyDecorateAlertShowOnMapActions(panel);
     if (!(panel instanceof HTMLElement) || panel.dataset.alertFocusBound === "true") return;
     panel.addEventListener("click", (event) => {
       if (gridlyLp0953TraceState?.tracingEnabled && gridlyLp0953TraceState.tapReceived && gridlyLp0953TraceState.handlerEntryCount > 0) {
@@ -103622,9 +103660,12 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
       const row = event.target?.closest?.("[data-gridly-alert-row='true'], [data-gridly-alert-id]");
       if (!row || !panel.contains(row)) { gridlyLp0953Fail("alert_row", "delegated handler did not identify an alert row", { returnPath: "delegated handler row guard" }); return; }
       gridlyLp0953Record("Alert row identified", { alertRowIdentified: true });
-      if (event.target?.closest?.("button, a, input, select, textarea, [data-v2-action], [data-gridly-alert-expand]") && event.target?.closest?.("[role='button']") !== row) { gridlyLp0953Fail("delegated_guard", "nested interactive control guard returned", { returnPath: "delegated handler nested control guard" }); return; }
+      const showOnMapAction = event.target?.closest?.("[data-gridly-show-on-map='true']");
+      if (event.target?.closest?.("button, a, input, select, textarea, [data-v2-action], [data-gridly-alert-expand]") && !showOnMapAction && event.target?.closest?.("[role='button']") !== row) { gridlyLp0953Fail("delegated_guard", "nested interactive control guard returned", { returnPath: "delegated handler nested control guard" }); return; }
       const id = gridlyLp019SafeText(row.getAttribute("data-gridly-alert-id"));
       const record = gridlyLp019ResolveAlertRecord(id);
+      const showOnMapTarget = showOnMapAction ? gridlyResolveAlertShowOnMapTarget(record, id) : null;
+      if (showOnMapAction && !showOnMapTarget) return;
       gridlyLp0953Record("Alert record lookup", { alertId: id || null, alertRecordResolved: Boolean(record) }, record ? "PASS" : "FAIL");
       const crossingType = Boolean(row.getAttribute("data-gridly-alert-crossing-id") || record?.crossingId || record?.crossing_id);
       gridlyLp0953Record("Alert type determined", { alertType: crossingType ? "crossing" : String(record?.type || "unknown") });
@@ -103689,7 +103730,9 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
         type: row.getAttribute("data-gridly-alert-hazard-type") || record?.providerId || record?.type || "alert",
         closeSurface,
         openPopup: true,
-        source: "lp019_alert_card",
+        source: showOnMapAction ? "alerts_show_on_map" : "lp019_alert_card",
+        marker: showOnMapTarget?.marker || null,
+        markerResolved: Boolean(showOnMapAction),
         record
         });
         gridlyLp0953Record("Post-popup-request focus call returned", { postPopupRequestFocusCallReturned: true, mapFocusDispatched: Boolean(focused) }, focused ? "PASS" : "FAIL");
