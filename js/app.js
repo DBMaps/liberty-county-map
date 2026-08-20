@@ -106143,12 +106143,13 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   counts.corridorCount = safeCorridorClusters.length;
   const highestPriorityCorridor = safeCorridorClusters[0] || null;
   const corridorSeverityMap = timeSection("object_construction_output_shaping", () => safeCorridorClusters.reduce((acc, corridor) => { acc[corridor.label] = corridor.healthState; return acc; }, {}));
-  const routeImpactSummary = timeSection("impact_calculations", () => (routeImpactItems.length > 0 ? `Expect delays into Dayton · ${routeImpactItems.length} route impact${routeImpactItems.length === 1 ? "" : "s"}` : "Route into Liberty moving normally"));
+  const quietMobilityPresentation = buildGridlyQuietMobilityPresentation();
+  const routeImpactSummary = timeSection("impact_calculations", () => (routeImpactItems.length > 0 ? `Expect delays into Dayton · ${routeImpactItems.length} route impact${routeImpactItems.length === 1 ? "" : "s"}` : quietMobilityPresentation.routeImpactSummary));
   const selectedTopStatusItem = top || highestPriorityCorridor?.items?.[0] || null;
   const topStatusSelectionSource = top
     ? `priorityModel:${top.priorityModel?.band || "active"}; reason=${top.priorityModel?.reason || "score"}; score=${top.priorityScore || 0}`
     : (highestPriorityCorridor ? `highestPriorityCorridor:${highestPriorityCorridor.label}; candidateCount=${highestPriorityCorridor.items?.length || 0}; routeImpactCount=${highestPriorityCorridor.routeImpactCount || 0}` : "quiet fallback");
-  const topStatus = timeSection("alert_generation", () => (top ? top.localizedSummary : (highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : "US 90 moving normally")));
+  const topStatus = timeSection("alert_generation", () => (top ? top.localizedSummary : (highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : quietMobilityPresentation.topStatus)));
   const topStatusSelectionAudit = timeSection("top_status_selection_audit", () => buildGridlyTopStatusSelectionDiagnostics({
     intelItems: safeIntelItems,
     corridorClusters: safeCorridorClusters,
@@ -106440,6 +106441,16 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
 
 function buildUnifiedLocalizedCommuteIntelligence({ limit = 6 } = {}) {
   return buildCommuteConsequenceIntelligence({ limit });
+}
+
+// Quiet mobility copy must not claim ownership of a place or roadway that did
+// not come from the current governed context. These neutral defaults are used
+// when the localized intelligence model has no active incident/corridor label.
+function buildGridlyQuietMobilityPresentation() {
+  return Object.freeze({
+    routeImpactSummary: "No active route impacts reported.",
+    topStatus: "Local routes moving normally"
+  });
 }
 
 function buildGridlyQuietLocalizedCommuteIntelligenceFastPathPayload() {
@@ -110968,7 +110979,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const roadHazards = getRoadHazardSurfaceIncidents(12).filter((incident) => incident?.status === "active" || !incident?.status);
     const floodingOrCrash = roadHazards.filter((incident) => ["crash", "flooding"].includes(String(incident?.type || "").toLowerCase()));
     const blockages = incidents.filter((incident) => String(incident?.report_type || incident?.type || "").toLowerCase().includes("blocked"));
-    if (!incidents.length) return "US 90 moving normally and roads around Dayton are clear.";
+    if (!incidents.length) return buildGridlyQuietMobilityPresentation().topStatus;
     if (high.length >= 2) return `Delays building into Dayton. Consider an alternate route.`;
     if (blockages.length >= 2) return "Train and crossing blockages are stacking up on major roads.";
     if (floodingOrCrash.length) return `${floodingOrCrash.length} road safety issue${floodingOrCrash.length > 1 ? "s" : ""} slowing local traffic.`;
