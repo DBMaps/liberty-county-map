@@ -34,19 +34,43 @@
 
   async function selectThroughProductionUi(row) {
     const settings = document.querySelector('[data-v2-sheet="settings"], #mobileDockSettingsBtn');
-    settings?.click(); await sleep(250);
-    document.querySelector('[data-v2-action="settings-choose-available-areas"], [data-v2-action="settings-change-awareness-area"], #settingsChooseCommunityManuallyBtn')?.click();
+    if (!settings) throw new Error('PRODUCTION_SETTINGS_OPEN_CONTROL_NOT_AVAILABLE');
+    settings.click(); await sleep(250);
+    const pickerToggle = document.querySelector('[data-v2-action="settings-choose-available-areas"], [data-v2-action="settings-change-awareness-area"], #settingsChooseCommunityManuallyBtn');
+    if (!pickerToggle) throw new Error('PRODUCTION_AWARENESS_PICKER_OPEN_CONTROL_NOT_AVAILABLE');
+    if (pickerToggle.getAttribute('aria-expanded') !== 'true') pickerToggle.click();
     await sleep(250);
     const input = document.querySelector('[data-gridly-manual-awareness-search]');
-    if (!input) throw new Error('PRODUCTION_SELECTION_UI_NOT_AVAILABLE');
-    input.value = row.representativeCommunity; input.dispatchEvent(new Event('input', { bubbles: true })); await sleep(300);
+    if (!input) throw new Error('PRODUCTION_AWARENESS_PICKER_SEARCH_NOT_AVAILABLE');
+    input.value = row.representativeCommunity;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await sleep(300);
     const choices = [...document.querySelectorAll('[data-gridly-manual-awareness-value]')];
-    const choice = choices.find(node => node.querySelector('span')?.textContent?.trim() === row.representativeCommunity && node.querySelector('small')?.textContent?.toLowerCase().includes(row.countyId.replace(/-tx$/, '').replace(/-/g, ' '))) || choices.find(node => node.querySelector('span')?.textContent?.trim() === row.representativeCommunity);
-    if (!choice) throw new Error('REPRESENTATIVE_NOT_FOUND_IN_PRODUCTION_SELECTION_UI');
-    choice.click(); await sleep(100);
-    const apply = document.querySelector('[data-gridly-manual-awareness-apply]');
-    if (!apply) throw new Error('PRODUCTION_SELECTION_APPLY_NOT_AVAILABLE');
-    apply.click(); await sleep(300);
+    const countyName = row.countyId.replace(/-tx$/, '').replace(/-/g, ' ');
+    const choice = choices.find(node => node.querySelector('span')?.textContent?.trim() === row.representativeCommunity && node.querySelector('small')?.textContent?.toLowerCase().includes(countyName)) || choices.find(node => node.querySelector('span')?.textContent?.trim() === row.representativeCommunity);
+    if (!choice) throw new Error('REPRESENTATIVE_NOT_FOUND_IN_PRODUCTION_AWARENESS_PICKER');
+
+    // Production deliberately disables the current community. In that state a
+    // user has nothing to confirm and the pending-selection apply control is
+    // therefore not rendered. Accept it only when production's public audit
+    // proves both canonical community and active-county ownership already match.
+    if (choice.disabled) {
+      const current = call('gridlyActiveCountyRuntimeAudit', {});
+      if (current.awarenessAreaKey !== row.canonicalKey || current.activeCountyId !== row.countyId) {
+        throw new Error('PRODUCTION_AWARENESS_PICKER_CURRENT_OPTION_CONTEXT_MISMATCH');
+      }
+    } else {
+      choice.click();
+      const pending = await waitFor(
+        () => document.querySelector('[data-gridly-manual-awareness-apply]'),
+        node => Boolean(node),
+        1500
+      );
+      const apply = pending.value;
+      if (!pending.settled || !apply) throw new Error('PRODUCTION_AWARENESS_PICKER_PENDING_APPLY_NOT_RENDERED');
+      if (apply.disabled) throw new Error('PRODUCTION_AWARENESS_PICKER_PENDING_APPLY_DISABLED');
+      apply.click(); await sleep(300);
+    }
     // Open the actual consumer surface so displayed-card evidence is captured,
     // rather than inferring presentation from records while Alerts is closed.
     document.querySelector('[data-v2-sheet="alerts"], #mobileDockAlertsBtn, [data-section="alerts"]')?.click();

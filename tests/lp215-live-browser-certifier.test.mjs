@@ -102,3 +102,33 @@ test('nonterminal predecessor context remains unsettled and reports every condit
   assert.equal(result.settled, false);
   assert.deepEqual(result.unsatisfied, ['activeCountyMatchesExpected', 'driveTexasLifecycleTerminal', 'railInventoryTerminal', 'railPresentationTerminal']);
 });
+
+test('live certifier discovers and drives the current production Settings picker contract', () => {
+  const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
+  assert.match(source, /#mobileDockSettingsBtn/);
+  assert.match(source, /#settingsChooseCommunityManuallyBtn/);
+  assert.match(source, /data-gridly-manual-awareness-search/);
+  assert.match(source, /input\.dispatchEvent\(new Event\('input', \{ bubbles: true \}\)\)/);
+  assert.match(source, /data-gridly-manual-awareness-value/);
+  assert.match(source, /choice\.click\(\)/);
+  assert.match(source, /data-gridly-manual-awareness-apply/);
+  assert.match(source, /apply\.click\(\)/);
+});
+
+test('live selection remains production-owned and fails closed for drifted controls', () => {
+  const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
+  const selection = source.slice(source.indexOf('async function selectThroughProductionUi'), source.indexOf('\n  function snapshot'));
+  assert.doesNotMatch(selection, /GRIDLY_ACTIVE_COUNTY_ID\s*=|activeCounty(Id)?\s*=|selectedCommunity\s*=|localStorage\.|sessionStorage\.|gridlyDispatchSemanticCamera\s*\(/);
+  assert.match(selection, /gridlyActiveCountyRuntimeAudit/);
+  assert.match(selection, /current\.awarenessAreaKey !== row\.canonicalKey/);
+  assert.match(selection, /current\.activeCountyId !== row\.countyId/);
+  for (const diagnostic of [
+    'PRODUCTION_SETTINGS_OPEN_CONTROL_NOT_AVAILABLE',
+    'PRODUCTION_AWARENESS_PICKER_OPEN_CONTROL_NOT_AVAILABLE',
+    'PRODUCTION_AWARENESS_PICKER_SEARCH_NOT_AVAILABLE',
+    'REPRESENTATIVE_NOT_FOUND_IN_PRODUCTION_AWARENESS_PICKER',
+    'PRODUCTION_AWARENESS_PICKER_CURRENT_OPTION_CONTEXT_MISMATCH',
+    'PRODUCTION_AWARENESS_PICKER_PENDING_APPLY_NOT_RENDERED',
+    'PRODUCTION_AWARENESS_PICKER_PENDING_APPLY_DISABLED'
+  ]) assert.match(selection, new RegExp(diagnostic));
+});
