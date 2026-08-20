@@ -14,6 +14,20 @@
   const mapSnapshot = () => { const audit = call('gridlyV925SnapshotState', null); const center = audit?.viewport || call('gridlyMapRuntimeAudit', null)?.center || null; return { center: center ? { lat: Number(center.lat), lng: Number(center.lng) } : null, zoom: center?.zoom ?? null }; };
   const near = (actual, expected) => Boolean(actual && expected && Math.abs(Number(actual.lat)-Number(expected.lat))<=0.001 && Math.abs(Number(actual.lng)-Number(expected.lng))<=0.001);
 
+  function currentOptionContextMatches(selected = {}, expected = {}) {
+    const expectedCounty = expected.operationalActiveCounty || expected.countyId || null;
+    const activeCounty = selected.activeCountyId || selected.activeCounty || null;
+    if (!expectedCounty || activeCounty !== expectedCounty) return false;
+    if (selected.canonicalCommunityIdentity === 'PLACE_GEOID') {
+      // These are authoritative runtime-audit identities. The picker key is a
+      // registry identity and must not override an explicit governed GEOID.
+      const selectedPlaceGeoid = selected.selectedPlaceGeoid || selected.placeGeoid || selected.selectedCommunityId || selected.communityId || selected.canonicalPlaceGeoid || null;
+      const selectedCounty = selected.selectedCountyId || selected.countyId || selected.resolvedGridlyCountyId || null;
+      return Boolean(expected.placeGeoid && selectedPlaceGeoid === expected.placeGeoid && selectedCounty === expectedCounty);
+    }
+    return Boolean(expected.canonicalKey && selected.awarenessAreaKey === expected.canonicalKey);
+  }
+
   function driveState(envelope, timedOut) {
     if (timedOut) return 'TIMEOUT';
     if (!envelope) return 'NOT_AVAILABLE_IN_RUNTIME';
@@ -56,7 +70,7 @@
     // proves both canonical community and active-county ownership already match.
     if (choice.disabled) {
       const current = call('gridlyActiveCountyRuntimeAudit', {});
-      if (current.awarenessAreaKey !== row.canonicalKey || current.activeCountyId !== row.countyId) {
+      if (!currentOptionContextMatches(current, row)) {
         throw new Error('PRODUCTION_AWARENESS_PICKER_CURRENT_OPTION_CONTEXT_MISMATCH');
       }
     } else {
