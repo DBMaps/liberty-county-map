@@ -102838,7 +102838,10 @@ window.gridlyLp214OfficialRoadwayMarkerPublicationAudit = function () {
 
 function findGridlyAlertMarker(coords, options = {}) {
   const requestedCoords = normalizeCoordinatePair(coords?.lat, coords?.lng) || normalizeCoordinatePair(options?.lat, options?.lng);
-  const alertCandidates = gridlyLp019IdentityCandidates(options?.record, options, options?.incidentId, options?.id);
+  const exactIdentityCandidates = Array.isArray(options?.exactIdentityCandidates)
+    ? options.exactIdentityCandidates.map((value) => gridlyLp019SafeText(value)).filter(Boolean)
+    : null;
+  const alertCandidates = exactIdentityCandidates || gridlyLp019IdentityCandidates(options?.record, options, options?.incidentId, options?.id);
   if (requestedCoords) alertCandidates.push(gridlyLp019CoordinateKey(requestedCoords));
   const alertSet = new Set(alertCandidates.filter(Boolean));
   const toleranceMeters = Number(options?.toleranceMeters || 45);
@@ -102857,7 +102860,10 @@ function findGridlyAlertMarker(coords, options = {}) {
     return Number.isFinite(delta) && delta <= toleranceMeters;
   };
   const testMarker = (marker, registry, key = "") => {
-    const markerCandidates = gridlyLp019MarkerIdentityCandidates(marker, key);
+    const markerCandidates = exactIdentityCandidates
+      ? [key, marker?.options?.incidentId, marker?.options?.canonicalIncidentId, marker?.options?.consumerSituationId, marker?.options?.id]
+        .map((value) => gridlyLp019SafeText(value)).filter(Boolean)
+      : gridlyLp019MarkerIdentityCandidates(marker, key);
     if (requestedCoords) markerCandidates.push(gridlyLp019CoordinateKey(marker?.getLatLng?.()));
     debug.markerIdentityCandidates.push({ registry, key: String(key || ""), candidates: Array.from(new Set(markerCandidates)) });
     const matched = markerCandidates.find((candidate) => alertSet.has(candidate));
@@ -103389,13 +103395,15 @@ function gridlyLp021AlertFocusLifecycleAudit() {
 window.gridlyLp021AlertFocusLifecycleAudit = gridlyLp021AlertFocusLifecycleAudit;
 
 function focusGridlyAlertIncident(focus = {}) {
-  if (focus?.source === "lp019_alert_card" || focus?.source === "alerts_panel_row" || /drivetexas|official/i.test(String(focus?.type || focus?.record?.providerId || focus?.record?.source || ""))) gridlyLp045EnsureOfficialMarkersCurrent("before_alert_focus");
+  if (!focus?.markerResolved && (focus?.source === "lp019_alert_card" || focus?.source === "alerts_panel_row" || /drivetexas|official/i.test(String(focus?.type || focus?.record?.providerId || focus?.record?.source || "")))) gridlyLp045EnsureOfficialMarkersCurrent("before_alert_focus");
   const coords = normalizeCoordinatePair(focus?.lat, focus?.lng);
   const incidentId = String(focus?.incidentId || focus?.id || "").trim();
   const mapRef = getGridlyAlertMapInstance();
   const mapCenterActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
   const markerOptions = { incidentId, id: incidentId, record: focus?.record, lat: coords?.lat, lng: coords?.lng, requireIdentityMatch: focus?.markerResolved === true };
-  const marker = coords ? findGridlyAlertMarker(coords, markerOptions) : null;
+  const marker = focus?.markerResolved === true && focus?.marker
+    ? focus.marker
+    : (coords ? findGridlyAlertMarker(coords, markerOptions) : null);
   if (focus?.record) {
     const record = focus.record;
     const cid = record.crossingId || record.crossing_id || record.raw?.crossingId || "";
@@ -103590,10 +103598,20 @@ function gridlyLp019ResolveAlertRecord(id = "") {
 function gridlyResolveAlertShowOnMapTarget(record = null, id = "") {
   const resolvedRecord = record || gridlyLp019ResolveAlertRecord(id);
   if (!resolvedRecord || gridlyLp019ResolveAlertRecord(id) !== resolvedRecord) return null;
-  const coords = gridlyLp019OfficialCoords(resolvedRecord);
+  const exactIdentityCandidates = [
+    id, resolvedRecord?.consumerSituationId, resolvedRecord?.canonicalIncidentId,
+    resolvedRecord?.incidentId, resolvedRecord?.id, resolvedRecord?.raw?.consumerSituationId,
+    resolvedRecord?.raw?.canonicalIncidentId, resolvedRecord?.raw?.incidentId, resolvedRecord?.raw?.id
+  ].map((value) => gridlyLp019SafeText(value)).filter(Boolean);
+  const markerOptions = { incidentId: id, id, record: resolvedRecord, exactIdentityCandidates, requireIdentityMatch: true };
+  // Current publication ownership is established above. Resolve its canonical
+  // identity before consulting alert geometry: a rendered marker owns its
+  // Leaflet location and the published alert must remain immutable.
+  const marker = findGridlyAlertMarker(null, markerOptions);
+  const markerLatLng = marker?.getLatLng?.();
+  const markerCoords = normalizeCoordinatePair(markerLatLng?.lat, markerLatLng?.lng);
+  const coords = markerCoords || gridlyLp019OfficialCoords(resolvedRecord);
   if (!coords) return null;
-  const markerOptions = { incidentId: id, id, record: resolvedRecord, lat: coords.lat, lng: coords.lng, requireIdentityMatch: true };
-  const marker = findGridlyAlertMarker(coords, markerOptions);
   return Object.freeze({ id, record: resolvedRecord, coords, marker, markerDebug: markerOptions.debug || null });
 }
 
@@ -103670,7 +103688,7 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
       const crossingType = Boolean(row.getAttribute("data-gridly-alert-crossing-id") || record?.crossingId || record?.crossing_id);
       gridlyLp0953Record("Alert type determined", { alertType: crossingType ? "crossing" : String(record?.type || "unknown") });
       const crossingTarget = gridlyLp0952ResolveCrossingAlertTarget(record, row);
-      const coords = crossingTarget.coords || normalizeCoordinatePair(
+      const coords = showOnMapTarget?.coords || crossingTarget.coords || normalizeCoordinatePair(
         row.getAttribute("data-gridly-alert-lat") ?? record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.source?.lat,
         row.getAttribute("data-gridly-alert-lng") ?? record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.source?.lng ?? record?.source?.lon
       );
