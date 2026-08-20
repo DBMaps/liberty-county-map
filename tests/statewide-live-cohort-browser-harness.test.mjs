@@ -70,7 +70,7 @@ test('manual actions pause and require the explicit continue command', () => {
 });
 test('checkpoint resume validates the completed artifact prefix', () => {
   harness.state.cohort = artifact; harness.state.rows = artifact.itinerary;
-  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v4', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
+  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v5', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
   assert.equal(harness.validateCheckpoint(checkpoint).length, 1);
   assert.throws(() => harness.validateCheckpoint({ ...checkpoint, completedPrefix: [{ ...checkpoint.completedPrefix[0], stateVectorId: 'wrong' }] }), /PREFIX_MISMATCH/);
 });
@@ -96,23 +96,26 @@ test('export is deterministic for unchanged audit state and supports no-download
 });
 
 
-test('V4 checkpoint namespace invalidates the incomplete V3 row', () => {
-  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V4');
+test('V5 checkpoint namespace invalidates the incomplete V4 row', () => {
+  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V5');
   assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V3'), false);
-  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v3', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
+  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V4'), false);
+  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v4', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
 });
 
 async function exerciseSelection(row, configure = () => {}) {
   let context = {};
+  let selected = null;
   window.GRIDLY_COUNTY_REGISTRY = { [row.countyId]: { consumerAwarenessAreas: [{ placeGeoid: row.placeGeoid, displayName: row.community, canonicalIdentity: 'PLACE_GEOID', countyMemberships: row.multiCounty ? row.governedMemberships : [row.countyFips] }] } };
   window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [{ key: `${row.countyId}-${row.community.toLowerCase()}`, label: row.community, storageValue: row.community, countyId: row.countyId, communityId: row.placeGeoid, placeGeoid: row.placeGeoid, canonicalCommunityIdentity: 'PLACE_GEOID' }];
   window.resolveGridlyAwarenessAreaQuery = () => row.multiCounty
     ? { status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', operational: true, placeGeoid: row.placeGeoid, awarenessArea: window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0] }
     : { status: 'RESOLVED_OPERATIONAL', operational: true, countyId: row.countyId, awarenessAreaKey: `${row.countyId}-${row.community.toLowerCase()}`, awarenessArea: window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0] };
-  window.selectGridlySettingsAwarenessArea = () => { context = { canonicalPlaceGeoid: row.placeGeoid, activeCountyId: row.countyId }; };
-  window.gridlySaveCanonicalMultiCountyPlaceHome = () => { context = { canonicalPlaceGeoid: row.placeGeoid, awarenessAreaKey: row.canonicalKey, activeCountyId: row.countyId }; };
+  window.selectGridlySettingsAwarenessArea = () => { selected = window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0]; context = { canonicalPlaceGeoid: row.placeGeoid, activeCountyId: row.countyId }; };
+  window.gridlySaveCanonicalMultiCountyPlaceHome = () => { selected = window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0]; context = { canonicalPlaceGeoid: row.placeGeoid, awarenessAreaKey: row.canonicalKey, activeCountyId: row.countyId }; };
   window.gridlyActiveCountyRuntimeAudit = () => context;
-  configure({ setContext: value => { context = value; } });
+  window.getGridlySelectedAwarenessArea = () => selected;
+  configure({ setContext: value => { context = value; }, setSelected: value => { selected = value; } });
   return harness.select(row, 1);
 }
 
@@ -135,6 +138,43 @@ test('statewide PLACE bridge resolves Anahuac without a label special case', () 
   const result = harness.resolveAuditSelection(row, { status: 'RESOLVED_OPERATIONAL', operational: true, awarenessArea: window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0], candidates: [] });
   assert.equal(result.resolution.awarenessArea.placeGeoid, '4803144');
   assert.equal(result.resolution.awarenessArea.storageValue, 'Anahuac');
+  assert.equal(result.bridge.identityShape, 'LEGACY_PARTIAL');
+});
+
+function convergence(row, bridge, selected, activeCountyId = row.countyId) {
+  window.getGridlySelectedAwarenessArea = () => selected;
+  window.gridlyActiveCountyRuntimeAudit = () => ({ activeCountyId, awarenessAreaKey: selected?.key, resolvedGridlyCountyId: selected?.countyId });
+  return harness.selectionContext(row, bridge);
+}
+
+test('Anahuac legacy convergence uses the exact governed bridge target without requiring runtime PLACE', () => {
+  const row = artifact.itinerary.find(row => row.community === 'Anahuac');
+  const bridge = { placeGeoid: row.placeGeoid, countyId: row.countyId, productionKey: 'anahuac', productionStorageValue: 'Anahuac', identityShape: 'LEGACY_PARTIAL', governedIdentityCount: 1, productionTargetCount: 1, membershipMatched: true };
+  const selected = { key: 'anahuac', storageValue: 'Anahuac', countyId: 'chambers-tx' };
+  const result = convergence(row, bridge, selected);
+  assert.equal(result.canonicalReady, true);
+  assert.equal(result.operands.selectedRuntimePlaceGeoid, null);
+  assert.equal(result.firstFalseOperand, null);
+});
+
+test('legacy convergence fails closed for wrong county, target, GEOID, target multiplicity, and active county', () => {
+  const row = artifact.itinerary.find(row => row.community === 'Anahuac');
+  const bridge = { placeGeoid: row.placeGeoid, countyId: row.countyId, productionKey: 'anahuac', productionStorageValue: 'Anahuac', identityShape: 'LEGACY_PARTIAL', governedIdentityCount: 1, productionTargetCount: 1, membershipMatched: true };
+  const selected = { key: 'anahuac', label: 'Anahuac', storageValue: 'Anahuac', countyId: row.countyId };
+  assert.equal(convergence(row, bridge, { ...selected, countyId: 'wrong-tx' }).firstFalseOperand, 'SELECTED_RUNTIME_COUNTY_MATCHES_EXPECTED');
+  assert.equal(convergence(row, bridge, { ...selected, key: 'wrong' }).firstFalseOperand, 'SELECTED_RUNTIME_TARGET_MATCHES_BRIDGE');
+  assert.equal(convergence(row, { ...bridge, placeGeoid: '4899999' }, selected).firstFalseOperand, 'BRIDGE_PLACE_MATCHES_EXPECTED');
+  assert.equal(convergence(row, { ...bridge, productionTargetCount: 2 }, selected).firstFalseOperand, 'BRIDGE_PRODUCTION_TARGET_COUNT_EXACTLY_ONE');
+  assert.equal(convergence(row, bridge, selected, 'wrong-tx').firstFalseOperand, 'ACTIVE_COUNTY_MATCHES_EXPECTED');
+});
+
+test('Chester modern convergence keeps authoritative runtime PLACE mandatory', () => {
+  const row = artifact.itinerary.find(row => row.community === 'Chester');
+  const bridge = { placeGeoid: row.placeGeoid, countyId: row.countyId, productionKey: 'chester', productionStorageValue: 'Chester', identityShape: 'MODERN_FULL', governedIdentityCount: 1, productionTargetCount: 1, membershipMatched: true };
+  const selected = { key: 'chester', storageValue: 'Chester', countyId: row.countyId, placeGeoid: row.placeGeoid };
+  assert.equal(convergence(row, bridge, selected).canonicalReady, true);
+  assert.equal(convergence(row, bridge, { ...selected, placeGeoid: undefined }).firstFalseOperand, 'MODERN_RUNTIME_PLACE_MATCHES_EXPECTED');
+  assert.equal(convergence(row, bridge, { ...selected, placeGeoid: '4899999' }).canonicalReady, false);
 });
 
 test('statewide PLACE bridge rejects wrong GEOID, governed county, and missing or duplicate registry identity', () => {
@@ -169,8 +209,9 @@ test('Chester command return is ignored and observed canonical PLACE/county conv
 test('existing current-community selection still uses the production command and retains exact identity', async () => {
   const row = artifact.itinerary.find(row => row.community === 'Chester');
   let calls = 0;
-  const selected = await exerciseSelection(row, ({ setContext }) => {
+  const selected = await exerciseSelection(row, ({ setContext, setSelected }) => {
     setContext({ canonicalPlaceGeoid: row.placeGeoid, activeCountyId: row.countyId });
+    setSelected(window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0]);
     window.selectGridlySettingsAwarenessArea = () => { calls++; };
   });
   assert.equal(calls, 1);
