@@ -271,16 +271,30 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
             "Active report";
 
       const id = cleanDisplayValue(
-        record?.id ||
+        record?.consumerSituationId ||
+          record?.canonicalIncidentId ||
+          record?.id ||
           record?.reportId ||
           record?.incidentId ||
+          record?.raw?.consumerSituationId ||
+          record?.raw?.canonicalIncidentId ||
+          record?.raw?.incidentId ||
+          record?.raw?.id ||
           record?.uuid ||
           `published-awareness-${index}`
       );
-      const lat = Number(record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.source?.lat);
-      const lng = Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.source?.lng ?? record?.source?.lon);
-      const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng)
+      const rawLat = record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.source?.lat;
+      const rawLng = record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.source?.lng ?? record?.source?.lon;
+      const lat = rawLat === null || rawLat === undefined || rawLat === "" ? null : Number(rawLat);
+      const lng = rawLng === null || rawLng === undefined || rawLng === "" ? null : Number(rawLng);
+      const coordAttrs = lat !== null && lng !== null && Number.isFinite(lat) && Number.isFinite(lng)
         ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"`
+        : "";
+      const showOnMapTarget = typeof gridlyResolveAlertShowOnMapTarget === "function"
+        ? gridlyResolveAlertShowOnMapTarget(record, id)
+        : null;
+      const showOnMapAction = showOnMapTarget
+        ? `<button type="button" class="gridly-alert-show-on-map" data-gridly-show-on-map="true" data-gridly-show-on-map-incident-id="${esc(id)}" aria-label="Show ${esc(title || "this alert")} on map">Show on map</button>`
         : "";
 
       return `
@@ -316,6 +330,8 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
             <div class="gridly-alert-trust-line">
               ${esc(trust)}
             </div>
+
+            ${showOnMapAction}
           </div>
         </div>
       `;
