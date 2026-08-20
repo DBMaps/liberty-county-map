@@ -8,7 +8,7 @@ const css = fs.readFileSync(new URL("../css/styles.css", import.meta.url), "utf8
 test("statewide Alerts expose an accessible action only for a current resolvable map target", () => {
   assert.match(app, /function gridlyResolveAlertShowOnMapTarget/);
   assert.match(app, /gridlyLp019ResolveAlertRecord\(id\) !== resolvedRecord/);
-  assert.match(app, /findGridlyAlertMarker\(coords, markerOptions\)/);
+  assert.match(app, /findGridlyAlertMarker\(null, markerOptions\)/);
   assert.match(app, /requireIdentityMatch: true/);
   assert.match(app, /source\.consumerSituationId/);
   assert.match(app, /action\.type = "button"/);
@@ -32,6 +32,24 @@ test("Show on map reuses the existing focus and marker contracts without marker 
 test("Fredericksburg control is provider- and city-agnostic", () => {
   const resolver = app.match(/function gridlyResolveAlertShowOnMapTarget[\s\S]*?\n}/)?.[0] || "";
   assert.doesNotMatch(resolver, /Fredericksburg|4827348|US\s*87/i);
+  assert.match(resolver, /findGridlyAlertMarker\(null, markerOptions\)/);
+  assert.match(resolver, /exactIdentityCandidates/);
+  assert.match(resolver, /markerCoords \|\| gridlyLp019OfficialCoords\(resolvedRecord\)/);
   assert.match(resolver, /gridlyLp019OfficialCoords\(resolvedRecord\)/);
   assert.match(resolver, /return Object\.freeze\(\{ id, record: resolvedRecord, coords, marker/);
+});
+
+test("an exact current marker is eligible without alert coordinates and remains authoritative", () => {
+  const resolver = app.match(/function gridlyResolveAlertShowOnMapTarget[\s\S]*?\n}/)?.[0] || "";
+  const focus = app.match(/function focusGridlyAlertIncident[\s\S]*?\n}\n\nfunction focusAlertLocation/)?.[0] || "";
+
+  assert.match(resolver, /gridlyLp019ResolveAlertRecord\(id\) !== resolvedRecord/);
+  assert.match(resolver, /findGridlyAlertMarker\(null, markerOptions\)/);
+  assert.match(resolver, /resolvedRecord\?\.consumerSituationId/);
+  assert.match(resolver, /normalizeCoordinatePair\(markerLatLng\?\.lat, markerLatLng\?\.lng\)/);
+  assert.match(app, /const coords = showOnMapTarget\?\.coords \|\| crossingTarget\.coords/);
+  assert.match(focus, /focus\?\.markerResolved === true && focus\?\.marker/);
+  assert.match(focus, /if \(!focus\?\.markerResolved/);
+  assert.doesNotMatch(resolver, /L\.marker|fetch\(|resolvedRecord\.(?:lat|lng)\s*=/);
+  assert.doesNotMatch(resolver, /tolerance|proximity|coordinateDelta/);
 });
