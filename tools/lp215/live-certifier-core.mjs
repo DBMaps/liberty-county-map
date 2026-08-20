@@ -7,6 +7,29 @@ export function normalizeIds(values = []) {
   return [...new Set((Array.isArray(values) ? values : []).map(String).filter(Boolean))].sort();
 }
 
+/**
+ * Proves that a disabled picker option is the itinerary's current governed
+ * selection. PLACE identity comes from the runtime audit's authoritative
+ * fields; picker keys and labels are deliberately not identity fallbacks.
+ */
+export function currentOptionContextMatches(selected = {}, expected = {}) {
+  const expectedCounty = expected.operationalActiveCounty || expected.countyId || null;
+  const activeCounty = selected.activeCountyId || selected.activeCounty || null;
+  if (!expectedCounty || activeCounty !== expectedCounty) return false;
+
+  if (selected.canonicalCommunityIdentity === 'PLACE_GEOID') {
+    const selectedPlaceGeoid = selected.selectedPlaceGeoid || selected.placeGeoid
+      || selected.selectedCommunityId || selected.communityId || selected.canonicalPlaceGeoid || null;
+    const selectedCounty = selected.selectedCountyId || selected.countyId
+      || selected.resolvedGridlyCountyId || null;
+    return Boolean(expected.placeGeoid
+      && selectedPlaceGeoid === expected.placeGeoid
+      && selectedCounty === expectedCounty);
+  }
+
+  return Boolean(expected.canonicalKey && selected.awarenessAreaKey === expected.canonicalKey);
+}
+
 export function exactIdParity(policy = [], leaflet = [], dom = []) {
   const sets = [policy, leaflet, dom].map(normalizeIds);
   return { pass: JSON.stringify(sets[0]) === JSON.stringify(sets[1]) && JSON.stringify(sets[1]) === JSON.stringify(sets[2]), policyVisibleIds: sets[0], leafletMarkerIds: sets[1], domMarkerIds: sets[2] };

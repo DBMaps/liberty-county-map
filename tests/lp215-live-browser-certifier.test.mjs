@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { classifyDriveTexas, compareStale, evaluateAlerts, evaluateExpectedEmptyRail, evaluateSeedSettlement, exactIdParity, checkpointPayload, resumeIndex, TERMINAL_STATES } from '../tools/lp215/live-certifier-core.mjs';
+import { classifyDriveTexas, compareStale, currentOptionContextMatches, evaluateAlerts, evaluateExpectedEmptyRail, evaluateSeedSettlement, exactIdParity, checkpointPayload, resumeIndex, TERMINAL_STATES } from '../tools/lp215/live-certifier-core.mjs';
 
 const report = JSON.parse(fs.readFileSync('reports/lp215/statewide-consumer-wiring-certification.json', 'utf8'));
 
@@ -115,13 +115,35 @@ test('live certifier discovers and drives the current production Settings picker
   assert.match(source, /apply\.click\(\)/);
 });
 
+test('current PLACE option uses authoritative GEOID and county rather than its registry key', () => {
+  const expected = { canonicalKey: 'place-4803008', placeGeoid: '4803008', countyId: 'zavala-tx' };
+  const runtime = {
+    awarenessAreaKey: 'zavala-tx-amaya',
+    selectedPlaceGeoid: '4803008',
+    selectedCountyId: 'zavala-tx',
+    canonicalCommunityIdentity: 'PLACE_GEOID',
+    activeCountyId: 'zavala-tx'
+  };
+  assert.equal(currentOptionContextMatches(runtime, expected), true);
+  assert.equal(currentOptionContextMatches({ ...runtime, selectedPlaceGeoid: '4899999' }, expected), false, 'matching label or runtime key cannot replace PLACE identity');
+  assert.equal(currentOptionContextMatches({ ...runtime, awarenessAreaKey: expected.canonicalKey, selectedPlaceGeoid: '4899999' }, expected), false, 'matching canonical-looking picker key cannot override the wrong GEOID');
+  assert.equal(currentOptionContextMatches({ ...runtime, selectedCountyId: 'dimmit-tx' }, expected), false, 'PLACE ownership must match');
+  assert.equal(currentOptionContextMatches({ ...runtime, activeCountyId: 'dimmit-tx' }, expected), false, 'operational active county must match');
+  assert.equal(currentOptionContextMatches({ ...runtime, selectedPlaceGeoid: null, selectedCommunityId: null }, expected), false, 'missing authoritative PLACE identity fails closed');
+});
+
+test('legacy current options retain exact key and active-county identity', () => {
+  const expected = { canonicalKey: 'legacy-community', countyId: 'legacy-tx' };
+  assert.equal(currentOptionContextMatches({ awarenessAreaKey: 'legacy-community', activeCountyId: 'legacy-tx' }, expected), true);
+  assert.equal(currentOptionContextMatches({ awarenessAreaKey: 'other-community', activeCountyId: 'legacy-tx' }, expected), false);
+});
+
 test('live selection remains production-owned and fails closed for drifted controls', () => {
   const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
   const selection = source.slice(source.indexOf('async function selectThroughProductionUi'), source.indexOf('\n  function snapshot'));
   assert.doesNotMatch(selection, /GRIDLY_ACTIVE_COUNTY_ID\s*=|activeCounty(Id)?\s*=|selectedCommunity\s*=|localStorage\.|sessionStorage\.|gridlyDispatchSemanticCamera\s*\(/);
   assert.match(selection, /gridlyActiveCountyRuntimeAudit/);
-  assert.match(selection, /current\.awarenessAreaKey !== row\.canonicalKey/);
-  assert.match(selection, /current\.activeCountyId !== row\.countyId/);
+  assert.match(selection, /currentOptionContextMatches\(current, row\)/);
   for (const diagnostic of [
     'PRODUCTION_SETTINGS_OPEN_CONTROL_NOT_AVAILABLE',
     'PRODUCTION_AWARENESS_PICKER_OPEN_CONTROL_NOT_AVAILABLE',
