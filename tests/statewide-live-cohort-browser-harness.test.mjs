@@ -70,7 +70,7 @@ test('manual actions pause and require the explicit continue command', () => {
 });
 test('checkpoint resume validates the completed artifact prefix', () => {
   harness.state.cohort = artifact; harness.state.rows = artifact.itinerary;
-  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v3', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
+  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v4', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
   assert.equal(harness.validateCheckpoint(checkpoint).length, 1);
   assert.throws(() => harness.validateCheckpoint({ ...checkpoint, completedPrefix: [{ ...checkpoint.completedPrefix[0], stateVectorId: 'wrong' }] }), /PREFIX_MISMATCH/);
 });
@@ -96,19 +96,19 @@ test('export is deterministic for unchanged audit state and supports no-download
 });
 
 
-test('V3 checkpoint namespace retries the incomplete V2 row', () => {
-  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V3');
-  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V2'), false);
-  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v2', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
+test('V4 checkpoint namespace invalidates the incomplete V3 row', () => {
+  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V4');
+  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V3'), false);
+  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v3', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
 });
 
 async function exerciseSelection(row, configure = () => {}) {
   let context = {};
   window.GRIDLY_COUNTY_REGISTRY = { [row.countyId]: { consumerAwarenessAreas: [{ placeGeoid: row.placeGeoid, displayName: row.community, canonicalIdentity: 'PLACE_GEOID', countyMemberships: row.multiCounty ? row.governedMemberships : [row.countyFips] }] } };
-  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [{ key: `${row.countyId}-${row.community.toLowerCase()}`, label: row.community, storageValue: row.community, countyId: row.countyId }];
+  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [{ key: `${row.countyId}-${row.community.toLowerCase()}`, label: row.community, storageValue: row.community, countyId: row.countyId, communityId: row.placeGeoid, placeGeoid: row.placeGeoid, canonicalCommunityIdentity: 'PLACE_GEOID' }];
   window.resolveGridlyAwarenessAreaQuery = () => row.multiCounty
-    ? { status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', operational: true, placeGeoid: row.placeGeoid, awarenessArea: { placeGeoid: row.placeGeoid } }
-    : { status: 'RESOLVED_OPERATIONAL', operational: true, awarenessAreaKey: `${row.countyId}-${row.community.toLowerCase()}`, awarenessArea: { storageValue: row.community, placeGeoid: row.placeGeoid } };
+    ? { status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', operational: true, placeGeoid: row.placeGeoid, awarenessArea: window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0] }
+    : { status: 'RESOLVED_OPERATIONAL', operational: true, countyId: row.countyId, awarenessAreaKey: `${row.countyId}-${row.community.toLowerCase()}`, awarenessArea: window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0] };
   window.selectGridlySettingsAwarenessArea = () => { context = { canonicalPlaceGeoid: row.placeGeoid, activeCountyId: row.countyId }; };
   window.gridlySaveCanonicalMultiCountyPlaceHome = () => { context = { canonicalPlaceGeoid: row.placeGeoid, awarenessAreaKey: row.canonicalKey, activeCountyId: row.countyId }; };
   window.gridlyActiveCountyRuntimeAudit = () => context;
@@ -146,14 +146,35 @@ test('statewide PLACE bridge rejects wrong GEOID, governed county, and missing o
   assert.equal(resolve({ placeGeoid: 'wrong' }), null);
   assert.equal(resolve({ countyFips: 'wrong' }), null);
   assert.equal(resolve({ countyId: 'missing-tx' }), null);
-  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [area, { ...area, key: 'duplicate' }];
+  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [{ ...area, placeGeoid: row.placeGeoid }, { ...area, key: 'duplicate', placeGeoid: row.placeGeoid }];
   assert.equal(resolve({}), null);
+});
+
+test('duplicate production label in another county is resolved by governed county identity, not label alone', () => {
+  const row = artifact.itinerary.find(row => row.community === 'Chester');
+  const expected = { key: 'tyler-tx-chester', label: 'Chester', storageValue: 'Chester', countyId: 'tyler-tx', placeGeoid: row.placeGeoid };
+  const other = { key: 'other-chester', label: 'Chester', storageValue: 'Other Chester', countyId: 'other-tx', placeGeoid: '4999999' };
+  window.GRIDLY_COUNTY_REGISTRY = { 'tyler-tx': { consumerAwarenessAreas: [{ placeGeoid: row.placeGeoid, displayName: row.community, canonicalIdentity: 'PLACE_GEOID', countyMemberships: row.governedMemberships }] } };
+  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [expected, other];
+  const result = harness.resolveAuditSelection(row, { status: 'AMBIGUOUS', operational: true, candidates: [{ countyId: 'tyler-tx', awarenessArea: expected }, { countyId: 'other-tx', awarenessArea: other }] });
+  assert.equal(result.resolution.awarenessArea.storageValue, 'Chester');
 });
 
 test('Chester command return is ignored and observed canonical PLACE/county convergence succeeds', async () => {
   const row = artifact.itinerary.find(row => row.community === 'Chester');
   window.selectGridlySettingsAwarenessArea = undefined;
   await exerciseSelection(row);
+});
+
+test('existing current-community selection still uses the production command and retains exact identity', async () => {
+  const row = artifact.itinerary.find(row => row.community === 'Chester');
+  let calls = 0;
+  const selected = await exerciseSelection(row, ({ setContext }) => {
+    setContext({ canonicalPlaceGeoid: row.placeGeoid, activeCountyId: row.countyId });
+    window.selectGridlySettingsAwarenessArea = () => { calls++; };
+  });
+  assert.equal(calls, 1);
+  assert.equal(selected.value.canonicalPlaceGeoid, row.placeGeoid);
 });
 
 test('multi-county Baytown retains canonical PLACE while Chambers operational county converges', async () => {
@@ -182,7 +203,10 @@ test('first selection blocker stops the run without attempting later rows', asyn
   const rows = artifact.itinerary.filter(row => !row.alreadyCertifiedByOwnerEvidence).slice(0, 2);
   harness.state.cohort = artifact; harness.state.rows = rows; harness.state.results = []; harness.state.index = 0; harness.state.running = false; harness.state.stopped = false; harness.state.waiting = null;
   let calls = 0;
-  window.resolveGridlyAwarenessAreaQuery = () => ({ status: 'RESOLVED_OPERATIONAL', operational: true, awarenessArea: { storageValue: rows[0].community, placeGeoid: rows[0].placeGeoid } });
+  const area = { key: 'tyler-tx-chester', label: rows[0].community, storageValue: rows[0].community, countyId: rows[0].countyId, placeGeoid: rows[0].placeGeoid };
+  window.GRIDLY_COUNTY_REGISTRY = { [rows[0].countyId]: { consumerAwarenessAreas: [{ placeGeoid: rows[0].placeGeoid, displayName: rows[0].community, canonicalIdentity: 'PLACE_GEOID', countyMemberships: rows[0].governedMemberships }] } };
+  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [area];
+  window.resolveGridlyAwarenessAreaQuery = () => ({ status: 'RESOLVED_OPERATIONAL', operational: true, countyId: rows[0].countyId, awarenessArea: area });
   window.selectGridlySettingsAwarenessArea = () => { calls++; throw new Error('blocked'); };
   await harness.run();
   assert.equal(calls, 1);
