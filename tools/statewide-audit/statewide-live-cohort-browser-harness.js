@@ -1,9 +1,9 @@
 (function installGridlyStatewideCohortHarness(global) {
   'use strict';
 
-  const AUDIT_VERSION = 'gridly.statewide-live-cohort-audit.v4';
+  const AUDIT_VERSION = 'gridly.statewide-live-cohort-audit.v5';
   const COHORT_URL = '/reports/statewide-audit/gridly-live-certification-cohort-v1.json';
-  const CHECKPOINT_KEY = 'GRIDLY_STATEWIDE_COHORT_AUDIT_V4';
+  const CHECKPOINT_KEY = 'GRIDLY_STATEWIDE_COHORT_AUDIT_V5';
   const REPOSITORY_HEAD = '6517795';
   const CLASS_STATUSES = new Set(['NOT_REQUIRED', 'PASS', 'FAIL', 'INCOMPLETE']);
   const DRIVE_TERMINAL = new Set(['HEALTHY_WITH_DATA', 'HEALTHY_EMPTY', 'FAILED', 'RETAINED', 'UNAVAILABLE', 'TIMEOUT']);
@@ -96,27 +96,61 @@
     return { settled: false, value, elapsedMs: Math.round(performance.now() - started) };
   }
 
-  function selectionContext(row) {
+  function selectionContext(row, bridge) {
     const context = call('gridlyActiveCountyRuntimeAudit', {}) || {};
-    const observedPlaceGeoid = String(context.canonicalPlaceGeoid || '').replace(/^place-/, '');
+    const lexical = name => safe(() => global.eval(name), null);
+    const selected = typeof global.getGridlySelectedAwarenessArea === 'function'
+      ? safe(() => global.getGridlySelectedAwarenessArea(), null)
+      : (typeof lexical('getGridlySelectedAwarenessArea') === 'function' ? safe(() => lexical('getGridlySelectedAwarenessArea')(), null) : null);
     const expectedPlaceGeoid = String(row.placeGeoid || row.canonicalKey || '').replace(/^place-/, '');
-    return {
-      context,
-      canonicalReady: Boolean(expectedPlaceGeoid && observedPlaceGeoid === expectedPlaceGeoid),
-      countyReady: context.activeCountyId === row.countyId
+    const selectedPlaceGeoid = String(selected?.placeGeoid || selected?.communityId || '').replace(/^place-/, '');
+    const operands = {
+      expectedPlaceGeoid, expectedCountyId: row.countyId,
+      bridgeResolvedPlaceGeoid: bridge?.placeGeoid || null,
+      bridgeResolvedCountyId: bridge?.countyId || null,
+      bridgeProductionKey: bridge?.productionKey || null,
+      bridgeProductionStorageValue: bridge?.productionStorageValue || null,
+      bridgeIdentityShape: bridge?.identityShape || null,
+      bridgeGovernedIdentityCount: bridge?.governedIdentityCount ?? null,
+      bridgeProductionTargetCount: bridge?.productionTargetCount ?? null,
+      selectedRuntimeKey: selected?.key || context.awarenessAreaKey || null,
+      selectedRuntimeStorageValue: selected?.storageValue || null,
+      selectedRuntimeCountyId: selected?.countyId || context.resolvedGridlyCountyId || null,
+      selectedRuntimePlaceGeoid: selectedPlaceGeoid || null,
+      activeCountyId: context.activeCountyId || null,
+      mapCameraTarget: null
     };
+    const checks = bridge?.identityShape === 'MODERN_FULL'
+      ? [
+          ['MODERN_RUNTIME_PLACE_MATCHES_EXPECTED', Boolean(expectedPlaceGeoid && selectedPlaceGeoid === expectedPlaceGeoid)],
+          ['SELECTED_RUNTIME_COUNTY_MATCHES_EXPECTED', operands.selectedRuntimeCountyId === row.countyId],
+          ['ACTIVE_COUNTY_MATCHES_EXPECTED', operands.activeCountyId === row.countyId]
+        ]
+      : [
+          ['BRIDGE_GOVERNED_IDENTITY_COUNT_EXACTLY_ONE', bridge?.governedIdentityCount === 1],
+          ['BRIDGE_PLACE_MATCHES_EXPECTED', bridge?.placeGeoid === expectedPlaceGeoid],
+          ['BRIDGE_COUNTY_MATCHES_EXPECTED', bridge?.countyId === row.countyId && bridge?.membershipMatched === true],
+          ['BRIDGE_PRODUCTION_TARGET_COUNT_EXACTLY_ONE', bridge?.productionTargetCount === 1],
+          ['SELECTED_RUNTIME_TARGET_MATCHES_BRIDGE', operands.selectedRuntimeKey === bridge?.productionKey && operands.selectedRuntimeStorageValue === bridge?.productionStorageValue],
+          ['SELECTED_RUNTIME_COUNTY_MATCHES_EXPECTED', operands.selectedRuntimeCountyId === row.countyId],
+          ['ACTIVE_COUNTY_MATCHES_EXPECTED', operands.activeCountyId === row.countyId]
+        ];
+    const firstFalseOperand = checks.find(([, passed]) => !passed)?.[0] || null;
+    return { context, selected, operands, checks: Object.fromEntries(checks), firstFalseOperand, canonicalReady: firstFalseOperand === null, countyReady: operands.activeCountyId === row.countyId };
   }
 
-  async function waitForSelectionContext(row, timeoutMs = 15000) {
+  async function waitForSelectionContext(row, bridge, timeoutMs = 15000) {
     const started = performance.now(); let observed; let sawCanonical = false; let sawCounty = false;
     do {
-      observed = selectionContext(row); sawCanonical ||= observed.canonicalReady; sawCounty ||= observed.countyReady;
-      if (observed.canonicalReady && observed.countyReady) return { settled: true, value: observed.context };
+      observed = selectionContext(row, bridge); sawCanonical ||= observed.canonicalReady; sawCounty ||= observed.countyReady;
+      if (observed.canonicalReady && observed.countyReady) return { settled: true, value: observed.context, convergence: { operands: observed.operands, checks: observed.checks, firstFalseOperand: null } };
       await sleep(200);
     } while (!state.stopped && performance.now() - started < timeoutMs);
-    observed = selectionContext(row);
+    observed = selectionContext(row, bridge);
     const error = new Error((sawCanonical || sawCounty || observed.canonicalReady || observed.countyReady) ? 'SELECTION_CONTEXT_MISMATCH' : 'SELECTION_CONTEXT_TIMEOUT');
     error.observedContext = observed.context;
+    error.selectionConvergenceOperands = observed.operands;
+    error.firstFalseOperand = observed.firstFalseOperand;
     throw error;
   }
 
@@ -196,13 +230,13 @@
     return result;
   }
 
-  function makeResult(row, settled, started) {
+  function makeResult(row, settled, started, selectionConvergence = null) {
     const observation = settled.value;
     const staleState = compareStale(state.previous, observation, row.transitionAssertions);
     const liveClassResults = classResults(row, observation, settled.settled, staleState);
     const result = {
       sequence: row.sequence, stateVectorId: row.stateVectorId, countyId: row.countyId, community: row.community, placeGeoid: row.placeGeoid,
-      selection: { canonicalKey: row.canonicalKey, observedCanonicalKey: observation.context.awarenessAreaKey ?? null },
+      selection: { canonicalKey: row.canonicalKey, observedCanonicalKey: observation.context.awarenessAreaKey ?? null, convergence: selectionConvergence },
       context: observation.context, roadway: { ...observation.roadway, featureCount: observation.roadwayFeatureCount, expectedState: row.roadwayState },
       driveTexas: { ...counts(observation), state: observation.driveTexasState, recordIds: observation.driveTexasRecordIds },
       officialRoadway: { ...observation.official, markerIds: observation.officialMarkerIds },
@@ -252,7 +286,7 @@
       finalResolvedProductionAwarenessValue: null,
       finalRejectionCondition: null
     };
-    const reject = condition => { trace.finalRejectionCondition = condition; console.warn('[GRIDLY V4 IDENTITY BRIDGE TRACE]', trace); return null; };
+    const reject = condition => { trace.finalRejectionCondition = condition; console.warn('[GRIDLY V5 IDENTITY BRIDGE TRACE]', trace); return null; };
     if (governed.length !== 1) return reject('GOVERNED_IDENTITY_COUNT_EXACTLY_ONE');
     const identity = governed[0];
     if (identity.canonicalIdentity !== 'PLACE_GEOID') return reject('GOVERNED_IDENTITY_IS_PLACE_GEOID');
@@ -275,16 +309,22 @@
     trace.matchingProductionAwarenessDefinitions = areas.length;
     if (areas.length !== 1) return reject('PRODUCTION_SELECTION_TARGET_COUNT_EXACTLY_ONE');
     const area = areas[0];
+    const areaGeoid = String(area.placeGeoid || area.communityId || '').replace(/^place-/, '');
+    const bridge = Object.freeze({
+      placeGeoid: geoid, countyId, productionKey: area.key, productionStorageValue: area.storageValue,
+      identityShape: areaGeoid ? 'MODERN_FULL' : 'LEGACY_PARTIAL', governedIdentityCount: governed.length,
+      productionTargetCount: areas.length, membershipMatched: true
+    });
     trace.finalResolvedProductionAwarenessValue = area.storageValue;
     if (row.multiCounty) {
       if (memberships.length < 2 || !['RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', 'AMBIGUOUS'].includes(consumerResult?.status)) return reject('MULTI_COUNTY_QUERY_CONTRACT_MATCHES');
-      console.log('[GRIDLY V4 IDENTITY BRIDGE TRACE]', trace);
-      return { multiCounty: true, resolution: consumerResult.status === 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE' ? consumerResult : { ...consumerResult, status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', operational: true, placeGeoid: geoid, awarenessArea: { ...area, key: `place-${geoid}`, placeGeoid: geoid, communityId: geoid, countyMemberships: memberships } } };
+      console.log('[GRIDLY V5 IDENTITY BRIDGE TRACE]', trace);
+      return { multiCounty: true, bridge, resolution: consumerResult.status === 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE' ? consumerResult : { ...consumerResult, status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', operational: true, placeGeoid: geoid, awarenessArea: { ...area, key: `place-${geoid}`, placeGeoid: geoid, communityId: geoid, countyMemberships: memberships } } };
     }
     if (memberships.length !== 1) return reject('SINGLE_COUNTY_MEMBERSHIP_COUNT_EXACTLY_ONE');
     if (consumerResult?.operational !== true) return reject('PRODUCTION_QUERY_IS_OPERATIONAL');
-    console.log('[GRIDLY V4 IDENTITY BRIDGE TRACE]', trace);
-    return { multiCounty: false, resolution: { ...consumerResult, status: 'RESOLVED_OPERATIONAL', operational: true, placeGeoid: geoid, countyId, awarenessAreaKey: area.key, awarenessArea: { ...area, placeGeoid: geoid, communityId: geoid, canonicalCommunityIdentity: 'PLACE_GEOID' }, candidates } };
+    console.log('[GRIDLY V5 IDENTITY BRIDGE TRACE]', trace);
+    return { multiCounty: false, bridge, resolution: { ...consumerResult, status: 'RESOLVED_OPERATIONAL', operational: true, placeGeoid: geoid, countyId, awarenessAreaKey: area.key, awarenessArea: { ...area, placeGeoid: geoid, communityId: geoid, canonicalCommunityIdentity: 'PLACE_GEOID' }, candidates } };
   }
 
   async function select(row, timeoutMs = 15000) {
@@ -304,7 +344,7 @@
       if (multiCounty) global[actionName](resolved, 'statewide_live_cohort_audit');
       else global[actionName](resolved.awarenessArea?.storageValue || resolved.awarenessAreaKey, 'statewide_live_cohort_audit', null);
     } catch (error) { const failure = new Error('SELECTION_ACTION_THROW'); failure.cause = error; throw failure; }
-    return waitForSelectionContext(row, timeoutMs);
+    return waitForSelectionContext(row, bridged.bridge, timeoutMs);
   }
 
   async function run() {
@@ -318,13 +358,13 @@
       }
       const started = performance.now();
       try {
-        await select(row);
+        const selected = await select(row);
         const settled = await waitForSettlement(row);
-        const result = makeResult(row, settled, started);
+        const result = makeResult(row, settled, started, selected.convergence);
         state.results.push(result); state.previous = priorFrom(result); state.index++; saveCheckpoint();
         if (requiresManual(result)) { state.waiting = { row, result, before: snapshot(row) }; printManual(row); break; }
       } catch (error) {
-        state.results.push({ sequence: row.sequence, stateVectorId: row.stateVectorId, countyId: row.countyId, community: row.community, placeGeoid: row.placeGeoid, selection: { canonicalKey: row.canonicalKey }, context: {}, roadway: {}, driveTexas: {}, officialRoadway: {}, alerts: {}, rail: {}, map: {}, showOnMap: null, staleState: {}, liveClassResults: Object.fromEntries(state.cohort.sixLiveBrowserClasses.map(item => [item.classId, required(row, item.classId) ? 'INCOMPLETE' : 'NOT_REQUIRED'])), manualActionEvidence: [], passAssertions: row.passAssertions, failureReasons: [], incompleteReasons: [error.message || String(error)], durationMs: Math.round(performance.now() - started) });
+        state.results.push({ sequence: row.sequence, stateVectorId: row.stateVectorId, countyId: row.countyId, community: row.community, placeGeoid: row.placeGeoid, selection: { canonicalKey: row.canonicalKey, convergence: error.selectionConvergenceOperands ? { operands: error.selectionConvergenceOperands, firstFalseOperand: error.firstFalseOperand || null } : null }, context: error.observedContext || {}, roadway: {}, driveTexas: {}, officialRoadway: {}, alerts: {}, rail: {}, map: {}, showOnMap: null, staleState: {}, liveClassResults: Object.fromEntries(state.cohort.sixLiveBrowserClasses.map(item => [item.classId, required(row, item.classId) ? 'INCOMPLETE' : 'NOT_REQUIRED'])), manualActionEvidence: [], passAssertions: row.passAssertions, failureReasons: [], incompleteReasons: [error.message || String(error)], durationMs: Math.round(performance.now() - started) });
         state.index++; state.stopped = true; saveCheckpoint();
         break;
       }
@@ -354,7 +394,7 @@
     result.manualActionEvidence.push({ confirmedAt: new Date().toISOString(), action: 'SHOW_ON_MAP', passed }); result.liveClassResults.SHOW_ON_MAP_LIVE_BROWSER_REQUIRED = passed ? 'PASS' : 'FAIL'; result.incompleteReasons = result.incompleteReasons.filter(reason => reason !== 'SHOW_ON_MAP_LIVE_BROWSER_REQUIRED_INCOMPLETE'); if (!passed) result.failureReasons.push('SHOW_ON_MAP_LIVE_BROWSER_REQUIRED_FAILED'); state.waiting = null; saveCheckpoint(); return run(); };
   global.gridlyStatewideCohortStop = () => { state.stopped = true; return global.gridlyStatewideCohortStatus(); };
   global.gridlyStatewideCohortResume = () => run();
-  global.gridlyStatewideCohortExport = (download = true) => { const output = JSON.stringify(payload(), null, 2) + '\n'; if (download) { const anchor = document.createElement('a'); anchor.href = URL.createObjectURL(new Blob([output], { type: 'application/json' })); anchor.download = 'gridly-statewide-live-cohort-audit-v4.json'; anchor.click(); URL.revokeObjectURL(anchor.href); } return output; };
+  global.gridlyStatewideCohortExport = (download = true) => { const output = JSON.stringify(payload(), null, 2) + '\n'; if (download) { const anchor = document.createElement('a'); anchor.href = URL.createObjectURL(new Blob([output], { type: 'application/json' })); anchor.download = 'gridly-statewide-live-cohort-audit-v5.json'; anchor.click(); URL.revokeObjectURL(anchor.href); } return output; };
   global.gridlyStatewideCohortClearCheckpoint = () => { sessionStorage.removeItem(CHECKPOINT_KEY); return true; };
   global.gridlyStatewideCohortStart = async () => { const response = await fetch(COHORT_URL, { cache: 'no-store' }); if (!response.ok) throw new Error(`COHORT_FETCH_FAILED_${response.status}`); state.cohort = await response.json(); state.rows = validateCohort(state.cohort); const checkpoint = safe(() => JSON.parse(sessionStorage.getItem(CHECKPOINT_KEY)), null); state.results = validateCheckpoint(checkpoint); state.index = state.results.length; state.startedAt = checkpoint?.startedAt || new Date().toISOString(); state.previous = state.results.length ? priorFrom(state.results.at(-1)) : null; return run(); };
 
