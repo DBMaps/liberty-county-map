@@ -18,13 +18,14 @@
             };
         }
 
-        const originalMode = "legacy";
+        const originalMode = provider.getMode?.() || "production";
         const packageSet = provider.setMode("package");
-        const packageGeojson = await window.gridlyGetActiveCountyCrossings?.();
+        const packageGeojson = await window.gridlyGetActiveCountyCrossings?.({ mode: "package" });
         const packageCount = countFeatures(packageGeojson);
-        const rollbackSet = provider.setMode(originalMode);
-        const rollbackGeojson = await window.gridlyGetActiveCountyCrossings?.();
+        const rollbackSet = provider.setMode("legacy");
+        const rollbackGeojson = await window.gridlyGetActiveCountyCrossings?.({ mode: "legacy" });
         const rollbackCount = countFeatures(rollbackGeojson);
+        provider.setMode(originalMode);
 
         const passed =
             packageSet.changed === true &&
@@ -63,7 +64,7 @@
                 supabaseModified: false,
                 mobilePortraitModified: false
             },
-            finalMode: "legacy",
+            finalMode: originalMode,
             finalDetermination: passed
                 ? "PASS_PACKAGE_MODE_ACTIVATION_AND_ROLLBACK"
                 : "BLOCKED_PACKAGE_MODE_ACTIVATION_OR_ROLLBACK_FAILED"

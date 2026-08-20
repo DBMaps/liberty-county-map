@@ -151,6 +151,7 @@ function sameCountyHydrationSandbox({ countyId, inventoryCounty = null, inventor
   vm.createContext(sandbox);
   vm.runInContext(`
     ${productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext')}
+    ${productionFunction('gridlyPersistCanonicalPlaceOperationalCounty')}
     ${productionFunction('ensureGridlyActiveCountyCrossingInventory')}
     ${productionFunction('gridlySynchronizeActiveCountyForOperationalContext')}
     this.synchronize = gridlySynchronizeActiveCountyForOperationalContext;
@@ -258,7 +259,8 @@ test('startup restoration and manual PLACE selection both replace Liberty with D
     assert.ok(runtime.inventory.every(row => row.countyId !== 'liberty-tx'), lifecycle);
   }
   assert.match(source, /startup-semantic-hydration:presentation-ready/);
-  assert.match(source, /gridlyDispatchSemanticCamera\(validation\.area, null, \{ source \}\)/);
+  assert.match(source, /gridlySynchronizeActiveCountyForOperationalContext\?\.\(validation\.area, requestedCountyId/);
+  assert.match(source, /gridlyDispatchSemanticCamera\(validation\.area, requestedCountyId, \{ source \}\)/);
 });
 
 test('production semantic caller retries containment readiness and commits Dallas through the real setter', async () => {
@@ -314,6 +316,7 @@ test('production semantic caller retries containment readiness and commits Dalla
   vm.runInContext(`
     ${productionFunction('gridlyResolveCanonicalPlaceGeoid')}
     ${productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext')}
+    ${productionFunction('gridlyPersistCanonicalPlaceOperationalCounty')}
     ${productionFunction('gridlySetActiveCountyContext')}
     ${productionFunction('gridlySynchronizeActiveCountyForOperationalContext')}
     ${productionFunction('gridlyDispatchSemanticCamera')}
@@ -325,7 +328,7 @@ test('production semantic caller retries containment readiness and commits Dalla
   await new Promise(resolve => setTimeout(resolve, 0));
   await new Promise(resolve => setTimeout(resolve, 0));
   assert.equal(sandbox.GRIDLY_ACTIVE_COUNTY_ID, 'dallas-tx');
-  assert.equal(sandbox.gridlyActiveCountyTransitionGeneration, 1);
+  assert.equal(sandbox.gridlyActiveCountyTransitionGeneration, 2, 'pending geometry invalidates Liberty work before Dallas commits');
   assert.equal(loadStartedCounty, 'dallas-tx');
   assert.equal(sandbox.gridlyCrossingInventoryCountyId, 'dallas-tx');
   assert.equal(sandbox.crossings.length, 789);

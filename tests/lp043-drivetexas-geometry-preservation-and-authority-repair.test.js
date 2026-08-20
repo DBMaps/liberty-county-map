@@ -86,8 +86,8 @@ assert.strictEqual(outsideLineResult.geometryEvaluation.boundingBoxesPassed, 0, 
 assert.strictEqual(outsideLineResult.geometryEvaluation.segmentsEvaluated, 0, 'segment evaluation skipped only after bounding-box rejection');
 const negativeLongitudeTexas = rec('negative-lon-crossing', { sourceGeometry: { type: 'LineString', coordinates: [[30.0466, -95.2], [30.0466, -94.4]] } });
 const negativeLongitudeResult = select([negativeLongitudeTexas]);
-assert.strictEqual(negativeLongitudeResult.authorityEligibleRecordCount, 1, 'Texas coordinate ranges with reversed lat/lon source order are normalized for authority');
-assert(negativeLongitudeResult.geometryEvaluation.segmentsEvaluated > 0, 'negative-longitude Texas geometry reaches segment evaluation');
+assert.strictEqual(negativeLongitudeResult.authorityEligibleRecordCount, 0, 'swapped GeoJSON latitude/longitude source order fails closed');
+assert.strictEqual(negativeLongitudeResult.recordProof[0].sourceGeometryValid, false, 'swapped GeoJSON geometry is not promoted to trusted geometry');
 const multiResult = select([rec('multi-cross-regression', { sourceGeometry: { type: 'MultiLineString', coordinates: [[[-94.2, 30.6], [-94.1, 30.7]], [[-95.2, 30.0466], [-94.4, 30.0466]]] } })]);
 assert(multiResult.geometryEvaluation.segmentsEvaluated > 0, 'MultiLineString segment evaluation executes');
 assert(!('fetch' in sandbox && sandbox.fetch.called), 'no extra network fetch');

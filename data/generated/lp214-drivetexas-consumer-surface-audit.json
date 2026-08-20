@@ -1,0 +1,229 @@
+{
+  "schemaVersion": "gridly.lp214.drivetexas-consumer-surface-audit.v1",
+  "ownershipConclusion": {
+    "awarenessBrief": "SECONDARY_EVIDENCE_OWNER_NOT_PRIMARY_HEADLINE_OWNER",
+    "alertsSheet": "EXPECTED_BY_DESIGN",
+    "communityTravelEmptyCopy": "PERMITTED_ONLY_UNDER_EXPLICIT_COMMUNITY_SECTION",
+    "locationContextDallasFour": "OTHER_COUNT_CONTRACT_DEFECT",
+    "repair": "Shared activeHazardsInArea was omitted and the narrower Alerts grouped count could override the shared count."
+  },
+  "surfaces": [
+    {
+      "surface": "Awareness Brief / top status",
+      "classification": "DRIVETEXAS_SECONDARY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "buildGridlyCommunityAwarenessIntelligenceSummary -> gridlyAwarenessOfficialRoadwayPublisherRepair.enrichSummary",
+      "contract": "records, source status, freshness/retention disclosure through shared summary",
+      "activityRule": "Official records may affect evidence/status; generic headline remains hierarchy-owned",
+      "dallasBehavior": "CORRECT_AFTER_SHARED_PUBLICATION"
+    },
+    {
+      "surface": "Community Pulse",
+      "classification": "DRIVETEXAS_SECONDARY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "refreshGridlyCommunityPulseSharedModel -> shared summary publisher",
+      "contract": "records and governed source envelope",
+      "activityRule": "Official hazards affect shared activity, not community-report wording",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Know Before You Go / Travel Brief",
+      "classification": "DRIVETEXAS_PRIMARY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "gridlyStoryTransportationConnectorRecords -> gridlySelectConsumerVisibleDriveTexasSituations",
+      "contract": "eligible records and authority source health",
+      "activityRule": "Owns official roadway travel presentation",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Official Roadways section",
+      "classification": "DRIVETEXAS_PRIMARY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "gridlyTravelBriefDriveTexasLines",
+      "contract": "eligible records, freshness and disclosure",
+      "activityRule": "Direct official-roadway owner",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Map DriveTexas markers",
+      "classification": "DRIVETEXAS_PRIMARY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "renderGridlyDriveTexasOfficialMarkers",
+      "contract": "eligible record geometry and official disclosure",
+      "activityRule": "Direct marker owner",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Alert cards",
+      "classification": "INTENTIONALLY_NOT_DRIVETEXAS_OWNED",
+      "driveTexasIntended": false,
+      "productionPath": "Alerts community incident contract",
+      "contract": "none",
+      "activityRule": "DriveTexas must not manufacture community alerts",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Alerts sheet",
+      "classification": "INTENTIONALLY_NOT_DRIVETEXAS_OWNED",
+      "driveTexasIntended": false,
+      "productionPath": "getAlertsSurfaceSnapshot / community alert registry",
+      "contract": "none",
+      "activityRule": "DriveTexas does not create sheet entries",
+      "dallasBehavior": "EXPECTED_BY_DESIGN"
+    },
+    {
+      "surface": "Hazard popup",
+      "classification": "DRIVETEXAS_SECONDARY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "gridlyLp0393ConsumerDriveTexasPopupHtml",
+      "contract": "eligible official record and attribution",
+      "activityRule": "Official markers open official hazard detail",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Crossing popup",
+      "classification": "INTENTIONALLY_NOT_DRIVETEXAS_OWNED",
+      "driveTexasIntended": false,
+      "productionPath": "crossing-owned popup builders",
+      "contract": "none",
+      "activityRule": "Rail/crossing contract only",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Destination awareness",
+      "classification": "DRIVETEXAS_SECONDARY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "Travel Brief destination awareness connector",
+      "contract": "eligible records and shared health",
+      "activityRule": "May include route-near official conditions",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Route intelligence",
+      "classification": "INTENTIONALLY_NOT_DRIVETEXAS_OWNED",
+      "driveTexasIntended": false,
+      "productionPath": "route-watch runtime",
+      "contract": "none",
+      "activityRule": "No established DriveTexas ownership",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "Quiet state",
+      "classification": "HEALTH_ONLY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "shared awareness summary source-status gate",
+      "contract": "source status, retention, disclosure",
+      "activityRule": "Failure is non-quiet; healthy empty may be quiet",
+      "dallasBehavior": "CORRECT"
+    },
+    {
+      "surface": "County/community summary",
+      "classification": "DRIVETEXAS_SECONDARY_CONSUMER",
+      "driveTexasIntended": true,
+      "productionPath": "buildGridlyCommunityAwarenessIntelligenceSummary",
+      "contract": "shared records and source envelope",
+      "activityRule": "Official hazards affect broad active-issue count",
+      "dallasBehavior": "REPAIRED"
+    },
+    {
+      "surface": "Location Context active-issue count",
+      "classification": "INCOMPLETE_PROPAGATION",
+      "driveTexasIntended": true,
+      "productionPath": "normalizeGridlyMobileAwarenessPanelSummary -> getGridlyReconciledAwarenessActiveIssueCount",
+      "contract": "shared active hazards/reports/crossings plus grouped-alert floor",
+      "activityRule": "Broad phrase counts governed shared active issues; source distinctions remain in evidence labels",
+      "dallasBehavior": "REPAIRED"
+    }
+  ],
+  "liveBrowserSample": [
+    {
+      "community": "Dallas",
+      "canonicalKey": "place-4819000",
+      "cohort": "multi-county metro",
+      "checks": [
+        "canonical identity",
+        "connected/source status",
+        "candidate/proof/geography/freshness/eligible counts",
+        "envelope",
+        "owned consumer presentation"
+      ]
+    },
+    {
+      "community": "Houston",
+      "canonicalKey": "place-4835000",
+      "cohort": "multi-county metro",
+      "checks": [
+        "canonical identity",
+        "connected/source status",
+        "candidate/proof/geography/freshness/eligible counts",
+        "envelope",
+        "owned consumer presentation"
+      ]
+    },
+    {
+      "community": "Liberty",
+      "canonicalKey": "place-4842568",
+      "cohort": "small/historical",
+      "checks": [
+        "canonical identity",
+        "connected/source status",
+        "candidate/proof/geography/freshness/eligible counts",
+        "envelope",
+        "owned consumer presentation"
+      ]
+    },
+    {
+      "community": "Talco",
+      "canonicalKey": "place-4871840",
+      "cohort": "rural",
+      "checks": [
+        "canonical identity",
+        "connected/source status",
+        "candidate/proof/geography/freshness/eligible counts",
+        "envelope",
+        "owned consumer presentation"
+      ]
+    },
+    {
+      "community": "El Paso",
+      "canonicalKey": "place-4824000",
+      "cohort": "West Texas",
+      "checks": [
+        "canonical identity",
+        "connected/source status",
+        "candidate/proof/geography/freshness/eligible counts",
+        "envelope",
+        "owned consumer presentation"
+      ]
+    },
+    {
+      "community": "McAllen",
+      "canonicalKey": "place-4845384",
+      "cohort": "Rio Grande Valley",
+      "checks": [
+        "canonical identity",
+        "connected/source status",
+        "candidate/proof/geography/freshness/eligible counts",
+        "envelope",
+        "owned consumer presentation"
+      ]
+    },
+    {
+      "community": "Amarillo",
+      "canonicalKey": "place-4803000",
+      "cohort": "Panhandle",
+      "checks": [
+        "canonical identity",
+        "connected/source status",
+        "candidate/proof/geography/freshness/eligible counts",
+        "envelope",
+        "owned consumer presentation"
+      ]
+    }
+  ],
+  "transitionControls": [
+    "community transition recomputes shared summary",
+    "county transition clears prior identity/count",
+    "fresh browser unconfigured/failure remains non-quiet"
+  ]
+}

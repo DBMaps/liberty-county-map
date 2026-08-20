@@ -271,16 +271,30 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
             "Active report";
 
       const id = cleanDisplayValue(
-        record?.id ||
+        record?.consumerSituationId ||
+          record?.canonicalIncidentId ||
+          record?.id ||
           record?.reportId ||
           record?.incidentId ||
+          record?.raw?.consumerSituationId ||
+          record?.raw?.canonicalIncidentId ||
+          record?.raw?.incidentId ||
+          record?.raw?.id ||
           record?.uuid ||
           `published-awareness-${index}`
       );
-      const lat = Number(record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.source?.lat);
-      const lng = Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.source?.lng ?? record?.source?.lon);
-      const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng)
+      const rawLat = record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.source?.lat;
+      const rawLng = record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.source?.lng ?? record?.source?.lon;
+      const lat = rawLat === null || rawLat === undefined || rawLat === "" ? null : Number(rawLat);
+      const lng = rawLng === null || rawLng === undefined || rawLng === "" ? null : Number(rawLng);
+      const coordAttrs = lat !== null && lng !== null && Number.isFinite(lat) && Number.isFinite(lng)
         ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"`
+        : "";
+      const showOnMapTarget = typeof gridlyResolveAlertShowOnMapTarget === "function"
+        ? gridlyResolveAlertShowOnMapTarget(record, id)
+        : null;
+      const showOnMapAction = showOnMapTarget
+        ? `<button type="button" class="gridly-alert-show-on-map" data-gridly-show-on-map="true" data-gridly-show-on-map-incident-id="${esc(id)}" aria-label="Show ${esc(title || "this alert")} on map">Show on map</button>`
         : "";
 
       return `
@@ -316,11 +330,34 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
             <div class="gridly-alert-trust-line">
               ${esc(trust)}
             </div>
+
+            ${showOnMapAction}
           </div>
         </div>
       `;
     })
     .join("");
+
+  const rankedHeading = typeof resolveGridlyAlertsPanelHeadingCandidate === "function"
+    ? resolveGridlyAlertsPanelHeadingCandidate({
+        activeHazards: safeRecords,
+        activeReports: [],
+        limit: safeRecords.length
+      })
+    : null;
+  const publishedHeading = gridlyPublishedAwarenessCleanConsumerText(
+    rankedHeading?.selectedAlertsPanelHeadingCandidate ||
+      rankedHeading?.text ||
+      safeRecords[0]?.title ||
+      safeRecords[0]?.headline ||
+      safeRecords[0]?.localizedSummary ||
+      "Active Alerts"
+  );
+  const publishedHeadingSource = gridlyPublishedAwarenessCleanConsumerText(
+    rankedHeading?.selectedAlertsPanelHeadingSource ||
+      rankedHeading?.source ||
+      "published-awareness.first-record"
+  );
 
   return `
     <div
@@ -328,6 +365,12 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
       data-gridly-alerts-phase="published-awareness"
       style="padding:0 1px;"
     >
+      <h3
+        class="gridly-alert-headline"
+        data-gridly-alerts-panel-heading
+        data-gridly-alerts-panel-heading-source="${esc(publishedHeadingSource)}"
+        style="margin:0 0 10px;font-size:16px;line-height:1.3;color:#fff;"
+      >${esc(publishedHeading)}</h3>
       <div class="gridly-v2-list">
         ${rows}
       </div>

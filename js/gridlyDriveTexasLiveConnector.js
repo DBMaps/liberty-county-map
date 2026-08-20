@@ -20,6 +20,7 @@
     lastFetchSucceeded: false,
     lastError: null,
     lastRequestAt: null,
+    initialFetchAttempted: false,
     refreshIntervalMs: REFRESH_INTERVAL_MS
   };
 
@@ -44,6 +45,8 @@
   let completeSourceDatasetPreservedAcrossAreaChange = true;
   let lastRefetchRequired = false;
   let lastRetainedDataReused = false;
+  let currentAreaViewIdentity = null;
+  let currentAreaViewCounty = null;
 
 
   const LP041_MAX_HISTORY = 3;
@@ -135,6 +138,7 @@
 
   function activeAwarenessArea() {
     try {
+      if (typeof globalScope.getGridlyCanonicalAwarenessPresentationContext === "function") return globalScope.getGridlyCanonicalAwarenessPresentationContext();
       if (typeof globalScope.getGridlySelectedAwarenessArea === "function") return globalScope.getGridlySelectedAwarenessArea();
       if (typeof globalScope.getGridlyHomeTownAwarenessAnchor === "function") return globalScope.getGridlyHomeTownAwarenessAnchor();
     } catch (error) {}
@@ -152,6 +156,10 @@
       lat: Number.isFinite(Number(area.lat)) ? Number(area.lat) : null,
       lng: Number.isFinite(Number(area.lng)) ? Number(area.lng) : null,
       radiusMiles: Number.isFinite(Number(area.radiusMiles)) ? Number(area.radiusMiles) : null,
+      canonicalKey: toSafeString(area.canonicalKey || area.key),
+      placeGeoid: toSafeString(area.placeGeoid),
+      focusAuthority: toSafeString(area.focusAuthority),
+      geographicEvaluationState: toSafeString(area.geographicEvaluationState) || "AVAILABLE",
       mode: area.countyWide === true ? "county" : "area",
       countyWide: area.countyWide === true,
       textFallbackTerms: [area.label, area.storageValue, area.key, area.countyId]
@@ -167,6 +175,7 @@
 
   function matchesAwarenessArea(record, awareness) {
     if (!awareness) return false;
+    if (awareness.geographicEvaluationState === "CANONICAL_FOCUS_UNAVAILABLE") return false;
     const rawLat = record?.latitude;
     const rawLng = record?.longitude;
     const lat = rawLat == null || rawLat === "" ? NaN : Number(rawLat);
@@ -193,7 +202,8 @@
     }
     const input = Array.isArray(records) ? records : [];
     let pointRadiusMatchCount = 0, textFallbackMatchCount = 0, includedByBothCount = 0, includedByPointOnlyCount = 0, includedByTextOnlyCount = 0, invalidCoordinateCount = 0, routeCommunityTextExcluded = 0, noTextMatchEvidence = 0;
-    const output = input.filter((record) => {
+    const canonicalFocusUnavailable = awareness?.geographicEvaluationState === "CANONICAL_FOCUS_UNAVAILABLE";
+    const output = canonicalFocusUnavailable ? [] : input.filter((record) => {
       const rawLat = record?.latitude;
       const rawLng = record?.longitude;
       const lat = rawLat == null || rawLat === "" ? NaN : Number(rawLat);
@@ -216,7 +226,7 @@
       if (!point && textMatch) routeCommunityTextExcluded += 0;
       return matchesAwarenessArea(record, awareness);
     });
-    const trace = freeze({ inputCount: input.length, selectedCounty: awareness?.countyId || null, selectedAwareness: awareness?.community || awareness?.label || null, anchor: awareness ? freeze({ lat: awareness.lat, lng: awareness.lng }) : null, radiusMiles: awareness?.radiusMiles ?? null, pointRadiusMatchCount, textFallbackMatchCount, uniqueUnionCount: output.length, includedByPointOnlyCount, includedByTextOnlyCount, includedByBothCount, outputCount: output.length, excludedByPointRadiusCount: input.length - pointRadiusMatchCount, recordsExcludedDespiteMatchingRouteCommunityText: routeCommunityTextExcluded, invalidCoordinateCount, noTextMatchEvidenceCount: noTextMatchEvidence, fallbackMethodNames: freeze(["awareness.textFallbackTerms", "recordText"]), diagnosticOnly: "diagnostic source scoping", certifiedAuthorityOwner: false, excludedCount: input.length - output.length });
+    const trace = freeze({ inputCount: input.length, selectedCounty: awareness?.countyId || null, selectedAwareness: awareness?.community || awareness?.label || null, canonicalKey: awareness?.canonicalKey || null, placeGeoid: awareness?.placeGeoid || null, focusAuthority: awareness?.focusAuthority || null, geographicEvaluationState: awareness?.geographicEvaluationState || "AVAILABLE", anchor: awareness ? freeze({ lat: awareness.lat, lng: awareness.lng }) : null, radiusMiles: awareness?.radiusMiles ?? null, pointRadiusMatchCount, textFallbackMatchCount, uniqueUnionCount: output.length, includedByPointOnlyCount, includedByTextOnlyCount, includedByBothCount, outputCount: output.length, excludedByPointRadiusCount: input.length - pointRadiusMatchCount, recordsExcludedDespiteMatchingRouteCommunityText: routeCommunityTextExcluded, invalidCoordinateCount, noTextMatchEvidenceCount: noTextMatchEvidence, fallbackMethodNames: freeze(["awareness.textFallbackTerms", "recordText"]), diagnosticOnly: "diagnostic source scoping", certifiedAuthorityOwner: false, excludedCount: input.length - output.length });
     lp041LastFilterTrace = trace;
     if (lp041LatestEvidence) lp041LatestEvidence = freeze(Object.assign({}, lp041LatestEvidence, { connectorFilterTrace: trace }));
     return output;
@@ -232,7 +242,32 @@
     awarenessRecordsUpdatedAt = new Date().toISOString();
     lastFilterReason = reason || "drivetexas-awareness-filter";
     lastFilterContext = context ? clone(context) : null;
+    currentAreaViewIdentity = toSafeString(context?.canonicalKey || context?.key) || null;
+    currentAreaViewCounty = toSafeString(context?.countyId) || null;
     state.normalizedRecordCount = awarenessNormalizedRecords.length;
+    return true;
+  }
+
+  function areaIdentity(context) {
+    return toSafeString(context?.canonicalKey || context?.key) || null;
+  }
+
+  function ensureCurrentAwarenessView(reason) {
+    const selectedContext = awarenessContextFrom(activeAwarenessArea());
+    const selectedIdentity = areaIdentity(selectedContext);
+    const selectedCounty = toSafeString(selectedContext?.countyId) || null;
+    if (selectedIdentity === currentAreaViewIdentity && selectedCounty === currentAreaViewCounty) return false;
+
+    // A derived awareness view is owned by exactly one canonical area.  The
+    // complete provider cache remains reusable, but its prior projection
+    // stops being current as soon as selection identity changes.
+    awarenessNormalizedRecords = [];
+    normalizedRecords = awarenessNormalizedRecords;
+    state.normalizedRecordCount = 0;
+    lastFilterContext = selectedContext ? clone(selectedContext) : null;
+    currentAreaViewIdentity = selectedIdentity;
+    currentAreaViewCounty = selectedCounty;
+    deriveAwarenessView(reason || "drivetexas-canonical-area-changed");
     return true;
   }
 
@@ -458,6 +493,7 @@
   }
 
   async function fetchNowInternal() {
+    state.initialFetchAttempted = true;
     state.networkingAvailable = typeof globalScope.fetch === "function";
     state.lastRequestAt = new Date().toISOString();
     let attempt = 0;
@@ -538,6 +574,7 @@
   }
 
   function getNormalizedRecords() {
+    ensureCurrentAwarenessView("drivetexas-current-view-read");
     return freeze(awarenessNormalizedRecords.map(clone).filter(Boolean));
   }
 
@@ -550,6 +587,10 @@
   }
 
   function areaLifecycleAudit() {
+    ensureCurrentAwarenessView("drivetexas-area-lifecycle-audit");
+    const selectedContext = awarenessContextFrom(activeAwarenessArea());
+    const selectedIdentity = areaIdentity(selectedContext);
+    const selectedCounty = toSafeString(selectedContext?.countyId) || null;
     return freeze({
       activeCounty: lastFilterContext?.countyId || null,
       activeCommunity: lastFilterContext?.community || null,
@@ -565,13 +606,20 @@
       lastFilteredCommunity: lastFilterContext?.community || null,
       lastFilterCoordinates: lastFilterContext ? { lat: lastFilterContext.lat, lng: lastFilterContext.lng } : null,
       lastFilterRadius: lastFilterContext?.radiusMiles ?? null,
+      lastFilterCanonicalKey: lastFilterContext?.canonicalKey || null,
+      lastFilterFocusAuthority: lastFilterContext?.focusAuthority || null,
+      geographicEvaluationState: lastFilterContext?.geographicEvaluationState || "AVAILABLE",
       lastAreaViewGeneration: areaViewGeneration,
       lastFetchGeneration: fetchGeneration,
       lastInstalledFetchGeneration,
       staleAreaViewCompletionIgnoredCount,
       staleFetchCompletionIgnoredCount,
       completeSourceDatasetPreservedAcrossAreaChange,
-      currentAwarenessViewMatchesSelectedArea: true,
+      currentAwarenessViewIdentity: currentAreaViewIdentity,
+      currentAwarenessViewCounty: currentAreaViewCounty,
+      selectedAreaIdentity: selectedIdentity,
+      selectedAreaCounty: selectedCounty,
+      currentAwarenessViewMatchesSelectedArea: Boolean(selectedIdentity && selectedIdentity === currentAreaViewIdentity && selectedCounty === currentAreaViewCounty),
       selectedRecordIds: awarenessNormalizedRecords.map((record) => record.id || record.incidentId || record.GLOBALID || null),
       selectedRecordCounties: awarenessNormalizedRecords.map((record) => record.county || record.countyName || record.countyId || record.raw?.county || null),
       selectedRecordCommunities: awarenessNormalizedRecords.map((record) => record.city || record.locality || record.community || record.raw?.city || null),
@@ -855,7 +903,12 @@
       normalizedRecordCount: state.normalizedRecordCount,
       refreshIntervalMs: REFRESH_INTERVAL_MS,
       apiKeyConfigured: Boolean(getConnectorConfig().apiKey),
-      configurationSource: getConnectorConfig().configurationSource
+      configurationSource: getConnectorConfig().configurationSource,
+      initialFetchAttempted: state.initialFetchAttempted === true,
+      lastFetchSucceeded: state.lastFetchSucceeded === true,
+      lastSuccessfulAt: lastSuccessfulFetchAt,
+      retainedRecordCount: allNormalizedRecords.length,
+      lastError: state.lastError
     });
   }
 

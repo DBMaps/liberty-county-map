@@ -79,6 +79,15 @@
     }
 
     async function getActiveCountyCrossings(options) {
+        // A governed runtime request is authoritative regardless of the mutable
+        // diagnostic mode.  Older browser audits intentionally leave the
+        // provider in legacy/package mode; allowing that state to override an
+        // explicit county package made every statewide request return the same
+        // five-record Liberty fixture.
+        const hasGovernedSourceOverride = Boolean(options?.sourcePath || options?.crossingSource || options?.runtimeCrossingSourcePath);
+        if (hasGovernedSourceOverride) {
+            return loadRuntimeProductionCrossings(options || {});
+        }
         const requestedMode = options && options.mode ? String(options.mode).toLowerCase() : state.mode;
 
         if (requestedMode === "package") return loadCuratedPackageCrossings();
@@ -170,6 +179,7 @@
         version: PROVIDER_VERSION,
         getActiveCountyCrossings,
         setMode,
+        getMode: function () { return state.mode; },
         audit,
         getLastLoadTrace: function () { return state.lastLoadTrace ? Object.assign({}, state.lastLoadTrace) : null; }
     };
@@ -179,5 +189,3 @@
 
     window.gridlyCrossingProviderRuntimePackageMode = false;
 })();
-
-
