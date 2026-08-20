@@ -30,6 +30,36 @@ export function evaluateExpectedEmptyRail(expectedState, expectedCount, liveCoun
   return { classification: expectedEmpty ? 'RAIL_EXPECTED_EMPTY' : 'RAIL_WITH_DATA', pass: expectedEmpty ? liveCount === 0 : Number.isInteger(liveCount) && liveCount > 0 };
 }
 
+const cameraNear = (actual, expected) => Boolean(actual && expected
+  && Math.abs(Number(actual.lat) - Number(expected.lat)) <= 0.001
+  && Math.abs(Number(actual.lng) - Number(expected.lng)) <= 0.001);
+
+/** Seed settlement is deliberately weaker than certification.  It proves that
+ * every consumer has reached the selected predecessor generation, not that a
+ * live provider returned useful data. */
+export function evaluateSeedSettlement(row, runtime = {}) {
+  const expectedEmptyRail = row.railManifestStatus === 'ACTIVE_EMPTY' && row.railGovernedCount === 0;
+  const driveTerminal = TERMINAL_STATES.includes(runtime.driveState);
+  const railCount = Number(runtime.railInventoryCount);
+  const renderCalls = Number(runtime.railRenderCalls || 0);
+  const conditions = {
+    selectedCommunityMatchesExpected: runtime.selectedCommunity === row.canonicalKey,
+    activeCountyMatchesExpected: runtime.activeCounty === row.countyId,
+    cameraSettled: cameraNear(runtime.mapCenter, row.semanticCameraTarget) && Number(runtime.mapZoom) === Number(row.semanticCameraTarget?.zoom),
+    roadwayCountyStateSettled: runtime.roadwayCounty === row.countyId,
+    roadwayLoadTerminal: runtime.roadwayLoaded === true || TERMINAL_STATES.includes(runtime.roadwayState),
+    driveTexasLifecycleTerminal: driveTerminal,
+    officialRoadwayConsumerSettled: runtime.officialRoadwaySettled === true || driveTerminal,
+    alertsConsumerSettled: runtime.alertsSettled === true || driveTerminal,
+    railSourceCountySettled: runtime.railSourceCounty === row.countyId,
+    railInventoryTerminal: expectedEmptyRail ? railCount === 0 && renderCalls > 0 : runtime.railInventoryTerminal === true,
+    railPresentationTerminal: expectedEmptyRail ? railCount === 0 && renderCalls > 0 : runtime.railPresentationTerminal === true,
+    staleStatePredecessorCleanupComplete: runtime.staleCleanupComplete !== false
+  };
+  const unsatisfied = Object.entries(conditions).filter(([, pass]) => !pass).map(([name]) => name);
+  return { settled: unsatisfied.length === 0, conditions, unsatisfied };
+}
+
 export function evaluateAlerts({ eligibleCount, displayedCount, emptyReason, ownershipState }) {
   const countsValid = Number.isInteger(eligibleCount) && Number.isInteger(displayedCount);
   const emptyValid = eligibleCount === 0 && displayedCount === 0 && Boolean(emptyReason);
