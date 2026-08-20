@@ -48,6 +48,48 @@ test('published Alerts sheet exposes the ranked heading as rendered DOM evidence
   assert.match(publisher, /data-gridly-alert-title="\$\{esc\(title\)\}"/);
 });
 
+test('lazy Alerts open markup exposes the ranked heading and active card to the audited DOM selectors', () => {
+  const record = {
+    id: 'drivetexas:provider:FE00C70A-A3F8-4CEB-8970-228FD50A14CD',
+    type: 'Lane Closure',
+    title: 'Road closed on US 87',
+    severity: 'high',
+    providerId: 'drivetexas',
+    lifecycleState: 'active'
+  };
+  const sandbox = {
+    cleanDisplayValue: value => String(value || '').trim(),
+    normalizeGridlyCountyAwareDisplayText: value => String(value || '').trim(),
+    gridlyResolveVisibleAlertCardLocationLine: () => 'US 87',
+    gridlyGetPublishedAwarenessConsumerSummary: () => 'Road closure reported.',
+    gridlyBuildVisibleAlertLocationLineMarkup: (location, escape) => `<div>${escape(location)}</div>`,
+    gridlyPublishedAwarenessCleanConsumerText: value => String(value || '').trim(),
+    gridlyBuildNeutralAlertsSheetMarkup: () => '<div class="gridly-alerts-active"></div>',
+    resolveGridlyAlertsPanelHeadingCandidate: () => ({
+      selectedAlertsPanelHeadingCandidate: 'Road closed on US 87',
+      selectedAlertsPanelHeadingSource: 'active-community-row.title'
+    }),
+    esc: value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]))
+  };
+  vm.runInNewContext(`${functionSource(publisher, 'gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords')};this.build=gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords;`, sandbox);
+  const markup = sandbox.build([record]);
+  assert.match(markup, /class="gridly-alerts-active"[\s\S]*data-gridly-alerts-panel-heading[\s\S]*>Road closed on US 87<\/h3>/);
+  assert.equal((markup.match(/data-gridly-alert-row="true"/g) || []).length, 1);
+  assert.match(markup, /data-gridly-alert-title="Road closed on US 87"/);
+
+  const openHandler = functionSource(publisher, 'openAlertsSurfaceFromDock');
+  assert.match(openHandler, /gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords\(publishedRecords\)/, 'open builds the published DOM contract');
+  assert.match(openHandler, /openGridlyPortraitV2Sheet\("alerts", \{ title, html \}\)/, 'open attaches that markup to the shared sheet body');
+});
+
+test('read-only Alerts audit distinguishes closed lazy state from an open render failure', () => {
+  const audit = functionSource(app, 'getGridlyAlertsPanelAuditSnapshot');
+  assert.match(audit, /renderContract:\s*"lazy-on-alerts-open"/);
+  assert.match(audit, /renderedDomExpected:\s*alertsPanelOpen/);
+  assert.match(audit, /"not-rendered-while-closed"/);
+  assert.match(audit, /"missing-while-open"/);
+});
+
 test('previous UTSA / Northwest context cannot own Fredericksburg distance metadata', () => {
   const sandbox = {
     getGridlyCanonicalAwarenessPresentationContext: () => ({

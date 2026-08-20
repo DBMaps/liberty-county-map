@@ -60515,6 +60515,8 @@ function resolveGridlyAlertsPanelHeadingCandidate(options = {}) {
 function getGridlyAlertsPanelAuditSnapshot(options = {}) {
   const snapshot = options?.snapshot || (typeof window !== "undefined" && typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null);
   const headingCandidate = resolveGridlyAlertsPanelHeadingCandidate({ ...options, snapshot });
+  const alertsSheet = typeof document !== "undefined" ? document.getElementById("gridlyPortraitV2Sheet") : null;
+  const alertsPanelOpen = Boolean(alertsSheet && alertsSheet.dataset?.activeSheet === "alerts" && !alertsSheet.hidden);
   const panel = typeof document !== "undefined"
     ? document.querySelector("#alertsPanel, #gridlyAlertsPanel, #alertsSection:not([hidden]), .alerts-panel, [data-gridly-alerts-panel], .gridly-alerts-active")
     : null;
@@ -60525,6 +60527,10 @@ function getGridlyAlertsPanelAuditSnapshot(options = {}) {
     .filter(Boolean)
     .slice(0, 12);
   return {
+    renderContract: "lazy-on-alerts-open",
+    alertsPanelOpen,
+    renderedDomExpected: alertsPanelOpen,
+    renderedDomState: panel ? "attached" : (alertsPanelOpen ? "missing-while-open" : "not-rendered-while-closed"),
     alertsPanelHeadingText: normalizeGridlyLightweightAlertSummaryText(headingNode?.textContent || headingCandidate.text || ""),
     renderedAlertsPanelHeadingText: headingCandidate.renderedAlertsPanelHeadingText || normalizeGridlyLightweightAlertSummaryText(headingNode?.textContent || ""),
     renderedRoadHazardHeadingCandidate: headingCandidate.renderedRoadHazardHeadingCandidate || "",
@@ -68424,6 +68430,10 @@ window.gridlyLightweightActiveAwarenessAudit = function gridlyLightweightActiveA
       selectedHeaderCandidate: existingAlertWording?.selectedHeaderCandidate || existingAlertWording?.text || "",
       selectedHeaderCandidateSource: existingAlertWording?.selectedHeaderCandidateSource || existingAlertWording?.source || "",
       alertsPanelHeadingText: alertsPanelAudit.alertsPanelHeadingText,
+      alertsPanelRenderContract: alertsPanelAudit.renderContract,
+      alertsPanelOpen: alertsPanelAudit.alertsPanelOpen,
+      alertsPanelRenderedDomExpected: alertsPanelAudit.renderedDomExpected,
+      alertsPanelRenderedDomState: alertsPanelAudit.renderedDomState,
       renderedAlertsPanelHeadingText: alertsPanelAudit.renderedAlertsPanelHeadingText || existingAlertWording.renderedAlertsPanelHeadingText || "",
       renderedRoadHazardHeadingCandidate: alertsPanelAudit.renderedRoadHazardHeadingCandidate || existingAlertWording.renderedRoadHazardHeadingCandidate || "",
       renderedRoadHazardHeadingSource: alertsPanelAudit.renderedRoadHazardHeadingSource || existingAlertWording.renderedRoadHazardHeadingSource || "",
@@ -71235,6 +71245,10 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
       selectedHeaderCandidateType: existingAlertWording.selectedHeaderCandidateType || existingAlertWording.type || "",
       rejectedHeaderCandidates: Array.isArray(existingAlertWording.rejectedHeaderCandidates) ? existingAlertWording.rejectedHeaderCandidates.slice(0, 12) : [],
       alertsPanelHeadingText: alertsPanelAudit.alertsPanelHeadingText,
+      alertsPanelRenderContract: alertsPanelAudit.renderContract,
+      alertsPanelOpen: alertsPanelAudit.alertsPanelOpen,
+      alertsPanelRenderedDomExpected: alertsPanelAudit.renderedDomExpected,
+      alertsPanelRenderedDomState: alertsPanelAudit.renderedDomState,
       renderedAlertsPanelHeadingText: alertsPanelAudit.renderedAlertsPanelHeadingText || existingAlertWording.renderedAlertsPanelHeadingText || "",
       renderedRoadHazardHeadingCandidate: alertsPanelAudit.renderedRoadHazardHeadingCandidate || existingAlertWording.renderedRoadHazardHeadingCandidate || "",
       renderedRoadHazardHeadingSource: alertsPanelAudit.renderedRoadHazardHeadingSource || existingAlertWording.renderedRoadHazardHeadingSource || "",
@@ -71370,6 +71384,10 @@ window.gridlyActiveLocationLifecycleAudit = function gridlyActiveLocationLifecyc
       locationLifecycleState,
       alertRowTextSamples,
       alertsPanelHeadingText: alertsPanelAudit.alertsPanelHeadingText || "",
+      alertsPanelRenderContract: alertsPanelAudit.renderContract,
+      alertsPanelOpen: alertsPanelAudit.alertsPanelOpen,
+      alertsPanelRenderedDomExpected: alertsPanelAudit.renderedDomExpected,
+      alertsPanelRenderedDomState: alertsPanelAudit.renderedDomState,
       selectedAlertsPanelHeadingCandidate: alertsPanelAudit.selectedAlertsPanelHeadingCandidate || "",
       selectedAlertsPanelHeadingSource: alertsPanelAudit.selectedAlertsPanelHeadingSource || "",
       alertsPanelHeadingPriorityReason: alertsPanelAudit.alertsPanelHeadingPriorityReason || "",
