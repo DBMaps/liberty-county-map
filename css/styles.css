@@ -25694,6 +25694,28 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   display: none;
 }
 
+.gridly-alert-show-on-map {
+  justify-self: start;
+  margin-top: 6px;
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid rgba(126, 190, 255, 0.65);
+  border-radius: 999px;
+  background: rgba(53, 133, 214, 0.18);
+  color: #dceeff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gridly-alert-show-on-map:hover,
+.gridly-alert-show-on-map:focus-visible {
+  background: rgba(53, 133, 214, 0.34);
+  outline: 2px solid rgba(158, 211, 255, 0.9);
+  outline-offset: 2px;
+}
+
 /* LP021 repair — responsive popup actions at narrow mobile widths. */
 .gridly-popup.gridly-premium-popup .popup-report-grid {
   grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
