@@ -103,16 +103,13 @@ test('nonterminal predecessor context remains unsettled and reports every condit
   assert.deepEqual(result.unsatisfied, ['activeCountyMatchesExpected', 'driveTexasLifecycleTerminal', 'railInventoryTerminal', 'railPresentationTerminal']);
 });
 
-test('live certifier discovers and drives the current production Settings picker contract', () => {
+test('live certifier calls the same highest-level production action used by Settings without picker choreography', () => {
   const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
-  assert.match(source, /#mobileDockSettingsBtn/);
-  assert.match(source, /#settingsChooseCommunityManuallyBtn/);
-  assert.match(source, /data-gridly-manual-awareness-search/);
-  assert.match(source, /input\.dispatchEvent\(new Event\('input', \{ bubbles: true \}\)\)/);
-  assert.match(source, /data-gridly-manual-awareness-value/);
-  assert.match(source, /choice\.click\(\)/);
-  assert.match(source, /data-gridly-manual-awareness-apply/);
-  assert.match(source, /apply\.click\(\)/);
+  const production = fs.readFileSync('js/app.js', 'utf8');
+  const selection = source.slice(source.indexOf('async function selectThroughCanonicalProductionAction'), source.indexOf('\n  function snapshot'));
+  assert.match(production, /function selectGridlySettingsAwarenessArea\([\s\S]*?saveGridlyHomeTownPreference\(saveValue, \{ source \}\)/);
+  assert.match(selection, /global\.selectGridlySettingsAwarenessArea\(row\.canonicalKey, 'lp215_live_certification', null\)/);
+  assert.doesNotMatch(source, /mobileDockSettingsBtn|settingsChooseCommunityManuallyBtn|data-gridly-manual-awareness-search|data-gridly-manual-awareness-value|data-gridly-manual-awareness-apply/);
 });
 
 test('current PLACE option uses authoritative GEOID and county rather than its registry key', () => {
@@ -121,7 +118,6 @@ test('current PLACE option uses authoritative GEOID and county rather than its r
     awarenessAreaKey: 'zavala-tx-amaya',
     selectedPlaceGeoid: '4803008',
     selectedCountyId: 'zavala-tx',
-    canonicalCommunityIdentity: 'PLACE_GEOID',
     activeCountyId: 'zavala-tx'
   };
   assert.equal(currentOptionContextMatches(runtime, expected), true);
@@ -138,19 +134,20 @@ test('legacy current options retain exact key and active-county identity', () =>
   assert.equal(currentOptionContextMatches({ awarenessAreaKey: 'other-community', activeCountyId: 'legacy-tx' }, expected), false);
 });
 
-test('live selection remains production-owned and fails closed for drifted controls', () => {
+test('Amaya/Zavala seed and county 001 advance use production selection with no direct state mutation', () => {
   const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
-  const selection = source.slice(source.indexOf('async function selectThroughProductionUi'), source.indexOf('\n  function snapshot'));
+  const selection = source.slice(source.indexOf('async function selectThroughCanonicalProductionAction'), source.indexOf('\n  function snapshot'));
+  const seed = source.slice(source.indexOf('async function seedWraparoundPredecessor'), source.indexOf('\n  async function run'));
+  const run = source.slice(source.indexOf('async function run'), source.indexOf('\n  function payload'));
   assert.doesNotMatch(selection, /GRIDLY_ACTIVE_COUNTY_ID\s*=|activeCounty(Id)?\s*=|selectedCommunity\s*=|localStorage\.|sessionStorage\.|gridlyDispatchSemanticCamera\s*\(/);
-  assert.match(selection, /gridlyActiveCountyRuntimeAudit/);
-  assert.match(selection, /currentOptionContextMatches\(current, row\)/);
-  for (const diagnostic of [
-    'PRODUCTION_SETTINGS_OPEN_CONTROL_NOT_AVAILABLE',
-    'PRODUCTION_AWARENESS_PICKER_OPEN_CONTROL_NOT_AVAILABLE',
-    'PRODUCTION_AWARENESS_PICKER_SEARCH_NOT_AVAILABLE',
-    'REPRESENTATIVE_NOT_FOUND_IN_PRODUCTION_AWARENESS_PICKER',
-    'PRODUCTION_AWARENESS_PICKER_CURRENT_OPTION_CONTEXT_MISMATCH',
-    'PRODUCTION_AWARENESS_PICKER_PENDING_APPLY_NOT_RENDERED',
-    'PRODUCTION_AWARENESS_PICKER_PENDING_APPLY_DISABLED'
-  ]) assert.match(selection, new RegExp(diagnostic));
+  assert.match(seed, /const row=state\.itinerary\[253\]/);
+  assert.match(seed, /currentOptionContextMatches\(current,row\)/);
+  assert.match(seed, /else await selectThroughCanonicalProductionAction\(row\)/);
+  assert.match(run, /const row=state\.itinerary\[state\.index\]/);
+  assert.match(run, /await selectThroughCanonicalProductionAction\(row\)/);
+  assert.equal(report.rows[253].representativeCommunity, 'Amaya');
+  assert.equal(report.rows[253].countyId, 'zavala-tx');
+  assert.equal(report.rows[0].countyFips, '48001');
+  assert.match(selection, /CANONICAL_PRODUCTION_SELECTION_ACTION_NOT_AVAILABLE/);
+  assert.match(selection, /CANONICAL_PRODUCTION_SELECTION_ACTION_REJECTED/);
 });

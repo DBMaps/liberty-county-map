@@ -39,7 +39,7 @@ The generated matrix contains every failing county and its classification; no co
 
 ## Phase 2 owner live certifier
 
-Open the trusted Gridly build once, open DevTools **Console** once, and paste this single bootstrap block. It loads committed audit tooling; it does not patch `js/app.js` or call a private state setter. Selection is performed by searching and applying the real production Settings area picker.
+Open the trusted Gridly build once, open DevTools **Console** once, and paste this single bootstrap block. It loads committed audit tooling; it does not patch `js/app.js` or call a private state setter. Each itinerary transition calls `selectGridlySettingsAwarenessArea(canonicalKey, "lp215_live_certification", null)`, the same highest-level production action used by Settings. The certifier does not open, search, click, or apply the Settings picker DOM.
 
 ```js
 fetch('/tools/lp215/lp215-live-browser-certifier.js',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`LP215 certifier ${r.status}`);return r.text()}).then(source=>(0,eval)(source))
