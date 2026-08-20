@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { classifyDriveTexas, compareStale, currentOptionContextMatches, evaluateAlerts, evaluateExpectedEmptyRail, evaluateSeedSettlement, exactIdParity, checkpointPayload, resumeIndex, TERMINAL_STATES } from '../tools/lp215/live-certifier-core.mjs';
+import { classifyDriveTexas, compareStale, evaluateAlerts, evaluateExpectedEmptyRail, exactIdParity, checkpointPayload, resumeIndex, TERMINAL_STATES } from '../tools/lp215/live-certifier-core.mjs';
 
 const report = JSON.parse(fs.readFileSync('reports/lp215/statewide-consumer-wiring-certification.json', 'utf8'));
 
@@ -68,41 +68,6 @@ test('Fredericksburg is the explicit expected-empty control', () => {
   assert.equal(row.roadwayFeatureCount, 3725); assert.equal(row.railManifestStatus, 'ACTIVE_EMPTY'); assert.equal(row.railGovernedCount, 0);
 });
 
-const seedRow = report.rows[253];
-const settledSeed = (overrides = {}) => ({
-  selectedCommunity: seedRow.canonicalKey, activeCounty: seedRow.countyId,
-  mapCenter: { lat: seedRow.semanticCameraTarget.lat, lng: seedRow.semanticCameraTarget.lng }, mapZoom: 13,
-  roadwayCounty: seedRow.countyId, roadwayLoaded: true, driveState: 'HEALTHY_EMPTY',
-  officialRoadwaySettled: true, alertsSettled: true, railSourceCounty: seedRow.countyId,
-  railInventoryCount: 0, railRenderCalls: 9, railFilterCalls: 0, staleCleanupComplete: true,
-  ...overrides
-});
-
-test('predecessor community, county, camera, and consumer generations settle independently', () => {
-  const result = evaluateSeedSettlement(seedRow, settledSeed());
-  assert.equal(result.settled, true); assert.deepEqual(result.unsatisfied, []);
-});
-
-test('terminal DriveTexas failure and empty Alerts do not block the seed', () => {
-  const result = evaluateSeedSettlement(seedRow, settledSeed({ driveState: 'FAILED', officialRoadwaySettled: false, alertsSettled: false }));
-  assert.equal(result.settled, true);
-  assert.equal(result.conditions.driveTexasLifecycleTerminal, true);
-  assert.equal(result.conditions.alertsConsumerSettled, true);
-});
-
-test('authoritative expected-empty rail settles without inventory or filter calls', () => {
-  const result = evaluateSeedSettlement(seedRow, settledSeed({ railInventoryCount: 0, railRenderCalls: 9, railFilterCalls: 0 }));
-  assert.equal(result.settled, true);
-  assert.equal(result.conditions.railInventoryTerminal, true);
-  assert.equal(result.conditions.railPresentationTerminal, true);
-});
-
-test('nonterminal predecessor context remains unsettled and reports every condition', () => {
-  const result = evaluateSeedSettlement(seedRow, settledSeed({ activeCounty: 'dimmit-tx', driveState: null, railRenderCalls: 0 }));
-  assert.equal(result.settled, false);
-  assert.deepEqual(result.unsatisfied, ['activeCountyMatchesExpected', 'driveTexasLifecycleTerminal', 'railInventoryTerminal', 'railPresentationTerminal']);
-});
-
 test('live certifier calls the same highest-level production action used by Settings without picker choreography', () => {
   const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
   const production = fs.readFileSync('js/app.js', 'utf8');
@@ -112,42 +77,34 @@ test('live certifier calls the same highest-level production action used by Sett
   assert.doesNotMatch(source, /mobileDockSettingsBtn|settingsChooseCommunityManuallyBtn|data-gridly-manual-awareness-search|data-gridly-manual-awareness-value|data-gridly-manual-awareness-apply/);
 });
 
-test('current PLACE option uses authoritative GEOID and county rather than its registry key', () => {
-  const expected = { canonicalKey: 'place-4803008', placeGeoid: '4803008', countyId: 'zavala-tx' };
-  const runtime = {
-    awarenessAreaKey: 'zavala-tx-amaya',
-    selectedPlaceGeoid: '4803008',
-    selectedCountyId: 'zavala-tx',
-    activeCountyId: 'zavala-tx'
-  };
-  assert.equal(currentOptionContextMatches(runtime, expected), true);
-  assert.equal(currentOptionContextMatches({ ...runtime, selectedPlaceGeoid: '4899999' }, expected), false, 'matching label or runtime key cannot replace PLACE identity');
-  assert.equal(currentOptionContextMatches({ ...runtime, awarenessAreaKey: expected.canonicalKey, selectedPlaceGeoid: '4899999' }, expected), false, 'matching canonical-looking picker key cannot override the wrong GEOID');
-  assert.equal(currentOptionContextMatches({ ...runtime, selectedCountyId: 'dimmit-tx' }, expected), false, 'PLACE ownership must match');
-  assert.equal(currentOptionContextMatches({ ...runtime, activeCountyId: 'dimmit-tx' }, expected), false, 'operational active county must match');
-  assert.equal(currentOptionContextMatches({ ...runtime, selectedPlaceGeoid: null, selectedCommunityId: null }, expected), false, 'missing authoritative PLACE identity fails closed');
-});
-
-test('legacy current options retain exact key and active-county identity', () => {
-  const expected = { canonicalKey: 'legacy-community', countyId: 'legacy-tx' };
-  assert.equal(currentOptionContextMatches({ awarenessAreaKey: 'legacy-community', activeCountyId: 'legacy-tx' }, expected), true);
-  assert.equal(currentOptionContextMatches({ awarenessAreaKey: 'other-community', activeCountyId: 'legacy-tx' }, expected), false);
-});
-
-test('Amaya/Zavala seed and county 001 advance use production selection with no direct state mutation', () => {
+test('live run starts directly at row 001 and makes 253 controlled predecessor comparisons', () => {
   const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
-  const selection = source.slice(source.indexOf('async function selectThroughCanonicalProductionAction'), source.indexOf('\n  function snapshot'));
-  const seed = source.slice(source.indexOf('async function seedWraparoundPredecessor'), source.indexOf('\n  async function run'));
   const run = source.slice(source.indexOf('async function run'), source.indexOf('\n  function payload'));
-  assert.doesNotMatch(selection, /GRIDLY_ACTIVE_COUNTY_ID\s*=|activeCounty(Id)?\s*=|selectedCommunity\s*=|localStorage\.|sessionStorage\.|gridlyDispatchSemanticCamera\s*\(/);
-  assert.match(seed, /const row=state\.itinerary\[253\]/);
-  assert.match(seed, /currentOptionContextMatches\(current,row\)/);
-  assert.match(seed, /else await selectThroughCanonicalProductionAction\(row\)/);
+  const start = source.slice(source.indexOf('global.gridlyLp215Start='));
+  assert.doesNotMatch(source, /seedWraparoundPredecessor|SEED_SOURCE_TIMEOUT_MS|seedSettlement|selectedCommunityMatchesExpected/);
   assert.match(run, /const row=state\.itinerary\[state\.index\]/);
   assert.match(run, /await selectThroughCanonicalProductionAction\(row\)/);
-  assert.equal(report.rows[253].representativeCommunity, 'Amaya');
-  assert.equal(report.rows[253].countyId, 'zavala-tx');
+  assert.match(source, /'NOT_APPLICABLE_FIRST_ROW'/);
+  assert.match(source, /controlledStaleTransitions:Math\.max\(0,state\.results\.length-1\)/);
+  assert.match(start, /state\.previous=state\.index>0\?previousFrom\(state\.results\[state\.index-1\]\):null/);
+  assert.equal(report.rows[0].sequence, 1);
   assert.equal(report.rows[0].countyFips, '48001');
+  assert.equal(report.rows[253].sequence, 254);
+});
+
+test('optional 254 to 001 wraparound is separate, post-completion, and non-blocking', () => {
+  const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
+  const helper = source.slice(source.indexOf('global.gridlyLp215OptionalWraparound='), source.indexOf('\n  global.gridlyLp215Start='));
+  assert.match(helper, /state\.index!==254/);
+  assert.match(helper, /nonBlocking:true/);
+  assert.match(helper, /catch\(error\)/);
+  assert.doesNotMatch(source.slice(source.indexOf('async function run'), source.indexOf('\n  function payload')), /OptionalWraparound/);
+});
+
+test('county rows use production selection with no direct state mutation', () => {
+  const source = fs.readFileSync('tools/lp215/lp215-live-browser-certifier.js', 'utf8');
+  const selection = source.slice(source.indexOf('async function selectThroughCanonicalProductionAction'), source.indexOf('\n  function snapshot'));
+  assert.doesNotMatch(selection, /GRIDLY_ACTIVE_COUNTY_ID\s*=|activeCounty(Id)?\s*=|selectedCommunity\s*=|localStorage\.|sessionStorage\.|gridlyDispatchSemanticCamera\s*\(/);
   assert.match(selection, /CANONICAL_PRODUCTION_SELECTION_ACTION_NOT_AVAILABLE/);
   assert.match(selection, /CANONICAL_PRODUCTION_SELECTION_ACTION_REJECTED/);
 });

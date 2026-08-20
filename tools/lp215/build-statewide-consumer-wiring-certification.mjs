@@ -49,7 +49,9 @@ export function buildCertification(){
  const count=k=>rows.filter(x=>x[k]).length;
  return {schemaVersion:'gridly.lp215.statewide-consumer-wiring-certification.v1',mode:'READ_ONLY_AUDIT',productionPatchApplied:false,
   selectionMethodology:'For each county in ascending five-digit FIPS order, select the lexicographically smallest canonical PLACE key that has a PLACE GEOID, includes the county in governed membership, and has a production presentation target. Use an explicit countywide fallback only when none exists.',
-  transitionOrder:'ascending county FIPS; each row predecessor is the preceding row (row 1 predecessor is row 254)',
+  transitionOrder:'ascending county FIPS; row 1 has no audit-controlled predecessor; rows 2-254 use the immediately preceding completed row',
+  controlledStaleTransitions:253,
+  optionalWraparound:'NON_BLOCKING_AFTER_CERTIFICATION',
   certificationBoundary:{repository:'Static governed identity, presentation, roadway manifest, and authoritative rail package state.',live:'Settled camera, connector lifecycle, consumer counts, Alerts DOM, rail viewport/Leaflet/DOM IDs, and transition cleanup require owner browser execution.',repositoryWiringCertified:rows.every(x=>x.repositoryWiringPass),liveSourceCertified:false},
   summary:{countiesExpected:254,countiesEvaluated:rows.length,context:{pass:count('contextPass'),fail:254-count('contextPass')},roadway:{pass:count('roadwayPass'),fail:254-count('roadwayPass')},driveTexas:{pass:count('driveTexasPass'),fail:254-count('driveTexasPass')},alerts:{pass:count('alertsPass'),fail:254-count('alertsPass')},rail:{pass:count('railPass'),fail:254-count('railPass')},staleState:{pass:count('staleStatePass'),fail:254-count('staleStatePass')},overall:{pass:count('overallPass'),fail:254-count('overallPass')},failingCounties:rows.filter(x=>!x.overallPass).map(x=>({countyFips:x.countyFips,countyId:x.countyId,failureReason:x.failureReason}))},
   fredericksburgControl:null,rows};

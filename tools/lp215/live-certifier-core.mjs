@@ -7,27 +7,6 @@ export function normalizeIds(values = []) {
   return [...new Set((Array.isArray(values) ? values : []).map(String).filter(Boolean))].sort();
 }
 
-/** Proves that the wraparound predecessor is already the current governed
- * selection. PLACE identity comes from the runtime audit's authoritative
- * fields; registry keys and labels are deliberately not identity fallbacks. */
-export function currentOptionContextMatches(selected = {}, expected = {}) {
-  const expectedCounty = expected.operationalActiveCounty || expected.countyId || null;
-  const activeCounty = selected.activeCountyId || selected.activeCounty || null;
-  if (!expectedCounty || activeCounty !== expectedCounty) return false;
-
-  if (expected.placeGeoid) {
-    const selectedPlaceGeoid = selected.selectedPlaceGeoid || selected.placeGeoid
-      || selected.selectedCommunityId || selected.communityId || selected.canonicalPlaceGeoid || null;
-    const selectedCounty = selected.selectedCountyId || selected.countyId
-      || selected.resolvedGridlyCountyId || null;
-    return Boolean(expected.placeGeoid
-      && selectedPlaceGeoid === expected.placeGeoid
-      && selectedCounty === expectedCounty);
-  }
-
-  return Boolean(expected.canonicalKey && selected.awarenessAreaKey === expected.canonicalKey);
-}
-
 export function exactIdParity(policy = [], leaflet = [], dom = []) {
   const sets = [policy, leaflet, dom].map(normalizeIds);
   return { pass: JSON.stringify(sets[0]) === JSON.stringify(sets[1]) && JSON.stringify(sets[1]) === JSON.stringify(sets[2]), policyVisibleIds: sets[0], leafletMarkerIds: sets[1], domMarkerIds: sets[2] };
@@ -49,36 +28,6 @@ export function classifyDriveTexas(envelope, timedOut = false) {
 export function evaluateExpectedEmptyRail(expectedState, expectedCount, liveCount) {
   const expectedEmpty = expectedState === 'ACTIVE_EMPTY' && expectedCount === 0;
   return { classification: expectedEmpty ? 'RAIL_EXPECTED_EMPTY' : 'RAIL_WITH_DATA', pass: expectedEmpty ? liveCount === 0 : Number.isInteger(liveCount) && liveCount > 0 };
-}
-
-const cameraNear = (actual, expected) => Boolean(actual && expected
-  && Math.abs(Number(actual.lat) - Number(expected.lat)) <= 0.001
-  && Math.abs(Number(actual.lng) - Number(expected.lng)) <= 0.001);
-
-/** Seed settlement is deliberately weaker than certification.  It proves that
- * every consumer has reached the selected predecessor generation, not that a
- * live provider returned useful data. */
-export function evaluateSeedSettlement(row, runtime = {}) {
-  const expectedEmptyRail = row.railManifestStatus === 'ACTIVE_EMPTY' && row.railGovernedCount === 0;
-  const driveTerminal = TERMINAL_STATES.includes(runtime.driveState);
-  const railCount = Number(runtime.railInventoryCount);
-  const renderCalls = Number(runtime.railRenderCalls || 0);
-  const conditions = {
-    selectedCommunityMatchesExpected: runtime.selectedCommunity === row.canonicalKey,
-    activeCountyMatchesExpected: runtime.activeCounty === row.countyId,
-    cameraSettled: cameraNear(runtime.mapCenter, row.semanticCameraTarget) && Number(runtime.mapZoom) === Number(row.semanticCameraTarget?.zoom),
-    roadwayCountyStateSettled: runtime.roadwayCounty === row.countyId,
-    roadwayLoadTerminal: runtime.roadwayLoaded === true || TERMINAL_STATES.includes(runtime.roadwayState),
-    driveTexasLifecycleTerminal: driveTerminal,
-    officialRoadwayConsumerSettled: runtime.officialRoadwaySettled === true || driveTerminal,
-    alertsConsumerSettled: runtime.alertsSettled === true || driveTerminal,
-    railSourceCountySettled: runtime.railSourceCounty === row.countyId,
-    railInventoryTerminal: expectedEmptyRail ? railCount === 0 && renderCalls > 0 : runtime.railInventoryTerminal === true,
-    railPresentationTerminal: expectedEmptyRail ? railCount === 0 && renderCalls > 0 : runtime.railPresentationTerminal === true,
-    staleStatePredecessorCleanupComplete: runtime.staleCleanupComplete !== false
-  };
-  const unsatisfied = Object.entries(conditions).filter(([, pass]) => !pass).map(([name]) => name);
-  return { settled: unsatisfied.length === 0, conditions, unsatisfied };
 }
 
 export function evaluateAlerts({ eligibleCount, displayedCount, emptyReason, ownershipState }) {
