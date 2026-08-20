@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildCertification, run } from '../tools/lp214/build-drivetexas-statewide-community-certification.mjs';
+import fs from 'node:fs';
+import { buildCertification, canonicalRepositoryPath, run } from '../tools/lp214/build-drivetexas-statewide-community-certification.mjs';
+
+const certificationPath = 'data/generated/lp214-drivetexas-statewide-community-certification.json';
 
 test('all canonical communities satisfy the shared DriveTexas radius and geometry contract', () => {
   const artifact = buildCertification();
@@ -20,4 +23,21 @@ test('all canonical communities satisfy the shared DriveTexas radius and geometr
   assert.equal(artifact.communities.some(row => row.communitySpecificOverride), false);
 });
 
-test('committed statewide evidence is deterministic', () => assert.doesNotThrow(() => run({verify:true})));
+test('artifact metadata paths are canonical and platform-independent', () => {
+  const artifact = buildCertification();
+  assert.deepEqual(artifact.generatedFrom, [
+    'data/generated/lp214-county-community-inventory.json',
+    'data/generated/gridly-statewide-place-presentation-v1.json'
+  ]);
+  assert.equal(artifact.generatedFrom.some(file => file.includes('\\')), false);
+  assert.equal(
+    canonicalRepositoryPath('data\\generated\\lp214-county-community-inventory.json'),
+    'data/generated/lp214-county-community-inventory.json'
+  );
+});
+
+test('committed statewide evidence is byte-for-byte deterministic', () => {
+  const expected = Buffer.from(`${JSON.stringify(buildCertification(), null, 2)}\n`);
+  assert.equal(fs.readFileSync(certificationPath).equals(expected), true);
+  assert.doesNotThrow(() => run({verify:true}));
+});

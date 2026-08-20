@@ -13,6 +13,8 @@ const paths = {
 const DEFAULT_RADIUS_MILES = 7;
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const stable = value => `${JSON.stringify(value, null, 2)}\n`;
+export const canonicalRepositoryPath = relativePath => relativePath.replaceAll('\\', '/');
+const repositoryRelative = file => canonicalRepositoryPath(path.relative(root, file));
 const fail = message => { throw new Error(`LP214 DriveTexas statewide certification: ${message}`); };
 const milesLatitude = miles => miles / 69;
 
@@ -52,7 +54,7 @@ export function buildCertification() {
   });
   const count = key => communities.filter(row => row.classification === key).length;
   const checkTotals = Object.fromEntries(Object.keys(communities[0].syntheticChecks).map(key => [key, communities.filter(row => row.syntheticChecks[key]).length]));
-  const artifact = { schemaVersion:'gridly.lp214.drivetexas-statewide-community-certification.v1', generatedFrom:[path.relative(root,paths.inventory),path.relative(root,paths.focus)], contract:{ defaultRadiusMiles:DEFAULT_RADIUS_MILES, geoJsonCoordinateOrder:'longitude_latitude', geometryAuthority:'js/gridlyDriveTexasGeometryAuthority.js:gridlyQualifyDriveTexasGeometryAuthority' }, summary:{ countyCount:254, communityCount:communities.length, membershipCount:inventory.summary.countyCommunityMembershipCount, multiCountyCommunityCount:communities.filter(x=>x.multiCountyIdentityPreserved).length, explicitRadiusCount:count('EXPLICIT_RADIUS_VALID'), defaultRadiusCount:count('GOVERNED_DEFAULT_RADIUS_VALID'), invalidFocusCount:count('INVALID_AWARENESS_FOCUS'), invalidRadiusCount:count('INVALID_RADIUS'), authorityFailureCount:count('AUTHORITY_SHAPE_FAILURE'), ownerReviewRequiredCount:count('OWNER_REVIEW_REQUIRED'), radiusPropagationFailureCount:communities.filter(x=>!x.radiusPropagationValid).length, syntheticCheckTotals:checkTotals }, controls:{ dallas:communities.find(x=>x.canonicalKey==='place-4819000'), houston:communities.find(x=>x.canonicalKey==='place-4835000') }, communities };
+  const artifact = { schemaVersion:'gridly.lp214.drivetexas-statewide-community-certification.v1', generatedFrom:[repositoryRelative(paths.inventory),repositoryRelative(paths.focus)], contract:{ defaultRadiusMiles:DEFAULT_RADIUS_MILES, geoJsonCoordinateOrder:'longitude_latitude', geometryAuthority:'js/gridlyDriveTexasGeometryAuthority.js:gridlyQualifyDriveTexasGeometryAuthority' }, summary:{ countyCount:254, communityCount:communities.length, membershipCount:inventory.summary.countyCommunityMembershipCount, multiCountyCommunityCount:communities.filter(x=>x.multiCountyIdentityPreserved).length, explicitRadiusCount:count('EXPLICIT_RADIUS_VALID'), defaultRadiusCount:count('GOVERNED_DEFAULT_RADIUS_VALID'), invalidFocusCount:count('INVALID_AWARENESS_FOCUS'), invalidRadiusCount:count('INVALID_RADIUS'), authorityFailureCount:count('AUTHORITY_SHAPE_FAILURE'), ownerReviewRequiredCount:count('OWNER_REVIEW_REQUIRED'), radiusPropagationFailureCount:communities.filter(x=>!x.radiusPropagationValid).length, syntheticCheckTotals:checkTotals }, controls:{ dallas:communities.find(x=>x.canonicalKey==='place-4819000'), houston:communities.find(x=>x.canonicalKey==='place-4835000') }, communities };
   if (artifact.summary.communityCount !== 1859 || artifact.summary.multiCountyCommunityCount !== 163 || Object.values(checkTotals).some(n=>n!==1859) || artifact.summary.radiusPropagationFailureCount) fail('statewide authority certification failed');
   return artifact;
 }
