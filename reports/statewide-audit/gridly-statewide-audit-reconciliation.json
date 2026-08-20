@@ -1,0 +1,6507 @@
+{
+  "schemaVersion": "gridly.statewide-audit-reconciliation.v1",
+  "mode": "AUDIT_ONLY_NO_PRODUCTION_REPAIR",
+  "authority": {
+    "primaryExport": "reports/statewide-audit/gridly-statewide-audit-export.json",
+    "excelWorkbookUsed": false,
+    "crossChecks": {
+      "statewideCsvDataRows": 1859,
+      "countyCsvDataRows": 254,
+      "lp214CanonicalCommunities": 1859,
+      "lp214GovernedMemberships": 2058,
+      "lp214MultiCountyCommunities": 163,
+      "lp214DriveTexasCommunities": 1859,
+      "lp215CountiesEvaluated": 254,
+      "lp215ProductionPatchApplied": false,
+      "status": "PASS"
+    }
+  },
+  "denominators": {
+    "counties": 254,
+    "canonicalCommunities": 1859,
+    "memberships": 2058,
+    "multiCountyCommunities": 163,
+    "status": "PASS"
+  },
+  "classificationSummary": {
+    "repositoryCertifiedCommunities": 1859,
+    "expectedEmptyConditions": 636,
+    "roadwayExpectedEmpty": 481,
+    "railExpectedEmpty": 155,
+    "evidenceGapConditions": 0,
+    "liveBrowserRequiredCommunities": 1859,
+    "productionContradictions": 0,
+    "systemicUnresolvedClasses": 6
+  },
+  "findings": {
+    "repositoryCertifiedCanonicalKeys": [
+      "place-4800100",
+      "place-4800160",
+      "place-4801000",
+      "place-4801060",
+      "place-4801084",
+      "place-4801108",
+      "place-4801240",
+      "place-4801324",
+      "place-4801390",
+      "place-4801396",
+      "place-4801420",
+      "place-4801500",
+      "place-4801514",
+      "place-4801576",
+      "place-4801594",
+      "place-4801600",
+      "place-4801612",
+      "place-4801636",
+      "place-4801648",
+      "place-4801696",
+      "place-4801744",
+      "place-4801816",
+      "place-4801852",
+      "place-4801858",
+      "place-4801924",
+      "place-4802032",
+      "place-4802044",
+      "place-4802104",
+      "place-4802188",
+      "place-4802194",
+      "place-4802212",
+      "place-4802260",
+      "place-4802272",
+      "place-4802284",
+      "place-4802286",
+      "place-4802290",
+      "place-4803000",
+      "place-4803008",
+      "place-4803072",
+      "place-4803084",
+      "place-4803096",
+      "place-4803126",
+      "place-4803144",
+      "place-4803192",
+      "place-4803216",
+      "place-4803264",
+      "place-4803288",
+      "place-4803300",
+      "place-4803336",
+      "place-4803340",
+      "place-4803342",
+      "place-4803360",
+      "place-4803372",
+      "place-4803432",
+      "place-4803540",
+      "place-4803564",
+      "place-4803588",
+      "place-4803600",
+      "place-4803696",
+      "place-4803708",
+      "place-4803768",
+      "place-4804000",
+      "place-4804156",
+      "place-4804174",
+      "place-4804176",
+      "place-4804300",
+      "place-4804408",
+      "place-4804462",
+      "place-4804504",
+      "place-4804516",
+      "place-4804600",
+      "place-4804672",
+      "place-4805000",
+      "place-4805036",
+      "place-4805072",
+      "place-4805084",
+      "place-4805168",
+      "place-4805180",
+      "place-4805264",
+      "place-4805288",
+      "place-4805336",
+      "place-4805372",
+      "place-4805384",
+      "place-4805456",
+      "place-4805468",
+      "place-4805520",
+      "place-4805528",
+      "place-4805552",
+      "place-4805576",
+      "place-4805612",
+      "place-4805648",
+      "place-4805690",
+      "place-4805696",
+      "place-4805708",
+      "place-4805720",
+      "place-4805732",
+      "place-4805750",
+      "place-4805768",
+      "place-4805864",
+      "place-4805924",
+      "place-4805984",
+      "place-4806060",
+      "place-4806104",
+      "place-4806128",
+      "place-4806140",
+      "place-4806200",
+      "place-4806242",
+      "place-4806244",
+      "place-4806272",
+      "place-4807000",
+      "place-4807036",
+      "place-4807042",
+      "place-4807108",
+      "place-4807132",
+      "place-4807144",
+      "place-4807156",
+      "place-4807192",
+      "place-4807300",
+      "place-4807396",
+      "place-4807408",
+      "place-4807420",
+      "place-4807432",
+      "place-4807486",
+      "place-4807492",
+      "place-4807516",
+      "place-4807528",
+      "place-4807540",
+      "place-4807552",
+      "place-4807636",
+      "place-4807642",
+      "place-4807708",
+      "place-4807852",
+      "place-4807864",
+      "place-4808104",
+      "place-4808128",
+      "place-4808164",
+      "place-4808212",
+      "place-4808224",
+      "place-4808236",
+      "place-4808240",
+      "place-4808260",
+      "place-4808392",
+      "place-4808398",
+      "place-4808404",
+      "place-4808410",
+      "place-4808488",
+      "place-4808536",
+      "place-4808596",
+      "place-4808644",
+      "place-4808668",
+      "place-4808752",
+      "place-4808788",
+      "place-4808800",
+      "place-4808812",
+      "place-4808830",
+      "place-4808860",
+      "place-4808872",
+      "place-4808908",
+      "place-4808932",
+      "place-4809004",
+      "place-4809160",
+      "place-4809172",
+      "place-4809232",
+      "place-4809250",
+      "place-4809310",
+      "place-4809328",
+      "place-4809388",
+      "place-4809448",
+      "place-4809556",
+      "place-4809598",
+      "place-4809628",
+      "place-4809640",
+      "place-4809656",
+      "place-4809748",
+      "place-4809796",
+      "place-4809868",
+      "place-4809916",
+      "place-4810072",
+      "place-4810084",
+      "place-4810090",
+      "place-4810132",
+      "place-4810144",
+      "place-4810156",
+      "place-4810192",
+      "place-4810197",
+      "place-4810216",
+      "place-4810252",
+      "place-4810264",
+      "place-4810276",
+      "place-4810336",
+      "place-4810384",
+      "place-4810528",
+      "place-4810636",
+      "place-4810648",
+      "place-4810660",
+      "place-4810708",
+      "place-4810720",
+      "place-4810756",
+      "place-4810768",
+      "place-4810780",
+      "place-4810828",
+      "place-4810852",
+      "place-4810876",
+      "place-4810897",
+      "place-4810912",
+      "place-4810960",
+      "place-4810984",
+      "place-4810990",
+      "place-4811020",
+      "place-4811080",
+      "place-4811102",
+      "place-4811116",
+      "place-4811128",
+      "place-4811155",
+      "place-4811212",
+      "place-4811224",
+      "place-4811236",
+      "place-4811300",
+      "place-4811368",
+      "place-4811380",
+      "place-4811428",
+      "place-4811440",
+      "place-4811464",
+      "place-4811536",
+      "place-4811572",
+      "place-4811626",
+      "place-4811644",
+      "place-4811656",
+      "place-4811692",
+      "place-4811716",
+      "place-4811725",
+      "place-4811836",
+      "place-4811940",
+      "place-4811968",
+      "place-4811992",
+      "place-4812010",
+      "place-4812040",
+      "place-4812045",
+      "place-4812112",
+      "place-4812226",
+      "place-4812334",
+      "place-4812388",
+      "place-4812412",
+      "place-4812472",
+      "place-4812496",
+      "place-4812502",
+      "place-4812508",
+      "place-4812532",
+      "place-4812562",
+      "place-4812580",
+      "place-4812600",
+      "place-4812736",
+      "place-4812892",
+      "place-4812895",
+      "place-4812904",
+      "place-4812916",
+      "place-4812982",
+      "place-4812988",
+      "place-4813024",
+      "place-4813075",
+      "place-4813108",
+      "place-4813128",
+      "place-4813150",
+      "place-4813198",
+      "place-4813276",
+      "place-4813312",
+      "place-4813324",
+      "place-4813432",
+      "place-4813492",
+      "place-4813552",
+      "place-4813570",
+      "place-4813672",
+      "place-4813684",
+      "place-4813732",
+      "place-4813828",
+      "place-4813900",
+      "place-4813972",
+      "place-4814038",
+      "place-4814224",
+      "place-4814236",
+      "place-4814260",
+      "place-4814266",
+      "place-4814290",
+      "place-4814404",
+      "place-4814584",
+      "place-4814620",
+      "place-4814668",
+      "place-4814680",
+      "place-4814692",
+      "place-4814704",
+      "place-4814716",
+      "place-4814740",
+      "place-4814776",
+      "place-4814860",
+      "place-4814872",
+      "place-4814880",
+      "place-4814881",
+      "place-4814882",
+      "place-4814920",
+      "place-4814927",
+      "place-4814929",
+      "place-4814986",
+      "place-4815004",
+      "place-4815028",
+      "place-4815112",
+      "place-4815160",
+      "place-4815172",
+      "place-4815196",
+      "place-4815232",
+      "place-4815328",
+      "place-4815364",
+      "place-4815436",
+      "place-4815472",
+      "place-4815544",
+      "place-4815628",
+      "place-4815652",
+      "place-4815676",
+      "place-4815700",
+      "place-4815796",
+      "place-4815820",
+      "place-4815892",
+      "place-4815916",
+      "place-4815976",
+      "place-4815988",
+      "place-4816036",
+      "place-4816048",
+      "place-4816110",
+      "place-4816120",
+      "place-4816168",
+      "place-4816192",
+      "place-4816204",
+      "place-4816216",
+      "place-4816228",
+      "place-4816240",
+      "place-4816252",
+      "place-4816300",
+      "place-4816432",
+      "place-4816468",
+      "place-4816540",
+      "place-4816552",
+      "place-4816564",
+      "place-4816612",
+      "place-4816624",
+      "place-4816636",
+      "place-4816696",
+      "place-4817000",
+      "place-4817021",
+      "place-4817036",
+      "place-4817060",
+      "place-4817200",
+      "place-4817208",
+      "place-4817216",
+      "place-4817312",
+      "place-4817336",
+      "place-4817372",
+      "place-4817408",
+      "place-4817426",
+      "place-4817429",
+      "place-4817504",
+      "place-4817516",
+      "place-4817540",
+      "place-4817564",
+      "place-4817612",
+      "place-4817648",
+      "place-4817744",
+      "place-4817756",
+      "place-4817768",
+      "place-4817811",
+      "place-4817816",
+      "place-4817852",
+      "place-4817917",
+      "place-4817948",
+      "place-4817960",
+      "place-4818020",
+      "place-4818092",
+      "place-4818104",
+      "place-4818128",
+      "place-4818134",
+      "place-4818152",
+      "place-4818224",
+      "place-4818260",
+      "place-4818464",
+      "place-4818476",
+      "place-4818524",
+      "place-4819000",
+      "place-4819084",
+      "place-4819108",
+      "place-4819120",
+      "place-4819288",
+      "place-4819420",
+      "place-4819432",
+      "place-4819435",
+      "place-4819456",
+      "place-4819492",
+      "place-4819528",
+      "place-4819570",
+      "place-4819624",
+      "place-4819632",
+      "place-4819648",
+      "place-4819672",
+      "place-4819708",
+      "place-4819714",
+      "place-4819732",
+      "place-4819792",
+      "place-4819808",
+      "place-4819900",
+      "place-4819924",
+      "place-4819972",
+      "place-4819984",
+      "place-4820020",
+      "place-4820092",
+      "place-4820128",
+      "place-4820140",
+      "place-4820152",
+      "place-4820212",
+      "place-4820248",
+      "place-4820308",
+      "place-4820332",
+      "place-4820344",
+      "place-4820428",
+      "place-4820452",
+      "place-4820464",
+      "place-4820540",
+      "place-4820680",
+      "place-4820716",
+      "place-4820734",
+      "place-4820848",
+      "place-4820884",
+      "place-4820926",
+      "place-4820932",
+      "place-4821028",
+      "place-4821031",
+      "place-4821112",
+      "place-4821412",
+      "place-4821424",
+      "place-4821436",
+      "place-4821484",
+      "place-4821556",
+      "place-4821628",
+      "place-4821844",
+      "place-4821892",
+      "place-4821904",
+      "place-4821928",
+      "place-4821958",
+      "place-4821988",
+      "place-4822000",
+      "place-4822132",
+      "place-4822168",
+      "place-4822192",
+      "place-4822276",
+      "place-4822516",
+      "place-4822528",
+      "place-4822552",
+      "place-4822588",
+      "place-4822593",
+      "place-4822612",
+      "place-4822660",
+      "place-4822708",
+      "place-4822720",
+      "place-4822744",
+      "place-4822768",
+      "place-4822810",
+      "place-4822840",
+      "place-4822853",
+      "place-4822858",
+      "place-4822864",
+      "place-4822892",
+      "place-4822898",
+      "place-4822905",
+      "place-4822920",
+      "place-4822960",
+      "place-4822984",
+      "place-4823044",
+      "place-4823062",
+      "place-4823080",
+      "place-4823140",
+      "place-4823164",
+      "place-4823176",
+      "place-4823254",
+      "place-4823272",
+      "place-4823278",
+      "place-4823356",
+      "place-4823398",
+      "place-4824000",
+      "place-4824013",
+      "place-4824015",
+      "place-4824018",
+      "place-4824036",
+      "place-4824055",
+      "place-4824158",
+      "place-4824168",
+      "place-4824216",
+      "place-4824223",
+      "place-4824228",
+      "place-4824240",
+      "place-4824252",
+      "place-4824348",
+      "place-4824552",
+      "place-4824636",
+      "place-4824738",
+      "place-4824768",
+      "place-4824816",
+      "place-4824828",
+      "place-4824840",
+      "place-4824864",
+      "place-4824894",
+      "place-4824912",
+      "place-4825032",
+      "place-4825038",
+      "place-4825068",
+      "place-4825104",
+      "place-4825168",
+      "place-4825224",
+      "place-4825338",
+      "place-4825344",
+      "place-4825348",
+      "place-4825352",
+      "place-4825356",
+      "place-4825368",
+      "place-4825392",
+      "place-4825397",
+      "place-4825404",
+      "place-4825452",
+      "place-4825488",
+      "place-4825512",
+      "place-4825548",
+      "place-4825572",
+      "place-4825644",
+      "place-4825744",
+      "place-4825752",
+      "place-4825795",
+      "place-4826004",
+      "place-4826028",
+      "place-4826130",
+      "place-4826136",
+      "place-4826160",
+      "place-4826220",
+      "place-4826232",
+      "place-4826268",
+      "place-4826280",
+      "place-4826328",
+      "place-4826516",
+      "place-4826544",
+      "place-4826604",
+      "place-4826640",
+      "place-4826664",
+      "place-4826666",
+      "place-4826680",
+      "place-4826688",
+      "place-4826724",
+      "place-4826808",
+      "place-4827000",
+      "place-4827102",
+      "place-4827124",
+      "place-4827144",
+      "place-4827288",
+      "place-4827300",
+      "place-4827348",
+      "place-4827420",
+      "place-4827432",
+      "place-4827540",
+      "place-4827648",
+      "place-4827660",
+      "place-4827684",
+      "place-4827696",
+      "place-4827744",
+      "place-4827748",
+      "place-4827768",
+      "place-4827804",
+      "place-4827876",
+      "place-4827888",
+      "place-4827972",
+      "place-4827984",
+      "place-4827996",
+      "place-4828008",
+      "place-4828068",
+      "place-4828080",
+      "place-4828128",
+      "place-4828152",
+      "place-4828176",
+      "place-4828200",
+      "place-4828248",
+      "place-4828320",
+      "place-4829000",
+      "place-4829012",
+      "place-4829036",
+      "place-4829060",
+      "place-4829096",
+      "place-4829108",
+      "place-4829114",
+      "place-4829168",
+      "place-4829216",
+      "place-4829336",
+      "place-4829348",
+      "place-4829384",
+      "place-4829408",
+      "place-4829432",
+      "place-4829564",
+      "place-4829612",
+      "place-4829660",
+      "place-4829732",
+      "place-4829840",
+      "place-4829876",
+      "place-4829912",
+      "place-4829972",
+      "place-4830044",
+      "place-4830056",
+      "place-4830080",
+      "place-4830092",
+      "place-4830116",
+      "place-4830188",
+      "place-4830224",
+      "place-4830272",
+      "place-4830296",
+      "place-4830308",
+      "place-4830380",
+      "place-4830392",
+      "place-4830416",
+      "place-4830440",
+      "place-4830464",
+      "place-4830476",
+      "place-4830512",
+      "place-4830548",
+      "place-4830560",
+      "place-4830584",
+      "place-4830608",
+      "place-4830629",
+      "place-4830632",
+      "place-4830644",
+      "place-4830752",
+      "place-4830890",
+      "place-4830920",
+      "place-4831064",
+      "place-4831100",
+      "place-4831280",
+      "place-4831292",
+      "place-4831328",
+      "place-4831340",
+      "place-4831412",
+      "place-4831442",
+      "place-4831484",
+      "place-4831592",
+      "place-4831616",
+      "place-4831628",
+      "place-4831640",
+      "place-4831646",
+      "place-4831715",
+      "place-4831820",
+      "place-4831868",
+      "place-4831880",
+      "place-4831904",
+      "place-4831928",
+      "place-4831952",
+      "place-4831964",
+      "place-4832012",
+      "place-4832156",
+      "place-4832240",
+      "place-4832246",
+      "place-4832300",
+      "place-4832312",
+      "place-4832372",
+      "place-4832456",
+      "place-4832552",
+      "place-4832576",
+      "place-4832612",
+      "place-4832696",
+      "place-4832720",
+      "place-4832792",
+      "place-4832810",
+      "place-4832816",
+      "place-4832840",
+      "place-4832906",
+      "place-4832910",
+      "place-4832972",
+      "place-4832978",
+      "place-4832984",
+      "place-4833008",
+      "place-4833020",
+      "place-4833044",
+      "place-4833068",
+      "place-4833092",
+      "place-4833146",
+      "place-4833188",
+      "place-4833200",
+      "place-4833212",
+      "place-4833284",
+      "place-4833320",
+      "place-4833356",
+      "place-4833428",
+      "place-4833476",
+      "place-4833548",
+      "place-4833560",
+      "place-4833578",
+      "place-4833608",
+      "place-4833794",
+      "place-4833824",
+      "place-4833836",
+      "place-4833848",
+      "place-4833968",
+      "place-4834018",
+      "place-4834088",
+      "place-4834105",
+      "place-4834130",
+      "place-4834133",
+      "place-4834136",
+      "place-4834148",
+      "place-4834220",
+      "place-4834478",
+      "place-4834502",
+      "place-4834508",
+      "place-4834532",
+      "place-4834586",
+      "place-4834628",
+      "place-4834671",
+      "place-4834673",
+      "place-4834676",
+      "place-4834700",
+      "place-4834736",
+      "place-4834832",
+      "place-4834856",
+      "place-4834862",
+      "place-4834865",
+      "place-4835000",
+      "place-4835072",
+      "place-4835084",
+      "place-4835180",
+      "place-4835204",
+      "place-4835228",
+      "place-4835253",
+      "place-4835254",
+      "place-4835300",
+      "place-4835324",
+      "place-4835348",
+      "place-4835420",
+      "place-4835480",
+      "place-4835492",
+      "place-4835528",
+      "place-4835576",
+      "place-4835612",
+      "place-4835624",
+      "place-4835636",
+      "place-4835684",
+      "place-4835732",
+      "place-4835754",
+      "place-4835816",
+      "place-4835828",
+      "place-4835915",
+      "place-4835918",
+      "place-4835954",
+      "place-4835966",
+      "place-4835984",
+      "place-4835996",
+      "place-4836008",
+      "place-4836020",
+      "place-4836032",
+      "place-4836068",
+      "place-4836092",
+      "place-4836104",
+      "place-4836128",
+      "place-4836140",
+      "place-4837000",
+      "place-4837072",
+      "place-4837084",
+      "place-4837112",
+      "place-4837156",
+      "place-4837168",
+      "place-4837216",
+      "place-4837252",
+      "place-4837390",
+      "place-4837396",
+      "place-4837420",
+      "place-4837468",
+      "place-4837528",
+      "place-4837612",
+      "place-4837648",
+      "place-4837665",
+      "place-4837684",
+      "place-4837780",
+      "place-4837924",
+      "place-4837984",
+      "place-4838020",
+      "place-4838068",
+      "place-4838080",
+      "place-4838116",
+      "place-4838168",
+      "place-4838248",
+      "place-4838332",
+      "place-4838452",
+      "place-4838476",
+      "place-4838488",
+      "place-4838518",
+      "place-4838548",
+      "place-4838632",
+      "place-4838776",
+      "place-4838788",
+      "place-4838800",
+      "place-4838848",
+      "place-4838860",
+      "place-4838872",
+      "place-4838884",
+      "place-4838896",
+      "place-4838992",
+      "place-4839004",
+      "place-4839040",
+      "place-4839124",
+      "place-4839148",
+      "place-4839292",
+      "place-4839304",
+      "place-4839352",
+      "place-4839448",
+      "place-4839460",
+      "place-4839520",
+      "place-4839664",
+      "place-4839680",
+      "place-4839700",
+      "place-4839784",
+      "place-4839844",
+      "place-4839868",
+      "place-4839904",
+      "place-4839916",
+      "place-4839928",
+      "place-4839940",
+      "place-4839952",
+      "place-4839988",
+      "place-4839994",
+      "place-4840000",
+      "place-4840018",
+      "place-4840036",
+      "place-4840100",
+      "place-4840104",
+      "place-4840108",
+      "place-4840168",
+      "place-4840180",
+      "place-4840186",
+      "place-4840188",
+      "place-4840204",
+      "place-4840210",
+      "place-4840258",
+      "place-4840262",
+      "place-4840264",
+      "place-4840276",
+      "place-4840288",
+      "place-4840300",
+      "place-4840312",
+      "place-4840320",
+      "place-4840336",
+      "place-4840342",
+      "place-4840384",
+      "place-4840450",
+      "place-4840456",
+      "place-4840462",
+      "place-4840468",
+      "place-4840472",
+      "place-4840475",
+      "place-4840516",
+      "place-4840522",
+      "place-4840576",
+      "place-4840588",
+      "place-4840624",
+      "place-4840674",
+      "place-4840676",
+      "place-4840696",
+      "place-4840714",
+      "place-4840738",
+      "place-4840744",
+      "place-4840756",
+      "place-4840804",
+      "place-4840888",
+      "place-4840966",
+      "place-4840984",
+      "place-4841050",
+      "place-4841056",
+      "place-4841086",
+      "place-4841092",
+      "place-4841116",
+      "place-4841164",
+      "place-4841170",
+      "place-4841176",
+      "place-4841180",
+      "place-4841188",
+      "place-4841212",
+      "place-4841404",
+      "place-4841416",
+      "place-4841420",
+      "place-4841422",
+      "place-4841424",
+      "place-4841440",
+      "place-4841449",
+      "place-4841452",
+      "place-4841458",
+      "place-4841464",
+      "place-4841473",
+      "place-4841475",
+      "place-4841503",
+      "place-4841542",
+      "place-4841548",
+      "place-4841565",
+      "place-4841566",
+      "place-4841569",
+      "place-4841579",
+      "place-4841580",
+      "place-4841582",
+      "place-4841583",
+      "place-4841644",
+      "place-4841660",
+      "place-4841704",
+      "place-4841728",
+      "place-4841764",
+      "place-4841782",
+      "place-4841788",
+      "place-4841800",
+      "place-4841848",
+      "place-4841872",
+      "place-4841980",
+      "place-4842004",
+      "place-4842016",
+      "place-4842028",
+      "place-4842148",
+      "place-4842244",
+      "place-4842256",
+      "place-4842340",
+      "place-4842352",
+      "place-4842388",
+      "place-4842400",
+      "place-4842448",
+      "place-4842508",
+      "place-4842532",
+      "place-4842568",
+      "place-4842616",
+      "place-4842664",
+      "place-4842820",
+      "place-4842844",
+      "place-4842868",
+      "place-4842874",
+      "place-4842880",
+      "place-4842916",
+      "place-4842940",
+      "place-4842952",
+      "place-4843000",
+      "place-4843012",
+      "place-4843024",
+      "place-4843066",
+      "place-4843096",
+      "place-4843120",
+      "place-4843132",
+      "place-4843144",
+      "place-4843150",
+      "place-4843216",
+      "place-4843240",
+      "place-4843252",
+      "place-4843354",
+      "place-4843432",
+      "place-4843458",
+      "place-4843460",
+      "place-4843462",
+      "place-4843463",
+      "place-4843465",
+      "place-4843474",
+      "place-4843516",
+      "place-4843636",
+      "place-4843684",
+      "place-4843822",
+      "place-4843888",
+      "place-4843948",
+      "place-4843960",
+      "place-4843972",
+      "place-4843996",
+      "place-4844020",
+      "place-4844032",
+      "place-4844038",
+      "place-4844044",
+      "place-4844062",
+      "place-4844072",
+      "place-4844075",
+      "place-4844076",
+      "place-4844077",
+      "place-4844079",
+      "place-4844104",
+      "place-4844110",
+      "place-4844116",
+      "place-4844120",
+      "place-4844123",
+      "place-4844128",
+      "place-4844142",
+      "place-4844145",
+      "place-4844146",
+      "place-4844162",
+      "place-4844167",
+      "place-4844168",
+      "place-4844170",
+      "place-4844176",
+      "place-4844212",
+      "place-4844260",
+      "place-4844284",
+      "place-4844308",
+      "place-4844344",
+      "place-4845000",
+      "place-4845012",
+      "place-4845048",
+      "place-4845072",
+      "place-4845096",
+      "place-4845120",
+      "place-4845228",
+      "place-4845276",
+      "place-4845288",
+      "place-4845324",
+      "place-4845384",
+      "place-4845432",
+      "place-4845444",
+      "place-4845564",
+      "place-4845576",
+      "place-4845672",
+      "place-4845744",
+      "place-4845750",
+      "place-4845780",
+      "place-4845804",
+      "place-4845816",
+      "place-4845948",
+      "place-4845996",
+      "place-4846056",
+      "place-4846080",
+      "place-4846224",
+      "place-4846260",
+      "place-4846308",
+      "place-4846440",
+      "place-4846452",
+      "place-4846492",
+      "place-4846494",
+      "place-4846500",
+      "place-4846572",
+      "place-4846584",
+      "place-4846620",
+      "place-4846668",
+      "place-4846692",
+      "place-4846716",
+      "place-4846740",
+      "place-4846752",
+      "place-4846776",
+      "place-4846824",
+      "place-4846848",
+      "place-4846854",
+      "place-4846968",
+      "place-4847004",
+      "place-4847016",
+      "place-4847040",
+      "place-4847088",
+      "place-4847100",
+      "place-4847172",
+      "place-4847268",
+      "place-4847316",
+      "place-4847330",
+      "place-4847337",
+      "place-4847406",
+      "place-4847460",
+      "place-4847496",
+      "place-4847568",
+      "place-4847616",
+      "place-4847628",
+      "place-4847676",
+      "place-4847700",
+      "place-4847760",
+      "place-4847796",
+      "place-4847820",
+      "place-4847832",
+      "place-4847892",
+      "place-4847898",
+      "place-4847916",
+      "place-4847988",
+      "place-4848048",
+      "place-4848072",
+      "place-4848096",
+      "place-4848180",
+      "place-4848272",
+      "place-4848280",
+      "place-4848315",
+      "place-4848318",
+      "place-4848320",
+      "place-4848324",
+      "place-4848336",
+      "place-4848372",
+      "place-4848396",
+      "place-4848408",
+      "place-4848478",
+      "place-4848564",
+      "place-4848648",
+      "place-4848684",
+      "place-4848720",
+      "place-4848750",
+      "place-4848756",
+      "place-4848768",
+      "place-4848772",
+      "place-4848804",
+      "place-4848852",
+      "place-4848858",
+      "place-4848936",
+      "place-4849032",
+      "place-4849068",
+      "place-4849080",
+      "place-4849128",
+      "place-4849200",
+      "place-4849224",
+      "place-4849272",
+      "place-4849300",
+      "place-4849314",
+      "place-4849320",
+      "place-4849356",
+      "place-4849359",
+      "place-4849380",
+      "place-4849392",
+      "place-4849411",
+      "place-4849440",
+      "place-4849464",
+      "place-4849512",
+      "place-4849560",
+      "place-4849572",
+      "place-4849600",
+      "place-4849692",
+      "place-4849728",
+      "place-4849800",
+      "place-4849860",
+      "place-4849932",
+      "place-4849968",
+      "place-4849992",
+      "place-4850040",
+      "place-4850058",
+      "place-4850076",
+      "place-4850092",
+      "place-4850100",
+      "place-4850200",
+      "place-4850220",
+      "place-4850232",
+      "place-4850256",
+      "place-4850268",
+      "place-4850316",
+      "place-4850322",
+      "place-4850352",
+      "place-4850376",
+      "place-4850400",
+      "place-4850448",
+      "place-4850472",
+      "place-4850496",
+      "place-4850544",
+      "place-4850580",
+      "place-4850628",
+      "place-4850742",
+      "place-4850760",
+      "place-4850772",
+      "place-4850796",
+      "place-4850808",
+      "place-4850820",
+      "place-4850868",
+      "place-4850876",
+      "place-4850916",
+      "place-4850920",
+      "place-4850924",
+      "place-4851012",
+      "place-4851036",
+      "place-4851168",
+      "place-4851336",
+      "place-4851372",
+      "place-4851384",
+      "place-4851396",
+      "place-4851444",
+      "place-4851492",
+      "place-4851552",
+      "place-4851588",
+      "place-4851648",
+      "place-4851654",
+      "place-4851708",
+      "place-4851720",
+      "place-4851756",
+      "place-4851792",
+      "place-4851828",
+      "place-4851840",
+      "place-4851852",
+      "place-4851900",
+      "place-4851984",
+      "place-4852068",
+      "place-4852212",
+      "place-4852302",
+      "place-4852356",
+      "place-4852404",
+      "place-4852668",
+      "place-4852902",
+      "place-4852992",
+      "place-4853004",
+      "place-4853115",
+      "place-4853130",
+      "place-4853154",
+      "place-4853160",
+      "place-4853190",
+      "place-4853212",
+      "place-4853217",
+      "place-4853232",
+      "place-4853304",
+      "place-4853376",
+      "place-4853388",
+      "place-4853436",
+      "place-4853520",
+      "place-4853556",
+      "place-4853616",
+      "place-4853824",
+      "place-4853934",
+      "place-4853946",
+      "place-4853964",
+      "place-4853970",
+      "place-4853988",
+      "place-4854000",
+      "place-4854012",
+      "place-4854024",
+      "place-4854048",
+      "place-4854075",
+      "place-4854132",
+      "place-4854168",
+      "place-4854186",
+      "place-4854192",
+      "place-4854216",
+      "place-4854432",
+      "place-4854444",
+      "place-4854509",
+      "place-4854528",
+      "place-4854552",
+      "place-4854558",
+      "place-4854600",
+      "place-4854624",
+      "place-4854636",
+      "place-4854666",
+      "place-4854684",
+      "place-4854708",
+      "place-4854726",
+      "place-4854744",
+      "place-4854748",
+      "place-4854780",
+      "place-4854798",
+      "place-4854804",
+      "place-4854810",
+      "place-4854846",
+      "place-4854868",
+      "place-4854872",
+      "place-4854876",
+      "place-4854912",
+      "place-4854960",
+      "place-4855008",
+      "place-4855020",
+      "place-4855056",
+      "place-4855080",
+      "place-4855152",
+      "place-4856000",
+      "place-4856108",
+      "place-4856156",
+      "place-4856252",
+      "place-4856276",
+      "place-4856348",
+      "place-4856384",
+      "place-4856432",
+      "place-4856462",
+      "place-4856468",
+      "place-4856482",
+      "place-4856485",
+      "place-4856498",
+      "place-4856640",
+      "place-4856644",
+      "place-4856660",
+      "place-4856672",
+      "place-4856696",
+      "place-4856804",
+      "place-4856864",
+      "place-4856912",
+      "place-4856996",
+      "place-4857044",
+      "place-4857056",
+      "place-4857116",
+      "place-4857128",
+      "place-4857176",
+      "place-4857200",
+      "place-4857476",
+      "place-4857494",
+      "place-4857524",
+      "place-4857566",
+      "place-4857596",
+      "place-4857608",
+      "place-4857615",
+      "place-4857644",
+      "place-4857752",
+      "place-4857800",
+      "place-4857908",
+      "place-4857932",
+      "place-4857968",
+      "place-4857980",
+      "place-4858016",
+      "place-4858040",
+      "place-4858088",
+      "place-4858232",
+      "place-4858280",
+      "place-4858400",
+      "place-4858436",
+      "place-4858448",
+      "place-4858502",
+      "place-4858532",
+      "place-4858556",
+      "place-4858568",
+      "place-4858586",
+      "place-4858664",
+      "place-4858808",
+      "place-4858820",
+      "place-4858850",
+      "place-4858892",
+      "place-4858904",
+      "place-4858916",
+      "place-4858928",
+      "place-4858940",
+      "place-4858952",
+      "place-4859012",
+      "place-4859065",
+      "place-4859084",
+      "place-4859096",
+      "place-4859108",
+      "place-4859132",
+      "place-4859156",
+      "place-4859168",
+      "place-4859192",
+      "place-4859210",
+      "place-4859216",
+      "place-4859336",
+      "place-4859384",
+      "place-4859396",
+      "place-4859420",
+      "place-4859528",
+      "place-4859540",
+      "place-4859576",
+      "place-4859612",
+      "place-4859636",
+      "place-4859642",
+      "place-4859696",
+      "place-4859748",
+      "place-4859794",
+      "place-4859798",
+      "place-4859984",
+      "place-4859996",
+      "place-4860020",
+      "place-4860026",
+      "place-4860044",
+      "place-4860080",
+      "place-4860092",
+      "place-4860098",
+      "place-4860140",
+      "place-4860164",
+      "place-4860176",
+      "place-4860188",
+      "place-4860278",
+      "place-4860290",
+      "place-4860356",
+      "place-4860380",
+      "place-4860408",
+      "place-4860422",
+      "place-4860458",
+      "place-4860478",
+      "place-4860480",
+      "place-4860482",
+      "place-4860518",
+      "place-4860529",
+      "place-4860534",
+      "place-4860539",
+      "place-4860544",
+      "place-4860554",
+      "place-4860608",
+      "place-4860632",
+      "place-4860668",
+      "place-4860672",
+      "place-4860686",
+      "place-4860752",
+      "place-4860836",
+      "place-4860932",
+      "place-4861040",
+      "place-4861076",
+      "place-4861124",
+      "place-4861172",
+      "place-4861196",
+      "place-4861280",
+      "place-4861340",
+      "place-4861352",
+      "place-4861436",
+      "place-4861454",
+      "place-4861466",
+      "place-4861508",
+      "place-4861532",
+      "place-4861568",
+      "place-4861592",
+      "place-4861604",
+      "place-4861616",
+      "place-4861700",
+      "place-4861724",
+      "place-4861736",
+      "place-4861766",
+      "place-4861784",
+      "place-4861796",
+      "place-4861820",
+      "place-4861844",
+      "place-4861880",
+      "place-4861892",
+      "place-4861904",
+      "place-4862108",
+      "place-4862132",
+      "place-4862138",
+      "place-4862168",
+      "place-4862180",
+      "place-4862240",
+      "place-4862252",
+      "place-4862318",
+      "place-4862384",
+      "place-4862408",
+      "place-4862468",
+      "place-4862486",
+      "place-4862504",
+      "place-4862528",
+      "place-4862564",
+      "place-4862588",
+      "place-4862600",
+      "place-4862612",
+      "place-4862624",
+      "place-4862636",
+      "place-4862672",
+      "place-4862732",
+      "place-4862804",
+      "place-4862816",
+      "place-4862828",
+      "place-4862834",
+      "place-4862870",
+      "place-4862924",
+      "place-4863008",
+      "place-4863020",
+      "place-4863044",
+      "place-4863140",
+      "place-4863164",
+      "place-4863176",
+      "place-4863188",
+      "place-4863200",
+      "place-4863272",
+      "place-4863284",
+      "place-4863332",
+      "place-4863350",
+      "place-4863380",
+      "place-4863404",
+      "place-4863464",
+      "place-4863476",
+      "place-4863500",
+      "place-4863524",
+      "place-4863560",
+      "place-4863572",
+      "place-4863584",
+      "place-4863668",
+      "place-4863752",
+      "place-4863782",
+      "place-4863788",
+      "place-4863848",
+      "place-4864004",
+      "place-4864064",
+      "place-4864088",
+      "place-4864112",
+      "place-4864172",
+      "place-4864184",
+      "place-4864220",
+      "place-4864244",
+      "place-4864268",
+      "place-4864307",
+      "place-4864316",
+      "place-4864322",
+      "place-4864442",
+      "place-4864448",
+      "place-4864460",
+      "place-4864472",
+      "place-4865000",
+      "place-4865024",
+      "place-4865036",
+      "place-4865048",
+      "place-4865049",
+      "place-4865050",
+      "place-4865066",
+      "place-4865084",
+      "place-4865168",
+      "place-4865180",
+      "place-4865210",
+      "place-4865240",
+      "place-4865342",
+      "place-4865344",
+      "place-4865345",
+      "place-4865360",
+      "place-4865372",
+      "place-4865378",
+      "place-4865384",
+      "place-4865408",
+      "place-4865432",
+      "place-4865516",
+      "place-4865532",
+      "place-4865552",
+      "place-4865564",
+      "place-4865600",
+      "place-4865612",
+      "place-4865620",
+      "place-4865636",
+      "place-4865648",
+      "place-4865660",
+      "place-4865672",
+      "place-4865678",
+      "place-4865690",
+      "place-4865708",
+      "place-4865726",
+      "place-4865744",
+      "place-4865756",
+      "place-4865762",
+      "place-4865768",
+      "place-4865774",
+      "place-4865777",
+      "place-4865780",
+      "place-4865792",
+      "place-4865864",
+      "place-4865876",
+      "place-4866000",
+      "place-4866008",
+      "place-4866089",
+      "place-4866128",
+      "place-4866188",
+      "place-4866248",
+      "place-4866284",
+      "place-4866332",
+      "place-4866368",
+      "place-4866392",
+      "place-4866416",
+      "place-4866428",
+      "place-4866440",
+      "place-4866464",
+      "place-4866512",
+      "place-4866536",
+      "place-4866644",
+      "place-4866686",
+      "place-4866704",
+      "place-4866764",
+      "place-4866806",
+      "place-4866848",
+      "place-4866884",
+      "place-4866908",
+      "place-4866968",
+      "place-4867010",
+      "place-4867082",
+      "place-4867100",
+      "place-4867136",
+      "place-4867160",
+      "place-4867268",
+      "place-4867340",
+      "place-4867364",
+      "place-4867376",
+      "place-4867400",
+      "place-4867424",
+      "place-4867472",
+      "place-4867496",
+      "place-4867554",
+      "place-4867640",
+      "place-4867664",
+      "place-4867688",
+      "place-4867763",
+      "place-4867772",
+      "place-4867775",
+      "place-4867778",
+      "place-4867832",
+      "place-4867904",
+      "place-4867964",
+      "place-4868036",
+      "place-4868120",
+      "place-4868132",
+      "place-4868180",
+      "place-4868300",
+      "place-4868456",
+      "place-4868504",
+      "place-4868576",
+      "place-4868624",
+      "place-4868636",
+      "place-4868678",
+      "place-4868708",
+      "place-4868720",
+      "place-4868756",
+      "place-4868762",
+      "place-4868828",
+      "place-4868846",
+      "place-4868966",
+      "place-4868978",
+      "place-4869020",
+      "place-4869032",
+      "place-4869072",
+      "place-4869104",
+      "place-4869120",
+      "place-4869140",
+      "place-4869194",
+      "place-4869272",
+      "place-4869326",
+      "place-4869353",
+      "place-4869380",
+      "place-4869432",
+      "place-4869476",
+      "place-4869548",
+      "place-4869560",
+      "place-4869596",
+      "place-4869608",
+      "place-4869708",
+      "place-4869764",
+      "place-4869800",
+      "place-4869830",
+      "place-4869848",
+      "place-4869908",
+      "place-4869932",
+      "place-4869980",
+      "place-4870040",
+      "place-4870052",
+      "place-4870076",
+      "place-4870154",
+      "place-4870208",
+      "place-4870232",
+      "place-4870340",
+      "place-4870376",
+      "place-4870406",
+      "place-4870460",
+      "place-4870520",
+      "place-4870544",
+      "place-4870580",
+      "place-4870604",
+      "place-4870688",
+      "place-4870772",
+      "place-4870808",
+      "place-4870868",
+      "place-4870904",
+      "place-4870940",
+      "place-4871060",
+      "place-4871156",
+      "place-4871180",
+      "place-4871228",
+      "place-4871236",
+      "place-4871264",
+      "place-4871274",
+      "place-4871289",
+      "place-4871324",
+      "place-4871356",
+      "place-4871384",
+      "place-4871492",
+      "place-4871540",
+      "place-4871636",
+      "place-4871684",
+      "place-4871696",
+      "place-4871708",
+      "place-4871732",
+      "place-4871756",
+      "place-4871820",
+      "place-4871824",
+      "place-4871924",
+      "place-4871948",
+      "place-4871960",
+      "place-4871966",
+      "place-4872020",
+      "place-4872080",
+      "place-4872176",
+      "place-4872188",
+      "place-4872248",
+      "place-4872284",
+      "place-4872296",
+      "place-4872368",
+      "place-4872392",
+      "place-4872464",
+      "place-4872476",
+      "place-4872530",
+      "place-4872578",
+      "place-4872581",
+      "place-4872656",
+      "place-4872740",
+      "place-4872758",
+      "place-4872776",
+      "place-4872788",
+      "place-4872800",
+      "place-4872824",
+      "place-4872872",
+      "place-4872896",
+      "place-4872902",
+      "place-4872948",
+      "place-4872950",
+      "place-4872952",
+      "place-4872954",
+      "place-4872989",
+      "place-4872992",
+      "place-4873030",
+      "place-4873057",
+      "place-4873076",
+      "place-4873112",
+      "place-4873124",
+      "place-4873148",
+      "place-4873196",
+      "place-4873224",
+      "place-4873268",
+      "place-4873316",
+      "place-4873328",
+      "place-4873352",
+      "place-4873376",
+      "place-4873424",
+      "place-4873493",
+      "place-4873496",
+      "place-4873526",
+      "place-4873562",
+      "place-4873580",
+      "place-4873592",
+      "place-4873652",
+      "place-4873664",
+      "place-4873710",
+      "place-4873724",
+      "place-4873748",
+      "place-4873856",
+      "place-4873868",
+      "place-4873904",
+      "place-4873928",
+      "place-4873964",
+      "place-4874048",
+      "place-4874132",
+      "place-4874144",
+      "place-4874168",
+      "place-4874216",
+      "place-4874228",
+      "place-4874240",
+      "place-4874312",
+      "place-4874372",
+      "place-4874408",
+      "place-4874492",
+      "place-4874576",
+      "place-4874588",
+      "place-4874594",
+      "place-4874648",
+      "place-4874660",
+      "place-4874667",
+      "place-4874668",
+      "place-4874670",
+      "place-4874732",
+      "place-4874756",
+      "place-4874895",
+      "place-4874912",
+      "place-4874924",
+      "place-4874984",
+      "place-4875032",
+      "place-4875068",
+      "place-4875188",
+      "place-4875236",
+      "place-4875308",
+      "place-4875428",
+      "place-4875432",
+      "place-4875476",
+      "place-4875554",
+      "place-4875614",
+      "place-4875617",
+      "place-4875626",
+      "place-4875668",
+      "place-4875752",
+      "place-4875764",
+      "place-4876000",
+      "place-4876012",
+      "place-4876024",
+      "place-4876048",
+      "place-4876096",
+      "place-4876228",
+      "place-4876240",
+      "place-4876348",
+      "place-4876564",
+      "place-4876576",
+      "place-4876612",
+      "place-4876636",
+      "place-4876672",
+      "place-4876816",
+      "place-4876864",
+      "place-4876924",
+      "place-4876948",
+      "place-4877020",
+      "place-4877044",
+      "place-4877056",
+      "place-4877080",
+      "place-4877152",
+      "place-4877164",
+      "place-4877176",
+      "place-4877196",
+      "place-4877272",
+      "place-4877332",
+      "place-4877336",
+      "place-4877380",
+      "place-4877416",
+      "place-4877422",
+      "place-4877490",
+      "place-4877620",
+      "place-4877632",
+      "place-4877662",
+      "place-4877680",
+      "place-4877728",
+      "place-4877740",
+      "place-4877746",
+      "place-4877752",
+      "place-4877788",
+      "place-4877866",
+      "place-4877896",
+      "place-4877956",
+      "place-4878016",
+      "place-4878040",
+      "place-4878076",
+      "place-4878136",
+      "place-4878208",
+      "place-4878316",
+      "place-4878328",
+      "place-4878388",
+      "place-4878436",
+      "place-4878532",
+      "place-4878544",
+      "place-4878628",
+      "place-4878640",
+      "place-4878664",
+      "place-4879000",
+      "place-4879036",
+      "place-4879180",
+      "place-4879192",
+      "place-4879204",
+      "place-4879408",
+      "place-4879456",
+      "place-4879492",
+      "place-4879564",
+      "place-4879576",
+      "place-4879612",
+      "place-4879624",
+      "place-4879672",
+      "place-4879684",
+      "place-4879696",
+      "place-4879720",
+      "place-4879756",
+      "place-4879768",
+      "place-4879792",
+      "place-4879816",
+      "place-4879828",
+      "place-4879876",
+      "place-4879919",
+      "place-4879948",
+      "place-4879972",
+      "place-4880044",
+      "place-4880058",
+      "place-4880144",
+      "place-4880176",
+      "place-4880188",
+      "place-4880212",
+      "place-4880224",
+      "place-4880296",
+      "place-4880350",
+      "place-4880356",
+      "place-4880428",
+      "place-4880440",
+      "place-4880560",
+      "place-4880584",
+      "place-4880686",
+      "place-4880716",
+      "place-4880722",
+      "place-4880724",
+      "place-4880728",
+      "place-4880740",
+      "place-4880836"
+    ],
+    "expectedEmpty": [
+      {
+        "canonicalKey": "place-4801000",
+        "governedMemberships": [
+          "48253",
+          "48441"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4801060",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4801108",
+        "governedMemberships": [
+          "48115",
+          "48317"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4801240",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4801514",
+        "governedMemberships": [
+          "48047"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4801576",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4801594",
+        "governedMemberships": [
+          "48057"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4801600",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4801636",
+        "governedMemberships": [
+          "48379",
+          "48499"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4801648",
+        "governedMemberships": [
+          "48417"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4801924",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4802032",
+        "governedMemberships": [
+          "48483"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4802212",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4802272",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4803008",
+        "governedMemberships": [
+          "48507"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4803072",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4803144",
+        "governedMemberships": [
+          "48071"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4803192",
+        "governedMemberships": [
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4803216",
+        "governedMemberships": [
+          "48003"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4803264",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4803300",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4803360",
+        "governedMemberships": [
+          "48387"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4803372",
+        "governedMemberships": [
+          "48253"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4803696",
+        "governedMemberships": [
+          "48009"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4803708",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4803768",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4804000",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4804300",
+        "governedMemberships": [
+          "48127"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4804408",
+        "governedMemberships": [
+          "48433"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4804600",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4805072",
+        "governedMemberships": [
+          "48387"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4805180",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4805288",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4805372",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4805384",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4805528",
+        "governedMemberships": [
+          "48019"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4805648",
+        "governedMemberships": [
+          "48137"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4805750",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4805768",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4805924",
+        "governedMemberships": [
+          "48507"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4805984",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4806060",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4806128",
+        "governedMemberships": [
+          "48071",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4806200",
+        "governedMemberships": [
+          "48071"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4806244",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4806272",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4807000",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4807036",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4807132",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4807144",
+        "governedMemberships": [
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4807156",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4807192",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4807432",
+        "governedMemberships": [
+          "48015"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4807552",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4807636",
+        "governedMemberships": [
+          "48275"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4808128",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4808240",
+        "governedMemberships": [
+          "48291",
+          "48373"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4808260",
+        "governedMemberships": [
+          "48127"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4808488",
+        "governedMemberships": [
+          "48081",
+          "48353"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4808668",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4808830",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4808860",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4808872",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4809160",
+        "governedMemberships": [
+          "48259"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4809172",
+        "governedMemberships": [
+          "48387"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4809232",
+        "governedMemberships": [
+          "48481"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4809250",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4809388",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810072",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810090",
+        "governedMemberships": [
+          "48015"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810156",
+        "governedMemberships": [
+          "48477"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810197",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810252",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810528",
+        "governedMemberships": [
+          "48081"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4810636",
+        "governedMemberships": [
+          "48473"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810648",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810708",
+        "governedMemberships": [
+          "48241"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810852",
+        "governedMemberships": [
+          "48127"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4810912",
+        "governedMemberships": [
+          "48041"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4810960",
+        "governedMemberships": [
+          "48237"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4811236",
+        "governedMemberships": [
+          "48241"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4811536",
+        "governedMemberships": [
+          "48477"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4812388",
+        "governedMemberships": [
+          "48385"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4812502",
+        "governedMemberships": [
+          "48047"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4812916",
+        "governedMemberships": [
+          "48149"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4812982",
+        "governedMemberships": [
+          "48127"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4812988",
+        "governedMemberships": [
+          "48127"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4813024",
+        "governedMemberships": [
+          "48085",
+          "48113",
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4813276",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4813324",
+        "governedMemberships": [
+          "48127"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4813492",
+        "governedMemberships": [
+          "48113",
+          "48139"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4813552",
+        "governedMemberships": [
+          "48453",
+          "48491"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4813684",
+        "governedMemberships": [
+          "48085",
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4813828",
+        "governedMemberships": [
+          "48265"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4813972",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4814038",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4814584",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4814584",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4814704",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4814716",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4814882",
+        "governedMemberships": [
+          "48507"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4814920",
+        "governedMemberships": [
+          "48029",
+          "48187"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4814929",
+        "governedMemberships": [
+          "48157",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4815028",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4815160",
+        "governedMemberships": [
+          "48387"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4815328",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4815436",
+        "governedMemberships": [
+          "48291",
+          "48339",
+          "48407"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4815652",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4815796",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4815976",
+        "governedMemberships": [
+          "48041"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4815988",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4816048",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4816048",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4816168",
+        "governedMemberships": [
+          "48089"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4816216",
+        "governedMemberships": [
+          "48113",
+          "48257"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4816228",
+        "governedMemberships": [
+          "48259"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4816432",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4816468",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4816564",
+        "governedMemberships": [
+          "48119"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4816612",
+        "governedMemberships": [
+          "48113",
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4816636",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4816696",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4817021",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4817336",
+        "governedMemberships": [
+          "48071"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4817768",
+        "governedMemberships": [
+          "48107"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4817811",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4817852",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4817948",
+        "governedMemberships": [
+          "48155"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4818020",
+        "governedMemberships": [
+          "48507"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4818104",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4818134",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4818260",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4818476",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4819000",
+        "governedMemberships": [
+          "48085",
+          "48113",
+          "48121",
+          "48257",
+          "48397"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4819084",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4819108",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4819120",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4819432",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4819435",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4819632",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4819972",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4820092",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4820128",
+        "governedMemberships": [
+          "48387"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4820140",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4820212",
+        "governedMemberships": [
+          "48351"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4820332",
+        "governedMemberships": [
+          "48125"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4820344",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4820540",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4820716",
+        "governedMemberships": [
+          "48087"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4820734",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4820884",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4820926",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4821028",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4821628",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4821844",
+        "governedMemberships": [
+          "48089"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4821988",
+        "governedMemberships": [
+          "48481"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4822000",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4822276",
+        "governedMemberships": [
+          "48379"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4822528",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4822552",
+        "governedMemberships": [
+          "48095"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4822588",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4822660",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4822720",
+        "governedMemberships": [
+          "48239"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4822840",
+        "governedMemberships": [
+          "48447"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4822864",
+        "governedMemberships": [
+          "48481"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4822960",
+        "governedMemberships": [
+          "48413"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4823176",
+        "governedMemberships": [
+          "48149"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4823272",
+        "governedMemberships": [
+          "48029",
+          "48493"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4824036",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4824216",
+        "governedMemberships": [
+          "48379"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4824252",
+        "governedMemberships": [
+          "48047"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4824768",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4824840",
+        "governedMemberships": [
+          "48241"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4824912",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825068",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825168",
+        "governedMemberships": [
+          "48029",
+          "48091",
+          "48259"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825224",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825348",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4825352",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4825368",
+        "governedMemberships": [
+          "48047"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4825392",
+        "governedMemberships": [
+          "48255"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4825404",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825452",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825488",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825644",
+        "governedMemberships": [
+          "48149"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825752",
+        "governedMemberships": [
+          "48113",
+          "48139"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4825795",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4826028",
+        "governedMemberships": [
+          "48149"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4826220",
+        "governedMemberships": [
+          "48047"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4826232",
+        "governedMemberships": [
+          "48121",
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4826516",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4826544",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4827000",
+        "governedMemberships": [
+          "48121",
+          "48251",
+          "48367",
+          "48439",
+          "48497"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4827102",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4827348",
+        "governedMemberships": [
+          "48171"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4827420",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4827540",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4827648",
+        "governedMemberships": [
+          "48167",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4827684",
+        "governedMemberships": [
+          "48085",
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4827876",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4827972",
+        "governedMemberships": [
+          "48033"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4828068",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4828080",
+        "governedMemberships": [
+          "48239"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4828176",
+        "governedMemberships": [
+          "48173"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4828320",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4829000",
+        "governedMemberships": [
+          "48085",
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4829096",
+        "governedMemberships": [
+          "48089"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4829612",
+        "governedMemberships": [
+          "48263"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4829840",
+        "governedMemberships": [
+          "48113",
+          "48139"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4829912",
+        "governedMemberships": [
+          "48089"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4830296",
+        "governedMemberships": [
+          "48275"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4830392",
+        "governedMemberships": [
+          "48503"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4830464",
+        "governedMemberships": [
+          "48113",
+          "48139",
+          "48251",
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4830560",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4830608",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4830644",
+        "governedMemberships": [
+          "48113",
+          "48121",
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4831100",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4831328",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4831640",
+        "governedMemberships": [
+          "48269"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4831715",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4831868",
+        "governedMemberships": [
+          "48285"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4831928",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4832012",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4832240",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4832246",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4832300",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4832456",
+        "governedMemberships": [
+          "48171"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4832696",
+        "governedMemberships": [
+          "48207"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4832720",
+        "governedMemberships": [
+          "48121",
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4832792",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4832840",
+        "governedMemberships": [
+          "48253"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4833020",
+        "governedMemberships": [
+          "48085",
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4833092",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4833146",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4833200",
+        "governedMemberships": [
+          "48473"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4833476",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4833560",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4833824",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4833848",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4833968",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4834018",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4834220",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4834502",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4834532",
+        "governedMemberships": [
+          "48009"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4834628",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4834856",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835000",
+        "governedMemberships": [
+          "48157",
+          "48201",
+          "48339",
+          "48473"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835253",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835324",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835420",
+        "governedMemberships": [
+          "48481"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835528",
+        "governedMemberships": [
+          "48471"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835576",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835612",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835684",
+        "governedMemberships": [
+          "48481"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835915",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4835984",
+        "governedMemberships": [
+          "48015"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4836032",
+        "governedMemberships": [
+          "48265"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4836068",
+        "governedMemberships": [
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4836092",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4837000",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4837112",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4837112",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4837168",
+        "governedMemberships": [
+          "48237"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4837252",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4837420",
+        "governedMemberships": [
+          "48241"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4837468",
+        "governedMemberships": [
+          "48263"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4837984",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838020",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838068",
+        "governedMemberships": [
+          "48085",
+          "48231"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838248",
+        "governedMemberships": [
+          "48267"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4838332",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838452",
+        "governedMemberships": [
+          "48255"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4838476",
+        "governedMemberships": [
+          "48157",
+          "48201",
+          "48473"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838632",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838776",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838848",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838860",
+        "governedMemberships": [
+          "48255"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4838872",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4838896",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4839040",
+        "governedMemberships": [
+          "48265"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4839448",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4839460",
+        "governedMemberships": [
+          "48241"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4839700",
+        "governedMemberships": [
+          "48275"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4839868",
+        "governedMemberships": [
+          "48199"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4839916",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4839928",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4839940",
+        "governedMemberships": [
+          "48041"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4839988",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840036",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840104",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840264",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840276",
+        "governedMemberships": [
+          "48149"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840320",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840342",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840384",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840462",
+        "governedMemberships": [
+          "48041"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840516",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840576",
+        "governedMemberships": [
+          "48019"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4840588",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840674",
+        "governedMemberships": [
+          "48019",
+          "48325"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4840744",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4840756",
+        "governedMemberships": [
+          "48009"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4840984",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841050",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841056",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841116",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841164",
+        "governedMemberships": [
+          "48115"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4841212",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841404",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841452",
+        "governedMemberships": [
+          "48507"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4841579",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4841788",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841800",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841848",
+        "governedMemberships": [
+          "48239"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4841980",
+        "governedMemberships": [
+          "48167",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4842004",
+        "governedMemberships": [
+          "48385"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4842016",
+        "governedMemberships": [
+          "48453",
+          "48491"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4842388",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4842508",
+        "governedMemberships": [
+          "48113",
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4842568",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4842916",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4843000",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4843012",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4843096",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4843120",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4843150",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4843432",
+        "governedMemberships": [
+          "48239"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4843458",
+        "governedMemberships": [
+          "48507"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4843960",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4843972",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4844032",
+        "governedMemberships": [
+          "48107"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4844104",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4844142",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4844162",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4844170",
+        "governedMemberships": [
+          "48115"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4844212",
+        "governedMemberships": [
+          "48481"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4844284",
+        "governedMemberships": [
+          "48503"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4844308",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4845012",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4845048",
+        "governedMemberships": [
+          "48253",
+          "48417"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4845120",
+        "governedMemberships": [
+          "48199"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4845384",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4845576",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4845744",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4845750",
+        "governedMemberships": [
+          "48003"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4846056",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4846080",
+        "governedMemberships": [
+          "48057"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4846308",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4846440",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4846500",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4846716",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4846968",
+        "governedMemberships": [
+          "48319"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4847004",
+        "governedMemberships": [
+          "48345"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4847016",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4847100",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4847337",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4847406",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4847460",
+        "governedMemberships": [
+          "48009"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4847496",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4847628",
+        "governedMemberships": [
+          "48327"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4847676",
+        "governedMemberships": [
+          "48301"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4847700",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4847892",
+        "governedMemberships": [
+          "48113",
+          "48257"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4848048",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4848272",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4848280",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4848320",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4848768",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4848772",
+        "governedMemberships": [
+          "48157",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4848804",
+        "governedMemberships": [
+          "48157",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4848852",
+        "governedMemberships": [
+          "48483"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4849068",
+        "governedMemberships": [
+          "48071",
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4849080",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4849128",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4849314",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4849320",
+        "governedMemberships": [
+          "48417"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4849380",
+        "governedMemberships": [
+          "48071",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4849560",
+        "governedMemberships": [
+          "48285"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850040",
+        "governedMemberships": [
+          "48275"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4850058",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850092",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850100",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850268",
+        "governedMemberships": [
+          "48089"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850472",
+        "governedMemberships": [
+          "48041",
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850580",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850628",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850760",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850772",
+        "governedMemberships": [
+          "48439",
+          "48497"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850868",
+        "governedMemberships": [
+          "48503"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4850920",
+        "governedMemberships": [
+          "48121",
+          "48497"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4850924",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4851012",
+        "governedMemberships": [
+          "48305"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4851036",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4851372",
+        "governedMemberships": [
+          "48351"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4851384",
+        "governedMemberships": [
+          "48015"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4851396",
+        "governedMemberships": [
+          "48471"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4851720",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4851852",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4851900",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4851984",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4852212",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4852356",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4853004",
+        "governedMemberships": [
+          "48071"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4853130",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4853190",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4853304",
+        "governedMemberships": [
+          "48207"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4853436",
+        "governedMemberships": [
+          "48115",
+          "48305"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4853824",
+        "governedMemberships": [
+          "48071",
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4853934",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4853988",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854000",
+        "governedMemberships": [
+          "48503"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4854132",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854192",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854444",
+        "governedMemberships": [
+          "48113",
+          "48139"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854528",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854600",
+        "governedMemberships": [
+          "48101"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4854636",
+        "governedMemberships": [
+          "48095"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4854684",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854780",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854804",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854810",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854868",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4854872",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4855008",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4855020",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4855152",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856108",
+        "governedMemberships": [
+          "48473"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856156",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856252",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4856348",
+        "governedMemberships": [
+          "48039",
+          "48157",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856462",
+        "governedMemberships": [
+          "48439",
+          "48497"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856468",
+        "governedMemberships": [
+          "48119",
+          "48147"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4856482",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856640",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856696",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856804",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4856864",
+        "governedMemberships": [
+          "48237"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4857116",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4857176",
+        "governedMemberships": [
+          "48453",
+          "48491"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4857200",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4857494",
+        "governedMemberships": [
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4857524",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4857596",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4857608",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4857615",
+        "governedMemberships": [
+          "48473"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4857752",
+        "governedMemberships": [
+          "48199"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4857968",
+        "governedMemberships": [
+          "48501"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4858016",
+        "governedMemberships": [
+          "48085",
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858040",
+        "governedMemberships": [
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858088",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858436",
+        "governedMemberships": [
+          "48149"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858448",
+        "governedMemberships": [
+          "48291"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858532",
+        "governedMemberships": [
+          "48379"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4858568",
+        "governedMemberships": [
+          "48057"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858586",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858664",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858820",
+        "governedMemberships": [
+          "48245",
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858850",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858916",
+        "governedMemberships": [
+          "48057"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858940",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4858952",
+        "governedMemberships": [
+          "48057"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4859336",
+        "governedMemberships": [
+          "48473"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4859576",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4859636",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4859642",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4859696",
+        "governedMemberships": [
+          "48085",
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4859748",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4860020",
+        "governedMemberships": [
+          "48087"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4860164",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4860176",
+        "governedMemberships": [
+          "48045"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4860356",
+        "governedMemberships": [
+          "48107"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4860380",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4860608",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4861532",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4861568",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4861784",
+        "governedMemberships": [
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4861796",
+        "governedMemberships": [
+          "48085",
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4861844",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4861892",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4861904",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4862384",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4862408",
+        "governedMemberships": [
+          "48471"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4862504",
+        "governedMemberships": [
+          "48121",
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4862528",
+        "governedMemberships": [
+          "48345"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4862564",
+        "governedMemberships": [
+          "48081"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4862636",
+        "governedMemberships": [
+          "48207"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4862732",
+        "governedMemberships": [
+          "48089"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4862816",
+        "governedMemberships": [
+          "48137"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4863008",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863044",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863200",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863272",
+        "governedMemberships": [
+          "48199"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863284",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863332",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863500",
+        "governedMemberships": [
+          "48453",
+          "48491"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863524",
+        "governedMemberships": [
+          "48149"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863572",
+        "governedMemberships": [
+          "48113",
+          "48397"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863668",
+        "governedMemberships": [
+          "48085",
+          "48231",
+          "48397"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4863752",
+        "governedMemberships": [
+          "48207"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4863788",
+        "governedMemberships": [
+          "48255"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4864064",
+        "governedMemberships": [
+          "48085",
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4864112",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4864172",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4864220",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4864307",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4864448",
+        "governedMemberships": [
+          "48087"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4864460",
+        "governedMemberships": [
+          "48241"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865000",
+        "governedMemberships": [
+          "48029",
+          "48091",
+          "48325"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865048",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865344",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865345",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865372",
+        "governedMemberships": [
+          "48015"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865516",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865552",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865564",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865660",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865726",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4865792",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4865864",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866000",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866089",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866128",
+        "governedMemberships": [
+          "48029",
+          "48091",
+          "48187"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866188",
+        "governedMemberships": [
+          "48149"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866248",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866284",
+        "governedMemberships": [
+          "48009"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4866392",
+        "governedMemberships": [
+          "48071",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866416",
+        "governedMemberships": [
+          "48057"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866428",
+        "governedMemberships": [
+          "48113",
+          "48257"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866464",
+        "governedMemberships": [
+          "48015"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866686",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866704",
+        "governedMemberships": [
+          "48029",
+          "48091",
+          "48187"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4866968",
+        "governedMemberships": [
+          "48023"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4867082",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867100",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867160",
+        "governedMemberships": [
+          "48483"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4867268",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867400",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867472",
+        "governedMemberships": [
+          "48089"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867640",
+        "governedMemberships": [
+          "48285"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867664",
+        "governedMemberships": [
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867688",
+        "governedMemberships": [
+          "48071",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867763",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867778",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4867832",
+        "governedMemberships": [
+          "48199"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4867904",
+        "governedMemberships": [
+          "48045"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4867964",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4868132",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4868708",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4868756",
+        "governedMemberships": [
+          "48435"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4868828",
+        "governedMemberships": [
+          "48199"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4868846",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4868978",
+        "governedMemberships": [
+          "48015"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4869032",
+        "governedMemberships": [
+          "48121",
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4869326",
+        "governedMemberships": [
+          "48351"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4869548",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4869848",
+        "governedMemberships": [
+          "48125"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4869908",
+        "governedMemberships": [
+          "48157",
+          "48201"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4869932",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4869980",
+        "governedMemberships": [
+          "48207",
+          "48253"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4870154",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4870232",
+        "governedMemberships": [
+          "48431"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4870460",
+        "governedMemberships": [
+          "48171"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4870520",
+        "governedMemberships": [
+          "48071"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4870808",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4870868",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4871156",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4871324",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4871384",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4871492",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4871708",
+        "governedMemberships": [
+          "48305"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4871966",
+        "governedMemberships": [
+          "48245"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4872296",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4872392",
+        "governedMemberships": [
+          "48071",
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4872530",
+        "governedMemberships": [
+          "48121"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4872578",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4872740",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4872896",
+        "governedMemberships": [
+          "48447"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4872989",
+        "governedMemberships": [
+          "48167"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4872992",
+        "governedMemberships": [
+          "48311"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4873057",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4873224",
+        "governedMemberships": [
+          "48185"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4873592",
+        "governedMemberships": [
+          "48085",
+          "48147",
+          "48181"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4873710",
+        "governedMemberships": [
+          "48121",
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4873856",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4873904",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4874168",
+        "governedMemberships": [
+          "48025"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4874408",
+        "governedMemberships": [
+          "48029",
+          "48187"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4874492",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4874924",
+        "governedMemberships": [
+          "48085",
+          "48181"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4874984",
+        "governedMemberships": [
+          "48239"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4875068",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4875476",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4875626",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4875752",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4875764",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4876012",
+        "governedMemberships": [
+          "48321"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4876240",
+        "governedMemberships": [
+          "48015"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4876564",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4876564",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4876672",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4876924",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877020",
+        "governedMemberships": [
+          "48089"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877044",
+        "governedMemberships": [
+          "48207"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4877080",
+        "governedMemberships": [
+          "48115"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4877152",
+        "governedMemberships": [
+          "48087"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4877196",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877272",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877416",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877620",
+        "governedMemberships": [
+          "48121",
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877632",
+        "governedMemberships": [
+          "48453"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877680",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877740",
+        "governedMemberships": [
+          "48085"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877746",
+        "governedMemberships": [
+          "48157"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877752",
+        "governedMemberships": [
+          "48361"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877788",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4877866",
+        "governedMemberships": [
+          "48215"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4878076",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4878136",
+        "governedMemberships": [
+          "48481"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4878208",
+        "governedMemberships": [
+          "48483"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4878544",
+        "governedMemberships": [
+          "48439"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4879192",
+        "governedMemberships": [
+          "48039"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4879204",
+        "governedMemberships": [
+          "48199",
+          "48457"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4879408",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4879576",
+        "governedMemberships": [
+          "48113"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4879612",
+        "governedMemberships": [
+          "48305"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4879672",
+        "governedMemberships": [
+          "48029"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4879696",
+        "governedMemberships": [
+          "48009",
+          "48077"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4879792",
+        "governedMemberships": [
+          "48071"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4879919",
+        "governedMemberships": [
+          "48041"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4880044",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4880144",
+        "governedMemberships": [
+          "48339"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4880188",
+        "governedMemberships": [
+          "48447"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4880212",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4880212",
+        "governedMemberships": [
+          "48457"
+        ],
+        "dimension": "rail"
+      },
+      {
+        "canonicalKey": "place-4880356",
+        "governedMemberships": [
+          "48085",
+          "48113",
+          "48397"
+        ],
+        "dimension": "roadway"
+      },
+      {
+        "canonicalKey": "place-4880716",
+        "governedMemberships": [
+          "48505"
+        ],
+        "dimension": "rail"
+      }
+    ],
+    "evidenceGaps": [],
+    "productionContradictions": [],
+    "systemicClasses": [
+      {
+        "classId": "DRIVETEXAS_LIVE_BROWSER_REQUIRED",
+        "classification": "LIVE_BROWSER_REQUIRED",
+        "affectedCanonicalCommunities": 1859,
+        "affectedCounties": 254,
+        "productionContradiction": false,
+        "repairAuthorized": false
+      },
+      {
+        "classId": "OFFICIAL_ROADWAY_LIVE_BROWSER_REQUIRED",
+        "classification": "LIVE_BROWSER_REQUIRED",
+        "affectedCanonicalCommunities": 1859,
+        "affectedCounties": 254,
+        "productionContradiction": false,
+        "repairAuthorized": false
+      },
+      {
+        "classId": "ALERTS_LIVE_BROWSER_REQUIRED",
+        "classification": "LIVE_BROWSER_REQUIRED",
+        "affectedCanonicalCommunities": 1859,
+        "affectedCounties": 254,
+        "productionContradiction": false,
+        "repairAuthorized": false
+      },
+      {
+        "classId": "RAIL_LIVE_BROWSER_REQUIRED",
+        "classification": "LIVE_BROWSER_REQUIRED",
+        "affectedCanonicalCommunities": 1859,
+        "affectedCounties": 254,
+        "productionContradiction": false,
+        "repairAuthorized": false
+      },
+      {
+        "classId": "SHOW_ON_MAP_LIVE_BROWSER_REQUIRED",
+        "classification": "LIVE_BROWSER_REQUIRED",
+        "affectedCanonicalCommunities": 1859,
+        "affectedCounties": 254,
+        "productionContradiction": false,
+        "repairAuthorized": false
+      },
+      {
+        "classId": "STALE_OWNERSHIP_LIVE_BROWSER_REQUIRED",
+        "classification": "LIVE_BROWSER_REQUIRED",
+        "affectedCanonicalCommunities": 1859,
+        "affectedCounties": 254,
+        "productionContradiction": false,
+        "repairAuthorized": false
+      }
+    ]
+  },
+  "conclusion": "NO_PRODUCTION_CONTRADICTION_PROVEN"
+}
