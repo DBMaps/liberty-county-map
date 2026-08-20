@@ -95756,12 +95756,6 @@ function selectGridlySettingsAwarenessArea(value = "", source = "settings_awaren
     document.querySelectorAll("[data-v2-settings-status]").forEach((node) => { node.textContent = "Awareness Area could not be saved on this device."; });
     return false;
   }
-  const resolvedCountyId = typeof gridlyResolveCountyIdForAwarenessArea === "function" ? gridlyResolveCountyIdForAwarenessArea(saved) : GRIDLY_DEFAULT_COUNTY_ID;
-  if (typeof gridlySetActiveCountyContext === "function") gridlySetActiveCountyContext(resolvedCountyId);
-  const selectedArea = typeof resolveGridlyAwarenessArea === "function" ? resolveGridlyAwarenessArea(saved) : null;
-  if (selectedArea && typeof gridlyDispatchSemanticCamera === "function") {
-    gridlyDispatchSemanticCamera(selectedArea, resolvedCountyId, { source });
-  }
   const scope = root || (typeof document !== "undefined" ? document : null);
   scope?.querySelectorAll?.("[data-gridly-awareness-community-select]")?.forEach((select) => {
     if (Array.from(select.options || []).some((option) => normalizeGridlyAwarenessAreaLookupText(option.value) === normalizeGridlyAwarenessAreaLookupText(saved))) {

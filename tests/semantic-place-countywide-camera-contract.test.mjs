@@ -132,7 +132,8 @@ test('El Paso and Bexar COUNTYWIDE cameras retain geometry, padding, and max zoo
 
 test('Home, picker, restore/startup and lifecycle paths converge without PLACE rewrites', () => {
   assert.match(body('gridlyFocusConfirmedHomeSelection', 'const GRIDLY_LP0361_PASSIVE'), /gridlyDispatchSemanticCamera/);
-  assert.match(body('selectGridlySettingsAwarenessArea', 'function gridlyCommunityCoverageExpansionAudit'), /gridlyDispatchSemanticCamera/);
+  assert.match(body('selectGridlySettingsAwarenessArea', 'function gridlyCommunityCoverageExpansionAudit'), /saveGridlyHomeTownPreference/);
+  assert.doesNotMatch(body('selectGridlySettingsAwarenessArea', 'function gridlyCommunityCoverageExpansionAudit'), /gridlyDispatchSemanticCamera/);
   assert.match(body('applyGridlyHomeTownAwarenessContext', 'function installLayerPickerDebugDiagnostics'), /gridlyDispatchSemanticCamera/);
   assert.match(app, /gridlyRestoreHomePersonalizationOnStartup\?\.\(\)/);
   assert.match(app, /applyGridlyHomeTownAwarenessContext\(\{ source: "map_init"/);
