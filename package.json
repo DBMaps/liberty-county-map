@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:statewide-audit-reconciliation": "node tools/statewide-audit/reconcile-certified-export.mjs --write",
+    "verify:statewide-audit-reconciliation": "node tools/statewide-audit/reconcile-certified-export.mjs",
+    "test:statewide-audit-reconciliation": "node --test tests/statewide-audit-reconciliation.test.mjs",
     "test:lp214": "node --test tests/lp214-*",
     "build:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --write",
     "verify:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --verify",
