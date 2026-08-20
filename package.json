@@ -14,6 +14,7 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "test:lp214": "node --test tests/lp214-*",
     "build:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --write",
     "verify:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --verify",
     "test:lp215": "node --test tests/lp215-statewide-consumer-wiring-certification.test.mjs tests/lp215-live-browser-certifier.test.mjs",
