@@ -19,8 +19,8 @@ function body(name, next = 'function ') {
 }
 
 test('governed PLACE artifact identity and statewide coverage remain exact', () => {
-  assert.equal(presentationBytes.length, 137855);
-  assert.equal(crypto.createHash('sha256').update(presentationBytes).digest('hex'), 'b4077f9a6532619c92c193a7849545dcc9f59abd5fbd717c0714442a1b86d18e');
+  assert.equal(presentationBytes.length, 137736);
+  assert.equal(crypto.createHash('sha256').update(presentationBytes).digest('hex'), '5fa822ceee9350d875012c6070c15f275b4b8309c5c56a07ce04fb710d5bc723');
   assert.equal(presentation.counts.eligiblePlaceCount, 1859);
   assert.equal(presentation.counts.presentationTargetCount, 1859);
   assert.equal(Object.keys(presentation.places).length, 1859);
@@ -45,13 +45,21 @@ test('PLACE dispatcher owns an exact zoom-13 setView and never fits county data'
   assert.match(placeBranch, /gridlyPlacePresentationTargets\?\.\[placeGeoid\]/);
   assert.match(placeBranch, /setGridlyAwarenessView\([^;]+targetZoom/);
   assert.match(placeBranch, /compensateForChrome: false/);
-  assert.doesNotMatch(placeBranch, /fitBounds|County|defaultCenter|prior|governedFocus/);
   assert.match(app, /const GRIDLY_TOWN_STARTUP_ZOOM = 13;/);
   assert.match(body('setGridlyAwarenessView', 'function initMap'), /map\.setView/);
+
+  const community = projection.communities.find((entry) => entry.displayName === 'Dallas');
+  const target = presentation.places[community.placeGeoid];
+  const { context, calls } = createCameraHarness();
+  assert.equal(context.gridlyDispatchSemanticCamera({ placeGeoid: community.placeGeoid }, community.primaryCountyId), true);
+  assert.equal(calls.synchronizeCounty.length, 1);
+  assert.equal(calls.synchronizeCounty[0].countyId, community.primaryCountyId);
+  assert.deepEqual(JSON.parse(JSON.stringify(calls.setView)), [{ lat: target.lat, lng: target.lon, zoom: 13, options: { animate: false } }]);
+  assert.equal(calls.fitBounds.length, 0);
 });
 
 function createCameraHarness() {
-  const calls = { setView: [], panBy: [], fitBounds: [] };
+  const calls = { synchronizeCounty: [], setView: [], panBy: [], fitBounds: [] };
   const map = {
     center: null,
     setView([lat, lng], zoom, options) { this.center = { lat, lng }; calls.setView.push({ lat, lng, zoom, options }); },
@@ -68,6 +76,10 @@ function createCameraHarness() {
     gridlyPlacePresentationTargets: presentation.places,
     gridlySemanticCameraSequence: 0,
     gridlyCommittedSemanticCamera: null,
+    gridlySynchronizeActiveCountyForOperationalContext(area, countyId, source) {
+      calls.synchronizeCounty.push({ area, countyId, source });
+      return String(countyId || area?.countyId || '');
+    },
     gridlyNormalizeCountyId(value) { return String(value); },
     gridlyResolveCanonicalPlaceGeoid(area) { return /^48\d{5}$/.test(area?.placeGeoid || '') ? area.placeGeoid : null; },
     getGridlyVisibleMapChromeInsets() { return { top: 120, bottom: 200, left: 20, right: 20 }; },
