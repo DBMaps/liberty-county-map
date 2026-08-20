@@ -36,3 +36,24 @@ npm run verify:lp215
 ```
 
 The generated matrix contains every failing county and its classification; no county is silently omitted.
+
+## Phase 2 owner live certifier
+
+Open the trusted Gridly build once, open DevTools **Console** once, and paste this single bootstrap block. It loads committed audit tooling; it does not patch `js/app.js` or call a private state setter. Selection is performed by searching and applying the real production Settings area picker.
+
+```js
+fetch('/tools/lp215/lp215-live-browser-certifier.js',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`LP215 certifier ${r.status}`);return r.text()}).then(source=>(0,eval)(source))
+```
+
+Progress is concise, for example:
+
+```text
+[086/254] gillespie / Fredericksburg
+CONTEXT PASS | ROADWAY PASS | DRIVETEXAS HEALTHY_EMPTY | ALERTS PASS | RAIL PASS | STALE PASS
+```
+
+The audit checkpoints after every county in session storage under `GRIDLY_LP215_AUDIT_CHECKPOINT_V1`. If the tab remains open, call `gridlyLp215Stop()` to stop after the current bounded wait and `gridlyLp215Resume()` to continue. After a reload, paste the bootstrap again; it resumes the checkpoint automatically. `gridlyLp215Status()` returns counts without changing runtime state. `gridlyLp215ClearAuditCheckpoint()` explicitly deletes every audit-namespaced session key.
+
+Call `gridlyLp215Export()` to download deterministic, formatted JSON, or `gridlyLp215Export(false)` to return the same JSON string for copying. Partial exports are valid and list every not-run or unsettled county as incomplete. A timeout is recorded separately as `SOURCE_TIMEOUT` or `RUNTIME_SETTLEMENT_TIMEOUT`; it is not silently converted into a production defect.
+
+The browser helper intentionally fails closed when a required production contract is not observable. In particular, a DriveTexas zero is never called `HEALTHY_EMPTY` without the governed source envelope confirming a successful current fetch, and rail parity uses exact policy/Leaflet/DOM ID sets rather than equating awareness inventory with viewport markers.
