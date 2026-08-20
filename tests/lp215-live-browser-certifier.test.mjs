@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { classifyDriveTexas, compareStale, evaluateAlerts, evaluateExpectedEmptyRail, exactIdParity, checkpointPayload, resumeIndex, TERMINAL_STATES } from '../tools/lp215/live-certifier-core.mjs';
+import { classifyDriveTexas, compareStale, evaluateAlerts, evaluateExpectedEmptyRail, evaluateSeedSettlement, exactIdParity, checkpointPayload, resumeIndex, TERMINAL_STATES } from '../tools/lp215/live-certifier-core.mjs';
 
 const report = JSON.parse(fs.readFileSync('reports/lp215/statewide-consumer-wiring-certification.json', 'utf8'));
 
@@ -66,4 +66,39 @@ test('Fredericksburg is the explicit expected-empty control', () => {
   assert.equal(row.representativeCommunity, 'Fredericksburg'); assert.equal(row.placeGeoid, '4827348');
   assert.deepEqual(row.semanticCameraTarget, { lat:30.2752011, lng:-98.8719843, zoom:13 });
   assert.equal(row.roadwayFeatureCount, 3725); assert.equal(row.railManifestStatus, 'ACTIVE_EMPTY'); assert.equal(row.railGovernedCount, 0);
+});
+
+const seedRow = report.rows[253];
+const settledSeed = (overrides = {}) => ({
+  selectedCommunity: seedRow.canonicalKey, activeCounty: seedRow.countyId,
+  mapCenter: { lat: seedRow.semanticCameraTarget.lat, lng: seedRow.semanticCameraTarget.lng }, mapZoom: 13,
+  roadwayCounty: seedRow.countyId, roadwayLoaded: true, driveState: 'HEALTHY_EMPTY',
+  officialRoadwaySettled: true, alertsSettled: true, railSourceCounty: seedRow.countyId,
+  railInventoryCount: 0, railRenderCalls: 9, railFilterCalls: 0, staleCleanupComplete: true,
+  ...overrides
+});
+
+test('predecessor community, county, camera, and consumer generations settle independently', () => {
+  const result = evaluateSeedSettlement(seedRow, settledSeed());
+  assert.equal(result.settled, true); assert.deepEqual(result.unsatisfied, []);
+});
+
+test('terminal DriveTexas failure and empty Alerts do not block the seed', () => {
+  const result = evaluateSeedSettlement(seedRow, settledSeed({ driveState: 'FAILED', officialRoadwaySettled: false, alertsSettled: false }));
+  assert.equal(result.settled, true);
+  assert.equal(result.conditions.driveTexasLifecycleTerminal, true);
+  assert.equal(result.conditions.alertsConsumerSettled, true);
+});
+
+test('authoritative expected-empty rail settles without inventory or filter calls', () => {
+  const result = evaluateSeedSettlement(seedRow, settledSeed({ railInventoryCount: 0, railRenderCalls: 9, railFilterCalls: 0 }));
+  assert.equal(result.settled, true);
+  assert.equal(result.conditions.railInventoryTerminal, true);
+  assert.equal(result.conditions.railPresentationTerminal, true);
+});
+
+test('nonterminal predecessor context remains unsettled and reports every condition', () => {
+  const result = evaluateSeedSettlement(seedRow, settledSeed({ activeCounty: 'dimmit-tx', driveState: null, railRenderCalls: 0 }));
+  assert.equal(result.settled, false);
+  assert.deepEqual(result.unsatisfied, ['activeCountyMatchesExpected', 'driveTexasLifecycleTerminal', 'railInventoryTerminal', 'railPresentationTerminal']);
 });
