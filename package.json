@@ -16,7 +16,7 @@
   "scripts": {
     "build:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --write",
     "verify:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --verify",
-    "test:lp215": "node --test tests/lp215-statewide-consumer-wiring-certification.test.mjs",
+    "test:lp215": "node --test tests/lp215-statewide-consumer-wiring-certification.test.mjs tests/lp215-live-browser-certifier.test.mjs",
     "test:lp213": "node --test tests/lp213-harris-dallas-consumer-transition.test.mjs tests/lp213-statewide-multi-county-place-audit.test.mjs",
     "test:lp212": "node --test tests/lp212-statewide-roadway-consumer-runtime.test.mjs",
     "test:lp212:identity": "node --test tests/lp212-roadway-identity-schema-compatibility.test.mjs",
