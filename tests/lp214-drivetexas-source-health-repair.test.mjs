@@ -53,13 +53,13 @@ test("healthy current-awareness records enter the governed consumer selector ins
   assert.equal(value.quietEligible, false);
 });
 
-test("Fredericksburg canonical place ownership preserves the connector's one current-area record", () => {
-  const operationalCounty = { key: "gillespie-tx", countyId: "48171", label: "Gillespie County" };
+test("Fredericksburg operational selection and canonical PLACE mismatch preserves the connector's one current-area record", () => {
+  const operationalCounty = { key: "gillespie-tx-fredericksburg", countyId: "gillespie-tx", placeGeoid: "4827348", label: "Fredericksburg" };
   const fredericksburg = {
-    key: "place-4827348",
+    key: "gillespie-tx-fredericksburg",
     canonicalKey: "place-4827348",
     placeGeoid: "4827348",
-    countyId: "48171",
+    countyId: "gillespie-tx",
     label: "Fredericksburg",
     lat: 30.2752,
     lng: -98.8719,
@@ -79,6 +79,9 @@ test("Fredericksburg canonical place ownership preserves the connector's one cur
   h.window.gridlyDriveTexasConnector.areaLifecycleAudit = () => ({
     lastFetchError: null,
     lastSuccessfulFetchTimestamp: "2026-08-17T12:00:00.000Z",
+    activeCounty: "gillespie-tx",
+    activeCommunity: "Fredericksburg",
+    currentAwarenessAreaRecordCount: 1,
     currentAwarenessViewIdentity: "place-4827348",
     currentAwarenessViewMatchesSelectedArea: true
   });

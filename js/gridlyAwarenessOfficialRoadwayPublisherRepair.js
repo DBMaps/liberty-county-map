@@ -94,7 +94,11 @@
   }
 
   function canonicalAreaKey(area) {
-    return String(area?.key || area?.canonicalKey || area?.id || "").trim();
+    // Governed presentation contexts retain the operational selection key
+    // alongside the canonical PLACE owner.  Consumer ownership must prefer
+    // the canonical owner; the operational key is only a fallback for older
+    // county/context shapes that do not publish canonicalKey.
+    return String(area?.canonicalKey || area?.key || area?.id || "").trim();
   }
 
   function buildSharedActiveIssueContract(summary, officialInArea, officialSource, selectedArea) {
