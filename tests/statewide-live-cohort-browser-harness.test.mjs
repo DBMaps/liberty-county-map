@@ -55,22 +55,23 @@ test('ROADWAY_WITH_DATA requires current source, loaded terminal state, and data
   assert.equal(harness.settlement(row, { ...base, roadwayFeatureCount: 0 }).roadwayReady, false);
 });
 test('DriveTexas keeps all terminal health states distinct and never manufactures healthy empty', () => {
-  assert.equal(harness.driveTexasState({ sourceStatus: 'HEALTHY_WITH_DATA' }), 'HEALTHY_WITH_DATA');
-  assert.equal(harness.driveTexasState({ sourceStatus: 'HEALTHY_EMPTY' }), null);
-  assert.equal(harness.driveTexasState({ sourceStatus: 'HEALTHY_EMPTY', requestCompleted: true }), 'HEALTHY_EMPTY');
-  assert.equal(harness.driveTexasState({ sourceStatus: 'FAILED' }), 'FAILED');
-  assert.equal(harness.driveTexasState({ sourceStatus: 'STALE_RETAINED' }), 'RETAINED');
-  assert.equal(harness.driveTexasState({ sourceStatus: 'UNAVAILABLE' }), 'UNAVAILABLE');
-  assert.equal(harness.driveTexasState({}, true), 'TIMEOUT');
+  const base = { currentRequestOwnership: 'PROVEN', requestAttempted: true, requestSuccess: true, requestCompletedAt: 2 };
+  assert.equal(harness.driveTexasState({ ...base, consumerEnvelopeRecordCount: 1 }), 'HEALTHY_WITH_DATA');
+  assert.equal(harness.driveTexasState({ ...base, consumerEnvelopeRecordCount: 0 }), 'HEALTHY_EMPTY');
+  assert.equal(harness.driveTexasState({ ...base, currentRequestOwnership: 'NOT_PROVEN', consumerEnvelopeRecordCount: 8 }), null);
+  assert.equal(harness.driveTexasState({ requestAttempted: true, requestSuccess: false }), 'SOURCE_FAILURE');
+  assert.equal(harness.driveTexasState({ retainedDataPresent: true }), 'RETAINED_DATA');
+  assert.equal(harness.driveTexasState({ requestAttempted: true, requestSuccess: null, requestCompletedAt: null }), 'IN_FLIGHT');
+  assert.equal(harness.driveTexasState({ requestAttempted: true, requestSuccess: null, requestCompletedAt: null }, true), 'TIMEOUT');
 });
 test('manual actions pause and require the explicit continue command', () => {
   assert.match(source, /\[MANUAL ACTION REQUIRED\]/);
-  assert.match(source, /state\.waiting = \{ row, result, before: snapshot\(row\) \}/);
+  assert.match(source, /state\.waiting = \{ row, result, before: manualActionSnapshot\(row, beforeObservation\) \}/);
   assert.match(source, /gridlyStatewideCohortContinue = async/);
 });
 test('checkpoint resume validates the completed artifact prefix', () => {
   harness.state.cohort = artifact; harness.state.rows = artifact.itinerary;
-  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v5', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
+  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v6', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
   assert.equal(harness.validateCheckpoint(checkpoint).length, 1);
   assert.throws(() => harness.validateCheckpoint({ ...checkpoint, completedPrefix: [{ ...checkpoint.completedPrefix[0], stateVectorId: 'wrong' }] }), /PREFIX_MISMATCH/);
 });
@@ -96,11 +97,11 @@ test('export is deterministic for unchanged audit state and supports no-download
 });
 
 
-test('V5 checkpoint namespace invalidates the incomplete V4 row', () => {
-  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V5');
+test('V6 checkpoint namespace rejects V5 certification', () => {
+  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V6');
   assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V3'), false);
-  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V4'), false);
-  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v4', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
+  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V5'), false);
+  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v5', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
 });
 
 async function exerciseSelection(row, configure = () => {}) {
@@ -254,4 +255,51 @@ test('first selection blocker stops the run without attempting later rows', asyn
   assert.equal(harness.state.results.length, 1);
   assert.equal(harness.state.stopped, true);
   assert.equal(harness.state.index, 1);
+});
+
+test('Addison and Cape Royale positive counts require current request ownership', () => {
+  for (const count of [8, 1]) {
+    const owned = { currentRequestOwnership: 'PROVEN', requestAttempted: true, requestSuccess: true, requestCompletedAt: 2, consumerEnvelopeRecordCount: count };
+    assert.equal(harness.driveTexasState(owned), 'HEALTHY_WITH_DATA');
+    assert.equal(harness.driveTexasState({ ...owned, currentRequestOwnership: 'NOT_PROVEN' }), null);
+    const observed = harness.counts({ driveTexasRecordIds: Array.from({ length: count }, (_, i) => String(i)), awareness: { activeOfficialRoadwayCount: count }, driveTexasState: 'HEALTHY_WITH_DATA', official: { sourceRecordCount: count, eligibleRecordCount: count }, officialMarkerIds: Array.from({ length: count }, (_, i) => String(i)), alertsSurface: {}, alertCardIds: [] });
+    assert.deepEqual([observed.driveTexasCurrentAreaCount, observed.consumerEnvelopeCount, observed.officialRoadwaySourceCount, observed.eligibleMarkerCount, observed.renderedMarkerCount], [count, count, count, count, count]);
+  }
+});
+
+test('DriveTexas evidence proves matching area and generation, not count alone', () => {
+  const row = { placeGeoid: '4801900', canonicalKey: 'place-4801900', countyId: 'dallas-tx' };
+  const evidence = harness.driveTexasEvidence(row, { areaIdentity: 'place-4801900', requestGeneration: 7, records: Array(8).fill({}) }, { requestGeneration: 7, requestAttempted: true, requestSuccess: true, requestCompletedAt: 2 }, {}, { sourceRecordCount: 8 }, { publishedAlertCount: 8 });
+  assert.equal(evidence.currentRequestOwnership, 'PROVEN');
+  assert.equal(evidence.consumerEnvelopeRecordCount, 8);
+  assert.equal(harness.driveTexasState(evidence), 'HEALTHY_WITH_DATA');
+  assert.equal(harness.driveTexasEvidence(row, { ...evidence, areaIdentity: 'wrong', records: [{}] }, evidence, {}, {}, {}).currentRequestOwnership, 'NOT_PROVEN');
+});
+
+function manual(overrides = {}) { return { expectedExistingMarkerIdentity: 'incident-1', markerObjectIdentity: 'marker-object-1', viewportContainsMarker: false, mapCenter: [0, 0], popupOpen: false, activeCounty: 'chambers-tx', selectedAwarenessKey: 'place-4806128', canonicalPlace: '4806128', markerRegistryCount: 1, matchingMarkerCount: 1, requestGeneration: 4, ...overrides }; }
+test('manual offscreen and already-visible handshakes require positive focus evidence', () => {
+  assert.equal(harness.evaluateManualAction(manual(), manual({ viewportContainsMarker: true, mapCenter: [1, 1], popupOpen: true })).status, 'MANUAL_ACTION_PROVEN');
+  assert.equal(harness.evaluateManualAction(manual({ viewportContainsMarker: true }), manual({ viewportContainsMarker: true, popupOpen: true })).status, 'MANUAL_ACTION_PROVEN');
+});
+test('continue without action, duplicates, popup loss, and county mutation are not proven', () => {
+  assert.equal(harness.evaluateManualAction(manual(), manual()).evidenceClassification, 'OWNER_ACTION_NOT_PROVEN');
+  assert.equal(harness.evaluateManualAction(manual(), manual({ viewportContainsMarker: true, popupOpen: true, matchingMarkerCount: 2 })).firstFalseOperand, 'noDuplicateMarker');
+  assert.equal(harness.evaluateManualAction(manual(), manual({ viewportContainsMarker: true })).firstFalseOperand, 'popupOpen');
+  assert.equal(harness.evaluateManualAction(manual(), manual({ viewportContainsMarker: true, popupOpen: true, activeCounty: 'harris-tx' })).firstFalseOperand, 'activeCountyUnchanged');
+});
+test('stale failure exports exact predecessor/current operands and first false name', () => {
+  const previous = { community: 'old', canonicalPlace: '1', county: 'old-county', roadwayCounty: 'old-county', railCounty: 'old-county', driveTexasIds: [], railIds: [], alertIds: ['stale'], officialIds: [] };
+  const current = { context: { awarenessAreaKey: 'new', canonicalPlaceGeoid: '2', activeCountyId: 'new-county', runtimeInventoryCounty: 'new-county' }, roadway: { loadedRoadwayCounty: 'new-county' }, driveTexasRecordIds: [], railLeafletIds: [], alertCardIds: ['stale'], officialMarkerIds: [] };
+  const result = harness.compareStale(previous, current, ['cleanup']);
+  assert.equal(result.firstFalseOperand, 'alertsPublication');
+  assert.deepEqual(result.operands.previousAlertsIds, ['stale']);
+  assert.deepEqual(result.operands.currentAlertsIds, ['stale']);
+});
+
+test('Baytown V6 control converges canonical PLACE and both operational source counties', () => {
+  const row = artifact.itinerary.find(row => row.placeGeoid === '4806128');
+  assert.equal(row.countyId, 'chambers-tx');
+  const observation = { context: { activeCountyId: 'chambers-tx', canonicalPlaceGeoid: '4806128', runtimeInventoryCounty: 'chambers-tx' }, roadway: { loadedRoadwayCounty: 'chambers-tx', activeCountyPackageLoaded: true }, roadwayFeatureCount: 1, rail: { runtimeCrossingInventoryCount: 1 }, railPolicyIds: ['r'], railLeafletIds: ['r'], railDomIds: ['r'], driveTexasState: 'HEALTHY_EMPTY' };
+  const converged = harness.settlement({ ...row, liveClassesCovered: [], roadwayState: 'ROADWAY_WITH_DATA', railState: 'ACTIVE_POSITIVE' }, observation);
+  assert.deepEqual({ contextReady: converged.contextReady, roadwayReady: converged.roadwayReady, railReady: converged.railReady }, { contextReady: true, roadwayReady: true, railReady: true });
 });
