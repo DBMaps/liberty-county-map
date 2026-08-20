@@ -3,7 +3,9 @@
   "mode": "READ_ONLY_AUDIT",
   "productionPatchApplied": false,
   "selectionMethodology": "For each county in ascending five-digit FIPS order, select the lexicographically smallest canonical PLACE key that has a PLACE GEOID, includes the county in governed membership, and has a production presentation target. Use an explicit countywide fallback only when none exists.",
-  "transitionOrder": "ascending county FIPS; each row predecessor is the preceding row (row 1 predecessor is row 254)",
+  "transitionOrder": "ascending county FIPS; row 1 has no audit-controlled predecessor; rows 2-254 use the immediately preceding completed row",
+  "controlledStaleTransitions": 253,
+  "optionalWraparound": "NON_BLOCKING_AFTER_CERTIFICATION",
   "certificationBoundary": {
     "repository": "Static governed identity, presentation, roadway manifest, and authoritative rail package state.",
     "live": "Settled camera, connector lifecycle, consumer counts, Alerts DOM, rail viewport/Leaflet/DOM IDs, and transition cleanup require owner browser execution.",
