@@ -17,6 +17,7 @@
     "build:statewide-audit-reconciliation": "node tools/statewide-audit/reconcile-certified-export.mjs --write",
     "verify:statewide-audit-reconciliation": "node tools/statewide-audit/reconcile-certified-export.mjs",
     "test:statewide-audit-reconciliation": "node --test tests/statewide-audit-reconciliation.test.mjs",
+    "test:statewide-cohort-harness": "node --test tests/statewide-live-cohort-browser-harness.test.mjs",
     "test:lp214": "node --test tests/lp214-*",
     "build:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --write",
     "verify:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --verify",
