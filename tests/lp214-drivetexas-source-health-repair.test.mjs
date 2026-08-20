@@ -53,6 +53,47 @@ test("healthy current-awareness records enter the governed consumer selector ins
   assert.equal(value.quietEligible, false);
 });
 
+test("Fredericksburg canonical place ownership preserves the connector's one current-area record", () => {
+  const operationalCounty = { key: "gillespie-tx", countyId: "48171", label: "Gillespie County" };
+  const fredericksburg = {
+    key: "place-4827348",
+    canonicalKey: "place-4827348",
+    placeGeoid: "4827348",
+    countyId: "48171",
+    label: "Fredericksburg",
+    lat: 30.2752,
+    lng: -98.8719,
+    radiusMiles: 7,
+    geographicEvaluationState: "AVAILABLE"
+  };
+  const record = { id: "fredericksburg-bridge", eligible: true, source: "DriveTexas" };
+  const h = harness({
+    records: [record],
+    area: operationalCounty,
+    canonicalArea: fredericksburg,
+    select: (input) => ({
+      consumerVisibleSituations: input.records.filter((candidate) => candidate.eligible),
+      lp0393ConsumerProjectionInputCount: input.records.length
+    })
+  });
+  h.window.gridlyDriveTexasConnector.areaLifecycleAudit = () => ({
+    lastFetchError: null,
+    lastSuccessfulFetchTimestamp: "2026-08-17T12:00:00.000Z",
+    currentAwarenessViewIdentity: "place-4827348",
+    currentAwarenessViewMatchesSelectedArea: true
+  });
+
+  const value = h.envelope();
+  assert.equal(value.records.length, 1);
+  assert.equal(value.records[0].id, "fredericksburg-bridge");
+  assert.equal(value.connected, true);
+  assert.equal(value.sourceStatus, "HEALTHY_WITH_DATA");
+  assert.equal(value.healthyEmpty, false);
+  assert.equal(value.selectedAreaIdentity, "place-4827348");
+  assert.equal(value.areaIdentity, "place-4827348");
+  assert.equal(value.areaOwnershipMatches, true);
+});
+
 test("Houston LineStrings use the canonical focus and retain identical direct/envelope LP039.2 proofs", () => {
   const selectedArea = { key: "place-4835000", placeGeoid: "4835000", countyId: "48201", label: "Houston" };
   const canonicalArea = { ...selectedArea, canonicalKey: "place-4835000", lat: 29.7589382, lng: -95.3676974, radiusMiles: 7, focusAuthority: "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1", geographicEvaluationState: "AVAILABLE" };

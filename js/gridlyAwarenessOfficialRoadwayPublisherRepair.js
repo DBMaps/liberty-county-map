@@ -140,8 +140,19 @@
     });
   }
 
+  function selectedGovernedArea() {
+    try {
+      if (typeof globalScope.getGridlyCanonicalAwarenessPresentationContext === "function") {
+        return globalScope.getGridlyCanonicalAwarenessPresentationContext() || null;
+      }
+      return globalScope.getGridlySelectedAwarenessArea?.() || null;
+    } catch (_error) {
+      return null;
+    }
+  }
+
   function selectedAreaIdentity() {
-    try { return canonicalAreaKey(globalScope.getGridlySelectedAwarenessArea?.()); } catch (_error) { return ""; }
+    return canonicalAreaKey(selectedGovernedArea());
   }
 
   function rememberSuccessfulConnectorRecords(records) {
@@ -188,11 +199,7 @@
       // focus, not the identity/operational-county object returned by the
       // raw selection accessor.  In particular, canonical place selections
       // can carry their certified lat/lng/radius only on this context.
-      if (typeof globalScope.getGridlyCanonicalAwarenessPresentationContext === "function") {
-        selectionInput.selectedAwarenessArea = globalScope.getGridlyCanonicalAwarenessPresentationContext();
-      } else if (typeof globalScope.getGridlySelectedAwarenessArea === "function") {
-        selectionInput.selectedAwarenessArea = globalScope.getGridlySelectedAwarenessArea();
-      }
+      selectionInput.selectedAwarenessArea = selectedGovernedArea();
       // Capture LP039.2 once, then give that very object to LP039.3.  Counts
       // and status below consequently describe one evaluation, not two calls
       // that may straddle an area transition or connector refresh.
