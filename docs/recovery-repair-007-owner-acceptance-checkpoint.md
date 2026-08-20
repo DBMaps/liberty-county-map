@@ -1,9 +1,9 @@
 # Repair 007 owner-acceptance recovery checkpoint
 
-**Certification status:** PASS  
-**Owner-accepted:** 2026-08-20  
-**Trusted recovery branch:** `recovery-integrated-gridly`  
-**Repair 007 implementation commit:** `451ceabc5f5090d5b7969099c8396715294fb858`  
+**Certification status:** PASS<br>
+**Owner-accepted:** 2026-08-20<br>
+**Trusted recovery branch:** `recovery-integrated-gridly`<br>
+**Repair 007 implementation commit:** `451ceabc5f5090d5b7969099c8396715294fb858`<br>
 **Certification checkout before this checkpoint:** branch `work`, HEAD `563b6e4e16f7388cabd39403bc8c11b44152d055`
 
 ## Defect, cause, and repair
