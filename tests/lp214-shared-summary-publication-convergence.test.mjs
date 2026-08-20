@@ -10,6 +10,7 @@ function harness() {
   let connected = true;
   let error = null;
   let area = { key: 'place-4819000', label: 'Dallas' };
+  let canonicalArea = area;
   let connectorAreaIdentity = area.key;
   const intervals = [];
   const baseSummary = () => ({
@@ -24,6 +25,7 @@ function harness() {
     clearInterval() {},
     setTimeout(fn) { fn(); },
     getGridlySelectedAwarenessArea: () => area,
+    getGridlyCanonicalAwarenessPresentationContext: () => canonicalArea,
     gridlyDriveTexasConnector: {
       getNormalizedRecords: () => records,
       areaLifecycleAudit: () => ({
@@ -31,7 +33,7 @@ function harness() {
         lastSuccessfulFetchTimestamp: '2026-08-18T00:00:00.000Z',
         currentAwarenessViewIdentity: connectorAreaIdentity,
         lastFilterCanonicalKey: connectorAreaIdentity,
-        currentAwarenessViewMatchesSelectedArea: connectorAreaIdentity === area.key
+        currentAwarenessViewMatchesSelectedArea: connectorAreaIdentity === (canonicalArea.canonicalKey || canonicalArea.key)
       })
     },
     gridlyDriveTexasProvider: { getNormalizedRecords: () => [], getRuntimeState: () => ({ connected, lastError: error }) },
@@ -74,12 +76,41 @@ function harness() {
     connected = next.connected ?? true;
     error = next.error ?? null;
     if (next.area) area = next.area;
-    connectorAreaIdentity = next.connectorAreaIdentity ?? area.key;
+    canonicalArea = next.canonicalArea ?? next.area ?? canonicalArea;
+    connectorAreaIdentity = next.connectorAreaIdentity ?? canonicalArea.canonicalKey ?? canonicalArea.key;
     window.gridlyOfficialProviderConsumerRefresh({ providerId: 'drivetexas', reason: next.reason || 'fetch-success' });
     return window.gridlyCommunityPulseAuditState.communityAwarenessSummary;
   };
   return { window, publish };
 }
+
+test('Fredericksburg live 1-to-0 contradiction repairs to one envelope and one Official Roadway publication', () => {
+  const h = harness();
+  const operationalArea = { key: 'gillespie-tx-fredericksburg', countyId: 'gillespie-tx', placeGeoid: '4827348', label: 'Fredericksburg' };
+  const governedArea = { ...operationalArea, canonicalKey: 'place-4827348', lat: 30.2752, lng: -98.8719, radiusMiles: 7, geographicEvaluationState: 'AVAILABLE' };
+  const record = { consumerSituationId: 'drivetexas:fredericksburg:bridge', providerId: 'drivetexas', category: 'Bridge Restriction', headline: 'Fredericksburg bridge restriction' };
+
+  let summary = h.publish([record], {
+    area: operationalArea,
+    canonicalArea: governedArea,
+    connectorAreaIdentity: 'place-4827348'
+  });
+  let audit = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit();
+  assert.equal(audit.sourceEnvelopeCount, 1, 'nonzero connector current view must remain nonzero at the consumer envelope');
+  assert.equal(audit.sourceStatusEnvelope.connected, true);
+  assert.equal(audit.sourceStatusEnvelope.fetchFailed, false);
+  assert.equal(audit.sourceStatusEnvelope.healthyEmpty, false);
+  assert.equal(audit.sourceStatusEnvelope.sourceStatus, 'HEALTHY_WITH_DATA');
+  assert.equal(audit.sourceStatusEnvelope.selectedAreaIdentity, 'place-4827348');
+  assert.equal(summary.sharedActiveIssueContract.activeOfficialRoadwayCount, 1, 'Official Roadway must receive the envelope record, never pass on 0 == 0');
+  assert.equal(summary.activeHazardsInArea.length, 1);
+
+  summary = h.publish([record], { canonicalArea: governedArea, connectorAreaIdentity: 'place-4827348' });
+  audit = h.window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit();
+  assert.equal(audit.sourceEnvelopeCount, 1);
+  assert.equal(audit.enrichedSummaryOfficialCount, 1);
+  assert.equal(summary.activeHazardsInArea.length, 1, 'repeat publication deduplicates the same governed situation');
+});
 
 test('governed snapshot is published as one Pulse, microline and Location Context reference', () => {
   const h = harness();
