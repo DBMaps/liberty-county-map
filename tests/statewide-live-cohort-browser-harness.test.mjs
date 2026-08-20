@@ -70,7 +70,7 @@ test('manual actions pause and require the explicit continue command', () => {
 });
 test('checkpoint resume validates the completed artifact prefix', () => {
   harness.state.cohort = artifact; harness.state.rows = artifact.itinerary;
-  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v2', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
+  const checkpoint = { auditVersion: 'gridly.statewide-live-cohort-audit.v3', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [{ sequence: 1, stateVectorId: 'SV-01', canonicalKey: artifact.itinerary[0].canonicalKey }], results: [{}] };
   assert.equal(harness.validateCheckpoint(checkpoint).length, 1);
   assert.throws(() => harness.validateCheckpoint({ ...checkpoint, completedPrefix: [{ ...checkpoint.completedPrefix[0], stateVectorId: 'wrong' }] }), /PREFIX_MISMATCH/);
 });
@@ -96,14 +96,16 @@ test('export is deterministic for unchanged audit state and supports no-download
 });
 
 
-test('V2 checkpoint namespace invalidates the completed V1 owner run', () => {
-  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V2');
-  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V1'), false);
-  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v1', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
+test('V3 checkpoint namespace retries the incomplete V2 row', () => {
+  assert.equal(harness.CHECKPOINT_KEY, 'GRIDLY_STATEWIDE_COHORT_AUDIT_V3');
+  assert.equal(storage.has('GRIDLY_STATEWIDE_COHORT_AUDIT_V2'), false);
+  assert.throws(() => harness.validateCheckpoint({ auditVersion: 'gridly.statewide-live-cohort-audit.v2', artifactSchemaVersion: artifact.schemaVersion, completedPrefix: [], results: [] }), /CHECKPOINT_CONTRACT_INVALID/);
 });
 
 async function exerciseSelection(row, configure = () => {}) {
   let context = {};
+  window.GRIDLY_COUNTY_REGISTRY = { [row.countyId]: { consumerAwarenessAreas: [{ placeGeoid: row.placeGeoid, displayName: row.community, canonicalIdentity: 'PLACE_GEOID', countyMemberships: row.multiCounty ? row.governedMemberships : [row.countyFips] }] } };
+  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [{ key: `${row.countyId}-${row.community.toLowerCase()}`, label: row.community, storageValue: row.community, countyId: row.countyId }];
   window.resolveGridlyAwarenessAreaQuery = () => row.multiCounty
     ? { status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', operational: true, placeGeoid: row.placeGeoid, awarenessArea: { placeGeoid: row.placeGeoid } }
     : { status: 'RESOLVED_OPERATIONAL', operational: true, awarenessAreaKey: `${row.countyId}-${row.community.toLowerCase()}`, awarenessArea: { storageValue: row.community, placeGeoid: row.placeGeoid } };
@@ -113,6 +115,40 @@ async function exerciseSelection(row, configure = () => {}) {
   configure({ setContext: value => { context = value; } });
   return harness.select(row, 1);
 }
+
+test('Chester healthy empty is owned by the current PLACE and does not require closed-sheet rows', () => {
+  const row = artifact.itinerary.find(row => row.community === 'Chester');
+  const checks = harness.alertsConditions(row, {
+    context: { activeCountyId: row.countyId, canonicalPlaceGeoid: row.placeGeoid },
+    alertsPresentationOwner: { countyId: row.countyId, placeGeoid: row.placeGeoid },
+    alertsSurface: { publishedAlertCount: 0, activeIncidentCount: 0, count: 0, nearbySummary: 'No active local issues reported.', routeImpactSummary: 'Route into Liberty moving normally', topStatus: 'US 90 moving normally' },
+    alertsSheetOpen: false, alertCardIds: [], driveTexasRecordIds: [], awareness: {}, official: {}, officialMarkerIds: []
+  });
+  assert.deepEqual({ ownerCurrent: checks.ownerCurrent, emptyContractMet: checks.emptyContractMet, domExpectationMet: checks.domExpectationMet }, { ownerCurrent: true, emptyContractMet: true, domExpectationMet: true });
+  assert.equal(harness.alertsConditions(row, { context: { canonicalPlaceGeoid: row.placeGeoid }, alertsPresentationOwner: { countyId: 'liberty-tx', placeGeoid: '4803072' }, alertsSurface: { count: 0, nearbySummary: 'No active local issues reported.' }, alertsSheetOpen: false, alertCardIds: [], driveTexasRecordIds: [], awareness: {}, official: {}, officialMarkerIds: [] }).ownerCurrent, false);
+});
+
+test('statewide PLACE bridge resolves Anahuac without a label special case', () => {
+  const row = artifact.itinerary.find(row => row.community === 'Anahuac');
+  window.GRIDLY_COUNTY_REGISTRY = { 'chambers-tx': { consumerAwarenessAreas: [{ placeGeoid: '4803144', displayName: 'Anahuac', canonicalIdentity: 'PLACE_GEOID', countyMemberships: ['48071'] }] } };
+  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [{ key: 'anahuac', label: 'Anahuac', storageValue: 'Anahuac', countyId: 'chambers-tx' }];
+  const result = harness.resolveAuditSelection(row, { status: 'RESOLVED_OPERATIONAL', operational: true, awarenessArea: window.GRIDLY_AWARENESS_AREA_DEFINITIONS[0], candidates: [] });
+  assert.equal(result.resolution.awarenessArea.placeGeoid, '4803144');
+  assert.equal(result.resolution.awarenessArea.storageValue, 'Anahuac');
+});
+
+test('statewide PLACE bridge rejects wrong GEOID, governed county, and missing or duplicate registry identity', () => {
+  const row = artifact.itinerary.find(row => row.community === 'Anahuac');
+  const area = { key: 'anahuac', label: 'Anahuac', storageValue: 'Anahuac', countyId: 'chambers-tx' };
+  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [area];
+  const resolve = changed => harness.resolveAuditSelection({ ...row, ...changed }, { status: 'RESOLVED_OPERATIONAL', operational: true, awarenessArea: area });
+  window.GRIDLY_COUNTY_REGISTRY = { 'chambers-tx': { consumerAwarenessAreas: [{ placeGeoid: '4803144', displayName: 'Anahuac', canonicalIdentity: 'PLACE_GEOID', countyMemberships: ['48071'] }] } };
+  assert.equal(resolve({ placeGeoid: 'wrong' }), null);
+  assert.equal(resolve({ countyFips: 'wrong' }), null);
+  assert.equal(resolve({ countyId: 'missing-tx' }), null);
+  window.GRIDLY_AWARENESS_AREA_DEFINITIONS = [area, { ...area, key: 'duplicate' }];
+  assert.equal(resolve({}), null);
+});
 
 test('Chester command return is ignored and observed canonical PLACE/county convergence succeeds', async () => {
   const row = artifact.itinerary.find(row => row.community === 'Chester');

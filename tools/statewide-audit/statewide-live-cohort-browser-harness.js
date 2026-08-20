@@ -1,9 +1,9 @@
 (function installGridlyStatewideCohortHarness(global) {
   'use strict';
 
-  const AUDIT_VERSION = 'gridly.statewide-live-cohort-audit.v2';
+  const AUDIT_VERSION = 'gridly.statewide-live-cohort-audit.v3';
   const COHORT_URL = '/reports/statewide-audit/gridly-live-certification-cohort-v1.json';
-  const CHECKPOINT_KEY = 'GRIDLY_STATEWIDE_COHORT_AUDIT_V2';
+  const CHECKPOINT_KEY = 'GRIDLY_STATEWIDE_COHORT_AUDIT_V3';
   const REPOSITORY_HEAD = '6517795';
   const CLASS_STATUSES = new Set(['NOT_REQUIRED', 'PASS', 'FAIL', 'INCOMPLETE']);
   const DRIVE_TERMINAL = new Set(['HEALTHY_WITH_DATA', 'HEALTHY_EMPTY', 'FAILED', 'RETAINED', 'UNAVAILABLE', 'TIMEOUT']);
@@ -73,8 +73,15 @@
     const records = Array.isArray(envelope?.records) ? envelope.records : [];
     const driveTexasRecordIds = ids(records.map(record => record.consumerSituationId || record.sourceProviderRecordId || record.id));
     const officialMarkerIds = ids(official.markerIds || official.renderedMarkerIds || markerNodes.map(node => node.dataset.gridlyOfficialRoadwayId || node.dataset.consumerSituationId));
+    const alertsPresentationOwner = {
+      countyId: context.activeCountyId || null,
+      placeGeoid: String(context.canonicalPlaceGeoid || '').replace(/^place-/, '') || null,
+      canonicalKey: context.awarenessAreaKey || null
+    };
+    const alertsSheetOpen = String(call('gridlyPortraitV2RuntimeAudit', {})?.alertsSurfaceMode || '') === 'alerts_sheet_open';
     return {
       context, roadway, roadwayFeatureCount, rail, envelope, awareness, alertsSurface, official, mapAudit,
+      alertsPresentationOwner, alertsSheetOpen,
       driveTexasState: driveTexasState(envelope, timedOut), driveTexasRecordIds,
       railPolicyIds: ids(railParity.expectedMarkerIds), railLeafletIds: ids(railParity.actualMarkerIds),
       railDomIds: ids(railDomNodes.map(node => node.dataset.gridlyCrossingId || node.dataset.crossingId)),
@@ -143,6 +150,36 @@
     };
   }
 
+  function alertsConditions(row, observation) {
+    const c = counts(observation);
+    const surface = observation.alertsSurface || {};
+    const expectedGeoid = String(row.placeGeoid || '').replace(/^place-/, '');
+    const observedGeoid = String(observation.context?.canonicalPlaceGeoid || '').replace(/^place-/, '');
+    const presentationOwner = observation.alertsPresentationOwner || {};
+    const ownerCurrent = presentationOwner.countyId === row.countyId
+      && String(presentationOwner.placeGeoid || '').replace(/^place-/, '') === expectedGeoid
+      && observedGeoid === expectedGeoid;
+    const publishedMatchesSurface = c.publishedAlertsCount === Number(surface.count ?? surface.activeIncidentCount ?? 0);
+    const emptyReason = String(surface.emptyReason || (c.publishedAlertsCount === 0 ? surface.nearbySummary : '') || '').trim();
+    const domExpectationMet = observation.alertsSheetOpen === true
+      ? c.activeAlertsCount === c.publishedAlertsCount
+      : c.activeAlertsCount === 0;
+    return {
+      publishedAlertsCount: c.publishedAlertsCount,
+      activeRowsCount: c.activeAlertsCount,
+      activeAlertsCount: Number(surface.activeIncidentCount ?? surface.count ?? 0),
+      explicitEmptyReason: emptyReason,
+      selectedCanonicalPlaceGeoid: observedGeoid,
+      presentationOwnerPlaceGeoid: String(presentationOwner.placeGeoid || ''),
+      presentationOwnerCountyId: presentationOwner.countyId || null,
+      alertsSheetOpen: observation.alertsSheetOpen === true,
+      publishedMatchesSurface,
+      ownerCurrent,
+      emptyContractMet: c.publishedAlertsCount > 0 || Boolean(emptyReason),
+      domExpectationMet
+    };
+  }
+
   function classResults(row, observation, settled, staleState) {
     const result = Object.fromEntries(state.cohort.sixLiveBrowserClasses.map(item => [item.classId, 'NOT_REQUIRED']));
     const set = (id, pass, incomplete = false) => { if (required(row, id)) result[id] = incomplete ? 'INCOMPLETE' : pass ? 'PASS' : 'FAIL'; };
@@ -150,7 +187,8 @@
     set('DRIVETEXAS_LIVE_BROWSER_REQUIRED', ['HEALTHY_WITH_DATA', 'HEALTHY_EMPTY'].includes(observation.driveTexasState), !settled && !DRIVE_TERMINAL.has(observation.driveTexasState));
     set('RAIL_LIVE_BROWSER_REQUIRED', settlement(row, observation).railReady, !settled);
     set('OFFICIAL_ROADWAY_LIVE_BROWSER_REQUIRED', c.officialRoadwaySourceCount === c.eligibleMarkerCount && c.eligibleMarkerCount === c.renderedMarkerCount, !settled);
-    set('ALERTS_LIVE_BROWSER_REQUIRED', c.publishedAlertsCount === c.activeAlertsCount && (c.activeAlertsCount > 0 || Boolean(observation.alertsSurface?.emptyReason)), !settled);
+    const alertChecks = alertsConditions(row, observation);
+    set('ALERTS_LIVE_BROWSER_REQUIRED', alertChecks.publishedMatchesSurface && alertChecks.ownerCurrent && alertChecks.emptyContractMet && alertChecks.domExpectationMet, !settled);
     set('STALE_OWNERSHIP_LIVE_BROWSER_REQUIRED', staleState.pass, false);
     // Completed after the owner confirms a required action, or PASS for a governed no-target state.
     set('SHOW_ON_MAP_LIVE_BROWSER_REQUIRED', c.eligibleMarkerCount === 0, c.eligibleMarkerCount > 0);
@@ -168,7 +206,7 @@
       context: observation.context, roadway: { ...observation.roadway, featureCount: observation.roadwayFeatureCount, expectedState: row.roadwayState },
       driveTexas: { ...counts(observation), state: observation.driveTexasState, recordIds: observation.driveTexasRecordIds },
       officialRoadway: { ...observation.official, markerIds: observation.officialMarkerIds },
-      alerts: { ...(observation.alertsSurface || {}), activeRowIds: observation.alertCardIds },
+      alerts: { ...(observation.alertsSurface || {}), activeRowIds: observation.alertCardIds, conditionOperands: alertsConditions(row, observation) },
       rail: { ...observation.rail, expectedState: row.railState, policyIds: observation.railPolicyIds, leafletIds: observation.railLeafletIds, domIds: observation.railDomIds },
       map: observation.mapAudit, showOnMap: null, staleState, liveClassResults, manualActionEvidence: [], passAssertions: row.passAssertions,
       failureReasons: [], incompleteReasons: [], durationMs: Math.round(performance.now() - started)
@@ -187,14 +225,38 @@
   function requiresManual(result) { return result.liveClassResults.SHOW_ON_MAP_LIVE_BROWSER_REQUIRED === 'INCOMPLETE'; }
   function printManual(row) { console.log(`[MANUAL ACTION REQUIRED]\n\nCommunity:\n${row.community}\n\nAction:\nIn Alerts, choose Show on map for the captured Official Roadway alert. Do not change community or county. Then run gridlyStatewideCohortContinue().`); }
 
+  function resolveAuditSelection(row, consumerResult) {
+    const geoid = String(row.placeGeoid || '').replace(/^place-/, '');
+    const countyId = String(row.countyId || '');
+    const definitions = Array.isArray(global.GRIDLY_AWARENESS_AREA_DEFINITIONS) ? global.GRIDLY_AWARENESS_AREA_DEFINITIONS : [];
+    const county = global.GRIDLY_COUNTY_REGISTRY?.[countyId] || null;
+    const governed = (county?.consumerAwarenessAreas || []).filter(item => String(item?.placeGeoid || '') === geoid);
+    if (governed.length !== 1 || governed[0].canonicalIdentity !== 'PLACE_GEOID' || !(governed[0].countyMemberships || []).map(String).includes(String(row.countyFips))) return null;
+    const normalize = value => String(value || '').replace(/[^a-z0-9]+/gi, ' ').trim().toLowerCase();
+    const areas = definitions.filter(area => !area?.countyWide && !area?.fallback && area?.countyId === countyId && [area.label, area.storageValue].some(value => normalize(value) === normalize(governed[0].displayName)));
+    if (areas.length !== 1) return null;
+    const area = areas[0];
+    const candidates = consumerResult?.candidates || [];
+    const matchingCandidate = candidates.find(candidate => candidate?.countyId === countyId && String(candidate?.placeGeoid || candidate?.awarenessArea?.placeGeoid || '') === geoid);
+    if (row.multiCounty) {
+      const memberships = (governed[0].countyMemberships || []).map(String);
+      if (memberships.length < 2 || !['RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', 'AMBIGUOUS'].includes(consumerResult?.status)) return null;
+      return { multiCounty: true, resolution: consumerResult.status === 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE' ? consumerResult : { ...consumerResult, status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', operational: true, placeGeoid: geoid, awarenessArea: { ...area, key: `place-${geoid}`, placeGeoid: geoid, communityId: geoid, countyMemberships: memberships } } };
+    }
+    if ((governed[0].countyMemberships || []).length !== 1 || consumerResult?.operational !== true) return null;
+    if (consumerResult.status !== 'AMBIGUOUS' && consumerResult.awarenessArea && normalize(consumerResult.awarenessArea.label || consumerResult.awarenessArea.storageValue) !== normalize(governed[0].displayName)) return null;
+    return { multiCounty: false, resolution: { ...consumerResult, status: 'RESOLVED_OPERATIONAL', operational: true, placeGeoid: geoid, countyId, awarenessAreaKey: area.key, awarenessArea: { ...area, placeGeoid: geoid, communityId: geoid, canonicalCommunityIdentity: 'PLACE_GEOID' }, candidates: matchingCandidate ? [matchingCandidate] : candidates } };
+  }
+
   async function select(row, timeoutMs = 15000) {
     if (typeof global.resolveGridlyAwarenessAreaQuery !== 'function') throw new Error('SELECTION_ACTION_NOT_AVAILABLE');
     let resolved;
     try { resolved = global.resolveGridlyAwarenessAreaQuery(row.community); }
     catch (error) { const failure = new Error('SELECTION_ACTION_THROW'); failure.cause = error; throw failure; }
-    const resolvedGeoid = String(resolved?.placeGeoid || resolved?.awarenessArea?.placeGeoid || resolved?.awarenessArea?.communityId || '');
-    if (!resolved || resolvedGeoid !== String(row.placeGeoid) || resolved.operational !== true) throw new Error('SELECTION_INPUT_UNRESOLVED');
-    const multiCounty = resolved.status === 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE';
+    const bridged = resolveAuditSelection(row, resolved);
+    if (!bridged) throw new Error('SELECTION_INPUT_UNRESOLVED');
+    resolved = bridged.resolution;
+    const multiCounty = bridged.multiCounty;
     const actionName = multiCounty ? 'gridlySaveCanonicalMultiCountyPlaceHome' : 'selectGridlySettingsAwarenessArea';
     if (typeof global[actionName] !== 'function') throw new Error('SELECTION_ACTION_NOT_AVAILABLE');
     try {
@@ -257,7 +319,7 @@
   global.gridlyStatewideCohortClearCheckpoint = () => { sessionStorage.removeItem(CHECKPOINT_KEY); return true; };
   global.gridlyStatewideCohortStart = async () => { const response = await fetch(COHORT_URL, { cache: 'no-store' }); if (!response.ok) throw new Error(`COHORT_FETCH_FAILED_${response.status}`); state.cohort = await response.json(); state.rows = validateCohort(state.cohort); const checkpoint = safe(() => JSON.parse(sessionStorage.getItem(CHECKPOINT_KEY)), null); state.results = validateCheckpoint(checkpoint); state.index = state.results.length; state.startedAt = checkpoint?.startedAt || new Date().toISOString(); state.previous = state.results.length ? priorFrom(state.results.at(-1)) : null; return run(); };
 
-  global.__gridlyStatewideCohortHarnessTest = { validateCohort, driveTexasState, settlement, compareStale, validateCheckpoint, payload, select, selectionContext, waitForSelectionContext, run, state, CHECKPOINT_KEY, AUDIT_VERSION };
+  global.__gridlyStatewideCohortHarnessTest = { validateCohort, driveTexasState, settlement, compareStale, alertsConditions, resolveAuditSelection, validateCheckpoint, payload, select, selectionContext, waitForSelectionContext, run, state, CHECKPOINT_KEY, AUDIT_VERSION };
   console.log('Gridly statewide live cohort audit harness installed. Starting/resuming.');
   global.gridlyStatewideCohortStart();
 })(window);
