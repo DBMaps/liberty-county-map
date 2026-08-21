@@ -40317,7 +40317,9 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
   );
 }
 
-function buildGridlyCrossingWatchPresentationModel(summary = {}) {
+let gridlyCrossingWatchCountAuditState = Object.freeze({ status: "unobserved" });
+
+function buildGridlyCrossingWatchPresentationModel(summary = {}, reason = "location-context-projection") {
   const canonicalArea = summary?.selectedAwarenessArea || getGridlySelectedAwarenessArea();
   const operationalCountyId = gridlyGetActiveCountyId();
   const inventoryComplete = gridlyCrossingInventoryHydrationState.countyId === operationalCountyId
@@ -40327,7 +40329,27 @@ function buildGridlyCrossingWatchPresentationModel(summary = {}) {
   const crossingsWatchedCount = inventoryComplete
     ? getGridlyBottomPanelAwarenessCrossingCount({ ...summary, selectedAwarenessArea: canonicalArea })
     : null;
-  return Object.freeze({
+  const inventory = gridlyGetActiveCountyCrossingInventory();
+  const validCoordinateCount = inventory.filter((crossing) => Number.isFinite(Number(crossing?.lat)) && Number.isFinite(Number(crossing?.lng))).length;
+  const previousDisplayedCount = gridlyCrossingWatchCountAuditState.displayedWatchedCount ?? null;
+  const stale = gridlyCrossingInventoryHydrationState.countyId !== operationalCountyId
+    || gridlyCrossingInventoryCountyId !== operationalCountyId;
+  gridlyCrossingWatchCountAuditState = Object.freeze({
+    countyId: operationalCountyId,
+    transitionGeneration: gridlyActiveCountyTransitionGeneration,
+    inventoryCount: inventory.length,
+    validCoordinateCount,
+    watchedAreaEligibleCount: crossingsWatchedCount,
+    viewportEligibleCount: Number(gridlyCrossingFallbackAuditState.renderCrossingsFilteredCount ?? crossingMarkers?.size ?? 0),
+    renderedMarkerCount: crossingMarkers instanceof Map ? crossingMarkers.size : 0,
+    displayedWatchedCount: crossingsWatchedCount,
+    skipBreakdown: gridlyCrossingFallbackAuditState.renderSkipBreakdown || null,
+    countUpdateReason: reason,
+    previousDisplayedCount,
+    newDisplayedCount: crossingsWatchedCount,
+    status: stale ? "stale" : "current"
+  });
+  const model = Object.freeze({
     canonicalAreaIdentity: canonicalArea?.key || (canonicalArea?.placeGeoid ? `place-${canonicalArea.placeGeoid}` : null),
     operationalCountyId,
     crossingInventoryStatus: inventoryComplete ? "VALID_COMPLETE_INVENTORY" : "INVENTORY_UNAVAILABLE",
@@ -40340,7 +40362,9 @@ function buildGridlyCrossingWatchPresentationModel(summary = {}) {
       ? `${crossingsWatchedCount} crossing${crossingsWatchedCount === 1 ? "" : "s"} watched`
       : "Crossing inventory unavailable"
   });
+  return model;
 }
+if (typeof window !== "undefined") window.gridlyCrossingWatchCountAudit = () => ({ ...gridlyCrossingWatchCountAuditState });
 
 function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const safeSummary = summary || {};
@@ -50173,12 +50197,34 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
 }
 
 function getGridlyBottomPanelAwarenessCrossingCount(summary = {}) {
-  const selectedArea = summary.selectedAwarenessArea || {};
+  // Awareness summaries intentionally expose a compact debug projection.  That
+  // projection stores its center under `coordinates`, and omits governed
+  // geometry, so it must never be used as the geographic count authority.
+  // Rejoin it to the current canonical area before applying the shared
+  // consumer selector.  The old direct use explained Family I: city-label
+  // matches happened to keep some communities working, while communities whose
+  // inventory locality differed from their label published a false zero.
+  const projectedArea = summary.selectedAwarenessArea || {};
+  const currentArea = getGridlySelectedAwarenessArea();
+  const projectedCountyId = gridlyNormalizeCountyId(projectedArea.countyId || gridlyGetActiveCountyId());
+  const currentCountyId = gridlyNormalizeCountyId(currentArea?.countyId || gridlyGetActiveCountyId());
+  const sameIdentity = Boolean(currentArea && (
+    (projectedArea.key && projectedArea.key === currentArea.key)
+    || (projectedArea.placeGeoid && projectedArea.placeGeoid === currentArea.placeGeoid)
+    || (projectedArea.label && projectedArea.label === currentArea.label)
+  ));
+  const selectedArea = sameIdentity && projectedCountyId === currentCountyId
+    ? currentArea
+    : {
+        ...projectedArea,
+        lat: projectedArea.lat ?? projectedArea.coordinates?.lat,
+        lng: projectedArea.lng ?? projectedArea.coordinates?.lng
+      };
   const routeWatchActive = Boolean(savedRouteCrossingIds instanceof Set && savedRouteCrossingIds.size > 0);
   const summaryCount = Array.isArray(summary.crossingsInArea) ? summary.crossingsInArea.length : Number(summary.crossingsInArea || 0);
   const activeCountyInventory = gridlyGetActiveCountyCrossingInventory();
   if (routeWatchActive) return Math.max(0, summaryCount, savedRouteCrossingIds.size);
-  const selectorCount = gridlySelectConsumerVisibleCrossings(summary.selectedAwarenessArea || getGridlySelectedAwarenessArea()).length;
+  const selectorCount = gridlySelectConsumerVisibleCrossings(selectedArea).length;
   if ((selectedArea.countyWide || selectedArea.fallback) && activeCountyInventory.length > 0) return selectorCount;
   return Math.max(0, selectorCount, summaryCount);
 }
