@@ -53,8 +53,8 @@ test('ACTIVE_EMPTY remains a legitimate governed zero', () => {
 
 test('compact summary coordinates are rejoined to canonical watched-area authority', () => {
   assert.match(app, /compact debug projection/);
-  assert.match(app, /projectedArea\.coordinates\?\.lat/);
-  assert.match(app, /sameIdentity && projectedCountyId === currentCountyId\s*\? currentArea/);
+  assert.match(app, /canonicalRejoinFailed: true/);
+  assert.match(app, /gridlyRejoinCrossingAwarenessSelector\(projectedArea, gridlyGetActiveCountyId\(\)\)/);
   assert.match(app, /summaryCount = Array\.isArray\(summary\.crossingsInArea\)/);
 });
 
