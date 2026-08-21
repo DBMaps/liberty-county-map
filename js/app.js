@@ -18041,6 +18041,7 @@ function gridlyLp0516OpenManualAwarenessAreaPicker() {
   state.step = "manual_picker";
   gridlySettingsManualAwarenessQuery = "";
   gridlySettingsManualAwarenessPending = "";
+  gridlySettingsManualAwarenessPendingCountyId = "";
   gridlyLp0516Render();
 }
 
@@ -18100,7 +18101,7 @@ function gridlyLp0516Render() {
   else if (state.step === "unavailable") body = `<h2 id="gridly-lp0516-title">Gridly isn’t available for this ZIP yet</h2><p>This ZIP is outside the available Texas evidence.</p>${btn('Choose manually','manual',true)}${btn('Try another ZIP','back',false)}${btn('Close','close',false,'tertiary')}`;
   else body = `<h2 id="gridly-lp0516-title">Choose your area manually</h2><p>ZIP evidence could not safely identify a community. Your existing setup is unchanged.</p>${btn('Choose manually','manual',true)}${btn('Try another ZIP','back',false)}${btn('Close','close',false,'tertiary')}`;
   root.innerHTML = `<style>#gridly-lp0516-zip-prototype{--lp0516-bg:var(--bg,#050505);--lp0516-sheet:var(--card,rgba(16,18,21,.92));--lp0516-sheet-strong:var(--gridly-surface-strong,#081827);--lp0516-border:var(--border,rgba(255,255,255,.14));--lp0516-border-accent:var(--gridly-border,rgba(0,245,240,.28));--lp0516-text:var(--text,#fff);--lp0516-muted:var(--muted,#a4acb8);--lp0516-accent:var(--accent,#39f3a4);--lp0516-focus:var(--blue,#66e8ff);position:fixed;inset:0;z-index:2147483647;background:rgba(2,8,18,.72);display:flex;align-items:flex-end;justify-content:center;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;pointer-events:auto;touch-action:manipulation;color:var(--lp0516-text)}.gridly-lp0516-sheet{position:relative;z-index:1;width:min(100%,430px);max-height:min(86vh,760px);overflow-y:auto;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025)),var(--lp0516-sheet);border:1px solid var(--lp0516-border-accent);border-bottom:0;border-radius:28px 28px 0 0;padding:28px 22px calc(28px + env(safe-area-inset-bottom));box-shadow:var(--shadow,0 26px 60px rgba(0,0,0,.72)),var(--gridly-cyan-glow,0 0 26px rgba(0,245,240,.14));backdrop-filter:blur(18px)}#gridly-lp0516-title{font-size:1.55rem;line-height:1.05;margin:0 0 10px;color:var(--lp0516-text);letter-spacing:-.02em}.gridly-lp0516-sheet h3{margin:8px 0;color:var(--lp0516-text);font-size:1.15rem}.gridly-lp0516-sheet p,.gridly-lp0516-sheet small{color:var(--lp0516-muted);line-height:1.45}.gridly-lp0516-sheet label{display:block;margin-top:16px;color:var(--lp0516-muted);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}#gridly-lp0516-zip-input{box-sizing:border-box;width:100%;font-size:1.25rem;padding:16px;border:1px solid var(--lp0516-border);border-radius:16px;margin:8px 0 6px;color:var(--lp0516-text);-webkit-text-fill-color:var(--lp0516-text);caret-color:var(--lp0516-focus);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035)),var(--lp0516-sheet-strong);opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}#gridly-lp0516-zip-input::placeholder{color:var(--lp0516-muted);opacity:.82;-webkit-text-fill-color:var(--lp0516-muted)}#gridly-lp0516-zip-input::selection{background:var(--lp0516-focus);color:#02070a;-webkit-text-fill-color:#02070a}#gridly-lp0516-zip-input:-webkit-autofill,#gridly-lp0516-zip-input:-webkit-autofill:focus{-webkit-text-fill-color:var(--lp0516-text);caret-color:var(--lp0516-focus);box-shadow:0 0 0 1000px var(--lp0516-sheet-strong) inset;border-color:var(--lp0516-border-accent)}#gridly-lp0516-zip-input:disabled{opacity:1;color:var(--lp0516-text);-webkit-text-fill-color:var(--lp0516-text)}.gridly-lp0516-validation{min-height:20px;color:var(--warning,#ffbf47);font-size:.9rem;font-weight:750}.gridly-lp0516-btn,.gridly-lp0516-option{width:100%;min-height:48px;border-radius:16px;border:1px solid var(--lp0516-border);margin-top:10px;font-weight:900;cursor:pointer}.gridly-lp0516-primary{background:linear-gradient(135deg,var(--blue,#66e8ff),#3dcfe8);color:#02070a;border-color:transparent}.gridly-lp0516-secondary,.gridly-lp0516-option{background:rgba(255,255,255,.07);color:var(--lp0516-text)}.gridly-lp0516-tertiary{background:transparent;color:var(--lp0516-muted);border-color:rgba(255,255,255,.1)}.gridly-lp0516-options{display:grid;gap:10px;margin:14px 0}.gridly-lp0516-option{text-align:left;padding:14px 16px}.gridly-lp0516-option[aria-checked="true"]{border-color:var(--lp0516-accent);background:linear-gradient(135deg,rgba(57,243,164,.22),rgba(102,232,255,.12));color:var(--lp0516-text);box-shadow:0 0 0 1px rgba(57,243,164,.18) inset}.gridly-lp0516-option:focus,.gridly-lp0516-btn:focus,#gridly-lp0516-zip-input:focus{outline:3px solid var(--lp0516-focus);outline-offset:2px;border-color:var(--lp0516-focus)}</style><div class="gridly-lp0516-sheet">${body}</div>`;
-  root.onclick = (event) => { const target = event.target; const action = target?.dataset?.action; if (target?.dataset && Object.prototype.hasOwnProperty.call(target.dataset, 'optionIndex')) { state.selectedCandidate = state.candidateOptions[Number(target.dataset.optionIndex)]; gridlyLp0516Render(); return; } if (!action) return; if (action === 'continue') gridlyLp0516Continue(); else if (action === 'back') { state.step = 'entry'; state.error = ''; gridlyLp0516Render(); } else if (action === 'manualBack') { state.step = state.previousStep || 'entry'; state.previousStep = null; gridlySettingsManualAwarenessQuery = ''; gridlySettingsManualAwarenessPending = ''; gridlyLp0516Render(); } else if (action === 'confirm') { gridlyLp0516SetPrototypeResult(null, 'explicit_confirm'); state.step = 'ready'; gridlyLp0516Render(); } else if (action === 'confirmSelection') { if (!state.selectedCandidate) { state.error = 'Choose an area to continue.'; return; } gridlyLp0516SetPrototypeResult(state.selectedCandidate, 'explicit_candidate_selection'); state.step = 'ready'; gridlyLp0516Render(); } else if (action === 'manual') { gridlyLp0516OpenManualAwarenessAreaPicker(); } else if (action === 'preview' || action === 'apply') { state.step = 'applying'; gridlyLp0516Render(); setTimeout(() => gridlyLp0517ConfirmSelection(), 0); } else if (action === 'done') { gridlyCloseLp0516ZipConfirmationPrototype(); } else if (action === 'tryAnotherZip') { gridlyLp0516ResetPrototypeSelectionState(); gridlyLp0516Render(); } else if (action === 'close') gridlyCloseLp0516ZipConfirmationPrototype(); };
+  root.onclick = (event) => { const target = event.target; const action = target?.dataset?.action; if (target?.dataset && Object.prototype.hasOwnProperty.call(target.dataset, 'optionIndex')) { state.selectedCandidate = state.candidateOptions[Number(target.dataset.optionIndex)]; gridlyLp0516Render(); return; } if (!action) return; if (action === 'continue') gridlyLp0516Continue(); else if (action === 'back') { state.step = 'entry'; state.error = ''; gridlyLp0516Render(); } else if (action === 'manualBack') { state.step = state.previousStep || 'entry'; state.previousStep = null; gridlySettingsManualAwarenessQuery = ''; gridlySettingsManualAwarenessPending = ''; gridlySettingsManualAwarenessPendingCountyId = ''; gridlyLp0516Render(); } else if (action === 'confirm') { gridlyLp0516SetPrototypeResult(null, 'explicit_confirm'); state.step = 'ready'; gridlyLp0516Render(); } else if (action === 'confirmSelection') { if (!state.selectedCandidate) { state.error = 'Choose an area to continue.'; return; } gridlyLp0516SetPrototypeResult(state.selectedCandidate, 'explicit_candidate_selection'); state.step = 'ready'; gridlyLp0516Render(); } else if (action === 'manual') { gridlyLp0516OpenManualAwarenessAreaPicker(); } else if (action === 'preview' || action === 'apply') { state.step = 'applying'; gridlyLp0516Render(); setTimeout(() => gridlyLp0517ConfirmSelection(), 0); } else if (action === 'done') { gridlyCloseLp0516ZipConfirmationPrototype(); } else if (action === 'tryAnotherZip') { gridlyLp0516ResetPrototypeSelectionState(); gridlyLp0516Render(); } else if (action === 'close') gridlyCloseLp0516ZipConfirmationPrototype(); };
   const manualPicker = root.querySelector?.("[data-gridly-lp0516-manual-picker]");
   if (manualPicker) renderGridlyManualAwarenessAreaPicker(manualPicker, { focusSearch: true, apply: gridlyLp0516ApplyManualAwarenessArea, consumerFlow: true });
   const input = document.getElementById("gridly-lp0516-zip-input"); if (input) { input.oninput = () => { state.zipInput = input.value; state.error = ''; }; input.onkeydown = (event) => { if (event.key === 'Enter') gridlyLp0516Continue(); }; input.disabled = false; input.readOnly = false; input.onpointerdown = () => gridlyLp0516QueueZipInputFocus(); input.onmousedown = () => gridlyLp0516QueueZipInputFocus(); input.ontouchstart = () => gridlyLp0516QueueZipInputFocus(); gridlyLp0516QueueZipInputFocus(); }
@@ -95509,6 +95510,18 @@ function syncGridlySettingsTextSizeSegments(root, selectedValue = "standard") {
 
 let gridlySettingsManualAwarenessQuery = "";
 let gridlySettingsManualAwarenessPending = "";
+let gridlySettingsManualAwarenessPendingCountyId = "";
+
+function gridlyManualAwarenessMembershipCountyId(community = {}, group = {}) {
+  if (!community?.canonicalResolution) return "";
+  return gridlyNormalizeCountyId(community.requestedOperationalCountyId || group.countyId || group.countyValue || "");
+}
+
+function gridlyManualAwarenessSelectionMatches(community = {}, group = {}, selectedValue = "", selectedCountyId = "") {
+  if (String(community.value || "") !== String(selectedValue || "")) return false;
+  const membershipCountyId = gridlyManualAwarenessMembershipCountyId(community, group);
+  return !membershipCountyId || membershipCountyId === gridlyNormalizeCountyId(selectedCountyId || "");
+}
 
 function getGridlyManualAwarenessAreaOptions() {
   return gridlyGetCountyGroupedAwarenessOptions().map((group) => Object.freeze({
@@ -95654,16 +95667,20 @@ function resolveGridlyManualAwarenessAreaSearch(query = "") {
 
 function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gridlySettingsManualAwarenessQuery, pendingValue = gridlySettingsManualAwarenessPending, options = {}) {
   const selectedArea = resolveGridlyAwarenessArea(selectedValue || getGridlyHomeTownPreference?.() || "");
+  const selectedCountyId = gridlyReadHomePersonalizationRecord?.()?.countyId || selectedArea?.countyId || "";
   const pendingArea = resolveGridlyAwarenessArea(pendingValue);
   const normalizedQuery = String(query || "").trim();
   const search = resolveGridlyManualAwarenessAreaSearch(normalizedQuery);
   const groups = search.groups;
-  const pendingOption = groups.flatMap((group) => group.communities).find((community) => community.value === pendingValue) || null;
+  const pendingOption = groups.flatMap((group) => group.communities.map((community) => ({ group, community })))
+    .find(({ group, community }) => gridlyManualAwarenessSelectionMatches(community, group, pendingValue, gridlySettingsManualAwarenessPendingCountyId))?.community || null;
   const resultHtml = groups.flatMap((group) => group.communities.map((community) => {
-      const isCurrent = community.key === selectedArea?.key;
-      const isPending = community.value === pendingValue || community.key === pendingArea?.key;
+      const membershipCountyId = gridlyManualAwarenessMembershipCountyId(community, group);
+      const isCurrent = community.key === selectedArea?.key && (!membershipCountyId || membershipCountyId === gridlyNormalizeCountyId(selectedCountyId));
+      const isPending = gridlyManualAwarenessSelectionMatches(community, group, pendingValue, gridlySettingsManualAwarenessPendingCountyId)
+        || (!membershipCountyId && community.key === pendingArea?.key);
       const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
-      return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
+      return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" data-gridly-manual-awareness-county-id="${escapeGridlySettingsAttribute(membershipCountyId)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
     })).join("");
   const pendingSelection = pendingArea || pendingOption;
   const pendingContext = pendingOption?.canonicalResolution ? "Multi-county community" : (GRIDLY_COUNTY_REGISTRY[pendingArea?.countyId]?.name || "");
@@ -95689,18 +95706,22 @@ function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
   input?.addEventListener("input", (event) => {
     gridlySettingsManualAwarenessQuery = String(event.target.value || "");
     gridlySettingsManualAwarenessPending = "";
+    gridlySettingsManualAwarenessPendingCountyId = "";
     renderGridlyManualAwarenessAreaPicker(container, { ...options, focusSearch: true });
   });
   container.querySelectorAll("[data-gridly-manual-awareness-value]").forEach((button) => button.addEventListener("click", () => {
     gridlySettingsManualAwarenessPending = button.dataset.gridlyManualAwarenessValue || "";
+    gridlySettingsManualAwarenessPendingCountyId = button.dataset.gridlyManualAwarenessCountyId || "";
     renderGridlyManualAwarenessAreaPicker(container, options);
   }));
   container.querySelector("[data-gridly-manual-awareness-apply]")?.addEventListener("click", () => {
     if (!gridlySettingsManualAwarenessPending) return;
     const pendingSearch = resolveGridlyManualAwarenessAreaSearch(gridlySettingsManualAwarenessQuery);
-    const pendingOption = pendingSearch.groups.flatMap((group) => group.communities).find((community) => community.value === gridlySettingsManualAwarenessPending) || null;
+    const pendingEntry = pendingSearch.groups.flatMap((group) => group.communities.map((community) => ({ group, community })))
+      .find(({ group, community }) => gridlyManualAwarenessSelectionMatches(community, group, gridlySettingsManualAwarenessPending, gridlySettingsManualAwarenessPendingCountyId)) || null;
+    const pendingOption = pendingEntry?.community || null;
     const canonicalResolution = pendingOption?.canonicalResolution || null;
-    const requestedOperationalCountyId = pendingOption?.requestedOperationalCountyId || pendingSearch.groups.find((group) => group.communities.includes(pendingOption))?.countyId || null;
+    const requestedOperationalCountyId = gridlyManualAwarenessMembershipCountyId(pendingOption, pendingEntry?.group) || pendingEntry?.group?.countyId || null;
     const applied = options.apply
       ? options.apply(gridlySettingsManualAwarenessPending, canonicalResolution, requestedOperationalCountyId)
       : canonicalResolution
@@ -95708,6 +95729,7 @@ function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
         : selectGridlySettingsAwarenessArea(gridlySettingsManualAwarenessPending, "settings_manual_awareness_area", container);
     if (applied) {
       gridlySettingsManualAwarenessPending = "";
+      gridlySettingsManualAwarenessPendingCountyId = "";
       renderGridlyManualAwarenessAreaPicker(container);
     }
   });
@@ -95723,6 +95745,7 @@ function openGridlySettingsAvailableAreaPicker(root = null) {
   if (!container) return false;
   gridlySettingsManualAwarenessQuery = "";
   gridlySettingsManualAwarenessPending = "";
+  gridlySettingsManualAwarenessPendingCountyId = "";
   renderGridlyManualAwarenessAreaPicker(container, { focusSearch: true });
   setGridlySettingsAwarenessChooserOpen(true, scope);
   return true;
@@ -97915,7 +97938,7 @@ function bindGridlySettingsPreferences() {
     });
   }
   const manualCommunityBtn = typeof document !== "undefined" ? document.getElementById("settingsChooseCommunityManuallyBtn") : null;
-  if (manualCommunityBtn && manualCommunityBtn.dataset.gridlySettingsBound !== "1") { manualCommunityBtn.dataset.gridlySettingsBound = "1"; manualCommunityBtn.addEventListener("click", () => { const open = manualCommunityBtn.getAttribute("aria-expanded") !== "true"; if (open) { gridlySettingsManualAwarenessQuery = ""; gridlySettingsManualAwarenessPending = ""; renderGridlyManualAwarenessAreaPicker(document.getElementById("settingsAwarenessAreaChooser")); } setGridlySettingsAwarenessChooserOpen(open, els.settingsModal || document); manualCommunityBtn.setAttribute("aria-expanded", open ? "true" : "false"); manualCommunityBtn.textContent = open ? "Hide available areas" : "Choose from available areas"; }); }
+  if (manualCommunityBtn && manualCommunityBtn.dataset.gridlySettingsBound !== "1") { manualCommunityBtn.dataset.gridlySettingsBound = "1"; manualCommunityBtn.addEventListener("click", () => { const open = manualCommunityBtn.getAttribute("aria-expanded") !== "true"; if (open) { gridlySettingsManualAwarenessQuery = ""; gridlySettingsManualAwarenessPending = ""; gridlySettingsManualAwarenessPendingCountyId = ""; renderGridlyManualAwarenessAreaPicker(document.getElementById("settingsAwarenessAreaChooser")); } setGridlySettingsAwarenessChooserOpen(open, els.settingsModal || document); manualCommunityBtn.setAttribute("aria-expanded", open ? "true" : "false"); manualCommunityBtn.textContent = open ? "Hide available areas" : "Choose from available areas"; }); }
   if (els.settingsAwarenessAreaSearchForm && els.settingsAwarenessAreaSearchForm.dataset.gridlySettingsBound !== "1") {
     els.settingsAwarenessAreaSearchForm.dataset.gridlySettingsBound = "1";
     els.settingsAwarenessAreaSearchForm.addEventListener("submit", (event) => {
