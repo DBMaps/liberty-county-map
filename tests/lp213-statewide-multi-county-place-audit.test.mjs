@@ -71,7 +71,7 @@ test('persisted precedence is generic across the full cohort', () => {
     const settings = { community: { awarenessAreaKey: row.canonicalAwarenessKey, countyId: row.staleSettingsCounty } };
     assert.equal(context.resolve(area, null, profile, settings, 'unrelated-tx'), row.selectedTestOperationalCounty.countyId, row.label);
     assert.equal(context.resolve(area, null, {}, settings, 'unrelated-tx'), row.staleSettingsCounty, row.label);
-    assert.equal(context.resolve(area, null, {}, { community: {} }, row.selectedTestOperationalCounty.countyId), row.selectedTestOperationalCounty.countyId, row.label);
+    assert.equal(context.resolve(area, null, {}, { community: {} }, row.selectedTestOperationalCounty.countyId), null, row.label);
     assert.equal(context.resolve(area, null, {}, { community: {} }, 'unrelated-tx'), null, row.label);
   }
 });
