@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:post-manual-statewide-certification": "node tools/statewide-audit/build-post-manual-statewide-certification.mjs --write",
+    "verify:post-manual-statewide-certification": "node tools/statewide-audit/build-post-manual-statewide-certification.mjs --verify",
+    "test:post-manual-statewide-certification": "node --test tests/post-manual-statewide-certification.test.mjs",
     "build:statewide-audit-reconciliation": "node tools/statewide-audit/reconcile-certified-export.mjs --write",
     "verify:statewide-audit-reconciliation": "node tools/statewide-audit/reconcile-certified-export.mjs",
     "test:statewide-audit-reconciliation": "node --test tests/statewide-audit-reconciliation.test.mjs",
