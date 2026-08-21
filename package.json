@@ -25,6 +25,7 @@
     "test:lp216": "node --test tests/lp216-*",
     "test:lp217": "node --test tests/lp217-*",
     "test:lp2171": "node --test tests/lp2171-*",
+    "test:lp218": "node --test tests/lp218-*",
     "build:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --write",
     "verify:lp215": "node tools/lp215/build-statewide-consumer-wiring-certification.mjs --verify",
     "test:lp215": "node --test tests/lp215-statewide-consumer-wiring-certification.test.mjs tests/lp215-live-browser-certifier.test.mjs",
