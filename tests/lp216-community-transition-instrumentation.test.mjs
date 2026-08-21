@@ -32,5 +32,5 @@ test('membership data and LP213 statewide control remain unchanged', () => {
 });
 
 test('all county-governed consumers emit into the same transaction ledger', () => {
-  for (const stage of ['county_scoped_selection', 'label_only_reconstruction', 'authoritative_county_resolution', 'active_county_decision', 'presentation_dispatch', 'crossing_source_resolution', 'crossing_render_county', 'roadway_source_resolution', 'awareness_county_projected', 'settings_county_persisted', 'profile_county_persisted']) assert.match(source, new RegExp(`"${stage}"`));
+  for (const stage of ['county_scoped_selection', 'explicit_membership_validated', 'authoritative_county_resolution', 'active_county_decision', 'presentation_dispatch', 'crossing_source_resolution', 'crossing_render_county', 'roadway_source_resolution', 'awareness_county_projected', 'settings_county_persisted', 'profile_county_persisted']) assert.match(source, new RegExp(`"${stage}"`));
 });
