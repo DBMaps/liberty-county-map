@@ -40318,6 +40318,7 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
 }
 
 let gridlyCrossingWatchCountAuditState = Object.freeze({ status: "unobserved" });
+let gridlyCrossingWatchedFilterRejectBreakdown = Object.freeze({});
 
 function buildGridlyCrossingWatchPresentationModel(summary = {}, reason = "location-context-projection") {
   const canonicalArea = summary?.selectedAwarenessArea || getGridlySelectedAwarenessArea();
@@ -40347,6 +40348,8 @@ function buildGridlyCrossingWatchPresentationModel(summary = {}, reason = "locat
     countUpdateReason: reason,
     previousDisplayedCount,
     newDisplayedCount: crossingsWatchedCount,
+    ...gridlyCrossingSelectorRejoinAuditState,
+    watchedFilterRejectBreakdown: gridlyCrossingWatchedFilterRejectBreakdown,
     status: stale ? "stale" : "current"
   });
   const model = Object.freeze({
@@ -47477,6 +47480,8 @@ function saveGridlyHomeTownPreference(town, options = {}) {
 function getGridlyAwarenessAreaDebugOption(area) {
   return {
     key: area.key,
+    canonicalKey: area.canonicalKey || (/^place-48\d{5}$/.test(String(area.key || "")) ? area.key : null),
+    placeGeoid: gridlyResolveCanonicalPlaceGeoid(area),
     label: area.label,
     storageValue: area.storageValue,
     coordinates: { lat: area.lat, lng: area.lng },
@@ -49785,11 +49790,17 @@ function gridlySelectConsumerVisibleCrossings(awarenessArea = getGridlySelectedA
   const visible = [];
   const seenFraIds = new Set();
   let duplicateFraIdsRemoved = 0;
+  const rejectBreakdown = { invalid_coordinate: 0, county_mismatch: 0, policy_rejection: 0, missing_geography: 0, outside_radius: 0, identity_mismatch: 0 };
   runtimeInventory.forEach((crossing) => {
-    if (!gridlyCrossingSampleMatchesCounty(crossing, activeCountyId)) return;
-    if (!gridlyCrossingSatisfiesConsumerVisibilityPolicy(crossing)) return;
-    if (typeof isGridlyReportableCrossing === "function" && !isGridlyReportableCrossing(crossing)) return;
-    if (!gridlyCrossingOwnedByAwarenessArea(crossing, selectedArea)) return;
+    if (!Number.isFinite(Number(crossing?.lat)) || !Number.isFinite(Number(crossing?.lng))) { rejectBreakdown.invalid_coordinate += 1; return; }
+    if (!gridlyCrossingSampleMatchesCounty(crossing, activeCountyId)) { rejectBreakdown.county_mismatch += 1; return; }
+    if (!gridlyCrossingSatisfiesConsumerVisibilityPolicy(crossing)) { rejectBreakdown.policy_rejection += 1; return; }
+    if (typeof isGridlyReportableCrossing === "function" && !isGridlyReportableCrossing(crossing)) { rejectBreakdown.policy_rejection += 1; return; }
+    if (!gridlyCrossingOwnedByAwarenessArea(crossing, selectedArea)) {
+      const hasGeography = selectedArea?.countyWide || selectedArea?.fallback || (Number.isFinite(Number(selectedArea?.lat)) && Number.isFinite(Number(selectedArea?.lng ?? selectedArea?.lon)));
+      rejectBreakdown[hasGeography ? "outside_radius" : "missing_geography"] += 1;
+      return;
+    }
     const fraId = gridlyGetConsumerCrossingFraId(crossing);
     if (fraId) {
       const key = fraId.toLowerCase();
@@ -49801,6 +49812,7 @@ function gridlySelectConsumerVisibleCrossings(awarenessArea = getGridlySelectedA
     }
     visible.push(crossing);
   });
+  gridlyCrossingWatchedFilterRejectBreakdown = Object.freeze({ ...rejectBreakdown });
   if (options.includeDiagnostics) {
     visible.consumerCrossingDiagnostics = Object.freeze({
       runtimeCount: runtimeInventory.length,
@@ -49810,7 +49822,8 @@ function gridlySelectConsumerVisibleCrossings(awarenessArea = getGridlySelectedA
       reportabilityApplied: true,
       awarenessGeometryApplied: true,
       activeCountyId,
-      awarenessArea: selectedArea?.label || selectedArea?.storageValue || activeCountyId
+      awarenessArea: selectedArea?.label || selectedArea?.storageValue || activeCountyId,
+      watchedFilterRejectBreakdown: Object.freeze({ ...rejectBreakdown })
     });
   }
   return visible;
@@ -50205,21 +50218,8 @@ function getGridlyBottomPanelAwarenessCrossingCount(summary = {}) {
   // matches happened to keep some communities working, while communities whose
   // inventory locality differed from their label published a false zero.
   const projectedArea = summary.selectedAwarenessArea || {};
-  const currentArea = getGridlySelectedAwarenessArea();
-  const projectedCountyId = gridlyNormalizeCountyId(projectedArea.countyId || gridlyGetActiveCountyId());
-  const currentCountyId = gridlyNormalizeCountyId(currentArea?.countyId || gridlyGetActiveCountyId());
-  const sameIdentity = Boolean(currentArea && (
-    (projectedArea.key && projectedArea.key === currentArea.key)
-    || (projectedArea.placeGeoid && projectedArea.placeGeoid === currentArea.placeGeoid)
-    || (projectedArea.label && projectedArea.label === currentArea.label)
-  ));
-  const selectedArea = sameIdentity && projectedCountyId === currentCountyId
-    ? currentArea
-    : {
-        ...projectedArea,
-        lat: projectedArea.lat ?? projectedArea.coordinates?.lat,
-        lng: projectedArea.lng ?? projectedArea.coordinates?.lng
-      };
+  const rejoin = gridlyRejoinCrossingAwarenessSelector(projectedArea, gridlyGetActiveCountyId());
+  const selectedArea = rejoin.selector;
   const routeWatchActive = Boolean(savedRouteCrossingIds instanceof Set && savedRouteCrossingIds.size > 0);
   const summaryCount = Array.isArray(summary.crossingsInArea) ? summary.crossingsInArea.length : Number(summary.crossingsInArea || 0);
   const activeCountyInventory = gridlyGetActiveCountyCrossingInventory();
@@ -50227,6 +50227,46 @@ function getGridlyBottomPanelAwarenessCrossingCount(summary = {}) {
   const selectorCount = gridlySelectConsumerVisibleCrossings(selectedArea).length;
   if ((selectedArea.countyWide || selectedArea.fallback) && activeCountyInventory.length > 0) return selectorCount;
   return Math.max(0, selectorCount, summaryCount);
+}
+
+let gridlyCrossingSelectorRejoinAuditState = Object.freeze({ selectorSourceKind: "unobserved" });
+
+function gridlyRejoinCrossingAwarenessSelector(projectedArea = {}, authoritativeCountyId = gridlyGetActiveCountyId(), canonicalAreas = GRIDLY_AWARENESS_AREA_DEFINITIONS) {
+  const countyId = gridlyNormalizeCountyId(authoritativeCountyId);
+  const selectorCountyId = gridlyNormalizeCountyId(projectedArea?.countyId || countyId);
+  const projectedKey = String(projectedArea?.canonicalKey || projectedArea?.key || "").trim();
+  const projectedGeoid = gridlyResolveCanonicalPlaceGeoid(projectedArea) || /^place-(48\d{5})$/.exec(projectedKey)?.[1] || null;
+  const canonicalIdentityPresent = Boolean(projectedKey || projectedGeoid);
+  const candidates = (canonicalAreas || []).filter((area) => {
+    if (!area || gridlyNormalizeCountyId(area.countyId || countyId) !== countyId) return false;
+    const areaKey = String(area.canonicalKey || area.key || "").trim();
+    const areaGeoid = gridlyResolveCanonicalPlaceGeoid(area);
+    return Boolean((projectedGeoid && areaGeoid === projectedGeoid) || (projectedKey && areaKey === projectedKey));
+  });
+  const canonical = selectorCountyId === countyId && canonicalIdentityPresent && candidates.length === 1 ? candidates[0] : null;
+  // A lossy projection is diagnostics, not geographic authority.  Returning a
+  // county-only sentinel prevents label matching or `(0, 0)` coercion from
+  // manufacturing membership when canonical identity is absent or ambiguous.
+  const selector = canonical || { countyId, canonicalRejoinFailed: true };
+  const canonicalGeoid = canonical ? gridlyResolveCanonicalPlaceGeoid(canonical) : null;
+  gridlyCrossingSelectorRejoinAuditState = Object.freeze({
+    selectorSourceKind: canonical ? "canonical-awareness-area-rejoin" : "compact-location-context-fail-closed",
+    canonicalRejoinAttempted: canonicalIdentityPresent,
+    canonicalRejoinSucceeded: Boolean(canonical),
+    canonicalKey: canonical?.canonicalKey || canonical?.key || null,
+    selectorCanonicalKey: projectedKey || null,
+    placeGeoid: canonicalGeoid,
+    selectorPlaceGeoid: projectedGeoid,
+    countyMatch: selectorCountyId === countyId,
+    labelMatch: Boolean(canonical && normalizeGridlyAwarenessAreaLookupText(canonical.label) === normalizeGridlyAwarenessAreaLookupText(projectedArea.label)),
+    coordinateSource: canonical ? "canonical-awareness-area" : "missing",
+    radiusSource: canonical ? "canonical-awareness-area" : "missing",
+    hasSelectorGeometry: Boolean(selector?.geometry), selectorLat: Number.isFinite(Number(selector?.lat)) ? Number(selector.lat) : null,
+    selectorLng: Number.isFinite(Number(selector?.lng ?? selector?.lon)) ? Number(selector.lng ?? selector.lon) : null,
+    selectorRadiusMiles: Number.isFinite(Number(selector?.radiusMiles)) ? Number(selector.radiusMiles) : null,
+    candidateCount: candidates.length
+  });
+  return Object.freeze({ selector, audit: gridlyCrossingSelectorRejoinAuditState });
 }
 
 function summarizeGridlyAwarenessIntelligenceForDisplay(summary = {}) {
