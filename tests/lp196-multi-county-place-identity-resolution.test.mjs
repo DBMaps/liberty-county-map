@@ -115,7 +115,7 @@ test('cameras and protected precedence remain literal and unchanged', () => {
   assert.match(source, /identityType: "PLACE_GEOID"/);
 });
 
-test('manual home-area pipeline presents one canonical exact PLACE result', () => {
+test('manual home-area pipeline presents one explicit governed-membership row per canonical PLACE membership', () => {
   for (const [name, geoid] of [['Dallas', '4819000'], ['Fort Worth', '4827000'], ['Austin', '4805000']]) {
     const context = manualFixture();
     const memberships = name === 'Dallas' ? ['48085', '48113', '48121'] : name === 'Fort Worth' ? ['48121', '48367', '48439'] : ['48021', '48055', '48209', '48453'];
@@ -126,14 +126,14 @@ test('manual home-area pipeline presents one canonical exact PLACE result', () =
     context.gridlyGetSelectableOperationalCountyIds = () => counties.map(([id]) => id);
     const result = context.manualSearch(name);
     assert.equal(result.exactMatch, true);
-    assert.equal(result.groups.length, 1);
-    assert.equal(result.groups[0].communities.length, 1);
-    assert.equal(result.groups[0].communities[0].canonicalResolution.placeGeoid, geoid);
-    assert.equal(result.groups[0].countyLabel, 'Multi-county community');
+    assert.equal(result.groups.length, memberships.length);
+    assert.ok(result.groups.every(group => group.communities.length === 1));
+    assert.ok(result.groups.every(group => group.communities[0].canonicalResolution.placeGeoid === geoid));
+    assert.deepEqual(result.groups.map(group => group.communities[0].requestedOperationalCountyId), counties.map(([countyId]) => countyId));
   }
 });
 
-test('partial PLACE search collapses by GEOID and preserves the canonical selection token', () => {
+test('partial PLACE search preserves canonical identity and an explicit token for every governed membership', () => {
   for (const [query, name, geoid, memberships] of [
     ['corp', 'Corpus Christi', '4817000', ['48007', '48273', '48355', '48409']],
     ['aus', 'Austin', '4805000', ['48021', '48055', '48209', '48453']],
@@ -148,15 +148,15 @@ test('partial PLACE search collapses by GEOID and preserves the canonical select
     context.gridlyGetSelectableOperationalCountyIds = () => counties.map(([id]) => id);
     const partial = context.manualSearch(query);
     const exact = context.manualSearch(name);
-    assert.equal(partial.groups.length, 1);
-    assert.equal(partial.groups[0].countyLabel, 'Multi-county community');
-    assert.equal(partial.groups[0].communities.length, 1);
-    assert.equal(partial.groups[0].communities[0].key, `place-${geoid}`);
-    assert.equal(partial.groups[0].communities[0].value, `place-${geoid}`);
-    assert.equal(partial.groups[0].communities[0].countyId, null);
-    assert.equal(partial.groups[0].communities[0].canonicalResolution.placeGeoid, geoid);
+    assert.equal(partial.groups.length, memberships.length);
+    assert.ok(partial.groups.every(group => group.communities.length === 1));
+    assert.ok(partial.groups.every(group => group.communities[0].canonicalResolution.placeGeoid === geoid));
+    assert.equal(partial.groups.map(group => group.countyValue).join('|'), counties.map(([countyId]) => countyId).join('|'));
+    assert.equal(new Set(partial.groups.map(group => group.communities[0].value)).size, memberships.length);
+    assert.ok(partial.groups.every((group, index) => group.communities[0].value.startsWith(`${counties[index][0]}-`)));
     assert.deepEqual([...partial.groups[0].communities[0].countyMemberships], memberships);
-    assert.equal(exact.groups[0].communities[0].canonicalResolution.placeGeoid, geoid);
+    assert.equal(exact.groups.length, memberships.length);
+    assert.ok(exact.groups.every(group => group.communities[0].canonicalResolution.placeGeoid === geoid));
   }
 });
 
@@ -178,7 +178,7 @@ test('partial search never name-deduplicates distinct PLACE GEOIDs', () => {
 test('Austin exact precedence does not expose Austin County or Bellville, while explicit searches remain available', () => {
   const context = manualFixture();
   const austin = context.manualSearch('Dallas');
-  assert.equal(austin.groups.length, 1);
+  assert.equal(austin.groups.length, 3);
   context.GRIDLY_AWARENESS_AREA_DEFINITIONS.push({ key: 'collin-tx-bellville', label: 'Bellville', storageValue: 'Bellville', countyId: 'collin-tx' });
   context.GRIDLY_AWARENESS_AREA_BY_KEY['collin-tx-bellville'] = context.GRIDLY_AWARENESS_AREA_DEFINITIONS.at(-1);
   context.GRIDLY_COUNTY_REGISTRY['collin-tx'].consumerAwarenessAreas.push({ placeGeoid: '4807488', displayName: 'Bellville', canonicalIdentity: 'PLACE_GEOID', consumerEligible: true, countyMemberships: ['48085'] });
@@ -187,38 +187,43 @@ test('Austin exact precedence does not expose Austin County or Bellville, while 
   assert.ok(context.manualSearch('Austin County').groups[0].communities.length > 0);
 });
 
-test('canonical manual apply routes persistence without an invented county', () => {
+test('canonical manual apply requires and routes the explicit governed county', () => {
   assert.match(source, /canonicalResolution\?\.status === "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE"/);
   assert.match(source, /gridlySaveCanonicalMultiCountyPlaceHome\(canonicalResolution/);
-  assert.match(source, /countyId: null, countyName: null, countyMemberships:/);
+  assert.match(source, /gridlySaveCanonicalMultiCountyPlaceHome\(canonicalResolution, "settings_manual_awareness_area", requestedOperationalCountyId\)/);
+  assert.match(source, /countyId: requestedCountyId, countyName: requestedCounty\.name, countyMemberships:/);
+  assert.match(source, /explicit_operational_membership_missing/);
   assert.match(source, /identityType: "PLACE_GEOID"/);
 });
 
-test('confirmed canonical PLACE apply persists, refreshes visible context, and dispatches its semantic camera', () => {
+test('confirmed canonical PLACE apply fails closed without authority and persists the explicit governed membership', () => {
   for (const [community, placeGeoid, countyMemberships] of [
     ['Dallas', '4819000', ['48085', '48113', '48121', '48231', '48257']],
     ['Fort Worth', '4827000', ['48121', '48251', '48367', '48439', '48497']],
     ['Austin', '4805000', ['48021', '48055', '48209', '48453']]
   ]) {
     const writes = new Map(); const calls = [];
-    const area = { label: community, placeGeoid, canonicalMultiCountyPlace: true, countyId: null, countyMemberships };
     const requestedCountyId = 'requested-tx';
+    const area = { label: community, placeGeoid, canonicalMultiCountyPlace: true, countyId: requestedCountyId, countyMemberships };
     const context = {
       GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY: 'home', GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION: '1', activeGeoFilter: 'county',
       GRIDLY_COUNTY_REGISTRY: { [requestedCountyId]: { countyFips: countyMemberships.at(-1), operational: true } }, GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID: {},
       gridlyNormalizeCountyId: value => value,
       localStorage: { setItem: (key, value) => writes.set(key, value) }, gridlySafeLocalStorageSet: (key, value) => writes.set(key, value),
-      gridlyLp0517ValidateHomeRecord: record => ({ valid: record.countyId === null && record.communityKey === placeGeoid && record.countyMemberships.join('|') === countyMemberships.join('|'), area }),
+      gridlyLp0517ValidateHomeRecord: record => ({ valid: record.countyId === requestedCountyId && record.communityKey === placeGeoid && record.countyMemberships.join('|') === countyMemberships.join('|'), area }),
+      gridlyBeginCommunityTransitionTrace: () => {}, gridlyRecordCommunityTransitionStage: () => {},
       invalidateGridlySelectedAwarenessAreaResolutionCache: reason => calls.push(['invalidate', reason]),
       gridlySynchronizeActiveCountyForOperationalContext: (selectedArea, countyId, reason) => { calls.push(['county', selectedArea, countyId, reason]); return countyId; },
       gridlyDispatchSemanticCamera: (selectedArea, countyId, options) => { calls.push(['camera', selectedArea, countyId, options]); return true; },
       syncGridlyAwarenessAreaSurfacesImmediately: (reason, options) => calls.push(['sync', reason, options]), renderGridlySettingsPanel: () => calls.push(['settings'])
     };
     vm.runInNewContext(`${canonicalSaveSource};this.save=gridlySaveCanonicalMultiCountyPlaceHome`, context);
+    assert.equal(context.save({ status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', canonicalIdentity: 'PLACE_GEOID', community, placeGeoid, countyMemberships }, 'ambiguous_test'), false);
+    assert.equal(writes.has('home'), false);
     assert.equal(context.save({ status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', canonicalIdentity: 'PLACE_GEOID', community, placeGeoid, countyMemberships }, 'confirmed_test', requestedCountyId), true);
     const record = JSON.parse(writes.get('home'));
     assert.equal(record.consumerLabel, community);
-    assert.equal(record.countyId, null);
+    assert.equal(record.countyId, requestedCountyId);
     assert.deepEqual(record.countyMemberships, countyMemberships);
     assert.deepEqual(calls.find(call => call[0] === 'camera').slice(1, 3), [area, requestedCountyId]);
     assert.deepEqual(calls.find(call => call[0] === 'county').slice(1, 3), [area, requestedCountyId]);
@@ -227,10 +232,10 @@ test('confirmed canonical PLACE apply persists, refreshes visible context, and d
   }
 });
 
-test('confirmation and reload contracts accept canonical PLACE countyId null without stale county fallback', () => {
+test('confirmation and reload contracts require persisted canonical PLACE authority without stale county fallback', () => {
   assert.match(source, /consumerLabel: canonicalResolution\.community/);
-  assert.match(source, /persistedHome\?\.identityType === "PLACE_GEOID" && !persistedHome\.countyId/);
-  assert.match(source, /context\.area\.canonicalMultiCountyPlace !== true/);
-  assert.match(source, /gridlyStartupSemanticContext\?\.countyId \|\| startupAnchor\.countyId/);
-  assert.match(source, /meta: area\.canonicalMultiCountyPlace === true\s*\? "Multi-county community"/);
+  assert.match(source, /gridlyResolvePersistedCanonicalPlaceOperationalCounty\(\s*persistedIdentity\.area,\s*persistedHome/);
+  assert.match(source, /const homeCountyId = validateMemberCounty\(homeRecord\?\.countyId\);\s*if \(homeCountyId\) return homeCountyId/);
+  assert.match(source, /do not inherit the previous active county/);
+  assert.match(source, /gridlyProjectCanonicalPlaceOperationalCounty\(persistedIdentity\.area, operationalCountyId\)/);
 });
