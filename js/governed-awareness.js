@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP219.1-live-surface-observation-v2";
+  const VERSION = "LP219.2-location-context-production-source-v3";
   const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup"]);
   const COMMUNITY_POLICY = Object.freeze({
     blocked_crossing: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
@@ -161,5 +161,45 @@
       currentStaleBreakdown: Object.freeze({ current: evidence.filter((row) => row.current).length, stale: evidence.filter((row) => !row.current).length }), events: Object.freeze(events), stableState: true
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, identity, sourceKindOf, subtypeOf });
+  function buildLocationContextProductionAudit(input = {}) {
+    const governed = Array.isArray(input.governedEvidence) ? input.governedEvidence : [];
+    const production = Array.isArray(input.productionItems) ? input.productionItems : [];
+    const seen = new Map();
+    const items = production.slice(0, 100).map((entry, index) => {
+      const record = entry?.record && typeof entry.record === "object" ? entry.record : (entry || {});
+      const sourceKind = sourceKindOf(record);
+      const subtype = subtypeOf(record);
+      const productionIdentity = identity(record, sourceKind, subtype);
+      const governedRow = productionIdentity ? governed.find((row) => row.evidenceId === productionIdentity) : null;
+      let matchStatus = productionIdentity ? (governedRow ? "MATCHED_GOVERNED" : "UNMATCHED_PRODUCTION_ITEM") : "IDENTITY_UNAVAILABLE";
+      if (governedRow && governedRow.lifecycle?.retainedForHistory) matchStatus = "MATCHED_INACTIVE_HISTORY";
+      else if (governedRow && (!governedRow.current || governedRow.staleStatus === "STALE")) matchStatus = "MATCHED_STALE";
+      if (productionIdentity && seen.has(productionIdentity)) matchStatus = "MATCHED_DUPLICATE";
+      else if (productionIdentity) seen.set(productionIdentity, index);
+      return Object.freeze({
+        productionIdentity: productionIdentity || null, sourceKind, subtype,
+        governedEvidenceId: governedRow?.evidenceId || null, matchStatus,
+        lifecycle: governedRow?.lifecycle?.classification || (matchStatus === "IDENTITY_UNAVAILABLE" ? "IDENTITY_UNAVAILABLE" : "UNRECONCILED"),
+        countedReason: text(entry?.countedReason || "production_collection_member")
+      });
+    });
+    const operands = Object.freeze({ ...(input.operands || {}) });
+    const count = Number.isFinite(Number(input.productionCount)) ? Math.max(0, Number(input.productionCount)) : items.length;
+    const ids = (status) => items.filter((row) => status.includes(row.matchStatus)).map((row) => row.governedEvidenceId || row.productionIdentity).filter(Boolean);
+    const sourceBreakdown = items.reduce((out, row) => ({ ...out, [row.sourceKind]: (out[row.sourceKind] || 0) + 1 }), {});
+    return Object.freeze({
+      locationContextProductionSource: text(input.productionSource || "normalizeGridlyMobileAwarenessPanelSummary.getGridlyReconciledAwarenessActiveIssueCount"),
+      locationContextProductionCount: count, locationContextProductionItems: Object.freeze(items),
+      locationContextProductionCollectionCardinality: items.length, locationContextProductionOperands: operands,
+      locationContextCountDerivationReason: text(input.derivationReason || "MAX_RECONCILIATION_ACROSS_LP214_OPERANDS"),
+      locationContextMatchedGovernedIds: Object.freeze(ids(["MATCHED_GOVERNED"])),
+      locationContextInactiveHistoryIds: Object.freeze(ids(["MATCHED_INACTIVE_HISTORY"])),
+      locationContextStaleIds: Object.freeze(ids(["MATCHED_STALE"])),
+      locationContextDuplicateIds: Object.freeze(ids(["MATCHED_DUPLICATE"])),
+      locationContextUnmatchedProductionItems: Object.freeze(items.filter((row) => row.matchStatus === "UNMATCHED_PRODUCTION_ITEM")),
+      locationContextIdentityUnavailableItems: Object.freeze(items.filter((row) => row.matchStatus === "IDENTITY_UNAVAILABLE")),
+      locationContextSourceBreakdown: Object.freeze(sourceBreakdown)
+    });
+  }
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildLocationContextProductionAudit, identity, sourceKindOf, subtypeOf });
 });

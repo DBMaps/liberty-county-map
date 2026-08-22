@@ -596,6 +596,7 @@
     "test:lp2051": "node --test tests/lp2051-statewide-awareness-completeness-and-quiet-state-repair.test.mjs",
     "verify:lp205": "node --test tests/lp205-statewide-quiet-state-claims-audit.test.mjs",
     "test:lp219": "node --test tests/lp219-*",
-    "test:lp2191": "node --test tests/lp2191-*"
+    "test:lp2191": "node --test tests/lp2191-*",
+    "test:lp2192": "node --test tests/lp2192-*"
   }
 }
