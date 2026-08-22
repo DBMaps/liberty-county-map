@@ -46,6 +46,9 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
   const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
   const allowedConsumerBoundaries = new Set([
     "js/app.js",
+    // LP223 extends the consumer-only governed diagnostic and does not alter
+    // DriveTexas fetching, normalization, identity, or publication.
+    "js/governed-awareness.js",
     "js/gridlyAlertSemanticContract.js",
     // Alerts publication-to-presentation convergence consumes the already
     // governed shared summary and does not alter provider normalization.

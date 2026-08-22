@@ -120727,7 +120727,10 @@ function gridlyGovernedAwarenessAudit(options = {}) {
       kbygOfficialRoadways: domIds('[data-gridly-kbyg-roadway-id]', ['data-gridly-kbyg-roadway-id']),
       kbygCommunityVisible: kbygCommunityNodes.some(visible), kbygOfficialRoadwaysVisible: kbygRoadwayNodes.some(visible),
       map: markerItems, mapVisible: visible(document.getElementById("map")),
-      popup: domIds('[data-gridly-popup-report-id], .leaflet-popup [data-report-id], .leaflet-popup [data-incident-id]', ['data-gridly-popup-report-id', 'data-report-id', 'data-incident-id']), popupVisible: visible(document.querySelector(".leaflet-popup"))
+      popup: domIds('[data-gridly-popup-report-id], .leaflet-popup [data-report-id], .leaflet-popup [data-incident-id]', ['data-gridly-popup-report-id', 'data-report-id', 'data-incident-id']), popupVisible: visible(document.querySelector(".leaflet-popup")),
+      // Crossing report persistence is the existing history owner. This is an
+      // observation only: LP223 does not create or rewrite archive storage.
+      history: reportRows.filter((row) => engine.subtypeOf(row) === "blocked_crossing" && /^(?:cleared|recently[_ -]?cleared)$/i.test(String(row?.status || row?.state || row?.lifecycleState || "")))
     }
   });
   const productionAudit = gridlyLocationContextProductionAudit();
