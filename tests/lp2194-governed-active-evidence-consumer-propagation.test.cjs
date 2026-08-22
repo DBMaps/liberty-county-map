@@ -39,10 +39,10 @@ function productionFunction(name, nextName, globals = {}) {
 
 test('Sulphur Springs browser-equivalent authority reaches active KBYG and Alerts DOM inputs', () => {
   const control = hazard('37e6718f-a853-4b8f-a2bb-31cd64625153', {
-    countyId: 'hopkins-tx', canonicalCommunity: 'Sulphur Springs', canonicalKey: '4871048',
+    countyId: 'hopkins-tx', canonicalCommunity: '', canonicalKey: '4870904',
     lat: 33.1384, lng: -95.6011, title: 'Road hazard', updatedAt: '2026-08-22T11:55:00Z'
   });
-  const projection = governed.buildConsumerProjection({ records: [control], nowMs: NOW, countyId: 'hopkins-tx', canonicalCommunity: 'Sulphur Springs', canonicalKey: '4871048' });
+  const projection = governed.buildConsumerProjection({ records: [control], nowMs: NOW, countyId: 'hopkins-tx', canonicalCommunity: 'Sulphur Springs', canonicalKey: '4870904' });
   assert.equal(projection.snapshot.governedEligibleEvidenceCount, 1);
   assert.deepEqual(projection.surfaces.locationContext.map(row => row.evidenceId), [`active_hazard:${control.id}`]);
   assert.deepEqual(projection.surfaces.kbygCommunity.map(row => row.evidenceId), [`active_hazard:${control.id}`]);
@@ -62,11 +62,23 @@ test('Sulphur Springs browser-equivalent authority reaches active KBYG and Alert
     gridlyGetActiveCountyId: () => 'hopkins-tx',
     getGridlyAwarenessIntelligenceCrossing: () => null
   });
-  assert.equal(areaPredicate(control, { label: 'Sulphur Springs', countyId: 'hopkins-tx' }), true);
+  assert.equal(areaPredicate(control, { label: 'Sulphur Springs', countyId: 'hopkins-tx', placeGeoid: '4870904' }), true);
+  assert.equal(areaPredicate({ ...control, countyId: 'other-tx' }, { label: 'Sulphur Springs', countyId: 'hopkins-tx', placeGeoid: '4870904' }), false, 'PLACE match cannot bypass canonical county agreement');
+
+  const geographyResolver = productionFunction('gridlyResolveAlertCanonicalGeography', 'gridlyAlertAreaFilterRecordSummary', {
+    getGridlySelectedAwarenessArea: () => ({ label: 'Sulphur Springs', countyId: 'hopkins-tx', placeGeoid: '4870904' }),
+    gridlyNormalizeCountyId: value => String(value || '').trim().toLowerCase(),
+    gridlyGetActiveCountyId: () => 'hopkins-tx'
+  });
+  assert.deepEqual({ ...geographyResolver(control) }, { canonicalCommunity: 'Sulphur Springs', canonicalKey: '4870904', countyId: 'hopkins-tx' });
+  assert.equal(geographyResolver({ ...control, countyId: 'other-tx' }).canonicalCommunity, '', 'presentation cannot recover town ownership across counties');
 
   assert.match(appSource, /intelItems\.length && !canonicalActiveCommunityRecords\?\.length/, 'governed Alerts candidates outrank unrelated localized intelligence');
   assert.match(appSource, /return \{\s*\.\.\.item,\s*id: item\?\.id \|\| item\?\.crossingId/s, 'Alerts presentation preserves governed identity and geography');
   assert.match(appSource, /window\.__gridlyLp2194AlertStages = Object\.freeze/, 'production records every Alerts authority stage');
   assert.match(appSource, /governedKbygAuthorityIds/, 'KBYG cache authority includes governed evidence membership');
+  assert.match(appSource, /const portraitKbygSynced = governedKbygAuthorityIds\.length[\s\S]*gridlyRenderTravelBrief\(\)/, 'governed refresh invokes the actual expanded portrait writer');
+  assert.match(appSource, /const portraitKbygDomText = String\(portraitKbygNode\?\.textContent/, 'audit reads the actual expanded portrait DOM separately');
+  assert.match(appSource, /authorityToDomParity/, 'audit distinguishes authority-to-portrait-DOM parity');
   assert.match(appSource, /lp2194AuthorityAudit/, 'owner audit exposes final consumer authority and first losing stage');
 });

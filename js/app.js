@@ -3322,7 +3322,20 @@ if (typeof window !== "undefined") { window.gridlyResolveCanonicalLiveIncidentId
 
 function gridlyStoryActiveRecords() {
   // LP053.4A compatibility note: previous implementation was `return gridlyGetLifecycleCorrectActiveCommunityRecords();`; LP053.4B promotes that source into the canonical selector.
-  return gridlyGetCanonicalActiveCommunityState().activeRecords.slice();
+  const canonicalRecords = gridlyGetCanonicalActiveCommunityState().activeRecords.slice();
+  // LP219.4: the expanded portrait KBYG is the Travel Brief, not the compact
+  // Community Pulse copy.  Carry its governed authority into the model that
+  // actually renders that panel, while retaining the canonical lifecycle set.
+  const governedRows = (typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null)?.surfaces?.kbygCommunity || [];
+  const seen = new Set(canonicalRecords.map((record) => String(record?.id || record?.reportId || record?.report_id || "")).filter(Boolean));
+  governedRows.forEach((row) => {
+    const record = row?.record;
+    const id = String(record?.id || record?.reportId || record?.report_id || row?.evidenceId || "");
+    if (!record || (id && seen.has(id))) return;
+    canonicalRecords.push(record);
+    if (id) seen.add(id);
+  });
+  return canonicalRecords;
 }
 
 function gridlyStoryWeatherMeaningfulImpact(weather) {
@@ -4369,10 +4382,14 @@ function gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecor
 
 function gridlyBuildTravelBriefModel(storyInput) {
   const records = gridlyStoryActiveRecords();
+  const governedKbygEvidenceIds = ((typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null)?.surfaces?.kbygCommunity || []).map((row) => row.evidenceId);
   const driveTexasSourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope();
   const driveTexasRecords = gridlyStoryTransportationConnectorRecords();
   const weather = gridlyBriefInteractionWeatherModel();
-  const story = storyInput?.evidence ? storyInput : (typeof buildGridlyAwarenessStory === "function" ? buildGridlyAwarenessStory({ records, transportationRecords: driveTexasRecords, weather }) : null);
+  // A caller may have built storyInput before the governed snapshot arrived.
+  // Once KBYG authority is active, rebuild from that final record collection so
+  // stale quiet copy cannot overwrite the expanded portrait consumer.
+  const story = storyInput?.evidence && !governedKbygEvidenceIds.length ? storyInput : (typeof buildGridlyAwarenessStory === "function" ? buildGridlyAwarenessStory({ records, transportationRecords: driveTexasRecords, weather }) : null);
   return Object.freeze({
     version: "LP061",
     title: "Current Conditions",
@@ -4385,6 +4402,7 @@ function gridlyBuildTravelBriefModel(storyInput) {
     ]),
     unifiedEvidence: gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather, sourceEnvelope: driveTexasSourceEnvelope }),
     officialRoadwaySourceStatus: driveTexasSourceEnvelope,
+    governedKbygEvidenceIds: Object.freeze(governedKbygEvidenceIds.slice()),
     storyConnected: Boolean(story?.evidence)
   });
 }
@@ -49992,9 +50010,15 @@ function gridlyRecordTextMatchesAwarenessArea(record = {}, area = {}) {
   // Governed canonical ownership is stronger than optional presentation text.
   // Require county agreement as well so this cannot broaden a same-named place.
   const canonicalCommunity = normalizeGridlyAwarenessAreaLookupText(record?.canonicalCommunity || record?.raw?.canonicalCommunity || "");
+  const canonicalKey = String(record?.canonicalKey || record?.placeGeoid || record?.place_geoid || record?.raw?.canonicalKey || record?.raw?.placeGeoid || record?.raw?.place_geoid || "").trim();
+  const areaCanonicalKey = String(area?.canonicalKey || area?.placeGeoid || area?.communityId || "").trim();
   const canonicalCountyId = gridlyNormalizeCountyId(record?.countyId || record?.county_id || record?.raw?.countyId || record?.raw?.county_id || "");
   const areaCountyId = gridlyNormalizeCountyId(area?.countyId || gridlyGetActiveCountyId());
   if (canonicalCommunity && canonicalCommunity === areaName && canonicalCountyId && canonicalCountyId === areaCountyId) return true;
+  // PLACE identity is the existing selected-area authority when optional
+  // presentation text is absent. County agreement remains independently
+  // required to prevent a same-key/cross-county ownership broadening.
+  if (canonicalKey && areaCanonicalKey && canonicalKey === areaCanonicalKey && canonicalCountyId && canonicalCountyId === areaCountyId) return true;
   const crossing = getGridlyAwarenessIntelligenceCrossing(record);
   const crossingCity = normalizeGridlyAwarenessAreaLookupText(crossing?.city || "");
   return Boolean(crossingCity && crossingCity === areaName);
@@ -50044,6 +50068,20 @@ function gridlyGetSelectedAlertAreaFilter() {
     applied: true,
     mode: countyMode ? "county" : (area?.houstonRegion === true ? "houston-region" : "town"),
     label: area?.label || GRIDLY_COUNTY_WIDE_AWARENESS_LABEL
+  };
+}
+
+function gridlyResolveAlertCanonicalGeography(record = {}, area = getGridlySelectedAwarenessArea()) {
+  const canonicalKey = String(record?.canonicalKey || record?.placeGeoid || record?.place_geoid || record?.raw?.canonicalKey || record?.raw?.placeGeoid || "").trim();
+  const areaCanonicalKey = String(area?.canonicalKey || area?.placeGeoid || area?.communityId || "").trim();
+  const countyId = gridlyNormalizeCountyId(record?.countyId || record?.county_id || record?.raw?.countyId || record?.raw?.county_id || "");
+  const areaCountyId = gridlyNormalizeCountyId(area?.countyId || gridlyGetActiveCountyId());
+  const existingCommunity = String(record?.canonicalCommunity || record?.raw?.canonicalCommunity || "").trim();
+  const identityAgrees = Boolean(canonicalKey && areaCanonicalKey && canonicalKey === areaCanonicalKey && countyId && countyId === areaCountyId);
+  return {
+    canonicalCommunity: existingCommunity || (identityAgrees ? String(area?.label || area?.name || "").trim() : ""),
+    canonicalKey,
+    countyId
   };
 }
 
@@ -61121,7 +61159,7 @@ function getGridlyActiveCountSurfaceRows(rows = [], options = {}) {
 function getGridlyAlertsSurfaceActiveCommunityReportRows(options = {}) {
   const safeRows = (rows) => getGridlyActiveCountSurfaceRows(rows, options);
   if (options?.alerts && Array.isArray(options.alerts)) return safeRows(options.alerts);
-  const governedAlertProjection = !options?.skipCanonicalSource ? gridlyGetGovernedConsumerProjection()?.surfaces?.alerts : null;
+  const governedAlertProjection = !options?.skipCanonicalSource && typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection()?.surfaces?.alerts : null;
   const canonicalActiveRecords = !options?.skipCanonicalSource && typeof gridlyGetCanonicalActiveCommunityState === "function"
     ? safeRows(Array.isArray(governedAlertProjection) ? governedAlertProjection.map((row) => ({ ...row.record, evidenceId: row.evidenceId })) : gridlyGetCanonicalActiveCommunityState().activeRecords)
     : null;
@@ -63187,6 +63225,12 @@ function refreshGridlyCommunityPulseSharedModel(options = {}) {
     cacheOutcome: reusedSharedModel ? "hit" : "miss"
   };
   const communityPulseCopySynced = syncGridlyCommunityPulseCopyFromModel(model, { reason: options?.reason || "refreshGridlyCommunityPulseSharedModel" });
+  // The expanded portrait KBYG is owned by Travel Brief. Refresh that final
+  // writer in the same governed-authority transaction instead of assuming the
+  // compact Community Pulse DOM represents portrait success.
+  const portraitKbygSynced = governedKbygAuthorityIds.length && typeof gridlyRenderTravelBrief === "function"
+    ? gridlyRenderTravelBrief()
+    : false;
   if (model.pulseVisible) markGridlyCommunityPulseFirstValidRender(model, options?.reason || "refreshGridlyCommunityPulseSharedModel");
   recordGridlyV737FirstPaint("community-pulse", {
     headline: model.renderedPulseHeadline || "",
@@ -63201,6 +63245,7 @@ function refreshGridlyCommunityPulseSharedModel(options = {}) {
     pulseVisible: false,
     pulseSuppressedReason: model.pulseSuppressedReason || "desktop pulse DOM gated; shared portrait model refreshed",
     communityPulseCopySynced,
+    portraitKbygSynced,
     v734SharedModelReuseApplied: reusedSharedModel,
     v734SharedModelReuseCount: gridlyV734RefreshReuseState.communityPulseReuseCount,
     v734SharedModelSignature: signature,
@@ -112686,6 +112731,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           detail: incident?.detail || raw?.detail || item?.detail || "",
           description: incident?.description || raw?.description || item?.description || "",
           raw: raw || incident || item || null,
+          canonicalCommunity: incident?.canonicalCommunity || item?.canonicalCommunity || raw?.canonicalCommunity || "",
+          canonicalKey: incident?.canonicalKey || incident?.placeGeoid || item?.canonicalKey || item?.placeGeoid || raw?.canonicalKey || raw?.placeGeoid || "",
+          countyId: incident?.countyId || incident?.county_id || item?.countyId || item?.county_id || raw?.countyId || raw?.county_id || "",
           crossStreetA: incident?.crossStreetA,
           crossStreetB: incident?.crossStreetB,
           direction: incident?.direction
@@ -112749,7 +112797,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           source: item?.source || item?.latestReport || null,
           detail: item?.detail || raw?.detail || item?.latestReport?.detail || "",
           description: item?.description || raw?.description || item?.latestReport?.description || "",
-          raw: raw || item || null
+          raw: raw || item || null,
+          canonicalCommunity: item?.canonicalCommunity || raw?.canonicalCommunity || "",
+          canonicalKey: item?.canonicalKey || item?.placeGeoid || raw?.canonicalKey || raw?.placeGeoid || "",
+          countyId: item?.countyId || item?.county_id || raw?.countyId || raw?.county_id || ""
         };
       });
     const normalizedAlertItemsBeforeAreaFilter = gridlyAlertsOpenAuditMeasure("DriveTexas official situation promotion", () => normalizedAlertItemsFromIntel.map((alert) => {
@@ -112761,6 +112812,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const priorityModel = getGridlyIncidentPriorityModel(shapedAlert.raw || shapedAlert, { routeRelevant: Boolean(shapedAlert.routeRelevant) });
       return {
         ...shapedAlert,
+        ...gridlyResolveAlertCanonicalGeography(shapedAlert),
         priorityModel,
         priorityScore: Number(shapedAlert.priorityScore ?? priorityModel.score),
         priorityReasonCopy: buildGridlyPriorityReasonCopy(priorityModel, { routeRelevant: Boolean(shapedAlert.routeRelevant) })
@@ -120558,6 +120610,11 @@ function gridlyGovernedAwarenessAudit(options = {}) {
   const finalKbygAuthorityIds = Array.isArray(finalPulseModel?.activeAwareness?.governedKbygEvidenceIds) ? finalPulseModel.activeAwareness.governedKbygEvidenceIds : [];
   const finalKbygDecision = typeof buildGridlyCommunityPulseDecisionPresentation === "function" ? buildGridlyCommunityPulseDecisionPresentation(finalPulseModel || {}) : null;
   const kbygVisibleText = [document.getElementById("gridlyCommunityPulseHeadline")?.textContent, document.getElementById("gridlyCommunityPulseSubline")?.textContent, document.getElementById("gridlyCommunityPulseDecisionHeadline")?.textContent, document.getElementById("gridlyCommunityPulseDecisionSubline")?.textContent].filter(Boolean).join(" ").trim();
+  const portraitKbygModel = typeof gridlyBuildTravelBriefModel === "function" ? gridlyBuildTravelBriefModel() : null;
+  const portraitKbygModelText = (portraitKbygModel?.sections || []).flatMap((section) => section?.lines || []).filter(Boolean).join(" ").trim();
+  const portraitKbygNode = document.querySelector("[data-gridly-travel-brief-list]");
+  const portraitKbygDomText = String(portraitKbygNode?.textContent || "").replace(/\s+/g, " ").trim();
+  const classifyKbygText = (text) => /No active local issues|No active concerns are reported/i.test(text) ? "quiet" : (String(text || "").trim() ? "active" : "not_visible");
   const alertStages = window.__gridlyLp2194AlertStages || {};
   const stagePublishedIds = (items) => engine.buildSnapshot({ records: reportRows, nowMs: options.nowMs, actual: { alerts: Array.isArray(items) ? items : [] } }).publishedIds.alerts;
   const alertPresentationCandidateIds = stagePublishedIds(alertStages.presentationCandidates);
@@ -120567,7 +120624,7 @@ function gridlyGovernedAwarenessAudit(options = {}) {
   const alertFilterState = typeof gridlyAlertAreaFilterState === "object" ? gridlyAlertAreaFilterState : {};
   const firstLosingStage = (id, stages) => Object.entries(stages).find(([, ids]) => !ids.includes(id))?.[0] || null;
   const lp2194AuthorityAudit = Object.freeze({
-    kbyg: Object.freeze({ governedEligibleIds: snapshot.surfaces.kbygCommunity.governedEligibleIds, governedPublishedIds: governedKbygIds, finalAuthorityInputIds: finalKbygAuthorityIds, finalDecision: finalKbygDecision?.state || "unavailable", finalVisibleState: /No active local issues|No active concerns are reported/i.test(kbygVisibleText) ? "quiet" : (kbygVisibleText ? "active" : "not_visible"), visibleText: kbygVisibleText, parity: governedKbygIds.every((id) => finalKbygAuthorityIds.includes(id)) && !/^(?:quiet|unavailable)$/.test(finalKbygDecision?.state || "unavailable") }),
+    kbyg: Object.freeze({ governedEligibleIds: snapshot.surfaces.kbygCommunity.governedEligibleIds, governedPublishedIds: governedKbygIds, finalAuthorityInputIds: finalKbygAuthorityIds, finalDecision: finalKbygDecision?.state || "unavailable", modelSummaryText: kbygVisibleText, portraitModelText: portraitKbygModelText, portraitDomText: portraitKbygDomText, portraitDomVisibleState: classifyKbygText(portraitKbygDomText), authorityToDomParity: governedKbygIds.every((id) => finalKbygAuthorityIds.includes(id)) && classifyKbygText(portraitKbygDomText) === "active", finalVisibleState: classifyKbygText(kbygVisibleText), visibleText: kbygVisibleText, parity: governedKbygIds.every((id) => finalKbygAuthorityIds.includes(id)) && !/^(?:quiet|unavailable)$/.test(finalKbygDecision?.state || "unavailable") }),
     alerts: Object.freeze({ governedEligibleIds: snapshot.surfaces.alerts.governedEligibleIds, governedProjectedIds: governedAlertIds, presentationCandidateIds: alertPresentationCandidateIds, areaFilterEligibleIds: alertAreaFilterEligibleIds, finalAlertDataIds: alertDataIds, finalDomIds: alertDomIds, areaFilter: alertFilterState, parity: governedAlertIds.every((id) => alertDataIds.includes(id) && alertDomIds.some((domId) => id === domId || id.endsWith(`:${domId}`))) }),
     evidence: Object.freeze(consumerProjection.lineage.map((row) => Object.freeze({ evidenceId: row.evidenceId, firstLosingStage: firstLosingStage(row.evidenceId, row.kbygCommunityEligible ? { kbygGovernedPublished: governedKbygIds, kbygFinalAuthorityInput: finalKbygAuthorityIds } : row.alertsEligible ? { alertsGovernedProjected: governedAlertIds, alertsPresentationCandidate: alertPresentationCandidateIds, alertsAreaFilterEligible: alertAreaFilterEligibleIds, alertsFinalData: alertDataIds, alertsFinalDom: alertDomIds.map((id) => row.evidenceId.endsWith(`:${id}`) ? row.evidenceId : id) } : {}) })))
   });
