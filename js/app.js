@@ -56935,8 +56935,16 @@ function normalizeReports(rows) {
     ? HAZARD_TYPES[reportType]
     : getReportCopy(reportType);
 
+    const persistedReportId = String(row.id || row.report_id || row.reportId || "").trim();
+    const lifecycleIdentityMatch = String(row.detail || "").match(/\(lifecycle_report_id:\s*([^\s)]+)\)/i);
+    const lifecycleIdentity = String(row.lifecycleIdentity || row.lifecycle_identity || row.clearsReportId || row.clears_report_id || lifecycleIdentityMatch?.[1] || persistedReportId).trim();
     return {
       id: row.id,
+      persistedReportId: persistedReportId || null,
+      lifecycleIdentity: lifecycleIdentity || null,
+      canonicalReportIdentity: lifecycleIdentity || null,
+      clearsReportId: reportType === "cleared" ? (lifecycleIdentity || null) : null,
+      providerRecordId: String(row.providerRecordId || row.provider_record_id || row.crossing_id || "").trim() || null,
       crossingId: String(row.crossing_id),
       crossingName: row.crossing_name || (isHazard ? copy.label : "Unknown crossing"),
       railroad: row.railroad || (isHazard ? "Road hazard" : "Rail line"),
@@ -84227,10 +84235,10 @@ const gridlyLocalAcceptedCrossingRegistrations = new Map();
 function gridlyCanonicalReportIdForRecord(record = {}, fallback = "") {
   const value = record?.canonicalReportId
     || record?.canonical_report_id
+    || record?.canonicalReportIdentity
+    || record?.lifecycleIdentity
     || record?.submittedReportId
     || record?.submitted_report_id
-    || record?.crossingId
-    || record?.crossing_id
     || record?.id
     || record?.report_id
     || record?.reportId
@@ -84238,6 +84246,8 @@ function gridlyCanonicalReportIdForRecord(record = {}, fallback = "") {
     || record?.raw?.crossingId
     || record?.raw?.crossing_id
     || record?.raw?.id
+    || record?.crossingId
+    || record?.crossing_id
     || fallback;
   return value === undefined || value === null || !String(value).trim() ? "" : String(value).trim();
 }
@@ -88825,6 +88835,15 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     return;
   }
 
+  const clearTarget = reportType === "cleared"
+    ? (Array.isArray(activeReports) ? activeReports : [])
+      .filter((report) => String(report?.crossingId || report?.crossing_id || "") === String(crossing.id)
+        && String(report?.type || report?.report_type || "").toLowerCase() !== "cleared")
+      .sort((left, right) => new Date(right?.submittedAt || right?.created_at || 0).getTime() - new Date(left?.submittedAt || left?.created_at || 0).getTime())[0] || null
+    : null;
+  const clearTargetCandidateId = gridlyCanonicalReportIdForRecord(clearTarget || {}, "");
+  const clearTargetReportId = clearTargetCandidateId && clearTargetCandidateId !== String(crossing.id) ? clearTargetCandidateId : "";
+  const lifecycleDetail = reportType === "cleared" && clearTargetReportId ? ` (lifecycle_report_id: ${clearTargetReportId})` : "";
   const row = {
     crossing_id: String(crossing.id),
     crossing_name: crossing.name,
@@ -88833,7 +88852,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     lng: crossing.lng,
     report_type: reportType,
     severity: copy.severity,
-    detail: `${copy.detail} (future_source: ${sourceTag})`,
+    detail: `${copy.detail} (future_source: ${sourceTag})${lifecycleDetail}`,
     source: "user",
     confidence,
     device_id: deviceId,
@@ -120859,7 +120878,8 @@ function gridlyGovernedAwarenessAudit(options = {}) {
       popup: domIds('[data-gridly-popup-report-id], .leaflet-popup [data-report-id], .leaflet-popup [data-incident-id]', ['data-gridly-popup-report-id', 'data-report-id', 'data-incident-id']), popupVisible: visible(document.querySelector(".leaflet-popup")),
       // Crossing report persistence is the existing history owner. This is an
       // observation only: LP223 does not create or rewrite archive storage.
-      history: reportRows.filter((row) => engine.subtypeOf(row) === "blocked_crossing" && /^(?:cleared|recently[_ -]?cleared)$/i.test(String(row?.status || row?.state || row?.lifecycleState || "")))
+      history: reportRows.filter((row) => String(row?.reportKind || "").toLowerCase() === "crossing"
+        && /^(?:cleared|recently[_ -]?cleared)$/i.test(String(row?.type || row?.report_type || row?.status || row?.state || row?.lifecycleState || "")))
     }
   });
   const productionAudit = gridlyLocationContextProductionAudit();

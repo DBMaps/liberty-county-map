@@ -49,10 +49,56 @@ test('one identity has governed summary ownership and crossing-specific spatial/
 test('policy and production wiring are statewide and expose map, popup, Alerts, KBYG, Location Context, and History audit membership', () => {
   const engine = fs.readFileSync('js/governed-awareness.js', 'utf8');
   const app = fs.readFileSync('js/app.js', 'utf8');
-  assert.doesNotMatch(engine, /Sulphur Springs|Pecos|Hopkins|Reeves|FRA/i);
-  assert.match(app, /history: reportRows\.filter/);
+  assert.doesNotMatch(engine, /Sulphur Springs|Pecos|Hopkins|Reeves|FRA-\d/i);
+  assert.match(app, /history: reportRows\.filter[\s\S]*reportKind[\s\S]*recently\[_ -\]\?cleared/);
   assert.match(app, /finalConsumerSurfaceMembership/);
   assert.match(app, /crossingMarkers instanceof Map/);
   assert.match(app, /governedAlertProjection/);
   assert.match(app, /governedKbygAuthorityIds/);
+});
+
+test('blocked-crossing persisted and governed aliases reconcile across a clear without deleting history', () => {
+  const active = crossing('5484625f-4d68-466a-86cd-a64fa523f6f7', {
+    crossingId: 'FRA-331630H', deviceId: 'owner-device', submittedAt: '2026-08-22T10:00:00Z'
+  });
+  const before = project([active]);
+  assert.equal(before.surfaces.alerts.length, 1);
+  assert.equal(before.surfaces.history.length, 0);
+
+  const clear = crossing('d8744fba-4b6b-44b8-9125-9cfe0a5d9e2a', {
+    type: 'cleared', status: 'cleared', active: false, crossingId: 'FRA-331630H',
+    deviceId: 'owner-device', submittedAt: '2026-08-22T10:05:00Z'
+  });
+  const after = project([active, clear]);
+  for (const surface of ['locationContext', 'communityPulse', 'alerts', 'kbygCommunity']) assert.equal(after.surfaces[surface].length, 0, surface);
+  assert.equal(after.surfaces.history.length, 1);
+  const activeLineage = after.lineage.find(row => row.persistedReportId === active.id);
+  assert.equal(activeLineage.lifecycleIdentity, active.id);
+  assert.equal(activeLineage.providerRecordId, 'FRA-331630H');
+  assert.equal(activeLineage.aliasReconciliationResult, 'SAME_REPORT_ACTIVE_HISTORY_ALIAS_CONFLICT');
+  assert.deepEqual(activeLineage.clearedAliasIds, [`community_report:${clear.id}`]);
+  assert.deepEqual(activeLineage.activeAliasIds, [`community_report:${active.id}`]);
+  assert.equal(activeLineage.firstLifecycleLosingStage, 'governed_active_lifecycle_alias_reconciliation');
+});
+
+test('explicit alias identity retires one report but never collapses separate reports at the same FRA crossing', () => {
+  const first = crossing('report-one', { crossingId: 'FRA-SHARED', deviceId: 'device-one', submittedAt: '2026-08-22T09:00:00Z' });
+  const second = crossing('report-two', { crossingId: 'FRA-SHARED', deviceId: 'device-two', submittedAt: '2026-08-22T09:01:00Z' });
+  const clear = crossing('clear-one', { type: 'cleared', status: 'cleared', active: false, crossingId: 'FRA-SHARED', deviceId: 'device-one', lifecycleIdentity: 'report-one', submittedAt: '2026-08-22T09:05:00Z' });
+  const result = project([first, second, clear]);
+  assert.deepEqual(result.surfaces.alerts.map(row => row.record.id), ['report-two']);
+  assert.deepEqual(result.surfaces.kbygCommunity.map(row => row.record.id), ['report-two']);
+  assert.equal(result.surfaces.history.length, 1);
+});
+
+test('hazard survives blocked-crossing clear and repeated clear is idempotent', () => {
+  const blocked = crossing('crossing-report', { crossingId: 'FRA-COUNT', deviceId: 'owner', submittedAt: '2026-08-22T08:00:00Z' });
+  const roadHazard = hazard('road-hazard');
+  assert.equal(project([roadHazard, blocked]).surfaces.locationContext.length, 2);
+  const clear = crossing('clear-event', { type: 'cleared', status: 'cleared', active: false, crossingId: 'FRA-COUNT', deviceId: 'owner', lifecycleIdentity: 'crossing-report', submittedAt: '2026-08-22T08:05:00Z' });
+  const after = project([roadHazard, blocked, clear, clear]);
+  assert.equal(after.surfaces.locationContext.length, 1);
+  assert.equal(after.surfaces.locationContext[0].record.id, 'road-hazard');
+  assert.equal(after.surfaces.history.length, 1);
+  assert.deepEqual(after.snapshot.duplicateEvidenceIds, ['community_report:clear-event']);
 });
