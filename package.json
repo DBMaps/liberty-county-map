@@ -598,6 +598,7 @@
     "test:lp219": "node --test tests/lp219-*",
     "test:lp2191": "node --test tests/lp2191-*",
     "test:lp2192": "node --test tests/lp2192-*",
-    "test:lp2192a": "node --test tests/lp2192a-*"
+    "test:lp2192a": "node --test tests/lp2192a-*",
+    "test:lp2192b": "node --test tests/lp2192b-current-county-visible-incident-identity.test.cjs"
   }
 }

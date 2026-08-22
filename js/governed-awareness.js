@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP219.2A-invocation-operand-capture-v4";
+  const VERSION = "LP219.2B-visible-incident-identity-rca-v5";
   const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup"]);
   const COMMUNITY_POLICY = Object.freeze({
     blocked_crossing: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
@@ -201,6 +201,71 @@
       locationContextSourceBreakdown: Object.freeze(sourceBreakdown)
     });
   }
+  function buildCurrentCountyVisibleIncidentAudit(input = {}) {
+    const source = Array.isArray(input.sourceCollection) ? input.sourceCollection : [];
+    const included = Array.isArray(input.includedItems) ? input.includedItems : source;
+    const excluded = Array.isArray(input.excludedItems) ? input.excludedItems : [];
+    const governed = Array.isArray(input.governedEvidence) ? input.governedEvidence : [];
+    const seen = new Set();
+    const duplicateIds = [];
+    const project = (entry, index, counted) => {
+      const record = entry || {};
+      const sourceKind = sourceKindOf(record);
+      const subtype = subtypeOf(record);
+      const productionIdentity = identity(record, sourceKind, subtype);
+      const rawId = text(record.providerRecordId || record.reportId || record.report_id || record.incidentId || record.crossingReportId || record.crossing_id || record.crossingId || record.id || record.sourceId);
+      const candidates = new Set([productionIdentity, rawId, text(record.evidenceId), rawId ? `${sourceKind}:${rawId}` : ""].filter(Boolean));
+      const governedRow = governed.find((row) => candidates.has(text(row.evidenceId)) || candidates.has(text(row.evidenceId).split(":").slice(1).join(":"))) || null;
+      const localLifecycle = lifecycle(record, subtype, Number.isFinite(Number(input.nowMs)) ? Number(input.nowMs) : Date.now());
+      const lifecycleState = governedRow?.lifecycle || localLifecycle;
+      let governedMatch = !productionIdentity ? "IDENTITY_UNAVAILABLE" : governedRow ? "MATCHED_GOVERNED_ACTIVE" : "UNMATCHED_REAL_INCIDENT";
+      if (governedRow && lifecycleState.retainedForHistory) governedMatch = "MATCHED_INACTIVE_HISTORY";
+      else if (governedRow && lifecycleState.current === false) governedMatch = "MATCHED_STALE";
+      else if (governedRow && lifecycleState.active === false) governedMatch = "MATCHED_NON_ACTIVE_PROJECTION";
+      if (productionIdentity && seen.has(productionIdentity)) {
+        governedMatch = "MATCHED_DUPLICATE";
+        duplicateIds.push(productionIdentity);
+      } else if (productionIdentity) seen.add(productionIdentity);
+      return Object.freeze({
+        productionIdentity: productionIdentity || null,
+        providerRecordId: rawId || null,
+        governedEvidenceId: governedRow?.evidenceId || null,
+        governedMatch,
+        sourceKind,
+        subtype,
+        countyId: text(record.countyId || record.county_id) || null,
+        canonicalCommunityIdentity: text(record.canonicalKey || record.placeGeoid || record.place_geoid || record.canonicalCommunity || record.community || record.city || record.town) || null,
+        current: lifecycleState.current,
+        stale: lifecycleState.current === false && !lifecycleState.retainedForHistory,
+        active: lifecycleState.active,
+        inactive: lifecycleState.active === false,
+        cleared: lifecycleState.retainedForHistory === true || subtype === "cleared",
+        lifecycle: lifecycleState.classification,
+        status: text(record.lifecycleState || record.status || record.state) || null,
+        inclusionReason: counted ? "ACTIVE_INVENTORY_MEMBER_MATCHING_CURRENT_COUNTY" : text(entry?.exclusionReason || "COUNTY_MISMATCH"),
+        sourceIndex: index
+      });
+    };
+    const items = included.slice(0, 100).map((row, index) => project(row, index, true));
+    const excludedItems = excluded.slice(0, Math.max(0, 100 - items.length)).map((row, index) => project(row, index, false));
+    const breakdown = (field) => Object.freeze(items.reduce((out, row) => ({ ...out, [row[field] || "unknown"]: (out[row[field] || "unknown"] || 0) + 1 }), {}));
+    return Object.freeze({
+      currentVisibleReportCount: included.length,
+      currentVisibleIncidentItems: Object.freeze(items),
+      currentVisibleIncidentIdentities: Object.freeze(items.map((row) => row.productionIdentity).filter(Boolean)),
+      currentVisibleIncidentSourceBreakdown: breakdown("sourceKind"),
+      currentVisibleIncidentLifecycleBreakdown: breakdown("lifecycle"),
+      currentVisibleIncidentCountyId: text(input.countyId),
+      currentVisibleIncidentGeneration: Number(input.generation || 0),
+      currentVisibleIncidentSourceCollection: "activeHazards + activeReports",
+      currentVisibleIncidentFilterStages: Object.freeze({ sourceCollectionCount: source.length, countyMatchedCount: included.length, countyExcludedCount: excluded.length, lifecycleFilteredCount: 0, staleFilteredCount: 0, duplicateFilteredCount: 0, sourceTypeFilteredCount: 0 }),
+      currentVisibleIncidentExcludedItems: Object.freeze(excludedItems),
+      currentVisibleIncidentDuplicateIds: Object.freeze([...new Set(duplicateIds)]),
+      currentVisibleIncidentStaleIds: Object.freeze(items.filter((row) => row.stale).map((row) => row.productionIdentity).filter(Boolean)),
+      currentVisibleIncidentInactiveHistoryIds: Object.freeze(items.filter((row) => row.cleared || (row.inactive && row.current)).map((row) => row.productionIdentity).filter(Boolean)),
+      currentVisibleIncidentCountContract: "MAP_REPORT_INVENTORY_COUNTY_MEMBERSHIP_NOT_ACTIVE_LIFECYCLE"
+    });
+  }
   function captureActiveIssueReconciliationInvocation(input = {}) {
     const safeNumber = (value) => {
       const number = Number(value);
@@ -242,5 +307,5 @@
       scalarSources: Object.freeze({ ...(input.scalarSources || {}) })
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildLocationContextProductionAudit, captureActiveIssueReconciliationInvocation, identity, sourceKindOf, subtypeOf });
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, identity, sourceKindOf, subtypeOf });
 });
