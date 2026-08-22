@@ -40236,6 +40236,31 @@ function getGridlyRouteContextTitle(destinationLabel = "") {
   return destination ? `ROUTE TO ${destination}` : "ROUTE SELECTED";
 }
 
+/* LP219.2 observes the already-computed Location Context projection.  It does
+ * not participate in the count decision or alter any consumer model. */
+let gridlyLocationContextProductionDiagnosticState = Object.freeze({ generation: -1, timeline: Object.freeze([]) });
+function gridlyObserveLocationContextProductionProjection({ summary = {}, productionItems = [], productionCount = 0, operands = {}, reason = "location-context-projection" } = {}) {
+  const generation = Number(gridlyActiveCountyTransitionGeneration || 0);
+  if (generation < Number(gridlyLocationContextProductionDiagnosticState.generation ?? -1)) return gridlyLocationContextProductionDiagnosticState;
+  const previousCount = Number.isFinite(Number(gridlyLocationContextProductionDiagnosticState.locationContextProductionCount)) ? Number(gridlyLocationContextProductionDiagnosticState.locationContextProductionCount) : null;
+  const at = new Date().toISOString();
+  const engine = window.GridlyGovernedAwareness;
+  const governed = engine?.buildSnapshot ? engine.buildSnapshot({ records: [
+    ...(Array.isArray(activeReports) ? activeReports : []), ...(Array.isArray(activeHazards) ? activeHazards : []),
+    ...(typeof getLiveHazardIncidents === "function" ? getLiveHazardIncidents().map((row) => ({ ...row, sourceKind: "generated_road_incident" })) : []),
+    ...(Array.isArray(window.__gridlyDriveTexasAlerts) ? window.__gridlyDriveTexasAlerts.map((row) => ({ ...row, sourceKind: "official_roadway" })) : [])
+  ], evidenceGeneration: generation }).evidence : [];
+  const audit = engine?.buildLocationContextProductionAudit ? engine.buildLocationContextProductionAudit({
+    governedEvidence: governed, productionItems, productionCount, operands,
+    productionSource: "normalizeGridlyMobileAwarenessPanelSummary.getGridlyReconciledAwarenessActiveIssueCount",
+    derivationReason: "LP214_MAX_RECONCILIATION_OF_SHARED_SUMMARY_RAW_COLLECTION_COUNTS_ALERTS_AND_VISIBLE_PROJECTIONS"
+  }) : { locationContextProductionCount: productionCount, locationContextProductionItems: [] };
+  const event = Object.freeze({ timestamp: at, transitionGeneration: generation, evidenceGeneration: generation, providerRefreshGeneration: Number(window.__gridlyDriveTexasRefreshGeneration || 0), previousCount, newCount: productionCount, countSource: audit.locationContextProductionSource, contributingProductionItemIdentities: audit.locationContextProductionItems.map((row) => row.productionIdentity), updateReason: reason });
+  const timeline = [...(gridlyLocationContextProductionDiagnosticState.timeline || []), event].slice(-40);
+  gridlyLocationContextProductionDiagnosticState = Object.freeze({ ...audit, generation, locationContextGeneration: generation, locationContextLastUpdateReason: reason, locationContextLastUpdatedAt: at, selectedAreaIdentity: getGridlyAwarenessSummaryAreaIdentity(summary), timeline: Object.freeze(timeline), locationContextUpdateTimeline: Object.freeze(timeline) });
+  return gridlyLocationContextProductionDiagnosticState;
+}
+
 function getGridlyBottomAwarenessHazardCountModel(summary = {}) {
   const safeSummary = summary || {};
   const summaryClassificationActiveRoadHazardCount = Number(safeSummary.classificationActiveRoadHazardCount);
@@ -40393,6 +40418,20 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const activeIssueCount = Number.isFinite(alertsGroupedIssueCount) && alertsGroupedIssueCount > 0
     ? Math.max(0, alertsGroupedIssueCount, reconciledActiveIssueCount)
     : reconciledActiveIssueCount;
+  const productionItems = [
+    ...activeReportRows.map((record) => ({ record, countedReason: "activeReportsInArea retained collection member" })),
+    ...(Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea : []).map((record) => ({ record, countedReason: "activeHazardsInArea collection member" }))
+  ];
+  gridlyObserveLocationContextProductionProjection({
+    summary: safeSummary, productionItems, productionCount: activeIssueCount,
+    operands: {
+      sharedActiveIssueCount: Number(safeSummary.sharedActiveIssueContract?.activeIssueCount || 0), rawActiveIssueCount,
+      hazardCount, reportCount: reportCount + crossingReportCount, activeReportsInAreaLength: activeReportRows.length,
+      activeHazardsInAreaLength: Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea.length : 0,
+      alertsGroupedIssueCount: Number.isFinite(alertsGroupedIssueCount) ? alertsGroupedIssueCount : null,
+      reconciledActiveIssueCount, finalActiveIssueCount: activeIssueCount
+    }, reason: "normalize-mobile-awareness-panel-summary"
+  });
   const evidenceReportCount = Number.isFinite(alertsCommunityReportCount) && alertsCommunityReportCount > 0
     ? alertsCommunityReportCount
     : (reportCount + crossingReportCount || activeIssueCount);
@@ -120387,8 +120426,21 @@ function gridlyGovernedAwarenessAudit(options = {}) {
       popup: domIds('[data-gridly-popup-report-id], .leaflet-popup [data-report-id], .leaflet-popup [data-incident-id]', ['data-gridly-popup-report-id', 'data-report-id', 'data-incident-id']), popupVisible: visible(document.querySelector(".leaflet-popup"))
     }
   });
-  console.info("gridlyGovernedAwarenessAudit", snapshot);
-  return snapshot;
+  const productionAudit = gridlyLocationContextProductionAudit();
+  const combined = Object.freeze({ ...snapshot, ...productionAudit });
+  console.info("gridlyGovernedAwarenessAudit", combined);
+  return combined;
+}
+function gridlyLocationContextProductionAudit() {
+  const state = gridlyLocationContextProductionDiagnosticState || {};
+  const nodes = Array.from(document.querySelectorAll('[data-v2-location-awareness="meta"], [data-gridly-location-context-count], #mobileAwarenessPanelCrossings'));
+  const textValue = nodes.map((node) => String(node.textContent || "")).find((value) => /(?:\d+|no) active issues? nearby/i.test(value)) || "";
+  const match = textValue.match(/\b(\d+)\s+active issues? nearby\b/i);
+  const domCount = match ? Number(match[1]) : (/\bno active issues? nearby\b/i.test(textValue) ? 0 : null);
+  const productionCount = Number.isFinite(Number(state.locationContextProductionCount)) ? Number(state.locationContextProductionCount) : null;
+  return Object.freeze({ ...state, locationContextDomCount: domCount, locationContextCountParity: productionCount === null || domCount === null ? null : productionCount === domCount });
 }
 window.gridlyGovernedAwarenessAudit = gridlyGovernedAwarenessAudit;
+window.gridlyLocationContextProductionAudit = gridlyLocationContextProductionAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGovernedAwarenessAudit", gridlyGovernedAwarenessAudit);
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLocationContextProductionAudit", gridlyLocationContextProductionAudit);
