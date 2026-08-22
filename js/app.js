@@ -120598,6 +120598,20 @@ window.gridlyRecordLp097BrowserCertification = function gridlyRecordLp097Browser
  * deliberately read-only; it reconciles authoritative records and consumer
  * projections without changing DriveTexas, crossing, or map ownership. */
 const gridlyGovernedAwarenessAuditEvents = [];
+function gridlyEvaluateKbygAuthorityDomParity({ governedEligibleIds = [], governedPublishedIds = [], finalAuthorityInputIds = [], finalDecision = "unavailable", finalVisibleState = "not_visible", portraitDomVisibleState = "not_visible" } = {}) {
+  const sameIds = (left, right) => left.length === right.length && left.every((id) => right.includes(id));
+  const authorityIdsAgree = sameIds(governedEligibleIds, governedPublishedIds) && sameIds(governedPublishedIds, finalAuthorityInputIds);
+  const authorityState = authorityIdsAgree && governedPublishedIds.length === 0 && finalDecision === "quiet"
+    ? "quiet"
+    : authorityIdsAgree && governedPublishedIds.length > 0 && !/^(?:quiet|unavailable)$/.test(finalDecision)
+      ? "active"
+      : "mismatch";
+  const domState = finalVisibleState === portraitDomVisibleState && /^(?:active|quiet)$/.test(finalVisibleState)
+    ? finalVisibleState
+    : "mismatch";
+  const parity = authorityState !== "mismatch" && authorityState === domState;
+  return Object.freeze({ authorityState, domState, authorityIdsAgree, authorityToDomParity: parity, parity });
+}
 function gridlyRecordGovernedAwarenessAuditEvent(reason = "unspecified", detail = {}) {
   gridlyGovernedAwarenessAuditEvents.push(Object.freeze({ at: new Date().toISOString(), reason, generation: Number(detail.generation ?? gridlyActiveCountyTransitionGeneration ?? 0) || 0 }));
   if (gridlyGovernedAwarenessAuditEvents.length > 40) gridlyGovernedAwarenessAuditEvents.shift();
@@ -120676,6 +120690,16 @@ function gridlyGovernedAwarenessAudit(options = {}) {
   const portraitKbygNode = document.querySelector("[data-gridly-travel-brief-list]");
   const portraitKbygDomText = String(portraitKbygNode?.textContent || "").replace(/\s+/g, " ").trim();
   const classifyKbygText = (text) => /No active local issues|No active concerns are reported/i.test(text) ? "quiet" : (String(text || "").trim() ? "active" : "not_visible");
+  const finalVisibleState = classifyKbygText(kbygVisibleText);
+  const portraitDomVisibleState = classifyKbygText(portraitKbygDomText);
+  const kbygParity = gridlyEvaluateKbygAuthorityDomParity({
+    governedEligibleIds: snapshot.surfaces.kbygCommunity.governedEligibleIds,
+    governedPublishedIds: governedKbygIds,
+    finalAuthorityInputIds: finalKbygAuthorityIds,
+    finalDecision: finalKbygDecision?.state || "unavailable",
+    finalVisibleState,
+    portraitDomVisibleState
+  });
   const alertStages = window.__gridlyLp2194AlertStages || {};
   const stagePublishedIds = (items) => engine.buildSnapshot({ records: reportRows, nowMs: options.nowMs, actual: { alerts: Array.isArray(items) ? items : [] } }).publishedIds.alerts;
   const alertPresentationCandidateIds = stagePublishedIds(alertStages.presentationCandidates);
@@ -120685,7 +120709,7 @@ function gridlyGovernedAwarenessAudit(options = {}) {
   const alertFilterState = typeof gridlyAlertAreaFilterState === "object" ? gridlyAlertAreaFilterState : {};
   const firstLosingStage = (id, stages) => Object.entries(stages).find(([, ids]) => !ids.includes(id))?.[0] || null;
   const lp2194AuthorityAudit = Object.freeze({
-    kbyg: Object.freeze({ governedEligibleIds: snapshot.surfaces.kbygCommunity.governedEligibleIds, governedPublishedIds: governedKbygIds, finalAuthorityInputIds: finalKbygAuthorityIds, finalDecision: finalKbygDecision?.state || "unavailable", modelSummaryText: kbygVisibleText, portraitModelText: portraitKbygModelText, portraitDomText: portraitKbygDomText, portraitDomVisibleState: classifyKbygText(portraitKbygDomText), authorityToDomParity: governedKbygIds.every((id) => finalKbygAuthorityIds.includes(id)) && classifyKbygText(portraitKbygDomText) === "active", finalVisibleState: classifyKbygText(kbygVisibleText), visibleText: kbygVisibleText, parity: governedKbygIds.every((id) => finalKbygAuthorityIds.includes(id)) && !/^(?:quiet|unavailable)$/.test(finalKbygDecision?.state || "unavailable") }),
+    kbyg: Object.freeze({ governedEligibleIds: snapshot.surfaces.kbygCommunity.governedEligibleIds, governedPublishedIds: governedKbygIds, finalAuthorityInputIds: finalKbygAuthorityIds, finalDecision: finalKbygDecision?.state || "unavailable", modelSummaryText: kbygVisibleText, portraitModelText: portraitKbygModelText, portraitDomText: portraitKbygDomText, portraitDomVisibleState, finalVisibleState, visibleText: kbygVisibleText, ...kbygParity }),
     alerts: Object.freeze({ governedEligibleIds: snapshot.surfaces.alerts.governedEligibleIds, governedProjectedIds: governedAlertIds, presentationCandidateIds: alertPresentationCandidateIds, areaFilterEligibleIds: alertAreaFilterEligibleIds, finalAlertDataIds: alertDataIds, finalDomIds: alertDomIds, areaFilter: alertFilterState, parity: governedAlertIds.every((id) => alertDataIds.includes(id) && alertDomIds.some((domId) => id === domId || id.endsWith(`:${domId}`))) }),
     evidence: Object.freeze(consumerProjection.lineage.map((row) => Object.freeze({ evidenceId: row.evidenceId, firstLosingStage: firstLosingStage(row.evidenceId, row.kbygCommunityEligible ? { kbygGovernedPublished: governedKbygIds, kbygFinalAuthorityInput: finalKbygAuthorityIds } : row.alertsEligible ? { alertsGovernedProjected: governedAlertIds, alertsPresentationCandidate: alertPresentationCandidateIds, alertsAreaFilterEligible: alertAreaFilterEligibleIds, alertsFinalData: alertDataIds, alertsFinalDom: alertDomIds.map((id) => row.evidenceId.endsWith(`:${id}`) ? row.evidenceId : id) } : {}) })))
   });

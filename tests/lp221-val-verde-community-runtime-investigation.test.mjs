@@ -4,6 +4,11 @@ import test from "node:test";
 
 const readJson = (path) => JSON.parse(fs.readFileSync(path, "utf8").replace(/^\uFEFF/, ""));
 const app = fs.readFileSync("js/app.js", "utf8");
+const parityHelperSource = app.slice(
+  app.indexOf("function gridlyEvaluateKbygAuthorityDomParity"),
+  app.indexOf("function gridlyRecordGovernedAwarenessAuditEvent")
+);
+const evaluateKbygParity = Function(`${parityHelperSource}; return gridlyEvaluateKbygAuthorityDomParity;`)();
 const pkg = readJson("Crossing-Packages/val-verde/package-manifest.json");
 const crossings = readJson(pkg.packageFile).features;
 const presentations = readJson("data/generated/gridly-statewide-place-presentation-v1.json").places;
@@ -48,6 +53,29 @@ test("LP219.4 active-hazard propagation stages are aggregated, not duplicated", 
 });
 test("quiet state is observable without being classified as a defect", () => {
   assert.match(app, /locationContextCount: governed\.locationContextProductionCount/);
+});
+test("KBYG audit parity distinguishes intentional quiet and active presentation states", () => {
+  const evaluate = (activeAuthority, domState) => evaluateKbygParity({
+    governedEligibleIds: activeAuthority ? ["incident-1"] : [],
+    governedPublishedIds: activeAuthority ? ["incident-1"] : [],
+    finalAuthorityInputIds: activeAuthority ? ["incident-1"] : [],
+    finalDecision: activeAuthority ? "avoid" : "quiet",
+    finalVisibleState: domState,
+    portraitDomVisibleState: domState
+  });
+
+  assert.equal(evaluate(false, "quiet").parity, true, "quiet authority + quiet DOM");
+  assert.equal(evaluate(true, "active").parity, true, "active authority + active DOM");
+  assert.equal(evaluate(true, "quiet").parity, false, "active authority + quiet DOM");
+  assert.equal(evaluate(false, "active").parity, false, "quiet authority + active DOM");
+});
+test("valid quiet KBYG control cannot become the first losing stage", () => {
+  const quiet = evaluateKbygParity({
+    governedEligibleIds: [], governedPublishedIds: [], finalAuthorityInputIds: [],
+    finalDecision: "quiet", finalVisibleState: "quiet", portraitDomVisibleState: "quiet"
+  });
+  const firstLosingStage = quiet.parity === false ? "kbyg.final_authority_or_dom" : null;
+  assert.equal(firstLosingStage, null);
 });
 test("stale, cleared history, and duplicate rejection evidence is exposed", () => {
   for (const field of ["staleIds", "duplicateIds", "inactiveHistoryIds"]) assert.match(app, new RegExp(`${field}: governed`));
