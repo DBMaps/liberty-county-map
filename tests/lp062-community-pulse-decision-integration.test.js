@@ -36,7 +36,7 @@ ${helperBlock}
 `, context);
 
 const quiet = context.buildGridlyCommunityPulseDecisionPresentation({ selectedCommunityCount: 0, activeAwareness: { activeAwarenessCount: 0 } });
-assert.strictEqual(quiet.headline, 'Travel normally and stay aware.', 'Quiet-state interpretation is first');
+assert.strictEqual(quiet.headline, 'Stay aware while traveling.', 'Quiet-state interpretation is first');
 assert.match(quiet.subline, /No active concerns are reported in the available local intelligence\. Quiet conditions · Checked just now\./, 'Quiet-state wording is validated');
 
 const active = context.buildGridlyCommunityPulseDecisionPresentation({ selectedCommunityCount: 4, mobilityPressureCategory: 'building', activeAwareness: { activeAwarenessCount: 4, activeAwarenessSamples: [{ updatedAt: new Date().toISOString() }] } });
