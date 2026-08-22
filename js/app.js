@@ -27814,6 +27814,34 @@ window.gridlyCrossingActivationReadinessAudit = function gridlyCrossingActivatio
 window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
   const renderedCrossingMarkerCount = getGridlyCurrentRenderedCrossingMarkerCount();
   const visibleCrossingCount = Math.max(Number(gridlyCrossingRenderAuditState.lastRender.visibleCount || 0), renderedCrossingMarkerCount);
+  const activeCountyId = gridlyGetActiveCountyId();
+  const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const awarenessAnchor = typeof getGridlyAwarenessAnchor === "function" ? getGridlyAwarenessAnchor({ preferUserLocation: false }) : null;
+  const canonicalFocus = typeof resolveGridlyCanonicalPlacePresentationFocus === "function" ? resolveGridlyCanonicalPlacePresentationFocus(selectedArea) : null;
+  const mapCenter = map?.getCenter?.() || null;
+  const mapBounds = map?.getBounds?.() || null;
+  const boundsParts = getGridlyCrossingBoundsParts(mapBounds);
+  const inventory = typeof gridlyGetActiveCountyCrossingInventory === "function" ? gridlyGetActiveCountyCrossingInventory() : [];
+  const coordinate = (crossing) => ({ lat: Number(crossing?.lat), lng: Number(crossing?.lng) });
+  const validInventory = inventory.filter((crossing) => {
+    const point = coordinate(crossing);
+    return Number.isFinite(point.lat) && Number.isFinite(point.lng);
+  });
+  const inActualBounds = (crossing) => Boolean(mapBounds?.contains?.([Number(crossing.lat), Number(crossing.lng)]));
+  const eligibleInventory = validInventory.filter((crossing) => gridlyCrossingSampleMatchesCounty(crossing, activeCountyId) && inActualBounds(crossing));
+  const crossingExtent = validInventory.length ? {
+    south: Math.min(...validInventory.map((crossing) => Number(crossing.lat))),
+    west: Math.min(...validInventory.map((crossing) => Number(crossing.lng))),
+    north: Math.max(...validInventory.map((crossing) => Number(crossing.lat))),
+    east: Math.max(...validInventory.map((crossing) => Number(crossing.lng)))
+  } : null;
+  const nearestDistance = (center) => center && Number.isFinite(Number(center.lat)) && Number.isFinite(Number(center.lng)) && validInventory.length
+    ? Math.min(...validInventory.map((crossing) => getDistanceMiles(Number(center.lat), Number(center.lng), Number(crossing.lat), Number(crossing.lng))))
+    : null;
+  const firstOutside = validInventory.find((crossing) => gridlyCrossingSampleMatchesCounty(crossing, activeCountyId) && !inActualBounds(crossing)) || null;
+  const outsidePoint = firstOutside ? coordinate(firstOutside) : null;
+  const outsideContainerPoint = firstOutside && map?.latLngToContainerPoint ? map.latLngToContainerPoint([outsidePoint.lat, outsidePoint.lng]) : null;
+  const outsideLayerPoint = firstOutside && map?.latLngToLayerPoint ? map.latLngToLayerPoint([outsidePoint.lat, outsidePoint.lng]) : null;
   return {
     renderCrossingsCallCount: gridlyCrossingRenderAuditState.renderCallCount,
     filterApplyCallCount: gridlyCrossingRenderAuditState.filterApplyCallCount,
@@ -27873,7 +27901,40 @@ window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
     reviewedLabelApplied: gridlyCrossingFallbackAuditState.reviewedLabelApplied,
     fallbackLabelUsed: gridlyCrossingFallbackAuditState.fallbackLabelUsed,
     crossingLayerPresent: Boolean(crossingLayer),
-    crossingLayerMapAttached: Boolean(crossingLayer && map && map.hasLayer?.(crossingLayer))
+    crossingLayerMapAttached: Boolean(crossingLayer && map && map.hasLayer?.(crossingLayer)),
+    canonicalCommunity: selectedArea?.label || selectedArea?.displayName || selectedArea?.consumerLabel || null,
+    canonicalKey: canonicalFocus?.canonicalKey || selectedArea?.canonicalKey || selectedArea?.key || null,
+    selectedAreaIdentity: [activeCountyId?.replace(/-tx$/, ""), "tx", selectedArea?.label].filter(Boolean).join(" ").toLowerCase(),
+    activeCountyId,
+    crossingSourceCounty: gridlyGetActiveCrossingSourceDiagnostics().crossingSourceCounty || gridlyCrossingInventoryCountyId || null,
+    awarenessAnchor: awarenessAnchor ? { lat: Number(awarenessAnchor.lat), lng: Number(awarenessAnchor.lng) } : null,
+    awarenessAnchorSource: awarenessAnchor?.source || awarenessAnchor?.focusAuthority || null,
+    canonicalPresentationCoordinate: canonicalFocus ? { lat: canonicalFocus.lat, lng: canonicalFocus.lng } : null,
+    actualMapCenter: mapCenter ? { lat: Number(mapCenter.lat), lng: Number(mapCenter.lng) } : null,
+    actualMapBounds: boundsParts,
+    viewportAuthority: "live_leaflet_map_getBounds",
+    viewportBounds: boundsParts,
+    viewportRadius: null,
+    viewportPadding: 0,
+    crossingExtent,
+    nearestCrossingDistanceToAnchor: nearestDistance(awarenessAnchor),
+    nearestCrossingDistanceToMapCenter: nearestDistance(mapCenter),
+    inActualLeafletBoundsCount: eligibleInventory.length,
+    inCrossingEligibilityBoundsCount: eligibleInventory.length,
+    eligibilityMismatchCount: 0,
+    representativeCandidateCount: Number(gridlyCrossingRenderAuditState.lastRender.visibleCount || 0),
+    selectedMarkerCount: renderedCrossingMarkerCount,
+    firstOutsideViewportSample: firstOutside ? {
+      id: firstOutside.id || null,
+      crossingCoordinate: outsidePoint,
+      decision: false,
+      predicate: "map.getBounds().contains([crossing.lat, crossing.lng])",
+      bounds: boundsParts,
+      zoom: getCurrentCrossingInfrastructureZoom(),
+      countyMatches: gridlyCrossingSampleMatchesCounty(firstOutside, activeCountyId),
+      containerPoint: outsideContainerPoint ? { x: Number(outsideContainerPoint.x), y: Number(outsideContainerPoint.y) } : null,
+      layerPoint: outsideLayerPoint ? { x: Number(outsideLayerPoint.x), y: Number(outsideLayerPoint.y) } : null
+    } : null
   };
 };
 
