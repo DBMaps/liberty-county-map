@@ -120719,3 +120719,55 @@ window.gridlyGovernedAwarenessAudit = gridlyGovernedAwarenessAudit;
 window.gridlyLocationContextProductionAudit = gridlyLocationContextProductionAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGovernedAwarenessAudit", gridlyGovernedAwarenessAudit);
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLocationContextProductionAudit", gridlyLocationContextProductionAudit);
+
+/* LP221: Val Verde owner investigation adapter.  This is intentionally a
+ * composition of production authorities; it neither selects a community nor
+ * computes an alternative viewport/consumer projection. */
+function gridlyValVerdeCommunityRuntimeAudit() {
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const activeCounty = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
+  const canonical = typeof gridlyGetCanonicalActiveCommunityState === "function"
+    ? gridlyGetCanonicalActiveCommunityState({ selectedArea: selected, selectedCounty: activeCounty }) : null;
+  const placeGeoid = typeof gridlyResolveCanonicalPlaceGeoid === "function" ? gridlyResolveCanonicalPlaceGeoid(selected) : null;
+  const presentation = typeof resolveGridlyCanonicalPlacePresentationFocus === "function"
+    ? resolveGridlyCanonicalPlacePresentationFocus(selected) : null;
+  const mapCenterValue = typeof map !== "undefined" && map?.getCenter ? map.getCenter() : null;
+  const mapCenter = mapCenterValue ? { lat: Number(mapCenterValue.lat), lng: Number(mapCenterValue.lng) } : null;
+  const distanceMiles = presentation && mapCenter && typeof getDistanceMiles === "function"
+    ? getDistanceMiles(presentation.lat, presentation.lng, mapCenter.lat, mapCenter.lng) : null;
+  const crossingVisibility = typeof gridlyCrossingVisibilityAudit === "function" ? gridlyCrossingVisibilityAudit() : null;
+  const crossingWatch = typeof window.gridlyCrossingWatchCountAudit === "function" ? window.gridlyCrossingWatchCountAudit() : null;
+  const crossingParity = typeof gridlyRailLocationContextParityAudit === "function" ? gridlyRailLocationContextParityAudit() : null;
+  const governed = typeof gridlyGovernedAwarenessAudit === "function" ? gridlyGovernedAwarenessAudit({ reason: "lp221-val-verde-audit" }) : null;
+  const sources = typeof gridlyGetActiveCountyRuntimeSources === "function" ? gridlyGetActiveCountyRuntimeSources() : null;
+  const expectedCounty = "val-verde-tx";
+  const identity = Object.freeze({
+    canonicalCommunity: selected?.label || selected?.name || null,
+    canonicalKey: selected?.key || selected?.canonicalKey || (placeGeoid ? `place-${placeGeoid}` : null),
+    canonicalType: selected?.governedType || selected?.type || null,
+    placeGeoid, county: selected?.countyId || null,
+    selectedAreaIdentity: selected ? { key: selected.key || null, label: selected.label || selected.storageValue || null, countyId: selected.countyId || null } : null,
+    activeCounty, governedAwarenessCounty: governed?.countyId || canonical?.selectedCounty || null,
+    crossingSourceCounty: sources?.countyId || crossingVisibility?.activeCountyId || null,
+    transitionGeneration: Number(gridlyActiveCountyTransitionGeneration || 0),
+    stable: Boolean(selected && activeCounty === expectedCounty && (selected.countyId || activeCounty) === expectedCounty)
+  });
+  const countyAuthorities = [identity.county, identity.activeCounty, identity.governedAwarenessCounty, identity.crossingSourceCounty].filter(Boolean);
+  const firstLosingStage = !selected ? "identity.selected_area" : !placeGeoid ? "identity.canonical_place_geoid"
+    : countyAuthorities.some((county) => county !== expectedCounty) ? "county.convergence"
+      : !presentation ? "presentation.canonical_coordinate"
+        : crossingVisibility?.possibleLifecycleRefreshIssue ? "crossings.render_lifecycle"
+          : governed?.lp2194AuthorityAudit?.alerts?.parity === false ? "alerts.final_projection_or_dom"
+            : governed?.lp2194AuthorityAudit?.kbyg?.parity === false ? "kbyg.final_authority_or_dom" : null;
+  return Object.freeze({
+    audit: "LP221 Val Verde County community runtime investigation", expectedCounty, identity,
+    countyConvergence: { authorities: countyAuthorities, converged: countyAuthorities.length >= 3 && countyAuthorities.every((county) => county === expectedCounty) },
+    presentation: { coordinate: presentation ? { lat: presentation.lat, lng: presentation.lng } : null, authority: presentation?.authority || null, awarenessAnchor: typeof getGridlyAwarenessAnchor === "function" ? getGridlyAwarenessAnchor({ preferUserLocation: false }) : null, mapCenter, distanceToFinalMapCenterMiles: distanceMiles, laterCameraWriters: typeof window.gridlySemanticCameraOwnerTrace === "function" ? window.gridlySemanticCameraOwnerTrace().filter((entry) => entry.order > 0).slice(-20) : [] },
+    crossings: { runtimeInventoryCount: crossingVisibility?.crossingInventoryCount ?? null, crossingsWatched: crossingWatch?.displayedWatchedCount ?? crossingParity?.counts?.locationContext ?? null, leafletInBoundsCount: crossingVisibility?.publicRoadwayCrossingCountForArea ?? null, eligibilityCount: crossingVisibility?.expectedNearbyCrossingCount ?? null, renderedMarkerCount: crossingVisibility?.renderedCrossingMarkerCount ?? null, domMarkerCount: crossingVisibility?.crossingMarkerDomCount ?? null, skipReasons: crossingVisibility?.skippedCandidateReasons || crossingWatch?.skipBreakdown || {}, nearestCrossingDistanceMiles: crossingVisibility?.nearestCrossingDistanceMiles ?? null, viewportAuthority: "live_leaflet_map_getBounds", watchedCountIndependentFromVisibleMarkers: true },
+    governedAwareness: governed ? { activeCount: governed.governedActiveCount ?? governed.activeCount ?? null, locationContextCount: governed.locationContextProductionCount ?? governed.locationContextDomCount ?? null, alerts: governed.lp2194AuthorityAudit?.alerts || null, kbyg: governed.lp2194AuthorityAudit?.kbyg || null, staleIds: governed.staleIds || [], duplicateIds: governed.duplicateIds || [], inactiveHistoryIds: governed.inactiveHistoryIds || [] } : null,
+    staleStateProtection: { transitionGeneration: Number(gridlyActiveCountyTransitionGeneration || 0), staleCountyRequestSuppressions: Number(gridlyActiveCountyStaleRequestSuppressions || 0), staleIds: governed?.staleIds || [], duplicateIds: governed?.duplicateIds || [], inactiveHistoryIds: governed?.inactiveHistoryIds || [] },
+    firstLosingStage, ownerBrowserAcceptanceRequired: true
+  });
+}
+window.gridlyValVerdeCommunityRuntimeAudit = gridlyValVerdeCommunityRuntimeAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyValVerdeCommunityRuntimeAudit", gridlyValVerdeCommunityRuntimeAudit);
