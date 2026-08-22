@@ -120345,20 +120345,46 @@ function gridlyGovernedAwarenessAudit(options = {}) {
     ...(Array.isArray(window.__gridlyDriveTexasAlerts) ? window.__gridlyDriveTexasAlerts.map((row) => ({ ...row, sourceKind: "official_roadway" })) : [])
   ];
   const domIds = (selector, attributes) => Array.from(document.querySelectorAll(selector)).flatMap((node) => attributes.map((attribute) => node.getAttribute(attribute)).filter(Boolean));
-  const displayedText = document.querySelector('[data-v2-location-awareness="panel"]')?.dataset?.activeAwarenessCount;
+  const visible = (node) => Boolean(node && !node.hidden && node.getAttribute?.("aria-hidden") !== "true");
+  const panel = document.querySelector('[data-v2-location-awareness="panel"]');
+  const productionValue = panel?.dataset?.activeAwarenessCount;
+  const productionCount = productionValue !== undefined && productionValue !== "" && Number.isFinite(Number(productionValue)) ? Math.max(0, Number(productionValue)) : null;
+  const locationDomNodes = Array.from(document.querySelectorAll('[data-v2-location-awareness="meta"], [data-gridly-location-context-count], [data-gridly-awareness-context], #mobileAwarenessPanelCrossings'));
+  const locationDomText = locationDomNodes.map((node) => String(node.textContent || "").trim()).find((value) => /(?:\d+|no) active issues? nearby/i.test(value)) || "";
+  const domMatch = locationDomText.match(/\b(\d+)\s+active issues? nearby\b/i);
+  const domCount = domMatch ? Number(domMatch[1]) : (/\bno active issues? nearby\b/i.test(locationDomText) ? 0 : null);
+  const sharedSummary = gridlyCommunityPulseAuditState?.communityAwarenessSummary || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary || null;
+  const locationItems = [...(Array.isArray(sharedSummary?.activeReportsInArea) ? sharedSummary.activeReportsInArea : []), ...(Array.isArray(sharedSummary?.activeHazardsInArea) ? sharedSummary.activeHazardsInArea : [])];
+  const pulseModel = gridlyV734RefreshReuseState?.communityPulseModel || gridlyCommunityPulseAuditState || null;
+  const pulseItems = [...(Array.isArray(pulseModel?.communityAwarenessSummary?.activeReportsInArea) ? pulseModel.communityAwarenessSummary.activeReportsInArea : []), ...(Array.isArray(pulseModel?.communityAwarenessSummary?.activeHazardsInArea) ? pulseModel.communityAwarenessSummary.activeHazardsInArea : [])];
+  const alertsSnapshot = typeof getAlertsSurfaceSnapshot === "function" ? getAlertsSurfaceSnapshot() : null;
+  const alertItems = Array.isArray(alertsSnapshot?.alerts) ? alertsSnapshot.alerts : [];
+  const alertSurface = document.querySelector('#gridlyPortraitV2Sheet[data-active-sheet="alerts"], #alertsList, .alerts-list');
+  const kbygCommunityNodes = Array.from(document.querySelectorAll('[data-gridly-kbyg-community-id]'));
+  const kbygRoadwayNodes = Array.from(document.querySelectorAll('[data-gridly-kbyg-roadway-id]'));
+  const markerItems = [];
+  const collectMarker = (layer, registry) => {
+    const item = layer?.options?.gridlyEvidence || layer?.options?.incident || layer?.options?.report || null;
+    const id = layer?.options?.evidenceId || layer?.options?.reportId || layer?.options?.incidentId || layer?.options?.crossingReportId;
+    if (item) markerItems.push({ ...item, markerRegistry: registry });
+    else if (id) markerItems.push({ id, sourceKind: layer?.options?.sourceKind, markerRegistry: registry });
+  };
+  if (typeof unifiedIncidentLayer?.eachLayer === "function") unifiedIncidentLayer.eachLayer((layer) => collectMarker(layer, "unifiedIncidentLayer"));
+  if (crossingMarkers instanceof Map) crossingMarkers.forEach((layer) => collectMarker(layer, "crossingMarkers"));
   gridlyRecordGovernedAwarenessAuditEvent(options.reason || "manual-audit", { generation: gridlyActiveCountyTransitionGeneration });
   const snapshot = engine.buildSnapshot({
     records: reportRows, nowMs: options.nowMs, canonicalCommunity: selected?.label || selected?.name || "", canonicalKey: selected?.canonicalKey || selected?.placeGeoid || "",
     countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "", transitionGeneration: gridlyActiveCountyTransitionGeneration,
     evidenceGeneration: Number(options.evidenceGeneration ?? gridlyActiveCountyTransitionGeneration ?? 0), providerRefreshGeneration: Number(window.__gridlyDriveTexasRefreshGeneration || 0),
-    displayedActiveIssueCount: displayedText === undefined ? null : Number(displayedText), updateReason: options.reason || "manual-audit", events: gridlyGovernedAwarenessAuditEvents,
+    displayedActiveIssueCount: domCount, locationContextProductionCount: productionCount, locationContextDomCount: domCount, updateReason: options.reason || "manual-audit", events: gridlyGovernedAwarenessAuditEvents,
     actual: {
-      locationContext: [], communityPulse: [],
-      alerts: domIds('[data-gridly-alert-id]', ['data-gridly-alert-id', 'data-gridly-alert-report-id', 'data-gridly-canonical-incident-id']),
+      locationContext: locationItems, locationContextVisible: visible(panel), communityPulse: pulseItems, communityPulseVisible: visible(document.getElementById("gridlyCommunityPulseSurface")),
+      alerts: alertItems.length ? alertItems : domIds('[data-gridly-alert-id]', ['data-gridly-alert-id', 'data-gridly-alert-report-id', 'data-gridly-canonical-incident-id']), alertsVisible: visible(alertSurface),
       kbygCommunity: domIds('[data-gridly-kbyg-community-id]', ['data-gridly-kbyg-community-id']),
       kbygOfficialRoadways: domIds('[data-gridly-kbyg-roadway-id]', ['data-gridly-kbyg-roadway-id']),
-      map: domIds('[data-incident-id], [data-gridly-incident-id]', ['data-incident-id', 'data-gridly-incident-id', 'data-report-id']),
-      popup: domIds('[data-gridly-popup-report-id]', ['data-gridly-popup-report-id'])
+      kbygCommunityVisible: kbygCommunityNodes.some(visible), kbygOfficialRoadwaysVisible: kbygRoadwayNodes.some(visible),
+      map: markerItems, mapVisible: visible(document.getElementById("map")),
+      popup: domIds('[data-gridly-popup-report-id], .leaflet-popup [data-report-id], .leaflet-popup [data-incident-id]', ['data-gridly-popup-report-id', 'data-report-id', 'data-incident-id']), popupVisible: visible(document.querySelector(".leaflet-popup"))
     }
   });
   console.info("gridlyGovernedAwarenessAudit", snapshot);
