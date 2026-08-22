@@ -120325,3 +120325,44 @@ window.gridlyRecordLp097BrowserCertification = function gridlyRecordLp097Browser
   gridlyLp097BrowserCertification = Object.freeze({ ...record });
   return gridlyLp097AddressResolutionAudit();
 };
+
+/* LP219: bounded governed-awareness evidence instrumentation.  This adapter is
+ * deliberately read-only; it reconciles authoritative records and consumer
+ * projections without changing DriveTexas, crossing, or map ownership. */
+const gridlyGovernedAwarenessAuditEvents = [];
+function gridlyRecordGovernedAwarenessAuditEvent(reason = "unspecified", detail = {}) {
+  gridlyGovernedAwarenessAuditEvents.push(Object.freeze({ at: new Date().toISOString(), reason, generation: Number(detail.generation ?? gridlyActiveCountyTransitionGeneration ?? 0) || 0 }));
+  if (gridlyGovernedAwarenessAuditEvents.length > 40) gridlyGovernedAwarenessAuditEvents.shift();
+}
+function gridlyGovernedAwarenessAudit(options = {}) {
+  const engine = window.GridlyGovernedAwareness;
+  if (!engine?.buildSnapshot) return Object.freeze({ available: false, reason: "LP219_ENGINE_UNAVAILABLE" });
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const reportRows = Array.isArray(options.records) ? options.records : [
+    ...(Array.isArray(activeReports) ? activeReports : []),
+    ...(Array.isArray(activeHazards) ? activeHazards : []),
+    ...(typeof getLiveHazardIncidents === "function" ? getLiveHazardIncidents().map((row) => ({ ...row, sourceKind: "generated_road_incident" })) : []),
+    ...(Array.isArray(window.__gridlyDriveTexasAlerts) ? window.__gridlyDriveTexasAlerts.map((row) => ({ ...row, sourceKind: "official_roadway" })) : [])
+  ];
+  const domIds = (selector, attributes) => Array.from(document.querySelectorAll(selector)).flatMap((node) => attributes.map((attribute) => node.getAttribute(attribute)).filter(Boolean));
+  const displayedText = document.querySelector('[data-v2-location-awareness="panel"]')?.dataset?.activeAwarenessCount;
+  gridlyRecordGovernedAwarenessAuditEvent(options.reason || "manual-audit", { generation: gridlyActiveCountyTransitionGeneration });
+  const snapshot = engine.buildSnapshot({
+    records: reportRows, nowMs: options.nowMs, canonicalCommunity: selected?.label || selected?.name || "", canonicalKey: selected?.canonicalKey || selected?.placeGeoid || "",
+    countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "", transitionGeneration: gridlyActiveCountyTransitionGeneration,
+    evidenceGeneration: Number(options.evidenceGeneration ?? gridlyActiveCountyTransitionGeneration ?? 0), providerRefreshGeneration: Number(window.__gridlyDriveTexasRefreshGeneration || 0),
+    displayedActiveIssueCount: displayedText === undefined ? null : Number(displayedText), updateReason: options.reason || "manual-audit", events: gridlyGovernedAwarenessAuditEvents,
+    actual: {
+      locationContext: [], communityPulse: [],
+      alerts: domIds('[data-gridly-alert-id]', ['data-gridly-alert-id', 'data-gridly-alert-report-id', 'data-gridly-canonical-incident-id']),
+      kbygCommunity: domIds('[data-gridly-kbyg-community-id]', ['data-gridly-kbyg-community-id']),
+      kbygOfficialRoadways: domIds('[data-gridly-kbyg-roadway-id]', ['data-gridly-kbyg-roadway-id']),
+      map: domIds('[data-incident-id], [data-gridly-incident-id]', ['data-incident-id', 'data-gridly-incident-id', 'data-report-id']),
+      popup: domIds('[data-gridly-popup-report-id]', ['data-gridly-popup-report-id'])
+    }
+  });
+  console.info("gridlyGovernedAwarenessAudit", snapshot);
+  return snapshot;
+}
+window.gridlyGovernedAwarenessAudit = gridlyGovernedAwarenessAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGovernedAwarenessAudit", gridlyGovernedAwarenessAudit);
