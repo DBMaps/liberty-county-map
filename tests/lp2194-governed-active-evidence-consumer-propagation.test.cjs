@@ -24,3 +24,49 @@ test('cleared history is retained but excluded from consumers', () => {
 test('stale and old-area evidence do not propagate', () => {
  const out=project([hazard('stale',{status:'stale'}),hazard('old',{countyId:'ward-tx',canonicalCommunity:'Monahans',geographicEligible:false})]); assert.equal(out.snapshot.governedEligibleEvidenceCount,0); assert.equal(out.surfaces.alerts.length,0); assert.equal(out.surfaces.kbygCommunity.length,0); assert.equal(out.lineage[0].alertsOmissionReason,'STALE_OR_INACTIVE'); assert.equal(out.lineage[1].alertsOmissionReason,'GEOGRAPHICALLY_INELIGIBLE');
 });
+
+const fs = require('node:fs');
+const vm = require('node:vm');
+const appSource = fs.readFileSync('js/app.js', 'utf8');
+function productionFunction(name, nextName, globals = {}) {
+  const start = appSource.indexOf(`function ${name}`);
+  const end = appSource.indexOf(`function ${nextName}`, start + 1);
+  assert.ok(start >= 0 && end > start, `${name} production function is extractable`);
+  const context = vm.createContext({ ...globals });
+  vm.runInContext(`${appSource.slice(start, end)};this.result=${name};`, context);
+  return context.result;
+}
+
+test('Sulphur Springs browser-equivalent authority reaches active KBYG and Alerts DOM inputs', () => {
+  const control = hazard('37e6718f-a853-4b8f-a2bb-31cd64625153', {
+    countyId: 'hopkins-tx', canonicalCommunity: 'Sulphur Springs', canonicalKey: '4871048',
+    lat: 33.1384, lng: -95.6011, title: 'Road hazard', updatedAt: '2026-08-22T11:55:00Z'
+  });
+  const projection = governed.buildConsumerProjection({ records: [control], nowMs: NOW, countyId: 'hopkins-tx', canonicalCommunity: 'Sulphur Springs', canonicalKey: '4871048' });
+  assert.equal(projection.snapshot.governedEligibleEvidenceCount, 1);
+  assert.deepEqual(projection.surfaces.locationContext.map(row => row.evidenceId), [`active_hazard:${control.id}`]);
+  assert.deepEqual(projection.surfaces.kbygCommunity.map(row => row.evidenceId), [`active_hazard:${control.id}`]);
+  assert.deepEqual(projection.surfaces.alerts.map(row => row.evidenceId), [`active_hazard:${control.id}`]);
+
+  const homeCopy = productionFunction('getGridlyHomeCommunityPulseCopy', 'gridlyCommunityPulseConsumerHeadlineAvailable', {
+    gridlyGetAwarenessEvidenceCompleteness: () => ({ canStateCommunityQuiet: false, canStateTravelNormal: false }),
+    getGridlyAwarenessCoverageState: () => ({ state: 'available' })
+  });
+  const finalKbyg = homeCopy({ quiet: false, activeCount: projection.surfaces.kbygCommunity.length, activityLevel: 'active', coverage: { state: 'available' } });
+  assert.equal(finalKbyg.state, 'one_issue');
+  assert.doesNotMatch(`${finalKbyg.headline} ${finalKbyg.subline}`, /No active local issues|No active concerns/i);
+
+  const areaPredicate = productionFunction('gridlyRecordTextMatchesAwarenessArea', 'gridlyGetGovernedAwarenessGeometry', {
+    normalizeGridlyAwarenessAreaLookupText: value => String(value || '').trim().toLowerCase(),
+    gridlyNormalizeCountyId: value => String(value || '').trim().toLowerCase(),
+    gridlyGetActiveCountyId: () => 'hopkins-tx',
+    getGridlyAwarenessIntelligenceCrossing: () => null
+  });
+  assert.equal(areaPredicate(control, { label: 'Sulphur Springs', countyId: 'hopkins-tx' }), true);
+
+  assert.match(appSource, /intelItems\.length && !canonicalActiveCommunityRecords\?\.length/, 'governed Alerts candidates outrank unrelated localized intelligence');
+  assert.match(appSource, /return \{\s*\.\.\.item,\s*id: item\?\.id \|\| item\?\.crossingId/s, 'Alerts presentation preserves governed identity and geography');
+  assert.match(appSource, /window\.__gridlyLp2194AlertStages = Object\.freeze/, 'production records every Alerts authority stage');
+  assert.match(appSource, /governedKbygAuthorityIds/, 'KBYG cache authority includes governed evidence membership');
+  assert.match(appSource, /lp2194AuthorityAudit/, 'owner audit exposes final consumer authority and first losing stage');
+});
