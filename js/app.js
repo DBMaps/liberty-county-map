@@ -49989,6 +49989,12 @@ function gridlyRecordTextMatchesAwarenessArea(record = {}, area = {}) {
   if (!areaName) return false;
   const cityText = normalizeGridlyAwarenessAreaLookupText(record?.city || record?.town || record?.community || record?.municipality || "");
   if (cityText && cityText === areaName) return true;
+  // Governed canonical ownership is stronger than optional presentation text.
+  // Require county agreement as well so this cannot broaden a same-named place.
+  const canonicalCommunity = normalizeGridlyAwarenessAreaLookupText(record?.canonicalCommunity || record?.raw?.canonicalCommunity || "");
+  const canonicalCountyId = gridlyNormalizeCountyId(record?.countyId || record?.county_id || record?.raw?.countyId || record?.raw?.county_id || "");
+  const areaCountyId = gridlyNormalizeCountyId(area?.countyId || gridlyGetActiveCountyId());
+  if (canonicalCommunity && canonicalCommunity === areaName && canonicalCountyId && canonicalCountyId === areaCountyId) return true;
   const crossing = getGridlyAwarenessIntelligenceCrossing(record);
   const crossingCity = normalizeGridlyAwarenessAreaLookupText(crossing?.city || "");
   return Boolean(crossingCity && crossingCity === areaName);
@@ -62676,10 +62682,10 @@ function buildGridlyCommunityPulseModel(options = {}) {
   // already-authorized active hazard from being described as quiet while
   // leaving crossing-report policy (currently undefined) unchanged.
   const governedKbygProjection = gridlyGetGovernedConsumerProjection()?.surfaces?.kbygCommunity || [];
-  if (governedKbygProjection.length > Number(activeAwareness.activeAwarenessCount || 0)) {
-    activeAwareness.activeAwarenessCount = governedKbygProjection.length;
-    activeAwareness.activeHazardCount = governedKbygProjection.length;
-    activeAwareness.activityLevel = governedKbygProjection.length >= 2 ? "elevated" : "active";
+  if (governedKbygProjection.length) {
+    activeAwareness.activeAwarenessCount = Math.max(governedKbygProjection.length, Number(activeAwareness.activeAwarenessCount || 0));
+    activeAwareness.activeHazardCount = Math.max(governedKbygProjection.length, Number(activeAwareness.activeHazardCount || 0));
+    activeAwareness.activityLevel = activeAwareness.activeAwarenessCount >= 2 ? "elevated" : "active";
     activeAwareness.governedKbygEvidenceIds = governedKbygProjection.map((row) => row.evidenceId);
   }
   const selectedCommunityCount = Number(dataset.selectedCommunityCount || 0);
@@ -63127,7 +63133,9 @@ function renderGridlyCommunityPulse(options = {}) {
 
 function refreshGridlyCommunityPulseSharedModel(options = {}) {
   if (typeof gridlyLp016RecordAwarenessSwitchEvent === "function") gridlyLp016RecordAwarenessSwitchEvent("authoritativeSnapshotUpdated", { reason: options?.reason || "refreshGridlyCommunityPulseSharedModel" });
+  const governedKbygAuthorityIds = (gridlyGetGovernedConsumerProjection()?.surfaces?.kbygCommunity || []).map((row) => row.evidenceId).sort();
   const signature = gridlyV734BuildRefreshReuseSignature({
+    governedKbygAuthorityIds,
     topAwarenessMicrolineReadOnly: Boolean(options?.topAwarenessMicrolineReadOnly),
     communityAwarenessSummaryArea: options?.communityAwarenessSummary?.awarenessAreaName || ""
   });
@@ -112632,7 +112640,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const watchCount = incidents.filter((incident) => incident?.severity !== "high").length;
     const unifiedIncidentSourceCount = unifiedIncidents.length;
     const activeHazardSourceCount = fallbackHazards.length;
-    const normalizedAlertItemsFromIntel = intelItems.length
+    const normalizedAlertItemsFromIntel = intelItems.length && !canonicalActiveCommunityRecords?.length
       ? intelItems.map((item) => {
         const incident = item?.incident || {};
         const severityKey = String(incident?.severity || "moderate").toLowerCase();
@@ -112690,6 +112698,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const stateLabel = item?.latestReport ? getReportStateLabel(item.latestReport) : (item?.statusLabel || "Active");
         const raw = item?.raw || null;
         return {
+          ...item,
           id: item?.id || item?.crossingId || "",
           title: pickFirstNonEmptyText([
             coerceDisplayText(item?.headline),
@@ -112761,6 +112770,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const areaFilteredAlertItems = gridlyAlertsOpenAuditMeasure("deduplication", () => gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot"));
     const normalizedAlertItems = gridlyAlertsOpenAuditMeasure("alert merge", () => mergeGridlyOfficialSituationAlerts(areaFilteredAlertItems)
       .sort(compareGridlyIncidentPriorityModels));
+    window.__gridlyLp2194AlertStages = Object.freeze({
+      presentationCandidates: Object.freeze(normalizedAlertItemsBeforeAreaFilter.slice()),
+      areaFilterEligible: Object.freeze(areaFilteredAlertItems.slice()),
+      finalAlertData: Object.freeze(normalizedAlertItems.slice())
+    });
     const activeIncidentCount = normalizedAlertItems.length || (gridlyGetSelectedAlertAreaFilter().mode === "county" ? incidents.length : normalizedAlertItems.length);
     const hasFallbackSignals = gridlyGetSelectedAlertAreaFilter().mode === "county" && (activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0);
     const nearbySummary = unifiedIntel.nearbySummary;
@@ -120538,7 +120552,26 @@ function gridlyGovernedAwarenessAudit(options = {}) {
     communityPulsePublished: snapshot.publishedIds.communityPulse.includes(row.evidenceId),
     finalConsumerSurfaceMembership: Object.freeze(snapshot.surfaces ? Object.fromEntries(Object.entries(snapshot.surfaces).map(([surface, observation]) => [surface, observation.publishedIds.includes(row.evidenceId)])) : {})
   }));
-  const combined = Object.freeze({ ...snapshot, ...productionAudit, consumerPropagationLineage: Object.freeze(consumerPropagationLineage) });
+  const governedKbygIds = consumerProjection.surfaces.kbygCommunity.map((row) => row.evidenceId);
+  const governedAlertIds = consumerProjection.surfaces.alerts.map((row) => row.evidenceId);
+  const finalPulseModel = gridlyV734RefreshReuseState?.communityPulseModel || gridlyCommunityPulseAuditState || null;
+  const finalKbygAuthorityIds = Array.isArray(finalPulseModel?.activeAwareness?.governedKbygEvidenceIds) ? finalPulseModel.activeAwareness.governedKbygEvidenceIds : [];
+  const finalKbygDecision = typeof buildGridlyCommunityPulseDecisionPresentation === "function" ? buildGridlyCommunityPulseDecisionPresentation(finalPulseModel || {}) : null;
+  const kbygVisibleText = [document.getElementById("gridlyCommunityPulseHeadline")?.textContent, document.getElementById("gridlyCommunityPulseSubline")?.textContent, document.getElementById("gridlyCommunityPulseDecisionHeadline")?.textContent, document.getElementById("gridlyCommunityPulseDecisionSubline")?.textContent].filter(Boolean).join(" ").trim();
+  const alertStages = window.__gridlyLp2194AlertStages || {};
+  const stagePublishedIds = (items) => engine.buildSnapshot({ records: reportRows, nowMs: options.nowMs, actual: { alerts: Array.isArray(items) ? items : [] } }).publishedIds.alerts;
+  const alertPresentationCandidateIds = stagePublishedIds(alertStages.presentationCandidates);
+  const alertAreaFilterEligibleIds = stagePublishedIds(alertStages.areaFilterEligible);
+  const alertDataIds = stagePublishedIds(alertStages.finalAlertData || alertItems);
+  const alertDomIds = domIds('[data-gridly-alert-id]', ['data-gridly-alert-id', 'data-gridly-alert-report-id', 'data-gridly-canonical-incident-id']);
+  const alertFilterState = typeof gridlyAlertAreaFilterState === "object" ? gridlyAlertAreaFilterState : {};
+  const firstLosingStage = (id, stages) => Object.entries(stages).find(([, ids]) => !ids.includes(id))?.[0] || null;
+  const lp2194AuthorityAudit = Object.freeze({
+    kbyg: Object.freeze({ governedEligibleIds: snapshot.surfaces.kbygCommunity.governedEligibleIds, governedPublishedIds: governedKbygIds, finalAuthorityInputIds: finalKbygAuthorityIds, finalDecision: finalKbygDecision?.state || "unavailable", finalVisibleState: /No active local issues|No active concerns are reported/i.test(kbygVisibleText) ? "quiet" : (kbygVisibleText ? "active" : "not_visible"), visibleText: kbygVisibleText, parity: governedKbygIds.every((id) => finalKbygAuthorityIds.includes(id)) && !/^(?:quiet|unavailable)$/.test(finalKbygDecision?.state || "unavailable") }),
+    alerts: Object.freeze({ governedEligibleIds: snapshot.surfaces.alerts.governedEligibleIds, governedProjectedIds: governedAlertIds, presentationCandidateIds: alertPresentationCandidateIds, areaFilterEligibleIds: alertAreaFilterEligibleIds, finalAlertDataIds: alertDataIds, finalDomIds: alertDomIds, areaFilter: alertFilterState, parity: governedAlertIds.every((id) => alertDataIds.includes(id) && alertDomIds.some((domId) => id === domId || id.endsWith(`:${domId}`))) }),
+    evidence: Object.freeze(consumerProjection.lineage.map((row) => Object.freeze({ evidenceId: row.evidenceId, firstLosingStage: firstLosingStage(row.evidenceId, row.kbygCommunityEligible ? { kbygGovernedPublished: governedKbygIds, kbygFinalAuthorityInput: finalKbygAuthorityIds } : row.alertsEligible ? { alertsGovernedProjected: governedAlertIds, alertsPresentationCandidate: alertPresentationCandidateIds, alertsAreaFilterEligible: alertAreaFilterEligibleIds, alertsFinalData: alertDataIds, alertsFinalDom: alertDomIds.map((id) => row.evidenceId.endsWith(`:${id}`) ? row.evidenceId : id) } : {}) })))
+  });
+  const combined = Object.freeze({ ...snapshot, ...productionAudit, consumerPropagationLineage: Object.freeze(consumerPropagationLineage), lp2194AuthorityAudit });
   console.info("gridlyGovernedAwarenessAudit", combined);
   return combined;
 }
