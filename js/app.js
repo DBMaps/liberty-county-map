@@ -40325,12 +40325,14 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
       })
     : null;
   let currentVisibleIncidentCount = 0;
+  let currentVisibleIncidentAudit = null;
   try {
     const areaIdentity = getGridlyAwarenessSummaryAreaIdentity(safeSummary);
     const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "";
     const activeCountyName = safeDisplayText(typeof gridlyGetActiveCountyConfig === "function" ? gridlyGetActiveCountyConfig()?.name : "", "");
     if (areaIdentity && activeCountyId && (areaIdentity === normalizeGridlyAwarenessAreaLookupText(activeCountyName) || areaIdentity.includes(activeCountyId.split("-")[0]))) {
-      currentVisibleIncidentCount = safeNumber(gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId)?.currentVisibleReportCount);
+      currentVisibleIncidentAudit = gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId);
+      currentVisibleIncidentCount = safeNumber(currentVisibleIncidentAudit?.currentVisibleReportCount);
     }
   } catch (error) {
     currentVisibleIncidentCount = 0;
@@ -40359,7 +40361,8 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
       "safeNumber(counts.reportCount)": safeSummary.activeReportsInArea,
       "safeLength(safeSummary.activeReportsInArea)": safeSummary.activeReportsInArea,
       "safeLength(safeSummary.activeHazardsInArea)": safeSummary.activeHazardsInArea,
-      "safeNumber(safeSummary.activeReportsInAreaCount)": safeSummary.activeReportsInArea
+      "safeNumber(safeSummary.activeReportsInAreaCount)": safeSummary.activeReportsInArea,
+      currentVisibleIncidentCount: currentVisibleIncidentAudit?.currentVisibleIncidentItems || []
     },
     scalarSources: {
       "safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount)": { sourceField: "activeIssueCount", sourceObjectModel: "safeSummary.sharedActiveIssueContract", assignedAt: "buildGridlySharedActiveIssueContract", contributorIdentityRetained: true },
@@ -40371,7 +40374,7 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
       "safeNumber(visibleCountModel?.visibleAlertIncidentCount)": { sourceField: "visibleAlertIncidentCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
       "safeNumber(visibleCountModel?.renderedMarkerCount)": { sourceField: "renderedMarkerCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
       "safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount)": { sourceField: "bottomAwarenessDisplayedHazardCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
-      currentVisibleIncidentCount: { sourceField: "currentVisibleReportCount", sourceObjectModel: "gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId)", assignedAt: "visible incident audit", contributorIdentityRetained: false }
+      currentVisibleIncidentCount: { sourceField: "currentVisibleReportCount", sourceObjectModel: "gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId)", assignedAt: "visible incident audit", contributorIdentityRetained: true }
     }
   }) || Object.freeze({ allCandidateOperands: Object.freeze(allCandidateOperands), winningValue: returnedValue, winningOperandNames: Object.freeze(Object.keys(allCandidateOperands).filter((name) => allCandidateOperands[name] === returnedValue)), returnedValue, candidateCollections: Object.freeze({}) });
   return returnedValue;
@@ -84075,6 +84078,7 @@ function gridlyMontgomeryReportSubmissionAudit() {
   };
 }
 
+let gridlyCurrentCountyVisibleIncidentDiagnosticState = Object.freeze({ currentVisibleReportCount: 0, currentVisibleIncidentItems: Object.freeze([]) });
 function gridlyGetCurrentCountyVisibleIncidentAudit(countyId = gridlyGetActiveCountyId()) {
   const normalizedCountyId = gridlyNormalizeCountyId(countyId);
   const reportInventory = [
@@ -84082,6 +84086,22 @@ function gridlyGetCurrentCountyVisibleIncidentAudit(countyId = gridlyGetActiveCo
     ...(Array.isArray(activeReports) ? activeReports : [])
   ];
   const currentVisibleReports = reportInventory.filter((item) => gridlyReportMatchesActiveCounty(item, normalizedCountyId));
+  const excludedReports = reportInventory.filter((item) => !gridlyReportMatchesActiveCounty(item, normalizedCountyId));
+  const identityEngine = window.GridlyGovernedAwareness;
+  const governedEvidence = identityEngine?.buildSnapshot
+    ? identityEngine.buildSnapshot({ records: reportInventory, countyId: normalizedCountyId, evidenceGeneration: Number(gridlyActiveCountyTransitionGeneration || 0) }).evidence
+    : [];
+  const identityAudit = identityEngine?.buildCurrentCountyVisibleIncidentAudit
+    ? identityEngine.buildCurrentCountyVisibleIncidentAudit({
+        sourceCollection: reportInventory,
+        includedItems: currentVisibleReports,
+        excludedItems: excludedReports,
+        governedEvidence,
+        countyId: normalizedCountyId,
+        generation: Number(gridlyActiveCountyTransitionGeneration || 0)
+      })
+    : Object.freeze({ currentVisibleReportCount: currentVisibleReports.length, currentVisibleIncidentItems: Object.freeze([]), currentVisibleIncidentIdentities: Object.freeze([]) });
+  gridlyCurrentCountyVisibleIncidentDiagnosticState = identityAudit;
   const currentVisibleIncidents = (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [])
     .filter((incident) => gridlyReportMatchesActiveCounty(incident, normalizedCountyId))
     .filter((incident) => typeof isGridlyAwarenessActiveRoadHazardIncident !== "function" || isGridlyAwarenessActiveRoadHazardIncident(incident));
@@ -84097,6 +84117,7 @@ function gridlyGetCurrentCountyVisibleIncidentAudit(countyId = gridlyGetActiveCo
   const locationCardCount = awarenessCount;
   const comparableCounts = [currentIncidentCount, markerCount, alertCount, awarenessCount, locationCardCount].filter((count) => count > 0);
   return {
+    ...identityAudit,
     countyId: normalizedCountyId,
     currentVisibleReportCount: currentVisibleReports.length,
     currentVisibleIncidentCount,
@@ -84118,6 +84139,8 @@ function gridlyGetCurrentCountyVisibleIncidentAudit(countyId = gridlyGetActiveCo
     }
   };
 }
+window.gridlyCurrentCountyVisibleIncidentAudit = () => gridlyGetCurrentCountyVisibleIncidentAudit(gridlyGetActiveCountyId());
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyCurrentCountyVisibleIncidentAudit", window.gridlyCurrentCountyVisibleIncidentAudit);
 
 function gridlySanJacintoReportSubmissionAudit() {
   const submissionAudit = gridlyMontgomeryReportSubmissionAudit();
@@ -120473,7 +120496,8 @@ function gridlyLocationContextProductionAudit() {
   const match = textValue.match(/\b(\d+)\s+active issues? nearby\b/i);
   const domCount = match ? Number(match[1]) : (/\bno active issues? nearby\b/i.test(textValue) ? 0 : null);
   const productionCount = Number.isFinite(Number(state.locationContextProductionCount)) ? Number(state.locationContextProductionCount) : null;
-  return Object.freeze({ ...state, locationContextDomCount: domCount, locationContextCountParity: productionCount === null || domCount === null ? null : productionCount === domCount });
+  const currentVisibleIncidentAudit = gridlyGetCurrentCountyVisibleIncidentAudit(gridlyGetActiveCountyId());
+  return Object.freeze({ ...state, currentVisibleIncidentAudit, locationContextDomCount: domCount, locationContextCountParity: productionCount === null || domCount === null ? null : productionCount === domCount });
 }
 window.gridlyGovernedAwarenessAudit = gridlyGovernedAwarenessAudit;
 window.gridlyLocationContextProductionAudit = gridlyLocationContextProductionAudit;
