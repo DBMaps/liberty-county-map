@@ -22,6 +22,7 @@
     "test:statewide-audit-reconciliation": "node --test tests/statewide-audit-reconciliation.test.mjs",
     "test:statewide-cohort-harness": "node --test tests/statewide-live-cohort-browser-harness.test.mjs",
     "test:lp214": "node --test tests/lp214-*",
+    "test:lp2193": "node --test tests/lp2193-*",
     "test:lp216": "node --test tests/lp216-*",
     "test:lp217": "node --test tests/lp217-*",
     "test:lp2171": "node --test tests/lp2171-*",
