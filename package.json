@@ -25,6 +25,7 @@
     "test:lp2193": "node --test tests/lp2193-*",
     "test:lp2194": "node --test tests/lp2194-*",
     "test:lp220": "node --test tests/lp220-*",
+    "test:lp221": "node --test tests/lp221-*",
     "test:lp216": "node --test tests/lp216-*",
     "test:lp217": "node --test tests/lp217-*",
     "test:lp2171": "node --test tests/lp2171-*",
