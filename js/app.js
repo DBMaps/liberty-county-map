@@ -30846,6 +30846,45 @@ window.gridlyAlertPanelDiagnostic = function () {
   };
 };
 
+window.gridlyAlertsAuthorityWriterAudit = function () {
+  const finalAuthority = Array.isArray(window.__gridlyLp2194AlertStages?.finalAlertData) ? window.__gridlyLp2194AlertStages.finalAlertData : [];
+  const dataStore = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+  const finalAuthorityIds = finalAuthority.map(gridlyAlertWriterRecordId);
+  const finalDataStoreIds = dataStore.map(gridlyAlertWriterRecordId);
+  const state = gridlyAlertsWriterSynchronizationAuditState;
+  const finalDomIds = gridlyAlertWriterDomIds();
+  const normalizedDomIds = finalDomIds.map((id) => finalAuthorityIds.find((authorityId) => authorityId === id || authorityId.endsWith(`:${id}`)) || id);
+  const duplicates = normalizedDomIds.filter((id, index) => normalizedDomIds.indexOf(id) !== index);
+  const parity = finalAuthorityIds.length === normalizedDomIds.length
+    && finalAuthorityIds.every((id) => normalizedDomIds.includes(id))
+    && duplicates.length === 0;
+  const laterEmptyOverwrite = finalAuthorityIds.length > 0 && state.invocations.some((row, index, rows) => row.inputIds.length > 0 && rows.slice(index + 1).some((later) => later.opened && later.inputIds.length === 0));
+  let firstLosingStage = "AUTHORITY_READY";
+  if (parity) firstLosingStage = "DOM_PARITY_PASS";
+  else if (!state.invocationCount) firstLosingStage = "WRITER_NOT_INVOKED";
+  else if (state.renderSuppressionReason && state.renderSuppressionReason !== "write_pending") firstLosingStage = "WRITER_SKIPPED";
+  else if (state.targetContainerIdentity !== "#gridlyPortraitV2SheetBody") firstLosingStage = "WRITER_TARGET_MISMATCH";
+  else if (laterEmptyOverwrite) firstLosingStage = "LATER_EMPTY_OVERWRITE";
+  else if (finalAuthorityIds.length || finalDomIds.length) firstLosingStage = "WRITER_OUTPUT_MISSING";
+  return Object.freeze({
+    finalAuthorityIds,
+    finalDataStoreIds,
+    writerInvocationCount: state.invocationCount,
+    writerLastInvocationTime: state.lastInvocationTime,
+    writerInputIds: [...state.writerInputIds],
+    targetContainerIdentity: state.targetContainerIdentity,
+    renderSuppressionReason: state.renderSuppressionReason,
+    postWriteDomIds: [...state.postWriteDomIds],
+    finalDomIds,
+    duplicateDomIds: duplicates,
+    laterOverwriteInvocation: laterEmptyOverwrite ? state.invocations.find((row) => row.opened && row.inputIds.length === 0) || null : null,
+    invocationOrder: state.invocations.map((row) => ({ ...row, inputIds: [...row.inputIds], postWriteDomIds: [...row.postWriteDomIds] })),
+    firstLosingStage,
+    parity
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyAlertsAuthorityWriterAudit", window.gridlyAlertsAuthorityWriterAudit);
+
 window.gridlyAlertDataDiagnostic = function () {
   const alertSource = Array.isArray(window.__gridlyAlertsForRenderSample)
     ? window.__gridlyAlertsForRenderSample
@@ -33836,6 +33875,81 @@ function gridlyCanApplyAlertsSheetGeneration(generation) {
   );
 }
 
+// LP223: the portrait sheet is a live consumer of the same snapshot used by
+// getAlertsSurfaceSnapshot.  Keep this small scheduler between refresh callers
+// and the existing authoritative renderer; it does not manufacture cards or
+// change alert eligibility.
+const gridlyAlertsWriterSynchronizationAuditState = {
+  invocationCount: 0,
+  lastInvocationTime: null,
+  writerInputIds: [],
+  targetContainerIdentity: null,
+  renderSuppressionReason: null,
+  postWriteDomIds: [],
+  invocations: [],
+  scheduled: false,
+  lastScheduleReason: null
+};
+
+function gridlyAlertWriterRecordId(record = {}, index = 0) {
+  const rawId = String(record?.evidenceId || record?.id || record?.reportId || record?.report_id || record?.incidentId || record?.uuid || `alert-${index}`);
+  const source = String(record?.sourceKind || record?.source_kind || record?.reportKind || record?.report_kind || "");
+  if (/^[a-z_]+:/.test(rawId) || !source) return rawId;
+  const prefix = /active[_ -]?hazard|hazard/i.test(source) ? "active_hazard" : (/community|crossing/i.test(source) ? "community_report" : source.toLowerCase().replace(/[^a-z0-9]+/g, "_"));
+  return prefix ? `${prefix}:${rawId}` : rawId;
+}
+
+function gridlyAlertWriterDomIds() {
+  return Array.from(document.querySelectorAll('#gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-id]'))
+    .map((row) => String(row.getAttribute("data-gridly-alert-id") || ""))
+    .filter(Boolean);
+}
+
+function gridlyRecordAlertsWriterInvocation({ input = [], suppressionReason = null, opened = false, invocationTime = Date.now(), countInvocation = true } = {}) {
+  const body = document.getElementById("gridlyPortraitV2SheetBody");
+  const inputIds = (Array.isArray(input) ? input : []).map(gridlyAlertWriterRecordId);
+  const postWriteDomIds = gridlyAlertWriterDomIds();
+  const row = {
+    invocation: countInvocation ? ++gridlyAlertsWriterSynchronizationAuditState.invocationCount : gridlyAlertsWriterSynchronizationAuditState.invocationCount,
+    invocationTime,
+    inputIds,
+    targetContainerIdentity: body ? `#${body.id}` : null,
+    suppressionReason,
+    opened: Boolean(opened),
+    postWriteDomIds
+  };
+  Object.assign(gridlyAlertsWriterSynchronizationAuditState, {
+    lastInvocationTime: invocationTime,
+    writerInputIds: inputIds,
+    targetContainerIdentity: row.targetContainerIdentity,
+    renderSuppressionReason: suppressionReason,
+    postWriteDomIds
+  });
+  if (!countInvocation && gridlyAlertsWriterSynchronizationAuditState.invocations.length) {
+    gridlyAlertsWriterSynchronizationAuditState.invocations[gridlyAlertsWriterSynchronizationAuditState.invocations.length - 1] = row;
+  } else gridlyAlertsWriterSynchronizationAuditState.invocations.push(row);
+  if (gridlyAlertsWriterSynchronizationAuditState.invocations.length > 20) gridlyAlertsWriterSynchronizationAuditState.invocations.shift();
+  return row;
+}
+
+function gridlySynchronizeOpenAlertsPortrait(reason = "alerts_refresh") {
+  const generation = gridlyAlertsSheetLifecycleState.activeGeneration;
+  if (!gridlyCanApplyAlertsSheetGeneration(generation)) return false;
+  gridlyAlertsWriterSynchronizationAuditState.lastScheduleReason = reason;
+  if (gridlyAlertsWriterSynchronizationAuditState.scheduled) return true;
+  gridlyAlertsWriterSynchronizationAuditState.scheduled = true;
+  const schedule = typeof requestAnimationFrame === "function" ? requestAnimationFrame : (callback) => setTimeout(callback, 0);
+  schedule(() => {
+    gridlyAlertsWriterSynchronizationAuditState.scheduled = false;
+    if (!gridlyCanApplyAlertsSheetGeneration(generation)) {
+      gridlyRecordAlertsWriterInvocation({ suppressionReason: "alerts_sheet_not_current" });
+      return;
+    }
+    gridlyOpenAlertsSurfaceAfterPaint(generation);
+  });
+  return true;
+}
+
 function gridlyIgnoreLateAlertsSheetResult(generation, reason = "stale_generation") {
   gridlyAlertsSheetLifecycleState.lateResultIgnoredCount += 1;
   if (generation && generation !== gridlyAlertsSheetLifecycleState.activeGeneration) gridlyAlertsSheetLifecycleState.staleResultApplyCount += 1;
@@ -33887,7 +34001,10 @@ function gridlyGetAlertsAuthoritativeRevisionKey() {
     window.gridlyAlertStateRevision ||
     window.gridlyAlertsStateRevision ||
     window.gridlySharedReportsRevision ||
-    `${Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender.length : 0}:${Array.isArray(window.activeHazards) ? window.activeHazards.length : 0}:${Array.isArray(window.activeReports) ? window.activeReports.length : 0}`
+    // The rendered cache is output, not an authority revision. Including it
+    // here made the writer invalidate its own cooperative build when an empty
+    // cache was replaced with the first current snapshot.
+    `${Array.isArray(window.activeHazards) ? window.activeHazards.length : 0}:${Array.isArray(window.activeReports) ? window.activeReports.length : 0}`
   );
 }
 
@@ -34121,6 +34238,9 @@ function gridlyAlertsMarkCooperativeBuildCancelled(buildAudit, alertsSheetGenera
   buildAudit.superseded = true;
   buildAudit.cancelled = true;
   buildAudit.cancelReason = reason;
+  gridlyAlertsWriterSynchronizationAuditState.renderSuppressionReason = reason;
+  const lastWriterInvocation = gridlyAlertsWriterSynchronizationAuditState.invocations.at(-1);
+  if (lastWriterInvocation) lastWriterInvocation.suppressionReason = reason;
   buildAudit.cancelledGenerationCount = Number(buildAudit.cancelledGenerationCount || 0) + 1;
   gridlyAlertsCooperativeBuildState.cancelledGenerationCount = Number(gridlyAlertsCooperativeBuildState.cancelledGenerationCount || 0) + 1;
   if (alertsSheetGeneration && !gridlyCanApplyAlertsSheetGeneration(alertsSheetGeneration)) {
@@ -34870,9 +34990,9 @@ function openAlertsSurfaceFromDock() {
     sheetOpenDelayMs: Number((sheetInsertedAt - handlerEnteredAt).toFixed(2)),
     waitedForBackgroundRefresh: false
   });
-  gridlyInstantAlertsSheetAuditState.lastOpen.authoritativeBuildSkippedOnOpen = true;
-gridlyInstantAlertsSheetAuditState.lastOpen.authoritativeBuildSkipReason =
-  "alerts_open_is_cache_only";
+  gridlyInstantAlertsSheetAuditState.lastOpen.authoritativeBuildSkippedOnOpen = false;
+  gridlyInstantAlertsSheetAuditState.lastOpen.authoritativeBuildSkipReason = null;
+  gridlySynchronizeOpenAlertsPortrait("alerts_open_after_shell");
   return opened;
 }
 
@@ -35014,10 +35134,13 @@ function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply(alertsSheetGeneration
 
 /* async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply() -- LP010 static guard alias; implementation delegates through gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync. */
 async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsSheetGeneration = gridlyAlertsSheetLifecycleState.activeGeneration) {
+  const writerInvocationTime = Date.now();
   if (!gridlyCanApplyAlertsSheetGeneration(alertsSheetGeneration)) {
+    gridlyRecordAlertsWriterInvocation({ suppressionReason: "authoritative_build_not_current_at_start", invocationTime: writerInvocationTime });
     gridlyIgnoreLateAlertsSheetResult(alertsSheetGeneration, "authoritative_build_not_current_at_start");
     return false;
   }
+  gridlyRecordAlertsWriterInvocation({ input: window.__gridlyLatestAlertsForRender, suppressionReason: "writer_input_pending", invocationTime: writerInvocationTime });
   const cooperativeBuildGeneration = ++gridlyAlertsCooperativeBuildState.generation;
   const cooperativeBuildContextKey = gridlyGetAlertsAuthoritativeContextKey();
   const cooperativeBuildRevisionKey = gridlyGetAlertsAuthoritativeRevisionKey();
@@ -35436,6 +35559,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   };
   let template = fallbackTemplate;
   let alertsOpenRenderContext = null;
+  let writerAlertsForRender = [];
   try {
     if (!(await cooperativeYieldOrCancel(true, "cancelled_before_snapshot"))) return false;
     const snapshot = await cooperativePhase("snapshotAcquisitionMs", async () => gridlyAlertsOpenAuditMeasure("alert snapshot creation", () => window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.()));
@@ -35444,6 +35568,8 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     const alertsForRender = await cooperativePhase("awarenessFilteringMs", async () => gridlyAlertsOpenAuditMeasure("alert merge", () => (typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
       ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "openAlertsSurfaceFromDock")
       : snapshotAlerts)));
+    writerAlertsForRender = alertsForRender;
+    gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: "write_pending", invocationTime: writerInvocationTime, countInvocation: false });
     if (!(await cooperativeYieldOrCancel(true, "cancelled_after_awareness_filter"))) return false;
     window.__gridlyLatestAlertsForRender = alertsForRender;
     window.__gridlyAlertsForRenderSample = alertsForRender.slice(0, 5);
@@ -36730,6 +36856,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         html: gridlyLp0458SanitizeOfficialAlertCardMarkup(html)
       }));
       cooperativeBuildAudit.finalContentApplied = Boolean(opened);
+      gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: opened ? null : "target_rejected_write", opened, invocationTime: writerInvocationTime, countInvocation: false });
       cooperativeBuildAudit.finalDomInsertionOccurred = Boolean(opened);
       if (opened) gridlyEnforceCanonicalPresentationOnVisibleAlertCards("gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync");
       if (opened) {
@@ -36804,6 +36931,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
 
   if (typeof openGridlyPortraitV2Sheet === 'function') {
     const opened = Boolean(openGridlyPortraitV2Sheet('alerts', template));
+    gridlyRecordAlertsWriterInvocation({ input: writerAlertsForRender, suppressionReason: opened ? null : "target_rejected_write", opened, invocationTime: writerInvocationTime, countInvocation: false });
     if (opened) {
       const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
       gridlyRecordAlertsOpenRefreshFixTiming({
@@ -109108,6 +109236,7 @@ function mergeGridlyOfficialSituationAlerts(alerts = []) {
 }
 
 function renderAlerts() {
+  gridlySynchronizeOpenAlertsPortrait("renderAlerts_refresh");
   return gridlyV920Measure("renderAlerts", "alert-rendering", () => {
   const functionStartedAt = performance.now();
   const gridlyV921AlertCall = { timestamp: Date.now(), phases: {}, signatureComparedBeforeDomReplacement: true };
@@ -120769,10 +120898,11 @@ function gridlyGovernedAwarenessAudit(options = {}) {
   const alertDataIds = stagePublishedIds(alertStages.finalAlertData || alertItems);
   const alertDomIds = domIds('[data-gridly-alert-id]', ['data-gridly-alert-id', 'data-gridly-alert-report-id', 'data-gridly-canonical-incident-id']);
   const alertFilterState = typeof gridlyAlertAreaFilterState === "object" ? gridlyAlertAreaFilterState : {};
+  const alertWriterAudit = typeof window.gridlyAlertsAuthorityWriterAudit === "function" ? window.gridlyAlertsAuthorityWriterAudit() : null;
   const firstLosingStage = (id, stages) => Object.entries(stages).find(([, ids]) => !ids.includes(id))?.[0] || null;
   const lp2194AuthorityAudit = Object.freeze({
     kbyg: Object.freeze({ governedEligibleIds: snapshot.surfaces.kbygCommunity.governedEligibleIds, governedPublishedIds: governedKbygIds, finalAuthorityInputIds: finalKbygAuthorityIds, finalDecision: finalKbygDecision?.state || "unavailable", modelSummaryText: kbygVisibleText, portraitModelText: portraitKbygModelText, portraitDomText: portraitKbygDomText, portraitDomVisibleState, finalVisibleState, visibleText: kbygVisibleText, ...kbygParity }),
-    alerts: Object.freeze({ governedEligibleIds: snapshot.surfaces.alerts.governedEligibleIds, governedProjectedIds: governedAlertIds, presentationCandidateIds: alertPresentationCandidateIds, areaFilterEligibleIds: alertAreaFilterEligibleIds, finalAlertDataIds: alertDataIds, finalDomIds: alertDomIds, areaFilter: alertFilterState, parity: governedAlertIds.every((id) => alertDataIds.includes(id) && alertDomIds.some((domId) => id === domId || id.endsWith(`:${domId}`))) }),
+    alerts: Object.freeze({ governedEligibleIds: snapshot.surfaces.alerts.governedEligibleIds, governedProjectedIds: governedAlertIds, presentationCandidateIds: alertPresentationCandidateIds, areaFilterEligibleIds: alertAreaFilterEligibleIds, finalAlertDataIds: alertDataIds, finalDomIds: alertDomIds, areaFilter: alertFilterState, writer: alertWriterAudit, parity: governedAlertIds.every((id) => alertDataIds.includes(id) && alertDomIds.some((domId) => id === domId || id.endsWith(`:${domId}`))) }),
     evidence: Object.freeze(consumerProjection.lineage.map((row) => Object.freeze({ evidenceId: row.evidenceId, firstLosingStage: firstLosingStage(row.evidenceId, row.kbygCommunityEligible ? { kbygGovernedPublished: governedKbygIds, kbygFinalAuthorityInput: finalKbygAuthorityIds } : row.alertsEligible ? { alertsGovernedProjected: governedAlertIds, alertsPresentationCandidate: alertPresentationCandidateIds, alertsAreaFilterEligible: alertAreaFilterEligibleIds, alertsFinalData: alertDataIds, alertsFinalDom: alertDomIds.map((id) => row.evidenceId.endsWith(`:${id}`) ? row.evidenceId : id) } : {}) })))
   });
   const combined = Object.freeze({ ...snapshot, ...productionAudit, consumerPropagationLineage: Object.freeze(consumerPropagationLineage), lp2194AuthorityAudit });
