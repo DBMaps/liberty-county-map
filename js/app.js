@@ -3302,6 +3302,22 @@ function gridlyGetCanonicalActiveCommunityState(options = {}) {
   });
 }
 
+function gridlyGetGovernedConsumerProjection(options = {}) {
+  const engine = typeof window !== "undefined" ? window.GridlyGovernedAwareness : null;
+  if (!engine?.buildConsumerProjection) return null;
+  const selectedArea = Object.prototype.hasOwnProperty.call(options, "selectedArea") ? options.selectedArea : getGridlySelectedAwarenessArea();
+  const records = Array.isArray(options.records) ? options.records : [
+    ...(Array.isArray(activeReports) ? activeReports : []),
+    ...(Array.isArray(activeHazards) ? activeHazards : [])
+  ];
+  return engine.buildConsumerProjection({
+    records,
+    canonicalCommunity: selectedArea?.label || selectedArea?.name || "",
+    canonicalKey: selectedArea?.canonicalKey || selectedArea?.placeGeoid || "",
+    countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : selectedArea?.countyId || ""
+  });
+}
+
 if (typeof window !== "undefined") { window.gridlyResolveCanonicalLiveIncidentIdentity = gridlyResolveCanonicalLiveIncidentIdentity; window.gridlyBuildCanonicalLiveIncidentPresentation = gridlyBuildCanonicalLiveIncidentPresentation; }
 
 function gridlyStoryActiveRecords() {
@@ -61099,8 +61115,9 @@ function getGridlyActiveCountSurfaceRows(rows = [], options = {}) {
 function getGridlyAlertsSurfaceActiveCommunityReportRows(options = {}) {
   const safeRows = (rows) => getGridlyActiveCountSurfaceRows(rows, options);
   if (options?.alerts && Array.isArray(options.alerts)) return safeRows(options.alerts);
+  const governedAlertProjection = !options?.skipCanonicalSource ? gridlyGetGovernedConsumerProjection()?.surfaces?.alerts : null;
   const canonicalActiveRecords = !options?.skipCanonicalSource && typeof gridlyGetCanonicalActiveCommunityState === "function"
-    ? safeRows(gridlyGetCanonicalActiveCommunityState().activeRecords)
+    ? safeRows(Array.isArray(governedAlertProjection) ? governedAlertProjection.map((row) => ({ ...row.record, evidenceId: row.evidenceId })) : gridlyGetCanonicalActiveCommunityState().activeRecords)
     : null;
   if (canonicalActiveRecords?.length) return canonicalActiveRecords;
   // The shared publication is identity-checked by its producer and is the
@@ -62654,6 +62671,17 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const awarenessMode = String(awarenessDiagnostics?.awarenessMode || "community").toLowerCase();
   const dataset = buildCommunityPresenceDataset(options);
   const activeAwareness = buildGridlyLightweightActiveAwareness(options);
+  // KBYG's quiet/active decision consumes the governed community projection,
+  // not the narrower Community Presence scoring collection.  This keeps an
+  // already-authorized active hazard from being described as quiet while
+  // leaving crossing-report policy (currently undefined) unchanged.
+  const governedKbygProjection = gridlyGetGovernedConsumerProjection()?.surfaces?.kbygCommunity || [];
+  if (governedKbygProjection.length > Number(activeAwareness.activeAwarenessCount || 0)) {
+    activeAwareness.activeAwarenessCount = governedKbygProjection.length;
+    activeAwareness.activeHazardCount = governedKbygProjection.length;
+    activeAwareness.activityLevel = governedKbygProjection.length >= 2 ? "elevated" : "active";
+    activeAwareness.governedKbygEvidenceIds = governedKbygProjection.map((row) => row.evidenceId);
+  }
   const selectedCommunityCount = Number(dataset.selectedCommunityCount || 0);
   const providedCommunityAwarenessSummary = options?.communityAwarenessSummary && typeof options.communityAwarenessSummary === "object"
     ? options.communityAwarenessSummary
@@ -112573,8 +112601,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return alert;
     }
     const canonicalActiveCommunityState = typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState() : null;
-    const canonicalActiveCommunityRecords = Array.isArray(canonicalActiveCommunityState?.activeRecords)
-      ? canonicalActiveCommunityState.activeRecords.slice()
+    const governedAlertProjection = gridlyGetGovernedConsumerProjection()?.surfaces?.alerts;
+    const canonicalActiveCommunityRecords = Array.isArray(governedAlertProjection)
+      ? governedAlertProjection.map((row) => ({ ...row.record, evidenceId: row.evidenceId }))
+      : Array.isArray(canonicalActiveCommunityState?.activeRecords)
+        ? canonicalActiveCommunityState.activeRecords.slice()
       : null;
     const incidents = canonicalActiveCommunityRecords || getActiveUnifiedIncidents();
     const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getGridlyActiveCountSurfaceRows(getUnifiedIncidents()) : [];
@@ -120481,6 +120512,8 @@ function gridlyGovernedAwarenessAudit(options = {}) {
   };
   if (typeof unifiedIncidentLayer?.eachLayer === "function") unifiedIncidentLayer.eachLayer((layer) => collectMarker(layer, "unifiedIncidentLayer"));
   if (crossingMarkers instanceof Map) crossingMarkers.forEach((layer) => collectMarker(layer, "crossingMarkers"));
+  const consumerProjection = engine.buildConsumerProjection({ records: reportRows, nowMs: options.nowMs });
+  const kbygProductionItems = consumerProjection.surfaces.kbygCommunity.map((row) => ({ ...row.record, evidenceId: row.evidenceId }));
   gridlyRecordGovernedAwarenessAuditEvent(options.reason || "manual-audit", { generation: gridlyActiveCountyTransitionGeneration });
   const snapshot = engine.buildSnapshot({
     records: reportRows, nowMs: options.nowMs, canonicalCommunity: selected?.label || selected?.name || "", canonicalKey: selected?.canonicalKey || selected?.placeGeoid || "",
@@ -120490,7 +120523,7 @@ function gridlyGovernedAwarenessAudit(options = {}) {
     actual: {
       locationContext: locationItems, locationContextVisible: visible(panel), communityPulse: pulseItems, communityPulseVisible: visible(document.getElementById("gridlyCommunityPulseSurface")),
       alerts: alertItems.length ? alertItems : domIds('[data-gridly-alert-id]', ['data-gridly-alert-id', 'data-gridly-alert-report-id', 'data-gridly-canonical-incident-id']), alertsVisible: visible(alertSurface),
-      kbygCommunity: domIds('[data-gridly-kbyg-community-id]', ['data-gridly-kbyg-community-id']),
+      kbygCommunity: kbygProductionItems,
       kbygOfficialRoadways: domIds('[data-gridly-kbyg-roadway-id]', ['data-gridly-kbyg-roadway-id']),
       kbygCommunityVisible: kbygCommunityNodes.some(visible), kbygOfficialRoadwaysVisible: kbygRoadwayNodes.some(visible),
       map: markerItems, mapVisible: visible(document.getElementById("map")),
@@ -120498,7 +120531,14 @@ function gridlyGovernedAwarenessAudit(options = {}) {
     }
   });
   const productionAudit = gridlyLocationContextProductionAudit();
-  const combined = Object.freeze({ ...snapshot, ...productionAudit });
+  const consumerPropagationLineage = consumerProjection.lineage.map((row) => Object.freeze({
+    ...row,
+    alertPublished: snapshot.publishedIds.alerts.includes(row.evidenceId),
+    kbygCommunityPublished: snapshot.publishedIds.kbygCommunity.includes(row.evidenceId),
+    communityPulsePublished: snapshot.publishedIds.communityPulse.includes(row.evidenceId),
+    finalConsumerSurfaceMembership: Object.freeze(snapshot.surfaces ? Object.fromEntries(Object.entries(snapshot.surfaces).map(([surface, observation]) => [surface, observation.publishedIds.includes(row.evidenceId)])) : {})
+  }));
+  const combined = Object.freeze({ ...snapshot, ...productionAudit, consumerPropagationLineage: Object.freeze(consumerPropagationLineage) });
   console.info("gridlyGovernedAwarenessAudit", combined);
   return combined;
 }

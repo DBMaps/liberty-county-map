@@ -171,6 +171,28 @@
       currentStaleBreakdown: Object.freeze({ current: evidence.filter((row) => row.current).length, stale: evidence.filter((row) => !row.current).length }), events: Object.freeze(events), stableState: true
     });
   }
+  function buildConsumerProjection(input = {}) {
+    const records = Array.isArray(input.records) ? input.records : [];
+    const snapshot = buildSnapshot({ ...input, records, actual: input.actual || {} });
+    const byId = new Map(records.map((record) => {
+      const kind = sourceKindOf(record); const subtype = subtypeOf(record);
+      return [identity(record, kind, subtype), record];
+    }).filter(([id]) => id));
+    const surfaces = Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, Object.freeze(snapshot.evidence
+      .filter((row) => row.eligible[surface] === true)
+      .map((row) => Object.freeze({ evidenceId: row.evidenceId, sourceKind: row.sourceKind, subtype: row.subtype, record: byId.get(row.evidenceId) })))])));
+    const lineage = Object.freeze(snapshot.evidence.map((row) => Object.freeze({
+      evidenceId: row.evidenceId, sourceKind: row.sourceKind, subtype: row.subtype,
+      canonicalCommunity: row.canonicalCommunity, canonicalKey: row.canonicalKey, countyId: row.countyId,
+      current: row.current, active: row.active, lifecycleEligible: isGovernedActiveLifecycle(row),
+      alertsEligible: row.eligible.alerts, alertsOmissionReason: row.eligible.alerts ? null : row.omissionReasons.alerts,
+      kbygCommunityEligible: row.eligible.kbygCommunity, kbygCommunityOmissionReason: row.eligible.kbygCommunity ? null : row.omissionReasons.kbygCommunity,
+      kbygOfficialRoadwaysEligible: row.eligible.kbygOfficialRoadways,
+      communityPulseEligible: row.eligible.communityPulse
+    })));
+    return Object.freeze({ version: "LP219.4-governed-consumer-propagation-v1", surfaces, lineage, snapshot });
+  }
+
   function buildLocationContextProductionAudit(input = {}) {
     const governed = Array.isArray(input.governedEvidence) ? input.governedEvidence : [];
     const production = Array.isArray(input.productionItems) ? input.productionItems : [];
@@ -331,5 +353,5 @@
       lifecycleOperandAudit: Object.freeze({ ...(input.lifecycleOperandAudit || {}) })
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, sourceKindOf, subtypeOf });
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, sourceKindOf, subtypeOf });
 });
