@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP219.2B-visible-incident-identity-rca-v5";
+  const VERSION = "LP219.3-governed-active-lifecycle-v1";
   const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup"]);
   const COMMUNITY_POLICY = Object.freeze({
     blocked_crossing: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
@@ -67,8 +67,10 @@
     return !Number.isFinite(expires) || expires > nowMs;
   }
   function lifecycle(record = {}, subtype = subtypeOf(record), nowMs = Date.now()) {
-    const current = isCurrent(record, nowMs);
     const explicitlyCleared = subtype === "cleared" || [record.lifecycleState, record.status, record.state].some((value) => /^(?:cleared|recently[_ -]?cleared)$/i.test(text(value)));
+    // A cleared row may be current history, but it can never be a current active
+    // condition. Keeping these concepts separate is the LP219.3 boundary.
+    const current = explicitlyCleared ? true : isCurrent(record, nowMs);
     return Object.freeze({
       current,
       active: current && !explicitlyCleared && record.active !== false,
@@ -76,6 +78,14 @@
       retainedForHistory: explicitlyCleared,
       reason: explicitlyCleared ? "Cleared is retained lifecycle evidence, not an active condition." : (current ? "Current lifecycle record is active." : "Record is stale or inactive.")
     });
+  }
+  function isGovernedActiveLifecycle(row = {}) {
+    const state = row.lifecycle && typeof row.lifecycle === "object" ? row.lifecycle : row;
+    return state.current === true
+      && state.active === true
+      && state.retainedForHistory !== true
+      && row.cleared !== true
+      && row.stale !== true;
   }
   function omission(policyValue, current, geographic, published) {
     if (published) return "PUBLISHED";
@@ -246,24 +256,37 @@
         sourceIndex: index
       });
     };
-    const items = included.slice(0, 100).map((row, index) => project(row, index, true));
+    const projectedItems = included.map((row, index) => project(row, index, true));
+    const items = projectedItems.slice(0, 100);
     const excludedItems = excluded.slice(0, Math.max(0, 100 - items.length)).map((row, index) => project(row, index, false));
     const breakdown = (field) => Object.freeze(items.reduce((out, row) => ({ ...out, [row[field] || "unknown"]: (out[row[field] || "unknown"] || 0) + 1 }), {}));
+    const activeItems = projectedItems.filter((row) => row.governedMatch === "MATCHED_GOVERNED_ACTIVE" && isGovernedActiveLifecycle(row));
+    const lifecycleExcludedItems = projectedItems.filter((row) => !activeItems.includes(row));
     return Object.freeze({
       currentVisibleReportCount: included.length,
       currentVisibleIncidentItems: Object.freeze(items),
       currentVisibleIncidentIdentities: Object.freeze(items.map((row) => row.productionIdentity).filter(Boolean)),
+      currentActiveVisibleIncidentCount: activeItems.length,
+      currentActiveVisibleIncidentItems: Object.freeze(activeItems.slice(0, 100)),
+      currentActiveVisibleIncidentIdentities: Object.freeze(activeItems.slice(0, 100).map((row) => row.productionIdentity).filter(Boolean)),
       currentVisibleIncidentSourceBreakdown: breakdown("sourceKind"),
       currentVisibleIncidentLifecycleBreakdown: breakdown("lifecycle"),
       currentVisibleIncidentCountyId: text(input.countyId),
       currentVisibleIncidentGeneration: Number(input.generation || 0),
       currentVisibleIncidentSourceCollection: "activeHazards + activeReports",
       currentVisibleIncidentFilterStages: Object.freeze({ sourceCollectionCount: source.length, countyMatchedCount: included.length, countyExcludedCount: excluded.length, lifecycleFilteredCount: 0, staleFilteredCount: 0, duplicateFilteredCount: 0, sourceTypeFilteredCount: 0 }),
+      currentActiveVisibleIncidentFilterStages: Object.freeze({ countyMatchedCount: included.length, activeLifecycleCount: activeItems.length, lifecycleExcludedCount: lifecycleExcludedItems.length, staleFilteredCount: projectedItems.filter((row) => row.stale).length, duplicateFilteredCount: projectedItems.filter((row) => row.governedMatch === "MATCHED_DUPLICATE").length }),
       currentVisibleIncidentExcludedItems: Object.freeze(excludedItems),
       currentVisibleIncidentDuplicateIds: Object.freeze([...new Set(duplicateIds)]),
       currentVisibleIncidentStaleIds: Object.freeze(items.filter((row) => row.stale).map((row) => row.productionIdentity).filter(Boolean)),
       currentVisibleIncidentInactiveHistoryIds: Object.freeze(items.filter((row) => row.cleared || (row.inactive && row.current)).map((row) => row.productionIdentity).filter(Boolean)),
-      currentVisibleIncidentCountContract: "MAP_REPORT_INVENTORY_COUNTY_MEMBERSHIP_NOT_ACTIVE_LIFECYCLE"
+      currentVisibleIncidentLifecycleExcludedIds: Object.freeze(lifecycleExcludedItems.map((row) => row.productionIdentity).filter(Boolean)),
+      duplicateIds: Object.freeze([...new Set(duplicateIds)]),
+      staleIds: Object.freeze(items.filter((row) => row.stale).map((row) => row.productionIdentity).filter(Boolean)),
+      inactiveHistoryIds: Object.freeze(items.filter((row) => row.cleared || (row.inactive && row.current)).map((row) => row.productionIdentity).filter(Boolean)),
+      lifecycleExcludedIds: Object.freeze(lifecycleExcludedItems.map((row) => row.productionIdentity).filter(Boolean)),
+      currentVisibleIncidentCountContract: "MAP_REPORT_INVENTORY_COUNTY_MEMBERSHIP_NOT_ACTIVE_LIFECYCLE",
+      currentActiveVisibleIncidentCountContract: "CURRENT_COUNTY_GOVERNED_ACTIVE_LIFECYCLE_COUNT"
     });
   }
   function captureActiveIssueReconciliationInvocation(input = {}) {
@@ -304,8 +327,9 @@
       winningOperandNames,
       returnedValue: safeNumber(input.returnedValue ?? winningValue),
       candidateCollections,
-      scalarSources: Object.freeze({ ...(input.scalarSources || {}) })
+      scalarSources: Object.freeze({ ...(input.scalarSources || {}) }),
+      lifecycleOperandAudit: Object.freeze({ ...(input.lifecycleOperandAudit || {}) })
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, identity, sourceKindOf, subtypeOf });
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, sourceKindOf, subtypeOf });
 });

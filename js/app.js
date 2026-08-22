@@ -40325,6 +40325,7 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
       })
     : null;
   let currentVisibleIncidentCount = 0;
+  let currentActiveVisibleIncidentCount = 0;
   let currentVisibleIncidentAudit = null;
   try {
     const areaIdentity = getGridlyAwarenessSummaryAreaIdentity(safeSummary);
@@ -40333,23 +40334,32 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
     if (areaIdentity && activeCountyId && (areaIdentity === normalizeGridlyAwarenessAreaLookupText(activeCountyName) || areaIdentity.includes(activeCountyId.split("-")[0]))) {
       currentVisibleIncidentAudit = gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId);
       currentVisibleIncidentCount = safeNumber(currentVisibleIncidentAudit?.currentVisibleReportCount);
+      currentActiveVisibleIncidentCount = safeNumber(currentVisibleIncidentAudit?.currentActiveVisibleIncidentCount);
     }
   } catch (error) {
     currentVisibleIncidentCount = 0;
+    currentActiveVisibleIncidentCount = 0;
   }
+  // LP219.3 operand audit. Collection cardinalities and rendered/marker counts
+  // remain diagnostics, but are not governed active-condition authorities.
+  const lifecycleOperandAudit = Object.freeze({
+    "safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount)": "ELIGIBLE_INDEPENDENTLY_GOVERNED_ACTIVE_COUNT",
+    "safeNumber(counts.activeIssueCount)": "EXCLUDED_DERIVED_COLLECTION_CARDINALITY",
+    "safeNumber(counts.hazardCount)": "EXCLUDED_PRESENTATION_COUNT",
+    "safeNumber(counts.reportCount)": "EXCLUDED_COLLECTION_CARDINALITY",
+    "safeLength(safeSummary.activeReportsInArea)": "EXCLUDED_RUNTIME_INVENTORY_LENGTH",
+    "safeLength(safeSummary.activeHazardsInArea)": "EXCLUDED_RUNTIME_INVENTORY_LENGTH",
+    "safeNumber(safeSummary.reportCount)": "EXCLUDED_UNQUALIFIED_SUMMARY_COUNT",
+    "safeNumber(safeSummary.activeReportsInAreaCount)": "EXCLUDED_UNQUALIFIED_SUMMARY_COUNT",
+    "safeNumber(visibleCountModel?.visibleAlertIncidentCount)": "EXCLUDED_VISIBILITY_PROJECTION",
+    "safeNumber(visibleCountModel?.renderedMarkerCount)": "EXCLUDED_RENDERED_MARKER_COUNT",
+    "safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount)": "EXCLUDED_PRESENTATION_COUNT",
+    currentVisibleIncidentCount: "EXCLUDED_RUNTIME_INVENTORY_COUNT",
+    currentActiveVisibleIncidentCount: "ELIGIBLE_CURRENT_COUNTY_GOVERNED_ACTIVE_LIFECYCLE_COUNT"
+  });
   const allCandidateOperands = {
     "safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount)": safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount),
-    "safeNumber(counts.activeIssueCount)": safeNumber(counts.activeIssueCount),
-    "safeNumber(counts.hazardCount)": safeNumber(counts.hazardCount),
-    "safeNumber(counts.reportCount)": safeNumber(counts.reportCount),
-    "safeLength(safeSummary.activeReportsInArea)": safeLength(safeSummary.activeReportsInArea),
-    "safeLength(safeSummary.activeHazardsInArea)": safeLength(safeSummary.activeHazardsInArea),
-    "safeNumber(safeSummary.reportCount)": safeNumber(safeSummary.reportCount),
-    "safeNumber(safeSummary.activeReportsInAreaCount)": safeNumber(safeSummary.activeReportsInAreaCount),
-    "safeNumber(visibleCountModel?.visibleAlertIncidentCount)": safeNumber(visibleCountModel?.visibleAlertIncidentCount),
-    "safeNumber(visibleCountModel?.renderedMarkerCount)": safeNumber(visibleCountModel?.renderedMarkerCount),
-    "safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount)": safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount),
-    currentVisibleIncidentCount
+    currentActiveVisibleIncidentCount
   };
   const returnedValue = Math.max(...Object.values(allCandidateOperands));
   gridlyActiveIssueReconciliationInvocation = window.GridlyGovernedAwareness?.captureActiveIssueReconciliationInvocation({
@@ -40362,7 +40372,8 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
       "safeLength(safeSummary.activeReportsInArea)": safeSummary.activeReportsInArea,
       "safeLength(safeSummary.activeHazardsInArea)": safeSummary.activeHazardsInArea,
       "safeNumber(safeSummary.activeReportsInAreaCount)": safeSummary.activeReportsInArea,
-      currentVisibleIncidentCount: currentVisibleIncidentAudit?.currentVisibleIncidentItems || []
+      currentVisibleIncidentCount: currentVisibleIncidentAudit?.currentVisibleIncidentItems || [],
+      currentActiveVisibleIncidentCount: currentVisibleIncidentAudit?.currentActiveVisibleIncidentItems || []
     },
     scalarSources: {
       "safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount)": { sourceField: "activeIssueCount", sourceObjectModel: "safeSummary.sharedActiveIssueContract", assignedAt: "buildGridlySharedActiveIssueContract", contributorIdentityRetained: true },
@@ -40374,8 +40385,10 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
       "safeNumber(visibleCountModel?.visibleAlertIncidentCount)": { sourceField: "visibleAlertIncidentCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
       "safeNumber(visibleCountModel?.renderedMarkerCount)": { sourceField: "renderedMarkerCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
       "safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount)": { sourceField: "bottomAwarenessDisplayedHazardCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
-      currentVisibleIncidentCount: { sourceField: "currentVisibleReportCount", sourceObjectModel: "gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId)", assignedAt: "visible incident audit", contributorIdentityRetained: true }
-    }
+      currentVisibleIncidentCount: { sourceField: "currentVisibleReportCount", sourceObjectModel: "gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId)", assignedAt: "diagnostic only; excluded from LP219.3 winner set", contributorIdentityRetained: true },
+      currentActiveVisibleIncidentCount: { sourceField: "currentActiveVisibleIncidentCount", sourceObjectModel: "gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId)", assignedAt: "governed lifecycle visible incident audit", contributorIdentityRetained: true }
+    },
+    lifecycleOperandAudit
   }) || Object.freeze({ allCandidateOperands: Object.freeze(allCandidateOperands), winningValue: returnedValue, winningOperandNames: Object.freeze(Object.keys(allCandidateOperands).filter((name) => allCandidateOperands[name] === returnedValue)), returnedValue, candidateCollections: Object.freeze({}) });
   return returnedValue;
 }
@@ -120497,7 +120510,19 @@ function gridlyLocationContextProductionAudit() {
   const domCount = match ? Number(match[1]) : (/\bno active issues? nearby\b/i.test(textValue) ? 0 : null);
   const productionCount = Number.isFinite(Number(state.locationContextProductionCount)) ? Number(state.locationContextProductionCount) : null;
   const currentVisibleIncidentAudit = gridlyGetCurrentCountyVisibleIncidentAudit(gridlyGetActiveCountyId());
-  return Object.freeze({ ...state, currentVisibleIncidentAudit, locationContextDomCount: domCount, locationContextCountParity: productionCount === null || domCount === null ? null : productionCount === domCount });
+  return Object.freeze({
+    ...state,
+    currentVisibleIncidentAudit, locationContextDomCount: domCount,
+    currentVisibleIncidentCount: currentVisibleIncidentAudit.currentVisibleIncidentCount,
+    currentActiveVisibleIncidentCount: currentVisibleIncidentAudit.currentActiveVisibleIncidentCount,
+    currentVisibleIncidentItems: currentVisibleIncidentAudit.currentVisibleIncidentItems,
+    currentActiveVisibleIncidentItems: currentVisibleIncidentAudit.currentActiveVisibleIncidentItems,
+    inactiveHistoryIds: currentVisibleIncidentAudit.currentVisibleIncidentInactiveHistoryIds,
+    staleIds: currentVisibleIncidentAudit.currentVisibleIncidentStaleIds,
+    duplicateIds: currentVisibleIncidentAudit.currentVisibleIncidentDuplicateIds,
+    lifecycleExcludedFromActiveCount: currentVisibleIncidentAudit.currentVisibleIncidentLifecycleExcludedIds,
+    locationContextCountParity: productionCount === null || domCount === null ? null : productionCount === domCount
+  });
 }
 window.gridlyGovernedAwarenessAudit = gridlyGovernedAwarenessAudit;
 window.gridlyLocationContextProductionAudit = gridlyLocationContextProductionAudit;
