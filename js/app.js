@@ -40239,7 +40239,8 @@ function getGridlyRouteContextTitle(destinationLabel = "") {
 /* LP219.2 observes the already-computed Location Context projection.  It does
  * not participate in the count decision or alter any consumer model. */
 let gridlyLocationContextProductionDiagnosticState = Object.freeze({ generation: -1, timeline: Object.freeze([]) });
-function gridlyObserveLocationContextProductionProjection({ summary = {}, productionItems = [], productionCount = 0, operands = {}, reason = "location-context-projection" } = {}) {
+let gridlyActiveIssueReconciliationInvocation = null;
+function gridlyObserveLocationContextProductionProjection({ summary = {}, productionItems = [], productionCount = 0, operands = {}, invocation = null, reason = "location-context-projection" } = {}) {
   const generation = Number(gridlyActiveCountyTransitionGeneration || 0);
   if (generation < Number(gridlyLocationContextProductionDiagnosticState.generation ?? -1)) return gridlyLocationContextProductionDiagnosticState;
   const previousCount = Number.isFinite(Number(gridlyLocationContextProductionDiagnosticState.locationContextProductionCount)) ? Number(gridlyLocationContextProductionDiagnosticState.locationContextProductionCount) : null;
@@ -40255,9 +40256,17 @@ function gridlyObserveLocationContextProductionProjection({ summary = {}, produc
     productionSource: "normalizeGridlyMobileAwarenessPanelSummary.getGridlyReconciledAwarenessActiveIssueCount",
     derivationReason: "LP214_MAX_RECONCILIATION_OF_SHARED_SUMMARY_RAW_COLLECTION_COUNTS_ALERTS_AND_VISIBLE_PROJECTIONS"
   }) : { locationContextProductionCount: productionCount, locationContextProductionItems: [] };
-  const event = Object.freeze({ timestamp: at, transitionGeneration: generation, evidenceGeneration: generation, providerRefreshGeneration: Number(window.__gridlyDriveTexasRefreshGeneration || 0), previousCount, newCount: productionCount, countSource: audit.locationContextProductionSource, contributingProductionItemIdentities: audit.locationContextProductionItems.map((row) => row.productionIdentity), updateReason: reason });
+  const invocationOperands = invocation?.allCandidateOperands || {};
+  const reconciliationWins = Number(invocation?.returnedValue) === Number(productionCount);
+  const alertWins = Number.isFinite(Number(operands.alertsGroupedIssueCount)) && Number(operands.alertsGroupedIssueCount) > 0 && Number(operands.alertsGroupedIssueCount) === Number(productionCount);
+  const winningOperandNames = [...(reconciliationWins ? (invocation?.winningOperandNames || []) : []), ...(alertWins ? ["alertsGroupedIssueCount"] : [])];
+  const winningCollections = Object.freeze(Object.fromEntries(winningOperandNames.filter((name) => invocation?.candidateCollections?.[name]).map((name) => [name, invocation.candidateCollections[name]])));
+  const winningItems = Object.freeze(Object.values(winningCollections).flatMap((collection) => collection.boundedIdentities || []).slice(0, 100));
+  const event = Object.freeze({ timestamp: at, transitionGeneration: generation, evidenceGeneration: generation, providerRefreshGeneration: Number(window.__gridlyDriveTexasRefreshGeneration || 0), previousCount, newCount: productionCount, allCandidateOperands: invocationOperands, winningOperandNames: Object.freeze(winningOperandNames), winningValue: productionCount, winningCollectionIdentities: winningItems, countSource: audit.locationContextProductionSource, contributingProductionItemIdentities: audit.locationContextProductionItems.map((row) => row.productionIdentity), updateReason: reason });
   const timeline = [...(gridlyLocationContextProductionDiagnosticState.timeline || []), event].slice(-40);
-  gridlyLocationContextProductionDiagnosticState = Object.freeze({ ...audit, generation, locationContextGeneration: generation, locationContextLastUpdateReason: reason, locationContextLastUpdatedAt: at, selectedAreaIdentity: getGridlyAwarenessSummaryAreaIdentity(summary), timeline: Object.freeze(timeline), locationContextUpdateTimeline: Object.freeze(timeline) });
+  const retainedFirstEvent = gridlyLocationContextProductionDiagnosticState.locationContextFirstProducingEvent;
+  const firstProducingEvent = retainedFirstEvent?.newCount === productionCount ? retainedFirstEvent : (timeline.find((row) => row.newCount === productionCount && row.previousCount !== productionCount) || null);
+  gridlyLocationContextProductionDiagnosticState = Object.freeze({ ...audit, generation, locationContextGeneration: generation, locationContextLastUpdateReason: reason, locationContextLastUpdatedAt: at, selectedAreaIdentity: getGridlyAwarenessSummaryAreaIdentity(summary), locationContextWinningOperands: Object.freeze(winningOperandNames), locationContextWinningValue: productionCount, locationContextInvocationOperands: Object.freeze({ ...invocationOperands }), locationContextWinningCollections: winningCollections, locationContextWinningItems: winningItems, locationContextReconciliationInvocation: invocation, locationContextLatestEvent: event, locationContextFirstProducingEvent: firstProducingEvent, timeline: Object.freeze(timeline), locationContextUpdateTimeline: Object.freeze(timeline) });
   return gridlyLocationContextProductionDiagnosticState;
 }
 
@@ -40326,20 +40335,46 @@ function getGridlyReconciledAwarenessActiveIssueCount(summary = {}, counts = {})
   } catch (error) {
     currentVisibleIncidentCount = 0;
   }
-  return Math.max(
-    safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount),
-    safeNumber(counts.activeIssueCount),
-    safeNumber(counts.hazardCount),
-    safeNumber(counts.reportCount),
-    safeLength(safeSummary.activeReportsInArea),
-    safeLength(safeSummary.activeHazardsInArea),
-    safeNumber(safeSummary.reportCount),
-    safeNumber(safeSummary.activeReportsInAreaCount),
-    safeNumber(visibleCountModel?.visibleAlertIncidentCount),
-    safeNumber(visibleCountModel?.renderedMarkerCount),
-    safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount),
+  const allCandidateOperands = {
+    "safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount)": safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount),
+    "safeNumber(counts.activeIssueCount)": safeNumber(counts.activeIssueCount),
+    "safeNumber(counts.hazardCount)": safeNumber(counts.hazardCount),
+    "safeNumber(counts.reportCount)": safeNumber(counts.reportCount),
+    "safeLength(safeSummary.activeReportsInArea)": safeLength(safeSummary.activeReportsInArea),
+    "safeLength(safeSummary.activeHazardsInArea)": safeLength(safeSummary.activeHazardsInArea),
+    "safeNumber(safeSummary.reportCount)": safeNumber(safeSummary.reportCount),
+    "safeNumber(safeSummary.activeReportsInAreaCount)": safeNumber(safeSummary.activeReportsInAreaCount),
+    "safeNumber(visibleCountModel?.visibleAlertIncidentCount)": safeNumber(visibleCountModel?.visibleAlertIncidentCount),
+    "safeNumber(visibleCountModel?.renderedMarkerCount)": safeNumber(visibleCountModel?.renderedMarkerCount),
+    "safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount)": safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount),
     currentVisibleIncidentCount
-  );
+  };
+  const returnedValue = Math.max(...Object.values(allCandidateOperands));
+  gridlyActiveIssueReconciliationInvocation = window.GridlyGovernedAwareness?.captureActiveIssueReconciliationInvocation({
+    transitionGeneration: Number(gridlyActiveCountyTransitionGeneration || 0), evidenceGeneration: Number(gridlyActiveCountyTransitionGeneration || 0), providerRefreshGeneration: Number(window.__gridlyDriveTexasRefreshGeneration || 0),
+    operands: allCandidateOperands, returnedValue,
+    collections: {
+      "safeNumber(counts.activeIssueCount)": [...(Array.isArray(safeSummary.activeReportsInArea) ? safeSummary.activeReportsInArea : []), ...(Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea : [])],
+      "safeNumber(counts.hazardCount)": safeSummary.activeHazardsInArea,
+      "safeNumber(counts.reportCount)": safeSummary.activeReportsInArea,
+      "safeLength(safeSummary.activeReportsInArea)": safeSummary.activeReportsInArea,
+      "safeLength(safeSummary.activeHazardsInArea)": safeSummary.activeHazardsInArea,
+      "safeNumber(safeSummary.activeReportsInAreaCount)": safeSummary.activeReportsInArea
+    },
+    scalarSources: {
+      "safeNumber(safeSummary.sharedActiveIssueContract?.activeIssueCount)": { sourceField: "activeIssueCount", sourceObjectModel: "safeSummary.sharedActiveIssueContract", assignedAt: "buildGridlySharedActiveIssueContract", contributorIdentityRetained: true },
+      "safeNumber(counts.activeIssueCount)": { sourceField: "activeIssueCount", sourceObjectModel: "getGridlyReconciledAwarenessActiveIssueCount counts", assignedAt: "normalizeGridlyMobileAwarenessPanelSummary rawActiveIssueCount", contributorIdentityRetained: true },
+      "safeNumber(counts.hazardCount)": { sourceField: "hazardCount", sourceObjectModel: "getGridlyReconciledAwarenessActiveIssueCount counts", assignedAt: "getGridlyBottomAwarenessHazardCountModel", contributorIdentityRetained: true },
+      "safeNumber(counts.reportCount)": { sourceField: "reportCount", sourceObjectModel: "getGridlyReconciledAwarenessActiveIssueCount counts", assignedAt: "normalizeGridlyMobileAwarenessPanelSummary report and crossing counts", contributorIdentityRetained: true },
+      "safeNumber(safeSummary.reportCount)": { sourceField: "reportCount", sourceObjectModel: "safeSummary", assignedAt: "awareness summary construction", contributorIdentityRetained: false },
+      "safeNumber(safeSummary.activeReportsInAreaCount)": { sourceField: "activeReportsInAreaCount", sourceObjectModel: "safeSummary", assignedAt: "awareness summary construction", contributorIdentityRetained: true },
+      "safeNumber(visibleCountModel?.visibleAlertIncidentCount)": { sourceField: "visibleAlertIncidentCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
+      "safeNumber(visibleCountModel?.renderedMarkerCount)": { sourceField: "renderedMarkerCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
+      "safeNumber(visibleCountModel?.bottomAwarenessDisplayedHazardCount)": { sourceField: "bottomAwarenessDisplayedHazardCount", sourceObjectModel: "buildGridlyAwarenessHazardCountConsistencyModel result", assignedAt: "visible awareness consistency model", contributorIdentityRetained: false },
+      currentVisibleIncidentCount: { sourceField: "currentVisibleReportCount", sourceObjectModel: "gridlyGetCurrentCountyVisibleIncidentAudit(activeCountyId)", assignedAt: "visible incident audit", contributorIdentityRetained: false }
+    }
+  }) || Object.freeze({ allCandidateOperands: Object.freeze(allCandidateOperands), winningValue: returnedValue, winningOperandNames: Object.freeze(Object.keys(allCandidateOperands).filter((name) => allCandidateOperands[name] === returnedValue)), returnedValue, candidateCollections: Object.freeze({}) });
+  return returnedValue;
 }
 
 let gridlyCrossingWatchCountAuditState = Object.freeze({ status: "unobserved" });
@@ -40430,7 +40465,7 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
       activeHazardsInAreaLength: Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea.length : 0,
       alertsGroupedIssueCount: Number.isFinite(alertsGroupedIssueCount) ? alertsGroupedIssueCount : null,
       reconciledActiveIssueCount, finalActiveIssueCount: activeIssueCount
-    }, reason: "normalize-mobile-awareness-panel-summary"
+    }, invocation: gridlyActiveIssueReconciliationInvocation, reason: "normalize-mobile-awareness-panel-summary"
   });
   const evidenceReportCount = Number.isFinite(alertsCommunityReportCount) && alertsCommunityReportCount > 0
     ? alertsCommunityReportCount

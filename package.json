@@ -597,6 +597,7 @@
     "verify:lp205": "node --test tests/lp205-statewide-quiet-state-claims-audit.test.mjs",
     "test:lp219": "node --test tests/lp219-*",
     "test:lp2191": "node --test tests/lp2191-*",
-    "test:lp2192": "node --test tests/lp2192-*"
+    "test:lp2192": "node --test tests/lp2192-*",
+    "test:lp2192a": "node --test tests/lp2192a-*"
   }
 }

@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP219.2-location-context-production-source-v3";
+  const VERSION = "LP219.2A-invocation-operand-capture-v4";
   const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup"]);
   const COMMUNITY_POLICY = Object.freeze({
     blocked_crossing: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
@@ -201,5 +201,46 @@
       locationContextSourceBreakdown: Object.freeze(sourceBreakdown)
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildLocationContextProductionAudit, identity, sourceKindOf, subtypeOf });
+  function captureActiveIssueReconciliationInvocation(input = {}) {
+    const safeNumber = (value) => {
+      const number = Number(value);
+      return Number.isFinite(number) ? Math.max(0, number) : 0;
+    };
+    const operands = Object.freeze(Object.fromEntries(Object.entries(input.operands || {}).map(([name, value]) => [name, safeNumber(value)])));
+    const values = Object.values(operands);
+    const winningValue = values.length ? Math.max(...values) : 0;
+    const winningOperandNames = Object.freeze(Object.keys(operands).filter((name) => operands[name] === winningValue));
+    const candidateCollections = Object.freeze(Object.fromEntries(Object.entries(input.collections || {}).map(([name, rows]) => {
+      const collection = Array.isArray(rows) ? rows : [];
+      const boundedIdentities = collection.slice(0, 100).map((record) => {
+        const sourceKind = sourceKindOf(record || {});
+        const subtype = subtypeOf(record || {});
+        return Object.freeze({
+          productionIdentity: identity(record || {}, sourceKind, subtype) || null,
+          governedEvidenceId: text(record?.evidenceId) || null,
+          sourceKind,
+          subtype,
+          lifecycle: text(record?.lifecycle?.classification || record?.lifecycleState || record?.status || record?.state) || null,
+          countyId: text(record?.countyId || record?.county_id) || null,
+          communityIdentity: text(record?.canonicalKey || record?.placeGeoid || record?.community || record?.city || record?.town) || null,
+          active: typeof record?.active === "boolean" ? record.active : null,
+          cleared: subtype === "cleared" || /cleared/i.test(text(record?.status || record?.state || record?.lifecycleState))
+        });
+      });
+      return [name, Object.freeze({ length: collection.length, boundedIdentities: Object.freeze(boundedIdentities) })];
+    })));
+    return Object.freeze({
+      timestamp: text(input.timestamp) || new Date().toISOString(),
+      transitionGeneration: Number(input.transitionGeneration || 0),
+      evidenceGeneration: Number(input.evidenceGeneration ?? input.transitionGeneration ?? 0),
+      providerRefreshGeneration: Number(input.providerRefreshGeneration || 0),
+      allCandidateOperands: operands,
+      winningValue,
+      winningOperandNames,
+      returnedValue: safeNumber(input.returnedValue ?? winningValue),
+      candidateCollections,
+      scalarSources: Object.freeze({ ...(input.scalarSources || {}) })
+    });
+  }
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildLocationContextProductionAudit, captureActiveIssueReconciliationInvocation, identity, sourceKindOf, subtypeOf });
 });
