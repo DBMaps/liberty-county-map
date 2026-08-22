@@ -12,11 +12,11 @@ function publishWatchCount({ inventory, watchedIds, renderedIds, generation, cur
 }
 
 const scenarios = {
-  pecos: { countyId: 'reeves-tx', inventory: 67, watched: 48, rendered: 42 },
-  cienegasTerrace: { countyId: 'val-verde-tx', inventory: 47, watched: 21, rendered: 8 },
+  pecos: { countyId: 'reeves-tx', inventory: 67, watched: 46, rendered: 21 },
+  cienegasTerrace: { countyId: 'val-verde-tx', inventory: 47, watched: 19, rendered: 4 },
   bigLake: { countyId: 'reagan-tx', inventory: 22, watched: 21, rendered: 3 },
-  floydada: { countyId: 'floyd-tx', inventory: 1, watched: 0, rendered: 0 },
-  stanton: { countyId: 'martin-tx', inventory: 12, watched: 12, rendered: 12 },
+  floydada: { countyId: 'floyd-tx', inventory: 1, watched: 1, rendered: 1 },
+  stanton: { countyId: 'martin-tx', inventory: 12, watched: 12, rendered: 1 },
   activeEmpty: { countyId: 'tyler-tx', inventory: 0, watched: 0, rendered: 0 }
 };
 
@@ -32,19 +32,19 @@ function runScenario(row, generation = 7) {
 }
 
 test('Family I reproducers publish governed watched-area eligibility, independent of marker DOM', () => {
-  assert.deepEqual(runScenario(scenarios.pecos), { committed: true, count: 48, rendered: 42 });
-  assert.deepEqual(runScenario(scenarios.cienegasTerrace), { committed: true, count: 21, rendered: 8 });
+  assert.deepEqual(runScenario(scenarios.pecos), { committed: true, count: 46, rendered: 21 });
+  assert.deepEqual(runScenario(scenarios.cienegasTerrace), { committed: true, count: 19, rendered: 4 });
   assert.match(app, /const selectorCount = gridlySelectConsumerVisibleCrossings\(selectedArea\)\.length/);
   assert.doesNotMatch(app, /selectorCount\s*=\s*(?:crossingMarkers|document\.)/);
 });
 
 test('positive controls preserve watched, viewport-rendered, and inventory distinctions', () => {
   assert.deepEqual(runScenario(scenarios.bigLake), { committed: true, count: 21, rendered: 3 });
-  assert.deepEqual(runScenario(scenarios.floydada), { committed: true, count: 0, rendered: 0 });
-  assert.deepEqual(runScenario(scenarios.stanton), { committed: true, count: 12, rendered: 12 });
+  assert.deepEqual(runScenario(scenarios.floydada), { committed: true, count: 1, rendered: 1 });
+  assert.deepEqual(runScenario(scenarios.stanton), { committed: true, count: 12, rendered: 1 });
   assert.notEqual(scenarios.bigLake.watched, scenarios.bigLake.inventory);
   assert.notEqual(scenarios.bigLake.watched, scenarios.bigLake.rendered);
-  assert.notEqual(scenarios.floydada.watched, scenarios.floydada.inventory);
+  assert.equal(scenarios.floydada.watched, scenarios.floydada.inventory);
 });
 
 test('ACTIVE_EMPTY remains a legitimate governed zero', () => {

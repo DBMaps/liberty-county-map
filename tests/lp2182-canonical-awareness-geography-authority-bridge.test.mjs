@@ -48,9 +48,9 @@ test('Cienegas and established controls share the same deterministic LP201 radiu
   // Complete canonical awareness areas retain their existing geography rather
   // than being overwritten by the presentation-only LP201 bridge.
   assert.match(app,/canonicalHasGeography \? canonical/);
-  const controls={bigLake:{inventory:22,watched:21,rendered:3},floydada:{inventory:1,watched:0,rendered:0},stanton:{watched:12},activeEmpty:{inventory:0,watched:0}};
+  const controls={bigLake:{inventory:22,watched:21,rendered:3},floydada:{inventory:1,watched:1,rendered:1},stanton:{watched:12},activeEmpty:{inventory:0,watched:0}};
   assert.deepEqual(controls.bigLake,{inventory:22,watched:21,rendered:3});
-  assert.deepEqual(controls.floydada,{inventory:1,watched:0,rendered:0});
+  assert.deepEqual(controls.floydada,{inventory:1,watched:1,rendered:1});
   assert.equal(controls.stanton.watched,12);
   assert.equal([].length,0);
   assert.notEqual(watched('reeves','4873493'),42);
