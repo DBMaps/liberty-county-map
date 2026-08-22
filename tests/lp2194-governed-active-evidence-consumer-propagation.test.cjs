@@ -12,11 +12,11 @@ test('quiet control stays quiet for Alerts and KBYG', () => {
 test('active road hazard follows existing Alerts and KBYG policy', () => {
  const out=project([hazard('h1')]); assert.equal(out.snapshot.governedEligibleEvidenceCount,1); assert.deepEqual(out.surfaces.alerts.map(x=>x.evidenceId),['active_hazard:h1']); assert.deepEqual(out.surfaces.kbygCommunity.map(x=>x.evidenceId),['active_hazard:h1']);
 });
-test('blocked crossing remains an explicit product-policy deferral', () => {
- const out=project([crossing('c1')]); assert.equal(out.snapshot.governedEligibleEvidenceCount,1); assert.equal(out.surfaces.alerts.length,0); assert.equal(out.surfaces.kbygCommunity.length,0); assert.equal(out.lineage[0].alertsOmissionReason,'PRODUCT_CONTRACT_UNDEFINED'); assert.equal(out.lineage[0].kbygCommunityOmissionReason,'PRODUCT_CONTRACT_UNDEFINED');
+test('blocked crossing follows the explicit LP223 Alerts and KBYG policy', () => {
+ const out=project([crossing('c1')]); assert.equal(out.snapshot.governedEligibleEvidenceCount,1); assert.equal(out.surfaces.alerts.length,1); assert.equal(out.surfaces.kbygCommunity.length,1); assert.equal(out.lineage[0].alertsOmissionReason,null); assert.equal(out.lineage[0].kbygCommunityOmissionReason,null);
 });
-test('mixed Pecos control publishes only policy-eligible evidence without inflation', () => {
- const out=project([crossing('c1'),hazard('h1'),hazard('h1')]); assert.equal(out.snapshot.governedEligibleEvidenceCount,2); assert.equal(out.snapshot.duplicateEvidenceIds.length,1); assert.equal(out.surfaces.alerts.length,1); assert.equal(out.surfaces.kbygCommunity.length,1);
+test('mixed Pecos control publishes each policy-eligible identity without inflation', () => {
+ const out=project([crossing('c1'),hazard('h1'),hazard('h1')]); assert.equal(out.snapshot.governedEligibleEvidenceCount,2); assert.equal(out.snapshot.duplicateEvidenceIds.length,1); assert.equal(out.surfaces.alerts.length,2); assert.equal(out.surfaces.kbygCommunity.length,2);
 });
 test('cleared history is retained but excluded from consumers', () => {
  const out=project([hazard('h1',{status:'cleared'})]); assert.equal(out.snapshot.evidence[0].lifecycle.retainedForHistory,true); assert.equal(out.snapshot.governedEligibleEvidenceCount,0); assert.equal(out.surfaces.alerts.length,0); assert.equal(out.surfaces.kbygCommunity.length,0);

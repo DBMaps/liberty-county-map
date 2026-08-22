@@ -5,11 +5,16 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP219.3-governed-active-lifecycle-v1";
-  const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup"]);
+  const VERSION = "LP223-blocked-crossing-consumer-policy-v1";
+  const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup", "history"]);
+  const BLOCKED_CROSSING_OWNERS = Object.freeze({
+    locationContext: "governed_awareness", communityPulse: "governed_awareness", alerts: "governed_awareness",
+    kbygCommunity: "governed_awareness", kbygOfficialRoadways: "none",
+    map: "crossing_specific", popup: "crossing_specific", history: "crossing_specific"
+  });
   const COMMUNITY_POLICY = Object.freeze({
-    blocked_crossing: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
-    rail_crossing_issue: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
+    blocked_crossing: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: true, kbygOfficialRoadways: false, map: true, popup: true, history: true },
+    rail_crossing_issue: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true, history: null },
     disabled_vehicle: { locationContext: false, communityPulse: false, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
     flooded_road: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
     closed_road: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true }
@@ -95,6 +100,10 @@
     if (policyValue === null) return "PRODUCT_CONTRACT_UNDEFINED";
     return "PROPAGATION_FAILURE";
   }
+  function surfaceOwner(sourceKind, subtype, surface) {
+    if (sourceKind === "community_report" && subtype === "blocked_crossing") return BLOCKED_CROSSING_OWNERS[surface] || "none";
+    return "governed_awareness";
+  }
   function buildSnapshot(input = {}) {
     const nowMs = Number.isFinite(Number(input.nowMs)) ? Number(input.nowMs) : Date.now();
     const generation = Number(input.evidenceGeneration ?? input.transitionGeneration ?? 0) || 0;
@@ -124,7 +133,7 @@
       const current = lifecycleState.current;
       const geographicEligible = record.geographicEligible !== false;
       const policy = policyFor(sourceKind, subtype);
-      const eligible = Object.fromEntries(SURFACES.map((surface) => [surface, lifecycleState.active && geographicEligible && policy[surface] === true]));
+      const eligible = Object.fromEntries(SURFACES.map((surface) => [surface, geographicEligible && policy[surface] === true && (surface === "history" ? lifecycleState.retainedForHistory : lifecycleState.active)]));
       const published = Object.fromEntries(SURFACES.map((surface) => [surface, actualSets[surface].has(evidenceId) || actualSets[surface].has(text(record.id)) || actualSets[surface].has(text(record.reportId)) || actualSets[surface].has(text(record.incidentId))]));
       evidence.push(Object.freeze({
         evidenceId, sourceKind, sourceId: text(record.sourceId || record.provider || record.source), subtype,
@@ -134,7 +143,7 @@
         createdAt: text(record.createdAt || record.created_at), observedAt: text(record.observedAt || record.observed_at), updatedAt: text(record.updatedAt || record.updated_at),
         freshness: current ? "current" : "stale", current, active: lifecycleState.active, lifecycle: lifecycleState, geographicEligible,
         reportabilityPolicy: Object.freeze({ ...policy }), eligible: Object.freeze(eligible), published: Object.freeze(published),
-        surfaceEligibility: Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, Object.freeze({ eligible: policy[surface] === null ? null : eligible[surface], policyStatus: policy[surface] === null ? "PRODUCT_CONTRACT_UNDEFINED" : (policy[surface] ? "DEFINED_ELIGIBLE" : "DEFINED_INELIGIBLE"), reason: !lifecycleState.active ? lifecycleState.reason : (!geographicEligible ? "Outside governed geography." : policy[surface] === null ? "Surface ownership is not defined by the product contract." : policy[surface] ? "Existing surface policy includes this evidence kind." : "Existing surface policy excludes this evidence kind.") })]))),
+        surfaceEligibility: Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, Object.freeze({ eligible: policy[surface] === null ? null : eligible[surface], policyStatus: policy[surface] === null ? "PRODUCT_POLICY_UNDEFINED" : (policy[surface] ? "PRODUCT_POLICY_ELIGIBLE" : "PRODUCT_POLICY_INELIGIBLE"), owningPublisher: surfaceOwner(sourceKind, subtype, surface), reason: surface === "history" && lifecycleState.retainedForHistory ? "Cleared crossing evidence is retained by crossing history." : !lifecycleState.active ? lifecycleState.reason : (!geographicEligible ? "Outside governed geography." : policy[surface] === null ? "Surface ownership is not defined by the product contract." : policy[surface] ? "Explicit surface policy includes this evidence kind." : "Explicit surface policy excludes this evidence kind.") })]))),
         countedByLocationContext: eligible.locationContext,
         contributesToCommunityPulse: eligible.communityPulse,
         omissionReasons: Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, omission(policy[surface], current, geographicEligible, published[surface])]))),
@@ -182,13 +191,24 @@
       .filter((row) => row.eligible[surface] === true)
       .map((row) => Object.freeze({ evidenceId: row.evidenceId, sourceKind: row.sourceKind, subtype: row.subtype, record: byId.get(row.evidenceId) })))])));
     const lineage = Object.freeze(snapshot.evidence.map((row) => Object.freeze({
-      evidenceId: row.evidenceId, sourceKind: row.sourceKind, subtype: row.subtype,
+      evidenceId: row.evidenceId, deduplicationIdentity: row.evidenceId,
+      deduplicationStatus: snapshot.duplicateEvidenceIds.includes(row.evidenceId) ? "DEDUPLICATED_SHARED_EVIDENCE" : "CANONICAL_UNIQUE_EVIDENCE",
+      sourceKind: row.sourceKind, subtype: row.subtype,
       canonicalCommunity: row.canonicalCommunity, canonicalKey: row.canonicalKey, countyId: row.countyId,
       current: row.current, active: row.active, lifecycleEligible: isGovernedActiveLifecycle(row),
       alertsEligible: row.eligible.alerts, alertsOmissionReason: row.eligible.alerts ? null : row.omissionReasons.alerts,
       kbygCommunityEligible: row.eligible.kbygCommunity, kbygCommunityOmissionReason: row.eligible.kbygCommunity ? null : row.omissionReasons.kbygCommunity,
       kbygOfficialRoadwaysEligible: row.eligible.kbygOfficialRoadways,
-      communityPulseEligible: row.eligible.communityPulse
+      communityPulseEligible: row.eligible.communityPulse,
+      consumerOwnership: Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, Object.freeze({
+        policyStatus: row.surfaceEligibility[surface].policyStatus,
+        owningPublisher: row.surfaceEligibility[surface].owningPublisher,
+        publicationStatus: row.published[surface]
+          ? (row.surfaceEligibility[surface].owningPublisher === "crossing_specific" ? "PUBLISHED_BY_CROSSING_SPECIFIC_OWNER" : "PUBLISHED_BY_GOVERNED_OWNER")
+          : (row.eligible[surface] ? "PROPAGATION_FAILURE" : row.surfaceEligibility[surface].policyStatus),
+        finalConsumerMember: row.eligible[surface], omissionReason: row.eligible[surface] ? null : row.omissionReasons[surface]
+      })]))),
+      historyEligible: row.eligible.history
     })));
     return Object.freeze({ version: "LP219.4-governed-consumer-propagation-v1", surfaces, lineage, snapshot });
   }
@@ -353,5 +373,5 @@
       lifecycleOperandAudit: Object.freeze({ ...(input.lifecycleOperandAudit || {}) })
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, sourceKindOf, subtypeOf });
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, sourceKindOf, subtypeOf });
 });
