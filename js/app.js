@@ -3432,6 +3432,33 @@ function gridlyStoryConfidence(records = [], evidence = {}) {
   return "No active concerns are showing right now.";
 }
 
+function gridlyStoryConditionIdentity(record = {}, index = 0, scope = "community") {
+  const identity = record?.evidenceId || record?.providerRecordId || record?.reportId || record?.report_id || record?.incidentId || record?.id;
+  if (identity) return `${scope}:${identity}`;
+  return `${scope}:anonymous:${index}:${gridlyStoryRecordText(record)}`;
+}
+
+function gridlyStoryRelevantConditionAuthority(records = [], transportationRecords = [], weatherEvidence = null) {
+  const sourceIds = [];
+  const seen = new Set();
+  const add = (id) => {
+    if (!id || seen.has(id)) return;
+    seen.add(id);
+    sourceIds.push(id);
+  };
+  records.forEach((record, index) => add(gridlyStoryConditionIdentity(record, index, "community")));
+  transportationRecords.forEach((record, index) => {
+    if (gridlyStoryTransportationImpact(record)) add(gridlyStoryConditionIdentity(record, index, "official-roadway"));
+  });
+  if (weatherEvidence) add(`weather:${weatherEvidence.kind || "travel-impact"}`);
+  return Object.freeze({
+    semanticScope: "travel-brief-current-relevant-conditions",
+    authoritativeConditionCount: sourceIds.length,
+    sourceIds: Object.freeze(sourceIds),
+    grammaticalNumber: sourceIds.length === 0 ? "quiet" : (sourceIds.length === 1 ? "singular" : "plural")
+  });
+}
+
 function buildGridlyAwarenessStory(input = {}) {
   const presentationContext = input.awarenessContext || (typeof getGridlyCanonicalAwarenessPresentationContext === "function" ? getGridlyCanonicalAwarenessPresentationContext() : {});
   const records = Array.isArray(input.records) ? input.records : gridlyStoryActiveRecords();
@@ -3456,17 +3483,17 @@ function buildGridlyAwarenessStory(input = {}) {
     transportation: gridlyStoryTransportationEvidence(transportationRecords),
     rail: gridlyStoryCrossingEvidence(records)
   });
+  const cardinality = gridlyStoryRelevantConditionAuthority(records, transportationRecords, weatherEvidence);
   const hasRailBlock = /train|rail|crossing/.test(combined) && /block|blocked|blocking|delay/.test(combined);
   const hasFlooding = /flood|flooding|high water|standing water/.test(combined);
   const hasHeavyRain = weatherEvidence?.kind === "heavy_rain" || /heavy rain|storm|downpour|rain may/.test(combined);
   const hasMeaningfulWeather = Boolean(weatherEvidence);
   const hasTransport = Boolean(evidence.transportation && !hasFlooding);
   const activeCount = records.length;
-  const concernKinds = [hasRailBlock, hasFlooding, hasHeavyRain, hasTransport, hasMeaningfulWeather && !hasHeavyRain && !hasFlooding, activeCount >= 2].filter(Boolean).length;
   let situation = completeness.canStateCommunityQuiet ? "Community is quiet." : "Local awareness";
   let recommendation = completeness.canStateCommunityQuiet ? "No active local issues reported." : "Monitoring nearby conditions";
   let template = completeness.canStateCommunityQuiet ? "quiet_conditions" : "awareness_loading";
-  if (concernKinds >= 2) {
+  if (cardinality.authoritativeConditionCount >= 2) {
     situation = "Several conditions may affect travel.";
     recommendation = hasFlooding ? "Avoid flooded roads and check your route before leaving." : "Check your route before leaving and allow extra travel time.";
     template = "multiple_simultaneous_conditions";
@@ -3508,7 +3535,8 @@ function buildGridlyAwarenessStory(input = {}) {
     recommendation,
     confidence,
     area: presentationContext.texasLabel || presentationContext.label || null,
-    evidence
+    evidence,
+    cardinality
   });
 }
 
@@ -4403,7 +4431,36 @@ function gridlyBuildTravelBriefModel(storyInput) {
     unifiedEvidence: gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather, sourceEnvelope: driveTexasSourceEnvelope }),
     officialRoadwaySourceStatus: driveTexasSourceEnvelope,
     governedKbygEvidenceIds: Object.freeze(governedKbygEvidenceIds.slice()),
+    cardinality: story?.cardinality || null,
     storyConnected: Boolean(story?.evidence)
+  });
+}
+
+function gridlyAwarenessCardinalityLanguageAudit(options = {}) {
+  const compactModel = options.compactModel || (typeof buildGridlyCommunityPulseModel === "function" ? buildGridlyCommunityPulseModel({ auditOnly: true }) : {});
+  const compactDecision = options.compactDecision || buildGridlyCommunityPulseDecisionPresentation(compactModel);
+  const travelModel = options.travelModel || gridlyBuildTravelBriefModel(options.story);
+  const travelDecision = (travelModel?.sections || []).find((section) => section.key === "driver-decision");
+  const compactIds = Array.isArray(compactModel?.activeAwareness?.governedKbygEvidenceIds)
+    ? [...new Set(compactModel.activeAwareness.governedKbygEvidenceIds.filter(Boolean))]
+    : [];
+  const travelCardinality = options.story?.cardinality || travelModel?.cardinality || null;
+  const travelIds = Array.isArray(travelCardinality?.sourceIds) ? travelCardinality.sourceIds.slice() : (travelModel?.governedKbygEvidenceIds || []).slice();
+  const compactCount = compactIds.length;
+  const travelCount = Number(travelCardinality?.authoritativeConditionCount ?? travelIds.length) || 0;
+  const grammaticalNumber = (count) => count === 0 ? "quiet" : (count === 1 ? "singular" : "plural");
+  const compactText = [compactDecision?.headline, compactDecision?.subline].filter(Boolean).join(" ");
+  const travelBriefText = (travelDecision?.lines || []).filter(Boolean).join(" ");
+  const compactNumber = grammaticalNumber(compactCount);
+  const travelNumber = grammaticalNumber(travelCount);
+  const parityApplicable = compactIds.length === travelIds.length && compactIds.every((id) => travelIds.includes(id));
+  return Object.freeze({
+    milestone: "LP222",
+    compact: Object.freeze({ semanticScope: "governed-kbyg-community-current-conditions", authoritativeConditionCount: compactCount, sourceIds: Object.freeze(compactIds), grammaticalNumber: compactNumber, text: compactText }),
+    travelBrief: Object.freeze({ semanticScope: travelCardinality?.semanticScope || "travel-brief-current-relevant-conditions", authoritativeConditionCount: travelCount, sourceIds: Object.freeze(travelIds), grammaticalNumber: travelNumber, text: travelBriefText }),
+    parityApplicable,
+    parity: parityApplicable ? compactNumber === travelNumber : null,
+    presentationOnly: true
   });
 }
 
@@ -4440,6 +4497,7 @@ function gridlyRenderTravelBrief(storyInput) {
 }
 
 window.gridlyBuildTravelBriefModel = gridlyBuildTravelBriefModel;
+window.gridlyAwarenessCardinalityLanguageAudit = gridlyAwarenessCardinalityLanguageAudit;
 
 function gridlyLp061DriverDecisionPatternAudit() {
   const model = typeof gridlyBuildTravelBriefModel === "function" ? gridlyBuildTravelBriefModel() : null;
@@ -62781,11 +62839,11 @@ function buildGridlyCommunityPulseModel(options = {}) {
   // already-authorized active hazard from being described as quiet while
   // leaving crossing-report policy (currently undefined) unchanged.
   const governedKbygProjection = gridlyGetGovernedConsumerProjection()?.surfaces?.kbygCommunity || [];
+  activeAwareness.governedKbygEvidenceIds = governedKbygProjection.map((row) => row.evidenceId);
   if (governedKbygProjection.length) {
     activeAwareness.activeAwarenessCount = Math.max(governedKbygProjection.length, Number(activeAwareness.activeAwarenessCount || 0));
     activeAwareness.activeHazardCount = Math.max(governedKbygProjection.length, Number(activeAwareness.activeHazardCount || 0));
     activeAwareness.activityLevel = activeAwareness.activeAwarenessCount >= 2 ? "elevated" : "active";
-    activeAwareness.governedKbygEvidenceIds = governedKbygProjection.map((row) => row.evidenceId);
   }
   const selectedCommunityCount = Number(dataset.selectedCommunityCount || 0);
   const providedCommunityAwarenessSummary = options?.communityAwarenessSummary && typeof options.communityAwarenessSummary === "object"
@@ -62999,7 +63057,8 @@ function gridlyCommunityPulseDecisionFreshnessLine(model = {}) {
 function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
   const selectedCount = Number(model?.selectedCommunityCount || 0);
   const activeCount = Number(model?.activeAwareness?.activeAwarenessCount || 0);
-  const combinedCount = Math.max(selectedCount, activeCount);
+  const governedIds = Array.isArray(model?.activeAwareness?.governedKbygEvidenceIds) ? [...new Set(model.activeAwareness.governedKbygEvidenceIds.filter(Boolean))] : null;
+  const combinedCount = governedIds ? governedIds.length : Math.max(selectedCount, activeCount);
   const existingText = safeDisplayText([model?.renderedPulseHeadline, model?.renderedPulseSubline, model?.activeAwareness?.headline, model?.activeAwareness?.subline].filter(Boolean).join(" "), "");
   const recentlyCleared = combinedCount <= 0 && /cleared|improving|recently updated|recently cleared/i.test(existingText);
   const coverage = model?.coverageState || (typeof getGridlyAwarenessCoverageState === "function" ? getGridlyAwarenessCoverageState() : { state: "available", primary: "", secondary: "" });
@@ -63023,11 +63082,11 @@ function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
     reason = "Conditions may be changing.";
     confidence = "Developing conditions";
   } else if (state === "active") {
-    state = combinedCount >= 3 || /building|elevated|high|increasing/i.test(String(model?.mobilityPressureCategory || "")) ? "active" : "developing";
+    state = combinedCount >= 2 ? "active" : "developing";
     communityStatus = state === "active" ? "Elevated conditions." : "Developing conditions.";
     interpretation = state === "active" ? "Check your route before leaving." : "Check before leaving.";
-    reason = state === "active" ? "Several conditions may affect travel." : "Conditions may be changing.";
-    confidence = combinedCount >= 3 ? "Multiple recent signals" : "Developing conditions";
+    reason = state === "active" ? "Several conditions may affect travel." : "A community report is active nearby.";
+    confidence = combinedCount >= 2 ? "Multiple recent signals" : "Developing conditions";
   } else if (state === "coverage_limited") {
     communityStatus = "Limited local coverage.";
     interpretation = coverage.primary;
