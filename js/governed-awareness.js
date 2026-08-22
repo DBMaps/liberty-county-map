@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP223-blocked-crossing-alias-reconciliation-v2";
+  const VERSION = "LP223-final-community-lifecycle-reconciliation-v3";
   const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup", "history"]);
   const BLOCKED_CROSSING_OWNERS = Object.freeze({
     locationContext: "governed_awareness", communityPulse: "governed_awareness", alerts: "governed_awareness",
@@ -78,17 +78,25 @@
     return sourceKindOf(record) === "community_report"
       && (subtype === "blocked_crossing" || subtype === "cleared" || subtype === "recently_cleared" || text(record.reportKind).toLowerCase() === "crossing");
   }
+  function lifecycleRoleOf(record = {}) {
+    const subtype = subtypeOf(record);
+    const state = [record.lifecycleState, record.status, record.state, record.reportKind]
+      .map((value) => slug(value));
+    return ["cleared", "recently_cleared"].includes(subtype)
+      || state.some((value) => value === "cleared" || value === "recently_cleared")
+      ? "CLEAR_HISTORY" : "ACTIVE";
+  }
   // A reports.id UUID identifies a user report. crossing_id/providerRecordId
   // identifies the FRA infrastructure and is deliberately not a report key.
   // Legacy clear rows did not carry their target UUID, so they are linked only
   // to the latest preceding report at that crossing from the same reporter.
   function reconcileCommunityReportAliases(records = []) {
-    const rows = records.map((record, index) => ({ record, index, persistedId: persistedReportId(record), providerId: crossingProviderId(record), explicitId: explicitLifecycleIdentity(record), subtype: subtypeOf(record), time: eventTime(record), deviceId: text(record.deviceId || record.device_id) }));
-    const activeCandidates = rows.filter((row) => isCrossingCommunityRecord(row.record) && !["cleared", "recently_cleared"].includes(row.subtype));
+    const rows = records.map((record, index) => ({ record, index, persistedId: persistedReportId(record), providerId: crossingProviderId(record), explicitId: explicitLifecycleIdentity(record), subtype: subtypeOf(record), lifecycleRole: lifecycleRoleOf(record), time: eventTime(record), deviceId: text(record.deviceId || record.device_id) }));
+    const activeCandidates = rows.filter((row) => isCrossingCommunityRecord(row.record) && row.lifecycleRole === "ACTIVE");
     const resolved = rows.map((row) => {
       let lifecycleIdentity = row.explicitId || row.persistedId;
       let result = row.explicitId ? "EXPLICIT_CANONICAL_REPORT_ID" : "PERSISTED_REPORT_ID";
-      if (isCrossingCommunityRecord(row.record) && ["cleared", "recently_cleared"].includes(row.subtype) && !row.explicitId) {
+      if (isCrossingCommunityRecord(row.record) && row.lifecycleRole === "CLEAR_HISTORY" && !row.explicitId) {
         const candidates = activeCandidates.filter((candidate) => candidate.providerId && candidate.providerId === row.providerId
           && candidate.deviceId && candidate.deviceId === row.deviceId && (!row.time || !candidate.time || candidate.time <= row.time))
           .sort((left, right) => right.time - left.time || right.index - left.index);
@@ -107,20 +115,24 @@
     });
     return resolved.map((row) => {
       const aliases = groups.get(row.lifecycleIdentity) || [row];
-      const cleared = aliases.filter((alias) => ["cleared", "recently_cleared"].includes(alias.subtype));
-      const active = aliases.filter((alias) => !["cleared", "recently_cleared"].includes(alias.subtype));
+      const cleared = aliases.filter((alias) => alias.lifecycleRole === "CLEAR_HISTORY");
+      const active = aliases.filter((alias) => alias.lifecycleRole === "ACTIVE");
       const conflict = cleared.length > 0 && active.length > 0;
+      const retiringClear = cleared.slice().sort((left, right) => right.time - left.time || right.index - left.index)[0];
       return Object.freeze({
         lifecycleIdentity: row.lifecycleIdentity || null,
         persistedReportId: row.persistedId || null,
         providerRecordId: row.providerId || null,
         crossingFraIdentity: row.providerId || null,
+        lifecycleRole: row.lifecycleRole,
+        canonicalLifecycleTarget: row.lifecycleIdentity || null,
+        retiredByClearId: row.lifecycleRole === "ACTIVE" && conflict ? (retiringClear?.persistedId || null) : null,
         aliasIds: Object.freeze(aliases.map((alias) => identity(alias.record, sourceKindOf(alias.record), subtypeOf(alias.record))).filter(Boolean)),
         clearedAliasIds: Object.freeze(cleared.map((alias) => identity(alias.record, sourceKindOf(alias.record), subtypeOf(alias.record))).filter(Boolean)),
         activeAliasIds: Object.freeze(active.map((alias) => identity(alias.record, sourceKindOf(alias.record), subtypeOf(alias.record))).filter(Boolean)),
         aliasReconciliationResult: conflict ? "SAME_REPORT_ACTIVE_HISTORY_ALIAS_CONFLICT" : row.reconciliationResult,
-        retireActiveAlias: conflict && !["cleared", "recently_cleared"].includes(row.subtype),
-        firstLifecycleLosingStage: conflict && !["cleared", "recently_cleared"].includes(row.subtype) ? "governed_active_lifecycle_alias_reconciliation" : null
+        retireActiveAlias: conflict && row.lifecycleRole === "ACTIVE",
+        firstLifecycleLosingStage: conflict && row.lifecycleRole === "ACTIVE" ? "governed_active_lifecycle_alias_reconciliation" : null
       });
     });
   }
@@ -199,7 +211,11 @@
       if (seen.has(evidenceId)) { duplicates.push(evidenceId); continue; }
       seen.add(evidenceId);
       const alias = aliasRows[recordIndex];
-      const baseLifecycleState = lifecycle(record, subtype, nowMs);
+      // Alias reconciliation is authoritative and deliberately precedes both
+      // final lifecycle state and every consumer-eligibility calculation.
+      const baseLifecycleState = alias?.lifecycleRole === "CLEAR_HISTORY"
+        ? Object.freeze({ current: true, active: false, classification: "CURRENT_HISTORY_INACTIVE_CLEARED", retainedForHistory: true, reason: "Cleared is retained lifecycle evidence, not an active condition." })
+        : lifecycle(record, subtype, nowMs);
       const lifecycleState = alias?.retireActiveAlias ? Object.freeze({ current: true, active: false, classification: "RETIRED_BY_CLEARED_CANONICAL_REPORT_ALIAS", retainedForHistory: false, reason: "Another governed alias records the clear transition for this canonical report." }) : baseLifecycleState;
       const current = lifecycleState.current;
       const geographicEligible = record.geographicEligible !== false;
@@ -211,6 +227,9 @@
         persistedReportId: alias?.persistedReportId || persistedReportId(record) || null,
         providerRecordId: alias?.providerRecordId || crossingProviderId(record) || null,
         crossingFraIdentity: alias?.crossingFraIdentity || null,
+        lifecycleRole: alias?.lifecycleRole || (baseLifecycleState.retainedForHistory ? "CLEAR_HISTORY" : "ACTIVE"),
+        canonicalLifecycleTarget: alias?.canonicalLifecycleTarget || persistedReportId(record) || null,
+        retiredByClearId: alias?.retiredByClearId || null,
         lifecycleIdentity: alias?.lifecycleIdentity || persistedReportId(record) || null,
         canonicalReportIdentity: alias?.lifecycleIdentity || persistedReportId(record) || null,
         aliases: alias?.aliasIds || Object.freeze([evidenceId]), clearedAliasIds: alias?.clearedAliasIds || Object.freeze([]), activeAliasIds: alias?.activeAliasIds || Object.freeze([]),
@@ -227,6 +246,19 @@
         omissionReasons: Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, omission(policy[surface], current, geographicEligible, published[surface])]))),
         staleStatus: current ? "CURRENT" : "STALE"
       }));
+    }
+    const lifecycleAudit = evidence.filter((row) => row.sourceKind === "community_report").map((row) => Object.freeze({
+      persistedReportId: row.persistedReportId,
+      lifecycleRole: row.lifecycleRole,
+      canonicalLifecycleTarget: row.canonicalLifecycleTarget,
+      retiredByClearId: row.retiredByClearId,
+      finalLifecycleEligible: isGovernedActiveLifecycle(row),
+      finalHistoryEligible: row.eligible.history === true,
+      finalConsumerEligible: SURFACES.some((surface) => surface !== "history" && row.eligible[surface] === true),
+      reconciliationResult: row.aliasReconciliationResult
+    }));
+    if (lifecycleAudit.some((row) => row.lifecycleRole === "CLEAR_HISTORY" && row.finalLifecycleEligible)) {
+      throw new Error("LP223 invariant violation: CLEAR_HISTORY cannot be lifecycle-active");
     }
     const locationIds = evidence.filter((row) => row.countedByLocationContext).map((row) => row.evidenceId);
     const pulseIds = evidence.filter((row) => row.contributesToCommunityPulse).map((row) => row.evidenceId);
@@ -251,7 +283,7 @@
       locationContextProductionCount: productionCount, locationContextDomCount: domCount, locationContextCountParity: productionCount === null || domCount === null ? null : productionCount === domCount,
       locationContextProductionEvidenceIds: productionIds, locationContextGovernedEvidenceIds: Object.freeze(locationIds), locationContextUnmatchedProductionItems: observations.locationContext.unmatchedConsumerItems,
       locationContextUnexpectedEvidenceIds: Object.freeze(unexpectedIds), locationContextMissingGovernedIds: Object.freeze(locationIds.filter((id) => !productionIds.includes(id))), surfaces: Object.freeze(observations),
-      evidence: Object.freeze(evidence), duplicateEvidenceIds: Object.freeze(duplicates), locationContextCountedIds: Object.freeze(locationIds), communityPulseEvidenceIds: Object.freeze(pulseIds),
+      evidence: Object.freeze(evidence), lifecycleAudit: Object.freeze(lifecycleAudit), duplicateEvidenceIds: Object.freeze(duplicates), locationContextCountedIds: Object.freeze(locationIds), communityPulseEvidenceIds: Object.freeze(pulseIds),
       publishedIds: Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, Object.freeze(evidence.filter((row) => row.published[surface]).map((row) => row.evidenceId))]))),
       omissions: Object.freeze(evidence.flatMap((row) => SURFACES.filter((surface) => !row.published[surface]).map((surface) => Object.freeze({ evidenceId: row.evidenceId, surface, reason: !observations[surface].surfaceObserved || observations[surface].observationStatus === "OBSERVED_UNMATCHED" ? "IDENTITY_UNAVAILABLE" : row.omissionReasons[surface] })))),
       sourceKindBreakdown: Object.freeze(evidence.reduce((out, row) => ({ ...out, [row.sourceKind]: (out[row.sourceKind] || 0) + 1 }), {})),
@@ -273,6 +305,7 @@
       governedEvidenceId: row.evidenceId, persistedReportId: row.persistedReportId,
       providerRecordId: row.providerRecordId, crossingFraIdentity: row.crossingFraIdentity,
       lifecycleIdentity: row.lifecycleIdentity, canonicalReportIdentity: row.canonicalReportIdentity,
+      lifecycleRole: row.lifecycleRole, canonicalLifecycleTarget: row.canonicalLifecycleTarget, retiredByClearId: row.retiredByClearId,
       aliases: row.aliases, clearedAliasIds: row.clearedAliasIds, activeAliasIds: row.activeAliasIds,
       aliasReconciliationResult: row.aliasReconciliationResult, firstLifecycleLosingStage: row.firstLifecycleLosingStage,
       deduplicationStatus: snapshot.duplicateEvidenceIds.includes(row.evidenceId) ? "DEDUPLICATED_SHARED_EVIDENCE" : "CANONICAL_UNIQUE_EVIDENCE",
@@ -291,7 +324,10 @@
           : (row.eligible[surface] ? "PROPAGATION_FAILURE" : row.surfaceEligibility[surface].policyStatus),
         finalConsumerMember: row.eligible[surface], omissionReason: row.eligible[surface] ? null : row.omissionReasons[surface]
       })]))),
-      historyEligible: row.eligible.history
+      historyEligible: row.eligible.history,
+      finalLifecycleEligible: isGovernedActiveLifecycle(row), finalHistoryEligible: row.eligible.history,
+      finalConsumerEligible: SURFACES.some((surface) => surface !== "history" && row.eligible[surface] === true),
+      reconciliationResult: row.aliasReconciliationResult
     })));
     return Object.freeze({ version: "LP219.4-governed-consumer-propagation-v1", surfaces, lineage, snapshot });
   }

@@ -61,24 +61,47 @@ test('blocked-crossing persisted and governed aliases reconcile across a clear w
   const active = crossing('5484625f-4d68-466a-86cd-a64fa523f6f7', {
     crossingId: 'FRA-331630H', deviceId: 'owner-device', submittedAt: '2026-08-22T10:00:00Z'
   });
-  const before = project([active]);
-  assert.equal(before.surfaces.alerts.length, 1);
+  const roadHazard = hazard('independent-road-hazard');
+  const before = project([roadHazard, active]);
+  assert.equal(before.surfaces.locationContext.length, 2);
+  assert.equal(before.surfaces.alerts.length, 2);
   assert.equal(before.surfaces.history.length, 0);
 
   const clear = crossing('d8744fba-4b6b-44b8-9125-9cfe0a5d9e2a', {
-    type: 'cleared', status: 'cleared', active: false, crossingId: 'FRA-331630H',
+    // The owner row retained an active-looking status. Its persisted clear role,
+    // not that stale boolean, must govern the final reconciled lifecycle.
+    type: 'cleared', status: 'active', active: true, crossingId: 'FRA-331630H',
     deviceId: 'owner-device', submittedAt: '2026-08-22T10:05:00Z'
   });
-  const after = project([active, clear]);
-  for (const surface of ['locationContext', 'communityPulse', 'alerts', 'kbygCommunity']) assert.equal(after.surfaces[surface].length, 0, surface);
+  const after = project([roadHazard, active, clear]);
+  for (const surface of ['locationContext', 'communityPulse', 'alerts', 'kbygCommunity']) {
+    assert.deepEqual(after.surfaces[surface].map(row => row.record.id), [roadHazard.id], surface);
+  }
   assert.equal(after.surfaces.history.length, 1);
   const activeLineage = after.lineage.find(row => row.persistedReportId === active.id);
+  const clearLineage = after.lineage.find(row => row.persistedReportId === clear.id);
   assert.equal(activeLineage.lifecycleIdentity, active.id);
   assert.equal(activeLineage.providerRecordId, 'FRA-331630H');
   assert.equal(activeLineage.aliasReconciliationResult, 'SAME_REPORT_ACTIVE_HISTORY_ALIAS_CONFLICT');
   assert.deepEqual(activeLineage.clearedAliasIds, [`community_report:${clear.id}`]);
   assert.deepEqual(activeLineage.activeAliasIds, [`community_report:${active.id}`]);
   assert.equal(activeLineage.firstLifecycleLosingStage, 'governed_active_lifecycle_alias_reconciliation');
+  assert.equal(activeLineage.retiredByClearId, clear.id);
+  assert.equal(activeLineage.finalLifecycleEligible, false);
+  assert.equal(clearLineage.lifecycleRole, 'CLEAR_HISTORY');
+  assert.equal(clearLineage.canonicalLifecycleTarget, active.id);
+  assert.equal(clearLineage.finalLifecycleEligible, false);
+  assert.equal(clearLineage.finalHistoryEligible, true);
+  assert.equal(clearLineage.finalConsumerEligible, false);
+  assert.equal(clearLineage.alertsEligible, false);
+  assert.equal(clearLineage.kbygCommunityEligible, false);
+
+  const activeGovernedIds = new Set(after.lineage.filter(row => row.finalLifecycleEligible).map(row => row.evidenceId));
+  const inactiveHistoryIds = new Set(after.lineage.filter(row => row.finalHistoryEligible).map(row => row.evidenceId));
+  const clearedAliasIds = new Set(after.lineage.flatMap(row => row.clearedAliasIds));
+  assert.deepEqual([...inactiveHistoryIds].filter(id => activeGovernedIds.has(id)), []);
+  assert.deepEqual([...clearedAliasIds].filter(id => activeGovernedIds.has(id)), []);
+  assert.equal(after.snapshot.lifecycleAudit.find(row => row.persistedReportId === clear.id).lifecycleRole, 'CLEAR_HISTORY');
 });
 
 test('explicit alias identity retires one report but never collapses separate reports at the same FRA crossing', () => {
