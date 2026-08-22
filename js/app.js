@@ -49776,11 +49776,22 @@ function gridlyCrossingOwnedByAwarenessArea(crossing = {}, awarenessArea = getGr
   }
   const townKey = String(awarenessArea.label || awarenessArea.storageValue || "").trim().toLowerCase();
   if (townKey && String(crossing.city || "").trim().toLowerCase() === townKey) return true;
-  const lat = Number(crossing?.lat);
-  const lng = Number(crossing?.lng);
+  const lat = gridlyParseOptionalGeographicCoordinate(crossing?.lat);
+  const lng = gridlyParseOptionalGeographicCoordinate(crossing?.lng);
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
   const radiusMiles = Number(awarenessArea.radiusMiles) || DEFAULT_NEARBY_RADIUS_MILES;
-  return getDistanceMiles(Number(awarenessArea.lat), Number(awarenessArea.lng), lat, lng) <= radiusMiles;
+  const areaLat = gridlyParseOptionalGeographicCoordinate(awarenessArea.lat);
+  const areaLng = gridlyParseOptionalGeographicCoordinate(awarenessArea.lng ?? awarenessArea.lon);
+  if (areaLat === null || areaLng === null) return false;
+  return getDistanceMiles(areaLat, areaLng, lat, lng) <= radiusMiles;
+}
+
+// Missing coordinate values must remain missing. Number(null) and Number("")
+// both return zero, which is unsafe for a fail-closed geographic selector.
+function gridlyParseOptionalGeographicCoordinate(value) {
+  if (value === null || value === undefined || (typeof value === "string" && value.trim() === "")) return null;
+  const coordinate = Number(value);
+  return Number.isFinite(coordinate) ? coordinate : null;
 }
 
 function gridlySelectConsumerVisibleCrossings(awarenessArea = getGridlySelectedAwarenessArea(), options = {}) {
@@ -49797,7 +49808,7 @@ function gridlySelectConsumerVisibleCrossings(awarenessArea = getGridlySelectedA
     if (!gridlyCrossingSatisfiesConsumerVisibilityPolicy(crossing)) { rejectBreakdown.policy_rejection += 1; return; }
     if (typeof isGridlyReportableCrossing === "function" && !isGridlyReportableCrossing(crossing)) { rejectBreakdown.policy_rejection += 1; return; }
     if (!gridlyCrossingOwnedByAwarenessArea(crossing, selectedArea)) {
-      const hasGeography = selectedArea?.countyWide || selectedArea?.fallback || (Number.isFinite(Number(selectedArea?.lat)) && Number.isFinite(Number(selectedArea?.lng ?? selectedArea?.lon)));
+      const hasGeography = selectedArea?.countyWide || selectedArea?.fallback || (gridlyParseOptionalGeographicCoordinate(selectedArea?.lat) !== null && gridlyParseOptionalGeographicCoordinate(selectedArea?.lng ?? selectedArea?.lon) !== null);
       rejectBreakdown[hasGeography ? "outside_radius" : "missing_geography"] += 1;
       return;
     }
@@ -50231,6 +50242,19 @@ function getGridlyBottomPanelAwarenessCrossingCount(summary = {}) {
 
 let gridlyCrossingSelectorRejoinAuditState = Object.freeze({ selectorSourceKind: "unobserved" });
 
+function gridlyResolveCrossingSelectorCanonicalGeography(canonicalArea, countyId) {
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(canonicalArea);
+  const county = GRIDLY_COUNTY_REGISTRY[countyId];
+  const countyFips = String(county?.countyFips || "");
+  const governedMatches = (county?.consumerAwarenessAreas || []).filter((community) => String(community?.placeGeoid || "") === placeGeoid);
+  const countyAuthorized = governedMatches.length === 1
+    && (!Array.isArray(governedMatches[0].countyMemberships) || governedMatches[0].countyMemberships.includes(countyFips));
+  if (!placeGeoid || !countyAuthorized) return null;
+  const focus = resolveGridlyCanonicalPlacePresentationFocus({ placeGeoid });
+  if (!focus) return null;
+  return Object.freeze({ ...canonicalArea, lat: focus.lat, lng: focus.lng, radiusMiles: Number.isFinite(Number(canonicalArea?.radiusMiles)) ? Number(canonicalArea.radiusMiles) : focus.radiusMiles });
+}
+
 function gridlyRejoinCrossingAwarenessSelector(projectedArea = {}, authoritativeCountyId = gridlyGetActiveCountyId(), canonicalAreas = GRIDLY_AWARENESS_AREA_DEFINITIONS) {
   const countyId = gridlyNormalizeCountyId(authoritativeCountyId);
   const selectorCountyId = gridlyNormalizeCountyId(projectedArea?.countyId || countyId);
@@ -50247,10 +50271,21 @@ function gridlyRejoinCrossingAwarenessSelector(projectedArea = {}, authoritative
   // A lossy projection is diagnostics, not geographic authority.  Returning a
   // county-only sentinel prevents label matching or `(0, 0)` coercion from
   // manufacturing membership when canonical identity is absent or ambiguous.
-  const selector = canonical || { countyId, canonicalRejoinFailed: true };
+  const canonicalLat = gridlyParseOptionalGeographicCoordinate(canonical?.lat);
+  const canonicalLng = gridlyParseOptionalGeographicCoordinate(canonical?.lng ?? canonical?.lon);
+  const canonicalHasGeography = Boolean(canonical?.geometry) || (canonicalLat !== null && canonicalLng !== null);
+  const bridgedSelector = canonical && !canonicalHasGeography ? gridlyResolveCrossingSelectorCanonicalGeography(canonical, countyId) : null;
+  // A missing/ambiguous identity retains the LP218 fail-closed diagnostic
+  // shape (`canonicalRejoinFailed: true`); a joined identity whose authority
+  // cannot supply geography receives the distinct bridge failure flag.
+  const selector = canonicalHasGeography ? canonical : (bridgedSelector || { countyId, canonicalRejoinFailed: !canonical, geographyBridgeFailed: Boolean(canonical) });
   const canonicalGeoid = canonical ? gridlyResolveCanonicalPlaceGeoid(canonical) : null;
+  const selectorLatRaw = canonical?.lat ?? null;
+  const selectorLngRaw = canonical?.lng ?? canonical?.lon ?? null;
+  const selectorLatResolved = gridlyParseOptionalGeographicCoordinate(selector?.lat);
+  const selectorLngResolved = gridlyParseOptionalGeographicCoordinate(selector?.lng ?? selector?.lon);
   gridlyCrossingSelectorRejoinAuditState = Object.freeze({
-    selectorSourceKind: canonical ? "canonical-awareness-area-rejoin" : "compact-location-context-fail-closed",
+    selectorSourceKind: canonicalHasGeography ? "canonical-awareness-area-rejoin" : (bridgedSelector ? "canonical-awareness-presentation-geography-bridge" : (canonical ? "canonical-awareness-geography-fail-closed" : "compact-location-context-fail-closed")),
     canonicalRejoinAttempted: canonicalIdentityPresent,
     canonicalRejoinSucceeded: Boolean(canonical),
     canonicalKey: canonical?.canonicalKey || canonical?.key || null,
@@ -50259,10 +50294,22 @@ function gridlyRejoinCrossingAwarenessSelector(projectedArea = {}, authoritative
     selectorPlaceGeoid: projectedGeoid,
     countyMatch: selectorCountyId === countyId,
     labelMatch: Boolean(canonical && normalizeGridlyAwarenessAreaLookupText(canonical.label) === normalizeGridlyAwarenessAreaLookupText(projectedArea.label)),
-    coordinateSource: canonical ? "canonical-awareness-area" : "missing",
+    coordinateSource: canonicalHasGeography ? "canonical-awareness-area" : (bridgedSelector ? GRIDLY_CANONICAL_PLACE_FOCUS_AUTHORITY : "missing"),
     radiusSource: canonical ? "canonical-awareness-area" : "missing",
-    hasSelectorGeometry: Boolean(selector?.geometry), selectorLat: Number.isFinite(Number(selector?.lat)) ? Number(selector.lat) : null,
-    selectorLng: Number.isFinite(Number(selector?.lng ?? selector?.lon)) ? Number(selector.lng ?? selector.lon) : null,
+    geographyBridgeAttempted: Boolean(canonical && !canonicalHasGeography),
+    geographyBridgeSucceeded: Boolean(bridgedSelector),
+    geographyAuthoritySource: bridgedSelector ? GRIDLY_CANONICAL_PLACE_FOCUS_AUTHORITY : null,
+    geographyCanonicalKey: bridgedSelector ? canonical?.canonicalKey || canonical?.key || `place-${canonicalGeoid}` : null,
+    geographyPlaceGeoid: bridgedSelector ? canonicalGeoid : null,
+    geographyCountyId: bridgedSelector ? countyId : null,
+    selectorLatRaw,
+    selectorLngRaw,
+    selectorLatResolved,
+    selectorLngResolved,
+    coordinateParseStatus: selectorLatResolved !== null && selectorLngResolved !== null ? "valid" : "missing_or_invalid",
+    presentationCoordinateMatch: Boolean(bridgedSelector),
+    hasSelectorGeometry: Boolean(selector?.geometry) || (selectorLatResolved !== null && selectorLngResolved !== null), selectorLat: selectorLatResolved,
+    selectorLng: selectorLngResolved,
     selectorRadiusMiles: Number.isFinite(Number(selector?.radiusMiles)) ? Number(selector.radiusMiles) : null,
     candidateCount: candidates.length
   });
