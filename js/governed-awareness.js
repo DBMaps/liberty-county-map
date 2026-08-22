@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP223-blocked-crossing-consumer-policy-v1";
+  const VERSION = "LP223-blocked-crossing-alias-reconciliation-v2";
   const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup", "history"]);
   const BLOCKED_CROSSING_OWNERS = Object.freeze({
     locationContext: "governed_awareness", communityPulse: "governed_awareness", alerts: "governed_awareness",
@@ -50,13 +50,79 @@
     return "consumer_only_projection";
   }
   function identity(record = {}, sourceKind = sourceKindOf(record), subtype = subtypeOf(record)) {
-    const governedId = text(record.evidenceId || record.providerRecordId || record.reportId || record.report_id || record.incidentId || record.crossingReportId || record.id || record.sourceId);
+    const governedId = sourceKind === "community_report"
+      ? text(record.evidenceId || record.persistedReportId || record.persisted_report_id || record.reportId || record.report_id || record.id || record.incidentId || record.crossingReportId || record.sourceId)
+      : text(record.evidenceId || record.providerRecordId || record.reportId || record.report_id || record.incidentId || record.crossingReportId || record.id || record.sourceId);
     if (governedId) return `${sourceKind}:${governedId}`;
     const lat = Number(record.lat ?? record.latitude ?? record.coordinates?.lat);
     const lng = Number(record.lng ?? record.lon ?? record.longitude ?? record.coordinates?.lng);
     const observed = text(record.observedAt || record.updatedAt || record.updated_at || record.createdAt || record.created_at || record.timestamp);
     if (Number.isFinite(lat) && Number.isFinite(lng) && observed) return `${sourceKind}:fallback:${subtype}:${lat.toFixed(5)},${lng.toFixed(5)}:${observed}`;
     return "";
+  }
+  function persistedReportId(record = {}) {
+    return text(record.persistedReportId || record.persisted_report_id || record.reportId || record.report_id || record.id || record.raw?.id || record.raw?.report_id);
+  }
+  function crossingProviderId(record = {}) {
+    return text(record.providerRecordId || record.provider_record_id || record.crossingId || record.crossing_id || record.crossing?.id);
+  }
+  function explicitLifecycleIdentity(record = {}) {
+    return text(record.lifecycleIdentity || record.lifecycle_identity || record.canonicalReportId || record.canonical_report_id || record.clearsReportId || record.clears_report_id || record.sourceReportId || record.source_report_id);
+  }
+  function eventTime(record = {}) {
+    const value = Date.parse(record.updatedAt || record.updated_at || record.createdAt || record.created_at || record.submittedAt || record.timestamp || "");
+    return Number.isFinite(value) ? value : 0;
+  }
+  function isCrossingCommunityRecord(record = {}) {
+    const subtype = subtypeOf(record);
+    return sourceKindOf(record) === "community_report"
+      && (subtype === "blocked_crossing" || subtype === "cleared" || subtype === "recently_cleared" || text(record.reportKind).toLowerCase() === "crossing");
+  }
+  // A reports.id UUID identifies a user report. crossing_id/providerRecordId
+  // identifies the FRA infrastructure and is deliberately not a report key.
+  // Legacy clear rows did not carry their target UUID, so they are linked only
+  // to the latest preceding report at that crossing from the same reporter.
+  function reconcileCommunityReportAliases(records = []) {
+    const rows = records.map((record, index) => ({ record, index, persistedId: persistedReportId(record), providerId: crossingProviderId(record), explicitId: explicitLifecycleIdentity(record), subtype: subtypeOf(record), time: eventTime(record), deviceId: text(record.deviceId || record.device_id) }));
+    const activeCandidates = rows.filter((row) => isCrossingCommunityRecord(row.record) && !["cleared", "recently_cleared"].includes(row.subtype));
+    const resolved = rows.map((row) => {
+      let lifecycleIdentity = row.explicitId || row.persistedId;
+      let result = row.explicitId ? "EXPLICIT_CANONICAL_REPORT_ID" : "PERSISTED_REPORT_ID";
+      if (isCrossingCommunityRecord(row.record) && ["cleared", "recently_cleared"].includes(row.subtype) && !row.explicitId) {
+        const candidates = activeCandidates.filter((candidate) => candidate.providerId && candidate.providerId === row.providerId
+          && candidate.deviceId && candidate.deviceId === row.deviceId && (!row.time || !candidate.time || candidate.time <= row.time))
+          .sort((left, right) => right.time - left.time || right.index - left.index);
+        if (candidates[0]?.persistedId) {
+          lifecycleIdentity = candidates[0].persistedId;
+          result = "LEGACY_CLEAR_MATCHED_LATEST_SAME_REPORTER_AT_CROSSING";
+        } else result = "CLEAR_TARGET_UNRESOLVED_NO_SAFE_REPORT_ALIAS";
+      }
+      return { ...row, lifecycleIdentity, reconciliationResult: result };
+    });
+    const groups = new Map();
+    resolved.forEach((row) => {
+      if (!row.lifecycleIdentity || !isCrossingCommunityRecord(row.record)) return;
+      if (!groups.has(row.lifecycleIdentity)) groups.set(row.lifecycleIdentity, []);
+      groups.get(row.lifecycleIdentity).push(row);
+    });
+    return resolved.map((row) => {
+      const aliases = groups.get(row.lifecycleIdentity) || [row];
+      const cleared = aliases.filter((alias) => ["cleared", "recently_cleared"].includes(alias.subtype));
+      const active = aliases.filter((alias) => !["cleared", "recently_cleared"].includes(alias.subtype));
+      const conflict = cleared.length > 0 && active.length > 0;
+      return Object.freeze({
+        lifecycleIdentity: row.lifecycleIdentity || null,
+        persistedReportId: row.persistedId || null,
+        providerRecordId: row.providerId || null,
+        crossingFraIdentity: row.providerId || null,
+        aliasIds: Object.freeze(aliases.map((alias) => identity(alias.record, sourceKindOf(alias.record), subtypeOf(alias.record))).filter(Boolean)),
+        clearedAliasIds: Object.freeze(cleared.map((alias) => identity(alias.record, sourceKindOf(alias.record), subtypeOf(alias.record))).filter(Boolean)),
+        activeAliasIds: Object.freeze(active.map((alias) => identity(alias.record, sourceKindOf(alias.record), subtypeOf(alias.record))).filter(Boolean)),
+        aliasReconciliationResult: conflict ? "SAME_REPORT_ACTIVE_HISTORY_ALIAS_CONFLICT" : row.reconciliationResult,
+        retireActiveAlias: conflict && !["cleared", "recently_cleared"].includes(row.subtype),
+        firstLifecycleLosingStage: conflict && !["cleared", "recently_cleared"].includes(row.subtype) ? "governed_active_lifecycle_alias_reconciliation" : null
+      });
+    });
   }
   function policyFor(sourceKind, subtype) {
     if (sourceKind === "official_roadway") return OFFICIAL_POLICY[subtype] || OFFICIAL_POLICY.debris;
@@ -117,19 +183,24 @@
       return [identity(item || {}, kind, subtype), item?.evidenceId, item?.id, item?.reportId, item?.incidentId, item?.providerRecordId].map(text).filter(Boolean);
     };
     const actualSets = Object.fromEntries(SURFACES.map((surface) => [surface, new Set(consumerItems[surface].flatMap(itemIds))]));
+    const records = Array.isArray(input.records) ? input.records : [];
+    const aliasRows = reconcileCommunityReportAliases(records);
     const seen = new Set();
     const duplicates = [];
     const evidence = [];
-    for (const record of Array.isArray(input.records) ? input.records : []) {
+    for (const [recordIndex, record] of records.entries()) {
       const sourceKind = sourceKindOf(record);
       let subtype = subtypeOf(record);
+      if (sourceKind === "community_report" && isCrossingCommunityRecord(record) && ["cleared", "recently_cleared"].includes(subtype)) subtype = "blocked_crossing";
       if (sourceKind === "official_roadway" && subtype === "flooded_road") subtype = "flooding";
       if (sourceKind === "official_roadway" && subtype === "closed_road") subtype = "road_closure";
       const evidenceId = identity(record, sourceKind, subtype);
       if (!evidenceId) continue; // fail closed: identity-less data cannot become authority
       if (seen.has(evidenceId)) { duplicates.push(evidenceId); continue; }
       seen.add(evidenceId);
-      const lifecycleState = lifecycle(record, subtype, nowMs);
+      const alias = aliasRows[recordIndex];
+      const baseLifecycleState = lifecycle(record, subtype, nowMs);
+      const lifecycleState = alias?.retireActiveAlias ? Object.freeze({ current: true, active: false, classification: "RETIRED_BY_CLEARED_CANONICAL_REPORT_ALIAS", retainedForHistory: false, reason: "Another governed alias records the clear transition for this canonical report." }) : baseLifecycleState;
       const current = lifecycleState.current;
       const geographicEligible = record.geographicEligible !== false;
       const policy = policyFor(sourceKind, subtype);
@@ -137,6 +208,13 @@
       const published = Object.fromEntries(SURFACES.map((surface) => [surface, actualSets[surface].has(evidenceId) || actualSets[surface].has(text(record.id)) || actualSets[surface].has(text(record.reportId)) || actualSets[surface].has(text(record.incidentId))]));
       evidence.push(Object.freeze({
         evidenceId, sourceKind, sourceId: text(record.sourceId || record.provider || record.source), subtype,
+        persistedReportId: alias?.persistedReportId || persistedReportId(record) || null,
+        providerRecordId: alias?.providerRecordId || crossingProviderId(record) || null,
+        crossingFraIdentity: alias?.crossingFraIdentity || null,
+        lifecycleIdentity: alias?.lifecycleIdentity || persistedReportId(record) || null,
+        canonicalReportIdentity: alias?.lifecycleIdentity || persistedReportId(record) || null,
+        aliases: alias?.aliasIds || Object.freeze([evidenceId]), clearedAliasIds: alias?.clearedAliasIds || Object.freeze([]), activeAliasIds: alias?.activeAliasIds || Object.freeze([]),
+        aliasReconciliationResult: alias?.aliasReconciliationResult || "NOT_APPLICABLE", firstLifecycleLosingStage: alias?.firstLifecycleLosingStage || null,
         canonicalCommunity: text(record.canonicalCommunity || record.community || record.city || record.town),
         canonicalKey: text(record.canonicalKey || record.placeGeoid || record.place_geoid), countyId: text(record.countyId || record.county_id),
         transitionGeneration: Number(record.transitionGeneration ?? input.transitionGeneration ?? 0) || 0,
@@ -192,6 +270,11 @@
       .map((row) => Object.freeze({ evidenceId: row.evidenceId, sourceKind: row.sourceKind, subtype: row.subtype, record: byId.get(row.evidenceId) })))])));
     const lineage = Object.freeze(snapshot.evidence.map((row) => Object.freeze({
       evidenceId: row.evidenceId, deduplicationIdentity: row.evidenceId,
+      governedEvidenceId: row.evidenceId, persistedReportId: row.persistedReportId,
+      providerRecordId: row.providerRecordId, crossingFraIdentity: row.crossingFraIdentity,
+      lifecycleIdentity: row.lifecycleIdentity, canonicalReportIdentity: row.canonicalReportIdentity,
+      aliases: row.aliases, clearedAliasIds: row.clearedAliasIds, activeAliasIds: row.activeAliasIds,
+      aliasReconciliationResult: row.aliasReconciliationResult, firstLifecycleLosingStage: row.firstLifecycleLosingStage,
       deduplicationStatus: snapshot.duplicateEvidenceIds.includes(row.evidenceId) ? "DEDUPLICATED_SHARED_EVIDENCE" : "CANONICAL_UNIQUE_EVIDENCE",
       sourceKind: row.sourceKind, subtype: row.subtype,
       canonicalCommunity: row.canonicalCommunity, canonicalKey: row.canonicalKey, countyId: row.countyId,
@@ -373,5 +456,5 @@
       lifecycleOperandAudit: Object.freeze({ ...(input.lifecycleOperandAudit || {}) })
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, sourceKindOf, subtypeOf });
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases });
 });
