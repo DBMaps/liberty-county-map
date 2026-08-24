@@ -25,7 +25,45 @@ test('present geometry and successful governed reader proceeds to feature certif
     assert.equal(result.features.length, 1); assert.equal(result.features[0].geometryType, 'Polygon'); assert.equal(result.features[0].geometry.coordinates.length, 2); assert.deepEqual(result.features[0].bbox, [0, 0, 2, 2]);
   } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 });
-test('workspace report fails closed without inventing geography', () => { assert.equal(report.finalClassification, 'E. INSUFFICIENT_EVIDENCE'); assert.equal(report.geometryAuthority.finding, 'NOT_PRESENT'); assert.equal(report.geometryAuthority.repairPerformed, false); });
+test('workspace report is internally consistent with observed source evidence', () => {
+  const { sourceState, finding, repairPerformed } = report.geometryAuthority;
+  const { artifactProduced, deterministicRebuildPass } = report.attribution;
+
+  assert.equal(repairPerformed, false);
+  if (sourceState === 'NOT_PRESENT') {
+    assert.equal(finding, 'NOT_PRESENT');
+    assert.equal(report.identityReconciliation, null);
+    assert.equal(artifactProduced, false);
+    assert.equal(report.finalClassification, 'E. INSUFFICIENT_EVIDENCE');
+  } else if (sourceState === 'PRESENT_REQUIRES_GOVERNED_GEOMETRY_READER') {
+    assert.equal(finding, 'PRESENT_REQUIRES_GOVERNED_GEOMETRY_READER');
+    assert.equal(report.identityReconciliation, null);
+    assert.equal(artifactProduced, false);
+    assert.equal(report.finalClassification, 'E. INSUFFICIENT_EVIDENCE');
+  } else {
+    assert.equal(sourceState, 'PRESENT_READER_AVAILABLE');
+    const geometryCertificationReady = report.geometryAuthority.archive !== null
+      && report.geometryAuthority.geoidUnique === true
+      && report.geometryAuthority.placefpUniqueWithinTexas === true
+      && report.identityReconciliation?.geometryReconciliationPass === true;
+    if (finding === 'PRESENT_REQUIRES_RECONCILIATION') {
+      assert.equal(geometryCertificationReady, false);
+      assert.equal(artifactProduced, false);
+      assert.equal(report.finalClassification, 'C. SOURCE_GEOMETRY_REQUIRES_RECONCILIATION');
+    } else {
+      assert.equal(finding, 'CERTIFIED');
+      assert.equal(geometryCertificationReady, true);
+      assert.equal(artifactProduced, true);
+      assert.equal(deterministicRebuildPass, true);
+      assert.equal(
+        report.finalClassification,
+        report.crossingAuthority.identityPass
+          ? 'B. NEW_OFFLINE_CROSSING_PLACE_ATTRIBUTION_CERTIFIED'
+          : 'D. CROSSING_IDENTITY_REQUIRES_RECONCILIATION',
+      );
+    }
+  }
+});
 test('spatial and identity contract prohibits approximations', () => { assert.equal(report.contract.stableGeoidJoinRequired, true); assert.equal(report.contract.nameOnlyJoinAllowed, false); assert.equal(report.contract.nearestPlaceAllowed, false); assert.equal(report.contract.presentationRadiusAllowed, false); assert.equal(report.contract.countyUnionAllowed, false); assert.match(report.contract.predicate, /boundary/); });
 test('certified statewide identity baseline remains governed', () => assert.deepEqual(report.canonicalBaseline, { canonicalCommunities: 1859, governedMemberships: 2058, multiCountyIdentities: 163, counties: 254 }));
 test('production behavior is untouched', () => assert.deepEqual(Object.values(report.safety), Array(8).fill(false)));
