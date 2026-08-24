@@ -4,6 +4,7 @@ import test from "node:test";
 import vm from "node:vm";
 
 const source = fs.readFileSync(new URL("../js/gridlyRuntimePerformanceAudit.js", import.meta.url), "utf8");
+const appSource = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 
 function load(extra = {}) {
   let time = 100;
@@ -33,6 +34,50 @@ test("LP224 instrumentation is passive and introduces no scheduling or output mu
   for (const forbidden of ["setInterval(", "setTimeout(", "requestAnimationFrame(", ".innerHTML", ".textContent", "MutationObserver"]) assert.equal(source.includes(forbidden), false, forbidden);
   assert.match(source, /instrumentationPassive: true/);
   assert.doesNotMatch(source, /debounce|throttle|sleep|delayMs|await new Promise/);
+  assert.doesNotMatch(source, /globalScope\.(?:setTimeout|setInterval|requestAnimationFrame|fetch)\s*=/);
+  assert.match(appSource, /productionOwner: lp224SnapshotCaller/);
+  assert.match(appSource, /caller: "getAlertsSurfaceSnapshot", reason: "snapshot official situation merge"/);
+  assert.match(appSource, /caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "authoritative card markup generation"/);
+});
+
+test("LP224 stage timing is transaction-scoped and preserves explicit production lineage", () => {
+  const window = load();
+  assert.equal(window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: "alert merge", startTime: 90, endTime: 99, productionOwner: "outside" }), null);
+  const id = window.gridlyRuntimePerformanceAuditBegin("IDLE", "owner bounded idle");
+  window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: "community alert collection", startTime: 110, endTime: 114, triggerReason: "snapshot community source collection", productionOwner: "getAlertsSurfaceSnapshot", outputChanged: false });
+  window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: "alert merge", startTime: 115, endTime: 127, triggerReason: "snapshot official situation merge", productionOwner: "getAlertsSurfaceSnapshot", authoritativeWriteFollowed: false });
+  window.__setTime(140);
+  const result = window.gridlyRuntimePerformanceAuditEnd(id);
+  assert.equal(result.stageTimings.length, 2);
+  assert.deepEqual(Array.from(result.stageTimings, (entry) => entry.transactionId), [id, id]);
+  assert.equal(result.triggerLineage[0].trigger, "getAlertsSurfaceSnapshot");
+  assert.deepEqual(Array.from(result.triggerLineage[0].downstreamStages), ["community alert collection", "alert merge"]);
+  assert.equal(result.topStageByTotalDuration.stageName, "alert merge");
+  assert.equal(result.topIdleTrigger.callCount, 2);
+  assert.equal(result.firstExpensiveStage, null);
+});
+
+test("Long Task stage overlap is bounded correlation and never a causation claim", () => {
+  const { window, deliver } = observedWindow();
+  const id = window.gridlyRuntimePerformanceAuditBegin("IDLE");
+  window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: "alert merge", startTime: 110, endTime: 130, productionOwner: "getAlertsSurfaceSnapshot" });
+  deliver({ name: "overlap", startTime: 120, duration: 60 });
+  deliver({ name: "unattributed", startTime: 190, duration: 55 });
+  window.__setTime(250);
+  const result = window.gridlyRuntimePerformanceAuditEnd(id);
+  assert.equal(result.longTaskStageOverlap[0].classification, "EXACT_STAGE_OVERLAP");
+  assert.equal(result.longTaskStageOverlap[0].causationClaimed, false);
+  assert.equal(result.longTaskStageOverlap[1].classification, "NO_MEASURED_STAGE_OVERLAP");
+});
+
+test("reset excludes historical stage entries as well as historical Long Tasks", () => {
+  const window = load();
+  const first = window.gridlyRuntimePerformanceAuditBegin("IDLE");
+  window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: "alert merge", startTime: 101, endTime: 102, productionOwner: "getAlertsSurfaceSnapshot" });
+  window.__setTime(110);
+  window.gridlyRuntimePerformanceAuditEnd(first);
+  window.gridlyRuntimePerformanceAuditReset();
+  assert.equal(window.gridlyRuntimePerformanceAudit().stageTimings.length, 0);
 });
 
 test("reset creates non-colliding generations and excludes buffered pre-reset Long Tasks", () => {

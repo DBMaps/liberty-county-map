@@ -32610,10 +32610,21 @@ function gridlyV921ScheduleBatches({ generation, items, batchSize = 36, process,
 }
 
 function gridlyV920Measure(functionName, category, fn, meta = {}) {
-  if (typeof window !== "undefined" && typeof window.gridlyV920MeasureFunction === "function") {
-    return window.gridlyV920MeasureFunction(functionName, category, fn, meta);
+  const lp224Stage = functionName === "renderAlerts" ? "renderAlerts" : null;
+  const startedAt = lp224Stage ? gridlyV921Now() : 0;
+  const lp224AlertSignatureBefore = lp224Stage === "renderAlerts" ? gridlyV920MainThreadRepairState?.alertRenderSignature : null;
+  let result;
+  try {
+    result = typeof window !== "undefined" && typeof window.gridlyV920MeasureFunction === "function"
+      ? window.gridlyV920MeasureFunction(functionName, category, fn, meta)
+      : fn();
+    return result;
+  } finally {
+    if (lp224Stage && typeof window?.gridlyRuntimePerformanceAuditRecordAlertsStage === "function") {
+      const outputChanged = functionName === "renderAlerts" ? lp224AlertSignatureBefore !== gridlyV920MainThreadRepairState?.alertRenderSignature : (meta.outputChanged ?? null);
+      window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: lp224Stage, startTime: startedAt, endTime: gridlyV921Now(), triggerReason: meta.triggeredBy || null, productionOwner: meta.caller || functionName, domMutationOccurred: outputChanged === true, outputChanged, authoritativeWriteFollowed: false });
+    }
   }
-  return fn();
 }
 
 function gridlyV920StableSignature(parts = []) {
@@ -32848,11 +32859,29 @@ function gridlyAlertsOpenAuditMeasure(name, fn, meta = {}) {
   const presentationSubphaseStartIndex = Array.isArray(runAtStart?.microProfile?.presentationSubphases) ? runAtStart.microProfile.presentationSubphases.length : 0;
   let result;
   let thrown = null;
+  const recordLp224Stage = (value, error = null) => {
+    const recorder = typeof window !== "undefined" ? window.gridlyRuntimePerformanceAuditRecordAlertsStage : null;
+    if (typeof recorder !== "function") return;
+    const finish = gridlyAlertsOpenAuditNow();
+    recorder({
+      stageName: name,
+      startTime: start,
+      endTime: finish,
+      triggerReason: meta.reason || meta.triggerReason || null,
+      productionOwner: meta.caller || null,
+      domMutationOccurred: meta.domMutationOccurred === true,
+      outputChanged: error ? null : (meta.outputChanged == null ? null : Boolean(meta.outputChanged)),
+      authoritativeWriteFollowed: meta.authoritativeWriteFollowed === true
+    });
+  };
   try {
     result = gridlyV920Measure(`alertsOpenAudit.${name}`, "alerts-open-audit", fn, { auditOnly: true, ...meta });
+    if (result && typeof result.then === "function") result.then((value) => recordLp224Stage(value), (error) => recordLp224Stage(undefined, error));
+    else recordLp224Stage(result);
     return result;
   } catch (error) {
     thrown = error;
+    recordLp224Stage(undefined, error);
     throw error;
   } finally {
     const auditFinalizeStarted = gridlyAlertsOpenAuditNow();
@@ -34016,6 +34045,7 @@ function gridlyAlertWriterDomIds() {
 }
 
 function gridlyRecordAlertsWriterInvocation({ input = [], suppressionReason = null, opened = false, invocationTime = Date.now(), countInvocation = true } = {}) {
+  const lp224StartedAt = gridlyAlertsOpenAuditNow();
   const body = document.getElementById("gridlyPortraitV2SheetBody");
   const inputIds = (Array.isArray(input) ? input : []).map(gridlyAlertWriterRecordId);
   const postWriteDomIds = gridlyAlertWriterDomIds();
@@ -34039,6 +34069,7 @@ function gridlyRecordAlertsWriterInvocation({ input = [], suppressionReason = nu
     gridlyAlertsWriterSynchronizationAuditState.invocations[gridlyAlertsWriterSynchronizationAuditState.invocations.length - 1] = row;
   } else gridlyAlertsWriterSynchronizationAuditState.invocations.push(row);
   if (gridlyAlertsWriterSynchronizationAuditState.invocations.length > 20) gridlyAlertsWriterSynchronizationAuditState.invocations.shift();
+  window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "authoritative Alerts writer", startTime: lp224StartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: suppressionReason || "authoritative writer invocation", productionOwner: "gridlyRecordAlertsWriterInvocation", domMutationOccurred: Boolean(opened), outputChanged: opened ? true : null, authoritativeWriteFollowed: Boolean(opened) });
   return row;
 }
 
@@ -35055,6 +35086,7 @@ function gridlyLp017DisabledVehiclePresentationTrace() {
 if (typeof window !== "undefined") window.gridlyLp017DisabledVehiclePresentationTrace = gridlyLp017DisabledVehiclePresentationTrace;
 
 function openAlertsSurfaceFromDock() {
+  const lp224ShellStartedAt = gridlyAlertsOpenAuditNow();
   gridlyLp017DisabledVehiclePresentationAuditState.lastFunctionEntered = "openAlertsSurfaceFromDock";
   gridlyLP012RecordAlertsClick("openAlertsSurfaceFromDock");
   window.gridlyStartupDiagnostics?.markInteractionProbe?.("clickHandler");
@@ -35112,7 +35144,9 @@ function openAlertsSurfaceFromDock() {
   } else {
     gridlySynchronizeOpenAlertsPortrait("alerts_open_after_shell");
   }
-  return cacheRead.contextMatched ? opened : true;
+  const shellResult = cacheRead.contextMatched ? opened : true;
+  window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "openAlertsSurfaceFromDock shell", startTime: lp224ShellStartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: "dock Alerts activation", productionOwner: "openAlertsSurfaceFromDock", domMutationOccurred: Boolean(opened), outputChanged: Boolean(opened), authoritativeWriteFollowed: !cacheRead.contextMatched });
+  return shellResult;
 }
 
 function gridlyInstantAlertsSheetAudit() {
@@ -35681,12 +35715,12 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   let writerAlertsForRender = [];
   try {
     if (!(await cooperativeYieldOrCancel(true, "cancelled_before_snapshot"))) return false;
-    const snapshot = await cooperativePhase("snapshotAcquisitionMs", async () => gridlyAlertsOpenAuditMeasure("alert snapshot creation", () => window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.()));
+    const snapshot = await cooperativePhase("snapshotAcquisitionMs", async () => window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.());
     if (!(await cooperativeYieldOrCancel(true, "cancelled_after_snapshot"))) return false;
     const snapshotAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
     const alertsForRender = await cooperativePhase("awarenessFilteringMs", async () => gridlyAlertsOpenAuditMeasure("alert merge", () => (typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
       ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "openAlertsSurfaceFromDock")
-      : snapshotAlerts)));
+      : snapshotAlerts), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "open Alerts awareness filtering" }));
     writerAlertsForRender = alertsForRender;
     gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: "write_pending", invocationTime: writerInvocationTime, countInvocation: false });
     if (!(await cooperativeYieldOrCancel(true, "cancelled_after_awareness_filter"))) return false;
@@ -36853,7 +36887,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
           cooperativeChunkStartedAt: cooperativeChunkStartedAt,
           isCancelled: () => !gridlyAlertsAuthoritativeBuildStillCurrent(alertsSheetGeneration, cooperativeBuildGeneration, cooperativeBuildContextKey, cooperativeBuildRevisionKey)
         })
-        : (typeof getGridlyAlertsPresentationCountModel === "function" ? getGridlyAlertsPresentationCountModel(alertsForRender) : { alerts: buildAlertPresentationGroups(alertsForRender), groupedAlertCount: alertsForRender.length, rawAlertRecordCount: alertsForRender.length, communityReportCount: alertsForRender.length })), { caller: "openAlertsSurfaceFromDock", inputCount: alertsForRender.length }), { caller: "openAlertsSurfaceFromDock", inputCount: alertsForRender.length }));
+        : (typeof getGridlyAlertsPresentationCountModel === "function" ? getGridlyAlertsPresentationCountModel(alertsForRender) : { alerts: buildAlertPresentationGroups(alertsForRender), groupedAlertCount: alertsForRender.length, rawAlertRecordCount: alertsForRender.length, communityReportCount: alertsForRender.length })), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", inputCount: alertsForRender.length }), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "authoritative Alerts presentation build", inputCount: alertsForRender.length }));
       if (gridlyAlertsGroupingHotLoopState.lastBuild?.cancelled) {
         cooperativeBuildAudit.superseded = true;
         cooperativeBuildAudit.cancelled = true;
@@ -36867,7 +36901,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       };
       gridlyAlertsOpenPerformanceAuditState.activeRenderContext = alertsOpenRenderContext;
       if (!(await cooperativeYieldOrCancel(true, "cancelled_after_presentation_model"))) return false;
-      const rawPresentationAlerts = await cooperativePhase("presentationGroupingMs", async () => gridlyAlertsOpenAuditMeasure("situation clustering", () => gridlyLp016AlertsPostPaintDelayMeasure("buildAlertPresentationGroups fallback", "presentation", () => presentationCountModel.alerts.length ? presentationCountModel.alerts : buildAlertPresentationGroups(alertsForRender), { inputCount: alertsForRender.length })));
+      const rawPresentationAlerts = await cooperativePhase("presentationGroupingMs", async () => gridlyAlertsOpenAuditMeasure("situation clustering", () => gridlyLp016AlertsPostPaintDelayMeasure("buildAlertPresentationGroups fallback", "presentation", () => presentationCountModel.alerts.length ? presentationCountModel.alerts : buildAlertPresentationGroups(alertsForRender), { inputCount: alertsForRender.length }), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "authoritative Alerts situation grouping" }));
       const presentationAlerts = rawPresentationAlerts.map(alert => {
         const identity = gridlyResolveCanonicalLiveIncidentIdentity(alert);
         const presentation = gridlyBuildCanonicalLiveIncidentPresentation(alert);
@@ -36906,7 +36940,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       const renderedRows = gridlyAlertsOpenAuditMeasure("DOM generation", () => ({
         rows: visibleRowParts.join(""),
         hiddenRows: hiddenRowParts.join("")
-      }));
+      }), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "authoritative card markup generation", domMutationOccurred: false });
       const rows = renderedRows.rows;
       const hiddenRows = renderedRows.hiddenRows;
       gridlyAlertsOpenAuditSetMetadata({ presentationCount: presentationAlerts.length, renderedCardCount: Math.min(3, presentationAlerts.length) });
@@ -113076,6 +113110,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function getAlertsSurfaceSnapshot() {
+    const lp224SnapshotStartedAt = gridlyAlertsOpenAuditNow();
+    const lp224SnapshotCaller = gridlyAlertsTraceStackFrames()[0] || null;
     const gridlyPostPaintPhase = window.gridlyStartupDiagnostics?.beginPostPaintPhase?.("alert snapshot creation", "getAlertsSurfaceSnapshot");
     try {
     function applyRoadSnapshotFallback(alert = {}) {
@@ -113150,7 +113186,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const reports = gridlyAlertsOpenAuditMeasure("community alert collection", () => canonicalActiveCommunityRecords
       ? canonicalActiveCommunityRecords.slice()
       : [...(Array.isArray(activeReports) ? activeReports : []), ...fallbackHazards]
-        .filter((report) => report && !report.expired && (typeof getIncidentLifecycleState !== "function" || getIncidentLifecycleState(report, now) === "active")));
+        .filter((report) => report && !report.expired && (typeof getIncidentLifecycleState !== "function" || getIncidentLifecycleState(report, now) === "active")), { caller: "getAlertsSurfaceSnapshot", reason: "snapshot community source collection" });
     const recentHazardCount = reports.filter((report) => {
       const submittedAt = new Date(report.submittedAt || 0).getTime();
       return Number.isFinite(submittedAt) && (now - submittedAt) <= 60 * 60 * 1000;
@@ -113294,11 +113330,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         priorityScore: Number(shapedAlert.priorityScore ?? priorityModel.score),
         priorityReasonCopy: buildGridlyPriorityReasonCopy(priorityModel, { routeRelevant: Boolean(shapedAlert.routeRelevant) })
       };
-    }));
-    gridlyAlertsOpenAuditMeasure("weather situation promotion", () => normalizedAlertItemsBeforeAreaFilter.filter((alert) => gridlyAlertsOpenAuditCountProvider(alert) === "weather").length);
-    const areaFilteredAlertItems = gridlyAlertsOpenAuditMeasure("deduplication", () => gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot"));
+    }), { caller: "getAlertsSurfaceSnapshot", reason: "snapshot normalized intelligence promotion" });
+    gridlyAlertsOpenAuditMeasure("weather situation promotion", () => normalizedAlertItemsBeforeAreaFilter.filter((alert) => gridlyAlertsOpenAuditCountProvider(alert) === "weather").length, { caller: "getAlertsSurfaceSnapshot", reason: "snapshot weather provider classification" });
+    const areaFilteredAlertItems = gridlyAlertsOpenAuditMeasure("deduplication", () => gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot"), { caller: "getAlertsSurfaceSnapshot", reason: "alertsSurfaceSnapshot area eligibility" });
     const normalizedAlertItems = gridlyAlertsOpenAuditMeasure("alert merge", () => mergeGridlyOfficialSituationAlerts(areaFilteredAlertItems)
-      .sort(compareGridlyIncidentPriorityModels));
+      .sort(compareGridlyIncidentPriorityModels), { caller: "getAlertsSurfaceSnapshot", reason: "snapshot official situation merge" });
     window.__gridlyLp2194AlertStages = Object.freeze({
       presentationCandidates: Object.freeze(normalizedAlertItemsBeforeAreaFilter.slice()),
       areaFilterEligible: Object.freeze(areaFilteredAlertItems.slice()),
@@ -113337,7 +113373,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       activeLocalizedAlertCount: unifiedIntel.activeLocalizedAlertCount,
       routeImpactIncidentCount: unifiedIntel.routeImpactIncidentCount
     };
-    } finally { window.gridlyStartupDiagnostics?.endPostPaintPhase?.(gridlyPostPaintPhase); }
+    } finally {
+      window.gridlyStartupDiagnostics?.endPostPaintPhase?.(gridlyPostPaintPhase);
+      window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "alert snapshot creation", startTime: lp224SnapshotStartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: "getAlertsSurfaceSnapshot direct call", productionOwner: lp224SnapshotCaller, domMutationOccurred: false, outputChanged: null, authoritativeWriteFollowed: false });
+    }
   }
   window.getAlertsSurfaceSnapshot = getAlertsSurfaceSnapshot;
   function resolveAlertTitleText(alert) {

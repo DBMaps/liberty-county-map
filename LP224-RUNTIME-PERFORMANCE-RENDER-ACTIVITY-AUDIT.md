@@ -49,7 +49,7 @@ The authoritative Alerts writer remains `renderAlerts`; LP224 neither wraps nor 
 
 `window.gridlyRuntimePerformanceAudit()` aggregates existing measured boundaries without wrapping writers or schedulers. A native `PerformanceObserver`, when available, records Long Tasks against explicit transaction timestamps. Unsupported APIs fail closed. Reset advances a measurement generation and records a monotonic cutoff; because browser-buffered performance entries cannot be deleted, entries older than that cutoff are truthfully excluded rather than represented as removed.
 
-LP224.1 cleared only its local Long Task array and reset its ID sequence. The observer's browser-owned buffered entries could subsequently be delivered again, so there was no durable observation boundary. LP224.2 fixes that instrumentation defect without changing production behavior. The helper continues to report unknowns rather than inventing function ownership, and `safeToOptimize` remains false until bounded live evidence deterministically identifies a production path.
+LP224.3 adds transaction-scoped records from explicit Alerts production boundaries. Each record carries the production owner supplied at the call site (or `null`), timing, mutation/output/write facts, and generation identity. Explicit stage call sites supply ownership; the top-level snapshot boundary also records its immediate available production stack frame rather than inventing a semantic trigger. End results now include `stageTimings`, `triggerLineage`, `longTaskStageOverlap`, `topStageByTotalDuration`, `topStageByMaxInvocationDuration`, `topIdleTrigger`, and the deliberately conservative `firstExpensiveStage`.
 
 ## Owner synchronous console workflow
 
@@ -71,7 +71,29 @@ gridlyRuntimePerformanceAudit("end", id)
 
 The same `begin` call accepts `COMMUNITY_CHANGE`, `MAP_PAN`, `MAP_ZOOM`, or `REPORT_SUBMIT`. The direct aliases remain available: `gridlyRuntimePerformanceAuditReset()`, `gridlyRuntimePerformanceAuditBegin(label, reason)`, and `gridlyRuntimePerformanceAuditEnd(id)`.
 
-Each end result includes transaction identity and bounds, canonical `durationMs` Long Tasks, maximum Long Task duration, and surface/render/writer/scheduling/repeated-work deltas. The aggregate audit preserves lifetime totals separately.
+Each end result includes transaction identity and bounds, canonical `durationMs` Long Tasks, maximum Long Task duration, surface/render/writer/scheduling/repeated-work deltas, stage timings, explicit trigger lineage, and overlap-only Long Task correlation. `EXACT_STAGE_OVERLAP` means exactly one measured stage window intersects a Long Task; it does not mean that stage caused the Long Task.
+
+For the final owner pass, run the first block, leave the application untouched for the same bounded window, then run the second block exactly:
+
+```js
+gridlyRuntimePerformanceAudit("reset");
+window.__lp224FinalId = gridlyRuntimePerformanceAudit("begin", "IDLE", "owner final live attribution pass");
+```
+
+```js
+window.__lp224FinalResult = gridlyRuntimePerformanceAudit("end", window.__lp224FinalId);
+console.table(window.__lp224FinalResult.stageTimings);
+console.table(window.__lp224FinalResult.triggerLineage);
+console.table(window.__lp224FinalResult.longTaskStageOverlap);
+console.log({
+  topStageByTotalDuration: window.__lp224FinalResult.topStageByTotalDuration,
+  topStageByMaxInvocationDuration: window.__lp224FinalResult.topStageByMaxInvocationDuration,
+  topIdleTrigger: window.__lp224FinalResult.topIdleTrigger,
+  firstExpensiveStage: window.__lp224FinalResult.firstExpensiveStage,
+  safeToOptimize: window.gridlyRuntimePerformanceAudit().safeToOptimize
+});
+window.__lp224FinalResult;
+```
 
 ## Owner aggregate console block
 
@@ -98,14 +120,14 @@ Canonical community context is read passively from `gridlyGetCanonicalActiveComm
 
 ## Classified findings and optimization candidates
 
-1. **UNKNOWN / NEEDS LIVE BROWSER:** owner of historical 119–353 ms violations. Capture transactions and a Performance profile; Long Task entries do not prove function ownership.
-2. **LIKELY PERFORMANCE DEFECT, not confirmed:** repeated shared-refresh/consumer work if live evidence records equivalent post-convergence writers.
+1. **CONFIRMED PERFORMANCE DEFECT FAMILY:** the bounded owner trace establishes repeated Alerts preparation during untouched idle. The committed evidence does not yet establish which measured stage overlaps the 1176–1255 ms Long Tasks.
+2. **STRONGEST ROOT-CAUSE CANDIDATE, awaiting LP224.3 owner trace:** a production consumer repeatedly calling `getAlertsSurfaceSnapshot`, because that explicit boundary owns community collection, provider promotions, area eligibility/deduplication, and official-situation merge. The final trace must identify its upstream call-site lineage before optimization is authorized.
 3. **UNKNOWN / NEEDS LIVE BROWSER:** application interval activity in a bounded idle window.
 4. **POTENTIAL_LAYOUT_RISK:** UI/map write/read adjacency; promote only with runtime evidence.
 5. **BENIGN / EXPECTED:** frame-coalesced crossings and generation batches unless redundant generations are observed.
 6. **AUDIT OVERHEAD:** opt-in legacy wrappers and simulations; exclude them from the production baseline.
 
-No confirmed defect is asserted from static evidence. Once evidence exists, candidate order is: first attributable >50 ms writer/render stage; duplicate refresh publication; idle application work; confirmed write/read layout thrash.
+LP224 can close the defect-family confirmation, but not expensive-stage attribution, until the final LP224.3 owner result is captured. A separate LP225 optimization milestone is justified only after that result identifies a narrow repeated production entry path. `firstExpensiveStage` remains null and `safeToOptimize` remains false in this pass.
 
 ## Regression statement
 
