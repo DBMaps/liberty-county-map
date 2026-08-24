@@ -30975,6 +30975,37 @@ window.gridlyAlertsAuthorityWriterAudit = function () {
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyAlertsAuthorityWriterAudit", window.gridlyAlertsAuthorityWriterAudit);
 
+// LP226 owner reopen acceptance: read-only evidence joining snapshot reuse to
+// LP223 DOM authority. Invoke after each open/reopen reaches its first visible
+// state; this helper does not render, schedule, or mutate Alerts.
+window.gridlyLP226AlertsReopenAcceptance = function () {
+  const snapshotAudit = typeof gridlyAlertsSnapshotReconciliationAudit === "function"
+    ? gridlyAlertsSnapshotReconciliationAudit()
+    : {};
+  const writerAudit = window.gridlyAlertsAuthorityWriterAudit?.() || {};
+  const lastOpen = gridlyInstantAlertsSheetAuditState.lastOpen || {};
+  const firstCard = document.querySelector('#gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-id]');
+  const presentationId = String(firstCard?.getAttribute("data-gridly-alert-id") || "");
+  const record = (Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [])
+    .find((row, index) => gridlyAlertWriterRecordId(row, index) === String(firstCard?.getAttribute("data-gridly-governed-evidence-id") || "")
+      || String(row?.id || row?.incidentId || row?.reportId || "") === presentationId) || {};
+  const locationNode = firstCard?.querySelector?.("[data-gridly-alert-location]") || firstCard;
+  const domLocation = String(locationNode?.getAttribute?.("data-location") || firstCard?.getAttribute?.("data-gridly-alert-location") || locationNode?.textContent || "").replace(/\s+/g, " ").trim();
+  const authoritativeWriteApplied = Boolean(writerAudit.parity && lastOpen.authoritativeContentAppliedAt);
+  return Object.freeze({
+    snapshotBuildDecision: snapshotAudit.lastChangedSincePrevious === true ? "BUILD_CHANGED_GENERATION" : "NO_BUILD",
+    snapshotReuseDecision: snapshotAudit.lastChangedSincePrevious === false ? "REUSE_SAME_GENERATION" : "NOT_REUSED",
+    authoritativeWriteApplied,
+    sheetExposedAfterAuthority: Boolean(authoritativeWriteApplied && lastOpen.sheetVisibleAt && lastOpen.initialCardsRenderedAt === lastOpen.sheetVisibleAt),
+    domLocation,
+    selectedLocationValue: String(record?.selectedLocationValue || record?.resolvedLocation || record?.__gridlyNarrowConsumerCard?.locationLine || ""),
+    writerParity: Boolean(writerAudit.parity),
+    presentationContract: writerAudit.presentationContract || "",
+    firstLosingStage: writerAudit.firstLosingStage || "WRITER_NOT_INVOKED"
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP226AlertsReopenAcceptance", window.gridlyLP226AlertsReopenAcceptance);
+
 window.gridlyAlertDataDiagnostic = function () {
   const alertSource = Array.isArray(window.__gridlyAlertsForRenderSample)
     ? window.__gridlyAlertsForRenderSample
@@ -34828,6 +34859,8 @@ function gridlyOpenAlertsSurfaceAfterPaint(alertsSheetGeneration = gridlyAlertsS
       Object.assign(gridlyInstantAlertsSheetAuditState.lastOpen, {
         authoritativeBuildCompletedAt: completedAt,
         authoritativeContentAppliedAt: applied ? completedAt : null,
+        sheetVisibleAt: applied ? completedAt : null,
+        initialCardsRenderedAt: applied ? completedAt : null,
         authoritativeBuildDurationMs: Number((completedAt - startedAt).toFixed(2)),
         sheetReopenedDuringUpdate: false,
         duplicateCardsDetected: gridlyDetectDuplicateAlertCards()
@@ -35116,20 +35149,19 @@ function openAlertsSurfaceFromDock() {
   gridlyBeginAlertsOpenRefreshFixTiming(handlerEnteredAt);
   const contextKey = gridlyGetAlertsAuthoritativeContextKey();
   const cacheRead = gridlyReadValidAlertsAuthoritativeCache(contextKey);
-  const initialContentSource = cacheRead.contextMatched ? "authoritative-cache" : "authoritative-build-before-visible-open";
-  // LP009 cache anchor: cacheRead.contextMatched ? cacheRead.cache.renderedMarkup may render immediately after sanitization.
-  const html = cacheRead.contextMatched ? gridlyLp0458SanitizeOfficialAlertCardMarkup(cacheRead.cache.renderedMarkup) : gridlyBuildNeutralAlertsSheetMarkup();
-  const title = cacheRead.contextMatched ? (cacheRead.cache.title || "Alerts") : "Alerts";
-  // LP009 ordering anchor: openGridlyPortraitV2Sheet("alerts") happens before gridlyOpenAlertsSurfaceAfterPaint().
-  const opened = cacheRead.contextMatched && typeof window.openGridlyPortraitV2Sheet === "function"
-    ? Boolean(window.openGridlyPortraitV2Sheet("alerts", { title, html }))
-    : (cacheRead.contextMatched && typeof openGridlyPortraitV2Sheet === "function" ? Boolean(openGridlyPortraitV2Sheet("alerts", { title, html })) : false);
+  const initialContentSource = cacheRead.contextMatched ? "cached-snapshot-authoritative-reprojection" : "authoritative-build-before-visible-open";
+  // A revision-matched markup cache is a data/build optimization, not proof
+  // that the currently hidden/retained sheet DOM has LP223 writer parity.
+  // Never expose cached or retained markup directly on open.  The sole
+  // authoritative writer below may reuse the LP226 snapshot, but must project
+  // it through CONCISE_ALERT_CARD before it exposes the sheet.
+  const opened = false;
   const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
   if (typeof gridlyLp019BindAlertFocusHandlers === "function") window.setTimeout(() => gridlyLp019BindAlertFocusHandlers(document), 0);
   gridlyInstantAlertsSheetAuditState.lastOpen = {
     handlerEnteredAt,
     sheetInsertedAt,
-    sheetVisibleAt: sheetInsertedAt,
+    sheetVisibleAt: null,
     initialContentSource,
     cacheAvailable: cacheRead.available,
     cacheContextMatched: cacheRead.contextMatched,
@@ -35145,10 +35177,10 @@ function openAlertsSurfaceFromDock() {
     alertsSheetGeneration,
     lateResultIgnoredCount: gridlyAlertsSheetLifecycleState.lateResultIgnoredCount
   };
-  gridlyLp016AlertsPostPaintDelayResetForOpen(sheetInsertedAt);
+  gridlyLp016AlertsPostPaintDelayResetForOpen(null);
   gridlyRecordAlertsOpenRefreshFixTiming({
-    sheetVisibleAt: sheetInsertedAt,
-    initialCardsRenderedAt: cacheRead.contextMatched ? sheetInsertedAt : null,
+    sheetVisibleAt: null,
+    initialCardsRenderedAt: null,
     sheetOpenDelayMs: Number((sheetInsertedAt - handlerEnteredAt).toFixed(2)),
     waitedForBackgroundRefresh: false
   });
@@ -35157,15 +35189,13 @@ function openAlertsSurfaceFromDock() {
   // When no revision-matched authoritative markup is ready, invoke the sole
   // writer in this transaction before exposing a consumer shell.  The writer
   // itself opens the sheet with the completed concise markup.
-  if (!cacheRead.contextMatched) {
-    gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration = alertsSheetGeneration;
-    gridlyAlertsWriterSynchronizationAuditState.lastScheduleReason = "alerts_open_same_transaction";
-    gridlyOpenAlertsSurfaceAfterPaint(alertsSheetGeneration);
-  } else {
-    gridlySynchronizeOpenAlertsPortrait("alerts_open_after_shell");
-  }
-  const shellResult = cacheRead.contextMatched ? opened : true;
-  window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "openAlertsSurfaceFromDock shell", startTime: lp224ShellStartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: "dock Alerts activation", productionOwner: "openAlertsSurfaceFromDock", domMutationOccurred: Boolean(opened), outputChanged: Boolean(opened), authoritativeWriteFollowed: !cacheRead.contextMatched });
+  gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration = alertsSheetGeneration;
+  gridlyAlertsWriterSynchronizationAuditState.lastScheduleReason = cacheRead.contextMatched
+    ? "alerts_reopen_cached_snapshot_authoritative_reprojection"
+    : "alerts_open_same_transaction";
+  gridlyOpenAlertsSurfaceAfterPaint(alertsSheetGeneration);
+  const shellResult = true;
+  window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "openAlertsSurfaceFromDock shell", startTime: lp224ShellStartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: "dock Alerts activation", productionOwner: "openAlertsSurfaceFromDock", domMutationOccurred: false, outputChanged: false, authoritativeWriteFollowed: true });
   return shellResult;
 }
 
@@ -113162,7 +113192,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       record.expired, record.cleared, record.confirmationCount, record.supportCount, record.count,
       record.updatedAt, record.updated_at, record.lastUpdated, record.submittedAt, record.created_at,
       record.title, record.headline, record.severity, record.primaryRoad, record.roadName,
-      record.referenceRoadA, record.referenceRoadB, record.crossingRoad, record.locationName,
+      record.referenceRoadA, record.referenceRoadB, record.crossStreet, record.crossStreetA,
+      record.crossStreetB, record.crossStreet1, record.crossStreet2, record.fromStreet,
+      record.toStreet, record.crossingRoad, record.locationName, record.resolvedLocation,
+      record.selectedLocationValue, record.selectedLocationAuthority, record.locationSelectionReason,
       record.canonicalCommunity, record.canonicalKey, record.countyId, record.county_id,
       record.lat, record.latitude, record.lng, record.lon, record.longitude
     ].forEach(add);
