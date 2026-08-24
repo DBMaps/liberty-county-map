@@ -30981,6 +30981,69 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 const GRIDLY_LP226_DEFAULT_TARGET_PRESENTATION_ID = "f4a2845c-aea2-49a2-84f2-5b9b6400eeff";
 const GRIDLY_LP226_DEFAULT_TARGET_GOVERNED_ID = "active_hazard:hazard-device-fb254e5c-da39-4ff0-92d1-15c9cc62b57d-1787577251389";
 
+// Community road hazards are written with the bounded provider TTL below and
+// loadSharedReports only selects rows whose expires_at remains in the future.
+// Keep this audit read-only: it explains an absent source row; it never extends
+// eligibility or restores a record that the provider lifecycle retired.
+window.gridlyLP226SourceLifecycleAudit = function (target = {}) {
+  const options = typeof target === "object" && target !== null ? target : { presentationIncidentId: target };
+  const presentationIncidentId = String(options.presentationIncidentId || GRIDLY_LP226_DEFAULT_TARGET_PRESENTATION_ID).trim();
+  const governedEvidenceId = String(options.governedEvidenceId || GRIDLY_LP226_DEFAULT_TARGET_GOVERNED_ID).trim();
+  const matches = (record = {}, index = 0) => gridlyAlertWriterRecordId(record, index) === governedEvidenceId
+    || [record?.id, record?.incidentId, record?.reportId, record?.report_id].some((id) => String(id || "") === presentationIncidentId)
+    || [record?.id, record?.crossingId, record?.crossing_id].some((id) => governedEvidenceId.includes(String(id || "__no_match__")));
+  const sources = [
+    ["activeHazards", Array.isArray(activeHazards) ? activeHazards : []],
+    ["activeReports", Array.isArray(activeReports) ? activeReports : []],
+    ["recentlyClearedRoadHazards", Array.isArray(typeof recentlyClearedRoadHazards !== "undefined" ? recentlyClearedRoadHazards : []) ? recentlyClearedRoadHazards : []],
+    ["gridlyLoadedReportSnapshot", Array.isArray(typeof gridlyLoadedReportSnapshot !== "undefined" ? gridlyLoadedReportSnapshot : []) ? gridlyLoadedReportSnapshot : []]
+  ];
+  let sourceName = "provider_query_excluded";
+  let record = null;
+  for (const [name, rows] of sources) {
+    const found = rows.find(matches);
+    if (found) { sourceName = name; record = found; break; }
+  }
+  const governed = typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null;
+  const lineage = Array.isArray(governed?.lineage) ? governed.lineage.find((row) => row.evidenceId === governedEvidenceId) : null;
+  const idTimestamp = Number((governedEvidenceId.match(/-(\d{13})$/) || [])[1]);
+  const createdAt = record?.created_at || record?.createdAt || record?.submittedAt
+    || (Number.isFinite(idTimestamp) ? new Date(idTimestamp).toISOString() : null);
+  const createdMs = Date.parse(createdAt || "");
+  const expiresAt = record?.expires_at || record?.expiresAt
+    || (Number.isFinite(createdMs) ? new Date(createdMs + HAZARD_REPORT_EXPIRATION_MINUTES * 60000).toISOString() : null);
+  const expiresMs = Date.parse(expiresAt || "");
+  const explicitlyCleared = Boolean(record && gridlyHazardLifecycleIsManuallyCleared(record));
+  const expired = Number.isFinite(expiresMs) && expiresMs <= Date.now();
+  const stale = /stale|historical/i.test(String(record?.lifecycleState || record?.status || ""));
+  const current = Boolean(record && !expired && !explicitlyCleared && !stale);
+  const active = Boolean(current && gridlyIsActiveHazardRecord(record));
+  const lifecycle = record && typeof gridlyClassifyHazardLifecycle === "function" ? gridlyClassifyHazardLifecycle(record) : null;
+  const sourceLifecycleReason = explicitlyCleared ? "EXPLICIT_CLEAR"
+    : expired ? "PROVIDER_TTL_EXPIRED"
+      : stale ? "GOVERNED_STALE"
+        : record ? (active ? "CURRENT_ACTIVE" : "FILTERED_INACTIVE") : "SOURCE_ROW_ABSENT";
+  const legitimateLifecycleRemoval = explicitlyCleared || expired || stale;
+  return Object.freeze({
+    presentationIncidentId, governedEvidenceId,
+    sourceLifecycleStatus: legitimateLifecycleRemoval ? "LEGITIMATE_LIFECYCLE_REMOVAL" : (active ? "ACTIVE" : "LIFECYCLE_DEFECT_DETECTABLE"),
+    sourceLifecycleReason,
+    lastSourceSeenAt: legitimateLifecycleRemoval ? (record?.updated_at || record?.updatedAt || expiresAt || createdAt) : (record?.updated_at || record?.updatedAt || createdAt),
+    lastGovernedActiveSeenAt: legitimateLifecycleRemoval ? (expiresAt || record?.updated_at || record?.updatedAt || createdAt) : (lineage?.active ? new Date().toISOString() : null),
+    removedByFunction: expired ? "loadSharedReports" : (explicitlyCleared ? "gridlyFilterRoadHazardsByLatestLifecycle" : (stale ? "gridlyIsActiveHazardRecord" : "not_observed")),
+    removedReason: expired ? "SUPABASE_EXPIRES_AT_NOT_GREATER_THAN_NOW" : sourceLifecycleReason,
+    legitimateLifecycleRemoval,
+    lifecycleFields: Object.freeze({ active, cleared: explicitlyCleared, stale, expired, current,
+      updatedAt: record?.updated_at || record?.updatedAt || null, createdAt, expiresAt,
+      ttlMinutes: HAZARD_REPORT_EXPIRATION_MINUTES,
+      confirmationState: lifecycle?.lifecycleConfidence || (record?.confirmed ? "confirmed" : "unverified"),
+      sourceProviderState: sourceName,
+      governedActive: Boolean(lineage?.active && lineage?.current),
+      governedReason: lineage?.alertsOmissionReason || null })
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP226SourceLifecycleAudit", window.gridlyLP226SourceLifecycleAudit);
+
 window.gridlyLP226AlertsMembershipAudit = function (target = {}, governedId = "") {
   const options = typeof target === "object" && target !== null ? target : { presentationIncidentId: target, governedEvidenceId: governedId };
   const expectedPresentationIncidentId = String(options.presentationIncidentId || options.targetPresentationIncidentId || GRIDLY_LP226_DEFAULT_TARGET_PRESENTATION_ID).trim();
@@ -31110,6 +31173,7 @@ window.gridlyLP226AlertsReopenAcceptance = function (target = {}, governedId = "
     membershipChangedWithoutSignature: audit.membershipChangedWithoutSignature,
     authoritativeMembershipCount, domMembershipCount, membershipParity, domLocation, selectedLocationValue,
     snapshotBuildDecision: audit.snapshotBuildDecision, snapshotReuseDecision: audit.snapshotReuseDecision,
+    authoritativeWriteDispatchAttempted: Boolean(lastOpen.authoritativeWriteDispatchAttempted),
     authoritativeWriteApplied,
     sheetExposedAfterAuthority: Boolean(authoritativeWriteApplied && lastOpen.sheetVisibleAt && lastOpen.initialCardsRenderedAt === lastOpen.sheetVisibleAt),
     writerParity, presentationContract, firstLosingStage: audit.firstLosingStage, overallPass
@@ -35277,6 +35341,7 @@ function openAlertsSurfaceFromDock() {
     cacheAvailable: cacheRead.available,
     cacheContextMatched: cacheRead.contextMatched,
     authoritativeBuildStartedAt: null,
+    authoritativeWriteDispatchAttempted: false,
     authoritativeBuildCompletedAt: null,
     authoritativeContentAppliedAt: null,
     sheetOpenDelayMs: Number((sheetInsertedAt - handlerEnteredAt).toFixed(2)),
@@ -35304,6 +35369,7 @@ function openAlertsSurfaceFromDock() {
   gridlyAlertsWriterSynchronizationAuditState.lastScheduleReason = cacheRead.contextMatched
     ? "alerts_reopen_cached_snapshot_authoritative_reprojection"
     : "alerts_open_same_transaction";
+  gridlyInstantAlertsSheetAuditState.lastOpen.authoritativeWriteDispatchAttempted = true;
   gridlyOpenAlertsSurfaceAfterPaint(alertsSheetGeneration);
   const shellResult = true;
   window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "openAlertsSurfaceFromDock shell", startTime: lp224ShellStartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: "dock Alerts activation", productionOwner: "openAlertsSurfaceFromDock", domMutationOccurred: false, outputChanged: false, authoritativeWriteFollowed: true });
