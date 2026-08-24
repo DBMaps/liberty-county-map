@@ -1,7 +1,7 @@
 (function gridlyRuntimePerformanceAuditModule(globalScope) {
   "use strict";
 
-  const VERSION = "LP224.2";
+  const VERSION = "LP224.3";
   const MAX_ENTRIES = 200;
   const startedAt = new Date().toISOString();
   let generation = 1;
@@ -10,6 +10,8 @@
   let currentTransactionId = null;
   const transactions = [];
   const longTasks = [];
+  const stageTimings = [];
+  let stageSequence = 0;
 
   const now = () => globalScope.performance && typeof globalScope.performance.now === "function"
     ? globalScope.performance.now()
@@ -121,6 +123,76 @@
     trim(longTasks);
   }
 
+  function activeTransactionForStage(startTime) {
+    if (!currentTransactionId) return null;
+    const transaction = transactions.find((entry) => entry.transactionId === currentTransactionId);
+    return transaction && transaction.generation === generation && startTime >= transaction.startTime
+      && (transaction.endTime === null || startTime <= transaction.endTime) ? transaction : null;
+  }
+
+  // Called only by explicit Alerts production boundaries. This records supplied
+  // facts; it does not invoke the production function, inspect a stack, mutate
+  // the DOM, or install a wrapper around a browser API.
+  function recordAlertsStage(record = {}) {
+    const startTime = Number(record.startTime);
+    const endTime = Number(record.endTime);
+    if (!record.stageName || !Number.isFinite(startTime) || !Number.isFinite(endTime)) return null;
+    const transaction = activeTransactionForStage(startTime);
+    if (!transaction || endTime < startTime) return null;
+    const entry = {
+      stageName: String(record.stageName),
+      transactionId: transaction.transactionId,
+      measurementGeneration: transaction.measurementGeneration,
+      invocationSequence: ++stageSequence,
+      startTime: round(startTime),
+      endTime: round(endTime),
+      durationMs: round(endTime - startTime),
+      triggerReason: record.triggerReason == null ? null : String(record.triggerReason),
+      productionOwner: record.productionOwner == null ? null : String(record.productionOwner),
+      domMutationOccurred: record.domMutationOccurred === true,
+      outputChanged: record.outputChanged == null ? null : Boolean(record.outputChanged),
+      authoritativeWriteFollowed: record.authoritativeWriteFollowed === true
+    };
+    stageTimings.push(entry);
+    trim(stageTimings);
+    return { ...entry };
+  }
+
+  function stageResultFor(transaction) {
+    const timings = stageTimings.filter((entry) => entry.transactionId === transaction.transactionId);
+    const byTrigger = new Map();
+    timings.forEach((entry) => {
+      const trigger = entry.productionOwner || entry.triggerReason || "UNATTRIBUTED_EXPLICIT_BOUNDARY";
+      const summary = byTrigger.get(trigger) || { trigger, callCount: 0, transactionId: transaction.transactionId, downstreamStages: [], totalMeasuredStageTimeMs: 0, maxInvocationDurationMs: 0 };
+      summary.callCount += 1;
+      if (!summary.downstreamStages.includes(entry.stageName)) summary.downstreamStages.push(entry.stageName);
+      summary.totalMeasuredStageTimeMs += entry.durationMs;
+      summary.maxInvocationDurationMs = Math.max(summary.maxInvocationDurationMs, entry.durationMs);
+      byTrigger.set(trigger, summary);
+    });
+    const triggerLineage = [...byTrigger.values()].map((entry) => ({ ...entry, totalMeasuredStageTimeMs: round(entry.totalMeasuredStageTimeMs), maxInvocationDurationMs: round(entry.maxInvocationDurationMs) }));
+    const longTaskStageOverlap = (transaction.longTasks || []).map((task) => {
+      const taskEnd = task.startTime + task.durationMs;
+      const overlappingStages = timings.filter((stage) => stage.startTime < taskEnd && stage.endTime > task.startTime)
+        .map((stage) => ({ stageName: stage.stageName, invocationSequence: stage.invocationSequence, startTime: stage.startTime, endTime: stage.endTime, durationMs: stage.durationMs }));
+      return { longTaskStartTime: task.startTime, longTaskDurationMs: task.durationMs, classification: overlappingStages.length === 0 ? "NO_MEASURED_STAGE_OVERLAP" : overlappingStages.length === 1 ? "EXACT_STAGE_OVERLAP" : "MULTIPLE_STAGE_OVERLAP", overlappingStages, causationClaimed: false };
+    });
+    const totals = new Map();
+    timings.forEach((entry) => {
+      const total = totals.get(entry.stageName) || { stageName: entry.stageName, totalDurationMs: 0, maxInvocationDurationMs: 0, callCount: 0 };
+      total.totalDurationMs += entry.durationMs; total.maxInvocationDurationMs = Math.max(total.maxInvocationDurationMs, entry.durationMs); total.callCount += 1;
+      totals.set(entry.stageName, total);
+    });
+    const stages = [...totals.values()].map((entry) => ({ ...entry, totalDurationMs: round(entry.totalDurationMs), maxInvocationDurationMs: round(entry.maxInvocationDurationMs) }));
+    return {
+      stageTimings: timings.map((entry) => ({ ...entry })), triggerLineage, longTaskStageOverlap,
+      topStageByTotalDuration: stages.sort((a, b) => b.totalDurationMs - a.totalDurationMs)[0] || null,
+      topStageByMaxInvocationDuration: [...stages].sort((a, b) => b.maxInvocationDurationMs - a.maxInvocationDurationMs)[0] || null,
+      topIdleTrigger: transaction.label === "IDLE" ? [...triggerLineage].sort((a, b) => b.callCount - a.callCount || b.totalMeasuredStageTimeMs - a.totalMeasuredStageTimeMs)[0] || null : null,
+      firstExpensiveStage: null
+    };
+  }
+
   let longTaskObserver = null;
   let longTaskObserverSupported = false;
   function drainLongTasks() {
@@ -177,6 +249,7 @@
     transaction.writerDeltas = subtract(finalSnapshot.writers, transaction.baseline.writers);
     transaction.schedulingDeltas = subtract(finalSnapshot.scheduling, transaction.baseline.scheduling);
     transaction.repeatedWorkDeltas = subtract(finalSnapshot.repeatedWork, transaction.baseline.repeatedWork);
+    Object.assign(transaction, stageResultFor(transaction));
     if (currentTransactionId === id) currentTransactionId = null;
     return publicTransaction(transaction);
   }
@@ -188,6 +261,8 @@
     currentTransactionId = null;
     transactions.length = 0;
     longTasks.length = 0;
+    stageTimings.length = 0;
+    stageSequence = 0;
     measurementCutoff = now();
     return { reset: true, measurementGeneration: generation, baselineCutoff: measurementCutoff, nextTransactionId: `lp224-g${generation}-1` };
   }
@@ -255,6 +330,7 @@
       },
       layout: { reads: Number(reflow.layoutReads || 0), writes: Number(reflow.domWrites || 0), suspectedForcedLayouts, confirmedRiskSites: reflow.confirmedRiskSites || [] },
       longTasks: longTasks.map((entry) => ({ ...entry })),
+      stageTimings: stageTimings.filter((entry) => entry.measurementGeneration === generation).map((entry) => ({ ...entry })),
       longTaskObservationSupported: longTaskObserverSupported,
       repeatedWork,
       findings: [{ classification: "UNKNOWN", evidence: "A bounded transaction has not deterministically identified a production owner" }],
@@ -267,4 +343,5 @@
   globalScope.gridlyRuntimePerformanceAuditBegin = beginTransaction;
   globalScope.gridlyRuntimePerformanceAuditEnd = endTransaction;
   globalScope.gridlyRuntimePerformanceAuditReset = reset;
+  globalScope.gridlyRuntimePerformanceAuditRecordAlertsStage = recordAlertsStage;
 })(typeof window !== "undefined" ? window : globalThis);
