@@ -9,6 +9,7 @@ const writer = app.slice(app.indexOf("async function gridlyOpenAlertsSurfaceAuth
 const open = app.slice(app.indexOf("function openAlertsSurfaceFromDock()"), app.indexOf("function gridlyInstantAlertsSheetAudit()"));
 const membershipAudit = app.slice(app.indexOf("const GRIDLY_LP226_DEFAULT_TARGET_PRESENTATION_ID"), app.indexOf("window.gridlyLP226AlertsReopenAcceptance"));
 const acceptance = app.slice(app.indexOf("window.gridlyLP226AlertsReopenAcceptance"), app.indexOf("window.gridlyAlertDataDiagnostic"));
+const lifecycleAudit = app.slice(app.indexOf("window.gridlyLP226SourceLifecycleAudit"), app.indexOf("window.gridlyLP226AlertsMembershipAudit"));
 
 test("unchanged same-generation requests reuse the existing snapshot without a timer", () => {
   assert.match(snapshot, /inputSignature === inputSignature/);
@@ -93,9 +94,28 @@ test("bounded signature distinguishes identity, lifecycle, and equal-count repla
 });
 
 test("owner reopen helper reports snapshot and writer decisions without another writer or delay", () => {
-  for (const key of ["snapshotBuildDecision", "snapshotReuseDecision", "authoritativeWriteApplied", "sheetExposedAfterAuthority", "domLocation", "selectedLocationValue", "writerParity", "presentationContract", "firstLosingStage"]) assert.match(acceptance, new RegExp(key));
+  for (const key of ["snapshotBuildDecision", "snapshotReuseDecision", "authoritativeWriteDispatchAttempted", "authoritativeWriteApplied", "sheetExposedAfterAuthority", "domLocation", "selectedLocationValue", "writerParity", "presentationContract", "firstLosingStage"]) assert.match(acceptance, new RegExp(key));
   assert.match(acceptance, /gridlyAlertsAuthorityWriterAudit/);
   assert.doesNotMatch(acceptance, /innerHTML|openGridlyPortraitV2Sheet|setTimeout|setInterval|requestAnimationFrame/);
+  assert.equal((app.match(/async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync/g) || []).length, 1);
+});
+
+test("source lifecycle audit distinguishes legitimate TTL removal from detectable invalid removal", () => {
+  for (const key of ["sourceLifecycleStatus", "sourceLifecycleReason", "lastSourceSeenAt", "lastGovernedActiveSeenAt",
+    "removedByFunction", "removedReason", "legitimateLifecycleRemoval", "active", "cleared", "stale", "expired",
+    "current", "updatedAt", "createdAt", "expiresAt", "ttlMinutes", "confirmationState", "sourceProviderState"]) {
+    assert.match(lifecycleAudit, new RegExp(key));
+  }
+  assert.match(lifecycleAudit, /PROVIDER_TTL_EXPIRED/);
+  assert.match(lifecycleAudit, /SUPABASE_EXPIRES_AT_NOT_GREATER_THAN_NOW/);
+  assert.match(lifecycleAudit, /LIFECYCLE_DEFECT_DETECTABLE/);
+  assert.doesNotMatch(lifecycleAudit, /activeHazards\s*=|\.push\(|\.splice\(/);
+});
+
+test("NO_BUILD and REUSE_SAME_GENERATION still dispatch the sole authoritative writer before exposure", () => {
+  assert.match(open, /authoritativeWriteDispatchAttempted = true;\s*gridlyOpenAlertsSurfaceAfterPaint\(alertsSheetGeneration\)/);
+  assert.match(open, /sheetVisibleAt: null/);
+  assert.match(writer, /window\.openGridlyPortraitV2Sheet\("alerts"/);
   assert.equal((app.match(/async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync/g) || []).length, 1);
 });
 
