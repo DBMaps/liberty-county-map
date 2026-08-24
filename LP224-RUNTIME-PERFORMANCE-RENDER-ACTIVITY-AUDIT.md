@@ -47,11 +47,33 @@ The authoritative Alerts writer remains `renderAlerts`; LP224 neither wraps nor 
 
 ## Passive instrumentation and authoritative helper
 
-`window.gridlyRuntimePerformanceAudit()` aggregates existing measured boundaries without wrapping writers or schedulers. A native `PerformanceObserver`, when available, records long tasks with the contemporaneous LP224 transaction ID. Unsupported APIs fail closed. Manual transaction boundaries use monotonic IDs; reset is explicit and deterministic.
+`window.gridlyRuntimePerformanceAudit()` aggregates existing measured boundaries without wrapping writers or schedulers. A native `PerformanceObserver`, when available, records Long Tasks against explicit transaction timestamps. Unsupported APIs fail closed. Reset advances a measurement generation and records a monotonic cutoff; because browser-buffered performance entries cannot be deleted, entries older than that cutoff are truthfully excluded rather than represented as removed.
 
-The helper reports unknowns rather than inventing attribution. `safeToOptimize` is true only after an existing measured function exceeds 50 ms; a Long Task entry alone is never assigned to a function.
+LP224.1 cleared only its local Long Task array and reset its ID sequence. The observer's browser-owned buffered entries could subsequently be delivered again, so there was no durable observation boundary. LP224.2 fixes that instrumentation defect without changing production behavior. The helper continues to report unknowns rather than inventing function ownership, and `safeToOptimize` remains false until bounded live evidence deterministically identifies a production path.
 
-## Owner single console acceptance block
+## Owner synchronous console workflow
+
+Reset once before each measurement, begin a named transaction, perform or wait for the action manually, and end it. No Promise wrapper is needed.
+
+```js
+gridlyRuntimePerformanceAudit("reset")
+const id = gridlyRuntimePerformanceAudit("begin", "IDLE")
+// Wait manually, then:
+gridlyRuntimePerformanceAudit("end", id)
+```
+
+```js
+gridlyRuntimePerformanceAudit("reset")
+const id = gridlyRuntimePerformanceAudit("begin", "OPEN_ALERTS")
+// Tap Alerts and wait for visible completion, then:
+gridlyRuntimePerformanceAudit("end", id)
+```
+
+The same `begin` call accepts `COMMUNITY_CHANGE`, `MAP_PAN`, `MAP_ZOOM`, or `REPORT_SUBMIT`. The direct aliases remain available: `gridlyRuntimePerformanceAuditReset()`, `gridlyRuntimePerformanceAuditBegin(label, reason)`, and `gridlyRuntimePerformanceAuditEnd(id)`.
+
+Each end result includes transaction identity and bounds, canonical `durationMs` Long Tasks, maximum Long Task duration, and surface/render/writer/scheduling/repeated-work deltas. The aggregate audit preserves lifetime totals separately.
+
+## Owner aggregate console block
 
 ```js
 (() => {
@@ -72,7 +94,7 @@ The helper reports unknowns rather than inventing attribution. `safeToOptimize` 
 })()
 ```
 
-Call `gridlyRuntimePerformanceAuditBegin(type, reason)` before an action and `gridlyRuntimePerformanceAuditEnd(id)` after convergence. Baseline labels are `FRESH_LOAD`, `COMMUNITY_CHANGE`, `OPEN_ALERTS`, `REOPEN_ALERTS`, `OPEN_SETTINGS`, `MAP_PAN`, `MAP_ZOOM`, `REPORT_SUBMIT`, `ACTIVE_EVIDENCE_REFRESH`, and `IDLE`.
+Canonical community context is read passively from `gridlyGetCanonicalActiveCommunityState().selectedAwarenessArea`; it remains null when that governed authority has no selected community and is never inferred from county.
 
 ## Classified findings and optimization candidates
 
