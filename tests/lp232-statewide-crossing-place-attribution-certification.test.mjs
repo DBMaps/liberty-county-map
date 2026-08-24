@@ -6,6 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 import { geometrySourceState, readTigerPlaceGeometry } from '../tools/lp232/tiger-place-geometry-reader.mjs';
+import { reconcileGovernedPlaceGeometry } from '../tools/lp232/governed-place-reconciliation.mjs';
 
 const root = new URL('../', import.meta.url);
 const report = JSON.parse(await readFile(new URL('reports/lp232/statewide-crossing-place-attribution-certification.json', root)));
@@ -29,3 +30,49 @@ test('spatial and identity contract prohibits approximations', () => { assert.eq
 test('certified statewide identity baseline remains governed', () => assert.deepEqual(report.canonicalBaseline, { canonicalCommunities: 1859, governedMemberships: 2058, multiCountyIdentities: 163, counties: 254 }));
 test('production behavior is untouched', () => assert.deepEqual(Object.values(report.safety), Array(8).fill(false)));
 test('builder contains no network or production runtime integration', async () => { const source = await readFile(new URL('tools/lp232/build-crossing-place-attribution-certification.mjs', root), 'utf8'); assert.doesNotMatch(source, /https?:|fetch\(|js\/app\.js|DriveTexas/); });
+
+const eligible = [{ geoid: '4800001', officialName: 'Active', placeFips: '00001', classFp: 'C1', funcStat: 'A', governedType: 'INCORPORATED_PLACE' }];
+const inactive = { geoid: '4800002', officialName: 'Inactive', placeFips: '00002', classFp: 'C9', funcStat: 'I', governedType: 'INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE' };
+const geometry = (GEOID, PLACEFP = GEOID.slice(-5)) => ({ GEOID, PLACEFP, valid: true, empty: false });
+
+test('governed geometry coverage permits an authority-classified source exclusion', () => {
+  const result = reconcileGovernedPlaceGeometry([geometry('4800001'), geometry('4800002')], [...eligible, inactive], ['4800001']);
+  assert.equal(result.exactGovernedGeometryMatches, 1);
+  assert.equal(result.missingGovernedGeometryCount, 0);
+  assert.equal(result.governedExcludedGeometryCount, 1);
+  assert.equal(result.unknownExtraGeometryCount, 0);
+  assert.equal(result.geometryReconciliationPass, true);
+  assert.deepEqual(result.excludedGeometryIdentities.map(row => row.geoid), ['4800002']);
+});
+
+test('unknown additional source geometry fails closed', () => {
+  const result = reconcileGovernedPlaceGeometry([geometry('4800001'), geometry('4899999')], [...eligible, inactive], ['4800001']);
+  assert.equal(result.unknownExtraGeometryCount, 1);
+  assert.equal(result.geometryReconciliationPass, false);
+});
+
+test('missing and duplicate governed geometry fail closed', () => {
+  assert.equal(reconcileGovernedPlaceGeometry([], eligible, ['4800001']).geometryReconciliationPass, false);
+  assert.equal(reconcileGovernedPlaceGeometry([geometry('4800001'), geometry('4800001')], eligible, ['4800001']).geometryReconciliationPass, false);
+});
+
+test('exclusions are derived from governed classification rather than GEOID constants', async () => {
+  const source = await readFile(new URL('tools/lp232/governed-place-reconciliation.mjs', root), 'utf8');
+  assert.match(source, /censusConsumerEligible\(authority\.governedType\)/);
+  assert.doesNotMatch(source, /4832684|4850184|4850724|4860644/);
+});
+
+test('source lineage builder preserves inactive identities and source geometry', async () => {
+  const source = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
+  assert.match(source, /INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE/);
+  assert.match(source, /Write-StableJson \(Join-Path \$promote 'texas-place-canonical\.json'\) \$canonical/);
+  assert.match(source, /sourceGeometryModified=\$false/);
+  assert.match(source, /membershipMethod='POLYGON_AREA_INTERSECTION'/);
+});
+
+test('attribution is gated by successful governed reconciliation and excludes inactive geometry', async () => {
+  const source = await readFile(new URL('tools/lp232/build-crossing-place-attribution-certification.mjs', root), 'utf8');
+  assert.match(source, /reconciliation\?\.geometryReconciliationPass === true/);
+  assert.match(source, /eligiblePlaces\.filter|const eligiblePlaces/);
+  assert.match(source, /excludedInactiveOnly/);
+});

@@ -36,13 +36,7 @@
     "placefpUniqueWithinTexas": null,
     "repairPerformed": false
   },
-  "identityReconciliation": {
-    "canonicalCommunities": 1859,
-    "exactGeoidMatches": null,
-    "missingCanonicalGeoids": null,
-    "extraGeometryGeoids": null,
-    "pass": null
-  },
+  "identityReconciliation": null,
   "crossingAuthority": {
     "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
     "sizeBytes": 67186117,
@@ -62,10 +56,19 @@
     "artifactPath": null,
     "artifactBytes": null,
     "artifactSha256": null,
-    "crossingsAttributedToCanonicalPlace": null,
-    "crossingsOutsideAnyCanonicalPlace": null,
-    "crossingsWithMultiplePlaceMatches": null,
+    "deterministicRebuildPass": false,
+    "crossingsWithValidCoordinates": null,
+    "crossingsAttributedToGovernedCanonicalPlace": null,
+    "crossingsOutsideAnyGovernedCanonicalPlace": null,
+    "crossingsWithMultipleGovernedPlaceMatches": null,
+    "crossingsIntersectingOnlyExcludedInactivePlace": null,
     "crossingsWithIdentityUnavailable": null,
+    "duplicateCrossingRecordsRemoved": 0,
+    "canonicalPlacesWithAtLeastOneCrossing": null,
+    "canonicalPlacesWithZeroCrossings": null,
+    "multiCountyPlacesWithAtLeastOneCrossing": null,
+    "multiCountyPlacesWithZeroCrossings": null,
+    "multiCountyPlacesWithAmbiguousAttribution": null,
     "controls": [
       {
         "name": "Katy",
