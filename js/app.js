@@ -57077,6 +57077,59 @@ function gridlyRailLocationContextParityAudit(summary = buildGridlyCommunityAwar
 }
 window.gridlyRailLocationContextParityAudit = gridlyRailLocationContextParityAudit;
 
+// LP229 observes the awareness collections already owned by production.  It
+// deliberately does not hydrate sibling memberships or ask any consumer to
+// rebuild: absent sibling evidence is reported as an authority limitation.
+window.gridlyLP229CanonicalCommunityAwarenessScopeAudit = function gridlyLP229CanonicalCommunityAwarenessScopeAudit() {
+  const selectedArea = getGridlySelectedAwarenessArea();
+  const canonicalCommunity = String(selectedArea?.label || selectedArea?.storageValue || "").trim() || null;
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(selectedArea);
+  const canonicalKey = String(selectedArea?.canonicalKey || selectedArea?.key || (placeGeoid ? `place-${placeGeoid}` : "")).trim() || null;
+  const activeCounty = gridlyGetActiveCountyId();
+  const membershipFips = [...new Set((Array.isArray(selectedArea?.countyMemberships) ? selectedArea.countyMemberships : []).map(String))];
+  const membershipCountyIds = membershipFips.map((countyFips) => Object.entries(GRIDLY_COUNTY_REGISTRY)
+    .find(([, config]) => String(config?.countyFips || "") === countyFips)?.[0]).filter(Boolean);
+  const allGovernedMemberships = membershipCountyIds.length ? membershipCountyIds : [activeCounty];
+  const selectedMembership = activeCounty;
+  const summary = buildGridlyCommunityAwarenessIntelligenceSummary();
+  const reports = [...(Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea : []), ...(Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea : [])];
+  const identity = (record) => String(record?.governedEvidenceId || record?.canonicalIncidentId || record?.report_id || record?.reportId || record?.incidentId || record?.id || "").trim();
+  const county = (record) => gridlyNormalizeCountyId(record?.sourceCounty || record?.countyId || record?.county_id || record?.raw?.countyId || "");
+  const ids = (records) => [...new Set(records.map(identity).filter(Boolean))];
+  const counties = (records) => [...new Set(records.map(county).filter(Boolean))];
+  const crossingEvidence = reports.filter((record) => isGridlyCrossingReportRecord(record));
+  const driveTexasRecords = typeof window.gridlyDriveTexasConnector?.getNormalizedRecords === "function"
+    ? window.gridlyDriveTexasConnector.getNormalizedRecords() : [];
+  const driveTexasEligible = (Array.isArray(driveTexasRecords) ? driveTexasRecords : []).filter((record) => isGridlyRecordInAwarenessArea(record, selectedArea));
+  const weatherRecords = typeof window.gridlyWeatherConnector?.getNormalizedRecords === "function"
+    ? window.gridlyWeatherConnector.getNormalizedRecords() : [];
+  const multiCounty = allGovernedMemberships.length > 1;
+  const communityAuthority = "lifecycle-active record -> isGridlyRecordInAwarenessArea: governed area geometry when present; otherwise county-qualified canonical/text identity, then record/crossing coordinate within presentation radius";
+  const consumerAuthority = Object.freeze({
+    alerts: "independent Alerts snapshot plus selected-awareness area filter",
+    kbyg: "governed active community projection; official roadway and weather provider projections remain separate",
+    communityPulse: "buildGridlyCommunityAwarenessIntelligenceSummary selected-awareness collection",
+    topAwareness: "reuses Community Pulse/community awareness summary",
+    locationContext: "reuses Community Pulse/community awareness summary; static crossing count remains a separate active-county selector",
+    map: "independent incident/crossing marker registries and viewport presentation"
+  });
+  return Object.freeze({
+    audit: "LP229 canonical community awareness scope audit (passive)",
+    canonicalCommunity, canonicalKey, selectedMembership,
+    allGovernedMemberships: Object.freeze(allGovernedMemberships), activeCounty,
+    communityReports: Object.freeze({ authority: communityAuthority, eligibleIds: Object.freeze(ids(reports)), sourceCounties: Object.freeze(counties(reports)), selectedMembershipLimited: multiCounty, safeToAggregate: false, classification: "NARROW_REPAIR_SAFE" }),
+    blockedCrossingEvidence: Object.freeze({ authority: `${communityAuthority}; crossing inventory coordinate is only a fallback and does not establish PLACE ownership`, eligibleIds: Object.freeze(ids(crossingEvidence)), sourceCounties: Object.freeze(counties(crossingEvidence)), selectedMembershipLimited: multiCounty, deduplicationAuthority: "governed evidence/report identity; no cross-membership collection is currently built", safeToAggregate: false, classification: "REPAIR_REQUIRES_NEW_AUTHORITY" }),
+    driveTexas: Object.freeze({ authority: "statewide/shared normalized provider records -> selected-awareness coordinate/radius or text predicate -> official situation projection", eligibleIds: Object.freeze(ids(driveTexasEligible)), sourceCounties: Object.freeze(counties(driveTexasEligible)), selectedMembershipLimited: false, coordinateAuthority: "normalized provider point (LineString is reduced to midpoint) evaluated against selected presentation radius", deduplicationAuthority: "provider incident id before official-situation presentation re-keying", safeToAggregate: true, classification: "COMMUNITY_SCOPE_ALREADY_CERTIFIED" }),
+    weather: Object.freeze({ authority: "NWS/provider geography retained by provider; connector-selected travel-impact records currently use radius/text fallback", providerGeography: "NWS alert polygons/zones and statewide feed metadata are not intersected by a certified community predicate", selectedMembershipLimited: false, communityRelevanceAuthority: "no certified canonical-community advisory ownership; loaded connector count is observational only", loadedRecordCount: Array.isArray(weatherRecords) ? weatherRecords.length : 0, safeToAggregate: false, classification: "CURRENT_BEHAVIOR_INTENTIONALLY_PROVIDER_SCOPED" }),
+    consumers: consumerAuthority,
+    consumerDivergences: Object.freeze(["Alerts applies its own selected-awareness filter", "KBYG separates community, official-roadway, and weather projections", "Community Pulse and Top Awareness reuse the selected summary", "Location Context owns a separate static-crossing selector", "map publication and viewport ownership are independent"]),
+    overallClassification: "MIXED_AUTHORITY — LAUNCH_SAFE_WITH_KNOWN_LIMITATIONS",
+    safeToRepairBeforeLaunch: false,
+    preservedMarkerFinding: "DriveTexas FM0529 has valid coordinates and map movement; markerIdentity remains null and marker publication is not certified"
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP229CanonicalCommunityAwarenessScopeAudit", window.gridlyLP229CanonicalCommunityAwarenessScopeAudit);
+
 // LP228 is deliberately observational.  This helper describes the collection
 // already selected by Location Context; it does not load sibling county
 // packages or manufacture a canonical-community crossing collection.
@@ -57126,6 +57179,7 @@ window.gridlyLP228CommunityCrossingScopeAudit = function gridlyLP228CommunityCro
   });
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP228CommunityCrossingScopeAudit", window.gridlyLP228CommunityCrossingScopeAudit);
+
 window.gridlySafeBrowserCrossingAudit = async function gridlySafeBrowserCrossingAudit() {
   const canonicalCommunity = getGridlySelectedAwarenessArea();
   const countyId = gridlyGetActiveCountyId();
