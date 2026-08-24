@@ -30939,6 +30939,7 @@ window.gridlyAlertDataDiagnostic = function () {
     const hazardMeta = pickHazardMeta(alert);
     const chosenPrimaryTitle = (!genericTitle(chosenTitle) && tidy(chosenTitle)) || locationMeta.value || chosenTitle || "Road hazard reported";
     const chosenSecondaryDetail = hazardMeta.value || chosenSubtitle || "Road hazard reported";
+    const conciseLocation = gridlySelectConciseAlertLocation(alert, alert?.__gridlyNarrowConsumerCard || {});
     return {
       id: alert?.id,
       title: alert?.title,
@@ -30973,6 +30974,10 @@ window.gridlyAlertDataDiagnostic = function () {
       chosenSubtitle,
       chosenPrimaryTitle,
       chosenSecondaryDetail,
+      locationCandidateFields: ["roadName", "primaryRoad", "road", "nearestRoad", "crossStreet", "nearbyCrossStreet", "nearestCrossStreet", "crossingRoad", "resolvedCrossingName", "crossingName", "crossingLabel", "locationPhrase", "locationLabel", "nearbyKnownLocation", "canonicalCommunity", "city", "place", "county", "countyName"],
+      selectedLocationField: conciseLocation.field,
+      selectedLocationValue: conciseLocation.value,
+      locationSelectionReason: conciseLocation.reason,
       primarySource: (!genericTitle(chosenTitle) && tidy(chosenTitle)) ? "headlineLikeField" : locationMeta.source,
       secondarySource: hazardMeta.source,
       fieldUsedForTitle: chosenTitle === alert?.resolvedHeadline ? "resolvedHeadline" : chosenTitle === alert?.headline ? "headline" : chosenTitle === alert?.title ? "title" : chosenTitle === alert?.localizedSummary ? "localizedSummary" : "",
@@ -80986,6 +80991,9 @@ function buildGridlyAlertCardConsumerModel(alert = {}, options = {}) {
 }
 
 function gridlyResolveVisibleAlertCardLocationLine(alert = {}, consumerCard = {}) {
+  if (typeof gridlySelectConciseAlertLocation === "function") {
+    return gridlySelectConciseAlertLocation(alert, consumerCard).value;
+  }
   return cleanDisplayValue(
     consumerCard?.locationLine ||
     consumerCard?.locationLabel ||
@@ -81014,6 +81022,48 @@ function gridlyResolveVisibleAlertCardLocationLine(alert = {}, consumerCard = {}
     alert?.raw?.awarenessArea ||
     alert?.raw?.city
   ) || "Nearby";
+}
+
+// Alerts-only presentation selection. This deliberately consumes fields already
+// present on the normalized alert; it does not resolve, geocode, or mutate them.
+function gridlySelectConciseAlertLocation(alert = {}, consumerCard = {}) {
+  const clean = (value) => cleanDisplayValue(value);
+  const semanticKey = (value) => clean(value).toLowerCase().replace(/\b(?:road|rd)\.?\b/g, "road").replace(/\b(?:street|st)\.?\b/g, "street").replace(/[^a-z0-9]+/g, " ").trim();
+  const isMeaningful = (value) => {
+    const key = semanticKey(value);
+    return Boolean(key) && !/^(?:nearby|unknown|road closed|road closure|blocked|hazard reported|road hazard reported|alert reported)$/.test(key);
+  };
+  const candidates = (fields) => fields
+    .map((field) => ({ field, value: clean(alert?.[field]) }))
+    .filter((candidate) => isMeaningful(candidate.value));
+  const first = (fields) => candidates(fields)[0] || null;
+  const county = first(["county", "countyName"]);
+  const road = first(["roadName", "primaryRoad", "road"]);
+  const cross = first(["crossStreet", "nearbyCrossStreet", "nearestCrossStreet", "nearestRoad"]);
+  if (road && cross && semanticKey(road.value) !== semanticKey(cross.value)) {
+    return { value: `${road.value} near ${cross.value}`, field: `${road.field}+${cross.field}`, reason: "road_with_cross_street" };
+  }
+  if (road) return { ...road, reason: cross ? "duplicate_cross_street_removed" : "road" };
+
+  const nearestRoad = first(["nearestRoad"]);
+  if (nearestRoad) return { ...nearestRoad, reason: "nearest_road" };
+
+  const crossing = first(["crossingRoad", "resolvedCrossingName", "crossingName", "crossingLabel"]);
+  if (crossing) return { ...crossing, reason: "crossing_location" };
+  const location = first(["locationPhrase", "locationLabel", "nearbyKnownLocation"]);
+  if (location) return { ...location, reason: "location_context" };
+
+  // A completed consumer model can contain authoritative local crossing
+  // presentation not repeated on the flattened record. Never let its county-only
+  // fallback outrank an explicit community, however.
+  const modeledValue = clean(consumerCard?.locationLine || consumerCard?.locationLabel || alert?.__gridlyPresentationLocationLabel || alert?.locationLine || alert?.displayLocation || alert?.presentationLocation);
+  const modeledIsCounty = county && semanticKey(modeledValue) === semanticKey(county.value);
+  if (isMeaningful(modeledValue) && !modeledIsCounty) return { value: modeledValue, field: "consumerCard.locationLine", reason: "normalized_presentation_location" };
+
+  const community = first(["canonicalCommunity", "city", "place"]);
+  if (community) return { ...community, reason: "community" };
+  if (county) return { ...county, reason: "county_fallback" };
+  return { value: "Nearby", field: "fallback", reason: "no_meaningful_location" };
 }
 
 function gridlyBuildVisibleAlertLocationLineMarkup(locationLine = "", escapeText = esc) {
