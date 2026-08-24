@@ -62,14 +62,30 @@ test('Alerts cards use concise composition without Travel Brief evidence section
 
 test('concise Alerts select the most useful existing location without duplicate text', () => {
   const select = (alert, consumerCard = {}) => gridlySelectConciseAlertLocation(alert, consumerCard).value;
-  assert.equal(select({ roadName: 'Spring Street', crossStreet: 'Gilmer Street', county: 'Hopkins County' }), 'Spring Street near Gilmer Street');
-  assert.equal(select({ roadName: 'Spring Street', nearestRoad: 'Gilmer Street' }), 'Spring Street near Gilmer Street');
+  assert.equal(select({ roadName: 'Spring St', crossStreet: 'S Davis St', county: 'Hopkins County' }), 'Spring St and S Davis St');
+  assert.equal(gridlySelectConciseAlertLocation({ roadName: 'Spring St', crossStreet: 'S Davis St' }).reason, 'road_cross_street');
+  assert.equal(select({ roadName: 'Spring Street', nearestRoad: 'Gilmer Street' }), 'Spring Street');
   assert.equal(select({ roadName: 'Spring Street', county: 'Hopkins County' }), 'Spring Street');
   assert.equal(select({ crossingRoad: 'College Street', county: 'Hopkins County' }), 'College Street');
   assert.equal(select({ locationPhrase: 'Near the civic center', county: 'Hopkins County' }), 'Near the civic center');
   assert.equal(select({ canonicalCommunity: 'Sulphur Springs', county: 'Hopkins County' }), 'Sulphur Springs');
   assert.equal(select({ county: 'Hopkins County' }), 'Hopkins County');
   assert.equal(select({ roadName: 'Spring Street', crossStreet: 'Spring St.' }), 'Spring Street');
+  assert.equal(select({ resolvedLocation: 'Civic Center entrance', canonicalCommunity: 'Sulphur Springs' }), 'Civic Center entrance');
+  for (const generic of ['Road Closed', 'Blocked', 'Hazard reported']) assert.equal(select({ locationLabel: generic }), 'Nearby');
+});
+
+test('governed Alerts projection preserves popup incident-location fields and their authority trace', () => {
+  const projection = block('function gridlyProjectAlertIncidentLocation', '\nfunction gridlyStoryActiveRecords');
+  const project = Function(`${projection}; return gridlyProjectAlertIncidentLocation;`)();
+  const source = { road: 'Spring St', cross_street: 'S Davis St', popupLocation: 'Spring St and S Davis St' };
+  const projected = project({ id: 'sulphur-road-closure', source, canonicalCommunity: 'Sulphur Springs', countyName: 'Hopkins County' });
+  assert.equal(projected.roadName, 'Spring St');
+  assert.equal(projected.crossStreet, 'S Davis St');
+  assert.equal(projected.resolvedLocation, 'Spring St and S Davis St');
+  assert.equal(selectLocation(projected).value, 'Spring St and S Davis St');
+  assert.deepEqual(projected.locationSourceFields, ['roadName', 'crossStreet', 'resolvedLocation']);
+  function selectLocation(alert) { return gridlySelectConciseAlertLocation(alert); }
 });
 
 test('location refinement preserves concise presentation and identity ownership', () => {
