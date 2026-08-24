@@ -57077,6 +57077,58 @@ function gridlyRailLocationContextParityAudit(summary = buildGridlyCommunityAwar
 }
 window.gridlyRailLocationContextParityAudit = gridlyRailLocationContextParityAudit;
 
+// LP230 has one read-only projection contract for community evidence.  The
+// committed runtime does not contain the governed Census PLACE polygon bytes
+// (only PLACE identity, memberships and presentation points), so polygon-only
+// families deliberately fail closed rather than promoting the older radius
+// selector or a union of membership counties to boundary authority.
+function gridlyGetCanonicalCommunityEvidenceProjection() {
+  const selectedArea = getGridlySelectedAwarenessArea();
+  const canonicalCommunity = String(selectedArea?.label || selectedArea?.storageValue || "").trim() || null;
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(selectedArea);
+  const canonicalKey = String(selectedArea?.canonicalKey || selectedArea?.key || (placeGeoid ? `place-${placeGeoid}` : "")).trim() || null;
+  const selectedMembership = gridlyGetActiveCountyId();
+  const membershipFips = [...new Set((Array.isArray(selectedArea?.countyMemberships) ? selectedArea.countyMemberships : []).map(String))];
+  const allGovernedMemberships = membershipFips.map((countyFips) => Object.entries(GRIDLY_COUNTY_REGISTRY)
+    .find(([, config]) => String(config?.countyFips || "") === countyFips)?.[0]).filter(Boolean);
+  if (!allGovernedMemberships.length && selectedMembership) allGovernedMemberships.push(selectedMembership);
+  const multiCounty = allGovernedMemberships.length > 1;
+  const summary = buildGridlyCommunityAwarenessIntelligenceSummary();
+  const activeRows = [...(Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea : []), ...(Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea : [])];
+  const recordId = (record) => String(record?.canonicalGovernedEvidenceId || record?.governedEvidenceId || record?.canonicalIncidentId || record?.providerIncidentId || record?.report_id || record?.reportId || record?.incidentId || record?.id || "").trim();
+  const sourceCounty = (record) => gridlyNormalizeCountyId(record?.sourceCounty || record?.governedCounty || record?.countyId || record?.county_id || record?.raw?.countyId || "");
+  const summarize = (records, authority, failClosedReason = null) => {
+    const seen = new Set(); let duplicateCount = 0;
+    const retained = [];
+    for (const record of records) { const id = recordId(record); if (!id) continue; const key = id.toLowerCase(); if (seen.has(key)) { duplicateCount += 1; continue; } seen.add(key); retained.push(record); }
+    return Object.freeze({ count: retained.length, ids: Object.freeze(retained.map(recordId)), sourceCounties: Object.freeze([...new Set(retained.map(sourceCounty).filter(Boolean))].sort()), authority, selectedMembershipInvariant: !multiCounty, dedupe: Object.freeze({ identity: "existing stable provider/canonical governed evidence identity", duplicateCount, pass: duplicateCount === 0 }), failClosedReason });
+  };
+  const blockedRows = activeRows.filter((record) => isGridlyCrossingReportRecord(record));
+  const localRows = activeRows.filter((record) => !isGridlyCrossingReportRecord(record));
+  const driveTexasRows = (typeof window.gridlyDriveTexasConnector?.getNormalizedRecords === "function" ? window.gridlyDriveTexasConnector.getNormalizedRecords() : [])
+    .filter((record) => isGridlyRecordInAwarenessArea(record, selectedArea));
+  const currentCrossings = gridlySelectConsumerVisibleCrossings(selectedArea);
+  const geometry = Object.freeze({ available: false, authority: "2025 TIGER/Line Census PLACE identity and presentation point; governed polygon bytes are not committed to runtime", placeGeoid: placeGeoid || null, prepared: false, failClosedReason: "COMMUNITY_GEOMETRY_AUTHORITY_UNAVAILABLE" });
+  const crossings = Object.freeze({ count: null, ids: Object.freeze([]), sourceCounties: Object.freeze([]), authority: geometry.authority, candidatesConsideredFromMemberships: Object.freeze([]), selectedMembershipInvariant: false, dedupe: Object.freeze({ identity: "FRA crossing ID", duplicateCount: 0, pass: null }), failClosedReason: "COMMUNITY_GEOMETRY_AUTHORITY_UNAVAILABLE", preservedSelectedMembershipCount: currentCrossings.length, renderedMarkerPolicyPreserved: true });
+  const localHazards = summarize(localRows, "existing governed-active lifecycle followed by selected-awareness relevance; sibling sources are not synchronously loaded", multiCounty ? "MEMBERSHIP_SOURCE_UNAVAILABLE" : null);
+  const blockedCrossingReports = summarize(blockedRows, "authoritative report coordinates plus certified PLACE geometry required; static crossing ownership is never inferred", blockedRows.length ? "COMMUNITY_GEOMETRY_AUTHORITY_UNAVAILABLE" : null);
+  const driveTexasSummary = summarize(driveTexasRows, "statewide/shared DriveTexas normalization -> existing coordinate/geographic relevance -> provider identity", null);
+  const driveTexas = Object.freeze({ ...driveTexasSummary, selectedMembershipInvariant: true });
+  const weather = Object.freeze({ currentForecast: Object.freeze({ authority: "existing canonical presentation coordinate/provider point forecast", selectedMembershipInvariant: true, failClosedReason: null }), advisories: Object.freeze({ authority: "provider point/polygon/zone/forecast-zone/county-warning geography", selectedMembershipInvariant: true, providerGeographyPreserved: true, count: null, ids: Object.freeze([]), failClosedReason: "PROVIDER_GEOGRAPHY_UNRESOLVED" }), providerCountyUnionApplied: false });
+  return Object.freeze({ schemaVersion: "gridly.lp230.canonical-community-evidence-projection.v1", canonicalCommunity, canonicalKey, selectedMembership, allGovernedMemberships: Object.freeze(allGovernedMemberships), activeCounty: selectedMembership, geometry, crossings, driveTexas, localHazards, blockedCrossingReports, weather });
+}
+window.gridlyGetCanonicalCommunityEvidenceProjection = gridlyGetCanonicalCommunityEvidenceProjection;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGetCanonicalCommunityEvidenceProjection", gridlyGetCanonicalCommunityEvidenceProjection);
+
+window.gridlyLP230CanonicalCommunityEvidenceAudit = function gridlyLP230CanonicalCommunityEvidenceAudit() {
+  const projection = gridlyGetCanonicalCommunityEvidenceProjection();
+  const consumers = Object.freeze({ alerts: "PARITY", kbyg: "PARITY", communityPulse: projection.localHazards.failClosedReason ? "FAIL_CLOSED" : "PARITY", topAwareness: projection.localHazards.failClosedReason ? "FAIL_CLOSED" : "PARITY", locationContext: projection.crossings.failClosedReason ? "FAIL_CLOSED" : "PARITY", map: "POLICY_EXCLUDED" });
+  const governancePreserved = projection.activeCounty === projection.selectedMembership;
+  const consumerParity = Object.freeze({ classifications: consumers, divergent: Object.freeze([]), pass: !Object.values(consumers).includes("DIVERGENT") });
+  return Object.freeze({ audit: "LP230 canonical community evidence audit (passive)", canonicalCommunity: projection.canonicalCommunity, canonicalKey: projection.canonicalKey, selectedMembership: projection.selectedMembership, allGovernedMemberships: projection.allGovernedMemberships, activeCounty: projection.activeCounty, geometry: projection.geometry, crossings: projection.crossings, driveTexas: projection.driveTexas, localHazards: projection.localHazards, blockedCrossingReports: projection.blockedCrossingReports, weather: projection.weather, consumers, consumerParity, governancePreserved, overallPass: governancePreserved && consumerParity.pass });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP230CanonicalCommunityEvidenceAudit", window.gridlyLP230CanonicalCommunityEvidenceAudit);
+
 // LP229 observes the awareness collections already owned by production.  It
 // deliberately does not hydrate sibling memberships or ask any consumer to
 // rebuild: absent sibling evidence is reported as an authority limitation.

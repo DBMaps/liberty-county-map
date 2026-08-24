@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "gridly.lp230.statewide-canonical-community-evidence-certification.v1",
+  "inventory": { "canonicalCommunities": 1859, "memberships": 2058, "multiCountyIdentities": 163, "counties": 254 },
+  "geometryAuthority": { "source": "2025 TIGER/Line Census PLACE identity/presentation artifacts", "runtimePolygonBytesAvailable": false, "failClosedReason": "COMMUNITY_GEOMETRY_AUTHORITY_UNAVAILABLE" },
+  "crossings": { "communitiesWithCertifiedGeometry": 0, "communitiesWithoutCertifiedGeometry": 1859, "multiCountyCommunitiesSuccessfullyAggregated": 0, "multiCountyCommunitiesFailClosed": 163, "totalCanonicalCrossingMemberships": 0, "duplicateStableCrossingIdsRemoved": 0, "communitiesWhereSelectedMembershipChangesCanonicalCount": 0 },
+  "driveTexas": { "authority": "statewide shared provider acquisition and existing coordinate/geographic relevance", "providerIdentityDedupe": true, "selectedMembershipInvariant": true, "lifecycleChanged": false },
+  "localHazards": { "authority": "existing governed-active lifecycle and currently loaded coordinate relevance", "multiCountyFailClosedReason": "MEMBERSHIP_SOURCE_UNAVAILABLE", "lifecycleChanged": false },
+  "blockedCrossingReports": { "staticCrossingPlaceInference": false, "failClosedReason": "COMMUNITY_GEOMETRY_AUTHORITY_UNAVAILABLE" },
+  "weather": { "currentForecastAuthority": "canonical presentation coordinate/provider point", "advisoryAuthority": "provider geography", "providerGeographyPreserved": true, "countyUnionApplied": false },
+  "protections": { "blindCountyUnionIntroduced": false, "alertsContractChanged": false, "kbygContractChanged": false, "multiCountyGovernanceChanged": false, "driveTexasMarkerArchitectureChanged": false, "unrelatedProductionChangeApplied": false }
+}
