@@ -113129,9 +113129,100 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return model;
   }
 
+  // LP226 owns only snapshot preparation.  This fingerprint is deliberately a
+  // shallow, bounded projection of Alerts inputs: it is not an alert identity,
+  // does not serialize provider payloads, and does not use elapsed time.
+  const gridlyAlertsSnapshotReconciliationState = {
+    inputSignature: null,
+    snapshot: null,
+    snapshotGeneration: 0,
+    requests: 0,
+    builds: 0,
+    reuses: 0,
+    invalidations: 0,
+    suppressedRequests: 0,
+    lastCaller: null,
+    lastChangedSincePrevious: null
+  };
+
+  function gridlyAlertsSnapshotInputSignature() {
+    let hash = 2166136261;
+    const add = (value) => {
+      const text = String(value ?? "");
+      for (let index = 0; index < text.length; index += 1) {
+        hash ^= text.charCodeAt(index);
+        hash = Math.imul(hash, 16777619);
+      }
+      hash ^= 31;
+    };
+    const addRecord = (record = {}) => [
+      record.evidenceId, record.id, record.uuid, record.reportId, record.report_id,
+      record.incidentId, record.crossingId, record.crossing_id, record.providerRecordId,
+      record.type, record.report_type, record.reportKind, record.status, record.lifecycleState,
+      record.expired, record.cleared, record.confirmationCount, record.supportCount, record.count,
+      record.updatedAt, record.updated_at, record.lastUpdated, record.submittedAt, record.created_at,
+      record.title, record.headline, record.severity, record.primaryRoad, record.roadName,
+      record.referenceRoadA, record.referenceRoadB, record.crossingRoad, record.locationName,
+      record.canonicalCommunity, record.canonicalKey, record.countyId, record.county_id,
+      record.lat, record.latitude, record.lng, record.lon, record.longitude
+    ].forEach(add);
+    const addRecords = (records) => {
+      const rows = Array.isArray(records) ? records : [];
+      add(rows.length);
+      rows.forEach(addRecord);
+    };
+    const canonical = typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState() : null;
+    const area = typeof gridlyGetSelectedAlertAreaFilter === "function" ? gridlyGetSelectedAlertAreaFilter() : null;
+    const preferences = typeof getSmartAlertsPreferences === "function" ? getSmartAlertsPreferences() : null;
+    const route = typeof getRouteSurfaceSnapshot === "function" ? getRouteSurfaceSnapshot() : null;
+    const driveTexas = typeof window.gridlyDriveTexasConnector?.getNormalizedRecords === "function"
+      ? window.gridlyDriveTexasConnector.getNormalizedRecords()
+      : (typeof window.gridlyDriveTexasProvider?.getNormalizedRecords === "function" ? window.gridlyDriveTexasProvider.getNormalizedRecords() : []);
+    const weather = typeof window.gridlyWeatherConnector?.getNormalizedRecords === "function"
+      ? window.gridlyWeatherConnector.getNormalizedRecords()
+      : (typeof window.gridlyWeatherProvider?.getNormalizedRecords === "function" ? window.gridlyWeatherProvider.getNormalizedRecords() : []);
+    [
+      canonical?.selectedAwarenessArea?.canonicalKey, canonical?.selectedAwarenessArea?.storageValue,
+      canonical?.community, canonical?.countyId, canonical?.county,
+      area?.mode, area?.canonicalKey, area?.countyId, area?.value,
+      preferences?.enabled, preferences?.routeAlerts, preferences?.communityAlerts,
+      route?.routeState, route?.origin, route?.destination, route?.updatedAt,
+      window.GRIDLY_ACTIVE_COUNTY_ID, window.gridlyDriveTexasNormalizedDataRevision,
+      window.gridlyTxdotNormalizedDataRevision, window.gridlyWeatherNormalizedDataRevision,
+      window.gridlyWeatherRevision
+    ].forEach(add);
+    addRecords(canonical?.activeRecords);
+    addRecords(activeReports);
+    addRecords(activeHazards);
+    addRecords(driveTexas);
+    addRecords(weather);
+    return `lp226-${(hash >>> 0).toString(36)}`;
+  }
+
+  function gridlyAlertsSnapshotReconciliationAudit() {
+    return Object.freeze({ ...gridlyAlertsSnapshotReconciliationState });
+  }
+  window.gridlyAlertsSnapshotReconciliationAudit = gridlyAlertsSnapshotReconciliationAudit;
+
   function getAlertsSurfaceSnapshot() {
     const lp224SnapshotStartedAt = gridlyAlertsOpenAuditNow();
     const lp224SnapshotCaller = gridlyAlertsTraceStackFrames()[0] || null;
+    const inputSignature = gridlyAlertsSnapshotInputSignature();
+    gridlyAlertsSnapshotReconciliationState.requests += 1;
+    gridlyAlertsSnapshotReconciliationState.lastCaller = lp224SnapshotCaller;
+    if (gridlyAlertsSnapshotReconciliationState.snapshot && gridlyAlertsSnapshotReconciliationState.inputSignature === inputSignature) {
+      gridlyAlertsSnapshotReconciliationState.reuses += 1;
+      gridlyAlertsSnapshotReconciliationState.suppressedRequests += 1;
+      gridlyAlertsSnapshotReconciliationState.lastChangedSincePrevious = false;
+      window.gridlyRuntimePerformanceAuditRecordAlertsSnapshot?.({ kind: "reuse", inputSignature, snapshotGeneration: gridlyAlertsSnapshotReconciliationState.snapshotGeneration, caller: lp224SnapshotCaller });
+      return gridlyAlertsSnapshotReconciliationState.snapshot;
+    }
+    if (gridlyAlertsSnapshotReconciliationState.inputSignature !== null) gridlyAlertsSnapshotReconciliationState.invalidations += 1;
+    gridlyAlertsSnapshotReconciliationState.inputSignature = inputSignature;
+    gridlyAlertsSnapshotReconciliationState.builds += 1;
+    gridlyAlertsSnapshotReconciliationState.snapshotGeneration += 1;
+    gridlyAlertsSnapshotReconciliationState.lastChangedSincePrevious = true;
+    window.gridlyRuntimePerformanceAuditRecordAlertsSnapshot?.({ kind: "build", inputSignature, snapshotGeneration: gridlyAlertsSnapshotReconciliationState.snapshotGeneration, caller: lp224SnapshotCaller });
     const gridlyPostPaintPhase = window.gridlyStartupDiagnostics?.beginPostPaintPhase?.("alert snapshot creation", "getAlertsSurfaceSnapshot");
     try {
     function applyRoadSnapshotFallback(alert = {}) {
@@ -113367,7 +113458,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const readinessSummary = prefs.enabled
       ? "Alert preferences are on for this device"
       : "Alert preferences are off — turn on to receive commute alerts";
-    return {
+    const snapshot = {
       activeIncidentCount,
       nearbySummary,
       routeImpactSummary,
@@ -113393,6 +113484,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       activeLocalizedAlertCount: unifiedIntel.activeLocalizedAlertCount,
       routeImpactIncidentCount: unifiedIntel.routeImpactIncidentCount
     };
+    gridlyAlertsSnapshotReconciliationState.snapshot = snapshot;
+    return snapshot;
     } finally {
       window.gridlyStartupDiagnostics?.endPostPaintPhase?.(gridlyPostPaintPhase);
       window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "alert snapshot creation", startTime: lp224SnapshotStartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: "getAlertsSurfaceSnapshot direct call", productionOwner: lp224SnapshotCaller, domMutationOccurred: false, outputChanged: null, authoritativeWriteFollowed: false });
