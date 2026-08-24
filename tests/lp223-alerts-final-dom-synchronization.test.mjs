@@ -17,6 +17,14 @@ test('portrait Alerts open and refresh dispatch the existing authoritative write
   assert.doesNotMatch(open, /alerts_open_is_cache_only/);
 });
 
+test('uncached Alerts open invokes authority before making a provisional shell visible', () => {
+  const open = block('function openAlertsSurfaceFromDock()', 'function gridlyInstantAlertsSheetAudit()');
+  assert.match(open, /cacheRead\.contextMatched && typeof window\.openGridlyPortraitV2Sheet/);
+  assert.match(open, /gridlyOpenAlertsSurfaceAfterPaint\(alertsSheetGeneration\)/);
+  assert.match(open, /alerts_open_same_transaction/);
+  assert.doesNotMatch(open, /neutral-empty-state/);
+});
+
 test('authoritative revision ownership cannot be invalidated by rendered output', () => {
   const revision = block('function gridlyGetAlertsAuthoritativeRevisionKey()', 'function gridlyLp0457MarkupHasBreakArtifacts');
   assert.doesNotMatch(revision, /__gridlyLatestAlertsForRender/);
