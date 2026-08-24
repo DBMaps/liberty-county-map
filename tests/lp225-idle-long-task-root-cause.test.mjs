@@ -54,3 +54,52 @@ test("LP225 has no town-specific attribution, writer replacement, or global brow
   assert.doesNotMatch(auditSource, /renderAlerts\s*=|renderGridlyCommunityPulse\s*=|localStorage\.setItem/);
   assert.match(auditSource, /instrumentationPassive: true/);
 });
+
+test("LP225 minimal control observes Long Tasks without attribution census or recording", () => {
+  let censusCalls = 0;
+  const h = harness();
+  h.window.gridlyMainThreadAttributionAudit = () => { censusCalls += 1; return { measuredFunctions: [] }; };
+  assert.deepEqual({ ...h.window.gridlyRuntimePerformanceAuditSetMode("MINIMAL_LONG_TASK_CONTROL") }, { mode: "MINIMAL_LONG_TASK_CONTROL" });
+  const reset = h.window.gridlyRuntimePerformanceAuditReset();
+  assert.equal(reset.measurementGeneration, 2);
+  const id = h.window.gridlyRuntimePerformanceAuditBegin("IDLE");
+  assert.equal(censusCalls, 0);
+  assert.equal(h.window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: "alert merge", startTime: 101, endTime: 110 }), null);
+  assert.equal(h.window.gridlyRuntimePerformanceAuditRecordSubsystemTiming({ subsystem: "AUDIT", boundaryName: "census", trigger: "manual", caller: "owner", startTime: 101, endTime: 110, auditOnly: true }), null);
+  h.queue({ name: "longtask", startTime: 105, duration: 75.555 }); h.at(200);
+  const result = h.window.gridlyRuntimePerformanceAuditControlEnd(id);
+  assert.deepEqual(Object.keys(result), ["mode", "durationMs", "longTaskCount", "maxLongTaskDurationMs", "longTasks"]);
+  assert.equal(result.mode, "MINIMAL_LONG_TASK_CONTROL");
+  assert.equal(result.longTaskCount, 1); assert.equal(result.maxLongTaskDurationMs, 75.56);
+  assert.equal(censusCalls, 0);
+});
+
+test("LP225 mode switches are deterministic and leave production execution unchanged", () => {
+  const h = harness(); let productionCalls = 0;
+  const productionFunction = () => { productionCalls += 1; return "unchanged-output"; };
+  for (const [mode, generation] of [["MINIMAL_LONG_TASK_CONTROL", 2], ["FULL_ATTRIBUTION", 3]]) {
+    assert.equal(h.window.gridlyRuntimePerformanceAudit("mode", mode).mode, mode);
+    assert.equal(h.window.gridlyRuntimePerformanceAudit("reset").measurementGeneration, generation);
+    const id = h.window.gridlyRuntimePerformanceAudit("begin", "IDLE");
+    assert.equal(productionFunction(), "unchanged-output");
+    h.at(100 + generation * 10);
+    const result = h.window.gridlyRuntimePerformanceAudit("control_end", id);
+    assert.equal(result.mode, mode); assert.equal(result.longTaskCount, 0);
+  }
+  assert.equal(productionCalls, 2);
+  assert.equal(h.window.gridlyRuntimePerformanceAuditSetMode("not-a-mode"), null);
+  assert.equal(h.window.gridlyRuntimePerformanceAudit().mode, "FULL_ATTRIBUTION");
+});
+
+test("LP225 FULL mode retains stage, subsystem, lineage, overlap, and repeated-work attribution", () => {
+  const h = harness();
+  h.window.gridlyRuntimePerformanceAuditSetMode("FULL_ATTRIBUTION");
+  const id = h.window.gridlyRuntimePerformanceAuditBegin("IDLE");
+  h.window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: "alert snapshot creation", startTime: 101, endTime: 120, productionOwner: "getAlertsSurfaceSnapshot" });
+  h.window.gridlyRuntimePerformanceAuditRecordSubsystemTiming({ subsystem: "ALERTS", boundaryName: "snapshot", trigger: "idle", caller: "getAlertsSurfaceSnapshot", startTime: 101, endTime: 120 });
+  h.queue({ name: "longtask", startTime: 105, duration: 60 }); h.at(180);
+  const full = h.window.gridlyRuntimePerformanceAuditEnd(id);
+  assert.equal(full.stageTimings.length, 1); assert.equal(full.subsystemTimings.length, 1);
+  assert.equal(full.ownerLineage.length, 1); assert.equal(full.longTaskOwnerOverlap.length, 1);
+  assert.ok("repeatedWorkDeltas" in full); assert.equal(full.longTaskCount, 1);
+});

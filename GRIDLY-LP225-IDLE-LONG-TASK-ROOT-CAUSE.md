@@ -54,3 +54,54 @@ result
 ```
 
 **NO PERFORMANCE OPTIMIZATION WAS APPLIED.**
+
+## Final audit-overhead control
+
+The bounded live-owner trace classified all three 1,343–1,381 ms Long Tasks as
+`AUDIT_OVERHEAD_CANDIDATE` because each task overlapped one or more measured
+subsystem boundaries and **every** overlapping boundary was explicitly marked
+`auditOnly: true`. Consequently the audit-only overlap count was three, no task
+was left browser/uninstrumented, and the overlap remained correlation rather
+than a causation claim. The trace therefore does not authorize production work.
+
+`FULL_ATTRIBUTION` is the unchanged LP224/LP225 path: transaction baseline and
+final audit censuses, Alerts stage records, subsystem records, counter and
+surface deltas, repeated-work deltas, trigger/owner lineage, and Long Task
+overlap/family aggregation are collected. `MINIMAL_LONG_TASK_CONTROL` retains
+only the boundary reset, synchronous bounded transaction timestamps, and the
+existing `PerformanceObserver` Long Task collection. It does not call the
+optional census helpers at begin/end, accept stage or subsystem records, or
+calculate attribution, lineage, overlap, repeated-work, scheduler, writer,
+render, or surface deltas. Neither mode invokes production work or modifies
+production scheduling, writers, rendering, data flow, or browser APIs.
+
+Run similarly sized, untouched windows with these synchronous console steps
+(there are no Promise wrappers or automatic timers):
+
+```js
+// FULL_ATTRIBUTION
+gridlyRuntimePerformanceAuditSetMode("FULL_ATTRIBUTION")
+gridlyRuntimePerformanceAuditReset()
+const fullId = gridlyRuntimePerformanceAuditBegin("IDLE")
+// Wait manually without interacting, then:
+const full = gridlyRuntimePerformanceAuditControlEnd(fullId)
+
+// MINIMAL_LONG_TASK_CONTROL
+gridlyRuntimePerformanceAuditSetMode("MINIMAL_LONG_TASK_CONTROL")
+gridlyRuntimePerformanceAuditReset()
+const minimalId = gridlyRuntimePerformanceAuditBegin("IDLE")
+// Wait manually without interacting, then:
+const minimal = gridlyRuntimePerformanceAuditControlEnd(minimalId)
+```
+
+Both `full` and `minimal` have only this comparison contract:
+
+```js
+{ mode, durationMs, longTaskCount, maxLongTaskDurationMs, longTasks }
+```
+
+Decision rule: severe tasks in FULL but not MINIMAL are
+`AUDIT_OVERHEAD_CONFIRMED_OR_STRONGLY_SUPPORTED`; similar tasks in both are
+`PRODUCTION_OR_BROWSER_WORK_REMAINS`; mixed evidence is `INCONCLUSIVE`. The
+latter two outcomes do not authorize optimization, and confirmed audit tasks
+must not be treated as production defects.
