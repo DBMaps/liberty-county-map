@@ -618,6 +618,9 @@
     "test:lp231": "node --test tests/lp231-*",
     "build:lp232": "node tools/lp232/build-crossing-place-attribution-certification.mjs --write",
     "verify:lp232": "node tools/lp232/build-crossing-place-attribution-certification.mjs --verify",
-    "test:lp232": "node --test tests/lp232-*"
+    "test:lp232": "node --test tests/lp232-*",
+    "build:lp233": "node tools/lp233/build-canonical-crossing-runtime.mjs --write",
+    "verify:lp233": "node tools/lp233/build-canonical-crossing-runtime.mjs",
+    "test:lp233": "node --test tests/lp233-*"
   }
 }

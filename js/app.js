@@ -51219,6 +51219,8 @@ function getGridlyBottomPanelAwarenessCrossingCount(summary = {}) {
   const projectedArea = summary.selectedAwarenessArea || {};
   const rejoin = gridlyRejoinCrossingAwarenessSelector(projectedArea, gridlyGetActiveCountyId());
   const selectedArea = rejoin.selector;
+  const canonicalMembership = window.gridlyCanonicalCrossingRuntime?.lookup(selectedArea);
+  if (canonicalMembership) return canonicalMembership.resolvedRuntimeCrossingCount;
   const routeWatchActive = Boolean(savedRouteCrossingIds instanceof Set && savedRouteCrossingIds.size > 0);
   const summaryCount = Array.isArray(summary.crossingsInArea) ? summary.crossingsInArea.length : Number(summary.crossingsInArea || 0);
   const activeCountyInventory = gridlyGetActiveCountyCrossingInventory();
@@ -57231,6 +57233,42 @@ window.gridlyLP228CommunityCrossingScopeAudit = function gridlyLP228CommunityCro
   });
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP228CommunityCrossingScopeAudit", window.gridlyLP228CommunityCrossingScopeAudit);
+
+window.gridlyLP233CanonicalCrossingRuntimeAudit = function gridlyLP233CanonicalCrossingRuntimeAudit() {
+  const selectedArea = getGridlySelectedAwarenessArea();
+  const membership = window.gridlyCanonicalCrossingRuntime?.lookup(selectedArea);
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(selectedArea);
+  const governanceCounty = gridlyGetActiveCountyId();
+  const selectedMembershipId = gridlyNormalizeCountyId(selectedArea?.countyId || governanceCounty);
+  const allGovernedMemberships = Object.freeze([...(selectedArea?.countyMemberships || [])]);
+  const governanceCountyFips = String(GRIDLY_COUNTY_REGISTRY[governanceCounty]?.countyFips || "");
+  const selectedMembershipInvariant = selectedMembershipId === governanceCounty
+    && (!allGovernedMemberships.length || allGovernedMemberships.includes(governanceCountyFips));
+  const renderedMarkerCount = getGridlyCurrentRenderedCrossingMarkerCount();
+  const certifiedCrossingCount = membership?.certifiedCrossingCount ?? null;
+  const resolvedRuntimeCrossingCount = membership?.resolvedRuntimeCrossingCount ?? 0;
+  const watchedCount = resolvedRuntimeCrossingCount;
+  const governancePreserved = selectedMembershipInvariant;
+  return Object.freeze({
+    canonicalCommunity: membership?.canonicalCommunity || selectedArea?.label || null,
+    canonicalKey: membership?.canonicalKey || (placeGeoid ? `place-${placeGeoid}` : null),
+    placeGeoid: membership?.placeGeoid || placeGeoid || null,
+    selectedMembership: selectedMembershipId, allGovernedMemberships, activeCounty: governanceCounty,
+    lp232SourceArtifactSha256: "2d3f409de35eded92b391cfe5525ad17ad822ded255bb7fdf5c2bf45f1dfc958",
+    runtimeArtifactSha256: "9a36ebdce9e3d11539512eaee8fd168b71f32fff9a6be63b61e3657badd691e5",
+    certifiedCrossingCount, resolvedRuntimeCrossingCount,
+    missingCertifiedCrossingIds: membership?.missingCertifiedCrossingIds || Object.freeze([]),
+    crossingIds: membership?.crossingIds || Object.freeze([]),
+    crossingsBySourceCounty: membership?.crossingsBySourceCounty || Object.freeze({}),
+    watchedCount,
+    watchedCountAuthority: "LP232 certified PLACE GEOID membership successfully resolved by LP233 runtime artifact",
+    renderedMarkerCount,
+    renderingSeparatedFromWatchedMembership: watchedCount !== renderedMarkerCount || watchedCount === 0,
+    selectedMembershipInvariant, governancePreserved,
+    overallPass: Boolean(membership && certifiedCrossingCount === resolvedRuntimeCrossingCount && !membership.missingCertifiedCrossingIds.length && governancePreserved)
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP233CanonicalCrossingRuntimeAudit", window.gridlyLP233CanonicalCrossingRuntimeAudit);
 
 window.gridlySafeBrowserCrossingAudit = async function gridlySafeBrowserCrossingAudit() {
   const canonicalCommunity = getGridlySelectedAwarenessArea();

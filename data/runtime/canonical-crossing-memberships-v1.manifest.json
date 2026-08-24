@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "gridly.lp233.canonical-crossing-runtime-manifest.v1",
+  "sourceArtifact": "reports/lp232/crossing-place-memberships.json",
+  "sourceArtifactSha256": "2d3f409de35eded92b391cfe5525ad17ad822ded255bb7fdf5c2bf45f1dfc958",
+  "runtimeArtifact": "data/runtime/canonical-crossing-memberships-v1.json",
+  "runtimeArtifactSha256": "9a36ebdce9e3d11539512eaee8fd168b71f32fff9a6be63b61e3657badd691e5",
+  "runtimeArtifactBytes": 361508,
+  "canonicalPlaceCount": 1859,
+  "crossingMembershipCount": 9094,
+  "communitiesWithCrossings": 760,
+  "communitiesWithZeroCrossings": 1099,
+  "derivation": "Exact stable crossing IDs and source-county lineage grouped by governed PLACE GEOID; no geometry or attribution computation"
+}
