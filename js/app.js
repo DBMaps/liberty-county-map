@@ -33657,6 +33657,39 @@ const gridlyInstantAlertsSheetAuditState = {
   inFlightKey: null,
   inFlightGeneration: 0
 };
+const GRIDLY_LP226_ALERTS_TRANSACTION_LIMIT = 12;
+const gridlyLP226AlertsWriterTransactions = new Map();
+let gridlyLP226AlertsWriterTransactionSequence = 0;
+function gridlyLP226BeginAlertsWriterTransaction(ownership = {}) {
+  const transaction = {
+    transactionId: ++gridlyLP226AlertsWriterTransactionSequence,
+    ...ownership,
+    stage: "PENDING_BEFORE_SNAPSHOT",
+    startedAt: Date.now(),
+    updatedAt: Date.now(),
+    terminalReason: null,
+    writerInputIds: [],
+    writerInputPresentationIds: []
+  };
+  gridlyLP226AlertsWriterTransactions.set(ownership.alertsSheetGeneration, transaction);
+  while (gridlyLP226AlertsWriterTransactions.size > GRIDLY_LP226_ALERTS_TRANSACTION_LIMIT) {
+    gridlyLP226AlertsWriterTransactions.delete(gridlyLP226AlertsWriterTransactions.keys().next().value);
+  }
+  return transaction;
+}
+function gridlyLP226SetAlertsWriterTransactionStage(transaction, stage, detail = {}) {
+  if (!transaction) return null;
+  transaction.stage = stage;
+  transaction.updatedAt = Date.now();
+  Object.assign(transaction, detail);
+  return transaction;
+}
+window.gridlyLP226CurrentAlertsWriterTransactionAudit = function () {
+  const generation = gridlyAlertsSheetLifecycleState?.activeGeneration || gridlyAlertsSheetLifecycleState?.pendingGeneration || 0;
+  const transaction = gridlyLP226AlertsWriterTransactions.get(generation) || null;
+  return transaction ? Object.freeze({ ...transaction, writerInputIds: [...transaction.writerInputIds], writerInputPresentationIds: [...transaction.writerInputPresentationIds] }) : null;
+};
+
 const gridlyAlertsSheetLifecycleState = {
   openGeneration: 0,
   activeGeneration: 0,
@@ -35940,10 +35973,39 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   let template = fallbackTemplate;
   let alertsOpenRenderContext = null;
   let writerAlertsForRender = [];
+  const transaction = gridlyLP226BeginAlertsWriterTransaction({ alertsSheetGeneration, cooperativeBuildGeneration, contextKey: cooperativeBuildContextKey, revisionKey: cooperativeBuildRevisionKey });
+  const setTransactionStage = (stage, detail = {}) => gridlyLP226SetAlertsWriterTransactionStage(transaction, stage, detail);
   try {
-    if (!(await cooperativeYieldOrCancel(true, "cancelled_before_snapshot"))) return false;
-    const snapshot = await cooperativePhase("snapshotAcquisitionMs", async () => window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.());
-    if (!(await cooperativeYieldOrCancel(true, "cancelled_after_snapshot"))) return false;
+    const currentInputSignature = gridlyAlertsSnapshotInputSignature();
+    const cachedMembership = gridlyAlertsSnapshotReconciliationState.snapshot?.authoritativeMembership;
+    const validSameGenerationSnapshot = Boolean(
+      gridlyAlertsSnapshotReconciliationState.snapshot
+      && gridlyAlertsSnapshotReconciliationState.inputSignature === currentInputSignature
+      && cachedMembership?.inputSignature === currentInputSignature
+      && cachedMembership?.contextKey === cooperativeBuildContextKey
+      && cachedMembership?.revisionKey === cooperativeBuildRevisionKey
+      && cachedMembership?.generation === gridlyAlertsSnapshotReconciliationState.snapshotGeneration
+      && gridlyCanApplyAlertsSheetGeneration(alertsSheetGeneration)
+    );
+    let snapshot;
+    if (validSameGenerationSnapshot) {
+      // Cached-data fast path: acquire a copy immediately. Post-snapshot ownership,
+      // LP223 presentation, and the sole authoritative DOM writer remain mandatory.
+      snapshot = await cooperativePhase("snapshotAcquisitionMs", async () => window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.());
+      setTransactionStage("SNAPSHOT_ACQUIRED", { reusedSameGeneration: true, inputSignature: currentInputSignature });
+    } else {
+      if (!(await cooperativeYieldOrCancel(true, "cancelled_before_snapshot"))) {
+        setTransactionStage("CANCELLED_BEFORE_SNAPSHOT", { terminalReason: "cancelled_before_snapshot" });
+        return false;
+      }
+      snapshot = await cooperativePhase("snapshotAcquisitionMs", async () => window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.());
+      setTransactionStage("SNAPSHOT_ACQUIRED", { reusedSameGeneration: false, inputSignature: currentInputSignature });
+      setTransactionStage("PENDING_AFTER_SNAPSHOT");
+      if (!(await cooperativeYieldOrCancel(true, "cancelled_after_snapshot"))) {
+        setTransactionStage("CANCELLED_AFTER_SNAPSHOT", { terminalReason: "cancelled_after_snapshot" });
+        return false;
+      }
+    }
     const snapshotAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
     // snapshot.alerts is already the complete governed, deduplicated authoritative
     // projection. Re-filtering it here treated the snapshot as raw provider input
@@ -35952,6 +36014,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     gridlyLP226AlertsMembershipAuditState.writerInputIds = gridlyLP226MembershipIds(alertsForRender, gridlyLP226CanonicalId);
     gridlyLP226AlertsMembershipAuditState.writerInputPresentationIds = gridlyLP226MembershipIds(alertsForRender, gridlyLP226PresentationId);
     writerAlertsForRender = alertsForRender;
+    setTransactionStage("WRITER_INPUT_ASSIGNED", { writerInputIds: gridlyLP226AlertsMembershipAuditState.writerInputIds.slice(), writerInputPresentationIds: gridlyLP226AlertsMembershipAuditState.writerInputPresentationIds.slice() });
     gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: "write_pending", invocationTime: writerInvocationTime, countInvocation: false });
     if (!(await cooperativeYieldOrCancel(true, "cancelled_after_awareness_filter"))) return false;
     window.__gridlyLatestAlertsForRender = alertsForRender;
@@ -37187,6 +37250,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
 
       const headerLeadAlert = presentationAlerts[0] || alertsForRender[0] || null;
       const headerEvidenceLine = pluralizeGridlyMobilityReports(presentationCountModel.communityReportCount || alertsForRender.length);
+      setTransactionStage("PRESENTATION_MODEL_BUILT", { presentationIds: gridlyLP226MembershipIds(presentationAlerts, gridlyLP226PresentationId) });
       const alertsPanelHeadingModel = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "outer sheet/header markup", () => {
         const countText = presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`;
         const locationText = headerLeadAlert ? getNarrowAlertLocationLabel(headerLeadAlert, headerLeadAlert.__gridlyNarrowConsumerCard || {}) : "";
@@ -37255,6 +37319,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       cooperativeBuildAudit.finalContentApplied = Boolean(opened);
       gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: opened ? null : "target_rejected_write", opened, invocationTime: writerInvocationTime, countInvocation: false });
       cooperativeBuildAudit.finalDomInsertionOccurred = Boolean(opened);
+      if (opened) setTransactionStage("DOM_APPLIED", { terminalReason: "authoritative_dom_applied" });
       if (opened) gridlyEnforceCanonicalPresentationOnVisibleAlertCards("gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync");
       if (opened) {
         gridlyAlertsSheetLifecycleState.latestAppliedGeneration = alertsSheetGeneration;
@@ -37321,6 +37386,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     }
     template = fallbackTemplate;
   } catch (error) {
+    setTransactionStage("ERROR", { terminalReason: String(error?.message || error || "unknown_error") });
     if (gridlyAlertsOpenPerformanceAuditState.activeRenderContext === alertsOpenRenderContext) gridlyAlertsOpenPerformanceAuditState.activeRenderContext = null;
     gridlyAlertsOpenAuditSetMetadata({ renderError: true });
     console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
@@ -61989,6 +62055,8 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     alertCount: topAwarenessAlertCount
   });
   const topAwarenessDedupedMobilityCount = topAwarenessCountAudit.count;
+  const governedEligibleTopAwarenessCount = Math.max(0, Number(options?.governedEligibleTopAwarenessCount || 0));
+  const topAwarenessPresentationActiveCount = Math.max(topAwarenessDedupedMobilityCount, governedEligibleTopAwarenessCount);
   const selectedLocation = selectedActiveDetail ? {
     resolvedLocationLabel: selectedActiveDetail.resolvedLocationLabel,
     locationSpecificityLevel: selectedActiveDetail.locationSpecificityLevel
@@ -62033,23 +62101,27 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
   });
   let headline = "Community Conditions Normal";
   let topAwarenessHeadlineSource = "default.noActiveAlerts";
-  let topAwarenessFallbackReason = topAwarenessDedupedMobilityCount > 0 ? "generic_fallback_pending" : (topAwarenessCountAudit.fallbackReason || "no_active_awareness_items");
-  if (topAwarenessDedupedMobilityCount > 0 && topAwarenessSpecificLocationApplied) {
+  let topAwarenessFallbackReason = topAwarenessPresentationActiveCount > 0 ? "generic_fallback_pending" : (topAwarenessCountAudit.fallbackReason || "no_active_awareness_items");
+  if (topAwarenessPresentationActiveCount > 0 && topAwarenessSpecificLocationApplied) {
     headline = topAwarenessHeadlineSelection.headline;
     topAwarenessHeadlineSource = topAwarenessHeadlineSelection.source || "topAwareness.locationIntelligence";
     topAwarenessFallbackReason = "";
-  } else if (topAwarenessDedupedMobilityCount > 0 && lightweightSummaryReuseApplied) {
+  } else if (topAwarenessPresentationActiveCount > 0 && lightweightSummaryReuseApplied) {
     headline = reusedAlertText;
     topAwarenessHeadlineSource = reusedAlertSource || "lightweightActiveAwareness.reusedAlertText";
     topAwarenessFallbackReason = topAwarenessHeadlineSelection.fallbackReason || "reused_alert_summary_without_specific_location";
-  } else if (topAwarenessDedupedMobilityCount > 0 && selectedActiveDetail) {
+  } else if (topAwarenessPresentationActiveCount > 0 && selectedActiveDetail) {
     headline = buildGridlyLightweightActiveHeadline(selectedActiveDetail.resolvedCategory, selectedLocation);
     topAwarenessHeadlineSource = "lightweightActiveAwareness.category+locationFallback";
     topAwarenessFallbackReason = topAwarenessHeadlineSelection.fallbackReason || (topAwarenessLocationIntelligence.usable ? "specific_location_candidate_unavailable" : "no_usable_location_intelligence");
-  } else if (topAwarenessDedupedMobilityCount > 1 && topCategory) {
-    headline = `${topAwarenessDedupedMobilityCount} active mobility issues${placePhrase}`;
+  } else if (topAwarenessPresentationActiveCount > 1 && topCategory) {
+    headline = `${topAwarenessPresentationActiveCount} active mobility issues${placePhrase}`;
     topAwarenessHeadlineSource = "lightweightActiveAwareness.dedupedMobilityCountFallback";
     topAwarenessFallbackReason = topAwarenessHeadlineSelection.fallbackReason || (topAwarenessLocationIntelligence.usable ? "specific_location_candidate_unavailable" : "multiple_deduped_mobility_issues_without_single_specific_location_headline");
+  } else if (topAwarenessPresentationActiveCount > 0) {
+    headline = "Active conditions are developing nearby";
+    topAwarenessHeadlineSource = "lightweightActiveAwareness.genericActiveFallback";
+    topAwarenessFallbackReason = "governed_active_without_safe_specific_detail";
   }
   const categoryOnlyLocationReplacement = buildGridlyCategoryOnlyTopAwarenessLocationReplacement(headline, selectedActiveDetail || {});
   const categoryOnlyLocationReplacementApplied = Boolean(categoryOnlyLocationReplacement?.headline);
@@ -62058,7 +62130,7 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     topAwarenessHeadlineSource = categoryOnlyLocationReplacement.source;
     topAwarenessFallbackReason = "";
   }
-  const subline = activeAwarenessCount > 0
+  const subline = topAwarenessPresentationActiveCount > 0
     ? (topCorridorLabel ? `Community activity remains visible near ${topCorridorLabel}.` : "Active reports are limited nearby.")
     : getGridlyQuietAwarenessBriefCopy().secondary;
   const dataSourceSummary = {
@@ -62088,7 +62160,7 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     loaded: true,
     version: GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION,
     runtimeMode: "lightweight_only",
-    activeAwarenessCount,
+    activeAwarenessCount: Math.max(activeAwarenessCount, governedEligibleTopAwarenessCount),
     topAwarenessUserProximityEnabled: Boolean(userLocationAwarenessAnchor),
     topAwarenessUserLocationAnchor: userLocationAwarenessAnchor ? { lat: userLocationAwarenessAnchor.lat, lng: userLocationAwarenessAnchor.lng, source: userLocationAwarenessAnchor.source } : null,
     topAwarenessProximityThresholdsMiles: GRIDLY_ACTIVE_AWARENESS_PROXIMITY_THRESHOLDS_MILES.map((entry) => ({ ...entry })),
@@ -63373,13 +63445,31 @@ function buildGridlyCommunityPulseModel(options = {}) {
     : { awarenessMode: "community" };
   const awarenessMode = String(awarenessDiagnostics?.awarenessMode || "community").toLowerCase();
   const dataset = buildCommunityPresenceDataset(options);
-  const activeAwareness = buildGridlyLightweightActiveAwareness(options);
-  // KBYG's quiet/active decision consumes the governed community projection,
-  // not the narrower Community Presence scoring collection.  This keeps an
-  // already-authorized active hazard from being described as quiet while
-  // leaving crossing-report policy (currently undefined) unchanged.
+  // Governance must precede presentation. Normalize authorized KBYG rows into
+  // the same candidate collection that selects detail, count, headline, and
+  // subline instead of patching cardinality after quiet copy was constructed.
   const governedKbygProjection = gridlyGetGovernedConsumerProjection()?.surfaces?.kbygCommunity || [];
+  const governedTopAwarenessCandidates = governedKbygProjection
+    .map((row) => row?.record && typeof row.record === "object"
+      ? { ...row.record, governedEvidenceId: row.evidenceId, evidenceId: row.evidenceId, __gridlyTopAwarenessGoverned: true }
+      : null)
+    .filter(Boolean);
+  const governedCandidateKeys = new Set(governedTopAwarenessCandidates.map((row, index) => getGridlyLightweightItemKey(row, index, "governed")));
+  const suppliedHazards = Array.isArray(options?.activeHazards)
+    ? options.activeHazards
+    : (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : []);
+  const postGovernanceHazards = [
+    ...governedTopAwarenessCandidates,
+    ...suppliedHazards.filter((row, index) => !governedCandidateKeys.has(getGridlyLightweightItemKey(row, index, "governed")))
+  ];
+  const activeAwareness = buildGridlyLightweightActiveAwareness({
+    ...options,
+    activeHazards: postGovernanceHazards,
+    governedEligibleTopAwarenessCount: governedKbygProjection.length
+  });
   activeAwareness.governedKbygEvidenceIds = governedKbygProjection.map((row) => row.evidenceId);
+  activeAwareness.governedTopAwarenessCandidateCount = governedTopAwarenessCandidates.length;
+  activeAwareness.postGovernancePresentationTruth = true;
   if (governedKbygProjection.length) {
     activeAwareness.activeAwarenessCount = Math.max(governedKbygProjection.length, Number(activeAwareness.activeAwarenessCount || 0));
     activeAwareness.activeHazardCount = Math.max(governedKbygProjection.length, Number(activeAwareness.activeHazardCount || 0));
@@ -113813,6 +113903,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       presentationIncidentIds: Object.freeze(presentationIncidentIds.slice()),
       activeMembershipCount: normalizedAlertItems.length,
       contextKey: typeof gridlyGetAlertsAuthoritativeContextKey === "function" ? gridlyGetAlertsAuthoritativeContextKey() : "",
+      revisionKey: typeof gridlyGetAlertsAuthoritativeRevisionKey === "function" ? gridlyGetAlertsAuthoritativeRevisionKey() : "",
       community: canonicalActiveCommunityState?.community || "",
       county: canonicalActiveCommunityState?.county || "",
       countyId: canonicalActiveCommunityState?.countyId || "",
