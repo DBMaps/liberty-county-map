@@ -57241,9 +57241,22 @@ window.gridlyLP233CanonicalCrossingRuntimeAudit = function gridlyLP233CanonicalC
   const governanceCounty = gridlyGetActiveCountyId();
   const selectedMembershipId = gridlyNormalizeCountyId(selectedArea?.countyId || governanceCounty);
   const allGovernedMemberships = Object.freeze([...(selectedArea?.countyMemberships || [])]);
-  const governanceCountyFips = String(GRIDLY_COUNTY_REGISTRY[governanceCounty]?.countyFips || "");
+  // LP233 governance evidence is certified as county FIPS, while the chooser and
+  // active-county authorities use Gridly county IDs. Resolve both through the
+  // existing county registry before auditing their identity.
+  const resolveGovernedCountyFips = (countyIdentity) => {
+    const identity = String(countyIdentity || "");
+    if (/^\d{5}$/.test(identity)) return identity;
+    const countyId = gridlyNormalizeCountyId(identity);
+    return String(GRIDLY_COUNTY_REGISTRY[countyId]?.countyFips || GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[countyId] || "");
+  };
+  const selectedMembershipFips = resolveGovernedCountyFips(selectedMembershipId);
+  const allGovernedMembershipFips = Object.freeze(allGovernedMemberships.map(resolveGovernedCountyFips).filter(Boolean));
+  const activeCountyFips = resolveGovernedCountyFips(governanceCounty);
   const selectedMembershipInvariant = selectedMembershipId === governanceCounty
-    && (!allGovernedMemberships.length || allGovernedMemberships.includes(governanceCountyFips));
+    && Boolean(selectedMembershipFips)
+    && selectedMembershipFips === activeCountyFips
+    && (!allGovernedMembershipFips.length || allGovernedMembershipFips.includes(selectedMembershipFips));
   const renderedMarkerCount = getGridlyCurrentRenderedCrossingMarkerCount();
   const certifiedCrossingCount = membership?.certifiedCrossingCount ?? null;
   const resolvedRuntimeCrossingCount = membership?.resolvedRuntimeCrossingCount ?? 0;
@@ -57253,7 +57266,9 @@ window.gridlyLP233CanonicalCrossingRuntimeAudit = function gridlyLP233CanonicalC
     canonicalCommunity: membership?.canonicalCommunity || selectedArea?.label || null,
     canonicalKey: membership?.canonicalKey || (placeGeoid ? `place-${placeGeoid}` : null),
     placeGeoid: membership?.placeGeoid || placeGeoid || null,
-    selectedMembership: selectedMembershipId, allGovernedMemberships, activeCounty: governanceCounty,
+    selectedMembership: selectedMembershipId, selectedMembershipFips,
+    allGovernedMemberships, allGovernedMembershipFips,
+    activeCounty: governanceCounty, activeCountyFips,
     lp232SourceArtifactSha256: "2d3f409de35eded92b391cfe5525ad17ad822ded255bb7fdf5c2bf45f1dfc958",
     runtimeArtifactSha256: "9a36ebdce9e3d11539512eaee8fd168b71f32fff9a6be63b61e3657badd691e5",
     certifiedCrossingCount, resolvedRuntimeCrossingCount,

@@ -63,6 +63,31 @@ test('watched authority is separate from rendering and preserves governance', ()
   assert.doesNotMatch(read('js/gridlyCanonicalCrossingRuntime.js').toString(), /setActiveCounty|setInterval|setTimeout|pointInPolygon|radiusMiles/);
 });
 
+test('LP233 owner audit normalizes Gridly county IDs through registry FIPS authority', () => {
+  const app = read('js/app.js').toString();
+  const countyFips = countyId => {
+    const registryEntry = app.match(new RegExp(`"${countyId}": Object\\.freeze\\(\\{([\\s\\S]*?)\\n  \\}\\),`))?.[1] || '';
+    return registryEntry.match(/countyFips: "(\d{5})"/)?.[1] || registryEntry.match(/GEOID (\d{5})/)?.[1] || '';
+  };
+  const governed = runtime.places['4838476'].m;
+  const invariant = (selectedMembership, activeCounty) => {
+    const selectedMembershipFips = countyFips(selectedMembership);
+    const activeCountyFips = countyFips(activeCounty);
+    return selectedMembership === activeCounty
+      && Boolean(selectedMembershipFips)
+      && selectedMembershipFips === activeCountyFips
+      && governed.includes(selectedMembershipFips);
+  };
+
+  assert.equal(countyFips('harris-tx'), '48201');
+  assert.equal(countyFips('fort-bend-tx'), '48157');
+  assert.equal(countyFips('waller-tx'), '48473');
+  for (const countyId of ['harris-tx', 'fort-bend-tx', 'waller-tx']) assert.equal(invariant(countyId, countyId), true, countyId);
+  assert.equal(invariant('liberty-tx', 'liberty-tx'), false);
+  for (const field of ['selectedMembershipFips', 'allGovernedMembershipFips', 'activeCountyFips']) assert.match(app, new RegExp(`\\b${field}\\b`));
+  assert.match(app, /GRIDLY_COUNTY_REGISTRY\[countyId\]\?\.countyFips \|\| GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID\?\.\[countyId\]/);
+});
+
 test('LP233 runtime contains no geometry, county union, writer, or unrelated awareness integration', () => {
   const runtimeSource = read('js/gridlyCanonicalCrossingRuntime.js').toString();
   assert.doesNotMatch(runtimeSource, /Polygon|coordinates|DriveTexas|weather|hazard|Alert|KBYG|Supabase|writer|poll/);
