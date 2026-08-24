@@ -612,6 +612,9 @@
     "test:lp227": "node --test tests/lp227-*",
     "test:lp228": "node --test tests/lp228-*",
     "test:lp229": "node --test tests/lp229-*",
-    "test:lp230": "node --test tests/lp230-*"
+    "test:lp230": "node --test tests/lp230-*",
+    "build:lp231": "node tools/lp231/build-canonical-place-geometry-audit.mjs --write",
+    "verify:lp231": "node tools/lp231/build-canonical-place-geometry-audit.mjs --verify",
+    "test:lp231": "node --test tests/lp231-*"
   }
 }

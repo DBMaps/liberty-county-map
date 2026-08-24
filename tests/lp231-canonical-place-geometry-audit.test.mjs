@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { test } from 'node:test';
+const root=new URL('../',import.meta.url); const report=JSON.parse(await readFile(new URL('reports/lp231/canonical-place-geometry-authority-certification.json',root)));
+test('geometry-source inventory and certification are deterministic',()=>assert.match(execFileSync(process.execPath,['tools/lp231/build-canonical-place-geometry-audit.mjs','--verify'],{cwd:root,encoding:'utf8'}),/verify PASS/));
+test('canonical identities reconcile without name-only joins',()=>{assert.equal(report.statewideCertification.canonicalIdentityInventoryCount,1859);assert.equal(report.statewideCertification.membershipIdentityInventoryCount,2058);assert.equal(report.statewideCertification.multiCountyIdentityCount,163);assert.equal(report.joinPolicy.nameOnlyJoinAllowed,false);});
+for(const label of ['Katy','Corpus Christi','Austin','Abilene','Midland','Sulphur Springs','Liberty','Fredericksburg','Pecos'])test(`${label} control fails geometry closed`,()=>{const row=report.controls.find(x=>x.label===label);assert.equal(row.canonicalIdentityReconciled,true);assert.match(row.canonicalKey,/^place-48\d{5}$/);assert.equal(row.polygonFound,false);});
+test('Katy remains one canonical identity with three governed memberships',()=>assert.deepEqual(report.controls.find(x=>x.label==='Katy'),{label:'Katy',canonicalKey:'place-4838476',governedMemberships:['fort-bend-tx','harris-tx','waller-tx'],canonicalIdentityReconciled:true,polygonFound:false,geometryMembershipReconciled:false}));
+test('multipolygon and hole preservation are not falsely claimed',()=>{assert.equal(report.statewideCertification.multiPolygonCount,null);assert.equal(report.inventory[0].multipolygonsPreserved,null);assert.equal(report.inventory[0].interiorRingsPreserved,null);});
+test('no county approximation or radius substitution is allowed',()=>{assert.equal(report.joinPolicy.countyApproximationAllowed,false);assert.equal(report.joinPolicy.presentationRadiusSubstitutionAllowed,false);});
+test('audit is passive and production authorities are unchanged',()=>{assert.deepEqual(Object.values(report.safety),Array(9).fill(false));assert.equal(report.runtime.pwaChangesMade,false);});
+test('runtime remains fail closed without polygon or membership bytes',()=>{assert.equal(report.runtime.geometryRuntimeAvailable,false);assert.equal(report.runtime.pointAttributionSupported,false);assert.equal(report.runtime.crossingMembershipArtifactAvailable,false);assert.equal(report.statewideCertification.safeForLP230,false);});
+test('no timers polling map movement or town-specific runtime branches were added',async()=>{const tool=await readFile(new URL('tools/lp231/build-canonical-place-geometry-audit.mjs',root),'utf8');assert.doesNotMatch(tool,/setTimeout|setInterval|requestAnimationFrame|map\.(?:setView|flyTo|panTo)|window\./);});
