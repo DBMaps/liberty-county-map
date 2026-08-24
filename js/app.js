@@ -3332,9 +3332,9 @@ function gridlyProjectAlertIncidentLocation(record = {}) {
   // This is the same shared normalized lookup consumed by
   // resolveGridlyHazardPopupRoadLabel(); it is not a second geocoder or lookup.
   const sharedLocation = typeof getSharedResolvedRoadLookup === "function" ? getSharedResolvedRoadLookup(record)?.locationContext || {} : {};
-  const roadName = read(["record.roadName", "record.road_name", "record.road", "record.primaryRoad", "record.street", "record.streetName", "record.street_name", "raw.roadName", "raw.road_name", "raw.road", "raw.primaryRoad", "source.roadName", "source.road_name", "source.road", "source.primaryRoad", "latest.roadName", "latest.road_name", "latest.road"]) || String(sharedLocation.primary || "").trim();
-  const crossStreet = read(["record.crossStreet", "record.cross_street", "record.nearbyCrossStreet", "record.nearestCrossStreet", "record.referenceRoadA", "raw.crossStreet", "raw.cross_street", "raw.referenceRoadA", "source.crossStreet", "source.cross_street", "source.referenceRoadA", "latest.crossStreet", "latest.cross_street"]) || String(sharedLocation.secondary || "").trim();
-  const resolvedLocation = read(["record.resolvedLocation", "record.authoritativeLocationLabel", "record.popupLocation", "record.locationPhrase", "record.locationLabel", "raw.resolvedLocation", "raw.authoritativeLocationLabel", "raw.popupLocation", "source.resolvedLocation", "source.authoritativeLocationLabel", "source.popupLocation"]) || String(sharedLocation.phrasing || sharedLocation.primary || "").trim();
+  const roadName = String(sharedLocation.primary || "").trim() || read(["record.roadName", "record.road_name", "record.road", "record.primaryRoad", "record.street", "record.streetName", "record.street_name", "raw.roadName", "raw.road_name", "raw.road", "raw.primaryRoad", "source.roadName", "source.road_name", "source.road", "source.primaryRoad", "latest.roadName", "latest.road_name", "latest.road"]);
+  const crossStreet = String(sharedLocation.secondary || "").trim() || read(["record.crossStreet", "record.cross_street", "record.nearbyCrossStreet", "record.nearestCrossStreet", "record.referenceRoadA", "raw.crossStreet", "raw.cross_street", "raw.referenceRoadA", "source.crossStreet", "source.cross_street", "source.referenceRoadA", "latest.crossStreet", "latest.cross_street"]);
+  const resolvedLocation = String(sharedLocation.phrasing || sharedLocation.primary || "").trim() || read(["record.resolvedLocation", "record.authoritativeLocationLabel", "record.popupLocation", "record.locationPhrase", "record.locationLabel", "raw.resolvedLocation", "raw.authoritativeLocationLabel", "raw.popupLocation", "source.resolvedLocation", "source.authoritativeLocationLabel", "source.popupLocation"]);
   const sourceFields = [];
   if (roadName) sourceFields.push(sharedLocation.primary && roadName === sharedLocation.primary ? "sharedResolvedRoadLookup.locationContext.primary" : "roadName");
   if (crossStreet) sourceFields.push(sharedLocation.secondary && crossStreet === sharedLocation.secondary ? "sharedResolvedRoadLookup.locationContext.secondary" : "crossStreet");
@@ -3342,10 +3342,10 @@ function gridlyProjectAlertIncidentLocation(record = {}) {
   if (!sourceFields.length) return record;
   return {
     ...record,
-    roadName: String(record?.roadName || roadName).trim(),
-    crossStreet: String(record?.crossStreet || crossStreet).trim(),
-    resolvedLocation: String(record?.resolvedLocation || resolvedLocation).trim(),
-    __gridlyPresentationLocationLabel: String(record?.__gridlyPresentationLocationLabel || resolvedLocation).trim(),
+    roadName: String(roadName || record?.roadName || "").trim(),
+    crossStreet: String(crossStreet || record?.crossStreet || "").trim(),
+    resolvedLocation: String(resolvedLocation || record?.resolvedLocation || "").trim(),
+    __gridlyPresentationLocationLabel: String(resolvedLocation || record?.__gridlyPresentationLocationLabel || "").trim(),
     locationSourceAuthority: sharedLocation.phrasing ? "shared_popup_incident_location" : (resolvedLocation ? "normalized_incident_location" : "structured_incident_location"),
     locationSourceFields: Object.freeze(sourceFields)
   };
@@ -25768,7 +25768,11 @@ function resolveIncidentRoadLookupPayload(incident = {}) {
     derivedPropertyFunctionSections[stepName] = (derivedPropertyFunctionSections[stepName] || 0) + (performance.now() - startedAt);
     return value;
   };
+  const incidentCoordinate = normalizeCoordinatePair(incident?.lat, incident?.lng);
+  const suppliedRoadCandidates = incident?.roadCandidates || incident?.road_candidates || incident?.roadSegments || incident?.road_segments || [];
+  const pointRoadResolution = gridlyResolvePointIncidentRoadCandidates(incidentCoordinate, suppliedRoadCandidates, { nearbyArea: incident?.canonicalCommunity || incident?.communityName || incident?.city || incident?.area || incident?.county });
   const locationCandidates = [
+    pointRoadResolution?.locationContext?.primary,
     incident?.road_name, incident?.roadName, incident?.primaryRoad, incident?.street_name, incident?.street, incident?.nearest_road, incident?.nearestRoad, incident?.snapped_road_name,
     incident?.crossing_street, incident?.cross_street
   ];
@@ -25789,7 +25793,7 @@ function resolveIncidentRoadLookupPayload(incident = {}) {
     locationCandidates.push(incident?.location_name, incident?.locationName, incident?.area, incident?.city, incident?.county);
   });
   const locationName = withDerivedFieldTiming("roadNameDerivation", () => locationCandidates.map((value) => String(value || "").trim()).find((value) => isResolvableRoadNameCandidate(value, roadEvaluationContext)) || "");
-  const locationContext = withDerivedFieldTiming("displayLabelDerivation", () => buildHumanLocationContext({
+  const locationContext = withDerivedFieldTiming("displayLabelDerivation", () => pointRoadResolution.primaryRoadCandidate ? pointRoadResolution.locationContext : buildHumanLocationContext({
     primaryRoad: locationName,
     crossingRoad: incident?.crossing_street || incident?.cross_street,
     intersectingRoad: incident?.intersecting_road,
@@ -25805,7 +25809,7 @@ function resolveIncidentRoadLookupPayload(incident = {}) {
     const lng = Number(incident?.lng);
     return Number.isFinite(lat) && Number.isFinite(lng) ? `${lat.toFixed(4)},${lng.toFixed(4)}` : "na";
   }));
-  const payload = withDerivedFieldTiming("objectConstruction", () => ({ locationContext, nearestKnownLocation, coords, crossingName, crossingId, nearbyName }));
+  const payload = withDerivedFieldTiming("objectConstruction", () => ({ locationContext, nearestKnownLocation, coords, crossingName, crossingId, nearbyName, incidentCoordinate, roadCandidates: pointRoadResolution.roadCandidates, primaryRoadCandidate: pointRoadResolution.primaryRoadCandidate, secondaryRoadCandidate: pointRoadResolution.secondaryRoadCandidate, distanceMeters: pointRoadResolution.distanceMeters, selectionReason: pointRoadResolution.selectionReason }));
   withDerivedFieldTiming("serializationWork", () => JSON.stringify([locationName, nearbyName, crossingName, crossingId]));
   withDerivedFieldTiming("objectSpread", () => ({ ...(incident && typeof incident === "object" ? incident : {}) }));
   withDerivedFieldTiming("fallbackResolution", () => withDerivedPropertyFunctionTiming("fallback_lookup_resolution", () => ({
@@ -33926,9 +33930,8 @@ function gridlyCanApplyAlertsSheetGeneration(generation) {
   return Boolean(
     generation
     && gridlyAlertsSheetLifecycleState.activeGeneration === generation
-    && sheet
-    && sheet.dataset?.activeSheet === "alerts"
-    && !sheet.hidden
+    && ((sheet && sheet.dataset?.activeSheet === "alerts" && !sheet.hidden)
+      || gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration === generation)
   );
 }
 
@@ -35021,14 +35024,14 @@ function openAlertsSurfaceFromDock() {
   gridlyBeginAlertsOpenRefreshFixTiming(handlerEnteredAt);
   const contextKey = gridlyGetAlertsAuthoritativeContextKey();
   const cacheRead = gridlyReadValidAlertsAuthoritativeCache(contextKey);
-  const initialContentSource = cacheRead.contextMatched ? "authoritative-cache" : "neutral-empty-state";
+  const initialContentSource = cacheRead.contextMatched ? "authoritative-cache" : "authoritative-build-before-visible-open";
   // LP009 cache anchor: cacheRead.contextMatched ? cacheRead.cache.renderedMarkup may render immediately after sanitization.
   const html = cacheRead.contextMatched ? gridlyLp0458SanitizeOfficialAlertCardMarkup(cacheRead.cache.renderedMarkup) : gridlyBuildNeutralAlertsSheetMarkup();
   const title = cacheRead.contextMatched ? (cacheRead.cache.title || "Alerts") : "Alerts";
   // LP009 ordering anchor: openGridlyPortraitV2Sheet("alerts") happens before gridlyOpenAlertsSurfaceAfterPaint().
-  const opened = typeof window.openGridlyPortraitV2Sheet === "function"
+  const opened = cacheRead.contextMatched && typeof window.openGridlyPortraitV2Sheet === "function"
     ? Boolean(window.openGridlyPortraitV2Sheet("alerts", { title, html }))
-    : (typeof openGridlyPortraitV2Sheet === "function" ? Boolean(openGridlyPortraitV2Sheet("alerts", { title, html })) : false);
+    : (cacheRead.contextMatched && typeof openGridlyPortraitV2Sheet === "function" ? Boolean(openGridlyPortraitV2Sheet("alerts", { title, html })) : false);
   const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
   if (typeof gridlyLp019BindAlertFocusHandlers === "function") window.setTimeout(() => gridlyLp019BindAlertFocusHandlers(document), 0);
   gridlyInstantAlertsSheetAuditState.lastOpen = {
@@ -35059,8 +35062,17 @@ function openAlertsSurfaceFromDock() {
   });
   gridlyInstantAlertsSheetAuditState.lastOpen.authoritativeBuildSkippedOnOpen = false;
   gridlyInstantAlertsSheetAuditState.lastOpen.authoritativeBuildSkipReason = null;
-  gridlySynchronizeOpenAlertsPortrait("alerts_open_after_shell");
-  return opened;
+  // When no revision-matched authoritative markup is ready, invoke the sole
+  // writer in this transaction before exposing a consumer shell.  The writer
+  // itself opens the sheet with the completed concise markup.
+  if (!cacheRead.contextMatched) {
+    gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration = alertsSheetGeneration;
+    gridlyAlertsWriterSynchronizationAuditState.lastScheduleReason = "alerts_open_same_transaction";
+    gridlyOpenAlertsSurfaceAfterPaint(alertsSheetGeneration);
+  } else {
+    gridlySynchronizeOpenAlertsPortrait("alerts_open_after_shell");
+  }
+  return cacheRead.contextMatched ? opened : true;
 }
 
 function gridlyInstantAlertsSheetAudit() {
@@ -36930,6 +36942,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         title: `${presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`}`,
         html: gridlyLp0458SanitizeOfficialAlertCardMarkup(html)
       }));
+      if (opened && gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration === alertsSheetGeneration) gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration = 0;
       cooperativeBuildAudit.finalContentApplied = Boolean(opened);
       gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: opened ? null : "target_rejected_write", opened, invocationTime: writerInvocationTime, countInvocation: false });
       cooperativeBuildAudit.finalDomInsertionOccurred = Boolean(opened);
@@ -101120,6 +101133,33 @@ function buildHumanLocationContext({ primaryRoad = "", crossingRoad = "", inters
     source: primary ? "roadway_candidates" : area ? "area_fallback" : "none",
     samples: uniqueRoads.slice(0, 4)
   };
+}
+
+// Rank point-hazard roadway evidence by the distance to the actual segment, not
+// by the order in which a nearby crossing happened to be returned.  Keeping
+// this small and data-shaped also lets county roadway loaders attach their
+// candidate segments without creating a second consumer resolver.
+function gridlyResolvePointIncidentRoadCandidates(incidentCoordinate, roadCandidates = [], options = {}) {
+  const coords = normalizeCoordinatePair(incidentCoordinate?.lat, incidentCoordinate?.lng);
+  const trustworthyMeters = Number.isFinite(Number(options?.trustworthyMeters)) ? Number(options.trustworthyMeters) : 45;
+  if (!coords) return { incidentCoordinate: null, roadCandidates: [], primaryRoadCandidate: null, secondaryRoadCandidate: null, distanceMeters: null, selectionReason: "invalid_incident_coordinate", locationContext: buildHumanLocationContext({ nearbyArea: options?.nearbyArea || "" }) };
+  const ranked = (Array.isArray(roadCandidates) ? roadCandidates : []).map((candidate, index) => {
+    const coordinates = Array.isArray(candidate?.coordinates) ? candidate.coordinates : [];
+    let distanceMiles = Infinity;
+    let closestSegment = null;
+    for (let pointIndex = 1; pointIndex < coordinates.length; pointIndex += 1) {
+      const a = coordinates[pointIndex - 1];
+      const b = coordinates[pointIndex];
+      const distance = distancePointToSegmentMiles(coords.lat, coords.lng, Number(a?.[1]), Number(a?.[0]), Number(b?.[1]), Number(b?.[0]));
+      if (Number.isFinite(distance) && distance < distanceMiles) { distanceMiles = distance; closestSegment = [a, b]; }
+    }
+    return { name: titleCaseRoadText(normalizeRoadNameCandidate(candidate?.name || candidate?.roadName || "")), coordinates, closestSegment, distanceMeters: Number.isFinite(distanceMiles) ? Number((distanceMiles * 1609.344).toFixed(2)) : null, classification: candidate?.classification || "road", sourceIndex: index };
+  }).filter(candidate => candidate.name && candidate.distanceMeters !== null)
+    .sort((a, b) => a.distanceMeters - b.distanceMeters || a.name.localeCompare(b.name) || a.sourceIndex - b.sourceIndex);
+  const primary = ranked[0] && ranked[0].distanceMeters <= trustworthyMeters ? ranked[0] : null;
+  const secondary = primary ? ranked.find(candidate => normalizeRoadComparison(candidate.name) !== normalizeRoadComparison(primary.name)) || null : null;
+  const locationContext = buildHumanLocationContext({ primaryRoad: primary?.name || "", crossingRoad: secondary?.name || "", nearbyArea: options?.nearbyArea || "" });
+  return { incidentCoordinate: coords, roadCandidates: ranked, primaryRoadCandidate: primary, secondaryRoadCandidate: secondary, distanceMeters: primary?.distanceMeters ?? null, selectionReason: primary ? (primary.distanceMeters <= 2 ? "point_on_nearest_road_segment" : "nearest_trustworthy_road_segment") : "no_trustworthy_road_geometry", locationContext };
 }
 
 function resolveNearbyKnownLocation(lat, lng, options = {}) {
