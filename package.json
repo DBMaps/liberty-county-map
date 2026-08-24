@@ -621,6 +621,7 @@
     "test:lp232": "node --test tests/lp232-*",
     "build:lp233": "node tools/lp233/build-canonical-crossing-runtime.mjs --write",
     "verify:lp233": "node tools/lp233/build-canonical-crossing-runtime.mjs",
-    "test:lp233": "node --test tests/lp233-*"
+    "test:lp233": "node --test tests/lp233-*",
+    "test:lp234": "node --test tests/lp234-*"
   }
 }
