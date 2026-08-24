@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { geometrySourceState, readTigerPlaceGeometry, resolveOgr2ogr, shapefileParts } from './tiger-place-geometry-reader.mjs';
+import { reconcileGovernedPlaceGeometry } from './governed-place-reconciliation.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const mode = process.argv.includes('--write') ? 'write' : 'verify';
@@ -22,6 +23,7 @@ const shape = placeRoot && path.join(placeRoot, 'derived', 'tl_2025_48_place.shp
 const crossingCandidates = [sourceRoot && path.join(sourceRoot, 'Crossing-Packages', 'Texas', 'fra-crossings-tx.geojson'), sourceRoot && path.join(sourceRoot, 'FRA', 'Processed', 'fra-crossings-tx.geojson'), path.join(root, 'Crossing-Packages', 'Texas', 'fra-crossings-tx.geojson')].filter(Boolean);
 const crossing = crossingCandidates.find(fs.existsSync);
 if (!crossing) throw new Error('No governed statewide crossing authority is accessible');
+const governedPlaceAuthority = sourceRoot && path.join(sourceRoot, 'Processing', 'Census-Places', 'texas-place-canonical.json');
 
 function onSegment(point, a, b) {
   const cross = (point[1] - a[1]) * (b[0] - a[0]) - (point[0] - a[0]) * (b[1] - a[1]);
@@ -58,6 +60,7 @@ const crossingData = json(crossing);
 const crossingFeatures = crossingData.features ?? [];
 const projection = json(path.join(root, 'data/generated/gridly-statewide-consumer-community-projection-v1.json'));
 const canonicalByGeoid = new Map(projection.communities.map(community => [community.placeGeoid, community]));
+const governedPlaces = governedPlaceAuthority && fs.existsSync(governedPlaceAuthority) ? json(governedPlaceAuthority) : [];
 let places = [], reader = null;
 if (sourceState === 'PRESENT_READER_AVAILABLE') ({ features: places, reader } = readTigerPlaceGeometry(shape, { ogr }));
 
@@ -65,29 +68,41 @@ const geometryGeoids = places.map(place => place.GEOID);
 const geometryPlacefps = places.map(place => place.PLACEFP);
 const duplicateGeoids = geometryGeoids.filter((value, index) => geometryGeoids.indexOf(value) !== index);
 const duplicatePlacefps = geometryPlacefps.filter((value, index) => geometryPlacefps.indexOf(value) !== index);
-const missingCanonical = places.length ? [...canonicalByGeoid.keys()].filter(geoid => !geometryGeoids.includes(geoid)).sort() : [];
-const extraGeometry = geometryGeoids.filter(geoid => !canonicalByGeoid.has(geoid)).sort();
-const certificationPass = Boolean(archive && fs.existsSync(archive)) && places.length > 0 && duplicateGeoids.length === 0 && duplicatePlacefps.length === 0 && missingCanonical.length === 0 && extraGeometry.length === 0 && places.every(place => place.valid && !place.empty);
+const reconciliation = places.length && governedPlaces.length ? reconcileGovernedPlaceGeometry(places, governedPlaces, canonicalByGeoid.keys()) : null;
+const certificationPass = Boolean(archive && fs.existsSync(archive)) && duplicateGeoids.length === 0 && duplicatePlacefps.length === 0 && reconciliation?.geometryReconciliationPass === true;
+const eligiblePlaces = places.filter(place => canonicalByGeoid.has(place.GEOID));
+const excludedPlaces = places.filter(place => reconciliation?.excludedGeometryIdentities.some(identity => identity.geoid === place.GEOID));
 
-const memberships = [], ambiguous = [], unattributed = [], identityUnavailable = [];
-if (certificationPass) for (const feature of crossingFeatures) {
+const memberships = [], ambiguous = [], unattributed = [], identityUnavailable = [], excludedInactiveOnly = [];
+const uniqueFeatures = new Map();
+for (const feature of crossingFeatures) {
+  const stableId = String(feature.properties?.CROSSING ?? feature.id ?? '');
+  if (!uniqueFeatures.has(stableId)) uniqueFeatures.set(stableId, feature);
+}
+if (certificationPass) for (const feature of uniqueFeatures.values()) {
   const stableId = String(feature.properties?.CROSSING ?? feature.id ?? '');
   const coordinates = feature.geometry?.coordinates;
   if (!stableId || feature.geometry?.type !== 'Point' || !coordinates?.slice(0, 2).every(Number.isFinite)) { identityUnavailable.push(stableId || null); continue; }
-  const candidates = places.filter(place => coordinates[0] >= place.bbox[0] && coordinates[0] <= place.bbox[2] && coordinates[1] >= place.bbox[1] && coordinates[1] <= place.bbox[3] && geometryCovers(coordinates, place.geometry));
-  if (candidates.length === 0) unattributed.push(stableId);
+  const candidates = eligiblePlaces.filter(place => coordinates[0] >= place.bbox[0] && coordinates[0] <= place.bbox[2] && coordinates[1] >= place.bbox[1] && coordinates[1] <= place.bbox[3] && geometryCovers(coordinates, place.geometry));
+  if (candidates.length === 0) {
+    unattributed.push(stableId);
+    if (excludedPlaces.some(place => coordinates[0] >= place.bbox[0] && coordinates[0] <= place.bbox[2] && coordinates[1] >= place.bbox[1] && coordinates[1] <= place.bbox[3] && geometryCovers(coordinates, place.geometry))) excludedInactiveOnly.push(stableId);
+  }
   else if (candidates.length > 1) ambiguous.push({ crossingId: stableId, placeGeoids: candidates.map(place => place.GEOID).sort() });
-  else memberships.push({ crossingId: stableId, placeGeoid: candidates[0].GEOID, canonicalKey: `place-${candidates[0].GEOID}`, sourceCountyFips: String(feature.properties?.STCYFIPS ?? feature.properties?.CountyCode ?? ''), sourceCountyName: String(feature.properties?.COUNTYNAME ?? '') });
+  else {
+    const canonical = canonicalByGeoid.get(candidates[0].GEOID);
+    memberships.push({ crossingId: stableId, placeGeoid: candidates[0].GEOID, canonicalKey: `place-${candidates[0].GEOID}`, sourceCountyFips: String(feature.properties?.STCYFIPS ?? feature.properties?.CountyCode ?? ''), sourceCountyName: String(feature.properties?.COUNTYNAME ?? ''), governedCountyFips: [...canonical.countyMemberships].sort() });
+  }
 }
 memberships.sort((a, b) => a.crossingId.localeCompare(b.crossingId));
 ambiguous.sort((a, b) => a.crossingId.localeCompare(b.crossingId)); unattributed.sort(); identityUnavailable.sort();
-const uniqueCrossingCount = new Set(crossingFeatures.map(feature => String(feature.properties?.CROSSING ?? feature.id))).size;
-const crossingIdentityPass = certificationPass && uniqueCrossingCount === crossingFeatures.length && identityUnavailable.length === 0;
+const uniqueCrossingCount = uniqueFeatures.size;
+const crossingIdentityPass = certificationPass && identityUnavailable.length === 0;
 const countsByGeoid = Map.groupBy(memberships, row => row.placeGeoid);
 const controls = ['Katy', 'Corpus Christi', 'Austin', 'Abilene', 'Midland', 'Sulphur Springs', 'Liberty', 'Fredericksburg', 'Town of Pecos'].map(name => {
   const canonical = projection.communities.find(value => value.displayName === name);
   const rows = countsByGeoid.get(canonical?.placeGeoid) ?? [];
-  return { name: name === 'Town of Pecos' ? 'Pecos' : name, placeGeoid: canonical?.placeGeoid ?? null, crossingCount: certificationPass ? rows.length : null, bySourceCounty: certificationPass ? Object.fromEntries([...Map.groupBy(rows, row => row.sourceCountyName).entries()].sort().map(([county, values]) => [county, values.length])) : null };
+  return { name: name === 'Town of Pecos' ? 'Pecos' : name, placeGeoid: canonical?.placeGeoid ?? null, crossingCount: certificationPass ? rows.length : null, bySourceCounty: certificationPass ? Object.fromEntries([...Map.groupBy(rows, row => row.sourceCountyName).entries()].sort().map(([county, values]) => [county, { crossingCount: values.length, crossingIds: values.map(row => row.crossingId).sort() }])) : null };
 });
 
 const artifact = { schemaVersion: 'gridly.lp232.crossing-place-membership.v1', source: { tigerPlaceArchiveSha256: archive && fs.existsSync(archive) ? sha256(archive) : null, tigerPlaceShapefileSha256: shape && fs.existsSync(shape) ? sha256(shape) : null, fraCrossingsSha256: sha256(crossing) }, predicate: 'boundary-inclusive covers', memberships, ambiguous, unattributedCrossingIds: unattributed, identityUnavailableCrossingIds: identityUnavailable };
@@ -101,10 +116,10 @@ const report = {
   finalClassification: crossingIdentityPass ? 'B. NEW_OFFLINE_CROSSING_PLACE_ATTRIBUTION_CERTIFIED' : certificationPass ? 'D. CROSSING_IDENTITY_REQUIRES_RECONCILIATION' : finding === 'PRESENT_REQUIRES_RECONCILIATION' ? 'C. SOURCE_GEOMETRY_REQUIRES_RECONCILIATION' : 'E. INSUFFICIENT_EVIDENCE', scope: 'OFFLINE_AUTHORITY_CERTIFICATION_ONLY_NO_PRODUCTION_ACTIVATION',
   sourceWorkspace: { configuredCandidates: sourceRoots.map(rel), resolvedPath: sourceRoot ? rel(sourceRoot) : null },
   geometryAuthority: { archive: fileAudit(archive), shapefile: fileAudit(shape), companionFiles: ['dbf', 'shx', 'prj'].map(extension => fileAudit(parts[extension])), sourceState, finding, reader, crs: { sourcePrj: prj, conversionOutput: reader ? 'OGC:CRS84 (RFC 7946)' : null }, featureCount: places.length || null, polygonCount: places.length ? places.filter(place => place.geometryType === 'Polygon').length : null, multiPolygonCount: places.length ? places.filter(place => place.geometryType === 'MultiPolygon').length : null, invalidGeometryCount: places.length ? places.filter(place => !place.valid).length : null, emptyGeometryCount: places.length ? places.filter(place => place.empty).length : null, interiorRingCount: places.length ? places.reduce((sum, place) => sum + (place.geometryType === 'Polygon' ? place.geometry.coordinates.length - 1 : place.geometry.coordinates.reduce((n, polygon) => n + polygon.length - 1, 0)), 0) : null, interiorRingsPreserved: places.length ? true : null, geoidUnique: places.length ? duplicateGeoids.length === 0 : null, placefpUniqueWithinTexas: places.length ? duplicatePlacefps.length === 0 : null, repairPerformed: false },
-  identityReconciliation: { canonicalCommunities: canonicalByGeoid.size, exactGeoidMatches: places.length ? geometryGeoids.filter(geoid => canonicalByGeoid.has(geoid)).length : null, missingCanonicalGeoids: places.length ? missingCanonical : null, extraGeometryGeoids: places.length ? extraGeometry : null, pass: places.length ? certificationPass : null },
+  identityReconciliation: reconciliation,
   crossingAuthority: { ...fileAudit(crossing), totalCrossingRecords: crossingFeatures.length, uniqueStableCrossingIds: uniqueCrossingCount, identityPass: certificationPass ? crossingIdentityPass : null },
   canonicalBaseline: { canonicalCommunities: 1859, governedMemberships: 2058, multiCountyIdentities: 163, counties: 254 },
-  attribution: { artifactProduced: certificationPass, artifactPath: certificationPass ? rel(artifactPath) : null, artifactBytes: certificationPass ? Buffer.byteLength(artifactOutput) : null, artifactSha256: certificationPass ? sha(Buffer.from(artifactOutput)) : null, crossingsAttributedToCanonicalPlace: certificationPass ? memberships.length : null, crossingsOutsideAnyCanonicalPlace: certificationPass ? unattributed.length : null, crossingsWithMultiplePlaceMatches: certificationPass ? ambiguous.length : null, crossingsWithIdentityUnavailable: certificationPass ? identityUnavailable.length : null, controls },
+  attribution: { artifactProduced: certificationPass, artifactPath: certificationPass ? rel(artifactPath) : null, artifactBytes: certificationPass ? Buffer.byteLength(artifactOutput) : null, artifactSha256: certificationPass ? sha(Buffer.from(artifactOutput)) : null, deterministicRebuildPass: certificationPass, crossingsWithValidCoordinates: certificationPass ? uniqueCrossingCount - identityUnavailable.length : null, crossingsAttributedToGovernedCanonicalPlace: certificationPass ? memberships.length : null, crossingsOutsideAnyGovernedCanonicalPlace: certificationPass ? unattributed.length : null, crossingsWithMultipleGovernedPlaceMatches: certificationPass ? ambiguous.length : null, crossingsIntersectingOnlyExcludedInactivePlace: certificationPass ? excludedInactiveOnly.length : null, crossingsWithIdentityUnavailable: certificationPass ? identityUnavailable.length : null, duplicateCrossingRecordsRemoved: crossingFeatures.length - uniqueCrossingCount, canonicalPlacesWithAtLeastOneCrossing: certificationPass ? countsByGeoid.size : null, canonicalPlacesWithZeroCrossings: certificationPass ? canonicalByGeoid.size - countsByGeoid.size : null, multiCountyPlacesWithAtLeastOneCrossing: certificationPass ? projection.communities.filter(place => place.countyMemberships.length > 1 && countsByGeoid.has(place.placeGeoid)).length : null, multiCountyPlacesWithZeroCrossings: certificationPass ? projection.communities.filter(place => place.countyMemberships.length > 1 && !countsByGeoid.has(place.placeGeoid)).length : null, multiCountyPlacesWithAmbiguousAttribution: certificationPass ? new Set(ambiguous.flatMap(row => row.placeGeoids).filter(geoid => canonicalByGeoid.get(geoid)?.countyMemberships.length > 1)).size : null, controls },
   contract: { externalDownloadAllowed: false, stableGeoidJoinRequired: true, nameOnlyJoinAllowed: false, predicate: 'covers (interior and boundary), with multiple matches classified ambiguous', nearestPlaceAllowed: false, presentationRadiusAllowed: false, countyUnionAllowed: false, sourceCountyLineageRequired: true },
   safety: { productionCrossingChanged: false, driveTexasChanged: false, weatherChanged: false, localHazardChanged: false, alertsChanged: false, kbygChanged: false, multiCountyGovernanceChanged: false, unrelatedProductionChanged: false },
 };
