@@ -71,7 +71,7 @@ test("reopen separates same-generation snapshot reuse from mandatory authoritati
   assert.match(open, /gridlyOpenAlertsSurfaceAfterPaint\(alertsSheetGeneration\)/);
   assert.doesNotMatch(open, /cacheRead\.contextMatched\s*&&\s*typeof window\.openGridlyPortraitV2Sheet/);
   assert.doesNotMatch(open, /gridlySynchronizeOpenAlertsPortrait\("alerts_open_after_shell"\)/);
-  assert.match(writer, /const snapshot = await cooperativePhase\("snapshotAcquisitionMs"/);
+  assert.match(writer, /snapshot = await cooperativePhase\("snapshotAcquisitionMs"/);
   assert.match(writer, /window\.openGridlyPortraitV2Sheet\("alerts"/);
 });
 
