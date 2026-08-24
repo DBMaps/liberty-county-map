@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP223-final-community-lifecycle-reconciliation-v3";
+  const VERSION = "LP223-explicit-clear-target-reconciliation-v4";
   const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup", "history"]);
   const BLOCKED_CROSSING_OWNERS = Object.freeze({
     locationContext: "governed_awareness", communityPulse: "governed_awareness", alerts: "governed_awareness",
@@ -67,7 +67,7 @@
     return text(record.providerRecordId || record.provider_record_id || record.crossingId || record.crossing_id || record.crossing?.id);
   }
   function explicitLifecycleIdentity(record = {}) {
-    return text(record.lifecycleIdentity || record.lifecycle_identity || record.canonicalReportId || record.canonical_report_id || record.clearsReportId || record.clears_report_id || record.sourceReportId || record.source_report_id);
+    return text(record.explicitLifecycleTargetRaw || record.lifecycleIdentity || record.lifecycle_identity || record.canonicalReportId || record.canonical_report_id || record.clearsReportId || record.clears_report_id || record.sourceReportId || record.source_report_id);
   }
   function eventTime(record = {}) {
     const value = Date.parse(record.updatedAt || record.updated_at || record.createdAt || record.created_at || record.submittedAt || record.timestamp || "");
@@ -94,16 +94,26 @@
     const rows = records.map((record, index) => ({ record, index, persistedId: persistedReportId(record), providerId: crossingProviderId(record), explicitId: explicitLifecycleIdentity(record), subtype: subtypeOf(record), lifecycleRole: lifecycleRoleOf(record), time: eventTime(record), deviceId: text(record.deviceId || record.device_id) }));
     const activeCandidates = rows.filter((row) => isCrossingCommunityRecord(row.record) && row.lifecycleRole === "ACTIVE");
     const resolved = rows.map((row) => {
-      let lifecycleIdentity = row.explicitId || row.persistedId;
-      let result = row.explicitId ? "EXPLICIT_CANONICAL_REPORT_ID" : "PERSISTED_REPORT_ID";
-      if (isCrossingCommunityRecord(row.record) && row.lifecycleRole === "CLEAR_HISTORY" && !row.explicitId) {
+      const isClear = isCrossingCommunityRecord(row.record) && row.lifecycleRole === "CLEAR_HISTORY";
+      // A normalized clear used to copy its own reports.id into lifecycleIdentity
+      // when no lifecycle_report_id was persisted.  That value is observable for
+      // audit purposes, but it is not an explicit relationship and must never
+      // prevent the safe legacy resolver from finding the preceding active row.
+      const validExplicitTarget = isClear && row.explicitId && row.explicitId !== row.persistedId
+        && activeCandidates.some((candidate) => candidate.persistedId === row.explicitId);
+      let lifecycleIdentity = isClear ? "" : row.persistedId;
+      let result = "NO_VALID_TARGET";
+      if (validExplicitTarget) {
+        lifecycleIdentity = row.explicitId;
+        result = "EXPLICIT_ACTIVE_REPORT_ID";
+      } else if (isClear) {
         const candidates = activeCandidates.filter((candidate) => candidate.providerId && candidate.providerId === row.providerId
           && candidate.deviceId && candidate.deviceId === row.deviceId && (!row.time || !candidate.time || candidate.time <= row.time))
           .sort((left, right) => right.time - left.time || right.index - left.index);
         if (candidates[0]?.persistedId) {
           lifecycleIdentity = candidates[0].persistedId;
-          result = "LEGACY_CLEAR_MATCHED_LATEST_SAME_REPORTER_AT_CROSSING";
-        } else result = "CLEAR_TARGET_UNRESOLVED_NO_SAFE_REPORT_ALIAS";
+          result = "LEGACY_SAME_REPORTER_SAME_CROSSING";
+        }
       }
       return { ...row, lifecycleIdentity, reconciliationResult: result };
     });
@@ -125,7 +135,9 @@
         providerRecordId: row.providerId || null,
         crossingFraIdentity: row.providerId || null,
         lifecycleRole: row.lifecycleRole,
+        explicitLifecycleTargetRaw: row.explicitId || null,
         canonicalLifecycleTarget: row.lifecycleIdentity || null,
+        targetResolutionSource: row.reconciliationResult,
         retiredByClearId: row.lifecycleRole === "ACTIVE" && conflict ? (retiringClear?.persistedId || null) : null,
         aliasIds: Object.freeze(aliases.map((alias) => identity(alias.record, sourceKindOf(alias.record), subtypeOf(alias.record))).filter(Boolean)),
         clearedAliasIds: Object.freeze(cleared.map((alias) => identity(alias.record, sourceKindOf(alias.record), subtypeOf(alias.record))).filter(Boolean)),
@@ -228,10 +240,12 @@
         providerRecordId: alias?.providerRecordId || crossingProviderId(record) || null,
         crossingFraIdentity: alias?.crossingFraIdentity || null,
         lifecycleRole: alias?.lifecycleRole || (baseLifecycleState.retainedForHistory ? "CLEAR_HISTORY" : "ACTIVE"),
-        canonicalLifecycleTarget: alias?.canonicalLifecycleTarget || persistedReportId(record) || null,
+        explicitLifecycleTargetRaw: alias?.explicitLifecycleTargetRaw || null,
+        canonicalLifecycleTarget: alias ? alias.canonicalLifecycleTarget : (persistedReportId(record) || null),
+        targetResolutionSource: alias?.targetResolutionSource || "NO_VALID_TARGET",
         retiredByClearId: alias?.retiredByClearId || null,
-        lifecycleIdentity: alias?.lifecycleIdentity || persistedReportId(record) || null,
-        canonicalReportIdentity: alias?.lifecycleIdentity || persistedReportId(record) || null,
+        lifecycleIdentity: alias ? alias.lifecycleIdentity : (persistedReportId(record) || null),
+        canonicalReportIdentity: alias ? alias.lifecycleIdentity : (persistedReportId(record) || null),
         aliases: alias?.aliasIds || Object.freeze([evidenceId]), clearedAliasIds: alias?.clearedAliasIds || Object.freeze([]), activeAliasIds: alias?.activeAliasIds || Object.freeze([]),
         aliasReconciliationResult: alias?.aliasReconciliationResult || "NOT_APPLICABLE", firstLifecycleLosingStage: alias?.firstLifecycleLosingStage || null,
         canonicalCommunity: text(record.canonicalCommunity || record.community || record.city || record.town),
@@ -250,7 +264,9 @@
     const lifecycleAudit = evidence.filter((row) => row.sourceKind === "community_report").map((row) => Object.freeze({
       persistedReportId: row.persistedReportId,
       lifecycleRole: row.lifecycleRole,
+      explicitLifecycleTargetRaw: row.explicitLifecycleTargetRaw,
       canonicalLifecycleTarget: row.canonicalLifecycleTarget,
+      targetResolutionSource: row.targetResolutionSource,
       retiredByClearId: row.retiredByClearId,
       finalLifecycleEligible: isGovernedActiveLifecycle(row),
       finalHistoryEligible: row.eligible.history === true,
@@ -259,6 +275,9 @@
     }));
     if (lifecycleAudit.some((row) => row.lifecycleRole === "CLEAR_HISTORY" && row.finalLifecycleEligible)) {
       throw new Error("LP223 invariant violation: CLEAR_HISTORY cannot be lifecycle-active");
+    }
+    if (lifecycleAudit.some((row) => row.lifecycleRole === "CLEAR_HISTORY" && row.canonicalLifecycleTarget === row.persistedReportId)) {
+      throw new Error("LP223 invariant violation: CLEAR_HISTORY cannot target its own persisted report id");
     }
     const locationIds = evidence.filter((row) => row.countedByLocationContext).map((row) => row.evidenceId);
     const pulseIds = evidence.filter((row) => row.contributesToCommunityPulse).map((row) => row.evidenceId);
@@ -305,7 +324,8 @@
       governedEvidenceId: row.evidenceId, persistedReportId: row.persistedReportId,
       providerRecordId: row.providerRecordId, crossingFraIdentity: row.crossingFraIdentity,
       lifecycleIdentity: row.lifecycleIdentity, canonicalReportIdentity: row.canonicalReportIdentity,
-      lifecycleRole: row.lifecycleRole, canonicalLifecycleTarget: row.canonicalLifecycleTarget, retiredByClearId: row.retiredByClearId,
+      lifecycleRole: row.lifecycleRole, explicitLifecycleTargetRaw: row.explicitLifecycleTargetRaw,
+      canonicalLifecycleTarget: row.canonicalLifecycleTarget, targetResolutionSource: row.targetResolutionSource, retiredByClearId: row.retiredByClearId,
       aliases: row.aliases, clearedAliasIds: row.clearedAliasIds, activeAliasIds: row.activeAliasIds,
       aliasReconciliationResult: row.aliasReconciliationResult, firstLifecycleLosingStage: row.firstLifecycleLosingStage,
       deduplicationStatus: snapshot.duplicateEvidenceIds.includes(row.evidenceId) ? "DEDUPLICATED_SHARED_EVIDENCE" : "CANONICAL_UNIQUE_EVIDENCE",
