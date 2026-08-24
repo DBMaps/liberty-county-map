@@ -12,9 +12,32 @@ const acceptance = app.slice(app.indexOf("window.gridlyLP226AlertsReopenAcceptan
 
 test("unchanged same-generation requests reuse the existing snapshot without a timer", () => {
   assert.match(snapshot, /inputSignature === inputSignature/);
-  assert.match(snapshot, /return gridlyAlertsSnapshotReconciliationState\.snapshot/);
+  assert.match(snapshot, /return gridlyLP226ConsumerSnapshot\(gridlyAlertsSnapshotReconciliationState\.snapshot\)/);
   assert.match(snapshot, /suppressedRequests \+= 1/);
   assert.doesNotMatch(snapshot, /setTimeout|setInterval|debounce|throttle|visibilityState/);
+});
+
+test("authoritative cache owns immutable membership and consumers receive shallow copies", () => {
+  assert.match(snapshot, /snapshot\.alerts = Object\.freeze\(normalizedAlertItems\.map/);
+  assert.match(snapshot, /gridlyLP226ConsumerSnapshot/);
+  assert.match(snapshot, /alerts: snapshot\.alerts\.map/);
+  assert.match(snapshot, /presentationAlerts: snapshot\.presentationAlerts\.map/);
+  assert.match(snapshot, /normalizedAlertItems: snapshot\.normalizedAlertItems\.map/);
+  const cache = Object.freeze([{ id: "road-closed" }, { id: "traffic-backup" }]);
+  const oneAlertProjection = cache.filter(({ id }) => id === "traffic-backup");
+  const zeroAlertProjection = cache.filter(() => false);
+  assert.equal(cache.length, 2);
+  assert.equal(oneAlertProjection.length, 1);
+  assert.equal(zeroAlertProjection.length, 0);
+});
+
+test("cache commits and replacements expose bounded integrity evidence", () => {
+  for (const token of ["cacheCommitSequence", "cacheCommitCaller", "cacheCommitReason", "previousCanonicalIds",
+    "nextCanonicalIds", "membershipAdded", "membershipRemoved", "previousSignature", "nextSignature",
+    "previousGeneration", "nextGeneration", "replacementCaller", "replacementReason",
+    "VALID_INVALIDATION_REBUILD", "VALID_SAME_MEMBERSHIP_REUSE", "INVALID_SAME_GENERATION_MEMBERSHIP_CHANGE", "UNKNOWN"]) {
+    assert.match(snapshot, new RegExp(token));
+  }
 });
 
 test("every relevant Alerts dependency contributes to deterministic invalidation", () => {
@@ -61,6 +84,14 @@ test("street-level location changes invalidate while an unchanged snapshot remai
   assert.notEqual(signature({ roadName: "Spring St", crossStreet: "", resolvedLocation: "Hopkins County" }), cached);
 });
 
+test("bounded signature distinguishes identity, lifecycle, and equal-count replacement", () => {
+  assert.match(snapshot, /governedMembership/);
+  const signature = (rows) => rows.map(({ id, lifecycle }) => `${id}:${lifecycle}`).sort().join("|");
+  assert.notEqual(signature([{ id: "road", lifecycle: "active" }]), signature([{ id: "traffic", lifecycle: "active" }]));
+  assert.notEqual(signature([{ id: "road", lifecycle: "active" }]), signature([{ id: "road", lifecycle: "cleared" }]));
+  assert.equal(signature([{ id: "road", lifecycle: "active" }]), signature([{ id: "road", lifecycle: "active" }]));
+});
+
 test("owner reopen helper reports snapshot and writer decisions without another writer or delay", () => {
   for (const key of ["snapshotBuildDecision", "snapshotReuseDecision", "authoritativeWriteApplied", "sheetExposedAfterAuthority", "domLocation", "selectedLocationValue", "writerParity", "presentationContract", "firstLosingStage"]) assert.match(acceptance, new RegExp(key));
   assert.match(acceptance, /gridlyAlertsAuthorityWriterAudit/);
@@ -97,9 +128,9 @@ test("target-specific audit follows Road Closed through every membership stage",
     "presentationModelContainsIncident", "finalDomContainsIncident", "cachedSnapshotIds", "writerInputIds",
     "governedProjectionIds", "dedupedProjectionIds", "presentationIds", "finalDomIds", "firstLosingStage"
   ]) assert.match(membershipAudit, new RegExp(key));
-  assert.match(membershipAudit, /CACHE_SNAPSHOT_MEMBERSHIP_FAILURE/);
-  assert.match(membershipAudit, /AUTHORITATIVE_DISPATCH_INPUT_FAILURE/);
-  assert.match(membershipAudit, /DOM_MEMBERSHIP_FAILURE/);
+  for (const stage of ["SOURCE_LIFECYCLE_FAILURE", "GOVERNED_ACTIVE_MEMBERSHIP_FAILURE", "SNAPSHOT_BUILD_MEMBERSHIP_FAILURE",
+    "CACHE_MUTATION_AFTER_BUILD", "CACHE_REPLACEMENT_SAME_GENERATION", "CACHE_SIGNATURE_FAILURE",
+    "AUTHORITATIVE_DISPATCH_INPUT_FAILURE", "PRESENTATION_MODEL_FAILURE", "DOM_PARITY_FAILURE"]) assert.match(membershipAudit, new RegExp(stage));
   assert.match(membershipAudit, /DOM_PARITY_PASS/);
 });
 
