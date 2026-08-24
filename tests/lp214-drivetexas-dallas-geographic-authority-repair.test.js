@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const vm = require('vm');
+const presentation = require('../data/generated/gridly-statewide-place-presentation-v1.json');
 
 const dallas = Object.freeze({
   key: 'place-4819000', label: 'Dallas', countyId: 'dallas-tx',
@@ -31,6 +32,11 @@ const dallasShapes = [
 
 const sandbox = { console, Date, Math, URLSearchParams, setTimeout() {}, clearTimeout() {}, window: null, getGridlySelectedAwarenessArea: () => dallas };
 sandbox.window = sandbox;
+sandbox.resolveGridlyCanonicalPlacePresentationFocus = (area) => {
+  const geoid = /^place-(48\d{5})$/.exec(String(area?.key || area?.canonicalKey || ''))?.[1];
+  const target = geoid && presentation.places[geoid];
+  return target ? { canonicalKey: `place-${geoid}`, lat: target.lat, lng: target.lon, radiusMiles: 7, authority: 'LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1' } : null;
+};
 vm.createContext(sandbox);
 vm.runInContext('window.gridlySelectDriveTexasAuthority = input => Object.freeze({ selectedAwarenessArea: input.selectedAwarenessArea, consumerEligibleSituations: [] });', sandbox);
 vm.runInContext(fs.readFileSync('js/gridlyDriveTexasGeometryAuthority.js', 'utf8'), sandbox);

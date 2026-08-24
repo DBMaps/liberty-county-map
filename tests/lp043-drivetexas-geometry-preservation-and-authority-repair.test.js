@@ -3,7 +3,8 @@ const fs = require('fs');
 const vm = require('vm');
 
 const now = Date.parse('2026-07-21T12:00:00Z');
-const sandbox = { console, Date, setTimeout, clearTimeout, window: {}, globalThis: {} };
+class FixtureDate extends Date { static now() { return now; } }
+const sandbox = { console, Date: FixtureDate, setTimeout, clearTimeout, window: {}, globalThis: {} };
 sandbox.window = sandbox;
 sandbox.globalThis = sandbox;
 sandbox.gridlySelectDriveTexasAuthority = (input = {}) => ({ selectedAwarenessArea: input.selectedAwarenessArea, consumerEligibleSituations: [] });
