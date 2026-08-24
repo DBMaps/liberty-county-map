@@ -96,6 +96,49 @@ test('governed Alerts projection preserves popup incident-location fields and th
   function selectLocation(alert) { return gridlySelectConciseAlertLocation(alert); }
 });
 
+test('established consumer road authority cannot be downgraded by a later shared lookup', () => {
+  const projection = block('function gridlyProjectAlertIncidentLocation', '\nfunction gridlyStoryActiveRecords');
+  let sharedInvocations = 0;
+  const project = Function('getSharedResolvedRoadLookup', `${projection}; return gridlyProjectAlertIncidentLocation;`)(() => {
+    sharedInvocations += 1;
+    return { locationContext: { primary: 'Davis Street' } };
+  });
+  const record = {
+    raw: {
+      canonicalRoadContext: { roadContextAvailable: true, roadContextInvoked: true, roadContextSource: 'resolveNearbyRoadPair', primaryRoad: 'Spring St', secondaryRoad: 'S Davis St' },
+      consumerLocation: { displayLocation: 'Spring St and S Davis St', primaryLocation: 'Spring St and S Davis St', roadway: 'Spring St and S Davis St' },
+      lp023ConsumerLocation: { displayLocation: 'Spring St and S Davis St', primaryLocation: 'Spring St and S Davis St', roadway: 'Spring St and S Davis St' },
+      sharedResolvedRoadLookup: { locationContext: { primary: 'Davis Street' } }
+    }
+  };
+  const projected = project(record);
+  assert.equal(sharedInvocations, 0, 'strong existing authority prevents unnecessary shared geometry lookup');
+  assert.equal(projected.roadName, 'Spring St');
+  assert.equal(projected.crossStreet, 'S Davis St');
+  assert.equal(projected.resolvedLocation, 'Spring St and S Davis St');
+  assert.equal(gridlySelectConciseAlertLocation(projected).value, 'Spring St and S Davis St');
+  assert.equal(projected.selectedLocationAuthority, 'canonicalRoadContext');
+  assert.equal(projected.locationSelectionReason, 'road_cross_street');
+  assert.deepEqual(projected.locationAuthorityCandidates.map(({ authority }) => authority), ['canonicalRoadContext', 'consumerLocation', 'lp023ConsumerLocation', 'sharedResolvedRoadLookup']);
+  assert.equal(projected.locationAuthorityCandidates.at(-1).value, 'Davis Street');
+});
+
+test('shared road lookup remains the fallback when normalized and structured context are absent', () => {
+  const projection = block('function gridlyProjectAlertIncidentLocation', '\nfunction gridlyStoryActiveRecords');
+  const project = Function('getSharedResolvedRoadLookup', `${projection}; return gridlyProjectAlertIncidentLocation;`)(() => ({ locationContext: { primary: 'Davis Street' } }));
+  const projected = project({ canonicalCommunity: 'Sulphur Springs', countyName: 'Hopkins County' });
+  assert.equal(projected.roadName, 'Davis Street');
+  assert.equal(gridlySelectConciseAlertLocation(projected).value, 'Davis Street');
+  assert.equal(projected.selectedLocationAuthority, 'sharedResolvedRoadLookup');
+});
+
+test('location diagnostic publishes candidate and selected authority evidence', () => {
+  const diagnostic = block('window.gridlyAlertDataDiagnostic = function', '\n\n');
+  for (const field of ['locationAuthorityCandidates', 'selectedLocationAuthority', 'selectedLocationSourceFields', 'selectedLocationValue', 'locationSelectionReason']) {
+    assert.match(diagnostic, new RegExp(`\\b${field}\\b`), field);
+  }
+});
+
 test('location refinement preserves concise presentation and identity ownership', () => {
   const renderer = block('const RenderCompleteAlertCard = (phase2Contract)', 'const renderAlertCard = (alert');
   const renderCard = block('const renderAlertCard = (alert', 'const normalizeAlertPresentationKey');

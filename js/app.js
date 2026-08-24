@@ -3325,20 +3325,52 @@ function gridlyProjectAlertIncidentLocation(record = {}) {
   const raw = record?.raw || {};
   const source = record?.source || {};
   const latest = record?.latestReport || {};
+  const owners = { record, raw, source, latest };
   const read = (fields = []) => fields.map((field) => {
     const [owner, key] = field.includes(".") ? field.split(".", 2) : ["record", field];
-    return String(({ record, raw, source, latest }[owner]?.[key] || "")).trim();
+    return String(owners[owner]?.[key] || "").trim();
   }).find(Boolean) || "";
-  // This is the same shared normalized lookup consumed by
-  // resolveGridlyHazardPopupRoadLabel(); it is not a second geocoder or lookup.
-  const sharedLocation = typeof getSharedResolvedRoadLookup === "function" ? getSharedResolvedRoadLookup(record)?.locationContext || {} : {};
-  const roadName = String(sharedLocation.primary || "").trim() || read(["record.roadName", "record.road_name", "record.road", "record.primaryRoad", "record.street", "record.streetName", "record.street_name", "raw.roadName", "raw.road_name", "raw.road", "raw.primaryRoad", "source.roadName", "source.road_name", "source.road", "source.primaryRoad", "latest.roadName", "latest.road_name", "latest.road"]);
-  const crossStreet = String(sharedLocation.secondary || "").trim() || read(["record.crossStreet", "record.cross_street", "record.nearbyCrossStreet", "record.nearestCrossStreet", "record.referenceRoadA", "raw.crossStreet", "raw.cross_street", "raw.referenceRoadA", "source.crossStreet", "source.cross_street", "source.referenceRoadA", "latest.crossStreet", "latest.cross_street"]);
-  const resolvedLocation = String(sharedLocation.phrasing || sharedLocation.primary || "").trim() || read(["record.resolvedLocation", "record.authoritativeLocationLabel", "record.popupLocation", "record.locationPhrase", "record.locationLabel", "raw.resolvedLocation", "raw.authoritativeLocationLabel", "raw.popupLocation", "source.resolvedLocation", "source.authoritativeLocationLabel", "source.popupLocation"]);
+  const meaningful = (value) => Boolean(String(value || "").trim()) && !/^(?:nearby|unknown)$/i.test(String(value).trim());
+  const nestedCandidates = (key) => Object.entries(owners).map(([owner, value]) => ({ owner, value: value?.[key] })).filter((entry) => entry.value && typeof entry.value === "object");
+  const canonicalEntry = nestedCandidates("canonicalRoadContext").find(({ value }) => value.roadContextAvailable !== false && (meaningful(value.primaryRoad) || meaningful(value.secondaryRoad)));
+  const consumerEntry = nestedCandidates("consumerLocation").find(({ value }) => meaningful(value.displayLocation || value.primaryLocation || value.roadway));
+  const lp023Entry = nestedCandidates("lp023ConsumerLocation").find(({ value }) => meaningful(value.displayLocation || value.primaryLocation || value.roadway));
+  const authorityCandidates = [];
+  const capture = (authority, entry, value) => {
+    if (entry) authorityCandidates.push(Object.freeze({ authority, owner: entry.owner, value: String(value || "").trim() }));
+  };
+  capture("canonicalRoadContext", canonicalEntry, [canonicalEntry?.value?.primaryRoad, canonicalEntry?.value?.secondaryRoad].filter(Boolean).join(" and "));
+  capture("consumerLocation", consumerEntry, consumerEntry?.value?.displayLocation || consumerEntry?.value?.primaryLocation || consumerEntry?.value?.roadway);
+  capture("lp023ConsumerLocation", lp023Entry, lp023Entry?.value?.displayLocation || lp023Entry?.value?.primaryLocation || lp023Entry?.value?.roadway);
+
+  const structuredRoad = read(["record.roadName", "record.road_name", "record.road", "record.primaryRoad", "record.street", "record.streetName", "record.street_name", "raw.roadName", "raw.road_name", "raw.road", "raw.primaryRoad", "source.roadName", "source.road_name", "source.road", "source.primaryRoad", "latest.roadName", "latest.road_name", "latest.road"]);
+  const structuredCross = read(["record.crossStreet", "record.cross_street", "record.nearbyCrossStreet", "record.nearestCrossStreet", "record.referenceRoadA", "raw.crossStreet", "raw.cross_street", "raw.referenceRoadA", "source.crossStreet", "source.cross_street", "source.referenceRoadA", "latest.crossStreet", "latest.cross_street"]);
+  const structuredResolved = read(["record.resolvedLocation", "record.authoritativeLocationLabel", "record.popupLocation", "record.locationPhrase", "record.locationLabel", "raw.resolvedLocation", "raw.authoritativeLocationLabel", "raw.popupLocation", "source.resolvedLocation", "source.authoritativeLocationLabel", "source.popupLocation"]);
+  const establishedConsumer = consumerEntry || lp023Entry;
+  const establishedValue = String(establishedConsumer?.value?.displayLocation || establishedConsumer?.value?.primaryLocation || establishedConsumer?.value?.roadway || "").trim();
+  const hasEstablishedAuthority = Boolean(canonicalEntry || establishedConsumer);
+  const hasStructuredAuthority = Boolean(structuredRoad || structuredCross || structuredResolved);
+  if (hasStructuredAuthority) authorityCandidates.push(Object.freeze({ authority: "structuredIncidentLocation", owner: "flattenedRecord", value: structuredResolved || [structuredRoad, structuredCross].filter(Boolean).join(" and ") }));
+
+  // The shared lookup is enrichment only. In particular, do not invoke its
+  // geometry-backed resolver after the record already carries normalized truth.
+  const storedSharedEntry = nestedCandidates("sharedResolvedRoadLookup").find(({ value }) => value.locationContext && typeof value.locationContext === "object");
+  const sharedLocation = storedSharedEntry?.value?.locationContext || (!hasEstablishedAuthority && !hasStructuredAuthority && typeof getSharedResolvedRoadLookup === "function"
+    ? getSharedResolvedRoadLookup(record)?.locationContext || {}
+    : {});
+  if (meaningful(sharedLocation.primary || sharedLocation.secondary || sharedLocation.phrasing)) authorityCandidates.push(Object.freeze({ authority: "sharedResolvedRoadLookup", owner: storedSharedEntry ? `${storedSharedEntry.owner}.sharedResolvedRoadLookup.locationContext` : "sharedResolvedRoadLookup.locationContext", value: String(sharedLocation.phrasing || [sharedLocation.primary, sharedLocation.secondary].filter(Boolean).join(" and ") || sharedLocation.primary || "").trim() }));
+
+  const roadName = String(canonicalEntry?.value?.primaryRoad || structuredRoad || sharedLocation.primary || "").trim();
+  const crossStreet = String(canonicalEntry?.value?.secondaryRoad || structuredCross || sharedLocation.secondary || "").trim();
+  const resolvedLocation = establishedValue || structuredResolved || String(sharedLocation.phrasing || [roadName, crossStreet].filter(Boolean).join(" and ") || sharedLocation.primary || "").trim();
+  const selectedLocationAuthority = canonicalEntry ? "canonicalRoadContext" : (establishedConsumer ? (consumerEntry ? "consumerLocation" : "lp023ConsumerLocation") : (hasStructuredAuthority ? "structuredIncidentLocation" : (authorityCandidates.some((candidate) => candidate.authority === "sharedResolvedRoadLookup") ? "sharedResolvedRoadLookup" : "")));
   const sourceFields = [];
-  if (roadName) sourceFields.push(sharedLocation.primary && roadName === sharedLocation.primary ? "sharedResolvedRoadLookup.locationContext.primary" : "roadName");
-  if (crossStreet) sourceFields.push(sharedLocation.secondary && crossStreet === sharedLocation.secondary ? "sharedResolvedRoadLookup.locationContext.secondary" : "crossStreet");
-  if (resolvedLocation) sourceFields.push(sharedLocation.phrasing && resolvedLocation === sharedLocation.phrasing ? "sharedResolvedRoadLookup.locationContext.phrasing" : "resolvedLocation");
+  if (canonicalEntry?.value?.primaryRoad) sourceFields.push(`${canonicalEntry.owner}.canonicalRoadContext.primaryRoad`);
+  else if (roadName) sourceFields.push(sharedLocation.primary ? "sharedResolvedRoadLookup.locationContext.primary" : "roadName");
+  if (canonicalEntry?.value?.secondaryRoad) sourceFields.push(`${canonicalEntry.owner}.canonicalRoadContext.secondaryRoad`);
+  else if (crossStreet) sourceFields.push(sharedLocation.secondary ? "sharedResolvedRoadLookup.locationContext.secondary" : "crossStreet");
+  if (establishedConsumer) sourceFields.push(`${establishedConsumer.owner}.${consumerEntry ? "consumerLocation" : "lp023ConsumerLocation"}.${establishedConsumer.value.displayLocation ? "displayLocation" : (establishedConsumer.value.primaryLocation ? "primaryLocation" : "roadway")}`);
+  else if (resolvedLocation) sourceFields.push(sharedLocation.phrasing ? "sharedResolvedRoadLookup.locationContext.phrasing" : "resolvedLocation");
   if (!sourceFields.length) return record;
   return {
     ...record,
@@ -3346,8 +3378,13 @@ function gridlyProjectAlertIncidentLocation(record = {}) {
     crossStreet: String(crossStreet || record?.crossStreet || "").trim(),
     resolvedLocation: String(resolvedLocation || record?.resolvedLocation || "").trim(),
     __gridlyPresentationLocationLabel: String(resolvedLocation || record?.__gridlyPresentationLocationLabel || "").trim(),
-    locationSourceAuthority: sharedLocation.phrasing ? "shared_popup_incident_location" : (resolvedLocation ? "normalized_incident_location" : "structured_incident_location"),
-    locationSourceFields: Object.freeze(sourceFields)
+    locationSourceAuthority: selectedLocationAuthority,
+    locationSourceFields: Object.freeze(sourceFields),
+    locationAuthorityCandidates: Object.freeze(authorityCandidates),
+    selectedLocationAuthority,
+    selectedLocationSourceFields: Object.freeze([...sourceFields]),
+    selectedLocationValue: resolvedLocation || [roadName, crossStreet].filter(Boolean).join(" and "),
+    locationSelectionReason: roadName && crossStreet ? "road_cross_street" : (roadName ? "road" : "location_context")
   };
 }
 
@@ -31018,6 +31055,9 @@ window.gridlyAlertDataDiagnostic = function () {
       locationSelectionReason: conciseLocation.reason,
       locationSourceAuthority: alert?.locationSourceAuthority || (conciseLocation.field === "consumerCard.locationLine" ? "normalized_presentation_location" : "source_record"),
       locationSourceFields: Array.isArray(alert?.locationSourceFields) ? [...alert.locationSourceFields] : String(conciseLocation.field || "").split("+").filter(Boolean),
+      locationAuthorityCandidates: Array.isArray(alert?.locationAuthorityCandidates) ? alert.locationAuthorityCandidates.map((candidate) => ({ ...candidate })) : [],
+      selectedLocationAuthority: alert?.selectedLocationAuthority || alert?.locationSourceAuthority || "source_record",
+      selectedLocationSourceFields: Array.isArray(alert?.selectedLocationSourceFields) ? [...alert.selectedLocationSourceFields] : (Array.isArray(alert?.locationSourceFields) ? [...alert.locationSourceFields] : String(conciseLocation.field || "").split("+").filter(Boolean)),
       primarySource: (!genericTitle(chosenTitle) && tidy(chosenTitle)) ? "headlineLikeField" : locationMeta.source,
       secondarySource: hazardMeta.source,
       fieldUsedForTitle: chosenTitle === alert?.resolvedHeadline ? "resolvedHeadline" : chosenTitle === alert?.headline ? "headline" : chosenTitle === alert?.title ? "title" : chosenTitle === alert?.localizedSummary ? "localizedSummary" : "",
