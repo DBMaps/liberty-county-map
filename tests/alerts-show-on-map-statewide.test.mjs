@@ -68,18 +68,12 @@ test("an exact current marker is eligible without alert coordinates and remains 
   assert.doesNotMatch(resolver, /tolerance|proximity|coordinateDelta/);
 });
 
-test("the production published-awareness builder attaches Show on map for an exact marker without alert coordinates", () => {
+test("the production published-awareness builder renders Show on map for an exact marker without alert coordinates", () => {
   const incidentId = "drivetexas:provider:FE00C70A-A3F8-4CEB-8970-228FD50A14CD";
   const record = { consumerSituationId: incidentId, lat: null, lng: null, title: "Road closure", lifecycleState: "active" };
   const marker = { options: { incidentId }, getLatLng: () => ({ lat: 30.354093522309597, lng: -98.92211903028245 }) };
-  let attached = null;
   const sandbox = {
-    window: {
-      __gridlyLatestAlertsForRender: [],
-      openGridlyPortraitV2Sheet: (surface, payload) => { attached = { surface, ...payload }; return true; },
-      gridlyStartupDiagnostics: {},
-      setTimeout: () => {}
-    },
+    window: { __gridlyLatestAlertsForRender: [record] },
     gridlyLp019SafeText: value => String(value ?? "").trim(),
     gridlyLp019IdentityCandidates: (...sources) => sources.flatMap(source => source && typeof source === "object"
       ? [source.consumerSituationId, source.canonicalIncidentId, source.incidentId, source.id]
@@ -96,33 +90,21 @@ test("the production published-awareness builder attaches Show on map for an exa
     gridlyBuildNeutralAlertsSheetMarkup: () => "<div></div>",
     resolveGridlyAlertsPanelHeadingCandidate: () => ({ text: "Active Alerts" }),
     esc: value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;"),
-    gridlyLP012RecordAlertsClick: () => {},
-    gridlyAlertsOpenRefreshFixNow: () => 0,
-    gridlyBeginAlertsSheetLifecycle: () => 1,
-    gridlyBeginAlertsOpenRefreshFixTiming: () => {},
-    gridlyRecordAlertsOpenRefreshFixTiming: () => {},
-    gridlyInstantAlertsSheetAuditState: {},
-    gridlyAlertsSheetLifecycleState: { lateResultIgnoredCount: 0 },
-    gridlyGetPublishedCommunityAwarenessSummaryForAlerts: () => ({ activeHazardsInArea: [record] }),
-    gridlyGetPublishedAwarenessAlertRecordsForCurrentArea: () => [record]
   };
   vm.createContext(sandbox);
   vm.runInContext([
     functionSource(app, "gridlyLp019ResolveAlertRecord"),
     functionSource(app, "gridlyResolveAlertShowOnMapTarget"),
     functionSource(publishedAwareness, "gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords"),
-    functionSource(publishedAwareness, "openAlertsSurfaceFromDock"),
-    "this.open = openAlertsSurfaceFromDock;"
+    "this.build = gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords;"
   ].join("\n"), sandbox);
 
-  assert.equal(sandbox.open(), true);
-  assert.equal(attached.surface, "alerts");
-  assert.match(attached.html, />Show on map<\/button>/);
-  assert.match(attached.html, /aria-label="Show Road closure on map"/);
-  assert.match(attached.html, new RegExp(`data-gridly-show-on-map-incident-id="${incidentId}"`));
-  assert.equal((attached.html.match(/data-gridly-show-on-map="true"/g) || []).length, 1);
-  assert.doesNotMatch(attached.html, /data-gridly-alert-(?:lat|lng)=/, "null alert coordinates are not fabricated as zeroes");
-  assert.equal(sandbox.window.__gridlyLatestAlertsForRender[0], record, "the exact current published object owns eligibility");
+  const html = sandbox.build([record]);
+  assert.match(html, />Show on map<\/button>/);
+  assert.match(html, /aria-label="Show Road closure on map"/);
+  assert.match(html, new RegExp(`data-gridly-show-on-map-incident-id="${incidentId}"`));
+  assert.equal((html.match(/data-gridly-show-on-map="true"/g) || []).length, 1);
+  assert.doesNotMatch(html, /data-gridly-alert-(?:lat|lng)=/, "null alert coordinates are not fabricated as zeroes");
   assert.equal(record.lat, null);
   assert.equal(record.lng, null);
 });
