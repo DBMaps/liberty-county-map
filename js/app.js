@@ -4155,6 +4155,38 @@ function gridlyTravelBriefCommunityLocality(record = {}) {
   return locality.replace(/,?\s*Texas$/i, "");
 }
 
+// LP227: KBYG owns community-level presentation.  Governance has already
+// selected the records passed here; this selector must not reinterpret county
+// membership or borrow the incident-location formatter used by Alerts/map.
+function gridlySelectKbygCommunityPresentationContext(records = [], awarenessContext = {}) {
+  const cleanCommunity = (value) => {
+    const label = gridlyTravelBriefCleanLine(value || "").replace(/,?\s*Texas$/i, "");
+    return !label || /county$/i.test(label) || /^(?:nearby|unknown|current location|area)$/i.test(label) ? "" : label;
+  };
+  const selectedArea = awarenessContext?.selectedAwarenessArea || {};
+  const selectedCommunity = awarenessContext?.countyWide === false && awarenessContext?.filterMode !== "county"
+    ? cleanCommunity(awarenessContext?.label || awarenessContext?.localityLabel || selectedArea?.label || selectedArea?.storageValue)
+    : "";
+  if (selectedCommunity) return Object.freeze({ label: selectedCommunity, type: "COMMUNITY", source: "selected_canonical_community" });
+
+  const evidenceCommunity = (Array.isArray(records) ? records : []).map((record) => cleanCommunity(
+    record?.canonicalCommunity || record?.communityName || record?.locality || record?.town || record?.city || record?.placeName || record?.awarenessArea
+      || record?.raw?.canonicalCommunity || record?.raw?.communityName || record?.raw?.locality || record?.raw?.town || record?.raw?.city || record?.raw?.placeName || record?.raw?.awarenessArea
+  )).find(Boolean) || "";
+  if (evidenceCommunity) return Object.freeze({ label: evidenceCommunity, type: "COMMUNITY", source: "governed_evidence_community" });
+
+  const county = gridlyTravelBriefCleanLine(awarenessContext?.countyName || "");
+  if (county && !/^(?:nearby|unknown|area)$/i.test(county)) return Object.freeze({ label: county, type: "COUNTY", source: "governed_county_fallback" });
+  return Object.freeze({ label: "", type: "GENERIC", source: "generic_area_fallback" });
+}
+
+function gridlyFormatKbygCommunityCopy(records = [], presentationContext = {}) {
+  const count = (Array.isArray(records) ? records : []).filter(Boolean).length;
+  if (!count) return "No community travel conditions reported.";
+  const subject = count === 1 ? "A community report is" : `${count} community reports are`;
+  return presentationContext?.label ? `${subject} active in ${presentationContext.label}.` : `${subject} active nearby.`;
+}
+
 const GRIDLY_TRAVEL_BRIEF_COMMUNITY_CONDITION_COPY = Object.freeze({
   "flooding": Object.freeze({ singular: "Flooding", plural: "Flooding", mixed: "flooding" }),
   "crossing-delay": Object.freeze({ singular: "Crossing delay", plural: "Crossing delays", mixed: "crossing delays" }),
@@ -4201,23 +4233,11 @@ function gridlyTravelBriefCommunityGroupLine(group) {
   return gridlyTravelBriefCommunityConditionLine(group.condition, copy);
 }
 
-function gridlyTravelBriefCommunityLines(records = []) {
+function gridlyTravelBriefCommunityLines(records = [], awarenessContext = {}) {
   const active = Array.isArray(records) ? records.filter(Boolean) : [];
   if (!active.length) return ["No community travel conditions reported."];
-  const groups = [];
-  active.forEach(function (record) {
-    const condition = gridlyTravelBriefCommunityCondition(record);
-    let group = groups.find((entry) => entry.condition === condition);
-    if (!group) {
-      group = { condition, records: [] };
-      groups.push(group);
-    }
-    group.records.push(record);
-  });
-  if (groups.length > 1 && groups.every((group) => group.records.length === 1)) {
-    return gridlyTravelBriefCommunityJoinedConditionLines(groups);
-  }
-  return groups.slice(0, 3).map((group) => gridlyTravelBriefCommunityGroupLine(group)).filter(Boolean);
+  const context = gridlySelectKbygCommunityPresentationContext(active, awarenessContext);
+  return [gridlyFormatKbygCommunityCopy(active, context)];
 }
 
 function gridlyTravelBriefCommunityJoinedConditionLines(groups) {
@@ -4484,6 +4504,7 @@ function gridlyBuildTravelBriefModel(storyInput) {
   const driveTexasSourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope();
   const driveTexasRecords = gridlyStoryTransportationConnectorRecords();
   const weather = gridlyBriefInteractionWeatherModel();
+  const kbygPresentationContext = typeof getGridlyCanonicalAwarenessPresentationContext === "function" ? getGridlyCanonicalAwarenessPresentationContext() : {};
   // A caller may have built storyInput before the governed snapshot arrived.
   // Once KBYG authority is active, rebuild from that final record collection so
   // stale quiet copy cannot overwrite the expanded portrait consumer.
@@ -4494,17 +4515,62 @@ function gridlyBuildTravelBriefModel(storyInput) {
     driverDecisionPattern: true,
     sections: Object.freeze([
       gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecords }),
-      Object.freeze({ key: "community", title: "Community", sourceLine: gridlyAwarenessSourceLabel("community"), lines: Object.freeze(gridlyTravelBriefCommunityLines(records)) }),
+      Object.freeze({ key: "community", title: "Community", sourceLine: gridlyAwarenessSourceLabel("community"), lines: Object.freeze(gridlyTravelBriefCommunityLines(records, kbygPresentationContext)) }),
       Object.freeze({ key: "drivetexas", title: "Official Roadways", sourceLine: gridlyAwarenessSourceLabel("official-roadways"), lines: Object.freeze(gridlyTravelBriefDriveTexasLines(driveTexasRecords, gridlyGetAwarenessEvidenceCompleteness(), driveTexasSourceEnvelope)) }),
       Object.freeze({ key: "weather", title: "Weather", sourceLine: gridlyAwarenessSourceLabel("weather"), lines: Object.freeze(gridlyTravelBriefWeatherLines(weather)) })
     ]),
     unifiedEvidence: gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather, sourceEnvelope: driveTexasSourceEnvelope }),
     officialRoadwaySourceStatus: driveTexasSourceEnvelope,
     governedKbygEvidenceIds: Object.freeze(governedKbygEvidenceIds.slice()),
+    kbygPresentationContext: gridlySelectKbygCommunityPresentationContext(records, kbygPresentationContext),
     cardinality: story?.cardinality || null,
     storyConnected: Boolean(story?.evidence)
   });
 }
+
+function gridlyLp227KbygCommunityContextAcceptance(options = {}) {
+  const projection = options.projection || (typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null);
+  const rows = Array.isArray(options.records) ? options.records.map((record) => ({ record })) : (projection?.surfaces?.kbygCommunity || []);
+  const records = rows.map((row) => row?.record || row).filter(Boolean);
+  const canonical = options.awarenessContext || (typeof getGridlyCanonicalAwarenessPresentationContext === "function" ? getGridlyCanonicalAwarenessPresentationContext() : {});
+  const context = gridlySelectKbygCommunityPresentationContext(records, canonical);
+  const kbygCommunityCopy = gridlyFormatKbygCommunityCopy(records, context);
+  const incidentRecord = records[0] || {};
+  const alertProjection = typeof gridlyProjectAlertIncidentLocation === "function" ? gridlyProjectAlertIncidentLocation(incidentRecord) : incidentRecord;
+  const incidentSpecificLocation = String(options.incidentSpecificLocation || alertProjection?.selectedLocationValue || alertProjection?.resolvedLocation || alertProjection?.__gridlyPresentationLocationLabel || "").trim();
+  const alertsIncidentLocation = String(options.alertsIncidentLocation || (typeof document !== "undefined" ? document.querySelector?.("[data-gridly-alert-location]")?.dataset?.gridlyAlertLocation : "") || incidentSpecificLocation).trim();
+  const activeCounty = String(options.activeCounty || (typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : canonical?.countyId || "")).trim();
+  const selectedArea = canonical?.selectedAwarenessArea || {};
+  const selectedMembership = String(options.selectedMembership || selectedArea?.selectedMembership || selectedArea?.countyId || activeCounty).trim();
+  const canonicalCommunity = context.source === "selected_canonical_community" ? context.label : String(canonical?.label || "").trim();
+  const incidentSpecificLocationExcludedFromKbyg = !incidentSpecificLocation || !kbygCommunityCopy.toLowerCase().includes(incidentSpecificLocation.toLowerCase());
+  const communityContextPass = Boolean(context.type === "COMMUNITY" && canonicalCommunity && context.label === canonicalCommunity && kbygCommunityCopy.includes(canonicalCommunity));
+  const surfaceSeparationPass = Boolean(incidentSpecificLocationExcludedFromKbyg && (!incidentSpecificLocation || alertsIncidentLocation === incidentSpecificLocation));
+  const governancePreservedPass = Boolean(!selectedMembership || !activeCounty || selectedMembership === activeCounty);
+  const report = Object.freeze({
+    canonicalCommunity, selectedMembership, activeCounty,
+    governedKbygEvidenceCount: rows.length,
+    kbygPresentationContext: context.label || "nearby",
+    kbygPresentationContextType: context.type,
+    kbygCommunityCopy,
+    countyFallbackAvailable: Boolean(canonical?.countyName),
+    incidentSpecificLocation,
+    incidentSpecificLocationExcludedFromKbyg,
+    alertsIncidentLocation,
+    communityContextPass,
+    surfaceSeparationPass,
+    governancePreservedPass,
+    overallPass: Boolean(communityContextPass && surfaceSeparationPass && governancePreservedPass)
+  });
+  if (options.log !== false && typeof console !== "undefined") {
+    console.group("=== LP227 KBYG COMMUNITY CONTEXT ACCEPTANCE ===");
+    Object.entries(report).forEach(([key, value]) => console.log(`${key}:`, value));
+    console.groupEnd();
+  }
+  return report;
+}
+
+if (typeof window !== "undefined") window.gridlyLp227KbygCommunityContextAcceptance = gridlyLp227KbygCommunityContextAcceptance;
 
 function gridlyAwarenessCardinalityLanguageAudit(options = {}) {
   const compactModel = options.compactModel || (typeof buildGridlyCommunityPulseModel === "function" ? buildGridlyCommunityPulseModel({ auditOnly: true }) : {});
