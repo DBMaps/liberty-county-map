@@ -57076,6 +57076,56 @@ function gridlyRailLocationContextParityAudit(summary = buildGridlyCommunityAwar
   });
 }
 window.gridlyRailLocationContextParityAudit = gridlyRailLocationContextParityAudit;
+
+// LP228 is deliberately observational.  This helper describes the collection
+// already selected by Location Context; it does not load sibling county
+// packages or manufacture a canonical-community crossing collection.
+window.gridlyLP228CommunityCrossingScopeAudit = function gridlyLP228CommunityCrossingScopeAudit() {
+  const selectedArea = getGridlySelectedAwarenessArea();
+  const canonicalCommunity = String(selectedArea?.label || selectedArea?.storageValue || "").trim() || null;
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(selectedArea);
+  const canonicalKey = String(selectedArea?.canonicalKey || selectedArea?.key || (placeGeoid ? `place-${placeGeoid}` : "")).trim() || null;
+  const selectedCountyId = gridlyGetActiveCountyId();
+  const membershipFips = [...new Set((Array.isArray(selectedArea?.countyMemberships) ? selectedArea.countyMemberships : []).map(String))];
+  const membershipCountyIds = membershipFips.map((countyFips) => Object.entries(GRIDLY_COUNTY_REGISTRY)
+    .find(([, config]) => String(config?.countyFips || "") === countyFips)?.[0]).filter(Boolean);
+  const allGovernedMemberships = membershipCountyIds.length ? membershipCountyIds : [selectedCountyId];
+  const inventory = gridlyGetActiveCountyCrossingInventory();
+  const watched = gridlySelectConsumerVisibleCrossings(selectedArea, { countyId: selectedCountyId, inventory });
+  const watchedCrossingIds = watched.map(gridlyGetConsumerCrossingFraId).filter(Boolean);
+  const countyInventories = Object.fromEntries(allGovernedMemberships.map((countyId) => [countyId, countyId === selectedCountyId ? inventory.length : null]));
+  const watchedCrossingsByCounty = Object.fromEntries(allGovernedMemberships.map((countyId) => [countyId, countyId === selectedCountyId ? watchedCrossingIds : []]));
+  const multiCounty = allGovernedMemberships.length > 1;
+  const radiusInfluenced = !selectedArea?.countyWide && !selectedArea?.fallback;
+  const publishedWatchedCount = Number(gridlyCrossingWatchCountAuditState?.displayedWatchedCount);
+  const currentWatchedCount = Number.isFinite(publishedWatchedCount) ? publishedWatchedCount : watched.length;
+  return Object.freeze({
+    audit: "LP228 community crossing scope audit (passive)",
+    canonicalCommunity,
+    canonicalKey,
+    selectedMembership: selectedCountyId,
+    allGovernedMemberships: Object.freeze(allGovernedMemberships),
+    countyInventories: Object.freeze(countyInventories),
+    currentWatchedCount,
+    currentWatchedSource: "buildGridlyCrossingWatchPresentationModel -> getGridlyBottomPanelAwarenessCrossingCount -> gridlySelectConsumerVisibleCrossings(active county inventory)",
+    currentWatchedPolicy: "max of active-county geographic selector and summary projection (plus saved-route set while route watch is active); selector requires valid/reportable public crossings and deduplicates FRA identity",
+    watchedCrossingIds: Object.freeze(watchedCrossingIds),
+    watchedCrossingsByCounty: Object.freeze(watchedCrossingsByCounty),
+    renderedMarkerCount: getGridlyCurrentRenderedCrossingMarkerCount(),
+    viewportInfluenced: false,
+    radiusInfluenced,
+    selectedMembershipLimited: multiCounty,
+    multiCountyAggregated: false,
+    deduplicated: false,
+    communityCrossingAuthority: radiusInfluenced ? "presentation coordinates plus governed awareness radius (not community boundary membership)" : "governed county inventory",
+    communityCrossingAuthorityConfidence: radiusInfluenced ? "LOW_NOT_AUTHORITATIVE_FOR_PLACE_MEMBERSHIP" : "HIGH_FOR_COUNTY_ONLY",
+    proposedCanonicalCommunityCount: null,
+    differenceFromCurrentCount: null,
+    safeToRepair: false,
+    classification: "REPAIR_REQUIRES_NEW_AUTHORITY"
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP228CommunityCrossingScopeAudit", window.gridlyLP228CommunityCrossingScopeAudit);
 window.gridlySafeBrowserCrossingAudit = async function gridlySafeBrowserCrossingAudit() {
   const canonicalCommunity = getGridlySelectedAwarenessArea();
   const countyId = gridlyGetActiveCountyId();
