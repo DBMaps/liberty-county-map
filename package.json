@@ -615,6 +615,9 @@
     "test:lp230": "node --test tests/lp230-*",
     "build:lp231": "node tools/lp231/build-canonical-place-geometry-audit.mjs --write",
     "verify:lp231": "node tools/lp231/build-canonical-place-geometry-audit.mjs --verify",
-    "test:lp231": "node --test tests/lp231-*"
+    "test:lp231": "node --test tests/lp231-*",
+    "build:lp232": "node tools/lp232/build-crossing-place-attribution-certification.mjs --write",
+    "verify:lp232": "node tools/lp232/build-crossing-place-attribution-certification.mjs --verify",
+    "test:lp232": "node --test tests/lp232-*"
   }
 }
