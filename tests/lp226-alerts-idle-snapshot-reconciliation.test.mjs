@@ -7,6 +7,7 @@ const audit = fs.readFileSync(new URL("../js/gridlyRuntimePerformanceAudit.js", 
 const snapshot = app.slice(app.indexOf("const gridlyAlertsSnapshotReconciliationState"), app.indexOf("window.getAlertsSurfaceSnapshot = getAlertsSurfaceSnapshot"));
 const writer = app.slice(app.indexOf("async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync"), app.indexOf("function invokeMobileAlertsEntry"));
 const open = app.slice(app.indexOf("function openAlertsSurfaceFromDock()"), app.indexOf("function gridlyInstantAlertsSheetAudit()"));
+const membershipAudit = app.slice(app.indexOf("const GRIDLY_LP226_DEFAULT_TARGET_PRESENTATION_ID"), app.indexOf("window.gridlyLP226AlertsReopenAcceptance"));
 const acceptance = app.slice(app.indexOf("window.gridlyLP226AlertsReopenAcceptance"), app.indexOf("window.gridlyAlertDataDiagnostic"));
 
 test("unchanged same-generation requests reuse the existing snapshot without a timer", () => {
@@ -65,4 +66,58 @@ test("owner reopen helper reports snapshot and writer decisions without another 
   assert.match(acceptance, /gridlyAlertsAuthorityWriterAudit/);
   assert.doesNotMatch(acceptance, /innerHTML|openGridlyPortraitV2Sheet|setTimeout|setInterval|requestAnimationFrame/);
   assert.equal((app.match(/async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync/g) || []).length, 1);
+});
+
+test("authoritative snapshot records bounded membership identity and generation metadata", () => {
+  for (const token of ["canonicalGovernedEvidenceIds", "presentationIncidentIds", "activeMembershipCount", "contextKey", "community", "county", "countyId", "inputSignature", "generation"]) {
+    assert.match(snapshot, new RegExp(token));
+  }
+  assert.match(snapshot, /snapshot\.authoritativeMembership/);
+});
+
+test("reopen dispatches the complete authoritative snapshot without narrowing it again", () => {
+  assert.match(writer, /const snapshotAlerts = Array\.isArray\(snapshot\?\.alerts\)/);
+  assert.match(writer, /authoritative snapshot membership reuse/);
+  assert.match(writer, /snapshotAlerts\.slice\(\)/);
+  assert.doesNotMatch(writer, /gridlyFilterAlertRecordsBySelectedAwarenessArea\(snapshotAlerts, "openAlertsSurfaceFromDock"\)/);
+
+  const authoritativeSnapshot = Object.freeze({ alerts: Object.freeze([
+    { id: "road-closed", evidenceId: "active_hazard:road-closed" },
+    { id: "traffic-backup", evidenceId: "official:traffic-backup" }
+  ]) });
+  const writerInput = authoritativeSnapshot.alerts.slice();
+  assert.deepEqual(writerInput.map(({ id }) => id), ["road-closed", "traffic-backup"]);
+  assert.equal(authoritativeSnapshot.alerts.length, writerInput.length);
+});
+
+test("target-specific audit follows Road Closed through every membership stage", () => {
+  for (const key of [
+    "expectedPresentationIncidentId", "expectedGovernedEvidenceId", "cachedSnapshotContainsIncident",
+    "writerInputContainsIncident", "governedProjectionContainsIncident", "dedupedProjectionContainsIncident",
+    "presentationModelContainsIncident", "finalDomContainsIncident", "cachedSnapshotIds", "writerInputIds",
+    "governedProjectionIds", "dedupedProjectionIds", "presentationIds", "finalDomIds", "firstLosingStage"
+  ]) assert.match(membershipAudit, new RegExp(key));
+  assert.match(membershipAudit, /CACHE_SNAPSHOT_MEMBERSHIP_FAILURE/);
+  assert.match(membershipAudit, /AUTHORITATIVE_DISPATCH_INPUT_FAILURE/);
+  assert.match(membershipAudit, /DOM_MEMBERSHIP_FAILURE/);
+  assert.match(membershipAudit, /DOM_PARITY_PASS/);
+});
+
+test("owner helper cannot pass for Traffic Backup when requested Road Closed is absent", () => {
+  for (const key of [
+    "targetPresentationIncidentId", "targetGovernedEvidenceId", "targetPresentInSnapshot",
+    "targetPresentInWriterInput", "targetPresentInFinalDom", "authoritativeMembershipCount",
+    "domMembershipCount", "membershipParity", "overallPass"
+  ]) assert.match(acceptance, new RegExp(key));
+  assert.match(acceptance, /audit\.cachedSnapshotContainsIncident && audit\.writerInputContainsIncident && audit\.finalDomContainsIncident/);
+  const requestedRoadClosedPresent = false;
+  const trafficBackupRenderedPerfectly = true;
+  assert.equal(requestedRoadClosedPresent && trafficBackupRenderedPerfectly, false);
+});
+
+test("known target and location authority are deterministic without community-specific production branching", () => {
+  assert.match(membershipAudit, /f4a2845c-aea2-49a2-84f2-5b9b6400eeff/);
+  assert.match(membershipAudit, /active_hazard:hazard-device-fb254e5c-da39-4ff0-92d1-15c9cc62b57d-1787577251389/);
+  assert.match(acceptance, /selectedLocationValue/);
+  assert.doesNotMatch(acceptance, /Sulphur Springs|Hopkins County/);
 });

@@ -30978,30 +30978,97 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 // LP226 owner reopen acceptance: read-only evidence joining snapshot reuse to
 // LP223 DOM authority. Invoke after each open/reopen reaches its first visible
 // state; this helper does not render, schedule, or mutate Alerts.
-window.gridlyLP226AlertsReopenAcceptance = function () {
-  const snapshotAudit = typeof gridlyAlertsSnapshotReconciliationAudit === "function"
-    ? gridlyAlertsSnapshotReconciliationAudit()
-    : {};
+const GRIDLY_LP226_DEFAULT_TARGET_PRESENTATION_ID = "f4a2845c-aea2-49a2-84f2-5b9b6400eeff";
+const GRIDLY_LP226_DEFAULT_TARGET_GOVERNED_ID = "active_hazard:hazard-device-fb254e5c-da39-4ff0-92d1-15c9cc62b57d-1787577251389";
+
+window.gridlyLP226AlertsMembershipAudit = function (target = {}, governedId = "") {
+  const options = typeof target === "object" && target !== null ? target : { presentationIncidentId: target, governedEvidenceId: governedId };
+  const expectedPresentationIncidentId = String(options.presentationIncidentId || options.targetPresentationIncidentId || GRIDLY_LP226_DEFAULT_TARGET_PRESENTATION_ID).trim();
+  const expectedGovernedEvidenceId = String(options.governedEvidenceId || options.targetGovernedEvidenceId || governedId || GRIDLY_LP226_DEFAULT_TARGET_GOVERNED_ID).trim();
+  const snapshotAudit = typeof gridlyAlertsSnapshotReconciliationAudit === "function" ? gridlyAlertsSnapshotReconciliationAudit() : {};
+  const membership = snapshotAudit.membership || {};
+  const stages = window.__gridlyLp2194AlertStages || {};
+  const canonicalIds = (rows) => (Array.isArray(rows) ? rows : []).map((row, index) => gridlyAlertWriterRecordId(row, index)).filter(Boolean);
+  const presentationIdsFor = (rows) => (Array.isArray(rows) ? rows : []).map((row) => String(row?.id || row?.incidentId || row?.reportId || "").trim()).filter(Boolean);
+  const cachedSnapshotIds = [...(membership.canonicalGovernedEvidenceIds || [])];
+  const cachedSnapshotPresentationIds = [...(membership.presentationIncidentIds || [])];
+  const writerRows = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+  const writerInputIds = canonicalIds(writerRows);
+  const writerInputPresentationIds = presentationIdsFor(writerRows);
+  const governedRows = Array.isArray(stages.areaFilterEligible) ? stages.areaFilterEligible : [];
+  const dedupedRows = Array.isArray(stages.finalAlertData) ? stages.finalAlertData : [];
+  const governedProjectionIds = canonicalIds(governedRows);
+  const governedProjectionPresentationIds = presentationIdsFor(governedRows);
+  const dedupedProjectionIds = canonicalIds(dedupedRows);
+  const dedupedProjectionPresentationIds = presentationIdsFor(dedupedRows);
+  const presentationMembership = window.__gridlyLP226PresentationMembership || {};
+  const presentationRows = gridlyAlertsOpenPerformanceAuditState?.activeRenderContext?.presentationModel?.alerts || [];
+  const presentationIds = [...(presentationMembership.presentationIds || presentationIdsFor(presentationRows))];
+  const presentationCanonicalIds = [...(presentationMembership.canonicalIds || canonicalIds(presentationRows))];
+  const domRows = Array.from(document.querySelectorAll('#gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-id]'));
+  const finalDomPresentationIds = domRows.map((row) => String(row.getAttribute("data-gridly-alert-id") || "")).filter(Boolean);
+  const finalDomCanonicalIds = domRows.map((row) => String(row.getAttribute("data-gridly-governed-evidence-id") || "")).filter(Boolean);
+  const containsTarget = (canonical, presentation) => canonical.includes(expectedGovernedEvidenceId) || presentation.includes(expectedPresentationIncidentId);
+  const cachedSnapshotContainsIncident = containsTarget(cachedSnapshotIds, cachedSnapshotPresentationIds);
+  const writerInputContainsIncident = containsTarget(writerInputIds, writerInputPresentationIds);
+  const governedProjectionContainsIncident = containsTarget(governedProjectionIds, governedProjectionPresentationIds);
+  const dedupedProjectionContainsIncident = containsTarget(dedupedProjectionIds, dedupedProjectionPresentationIds);
+  const presentationModelContainsIncident = containsTarget(presentationCanonicalIds, presentationIds);
+  const finalDomContainsIncident = containsTarget(finalDomCanonicalIds, finalDomPresentationIds);
+  let firstLosingStage = "DOM_PARITY_PASS";
+  if (!cachedSnapshotContainsIncident) firstLosingStage = "CACHE_SNAPSHOT_MEMBERSHIP_FAILURE";
+  else if (!writerInputContainsIncident) firstLosingStage = "AUTHORITATIVE_DISPATCH_INPUT_FAILURE";
+  else if (!governedProjectionContainsIncident) firstLosingStage = "GOVERNED_PROJECTION_FAILURE";
+  else if (!dedupedProjectionContainsIncident) firstLosingStage = "DEDUPLICATION_FAILURE";
+  else if (!presentationModelContainsIncident) firstLosingStage = "PRESENTATION_MODEL_FAILURE";
+  else if (!finalDomContainsIncident) firstLosingStage = "DOM_MEMBERSHIP_FAILURE";
+  return Object.freeze({
+    expectedPresentationIncidentId, expectedGovernedEvidenceId,
+    cachedSnapshotContainsIncident, writerInputContainsIncident, governedProjectionContainsIncident,
+    dedupedProjectionContainsIncident, presentationModelContainsIncident, finalDomContainsIncident,
+    cachedSnapshotIds, writerInputIds, governedProjectionIds, dedupedProjectionIds, presentationIds,
+    finalDomIds: finalDomCanonicalIds, finalDomPresentationIds, firstLosingStage,
+    snapshotGeneration: snapshotAudit.snapshotGeneration ?? membership.generation ?? null,
+    snapshotSignature: snapshotAudit.inputSignature || membership.inputSignature || "",
+    snapshotBuildDecision: snapshotAudit.snapshotBuildDecision || (snapshotAudit.lastChangedSincePrevious === true ? "BUILD_CHANGED_GENERATION" : "NO_BUILD"),
+    snapshotReuseDecision: snapshotAudit.snapshotReuseDecision || (snapshotAudit.lastChangedSincePrevious === false ? "REUSE_SAME_GENERATION" : "NOT_REUSED")
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP226AlertsMembershipAudit", window.gridlyLP226AlertsMembershipAudit);
+
+window.gridlyLP226AlertsReopenAcceptance = function (target = {}, governedId = "") {
+  const audit = window.gridlyLP226AlertsMembershipAudit(target, governedId);
   const writerAudit = window.gridlyAlertsAuthorityWriterAudit?.() || {};
   const lastOpen = gridlyInstantAlertsSheetAuditState.lastOpen || {};
-  const firstCard = document.querySelector('#gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-id]');
-  const presentationId = String(firstCard?.getAttribute("data-gridly-alert-id") || "");
-  const record = (Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [])
-    .find((row, index) => gridlyAlertWriterRecordId(row, index) === String(firstCard?.getAttribute("data-gridly-governed-evidence-id") || "")
-      || String(row?.id || row?.incidentId || row?.reportId || "") === presentationId) || {};
-  const locationNode = firstCard?.querySelector?.("[data-gridly-alert-location]") || firstCard;
-  const domLocation = String(locationNode?.getAttribute?.("data-location") || firstCard?.getAttribute?.("data-gridly-alert-location") || locationNode?.textContent || "").replace(/\s+/g, " ").trim();
+  const cards = Array.from(document.querySelectorAll('#gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-id]'));
+  const targetCard = cards.find((card) => String(card.getAttribute("data-gridly-alert-id") || "") === audit.expectedPresentationIncidentId
+    || String(card.getAttribute("data-gridly-governed-evidence-id") || "") === audit.expectedGovernedEvidenceId) || null;
+  const records = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+  const record = records.find((row, index) => gridlyAlertWriterRecordId(row, index) === audit.expectedGovernedEvidenceId
+    || String(row?.id || row?.incidentId || row?.reportId || "") === audit.expectedPresentationIncidentId) || {};
+  const locationNode = targetCard?.querySelector?.("[data-gridly-alert-location]") || targetCard;
+  const domLocation = String(locationNode?.getAttribute?.("data-location") || targetCard?.getAttribute?.("data-gridly-alert-location") || locationNode?.textContent || "").replace(/\s+/g, " ").trim();
+  const authoritativeMembershipCount = Number((typeof gridlyAlertsSnapshotReconciliationAudit === "function" ? gridlyAlertsSnapshotReconciliationAudit()?.membership?.activeMembershipCount : 0) || 0);
+  const domMembershipCount = cards.length;
+  const membershipParity = authoritativeMembershipCount === domMembershipCount
+    && (audit.cachedSnapshotIds || []).every((id) => (audit.finalDomIds || []).includes(id));
   const authoritativeWriteApplied = Boolean(writerAudit.parity && lastOpen.authoritativeContentAppliedAt);
+  const selectedLocationValue = String(record?.selectedLocationValue || record?.resolvedLocation || record?.__gridlyNarrowConsumerCard?.locationLine || "");
+  const writerParity = Boolean(writerAudit.parity);
+  const presentationContract = writerAudit.presentationContract || "";
+  const overallPass = Boolean(audit.cachedSnapshotContainsIncident && audit.writerInputContainsIncident && audit.finalDomContainsIncident
+    && membershipParity && authoritativeWriteApplied && writerParity && presentationContract === "CONCISE_ALERT_CARD" && audit.firstLosingStage === "DOM_PARITY_PASS");
   return Object.freeze({
-    snapshotBuildDecision: snapshotAudit.lastChangedSincePrevious === true ? "BUILD_CHANGED_GENERATION" : "NO_BUILD",
-    snapshotReuseDecision: snapshotAudit.lastChangedSincePrevious === false ? "REUSE_SAME_GENERATION" : "NOT_REUSED",
+    targetPresentationIncidentId: audit.expectedPresentationIncidentId,
+    targetGovernedEvidenceId: audit.expectedGovernedEvidenceId,
+    targetPresentInSnapshot: audit.cachedSnapshotContainsIncident,
+    targetPresentInWriterInput: audit.writerInputContainsIncident,
+    targetPresentInFinalDom: audit.finalDomContainsIncident,
+    authoritativeMembershipCount, domMembershipCount, membershipParity, domLocation, selectedLocationValue,
+    snapshotBuildDecision: audit.snapshotBuildDecision, snapshotReuseDecision: audit.snapshotReuseDecision,
     authoritativeWriteApplied,
     sheetExposedAfterAuthority: Boolean(authoritativeWriteApplied && lastOpen.sheetVisibleAt && lastOpen.initialCardsRenderedAt === lastOpen.sheetVisibleAt),
-    domLocation,
-    selectedLocationValue: String(record?.selectedLocationValue || record?.resolvedLocation || record?.__gridlyNarrowConsumerCard?.locationLine || ""),
-    writerParity: Boolean(writerAudit.parity),
-    presentationContract: writerAudit.presentationContract || "",
-    firstLosingStage: writerAudit.firstLosingStage || "WRITER_NOT_INVOKED"
+    writerParity, presentationContract, firstLosingStage: audit.firstLosingStage, overallPass
   });
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP226AlertsReopenAcceptance", window.gridlyLP226AlertsReopenAcceptance);
@@ -35768,9 +35835,12 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     const snapshot = await cooperativePhase("snapshotAcquisitionMs", async () => window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.());
     if (!(await cooperativeYieldOrCancel(true, "cancelled_after_snapshot"))) return false;
     const snapshotAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
-    const alertsForRender = await cooperativePhase("awarenessFilteringMs", async () => gridlyAlertsOpenAuditMeasure("alert merge", () => (typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
-      ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "openAlertsSurfaceFromDock")
-      : snapshotAlerts), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "open Alerts awareness filtering" }));
+    // snapshot.alerts is already the complete governed, deduplicated authoritative
+    // projection. Re-filtering it here treated the snapshot as raw provider input
+    // and could narrow a valid same-generation membership during reopen.
+    const alertsForRender = await cooperativePhase("awarenessFilteringMs", async () => gridlyAlertsOpenAuditMeasure("authoritative snapshot membership reuse", () => snapshotAlerts.slice(), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "reuse governed Alerts snapshot without consumer re-filtering" }));
+    gridlyLP226AlertsMembershipAuditState.writerInputIds = gridlyLP226MembershipIds(alertsForRender, gridlyLP226CanonicalId);
+    gridlyLP226AlertsMembershipAuditState.writerInputPresentationIds = gridlyLP226MembershipIds(alertsForRender, gridlyLP226PresentationId);
     writerAlertsForRender = alertsForRender;
     gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: "write_pending", invocationTime: writerInvocationTime, countInvocation: false });
     if (!(await cooperativeYieldOrCancel(true, "cancelled_after_awareness_filter"))) return false;
@@ -36962,6 +37032,11 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         };
       });
       cooperativeBuildAudit.itemCount = presentationAlerts.length;
+      gridlyLP226AlertsMembershipAuditState.presentationIds = gridlyLP226MembershipIds(presentationAlerts, gridlyLP226PresentationId);
+      window.__gridlyLP226PresentationMembership = Object.freeze({
+        presentationIds: Object.freeze(gridlyLP226AlertsMembershipAuditState.presentationIds.slice()),
+        canonicalIds: Object.freeze(gridlyLP226MembershipIds(presentationAlerts, gridlyLP226CanonicalId))
+      });
       gridlyAlertsCooperativeBuildState.equivalence.outputSignatureBefore = gridlyAlertsAuthoritativeOutputSignature(presentationAlerts);
       gridlyAlertsGroupingHotLoopState.equivalence.beforeSignature = gridlyAlertsCooperativeBuildState.equivalence.outputSignatureBefore;
       if (!(await cooperativeYieldOrCancel(true, "cancelled_after_presentation_grouping"))) return false;
@@ -113172,8 +113247,23 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     invalidations: 0,
     suppressedRequests: 0,
     lastCaller: null,
-    lastChangedSincePrevious: null
+    lastChangedSincePrevious: null,
+    snapshotBuildDecision: "NO_BUILD",
+    snapshotReuseDecision: "NOT_REUSED",
+    membership: null
   };
+  const gridlyLP226AlertsMembershipAuditState = {
+    cachedSnapshotIds: [],
+    cachedSnapshotPresentationIds: [],
+    writerInputIds: [],
+    writerInputPresentationIds: [],
+    governedProjectionIds: [],
+    dedupedProjectionIds: [],
+    presentationIds: []
+  };
+  const gridlyLP226PresentationId = (record = {}) => String(record?.id || record?.incidentId || record?.reportId || "").trim();
+  const gridlyLP226CanonicalId = (record = {}, index = 0) => String(typeof gridlyAlertWriterRecordId === "function" ? gridlyAlertWriterRecordId(record, index) : (record?.evidenceId || record?.governedEvidenceId || "")).trim();
+  const gridlyLP226MembershipIds = (records, resolver) => (Array.isArray(records) ? records : []).map(resolver).filter(Boolean);
 
   function gridlyAlertsSnapshotInputSignature() {
     let hash = 2166136261;
@@ -113247,6 +113337,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       gridlyAlertsSnapshotReconciliationState.reuses += 1;
       gridlyAlertsSnapshotReconciliationState.suppressedRequests += 1;
       gridlyAlertsSnapshotReconciliationState.lastChangedSincePrevious = false;
+      gridlyAlertsSnapshotReconciliationState.snapshotBuildDecision = "NO_BUILD";
+      gridlyAlertsSnapshotReconciliationState.snapshotReuseDecision = "REUSE_SAME_GENERATION";
       window.gridlyRuntimePerformanceAuditRecordAlertsSnapshot?.({ kind: "reuse", inputSignature, snapshotGeneration: gridlyAlertsSnapshotReconciliationState.snapshotGeneration, caller: lp224SnapshotCaller });
       return gridlyAlertsSnapshotReconciliationState.snapshot;
     }
@@ -113255,6 +113347,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     gridlyAlertsSnapshotReconciliationState.builds += 1;
     gridlyAlertsSnapshotReconciliationState.snapshotGeneration += 1;
     gridlyAlertsSnapshotReconciliationState.lastChangedSincePrevious = true;
+    gridlyAlertsSnapshotReconciliationState.snapshotBuildDecision = "BUILD_CHANGED_GENERATION";
+    gridlyAlertsSnapshotReconciliationState.snapshotReuseDecision = "NOT_REUSED";
     window.gridlyRuntimePerformanceAuditRecordAlertsSnapshot?.({ kind: "build", inputSignature, snapshotGeneration: gridlyAlertsSnapshotReconciliationState.snapshotGeneration, caller: lp224SnapshotCaller });
     const gridlyPostPaintPhase = window.gridlyStartupDiagnostics?.beginPostPaintPhase?.("alert snapshot creation", "getAlertsSurfaceSnapshot");
     try {
@@ -113484,6 +113578,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       areaFilterEligible: Object.freeze(areaFilteredAlertItems.slice()),
       finalAlertData: Object.freeze(normalizedAlertItems.slice())
     });
+    gridlyLP226AlertsMembershipAuditState.governedProjectionIds = gridlyLP226MembershipIds(areaFilteredAlertItems, gridlyLP226CanonicalId);
+    gridlyLP226AlertsMembershipAuditState.dedupedProjectionIds = gridlyLP226MembershipIds(normalizedAlertItems, gridlyLP226CanonicalId);
     const activeIncidentCount = normalizedAlertItems.length || (gridlyGetSelectedAlertAreaFilter().mode === "county" ? incidents.length : normalizedAlertItems.length);
     const hasFallbackSignals = gridlyGetSelectedAlertAreaFilter().mode === "county" && (activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0);
     const nearbySummary = unifiedIntel.nearbySummary;
@@ -113517,6 +113613,22 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       activeLocalizedAlertCount: unifiedIntel.activeLocalizedAlertCount,
       routeImpactIncidentCount: unifiedIntel.routeImpactIncidentCount
     };
+    const canonicalGovernedEvidenceIds = gridlyLP226MembershipIds(normalizedAlertItems, gridlyLP226CanonicalId);
+    const presentationIncidentIds = gridlyLP226MembershipIds(normalizedAlertItems, gridlyLP226PresentationId);
+    snapshot.authoritativeMembership = Object.freeze({
+      canonicalGovernedEvidenceIds: Object.freeze(canonicalGovernedEvidenceIds.slice()),
+      presentationIncidentIds: Object.freeze(presentationIncidentIds.slice()),
+      activeMembershipCount: normalizedAlertItems.length,
+      contextKey: typeof gridlyGetAlertsAuthoritativeContextKey === "function" ? gridlyGetAlertsAuthoritativeContextKey() : "",
+      community: canonicalActiveCommunityState?.community || "",
+      county: canonicalActiveCommunityState?.county || "",
+      countyId: canonicalActiveCommunityState?.countyId || "",
+      inputSignature,
+      generation: gridlyAlertsSnapshotReconciliationState.snapshotGeneration
+    });
+    gridlyLP226AlertsMembershipAuditState.cachedSnapshotIds = canonicalGovernedEvidenceIds.slice();
+    gridlyLP226AlertsMembershipAuditState.cachedSnapshotPresentationIds = presentationIncidentIds.slice();
+    gridlyAlertsSnapshotReconciliationState.membership = snapshot.authoritativeMembership;
     gridlyAlertsSnapshotReconciliationState.snapshot = snapshot;
     return snapshot;
     } finally {
