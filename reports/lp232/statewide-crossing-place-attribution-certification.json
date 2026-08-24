@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "gridly.lp232.crossing-place-attribution-certification.v1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "finalClassification": "F. INSUFFICIENT_EVIDENCE",
+  "scope": "OFFLINE_AUTHORITY_CERTIFICATION_ONLY_NO_PRODUCTION_ACTIVATION",
+  "sourceWorkspace": {
+    "configuredCandidates": [
+      "C:\\GitHub\\Gridly-Source-Data",
+      "Gridly-Source-Data"
+    ],
+    "resolvedPath": "Gridly-Source-Data",
+    "filesInspected": 31,
+    "searchBeforeDerivationPerformed": true,
+    "searchTerms": "(crossing[-_. ]?to[-_. ]?place|crossing[-_. ]?place|place[-_. ]?crossings|community[-_. ]?crossings|crossing[-_. ]?community|place[-_. ]?geoid|PLACEFP|canonicalPlace|canonicalCommunity|communityKey|placeKey)",
+    "existingAttributionFound": false,
+    "attributionCandidates": [
+      "Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1"
+    ]
+  },
+  "geometryAuthority": {
+    "archive": null,
+    "shapefile": null,
+    "companionFiles": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "crs": null,
+    "featureCount": null,
+    "polygonCount": null,
+    "multiPolygonCount": null,
+    "invalidGeometryCount": null,
+    "emptyGeometryCount": null,
+    "interiorRingsPreserved": null,
+    "geoidUnique": null,
+    "placefpUniqueWithinTexas": null,
+    "repairPerformed": false,
+    "finding": "AUTHORITATIVE_TIGER2025_PLACE_BYTES_NOT_PRESENT_IN_ACCESSIBLE_SOURCE_WORKSPACE"
+  },
+  "crossingAuthority": {
+    "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sizeBytes": 67186117,
+    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f",
+    "preferredCandidateOrder": [
+      "Gridly-Source-Data/FRA/Processed/fra-crossings-tx.geojson",
+      "Gridly-Source-Data/Crossing-Packages/Texas/fra-crossings-tx.geojson",
+      "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+    ],
+    "totalCrossingRecords": 16101,
+    "uniqueStableCrossingIds": 16101,
+    "crossingsWithValidCoordinates": 16101,
+    "duplicateCrossingRecords": 0,
+    "stableIdFieldsInspected": [
+      "crossingId",
+      "crossing_id",
+      "CROSSING",
+      "Crossing",
+      "crossing"
+    ]
+  },
+  "canonicalBaseline": {
+    "canonicalCommunities": 1859,
+    "governedMemberships": 2058,
+    "multiCountyIdentities": 163,
+    "counties": 254
+  },
+  "attribution": {
+    "artifactProduced": false,
+    "reason": "Exact PLACE polygon authority is unavailable; spatial attribution and control counts cannot be truthfully certified.",
+    "crossingsAttributedToCanonicalPlace": null,
+    "crossingsOutsideAnyCanonicalPlace": null,
+    "crossingsWithMultiplePlaceMatches": null,
+    "crossingsWithIdentityUnavailable": null
+  },
+  "contract": {
+    "externalDownloadAllowed": false,
+    "stableGeoidJoinRequired": true,
+    "nameOnlyJoinAllowed": false,
+    "predicate": "covers (interior and boundary), with multiple matches classified ambiguous",
+    "nearestPlaceAllowed": false,
+    "presentationRadiusAllowed": false,
+    "countyUnionAllowed": false,
+    "sourceCountyLineageRequired": true
+  },
+  "safety": {
+    "productionCrossingChanged": false,
+    "driveTexasChanged": false,
+    "weatherChanged": false,
+    "localHazardChanged": false,
+    "alertsChanged": false,
+    "kbygChanged": false,
+    "multiCountyGovernanceChanged": false,
+    "unrelatedProductionChanged": false
+  }
+}
