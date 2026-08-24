@@ -5,6 +5,9 @@ import fs from 'node:fs';
 const app = fs.readFileSync('js/app.js', 'utf8');
 const block = (start, end) => app.slice(app.indexOf(start), app.indexOf(end, app.indexOf(start)));
 
+const locationSelectorSource = block('function gridlySelectConciseAlertLocation', '\nfunction gridlyBuildVisibleAlertLocationLineMarkup');
+const gridlySelectConciseAlertLocation = Function('cleanDisplayValue', `${locationSelectorSource}; return gridlySelectConciseAlertLocation;`)(value => String(value || '').trim());
+
 test('portrait Alerts open and refresh dispatch the existing authoritative writer', () => {
   const open = block('function openAlertsSurfaceFromDock()', 'function gridlyInstantAlertsSheetAudit()');
   const refresh = block('function renderAlerts()', 'function renderTrendingCrossings()');
@@ -55,6 +58,27 @@ test('Alerts cards use concise composition without Travel Brief evidence section
   assert.doesNotMatch(renderer, /\$\{eventEvidenceHtml\}/);
   assert.doesNotMatch(renderer, /historicalAlertLine \?/);
   assert.doesNotMatch(renderer, /Community|Official Roadways|Weather/);
+});
+
+test('concise Alerts select the most useful existing location without duplicate text', () => {
+  const select = (alert, consumerCard = {}) => gridlySelectConciseAlertLocation(alert, consumerCard).value;
+  assert.equal(select({ roadName: 'Spring Street', crossStreet: 'Gilmer Street', county: 'Hopkins County' }), 'Spring Street near Gilmer Street');
+  assert.equal(select({ roadName: 'Spring Street', nearestRoad: 'Gilmer Street' }), 'Spring Street near Gilmer Street');
+  assert.equal(select({ roadName: 'Spring Street', county: 'Hopkins County' }), 'Spring Street');
+  assert.equal(select({ crossingRoad: 'College Street', county: 'Hopkins County' }), 'College Street');
+  assert.equal(select({ locationPhrase: 'Near the civic center', county: 'Hopkins County' }), 'Near the civic center');
+  assert.equal(select({ canonicalCommunity: 'Sulphur Springs', county: 'Hopkins County' }), 'Sulphur Springs');
+  assert.equal(select({ county: 'Hopkins County' }), 'Hopkins County');
+  assert.equal(select({ roadName: 'Spring Street', crossStreet: 'Spring St.' }), 'Spring Street');
+});
+
+test('location refinement preserves concise presentation and identity ownership', () => {
+  const renderer = block('const RenderCompleteAlertCard = (phase2Contract)', 'const renderAlertCard = (alert');
+  const renderCard = block('const renderAlertCard = (alert', 'const normalizeAlertPresentationKey');
+  assert.match(renderer, /CONCISE_ALERT_CARD/);
+  assert.doesNotMatch(renderer, /Community|Official Roadways|Weather/);
+  assert.match(renderCard, /gridlyAlertWriterRecordId\(alert, index\)/);
+  assert.match(renderCard, /canonicalIncidentId/);
 });
 
 test('identity and concise contracts are stable for single, two-row, quiet, and rewrite controls', () => {
