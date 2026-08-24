@@ -2,12 +2,17 @@
   "use strict";
 
   const VERSION = "LP225";
+  const MODES = Object.freeze({
+    FULL_ATTRIBUTION: "FULL_ATTRIBUTION",
+    MINIMAL_LONG_TASK_CONTROL: "MINIMAL_LONG_TASK_CONTROL"
+  });
   const MAX_ENTRIES = 200;
   const startedAt = new Date().toISOString();
   let generation = 1;
   let generationSequence = 0;
   let measurementCutoff = 0;
   let currentTransactionId = null;
+  let auditMode = MODES.FULL_ATTRIBUTION;
   const transactions = [];
   const longTasks = [];
   const stageTimings = [];
@@ -140,7 +145,7 @@
     const endTime = Number(record.endTime);
     if (!record.stageName || !Number.isFinite(startTime) || !Number.isFinite(endTime)) return null;
     const transaction = activeTransactionForStage(startTime);
-    if (!transaction || endTime < startTime) return null;
+    if (!transaction || transaction.mode === MODES.MINIMAL_LONG_TASK_CONTROL || endTime < startTime) return null;
     const entry = {
       stageName: String(record.stageName),
       transactionId: transaction.transactionId,
@@ -169,7 +174,7 @@
     if (!record.subsystem || !record.boundaryName || !record.trigger || !record.caller
       || !Number.isFinite(startTime) || !Number.isFinite(endTime) || endTime < startTime) return null;
     const transaction = activeTransactionForStage(startTime);
-    if (!transaction) return null;
+    if (!transaction || transaction.mode === MODES.MINIMAL_LONG_TASK_CONTROL) return null;
     const entry = {
       subsystem: String(record.subsystem).toUpperCase(), boundaryName: String(record.boundaryName),
       transactionId: transaction.transactionId, measurementGeneration: transaction.measurementGeneration,
@@ -277,7 +282,8 @@
       startTime,
       endTime: null,
       durationMs: null,
-      baseline: snapshot()
+      mode: auditMode,
+      baseline: auditMode === MODES.FULL_ATTRIBUTION ? snapshot() : null
     });
     trim(transactions);
     currentTransactionId = transactionId;
@@ -295,9 +301,14 @@
     transaction.endTime = now();
     transaction.durationMs = round(transaction.endTime - transaction.startTime);
     drainLongTasks();
-    const finalSnapshot = snapshot();
     transaction.longTasks = longTasks.filter((entry) => entry.transactionId === id);
     transaction.maxLongTaskDurationMs = Math.max(0, ...transaction.longTasks.map((entry) => entry.durationMs));
+    transaction.longTaskCount = transaction.longTasks.length;
+    if (transaction.mode === MODES.MINIMAL_LONG_TASK_CONTROL) {
+      if (currentTransactionId === id) currentTransactionId = null;
+      return publicTransaction(transaction);
+    }
+    const finalSnapshot = snapshot();
     transaction.counterDeltas = subtract(finalSnapshot.counters, transaction.baseline.counters);
     transaction.surfaceCounterDeltas = subtract(finalSnapshot.surfaces, transaction.baseline.surfaces);
     transaction.renderDeltas = subtract(finalSnapshot.renders, transaction.baseline.renders);
@@ -308,6 +319,25 @@
     Object.assign(transaction, ownerResultFor(transaction));
     if (currentTransactionId === id) currentTransactionId = null;
     return publicTransaction(transaction);
+  }
+
+  function comparisonEnd(id = currentTransactionId) {
+    const result = endTransaction(id);
+    if (!result) return null;
+    return {
+      mode: result.mode,
+      durationMs: result.durationMs,
+      longTaskCount: result.longTaskCount,
+      maxLongTaskDurationMs: result.maxLongTaskDurationMs,
+      longTasks: result.longTasks
+    };
+  }
+
+  function setMode(mode) {
+    const normalized = String(mode || "").trim().toUpperCase();
+    if (!Object.prototype.hasOwnProperty.call(MODES, normalized)) return null;
+    auditMode = MODES[normalized];
+    return { mode: auditMode };
   }
 
   function reset() {
@@ -337,8 +367,19 @@
       if (operation === "RESET") return reset();
       if (operation === "BEGIN") return beginTransaction(value, reason);
       if (operation === "END") return endTransaction(value);
+      if (operation === "CONTROL_END") return comparisonEnd(value);
+      if (operation === "MODE" || operation === "SET_MODE") return setMode(value);
     }
     drainLongTasks();
+    if (auditMode === MODES.MINIMAL_LONG_TASK_CONTROL) {
+      return {
+        version: VERSION, available: true, instrumentationPassive: true, mode: auditMode,
+        measurementGeneration: generation, measurementBaselineCutoff: measurementCutoff,
+        currentTransactionId, longTaskObservationSupported: longTaskObserverSupported,
+        longTasks: longTasks.filter((entry) => entry.measurementGeneration === generation).map((entry) => ({ ...entry })),
+        safeToOptimize: false
+      };
+    }
     const state = readState();
     const { measured, background, reflow, crossings, repeatedWork, counters } = state;
     const alerts = measured.filter((entry) => /alert/i.test(`${entry.functionName} ${entry.category}`));
@@ -351,6 +392,7 @@
       version: VERSION,
       available: true,
       instrumentationPassive: true,
+      mode: auditMode,
       measurementGeneration: generation,
       measurementBaselineCutoff: measurementCutoff,
       session: {
@@ -402,6 +444,8 @@
   globalScope.gridlyRuntimePerformanceAuditBegin = beginTransaction;
   globalScope.gridlyRuntimePerformanceAuditEnd = endTransaction;
   globalScope.gridlyRuntimePerformanceAuditReset = reset;
+  globalScope.gridlyRuntimePerformanceAuditSetMode = setMode;
+  globalScope.gridlyRuntimePerformanceAuditControlEnd = comparisonEnd;
   globalScope.gridlyRuntimePerformanceAuditRecordAlertsStage = recordAlertsStage;
   globalScope.gridlyRuntimePerformanceAuditRecordSubsystemTiming = recordSubsystemTiming;
 })(typeof window !== "undefined" ? window : globalThis);
