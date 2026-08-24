@@ -3318,6 +3318,39 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
   });
 }
 
+// Preserve the normalized incident-location context which already owns map and
+// popup copy when a governed record is projected into Alerts. This projection
+// consumes the existing shared result; it adds no geocoder or parallel resolver.
+function gridlyProjectAlertIncidentLocation(record = {}) {
+  const raw = record?.raw || {};
+  const source = record?.source || {};
+  const latest = record?.latestReport || {};
+  const read = (fields = []) => fields.map((field) => {
+    const [owner, key] = field.includes(".") ? field.split(".", 2) : ["record", field];
+    return String(({ record, raw, source, latest }[owner]?.[key] || "")).trim();
+  }).find(Boolean) || "";
+  // This is the same shared normalized lookup consumed by
+  // resolveGridlyHazardPopupRoadLabel(); it is not a second geocoder or lookup.
+  const sharedLocation = typeof getSharedResolvedRoadLookup === "function" ? getSharedResolvedRoadLookup(record)?.locationContext || {} : {};
+  const roadName = read(["record.roadName", "record.road_name", "record.road", "record.primaryRoad", "record.street", "record.streetName", "record.street_name", "raw.roadName", "raw.road_name", "raw.road", "raw.primaryRoad", "source.roadName", "source.road_name", "source.road", "source.primaryRoad", "latest.roadName", "latest.road_name", "latest.road"]) || String(sharedLocation.primary || "").trim();
+  const crossStreet = read(["record.crossStreet", "record.cross_street", "record.nearbyCrossStreet", "record.nearestCrossStreet", "record.referenceRoadA", "raw.crossStreet", "raw.cross_street", "raw.referenceRoadA", "source.crossStreet", "source.cross_street", "source.referenceRoadA", "latest.crossStreet", "latest.cross_street"]) || String(sharedLocation.secondary || "").trim();
+  const resolvedLocation = read(["record.resolvedLocation", "record.authoritativeLocationLabel", "record.popupLocation", "record.locationPhrase", "record.locationLabel", "raw.resolvedLocation", "raw.authoritativeLocationLabel", "raw.popupLocation", "source.resolvedLocation", "source.authoritativeLocationLabel", "source.popupLocation"]) || String(sharedLocation.phrasing || sharedLocation.primary || "").trim();
+  const sourceFields = [];
+  if (roadName) sourceFields.push(sharedLocation.primary && roadName === sharedLocation.primary ? "sharedResolvedRoadLookup.locationContext.primary" : "roadName");
+  if (crossStreet) sourceFields.push(sharedLocation.secondary && crossStreet === sharedLocation.secondary ? "sharedResolvedRoadLookup.locationContext.secondary" : "crossStreet");
+  if (resolvedLocation) sourceFields.push(sharedLocation.phrasing && resolvedLocation === sharedLocation.phrasing ? "sharedResolvedRoadLookup.locationContext.phrasing" : "resolvedLocation");
+  if (!sourceFields.length) return record;
+  return {
+    ...record,
+    roadName: String(record?.roadName || roadName).trim(),
+    crossStreet: String(record?.crossStreet || crossStreet).trim(),
+    resolvedLocation: String(record?.resolvedLocation || resolvedLocation).trim(),
+    __gridlyPresentationLocationLabel: String(record?.__gridlyPresentationLocationLabel || resolvedLocation).trim(),
+    locationSourceAuthority: sharedLocation.phrasing ? "shared_popup_incident_location" : (resolvedLocation ? "normalized_incident_location" : "structured_incident_location"),
+    locationSourceFields: Object.freeze(sourceFields)
+  };
+}
+
 if (typeof window !== "undefined") { window.gridlyResolveCanonicalLiveIncidentIdentity = gridlyResolveCanonicalLiveIncidentIdentity; window.gridlyBuildCanonicalLiveIncidentPresentation = gridlyBuildCanonicalLiveIncidentPresentation; }
 
 function gridlyStoryActiveRecords() {
@@ -30962,6 +30995,7 @@ window.gridlyAlertDataDiagnostic = function () {
       locationPhrase: alert?.locationPhrase,
       locationLabel: alert?.locationLabel,
       nearbyKnownLocation: alert?.nearbyKnownLocation,
+      resolvedLocation: alert?.resolvedLocation,
       city: alert?.city,
       place: alert?.place,
       lat: alert?.lat,
@@ -30974,10 +31008,12 @@ window.gridlyAlertDataDiagnostic = function () {
       chosenSubtitle,
       chosenPrimaryTitle,
       chosenSecondaryDetail,
-      locationCandidateFields: ["roadName", "primaryRoad", "road", "nearestRoad", "crossStreet", "nearbyCrossStreet", "nearestCrossStreet", "crossingRoad", "resolvedCrossingName", "crossingName", "crossingLabel", "locationPhrase", "locationLabel", "nearbyKnownLocation", "canonicalCommunity", "city", "place", "county", "countyName"],
+      locationCandidateFields: ["roadName", "primaryRoad", "road", "nearestRoad", "street", "streetName", "crossStreet", "nearbyCrossStreet", "nearestCrossStreet", "intersection", "crossingRoad", "resolvedCrossingName", "crossingName", "crossingLabel", "locationPhrase", "locationLabel", "nearbyKnownLocation", "resolvedLocation", "canonicalCommunity", "city", "place", "county", "countyName"],
       selectedLocationField: conciseLocation.field,
       selectedLocationValue: conciseLocation.value,
       locationSelectionReason: conciseLocation.reason,
+      locationSourceAuthority: alert?.locationSourceAuthority || (conciseLocation.field === "consumerCard.locationLine" ? "normalized_presentation_location" : "source_record"),
+      locationSourceFields: Array.isArray(alert?.locationSourceFields) ? [...alert.locationSourceFields] : String(conciseLocation.field || "").split("+").filter(Boolean),
       primarySource: (!genericTitle(chosenTitle) && tidy(chosenTitle)) ? "headlineLikeField" : locationMeta.source,
       secondarySource: hazardMeta.source,
       fieldUsedForTitle: chosenTitle === alert?.resolvedHeadline ? "resolvedHeadline" : chosenTitle === alert?.headline ? "headline" : chosenTitle === alert?.title ? "title" : chosenTitle === alert?.localizedSummary ? "localizedSummary" : "",
@@ -81038,10 +81074,10 @@ function gridlySelectConciseAlertLocation(alert = {}, consumerCard = {}) {
     .filter((candidate) => isMeaningful(candidate.value));
   const first = (fields) => candidates(fields)[0] || null;
   const county = first(["county", "countyName"]);
-  const road = first(["roadName", "primaryRoad", "road"]);
-  const cross = first(["crossStreet", "nearbyCrossStreet", "nearestCrossStreet", "nearestRoad"]);
+  const road = first(["roadName", "primaryRoad", "road", "streetName", "street"]);
+  const cross = first(["crossStreet", "nearbyCrossStreet", "nearestCrossStreet"]);
   if (road && cross && semanticKey(road.value) !== semanticKey(cross.value)) {
-    return { value: `${road.value} near ${cross.value}`, field: `${road.field}+${cross.field}`, reason: "road_with_cross_street" };
+    return { value: `${road.value} and ${cross.value}`, field: `${road.field}+${cross.field}`, reason: "road_cross_street" };
   }
   if (road) return { ...road, reason: cross ? "duplicate_cross_street_removed" : "road" };
 
@@ -81050,7 +81086,9 @@ function gridlySelectConciseAlertLocation(alert = {}, consumerCard = {}) {
 
   const crossing = first(["crossingRoad", "resolvedCrossingName", "crossingName", "crossingLabel"]);
   if (crossing) return { ...crossing, reason: "crossing_location" };
-  const location = first(["locationPhrase", "locationLabel", "nearbyKnownLocation"]);
+  const intersection = first(["intersection"]);
+  if (intersection) return { ...intersection, reason: "road_cross_street" };
+  const location = first(["resolvedLocation", "locationPhrase", "locationLabel", "nearbyKnownLocation"]);
   if (location) return { ...location, reason: "location_context" };
 
   // A completed consumer model can contain authoritative local crossing
@@ -113015,7 +113053,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const canonicalActiveCommunityState = typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState() : null;
     const governedAlertProjection = gridlyGetGovernedConsumerProjection()?.surfaces?.alerts;
     const canonicalActiveCommunityRecords = Array.isArray(governedAlertProjection)
-      ? governedAlertProjection.map((row) => ({ ...row.record, evidenceId: row.evidenceId }))
+      ? governedAlertProjection.map((row) => ({ ...gridlyProjectAlertIncidentLocation(row.record), evidenceId: row.evidenceId }))
       : Array.isArray(canonicalActiveCommunityState?.activeRecords)
         ? canonicalActiveCommunityState.activeRecords.slice()
       : null;
