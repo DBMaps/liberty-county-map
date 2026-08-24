@@ -31009,6 +31009,17 @@ window.gridlyLP226AlertsMembershipAudit = function (target = {}, governedId = ""
   const finalDomPresentationIds = domRows.map((row) => String(row.getAttribute("data-gridly-alert-id") || "")).filter(Boolean);
   const finalDomCanonicalIds = domRows.map((row) => String(row.getAttribute("data-gridly-governed-evidence-id") || "")).filter(Boolean);
   const containsTarget = (canonical, presentation) => canonical.includes(expectedGovernedEvidenceId) || presentation.includes(expectedPresentationIncidentId);
+  const currentSourceRows = [
+    ...(Array.isArray(activeReports) ? activeReports : []),
+    ...(Array.isArray(activeHazards) ? activeHazards : [])
+  ];
+  const governedActiveRows = (typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection()?.surfaces?.alerts || [] : []).map((row) => ({
+    ...(row?.record || {}), evidenceId: row?.evidenceId || row?.record?.evidenceId
+  }));
+  const targetPresentInCurrentSource = containsTarget(canonicalIds(currentSourceRows), presentationIdsFor(currentSourceRows));
+  const targetPresentInGovernedActiveEvidence = containsTarget(canonicalIds(governedActiveRows), presentationIdsFor(governedActiveRows));
+  const commit = snapshotAudit.cacheCommit || {};
+  const targetPresentAtSnapshotBuild = containsTarget([...(commit.canonicalGovernedEvidenceIds || [])], [...(commit.presentationIncidentIds || [])]);
   const cachedSnapshotContainsIncident = containsTarget(cachedSnapshotIds, cachedSnapshotPresentationIds);
   const writerInputContainsIncident = containsTarget(writerInputIds, writerInputPresentationIds);
   const governedProjectionContainsIncident = containsTarget(governedProjectionIds, governedProjectionPresentationIds);
@@ -31016,18 +31027,37 @@ window.gridlyLP226AlertsMembershipAudit = function (target = {}, governedId = ""
   const presentationModelContainsIncident = containsTarget(presentationCanonicalIds, presentationIds);
   const finalDomContainsIncident = containsTarget(finalDomCanonicalIds, finalDomPresentationIds);
   let firstLosingStage = "DOM_PARITY_PASS";
-  if (!cachedSnapshotContainsIncident) firstLosingStage = "CACHE_SNAPSHOT_MEMBERSHIP_FAILURE";
+  if (!targetPresentInCurrentSource) firstLosingStage = "SOURCE_LIFECYCLE_FAILURE";
+  else if (!targetPresentInGovernedActiveEvidence) firstLosingStage = "GOVERNED_ACTIVE_MEMBERSHIP_FAILURE";
+  else if (!targetPresentAtSnapshotBuild) firstLosingStage = "SNAPSHOT_BUILD_MEMBERSHIP_FAILURE";
+  else if (snapshotAudit.membershipChangedWithoutGeneration || snapshotAudit.membershipChangedWithoutSignature) firstLosingStage = "CACHE_MUTATION_AFTER_BUILD";
+  else if ((snapshotAudit.cacheReplacements || []).some((row) => row.classification === "INVALID_SAME_GENERATION_MEMBERSHIP_CHANGE")) firstLosingStage = "CACHE_REPLACEMENT_SAME_GENERATION";
+  else if (!cachedSnapshotContainsIncident && snapshotAudit.inputSignature === commit.inputSignature) firstLosingStage = "CACHE_SIGNATURE_FAILURE";
+  else if (!cachedSnapshotContainsIncident) firstLosingStage = "CACHE_REPLACEMENT_SAME_GENERATION";
   else if (!writerInputContainsIncident) firstLosingStage = "AUTHORITATIVE_DISPATCH_INPUT_FAILURE";
   else if (!governedProjectionContainsIncident) firstLosingStage = "GOVERNED_PROJECTION_FAILURE";
   else if (!dedupedProjectionContainsIncident) firstLosingStage = "DEDUPLICATION_FAILURE";
   else if (!presentationModelContainsIncident) firstLosingStage = "PRESENTATION_MODEL_FAILURE";
-  else if (!finalDomContainsIncident) firstLosingStage = "DOM_MEMBERSHIP_FAILURE";
+  else if (!finalDomContainsIncident) firstLosingStage = "DOM_PARITY_FAILURE";
   return Object.freeze({
     expectedPresentationIncidentId, expectedGovernedEvidenceId,
+    targetPresentInCurrentSource, targetPresentInGovernedActiveEvidence, targetPresentAtSnapshotBuild,
+    targetPresentInCurrentCachedSnapshot: cachedSnapshotContainsIncident,
+    targetPresentInWriterInput: writerInputContainsIncident,
+    targetPresentInPresentationModel: presentationModelContainsIncident,
+    targetPresentInFinalDom: finalDomContainsIncident,
     cachedSnapshotContainsIncident, writerInputContainsIncident, governedProjectionContainsIncident,
     dedupedProjectionContainsIncident, presentationModelContainsIncident, finalDomContainsIncident,
     cachedSnapshotIds, writerInputIds, governedProjectionIds, dedupedProjectionIds, presentationIds,
     finalDomIds: finalDomCanonicalIds, finalDomPresentationIds, firstLosingStage,
+    cacheCommitSequence: commit.cacheCommitSequence ?? null,
+    cacheCommitCaller: commit.cacheCommitCaller || "",
+    cacheCommitReason: commit.cacheCommitReason || "",
+    cacheGeneration: snapshotAudit.snapshotGeneration ?? membership.generation ?? null,
+    cacheSignature: snapshotAudit.inputSignature || membership.inputSignature || "",
+    membershipAtCommit: snapshotAudit.membershipAtCommit || [], membershipNow: snapshotAudit.membershipNow || [],
+    membershipChangedWithoutGeneration: Boolean(snapshotAudit.membershipChangedWithoutGeneration),
+    membershipChangedWithoutSignature: Boolean(snapshotAudit.membershipChangedWithoutSignature),
     snapshotGeneration: snapshotAudit.snapshotGeneration ?? membership.generation ?? null,
     snapshotSignature: snapshotAudit.inputSignature || membership.inputSignature || "",
     snapshotBuildDecision: snapshotAudit.snapshotBuildDecision || (snapshotAudit.lastChangedSincePrevious === true ? "BUILD_CHANGED_GENERATION" : "NO_BUILD"),
@@ -31062,8 +31092,22 @@ window.gridlyLP226AlertsReopenAcceptance = function (target = {}, governedId = "
     targetPresentationIncidentId: audit.expectedPresentationIncidentId,
     targetGovernedEvidenceId: audit.expectedGovernedEvidenceId,
     targetPresentInSnapshot: audit.cachedSnapshotContainsIncident,
+    targetPresentInCurrentSource: audit.targetPresentInCurrentSource,
+    targetPresentInGovernedActiveEvidence: audit.targetPresentInGovernedActiveEvidence,
+    targetPresentAtSnapshotBuild: audit.targetPresentAtSnapshotBuild,
+    targetPresentInCurrentCachedSnapshot: audit.targetPresentInCurrentCachedSnapshot,
     targetPresentInWriterInput: audit.writerInputContainsIncident,
+    targetPresentInPresentationModel: audit.targetPresentInPresentationModel,
     targetPresentInFinalDom: audit.finalDomContainsIncident,
+    cacheCommitSequence: audit.cacheCommitSequence,
+    cacheCommitCaller: audit.cacheCommitCaller,
+    cacheCommitReason: audit.cacheCommitReason,
+    cacheGeneration: audit.cacheGeneration,
+    cacheSignature: audit.cacheSignature,
+    membershipAtCommit: audit.membershipAtCommit,
+    membershipNow: audit.membershipNow,
+    membershipChangedWithoutGeneration: audit.membershipChangedWithoutGeneration,
+    membershipChangedWithoutSignature: audit.membershipChangedWithoutSignature,
     authoritativeMembershipCount, domMembershipCount, membershipParity, domLocation, selectedLocationValue,
     snapshotBuildDecision: audit.snapshotBuildDecision, snapshotReuseDecision: audit.snapshotReuseDecision,
     authoritativeWriteApplied,
@@ -113250,7 +113294,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     lastChangedSincePrevious: null,
     snapshotBuildDecision: "NO_BUILD",
     snapshotReuseDecision: "NOT_REUSED",
-    membership: null
+    membership: null,
+    cacheCommitSequence: 0,
+    cacheCommit: null,
+    cacheReplacements: []
   };
   const gridlyLP226AlertsMembershipAuditState = {
     cachedSnapshotIds: [],
@@ -113264,6 +113311,57 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   const gridlyLP226PresentationId = (record = {}) => String(record?.id || record?.incidentId || record?.reportId || "").trim();
   const gridlyLP226CanonicalId = (record = {}, index = 0) => String(typeof gridlyAlertWriterRecordId === "function" ? gridlyAlertWriterRecordId(record, index) : (record?.evidenceId || record?.governedEvidenceId || "")).trim();
   const gridlyLP226MembershipIds = (records, resolver) => (Array.isArray(records) ? records : []).map(resolver).filter(Boolean);
+  const gridlyLP226MembershipKey = (ids) => [...ids].sort().join("\u001f");
+
+  function gridlyLP226ConsumerSnapshot(snapshot) {
+    if (!snapshot) return snapshot;
+    // The cache owns its membership arrays. Consumers get inexpensive shallow
+    // projections so filtering/sorting a surface cannot edit authoritative truth.
+    return {
+      ...snapshot,
+      alerts: snapshot.alerts.map((record) => ({ ...record })),
+      presentationAlerts: snapshot.presentationAlerts.map((record) => ({ ...record })),
+      normalizedAlertItems: snapshot.normalizedAlertItems.map((record) => ({ ...record }))
+    };
+  }
+
+  function gridlyLP226CommitSnapshot(snapshot, inputSignature, caller, reason) {
+    const state = gridlyAlertsSnapshotReconciliationState;
+    const previous = state.cacheCommit;
+    const canonicalIds = gridlyLP226MembershipIds(snapshot.alerts, gridlyLP226CanonicalId);
+    const presentationIds = gridlyLP226MembershipIds(snapshot.alerts, gridlyLP226PresentationId);
+    const commit = Object.freeze({
+      cacheCommitSequence: ++state.cacheCommitSequence,
+      snapshotGeneration: state.snapshotGeneration,
+      inputSignature,
+      canonicalGovernedEvidenceIds: Object.freeze(canonicalIds.slice()),
+      presentationIncidentIds: Object.freeze(presentationIds.slice()),
+      membershipCount: canonicalIds.length,
+      cacheCommitCaller: caller || "getAlertsSurfaceSnapshot",
+      cacheCommitReason: reason
+    });
+    if (previous) {
+      const prior = previous.canonicalGovernedEvidenceIds;
+      const sameGeneration = previous.snapshotGeneration === commit.snapshotGeneration;
+      const sameSignature = previous.inputSignature === commit.inputSignature;
+      const sameMembership = gridlyLP226MembershipKey(prior) === gridlyLP226MembershipKey(canonicalIds);
+      state.cacheReplacements.push(Object.freeze({
+        previousCanonicalIds: prior.slice(), nextCanonicalIds: canonicalIds.slice(),
+        previousPresentationIds: previous.presentationIncidentIds.slice(), nextPresentationIds: presentationIds.slice(),
+        membershipAdded: canonicalIds.filter((id) => !prior.includes(id)),
+        membershipRemoved: prior.filter((id) => !canonicalIds.includes(id)),
+        previousSignature: previous.inputSignature, nextSignature: inputSignature,
+        previousGeneration: previous.snapshotGeneration, nextGeneration: state.snapshotGeneration,
+        replacementCaller: caller || "getAlertsSurfaceSnapshot", replacementReason: reason,
+        classification: sameGeneration && !sameMembership ? "INVALID_SAME_GENERATION_MEMBERSHIP_CHANGE"
+          : sameGeneration && sameSignature && sameMembership ? "VALID_SAME_MEMBERSHIP_REUSE"
+          : !sameGeneration && !sameSignature ? "VALID_INVALIDATION_REBUILD" : "UNKNOWN"
+      }));
+      if (state.cacheReplacements.length > 20) state.cacheReplacements.shift();
+    }
+    state.cacheCommit = commit;
+    return commit;
+  }
 
   function gridlyAlertsSnapshotInputSignature() {
     let hash = 2166136261;
@@ -113319,11 +113417,36 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     addRecords(activeHazards);
     addRecords(driveTexas);
     addRecords(weather);
+    const governedMembership = typeof gridlyGetGovernedConsumerProjection === "function"
+      ? gridlyGetGovernedConsumerProjection()?.surfaces?.alerts : [];
+    addRecords((Array.isArray(governedMembership) ? governedMembership : []).map((row) => ({
+      evidenceId: row?.evidenceId, id: row?.record?.id, status: row?.record?.status,
+      lifecycleState: row?.record?.lifecycleState, expired: row?.record?.expired,
+      cleared: row?.record?.cleared
+    })));
     return `lp226-${(hash >>> 0).toString(36)}`;
   }
 
   function gridlyAlertsSnapshotReconciliationAudit() {
-    return Object.freeze({ ...gridlyAlertsSnapshotReconciliationState });
+    const state = gridlyAlertsSnapshotReconciliationState;
+    const commit = state.cacheCommit;
+    const membershipNow = gridlyLP226MembershipIds(state.snapshot?.alerts, gridlyLP226CanonicalId);
+    const membershipAtCommit = commit?.canonicalGovernedEvidenceIds || [];
+    return Object.freeze({
+      inputSignature: state.inputSignature, snapshotGeneration: state.snapshotGeneration,
+      requests: state.requests, builds: state.builds, reuses: state.reuses,
+      invalidations: state.invalidations, suppressedRequests: state.suppressedRequests,
+      lastCaller: state.lastCaller, lastChangedSincePrevious: state.lastChangedSincePrevious,
+      snapshotBuildDecision: state.snapshotBuildDecision, snapshotReuseDecision: state.snapshotReuseDecision,
+      membership: state.membership, cacheCommit: commit,
+      cacheReplacements: Object.freeze(state.cacheReplacements.slice()),
+      membershipAtCommit: Object.freeze([...membershipAtCommit]),
+      membershipNow: Object.freeze(membershipNow),
+      membershipChangedWithoutGeneration: Boolean(commit && commit.snapshotGeneration === state.snapshotGeneration
+        && gridlyLP226MembershipKey(membershipAtCommit) !== gridlyLP226MembershipKey(membershipNow)),
+      membershipChangedWithoutSignature: Boolean(commit && commit.inputSignature === state.inputSignature
+        && gridlyLP226MembershipKey(membershipAtCommit) !== gridlyLP226MembershipKey(membershipNow))
+    });
   }
   window.gridlyAlertsSnapshotReconciliationAudit = gridlyAlertsSnapshotReconciliationAudit;
 
@@ -113340,7 +113463,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       gridlyAlertsSnapshotReconciliationState.snapshotBuildDecision = "NO_BUILD";
       gridlyAlertsSnapshotReconciliationState.snapshotReuseDecision = "REUSE_SAME_GENERATION";
       window.gridlyRuntimePerformanceAuditRecordAlertsSnapshot?.({ kind: "reuse", inputSignature, snapshotGeneration: gridlyAlertsSnapshotReconciliationState.snapshotGeneration, caller: lp224SnapshotCaller });
-      return gridlyAlertsSnapshotReconciliationState.snapshot;
+      return gridlyLP226ConsumerSnapshot(gridlyAlertsSnapshotReconciliationState.snapshot);
     }
     if (gridlyAlertsSnapshotReconciliationState.inputSignature !== null) gridlyAlertsSnapshotReconciliationState.invalidations += 1;
     gridlyAlertsSnapshotReconciliationState.inputSignature = inputSignature;
@@ -113615,6 +113738,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     };
     const canonicalGovernedEvidenceIds = gridlyLP226MembershipIds(normalizedAlertItems, gridlyLP226CanonicalId);
     const presentationIncidentIds = gridlyLP226MembershipIds(normalizedAlertItems, gridlyLP226PresentationId);
+    snapshot.alerts = Object.freeze(normalizedAlertItems.map((record) => Object.freeze({ ...record })));
+    snapshot.presentationAlerts = snapshot.alerts;
+    snapshot.normalizedAlertItems = snapshot.alerts;
+    const cacheCommit = gridlyLP226CommitSnapshot(snapshot, inputSignature, lp224SnapshotCaller, "authoritative-membership-build");
     snapshot.authoritativeMembership = Object.freeze({
       canonicalGovernedEvidenceIds: Object.freeze(canonicalGovernedEvidenceIds.slice()),
       presentationIncidentIds: Object.freeze(presentationIncidentIds.slice()),
@@ -113624,13 +113751,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       county: canonicalActiveCommunityState?.county || "",
       countyId: canonicalActiveCommunityState?.countyId || "",
       inputSignature,
-      generation: gridlyAlertsSnapshotReconciliationState.snapshotGeneration
+      generation: gridlyAlertsSnapshotReconciliationState.snapshotGeneration,
+      cacheCommitSequence: cacheCommit.cacheCommitSequence,
+      cacheCommitCaller: cacheCommit.cacheCommitCaller,
+      cacheCommitReason: cacheCommit.cacheCommitReason
     });
     gridlyLP226AlertsMembershipAuditState.cachedSnapshotIds = canonicalGovernedEvidenceIds.slice();
     gridlyLP226AlertsMembershipAuditState.cachedSnapshotPresentationIds = presentationIncidentIds.slice();
     gridlyAlertsSnapshotReconciliationState.membership = snapshot.authoritativeMembership;
-    gridlyAlertsSnapshotReconciliationState.snapshot = snapshot;
-    return snapshot;
+    gridlyAlertsSnapshotReconciliationState.snapshot = Object.freeze(snapshot);
+    return gridlyLP226ConsumerSnapshot(gridlyAlertsSnapshotReconciliationState.snapshot);
     } finally {
       window.gridlyStartupDiagnostics?.endPostPaintPhase?.(gridlyPostPaintPhase);
       window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "alert snapshot creation", startTime: lp224SnapshotStartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: "getAlertsSurfaceSnapshot direct call", productionOwner: lp224SnapshotCaller, domMutationOccurred: false, outputChanged: null, authoritativeWriteFollowed: false });
