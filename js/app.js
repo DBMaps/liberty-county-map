@@ -33661,16 +33661,22 @@ const GRIDLY_LP226_ALERTS_TRANSACTION_LIMIT = 12;
 const gridlyLP226AlertsWriterTransactions = new Map();
 let gridlyLP226AlertsWriterTransactionSequence = 0;
 function gridlyLP226BeginAlertsWriterTransaction(ownership = {}) {
-  const transaction = {
+  const existing = gridlyLP226AlertsWriterTransactions.get(ownership.alertsSheetGeneration);
+  const transaction = existing || {
     transactionId: ++gridlyLP226AlertsWriterTransactionSequence,
-    ...ownership,
-    stage: "PENDING_BEFORE_SNAPSHOT",
+    alertsSheetGeneration: ownership.alertsSheetGeneration,
+    state: "PENDING_AUTHORITY",
     startedAt: Date.now(),
     updatedAt: Date.now(),
+    writerInputAssignedAt: null,
+    domAppliedAt: null,
+    finalizedAt: null,
+    finalizeReason: null,
     terminalReason: null,
     writerInputIds: [],
     writerInputPresentationIds: []
   };
+  Object.assign(transaction, ownership, { stage: "PENDING_BEFORE_SNAPSHOT", updatedAt: Date.now() });
   gridlyLP226AlertsWriterTransactions.set(ownership.alertsSheetGeneration, transaction);
   while (gridlyLP226AlertsWriterTransactions.size > GRIDLY_LP226_ALERTS_TRANSACTION_LIMIT) {
     gridlyLP226AlertsWriterTransactions.delete(gridlyLP226AlertsWriterTransactions.keys().next().value);
@@ -33681,12 +33687,20 @@ function gridlyLP226SetAlertsWriterTransactionStage(transaction, stage, detail =
   if (!transaction) return null;
   transaction.stage = stage;
   transaction.updatedAt = Date.now();
+  if (stage === "WRITER_INPUT_ASSIGNED" && !transaction.writerInputAssignedAt) transaction.writerInputAssignedAt = transaction.updatedAt;
+  if (stage === "DOM_APPLIED") {
+    transaction.state = "DOM_APPLIED";
+    transaction.domAppliedAt = transaction.updatedAt;
+    transaction.finalizedAt = transaction.updatedAt;
+    transaction.finalizeReason = detail.terminalReason || "authoritative_dom_applied";
+  } else if (stage === "ERROR") transaction.state = "ERROR";
+  else if (stage.startsWith("CANCELLED")) transaction.state = "CANCELLED";
   Object.assign(transaction, detail);
   return transaction;
 }
 window.gridlyLP226CurrentAlertsWriterTransactionAudit = function () {
-  const generation = gridlyAlertsSheetLifecycleState?.activeGeneration || gridlyAlertsSheetLifecycleState?.pendingGeneration || 0;
-  const transaction = gridlyLP226AlertsWriterTransactions.get(generation) || null;
+  const generation = gridlyAlertsSheetLifecycleState?.activeGeneration || gridlyAlertsSheetLifecycleState?.pendingGeneration || gridlyAlertsSheetLifecycleState?.openGeneration || 0;
+  const transaction = gridlyLP226AlertsWriterTransactions.get(generation) || [...gridlyLP226AlertsWriterTransactions.values()].at(-1) || null;
   return transaction ? Object.freeze({ ...transaction, writerInputIds: [...transaction.writerInputIds], writerInputPresentationIds: [...transaction.writerInputPresentationIds] }) : null;
 };
 
@@ -33698,7 +33712,10 @@ const gridlyAlertsSheetLifecycleState = {
   lastCloseAt: null,
   lateResultIgnoredCount: 0,
   staleResultApplyCount: 0,
-  closeButtonBound: false
+  closeButtonBound: false,
+  authoritativeOpenPendingGeneration: 0,
+  generationStates: new Map(),
+  transitions: []
 };
 
 const gridlyLp016AlertsPostPaintDelayAuditState = {
@@ -34218,15 +34235,35 @@ function gridlyLp016AwarenessResolverHotLoopRepairAudit() {
 if (typeof window !== "undefined") window.gridlyLp016AwarenessResolverHotLoopRepairAudit = gridlyLp016AwarenessResolverHotLoopRepairAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp016AwarenessResolverHotLoopRepairAudit", gridlyLp016AwarenessResolverHotLoopRepairAudit);
 
+function gridlyRecordAlertsSheetGenerationTransition(generation, nextState, reason, functionName) {
+  const previousActiveGeneration = gridlyAlertsSheetLifecycleState.activeGeneration;
+  const record = gridlyAlertsSheetLifecycleState.generationStates.get(generation) || { alertsSheetGeneration: generation, state: null, startedAt: Date.now() };
+  record.state = nextState;
+  record.updatedAt = Date.now();
+  if (["CLOSED", "SUPERSEDED", "CANCELLED", "ERROR"].includes(nextState)) {
+    record.finalizedAt = record.updatedAt;
+    record.finalizeReason = reason;
+  }
+  gridlyAlertsSheetLifecycleState.generationStates.set(generation, record);
+  gridlyAlertsSheetLifecycleState.transitions.push(Object.freeze({ generation, previousActiveGeneration, nextActiveGeneration: ["CLOSED", "SUPERSEDED", "CANCELLED", "ERROR"].includes(nextState) ? 0 : generation, function: functionName, reason, timestamp: record.updatedAt }));
+  if (gridlyAlertsSheetLifecycleState.transitions.length > 40) gridlyAlertsSheetLifecycleState.transitions.shift();
+  return record;
+}
+
 function gridlyFinalizeAlertsSheetGeneration(generation, outcome = "completed") {
   const finalizedGeneration = Number(generation || 0);
   if (!finalizedGeneration) return;
+  const terminalState = outcome === "applied" ? "DOM_APPLIED" : outcome === "closed" ? "CLOSED" : outcome.includes("superseded") ? "SUPERSEDED" : outcome.includes("error") ? "ERROR" : "CANCELLED";
+  const lifecycleRecord = gridlyRecordAlertsSheetGenerationTransition(finalizedGeneration, terminalState, outcome, "gridlyFinalizeAlertsSheetGeneration");
+  const transaction = gridlyLP226AlertsWriterTransactions.get(finalizedGeneration);
+  if (transaction) Object.assign(transaction, { state: terminalState, finalizedAt: lifecycleRecord.finalizedAt || (terminalState === "DOM_APPLIED" ? Date.now() : null), finalizeReason: outcome, updatedAt: Date.now() });
   if (gridlyAlertsSheetLifecycleState.pendingGeneration === finalizedGeneration) {
     gridlyAlertsSheetLifecycleState.pendingGeneration = 0;
   }
   if (gridlyAlertsSheetLifecycleState.activeGeneration === finalizedGeneration && outcome !== "applied") {
     gridlyAlertsSheetLifecycleState.activeGeneration = 0;
   }
+  if (gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration === finalizedGeneration && outcome !== "applied") gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration = 0;
   if (gridlyInstantAlertsSheetAuditState.inFlightGeneration === finalizedGeneration) {
     gridlyInstantAlertsSheetAuditState.inFlight = null;
     gridlyInstantAlertsSheetAuditState.inFlightKey = null;
@@ -34239,7 +34276,13 @@ function gridlyBeginAlertsSheetLifecycle() {
   if (previousGeneration) gridlyFinalizeAlertsSheetGeneration(previousGeneration, "superseded_by_new_alerts_open");
   gridlyAlertsSheetLifecycleState.openGeneration += 1;
   gridlyAlertsSheetLifecycleState.activeGeneration = gridlyAlertsSheetLifecycleState.openGeneration;
-  gridlyAlertsSheetLifecycleState.pendingGeneration = 0;
+  gridlyAlertsSheetLifecycleState.pendingGeneration = gridlyAlertsSheetLifecycleState.activeGeneration;
+  gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration = gridlyAlertsSheetLifecycleState.activeGeneration;
+  const generation = gridlyAlertsSheetLifecycleState.activeGeneration;
+  const startedAt = Date.now();
+  gridlyAlertsSheetLifecycleState.generationStates.set(generation, { alertsSheetGeneration: generation, state: "PENDING_AUTHORITY", startedAt, updatedAt: startedAt, finalizedAt: null, finalizeReason: null });
+  gridlyRecordAlertsSheetGenerationTransition(generation, "PENDING_AUTHORITY", "alerts_open_requested", "gridlyBeginAlertsSheetLifecycle");
+  gridlyLP226AlertsWriterTransactions.set(generation, { transactionId: ++gridlyLP226AlertsWriterTransactionSequence, alertsSheetGeneration: generation, state: "PENDING_AUTHORITY", stage: "PENDING_BEFORE_SNAPSHOT", startedAt, updatedAt: startedAt, writerInputAssignedAt: null, domAppliedAt: null, finalizedAt: null, finalizeReason: null, terminalReason: null, writerInputIds: [], writerInputPresentationIds: [] });
   return gridlyAlertsSheetLifecycleState.activeGeneration;
 }
 
@@ -34254,14 +34297,28 @@ function gridlyMarkAlertsSheetClosed() {
 }
 
 function gridlyCanApplyAlertsSheetGeneration(generation) {
-  const sheet = typeof document !== "undefined" ? document.getElementById("gridlyPortraitV2Sheet") : null;
+  const generationState = gridlyAlertsSheetLifecycleState.generationStates.get(generation)?.state;
   return Boolean(
     generation
     && gridlyAlertsSheetLifecycleState.activeGeneration === generation
-    && ((sheet && sheet.dataset?.activeSheet === "alerts" && !sheet.hidden)
-      || gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration === generation)
+    && (generationState === "PENDING_AUTHORITY" || generationState === "DOM_APPLIED")
   );
 }
+
+window.gridlyAlertsSheetLifecycleAudit = function () {
+  const generation = gridlyAlertsSheetLifecycleState.activeGeneration || gridlyAlertsSheetLifecycleState.pendingGeneration || gridlyAlertsSheetLifecycleState.openGeneration || 0;
+  const sheet = typeof document !== "undefined" ? document.getElementById("gridlyPortraitV2Sheet") : null;
+  return Object.freeze({
+    openGeneration: gridlyAlertsSheetLifecycleState.openGeneration,
+    activeGeneration: gridlyAlertsSheetLifecycleState.activeGeneration,
+    authoritativeOpenPendingGeneration: gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration,
+    sheetType: sheet?.dataset?.activeSheet || null,
+    sheetVisible: Boolean(sheet && !sheet.hidden),
+    pending: gridlyAlertsSheetLifecycleState.generationStates.get(generation)?.state === "PENDING_AUTHORITY",
+    generation: gridlyAlertsSheetLifecycleState.generationStates.get(generation) || null,
+    transitions: gridlyAlertsSheetLifecycleState.transitions.slice()
+  });
+};
 
 // LP223: the portrait sheet is a live consumer of the same snapshot used by
 // getAlertsSurfaceSnapshot.  Keep this small scheduler between refresh callers
