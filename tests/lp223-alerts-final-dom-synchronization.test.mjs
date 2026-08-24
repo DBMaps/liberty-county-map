@@ -24,6 +24,9 @@ test('authoritative revision ownership cannot be invalidated by rendered output'
 test('writer audit exposes final authority, data store, invocation, target, suppression, overwrite, and parity evidence', () => {
   const audit = block('window.gridlyAlertsAuthorityWriterAudit = function', 'window.gridlyAlertDataDiagnostic = function');
   for (const field of [
+    'writerInputCanonicalIds', 'finalAuthorityCanonicalIds', 'finalDomCanonicalIds',
+    'finalDomPresentationIds', 'canonicalToPresentationMapping', 'duplicateCanonicalDomIds',
+    'presentationContract', 'presentationTemplateUsed',
     'finalAuthorityIds', 'finalDataStoreIds', 'writerInvocationCount', 'writerLastInvocationTime',
     'writerInputIds', 'targetContainerIdentity', 'renderSuppressionReason', 'postWriteDomIds',
     'laterOverwriteInvocation', 'firstLosingStage', 'parity'
@@ -32,6 +35,39 @@ test('writer audit exposes final authority, data store, invocation, target, supp
     'AUTHORITY_READY', 'WRITER_NOT_INVOKED', 'WRITER_SKIPPED', 'WRITER_TARGET_MISMATCH',
     'WRITER_OUTPUT_MISSING', 'LATER_EMPTY_OVERWRITE', 'DOM_PARITY_PASS'
   ]) assert.match(audit, new RegExp(state), state);
+});
+
+test('top-level rows preserve separate canonical, persisted, provider, and presentation identities', () => {
+  const renderer = block('const RenderCompleteAlertCard = (phase2Contract)', 'const renderAlertCard = (alert');
+  assert.match(renderer, /data-gridly-governed-evidence-id=/);
+  assert.match(renderer, /data-gridly-alert-id=/);
+  assert.match(renderer, /data-gridly-persisted-record-id=/);
+  assert.match(renderer, /data-gridly-provider-record-id=/);
+  assert.match(renderer, /data-gridly-alert-presentation-contract="CONCISE_ALERT_CARD"/);
+  const audit = block('window.gridlyAlertsAuthorityWriterAudit = function', 'window.gridlyAlertDataDiagnostic = function');
+  assert.doesNotMatch(audit, /endsWith/, 'parity never guesses identity by stripping a namespace');
+});
+
+test('Alerts cards use concise composition without Travel Brief evidence sections', () => {
+  const renderer = block('const RenderCompleteAlertCard = (phase2Contract)', 'const renderAlertCard = (alert');
+  assert.match(renderer, /Updated/);
+  assert.match(renderer, /Show on map/);
+  assert.doesNotMatch(renderer, /\$\{eventEvidenceHtml\}/);
+  assert.doesNotMatch(renderer, /historicalAlertLine \?/);
+  assert.doesNotMatch(renderer, /Community|Official Roadways|Weather/);
+});
+
+test('identity and concise contracts are stable for single, two-row, quiet, and rewrite controls', () => {
+  const render = (records) => records.map((record) => ({ canonical: record.evidenceId, presentation: record.id, contract: 'CONCISE_ALERT_CARD' }));
+  const hazard = { evidenceId: 'active_hazard:hazard-device-1', id: 'persisted-hazard-uuid' };
+  const crossing = { evidenceId: 'community_report:crossing-1', id: 'persisted-crossing-uuid' };
+  assert.deepEqual(render([hazard]).map(row => row.canonical), [hazard.evidenceId]);
+  const two = render([hazard, crossing]);
+  assert.equal(two.length, 2);
+  assert.equal(new Set(two.map(row => row.canonical)).size, 2);
+  assert.ok(two.every(row => row.contract === 'CONCISE_ALERT_CARD'));
+  assert.deepEqual(render([]), []);
+  assert.deepEqual(render([hazard, crossing]), two);
 });
 
 test('single, update, quiet, clear, and repeated refresh controls converge without duplicates', () => {

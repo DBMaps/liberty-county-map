@@ -30852,12 +30852,20 @@ window.gridlyAlertsAuthorityWriterAudit = function () {
   const finalAuthorityIds = finalAuthority.map(gridlyAlertWriterRecordId);
   const finalDataStoreIds = dataStore.map(gridlyAlertWriterRecordId);
   const state = gridlyAlertsWriterSynchronizationAuditState;
-  const finalDomIds = gridlyAlertWriterDomIds();
-  const normalizedDomIds = finalDomIds.map((id) => finalAuthorityIds.find((authorityId) => authorityId === id || authorityId.endsWith(`:${id}`)) || id);
-  const duplicates = normalizedDomIds.filter((id, index) => normalizedDomIds.indexOf(id) !== index);
-  const parity = finalAuthorityIds.length === normalizedDomIds.length
-    && finalAuthorityIds.every((id) => normalizedDomIds.includes(id))
-    && duplicates.length === 0;
+  const finalDomIdentity = gridlyAlertWriterDomIdentity();
+  const finalDomPresentationIds = finalDomIdentity.map((identity) => identity.presentationId).filter(Boolean);
+  const finalDomCanonicalIds = finalDomIdentity.map((identity) => identity.canonicalId).filter(Boolean);
+  const canonicalToPresentationMapping = finalDomIdentity.map((identity) => Object.freeze({ ...identity }));
+  const duplicateCanonicalDomIds = finalDomCanonicalIds.filter((id, index) => finalDomCanonicalIds.indexOf(id) !== index);
+  const presentationContracts = [...new Set(finalDomIdentity.map((identity) => identity.presentationContract).filter(Boolean))];
+  const presentationTemplates = [...new Set(finalDomIdentity.map((identity) => identity.presentationTemplateUsed).filter(Boolean))];
+  const presentationContract = presentationContracts.length === 1 ? presentationContracts[0] : (presentationContracts.length ? "MIXED" : "");
+  const presentationTemplateUsed = presentationTemplates.length === 1 ? presentationTemplates[0] : (presentationTemplates.length ? "MIXED" : "");
+  const concisePresentation = finalDomIdentity.every((identity) => identity.presentationContract === "CONCISE_ALERT_CARD" && identity.presentationTemplateUsed === "RenderCompleteAlertCard.CONCISE_ALERT_CARD");
+  const parity = finalAuthorityIds.length === finalDomCanonicalIds.length
+    && finalAuthorityIds.every((id) => finalDomCanonicalIds.includes(id))
+    && duplicateCanonicalDomIds.length === 0
+    && concisePresentation;
   const laterEmptyOverwrite = finalAuthorityIds.length > 0 && state.invocations.some((row, index, rows) => row.inputIds.length > 0 && rows.slice(index + 1).some((later) => later.opened && later.inputIds.length === 0));
   let firstLosingStage = "AUTHORITY_READY";
   if (parity) firstLosingStage = "DOM_PARITY_PASS";
@@ -30865,18 +30873,26 @@ window.gridlyAlertsAuthorityWriterAudit = function () {
   else if (state.renderSuppressionReason && state.renderSuppressionReason !== "write_pending") firstLosingStage = "WRITER_SKIPPED";
   else if (state.targetContainerIdentity !== "#gridlyPortraitV2SheetBody") firstLosingStage = "WRITER_TARGET_MISMATCH";
   else if (laterEmptyOverwrite) firstLosingStage = "LATER_EMPTY_OVERWRITE";
-  else if (finalAuthorityIds.length || finalDomIds.length) firstLosingStage = "WRITER_OUTPUT_MISSING";
+  else if (finalAuthorityIds.length || finalDomPresentationIds.length) firstLosingStage = "WRITER_OUTPUT_MISSING";
   return Object.freeze({
+    finalAuthorityCanonicalIds: finalAuthorityIds,
     finalAuthorityIds,
     finalDataStoreIds,
     writerInvocationCount: state.invocationCount,
     writerLastInvocationTime: state.lastInvocationTime,
+    writerInputCanonicalIds: [...state.writerInputIds],
     writerInputIds: [...state.writerInputIds],
     targetContainerIdentity: state.targetContainerIdentity,
     renderSuppressionReason: state.renderSuppressionReason,
     postWriteDomIds: [...state.postWriteDomIds],
-    finalDomIds,
-    duplicateDomIds: duplicates,
+    finalDomCanonicalIds,
+    finalDomPresentationIds,
+    finalDomIds: finalDomCanonicalIds,
+    canonicalToPresentationMapping,
+    duplicateCanonicalDomIds,
+    duplicateDomIds: duplicateCanonicalDomIds,
+    presentationContract,
+    presentationTemplateUsed,
     laterOverwriteInvocation: laterEmptyOverwrite ? state.invocations.find((row) => row.opened && row.inputIds.length === 0) || null : null,
     invocationOrder: state.invocations.map((row) => ({ ...row, inputIds: [...row.inputIds], postWriteDomIds: [...row.postWriteDomIds] })),
     firstLosingStage,
@@ -33899,10 +33915,20 @@ function gridlyAlertWriterRecordId(record = {}, index = 0) {
   return prefix ? `${prefix}:${rawId}` : rawId;
 }
 
-function gridlyAlertWriterDomIds() {
+function gridlyAlertWriterDomIdentity() {
   return Array.from(document.querySelectorAll('#gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-id]'))
-    .map((row) => String(row.getAttribute("data-gridly-alert-id") || ""))
-    .filter(Boolean);
+    .map((row) => Object.freeze({
+      canonicalId: String(row.getAttribute("data-gridly-governed-evidence-id") || ""),
+      presentationId: String(row.getAttribute("data-gridly-alert-id") || ""),
+      persistedId: String(row.getAttribute("data-gridly-persisted-record-id") || ""),
+      providerId: String(row.getAttribute("data-gridly-provider-record-id") || ""),
+      presentationContract: String(row.getAttribute("data-gridly-alert-presentation-contract") || ""),
+      presentationTemplateUsed: String(row.getAttribute("data-gridly-alert-presentation-template") || "")
+    }));
+}
+
+function gridlyAlertWriterDomIds() {
+  return gridlyAlertWriterDomIdentity().map((identity) => identity.presentationId).filter(Boolean);
 }
 
 function gridlyRecordAlertsWriterInvocation({ input = [], suppressionReason = null, opened = false, invocationTime = Date.now(), countInvocation = true } = {}) {
@@ -36416,7 +36442,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
           displayCondition = phase2Contract.situationSummary || phase2Contract.conditionLabel || "";
         }
         return `
-  <div class="gridly-alert-row gridly-alert-intel-card"${gridlyLp0952AlertCardInteractionAttributes(crossingId, esc)} data-gridly-alert-id="${esc(id)}" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-condition="${esc(displayCondition)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}" data-gridly-alert-historical-context="${esc(historicalAlertLine)}" data-gridly-alert-historical-context-source="${historicalAlertLine ? "historical_awareness_adapter" : "suppressed"}"${coordAttrs}${lockMetadataAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
+  <div class="gridly-alert-row gridly-alert-intel-card"${gridlyLp0952AlertCardInteractionAttributes(crossingId, esc)} data-gridly-alert-id="${esc(id)}" data-gridly-governed-evidence-id="${esc(phase2Contract.governedEvidenceId)}" data-gridly-persisted-record-id="${esc(phase2Contract.persistedRecordId)}" data-gridly-provider-record-id="${esc(phase2Contract.providerRecordId)}" data-gridly-alert-presentation-contract="CONCISE_ALERT_CARD" data-gridly-alert-presentation-template="RenderCompleteAlertCard.CONCISE_ALERT_CARD" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-condition="${esc(displayCondition)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}"${coordAttrs}${lockMetadataAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
     <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
     <div style="min-width:0;flex:1;">
       <div style="display:grid;gap:4px;">
@@ -36424,9 +36450,8 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         ${gridlyBuildVisibleAlertLocationLineMarkup(displaySubtitle, esc)}
         <div class="gridly-alert-situation-summary gridly-alert-subtitle" data-gridly-alert-situation-summary="true" data-gridly-alert-condition-line="true" data-gridly-alert-condition-node="true" style="font-size:12px;line-height:1.35;color:rgba(242,246,255,0.9);">${esc(displayCondition)}</div>
         <div class="gridly-alert-meta-line" data-gridly-alert-freshness="true"><strong>Updated</strong> ${esc(freshnessLine.replace(/^Updated\s*/i, ""))}</div>
-        ${eventEvidenceHtml}
         <div class="gridly-alert-trust-line" data-gridly-alert-trust="true">${esc(trustLine)}</div>
-        ${historicalAlertLine ? `<div class="gridly-alert-context-line" data-gridly-alert-historical-context-line="true" style="font-size:11px;line-height:1.25;color:rgba(225,232,244,0.64);">${esc(historicalAlertLine)}</div>` : ""}
+        ${Number.isFinite(lat) && Number.isFinite(lng) ? `<div class="gridly-alert-map-action" data-gridly-alert-map-action="true" style="font-size:11px;line-height:1.25;color:#9ecbff;">Show on map</div>` : ""}
       </div>
     </div>
   </div>
@@ -36445,6 +36470,9 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   const sourceReportId = canonicalPresentation.sourceReportId || canonicalPresentation.reportId || canonicalIdentity.sourceReportId;
   const canonicalHazardType = canonicalPresentation.hazardType || canonicalIdentity.hazardType;
   const canonicalConditionFamily = canonicalPresentation.conditionFamily || canonicalIdentity.conditionFamily;
+  const governedEvidenceId = gridlyAlertWriterRecordId(alert, index);
+  const persistedRecordId = cleanDisplayValue(sourceReportId || alert?.id || alert?.reportId || alert?.report_id || alert?.uuid || "");
+  const providerRecordId = cleanDisplayValue(alert?.providerRecordId || alert?.provider_record_id || alert?.sourceId || alert?.source_id || alert?.raw?.providerRecordId || alert?.raw?.provider_record_id || "");
   const id = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "sanitization/escaping", () => cleanDisplayValue(canonicalIncidentId || alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`));
   const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"` : "";
   const resolvedTitle = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "title creation", () => displayTitle);
@@ -36561,8 +36589,11 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   const historicalAlertLine = alert?.historicalAlertLine || alert?.__gridlyHistoricalContextLine || "";
   const evidenceCount = Math.max(Number(consumerCard.reportCount || 1), Number(alert?.__gridlyPresentationGroupCount || 1), Number(alert?.count || alert?.confirmationCount || 0));
   const evidenceLine = `${evidenceCount} community report${evidenceCount === 1 ? "" : "s"}`;
-  const eventEvidenceLines = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "evidence composition", () => getEventCenteredEvidenceLines(alert, evidenceCount));
-  const eventEvidenceHtml = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "evidence-line generation", () => eventEvidenceLines.map((item) => `<div class="gridly-alert-evidence-line" data-gridly-alert-evidence="true"><strong>${esc(item.label)}</strong> ${esc(item.value)}</div>`).join(""));
+  // Alerts owns a concise card. Cross-provider Community/Official/Weather
+  // evidence composition remains available to Travel Brief/KBYG, but is not
+  // part of this renderer's input contract.
+  const eventEvidenceLines = [];
+  const eventEvidenceHtml = "";
   const freshnessLine = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "freshness formatting", () => officialAlertCard && typeof gridlyLp0455OfficialFreshnessResult === "function"
     ? gridlyLp0455OfficialFreshnessResult(alert).renderedFreshnessLine
     : formatGridlyAlertsFreshnessLine(alert, consumerCard.freshnessLine));
@@ -36614,6 +36645,9 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   const canonicalRenderContract = {
     ...phase2Contract,
     canonicalPresentationLocked: true,
+    governedEvidenceId,
+    persistedRecordId,
+    providerRecordId,
     incidentId: canonicalPresentation.incidentId || canonicalIdentity.incidentId,
     sourceReportId: canonicalPresentation.sourceReportId || canonicalIdentity.sourceReportId,
     hazardType: canonicalPresentation.hazardType || canonicalIdentity.hazardType,
