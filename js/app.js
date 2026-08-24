@@ -32611,7 +32611,15 @@ function gridlyV921ScheduleBatches({ generation, items, batchSize = 36, process,
 
 function gridlyV920Measure(functionName, category, fn, meta = {}) {
   const lp224Stage = functionName === "renderAlerts" ? "renderAlerts" : null;
-  const startedAt = lp224Stage ? gridlyV921Now() : 0;
+  const lp225Subsystem = /crossing/i.test(`${functionName} ${category}`) ? "CROSSINGS"
+    : /roadway/i.test(`${functionName} ${category}`) ? "ROADWAYS"
+      : /hazard|marker|map|leaflet/i.test(`${functionName} ${category}`) ? "MAP"
+        : /drive.?texas/i.test(`${functionName} ${category}`) ? "DRIVETEXAS"
+          : /weather/i.test(`${functionName} ${category}`) ? "WEATHER"
+            : /awareness|community.?pulse|kbyg|location.?context/i.test(`${functionName} ${category}`) ? "AWARENESS"
+              : /report|supabase/i.test(`${functionName} ${category}`) ? "SUPABASE_REPORTS"
+                : /audit|diagnostic|simulation/i.test(`${functionName} ${category}`) ? "AUDIT" : null;
+  const startedAt = lp224Stage || lp225Subsystem ? gridlyV921Now() : 0;
   const lp224AlertSignatureBefore = lp224Stage === "renderAlerts" ? gridlyV920MainThreadRepairState?.alertRenderSignature : null;
   let result;
   try {
@@ -32623,6 +32631,18 @@ function gridlyV920Measure(functionName, category, fn, meta = {}) {
     if (lp224Stage && typeof window?.gridlyRuntimePerformanceAuditRecordAlertsStage === "function") {
       const outputChanged = functionName === "renderAlerts" ? lp224AlertSignatureBefore !== gridlyV920MainThreadRepairState?.alertRenderSignature : (meta.outputChanged ?? null);
       window.gridlyRuntimePerformanceAuditRecordAlertsStage({ stageName: lp224Stage, startTime: startedAt, endTime: gridlyV921Now(), triggerReason: meta.triggeredBy || null, productionOwner: meta.caller || functionName, domMutationOccurred: outputChanged === true, outputChanged, authoritativeWriteFollowed: false });
+    }
+    if (lp225Subsystem && typeof window?.gridlyRuntimePerformanceAuditRecordSubsystemTiming === "function") {
+      const outputCount = Array.isArray(result) ? result.length : Number.isFinite(Number(meta.outputCount)) ? Number(meta.outputCount) : null;
+      window.gridlyRuntimePerformanceAuditRecordSubsystemTiming({
+        subsystem: lp225Subsystem, boundaryName: functionName, startTime: startedAt, endTime: gridlyV921Now(),
+        trigger: meta.triggeredBy || `direct ${functionName} invocation`, caller: meta.caller || functionName,
+        inputCount: meta.itemCount ?? meta.inputCount, outputCount,
+        domMutationOccurred: meta.domMutationOccurred === true, mapMutationOccurred: /crossing|hazard|marker|map|leaflet/i.test(`${functionName} ${category}`),
+        persistedStateMutationOccurred: meta.persistedStateMutationOccurred === true,
+        outputChanged: meta.outputChanged, noOp: meta.noOp,
+        auditOnly: meta.auditOnly === true || lp225Subsystem === "AUDIT"
+      });
     }
   }
 }

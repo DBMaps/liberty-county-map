@@ -1,7 +1,7 @@
 (function gridlyRuntimePerformanceAuditModule(globalScope) {
   "use strict";
 
-  const VERSION = "LP224.3";
+  const VERSION = "LP225";
   const MAX_ENTRIES = 200;
   const startedAt = new Date().toISOString();
   let generation = 1;
@@ -11,7 +11,9 @@
   const transactions = [];
   const longTasks = [];
   const stageTimings = [];
+  const subsystemTimings = [];
   let stageSequence = 0;
+  let subsystemSequence = 0;
 
   const now = () => globalScope.performance && typeof globalScope.performance.now === "function"
     ? globalScope.performance.now()
@@ -158,6 +160,59 @@
     return { ...entry };
   }
 
+  // LP225 production call sites opt in at a small number of already-existing
+  // subsystem boundaries.  Supplying the trigger and caller is mandatory: the
+  // audit never guesses lineage from a stack and never invokes production work.
+  function recordSubsystemTiming(record = {}) {
+    const startTime = Number(record.startTime);
+    const endTime = Number(record.endTime);
+    if (!record.subsystem || !record.boundaryName || !record.trigger || !record.caller
+      || !Number.isFinite(startTime) || !Number.isFinite(endTime) || endTime < startTime) return null;
+    const transaction = activeTransactionForStage(startTime);
+    if (!transaction) return null;
+    const entry = {
+      subsystem: String(record.subsystem).toUpperCase(), boundaryName: String(record.boundaryName),
+      transactionId: transaction.transactionId, measurementGeneration: transaction.measurementGeneration,
+      sequence: ++subsystemSequence, startTime: round(startTime), endTime: round(endTime), durationMs: round(endTime - startTime),
+      trigger: String(record.trigger), caller: String(record.caller),
+      inputCount: Number.isFinite(Number(record.inputCount)) ? Number(record.inputCount) : null,
+      outputCount: Number.isFinite(Number(record.outputCount)) ? Number(record.outputCount) : null,
+      domMutationOccurred: record.domMutationOccurred === true, mapMutationOccurred: record.mapMutationOccurred === true,
+      persistedStateMutationOccurred: record.persistedStateMutationOccurred === true,
+      outputChanged: record.outputChanged == null ? null : Boolean(record.outputChanged),
+      noOp: record.noOp == null ? null : Boolean(record.noOp), auditOnly: record.auditOnly === true
+    };
+    subsystemTimings.push(entry); trim(subsystemTimings);
+    return { ...entry };
+  }
+
+  function ownerResultFor(transaction) {
+    const timings = subsystemTimings.filter((entry) => entry.transactionId === transaction.transactionId);
+    const totals = new Map();
+    timings.forEach((entry) => {
+      const key = `${entry.subsystem}:${entry.boundaryName}`;
+      const row = totals.get(key) || { owner: key, subsystem: entry.subsystem, boundaryName: entry.boundaryName, callCount: 0, totalDurationMs: 0, maxInvocationDurationMs: 0 };
+      row.callCount += 1; row.totalDurationMs += entry.durationMs; row.maxInvocationDurationMs = Math.max(row.maxInvocationDurationMs, entry.durationMs); totals.set(key, row);
+    });
+    const owners = [...totals.values()].map((row) => ({ ...row, totalDurationMs: round(row.totalDurationMs), maxInvocationDurationMs: round(row.maxInvocationDurationMs) }));
+    const overlap = (transaction.longTasks || []).map((task) => {
+      const end = task.startTime + task.durationMs;
+      const matches = timings.filter((entry) => entry.startTime < end && entry.endTime > task.startTime).map((entry) => ({ subsystem: entry.subsystem, boundaryName: entry.boundaryName, sequence: entry.sequence, trigger: entry.trigger, caller: entry.caller, durationMs: entry.durationMs, auditOnly: entry.auditOnly }));
+      const auditOnly = matches.length > 0 && matches.every((entry) => entry.auditOnly);
+      return { longTaskStartTime: task.startTime, longTaskDurationMs: task.durationMs, classification: auditOnly ? "AUDIT_OVERHEAD_CANDIDATE" : matches.length === 0 ? "BROWSER_OR_UNINSTRUMENTED" : matches.length === 1 ? "EXACT_OWNER_OVERLAP" : "MULTIPLE_OWNER_OVERLAP", overlappingOwners: matches, causationClaimed: false };
+    });
+    const familyRanges = [[50, 300, "FAMILY_A_50_300_MS"], [300, 600, "FAMILY_B_300_600_MS"], [600, Infinity, "FAMILY_C_600_PLUS_MS"]];
+    const longTaskFamilies = familyRanges.map(([min, max, family]) => {
+      const rows = overlap.filter((row) => row.longTaskDurationMs >= min && row.longTaskDurationMs < max);
+      return { family, count: rows.length, durationRangeMs: rows.length ? [Math.min(...rows.map((r) => r.longTaskDurationMs)), Math.max(...rows.map((r) => r.longTaskDurationMs))] : null, ownerOverlap: [...new Set(rows.flatMap((r) => r.overlappingOwners.map((o) => `${o.subsystem}:${o.boundaryName}`)))], confidence: rows.length ? "BOUNDED_OVERLAP_ONLY" : "NO_EVIDENCE" };
+    }).filter((row) => row.count > 0);
+    const unexplainedLongTaskCount = overlap.filter((row) => row.classification === "BROWSER_OR_UNINSTRUMENTED").length;
+    const topTotal = [...owners].sort((a, b) => b.totalDurationMs - a.totalDurationMs)[0] || null;
+    const topMax = [...owners].sort((a, b) => b.maxInvocationDurationMs - a.maxInvocationDurationMs)[0] || null;
+    const auditMatches = overlap.filter((row) => row.classification === "AUDIT_OVERHEAD_CANDIDATE").length;
+    return { subsystemTimings: timings.map((entry) => ({ ...entry })), longTaskOwnerOverlap: overlap, ownerLineage: timings.map((entry) => ({ sequence: entry.sequence, subsystem: entry.subsystem, boundaryName: entry.boundaryName, trigger: entry.trigger, caller: entry.caller })), longTaskFamilies, topOwnerByTotalDuration: topTotal, topOwnerByMaxInvocationDuration: topMax, topIdleOwner: transaction.label === "IDLE" ? topTotal : null, auditOverheadAssessment: { classification: auditMatches ? "MIXED_OR_AUDIT_CANDIDATE" : "UNKNOWN", auditOnlyOverlapCount: auditMatches, productionLogicDisabled: false }, unexplainedLongTaskCount, rootCauseCandidate: null, rootCauseConfidence: "UNKNOWN", safeToOptimize: false };
+  }
+
   function stageResultFor(transaction) {
     const timings = stageTimings.filter((entry) => entry.transactionId === transaction.transactionId);
     const byTrigger = new Map();
@@ -250,6 +305,7 @@
     transaction.schedulingDeltas = subtract(finalSnapshot.scheduling, transaction.baseline.scheduling);
     transaction.repeatedWorkDeltas = subtract(finalSnapshot.repeatedWork, transaction.baseline.repeatedWork);
     Object.assign(transaction, stageResultFor(transaction));
+    Object.assign(transaction, ownerResultFor(transaction));
     if (currentTransactionId === id) currentTransactionId = null;
     return publicTransaction(transaction);
   }
@@ -262,7 +318,9 @@
     transactions.length = 0;
     longTasks.length = 0;
     stageTimings.length = 0;
+    subsystemTimings.length = 0;
     stageSequence = 0;
+    subsystemSequence = 0;
     measurementCutoff = now();
     return { reset: true, measurementGeneration: generation, baselineCutoff: measurementCutoff, nextTransactionId: `lp224-g${generation}-1` };
   }
@@ -331,6 +389,7 @@
       layout: { reads: Number(reflow.layoutReads || 0), writes: Number(reflow.domWrites || 0), suspectedForcedLayouts, confirmedRiskSites: reflow.confirmedRiskSites || [] },
       longTasks: longTasks.map((entry) => ({ ...entry })),
       stageTimings: stageTimings.filter((entry) => entry.measurementGeneration === generation).map((entry) => ({ ...entry })),
+      subsystemTimings: subsystemTimings.filter((entry) => entry.measurementGeneration === generation).map((entry) => ({ ...entry })),
       longTaskObservationSupported: longTaskObserverSupported,
       repeatedWork,
       findings: [{ classification: "UNKNOWN", evidence: "A bounded transaction has not deterministically identified a production owner" }],
@@ -344,4 +403,5 @@
   globalScope.gridlyRuntimePerformanceAuditEnd = endTransaction;
   globalScope.gridlyRuntimePerformanceAuditReset = reset;
   globalScope.gridlyRuntimePerformanceAuditRecordAlertsStage = recordAlertsStage;
+  globalScope.gridlyRuntimePerformanceAuditRecordSubsystemTiming = recordSubsystemTiming;
 })(typeof window !== "undefined" ? window : globalThis);
