@@ -607,6 +607,7 @@
     "test:lp222": "node --test tests/lp222-*",
     "test:lp223": "node --test tests/lp223-*",
     "test:lp224": "node --test tests/lp224-*",
-    "test:lp225": "node --test tests/lp225-*"
+    "test:lp225": "node --test tests/lp225-*",
+    "test:lp226": "node --test tests/lp226-*"
   }
 }

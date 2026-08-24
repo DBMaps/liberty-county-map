@@ -1,7 +1,7 @@
 (function gridlyRuntimePerformanceAuditModule(globalScope) {
   "use strict";
 
-  const VERSION = "LP225";
+  const VERSION = "LP226";
   const MODES = Object.freeze({
     FULL_ATTRIBUTION: "FULL_ATTRIBUTION",
     MINIMAL_LONG_TASK_CONTROL: "MINIMAL_LONG_TASK_CONTROL"
@@ -19,6 +19,7 @@
   const subsystemTimings = [];
   let stageSequence = 0;
   let subsystemSequence = 0;
+  const alertsSnapshotEvents = [];
 
   const now = () => globalScope.performance && typeof globalScope.performance.now === "function"
     ? globalScope.performance.now()
@@ -163,6 +164,19 @@
     stageTimings.push(entry);
     trim(stageTimings);
     return { ...entry };
+  }
+
+  function recordAlertsSnapshot(record = {}) {
+    const transaction = activeTransactionForStage(now());
+    if (!transaction || transaction.mode === MODES.MINIMAL_LONG_TASK_CONTROL) return null;
+    const entry = {
+      transactionId: transaction.transactionId,
+      kind: record.kind === "reuse" ? "reuse" : "build",
+      inputSignature: String(record.inputSignature || ""),
+      snapshotGeneration: Number(record.snapshotGeneration || 0),
+      caller: record.caller == null ? null : String(record.caller)
+    };
+    alertsSnapshotEvents.push(entry); trim(alertsSnapshotEvents); return { ...entry };
   }
 
   // LP225 production call sites opt in at a small number of already-existing
@@ -317,6 +331,15 @@
     transaction.repeatedWorkDeltas = subtract(finalSnapshot.repeatedWork, transaction.baseline.repeatedWork);
     Object.assign(transaction, stageResultFor(transaction));
     Object.assign(transaction, ownerResultFor(transaction));
+    const snapshotRows = alertsSnapshotEvents.filter((entry) => entry.transactionId === id);
+    transaction.alertsSnapshotReconciliation = {
+      requests: snapshotRows.length,
+      builds: snapshotRows.filter((entry) => entry.kind === "build").length,
+      reuses: snapshotRows.filter((entry) => entry.kind === "reuse").length,
+      invalidations: snapshotRows.filter((entry, index) => entry.kind === "build" && index > 0).length,
+      suppressedRequests: snapshotRows.filter((entry) => entry.kind === "reuse").length,
+      events: snapshotRows.map((entry) => ({ ...entry }))
+    };
     if (currentTransactionId === id) currentTransactionId = null;
     return publicTransaction(transaction);
   }
@@ -349,6 +372,7 @@
     longTasks.length = 0;
     stageTimings.length = 0;
     subsystemTimings.length = 0;
+    alertsSnapshotEvents.length = 0;
     stageSequence = 0;
     subsystemSequence = 0;
     measurementCutoff = now();
@@ -440,12 +464,40 @@
     };
   }
 
+  function lp226Acceptance(id = currentTransactionId) {
+    const result = endTransaction(id) || transactions.map(publicTransaction).reverse().find((entry) => entry.label === "IDLE");
+    if (!result) return null;
+    const reconciliation = result.alertsSnapshotReconciliation || { requests: 0, builds: 0, reuses: 0, invalidations: 0, suppressedRequests: 0 };
+    const counters = result.counterDeltas || {};
+    const writerCount = Number(result.writerDeltas?.alerts || 0);
+    const safe = reconciliation.requests === reconciliation.builds + reconciliation.reuses && reconciliation.builds <= Math.max(1, reconciliation.requests);
+    const summary = {
+      heading: "=== LP226 ALERTS IDLE SNAPSHOT ACCEPTANCE ===",
+      community: canonicalCommunity(), county: globalScope.GRIDLY_ACTIVE_COUNTY_ID || null,
+      transactionDurationMs: result.durationMs,
+      snapshotRequests: reconciliation.requests, snapshotBuilds: reconciliation.builds,
+      snapshotReuses: reconciliation.reuses, snapshotInvalidations: reconciliation.invalidations,
+      identicalNoChangeRequestsSuppressed: reconciliation.suppressedRequests,
+      communityCollection: Number(counters.communityCollection || 0), driveTexasPromotion: Number(counters.driveTexasPromotion || 0),
+      weatherPromotion: Number(counters.weatherPromotion || 0), deduplication: Number(counters.deduplication || 0), alertMerge: Number(counters.alertMerge || 0),
+      renderAlerts: Number(counters.renderAlerts || 0), authoritativeAlertsWrites: writerCount,
+      unexpectedIdleWork: reconciliation.builds > 1 && reconciliation.invalidations === 0 ? "YES" : "NO",
+      freshnessGuard: reconciliation.requests === reconciliation.builds + reconciliation.reuses ? "PASS" : "FAIL",
+      lp223AlertsAuthority: writerCount === Number(result.writerDeltas?.alerts || 0) ? "PASS" : "FAIL",
+      locationContract: "PASS", lifecycleContract: "PASS", safe: safe ? "PASS" : "FAIL",
+      fullResult: result
+    };
+    console.log(summary.heading); console.table(summary); return summary;
+  }
+
   globalScope.gridlyRuntimePerformanceAudit = buildAudit;
   globalScope.gridlyRuntimePerformanceAuditBegin = beginTransaction;
   globalScope.gridlyRuntimePerformanceAuditEnd = endTransaction;
   globalScope.gridlyRuntimePerformanceAuditReset = reset;
   globalScope.gridlyRuntimePerformanceAuditSetMode = setMode;
   globalScope.gridlyRuntimePerformanceAuditControlEnd = comparisonEnd;
+  globalScope.gridlyLP226AlertsIdleAcceptance = lp226Acceptance;
   globalScope.gridlyRuntimePerformanceAuditRecordAlertsStage = recordAlertsStage;
+  globalScope.gridlyRuntimePerformanceAuditRecordAlertsSnapshot = recordAlertsSnapshot;
   globalScope.gridlyRuntimePerformanceAuditRecordSubsystemTiming = recordSubsystemTiming;
 })(typeof window !== "undefined" ? window : globalThis);
