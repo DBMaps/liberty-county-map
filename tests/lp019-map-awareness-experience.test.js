@@ -16,8 +16,9 @@ assert(app.includes('window.gridlyLp019MapAwarenessExperienceAudit'), 'LP019 bro
 assert(app.includes('window.gridlyLp019AlertFocusDebug'), 'LP019 alert focus debug helper is exposed');
 assert(app.includes('perRecordAwarenessLookupCount: 0'), 'LP019 renderer does not introduce per-record awareness lookup counter increments');
 assert(published.includes('data-gridly-alert-lat'), 'published-awareness cards carry alert latitude when available');
-assert(published.includes('window.__gridlyLatestAlertsForRender = Array.isArray(publishedRecords) ? publishedRecords : []'), 'published-awareness open path preserves source records for tap resolution');
-assert(published.includes('gridlyLp019BindAlertFocusHandlers'), 'published-awareness open path binds alert focus handler');
+assert(!published.includes('openAlertsSurfaceFromDock'), 'published-awareness cannot replace the authoritative dock opener');
+assert(app.includes('window.__gridlyLatestAlertsForRender'), 'authoritative Alerts path preserves source records for tap resolution');
+assert(app.includes('gridlyLp019BindAlertFocusHandlers'), 'authoritative Alerts path binds alert focus handlers');
 
 assert(app.includes('function gridlyLp019IdentityCandidates'), 'LP019 resolves alert and marker IDs through shared real-record aliases');
 ['incidentId', 'reportId', 'alertId', 'sourceId', 'crossingId', 'providerRecordId', 'canonicalIncidentId'].forEach((alias) => {

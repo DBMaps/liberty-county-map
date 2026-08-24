@@ -378,69 +378,8 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
   `;
 }
 
-function openAlertsSurfaceFromDock() {
-  gridlyLP012RecordAlertsClick("openAlertsSurfaceFromDock");
-  window.gridlyStartupDiagnostics?.markInteractionProbe?.("clickHandler");
-  window.gridlyStartupDiagnostics?.markPostPaintLifecycle?.("firstResponsiveInteraction");
-
-  const handlerEnteredAt = gridlyAlertsOpenRefreshFixNow();
-  const alertsSheetGeneration = gridlyBeginAlertsSheetLifecycle();
-  gridlyBeginAlertsOpenRefreshFixTiming(handlerEnteredAt);
-
-  const publishedSummary = gridlyGetPublishedCommunityAwarenessSummaryForAlerts();
-  const publishedRecords = gridlyGetPublishedAwarenessAlertRecordsForCurrentArea(publishedSummary);
-  window.__gridlyLatestAlertsForRender = Array.isArray(publishedRecords) ? publishedRecords : [];
-  const initialContentSource = publishedRecords === null
-    ? "shared-summary-unavailable"
-    : (publishedRecords.length ? "published-awareness-summary" : "consumer-empty-state");
-  const html = publishedRecords === null
-    ? '<div class="gridly-alerts-active" data-gridly-alerts-phase="waiting-for-shared-summary"><div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Updating alerts…</p></div></div>'
-    : gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(publishedRecords);
-  const title = "Alerts";
-
-  const opened = typeof window.openGridlyPortraitV2Sheet === "function"
-    ? Boolean(window.openGridlyPortraitV2Sheet("alerts", { title, html }))
-    : (typeof openGridlyPortraitV2Sheet === "function"
-      ? Boolean(openGridlyPortraitV2Sheet("alerts", { title, html }))
-      : false);
-
-  const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
-  if (typeof window.gridlyLp019BindAlertFocusHandlers === "function") window.setTimeout(() => window.gridlyLp019BindAlertFocusHandlers(document), 0);
-  gridlyInstantAlertsSheetAuditState.lastOpen = {
-    handlerEnteredAt,
-    sheetInsertedAt,
-    sheetVisibleAt: sheetInsertedAt,
-    initialContentSource,
-    cacheAvailable: false,
-    cacheContextMatched: false,
-    authoritativeBuildSkippedOnOpen: true,
-    authoritativeBuildSkipReason: "alerts_open_is_cache_only",
-    publishedAwarenessSummaryAvailable: Boolean(publishedSummary),
-    publishedAwarenessRecordCount: Array.isArray(publishedRecords) ? publishedRecords.length : null,
-    authoritativeBuildStartedAt: null,
-    authoritativeBuildCompletedAt: null,
-    authoritativeContentAppliedAt: null,
-    sheetOpenDelayMs: Number((sheetInsertedAt - handlerEnteredAt).toFixed(2)),
-    authoritativeBuildDurationMs: null,
-    sheetWaitedForAuthoritativeBuild: false,
-    duplicateBuildPrevented: false,
-    sheetReopenedDuringUpdate: false,
-    duplicateCardsDetected: false,
-    alertsSheetGeneration,
-    lateResultIgnoredCount: gridlyAlertsSheetLifecycleState.lateResultIgnoredCount
-  };
-
-  gridlyRecordAlertsOpenRefreshFixTiming({
-    sheetVisibleAt: sheetInsertedAt,
-    initialCardsRenderedAt: Array.isArray(publishedRecords) && publishedRecords.length
-      ? sheetInsertedAt
-      : null,
-    sheetOpenDelayMs: Number((sheetInsertedAt - handlerEnteredAt).toFixed(2)),
-    waitedForBackgroundRefresh: false
-  });
-
-  return opened;
-}
+// Alerts dock ownership intentionally remains in app.js. This module only publishes
+// the awareness projections and markup helpers consumed by non-dock surfaces.
 
 window.gridlyGetPublishedCommunityAwarenessSummaryForAlerts =
   gridlyGetPublishedCommunityAwarenessSummaryForAlerts;
@@ -448,4 +387,3 @@ window.gridlyGetPublishedAwarenessAlertRecordsForCurrentArea =
   gridlyGetPublishedAwarenessAlertRecordsForCurrentArea;
 window.gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords =
   gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords;
-window.openAlertsSurfaceFromDock = openAlertsSurfaceFromDock;

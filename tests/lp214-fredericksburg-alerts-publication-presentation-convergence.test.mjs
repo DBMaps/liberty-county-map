@@ -48,7 +48,7 @@ test('published Alerts sheet exposes the ranked heading as rendered DOM evidence
   assert.match(publisher, /data-gridly-alert-title="\$\{esc\(title\)\}"/);
 });
 
-test('lazy Alerts open markup exposes the ranked heading and active card to the audited DOM selectors', () => {
+test('published-awareness markup helper exposes the ranked heading and active card to audited DOM selectors', () => {
   const record = {
     id: 'drivetexas:provider:FE00C70A-A3F8-4CEB-8970-228FD50A14CD',
     type: 'Lane Closure',
@@ -77,9 +77,8 @@ test('lazy Alerts open markup exposes the ranked heading and active card to the 
   assert.equal((markup.match(/data-gridly-alert-row="true"/g) || []).length, 1);
   assert.match(markup, /data-gridly-alert-title="Road closed on US 87"/);
 
-  const openHandler = functionSource(publisher, 'openAlertsSurfaceFromDock');
-  assert.match(openHandler, /gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords\(publishedRecords\)/, 'open builds the published DOM contract');
-  assert.match(openHandler, /openGridlyPortraitV2Sheet\("alerts", \{ title, html \}\)/, 'open attaches that markup to the shared sheet body');
+  assert.doesNotMatch(publisher, /function openAlertsSurfaceFromDock|window\.openAlertsSurfaceFromDock\s*=/,
+    'published-awareness retains its markup helper without claiming dock-open authority');
 });
 
 test('read-only Alerts audit distinguishes closed lazy state from an open render failure', () => {
