@@ -1,49 +1,123 @@
 {
   "schemaVersion": "gridly.lp232.crossing-place-attribution-certification.v2",
   "generatedAt": "1970-01-01T00:00:00.000Z",
-  "finalClassification": "E. INSUFFICIENT_EVIDENCE",
+  "finalClassification": "B. NEW_OFFLINE_CROSSING_PLACE_ATTRIBUTION_CERTIFIED",
   "scope": "OFFLINE_AUTHORITY_CERTIFICATION_ONLY_NO_PRODUCTION_ACTIVATION",
   "sourceWorkspace": {
     "configuredCandidates": [
-      "C:\\GitHub\\Gridly-Source-Data",
+      "../Gridly-Source-Data",
       "Gridly-Source-Data"
     ],
-    "resolvedPath": "Gridly-Source-Data"
+    "resolvedPath": "../Gridly-Source-Data"
   },
   "geometryAuthority": {
-    "archive": null,
-    "shapefile": null,
-    "companionFiles": [
-      null,
-      null,
-      null
-    ],
-    "sourceState": "NOT_PRESENT",
-    "finding": "NOT_PRESENT",
-    "reader": null,
-    "crs": {
-      "sourcePrj": null,
-      "conversionOutput": null
+    "archive": {
+      "path": "../Gridly-Source-Data/Census/TIGER2025/PLACE/original/tl_2025_48_place.zip",
+      "sizeBytes": 9782040,
+      "sha256": "5a0c4d49641f69028ee9f5c343bf09936ec00a378e5e6393115b106bab935e13"
     },
-    "featureCount": null,
-    "polygonCount": null,
-    "multiPolygonCount": null,
-    "invalidGeometryCount": null,
-    "emptyGeometryCount": null,
-    "interiorRingCount": null,
-    "interiorRingsPreserved": null,
-    "geoidUnique": null,
-    "placefpUniqueWithinTexas": null,
+    "shapefile": {
+      "path": "../Gridly-Source-Data/Census/TIGER2025/PLACE/derived/tl_2025_48_place.shp",
+      "sizeBytes": 15091320,
+      "sha256": "383a41b281eacc9fb4589efa3120dc8b9890d76f7fec75745cea34cbb2c94ab2"
+    },
+    "companionFiles": [
+      {
+        "path": "../Gridly-Source-Data/Census/TIGER2025/PLACE/derived/tl_2025_48_place.dbf",
+        "sizeBytes": 561309,
+        "sha256": "9d1c64ef3f41a789aee1deeb49239a7bd5aa8f196aa7625b9dfde2d340745bfc"
+      },
+      {
+        "path": "../Gridly-Source-Data/Census/TIGER2025/PLACE/derived/tl_2025_48_place.shx",
+        "sizeBytes": 15004,
+        "sha256": "58bbfcaa3bd3be2c80212f457e490f28bdfddf49720cfc324b9cbaaf0e190c9e"
+      },
+      {
+        "path": "../Gridly-Source-Data/Census/TIGER2025/PLACE/derived/tl_2025_48_place.prj",
+        "sizeBytes": 165,
+        "sha256": "0b9041e921d9ebb43247d314608fe9e38a0b008ee793067fc1806199ea1fb9dd"
+      }
+    ],
+    "sourceState": "PRESENT_READER_AVAILABLE",
+    "finding": "CERTIFIED",
+    "reader": {
+      "name": "GDAL ogr2ogr",
+      "executable": "C:\\Program Files\\QGIS 3.44.11\\bin\\ogr2ogr.exe",
+      "version": "GDAL 3.13.0 \"Iowa City\", released 2026/05/04",
+      "dialect": "SQLite",
+      "output": "RFC 7946 GeoJSON"
+    },
+    "crs": {
+      "sourcePrj": "GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]]",
+      "conversionOutput": "OGC:CRS84 (RFC 7946)"
+    },
+    "featureCount": 1863,
+    "polygonCount": 1622,
+    "multiPolygonCount": 241,
+    "invalidGeometryCount": 0,
+    "emptyGeometryCount": 0,
+    "interiorRingCount": 2081,
+    "interiorRingsPreserved": true,
+    "geoidUnique": true,
+    "placefpUniqueWithinTexas": true,
     "repairPerformed": false
   },
-  "identityReconciliation": null,
+  "identityReconciliation": {
+    "sourceGeometryCount": 1863,
+    "governedEligibleCanonicalCount": 1859,
+    "exactGovernedGeometryMatches": 1859,
+    "missingGovernedGeometryCount": 0,
+    "missingGovernedGeometryGeoids": [],
+    "duplicateGovernedGeometryCount": 0,
+    "duplicateGovernedGeometryGeoids": [],
+    "extraSourceGeometryCount": 4,
+    "governedExcludedGeometryCount": 4,
+    "unknownExtraGeometryCount": 0,
+    "unknownExtraGeometryGeoids": [],
+    "excludedGeometryIdentities": [
+      {
+        "name": "Harwood",
+        "geoid": "4832684",
+        "placeFp": "32684",
+        "classFp": "C9",
+        "funcStat": "I",
+        "governedType": "INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE"
+      },
+      {
+        "name": "Mustang",
+        "geoid": "4850184",
+        "placeFp": "50184",
+        "classFp": "C9",
+        "funcStat": "I",
+        "governedType": "INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE"
+      },
+      {
+        "name": "Nesbitt",
+        "geoid": "4850724",
+        "placeFp": "50724",
+        "classFp": "C9",
+        "funcStat": "I",
+        "governedType": "INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE"
+      },
+      {
+        "name": "Rangerville",
+        "geoid": "4860644",
+        "placeFp": "60644",
+        "classFp": "C9",
+        "funcStat": "I",
+        "governedType": "INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE"
+      }
+    ],
+    "exclusionAuthority": "existing governed PLACE classification",
+    "geometryReconciliationPass": true
+  },
   "crossingAuthority": {
-    "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
-    "sizeBytes": 67186117,
-    "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f",
+    "path": "../Gridly-Source-Data/Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "sizeBytes": 68200491,
+    "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c",
     "totalCrossingRecords": 16101,
     "uniqueStableCrossingIds": 16101,
-    "identityPass": null
+    "identityPass": true
   },
   "canonicalBaseline": {
     "canonicalCommunities": 1859,
@@ -52,77 +126,531 @@
     "counties": 254
   },
   "attribution": {
-    "artifactProduced": false,
-    "artifactPath": null,
-    "artifactBytes": null,
-    "artifactSha256": null,
-    "deterministicRebuildPass": false,
-    "crossingsWithValidCoordinates": null,
-    "crossingsAttributedToGovernedCanonicalPlace": null,
-    "crossingsOutsideAnyGovernedCanonicalPlace": null,
-    "crossingsWithMultipleGovernedPlaceMatches": null,
-    "crossingsIntersectingOnlyExcludedInactivePlace": null,
-    "crossingsWithIdentityUnavailable": null,
+    "artifactProduced": true,
+    "artifactPath": "reports/lp232/crossing-place-memberships.json",
+    "artifactBytes": 2427913,
+    "artifactSha256": "2d3f409de35eded92b391cfe5525ad17ad822ded255bb7fdf5c2bf45f1dfc958",
+    "deterministicRebuildPass": true,
+    "crossingsWithValidCoordinates": 16101,
+    "crossingsAttributedToGovernedCanonicalPlace": 9094,
+    "crossingsOutsideAnyGovernedCanonicalPlace": 7007,
+    "crossingsWithMultipleGovernedPlaceMatches": 0,
+    "crossingsIntersectingOnlyExcludedInactivePlace": 5,
+    "crossingsWithIdentityUnavailable": 0,
     "duplicateCrossingRecordsRemoved": 0,
-    "canonicalPlacesWithAtLeastOneCrossing": null,
-    "canonicalPlacesWithZeroCrossings": null,
-    "multiCountyPlacesWithAtLeastOneCrossing": null,
-    "multiCountyPlacesWithZeroCrossings": null,
-    "multiCountyPlacesWithAmbiguousAttribution": null,
+    "canonicalPlacesWithAtLeastOneCrossing": 760,
+    "canonicalPlacesWithZeroCrossings": 1099,
+    "multiCountyPlacesWithAtLeastOneCrossing": 103,
+    "multiCountyPlacesWithZeroCrossings": 60,
+    "multiCountyPlacesWithAmbiguousAttribution": 0,
     "controls": [
       {
         "name": "Katy",
         "placeGeoid": "4838476",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 11,
+        "bySourceCounty": {
+          "FORT BEND": {
+            "crossingCount": 3,
+            "crossingIds": [
+              "416519S",
+              "416520L",
+              "416522A"
+            ]
+          },
+          "HARRIS": {
+            "crossingCount": 4,
+            "crossingIds": [
+              "416523G",
+              "416524N",
+              "416525V",
+              "972563K"
+            ]
+          },
+          "WALLER": {
+            "crossingCount": 4,
+            "crossingIds": [
+              "414049E",
+              "416514H",
+              "416517D",
+              "440858H"
+            ]
+          }
+        }
       },
       {
         "name": "Corpus Christi",
         "placeGeoid": "4817000",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 59,
+        "bySourceCounty": {
+          "NUECES": {
+            "crossingCount": 58,
+            "crossingIds": [
+              "427584D",
+              "427585K",
+              "427586S",
+              "427587Y",
+              "427704S",
+              "435492L",
+              "435493T",
+              "435497V",
+              "435520M",
+              "441079T",
+              "755937S",
+              "793773F",
+              "793776B",
+              "793778P",
+              "793780R",
+              "793781X",
+              "793783L",
+              "793785A",
+              "793788V",
+              "793789C",
+              "793790W",
+              "793791D",
+              "793792K",
+              "793843T",
+              "793844A",
+              "793845G",
+              "793846N",
+              "793847V",
+              "793848C",
+              "793849J",
+              "793850D",
+              "793851K",
+              "793852S",
+              "793853Y",
+              "793854F",
+              "793855M",
+              "793856U",
+              "793857B",
+              "793858H",
+              "793860J",
+              "793864L",
+              "793930W",
+              "793943X",
+              "793946T",
+              "793952W",
+              "793954K",
+              "793962C",
+              "793992U",
+              "923781J",
+              "923782R",
+              "969656B",
+              "969657H",
+              "969774D",
+              "969775K",
+              "970226M",
+              "970227U",
+              "970383F",
+              "973996U"
+            ]
+          },
+          "SAN PATRICIO": {
+            "crossingCount": 1,
+            "crossingIds": [
+              "748427W"
+            ]
+          }
+        }
       },
       {
         "name": "Austin",
         "placeGeoid": "4805000",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 154,
+        "bySourceCounty": {
+          "LLANO": {
+            "crossingCount": 1,
+            "crossingIds": [
+              "745304A"
+            ]
+          },
+          "TRAVIS": {
+            "crossingCount": 144,
+            "crossingIds": [
+              "427752G",
+              "435964F",
+              "435965M",
+              "435971R",
+              "435973E",
+              "435974L",
+              "435975T",
+              "435976A",
+              "435977G",
+              "435978N",
+              "435979V",
+              "435980P",
+              "435981W",
+              "435982D",
+              "435983K",
+              "435984S",
+              "435985Y",
+              "435986F",
+              "435998A",
+              "436001N",
+              "436002V",
+              "436003C",
+              "436004J",
+              "436005R",
+              "439696L",
+              "440128J",
+              "440510S",
+              "447606F",
+              "447607M",
+              "447608U",
+              "447609B",
+              "447610V",
+              "447611C",
+              "447613R",
+              "447618A",
+              "447619G",
+              "447620B",
+              "447621H",
+              "447623W",
+              "447624D",
+              "447625K",
+              "447626S",
+              "447627Y",
+              "447629M",
+              "447630G",
+              "447636X",
+              "447637E",
+              "447638L",
+              "447639T",
+              "448356Y",
+              "448385J",
+              "448407G",
+              "450407G",
+              "744886D",
+              "744894V",
+              "764970R",
+              "765566L",
+              "765567T",
+              "765568A",
+              "765571H",
+              "765577Y",
+              "765651B",
+              "765654W",
+              "765656K",
+              "765657S",
+              "765661G",
+              "765664C",
+              "765665J",
+              "765698W",
+              "765718F",
+              "765720G",
+              "765721N",
+              "765723C",
+              "765724J",
+              "765725R",
+              "765726X",
+              "765727E",
+              "765728L",
+              "765729T",
+              "765730M",
+              "765731U",
+              "765734P",
+              "765735W",
+              "765738S",
+              "765739Y",
+              "765741A",
+              "765742G",
+              "765743N",
+              "765744V",
+              "765748X",
+              "765749E",
+              "765750Y",
+              "765752M",
+              "765754B",
+              "765763A",
+              "765764G",
+              "765765N",
+              "765766V",
+              "765798B",
+              "765799H",
+              "765800A",
+              "765801G",
+              "765802N",
+              "765803V",
+              "765804C",
+              "765805J",
+              "765806R",
+              "765807X",
+              "765808E",
+              "765809L",
+              "765810F",
+              "765811M",
+              "765812U",
+              "765813B",
+              "765814H",
+              "765815P",
+              "765816W",
+              "795409A",
+              "848280A",
+              "848301R",
+              "900251E",
+              "900252L",
+              "906657J",
+              "913617D",
+              "913620L",
+              "913621T",
+              "920996X",
+              "922542F",
+              "922543M",
+              "922544U",
+              "924565U",
+              "924566B",
+              "925928N",
+              "925929V",
+              "925944X",
+              "925947T",
+              "930570E",
+              "975131W",
+              "975136F",
+              "975137M",
+              "976533G",
+              "976534N",
+              "976711R",
+              "981756H"
+            ]
+          },
+          "WILLIAMSON": {
+            "crossingCount": 9,
+            "crossingIds": [
+              "744810X",
+              "744811E",
+              "744835T",
+              "913615P",
+              "913616W",
+              "914512T",
+              "914513A",
+              "920486U",
+              "924564M"
+            ]
+          }
+        }
       },
       {
         "name": "Abilene",
         "placeGeoid": "4801000",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 49,
+        "bySourceCounty": {
+          "TAYLOR": {
+            "crossingCount": 49,
+            "crossingIds": [
+              "274931W",
+              "274936F",
+              "275075J",
+              "275076R",
+              "275077X",
+              "275078E",
+              "275080F",
+              "275083B",
+              "275085P",
+              "795386V",
+              "796033L",
+              "796034T",
+              "796035A",
+              "796037N",
+              "796038V",
+              "796039C",
+              "796040W",
+              "796041D",
+              "796042K",
+              "796044Y",
+              "796045F",
+              "796046M",
+              "796047U",
+              "796048B",
+              "796049H",
+              "796050C",
+              "796051J",
+              "796052R",
+              "796053X",
+              "796054E",
+              "796055L",
+              "796056T",
+              "796059N",
+              "839396C",
+              "839397J",
+              "864723A",
+              "864725N",
+              "864726V",
+              "864727C",
+              "864728J",
+              "864729R",
+              "864731S",
+              "864733F",
+              "864734M",
+              "864735U",
+              "864736B",
+              "864738P",
+              "924245U",
+              "973884V"
+            ]
+          }
+        }
       },
       {
         "name": "Midland",
         "placeGeoid": "4848072",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 15,
+        "bySourceCounty": {
+          "MIDLAND": {
+            "crossingCount": 15,
+            "crossingIds": [
+              "440781X",
+              "448430B",
+              "796313N",
+              "796324B",
+              "796325H",
+              "796326P",
+              "796330E",
+              "796331L",
+              "796332T",
+              "796334G",
+              "796335N",
+              "796336V",
+              "796337C",
+              "796338J",
+              "796340K"
+            ]
+          }
+        }
       },
       {
         "name": "Sulphur Springs",
         "placeGeoid": "4870904",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 36,
+        "bySourceCounty": {
+          "HOPKINS": {
+            "crossingCount": 36,
+            "crossingIds": [
+              "330911N",
+              "331621J",
+              "331623X",
+              "331624E",
+              "331625L",
+              "331627A",
+              "331628G",
+              "331629N",
+              "331630H",
+              "331631P",
+              "331633D",
+              "331634K",
+              "331635S",
+              "331638M",
+              "331639U",
+              "331640N",
+              "331641V",
+              "331643J",
+              "331644R",
+              "331645X",
+              "789369R",
+              "789371S",
+              "789375U",
+              "789376B",
+              "789377H",
+              "789378P",
+              "789379W",
+              "789380R",
+              "789381X",
+              "789383L",
+              "789865L",
+              "789866T",
+              "790095N",
+              "790105S",
+              "927005X",
+              "970356J"
+            ]
+          }
+        }
       },
       {
         "name": "Liberty",
         "placeGeoid": "4842568",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 17,
+        "bySourceCounty": {
+          "LIBERTY": {
+            "crossingCount": 17,
+            "crossingIds": [
+              "762759A",
+              "762762H",
+              "762763P",
+              "762764W",
+              "762765D",
+              "762766K",
+              "762767S",
+              "762768Y",
+              "762769F",
+              "762770A",
+              "762771G",
+              "762772N",
+              "762778E",
+              "762782U",
+              "762783B",
+              "763046V",
+              "763062E"
+            ]
+          }
+        }
       },
       {
         "name": "Fredericksburg",
         "placeGeoid": "4827348",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 0,
+        "bySourceCounty": {}
       },
       {
         "name": "Pecos",
         "placeGeoid": "4873493",
-        "crossingCount": null,
-        "bySourceCounty": null
+        "crossingCount": 40,
+        "bySourceCounty": {
+          "REEVES": {
+            "crossingCount": 40,
+            "crossingIds": [
+              "796228Y",
+              "796229F",
+              "796251T",
+              "796253G",
+              "796254N",
+              "796255V",
+              "865861S",
+              "865862Y",
+              "865863F",
+              "865865U",
+              "865866B",
+              "865867H",
+              "865874T",
+              "865875A",
+              "865876G",
+              "865877N",
+              "865878V",
+              "865879C",
+              "865880W",
+              "865881D",
+              "865882K",
+              "865883S",
+              "865884Y",
+              "865885F",
+              "865887U",
+              "865895L",
+              "865897A",
+              "865898G",
+              "865899N",
+              "865900F",
+              "865902U",
+              "865904H",
+              "865906W",
+              "865907D",
+              "865911T",
+              "865925B",
+              "865927P",
+              "925044G",
+              "925045N",
+              "968197E"
+            ]
+          }
+        }
       }
     ]
   },
