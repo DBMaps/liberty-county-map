@@ -3306,9 +3306,22 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
   const engine = typeof window !== "undefined" ? window.GridlyGovernedAwareness : null;
   if (!engine?.buildConsumerProjection) return null;
   const selectedArea = Object.prototype.hasOwnProperty.call(options, "selectedArea") ? options.selectedArea : getGridlySelectedAwarenessArea();
+  // DriveTexas is already reduced to the current canonical geography by the
+  // LP039 authority selector.  Admit that existing projection at the shared
+  // evidence boundary; previously only community reports/hazards were passed
+  // here, while Alerts independently received the official projection.
+  const driveTexasRecords = Array.isArray(options.driveTexasRecords) ? options.driveTexasRecords
+    : (typeof gridlyStoryTransportationConnectorRecords === "function" ? gridlyStoryTransportationConnectorRecords() : []);
+  const governedDriveTexasRecords = driveTexasRecords.map((record) => ({
+    ...record,
+    sourceKind: "official_roadway",
+    providerRecordId: record?.providerRecordId || record?.providerId || record?.sourceId || record?.id || "",
+    geographicEligible: true
+  }));
   const records = Array.isArray(options.records) ? options.records : [
     ...(Array.isArray(activeReports) ? activeReports : []),
-    ...(Array.isArray(activeHazards) ? activeHazards : [])
+    ...(Array.isArray(activeHazards) ? activeHazards : []),
+    ...governedDriveTexasRecords
   ];
   return engine.buildConsumerProjection({
     records,
@@ -3316,6 +3329,13 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
     canonicalKey: selectedArea?.canonicalKey || selectedArea?.placeGeoid || "",
     countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : selectedArea?.countyId || ""
   });
+}
+
+function gridlyGetGovernedActiveAwarenessRows(options = {}) {
+  const projection = gridlyGetGovernedConsumerProjection(options);
+  if (!projection?.surfaces) return [];
+  const rows = [...(projection.surfaces.kbygCommunity || []), ...(projection.surfaces.kbygOfficialRoadways || [])];
+  return [...new Map(rows.map((row) => [row.evidenceId, row])).values()];
 }
 
 // Preserve the normalized incident-location context which already owns map and
@@ -4500,7 +4520,7 @@ function gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecor
 
 function gridlyBuildTravelBriefModel(storyInput) {
   const records = gridlyStoryActiveRecords();
-  const governedKbygEvidenceIds = ((typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null)?.surfaces?.kbygCommunity || []).map((row) => row.evidenceId);
+  const governedKbygEvidenceIds = gridlyGetGovernedActiveAwarenessRows().map((row) => row.evidenceId);
   const driveTexasSourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope();
   const driveTexasRecords = gridlyStoryTransportationConnectorRecords();
   const weather = gridlyBriefInteractionWeatherModel();
@@ -41343,7 +41363,9 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
     : reconciledActiveIssueCount;
   const productionItems = [
     ...activeReportRows.map((record) => ({ record, countedReason: "activeReportsInArea retained collection member" })),
-    ...(Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea : []).map((record) => ({ record, countedReason: "activeHazardsInArea collection member" }))
+    ...(Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea : []).map((record) => ({ record, countedReason: "activeHazardsInArea collection member" })),
+    ...gridlyGetGovernedActiveAwarenessRows().filter((row) => row.sourceKind === "official_roadway")
+      .map((row) => ({ record: row.record, countedReason: "governed official roadway collection member" }))
   ];
   gridlyObserveLocationContextProductionProjection({
     summary: safeSummary, productionItems, productionCount: activeIssueCount,
@@ -63785,7 +63807,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
   // Governance must precede presentation. Normalize authorized KBYG rows into
   // the same candidate collection that selects detail, count, headline, and
   // subline instead of patching cardinality after quiet copy was constructed.
-  const governedKbygProjection = gridlyGetGovernedConsumerProjection()?.surfaces?.kbygCommunity || [];
+  const governedKbygProjection = gridlyGetGovernedActiveAwarenessRows();
   const governedTopAwarenessCandidates = governedKbygProjection
     .map((row) => row?.record && typeof row.record === "object"
       ? { ...row.record, governedEvidenceId: row.evidenceId, evidenceId: row.evidenceId, __gridlyTopAwarenessGoverned: true }
@@ -64258,7 +64280,7 @@ function renderGridlyCommunityPulse(options = {}) {
 
 function refreshGridlyCommunityPulseSharedModel(options = {}) {
   if (typeof gridlyLp016RecordAwarenessSwitchEvent === "function") gridlyLp016RecordAwarenessSwitchEvent("authoritativeSnapshotUpdated", { reason: options?.reason || "refreshGridlyCommunityPulseSharedModel" });
-  const governedKbygAuthorityIds = (gridlyGetGovernedConsumerProjection()?.surfaces?.kbygCommunity || []).map((row) => row.evidenceId).sort();
+  const governedKbygAuthorityIds = gridlyGetGovernedActiveAwarenessRows().map((row) => row.evidenceId).sort();
   const signature = gridlyV734BuildRefreshReuseSignature({
     governedKbygAuthorityIds,
     topAwarenessMicrolineReadOnly: Boolean(options?.topAwarenessMicrolineReadOnly),
@@ -122095,6 +122117,51 @@ window.gridlyGovernedAwarenessAudit = gridlyGovernedAwarenessAudit;
 window.gridlyLocationContextProductionAudit = gridlyLocationContextProductionAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGovernedAwarenessAudit", gridlyGovernedAwarenessAudit);
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLocationContextProductionAudit", gridlyLocationContextProductionAudit);
+
+// LP234 is a passive lineage report over the existing DriveTexas authority,
+// governed evidence engine, and consumer projections. It performs no refresh.
+window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234DriveTexasGovernedPropagationAudit() {
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const source = typeof window.gridlyDriveTexasConnector?.getNormalizedRecords === "function" ? window.gridlyDriveTexasConnector.getNormalizedRecords() : [];
+  const relevant = typeof gridlyStoryTransportationConnectorRecords === "function" ? gridlyStoryTransportationConnectorRecords() : [];
+  const roadOf = (row = {}) => String(row.roadway || row.routeName || row.roadName || row.canonicalRoad || row.locationPhrase || "").trim();
+  const providerIdOf = (row = {}) => String(row.providerRecordId || row.providerId || row.sourceId || row.id || "").trim();
+  const target = relevant.find((row) => /FM\s*0?529/i.test(roadOf(row))) || relevant[0] || null;
+  const targetProviderId = providerIdOf(target || {});
+  const matches = (row = {}) => Boolean(target && (providerIdOf(row) === targetProviderId || (/FM\s*0?529/i.test(roadOf(target)) && roadOf(row) === roadOf(target))));
+  const projection = gridlyGetGovernedConsumerProjection({ driveTexasRecords: relevant });
+  const allRows = projection?.lineage || [];
+  const governed = allRows.find((row) => row.sourceKind === "official_roadway" && (row.providerRecordId === targetProviderId || String(row.evidenceId).endsWith(`:${targetProviderId}`))) || null;
+  const surfaceHas = (name) => (projection?.surfaces?.[name] || []).some((row) => row.evidenceId === governed?.evidenceId);
+  const domHas = (selector) => Array.from(document.querySelectorAll(selector)).some((node) => matches({ providerRecordId: node.getAttribute("data-gridly-provider-record-id"), roadway: node.getAttribute("data-gridly-alert-location") || node.textContent }));
+  const locationAudit = gridlyLocationContextProductionAudit();
+  const locationItems = locationAudit.locationContextProductionItems || [];
+  const targetPresentInLocationContextCollection = locationItems.some((row) => row.governedEvidenceId === governed?.evidenceId || row.productionIdentity === governed?.evidenceId);
+  const targetPresentInAlertsProjection = surfaceHas("alerts");
+  const targetPresentInKbygOfficialRoadways = surfaceHas("kbygOfficialRoadways");
+  const targetPresentInCommunityPulse = surfaceHas("communityPulse");
+  const targetPresentInTopAwareness = gridlyGetGovernedActiveAwarenessRows({ driveTexasRecords: relevant }).some((row) => row.evidenceId === governed?.evidenceId);
+  const parityValues = [targetPresentInAlertsProjection, targetPresentInKbygOfficialRoadways, targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection];
+  const firstLosingStage = !target ? "drivetexas_source_to_geographic_relevance" : !governed ? "governed_active_evidence_ingestion" : !governed.lifecycleEligible ? "governed_active_lifecycle" : parityValues.every(Boolean) ? null : "governed_consumer_projection";
+  const result = {
+    canonicalCommunity: selected?.label || selected?.name || "", canonicalKey: selected?.canonicalKey || selected?.placeGeoid || "",
+    selectedMembership: selected?.countyId || selected?.membershipCountyId || "", activeCounty: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "",
+    driveTexasSourceCount: source.length, driveTexasRelevantCount: relevant.length,
+    targetIncidentId: target?.consumerSituationId || target?.incidentId || target?.id || null, targetProviderId: targetProviderId || null,
+    targetRoad: target ? roadOf(target) : null,
+    targetCoordinates: target?.sourceCoordinates ? { lat: Number(target.sourceCoordinates.latitude ?? target.sourceCoordinates.lat), lng: Number(target.sourceCoordinates.longitude ?? target.sourceCoordinates.lng ?? target.sourceCoordinates.lon) } : null,
+    targetPresentInDriveTexasSource: source.some(matches), targetRelevantToCanonicalCommunity: Boolean(target),
+    targetPresentInGovernedActiveEvidence: Boolean(governed?.lifecycleEligible), governedEvidenceId: governed?.evidenceId || null,
+    targetPresentInAlertsProjection, targetPresentInAlertsDom: domHas("[data-gridly-alert-id]"),
+    targetPresentInKbygOfficialRoadways, targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection,
+    locationContextProductionCollectionCardinality: locationItems.length,
+    locationContextProductionCount: locationAudit.locationContextProductionCount,
+    firstLosingStage, consumerParity: parityValues.every(Boolean)
+  };
+  result.overallPass = Boolean(result.targetPresentInDriveTexasSource && result.targetRelevantToCanonicalCommunity && result.targetPresentInGovernedActiveEvidence && result.targetPresentInAlertsDom && result.consumerParity && result.locationContextProductionCollectionCardinality === result.locationContextProductionCount);
+  return Object.freeze(result);
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP234DriveTexasGovernedPropagationAudit", window.gridlyLP234DriveTexasGovernedPropagationAudit);
 
 /* LP221: Val Verde owner investigation adapter.  This is intentionally a
  * composition of production authorities; it neither selects a community nor
