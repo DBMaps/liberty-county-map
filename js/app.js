@@ -36033,15 +36033,18 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   const transaction = gridlyLP226BeginAlertsWriterTransaction({ alertsSheetGeneration, cooperativeBuildGeneration, contextKey: cooperativeBuildContextKey, revisionKey: cooperativeBuildRevisionKey });
   const setTransactionStage = (stage, detail = {}) => gridlyLP226SetAlertsWriterTransactionStage(transaction, stage, detail);
   try {
-    const currentInputSignature = gridlyAlertsSnapshotInputSignature();
-    const cachedMembership = gridlyAlertsSnapshotReconciliationState.snapshot?.authoritativeMembership;
+    // The snapshot owner lives in the Portrait V2 closure. Use its exported
+    // authority rather than resolving a same-named helper in this closure.
+    const currentInputSignature = window.gridlyAlertsSnapshotInputSignature();
+    const snapshotReconciliationState = window.gridlyAlertsSnapshotReconciliationState;
+    const cachedMembership = snapshotReconciliationState.snapshot?.authoritativeMembership;
     const validSameGenerationSnapshot = Boolean(
-      gridlyAlertsSnapshotReconciliationState.snapshot
-      && gridlyAlertsSnapshotReconciliationState.inputSignature === currentInputSignature
+      snapshotReconciliationState.snapshot
+      && snapshotReconciliationState.inputSignature === currentInputSignature
       && cachedMembership?.inputSignature === currentInputSignature
       && cachedMembership?.contextKey === cooperativeBuildContextKey
       && cachedMembership?.revisionKey === cooperativeBuildRevisionKey
-      && cachedMembership?.generation === gridlyAlertsSnapshotReconciliationState.snapshotGeneration
+      && cachedMembership?.generation === snapshotReconciliationState.snapshotGeneration
       && gridlyCanApplyAlertsSheetGeneration(alertsSheetGeneration)
     );
     let snapshot;
@@ -36068,10 +36071,12 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     // projection. Re-filtering it here treated the snapshot as raw provider input
     // and could narrow a valid same-generation membership during reopen.
     const alertsForRender = await cooperativePhase("awarenessFilteringMs", async () => gridlyAlertsOpenAuditMeasure("authoritative snapshot membership reuse", () => snapshotAlerts.slice(), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "reuse governed Alerts snapshot without consumer re-filtering" }));
-    gridlyLP226AlertsMembershipAuditState.writerInputIds = gridlyLP226MembershipIds(alertsForRender, gridlyLP226CanonicalId);
-    gridlyLP226AlertsMembershipAuditState.writerInputPresentationIds = gridlyLP226MembershipIds(alertsForRender, gridlyLP226PresentationId);
+    const membershipAuditState = window.gridlyLP226AlertsMembershipAuditState;
+    const membershipIds = window.gridlyLP226MembershipIds;
+    membershipAuditState.writerInputIds = membershipIds(alertsForRender, window.gridlyLP226CanonicalId);
+    membershipAuditState.writerInputPresentationIds = membershipIds(alertsForRender, window.gridlyLP226PresentationId);
     writerAlertsForRender = alertsForRender;
-    setTransactionStage("WRITER_INPUT_ASSIGNED", { writerInputIds: gridlyLP226AlertsMembershipAuditState.writerInputIds.slice(), writerInputPresentationIds: gridlyLP226AlertsMembershipAuditState.writerInputPresentationIds.slice() });
+    setTransactionStage("WRITER_INPUT_ASSIGNED", { writerInputIds: membershipAuditState.writerInputIds.slice(), writerInputPresentationIds: membershipAuditState.writerInputPresentationIds.slice() });
     gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: "write_pending", invocationTime: writerInvocationTime, countInvocation: false });
     if (!(await cooperativeYieldOrCancel(true, "cancelled_after_awareness_filter"))) return false;
     window.__gridlyLatestAlertsForRender = alertsForRender;
@@ -37262,10 +37267,10 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         };
       });
       cooperativeBuildAudit.itemCount = presentationAlerts.length;
-      gridlyLP226AlertsMembershipAuditState.presentationIds = gridlyLP226MembershipIds(presentationAlerts, gridlyLP226PresentationId);
+      membershipAuditState.presentationIds = membershipIds(presentationAlerts, window.gridlyLP226PresentationId);
       window.__gridlyLP226PresentationMembership = Object.freeze({
-        presentationIds: Object.freeze(gridlyLP226AlertsMembershipAuditState.presentationIds.slice()),
-        canonicalIds: Object.freeze(gridlyLP226MembershipIds(presentationAlerts, gridlyLP226CanonicalId))
+        presentationIds: Object.freeze(membershipAuditState.presentationIds.slice()),
+        canonicalIds: Object.freeze(membershipIds(presentationAlerts, window.gridlyLP226CanonicalId))
       });
       gridlyAlertsCooperativeBuildState.equivalence.outputSignatureBefore = gridlyAlertsAuthoritativeOutputSignature(presentationAlerts);
       gridlyAlertsGroupingHotLoopState.equivalence.beforeSignature = gridlyAlertsCooperativeBuildState.equivalence.outputSignatureBefore;
@@ -37307,7 +37312,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
 
       const headerLeadAlert = presentationAlerts[0] || alertsForRender[0] || null;
       const headerEvidenceLine = pluralizeGridlyMobilityReports(presentationCountModel.communityReportCount || alertsForRender.length);
-      setTransactionStage("PRESENTATION_MODEL_BUILT", { presentationIds: gridlyLP226MembershipIds(presentationAlerts, gridlyLP226PresentationId) });
+      setTransactionStage("PRESENTATION_MODEL_BUILT", { presentationIds: membershipIds(presentationAlerts, window.gridlyLP226PresentationId) });
       const alertsPanelHeadingModel = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "outer sheet/header markup", () => {
         const countText = presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`;
         const locationText = headerLeadAlert ? getNarrowAlertLocationLabel(headerLeadAlert, headerLeadAlert.__gridlyNarrowConsumerCard || {}) : "";
@@ -113639,6 +113644,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     })));
     return `lp226-${(hash >>> 0).toString(36)}`;
   }
+
+  // The authoritative writer is intentionally owned by the earlier app
+  // closure. Export references to this closure's LP226 snapshot authority so
+  // reuse validation and membership evidence cannot fork their implementations.
+  window.gridlyAlertsSnapshotInputSignature = gridlyAlertsSnapshotInputSignature;
+  window.gridlyAlertsSnapshotReconciliationState = gridlyAlertsSnapshotReconciliationState;
+  window.gridlyLP226AlertsMembershipAuditState = gridlyLP226AlertsMembershipAuditState;
+  window.gridlyLP226MembershipIds = gridlyLP226MembershipIds;
+  window.gridlyLP226CanonicalId = gridlyLP226CanonicalId;
+  window.gridlyLP226PresentationId = gridlyLP226PresentationId;
 
   function gridlyAlertsSnapshotReconciliationAudit() {
     const state = gridlyAlertsSnapshotReconciliationState;
