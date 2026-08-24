@@ -71,7 +71,8 @@ test('blocked-crossing persisted and governed aliases reconcile across a clear w
     // The owner row retained an active-looking status. Its persisted clear role,
     // not that stale boolean, must govern the final reconciled lifecycle.
     type: 'cleared', status: 'active', active: true, crossingId: 'FRA-331630H',
-    deviceId: 'owner-device', submittedAt: '2026-08-22T10:05:00Z'
+    deviceId: 'owner-device', lifecycleIdentity: '5484625f-4d68-466a-86cd-a64fa523f6f7',
+    submittedAt: '2026-08-22T10:05:00Z'
   });
   const after = project([roadHazard, active, clear]);
   for (const surface of ['locationContext', 'communityPulse', 'alerts', 'kbygCommunity']) {
@@ -89,7 +90,10 @@ test('blocked-crossing persisted and governed aliases reconcile across a clear w
   assert.equal(activeLineage.retiredByClearId, clear.id);
   assert.equal(activeLineage.finalLifecycleEligible, false);
   assert.equal(clearLineage.lifecycleRole, 'CLEAR_HISTORY');
+  assert.equal(clearLineage.explicitLifecycleTargetRaw, active.id);
   assert.equal(clearLineage.canonicalLifecycleTarget, active.id);
+  assert.notEqual(clearLineage.canonicalLifecycleTarget, clearLineage.persistedReportId);
+  assert.equal(clearLineage.targetResolutionSource, 'EXPLICIT_ACTIVE_REPORT_ID');
   assert.equal(clearLineage.finalLifecycleEligible, false);
   assert.equal(clearLineage.finalHistoryEligible, true);
   assert.equal(clearLineage.finalConsumerEligible, false);
@@ -102,6 +106,31 @@ test('blocked-crossing persisted and governed aliases reconcile across a clear w
   assert.deepEqual([...inactiveHistoryIds].filter(id => activeGovernedIds.has(id)), []);
   assert.deepEqual([...clearedAliasIds].filter(id => activeGovernedIds.has(id)), []);
   assert.equal(after.snapshot.lifecycleAudit.find(row => row.persistedReportId === clear.id).lifecycleRole, 'CLEAR_HISTORY');
+  assert.equal(after.snapshot.lifecycleAudit.find(row => row.persistedReportId === clear.id).canonicalLifecycleTarget, active.id);
+});
+
+test('a clear UUID presented as its own explicit target is rejected and safely resolved to the exact preceding owner report', () => {
+  const active = crossing('5484625f-4d68-466a-86cd-a64fa523f6f7', {
+    crossingId: 'FRA-331630H', deviceId: 'owner-device', submittedAt: '2026-08-22T10:00:00Z'
+  });
+  const clear = crossing('d8744fba-4b6b-44b8-9125-9cfe0a5d9e2a', {
+    type: 'cleared', status: 'active', active: true, crossingId: 'FRA-331630H',
+    deviceId: 'owner-device', lifecycleIdentity: 'd8744fba-4b6b-44b8-9125-9cfe0a5d9e2a',
+    submittedAt: '2026-08-22T10:05:00Z'
+  });
+  const result = project([active, clear]);
+  const activeLineage = result.lineage.find(row => row.persistedReportId === active.id);
+  const clearLineage = result.lineage.find(row => row.persistedReportId === clear.id);
+  assert.equal(clearLineage.explicitLifecycleTargetRaw, clear.id);
+  assert.equal(clearLineage.targetResolutionSource, 'LEGACY_SAME_REPORTER_SAME_CROSSING');
+  assert.equal(clearLineage.canonicalLifecycleTarget, active.id);
+  assert.notEqual(clearLineage.canonicalLifecycleTarget, clearLineage.persistedReportId);
+  assert.equal(activeLineage.retiredByClearId, clear.id);
+  assert.equal(activeLineage.finalLifecycleEligible, false);
+  assert.equal(result.surfaces.alerts.length, 0);
+  assert.equal(result.surfaces.kbygCommunity.length, 0);
+  assert.equal(result.surfaces.locationContext.length, 0);
+  assert.equal(result.surfaces.history.length, 1);
 });
 
 test('explicit alias identity retires one report but never collapses separate reports at the same FRA crossing', () => {
@@ -112,6 +141,7 @@ test('explicit alias identity retires one report but never collapses separate re
   assert.deepEqual(result.surfaces.alerts.map(row => row.record.id), ['report-two']);
   assert.deepEqual(result.surfaces.kbygCommunity.map(row => row.record.id), ['report-two']);
   assert.equal(result.surfaces.history.length, 1);
+  assert.equal(result.lineage.find(row => row.persistedReportId === clear.id).targetResolutionSource, 'EXPLICIT_ACTIVE_REPORT_ID');
 });
 
 test('hazard survives blocked-crossing clear and repeated clear is idempotent', () => {

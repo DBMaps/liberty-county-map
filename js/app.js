@@ -56937,10 +56937,17 @@ function normalizeReports(rows) {
 
     const persistedReportId = String(row.id || row.report_id || row.reportId || "").trim();
     const lifecycleIdentityMatch = String(row.detail || "").match(/\(lifecycle_report_id:\s*([^\s)]+)\)/i);
-    const lifecycleIdentity = String(row.lifecycleIdentity || row.lifecycle_identity || row.clearsReportId || row.clears_report_id || lifecycleIdentityMatch?.[1] || persistedReportId).trim();
+    // Only a persisted lifecycle_report_id (or an equivalent dedicated target
+    // field) is an explicit clear relationship. Falling back to row.id made a
+    // newly inserted clear claim that it cleared itself.
+    const explicitLifecycleTargetRaw = String(row.lifecycleIdentity || row.lifecycle_identity || row.clearsReportId || row.clears_report_id || lifecycleIdentityMatch?.[1] || "").trim();
+    const lifecycleIdentity = explicitLifecycleTargetRaw && explicitLifecycleTargetRaw !== persistedReportId
+      ? explicitLifecycleTargetRaw
+      : "";
     return {
       id: row.id,
       persistedReportId: persistedReportId || null,
+      explicitLifecycleTargetRaw: explicitLifecycleTargetRaw || null,
       lifecycleIdentity: lifecycleIdentity || null,
       canonicalReportIdentity: lifecycleIdentity || null,
       clearsReportId: reportType === "cleared" ? (lifecycleIdentity || null) : null,
