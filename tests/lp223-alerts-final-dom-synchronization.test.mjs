@@ -11,7 +11,7 @@ const gridlySelectConciseAlertLocation = Function('cleanDisplayValue', `${locati
 test('portrait Alerts open and refresh dispatch the existing authoritative writer', () => {
   const open = block('function openAlertsSurfaceFromDock()', 'function gridlyInstantAlertsSheetAudit()');
   const refresh = block('function renderAlerts()', 'function renderTrendingCrossings()');
-  assert.match(open, /gridlySynchronizeOpenAlertsPortrait\("alerts_open_after_shell"\)/);
+  assert.match(open, /gridlyOpenAlertsSurfaceAfterPaint\(alertsSheetGeneration\)/);
   assert.match(refresh, /gridlySynchronizeOpenAlertsPortrait\("renderAlerts_refresh"\)/);
   assert.match(app, /gridlyOpenAlertsSurfaceAfterPaint\(generation\)/);
   assert.doesNotMatch(open, /alerts_open_is_cache_only/);
@@ -19,7 +19,8 @@ test('portrait Alerts open and refresh dispatch the existing authoritative write
 
 test('uncached Alerts open invokes authority before making a provisional shell visible', () => {
   const open = block('function openAlertsSurfaceFromDock()', 'function gridlyInstantAlertsSheetAudit()');
-  assert.match(open, /cacheRead\.contextMatched && typeof window\.openGridlyPortraitV2Sheet/);
+  assert.match(open, /const opened = false/);
+  assert.doesNotMatch(open, /cacheRead\.contextMatched && typeof window\.openGridlyPortraitV2Sheet/);
   assert.match(open, /gridlyOpenAlertsSurfaceAfterPaint\(alertsSheetGeneration\)/);
   assert.match(open, /alerts_open_same_transaction/);
   assert.doesNotMatch(open, /neutral-empty-state/);
