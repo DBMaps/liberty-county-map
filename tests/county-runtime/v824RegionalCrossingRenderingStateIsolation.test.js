@@ -12,7 +12,7 @@ assert(appSource.includes('firstRuntimeCrossingSample'), 'Regional audit reports
 assert(appSource.includes('crossingSourceCounty: sources?.countyId || null'), 'Regional audit reports the active crossing source county');
 assert(appSource.includes('function gridlyGetActiveCountyCrossingInventory'), 'Render path has an active-county crossing inventory accessor');
 assert(appSource.includes('const activeCountyCrossings = gridlyGetActiveCountyCrossingInventory();'), 'renderCrossings uses active county inventory instead of raw global crossings');
-assert(appSource.includes('!activeCountyCrossingIds.has(String(crossing.id)) || !gridlyCrossingSampleMatchesCounty(crossing, activeCountyId)'), 'renderCrossings filters out stale cross-county crossing records');
+assert(appSource.includes('canonicalResolution?.authorityAvailable') && appSource.includes('? [...canonicalResolution.records]') && appSource.includes(': gridlyGetActiveCountyCrossingInventory()'), 'canonical PLACE rendering uses exact LP233 records while county selections retain the active-county fallback');
 assert(appSource.includes('crossingMarkers.clear();\n    }\n    gridlyCrossingRenderAuditState.renderCallCount'), 'renderCrossings clears stale markers when active county inventory is empty or mismatched');
 assert(appSource.includes('await gridlyAwaitActiveCountyCrossingInventoryLoad("regional-crossing-rendering-audit-restore")'), 'Regional audit restores the original active county and inventory after completion');
 

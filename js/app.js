@@ -27380,6 +27380,8 @@ function gridlyBuildCrossingRenderCoverageDiagnostics({
     ? getGridlyRegionalCrossingVisibilityPolicy({ inventoryCount: renderInputCount, bounds, activeCountyId })
     : null;
   return Object.freeze({
+    visibleIds: Object.freeze([...visibleIds]),
+    selectedMarkerIds: Object.freeze([...renderedIds]),
     renderedCount: renderedIds.size,
     renderedMarkerCount: renderedIds.size,
     skippedCount,
@@ -122227,6 +122229,7 @@ window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234Drive
   const authority = authoritySnapshot?.authority || {};
   const authorityProof = Array.isArray(authority.recordProof) ? authority.recordProof : [];
   const relevant = typeof gridlyStoryTransportationConnectorRecords === "function" ? gridlyStoryTransportationConnectorRecords() : [];
+  const driveTexasAuthorityAvailable = Boolean(authoritySnapshot && typeof gridlyStoryTransportationConnectorRecords === "function");
   const roadOf = (row = {}) => String(row.roadway || row.routeName || row.roadName || row.canonicalRoad || row.locationPhrase || "").trim();
   const providerIdOf = (row = {}) => String(row.providerRecordId || row.sourceProviderRecordId || row.sourceId || row.id || row.incidentId || row.providerId || "").replace(/^provider:/, "").trim();
   const requestedProviderId = String(options?.providerRecordId || "").replace(/^provider:/, "").trim();
@@ -122289,7 +122292,11 @@ window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234Drive
     selectedAwarenessAnchor: authority.selectedAwarenessAnchor || null, selectedAwarenessAnchorAuthority: authority.selectedAwarenessAnchorAuthority || null,
     selectedAwarenessRadiusMiles: authority.selectedAwarenessRadiusMiles ?? null, anchorResolutionPass: authority.anchorResolutionPass === true,
     selectedMembership: selected?.countyId || selected?.membershipCountyId || "", activeCounty: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "",
-    driveTexasSourceCount: source.length, driveTexasDistanceEvaluatedCount: authorityProof.filter((row) => Number.isFinite(row.distanceFromSelectedAwarenessMiles)).length, driveTexasRelevantCount: relevant.length,
+    driveTexasSourceCount: source.length, driveTexasDistanceEvaluatedCount: authorityProof.filter((row) => Number.isFinite(row.distanceFromSelectedAwarenessMiles)).length, driveTexasRelevantCount: driveTexasAuthorityAvailable ? relevant.length : null,
+    driveTexasRelevantAuthority: driveTexasAuthorityAvailable ? "LP039.3 gridlyStoryTransportationConnectorRecords consumer-visible situations" : null,
+    driveTexasGovernedAuthority: driveTexasAuthorityAvailable ? "LP234 governed projection official_roadway lifecycle-eligible lineage" : null,
+    driveTexasAuthorityAvailable,
+    driveTexasAuditReason: driveTexasAuthorityAvailable ? null : "LP039 DriveTexas authority snapshot or consumer-visible collection unavailable",
     targetIncidentId: target?.consumerSituationId || target?.incidentId || target?.id || null, targetProviderId: targetProviderId || null, targetRoad: target ? roadOf(target) : null,
     targetCoordinates: target ? { lat: Number(target.sourceCoordinates?.latitude ?? target.sourceCoordinates?.lat ?? target.latitude ?? target.lat), lng: Number(target.sourceCoordinates?.longitude ?? target.sourceCoordinates?.lng ?? target.sourceCoordinates?.lon ?? target.longitude ?? target.lng ?? target.lon) } : null,
     targetDistanceMiles: targetProof?.distanceFromSelectedAwarenessMiles ?? null, targetEligibilityReason: targetProof?.finalEligibility === true ? "eligible" : (targetProof?.ineligibilityReasons?.[0] || null),
@@ -122378,8 +122385,11 @@ window.gridlyLP234AlertsCompletenessAudit = function gridlyLP234AlertsCompletene
     let firstLosingStage = null;
     let reason = presentation ? presentation.groupingReason : "represented by an ungrouped Alerts presentation";
     let disposition = presentation ? "REPRESENTED_BY_ALERT_PRESENTATION" : "UNACCOUNTED";
-    if (!candidate) { firstLosingStage = "ALERTS_PRESENTATION_CONVERSION"; reason = "governed Alerts-eligible identity is absent from the cached presentation candidates"; }
-    else if (!areaRow) { firstLosingStage = "ALERTS_AREA_COMMUNITY_FILTER"; reason = "cached selected-awareness-area filter excluded the identity"; disposition = "FILTERED"; }
+    // A final presentation with explicit governed lineage is stronger evidence
+    // than a missing row in an optional intermediate instrumentation snapshot.
+    // Never diagnose county removal for an identity proven downstream.
+    if (!presentation && !candidate) { firstLosingStage = "ALERTS_PRESENTATION_CONVERSION"; reason = "governed Alerts-eligible identity is absent from the cached presentation candidates"; }
+    else if (!presentation && !areaRow) { firstLosingStage = "ALERTS_AREA_COMMUNITY_FILTER"; reason = "cached selected-awareness-area filter excluded the identity"; disposition = "FILTERED"; }
     else if (!finalRow && !presentation) { firstLosingStage = "ALERTS_GROUPING_DEDUPLICATION"; reason = "identity has no explicit lineage in final Alerts authority"; }
     return Object.freeze({
       governedEvidenceId: id, providerRecordId: clean(lineage.providerRecordId) || providerIdOf(record), roadway: roadwayOf(record),
@@ -122437,26 +122447,49 @@ window.gridlyLP235CanonicalCommunityScopeAudit = function gridlyLP235CanonicalCo
   const resolved = window.gridlyCanonicalCrossingRuntime?.resolveRecords?.(selected) || null;
   const alerts = window.gridlyLP234AlertsCompletenessAudit?.() || {};
   const evidence = window.gridlyCanonicalCommunityEvidenceProjection?.() || window.gridlyLP230CanonicalCommunityEvidenceAudit?.() || {};
-  const driveTexasAudit = window.gridlyLP234DriveTexasGovernedPropagationAudit?.() || {};
+  const driveTexasHelperAvailable = typeof window.gridlyLP234DriveTexasGovernedPropagationAudit === "function";
+  const driveTexasAudit = driveTexasHelperAvailable ? window.gridlyLP234DriveTexasGovernedPropagationAudit() : null;
   const search = selected?.label ? resolveGridlyManualAwarenessAreaSearch(selected.label) : { groups: [] };
   const searchRows = (search.groups || []).flatMap((group) => group.communities || []);
   const governedMemberships = Object.freeze([...(selected?.countyMemberships || membership?.governedCountyFips || [])]);
-  const renderedIds = new Set(Array.from(crossingMarkers?.keys?.() || []).map(String));
+  const canonicalInputIds = Object.freeze([...(resolved?.records || []).map((row) => String(row?.id || "")).filter(Boolean)]);
+  const renderedMarkerIdsRaw = Array.from(crossingMarkers?.keys?.() || []).map(String);
+  const renderedIds = new Set(renderedMarkerIdsRaw);
+  const layerMarkerIdsRaw = typeof crossingLayer?.getLayers === "function" ? crossingLayer.getLayers().map((layer) => String(layer?.options?.crossingId || layer?.options?.gridlyCrossingId || "")).filter(Boolean) : [];
+  const domMarkerIdsRaw = Array.from(document.querySelectorAll?.('#map .gridly-crossing-marker-wrap[data-crossing-id]') || []).map((node) => String(node.getAttribute("data-crossing-id") || "")).filter(Boolean);
+  const duplicateIds = (ids) => Object.freeze([...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))].sort());
+  const lastRender = gridlyCrossingRenderAuditState?.lastRender || {};
+  const visibleIds = Object.freeze([...(lastRender.visibleIds || [])].map(String));
+  const representativeCandidateIds = Object.freeze([...(lastRender.selectedMarkerIds || [])].map(String));
+  const selectedMarkerIds = representativeCandidateIds;
+  const renderedLayerIds = Object.freeze([...new Set(layerMarkerIdsRaw)].sort());
+  const duplicateRenderedIds = Object.freeze([...new Set([...duplicateIds(renderedMarkerIdsRaw), ...duplicateIds(layerMarkerIdsRaw), ...duplicateIds(domMarkerIdsRaw)])].sort());
+  const canonicalIdSet = new Set(canonicalInputIds);
+  const legacyCountyOnlyRenderedIds = Object.freeze(renderedLayerIds.filter((id) => !canonicalIdSet.has(id)));
   const renderedCanonicalCount = membership ? membership.crossingIds.filter((id) => renderedIds.has(String(id))).length : 0;
   const localAuthority = evidence?.localHazards?.authorityAvailable === true;
   const blockedAuthority = evidence?.blockedCrossingReports?.authorityAvailable === true || Boolean(membership);
   const weatherAuthorityAvailable = evidence?.weather?.authorityAvailable !== false && Boolean(placeGeoid);
   const familyAuthority = Object.freeze({
     crossings: Object.freeze({ authorityAvailable: Boolean(resolved?.authorityAvailable), reason: resolved?.reason || (!membership ? "selection has no canonical PLACE crossing membership" : null) }),
-    driveTexas: Object.freeze({ authorityAvailable: Boolean(placeGeoid), reason: placeGeoid ? null : "selection has no LP201 canonical PLACE identity" }),
+    driveTexas: Object.freeze({ authorityAvailable: driveTexasAudit?.driveTexasAuthorityAvailable === true, reason: driveTexasAudit?.driveTexasAuditReason || (!placeGeoid ? "selection has no LP201 canonical PLACE identity" : null) }),
     localHazards: Object.freeze({ authorityAvailable: localAuthority, reason: localAuthority ? null : "active local reports do not expose certified PLACE attribution across memberships" }),
     blockedCrossings: Object.freeze({ authorityAvailable: blockedAuthority, reason: blockedAuthority ? null : "blocked report cannot be joined to an LP233 canonical crossing identity" }),
     weather: Object.freeze({ authorityAvailable: weatherAuthorityAvailable, reason: weatherAuthorityAvailable ? null : "provider point/zone authority unavailable for canonical presentation coordinate" })
   });
-  const countyFragmentationFindings = Object.freeze([
-    ...(alerts.countyFragmentationDetected ? ["Alerts area/community stage removed governed canonical evidence"] : []),
-    ...(!resolved?.authorityAvailable && membership ? ["canonical crossing IDs are not fully resolved to runtime records"] : [])
+  const alertsFragmentStage = (alerts.stageAudit || []).find((stage) => stage.stage === "Alerts area/community filter");
+  const alertsRemovedIds = Object.freeze([...(alertsFragmentStage?.removedGovernedIds || [])]);
+  const countyFragmentationEvidence = Object.freeze([
+    ...(alertsRemovedIds.length ? [Object.freeze({ family: "alerts", stage: alertsFragmentStage.stage, inputCount: alertsFragmentStage.inputCount, outputCount: alertsFragmentStage.outputCount, removedGovernedIds: alertsRemovedIds, selectedMembership: selected?.countyId || activeCounty, activeCounty, canonicalKey, reason: alertsFragmentStage.reason, evidenceAuthority: "LP234 cached identity-bearing Alerts stage audit" })] : [])
   ]);
+  const countyFragmentationFindings = countyFragmentationEvidence;
+  const driveTexasAuthorityAvailable = Boolean(driveTexasHelperAvailable && driveTexasAudit?.driveTexasAuthorityAvailable === true);
+  const driveTexasRelevantCount = driveTexasAuthorityAvailable && Number.isInteger(driveTexasAudit?.driveTexasRelevantCount) ? driveTexasAudit.driveTexasRelevantCount : null;
+  const driveTexasGovernedCount = driveTexasAuthorityAvailable && Number.isInteger(driveTexasAudit?.lifecycleCounts?.activeAfterLifecycle) ? driveTexasAudit.lifecycleCounts.activeAfterLifecycle : null;
+  const crossingHardCapApplied = Boolean(lastRender.hardCapActive);
+  const crossingSelectedMarkerCount = selectedMarkerIds.length;
+  const crossingRenderedLayerCount = renderedLayerIds.length;
+  const crossingRenderCountInvariantPass = duplicateRenderedIds.length === 0 && legacyCountyOnlyRenderedIds.length === 0 && crossingRenderedLayerCount === crossingSelectedMarkerCount && (!crossingHardCapApplied || crossingSelectedMarkerCount <= Number(lastRender.hardCapLimit));
   const canonicalScopePass = Boolean(placeGeoid && searchRows.length === 1 && resolved?.authorityAvailable && alerts.allGovernedEvidenceAccountedFor && !alerts.countyFragmentationDetected);
   return Object.freeze({
     canonicalCommunity: selected?.label || null, canonicalKey, placeGeoid,
@@ -122465,21 +122498,34 @@ window.gridlyLP235CanonicalCommunityScopeAudit = function gridlyLP235CanonicalCo
     searchDuplicateMembershipRows: Math.max(0, searchRows.filter((row) => String(row.placeGeoid || "") === String(placeGeoid || "")).length - 1),
     crossingCertifiedCount: membership?.certifiedCrossingCount ?? null,
     crossingResolvedCount: resolved?.records?.length ?? 0,
-    crossingMapInputCount: Number(gridlyCrossingRenderAuditState?.lastRender?.inventoryCount || 0),
+    crossingMapInputCount: Number(lastRender.inventoryCount || 0),
     crossingRenderedCount: renderedCanonicalCount,
     crossingMapScopeAuthority: resolved?.authorityAvailable ? "LP233 exact crossing IDs -> governed runtime record index -> existing viewport and representative-marker policy" : "FAIL_CLOSED",
-    driveTexasRelevantCount: Number(driveTexasAudit.relevantCount || driveTexasAudit.canonicalRelevantCount || 0),
-    driveTexasGovernedCount: Number(driveTexasAudit.governedActiveCount || driveTexasAudit.governedCount || 0),
+    driveTexasRelevantCount, driveTexasGovernedCount,
+    driveTexasRelevantAuthority: driveTexasAudit?.driveTexasRelevantAuthority || null,
+    driveTexasGovernedAuthority: driveTexasAudit?.driveTexasGovernedAuthority || null,
+    driveTexasAuthorityAvailable,
+    driveTexasAuditReason: driveTexasAuthorityAvailable ? null : (driveTexasAudit?.driveTexasAuditReason || "LP234 DriveTexas governed propagation audit unavailable"),
     localHazardCanonicalCount: Number(evidence?.localHazards?.eligibleIds?.length || 0),
     blockedCrossingCanonicalCount: Number(evidence?.blockedCrossingReports?.eligibleIds?.length || 0),
     weatherAuthoritySummary: evidence?.weather || familyAuthority.weather,
     alertsGovernedInputCount: Number(alerts.governedOfficialRoadwayCount || 0),
     alertsAccountedCount: Math.max(0, Number(alerts.governedOfficialRoadwayCount || 0) - (alerts.unaccountedGovernedIds?.length || 0)),
     alertsUnaccountedIds: Object.freeze([...(alerts.unaccountedGovernedIds || [])]),
-    kbygOfficialCount: Number(driveTexasAudit.kbygOfficialCount || 0), kbygCommunityCount: Number(evidence?.consumers?.kbygCommunityCount || 0),
-    topAwarenessActive: Boolean(driveTexasAudit.topAwarenessActive), communityPulseActive: Boolean(driveTexasAudit.communityPulseActive),
-    locationContextCanonicalCount: Number(driveTexasAudit.locationContextProductionCount || 0),
-    countyFragmentationFindings, familyAuthority, canonicalScopePass, overallPass: canonicalScopePass && countyFragmentationFindings.length === 0
+    kbygOfficialCount: Number(driveTexasAudit?.kbygOfficialCount || 0), kbygCommunityCount: Number(evidence?.consumers?.kbygCommunityCount || 0),
+    topAwarenessActive: Boolean(driveTexasAudit?.topAwarenessActive), communityPulseActive: Boolean(driveTexasAudit?.communityPulseActive),
+    locationContextCanonicalCount: Number(driveTexasAudit?.locationContextProductionCount || 0),
+    countyFragmentationFindings, countyFragmentationEvidence,
+    crossingCanonicalInputCount: canonicalInputIds.length, crossingViewportVisibleCount: visibleIds.length,
+    crossingRepresentativeCandidateCount: representativeCandidateIds.length,
+    crossingConfiguredHardCap: lastRender.hardCapLimit ?? null, crossingHardCapApplied,
+    crossingSelectedMarkerCount, crossingRenderedLayerCount,
+    crossingDomMarkerCount: domMarkerIdsRaw.length,
+    canonicalInputIds, visibleIds, representativeCandidateIds,
+    crossingSelectedMarkerIds: selectedMarkerIds, crossingRenderedMarkerIds: renderedLayerIds,
+    crossingDuplicateRenderedIds: duplicateRenderedIds, crossingLegacyCountyOnlyRenderedIds: legacyCountyOnlyRenderedIds,
+    crossingRenderCountInvariantPass,
+    familyAuthority, canonicalScopePass, overallPass: canonicalScopePass && countyFragmentationFindings.length === 0 && crossingRenderCountInvariantPass
   });
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP235CanonicalCommunityScopeAudit", window.gridlyLP235CanonicalCommunityScopeAudit);
