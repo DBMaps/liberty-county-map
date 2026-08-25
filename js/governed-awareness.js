@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildGridlyGovernedAwarenessApi() {
   "use strict";
 
-  const VERSION = "LP223-explicit-clear-target-reconciliation-v4";
+  const VERSION = "LP237-community-hazard-identity-reconciliation-v1";
   const SURFACES = Object.freeze(["locationContext", "communityPulse", "alerts", "kbygCommunity", "kbygOfficialRoadways", "map", "popup", "history"]);
   const BLOCKED_CROSSING_OWNERS = Object.freeze({
     locationContext: "governed_awareness", communityPulse: "governed_awareness", alerts: "governed_awareness",
@@ -61,6 +61,33 @@
     const observed = text(record.observedAt || record.updatedAt || record.updated_at || record.createdAt || record.created_at || record.timestamp);
     if (Number.isFinite(lat) && Number.isFinite(lng) && observed) return `${sourceKind}:fallback:${subtype}:${lat.toFixed(5)},${lng.toFixed(5)}:${observed}`;
     return "";
+  }
+  // A consumer is allowed to keep its presentation id, but identity ownership
+  // remains with the stable submitted/provider record.  Keep this list ordered
+  // and coordinate-free: coordinates describe a presentation, not a condition.
+  function communityHazardAliasCandidates(record = {}, sourceKind = sourceKindOf(record), subtype = subtypeOf(record), visited = new Set()) {
+    if (!record || typeof record !== "object" || visited.has(record)) return Object.freeze([]);
+    visited.add(record);
+    const values = [
+      identity(record, sourceKind, subtype), record.evidenceId,
+      record.canonicalGovernedId, record.canonicalReportIdentity,
+      record.canonicalReportId, record.canonical_report_id,
+      record.lifecycleIdentity, record.lifecycle_identity,
+      record.persistedReportId, record.persisted_report_id,
+      record.submittedReportId, record.submitted_report_id,
+      record.providerRecordId, record.provider_record_id,
+      record.crossingId, record.crossing_id, record.reportId,
+      record.report_id, record.incidentId, record.id, record.sourceId
+    ].map(text).filter(Boolean);
+    for (const child of [record.record, record.raw, record.latestReport, ...(Array.isArray(record.reports) ? record.reports : [])]) {
+      if (!child || child === record) continue;
+      values.push(...communityHazardAliasCandidates(child, sourceKindOf(child), subtypeOf(child), visited));
+    }
+    const expanded = values.flatMap((value) => {
+      const bare = value.includes(":") ? value.split(":").slice(1).join(":") : value;
+      return [value, bare, `${sourceKind}:${bare}`];
+    });
+    return Object.freeze([...new Set(expanded.filter(Boolean))]);
   }
   function persistedReportId(record = {}) {
     return text(record.persistedReportId || record.persisted_report_id || record.reportId || record.report_id || record.id || record.raw?.id || record.raw?.report_id);
@@ -207,7 +234,7 @@
     const itemIds = (item) => {
       if (typeof item === "string" || typeof item === "number") return [text(item)];
       const kind = sourceKindOf(item || {}); const subtype = subtypeOf(item || {});
-      return [identity(item || {}, kind, subtype), item?.evidenceId, item?.id, item?.reportId, item?.incidentId, item?.providerRecordId].map(text).filter(Boolean);
+      return communityHazardAliasCandidates(item || {}, kind, subtype);
     };
     const actualSets = Object.fromEntries(SURFACES.map((surface) => [surface, new Set(consumerItems[surface].flatMap(itemIds))]));
     const records = Array.isArray(input.records) ? input.records : [];
@@ -236,7 +263,8 @@
       const geographicEligible = record.geographicEligible !== false;
       const policy = policyFor(sourceKind, subtype);
       const eligible = Object.fromEntries(SURFACES.map((surface) => [surface, geographicEligible && policy[surface] === true && (surface === "history" ? lifecycleState.retainedForHistory : lifecycleState.active)]));
-      const published = Object.fromEntries(SURFACES.map((surface) => [surface, actualSets[surface].has(evidenceId) || actualSets[surface].has(text(record.id)) || actualSets[surface].has(text(record.reportId)) || actualSets[surface].has(text(record.incidentId))]));
+      const aliasCandidates = communityHazardAliasCandidates(record, sourceKind, subtype);
+      const published = Object.fromEntries(SURFACES.map((surface) => [surface, aliasCandidates.some((candidate) => actualSets[surface].has(candidate))]));
       evidence.push(Object.freeze({
         evidenceId, sourceKind, sourceId: text(record.sourceId || record.provider || record.source), subtype,
         persistedReportId: alias?.persistedReportId || persistedReportId(record) || null,
@@ -249,7 +277,7 @@
         retiredByClearId: alias?.retiredByClearId || null,
         lifecycleIdentity: alias ? alias.lifecycleIdentity : (persistedReportId(record) || null),
         canonicalReportIdentity: alias ? alias.lifecycleIdentity : (persistedReportId(record) || null),
-        aliases: alias?.aliasIds || Object.freeze([evidenceId]), clearedAliasIds: alias?.clearedAliasIds || Object.freeze([]), activeAliasIds: alias?.activeAliasIds || Object.freeze([]),
+        aliases: Object.freeze([...new Set([...(alias?.aliasIds || []), ...aliasCandidates])]), aliasCandidates, clearedAliasIds: alias?.clearedAliasIds || Object.freeze([]), activeAliasIds: alias?.activeAliasIds || Object.freeze([]),
         aliasReconciliationResult: alias?.aliasReconciliationResult || "NOT_APPLICABLE", firstLifecycleLosingStage: alias?.firstLifecycleLosingStage || null,
         canonicalCommunity: text(record.canonicalCommunity || record.community || record.city || record.town),
         canonicalKey: text(record.canonicalKey || record.placeGeoid || record.place_geoid), countyId: text(record.countyId || record.county_id),
@@ -289,7 +317,7 @@
     const observations = Object.fromEntries(SURFACES.map((surface) => {
       const items = consumerItems[surface];
       const matched = evidence.filter((row) => row.published[surface]);
-      const unmatched = items.filter((item) => !itemIds(item).some((id) => evidence.some((row) => [row.evidenceId, row.evidenceId.split(":").slice(1).join(":")].includes(id))));
+      const unmatched = items.filter((item) => !itemIds(item).some((id) => evidence.some((row) => row.aliasCandidates.includes(id))));
       const observed = Object.prototype.hasOwnProperty.call(actual, surface);
       const governedExpectedIds = evidence.filter((row) => row.eligible[surface]).map((row) => row.evidenceId);
       return [surface, Object.freeze({ surfaceObserved: observed, surfaceVisible: actual[`${surface}Visible`] === true, observationStatus: !observed ? "NOT_OBSERVED" : matched.length ? "OBSERVED_MATCHED" : unmatched.length ? "OBSERVED_UNMATCHED" : "OBSERVED_EMPTY", publishedIds: Object.freeze(matched.map((row) => row.evidenceId)), governedEligibleIds: Object.freeze(governedExpectedIds), unmatchedConsumerItems: Object.freeze(unmatched), missingGovernedIds: Object.freeze(governedExpectedIds.filter((id) => !matched.some((row) => row.evidenceId === id))) })];
@@ -515,5 +543,5 @@
       lifecycleOperandAudit: Object.freeze({ ...(input.lifecycleOperandAudit || {}) })
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases });
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, communityHazardAliasCandidates, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases });
 });

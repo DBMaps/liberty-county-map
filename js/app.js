@@ -85343,12 +85343,16 @@ const gridlyLocalAcceptedHazardRegistrations = new Map();
 const gridlyLocalAcceptedCrossingRegistrations = new Map();
 
 function gridlyCanonicalReportIdForRecord(record = {}, fallback = "") {
+  const stableHazardOwner = String(record?.reportKind || "").toLowerCase() === "hazard"
+    ? (record?.providerRecordId || record?.provider_record_id || record?.crossingId || record?.crossing_id)
+    : "";
   const value = record?.canonicalReportId
     || record?.canonical_report_id
     || record?.canonicalReportIdentity
     || record?.lifecycleIdentity
     || record?.submittedReportId
     || record?.submitted_report_id
+    || stableHazardOwner
     || record?.id
     || record?.report_id
     || record?.reportId
@@ -122850,10 +122854,53 @@ function gridlyLocationContextProductionAudit() {
     locationContextCountParity: productionCount === null || domCount === null ? null : productionCount === domCount
   });
 }
+function gridlyLP237CommunityHazardIdentityAudit(options = {}) {
+  const governed = gridlyGovernedAwarenessAudit({ ...options, reason: options.reason || "lp237-passive-audit" });
+  const community = (governed.evidence || []).filter((row) => row.sourceKind === "active_hazard" || row.sourceKind === "community_report");
+  const lineage = new Map((governed.consumerPropagationLineage || []).map((row) => [row.evidenceId, row]));
+  const hazards = community.map((row) => {
+    const aliases = Array.isArray(row.aliasCandidates) ? row.aliasCandidates : (row.aliases || []);
+    const mapIds = aliases.filter((id) => /^road[-_:]/i.test(String(id)));
+    const propagated = lineage.get(row.evidenceId) || {};
+    const currentVisibleIncidentIncluded = !(governed.currentVisibleIncidentExcludedItems || []).some((item) => item.productionIdentity === row.evidenceId);
+    const currentVisibleIncidentExclusionReason = currentVisibleIncidentIncluded ? null : "COUNTY_MISMATCH";
+    return Object.freeze({
+      canonicalGovernedId: row.evidenceId,
+      submissionId: row.canonicalReportIdentity || row.persistedReportId || null,
+      hazardDeviceId: aliases.find((id) => /^hazard-device-/i.test(String(id))) || null,
+      presentationIds: Object.freeze(aliases.filter((id) => id !== row.evidenceId)),
+      mapIds: Object.freeze(mapIds), aliasCandidates: Object.freeze([...aliases]),
+      active: row.active === true, stale: row.staleStatus === "STALE", cleared: row.lifecycleRole === "CLEAR_HISTORY",
+      currentVisibleIncidentIncluded, currentVisibleIncidentExclusionReason,
+      mapMatched: row.published?.map === true, alertsMatched: row.published?.alerts === true,
+      kbygMatched: row.published?.kbygCommunity === true, locationContextMatched: row.published?.locationContext === true,
+      firstLosingStage: propagated.firstLifecycleLosingStage || (!currentVisibleIncidentIncluded ? "CURRENT_VISIBLE_INCIDENT_COUNTY_FILTER" : null)
+    });
+  });
+  const duplicateCanonicalHazardIds = community.map((row) => row.evidenceId).filter((id, index, ids) => ids.indexOf(id) !== index);
+  const unmatchedMapHazardIds = hazards.filter((row) => !row.mapMatched).map((row) => row.canonicalGovernedId);
+  const excludedActiveHazardIds = hazards.filter((row) => row.active && !row.currentVisibleIncidentIncluded).map((row) => row.canonicalGovernedId);
+  const unreconciledAliasPairs = hazards.filter((row) => row.aliasCandidates.length < 2).map((row) => row.canonicalGovernedId);
+  const identityReconciliationPass = duplicateCanonicalHazardIds.length === 0 && unreconciledAliasPairs.length === 0;
+  const lifecyclePersistencePass = hazards.every((row) => !row.active || (!row.stale && !row.cleared && row.currentVisibleIncidentIncluded));
+  const consumerPropagationPass = unmatchedMapHazardIds.length === 0 && excludedActiveHazardIds.length === 0
+    && hazards.every((row) => !row.active || (row.alertsMatched && row.locationContextMatched));
+  return Object.freeze({
+    canonicalCommunity: governed.canonicalCommunity || null, activeCounty: governed.countyId || null,
+    submittedHazardCount: gridlyLocalAcceptedHazardRegistrations.size, governedHazardCount: hazards.length,
+    hazards: Object.freeze(hazards), unmatchedMapHazardIds: Object.freeze(unmatchedMapHazardIds),
+    excludedActiveHazardIds: Object.freeze(excludedActiveHazardIds), duplicateCanonicalHazardIds: Object.freeze(duplicateCanonicalHazardIds),
+    unreconciledAliasPairs: Object.freeze(unreconciledAliasPairs), identityReconciliationPass, lifecyclePersistencePass,
+    consumerPropagationPass, overallPass: identityReconciliationPass && lifecyclePersistencePass && consumerPropagationPass,
+    passiveOnly: true
+  });
+}
 window.gridlyGovernedAwarenessAudit = gridlyGovernedAwarenessAudit;
 window.gridlyLocationContextProductionAudit = gridlyLocationContextProductionAudit;
+window.gridlyLP237CommunityHazardIdentityAudit = gridlyLP237CommunityHazardIdentityAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGovernedAwarenessAudit", gridlyGovernedAwarenessAudit);
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLocationContextProductionAudit", gridlyLocationContextProductionAudit);
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP237CommunityHazardIdentityAudit", gridlyLP237CommunityHazardIdentityAudit);
 
 // LP234 is a passive lineage report over the existing DriveTexas authority,
 // governed evidence engine, and consumer projections. It performs no refresh.
