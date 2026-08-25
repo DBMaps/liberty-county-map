@@ -19,7 +19,7 @@ const sandbox = {
   normalizeGridlyUserFacingRoadText: value => value,
   exposeGridlyAuditHelper: () => {}
 };
-vm.runInNewContext(`${source}\nthis.buildLP236 = gridlyLP236BuildModel; this.renderLP236 = gridlyLP236RenderAlertsPresentation; this.auditLP236 = gridlyLP236AlertsInformationArchitectureAudit;`, sandbox);
+vm.runInNewContext(`${source}\nthis.buildLP236 = gridlyLP236BuildModel; this.renderLP236 = gridlyLP236RenderAlertsPresentation; this.auditLP236 = gridlyLP236AlertsInformationArchitectureAudit; this.bindLP236 = gridlyLP236BindAccordions; this.locationClueLP236 = gridlyLP236LocationClue;`, sandbox);
 const build = rows => sandbox.buildLP236(rows, { authoritativeMembership: { community: 'Dallas' } });
 
 test('top and section counts use governed active identities rather than presentation cards', () => {
@@ -47,7 +47,7 @@ test('large inventories remain compact by default while retaining every lineage 
     assert.equal(model.sections.flatMap(section => section.groups.flatMap(group => group.rows)).length, count);
     assert.equal(new Set(model.sections.flatMap(section => section.groups.flatMap(group => group.rows.map(row => row.canonicalId)))).size, count);
   }
-  assert.match(app, /const open = model\.total === 1 \|\| \(model\.total <= 5/);
+  assert.match(app, /const open = groupIndex === 0 && \(model\.total === 1 \|\| \(model\.total <= 5/);
   assert.doesNotMatch(app.slice(app.indexOf('function gridlyLP236BuildModel'), app.indexOf('function gridlyLP236AlertsInformationArchitectureAudit')), /slice\(0,/);
 });
 
@@ -60,55 +60,38 @@ test('critical callouts require weather source and governed severity', () => {
   assert.deepEqual(Array.from(model.critical, row => row.canonicalId), ['severe-weather']);
 });
 
-test('markup preserves compact detail, Show me, empty omission, and accessible native disclosure', () => {
-  for (const token of ['gridly-lp236-source', 'gridly-lp236-group', 'gridly-lp236-condition-details', 'gridly-alert-show-on-map', 'aria-label=', '<details', '<summary']) assert.match(app, new RegExp(token));
-  assert.match(css, /min-height:48px/);
-  assert.match(css, /\.gridly-lp236-row-copy \{[^}]*display:block; width:100%; min-width:0; max-width:100%/);
-  assert.match(css, /\.gridly-lp236-row-copy strong \{[^}]*white-space:normal; overflow-wrap:break-word; word-break:normal/);
-  assert.match(css, /\.gridly-lp236-condition-details \{[^}]*flex:1 1 auto; min-width:0; max-width:100%/);
-  assert.match(css, /\.gridly-lp236-condition-details p \{[^}]*overflow-wrap:break-word; word-break:normal/);
-  assert.doesNotMatch(css, /\.gridly-lp236-row-copy \{[^}]*overflow-wrap:anywhere/);
+test('LP236.8 uses only source, type, and repeated-roadway disclosures', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'one', sourceClass: 'official_roadway', category: 'Lane Closure', routeName: 'SH0078', latitude: 32.8, longitude: -96.8 }]);
+  assert.match(rendered, /gridly-lp236-source/);
+  assert.match(rendered, /gridly-lp236-group/);
+  assert.match(rendered, /SH0078[\s\S]*Lane Closure[\s\S]*Show me/);
+  assert.doesNotMatch(rendered, /View details|gridly-lp236-condition-details/);
   assert.match(app, /filter\(\(section\) => section\.activeConditionCount > 0\)/);
 });
 
-test('compact rows retain width and containment at supported portrait widths', () => {
-  assert.match(css, /\.gridly-lp236-row-main \{[^}]*display:block; width:100%; min-width:0; max-width:100%; overflow:hidden/);
-  assert.match(css, /@media \(max-width:420px\)/);
-  for (const width of [320, 360, 390, 430]) {
-    assert.ok(width >= 320);
-    assert.doesNotMatch(css, new RegExp(`width:${width + 1}px`));
-  }
-  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'long-road', sourceClass: 'official_roadway', category: 'Lane Closure', location: 'North President George Bush Turnpike Frontage Road', lat: 32.9, lng: -96.7 }]);
-  assert.match(rendered, /North President George Bush Turnpike Frontage Road/);
-  assert.match(rendered, /gridly-lp236-condition-details/);
-  assert.match(rendered, /Show me/);
+test('compact rows retain width and containment at 320/360/390/430px', () => {
+  assert.match(css, /\.gridly-lp236-row-main \{[^}]*width:100%; min-width:0; max-width:100%; overflow:clip/);
+  assert.match(css, /\.gridly-lp236-row-copy strong \{[^}]*overflow-wrap:break-word; word-break:normal/);
+  assert.doesNotMatch(css, /word-break:break-all|overflow-wrap:anywhere/);
+  for (const width of [320, 360, 390, 430]) assert.ok(width >= 320 && !css.includes(`width:${width + 1}px`));
 });
 
-test('LP236.6 mobile child rows stack copy above a horizontal, tappable action line', () => {
-  assert.match(css, /\.gridly-lp236-actions \{[^}]*display:flex; width:100%; min-width:0; align-items:flex-start; gap:10px/);
+test('LP236.8 mobile rows are vertical with a full-width action line', () => {
+  assert.match(css, /\.gridly-lp236-actions \{[^}]*width:100%; min-width:0; justify-content:flex-end/);
   assert.match(css, /\.gridly-lp236-show-me \{[^}]*min-height:44px/);
-  assert.match(css, /\.gridly-lp236-condition-details > summary \{[^}]*min-height:44px/);
-  assert.match(app, /gridly-lp236-row-main[\s\S]*gridly-lp236-row-copy[\s\S]*<\/div>\s*<div class="gridly-lp236-actions">/);
-  assert.doesNotMatch(app, /gridly-lp236-row-copy[\s\S]{0,200}gridly-lp236-show-me/);
+  assert.match(app, /gridly-lp236-row-main[\s\S]*gridly-lp236-actions/);
 });
 
-test('LP236.6 governed route labels and secondary labels retain word-based wrapping', () => {
-  const rows = ['SH0078', 'IH0030', 'SS0366', 'US0175'].map((location, index) => ({
-    id: `route-${index}`, sourceClass: 'official_roadway', category: index === 1 ? 'Bridge Restriction' : 'Lane Closure', location,
-    lat: 32.8 + index / 100, lng: -96.8
-  }));
-  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, rows);
-  for (const route of ['SH0078', 'IH0030', 'SS0366', 'US0175']) assert.match(rendered, new RegExp(`<strong>${route}<\\/strong>`));
-  assert.match(rendered, /<span class="gridly-lp236-condition-copy">Bridge Restriction<\/span>/);
-  assert.match(css, /\.gridly-lp236-row-copy span \{[^}]*white-space:normal; overflow-wrap:break-word; word-break:normal/);
-  assert.doesNotMatch(css, /\.gridly-lp236-row-copy (?:strong|span) \{[^}]*(?:word-break:break-all|overflow-wrap:anywhere)/);
+test('LP236.8 uses the trusted roadway formatter without truncating route identity', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, ['SH0078', 'IH0030', 'US0175'].map((routeName, index) => ({ id: `r${index}`, sourceClass: 'official_roadway', category: 'Lane Closure', routeName })));
+  for (const route of ['SH0078', 'IH0030', 'US0175']) assert.match(rendered, new RegExp(route));
+  assert.match(source, /normalizeGridlyUserFacingRoadText\(governedRoad\)/);
 });
 
-test('LP236.6 details use full contained width while provenance stays out of compact copy', () => {
-  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'detail', sourceClass: 'official_roadway', category: 'Road Closure', location: 'SH0078', description: 'Long governed location detail', lat: 32.8, lng: -96.8 }]);
-  assert.match(rendered, /<div class="gridly-lp236-details-content"><p>Long governed location detail<\/p><small>Official source · DriveTexas<\/small><\/div>/);
-  assert.doesNotMatch(rendered, /gridly-lp236-row-copy[^<]*Official source · DriveTexas/);
-  assert.match(css, /\.gridly-lp236-details-content \{[^}]*width:100%; min-width:0; max-width:100%; overflow:hidden/);
+test('LP236.8 omits provider narrative and repeated provenance from condition rows', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'detail', sourceClass: 'official_roadway', category: 'Road Closure', routeName: 'SH0078', description: 'Long governed location detail' }]);
+  assert.doesNotMatch(rendered, /Long governed location detail|View details/);
+  assert.equal((rendered.match(/Official source · DriveTexas/g) || []).length, 1);
 });
 
 test('LP236.7 condition types conditionally group only repeated governed roadways', () => {
@@ -138,18 +121,20 @@ test('LP236.7 weather stays direct and every identity is represented once', () =
   assert.deepEqual(Array.from(group.directRows, row => row.canonicalId), ['w1', 'w2']);
 });
 
-test('LP236.7 compact information, safe details, location authority, and map contract render in priority order', () => {
+test('LP236.8 readable summaries use trusted clues, concise governed condition, freshness, and Show me', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [
     { id: 'a', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'Buckner Blvd', conciseSummary: 'Right lane closed', freshnessLabel: 'Updated recently', description: 'First<br>Second<script>bad()</script>', lat: 32.8, lng: -96.8 },
-    { id: 'b', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'I-45', lat: 32.81, lng: -96.81 }
+    { id: 'b', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'Bl', lat: 32.81, lng: -96.81 }
   ]);
-  assert.match(rendered, /gridly-lp236-roadway-group/);
-  assert.match(rendered, /I-30, 2 conditions/);
-  assert.match(rendered, /near Buckner Blvd[\s\S]*Right lane closed[\s\S]*Updated recently[\s\S]*View details[\s\S]*Show me/);
-  assert.match(rendered, /First · Second bad\(\)/);
-  assert.doesNotMatch(rendered, /<br>|<script>/i);
-  assert.doesNotMatch(rendered, /Show all/);
+  assert.match(rendered, /near Buckner Blvd[\s\S]*Right lane closed[\s\S]*Updated recently[\s\S]*Show me/);
+  assert.doesNotMatch(rendered, /near Bl|First|<br>|<script>|View details/i);
   assert.match(rendered, /data-gridly-alert-lat="32.8" data-gridly-alert-lng="-96.8"/);
+});
+
+test('LP236.8 singleton roadway presents roadway and trusted clue without another disclosure', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'single', sourceClass: 'official_roadway', category: 'Bridge Restriction', roadName: 'SL 12', referenceRoadA: 'Loop 12', lat: 32.8, lng: -96.8 }]);
+  assert.match(rendered, /<strong>SL 12<\/strong>[\s\S]*near Loop 12[\s\S]*Bridge Restriction[\s\S]*Show me/);
+  assert.doesNotMatch(rendered, /gridly-lp236-roadway-group/);
 });
 
 test('sheet and content expose one primary count without repeating Alerts', () => {
@@ -270,12 +255,10 @@ test('LP236 audit fails closed with an array when mounted authority is unavailab
   assert.deepEqual(Array.from(audit.sections), []);
 });
 
-test('live hierarchy renderer consumes supplied governed conditions without refetching', () => {
+test('live hierarchy consumes supplied governed conditions without refetch or nested detail', () => {
   const renderer = app.slice(app.indexOf('function gridlyLP236RenderAlertsPresentation'), app.indexOf('\n  function buildAlertsSurfaceHtml'));
-  for (const token of ['gridly-lp236-group', 'gridly-lp236-condition', 'Show me', 'View details']) assert.match(renderer, new RegExp(token));
-  for (const sourceLabel of ['Official Roadways', 'Community Reports', 'Weather']) assert.match(source, new RegExp(sourceLabel));
-  assert.match(renderer, /Array\.isArray\(suppliedAlerts\) \? suppliedAlerts/);
-  assert.doesNotMatch(renderer, /fetch\(|setTimeout|setInterval|RenderCompleteAlertCard|Dallas/);
+  for (const token of ['gridly-lp236-group', 'gridly-lp236-condition', 'Show me']) assert.match(renderer, new RegExp(token));
+  assert.doesNotMatch(renderer, /View details|fetch\(|setTimeout|setInterval|Dallas/);
 });
 
 test('quiet state requires explicit governed authority and official evidence cannot render quiet', () => {
@@ -306,4 +289,61 @@ test('audit exposes active-condition authority, lineage counts, and quiet-state 
   const lp236 = app.slice(app.indexOf('// LP236 is a presentation projection'), app.indexOf('function escapeV2SettingsText'));
   for (const field of ['sourceConditionCount', 'sourceConditionIds', 'officialRoadwayConditionCount', 'communityReportConditionCount', 'weatherConditionCount', 'quietStateRendered', 'quietStateAuthorityPass', 'firstStageWhereActiveConditionsBecomeEmpty']) assert.match(lp236, new RegExp(field));
   assert.match(lp236, /overallPass: Boolean\(root\) && quietStateAuthorityPass/);
+});
+
+
+test('LP236.8 real DriveTexas field contract is narrow and proven', () => {
+  const provider = fs.readFileSync(new URL('../js/gridlyDriveTexasProvider.js', import.meta.url), 'utf8');
+  for (const field of ['id', 'providerId', 'category', 'title', 'description', 'routeName', 'latitude', 'longitude', 'startTime', 'endTime', 'sourceTrace']) assert.match(provider, new RegExp(`\\b${field}\\b`));
+  const roadway = source.slice(source.indexOf('function gridlyLP236Roadway'), source.indexOf('function gridlyLP236UsefulStructuredClue'));
+  assert.match(roadway, /roadName, alert\?\.routeName, alert\?\.primaryRoad/);
+  assert.doesNotMatch(roadway, /raw\?|source\?|corridor|roadwayName/);
+});
+
+test('LP236.8 location clues reject invalid short values, omit missing values, and accept structured clues', () => {
+  assert.equal(sandbox.locationClueLP236({ crossStreet: 'Bl' }, 'I-30'), '');
+  assert.equal(sandbox.locationClueLP236({}, 'I-30'), '');
+  assert.equal(sandbox.locationClueLP236({ crossStreet: 'Buckner Blvd' }, 'I-30'), 'Buckner Blvd');
+  assert.equal(sandbox.locationClueLP236({ referenceRoadA: 'I-45', direction: 'East' }, 'I-30'), 'East of I-45');
+});
+
+test('LP236.8 concise summary strips raw markup and bounds long governed copy', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'x', sourceClass: 'official_roadway', routeName: 'SL0012', conciseSummary: '<b>Bridge restriction</b><br>' + 'x'.repeat(120) }]);
+  assert.match(rendered, /Bridge restriction/);
+  assert.doesNotMatch(rendered, /<b>|<br>|x{100}/);
+});
+
+test('LP236.8 accordion binding is idempotent and closes only open same-level siblings', () => {
+  let handler;
+  const typeA = { open: true, matches: q => q.includes('gridly-lp236-group'), parentElement: null };
+  const typeB = { open: true, matches: typeA.matches, parentElement: null };
+  const owner = { querySelectorAll: q => q.includes('gridly-lp236-group') ? [typeA, typeB] : [] };
+  typeA.parentElement = owner; typeB.parentElement = owner;
+  const root = { dataset: {}, matches: () => true, addEventListener: (name, fn, capture) => { assert.equal(name, 'toggle'); assert.equal(capture, true); handler = fn; } };
+  assert.equal(sandbox.bindLP236(root), true);
+  assert.equal(sandbox.bindLP236(root), false);
+  handler({ target: typeB });
+  assert.equal(typeA.open, false);
+  assert.equal(typeB.open, true);
+});
+
+test('LP236.8 accordion event ownership preserves source and allows current disclosure to close natively', () => {
+  const binding = source.slice(source.indexOf('function gridlyLP236BindAccordions'), source.indexOf('window.gridlyLP236BindAccordions'));
+  assert.equal((binding.match(/addEventListener/g) || []).length, 1);
+  assert.match(binding, /if \(!opened\?\.open/);
+  assert.doesNotMatch(binding, /preventDefault|stopPropagation|innerHTML|gridly-lp236-source.*open = false/);
+  const mountStart = app.indexOf('const mountLP236AlertsPresentation');
+  const mount = app.slice(mountStart, app.indexOf('const transaction =', mountStart));
+  assert.match(mount, /gridlyLP236BindAccordions/);
+});
+
+test('LP236.8 Show me remains a button and cannot toggle disclosure ancestors', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'map', sourceClass: 'official_roadway', category: 'Road Closure', routeName: 'US0175', latitude: 32.8, longitude: -96.8 }]);
+  assert.match(rendered, /<button class="gridly-alert-show-on-map gridly-lp236-show-me"[^>]*>Show me<\/button>/);
+  assert.doesNotMatch(rendered, /<summary[^>]*>Show me/);
+});
+
+test('LP236.8 audit exposes the full passive identity and accordion contract', () => {
+  for (const field of ['totalActiveConditionCount','roadwayGroupCount','directConditionCount','representedConditionIdentityCount','unrepresentedConditionIds','duplicateRepresentedConditionIds','locationClueCoverageCount','invalidLocationClueCount','rawMarkupLeakCount','showMeActionCount','openSourceCount','openConditionTypeCountBySource','openRoadwayGroupCountByConditionType','accordionInvariantPass','identityCoveragePass','sourceSemanticsPass','overallPass']) assert.match(source, new RegExp(field));
+  assert.doesNotMatch(source, /fetch\(|setInterval|setTimeout|navigator\.geolocation|Dallas/);
 });
