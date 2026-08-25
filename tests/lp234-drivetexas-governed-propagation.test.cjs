@@ -79,8 +79,7 @@ test('LP234 joins governed Alerts identity through the LP223 writer mapping with
   const audit = app.slice(app.indexOf('window.gridlyLP234DriveTexasGovernedPropagationAudit'), app.indexOf('/* LP221:'));
   assert.match(audit, /gridlyAlertsAuthorityWriterAudit/);
   assert.match(audit, /alertsCanonicalToPresentationMapping/);
-  assert.match(audit, /identity\.canonicalId === governed\?\.evidenceId/);
-  assert.match(audit, /authoritative_governed_to_presentation_mapping/);
+  assert.match(audit, /gridlyLP234ResolveAlertsPresentationIdentity/);
   assert.match(audit, /alertsPresentationIncidentId/);
   assert.match(audit, /alertsDomPresentationIds\.includes\(alertsPresentationIncidentId\)/);
   assert.doesNotMatch(audit, /textContent|innerHTML|outerHTML|MutationObserver|setTimeout|setInterval/,
@@ -94,11 +93,63 @@ test('LP234 classifies Location Context collection/count divergence instead of f
   const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
   const audit = app.slice(app.indexOf('window.gridlyLP234DriveTexasGovernedPropagationAudit'), app.indexOf('/* LP221:'));
   assert.match(audit, /locationContextPostDedupItems/);
+  assert.match(audit, /locationContextCountedItems/);
   assert.match(audit, /locationContextUncountedItems/);
-  assert.match(audit, /entry\?\.matchStatus === "MATCHED_GOVERNED"/);
-  assert.match(audit, /retained diagnostic collection member is not governed active count evidence/);
+  assert.match(audit, /locationContextCountInvariantPass/);
   assert.doesNotMatch(audit, /locationContextPostDedupCardinality === result\.locationContextProductionCount/);
   assert.match(audit, /result\.firstLosingStage === null/);
   assert.match(audit, /!result\.alertsDomMounted \|\| result\.targetPresentInAlertsDom/,
     'a closed sheet is not a propagation failure, while mounted DOM must prove the mapped target');
+});
+
+test('LP234 resolves the owner-observed LP223 mapping shape by exact presentation identity', () => {
+  const fs = require('node:fs');
+  const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
+  const source = app.slice(app.indexOf('function gridlyLP234ResolveAlertsPresentationIdentity'), app.indexOf('\nfunction gridlyLP234ClassifyLocationContextCount'));
+  const resolve = Function(`${source}; return gridlyLP234ResolveAlertsPresentationIdentity;`)();
+  const presentationId = `official-situation-official-roadways-${DALLAS_TARGET}`;
+  const mapping = {
+    canonicalId: 'undefined', presentationId, persistedId: 'undefined', providerId: 'undefined',
+    presentationContract: 'CONCISE_ALERT_CARD', presentationTemplateUsed: 'RenderCompleteAlertCard.CONCISE_ALERT_CARD'
+  };
+  const out = resolve({
+    mappings: [mapping], governed: { evidenceId: `official_roadway:${DALLAS_TARGET}` }, targetProviderId: DALLAS_TARGET,
+    alertsSurfaceItems: [{ evidenceId: `official_roadway:${DALLAS_TARGET}`, record: { consumerSituationId: presentationId } }]
+  });
+  assert.deepEqual(out.mappingEntry, mapping);
+  assert.equal(out.presentationId, presentationId);
+  assert.equal(out.matchAuthority, 'alerts_projection_record.presentation_identity_to_lp223_mapping.presentationId');
+});
+
+test('LP234 joins 23 counted identities to a 24-member owner-observed production collection', () => {
+  const fs = require('node:fs');
+  const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
+  const source = app.slice(app.indexOf('function gridlyLP234ClassifyLocationContextCount'), app.indexOf('\nwindow.gridlyLP234DriveTexasGovernedPropagationAudit'));
+  const classify = Function(`${source}; return gridlyLP234ClassifyLocationContextCount;`)();
+  const productionItems = Array.from({ length: 24 }, (_, index) => ({
+    productionIdentity: `official_roadway:DALLAS-${index}`, sourceKind: 'official_roadway',
+    matchStatus: 'MATCHED_GOVERNED', lifecycle: 'ACTIVE_CURRENT'
+  }));
+  const currentActiveVisibleIncidentItems = productionItems.slice(0, 23).map((row) => ({ productionIdentity: row.productionIdentity }));
+  const out = classify({ productionItems, productionCount: 23, productionObservation: { currentActiveVisibleIncidentItems } });
+  assert.equal(out.membershipEstablished, true);
+  assert.equal(out.membershipAuthority, 'currentActiveVisibleIncidentItems');
+  assert.equal(out.countedItems.length, 23);
+  assert.equal(out.uncountedItems.length, 1);
+  assert.equal(out.uncountedItems[0].governedIdentity, 'official_roadway:DALLAS-23');
+  assert.equal(out.invariantPass, true);
+  assert.match(out.uncountedItems[0].reasonIfNotCounted, /not a member of currentActiveVisibleIncidentItems/);
+});
+
+test('LP234 reports an instrumentation gap rather than inventing count membership', () => {
+  const fs = require('node:fs');
+  const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
+  const source = app.slice(app.indexOf('function gridlyLP234ClassifyLocationContextCount'), app.indexOf('\nwindow.gridlyLP234DriveTexasGovernedPropagationAudit'));
+  const classify = Function(`${source}; return gridlyLP234ClassifyLocationContextCount;`)();
+  const out = classify({ productionItems: [{ productionIdentity: 'official_roadway:A' }], productionCount: 1, productionObservation: {} });
+  assert.equal(out.membershipEstablished, false);
+  assert.equal(out.countedItems.length, 0);
+  assert.equal(out.uncountedItems.length, 1);
+  assert.equal(out.invariantPass, false);
+  assert.match(out.uncountedItems[0].reasonIfNotCounted, /instrumentation gap/);
 });
