@@ -14,16 +14,17 @@
   });
   const COMMUNITY_POLICY = Object.freeze({
     blocked_crossing: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: true, kbygOfficialRoadways: false, map: true, popup: true, history: true },
-    rail_crossing_issue: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true, history: null },
-    disabled_vehicle: { locationContext: false, communityPulse: false, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
-    flooded_road: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
-    closed_road: { locationContext: true, communityPulse: true, alerts: null, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true }
+    rail_crossing_issue: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true, history: null },
+    disabled_vehicle: { locationContext: false, communityPulse: false, alerts: true, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
+    flooded_road: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
+    closed_road: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true }
   });
   const OFFICIAL_POLICY = Object.freeze(Object.fromEntries([
     "flooding", "lane_closure", "road_closure", "bridge_restriction", "travel_advisory", "debris"
   ].map((subtype) => [subtype, Object.freeze({ locationContext: true, communityPulse: true, alerts: true, kbygCommunity: false, kbygOfficialRoadways: true, map: true, popup: true })])));
   const GENERATED_POLICY = Object.freeze({ locationContext: true, communityPulse: true, alerts: true, kbygCommunity: true, kbygOfficialRoadways: false, map: true, popup: true });
   const HAZARD_POLICY = Object.freeze({ locationContext: true, communityPulse: true, alerts: true, kbygCommunity: true, kbygOfficialRoadways: false, map: true, popup: true });
+  const WEATHER_POLICY = Object.freeze({ locationContext: false, communityPulse: false, alerts: true, kbygCommunity: false, kbygOfficialRoadways: false, map: false, popup: false });
 
   const text = (value) => String(value ?? "").trim();
   const slug = (value) => text(value).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
@@ -44,6 +45,7 @@
     const source = slug(record.provider || record.source || record.sourceId);
     const type = subtypeOf(record);
     if (/drivetexas|txdot|official/.test(source) || record.official === true) return "official_roadway";
+    if (/weather|nws|noaa/.test(source) || /weather/.test(explicit)) return "weather_provider";
     if (/generated/.test(source) || /^road[-_]/.test(text(record.incidentId || record.id))) return "generated_road_incident";
     if (/hazard/.test(source) || record.reportKind === "hazard") return "active_hazard";
     if (COMMUNITY_POLICY[type] || /user|community|report/.test(source)) return "community_report";
@@ -149,10 +151,11 @@
     });
   }
   function policyFor(sourceKind, subtype) {
+    if (sourceKind === "weather_provider") return WEATHER_POLICY;
     if (sourceKind === "official_roadway") return OFFICIAL_POLICY[subtype] || OFFICIAL_POLICY.debris;
     if (sourceKind === "generated_road_incident") return GENERATED_POLICY;
     if (sourceKind === "active_hazard") return HAZARD_POLICY;
-    if (sourceKind === "community_report") return COMMUNITY_POLICY[subtype] || Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, surface === "map" || surface === "popup" ? true : null])));
+    if (sourceKind === "community_report") return COMMUNITY_POLICY[subtype] || Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, ["alerts", "map", "popup"].includes(surface) ? true : null])));
     return Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, false])));
   }
   function isCurrent(record = {}, nowMs = Date.now()) {
