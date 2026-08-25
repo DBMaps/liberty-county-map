@@ -19,7 +19,7 @@ const sandbox = {
   normalizeGridlyUserFacingRoadText: value => value,
   exposeGridlyAuditHelper: () => {}
 };
-vm.runInNewContext(`${source}\nthis.buildLP236 = gridlyLP236BuildModel; this.renderLP236 = gridlyLP236RenderAlertsPresentation; this.auditLP236 = gridlyLP236AlertsInformationArchitectureAudit; this.bindLP236 = gridlyLP236BindAccordions; this.locationClueLP236 = gridlyLP236LocationClue;`, sandbox);
+vm.runInNewContext(`${source}\nthis.buildLP236 = gridlyLP236BuildModel; this.renderLP236 = gridlyLP236RenderAlertsPresentation; this.auditLP236 = gridlyLP236AlertsInformationArchitectureAudit; this.bindLP236 = gridlyLP236BindDisclosureState; this.captureLP236 = gridlyLP236CaptureDisclosureState; this.locationClueLP236 = gridlyLP236LocationClue;`, sandbox);
 const build = rows => sandbox.buildLP236(rows, { authoritativeMembership: { community: 'Dallas' } });
 
 test('top and section counts use governed active identities rather than presentation cards', () => {
@@ -47,7 +47,7 @@ test('large inventories remain compact by default while retaining every lineage 
     assert.equal(model.sections.flatMap(section => section.groups.flatMap(group => group.rows)).length, count);
     assert.equal(new Set(model.sections.flatMap(section => section.groups.flatMap(group => group.rows.map(row => row.canonicalId)))).size, count);
   }
-  assert.match(app, /const open = groupIndex === 0 && \(model\.total === 1 \|\| \(model\.total <= 5/);
+  assert.match(app, /gridlyLP236AlertsState\.disclosure\.initialized[\s\S]*groupIndex === 0/);
   assert.doesNotMatch(app.slice(app.indexOf('function gridlyLP236BuildModel'), app.indexOf('function gridlyLP236AlertsInformationArchitectureAudit')), /slice\(0,/);
 });
 
@@ -60,7 +60,7 @@ test('critical callouts require weather source and governed severity', () => {
   assert.deepEqual(Array.from(model.critical, row => row.canonicalId), ['severe-weather']);
 });
 
-test('LP236.8 uses only source, type, and repeated-roadway disclosures', () => {
+test('LP236.9 uses only source, type, and repeated-roadway disclosures', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'one', sourceClass: 'official_roadway', category: 'Lane Closure', routeName: 'SH0078', latitude: 32.8, longitude: -96.8 }]);
   assert.match(rendered, /gridly-lp236-source/);
   assert.match(rendered, /gridly-lp236-group/);
@@ -76,21 +76,22 @@ test('compact rows retain width and containment at 320/360/390/430px', () => {
   for (const width of [320, 360, 390, 430]) assert.ok(width >= 320 && !css.includes(`width:${width + 1}px`));
 });
 
-test('LP236.8 mobile rows are vertical with a full-width action line', () => {
+test('LP236.9 mobile rows are vertical with a full-width action line', () => {
   assert.match(css, /\.gridly-lp236-actions \{[^}]*width:100%; min-width:0; justify-content:flex-end/);
   assert.match(css, /\.gridly-lp236-show-me \{[^}]*min-height:44px/);
   assert.match(app, /gridly-lp236-row-main[\s\S]*gridly-lp236-actions/);
 });
 
-test('LP236.8 uses the trusted roadway formatter without truncating route identity', () => {
+test('LP236.9 uses the trusted roadway formatter without truncating route identity', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, ['SH0078', 'IH0030', 'US0175'].map((routeName, index) => ({ id: `r${index}`, sourceClass: 'official_roadway', category: 'Lane Closure', routeName })));
   for (const route of ['SH0078', 'IH0030', 'US0175']) assert.match(rendered, new RegExp(route));
   assert.match(source, /normalizeGridlyUserFacingRoadText\(governedRoad\)/);
 });
 
-test('LP236.8 omits provider narrative and repeated provenance from condition rows', () => {
+test('LP236.9 extracts one bounded provider sentence and omits repeated provenance', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'detail', sourceClass: 'official_roadway', category: 'Road Closure', routeName: 'SH0078', description: 'Long governed location detail' }]);
-  assert.doesNotMatch(rendered, /Long governed location detail|View details/);
+  assert.match(rendered, /Long governed location detail\./);
+  assert.doesNotMatch(rendered, /View details/);
   assert.equal((rendered.match(/Official source · DriveTexas/g) || []).length, 1);
 });
 
@@ -121,17 +122,18 @@ test('LP236.7 weather stays direct and every identity is represented once', () =
   assert.deepEqual(Array.from(group.directRows, row => row.canonicalId), ['w1', 'w2']);
 });
 
-test('LP236.8 readable summaries use trusted clues, concise governed condition, freshness, and Show me', () => {
+test('LP236.9 readable summaries use trusted clues, concise governed condition, freshness, and Show me', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [
-    { id: 'a', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'Buckner Blvd', conciseSummary: 'Right lane closed', freshnessLabel: 'Updated recently', description: 'First<br>Second<script>bad()</script>', lat: 32.8, lng: -96.8 },
+    { id: 'a', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'Buckner Blvd', conciseSummary: 'Right lane closed', freshnessLabel: 'Updated recently', description: 'Main lanes are open.<br>Second<script>bad()</script>', lat: 32.8, lng: -96.8 },
     { id: 'b', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'Bl', lat: 32.81, lng: -96.81 }
   ]);
   assert.match(rendered, /near Buckner Blvd[\s\S]*Right lane closed[\s\S]*Updated recently[\s\S]*Show me/);
-  assert.doesNotMatch(rendered, /near Bl|First|<br>|<script>|View details/i);
+  assert.match(rendered, /Main lanes are open\./);
+  assert.doesNotMatch(rendered, /near Bl|<br>|<script>|bad\(\)|View details/i);
   assert.match(rendered, /data-gridly-alert-lat="32.8" data-gridly-alert-lng="-96.8"/);
 });
 
-test('LP236.8 singleton roadway presents roadway and trusted clue without another disclosure', () => {
+test('LP236.9 singleton roadway presents roadway and trusted clue without another disclosure', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'single', sourceClass: 'official_roadway', category: 'Bridge Restriction', roadName: 'SL 12', referenceRoadA: 'Loop 12', lat: 32.8, lng: -96.8 }]);
   assert.match(rendered, /<strong>SL 12<\/strong>[\s\S]*near Loop 12[\s\S]*Bridge Restriction[\s\S]*Show me/);
   assert.doesNotMatch(rendered, /gridly-lp236-roadway-group/);
@@ -292,7 +294,7 @@ test('audit exposes active-condition authority, lineage counts, and quiet-state 
 });
 
 
-test('LP236.8 real DriveTexas field contract is narrow and proven', () => {
+test('LP236.9 real DriveTexas field contract is narrow and proven', () => {
   const provider = fs.readFileSync(new URL('../js/gridlyDriveTexasProvider.js', import.meta.url), 'utf8');
   for (const field of ['id', 'providerId', 'category', 'title', 'description', 'routeName', 'latitude', 'longitude', 'startTime', 'endTime', 'sourceTrace']) assert.match(provider, new RegExp(`\\b${field}\\b`));
   const roadway = source.slice(source.indexOf('function gridlyLP236Roadway'), source.indexOf('function gridlyLP236UsefulStructuredClue'));
@@ -300,50 +302,60 @@ test('LP236.8 real DriveTexas field contract is narrow and proven', () => {
   assert.doesNotMatch(roadway, /raw\?|source\?|corridor|roadwayName/);
 });
 
-test('LP236.8 location clues reject invalid short values, omit missing values, and accept structured clues', () => {
+test('LP236.9 location clues reject invalid short values, omit missing values, and accept structured clues', () => {
   assert.equal(sandbox.locationClueLP236({ crossStreet: 'Bl' }, 'I-30'), '');
   assert.equal(sandbox.locationClueLP236({}, 'I-30'), '');
   assert.equal(sandbox.locationClueLP236({ crossStreet: 'Buckner Blvd' }, 'I-30'), 'Buckner Blvd');
   assert.equal(sandbox.locationClueLP236({ referenceRoadA: 'I-45', direction: 'East' }, 'I-30'), 'East of I-45');
 });
 
-test('LP236.8 concise summary strips raw markup and bounds long governed copy', () => {
+test('LP236.9 concise summary strips raw markup and bounds long governed copy', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'x', sourceClass: 'official_roadway', routeName: 'SL0012', conciseSummary: '<b>Bridge restriction</b><br>' + 'x'.repeat(120) }]);
   assert.match(rendered, /Bridge restriction/);
   assert.doesNotMatch(rendered, /<b>|<br>|x{100}/);
 });
 
-test('LP236.8 accordion binding is idempotent and closes only open same-level siblings', () => {
+test('LP236.9 disclosures are user-owned and never close siblings', () => {
   let handler;
-  const typeA = { open: true, matches: q => q.includes('gridly-lp236-group'), parentElement: null };
-  const typeB = { open: true, matches: typeA.matches, parentElement: null };
-  const owner = { querySelectorAll: q => q.includes('gridly-lp236-group') ? [typeA, typeB] : [] };
-  typeA.parentElement = owner; typeB.parentElement = owner;
-  const root = { dataset: {}, matches: () => true, addEventListener: (name, fn, capture) => { assert.equal(name, 'toggle'); assert.equal(capture, true); handler = fn; } };
-  assert.equal(sandbox.bindLP236(root), true);
-  assert.equal(sandbox.bindLP236(root), false);
+  const stateRoot = { dataset: {}, matches: () => true, addEventListener: (name, fn, capture) => { assert.equal(name, 'toggle'); assert.equal(capture, true); handler = fn; } };
+  assert.equal(sandbox.bindLP236(stateRoot), true);
+  assert.equal(sandbox.bindLP236(stateRoot), false);
+  const typeA = { open: true, dataset: { gridlyDisclosureKey: 'official_roadway:lane_closures' }, matches: q => q === '.gridly-lp236-group' };
+  const typeB = { open: true, dataset: { gridlyDisclosureKey: 'official_roadway:road_closures' }, matches: typeA.matches };
+  handler({ target: typeA });
   handler({ target: typeB });
+  assert.equal(typeA.open, true);
+  assert.equal(typeB.open, true);
+  typeA.open = false;
+  handler({ target: typeA });
   assert.equal(typeA.open, false);
   assert.equal(typeB.open, true);
 });
 
-test('LP236.8 accordion event ownership preserves source and allows current disclosure to close natively', () => {
-  const binding = source.slice(source.indexOf('function gridlyLP236BindAccordions'), source.indexOf('window.gridlyLP236BindAccordions'));
-  assert.equal((binding.match(/addEventListener/g) || []).length, 1);
-  assert.match(binding, /if \(!opened\?\.open/);
-  assert.doesNotMatch(binding, /preventDefault|stopPropagation|innerHTML|gridly-lp236-source.*open = false/);
-  const mountStart = app.indexOf('const mountLP236AlertsPresentation');
-  const mount = app.slice(mountStart, app.indexOf('const transaction =', mountStart));
-  assert.match(mount, /gridlyLP236BindAccordions/);
+test('LP236.9 stable disclosure keys survive ordinary rerenders', () => {
+  const rows = [
+    { id: 'a', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30' },
+    { id: 'b', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30' },
+    { id: 'c', sourceClass: 'official_roadway', category: 'Road Closure', roadName: 'US 75' }
+  ];
+  const nodes = (keys) => keys.map(gridlyDisclosureKey => ({ dataset: { gridlyDisclosureKey } }));
+  const root = { matches: () => true, querySelectorAll: selector => selector.includes('source') ? nodes(['official_roadway']) : selector.includes('roadway-group') ? nodes(['official_roadway:lane_closures:i-30']) : nodes(['official_roadway:lane_closures', 'official_roadway:road_closures']) };
+  assert.equal(sandbox.captureLP236(root), true);
+  const rerendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, rows);
+  assert.match(rerendered, /data-gridly-disclosure-key="official_roadway"[^>]* open/);
+  assert.match(rerendered, /data-gridly-disclosure-key="official_roadway:lane_closures"[^>]* open/);
+  assert.match(rerendered, /data-gridly-disclosure-key="official_roadway:road_closures"[^>]* open/);
+  assert.match(rerendered, /data-gridly-disclosure-key="official_roadway:lane_closures:i-30"[^>]* open/);
+  assert.doesNotMatch(source, /gridlyLP236BindAccordions|sibling\.open\s*=\s*false|DOM index|card position/);
 });
 
-test('LP236.8 Show me remains a button and cannot toggle disclosure ancestors', () => {
+test('LP236.9 Show me remains a button and cannot toggle disclosure ancestors', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'map', sourceClass: 'official_roadway', category: 'Road Closure', routeName: 'US0175', latitude: 32.8, longitude: -96.8 }]);
   assert.match(rendered, /<button class="gridly-alert-show-on-map gridly-lp236-show-me"[^>]*>Show me<\/button>/);
   assert.doesNotMatch(rendered, /<summary[^>]*>Show me/);
 });
 
-test('LP236.8 audit exposes the full passive identity and accordion contract', () => {
-  for (const field of ['totalActiveConditionCount','roadwayGroupCount','directConditionCount','representedConditionIdentityCount','unrepresentedConditionIds','duplicateRepresentedConditionIds','locationClueCoverageCount','invalidLocationClueCount','rawMarkupLeakCount','showMeActionCount','openSourceCount','openConditionTypeCountBySource','openRoadwayGroupCountByConditionType','accordionInvariantPass','identityCoveragePass','sourceSemanticsPass','overallPass']) assert.match(source, new RegExp(field));
+test('LP236.9 audit exposes the full passive identity and accordion contract', () => {
+  for (const field of ['totalActiveConditionCount','roadwayGroupCount','directConditionCount','representedConditionIdentityCount','unrepresentedConditionIds','duplicateRepresentedConditionIds','locationClueCoverageCount','invalidLocationClueCount','rawMarkupLeakCount','showMeActionCount','openSourceKeys','openConditionTypeKeys','openRoadwayGroupKeys','userDisclosureStatePreserved','autoCollapseDetected','disclosurePersistencePass','summarySentenceCoverageCount','identityCoveragePass','sourceSemanticsPass','overallPass']) assert.match(source, new RegExp(field));
   assert.doesNotMatch(source, /fetch\(|setInterval|setTimeout|navigator\.geolocation|Dallas/);
 });
