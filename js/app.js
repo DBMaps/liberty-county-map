@@ -113931,9 +113931,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function gridlyAlertGroupObjectIdentityFirstLosingStage(checkpoints = {}) {
     const stages = ["PRE_GROUP_INPUT", "ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY_GROUP_OBJECT", "PRESENTATION_MODEL_ROW", "FUNCTION_RETURN_ROW", "POST_GROUP_BUILD_AUDIT_ROW"];
-    let previousCount = Number(checkpoints?.PRE_GROUP_INPUT?.evidenceRowCount || 0);
+    if (!Number.isFinite(checkpoints?.PRE_GROUP_INPUT?.evidenceRowCount)) return null;
+    let previousCount = checkpoints.PRE_GROUP_INPUT.evidenceRowCount;
     return stages.slice(1).find((stage) => {
-      const count = Number(checkpoints?.[stage]?.evidenceRowCount || 0);
+      const count = checkpoints?.[stage]?.evidenceRowCount;
+      if (!Number.isFinite(count)) return false;
       const lost = count < previousCount;
       previousCount = count;
       return lost;
@@ -113957,6 +113959,38 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       mapToArray: internal(mapToArrayGroup),
       accumulatorIsMapStored: group === mapStoredGroup,
       mapStoredIsMapToArray: mapStoredGroup === mapToArrayGroup
+    });
+  }
+
+  // LP235.4I: the presentation builders publish value-only observations of
+  // their real private and public objects. This is the single live authority;
+  // it is bounded and deliberately contains no source object references.
+  function gridlyPublishAlertsGroupCheckpointAuthority(executionMode, inputCount, groups, presentations) {
+    const privateStages = ["ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY_GROUP_OBJECT"];
+    const publicStages = ["PRESENTATION_MODEL_ROW", "FUNCTION_RETURN_ROW", "POST_GROUP_BUILD_AUDIT_ROW"];
+    const summarize = (row, stage, groupIndex, objectDomain) => {
+      const privateDomain = objectDomain === "PRIVATE_GROUP";
+      const evidenceRows = privateDomain ? row?.evidenceRows : row?.__gridlyPresentationEvidenceRows;
+      const sourceIndexes = privateDomain ? row?.sourceIndexes : row?.__gridlyPresentationSourceIndexes;
+      const rows = Array.isArray(evidenceRows) ? evidenceRows : [];
+      const indexes = Array.isArray(sourceIndexes) ? sourceIndexes : [];
+      const representedCanonicalIds = rows.map((evidence, index) => typeof gridlyAlertWriterRecordId === "function" ? gridlyAlertWriterRecordId(evidence, indexes[index] ?? index) : "").filter(Boolean);
+      const representedProviderIds = rows.map((evidence) => String(evidence?.providerRecordId || evidence?.provider_record_id || evidence?.sourceId || evidence?.source_id || evidence?.raw?.providerRecordId || "").replace(/^provider:/, "")).filter(Boolean);
+      return Object.freeze({
+        stage, groupIndex, clusterKey: String((privateDomain ? row?.key : row?.__gridlyPresentationClusterKey) || ""), objectDomain,
+        representedCount: Number(privateDomain ? row?.representedEvidenceCount : row?.__gridlyRepresentedEvidenceCount),
+        evidenceRowCount: rows.length, sourceIndexCount: indexes.length,
+        representedCanonicalIds: Object.freeze(representedCanonicalIds), representedProviderIds: Object.freeze(representedProviderIds),
+        hasEvidenceRows: Object.prototype.hasOwnProperty.call(row || {}, privateDomain ? "evidenceRows" : "__gridlyPresentationEvidenceRows") && Array.isArray(evidenceRows)
+      });
+    };
+    const records = [];
+    groups.slice(0, 250).forEach((group, groupIndex) => privateStages.forEach((stage) => records.push(summarize(group, stage, groupIndex, "PRIVATE_GROUP"))));
+    presentations.slice(0, 250).forEach((row, groupIndex) => publicStages.forEach((stage) => records.push(summarize(row, stage, groupIndex, "PUBLIC_PRESENTATION"))));
+    globalThis.__gridlyAlertsGroupCheckpointAuthority = Object.freeze({
+      authorityName: "__gridlyAlertsGroupCheckpointAuthority", executionMode, builderFunctionName: executionMode === "COOPERATIVE" ? "gridlyGetAlertsPresentationCountModelCooperative" : "gridlyBuildGridlyAlertsPresentationCountModelSync",
+      groupingFunctionName: "gridlyAccumulateAlertPresentationGroup", accumulatorOwner: "groups Map", inputCount,
+      groupCount: groups.length, writeCount: records.length, stagesWritten: Object.freeze([...privateStages, ...publicStages]), records: Object.freeze(records)
     });
   }
 
@@ -113993,6 +114027,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return { ...representative, title: situationLabel, count: priorityCount, __gridlyEventSituationType: situationType, __gridlyEventSituationLabel: situationLabel, __gridlyPresentationGroupCount: group.rawRecordCount, __gridlyPresentationSourceCount: group.rawRecordCount, __gridlyPresentationSourceIndexes: group.sourceIndexes, __gridlyPresentationEvidenceRows: group.evidenceRows, __gridlyGroupAccumulationTrace: group.accumulationTrace, __gridlyGroupObjectIdentityTrace: gridlyBuildAlertGroupObjectIdentityTrace(group, groups.get(group.key), group), __gridlyPresentationGrouped: group.rawRecordCount > 1, __gridlyRepresentedEvidenceCount: group.representedEvidenceCount, __gridlyCountContributionType: group.sourceClass, __gridlyCommunityReportEvidenceCount: group.sourceClass === "community_report" ? group.representedEvidenceCount : 0, __gridlyPresentationClusterKey: group.key };
     }), { collectionSize: groupRows.length });
     const rankedAlerts = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "sorting/finalization", () => groupedAlerts, { collectionSize: groupedAlerts.length });
+    gridlyPublishAlertsGroupCheckpointAuthority("SYNCHRONOUS", filteredAlerts.length, groupRows, rankedAlerts);
     const communityReportCount = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "community-row extraction", () => rankedAlerts.reduce((sum, alert) => sum + (alert.__gridlyCountContributionType === "community_report" ? Math.max(1, Number(alert.__gridlyCommunityReportEvidenceCount || alert.count || 1)) : 0), 0), { collectionSize: rankedAlerts.length, fullCollectionScan: true });
     const model = { rawAlertRecordCount: filteredAlerts.length, groupedAlertCount: rankedAlerts.length, duplicateGroupCount: groupRows.filter((group) => group.rawRecordCount > 1).length, alerts: rankedAlerts, communityReportCount };
     if (audit) { audit.groupCount = groups.size; audit.presentationRecordCount = rankedAlerts.length; audit.totalDurationMs = Number((gridlyAlertsCooperativeNow() - startedAt).toFixed(2)); }
@@ -114036,6 +114071,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         return { ...representative, title: situationLabel, count: priorityCount, __gridlyEventSituationType: situationType, __gridlyEventSituationLabel: situationLabel, __gridlyPresentationGroupCount: group.rawRecordCount, __gridlyPresentationSourceCount: group.rawRecordCount, __gridlyPresentationSourceIndexes: group.sourceIndexes, __gridlyPresentationEvidenceRows: group.evidenceRows, __gridlyGroupAccumulationTrace: group.accumulationTrace, __gridlyGroupObjectIdentityTrace: gridlyBuildAlertGroupObjectIdentityTrace(group, groups.get(group.key), group), __gridlyPresentationGrouped: group.rawRecordCount > 1, __gridlyRepresentedEvidenceCount: group.representedEvidenceCount, __gridlyCountContributionType: group.sourceClass, __gridlyCommunityReportEvidenceCount: group.sourceClass === "community_report" ? group.representedEvidenceCount : 0, __gridlyPresentationClusterKey: group.key };
       }), { collectionSize: groupRows.length });
       const rankedAlerts = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "sorting/finalization", () => groupedAlerts, { collectionSize: groupedAlerts.length });
+      gridlyPublishAlertsGroupCheckpointAuthority("COOPERATIVE", filteredAlerts.length, groupRows, rankedAlerts);
       const communityReportCount = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "community-row extraction", () => rankedAlerts.reduce((sum, alert) => sum + (alert.__gridlyCountContributionType === "community_report" ? Math.max(1, Number(alert.__gridlyCommunityReportEvidenceCount || alert.count || 1)) : 0), 0), { collectionSize: rankedAlerts.length, fullCollectionScan: true });
       model = { rawAlertRecordCount: filteredAlerts.length, groupedAlertCount: rankedAlerts.length, duplicateGroupCount: groupRows.filter((group) => group.rawRecordCount > 1).length, alerts: rankedAlerts, communityReportCount };
       audit.presentationRecordCount = rankedAlerts.length;
@@ -122853,9 +122889,11 @@ function gridlyAlertGroupObjectIdentityCheckpoint(row, domain = "public") {
 
 function gridlyAlertGroupObjectIdentityFirstLosingStage(checkpoints = {}) {
   const stages = ["PRE_GROUP_INPUT", "ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY_GROUP_OBJECT", "PRESENTATION_MODEL_ROW", "FUNCTION_RETURN_ROW", "POST_GROUP_BUILD_AUDIT_ROW"];
-  let previousCount = Number(checkpoints?.PRE_GROUP_INPUT?.evidenceRowCount || 0);
+  if (!Number.isFinite(checkpoints?.PRE_GROUP_INPUT?.evidenceRowCount)) return null;
+  let previousCount = checkpoints.PRE_GROUP_INPUT.evidenceRowCount;
   return stages.slice(1).find((stage) => {
-    const count = Number(checkpoints?.[stage]?.evidenceRowCount || 0);
+    const count = checkpoints?.[stage]?.evidenceRowCount;
+    if (!Number.isFinite(count)) return false;
     const lost = count < previousCount;
     previousCount = count;
     return lost;
@@ -122965,9 +123003,12 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   const stageCount = (stage) => groupedLineageStageAudit.find((entry) => entry.stage === stage)?.representedCanonicalCount ?? 0;
   const groupedLineageFirstLosingStage = groupedLineageStageAudit.slice(1).find((entry) => entry.representedCanonicalCount < preGroupCanonicalIds.length)?.stage || null;
   const postGroupStage = retainedStages.find((entry) => entry.stage === "POST_GROUP_BUILD");
-  const groupObjectIdentityAuthorityAvailable = Boolean(authorityAvailable && postGroupStage && Array.isArray(postGroupStage.groups));
+  const groupCheckpointAuthority = globalThis.__gridlyAlertsGroupCheckpointAuthority;
+  const groupCheckpointRecords = Array.isArray(groupCheckpointAuthority?.records) ? groupCheckpointAuthority.records : null;
+  const groupObjectIdentityAuthorityAvailable = Boolean(authorityAvailable && groupCheckpointRecords
+    && groupCheckpointAuthority.inputCount === writerInputs.length && groupCheckpointAuthority.groupCount === finalRows.length);
   const groupObjectIdentityAuthorityReason = groupObjectIdentityAuthorityAvailable ? null
-    : "POST_GROUP_OBJECT_IDENTITY_CHECKPOINT_UNAVAILABLE";
+    : "COOPERATIVE_GROUP_CHECKPOINT_NOT_PUBLISHED";
   const groupObjectIdentityAudit = Object.freeze((groupObjectIdentityAuthorityAvailable ? finalRows : []).map((row, groupIndex) => {
     const trace = row?.__gridlyGroupObjectIdentityTrace || {};
     const presentation = gridlyAlertGroupObjectIdentityCheckpoint(row);
@@ -123025,7 +123066,26 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   const privateGroupIdentityCoveragePass = privateGroupIdentityCount === new Set(preGroupCanonicalIds).size;
   const privateToPublicBridgeCoveragePass = privateToPublicBridgeAudit.every((group) => group.firstBridgeFailure === null)
     && publicPresentationIdentityCount === privateGroupIdentityCount;
-  const correctedGroupObjectIdentityFirstLosingStage = groupObjectIdentityFirstLosingStage;
+  const checkpointStageIdentityCount = (stage) => groupObjectIdentityAuthorityAvailable
+    ? new Set(groupCheckpointRecords.filter((record) => record.stage === stage).flatMap((record) => record.representedCanonicalIds)).size : null;
+  const checkpointStageEvidenceRowCount = (stage) => groupObjectIdentityAuthorityAvailable
+    ? groupCheckpointRecords.filter((record) => record.stage === stage).reduce((sum, record) => sum + record.evidenceRowCount, 0) : null;
+  const privateCheckpointRows = groupObjectIdentityAuthorityAvailable ? groupCheckpointRecords.filter((record) => record.stage === "MAP_TO_ARRAY_GROUP_OBJECT") : null;
+  const publicCheckpointRows = groupObjectIdentityAuthorityAvailable ? groupCheckpointRecords.filter((record) => record.stage === "PRESENTATION_MODEL_ROW") : null;
+  const privateCheckpointGroupCount = privateCheckpointRows ? privateCheckpointRows.length : null;
+  const publicCheckpointGroupCount = publicCheckpointRows ? publicCheckpointRows.length : null;
+  const privateCheckpointIdentityCount = checkpointStageIdentityCount("MAP_TO_ARRAY_GROUP_OBJECT");
+  const privateCheckpointEvidenceRowCount = checkpointStageEvidenceRowCount("MAP_TO_ARRAY_GROUP_OBJECT");
+  const publicCheckpointIdentityCount = checkpointStageIdentityCount("PRESENTATION_MODEL_ROW");
+  const publicCheckpointEvidenceRowCount = checkpointStageEvidenceRowCount("PRESENTATION_MODEL_ROW");
+  const cooperativeCheckpointCoveragePass = groupObjectIdentityAuthorityAvailable
+    ? privateCheckpointIdentityCount === new Set(preGroupCanonicalIds).size && publicCheckpointIdentityCount === privateCheckpointIdentityCount : false;
+  const checkpointLossStages = ["ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY_GROUP_OBJECT", "PRESENTATION_MODEL_ROW", "FUNCTION_RETURN_ROW", "POST_GROUP_BUILD_AUDIT_ROW"];
+  const correctedGroupObjectIdentityFirstLosingStage = groupObjectIdentityAuthorityAvailable ? checkpointLossStages.find((stage) => checkpointStageIdentityCount(stage) < new Set(preGroupCanonicalIds).size) || null : null;
+  const groupCheckpointRcaClassification = !groupObjectIdentityAuthorityAvailable ? "COOPERATIVE_CHECKPOINT_PUBLICATION_GAP"
+    : privateCheckpointIdentityCount < new Set(preGroupCanonicalIds).size ? "PRIVATE_ACCUMULATOR_LINEAGE_LOSS"
+      : publicCheckpointIdentityCount < privateCheckpointIdentityCount ? "PRIVATE_TO_PUBLIC_BRIDGE_LOSS"
+        : correctedGroupObjectIdentityFirstLosingStage ? "DOWNSTREAM_LINEAGE_LOSS" : null;
   const authoritativePostGroupRepresentedCanonicalCount = stageCount("POST_GROUP_BUILD");
   const postGroupAuditObservationMatchesAuthority = authoritativePostGroupRepresentedCanonicalCount === new Set(preGroupCanonicalIds).size
     && groupObjectIdentityAudit.every((row) => row.postGroupAuditHasEvidenceRows);
@@ -123071,6 +123131,18 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     preGroupSourceKindBreakdown, preGroupDuplicateCanonicalIds: Object.freeze(preGroupDuplicateCanonicalIds),
     presentationGroups: Object.freeze(presentationGroups), groupAccumulationTrace,
     groupObjectIdentityAuthorityAvailable, groupObjectIdentityAuthorityReason,
+    groupCheckpointAuthorityAvailable: groupObjectIdentityAuthorityAvailable,
+    groupCheckpointAuthorityReason: groupObjectIdentityAuthorityReason,
+    groupCheckpointExecutionMode: groupObjectIdentityAuthorityAvailable ? groupCheckpointAuthority.executionMode : null,
+    cooperativeBuilderFunctionName: groupObjectIdentityAuthorityAvailable ? groupCheckpointAuthority.builderFunctionName : "gridlyGetAlertsPresentationCountModelCooperative",
+    cooperativeGroupingFunctionName: groupObjectIdentityAuthorityAvailable ? groupCheckpointAuthority.groupingFunctionName : "gridlyAccumulateAlertPresentationGroup",
+    cooperativeAccumulatorOwner: groupObjectIdentityAuthorityAvailable ? groupCheckpointAuthority.accumulatorOwner : "groups Map",
+    cooperativeCheckpointAuthorityName: groupObjectIdentityAuthorityAvailable ? groupCheckpointAuthority.authorityName : "__gridlyAlertsGroupCheckpointAuthority",
+    cooperativeCheckpointAuthorityWriteCount: groupObjectIdentityAuthorityAvailable ? groupCheckpointAuthority.writeCount : null,
+    cooperativeCheckpointStagesWritten: groupObjectIdentityAuthorityAvailable ? groupCheckpointAuthority.stagesWritten : null,
+    cooperativeCheckpointGroupCount: groupObjectIdentityAuthorityAvailable ? groupCheckpointAuthority.groupCount : null,
+    privateCheckpointGroupCount, publicCheckpointGroupCount, privateCheckpointIdentityCount, privateCheckpointEvidenceRowCount,
+    publicCheckpointIdentityCount, publicCheckpointEvidenceRowCount, cooperativeCheckpointCoveragePass, groupCheckpointRcaClassification,
     groupObjectIdentityAudit, groupObjectIdentityFirstLosingStage,
     privateGroupIdentityCount, privateGroupEvidenceRowCount,
     publicPresentationIdentityCount, publicPresentationEvidenceRowCount,
