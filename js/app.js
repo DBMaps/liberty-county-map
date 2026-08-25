@@ -27739,7 +27739,7 @@ function getGridlyPolicyVisibleCrossings({ activeCountyCrossings = [], activeCou
       const metadata = getGridlyCachedCrossingStaticMetadata(crossing);
       return metadata.reportable && metadata.publicRoadway;
     }));
-    visibleCrossings = phase("awareness-area filtering", () => visibleCrossings.filter((crossing) => gridlyCrossingSampleMatchesCounty(crossing, activeCountyId) && activeInventoryIds.has(String(crossing?.id || ""))));
+    visibleCrossings = phase("awareness-area filtering", () => visibleCrossings.filter((crossing) => (crossing?.canonicalCommunityScope === true || gridlyCrossingSampleMatchesCounty(crossing, activeCountyId)) && activeInventoryIds.has(String(crossing?.id || ""))));
     visibleCrossings = phase("viewport/bounds filtering", () => visibleCrossings.filter((crossing) => !visibilityPolicy.useViewport || !bounds || bounds.contains?.([crossing.lat, crossing.lng])));
     visibleCrossings = phase("candidate list construction", () => visibleCrossings.filter((crossing) => {
       const activeTrainDelay = isActiveTrainDelayCrossing(crossing);
@@ -27795,7 +27795,8 @@ function getGridlyPolicyVisibleCrossings({ activeCountyCrossings = [], activeCou
   audit.zoomInvalidation = Boolean(previousCache && signatureComparison?.viewportBucket?.changed && previousCache.signatureComponents?.visibilityStage === visibilitySignatureComponents.visibilityStage && previousCache.signatureComponents?.renderMode === visibilitySignatureComponents.renderMode && previousCache.signatureComponents?.viewportBucket && !String(previousCache.signatureComponents.viewportBucket).includes(`|${visibilityPolicy?.currentZoom}|`));
   const sourceCrossings = phase("awareness-area filtering", () => {
     if (canIncrementalViewport) return previousCache.candidateCrossings || previousCache.visibleCrossings;
-    return useStreetViewportSource ? activeCountyCrossings : getVisibleCrossingsForFilter(`fit:${reason}`);
+    return useStreetViewportSource || activeCountyCrossings.some((crossing) => crossing?.canonicalCommunityScope === true)
+      ? activeCountyCrossings : getVisibleCrossingsForFilter(`fit:${reason}`);
   });
   audit.incrementalViewportUpdate = canIncrementalViewport;
   audit.fullInventoryScan = !canIncrementalViewport;
@@ -58327,7 +58328,15 @@ function renderCrossings(reason = "unspecified", options = {}) {
   const reasonContainsViewportChange = /map-move-or-zoom|zoom|move|viewport|bounds/i.test(reasonText);
   const popupGuardActive = isGridlyCrossingPopupStateChangeGuardActive(now);
   const activeCountyId = gridlyGetActiveCountyId();
-  const activeCountyCrossings = gridlyV921Phase("input record acquisition", () => gridlyGetActiveCountyCrossingInventory());
+  const selectedCanonicalArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const canonicalResolution = window.gridlyCanonicalCrossingRuntime?.resolveRecords?.(selectedCanonicalArea);
+  // LP235 bridges only exact LP233 IDs to the governed runtime record index.
+  // County inventory remains the fallback for county selections and while the
+  // passive asset is unavailable; viewport and representative policies below
+  // are deliberately unchanged.
+  const activeCountyCrossings = gridlyV921Phase("input record acquisition", () => canonicalResolution?.authorityAvailable
+    ? [...canonicalResolution.records]
+    : gridlyGetActiveCountyCrossingInventory());
   const renderCrossingsInputCount = activeCountyCrossings.length;
   const crossingDataChangeSignature = buildCrossingDataChangeSignature(activeCountyCrossings, activeCountyId);
   const crossingDataSignatureChanged = Boolean(!gridlyLastCrossingRenderDataSignature || crossingDataChangeSignature !== gridlyLastCrossingRenderDataSignature);
@@ -97118,15 +97127,23 @@ function filterGridlyManualAwarenessAreas(query = "") {
       })))
     });
     collapsedGeoids.add(placeGeoid);
-    occurrences.forEach(({ group, community }) => canonicalGroups.push(Object.freeze({
-      ...group,
+    // LP235: a governed membership is not a search-result identity. Publish
+    // exactly one row keyed by PLACE GEOID and retain every membership on the
+    // canonical resolution. The active membership remains an internal default.
+    const activeCountyId = gridlyGetActiveCountyId();
+    const selectedOccurrence = occurrences.find(({ group }) => group.countyId === activeCountyId) || occurrences[0];
+    canonicalGroups.push(Object.freeze({
+      ...selectedOccurrence.group,
+      countyLabel: "City",
       communities: Object.freeze([Object.freeze({
-        ...community,
-        label: first.canonicalLabel,
+        ...selectedOccurrence.community,
+        key: canonicalArea.key,
+        value: canonicalArea.key,
+        label: `${first.canonicalLabel}, TX`,
         canonicalResolution,
-        requestedOperationalCountyId: group.countyId
+        requestedOperationalCountyId: selectedOccurrence.group.countyId
       })])
-    })));
+    }));
   });
   const remainingGroups = matchingGroups.map((group) => Object.freeze({
     ...group,
@@ -97152,12 +97169,13 @@ function resolveGridlyManualAwarenessAreaSearch(query = "") {
   }
   const exact = resolveGridlyAwarenessAreaQuery(normalizedQuery);
   if (exact.status === "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE") {
-    const groups = exact.candidates.map((candidate) => Object.freeze({
+    const candidate = exact.candidates.find((row) => row.countyId === gridlyGetActiveCountyId()) || exact.candidates[0];
+    const groups = candidate ? [Object.freeze({
       countyValue: candidate.countyId,
       countyId: candidate.countyId,
-      countyLabel: candidate.county,
-      communities: Object.freeze([Object.freeze({ ...candidate, key: candidate.awarenessAreaKey, value: candidate.awarenessAreaKey, label: exact.community, canonicalResolution: exact, requestedOperationalCountyId: candidate.countyId })])
-    }));
+      countyLabel: "City",
+      communities: Object.freeze([Object.freeze({ ...candidate, key: exact.awarenessAreaKey, value: exact.awarenessAreaKey, label: `${exact.community}, TX`, canonicalResolution: exact, requestedOperationalCountyId: candidate.countyId })])
+    })] : [];
     return Object.freeze({ status: "RESULTS", resolution: exact, exactMatch: true, groups: Object.freeze(groups) });
   }
   if (exact.status === "RESOLVED_OPERATIONAL") {
@@ -122407,6 +122425,64 @@ window.gridlyLP234AlertsCompletenessAudit = function gridlyLP234AlertsCompletene
   return Object.freeze(result);
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP234AlertsCompletenessAudit", window.gridlyLP234AlertsCompletenessAudit);
+
+// LP235 is passive: it reconciles production collections and never fetches,
+// changes selection, renders, or manufactures attribution.
+window.gridlyLP235CanonicalCommunityScopeAudit = function gridlyLP235CanonicalCommunityScopeAudit() {
+  const selected = getGridlySelectedAwarenessArea();
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(selected);
+  const canonicalKey = placeGeoid ? `place-${placeGeoid}` : null;
+  const activeCounty = gridlyGetActiveCountyId();
+  const membership = window.gridlyCanonicalCrossingRuntime?.lookup?.(selected) || null;
+  const resolved = window.gridlyCanonicalCrossingRuntime?.resolveRecords?.(selected) || null;
+  const alerts = window.gridlyLP234AlertsCompletenessAudit?.() || {};
+  const evidence = window.gridlyCanonicalCommunityEvidenceProjection?.() || window.gridlyLP230CanonicalCommunityEvidenceAudit?.() || {};
+  const driveTexasAudit = window.gridlyLP234DriveTexasGovernedPropagationAudit?.() || {};
+  const search = selected?.label ? resolveGridlyManualAwarenessAreaSearch(selected.label) : { groups: [] };
+  const searchRows = (search.groups || []).flatMap((group) => group.communities || []);
+  const governedMemberships = Object.freeze([...(selected?.countyMemberships || membership?.governedCountyFips || [])]);
+  const renderedIds = new Set(Array.from(crossingMarkers?.keys?.() || []).map(String));
+  const renderedCanonicalCount = membership ? membership.crossingIds.filter((id) => renderedIds.has(String(id))).length : 0;
+  const localAuthority = evidence?.localHazards?.authorityAvailable === true;
+  const blockedAuthority = evidence?.blockedCrossingReports?.authorityAvailable === true || Boolean(membership);
+  const weatherAuthorityAvailable = evidence?.weather?.authorityAvailable !== false && Boolean(placeGeoid);
+  const familyAuthority = Object.freeze({
+    crossings: Object.freeze({ authorityAvailable: Boolean(resolved?.authorityAvailable), reason: resolved?.reason || (!membership ? "selection has no canonical PLACE crossing membership" : null) }),
+    driveTexas: Object.freeze({ authorityAvailable: Boolean(placeGeoid), reason: placeGeoid ? null : "selection has no LP201 canonical PLACE identity" }),
+    localHazards: Object.freeze({ authorityAvailable: localAuthority, reason: localAuthority ? null : "active local reports do not expose certified PLACE attribution across memberships" }),
+    blockedCrossings: Object.freeze({ authorityAvailable: blockedAuthority, reason: blockedAuthority ? null : "blocked report cannot be joined to an LP233 canonical crossing identity" }),
+    weather: Object.freeze({ authorityAvailable: weatherAuthorityAvailable, reason: weatherAuthorityAvailable ? null : "provider point/zone authority unavailable for canonical presentation coordinate" })
+  });
+  const countyFragmentationFindings = Object.freeze([
+    ...(alerts.countyFragmentationDetected ? ["Alerts area/community stage removed governed canonical evidence"] : []),
+    ...(!resolved?.authorityAvailable && membership ? ["canonical crossing IDs are not fully resolved to runtime records"] : [])
+  ]);
+  const canonicalScopePass = Boolean(placeGeoid && searchRows.length === 1 && resolved?.authorityAvailable && alerts.allGovernedEvidenceAccountedFor && !alerts.countyFragmentationDetected);
+  return Object.freeze({
+    canonicalCommunity: selected?.label || null, canonicalKey, placeGeoid,
+    selectedMembership: selected?.countyId || activeCounty, activeCounty, allGovernedMemberships: governedMemberships,
+    searchCanonicalResultCount: searchRows.filter((row) => String(row.placeGeoid || "") === String(placeGeoid || "")).length,
+    searchDuplicateMembershipRows: Math.max(0, searchRows.filter((row) => String(row.placeGeoid || "") === String(placeGeoid || "")).length - 1),
+    crossingCertifiedCount: membership?.certifiedCrossingCount ?? null,
+    crossingResolvedCount: resolved?.records?.length ?? 0,
+    crossingMapInputCount: Number(gridlyCrossingRenderAuditState?.lastRender?.inventoryCount || 0),
+    crossingRenderedCount: renderedCanonicalCount,
+    crossingMapScopeAuthority: resolved?.authorityAvailable ? "LP233 exact crossing IDs -> governed runtime record index -> existing viewport and representative-marker policy" : "FAIL_CLOSED",
+    driveTexasRelevantCount: Number(driveTexasAudit.relevantCount || driveTexasAudit.canonicalRelevantCount || 0),
+    driveTexasGovernedCount: Number(driveTexasAudit.governedActiveCount || driveTexasAudit.governedCount || 0),
+    localHazardCanonicalCount: Number(evidence?.localHazards?.eligibleIds?.length || 0),
+    blockedCrossingCanonicalCount: Number(evidence?.blockedCrossingReports?.eligibleIds?.length || 0),
+    weatherAuthoritySummary: evidence?.weather || familyAuthority.weather,
+    alertsGovernedInputCount: Number(alerts.governedOfficialRoadwayCount || 0),
+    alertsAccountedCount: Math.max(0, Number(alerts.governedOfficialRoadwayCount || 0) - (alerts.unaccountedGovernedIds?.length || 0)),
+    alertsUnaccountedIds: Object.freeze([...(alerts.unaccountedGovernedIds || [])]),
+    kbygOfficialCount: Number(driveTexasAudit.kbygOfficialCount || 0), kbygCommunityCount: Number(evidence?.consumers?.kbygCommunityCount || 0),
+    topAwarenessActive: Boolean(driveTexasAudit.topAwarenessActive), communityPulseActive: Boolean(driveTexasAudit.communityPulseActive),
+    locationContextCanonicalCount: Number(driveTexasAudit.locationContextProductionCount || 0),
+    countyFragmentationFindings, familyAuthority, canonicalScopePass, overallPass: canonicalScopePass && countyFragmentationFindings.length === 0
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP235CanonicalCommunityScopeAudit", window.gridlyLP235CanonicalCommunityScopeAudit);
 
 /* LP221: Val Verde owner investigation adapter.  This is intentionally a
  * composition of production authorities; it neither selects a community nor

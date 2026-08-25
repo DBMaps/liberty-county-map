@@ -1,5 +1,5 @@
 const GRIDLY_SW_VERSION = "lp101.1-runtime-recovery";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp233-v1";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp235-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
@@ -13,7 +13,8 @@ const GRIDLY_CLOSURE_URLS = [
   "./assets/store/branding/Logos/gridly-logo-horizontal.png",
   "./js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js",
   "./js/gridlyCanonicalCrossingRuntime.js",
-  "./data/runtime/canonical-crossing-memberships-v1.json"
+  "./data/runtime/canonical-crossing-memberships-v1.json",
+  "./data/runtime/canonical-crossing-records-v1.json"
 ];
 
 const GRIDLY_LP0361C_RUNTIME_COUNTY_GEOMETRY_URLS = [
