@@ -32,7 +32,9 @@ function buildRealGroups(rows) {
     gridlyAlertWriterRecordId: (row, index = 0) => String(row.evidenceId || `alert-${index}`)
   };
   vm.runInNewContext(`${source}\nthis.buildGroups = gridlyBuildGridlyAlertsPresentationCountModelSync;`, sandbox);
-  return sandbox.buildGroups(rows);
+  const model = sandbox.buildGroups(rows);
+  model.testCheckpointAuthority = sandbox.globalThis.__gridlyAlertsGroupCheckpointAuthority;
+  return model;
 }
 
 async function buildRealGroupsCooperative(rows) {
@@ -49,7 +51,9 @@ async function buildRealGroupsCooperative(rows) {
     gridlyAlertsGroupingYieldIfNeeded: async () => {}, gridlyFinalizeAlertsGroupingHotLoopAudit: () => {}
   };
   vm.runInNewContext(`${source}\nthis.buildGroupsCooperative = gridlyGetAlertsPresentationCountModelCooperative;`, sandbox);
-  return sandbox.buildGroupsCooperative(rows);
+  const model = await sandbox.buildGroupsCooperative(rows);
+  model.testCheckpointAuthority = sandbox.globalThis.__gridlyAlertsGroupCheckpointAuthority;
+  return model;
 }
 
 const officialRow = (index, cluster) => ({ evidenceId:`canonical-${index}`, providerRecordId:`provider-${index}`, sourceKind:'official_roadway', situationType:'construction', corridor:`road-${cluster}`, crossingRoad:`cluster-${cluster}`, title:'Construction' });
@@ -241,18 +245,19 @@ test('LP235.4F audit checkpoint is accessible without a window binding and stays
 
 test('LP235.4F object identity authority fails closed when its checkpoint is unavailable', () => {
   const audit = app.slice(app.indexOf('// LP235.4: passive presentation-completeness reconciliation'), app.indexOf('// LP235.4A:'));
-  assert.match(audit, /groupObjectIdentityAuthorityAvailable = Boolean\(authorityAvailable && postGroupStage && Array\.isArray\(postGroupStage\.groups\)\)/);
-  assert.match(audit, /POST_GROUP_OBJECT_IDENTITY_CHECKPOINT_UNAVAILABLE/);
+  assert.match(audit, /groupObjectIdentityAuthorityAvailable = Boolean\(authorityAvailable && groupCheckpointRecords/);
+  assert.match(audit, /COOPERATIVE_GROUP_CHECKPOINT_NOT_PUBLISHED/);
   assert.match(audit, /groupObjectIdentityAuthorityAvailable \? finalRows : \[\]/);
   assert.match(audit, /&& groupObjectIdentityAuthorityAvailable/);
   assert.match(audit, /groupObjectIdentityAuthorityAvailable, groupObjectIdentityAuthorityReason/);
 });
 
-function runPresentationCompletenessAudit(auditRenderContext) {
+function runPresentationCompletenessAudit(auditRenderContext, checkpointAuthority = null) {
   const auditStart = app.indexOf('(() => {', app.indexOf('// LP235.4: passive presentation-completeness reconciliation'));
   const auditEnd = app.indexOf('// LP235.4A:', auditStart);
   const auditSource = app.slice(auditStart, auditEnd);
   const sandbox = {
+    __gridlyAlertsGroupCheckpointAuthority: checkpointAuthority,
     window: {
       __gridlyLp2194AlertStages: { finalAlertData: auditRenderContext?.alerts || [] },
       gridlyAlertsAuthorityWriterAudit: () => ({
@@ -299,21 +304,24 @@ test('LP235.4G owner audit runs with checkpoint authority and summarizes identit
     mapToArray: { hasEvidenceRows: true, evidenceRowCount: 1 },
     accumulatorIsMapStored: true, mapStoredIsMapToArray: true
   };
-  const { result, sandbox } = runPresentationCompletenessAudit({
-    alerts: [evidence], presentationModel: { alerts: [presentation] },
-    groupedLineageStages: [{ stage: 'POST_GROUP_BUILD', representedCanonicalCount: 1, groups: [{ hasEvidenceRows: true, evidenceRowCount: 1 }] }]
-  });
+  const checkpoint = buildRealGroupsCooperative([evidence]);
+  return checkpoint.then((built) => {
+    const { result, sandbox } = runPresentationCompletenessAudit({
+      alerts: [evidence], presentationModel: { alerts: [presentation] },
+      groupedLineageStages: [{ stage: 'POST_GROUP_BUILD', representedCanonicalCount: 1, groups: [{ hasEvidenceRows: true, evidenceRowCount: 1 }] }]
+    }, built.testCheckpointAuthority);
   assert.equal(result.groupObjectIdentityAuthorityAvailable, true);
   assert.equal(result.groupObjectIdentityAuthorityReason, null);
   assert.equal(result.groupObjectIdentityAudit.length, 1);
   assert.equal(result.groupObjectIdentityAudit[0].postGroupAuditHasEvidenceRows, true);
   assert.equal(Object.hasOwn(sandbox.window, 'postGroupAuditHasEvidenceRows'), false);
+  });
 });
 
 test('LP235.4G owner audit runs without checkpoint authority and fails closed', () => {
   const { result, sandbox } = runPresentationCompletenessAudit(null);
   assert.equal(result.groupObjectIdentityAuthorityAvailable, false);
-  assert.equal(result.groupObjectIdentityAuthorityReason, 'POST_GROUP_OBJECT_IDENTITY_CHECKPOINT_UNAVAILABLE');
+  assert.equal(result.groupObjectIdentityAuthorityReason, 'COOPERATIVE_GROUP_CHECKPOINT_NOT_PUBLISHED');
   assert.deepEqual(Array.from(result.groupObjectIdentityAudit), []);
   assert.equal(result.overallPass, false);
   assert.equal(Object.hasOwn(sandbox.window, 'postGroupAuditHasEvidenceRows'), false);
@@ -332,4 +340,46 @@ test('completeness audit publishes all passive grouped-lineage checkpoints', () 
     assert.match(audit, new RegExp(field));
   }
   assert.doesNotMatch(audit, /fetch\(|setTimeout|setInterval|querySelector|openGridlyPortraitV2Sheet/);
+});
+
+test('LP235.4I synchronous and cooperative builders publish bounded value-only checkpoint authorities', async () => {
+  for (const model of [
+    buildRealGroups([officialRow(1, 1), officialRow(2, 1), officialRow(3, 1)]),
+    await buildRealGroupsCooperative([officialRow(1, 1), officialRow(2, 1), officialRow(3, 1)])
+  ]) {
+    const authority = model.testCheckpointAuthority;
+    assert.ok(authority);
+    assert.equal(authority.groupCount, 1);
+    assert.equal(authority.writeCount, 6);
+    assert.deepEqual(Array.from(authority.stagesWritten), ['ACCUMULATOR_GROUP_OBJECT','MAP_STORED_GROUP_OBJECT','MAP_TO_ARRAY_GROUP_OBJECT','PRESENTATION_MODEL_ROW','FUNCTION_RETURN_ROW','POST_GROUP_BUILD_AUDIT_ROW']);
+    assert.ok(authority.records.every(record => record.evidenceRowCount === 3 && record.representedCanonicalIds.length === 3));
+    assert.ok(authority.records.every(record => !Object.hasOwn(record, 'row') && !Object.hasOwn(record, 'group')));
+  }
+});
+
+test('LP235.4I cooperative 26 to 12 authority observes all private and public identities', async () => {
+  const model = await buildRealGroupsCooperative(Array.from({length:26}, (_, index) => officialRow(index + 1, (index % 12) + 1)));
+  const authority = model.testCheckpointAuthority;
+  assert.equal(authority.executionMode, 'COOPERATIVE');
+  assert.equal(authority.groupCount, 12);
+  for (const stage of ['MAP_TO_ARRAY_GROUP_OBJECT', 'PRESENTATION_MODEL_ROW']) {
+    const records = authority.records.filter(record => record.stage === stage);
+    assert.equal(records.length, 12);
+    assert.equal(records.reduce((sum, record) => sum + record.evidenceRowCount, 0), 26);
+    assert.equal(new Set(records.flatMap(record => record.representedCanonicalIds)).size, 26);
+  }
+});
+
+test('LP235.4I audit distinguishes unavailable authority from explicitly observed empty collections', () => {
+  const missing = runPresentationCompletenessAudit(null).result;
+  assert.equal(missing.groupCheckpointAuthorityAvailable, false);
+  assert.equal(missing.privateCheckpointIdentityCount, null);
+  assert.equal(missing.publicCheckpointEvidenceRowCount, null);
+  assert.equal(missing.correctedGroupObjectIdentityFirstLosingStage, null);
+  assert.equal(missing.groupCheckpointRcaClassification, 'COOPERATIVE_CHECKPOINT_PUBLICATION_GAP');
+  const emptyAuthority = Object.freeze({ authorityName:'__gridlyAlertsGroupCheckpointAuthority', executionMode:'COOPERATIVE', builderFunctionName:'gridlyGetAlertsPresentationCountModelCooperative', groupingFunctionName:'gridlyAccumulateAlertPresentationGroup', accumulatorOwner:'groups Map', inputCount:0, groupCount:0, writeCount:0, stagesWritten:Object.freeze([]), records:Object.freeze([]) });
+  const observed = runPresentationCompletenessAudit({ alerts:[], presentationModel:{ alerts:[] }, groupedLineageStages:[] }, emptyAuthority).result;
+  assert.equal(observed.groupCheckpointAuthorityAvailable, true);
+  assert.equal(observed.privateCheckpointIdentityCount, 0);
+  assert.equal(observed.privateCheckpointEvidenceRowCount, 0);
 });
