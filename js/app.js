@@ -8993,7 +8993,23 @@ function gridlyReportMatchesActiveCounty(row, activeCountyId = gridlyGetActiveCo
     ? String(rawCountyId || "").trim().toLowerCase()
     : String(gridlyGetReportCountyId(row, activeCountyId) || "").trim().toLowerCase();
   if (!normalizedReportCountyId) return activeCountyId === GRIDLY_DEFAULT_COUNTY_ID;
-  return normalizedReportCountyId === activeCountyId && gridlyIsKnownCountyId(normalizedReportCountyId) && gridlyIsCountyOperational(normalizedReportCountyId);
+  if (normalizedReportCountyId === activeCountyId) return gridlyIsKnownCountyId(normalizedReportCountyId) && gridlyIsCountyOperational(normalizedReportCountyId);
+  // Community hazard geography is evidence metadata, not canonical PLACE
+  // authority. A hazard in another governed membership of the selected PLACE
+  // remains eligible without changing the active runtime county. This exception
+  // is deliberately limited to community hazards with matching PLACE identity;
+  // roadway and unrelated/out-of-scope records retain exact-county behavior.
+  const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const reportKind = String(row?.reportKind || row?.sourceKind || "").toLowerCase();
+  const reportPlaceGeoid = String(row?.placeGeoid || row?.communityKey || row?.canonicalKey || row?.raw?.placeGeoid || row?.raw?.communityKey || "").replace(/^place[-:]/, "");
+  const selectedPlaceGeoid = String(selectedArea?.placeGeoid || selectedArea?.communityId || "");
+  const reportCountyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedReportCountyId]?.countyFips || "");
+  return reportKind === "hazard"
+    && selectedArea?.canonicalMultiCountyPlace === true
+    && Boolean(reportPlaceGeoid && reportPlaceGeoid === selectedPlaceGeoid)
+    && (selectedArea.countyMemberships || []).map(String).includes(reportCountyFips)
+    && gridlyIsKnownCountyId(normalizedReportCountyId)
+    && gridlyIsCountyOperational(normalizedReportCountyId);
 }
 
 // Legacy test sentinel only: const FRA_URL = gridlyGetActiveCountyConfig().crossingsPath;
@@ -97317,11 +97333,16 @@ function filterGridlyManualAwarenessAreas(query = "") {
       })))
     });
     collapsedGeoids.add(placeGeoid);
-    // LP235: a governed membership is not a search-result identity. Publish
-    // exactly one row keyed by PLACE GEOID and retain every membership on the
-    // canonical resolution. The active membership remains an internal default.
-    const activeCountyId = gridlyGetActiveCountyId();
-    const selectedOccurrence = occurrences.find(({ group }) => group.countyId === activeCountyId) || occurrences[0];
+    // a governed membership is not a search-result identity. Publish exactly
+    // one row keyed by PLACE GEOID and retain every membership on the canonical
+    // resolution.  Never use the prior runtime county as the implicit member:
+    // it belongs to the previous selection and is therefore not an authority
+    // for this PLACE.  The established PLACE presentation contract supplies
+    // the deterministic operational member when the picker has no explicit
+    // county scope; unresolved authority fails closed below.
+    const authoritativeCountyId = gridlyResolveCanonicalCountyIdForOperationalContext(canonicalArea, null);
+    const selectedOccurrence = occurrences.find(({ group }) => group.countyId === authoritativeCountyId) || null;
+    if (!selectedOccurrence) return;
     canonicalGroups.push(Object.freeze({
       ...selectedOccurrence.group,
       countyLabel: "City",
@@ -122881,17 +122902,43 @@ function gridlyLP237CommunityHazardIdentityAudit(options = {}) {
   const unmatchedMapHazardIds = hazards.filter((row) => !row.mapMatched).map((row) => row.canonicalGovernedId);
   const excludedActiveHazardIds = hazards.filter((row) => row.active && !row.currentVisibleIncidentIncluded).map((row) => row.canonicalGovernedId);
   const unreconciledAliasPairs = hazards.filter((row) => row.aliasCandidates.length < 2).map((row) => row.canonicalGovernedId);
-  const identityReconciliationPass = duplicateCanonicalHazardIds.length === 0 && unreconciledAliasPairs.length === 0;
-  const lifecyclePersistencePass = hazards.every((row) => !row.active || (!row.stale && !row.cleared && row.currentVisibleIncidentIncluded));
-  const consumerPropagationPass = unmatchedMapHazardIds.length === 0 && excludedActiveHazardIds.length === 0
+  const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const homeRecord = typeof gridlyReadHomePersonalizationRecord === "function" ? gridlyReadHomePersonalizationRecord() : null;
+  const membershipCounties = (selectedArea?.countyMemberships || []).map((fips) => Object.values(GRIDLY_COUNTY_REGISTRY || {}).find((county) => String(county?.countyFips || "") === String(fips))?.id).filter(Boolean);
+  const selectedMembershipCounty = gridlyNormalizeCountyId(homeRecord?.countyId || selectedArea?.countyId || "") || null;
+  const authoritativeMembershipCounty = selectedArea?.canonicalMultiCountyPlace === true
+    ? gridlyResolvePersistedCanonicalPlaceOperationalCounty(selectedArea, homeRecord, gridlyUserProfile, typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : null, "")
+    : selectedMembershipCounty;
+  const submissions = [...gridlyLocalAcceptedHazardRegistrations.values()].map((registration) => ({
+    ...registration.report,
+    submissionId: registration.submittedReportId || registration.canonicalReportId,
+    canonicalReportId: registration.canonicalReportId,
+    persistedCounty: registration.report?.countyId || registration.report?.county_id || null
+  }));
+  const acceptance = engine.buildCommunityHazardAcceptanceAudit({
+    submissions, hazards, selectedMembershipCounty, authoritativeMembershipCounty,
+    activeCounty: governed.countyId || null,
+    membershipCounties: membershipCounties.length ? membershipCounties : [selectedMembershipCounty].filter(Boolean)
+  });
+  const identityReconciliationPass = acceptance.submittedToGovernedParityPass && duplicateCanonicalHazardIds.length === 0 && unreconciledAliasPairs.length === 0;
+  const lifecyclePersistencePass = acceptance.submittedToGovernedParityPass && hazards.every((row) => !row.active || (!row.stale && !row.cleared && row.currentVisibleIncidentIncluded));
+  const consumerPropagationPass = acceptance.submittedToGovernedParityPass && unmatchedMapHazardIds.length === 0 && excludedActiveHazardIds.length === 0
     && hazards.every((row) => !row.active || (row.alertsMatched && row.locationContextMatched));
   return Object.freeze({
-    canonicalCommunity: governed.canonicalCommunity || null, activeCounty: governed.countyId || null,
-    submittedHazardCount: gridlyLocalAcceptedHazardRegistrations.size, governedHazardCount: hazards.length,
+    canonicalCommunity: governed.canonicalCommunity || null,
+    canonicalCommunityId: selectedArea?.placeGeoid || selectedArea?.communityId || null,
+    selectedMembershipCounty, authoritativeMembershipCounty, activeCounty: governed.countyId || null,
+    submittedHazardCount: acceptance.submittedHazardCount, governedHazardCount: acceptance.governedHazardCount,
+    submittedButUngovernedHazardIds: acceptance.submittedButUngovernedHazardIds,
+    missingGovernedHazardIds: acceptance.missingGovernedHazardIds,
+    hazardCountyAuthority: acceptance.hazardCountyAuthority,
+    countyGovernancePass: acceptance.countyGovernancePass,
+    submittedToGovernedParityPass: acceptance.submittedToGovernedParityPass,
+    firstLosingStage: acceptance.firstLosingStage,
     hazards: Object.freeze(hazards), unmatchedMapHazardIds: Object.freeze(unmatchedMapHazardIds),
     excludedActiveHazardIds: Object.freeze(excludedActiveHazardIds), duplicateCanonicalHazardIds: Object.freeze(duplicateCanonicalHazardIds),
     unreconciledAliasPairs: Object.freeze(unreconciledAliasPairs), identityReconciliationPass, lifecyclePersistencePass,
-    consumerPropagationPass, overallPass: identityReconciliationPass && lifecyclePersistencePass && consumerPropagationPass,
+    consumerPropagationPass, overallPass: acceptance.countyGovernancePass && identityReconciliationPass && lifecyclePersistencePass && consumerPropagationPass,
     passiveOnly: true
   });
 }

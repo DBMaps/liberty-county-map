@@ -543,5 +543,63 @@
       lifecycleOperandAudit: Object.freeze({ ...(input.lifecycleOperandAudit || {}) })
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, isGovernedActiveLifecycle, identity, communityHazardAliasCandidates, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases });
+  function buildCommunityHazardAcceptanceAudit(input = {}) {
+    const submissions = Array.isArray(input.submissions) ? input.submissions.slice(0, 100) : [];
+    const hazards = Array.isArray(input.hazards) ? input.hazards.slice(0, 100) : [];
+    const terminal = new Set(["cleared", "expired", "deleted", "stale", "rejected"]);
+    const aliasesOf = (row) => new Set([
+      row?.submissionId, row?.canonicalGovernedId, row?.canonicalReportId,
+      row?.submittedReportId, row?.hazardDeviceId, row?.providerRecordId,
+      row?.provider_record_id, row?.crossingId, row?.crossing_id,
+      ...(row?.aliasCandidates || [])
+    ].map(text).filter(Boolean));
+    const governedAliases = hazards.map((row) => ({ row, aliases: aliasesOf(row) }));
+    const selectedMembershipCounty = text(input.selectedMembershipCounty) || null;
+    const authoritativeMembershipCounty = text(input.authoritativeMembershipCounty) || null;
+    const activeCounty = text(input.activeCounty) || null;
+    const membershipCounties = new Set((input.membershipCounties || []).map(text).filter(Boolean));
+    const authorityAvailable = Boolean(selectedMembershipCounty && authoritativeMembershipCounty && activeCounty && membershipCounties.size);
+    const countyGovernancePass = authorityAvailable
+      && membershipCounties.has(selectedMembershipCounty)
+      && selectedMembershipCounty === authoritativeMembershipCounty
+      && activeCounty === authoritativeMembershipCounty;
+    const hazardCountyAuthority = submissions.map((submission) => {
+      const submissionAliases = aliasesOf(submission);
+      const match = governedAliases.find(({ aliases }) => [...submissionAliases].some((id) => aliases.has(id)))?.row || null;
+      const disposition = text(submission?.terminalDisposition || submission?.status || submission?.lifecycleState).toLowerCase();
+      const terminalReconciled = terminal.has(disposition) && (disposition !== "rejected" || Boolean(text(submission?.rejectionReason)));
+      const submissionCounty = text(submission?.submissionCounty || submission?.countyId || submission?.county_id) || null;
+      const persistedCounty = text(submission?.persistedCounty || submission?.report?.countyId || submission?.report?.county_id) || null;
+      const governedCounty = text(match?.governedCounty || match?.countyId || match?.county_id) || null;
+      const countyFirstDivergenceStage = !countyGovernancePass ? (!authorityAvailable ? "COMMUNITY_MEMBERSHIP_AUTHORITY_UNAVAILABLE" : "ACTIVE_COUNTY_AUTHORITY")
+        : submissionCounty && membershipCounties.has(submissionCounty) === false ? "HAZARD_GEOGRAPHY_OUTSIDE_PLACE_MEMBERSHIPS"
+          : persistedCounty && submissionCounty && persistedCounty !== submissionCounty ? "PERSISTED_HAZARD_COUNTY" : null;
+      return Object.freeze({
+        submissionId: text(submission?.submissionId || submission?.canonicalReportId) || null,
+        canonicalGovernedId: match?.canonicalGovernedId || null,
+        selectedMembershipCounty, authoritativeMembershipCounty, activeCounty,
+        submissionCounty, persistedCounty, governedCounty,
+        countyResolutionReason: text(submission?.countyResolutionReason) || (submissionCounty ? "hazard_geography_metadata_preserved" : "hazard_geography_unavailable"),
+        countyFirstDivergenceStage,
+        lifecycleFirstLosingStage: match || terminalReconciled ? null : "SUBMITTED_TO_GOVERNED_RECONCILIATION",
+        terminalDisposition: terminalReconciled ? disposition : null
+      });
+    });
+    const missing = hazardCountyAuthority.filter((row) => !row.canonicalGovernedId && !row.terminalDisposition);
+    const submittedButUngovernedHazardIds = missing.map((row) => row.submissionId).filter(Boolean);
+    // This is an owner acceptance audit, not a generic idle-state health flag.
+    // With no bounded submission evidence it must not certify lifecycle parity
+    // merely because Array#every/find have no counterexample.
+    const submittedToGovernedParityPass = submissions.length > 0 && missing.length === 0;
+    return Object.freeze({
+      submittedHazardCount: submissions.length, governedHazardCount: hazards.length,
+      submittedButUngovernedHazardIds: Object.freeze(submittedButUngovernedHazardIds),
+      missingGovernedHazardIds: Object.freeze([...submittedButUngovernedHazardIds]),
+      hazardCountyAuthority: Object.freeze(hazardCountyAuthority), countyGovernancePass,
+      submittedToGovernedParityPass,
+      firstLosingStage: hazardCountyAuthority.find((row) => row.countyFirstDivergenceStage || row.lifecycleFirstLosingStage)?.countyFirstDivergenceStage
+        || hazardCountyAuthority.find((row) => row.lifecycleFirstLosingStage)?.lifecycleFirstLosingStage || null
+    });
+  }
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, buildCommunityHazardAcceptanceAudit, isGovernedActiveLifecycle, identity, communityHazardAliasCandidates, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases });
 });
