@@ -86,3 +86,76 @@ test('LP237 does not change official roadway canonical identity semantics', () =
   const official = { sourceKind: 'official_roadway', providerRecordId: 'txdot-19', type: 'flooding', active: true };
   assert.equal(governed.identity(official), 'official_roadway:txdot-19');
 });
+
+test('LP237.1 fails closed for submitted one / governed zero instead of passing vacuously', () => {
+  const audit = governed.buildCommunityHazardAcceptanceAudit({
+    submissions: [{ submissionId: 'hazard-device-a', countyId: 'travis-tx' }],
+    hazards: [], selectedMembershipCounty: 'travis-tx',
+    authoritativeMembershipCounty: 'travis-tx', activeCounty: 'travis-tx',
+    membershipCounties: ['bastrop-tx', 'hays-tx', 'travis-tx', 'williamson-tx']
+  });
+  assert.equal(audit.submittedHazardCount, 1);
+  assert.equal(audit.governedHazardCount, 0);
+  assert.equal(audit.submittedToGovernedParityPass, false);
+  assert.deepEqual(audit.submittedButUngovernedHazardIds, ['hazard-device-a']);
+  assert.equal(audit.firstLosingStage, 'SUBMITTED_TO_GOVERNED_RECONCILIATION');
+});
+
+test('LP237.1 cannot certify an empty owner-acceptance sample', () => {
+  const audit = governed.buildCommunityHazardAcceptanceAudit({
+    submissions: [], hazards: [], selectedMembershipCounty: 'travis-tx',
+    authoritativeMembershipCounty: 'travis-tx', activeCounty: 'travis-tx',
+    membershipCounties: ['travis-tx']
+  });
+  assert.equal(audit.submittedToGovernedParityPass, false);
+});
+
+test('LP237.1 reconciles an explicit legitimate terminal disposition', () => {
+  const audit = governed.buildCommunityHazardAcceptanceAudit({
+    submissions: [{ submissionId: 'old-hazard', countyId: 'travis-tx', terminalDisposition: 'expired' }],
+    hazards: [], selectedMembershipCounty: 'travis-tx',
+    authoritativeMembershipCounty: 'travis-tx', activeCounty: 'travis-tx',
+    membershipCounties: ['travis-tx']
+  });
+  assert.equal(audit.submittedToGovernedParityPass, true);
+  assert.deepEqual(audit.submittedButUngovernedHazardIds, []);
+});
+
+test('LP237.1 preserves multi-county community authority and hazard geography metadata', () => {
+  const report = hazard({ type: 'flooding', countyId: 'bastrop-tx' });
+  const snapshot = governed.buildSnapshot({ records: [report], nowMs: NOW, actual: { map: [presentation(report)], alerts: [presentation(report)], locationContext: [presentation(report)] } });
+  const row = snapshot.evidence[0];
+  const audit = governed.buildCommunityHazardAcceptanceAudit({
+    submissions: [{ ...report, submissionId: report.providerRecordId, persistedCounty: 'bastrop-tx' }],
+    hazards: [{ canonicalGovernedId: row.evidenceId, countyId: row.countyId, aliasCandidates: row.aliasCandidates }],
+    selectedMembershipCounty: 'travis-tx', authoritativeMembershipCounty: 'travis-tx',
+    activeCounty: 'travis-tx', membershipCounties: ['bastrop-tx', 'hays-tx', 'travis-tx', 'williamson-tx']
+  });
+  assert.equal(audit.countyGovernancePass, true);
+  assert.equal(audit.submittedToGovernedParityPass, true);
+  assert.equal(audit.hazardCountyAuthority[0].submissionCounty, 'bastrop-tx');
+  assert.equal(audit.hazardCountyAuthority[0].governedCounty, 'bastrop-tx');
+});
+
+test('LP237.1 rejects stale runtime authority and truthfully identifies out-of-scope geography', () => {
+  const stale = governed.buildCommunityHazardAcceptanceAudit({
+    submissions: [], hazards: [], selectedMembershipCounty: 'travis-tx',
+    authoritativeMembershipCounty: 'travis-tx', activeCounty: 'bexar-tx',
+    membershipCounties: ['travis-tx', 'bastrop-tx']
+  });
+  assert.equal(stale.countyGovernancePass, false);
+  const outside = governed.buildCommunityHazardAcceptanceAudit({
+    submissions: [{ submissionId: 'outside', countyId: 'bexar-tx' }], hazards: [],
+    selectedMembershipCounty: 'travis-tx', authoritativeMembershipCounty: 'travis-tx',
+    activeCounty: 'travis-tx', membershipCounties: ['travis-tx', 'bastrop-tx']
+  });
+  assert.equal(outside.hazardCountyAuthority[0].countyFirstDivergenceStage, 'HAZARD_GEOGRAPHY_OUTSIDE_PLACE_MEMBERSHIPS');
+  assert.equal(outside.submittedToGovernedParityPass, false);
+});
+
+test('LP237.1 production selection does not inherit a stale active county', () => {
+  const app = require('node:fs').readFileSync(require('node:path').join(__dirname, '../js/app.js'), 'utf8');
+  assert.doesNotMatch(app, /selectedOccurrence = occurrences\.find\(\(\{ group \}\) => group\.countyId === activeCountyId\) \|\| occurrences\[0\]/);
+  assert.match(app, /authoritativeCountyId = gridlyResolveCanonicalCountyIdForOperationalContext\(canonicalArea, null\)/);
+  assert.doesNotMatch(app, /if \([^)]*Austin|if \([^)]*Bastrop/);
+});
