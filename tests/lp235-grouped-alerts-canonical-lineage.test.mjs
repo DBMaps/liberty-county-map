@@ -19,6 +19,47 @@ function buildMapping(presentations, dom) {
 const domRow = id => ({ presentationId:id, persistedId:`persisted-${id}`, providerId:`provider-${id}`, presentationContract:'CONCISE_ALERT_CARD', presentationTemplateUsed:'RenderCompleteAlertCard.CONCISE_ALERT_CARD' });
 const group = (presentationId, ids, sourceIndexes = ids.map((_, i) => i)) => ({ presentationId, evidenceId:ids[0], __gridlyPresentationEvidenceRows:ids.map(id => ({ evidenceId:id, providerRecordId:`provider-${id}`, sourceKind:'official_roadway' })), __gridlyPresentationSourceIndexes:sourceIndexes, __gridlyPresentationClusterKey:`official_roadway|construction|road|cluster` });
 
+function buildRealGroups(rows) {
+  const source = app.slice(app.indexOf('function getAlertLocationClusterLabel'), app.indexOf('\n  async function gridlyGetAlertsPresentationCountModelCooperative'));
+  const sandbox = {
+    globalThis: { gridlyAlertSemanticContract: { classify: row => ({ classification: row.situationType }) } },
+    pickFirstNonEmptyText: values => String(values.find(value => value != null && String(value).trim()) || ''),
+    coerceDisplayText: value => String(value || ''),
+    gridlyResolveCountyAwareFallbackLocation: () => 'Texas',
+    gridlyAlertsPresentationSourceClass: row => row.sourceKind || 'official_roadway',
+    gridlyAlertsGroupingRecordHelper: () => {}, gridlyAlertsCooperativeNow: () => 0,
+    gridlyAlertsGroupingMeasure: (_audit, _field, _label, fn) => fn(),
+    gridlyAlertWriterRecordId: (row, index = 0) => String(row.evidenceId || `alert-${index}`)
+  };
+  vm.runInNewContext(`${source}\nthis.buildGroups = gridlyBuildGridlyAlertsPresentationCountModelSync;`, sandbox);
+  return sandbox.buildGroups(rows);
+}
+
+const officialRow = (index, cluster) => ({ evidenceId:`canonical-${index}`, providerRecordId:`provider-${index}`, sourceKind:'official_roadway', situationType:'construction', corridor:`road-${cluster}`, crossingRoad:`cluster-${cluster}`, title:'Construction' });
+
+test('real group create and append paths retain three identities and source indexes', () => {
+  const model = buildRealGroups([officialRow(1, 1), officialRow(2, 1), officialRow(3, 1)]);
+  assert.equal(model.alerts.length, 1);
+  const [presentation] = model.alerts;
+  assert.equal(presentation.__gridlyRepresentedEvidenceCount, 3);
+  assert.deepEqual(Array.from(presentation.__gridlyPresentationEvidenceRows, row => row.evidenceId), ['canonical-1','canonical-2','canonical-3']);
+  assert.deepEqual(Array.from(presentation.__gridlyPresentationSourceIndexes), [0,1,2]);
+  assert.deepEqual(Array.from(presentation.__gridlyGroupAccumulationTrace, row => row.action), ['CREATE_GROUP','APPEND_GROUP_MEMBER','APPEND_GROUP_MEMBER']);
+  assert.ok(presentation.__gridlyGroupAccumulationTrace.every(row => row.memberRetained));
+  assert.equal(presentation.__gridlyPresentationClusterKey, 'official_roadway|construction|road-1|cluster-1');
+  const mapping = buildMapping(model.alerts.map(row => ({...row, presentationId:'p-1'})), [domRow('p-1')]);
+  assert.deepEqual(Array.from(mapping.mapping, row => row.representationRole), ['LEADER','GROUP_MEMBER','GROUP_MEMBER']);
+});
+
+test('real 26 input grouping path retains all identities in 12 groups', () => {
+  const rows = Array.from({length:26}, (_, index) => officialRow(index + 1, (index % 12) + 1));
+  const model = buildRealGroups(rows);
+  assert.equal(model.alerts.length, 12);
+  assert.equal(model.alerts.reduce((sum, row) => sum + row.__gridlyRepresentedEvidenceCount, 0), 26);
+  assert.equal(model.alerts.reduce((sum, row) => sum + row.__gridlyPresentationEvidenceRows.length, 0), 26);
+  assert.equal(new Set(model.alerts.flatMap(row => row.__gridlyPresentationEvidenceRows.map(member => member.evidenceId))).size, 26);
+});
+
 test('three canonical identities expand to one leader and two grouped mappings without cards', () => {
   const output = buildMapping([group('p-1', ['a','b','c'])], [domRow('p-1')]);
   assert.equal(output.mapping.length, 3);
