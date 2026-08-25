@@ -72,3 +72,33 @@ test('LP039.3 publishes the raw provider record identity for governed admission'
   assert.match(integration, /providerRecordId: record\.providerRecordId \|\| record\.sourceProviderRecordId/);
   assert.doesNotMatch(integration, /providerRecordId:\s*(?:record\.)?routeName/);
 });
+
+test('LP234 joins governed Alerts identity through the LP223 writer mapping without changing presentation', () => {
+  const fs = require('node:fs');
+  const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
+  const audit = app.slice(app.indexOf('window.gridlyLP234DriveTexasGovernedPropagationAudit'), app.indexOf('/* LP221:'));
+  assert.match(audit, /gridlyAlertsAuthorityWriterAudit/);
+  assert.match(audit, /alertsCanonicalToPresentationMapping/);
+  assert.match(audit, /identity\.canonicalId === governed\?\.evidenceId/);
+  assert.match(audit, /authoritative_governed_to_presentation_mapping/);
+  assert.match(audit, /alertsPresentationIncidentId/);
+  assert.match(audit, /alertsDomPresentationIds\.includes\(alertsPresentationIncidentId\)/);
+  assert.doesNotMatch(audit, /textContent|innerHTML|outerHTML|MutationObserver|setTimeout|setInterval/,
+    'passive proof neither scrapes markup nor schedules/mutates the DOM');
+  assert.doesNotMatch(audit, /renderCompleteAlertCard|gridlyRecordAlertsWriterInvocation|\.appendChild|\.setAttribute/,
+    'LP234 does not enter the Alerts writer');
+});
+
+test('LP234 classifies Location Context collection/count divergence instead of forcing equality', () => {
+  const fs = require('node:fs');
+  const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
+  const audit = app.slice(app.indexOf('window.gridlyLP234DriveTexasGovernedPropagationAudit'), app.indexOf('/* LP221:'));
+  assert.match(audit, /locationContextPostDedupItems/);
+  assert.match(audit, /locationContextUncountedItems/);
+  assert.match(audit, /entry\?\.matchStatus === "MATCHED_GOVERNED"/);
+  assert.match(audit, /retained diagnostic collection member is not governed active count evidence/);
+  assert.doesNotMatch(audit, /locationContextPostDedupCardinality === result\.locationContextProductionCount/);
+  assert.match(audit, /result\.firstLosingStage === null/);
+  assert.match(audit, /!result\.alertsDomMounted \|\| result\.targetPresentInAlertsDom/,
+    'a closed sheet is not a propagation failure, while mounted DOM must prove the mapped target');
+});
