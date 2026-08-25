@@ -46,6 +46,9 @@ test("Phase 2.1 artifact remains immutable while later repairs stay outside prot
   const changed = execFileSync("git", ["diff", "--name-only", "--", "js"], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
   const allowedConsumerBoundaries = new Set([
     "js/app.js",
+    // LP235 resolves LP233 crossing IDs through a static FRA record index for
+    // the map consumer; it does not touch DriveTexas provider authority.
+    "js/gridlyCanonicalCrossingRuntime.js",
     // LP223 extends the consumer-only governed diagnostic and does not alter
     // DriveTexas fetching, normalization, identity, or publication.
     "js/governed-awareness.js",
