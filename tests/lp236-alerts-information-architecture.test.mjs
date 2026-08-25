@@ -90,7 +90,7 @@ test('LP236.11 condition geometry stays usable at 320/360/390/430px', () => {
   assert.match(css, /\.gridly-lp236-groups \{[^}]*grid-template-columns:minmax\(0, 1fr\); width:100%; min-width:0; box-sizing:border-box/);
   assert.match(css, /\.gridly-lp236-roadway-group \{[^}]*width:100%; min-width:0; max-width:100%; box-sizing:border-box/);
   assert.match(css, /\.gridly-lp236-roadway-rows \{[^}]*width:100%; min-width:0; box-sizing:border-box/);
-  assert.match(isolatedCss, /\.gridly-lp236-condition-item \{[^}]*position:static; display:block; float:none; width:100%; min-width:0; max-width:none; box-sizing:border-box;[^}]*overflow:visible; contain:none; transform:none/);
+  assert.match(isolatedCss, /\.gridly-lp236-condition-item \{[^}]*position:static; display:grid;[^}]*grid-template-areas:"condition-copy" "condition-actions";[^}]*float:none; width:100%; min-width:0; max-width:none; box-sizing:border-box;[^}]*overflow:visible; contain:none; transform:none/);
   assert.match(isolatedCss, /\.gridly-lp236-condition-body \{[^}]*width:100%; min-width:0; max-width:none; box-sizing:border-box; overflow:visible/);
   assert.doesNotMatch(isolatedCss, /\.gridly-lp236-condition-body\s*\{[^}]*(?:width|min-width|inline-size):\s*24px/);
   assert.match(isolatedCss, /\.gridly-lp236-condition-body > :is\(strong, span\) \{[^}]*display:block;[^}]*width:auto; min-width:0; max-width:none/);
@@ -107,10 +107,26 @@ test('LP236.11 condition geometry stays usable at 320/360/390/430px', () => {
 });
 
 test('LP236.10 mobile rows are vertical with a non-competing action line', () => {
-  assert.match(css, /\.gridly-lp236-condition-actions \{[^}]*position:static; display:flex; width:100%; min-width:0; box-sizing:border-box; justify-content:flex-end/);
+  assert.match(css, /\.gridly-lp236-condition-actions \{[^}]*grid-area:condition-actions;[^}]*position:static; display:flex;[^}]*width:100%; min-width:0; min-height:44px; box-sizing:border-box; justify-content:flex-end/);
   assert.match(css, /\.gridly-lp236-show-me \{[^}]*min-height:44px/);
   assert.match(app, /gridly-lp236-condition-body[\s\S]*gridly-lp236-condition-actions/);
   assert.doesNotMatch(app.slice(app.indexOf('const renderRow'), app.indexOf('const renderGroup')), /View details|<details|gridly-lp236-row-main|gridly-lp236-row-copy/);
+});
+
+test('LP236.14 gives Show me an owned physical grid row and browser hit-test audit', () => {
+  const isolatedCss = css.slice(css.indexOf('/* LP236.11 condition isolation'), css.indexOf('.gridly-lp236-critical'));
+  assert.match(isolatedCss, /\.gridly-lp236-condition-item \{[^}]*display:grid;[^}]*grid-template-rows:auto auto;[^}]*grid-template-areas:"condition-copy" "condition-actions"/);
+  assert.match(isolatedCss, /\.gridly-lp236-condition-body \{[^}]*grid-area:condition-copy;[^}]*position:static/);
+  assert.match(isolatedCss, /\.gridly-lp236-condition-actions \{[^}]*grid-area:condition-actions;[^}]*position:static;[^}]*min-height:44px/);
+  assert.match(isolatedCss, /\.gridly-lp236-show-me \{[^}]*position:static;[^}]*min-width:74px; min-height:44px;[^}]*transform:none/);
+  assert.doesNotMatch(isolatedCss, /position:absolute|margin-top:-|translate|z-index/);
+  for (const copyClass of ['roadway', 'title', 'summary', 'time']) {
+    assert.match(isolatedCss, new RegExp(`\\.gridly-lp236-condition-${copyClass}`));
+  }
+  for (const proof of ['getBoundingClientRect', 'document.elementFromPoint', 'rect.left + inset', 'rect.width / 2', 'rect.right - inset', 'bodyRect.bottom <= actionRect.top', 'showMePhysicalHitTargetPass']) {
+    assert.match(source, new RegExp(proof.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  assert.match(source, /showMePhysicalHitTargetPass && showMeBehaviorPass !== false/);
 });
 
 test('LP236.9 uses the trusted roadway formatter without truncating route identity', () => {
