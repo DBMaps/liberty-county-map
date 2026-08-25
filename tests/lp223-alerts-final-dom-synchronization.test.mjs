@@ -179,6 +179,7 @@ test('single, update, quiet, clear, and repeated refresh controls converge witho
 test('writer continues to use portrait sheet pipeline rather than ad hoc row insertion', () => {
   const writer = block('async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync', 'function invokeMobileAlertsEntry');
   assert.match(writer, /window\.openGridlyPortraitV2Sheet\("alerts"/);
-  assert.match(writer, /renderAlertCard\(alert, index, isHidden\)/);
+  assert.match(writer, /gridlyLP236RenderAlertsPresentation\(snapshot, alertsForRender\)/);
+  assert.doesNotMatch(writer.slice(writer.indexOf('\/\/ LP236 owns the presentation projection')), /renderAlertCard\(alert, index, isHidden\)/);
   assert.doesNotMatch(writer, /createElement\(['"](?:article|div)['"]\)/);
 });

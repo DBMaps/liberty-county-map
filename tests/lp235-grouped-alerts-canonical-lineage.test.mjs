@@ -155,7 +155,7 @@ test('LP235.4C retains grouped lineage through normalization and completed conte
   const renderPipeline = app.slice(app.indexOf('alertsOpenRenderContext = {'), app.indexOf('return opened;', app.indexOf('alertsOpenRenderContext = {')));
   assert.match(renderPipeline, /POST_GROUP_BUILD/);
   assert.match(renderPipeline, /POST_PRESENTATION_NORMALIZATION/);
-  assert.match(renderPipeline, /PRE_RENDER_COMPLETE_ALERT_CARD/);
+  assert.match(renderPipeline, /PRE_LP236_PRESENTATION/);
   assert.match(renderPipeline, /COMPLETED_RENDER_CONTEXT/);
   assert.match(renderPipeline, /presentationModel = \{ \.\.\.presentationCountModel, alerts: presentationAlerts \}/);
   assert.match(renderPipeline, /lastCompletedRenderContext = alertsOpenRenderContext/);
