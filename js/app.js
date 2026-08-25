@@ -33041,6 +33041,45 @@ function gridlyAlertsGetAuditRenderContext() {
     || null;
 }
 
+// LP235.4C keeps a bounded, source-backed lineage snapshot at each existing
+// presentation boundary.  It never consults the DOM and performs no work
+// outside an Alerts render or a passive audit of the completed context.
+function gridlySummarizeAlertsGroupedLineage(stage, rows = [], writerRows = []) {
+  const expectedCanonicalIds = writerRows.map((row, index) => gridlyAlertWriterRecordId(row, index));
+  const representedCanonicalIds = [];
+  const representedProviderIds = [];
+  let groupsMissingEvidenceRows = 0;
+  const groups = rows.map((row, presentationIndex) => {
+    const hasEvidenceRows = Array.isArray(row?.__gridlyPresentationEvidenceRows) && row.__gridlyPresentationEvidenceRows.length > 0;
+    const evidenceRows = hasEvidenceRows ? row.__gridlyPresentationEvidenceRows : [row];
+    const sourceIndexes = Array.isArray(row?.__gridlyPresentationSourceIndexes) ? row.__gridlyPresentationSourceIndexes : [];
+    if (!hasEvidenceRows) groupsMissingEvidenceRows += 1;
+    const canonicalIds = evidenceRows.map((evidence, evidenceIndex) => gridlyAlertWriterRecordId(evidence, sourceIndexes[evidenceIndex] ?? evidenceIndex));
+    const providerIds = evidenceRows.map((evidence) => String(evidence?.providerRecordId || evidence?.provider_record_id || evidence?.sourceId || evidence?.source_id || evidence?.raw?.providerRecordId || "").trim()).filter(Boolean);
+    representedCanonicalIds.push(...canonicalIds);
+    representedProviderIds.push(...providerIds);
+    return Object.freeze({
+      presentationIndex,
+      clusterKey: String(row?.__gridlyPresentationClusterKey || "").trim() || null,
+      leaderCanonicalId: gridlyAlertWriterRecordId(row, presentationIndex),
+      evidenceRowCount: evidenceRows.length,
+      representedCanonicalIds: Object.freeze(canonicalIds),
+      representedProviderIds: Object.freeze(providerIds),
+      sourceIndexes: Object.freeze(sourceIndexes.slice())
+    });
+  });
+  const uniqueCanonicalIds = [...new Set(representedCanonicalIds.filter(Boolean))];
+  return Object.freeze({
+    stage,
+    groupCount: rows.length,
+    representedCanonicalCount: uniqueCanonicalIds.length,
+    representedProviderCount: new Set(representedProviderIds).size,
+    groupsMissingEvidenceRows,
+    missingCanonicalIds: Object.freeze([...new Set(expectedCanonicalIds.filter((id) => id && !uniqueCanonicalIds.includes(id)))]),
+    groups: Object.freeze(groups)
+  });
+}
+
 function gridlyAlertsWithActiveRenderContext(context = {}, fn) {
   const priorContext = gridlyAlertsOpenPerformanceAuditState.activeRenderContext;
   gridlyAlertsOpenPerformanceAuditState.activeRenderContext = context && typeof context === "object" ? context : null;
@@ -37405,10 +37444,11 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         runId: gridlyAlertsOpenAuditActive()?.runId || null,
         snapshot,
         alerts: alertsForRender,
-        presentationModel: presentationCountModel
+        presentationModel: presentationCountModel,
+        groupedLineageStages: []
       };
       gridlyAlertsOpenPerformanceAuditState.activeRenderContext = alertsOpenRenderContext;
-      gridlyAlertsOpenPerformanceAuditState.lastCompletedRenderContext = alertsOpenRenderContext;
+      alertsOpenRenderContext.groupedLineageStages.push(gridlySummarizeAlertsGroupedLineage("POST_GROUP_BUILD", presentationCountModel.alerts, alertsForRender));
       if (!(await cooperativeYieldOrCancel(true, "cancelled_after_presentation_model"))) return false;
       const rawPresentationAlerts = await cooperativePhase("presentationGroupingMs", async () => gridlyAlertsOpenAuditMeasure("situation clustering", () => gridlyLp016AlertsPostPaintDelayMeasure("buildAlertPresentationGroups fallback", "presentation", () => presentationCountModel.alerts.length ? presentationCountModel.alerts : buildAlertPresentationGroups(alertsForRender), { inputCount: alertsForRender.length }), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "authoritative Alerts situation grouping" }));
       const presentationAlerts = rawPresentationAlerts.map(alert => {
@@ -37420,6 +37460,12 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
           __gridlyCanonicalPresentation: presentation
         };
       });
+      alertsOpenRenderContext.groupedLineageStages.push(gridlySummarizeAlertsGroupedLineage("POST_PRESENTATION_NORMALIZATION", presentationAlerts, alertsForRender));
+      // The normalized records are the durable presentation authority. The
+      // spread above retains all three enumerable grouping-lineage fields;
+      // caching this exact array prevents the earlier pre-normalization model
+      // summary from becoming LP223's completed-context input.
+      alertsOpenRenderContext.presentationModel = { ...presentationCountModel, alerts: presentationAlerts };
       cooperativeBuildAudit.itemCount = presentationAlerts.length;
       membershipAuditState.presentationIds = membershipIds(presentationAlerts, window.gridlyLP226PresentationId);
       window.__gridlyLP226PresentationMembership = Object.freeze({
@@ -37443,6 +37489,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       }
       const visibleRowParts = [];
       const hiddenRowParts = [];
+      alertsOpenRenderContext.groupedLineageStages.push(gridlySummarizeAlertsGroupedLineage("PRE_RENDER_COMPLETE_ALERT_CARD", presentationAlerts, alertsForRender));
       for (let index = 0; index < presentationAlerts.length; index += 1) {
         const alert = presentationAlerts[index];
         const isHidden = index >= 3;
@@ -37540,6 +37587,8 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       if (opened) {
         gridlyAlertsSheetLifecycleState.latestAppliedGeneration = alertsSheetGeneration;
         gridlyFinalizeAlertsSheetGeneration(alertsSheetGeneration, "applied");
+        alertsOpenRenderContext.groupedLineageStages.push(gridlySummarizeAlertsGroupedLineage("COMPLETED_RENDER_CONTEXT", alertsOpenRenderContext.presentationModel.alerts, alertsForRender));
+        gridlyAlertsOpenPerformanceAuditState.lastCompletedRenderContext = alertsOpenRenderContext;
       }
       gridlyAlertsOpenAuditRecordPhase("DOM insertion", domInsertStarted, gridlyAlertsOpenAuditNow(), { opened: Boolean(opened) });
       const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
@@ -122785,6 +122834,12 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     representedProviderIds: presentation.providerRecordIdsRepresented,
     representationCount: presentation.canonicalIdsRepresented.length
   }));
+  const retainedStages = Array.isArray(auditRenderContext?.groupedLineageStages) ? auditRenderContext.groupedLineageStages : [];
+  const mappingBuilderInputStage = gridlySummarizeAlertsGroupedLineage("MAPPING_BUILDER_INPUT", finalRows, writerInputs);
+  const groupedLineageStageAudit = Object.freeze([...retainedStages, mappingBuilderInputStage]);
+  const stageCount = (stage) => groupedLineageStageAudit.find((entry) => entry.stage === stage)?.representedCanonicalCount ?? 0;
+  const firstCompleteCount = groupedLineageStageAudit[0]?.representedCanonicalCount ?? 0;
+  const groupedLineageFirstLosingStage = groupedLineageStageAudit.find((entry) => entry.representedCanonicalCount < firstCompleteCount)?.stage || null;
   const overallPass = Boolean(writerInputs.length === authorityRows.length && presentationIdentityCoveragePass && groupedLineageCoveragePass
     && mappingCount === writerInputs.length && dispositionCount("MISSING_REQUIRED_FIELD") === 0 && writerAudit.parity === true);
   const inputCanonicalIds = [...inputById.keys()];
@@ -122818,6 +122873,14 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     unaccountedWriterCanonicalIds: Object.freeze(unaccountedWriterCanonicalIds), presentationCoverageCanonicalIds: Object.freeze(presentationCoverageCanonicalIds), presentationCoverageCount: presentationCoverageCanonicalIds.length, presentationIdentityCoveragePass,
     groupedPresentationLineage: Object.freeze(groupedPresentationLineage), canonicalToPresentationMappingUniqueCanonicalCount: mappedCanonicalIds.length,
     canonicalToPresentationMappingDuplicatePairs: Object.freeze(canonicalToPresentationMappingDuplicatePairs), groupedLineageCoveragePass,
+    groupedLineageStageAudit,
+    postGroupBuildRepresentedCanonicalCount: stageCount("POST_GROUP_BUILD"),
+    preRenderRepresentedCanonicalCount: stageCount("PRE_RENDER_COMPLETE_ALERT_CARD"),
+    postNormalizationRepresentedCanonicalCount: stageCount("POST_PRESENTATION_NORMALIZATION"),
+    completedRenderContextRepresentedCanonicalCount: stageCount("COMPLETED_RENDER_CONTEXT"),
+    mappingBuilderInputRepresentedCanonicalCount: stageCount("MAPPING_BUILDER_INPUT"),
+    groupedLineageFirstLosingStage,
+    groupsMissingEvidenceRowsAtCompletedContext: groupedLineageStageAudit.find((entry) => entry.stage === "COMPLETED_RENDER_CONTEXT")?.groupsMissingEvidenceRows ?? 0,
     writerParity: writerAudit.parity === true, writerParityAuthority: "GROUPED_CANONICAL_TO_PRESENTATION_IDENTITY_COVERAGE",
     presentationCap: null, presentationCapApplied: false, genericPresentationIdCount,
     firstLosingStage: overallPass ? "DOM_PARITY_PASS" : (!presentationIdentityCoveragePass || !groupedLineageCoveragePass ? "CANONICAL_MAPPING_INSERTION" : "PRESENTATION_COMPLETENESS_FAILURE"), overallPass
