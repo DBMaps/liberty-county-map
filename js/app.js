@@ -36249,9 +36249,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     const html = renderedHtml ?? window.gridlyLP236RenderAlertsPresentation(authoritySnapshot, alerts);
     const authorityAvailable = authoritySnapshot?.activeConditionAuthorityAvailable === true;
     gridlyLP236AlertsOpenAuditState.authorityState = authorityAvailable ? (alerts.length ? "AVAILABLE_NONEMPTY" : "AVAILABLE_EMPTY") : "UNAVAILABLE";
-    const title = authorityAvailable
-      ? (alerts.length ? `${alerts.length} active condition${alerts.length === 1 ? "" : "s"}` : "No Active Alerts")
-      : "Alerts unavailable";
+    const title = authorityAvailable && !alerts.length ? "No Active Alerts" : (authorityAvailable ? "Alerts" : "Alerts unavailable");
     gridlyLP236AlertsOpenAuditState.writerInvoked = true;
     gridlyLP236AlertsOpenAuditState.writerInvocationCount += 1;
     const writerResult = window.openGridlyPortraitV2Sheet("alerts", {
@@ -38217,7 +38215,7 @@ function bindBottomDockRealButtons() {
       event.stopPropagation();
       if (intent === 'report') return invokeMobileReportEntry?.('bottom_dock_runtime_bind', event);
       if (intent === 'route') return openGridlyRouteDock('bottom_dock_runtime_bind');
-      if (intent === 'alerts') return openAlertsSurfaceFromDock();
+      if (intent === 'alerts') return isTacticalLandscapeDockMode() ? undefined : invokeMobileAlertsEntry('bottom_dock_runtime_bind', event);
       if (intent === 'layers') return openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.();
     }, true);
     button.dataset[boundKey] = 'true';
@@ -88234,7 +88232,7 @@ function bindEvents() {
   });
   if (document.getElementById("mobileDockRouteBtn")) document.getElementById("mobileDockRouteBtn").dataset.gridlyRouteDockBound = "true";
   document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
-    if (!isTacticalLandscapeDockMode()) return invokeMobileAlertsEntry("mobile_dock_alerts");
+    if (!isTacticalLandscapeDockMode()) return;
     const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {
       const latest = incident?.latestReport || {};
       return `<article class="gridly-tactical-alert-row"><strong>${sanitizeText(incident?.crossingName || "Incident")}</strong><p>${sanitizeText(getReportCopy(latest.type).label)} · ${sanitizeText(getReportStateLabel(latest))}</p></article>`;
@@ -114817,7 +114815,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const open = model.total === 1 || source.sourceClass === model.firstSource;
       return `<details class="gridly-lp236-source" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active conditions"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active conditions">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${source.groups.map((group) => renderGroup(group, source)).join("")}</div></details>`;
     }).join("");
-    return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong>Alerts</strong><span aria-label="${model.total} active conditions">${model.total} active condition${model.total === 1 ? "" : "s"}</span></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
+    return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong aria-label="${model.total} active condition${model.total === 1 ? "" : "s"}">${model.total} active condition${model.total === 1 ? "" : "s"}</strong></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
   }
   window.gridlyLP236RenderAlertsPresentation = (snapshot, suppliedAlerts = null) => {
     try {

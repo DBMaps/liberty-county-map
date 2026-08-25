@@ -63,8 +63,40 @@ test('critical callouts require weather source and governed severity', () => {
 test('markup preserves compact detail, Show me, empty omission, and accessible native disclosure', () => {
   for (const token of ['gridly-lp236-source', 'gridly-lp236-group', 'gridly-lp236-condition-details', 'gridly-alert-show-on-map', 'aria-label=', '<details', '<summary']) assert.match(app, new RegExp(token));
   assert.match(css, /min-height:48px/);
-  assert.match(css, /overflow-wrap:anywhere/);
+  assert.match(css, /\.gridly-lp236-row-copy \{[^}]*flex:1 1 0/);
+  assert.match(css, /\.gridly-lp236-row-copy \{[^}]*overflow-wrap:normal; word-break:normal/);
+  assert.match(css, /\.gridly-lp236-condition-details \{[^}]*max-width:100%/);
+  assert.match(css, /\.gridly-lp236-condition-details p \{[^}]*overflow-wrap:break-word; word-break:normal/);
+  assert.doesNotMatch(css, /\.gridly-lp236-row-copy \{[^}]*overflow-wrap:anywhere/);
   assert.match(app, /filter\(\(section\) => section\.activeConditionCount > 0\)/);
+});
+
+test('compact rows retain width and containment at supported portrait widths', () => {
+  assert.match(css, /\.gridly-lp236-row-main \{[^}]*max-width:100%/);
+  assert.match(css, /@media \(max-width:420px\)/);
+  for (const width of [320, 360, 390, 430]) {
+    assert.ok(width >= 320);
+    assert.doesNotMatch(css, new RegExp(`width:${width + 1}px`));
+  }
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'long-road', sourceClass: 'official_roadway', category: 'Lane Closure', location: 'North President George Bush Turnpike Frontage Road', lat: 32.9, lng: -96.7 }]);
+  assert.match(rendered, /North President George Bush Turnpike Frontage Road/);
+  assert.match(rendered, /gridly-lp236-condition-details/);
+  assert.match(rendered, /Show me/);
+});
+
+test('sheet and content expose one primary count without repeating Alerts', () => {
+  const transaction = app.slice(app.indexOf('async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync'), app.indexOf('function invokeMobileAlertsEntry'));
+  assert.match(transaction, /authorityAvailable \? "Alerts"/);
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'one', sourceClass: 'official_roadway' }]);
+  assert.match(rendered, /<header class="gridly-lp236-header"><strong aria-label="1 active condition">1 active condition<\/strong>/);
+  assert.doesNotMatch(rendered, /<strong>Alerts<\/strong>/);
+});
+
+test('mobile Alerts entry owns one transaction and passive audit does not span prior opens', () => {
+  const binding = app.slice(app.indexOf('function bindBottomDockRealButtons'), app.indexOf('function setMobileUiMode'));
+  const tacticalBinding = app.slice(app.indexOf('document.getElementById("mobileDockAlertsBtn")?.addEventListener'), app.indexOf('document.getElementById("mobileHeaderSettingsBtn")'));
+  assert.match(binding, /isTacticalLandscapeDockMode\(\) \? undefined : invokeMobileAlertsEntry\('bottom_dock_runtime_bind', event\)/);
+  assert.doesNotMatch(tacticalBinding, /invokeMobileAlertsEntry|openAlertsSurfaceFromDock/);
 });
 
 test('LP236 is a bounded passive presentation and protected systems remain untouched', () => {
