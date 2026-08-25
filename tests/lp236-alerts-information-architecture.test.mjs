@@ -545,3 +545,51 @@ test('LP236.15 remains family-neutral and preserves approved presentation constr
   const minimize = app.slice(app.indexOf('function minimizePortraitV2Sheet'), app.indexOf('function closePortraitV2Sheet'));
   assert.doesNotMatch(minimize, /fetch\(|setInterval|setTimeout|Dallas|town/i);
 });
+
+test('LP236.16 canonical official-roadway identity deterministically resolves the governed provider record', () => {
+  const runtime = {
+    window: { __gridlyLatestAlertsForRender: [] },
+    normalizeCoordinatePair: (lat, lng) => Number.isFinite(Number(lat)) && Number.isFinite(Number(lng)) ? { lat: Number(lat), lng: Number(lng) } : null,
+    findGridlyAlertMarker: () => null,
+    Object
+  };
+  const functionSource = name => {
+    const start = app.indexOf(`function ${name}`);
+    const next = app.indexOf('\nfunction ', start + 10);
+    return app.slice(start, next);
+  };
+  vm.runInNewContext([
+    functionSource('gridlyLp019SafeText'), functionSource('gridlyLp019IdentityCandidates'),
+    functionSource('gridlyLp019OfficialCoords'), functionSource('gridlyLp019ResolveAlertRecord'),
+    functionSource('gridlyResolveAlertShowOnMapTarget'),
+    'this.candidates = gridlyLp019IdentityCandidates; this.resolve = gridlyResolveAlertShowOnMapTarget;'
+  ].join('\n'), runtime);
+  const uuid = '8DCC004A-59A4-46B7-8D42-0070A8E0FF0F';
+  const record = { id: uuid, providerRecordId: uuid, providerId: 'drivetexas', latitude: 32.8, longitude: -96.8 };
+  runtime.window.__gridlyLatestAlertsForRender = [record];
+  assert.ok(runtime.candidates(`official_roadway:${uuid}`).includes(uuid));
+  const target = runtime.resolve(record, `official_roadway:${uuid}`);
+  assert.equal(target.record, record);
+  assert.deepEqual({ ...target.coords }, { lat: 32.8, lng: -96.8 });
+  assert.equal(target.targetType, 'governed_coordinates');
+});
+
+test('LP236.16 governed coordinate authority supports nested coordinates and source geometry without text or fetch fallback', () => {
+  const resolver = app.slice(app.indexOf('function gridlyLp019OfficialCoords'), app.indexOf('\nfunction gridlyLp019ReadDriveTexasRecords'));
+  assert.match(resolver, /record\?\.coordinates/);
+  assert.match(resolver, /record\?\.sourceGeometry/);
+  assert.match(resolver, /LineString/);
+  assert.doesNotMatch(resolver, /location|description|title|geocode|fetch\(/i);
+  const renderer = app.slice(app.indexOf('function gridlyLP236MapTarget'), app.indexOf('function gridlyLP236CaptureDisclosureState'));
+  assert.match(renderer, /gridlyResolveAlertShowOnMapTarget/);
+  assert.match(renderer, /return governedTarget\?\.coords \|\| \{ lat: null, lng: null \}/);
+});
+
+test('LP236.16 audit certifies rendered-action resolver parity and bounded lookup diagnostics', () => {
+  const lp236 = app.slice(app.indexOf('function gridlyLP236AlertsInformationArchitectureAudit'), app.indexOf('function gridlyLP236RenderAlertsPresentation'));
+  for (const field of ['showMeResolvableConditionCount', 'showMeUnresolvableConditionIds', 'showMeEligibilityResolutionParityPass', 'showMeLastRecordLookupId', 'showMeLastRecordLookupSucceeded']) assert.match(lp236, new RegExp(field));
+  assert.match(lp236, /showMeCoveragePass && showMeEligibilityResolutionParityPass/);
+  const handler = app.slice(app.indexOf('function gridlyLp019BindAlertFocusHandlers'), app.indexOf('if (typeof window !== "undefined")', app.indexOf('function gridlyLp019BindAlertFocusHandlers')));
+  assert.match(handler, /recordLookupSucceeded: Boolean\(record\)/);
+  assert.doesNotMatch(handler, /fetch\(|geocode|Dallas/);
+});
