@@ -324,6 +324,33 @@ test('audit exposes active-condition authority, lineage counts, and quiet-state 
   assert.match(lp236, /overallPass: Boolean\(root\) && quietStateAuthorityPass/);
 });
 
+test('LP236.12 supplies governed community and weather records before source partitioning', () => {
+  const governed = fs.readFileSync(new URL('../js/governed-awareness.js', import.meta.url), 'utf8');
+  const handoff = app.slice(app.indexOf('function gridlyGetGovernedConsumerProjection'), app.indexOf('function gridlyGetGovernedActiveAwarenessRows'));
+  assert.match(handoff, /gridlySelectConsumerVisibleWeatherSituations/);
+  assert.match(handoff, /sourceKind: "weather_provider"/);
+  assert.match(governed, /const WEATHER_POLICY = Object\.freeze\([^;]*alerts: true/);
+  for (const subtype of ['rail_crossing_issue', 'disabled_vehicle', 'flooded_road', 'closed_road']) assert.match(governed, new RegExp(`${subtype}:[^\\n]+alerts: true`));
+  assert.doesNotMatch(handoff, /Dallas|Austin|Corpus Christi|San Antonio|fetch\(|setInterval|setTimeout/);
+});
+
+test('LP236.12 audit reports exact per-family and Show me coverage', () => {
+  const lp236 = app.slice(app.indexOf('// LP236 is a presentation projection'), app.indexOf('function escapeV2SettingsText'));
+  for (const field of ['governedAlertsInputCount', 'officialRoadwayInputCount', 'communityReportInputCount', 'weatherInputCount', 'officialRoadwayRenderedCount', 'communityReportRenderedCount', 'weatherRenderedCount', 'missingOfficialRoadwayIds', 'missingCommunityReportIds', 'missingWeatherIds', 'showMeEligibleConditionCount', 'showMeRenderedActionCount', 'showMeMissingConditionIds', 'sourceCoveragePass', 'showMeCoveragePass', 'identityCoveragePass', 'overallPass']) assert.match(lp236, new RegExp(field));
+});
+
+test('LP236.12 Show me uses governed nested coordinates and preserves the sheet', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [
+    { id: 'nested', sourceClass: 'community_report', category: 'High Water', raw: { latitude: 32.8, longitude: -96.8 } },
+    { id: 'area', sourceClass: 'weather', event: 'Flood Warning' }
+  ]);
+  assert.match(rendered, /data-gridly-alert-lat="32.8" data-gridly-alert-lng="-96.8"[\s\S]*Show me/);
+  assert.equal((rendered.match(/>Show me<\/button>/g) || []).length, 1);
+  const clickBinding = app.slice(app.indexOf('const bindAlertsPanelClick'), app.indexOf('const normalizeToken'));
+  assert.match(clickBinding, /preserveSurface: true/);
+  assert.match(app, /focus\?\.preserveSurface !== true/);
+});
+
 
 test('LP236.9 real DriveTexas field contract is narrow and proven', () => {
   const provider = fs.readFileSync(new URL('../js/gridlyDriveTexasProvider.js', import.meta.url), 'utf8');
