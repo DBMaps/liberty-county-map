@@ -12,7 +12,7 @@ const sandbox = {
   gridlyAlertsPresentationSourceClass: row => row.sourceClass,
   exposeGridlyAuditHelper: () => {}
 };
-vm.runInNewContext(`${source}\nthis.buildLP236 = gridlyLP236BuildModel;`, sandbox);
+vm.runInNewContext(`${source}\nthis.buildLP236 = gridlyLP236BuildModel; this.auditLP236 = gridlyLP236AlertsInformationArchitectureAudit;`, sandbox);
 const build = rows => sandbox.buildLP236(rows, { authoritativeMembership: { community: 'Dallas' } });
 
 test('top and section counts use governed active identities rather than presentation cards', () => {
@@ -66,4 +66,28 @@ test('LP236 is a bounded passive presentation and protected systems remain untou
   assert.match(lp236, /gridlyFilterAlertRecordsBySelectedAwarenessArea/);
   assert.match(lp236, /gridlyLp0952ResolveCrossingAlertTarget/);
   for (const field of ['totalActiveConditionCount', 'sections', 'criticalCalloutCount', 'officialRoadwayConditionCount', 'communityReportConditionCount', 'weatherConditionCount', 'displayedConditionIdentityCount', 'unrepresentedConditionIds', 'duplicateDisplayedConditionIds', 'sourceSemanticsPass', 'countSemanticsPass', 'identityCoveragePass', 'showMeActionCount', 'emptySectionsRendered', 'accessibilityPass', 'overallPass']) assert.match(lp236, new RegExp(field));
+});
+
+test('production Alerts writer mounts LP236 through the existing single DOM writer', () => {
+  const writer = app.slice(app.indexOf('async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync'), app.indexOf('function invokeMobileAlertsEntry'));
+  assert.match(writer, /gridlyLP236RenderAlertsPresentation\(snapshot, alertsForRender\)/);
+  assert.equal((writer.match(/openGridlyPortraitV2Sheet\("alerts"/g) || []).length, 1);
+  assert.doesNotMatch(writer.slice(writer.indexOf('// LP236 owns the presentation projection')), /renderAlertCard\(alert, index, isHidden\)/);
+  assert.match(writer, /title: `\$\{alertsForRender\.length\} active condition/);
+});
+
+test('LP236 audit fails closed with an array when mounted authority is unavailable', () => {
+  const audit = sandbox.auditLP236();
+  assert.equal(audit.authorityAvailable, false);
+  assert.equal(typeof audit.authorityReason, 'string');
+  assert.ok(audit.authorityReason.length > 0);
+  assert.deepEqual(Array.from(audit.sections), []);
+});
+
+test('live hierarchy renderer consumes supplied governed conditions without refetching', () => {
+  const renderer = app.slice(app.indexOf('function gridlyLP236RenderAlertsPresentation'), app.indexOf('\n  function buildAlertsSurfaceHtml'));
+  for (const token of ['gridly-lp236-group', 'gridly-lp236-condition', 'Show me', 'Details']) assert.match(renderer, new RegExp(token));
+  for (const sourceLabel of ['Official Roadways', 'Community Reports', 'Weather']) assert.match(source, new RegExp(sourceLabel));
+  assert.match(renderer, /Array\.isArray\(suppliedAlerts\) \? suppliedAlerts/);
+  assert.doesNotMatch(renderer, /fetch\(|setTimeout|setInterval|RenderCompleteAlertCard|Dallas/);
 });

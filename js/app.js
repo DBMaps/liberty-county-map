@@ -37497,55 +37497,26 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         }
         if (!(await cooperativeYieldOrCancel(false, "cancelled_during_card_model_hydration"))) return false;
       }
-      const visibleRowParts = [];
-      const hiddenRowParts = [];
-      alertsOpenRenderContext.groupedLineageStages.push(gridlySummarizeAlertsGroupedLineage("PRE_RENDER_COMPLETE_ALERT_CARD", presentationAlerts, alertsForRender));
-      for (let index = 0; index < presentationAlerts.length; index += 1) {
-        const alert = presentationAlerts[index];
-        const isHidden = index >= 3;
-        const rendered = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "renderAlertCard total", () => renderAlertCard(alert, index, isHidden), { hidden: isHidden });
-        if (isHidden) hiddenRowParts.push(rendered); else visibleRowParts.push(rendered);
-        if (!(await cooperativeYieldOrCancel(false, "cancelled_during_card_html_generation"))) return false;
-      }
-      if (!(await cooperativeYieldOrCancel(true, "cancelled_after_card_html_generation"))) return false;
-      const renderedRows = gridlyAlertsOpenAuditMeasure("DOM generation", () => ({
-        rows: visibleRowParts.join(""),
-        hiddenRows: hiddenRowParts.join("")
-      }), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "authoritative card markup generation", domMutationOccurred: false });
-      const rows = renderedRows.rows;
-      const hiddenRows = renderedRows.hiddenRows;
-      gridlyAlertsOpenAuditSetMetadata({ presentationCount: presentationAlerts.length, renderedCardCount: Math.min(3, presentationAlerts.length) });
-      const preInsertionStarted = gridlyAlertsOpenAuditNow();
-
-      const extra = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "hidden-row expand markup", () => presentationAlerts.length > 3
-        ? `<div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-expand="true" data-gridly-alert-expanded-secondary="true" style="margin-top:6px;padding:10px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:11px;background:rgba(255,255,255,0.018);text-align:center;cursor:pointer;"><small style="font-size:11px;line-height:1.35;color:rgba(206,218,235,0.85);letter-spacing:0.02em;"><strong style="color:#f2f6ff;">+ ${presentationAlerts.length - 3} more alert${presentationAlerts.length - 3 === 1 ? "" : "s"}</strong></small></div>`
-        : "");
-
-      const headerLeadAlert = presentationAlerts[0] || alertsForRender[0] || null;
-      const headerEvidenceLine = pluralizeGridlyMobilityReports(presentationCountModel.communityReportCount || alertsForRender.length);
+      alertsOpenRenderContext.groupedLineageStages.push(gridlySummarizeAlertsGroupedLineage("PRE_LP236_PRESENTATION", presentationAlerts, alertsForRender));
       setTransactionStage("PRESENTATION_MODEL_BUILT", { presentationIds: membershipIds(presentationAlerts, window.gridlyLP226PresentationId) });
-      const alertsPanelHeadingModel = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "outer sheet/header markup", () => {
-        const countText = presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`;
-        const locationText = headerLeadAlert ? getNarrowAlertLocationLabel(headerLeadAlert, headerLeadAlert.__gridlyNarrowConsumerCard || {}) : "";
-        const summaryText = headerLeadAlert?.__gridlyEventSituationLabel || (typeof getGridlyAlertSituationLabel === "function" ? getGridlyAlertSituationLabel(headerLeadAlert) : "") || headerLeadAlert?.hazardType || headerLeadAlert?.type || "";
-        return { text: countText, locationText, evidenceText: summaryText ? `${summaryText} · ${headerEvidenceLine}` : headerEvidenceLine };
+      // LP236 owns the presentation projection, while LP223 retains the one
+      // authoritative portrait-sheet writer below. Build directly from the
+      // governed active-condition inventory; the grouped LP223 model remains
+      // render-context evidence and is not used as the user-facing count.
+      const html = gridlyAlertsOpenAuditMeasure("DOM generation", () =>
+        gridlyLP236RenderAlertsPresentation(snapshot, alertsForRender), {
+          caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync",
+          reason: "LP236 authoritative progressive-disclosure presentation",
+          domMutationOccurred: false
+        });
+      gridlyAlertsOpenAuditSetMetadata({
+        presentationCount: presentationAlerts.length,
+        renderedCardCount: 0,
+        activeConditionCount: alertsForRender.length,
+        generatedMarkupLength: html.length,
+        presentationOwner: "gridlyLP236RenderAlertsPresentation"
       });
-      const alertsPanelHeadingText = alertsPanelHeadingModel.text;
-      const alertsPanelHeadingLocationText = alertsPanelHeadingModel.locationText || "";
-      const alertsPanelHeadingEvidenceText = alertsPanelHeadingModel.evidenceText || headerEvidenceLine;
-
-      const html = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "string joining", () => `
-<div class="gridly-alerts-active" style="padding:0 1px;" data-gridly-alerts-deduplicated="true">
-  <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alerts-panel-heading="true" style="margin-bottom:8px;padding:12px;border:1px solid rgba(255,255,255,0.08);border-radius:12px;background:rgba(255,255,255,0.025);">
-    <strong>${esc(alertsPanelHeadingText)}</strong>
-    ${alertsPanelHeadingLocationText ? `<div data-gridly-alerts-panel-heading-location="true" style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">${esc(alertsPanelHeadingLocationText)}</div>` : `<div data-gridly-alerts-panel-heading-location="true" style="display:none;"></div>`}
-    <div data-gridly-alerts-panel-heading-evidence="true" style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">${esc(alertsPanelHeadingEvidenceText)}</div>
-  </div>
-  ${rows}
-  ${hiddenRows}
-  ${extra}
-</div>`);
-      gridlyAlertsOpenAuditSetMetadata({ generatedMarkupLength: html.length });
+      const preInsertionStarted = gridlyAlertsOpenAuditNow();
 
       const cooperativeOutputSignatureAfter = gridlyAlertsAuthoritativeOutputSignature(presentationAlerts);
       gridlyAlertsCooperativeBuildState.equivalence.outputSignatureAfter = cooperativeOutputSignatureAfter;
@@ -37557,7 +37528,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         contextKey: cooperativeBuildContextKey,
         revisionKey: cooperativeBuildRevisionKey,
         renderedMarkup: html,
-        title: `${presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`}`,
+        title: `${alertsForRender.length} active condition${alertsForRender.length === 1 ? "" : "s"}`,
         presentationRecordCount: presentationAlerts.length
       });
       cooperativeBuildAudit.finalCacheUpdated = true;
@@ -37585,7 +37556,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       }
       gridlyLp017DisabledVehiclePresentationAuditState.lastFunctionEntered = "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply";
       const opened = gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => window.openGridlyPortraitV2Sheet("alerts", {
-        title: `${presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`}`,
+        title: `${alertsForRender.length} active condition${alertsForRender.length === 1 ? "" : "s"}`,
         html: gridlyLp0458SanitizeOfficialAlertCardMarkup(html)
       }));
       if (opened && gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration === alertsSheetGeneration) gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration = 0;
@@ -114668,8 +114639,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const governed = typeof gridlyAlertsPresentationSourceClass === "function" ? gridlyAlertsPresentationSourceClass(alert) : "";
     const provider = String(alert?.providerId || alert?.sourceId || alert?.source || alert?.sourceLabel || alert?.raw?.providerId || "").toLowerCase();
     const kind = String(alert?.reportKind || alert?.type || alert?.category || "").toLowerCase();
-    if (governed === "community_report" || /community|user|driver/.test(provider) || /community/.test(kind)) return "community_report";
-    if (governed === "weather" || /weather|nws|noaa/.test(provider) || /weather/.test(kind)) return "weather";
+    if (governed === "community_report" || governed === "blocked_crossing_report" || /community|user|driver/.test(provider) || /community/.test(kind)) return "community_report";
+    if (governed === "weather" || governed === "weather_provider" || /weather|nws|noaa/.test(provider) || /weather/.test(kind)) return "weather";
     return "official_roadway";
   }
 
@@ -114723,8 +114694,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function gridlyLP236AlertsInformationArchitectureAudit() {
     const model = gridlyLP236AlertsState.model;
-    if (!model) return { available: false, overallPass: false, message: "Open Alerts before running the LP236 audit." };
+    if (!model) return { available: false, authorityAvailable: false, authorityReason: "LP236 presentation has not been mounted; open Alerts first.", sections: [], overallPass: false, message: "Open Alerts before running the LP236 audit." };
     const root = document.querySelector("[data-gridly-lp236-alerts]");
+    if (!root) return { available: false, authorityAvailable: false, authorityReason: "The authoritative Alerts writer has not mounted the LP236 presentation.", sections: [], overallPass: false, message: "Open Alerts before running the LP236 audit." };
     const displayedIds = Array.from(root?.querySelectorAll?.("[data-gridly-lp236-condition-id]") || []).map((node) => node.dataset.gridlyLp236ConditionId).filter(Boolean);
     const authorityIds = model.alerts.map((alert, index) => gridlyLP236CanonicalId(alert, index));
     const duplicates = [...new Set(displayedIds.filter((id, index) => displayedIds.indexOf(id) !== index))];
@@ -114740,17 +114712,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const accessibilityPass = Array.from(root?.querySelectorAll?.("summary") || []).every((summary) => summary.parentElement?.tagName === "DETAILS" && summary.getAttribute("aria-label"));
     const sourceSemanticsPass = model.sections.every((section) => section.groups.every((group) => group.rows.every((row) => gridlyLP236SourceClass(row.alert) === section.sourceClass)));
     const countSemanticsPass = model.total === model.sections.reduce((sum, section) => sum + section.activeConditionCount, 0);
-    return { canonicalCommunity: model.snapshot?.authoritativeMembership?.community || "", canonicalKey: model.snapshot?.canonicalKey || model.snapshot?.authoritativeMembership?.contextKey || "", totalActiveConditionCount: model.total, sections, criticalCalloutCount: model.critical.length, officialRoadwayConditionCount: model.sections.find((section) => section.sourceClass === "official_roadway")?.activeConditionCount || 0, communityReportConditionCount: model.sections.find((section) => section.sourceClass === "community_report")?.activeConditionCount || 0, weatherConditionCount: model.sections.find((section) => section.sourceClass === "weather")?.activeConditionCount || 0, displayedConditionIdentityCount: new Set(displayedIds).size, unrepresentedConditionIds: unrepresented, duplicateDisplayedConditionIds: duplicates, sourceSemanticsPass, countSemanticsPass, identityCoveragePass: unrepresented.length === 0 && duplicates.length === 0, showMeActionCount: root?.querySelectorAll?.(".gridly-alert-show-on-map")?.length || 0, emptySectionsRendered, accessibilityPass, overallPass: sourceSemanticsPass && countSemanticsPass && unrepresented.length === 0 && duplicates.length === 0 && emptySectionsRendered.length === 0 && accessibilityPass };
+    return { available: true, authorityAvailable: true, authorityReason: null, canonicalCommunity: model.snapshot?.authoritativeMembership?.community || "", canonicalKey: model.snapshot?.canonicalKey || model.snapshot?.authoritativeMembership?.contextKey || "", totalActiveConditionCount: model.total, sections, criticalCalloutCount: model.critical.length, officialRoadwayConditionCount: model.sections.find((section) => section.sourceClass === "official_roadway")?.activeConditionCount || 0, communityReportConditionCount: model.sections.find((section) => section.sourceClass === "community_report")?.activeConditionCount || 0, weatherConditionCount: model.sections.find((section) => section.sourceClass === "weather")?.activeConditionCount || 0, displayedConditionIdentityCount: new Set(displayedIds).size, unrepresentedConditionIds: unrepresented, duplicateDisplayedConditionIds: duplicates, sourceSemanticsPass, countSemanticsPass, identityCoveragePass: unrepresented.length === 0 && duplicates.length === 0, showMeActionCount: root?.querySelectorAll?.(".gridly-alert-show-on-map")?.length || 0, emptySectionsRendered, accessibilityPass, overallPass: Boolean(root) && sourceSemanticsPass && countSemanticsPass && unrepresented.length === 0 && duplicates.length === 0 && emptySectionsRendered.length === 0 && accessibilityPass };
   }
   window.gridlyLP236AlertsInformationArchitectureAudit = gridlyLP236AlertsInformationArchitectureAudit;
   if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP236AlertsInformationArchitectureAudit", gridlyLP236AlertsInformationArchitectureAudit);
 
-  function buildAlertsSurfaceHtml() {
-    const snapshot = getAlertsSurfaceSnapshot();
+  function gridlyLP236RenderAlertsPresentation(snapshot, suppliedAlerts = null) {
     const snapshotAlerts = Array.isArray(snapshot.alerts) ? snapshot.alerts : [];
-    const alerts = typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
+    const alerts = Array.isArray(suppliedAlerts) ? suppliedAlerts : (typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
       ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "buildAlertsSurfaceHtml")
-      : snapshotAlerts;
+      : snapshotAlerts);
     const model = gridlyLP236BuildModel(alerts.filter(Boolean), snapshot);
     gridlyLP236AlertsState.model = model;
     if (!model.total) return `<div class="gridly-alerts-active" data-gridly-lp236-alerts="true"><div class="gridly-alert-headline">Community Awareness</div><div class="gridly-alert-row gridly-alert-empty-state"><div class="gridly-alert-title">You're all caught up.</div><div class="gridly-alert-subtitle">No active conditions in your Awareness Area.</div></div></div>`;
@@ -114766,7 +114737,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const lng = Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng ?? crossingTarget.coords?.lng);
       const coords = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${sanitizeText(lat)}" data-gridly-alert-lng="${sanitizeText(lng)}"` : "";
       const detail = normalizeGridlyUserFacingRoadText(pickFirstNonEmptyText([alert?.localizedSummary, alert?.description, alert?.detail, alert?.timeframe, alert?.updatedAt]) || condition);
-      return `<article class="gridly-lp236-condition gridly-alert-row" data-gridly-lp236-condition-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-title="${sanitizeText(title)}" data-gridly-alert-location="${sanitizeText(location)}" data-gridly-alert-condition="${sanitizeText(condition)}"${gridlyLp0952AlertCardInteractionAttributes(crossingTarget.crossingId, sanitizeText)}${coords}>
+      return `<article class="gridly-lp236-condition" data-gridly-lp236-condition-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-title="${sanitizeText(title)}" data-gridly-alert-location="${sanitizeText(location)}" data-gridly-alert-condition="${sanitizeText(condition)}"${gridlyLp0952AlertCardInteractionAttributes(crossingTarget.crossingId, sanitizeText)}${coords}>
         <div class="gridly-lp236-row-main"><div class="gridly-lp236-row-copy"><strong>${sanitizeText(location)}</strong><span>${sanitizeText(condition)}</span></div>${Number.isFinite(lat) && Number.isFinite(lng) ? `<button class="gridly-alert-show-on-map gridly-lp236-show-me" type="button" aria-label="Show ${sanitizeText(location)} on map">Show me</button>` : ""}</div>
         <details class="gridly-lp236-condition-details"><summary aria-label="View details for ${sanitizeText(location)}">Details</summary><p>${sanitizeText(detail)}</p><small>${sanitizeText(source.provenance)}</small></details>
       </article>`;
@@ -114785,6 +114756,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return `<details class="gridly-lp236-source" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active conditions"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active conditions">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${source.groups.map((group) => renderGroup(group, source)).join("")}</div></details>`;
     }).join("");
     return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong>Alerts</strong><span aria-label="${model.total} active conditions">${model.total} active condition${model.total === 1 ? "" : "s"}</span></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
+  }
+
+  function buildAlertsSurfaceHtml() {
+    return gridlyLP236RenderAlertsPresentation(getAlertsSurfaceSnapshot());
   }
 
 
