@@ -63,16 +63,16 @@ test('critical callouts require weather source and governed severity', () => {
 test('markup preserves compact detail, Show me, empty omission, and accessible native disclosure', () => {
   for (const token of ['gridly-lp236-source', 'gridly-lp236-group', 'gridly-lp236-condition-details', 'gridly-alert-show-on-map', 'aria-label=', '<details', '<summary']) assert.match(app, new RegExp(token));
   assert.match(css, /min-height:48px/);
-  assert.match(css, /\.gridly-lp236-row-copy \{[^}]*flex:1 1 0/);
-  assert.match(css, /\.gridly-lp236-row-copy \{[^}]*overflow-wrap:normal; word-break:normal/);
-  assert.match(css, /\.gridly-lp236-condition-details \{[^}]*max-width:100%/);
+  assert.match(css, /\.gridly-lp236-row-copy \{[^}]*display:block; width:100%; min-width:0; max-width:100%/);
+  assert.match(css, /\.gridly-lp236-row-copy strong \{[^}]*white-space:normal; overflow-wrap:break-word; word-break:normal/);
+  assert.match(css, /\.gridly-lp236-condition-details \{[^}]*width:100%; min-width:0; max-width:100%; overflow:hidden/);
   assert.match(css, /\.gridly-lp236-condition-details p \{[^}]*overflow-wrap:break-word; word-break:normal/);
   assert.doesNotMatch(css, /\.gridly-lp236-row-copy \{[^}]*overflow-wrap:anywhere/);
   assert.match(app, /filter\(\(section\) => section\.activeConditionCount > 0\)/);
 });
 
 test('compact rows retain width and containment at supported portrait widths', () => {
-  assert.match(css, /\.gridly-lp236-row-main \{[^}]*max-width:100%/);
+  assert.match(css, /\.gridly-lp236-row-main \{[^}]*display:block; width:100%; min-width:0; max-width:100%; overflow:hidden/);
   assert.match(css, /@media \(max-width:420px\)/);
   for (const width of [320, 360, 390, 430]) {
     assert.ok(width >= 320);
@@ -82,6 +82,33 @@ test('compact rows retain width and containment at supported portrait widths', (
   assert.match(rendered, /North President George Bush Turnpike Frontage Road/);
   assert.match(rendered, /gridly-lp236-condition-details/);
   assert.match(rendered, /Show me/);
+});
+
+test('LP236.6 mobile child rows stack copy above a horizontal, tappable action line', () => {
+  assert.match(css, /\.gridly-lp236-actions \{[^}]*display:flex; width:100%; min-width:0; align-items:flex-start; gap:10px/);
+  assert.match(css, /\.gridly-lp236-show-me \{[^}]*min-height:44px/);
+  assert.match(css, /\.gridly-lp236-condition-details > summary \{[^}]*min-height:44px/);
+  assert.match(app, /gridly-lp236-row-main[\s\S]*gridly-lp236-row-copy[\s\S]*<\/div>\s*<div class="gridly-lp236-actions">/);
+  assert.doesNotMatch(app, /gridly-lp236-row-copy[\s\S]{0,200}gridly-lp236-show-me/);
+});
+
+test('LP236.6 governed route labels and secondary labels retain word-based wrapping', () => {
+  const rows = ['SH0078', 'IH0030', 'SS0366', 'US0175'].map((location, index) => ({
+    id: `route-${index}`, sourceClass: 'official_roadway', category: index === 1 ? 'Bridge Restriction' : 'Lane Closure', location,
+    lat: 32.8 + index / 100, lng: -96.8
+  }));
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, rows);
+  for (const route of ['SH0078', 'IH0030', 'SS0366', 'US0175']) assert.match(rendered, new RegExp(`<strong>${route}<\\/strong>`));
+  assert.match(rendered, /<span>Bridge Restriction<\/span>/);
+  assert.match(css, /\.gridly-lp236-row-copy span \{[^}]*white-space:normal; overflow-wrap:break-word; word-break:normal/);
+  assert.doesNotMatch(css, /\.gridly-lp236-row-copy (?:strong|span) \{[^}]*(?:word-break:break-all|overflow-wrap:anywhere)/);
+});
+
+test('LP236.6 details use full contained width while provenance stays out of compact copy', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'detail', sourceClass: 'official_roadway', category: 'Road Closure', location: 'SH0078', description: 'Long governed location detail', lat: 32.8, lng: -96.8 }]);
+  assert.match(rendered, /<div class="gridly-lp236-details-content"><p>Long governed location detail<\/p><small>Official source · DriveTexas<\/small><\/div>/);
+  assert.doesNotMatch(rendered, /gridly-lp236-row-copy[^<]*Official source · DriveTexas/);
+  assert.match(css, /\.gridly-lp236-details-content \{[^}]*width:100%; min-width:0; max-width:100%; overflow:hidden/);
 });
 
 test('sheet and content expose one primary count without repeating Alerts', () => {
