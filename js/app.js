@@ -36216,13 +36216,21 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   ${hiddenCount > 0 ? `<div class="gridly-alert-row gridly-alert-intel-card"><small><strong>+ ${hiddenCount} more affected crossing${hiddenCount === 1 ? "" : "s"}</strong></small></div>` : ""}
 </div>`.trim();
   };
-  const fallbackTemplate = {
-    title: 'No Active Alerts',
-    html: '<div class="gridly-v2-list"><div class="gridly-alert-empty-state gridly-alert-intel-card"><strong>You\'re all caught up.</strong><p class="gridly-v2-sheet-copy">No active community alerts in your Awareness Area.</p></div></div>'
-  };
-  let template = fallbackTemplate;
   let alertsOpenRenderContext = null;
   let writerAlertsForRender = [];
+  let snapshot = null;
+  const mountLP236AlertsPresentation = (authoritySnapshot, authorityAlerts, renderedHtml = null) => {
+    const alerts = Array.isArray(authorityAlerts) ? authorityAlerts : [];
+    const html = renderedHtml ?? gridlyLP236RenderAlertsPresentation(authoritySnapshot, alerts);
+    const authorityAvailable = authoritySnapshot?.activeConditionAuthorityAvailable === true;
+    const title = authorityAvailable
+      ? (alerts.length ? `${alerts.length} active condition${alerts.length === 1 ? "" : "s"}` : "No Active Alerts")
+      : "Alerts unavailable";
+    return Boolean(window.openGridlyPortraitV2Sheet("alerts", {
+      title,
+      html: gridlyLp0458SanitizeOfficialAlertCardMarkup(html)
+    }));
+  };
   const transaction = gridlyLP226BeginAlertsWriterTransaction({ alertsSheetGeneration, cooperativeBuildGeneration, contextKey: cooperativeBuildContextKey, revisionKey: cooperativeBuildRevisionKey });
   const setTransactionStage = (stage, detail = {}) => gridlyLP226SetAlertsWriterTransactionStage(transaction, stage, detail);
   try {
@@ -36240,7 +36248,6 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       && cachedMembership?.generation === snapshotReconciliationState.snapshotGeneration
       && gridlyCanApplyAlertsSheetGeneration(alertsSheetGeneration)
     );
-    let snapshot;
     if (validSameGenerationSnapshot) {
       // Cached-data fast path: acquire a copy immediately. Post-snapshot ownership,
       // LP223 presentation, and the sole authoritative DOM writer remain mandatory.
@@ -37555,10 +37562,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         return false;
       }
       gridlyLp017DisabledVehiclePresentationAuditState.lastFunctionEntered = "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply";
-      const opened = gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => window.openGridlyPortraitV2Sheet("alerts", {
-        title: `${alertsForRender.length} active condition${alertsForRender.length === 1 ? "" : "s"}`,
-        html: gridlyLp0458SanitizeOfficialAlertCardMarkup(html)
-      }));
+      const opened = gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => mountLP236AlertsPresentation(snapshot, alertsForRender, html));
       if (opened && gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration === alertsSheetGeneration) gridlyAlertsSheetLifecycleState.authoritativeOpenPendingGeneration = 0;
       cooperativeBuildAudit.finalContentApplied = Boolean(opened);
       gridlyRecordAlertsWriterInvocation({ input: alertsForRender, suppressionReason: opened ? null : "target_rejected_write", opened, invocationTime: writerInvocationTime, countInvocation: false });
@@ -37630,20 +37634,21 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         sourceKeys: a?.source ? Object.keys(a.source).join(", ") : ""
       })));
     }
-    const zeroStateHtml = gridlyLP236RenderAlertsPresentation(snapshot, alertsForRender);
-    template = {
-      title: snapshot?.activeConditionAuthorityAvailable === true ? "No Active Alerts" : "Alerts unavailable",
-      html: zeroStateHtml
-    };
   } catch (error) {
     setTransactionStage("ERROR", { terminalReason: String(error?.message || error || "unknown_error") });
     if (gridlyAlertsOpenPerformanceAuditState.activeRenderContext === alertsOpenRenderContext) gridlyAlertsOpenPerformanceAuditState.activeRenderContext = null;
     gridlyAlertsOpenAuditSetMetadata({ renderError: true });
-    console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
+    snapshot = {
+      alerts: [],
+      activeConditionAuthorityAvailable: false,
+      activeConditionAuthorityReason: "The governed Alerts authority could not be acquired."
+    };
+    writerAlertsForRender = [];
+    console.warn('[Gridly][Alerts] governed Alerts transaction failed; mounting LP236 unavailable state.', error);
   }
 
-  if (typeof openGridlyPortraitV2Sheet === 'function') {
-    const opened = Boolean(openGridlyPortraitV2Sheet('alerts', template));
+  if (typeof window.openGridlyPortraitV2Sheet === 'function') {
+    const opened = mountLP236AlertsPresentation(snapshot, writerAlertsForRender);
     gridlyRecordAlertsWriterInvocation({ input: writerAlertsForRender, suppressionReason: opened ? null : "target_rejected_write", opened, invocationTime: writerInvocationTime, countInvocation: false });
     if (opened) {
       const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
@@ -37653,28 +37658,13 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         sheetOpenDelayMs: Number((sheetInsertedAt - gridlyV920PanelOpenStartedAt).toFixed(2))
       });
       scrollToSection('mapSection');
-      gridlyRunAlertsBackgroundRefreshAfterOpen("alerts_open_background_refresh_fallback");
+      gridlyRunAlertsBackgroundRefreshAfterOpen("alerts_open_background_refresh_lp236");
       gridlyV921PanelTiming.contentReady = Number((gridlyV921Now() - gridlyV920PanelOpenStartedAt).toFixed(2));
       gridlyV921PanelTiming.fullInteractionCompletion = gridlyV921PanelTiming.contentReady;
-      gridlyV921RecordPipelineCall("panel", { ...gridlyV921PanelTiming, opened: true, path: "fallback-template" });
-      gridlyAlertsOpenAuditFinish({ opened: true, path: "fallback-template" });
+      gridlyV921RecordPipelineCall("panel", { ...gridlyV921PanelTiming, opened: true, path: "lp236-authoritative-state" });
+      gridlyAlertsOpenAuditFinish({ opened: true, path: "lp236-authoritative-state" });
       return true;
     }
-  }
-  if (typeof openPortraitV2Sheet === 'function') {
-    openPortraitV2Sheet('alerts');
-    const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
-    gridlyRecordAlertsOpenRefreshFixTiming({
-      sheetVisibleAt: sheetInsertedAt,
-      initialCardsRenderedAt: sheetInsertedAt,
-      sheetOpenDelayMs: Number((sheetInsertedAt - gridlyV920PanelOpenStartedAt).toFixed(2))
-    });
-    scrollToSection('mapSection');
-    gridlyV921PanelTiming.contentReady = Number((gridlyV921Now() - gridlyV920PanelOpenStartedAt).toFixed(2));
-    gridlyV921PanelTiming.fullInteractionCompletion = gridlyV921PanelTiming.contentReady;
-    gridlyV921RecordPipelineCall("panel", { ...gridlyV921PanelTiming, opened: true, path: "legacy-portrait" });
-    gridlyAlertsOpenAuditFinish({ opened: true, path: "legacy-portrait" });
-    return true;
   }
   gridlyAlertsOpenAuditFinish({ opened: false, path: "unavailable" });
   return false;
@@ -37687,13 +37677,7 @@ function invokeMobileAlertsEntry(sourceLabel, event) {
     targetId: event?.target?.id || null,
     receiverId: event?.currentTarget?.id || null
   });
-  const opened = openAlertsSurfaceFromDock();
-  if (!opened) {
-    openGridlyPortraitV2Sheet?.("alerts", {
-      title: "Alerts",
-      html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
-    });
-  }
+  openAlertsSurfaceFromDock();
 }
 
 const gridlySettingsDockTapTrace = {
@@ -114708,7 +114692,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const severity = String(alert?.severity || alert?.priority || "").toLowerCase();
       return gridlyLP236SourceClass(alert) === "weather" && /critical|extreme|severe|high/.test(severity);
     });
-    return { snapshot, alerts, total, sections, firstSource, critical };
+    const authorityState = snapshot?.activeConditionAuthorityAvailable === true
+      ? (total > 0 ? "AVAILABLE_NONEMPTY" : "AVAILABLE_EMPTY")
+      : "UNAVAILABLE";
+    return { snapshot, alerts, total, sections, firstSource, critical, authorityState };
   }
 
   function gridlyLP236AlertsInformationArchitectureAudit() {
@@ -114735,13 +114722,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const quietStateRendered = Boolean(root?.querySelector?.(".gridly-alert-empty-state"));
     const quietStateAuthorityPass = !quietStateRendered || (authorityAvailable && model.total === 0);
     const handoff = model.snapshot?.activeConditionHandoff || {};
-    return { available: true, authorityAvailable, authorityReason: model.snapshot?.activeConditionAuthorityReason || "governed Alerts authority unavailable", sourceConditionCount: model.total, sourceConditionIds: authorityIds, alertsSnapshotAuthority: handoff.alertsSnapshotAuthority ?? authorityAvailable, alertsSnapshotCount: handoff.alertsSnapshotCount ?? model.total, alertsForRenderAuthority: handoff.alertsForRenderAuthority ?? authorityAvailable, alertsForRenderCount: handoff.alertsForRenderCount ?? model.total, governedActiveConditionAuthority: handoff.governedActiveConditionAuthority ?? false, governedActiveConditionCount: handoff.governedActiveConditionCount ?? 0, kbygOfficialConditionCount: handoff.kbygOfficialConditionCount ?? 0, locationContextActiveConditionCount: handoff.locationContextActiveConditionCount ?? 0, firstStageWhereActiveConditionsBecomeEmpty: handoff.firstStageWhereActiveConditionsBecomeEmpty ?? (model.total ? null : "authority unavailable"), canonicalCommunity: model.snapshot?.authoritativeMembership?.community || "", canonicalKey: model.snapshot?.canonicalKey || model.snapshot?.authoritativeMembership?.contextKey || "", totalActiveConditionCount: model.total, sections, criticalCalloutCount: model.critical.length, officialRoadwayConditionCount: model.sections.find((section) => section.sourceClass === "official_roadway")?.activeConditionCount || 0, communityReportConditionCount: model.sections.find((section) => section.sourceClass === "community_report")?.activeConditionCount || 0, weatherConditionCount: model.sections.find((section) => section.sourceClass === "weather")?.activeConditionCount || 0, quietStateRendered, quietStateAuthorityPass, displayedConditionIdentityCount: new Set(displayedIds).size, unrepresentedConditionIds: unrepresented, duplicateDisplayedConditionIds: duplicates, sourceSemanticsPass, countSemanticsPass, identityCoveragePass: unrepresented.length === 0 && duplicates.length === 0, showMeActionCount: root?.querySelectorAll?.(".gridly-alert-show-on-map")?.length || 0, emptySectionsRendered, accessibilityPass, overallPass: Boolean(root) && authorityAvailable && quietStateAuthorityPass && sourceSemanticsPass && countSemanticsPass && unrepresented.length === 0 && duplicates.length === 0 && emptySectionsRendered.length === 0 && accessibilityPass };
+    return { available: true, authorityAvailable, authorityState: model.authorityState, authorityReason: model.snapshot?.activeConditionAuthorityReason || "governed Alerts authority unavailable", sourceConditionCount: model.total, sourceConditionIds: authorityIds, alertsSnapshotAuthority: handoff.alertsSnapshotAuthority ?? authorityAvailable, alertsSnapshotCount: handoff.alertsSnapshotCount ?? model.total, alertsForRenderAuthority: handoff.alertsForRenderAuthority ?? authorityAvailable, alertsForRenderCount: handoff.alertsForRenderCount ?? model.total, governedActiveConditionAuthority: handoff.governedActiveConditionAuthority ?? false, governedActiveConditionCount: handoff.governedActiveConditionCount ?? 0, kbygOfficialConditionCount: handoff.kbygOfficialConditionCount ?? 0, locationContextActiveConditionCount: handoff.locationContextActiveConditionCount ?? 0, firstStageWhereActiveConditionsBecomeEmpty: handoff.firstStageWhereActiveConditionsBecomeEmpty ?? (model.total ? null : (authorityAvailable ? null : "authority unavailable")), canonicalCommunity: model.snapshot?.authoritativeMembership?.community || "", canonicalKey: model.snapshot?.canonicalKey || model.snapshot?.authoritativeMembership?.contextKey || "", totalActiveConditionCount: model.total, sections, criticalCalloutCount: model.critical.length, officialRoadwayConditionCount: model.sections.find((section) => section.sourceClass === "official_roadway")?.activeConditionCount || 0, communityReportConditionCount: model.sections.find((section) => section.sourceClass === "community_report")?.activeConditionCount || 0, weatherConditionCount: model.sections.find((section) => section.sourceClass === "weather")?.activeConditionCount || 0, quietStateRendered, quietStateAuthorityPass, displayedConditionIdentityCount: new Set(displayedIds).size, unrepresentedConditionIds: unrepresented, duplicateDisplayedConditionIds: duplicates, sourceSemanticsPass, countSemanticsPass, identityCoveragePass: unrepresented.length === 0 && duplicates.length === 0, showMeActionCount: root?.querySelectorAll?.(".gridly-alert-show-on-map")?.length || 0, emptySectionsRendered, accessibilityPass, overallPass: Boolean(root) && quietStateAuthorityPass && sourceSemanticsPass && countSemanticsPass && unrepresented.length === 0 && duplicates.length === 0 && emptySectionsRendered.length === 0 && accessibilityPass };
   }
   window.gridlyLP236AlertsInformationArchitectureAudit = gridlyLP236AlertsInformationArchitectureAudit;
   if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP236AlertsInformationArchitectureAudit", gridlyLP236AlertsInformationArchitectureAudit);
 
   function gridlyLP236RenderAlertsPresentation(snapshot, suppliedAlerts = null) {
-    const snapshotAlerts = Array.isArray(snapshot.alerts) ? snapshot.alerts : [];
+    const snapshotAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
     const alerts = Array.isArray(suppliedAlerts) ? suppliedAlerts : (typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
       ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "buildAlertsSurfaceHtml")
       : snapshotAlerts);
