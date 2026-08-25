@@ -58575,6 +58575,13 @@ function renderCrossings(reason = "unspecified", options = {}) {
   });
 
   const smartClusterState = buildSmartIncidentClusters(prioritizedVisibleCrossings);
+  // Preserve the production clustering decision as identity-bearing audit
+  // lineage.  A clustered crossing is represented, not lost, even though it
+  // intentionally has no independent Leaflet marker.
+  gridlyCrossingRenderAuditState.lastRender = {
+    ...gridlyCrossingRenderAuditState.lastRender,
+    markerRepresentationLineage: smartClusterState.representationLineage
+  };
   const hasSavedRoute = savedRouteCrossingIds.size >= 2;
 
   const renderCrossingMarkersFromList = (crossingsToRender = [], { ignoreClusterHidden = false } = {}) => {
@@ -73769,6 +73776,7 @@ function buildSmartIncidentClusters(visibleCrossings = []) {
   const hiddenIds = new Set();
   const leadCounts = new Map();
   const groupedIds = new Set();
+  const representationLineage = [];
 
   candidates.forEach((seed) => {
     const seedId = String(seed.crossing.id);
@@ -73781,14 +73789,17 @@ function buildSmartIncidentClusters(visibleCrossings = []) {
     if (group.length <= 2) return;
 
     const leader = group.sort((a, b) => b.severity - a.severity || a.report.minutesAgo - b.report.minutesAgo)[0];
-    leadCounts.set(String(leader.crossing.id), group.length);
+    const leaderId = String(leader.crossing.id);
+    const representedCrossingIds = group.map((entry) => String(entry.crossing.id));
+    leadCounts.set(leaderId, group.length);
+    representationLineage.push(Object.freeze({ renderedMarkerId: leaderId, representedCrossingIds: Object.freeze(representedCrossingIds) }));
     group.forEach((entry) => {
       const id = String(entry.crossing.id);
       if (id !== String(leader.crossing.id)) hiddenIds.add(id);
     });
   });
 
-  return { leadCounts, hiddenIds };
+  return { leadCounts, hiddenIds, representationLineage: Object.freeze(representationLineage) };
 }
 
 
@@ -122398,7 +122409,7 @@ window.gridlyLP234AlertsCompletenessAudit = function gridlyLP234AlertsCompletene
       firstLosingStage, reason, presentationId: presentation?.presentationId || null
     });
   });
-  const unaccountedGovernedIds = governedToAlertsDisposition.filter((row) => row.disposition === "UNACCOUNTED").map((row) => row.governedEvidenceId);
+  const unaccountedGovernedIds = governedToAlertsDisposition.filter((row) => row.disposition !== "REPRESENTED_BY_ALERT_PRESENTATION").map((row) => row.governedEvidenceId);
   const areaRemovedIds = governedToAlertsDisposition.filter((row) => row.firstLosingStage === "ALERTS_AREA_COMMUNITY_FILTER").map((row) => row.governedEvidenceId);
   const writerInputIds = Array.isArray(writer.writerInputCanonicalIds) ? writer.writerInputCanonicalIds : [];
   const finalWriterIds = Array.isArray(writer.finalAuthorityCanonicalIds) ? writer.finalAuthorityCanonicalIds : [];
@@ -122427,7 +122438,7 @@ window.gridlyLP234AlertsCompletenessAudit = function gridlyLP234AlertsCompletene
     governedToAlertsDisposition: Object.freeze(governedToAlertsDisposition), alertsPresentations: Object.freeze(alertsPresentations),
     unaccountedGovernedIds: Object.freeze(unaccountedGovernedIds), countLabelValue,
     countLabelAuthority: "final grouped Alerts presentations", countLabelSemanticMeaning: "total grouped alert presentations, not total active governed issues",
-    countyFragmentationDetected: areaRemovedIds.length > 0,
+    countyFragmentationDetected: areaRemovedIds.some((id) => unaccountedGovernedIds.includes(id)),
     allGovernedEvidenceAccountedFor: unaccountedGovernedIds.length === 0,
     classification: unaccountedGovernedIds.length ? (areaRemovedIds.length ? "D. COUNTY_FRAGMENTATION_DEFECT" : "E. PROPAGATION_DEFECT") : (alertsPresentations.length < officialLineage.length ? "A. LEGITIMATE_GROUPING" : "B. LEGITIMATE_CONSUMER_FILTER")
   };
@@ -122479,17 +122490,42 @@ window.gridlyLP235CanonicalCommunityScopeAudit = function gridlyLP235CanonicalCo
   });
   const alertsFragmentStage = (alerts.stageAudit || []).find((stage) => stage.stage === "Alerts area/community filter");
   const alertsRemovedIds = Object.freeze([...(alertsFragmentStage?.removedGovernedIds || [])]);
+  const alertsUnaccountedIds = Object.freeze([...(alerts.unaccountedGovernedIds || [])]);
+  const finallyUnaccountedAlertIds = Object.freeze(alertsRemovedIds.filter((id) => alertsUnaccountedIds.includes(id)));
+  const finallyAccountedAlertIds = Object.freeze(alertsRemovedIds.filter((id) => !alertsUnaccountedIds.includes(id)));
   const countyFragmentationEvidence = Object.freeze([
-    ...(alertsRemovedIds.length ? [Object.freeze({ family: "alerts", stage: alertsFragmentStage.stage, inputCount: alertsFragmentStage.inputCount, outputCount: alertsFragmentStage.outputCount, removedGovernedIds: alertsRemovedIds, selectedMembership: selected?.countyId || activeCounty, activeCounty, canonicalKey, reason: alertsFragmentStage.reason, evidenceAuthority: "LP234 cached identity-bearing Alerts stage audit" })] : [])
+    ...(alertsRemovedIds.length ? [Object.freeze({ family: "alerts", stage: alertsFragmentStage.stage, inputCount: alertsFragmentStage.inputCount, outputCount: alertsFragmentStage.outputCount, removedGovernedIds: alertsRemovedIds, finallyAccountedIds: finallyAccountedAlertIds, finallyUnaccountedIds: finallyUnaccountedAlertIds, selectedMembership: selected?.countyId || activeCounty, activeCounty, canonicalKey, removalPredicate: alertsFragmentStage.reason, evidenceAuthority: "LP234 cached intermediate Alerts stage observation reconciled against final presentation lineage", finalClassification: finallyUnaccountedAlertIds.length ? "COUNTY_FRAGMENTATION_ESTABLISHED" : "INTERMEDIATE_SNAPSHOT_NOT_AUTHORITATIVE" })] : [])
   ]);
-  const countyFragmentationFindings = countyFragmentationEvidence;
+  const countyFragmentationFindings = Object.freeze(countyFragmentationEvidence.filter((finding) => finding.finalClassification === "COUNTY_FRAGMENTATION_ESTABLISHED"));
   const driveTexasAuthorityAvailable = Boolean(driveTexasHelperAvailable && driveTexasAudit?.driveTexasAuthorityAvailable === true);
   const driveTexasRelevantCount = driveTexasAuthorityAvailable && Number.isInteger(driveTexasAudit?.driveTexasRelevantCount) ? driveTexasAudit.driveTexasRelevantCount : null;
   const driveTexasGovernedCount = driveTexasAuthorityAvailable && Number.isInteger(driveTexasAudit?.lifecycleCounts?.activeAfterLifecycle) ? driveTexasAudit.lifecycleCounts.activeAfterLifecycle : null;
   const crossingHardCapApplied = Boolean(lastRender.hardCapActive);
   const crossingSelectedMarkerCount = selectedMarkerIds.length;
   const crossingRenderedLayerCount = renderedLayerIds.length;
-  const crossingRenderCountInvariantPass = duplicateRenderedIds.length === 0 && legacyCountyOnlyRenderedIds.length === 0 && crossingRenderedLayerCount === crossingSelectedMarkerCount && (!crossingHardCapApplied || crossingSelectedMarkerCount <= Number(lastRender.hardCapLimit));
+  const crossingMarkerRepresentationLineage = Object.freeze([...(lastRender.markerRepresentationLineage || [])].map((entry) => Object.freeze({ renderedMarkerId: String(entry.renderedMarkerId || ""), representedCrossingIds: Object.freeze([...(entry.representedCrossingIds || [])].map(String)) })));
+  const representedByMarker = new Map();
+  renderedLayerIds.forEach((id) => representedByMarker.set(id, id));
+  crossingMarkerRepresentationLineage.forEach((entry) => {
+    if (renderedIds.has(entry.renderedMarkerId)) entry.representedCrossingIds.forEach((id) => representedByMarker.set(id, entry.renderedMarkerId));
+  });
+  const crossingUnrepresentedSelectedIds = Object.freeze(selectedMarkerIds.filter((id) => !representedByMarker.has(id)));
+  const crossingPublicationDisposition = Object.freeze(selectedMarkerIds.map((crossingId) => {
+    const renderedMarkerId = representedByMarker.get(crossingId) || null;
+    const directlyRendered = renderedMarkerId === crossingId;
+    return Object.freeze({ crossingId, disposition: directlyRendered ? "RENDERED" : renderedMarkerId ? "REPRESENTED_BY_CLUSTER" : "UNREPRESENTED", firstLosingStage: renderedMarkerId ? null : "MARKER_PUBLICATION", reason: directlyRendered ? "one selected crossing published as one marker" : renderedMarkerId ? "production smart-incident cluster publishes this identity through its leader marker" : "selected identity has no final marker or explicit representation lineage", renderedMarkerId });
+  }));
+  const crossingRenderedIdentityCoverageCount = selectedMarkerIds.length - crossingUnrepresentedSelectedIds.length;
+  const crossingRenderCountInvariantPass = duplicateRenderedIds.length === 0 && legacyCountyOnlyRenderedIds.length === 0 && crossingUnrepresentedSelectedIds.length === 0 && (!crossingHardCapApplied || crossingSelectedMarkerCount <= Number(lastRender.hardCapLimit));
+  const consumerProjection = typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null;
+  const consumerSurfaces = consumerProjection?.surfaces || null;
+  const kbygOfficialCount = Array.isArray(consumerSurfaces?.kbygOfficialRoadways) ? consumerSurfaces.kbygOfficialRoadways.length : null;
+  const kbygCommunityCount = Array.isArray(consumerSurfaces?.kbygCommunity) ? consumerSurfaces.kbygCommunity.length : null;
+  const governedAwarenessRows = typeof gridlyGetGovernedActiveAwarenessRows === "function" ? gridlyGetGovernedActiveAwarenessRows() : [];
+  const topAwarenessActive = governedAwarenessRows.length > 0;
+  const communityPulseRows = Array.isArray(consumerSurfaces?.communityPulse) ? consumerSurfaces.communityPulse : null;
+  const communityPulseActive = Array.isArray(communityPulseRows) ? communityPulseRows.length > 0 : null;
+  const consumerAuthorityAvailable = Boolean(consumerSurfaces);
   const canonicalScopePass = Boolean(placeGeoid && searchRows.length === 1 && resolved?.authorityAvailable && alerts.allGovernedEvidenceAccountedFor && !alerts.countyFragmentationDetected);
   return Object.freeze({
     canonicalCommunity: selected?.label || null, canonicalKey, placeGeoid,
@@ -122511,15 +122547,27 @@ window.gridlyLP235CanonicalCommunityScopeAudit = function gridlyLP235CanonicalCo
     weatherAuthoritySummary: evidence?.weather || familyAuthority.weather,
     alertsGovernedInputCount: Number(alerts.governedOfficialRoadwayCount || 0),
     alertsAccountedCount: Math.max(0, Number(alerts.governedOfficialRoadwayCount || 0) - (alerts.unaccountedGovernedIds?.length || 0)),
-    alertsUnaccountedIds: Object.freeze([...(alerts.unaccountedGovernedIds || [])]),
-    kbygOfficialCount: Number(driveTexasAudit?.kbygOfficialCount || 0), kbygCommunityCount: Number(evidence?.consumers?.kbygCommunityCount || 0),
-    topAwarenessActive: Boolean(driveTexasAudit?.topAwarenessActive), communityPulseActive: Boolean(driveTexasAudit?.communityPulseActive),
+    alertsUnaccountedIds,
+    alertsCountyFragmentationFinalAuthority: "LP234 final governed-to-Alerts presentation identity lineage",
+    alertsIntermediateRemovalDiagnostics: countyFragmentationEvidence,
+    kbygOfficialAuthority: consumerAuthorityAvailable ? "existing governed consumer projection kbygOfficialRoadways surface" : "UNAVAILABLE",
+    kbygOfficialCount,
+    kbygCommunityAuthority: consumerAuthorityAvailable ? "existing governed consumer projection kbygCommunity surface" : "UNAVAILABLE",
+    kbygCommunityCount,
+    topAwarenessAuthority: consumerAuthorityAvailable ? "existing governed active-awareness projection" : "UNAVAILABLE",
+    topAwarenessActive,
+    communityPulseAuthority: consumerAuthorityAvailable ? "existing governed consumer projection communityPulse surface" : "UNAVAILABLE",
+    communityPulseActive, consumerAuthorityAvailable,
     locationContextCanonicalCount: Number(driveTexasAudit?.locationContextProductionCount || 0),
     countyFragmentationFindings, countyFragmentationEvidence,
     crossingCanonicalInputCount: canonicalInputIds.length, crossingViewportVisibleCount: visibleIds.length,
     crossingRepresentativeCandidateCount: representativeCandidateIds.length,
     crossingConfiguredHardCap: lastRender.hardCapLimit ?? null, crossingHardCapApplied,
     crossingSelectedMarkerCount, crossingRenderedLayerCount,
+    crossingSelectedIdentityCount: crossingSelectedMarkerCount,
+    crossingRenderedIdentityCoverageCount,
+    crossingRenderedVisualMarkerCount: crossingRenderedLayerCount,
+    crossingUnrepresentedSelectedIds, crossingMarkerRepresentationLineage, crossingPublicationDisposition,
     crossingDomMarkerCount: domMarkerIdsRaw.length,
     canonicalInputIds, visibleIds, representativeCandidateIds,
     crossingSelectedMarkerIds: selectedMarkerIds, crossingRenderedMarkerIds: renderedLayerIds,

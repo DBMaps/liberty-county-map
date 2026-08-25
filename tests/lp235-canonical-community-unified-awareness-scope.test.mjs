@@ -78,22 +78,45 @@ test('LP235.1 reuses observed LP234 DriveTexas authority and never manufactures 
   assert.match(app, /LP234 governed projection official_roadway lifecycle-eligible lineage/);
 });
 
-test('LP235.1 county fragmentation requires explicit identity-backed removal', () => {
+test('LP235.2 county fragmentation requires final, identity-backed removal', () => {
   assert.match(app, /Never diagnose county removal for an identity proven downstream/);
   assert.match(app, /!presentation && !areaRow/);
   assert.match(app, /alertsRemovedIds\.length/);
   assert.match(app, /removedGovernedIds: alertsRemovedIds/);
-  assert.match(app, /evidenceAuthority: "LP234 cached identity-bearing Alerts stage audit"/);
+  assert.match(app, /finallyUnaccountedIds: finallyUnaccountedAlertIds/);
+  assert.match(app, /INTERMEDIATE_SNAPSHOT_NOT_AUTHORITATIVE/);
+  assert.match(app, /countyFragmentationEvidence\.filter/);
+  assert.match(app, /areaRemovedIds\.some\(\(id\) => unaccountedGovernedIds\.includes\(id\)\)/);
   assert.doesNotMatch(app, /selectedMembership being present/);
 });
 
-test('LP235.1 reconciles canonical, viewport, selected, layer and DOM crossing identities', () => {
-  for (const field of ['canonicalInputIds', 'visibleIds', 'representativeCandidateIds', 'crossingSelectedMarkerIds', 'crossingRenderedMarkerIds', 'crossingDuplicateRenderedIds', 'crossingLegacyCountyOnlyRenderedIds', 'crossingRenderCountInvariantPass']) {
+test('LP235.2 reconciles crossing identity coverage including explicit cluster lineage', () => {
+  for (const field of ['canonicalInputIds', 'visibleIds', 'representativeCandidateIds', 'crossingSelectedMarkerIds', 'crossingRenderedMarkerIds', 'crossingDuplicateRenderedIds', 'crossingLegacyCountyOnlyRenderedIds', 'crossingSelectedIdentityCount', 'crossingRenderedIdentityCoverageCount', 'crossingRenderedVisualMarkerCount', 'crossingUnrepresentedSelectedIds', 'crossingMarkerRepresentationLineage', 'crossingPublicationDisposition', 'crossingRenderCountInvariantPass']) {
     assert.match(app, new RegExp(field));
   }
-  assert.match(app, /crossingRenderedLayerCount === crossingSelectedMarkerCount/);
+  assert.match(app, /REPRESENTED_BY_CLUSTER/);
+  assert.match(app, /crossingUnrepresentedSelectedIds\.length === 0/);
+  assert.doesNotMatch(app, /crossingRenderedLayerCount === crossingSelectedMarkerCount/);
   assert.match(app, /crossingSelectedMarkerCount <= Number\(lastRender\.hardCapLimit\)/);
   assert.match(app, /canonicalResolution\?\.authorityAvailable[\s\S]*canonicalResolution\.records/);
+});
+
+test('LP235.2 reads existing governed consumer authorities without DOM-zero coercion', () => {
+  const lp235 = app.slice(app.indexOf('// LP235 is passive'), app.indexOf('/* LP221: Val Verde'));
+  assert.match(lp235, /consumerProjection\?\.surfaces/);
+  assert.match(lp235, /consumerSurfaces\?\.kbygOfficialRoadways/);
+  assert.match(lp235, /consumerSurfaces\?\.kbygCommunity/);
+  assert.match(lp235, /gridlyGetGovernedActiveAwarenessRows/);
+  assert.match(lp235, /consumerSurfaces\?\.communityPulse/);
+  assert.doesNotMatch(lp235, /querySelector[^\n]*kbyg/);
+  assert.doesNotMatch(lp235, /kbygOfficialCount \|\| 0/);
+});
+
+test('LP235.2 does not hardcode owner crossing controls or community branches', () => {
+  const production = app.slice(0, app.indexOf('/* LP221: Val Verde'));
+  for (const id of ['441023Y', '972547B', '763663N']) assert.doesNotMatch(production, new RegExp(id));
+  const lp235 = app.slice(app.indexOf('// LP235 is passive'), app.indexOf('/* LP221: Val Verde'));
+  assert.doesNotMatch(lp235, /Dallas|4819000|Austin|Katy|Corpus Christi/);
 });
 
 test('LP235.1 remains passive and does not alter protected production authorities', () => {
