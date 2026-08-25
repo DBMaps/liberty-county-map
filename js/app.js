@@ -31018,9 +31018,17 @@ window.gridlyAlertsAuthorityWriterAudit = function () {
   const state = gridlyAlertsWriterSynchronizationAuditState;
   const finalDomIdentity = gridlyAlertWriterDomIdentity();
   const finalDomPresentationIds = finalDomIdentity.map((identity) => identity.presentationId).filter(Boolean);
-  const finalDomCanonicalIds = finalDomIdentity.map((identity) => identity.canonicalId).filter(Boolean);
-  const canonicalToPresentationMapping = finalDomIdentity.map((identity) => Object.freeze({ ...identity }));
-  const duplicateCanonicalDomIds = finalDomCanonicalIds.filter((id, index) => finalDomCanonicalIds.indexOf(id) !== index);
+  const directDomCanonicalIds = finalDomIdentity.map((identity) => identity.canonicalId).filter(Boolean);
+  const presentationRows = Array.isArray(alertsOpenRenderContext?.presentationModel?.alerts) ? alertsOpenRenderContext.presentationModel.alerts : [];
+  const canonicalToPresentationMapping = presentationRows.flatMap((presentation, index) => {
+    const expectedPresentationId = gridlyAlertPresentationId(presentation, index, presentation?.__gridlyCanonicalPresentation?.incidentId);
+    const domIdentity = finalDomIdentity.find((identity) => identity.presentationId === expectedPresentationId) || finalDomIdentity[index];
+    if (!domIdentity) return [];
+    const evidenceRows = Array.isArray(presentation?.__gridlyPresentationEvidenceRows) && presentation.__gridlyPresentationEvidenceRows.length ? presentation.__gridlyPresentationEvidenceRows : [presentation];
+    return evidenceRows.map((record, evidenceIndex) => Object.freeze({ ...domIdentity, canonicalId: gridlyAlertWriterRecordId(record, presentation?.__gridlyPresentationSourceIndexes?.[evidenceIndex] ?? evidenceIndex), presentationId: domIdentity.presentationId || expectedPresentationId, representedByCanonicalId: gridlyAlertWriterRecordId(presentation, index) }));
+  });
+  const finalDomCanonicalIds = [...new Set(canonicalToPresentationMapping.map((identity) => identity.canonicalId).filter(Boolean))];
+  const duplicateCanonicalDomIds = directDomCanonicalIds.filter((id, index) => directDomCanonicalIds.indexOf(id) !== index);
   const presentationContracts = [...new Set(finalDomIdentity.map((identity) => identity.presentationContract).filter(Boolean))];
   const presentationTemplates = [...new Set(finalDomIdentity.map((identity) => identity.presentationTemplateUsed).filter(Boolean))];
   const presentationContract = presentationContracts.length === 1 ? presentationContracts[0] : (presentationContracts.length ? "MIXED" : "");
@@ -34434,6 +34442,18 @@ function gridlyAlertWriterRecordId(record = {}, index = 0) {
   return prefix ? `${prefix}:${rawId}` : rawId;
 }
 
+// LP235.4: a governed record must not inherit the legacy index fallback from
+// canonical presentation formatting.  This is deterministic and does not
+// alter the governed source record.
+function gridlyAlertPresentationId(record = {}, index = 0, canonicalIncidentId = "") {
+  const canonical = String(canonicalIncidentId || "").trim();
+  if (canonical && !/^alert-\d+$/.test(canonical)) return canonical;
+  const governed = gridlyAlertWriterRecordId(record, index);
+  if (governed && !/^alert-\d+$/.test(governed)) return governed;
+  const provider = String(record?.providerRecordId || record?.provider_record_id || record?.sourceId || record?.source_id || record?.raw?.providerRecordId || "").trim();
+  return provider || canonical || `alert-${index}`;
+}
+
 function gridlyAlertWriterDomIdentity() {
   return Array.from(document.querySelectorAll('#gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-id]'))
     .map((row) => Object.freeze({
@@ -37045,7 +37065,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   const governedEvidenceId = gridlyAlertWriterRecordId(alert, index);
   const persistedRecordId = cleanDisplayValue(sourceReportId || alert?.id || alert?.reportId || alert?.report_id || alert?.uuid || "");
   const providerRecordId = cleanDisplayValue(alert?.providerRecordId || alert?.provider_record_id || alert?.sourceId || alert?.source_id || alert?.raw?.providerRecordId || alert?.raw?.provider_record_id || "");
-  const id = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "sanitization/escaping", () => cleanDisplayValue(canonicalIncidentId || alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`));
+  const id = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "sanitization/escaping", () => cleanDisplayValue(gridlyAlertPresentationId(alert, index, canonicalIncidentId)));
   const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"` : "";
   const resolvedTitle = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "title creation", () => displayTitle);
   const resolvedHelper = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "summary formatting", () => helperTextFor(alert));
@@ -122620,6 +122640,93 @@ window.gridlyLP235AlertsCanonicalSourceAudit = function gridlyLP235AlertsCanonic
   });
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP235AlertsCanonicalSourceAudit", window.gridlyLP235AlertsCanonicalSourceAudit);
+
+// LP235.4: passive presentation-completeness reconciliation.  The active
+// LP223 render context is the authority; this helper never reconstructs the
+// source, reads cards, fetches, schedules, or changes selection.
+window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235AlertsPresentationCompletenessAudit() {
+  const clean = (value) => String(value ?? "").trim();
+  const selected = getGridlySelectedAwarenessArea();
+  const canonicalCommunity = clean(selected?.label || selected?.name) || null;
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(selected);
+  const canonicalKey = placeGeoid ? `place-${placeGeoid}` : null;
+  const writerInputs = Array.isArray(alertsOpenRenderContext?.alerts) ? alertsOpenRenderContext.alerts : [];
+  const finalRows = Array.isArray(alertsOpenRenderContext?.presentationModel?.alerts) ? alertsOpenRenderContext.presentationModel.alerts : [];
+  const authorityRows = Array.isArray(window.__gridlyLp2194AlertStages?.finalAlertData) ? window.__gridlyLp2194AlertStages.finalAlertData : writerInputs;
+  const inputById = new Map(writerInputs.map((row, index) => [gridlyAlertWriterRecordId(row, index), { row, index }]));
+  const lineage = new Map();
+  const finalPresentations = finalRows.map((row, presentationIndex) => {
+    const evidenceRows = Array.isArray(row?.__gridlyPresentationEvidenceRows) && row.__gridlyPresentationEvidenceRows.length ? row.__gridlyPresentationEvidenceRows : [row];
+    const sourceIndexes = Array.isArray(row?.__gridlyPresentationSourceIndexes) ? row.__gridlyPresentationSourceIndexes : [];
+    const canonicalIdsRepresented = evidenceRows.map((evidence, evidenceIndex) => gridlyAlertWriterRecordId(evidence, sourceIndexes[evidenceIndex] ?? evidenceIndex));
+    const providerRecordIdsRepresented = evidenceRows.map((evidence) => clean(evidence?.providerRecordId || evidence?.provider_record_id || evidence?.sourceId || evidence?.source_id || evidence?.raw?.providerRecordId)).filter(Boolean);
+    const canonicalPresentation = row?.__gridlyCanonicalPresentation || gridlyBuildCanonicalLiveIncidentPresentation(row);
+    const presentationId = gridlyAlertPresentationId(row, presentationIndex, canonicalPresentation?.incidentId);
+    canonicalIdsRepresented.forEach((canonicalId) => lineage.set(canonicalId, { presentationId, grouped: canonicalIdsRepresented.length > 1 }));
+    return Object.freeze({
+      presentationId, canonicalIdsRepresented: Object.freeze(canonicalIdsRepresented), providerRecordIdsRepresented: Object.freeze(providerRecordIdsRepresented),
+      sourceCanonicalId: gridlyAlertWriterRecordId(row, presentationIndex), groupingKey: clean(row?.__gridlyPresentationClusterKey) || null,
+      groupingReason: canonicalIdsRepresented.length > 1 ? "same situation type, roadway corridor, and location cluster" : "one canonical input",
+      cardTitle: clean(canonicalPresentation?.title || row?.title || row?.headline) || null,
+      roadway: clean(row?.roadName || row?.primaryRoad || row?.route || row?.corridor || row?.nearestRoad) || null,
+      category: clean(row?.category || row?.hazardType || row?.type || row?.reportType) || null,
+      whyIncluded: "LP223 writer input represented by CONCISE_ALERT_CARD"
+    });
+  });
+  const writerInputDisposition = writerInputs.map((row, index) => {
+    const canonicalId = gridlyAlertWriterRecordId(row, index);
+    const represented = lineage.get(canonicalId);
+    const providerRecordId = clean(row?.providerRecordId || row?.provider_record_id || row?.sourceId || row?.source_id || row?.raw?.providerRecordId) || null;
+    const canonicalPresentation = row?.__gridlyCanonicalPresentation || gridlyBuildCanonicalLiveIncidentPresentation(row);
+    const requiredFieldsPresent = Boolean(canonicalId && clean(canonicalPresentation?.title || row?.title || row?.headline));
+    const disposition = !requiredFieldsPresent ? "MISSING_REQUIRED_FIELD" : represented ? (represented.grouped ? "GROUPED_INTO_PRESENTATION" : "DIRECT_PRESENTATION") : "PROPAGATION_LOSS";
+    return Object.freeze({
+      canonicalId, providerRecordId, roadway: clean(row?.roadName || row?.primaryRoad || row?.route || row?.corridor || row?.nearestRoad) || null,
+      category: clean(row?.category || row?.hazardType || row?.type || row?.reportType) || null,
+      recordShapeSummary: Object.freeze({ hasCanonicalId: Boolean(canonicalId), hasProviderRecordId: Boolean(providerRecordId), hasTitle: Boolean(clean(canonicalPresentation?.title || row?.title || row?.headline)), hasCoordinates: Number.isFinite(Number(row?.lat ?? row?.latitude)) && Number.isFinite(Number(row?.lng ?? row?.longitude ?? row?.lon)) }),
+      enteredPresentationConversion: true, conciseCardEligible: requiredFieldsPresent, requiredFieldsPresent,
+      presentationIdDerived: represented?.presentationId || gridlyAlertPresentationId(row, index, canonicalPresentation?.incidentId) || null,
+      cardConstructionAttempted: Boolean(represented), cardConstructionSucceeded: Boolean(represented), mappingInserted: Boolean(represented), presentInFinalPresentationArray: Boolean(represented),
+      disposition, firstLosingStage: represented ? null : (requiredFieldsPresent ? "PRESENTATION_PROPAGATION" : "REQUIRED_FIELD_VALIDATION"),
+      reason: represented ? (represented.grouped ? "explicit cluster lineage represents this canonical input" : "direct concise-card presentation") : (requiredFieldsPresent ? "no final presentation lineage" : "title/headline presentation field is missing")
+    });
+  });
+  const dispositionCount = (name) => writerInputDisposition.filter((row) => row.disposition === name).length;
+  const presentationCoverageCanonicalIds = [...lineage.keys()].filter((id) => inputById.has(id));
+  const unaccountedWriterCanonicalIds = [...inputById.keys()].filter((id) => !lineage.has(id));
+  const presentationIdentityCoveragePass = unaccountedWriterCanonicalIds.length === 0 && presentationCoverageCanonicalIds.length === inputById.size;
+  const genericPresentationIdCount = finalPresentations.filter((row) => /^alert-\d+$/.test(row.presentationId)).length;
+  const mappingCount = presentationCoverageCanonicalIds.length;
+  const overallPass = Boolean(writerInputs.length === authorityRows.length && presentationIdentityCoveragePass && mappingCount === writerInputs.length && dispositionCount("MISSING_REQUIRED_FIELD") === 0);
+  const inputCanonicalIds = [...inputById.keys()];
+  const presentationIds = finalPresentations.map((row) => row.presentationId);
+  const presentationStages = Object.freeze([
+    ["WRITER_INPUT_NORMALIZATION", "gridlyBuildGridlyAlertsPresentationCountModelSync input normalization", writerInputs.length, writerInputs.length, [], [], "array normalization only"],
+    ["PRESENTATION_IDENTITY_DERIVATION", "gridlyAlertPresentationId", writerInputs.length, writerInputs.length, [], inputCanonicalIds.map((id, index) => gridlyAlertPresentationId(inputById.get(id)?.row, index)), "stable canonical/provider identity with governed fallback"],
+    ["CONCISE_CARD_ELIGIBILITY", "RenderCompleteAlertCard.CONCISE_ALERT_CARD adapter", writerInputs.length, writerInputs.length - dispositionCount("MISSING_REQUIRED_FIELD"), writerInputDisposition.filter((row) => !row.requiredFieldsPresent).map((row) => row.canonicalId), [], "canonical identity and display title required"],
+    ["PRESENTATION_DEDUPLICATION", "gridlyBuildGridlyAlertsPresentationCountModelSync", writerInputs.length, writerInputs.length, [], [], "no independent dedup pass"],
+    ["PRESENTATION_GROUPING", "gridlyGetAlertClusterKeyWithContext", writerInputs.length, finalRows.length, [], presentationIds, "intentional situation-type|corridor|location cluster grouping with evidence lineage"],
+    ["RECORD_SHAPE_VALIDATION", "LP235.4 presentation adapter", writerInputs.length, writerInputs.length - dispositionCount("INVALID_PRESENTATION_SHAPE"), writerInputDisposition.filter((row) => row.disposition === "INVALID_PRESENTATION_SHAPE").map((row) => row.canonicalId), [], "presentation-compatible governed record shape"],
+    ["REQUIRED_FIELD_CHECKS", "LP235.4 presentation adapter", writerInputs.length, writerInputs.length - dispositionCount("MISSING_REQUIRED_FIELD"), writerInputDisposition.filter((row) => row.disposition === "MISSING_REQUIRED_FIELD").map((row) => row.canonicalId), [], "canonical identity and title/headline"],
+    ["LOCATION_COORDINATE_CHECKS", "buildNarrowAlertTrustDisplayModel", finalRows.length, finalRows.length, [], [], "coordinates are optional for concise cards"],
+    ["TITLE_HEADLINE_FORMATTING", "gridlyBuildCanonicalLiveIncidentPresentation", finalRows.length, finalRows.length, [], [], "canonical event-centered display formatting"],
+    ["CARD_CONSTRUCTION", "RenderCompleteAlertCard", finalRows.length, finalRows.length - dispositionCount("CARD_CONSTRUCTION_FAILURE"), writerInputDisposition.filter((row) => row.disposition === "CARD_CONSTRUCTION_FAILURE").map((row) => row.canonicalId), presentationIds, "one concise card per final presentation"],
+    ["PRESENTATION_RECORD_RETURN", "renderAlertCard", finalRows.length, finalRows.length, [], presentationIds, "complete alert-card contract returned"],
+    ["CANONICAL_MAPPING_INSERTION", "gridlyAlertsAuthorityWriterAudit lineage adapter", writerInputs.length, mappingCount, unaccountedWriterCanonicalIds, presentationIds, "each evidence row maps to its represented presentation"],
+    ["FINAL_PRESENTATION_ARRAY_ASSEMBLY", "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", finalRows.length, finalRows.length, [], presentationIds, "no cap; all presentation groups rendered"]
+  ].map(([stageName, ownerFunction, inputCount, outputCount, removedCanonicalIds, addedPresentationIds, reason]) => Object.freeze({ stageName, ownerFunction, inputCount, outputCount, removedCanonicalIds: Object.freeze(removedCanonicalIds), removedProviderIds: Object.freeze(writerInputDisposition.filter((row) => removedCanonicalIds.includes(row.canonicalId)).map((row) => row.providerRecordId).filter(Boolean)), addedPresentationIds: Object.freeze(addedPresentationIds), reason })));
+  return Object.freeze({
+    canonicalCommunity, canonicalKey, writerInputCount: writerInputs.length, writerFinalCanonicalCount: authorityRows.length,
+    presentationCandidateCount: writerInputs.length, presentationOutputCount: finalRows.length, canonicalToPresentationMappingCount: mappingCount,
+    writerInputDisposition: Object.freeze(writerInputDisposition), finalPresentations: Object.freeze(finalPresentations), presentationStages,
+    directPresentationCount: dispositionCount("DIRECT_PRESENTATION"), groupedRepresentationCount: dispositionCount("GROUPED_INTO_PRESENTATION"), deduplicatedEquivalentCount: dispositionCount("DEDUPLICATED_EQUIVALENT"), intentionallySuppressedCount: dispositionCount("INTENTIONALLY_SUPPRESSED_BY_PRODUCT_RULE"),
+    invalidShapeCount: dispositionCount("INVALID_PRESENTATION_SHAPE"), missingRequiredFieldCount: dispositionCount("MISSING_REQUIRED_FIELD"), presentationIdFailureCount: dispositionCount("PRESENTATION_ID_FAILURE"), cardConstructionFailureCount: dispositionCount("CARD_CONSTRUCTION_FAILURE"), mappingInsertionFailureCount: dispositionCount("MAPPING_INSERTION_FAILURE"), propagationLossCount: dispositionCount("PROPAGATION_LOSS"),
+    unaccountedWriterCanonicalIds: Object.freeze(unaccountedWriterCanonicalIds), presentationCoverageCanonicalIds: Object.freeze(presentationCoverageCanonicalIds), presentationCoverageCount: presentationCoverageCanonicalIds.length, presentationIdentityCoveragePass,
+    presentationCap: null, presentationCapApplied: false, genericPresentationIdCount,
+    firstLosingStage: writerInputs.length !== finalRows.length ? "ALERTS_PRESENTATION_GROUPING" : (overallPass ? null : "PRESENTATION_COMPLETENESS_FAILURE"), overallPass
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP235AlertsPresentationCompletenessAudit", window.gridlyLP235AlertsPresentationCompletenessAudit);
 
 // LP235 is passive: it reconciles production collections and never fetches,
 // changes selection, renders, or manufactures attribution.
