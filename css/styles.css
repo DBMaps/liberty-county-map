@@ -27483,3 +27483,15 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
 .gridly-lp236-critical { display:grid; gap:3px; padding:11px 12px; border:1px solid rgba(251,146,60,.5); border-radius:11px; background:rgba(251,146,60,.1); }
 .gridly-lp236-critical span { font-size:.75rem; opacity:.8; }
 @media (max-width:420px) { .gridly-lp236-groups { padding-left:8px; } .gridly-lp236-source > summary { padding-inline:10px; } .gridly-lp236-condition-item { padding-inline:8px; } }
+
+/* Portrait V2 lifecycle-owned minimized state: retain mounted sheet content/state
+   while exposing the map and leaving close as a distinct destructive transition. */
+#gridlyPortraitV2Sheet.is-minimized {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+#gridlyPortraitV2SheetBackdrop.is-minimized {
+  display: none !important;
+  pointer-events: none !important;
+}
