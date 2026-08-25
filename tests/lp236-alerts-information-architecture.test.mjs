@@ -83,6 +83,33 @@ test('production Alerts writer mounts LP236 through the existing single DOM writ
   assert.match(writer, /title: `\$\{alertsForRender\.length\} active condition/);
 });
 
+test('LP236.4 restores the renderer scope and asynchronous entry return contracts', () => {
+  const transaction = app.slice(app.indexOf('async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync'), app.indexOf('const gridlySettingsDockTapTrace'));
+  const dock = app.slice(app.indexOf('function openAlertsSurfaceFromDock'), app.indexOf('function gridlyInstantAlertsSheetAudit'));
+  const entry = app.slice(app.indexOf('function invokeMobileAlertsEntry'), app.indexOf('const gridlySettingsDockTapTrace'));
+  assert.match(app, /window\.gridlyLP236RenderAlertsPresentation = \(snapshot, suppliedAlerts = null\) =>/);
+  assert.match(transaction, /window\.gridlyLP236RenderAlertsPresentation\(authoritySnapshot, alerts\)/);
+  assert.match(dock, /return shellResult/);
+  assert.match(entry, /return entryResult\.then\(\(opened\) =>/);
+  assert.match(entry, /return opened/);
+});
+
+test('LP236.4 open audit covers all authority states and exactly one writer', () => {
+  const audit = app.slice(app.indexOf('const gridlyLP236AlertsOpenAuditState'), app.indexOf('async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync'));
+  const transaction = app.slice(app.indexOf('async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync'), app.indexOf('function invokeMobileAlertsEntry'));
+  for (const state of ['AVAILABLE_NONEMPTY', 'AVAILABLE_EMPTY', 'UNAVAILABLE']) assert.match(transaction, new RegExp(state));
+  for (const field of ['entryInvoked', 'openInvoked', 'mountInvoked', 'writerInvoked', 'writerInvocationCount', 'writerResult', 'openReturnValue', 'entryReturnValue', 'authorityState', 'exception', 'overallPass']) assert.match(audit, new RegExp(field));
+  assert.equal((transaction.match(/window\.openGridlyPortraitV2Sheet\("alerts"/g) || []).length, 1);
+  assert.doesNotMatch(transaction, /openPortraitV2Sheet\('alerts'\)|No active community alerts|No active alerts right now/);
+});
+
+test('LP236.4 renderer failure fails closed without provider, polling, or town logic', () => {
+  const bridge = app.slice(app.indexOf('window.gridlyLP236RenderAlertsPresentation ='), app.indexOf('\n\n  function buildAlertsSurfaceHtml'));
+  assert.match(bridge, /catch \(error\)/);
+  assert.match(bridge, /activeConditionAuthorityAvailable: false/);
+  assert.doesNotMatch(bridge, /fetch\(|setTimeout|setInterval|Dallas|Dayton|Katy/);
+});
+
 test('positive, authoritative zero, and unavailable transactions all render through LP236', () => {
   const positive = sandbox.renderLP236({ activeConditionAuthorityAvailable: true, alerts: [] }, [{ id: 'official-1', sourceClass: 'official_roadway', category: 'Lane Closure' }]);
   assert.match(positive, /data-gridly-lp236-alerts="true"/);

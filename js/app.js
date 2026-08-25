@@ -35654,7 +35654,7 @@ function openAlertsSurfaceFromDock() {
     : "alerts_open_same_transaction";
   gridlyInstantAlertsSheetAuditState.lastOpen.authoritativeWriteDispatchAttempted = true;
   gridlyOpenAlertsSurfaceAfterPaint(alertsSheetGeneration);
-  const shellResult = true;
+  const shellResult = gridlyInstantAlertsSheetAuditState.inFlight;
   window.gridlyRuntimePerformanceAuditRecordAlertsStage?.({ stageName: "openAlertsSurfaceFromDock shell", startTime: lp224ShellStartedAt, endTime: gridlyAlertsOpenAuditNow(), triggerReason: "dock Alerts activation", productionOwner: "openAlertsSurfaceFromDock", domMutationOccurred: false, outputChanged: false, authoritativeWriteFollowed: true });
   return shellResult;
 }
@@ -35795,8 +35795,32 @@ function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply(alertsSheetGeneration
   return gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsSheetGeneration);
 }
 
+const gridlyLP236AlertsOpenAuditState = {
+  entryInvoked: false,
+  openInvoked: false,
+  mountInvoked: false,
+  writerInvoked: false,
+  writerInvocationCount: 0,
+  writerResult: null,
+  openReturnValue: null,
+  entryReturnValue: null,
+  authorityState: null,
+  exception: null
+};
+
+function gridlyLP236AlertsOpenAudit() {
+  const audit = { ...gridlyLP236AlertsOpenAuditState };
+  return {
+    ...audit,
+    overallPass: Boolean(audit.entryInvoked && audit.openInvoked && audit.mountInvoked && audit.writerInvoked && audit.writerInvocationCount === 1 && audit.writerResult === true && audit.openReturnValue === true && audit.entryReturnValue === true)
+  };
+}
+if (typeof window !== "undefined") window.gridlyLP236AlertsOpenAudit = gridlyLP236AlertsOpenAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP236AlertsOpenAudit", gridlyLP236AlertsOpenAudit);
+
 /* async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply() -- LP010 static guard alias; implementation delegates through gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync. */
 async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsSheetGeneration = gridlyAlertsSheetLifecycleState.activeGeneration) {
+  gridlyLP236AlertsOpenAuditState.openInvoked = true;
   const writerInvocationTime = Date.now();
   if (!gridlyCanApplyAlertsSheetGeneration(alertsSheetGeneration)) {
     gridlyRecordAlertsWriterInvocation({ suppressionReason: "authoritative_build_not_current_at_start", invocationTime: writerInvocationTime });
@@ -36220,16 +36244,22 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   let writerAlertsForRender = [];
   let snapshot = null;
   const mountLP236AlertsPresentation = (authoritySnapshot, authorityAlerts, renderedHtml = null) => {
+    gridlyLP236AlertsOpenAuditState.mountInvoked = true;
     const alerts = Array.isArray(authorityAlerts) ? authorityAlerts : [];
-    const html = renderedHtml ?? gridlyLP236RenderAlertsPresentation(authoritySnapshot, alerts);
+    const html = renderedHtml ?? window.gridlyLP236RenderAlertsPresentation(authoritySnapshot, alerts);
     const authorityAvailable = authoritySnapshot?.activeConditionAuthorityAvailable === true;
+    gridlyLP236AlertsOpenAuditState.authorityState = authorityAvailable ? (alerts.length ? "AVAILABLE_NONEMPTY" : "AVAILABLE_EMPTY") : "UNAVAILABLE";
     const title = authorityAvailable
       ? (alerts.length ? `${alerts.length} active condition${alerts.length === 1 ? "" : "s"}` : "No Active Alerts")
       : "Alerts unavailable";
-    return Boolean(window.openGridlyPortraitV2Sheet("alerts", {
+    gridlyLP236AlertsOpenAuditState.writerInvoked = true;
+    gridlyLP236AlertsOpenAuditState.writerInvocationCount += 1;
+    const writerResult = window.openGridlyPortraitV2Sheet("alerts", {
       title,
       html: gridlyLp0458SanitizeOfficialAlertCardMarkup(html)
-    }));
+    });
+    gridlyLP236AlertsOpenAuditState.writerResult = writerResult;
+    return writerResult;
   };
   const transaction = gridlyLP226BeginAlertsWriterTransaction({ alertsSheetGeneration, cooperativeBuildGeneration, contextKey: cooperativeBuildContextKey, revisionKey: cooperativeBuildRevisionKey });
   const setTransactionStage = (stage, detail = {}) => gridlyLP226SetAlertsWriterTransactionStage(transaction, stage, detail);
@@ -37511,7 +37541,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       // governed active-condition inventory; the grouped LP223 model remains
       // render-context evidence and is not used as the user-facing count.
       const html = gridlyAlertsOpenAuditMeasure("DOM generation", () =>
-        gridlyLP236RenderAlertsPresentation(snapshot, alertsForRender), {
+        window.gridlyLP236RenderAlertsPresentation(snapshot, alertsForRender), {
           caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync",
           reason: "LP236 authoritative progressive-disclosure presentation",
           domMutationOccurred: false
@@ -37614,6 +37644,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       gridlyAlertsCooperativeBuildState.equivalence.duplicateCardsDetected = gridlyDetectDuplicateAlertCards();
       gridlyAlertsGroupingHotLoopState.equivalence.duplicateCardsDetected = gridlyAlertsCooperativeBuildState.equivalence.duplicateCardsDetected;
       gridlyAlertsOpenAuditFinish({ opened: Boolean(opened), path: "active-alerts" });
+      gridlyLP236AlertsOpenAuditState.openReturnValue = opened;
       return opened;
     }
 
@@ -37635,6 +37666,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       })));
     }
   } catch (error) {
+    gridlyLP236AlertsOpenAuditState.exception = String(error?.message || error || "unknown_error");
     setTransactionStage("ERROR", { terminalReason: String(error?.message || error || "unknown_error") });
     if (gridlyAlertsOpenPerformanceAuditState.activeRenderContext === alertsOpenRenderContext) gridlyAlertsOpenPerformanceAuditState.activeRenderContext = null;
     gridlyAlertsOpenAuditSetMetadata({ renderError: true });
@@ -37663,6 +37695,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       gridlyV921PanelTiming.fullInteractionCompletion = gridlyV921PanelTiming.contentReady;
       gridlyV921RecordPipelineCall("panel", { ...gridlyV921PanelTiming, opened: true, path: "lp236-authoritative-state" });
       gridlyAlertsOpenAuditFinish({ opened: true, path: "lp236-authoritative-state" });
+      gridlyLP236AlertsOpenAuditState.openReturnValue = opened;
       return true;
     }
   }
@@ -37671,13 +37704,31 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
 }
 
 function invokeMobileAlertsEntry(sourceLabel, event) {
+  gridlyLP236AlertsOpenAuditState.entryInvoked = true;
+  gridlyLP236AlertsOpenAuditState.openInvoked = false;
+  gridlyLP236AlertsOpenAuditState.mountInvoked = false;
+  gridlyLP236AlertsOpenAuditState.writerInvoked = false;
+  gridlyLP236AlertsOpenAuditState.writerInvocationCount = 0;
+  gridlyLP236AlertsOpenAuditState.writerResult = null;
+  gridlyLP236AlertsOpenAuditState.openReturnValue = null;
+  gridlyLP236AlertsOpenAuditState.entryReturnValue = null;
+  gridlyLP236AlertsOpenAuditState.authorityState = null;
+  gridlyLP236AlertsOpenAuditState.exception = null;
   reportDebugLog("[Gridly][Alerts] mobile alerts entry clicked", {
     sourceLabel,
     eventType: event?.type || "manual",
     targetId: event?.target?.id || null,
     receiverId: event?.currentTarget?.id || null
   });
-  openAlertsSurfaceFromDock();
+  const entryResult = openAlertsSurfaceFromDock();
+  if (entryResult && typeof entryResult.then === "function") {
+    return entryResult.then((opened) => {
+      gridlyLP236AlertsOpenAuditState.entryReturnValue = opened;
+      return opened;
+    });
+  }
+  gridlyLP236AlertsOpenAuditState.entryReturnValue = entryResult;
+  return entryResult;
 }
 
 const gridlySettingsDockTapTrace = {
@@ -114768,6 +114819,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }).join("");
     return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong>Alerts</strong><span aria-label="${model.total} active conditions">${model.total} active condition${model.total === 1 ? "" : "s"}</span></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
   }
+  window.gridlyLP236RenderAlertsPresentation = (snapshot, suppliedAlerts = null) => {
+    try {
+      return gridlyLP236RenderAlertsPresentation(snapshot, suppliedAlerts);
+    } catch (error) {
+      console.warn("[Gridly][Alerts] LP236 presentation failed; rendering unavailable state.", error);
+      return gridlyLP236RenderAlertsPresentation({
+        alerts: [],
+        activeConditionAuthorityAvailable: false,
+        activeConditionAuthorityReason: "The governed Alerts presentation could not be rendered."
+      }, []);
+    }
+  };
 
   function buildAlertsSurfaceHtml() {
     return gridlyLP236RenderAlertsPresentation(getAlertsSurfaceSnapshot());
