@@ -153,3 +153,38 @@ test('LP234 reports an instrumentation gap rather than inventing count membershi
   assert.equal(out.invariantPass, false);
   assert.match(out.uncountedItems[0].reasonIfNotCounted, /instrumentation gap/);
 });
+
+test('LP234.4 exposes passive whole-collection Alerts accounting and explicit count semantics', () => {
+  const fs = require('node:fs');
+  const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
+  const audit = app.slice(app.indexOf('window.gridlyLP234AlertsCompletenessAudit'), app.indexOf('/* LP221:'));
+  for (const field of [
+    'governedOfficialRoadwayCount', 'alertsEligibilityInputCount', 'alertsEligibilityOutputCount',
+    'alertsGroupingInputCount', 'alertsGroupingOutputCount', 'alertsRankingInputCount',
+    'alertsRankingOutputCount', 'alertsCap', 'alertsCapApplied', 'alertsWriterInputCount',
+    'alertsWriterFinalCount', 'alertsDomCount', 'governedToAlertsDisposition',
+    'alertsPresentations', 'unaccountedGovernedIds', 'countLabelAuthority',
+    'countLabelSemanticMeaning', 'countyFragmentationDetected',
+    'allGovernedEvidenceAccountedFor', 'overallPass'
+  ]) assert.match(audit, new RegExp(`\\b${field}\\b`), `${field} is reported`);
+  assert.match(audit, /total grouped alert presentations, not total active governed issues/);
+  assert.match(audit, /A\. LEGITIMATE_GROUPING/);
+  assert.doesNotMatch(audit, /textContent|innerHTML|outerHTML|MutationObserver|setTimeout|setInterval|fetch\s*\(/,
+    'completeness audit is passive and does not scrape or mutate the DOM, schedule work, or fetch');
+  assert.doesNotMatch(audit, /Austin|travis-tx|setActiveCounty|selectAwareness|renderCompleteAlertCard/,
+    'audit contains no town branch, county transition, or writer invocation');
+});
+
+test('LP234.4 records every pre-writer stage and grouping identity lineage', () => {
+  const fs = require('node:fs');
+  const app = fs.readFileSync(require.resolve('../js/app.js'), 'utf8');
+  const audit = app.slice(app.indexOf('window.gridlyLP234AlertsCompletenessAudit'), app.indexOf('/* LP221:'));
+  for (const stage of [
+    'governed consumer projection', 'Alerts eligibility policy', 'Alerts area/community filter',
+    'Alerts grouping/deduplication', 'Alerts prioritization/ranking', 'Alerts cap/limit',
+    'Alerts presentation conversion', 'writer input'
+  ]) assert.match(audit, new RegExp(stage.replace(/[\/]/g, '\\$&')));
+  for (const lineageField of ['representedGovernedIds', 'representedProviderIds', 'groupingKey', 'groupingReason', 'cardTitle', 'roadways']) {
+    assert.match(audit, new RegExp(`\\b${lineageField}\\b`));
+  }
+});
