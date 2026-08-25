@@ -173,3 +173,56 @@ test('LP235.3 leaves protected systems and LP223 writer implementation untouched
   assert.match(app, /window\.gridlyAlertsAuthorityWriterAudit = function/);
   assert.match(app, /firstLosingStage = "DOM_PARITY_PASS"/);
 });
+
+test('LP235.4 audits every writer input and explicit final presentation lineage', () => {
+  const lp2354 = app.slice(app.indexOf('// LP235.4: passive'), app.indexOf('// LP235 is passive'));
+  assert.match(lp2354, /gridlyLP235AlertsPresentationCompletenessAudit/);
+  for (const field of ['writerInputDisposition', 'finalPresentations', 'canonicalIdsRepresented', 'providerRecordIdsRepresented', 'presentationCoverageCanonicalIds', 'unaccountedWriterCanonicalIds', 'presentationIdentityCoveragePass']) assert.match(lp2354, new RegExp(field));
+  for (const disposition of ['DIRECT_PRESENTATION', 'GROUPED_INTO_PRESENTATION', 'DEDUPLICATED_EQUIVALENT', 'INTENTIONALLY_SUPPRESSED_BY_PRODUCT_RULE', 'INVALID_PRESENTATION_SHAPE', 'MISSING_REQUIRED_FIELD', 'PRESENTATION_ID_FAILURE', 'CARD_CONSTRUCTION_FAILURE', 'MAPPING_INSERTION_FAILURE', 'PROPAGATION_LOSS']) assert.match(lp2354, new RegExp(disposition));
+  assert.match(lp2354, /writerInputs\.map/);
+  assert.match(lp2354, /evidenceRows\.map/);
+});
+
+test('LP235.4 completeness fails closed on lost lineage, required fields, and mapping mismatch', () => {
+  const lp2354 = app.slice(app.indexOf('// LP235.4: passive'), app.indexOf('// LP235 is passive'));
+  assert.match(lp2354, /unaccountedWriterCanonicalIds\.length === 0/);
+  assert.match(lp2354, /mappingCount === writerInputs\.length/);
+  assert.match(lp2354, /dispositionCount\("MISSING_REQUIRED_FIELD"\) === 0/);
+  assert.match(lp2354, /writerInputs\.length === authorityRows\.length/);
+  assert.match(lp2354, /presentationCoverageCanonicalIds\.length === inputById\.size/);
+});
+
+test('LP235.4 presentation identity is deterministic and generic IDs cannot mask loss', () => {
+  const identity = app.slice(app.indexOf('function gridlyAlertPresentationId'), app.indexOf('function gridlyAlertWriterDomIdentity'));
+  assert.match(identity, /gridlyAlertWriterRecordId/);
+  assert.match(identity, /providerRecordId/);
+  assert.match(identity, /\^alert-\\d\+\$/);
+  assert.doesNotMatch(identity, /Math\.random|Date\.now|crypto/);
+  assert.match(app, /genericPresentationIdCount/);
+  assert.match(app, /gridlyAlertPresentationId\(alert, index, canonicalIncidentId\)/);
+});
+
+test('LP235.4 detects grouping key and cap state without inventing either', () => {
+  const lp2354 = app.slice(app.indexOf('// LP235.4: passive'), app.indexOf('// LP235 is passive'));
+  assert.match(lp2354, /__gridlyPresentationClusterKey/);
+  assert.match(lp2354, /same situation type, roadway corridor, and location cluster/);
+  assert.match(lp2354, /presentationCap: null, presentationCapApplied: false/);
+  assert.match(app, /const key = `\$\{kind\}\|\$\{corridor\}\|\$\{locationCluster\}`/);
+});
+
+test('LP235.4 stays passive, O(current inputs), provider-free, and town-neutral', () => {
+  const lp2354 = app.slice(app.indexOf('// LP235.4: passive'), app.indexOf('// LP235 is passive'));
+  assert.doesNotMatch(lp2354, /document\.|querySelector|fetch\(|setTimeout|setInterval|requestAnimationFrame|while\s*\(/);
+  assert.doesNotMatch(lp2354, /Dallas|Austin|Katy|4819000|4805000|4827348/);
+  assert.doesNotMatch(lp2354, /getAlertsSurfaceSnapshot\s*\(|gridlyOpenAlertsSurface\w*\s*\(|renderAlertCard\s*\(/);
+  assert.match(lp2354, /alertsOpenRenderContext/);
+});
+
+test('LP235.4 preserves LP223 ownership and protected regressions', () => {
+  assert.match(app, /LP223: the portrait sheet is a live consumer/);
+  assert.match(app, /CANONICAL_GOVERNED_PLACE_ONLY/);
+  assert.match(app, /NON_PLACE_LEGACY_FALLBACK/);
+  assert.match(app, /FM0529/);
+  const lp2354 = app.slice(app.indexOf('// LP235.4: passive'), app.indexOf('// LP235 is passive'));
+  assert.doesNotMatch(lp2354, /crossingMarkers|kbyg|topAwareness|communityPulse|weather/);
+});
