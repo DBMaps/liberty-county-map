@@ -31,6 +31,17 @@ test('LP237.3 community traveler location uses structured priority and county on
   assert.doesNotMatch(source, /geocod|fetch\(|setTimeout|setInterval/i);
 });
 
+test('LP237.4 selects every structured road alias ahead of a generic resolved location', () => {
+  const resolve = Function('normalizeGridlyUserFacingRoadText', `${functionSource('gridlyResolveCommunityTravelerLocation')}; return gridlyResolveCommunityTravelerLocation;`)(value => String(value || '').trim());
+  for (const [field, value] of [['roadName', 'River Road'], ['street', 'Main Street'], ['routeName', 'FM 973']]) {
+    assert.deepEqual(resolve({ [field]: value, resolvedLocation: '2 miles south of Austin' }), { value, authority: 'governed_road', countyOnly: false });
+  }
+  assert.deepEqual(resolve({ crossStreet: 'Onion Creek Road', resolvedLocation: '2 miles south of Austin' }), { value: 'Onion Creek Road', authority: 'governed_reference_road', countyOnly: false });
+  assert.deepEqual(resolve({ resolvedLocation: '2 miles south of Austin', countyName: 'Travis County' }), { value: '2 miles south of Austin', authority: 'governed_resolved_location', countyOnly: false });
+  assert.deepEqual(resolve({ countyName: 'Travis County' }), { value: 'Travis County', authority: 'county_fallback', countyOnly: true });
+  assert.equal(resolve({ structuredMetadata: { roadName: 'Old San Antonio Road' }, resolvedLocation: '2 miles south of Austin' }).value, 'Old San Antonio Road');
+});
+
 test('LP237.3 preserves submitted location lineage through persistence normalization and Alerts projection', () => {
   const normalization = functionSource('normalizeReports');
   for (const field of ['roadName', 'routeName', 'street', 'streetName', 'primaryRoad', 'locationName', 'location', 'crossStreet', 'referenceRoadA']) assert.match(normalization, new RegExp(`${field}:`));
@@ -52,7 +63,7 @@ test('LP237.3 community Show me shares the governed resolver and coordinate focu
 
 test('LP237.3 audit exposes bounded fail-closed community coverage', () => {
   const audit = functionSource('gridlyLP236AlertsInformationArchitectureAudit');
-  for (const field of ['communityReportLocationCoverageCount', 'communityReportCountyOnlyLocationCount', 'communityReportMissingSpecificLocationIds', 'communityReportShowMeEligibleCount', 'communityReportShowMeRenderedCount', 'communityReportShowMeMissingIds', 'communityReportSummaries', 'communityReportLocationPass', 'communityReportShowMeCoveragePass']) assert.match(audit, new RegExp(field));
+  for (const field of ['communityReportStreetAuthorityCount', 'communityReportResolvedLocationFallbackCount', 'communityReportCountyFallbackCount', 'communityReportStreetLineagePass', 'streetAuthorityAvailable', 'selectedStreetValue', 'firstStreetLineageLosingStage', 'communityReportLocationCoverageCount', 'communityReportCountyOnlyLocationCount', 'communityReportMissingSpecificLocationIds', 'communityReportShowMeEligibleCount', 'communityReportShowMeRenderedCount', 'communityReportShowMeMissingIds', 'communityReportSummaries', 'communityReportLocationPass', 'communityReportShowMeCoveragePass']) assert.match(audit, new RegExp(field));
   assert.match(audit, /slice\(0, 25\)/);
 });
 
