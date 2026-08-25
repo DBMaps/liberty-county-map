@@ -122815,6 +122815,27 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 // LP235.4: passive presentation-completeness reconciliation.  The active
 // LP223 render context is the authority; this helper never reconstructs the
 // source, reads cards, fetches, schedules, or changes selection.
+// LP235.4F: these pure summarizers intentionally share the audit's stable
+// lexical scope. The presentation builder has private helpers with the same
+// purpose inside its IIFE, but those helpers are not visible after that IIFE
+// has completed.
+(() => {
+function gridlyAlertGroupObjectIdentityCheckpoint(row) {
+  const hasEvidenceRows = Object.prototype.hasOwnProperty.call(row || {}, "__gridlyPresentationEvidenceRows");
+  const evidenceRows = hasEvidenceRows && Array.isArray(row.__gridlyPresentationEvidenceRows) ? row.__gridlyPresentationEvidenceRows : [];
+  return Object.freeze({
+    hasEvidenceRows,
+    evidenceRowCount: evidenceRows.length,
+    evidenceRowsOwnProperty: hasEvidenceRows,
+    evidenceRowsEnumerable: hasEvidenceRows && Object.prototype.propertyIsEnumerable.call(row, "__gridlyPresentationEvidenceRows")
+  });
+}
+
+function gridlyAlertGroupObjectIdentityFirstLosingStage(checkpoints = {}) {
+  return ["ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY", "PRESENTATION_COUNT_MODEL", "FUNCTION_RETURN", "POST_GROUP_AUDIT"]
+    .find((stage) => !checkpoints?.[stage]?.hasEvidenceRows) || null;
+}
+
 window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235AlertsPresentationCompletenessAudit() {
   const clean = (value) => String(value ?? "").trim();
   const selected = getGridlySelectedAwarenessArea();
@@ -122918,7 +122939,10 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   const stageCount = (stage) => groupedLineageStageAudit.find((entry) => entry.stage === stage)?.representedCanonicalCount ?? 0;
   const groupedLineageFirstLosingStage = groupedLineageStageAudit.slice(1).find((entry) => entry.representedCanonicalCount < preGroupCanonicalIds.length)?.stage || null;
   const postGroupStage = retainedStages.find((entry) => entry.stage === "POST_GROUP_BUILD");
-  const groupObjectIdentityAudit = Object.freeze(finalRows.map((row, groupIndex) => {
+  const groupObjectIdentityAuthorityAvailable = Boolean(authorityAvailable && postGroupStage && Array.isArray(postGroupStage.groups));
+  const groupObjectIdentityAuthorityReason = groupObjectIdentityAuthorityAvailable ? null
+    : (!authorityAvailable ? authorityReason : "POST_GROUP_OBJECT_IDENTITY_CHECKPOINT_UNAVAILABLE");
+  const groupObjectIdentityAudit = Object.freeze((groupObjectIdentityAuthorityAvailable ? finalRows : []).map((row, groupIndex) => {
     const trace = row?.__gridlyGroupObjectIdentityTrace || {};
     const presentation = gridlyAlertGroupObjectIdentityCheckpoint(row);
     const postGroup = postGroupStage?.groups?.[groupIndex];
@@ -122951,6 +122975,7 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   const groupCountIdentityParityPass = presentationGroups.every((group) => group.countIdentityParity && group.evidenceRowCount === group.sourceIndexCount && group.duplicateCanonicalIds.length === 0 && group.duplicateSourceIndexes.length === 0);
   const groupBuildIdentityCoveragePass = stageCount("POST_GROUP_BUILD") === new Set(preGroupCanonicalIds).size && groupCountIdentityParityPass;
   const overallPass = Boolean(writerInputs.length === authorityRows.length && presentationIdentityCoveragePass && groupedLineageCoveragePass
+    && groupObjectIdentityAuthorityAvailable
     && groupBuildIdentityCoveragePass && groupCountIdentityParityPass
     && mappingCount === writerInputs.length && dispositionCount("MISSING_REQUIRED_FIELD") === 0 && writerAudit.parity === true);
   const inputCanonicalIds = [...inputById.keys()];
@@ -122988,6 +123013,7 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     preGroupInputCount: writerInputs.length, preGroupCanonicalIds: Object.freeze(preGroupCanonicalIds), preGroupProviderIds: Object.freeze(preGroupProviderIds),
     preGroupSourceKindBreakdown, preGroupDuplicateCanonicalIds: Object.freeze(preGroupDuplicateCanonicalIds),
     presentationGroups: Object.freeze(presentationGroups), groupAccumulationTrace,
+    groupObjectIdentityAuthorityAvailable, groupObjectIdentityAuthorityReason,
     groupObjectIdentityAudit, groupObjectIdentityFirstLosingStage,
     authoritativePostGroupCollectionName: "presentationCountModel.alerts",
     authoritativePostGroupRepresentedCanonicalCount, postGroupAuditObservationMatchesAuthority,
@@ -123009,6 +123035,7 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   });
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP235AlertsPresentationCompletenessAudit", window.gridlyLP235AlertsPresentationCompletenessAudit);
+})();
 
 
 // LP235.4A: passive source-semantics reconciliation. It reads only the
