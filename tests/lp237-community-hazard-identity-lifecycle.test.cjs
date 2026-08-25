@@ -1,6 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const governed = require('../js/governed-awareness.js');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const NOW = Date.parse('2026-08-25T12:00:00Z');
 
@@ -158,4 +160,76 @@ test('LP237.1 production selection does not inherit a stale active county', () =
   assert.doesNotMatch(app, /selectedOccurrence = occurrences\.find\(\(\{ group \}\) => group\.countyId === activeCountyId\) \|\| occurrences\[0\]/);
   assert.match(app, /authoritativeCountyId = gridlyResolveCanonicalCountyIdForOperationalContext\(canonicalArea, null\)/);
   assert.doesNotMatch(app, /if \([^)]*Austin|if \([^)]*Bastrop/);
+});
+
+function loadOwnerAudit(overrides = {}) {
+  const app = fs.readFileSync(path.join(__dirname, '../js/app.js'), 'utf8');
+  const source = app.match(/function gridlyLP237CommunityHazardIdentityAudit\(options = \{\}\) \{[\s\S]*?\n\}/)?.[0];
+  assert.ok(source, 'owner audit source is present');
+  const defaults = {
+    window: { GridlyGovernedAwareness: governed },
+    gridlyGovernedAwarenessAudit: () => ({ evidence: [], consumerPropagationLineage: [], countyId: 'travis-tx' }),
+    getGridlySelectedAwarenessArea: () => ({ countyId: 'travis-tx', countyMemberships: ['48453'] }),
+    gridlyReadHomePersonalizationRecord: () => ({ countyId: 'travis-tx' }),
+    GRIDLY_COUNTY_REGISTRY: { travis: { id: 'travis-tx', countyFips: '48453' } },
+    gridlyNormalizeCountyId: (value) => value,
+    gridlyResolvePersistedCanonicalPlaceOperationalCounty: () => 'travis-tx',
+    gridlyUserProfile: null,
+    getGridlySettingsPreferences: () => null,
+    gridlyLocalAcceptedHazardRegistrations: new Map()
+  };
+  const context = { ...defaults, ...overrides };
+  const names = Object.keys(context);
+  return Function(...names, `${source}; return gridlyLP237CommunityHazardIdentityAudit;`)(...names.map((name) => context[name]));
+}
+
+test('LP237.2 owner audit uses bounded published authority without leaking engine', () => {
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  let fetchCalls = 0;
+  let timerCalls = 0;
+  globalThis.fetch = () => { fetchCalls += 1; throw new Error('owner audit must not fetch'); };
+  globalThis.setTimeout = () => { timerCalls += 1; throw new Error('owner audit must not create timers'); };
+  try {
+    const browserWindow = { GridlyGovernedAwareness: governed };
+    const audit = loadOwnerAudit({ window: browserWindow })();
+    assert.equal(audit.authorityAvailable, true);
+    assert.equal(audit.passiveOnly, true);
+    assert.equal(fetchCalls, 0);
+    assert.equal(timerCalls, 0);
+    assert.equal(Object.hasOwn(browserWindow, 'engine'), false);
+    assert.equal(Object.values(audit).includes(governed), false, 'raw authority is not returned');
+  } finally {
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+  }
+});
+
+test('LP237.2 owner audit fails closed when bounded authority is unavailable', () => {
+  const audit = loadOwnerAudit({ window: {} })();
+  assert.deepEqual(audit, {
+    authorityAvailable: false,
+    authorityReason: 'LP237_GOVERNED_AWARENESS_AUTHORITY_UNAVAILABLE',
+    overallPass: false,
+    passiveOnly: true
+  });
+});
+
+test('LP237.2 submitted one / governed zero remains a failing owner result', () => {
+  const registrations = new Map([['one', {
+    report: { countyId: 'travis-tx' }, submittedReportId: 'hazard-device-a', canonicalReportId: 'hazard-device-a'
+  }]]);
+  const audit = loadOwnerAudit({ gridlyLocalAcceptedHazardRegistrations: registrations })();
+  assert.equal(audit.submittedHazardCount, 1);
+  assert.equal(audit.governedHazardCount, 0);
+  assert.equal(audit.submittedToGovernedParityPass, false);
+  assert.equal(audit.overallPass, false);
+});
+
+test('LP237.2 repair is scope-only and keeps production lifecycle wiring unchanged', () => {
+  const app = fs.readFileSync(path.join(__dirname, '../js/app.js'), 'utf8');
+  assert.match(app, /const engine = window\.GridlyGovernedAwareness;[\s\S]*?function gridlyLP237CommunityHazardIdentityAudit/);
+  assert.match(app, /const authority = window\.GridlyGovernedAwareness;/);
+  assert.doesNotMatch(app, /window\.engine\s*=/);
+  assert.doesNotMatch(app.match(/function gridlyLP237CommunityHazardIdentityAudit[\s\S]*?\n\}/)[0], /\b(?:fetch|setInterval|setTimeout)\s*\(/);
 });
