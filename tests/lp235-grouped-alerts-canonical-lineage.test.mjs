@@ -47,6 +47,17 @@ test('real group create and append paths retain three identities and source inde
   assert.deepEqual(Array.from(presentation.__gridlyGroupAccumulationTrace, row => row.action), ['CREATE_GROUP','APPEND_GROUP_MEMBER','APPEND_GROUP_MEMBER']);
   assert.ok(presentation.__gridlyGroupAccumulationTrace.every(row => row.memberRetained));
   assert.equal(presentation.__gridlyPresentationClusterKey, 'official_roadway|construction|road-1|cluster-1');
+  assert.equal(presentation.__gridlyGroupObjectIdentityTrace.accumulatorIsMapStored, true);
+  assert.equal(presentation.__gridlyGroupObjectIdentityTrace.mapStoredIsMapToArray, true);
+  for (const checkpoint of ['accumulator', 'mapStored', 'mapToArray']) {
+    assert.equal(presentation.__gridlyGroupObjectIdentityTrace[checkpoint].hasEvidenceRows, true);
+    assert.equal(presentation.__gridlyGroupObjectIdentityTrace[checkpoint].evidenceRowCount, 3);
+  }
+  for (const property of ['__gridlyPresentationEvidenceRows', '__gridlyPresentationSourceIndexes', '__gridlyPresentationClusterKey']) {
+    assert.equal(Object.prototype.hasOwnProperty.call(presentation, property), true);
+    assert.equal(Object.prototype.propertyIsEnumerable.call(presentation, property), true);
+    assert.equal(Object.getOwnPropertyDescriptor(presentation, property).enumerable, true);
+  }
   const mapping = buildMapping(model.alerts.map(row => ({...row, presentationId:'p-1'})), [domRow('p-1')]);
   assert.deepEqual(Array.from(mapping.mapping, row => row.representationRole), ['LEADER','GROUP_MEMBER','GROUP_MEMBER']);
 });
@@ -138,6 +149,29 @@ test('lineage stage audit detects field loss without DOM reconstruction', () => 
   assert.doesNotMatch(summarySource, /document\.|querySelector|textContent|fetch\(|setTimeout|setInterval/);
 });
 
+test('object identity audit identifies an intentional reconstruction loss at its exact boundary', () => {
+  const source = app.slice(app.indexOf('function gridlyAlertGroupObjectIdentityCheckpoint'), app.indexOf('\n  function getGridlyAlertsPresentationCountModel'));
+  const sandbox = {};
+  vm.runInNewContext(`${source}\nthis.checkpoint = gridlyAlertGroupObjectIdentityCheckpoint; this.firstLoss = gridlyAlertGroupObjectIdentityFirstLosingStage;`, sandbox);
+  const retained = group('p-1', ['a', 'b', 'c']);
+  const good = sandbox.checkpoint(retained);
+  const dropped = sandbox.checkpoint({ presentationId: retained.presentationId });
+  assert.equal(good.hasEvidenceRows, true);
+  assert.equal(good.evidenceRowsOwnProperty, true);
+  assert.equal(good.evidenceRowsEnumerable, true);
+  assert.equal(dropped.hasEvidenceRows, false);
+  assert.equal(sandbox.firstLoss({
+    ACCUMULATOR_GROUP_OBJECT: good, MAP_STORED_GROUP_OBJECT: good,
+    MAP_TO_ARRAY: dropped, PRESENTATION_COUNT_MODEL: dropped,
+    FUNCTION_RETURN: dropped, POST_GROUP_AUDIT: dropped
+  }), 'MAP_TO_ARRAY');
+  assert.equal(sandbox.firstLoss({
+    ACCUMULATOR_GROUP_OBJECT: good, MAP_STORED_GROUP_OBJECT: good,
+    MAP_TO_ARRAY: good, PRESENTATION_COUNT_MODEL: good,
+    FUNCTION_RETURN: good, POST_GROUP_AUDIT: dropped
+  }), 'POST_GROUP_AUDIT');
+});
+
 test('completeness audit publishes all passive grouped-lineage checkpoints', () => {
   const audit = app.slice(app.indexOf('window.gridlyLP235AlertsPresentationCompletenessAudit = function'), app.indexOf('// LP235.4A:'));
   for (const field of [
@@ -146,5 +180,9 @@ test('completeness audit publishes all passive grouped-lineage checkpoints', () 
     'mappingBuilderInputRepresentedCanonicalCount', 'groupedLineageFirstLosingStage',
     'groupsMissingEvidenceRowsAtCompletedContext'
   ]) assert.match(audit, new RegExp(field));
+  for (const field of ['groupObjectIdentityAudit', 'groupObjectIdentityFirstLosingStage', 'authoritativePostGroupCollectionName',
+    'authoritativePostGroupRepresentedCanonicalCount', 'postGroupAuditObservationMatchesAuthority', 'postGroupBuildAuditReadsAuthoritativeGroupObjects']) {
+    assert.match(audit, new RegExp(field));
+  }
   assert.doesNotMatch(audit, /fetch\(|setTimeout|setInterval|querySelector|openGridlyPortraitV2Sheet/);
 });
