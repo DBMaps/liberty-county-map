@@ -122876,6 +122876,19 @@ function gridlyLocationContextProductionAudit() {
   });
 }
 function gridlyLP237CommunityHazardIdentityAudit(options = {}) {
+  // The governed-awareness module is the existing bounded, passive authority
+  // published by its owning runtime. Do not leak or depend on the `engine`
+  // local used inside gridlyGovernedAwarenessAudit; that binding ends with that
+  // function's lexical scope.
+  const authority = window.GridlyGovernedAwareness;
+  if (!authority || typeof authority.buildCommunityHazardAcceptanceAudit !== "function") {
+    return Object.freeze({
+      authorityAvailable: false,
+      authorityReason: "LP237_GOVERNED_AWARENESS_AUTHORITY_UNAVAILABLE",
+      overallPass: false,
+      passiveOnly: true
+    });
+  }
   const governed = gridlyGovernedAwarenessAudit({ ...options, reason: options.reason || "lp237-passive-audit" });
   const community = (governed.evidence || []).filter((row) => row.sourceKind === "active_hazard" || row.sourceKind === "community_report");
   const lineage = new Map((governed.consumerPropagationLineage || []).map((row) => [row.evidenceId, row]));
@@ -122915,7 +122928,7 @@ function gridlyLP237CommunityHazardIdentityAudit(options = {}) {
     canonicalReportId: registration.canonicalReportId,
     persistedCounty: registration.report?.countyId || registration.report?.county_id || null
   }));
-  const acceptance = engine.buildCommunityHazardAcceptanceAudit({
+  const acceptance = authority.buildCommunityHazardAcceptanceAudit({
     submissions, hazards, selectedMembershipCounty, authoritativeMembershipCounty,
     activeCounty: governed.countyId || null,
     membershipCounties: membershipCounties.length ? membershipCounties : [selectedMembershipCounty].filter(Boolean)
@@ -122925,6 +122938,7 @@ function gridlyLP237CommunityHazardIdentityAudit(options = {}) {
   const consumerPropagationPass = acceptance.submittedToGovernedParityPass && unmatchedMapHazardIds.length === 0 && excludedActiveHazardIds.length === 0
     && hazards.every((row) => !row.active || (row.alertsMatched && row.locationContextMatched));
   return Object.freeze({
+    authorityAvailable: true, authorityReason: null,
     canonicalCommunity: governed.canonicalCommunity || null,
     canonicalCommunityId: selectedArea?.placeGeoid || selectedArea?.communityId || null,
     selectedMembershipCounty, authoritativeMembershipCounty, activeCounty: governed.countyId || null,
