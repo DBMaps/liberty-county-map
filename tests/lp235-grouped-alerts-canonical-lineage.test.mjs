@@ -204,6 +204,77 @@ test('LP235.4F object identity authority fails closed when its checkpoint is una
   assert.match(audit, /groupObjectIdentityAuthorityAvailable, groupObjectIdentityAuthorityReason/);
 });
 
+function runPresentationCompletenessAudit(auditRenderContext) {
+  const auditStart = app.indexOf('(() => {', app.indexOf('// LP235.4: passive presentation-completeness reconciliation'));
+  const auditEnd = app.indexOf('// LP235.4A:', auditStart);
+  const auditSource = app.slice(auditStart, auditEnd);
+  const sandbox = {
+    window: {
+      __gridlyLp2194AlertStages: { finalAlertData: auditRenderContext?.alerts || [] },
+      gridlyAlertsAuthorityWriterAudit: () => ({
+        canonicalToPresentationMapping: auditRenderContext ? [{ canonicalId: 'canonical-1', presentationId: 'presentation-1' }] : [],
+        canonicalToPresentationMappingDuplicatePairs: [], parity: Boolean(auditRenderContext)
+      })
+    },
+    getGridlySelectedAwarenessArea: () => null,
+    gridlyResolveCanonicalPlaceGeoid: () => null,
+    gridlyAlertsGetAuditRenderContext: () => auditRenderContext,
+    gridlyAlertWriterRecordId: (row, index = 0) => String(row?.evidenceId || `alert-${index}`),
+    gridlyBuildCanonicalLiveIncidentPresentation: row => ({ incidentId: row?.presentationId, title: row?.title }),
+    gridlyAlertPresentationId: (row, index = 0) => String(row?.presentationId || row?.evidenceId || `alert-${index}`),
+    gridlyAlertsPresentationSourceClass: row => row?.sourceKind || 'official_roadway',
+    gridlySummarizeAlertsGroupedLineage: (stage, rows) => ({
+      stage, representedCanonicalCount: rows.reduce((count, row) => count + (row?.__gridlyPresentationEvidenceRows?.length || 1), 0),
+      groupsMissingEvidenceRows: rows.filter(row => !Array.isArray(row?.__gridlyPresentationEvidenceRows)).length
+    }),
+    exposeGridlyAuditHelper: () => {}
+  };
+  vm.runInNewContext(auditSource, sandbox);
+  return { result: sandbox.window.gridlyLP235AlertsPresentationCompletenessAudit(), sandbox };
+}
+
+test('LP235.4G owner audit object-identity names are lexical and never globalized', () => {
+  const audit = app.slice(app.indexOf('// LP235.4: passive presentation-completeness reconciliation'), app.indexOf('// LP235.4A:'));
+  assert.match(audit, /const postGroupHasEvidenceRows = postGroup\?\.hasEvidenceRows === true;/);
+  assert.match(audit, /postGroupAuditHasEvidenceRows: postGroupHasEvidenceRows/);
+  for (const field of ['accumulatorHasEvidenceRows', 'mapStoredHasEvidenceRows', 'mapToArrayHasEvidenceRows', 'presentationModelHasEvidenceRows', 'functionReturnHasEvidenceRows']) {
+    assert.match(audit, new RegExp(`${field}: (?:Boolean\\(trace\\.|presentation\\.hasEvidenceRows)`));
+  }
+  assert.doesNotMatch(audit, /window\.(?:postGroupAuditHasEvidenceRows|accumulatorHasEvidenceRows|mapStoredHasEvidenceRows|mapToArrayHasEvidenceRows|presentationModelHasEvidenceRows|functionReturnHasEvidenceRows)\s*=/);
+  assert.doesNotMatch(audit, /\bpostGroupAuditHasEvidenceRows\s*[,}]/, 'owner audit must not use unresolved shorthand');
+});
+
+test('LP235.4G owner audit runs with checkpoint authority and summarizes identity', () => {
+  const evidence = officialRow(1, 1);
+  const presentation = group('presentation-1', ['canonical-1']);
+  presentation.title = 'Construction';
+  presentation.sourceKind = 'official_roadway';
+  presentation.__gridlyGroupObjectIdentityTrace = {
+    accumulator: { hasEvidenceRows: true, evidenceRowCount: 1 },
+    mapStored: { hasEvidenceRows: true, evidenceRowCount: 1 },
+    mapToArray: { hasEvidenceRows: true, evidenceRowCount: 1 },
+    accumulatorIsMapStored: true, mapStoredIsMapToArray: true
+  };
+  const { result, sandbox } = runPresentationCompletenessAudit({
+    alerts: [evidence], presentationModel: { alerts: [presentation] },
+    groupedLineageStages: [{ stage: 'POST_GROUP_BUILD', representedCanonicalCount: 1, groups: [{ hasEvidenceRows: true, evidenceRowCount: 1 }] }]
+  });
+  assert.equal(result.groupObjectIdentityAuthorityAvailable, true);
+  assert.equal(result.groupObjectIdentityAuthorityReason, null);
+  assert.equal(result.groupObjectIdentityAudit.length, 1);
+  assert.equal(result.groupObjectIdentityAudit[0].postGroupAuditHasEvidenceRows, true);
+  assert.equal(Object.hasOwn(sandbox.window, 'postGroupAuditHasEvidenceRows'), false);
+});
+
+test('LP235.4G owner audit runs without checkpoint authority and fails closed', () => {
+  const { result, sandbox } = runPresentationCompletenessAudit(null);
+  assert.equal(result.groupObjectIdentityAuthorityAvailable, false);
+  assert.equal(result.groupObjectIdentityAuthorityReason, 'POST_GROUP_OBJECT_IDENTITY_CHECKPOINT_UNAVAILABLE');
+  assert.deepEqual(Array.from(result.groupObjectIdentityAudit), []);
+  assert.equal(result.overallPass, false);
+  assert.equal(Object.hasOwn(sandbox.window, 'postGroupAuditHasEvidenceRows'), false);
+});
+
 test('completeness audit publishes all passive grouped-lineage checkpoints', () => {
   const audit = app.slice(app.indexOf('window.gridlyLP235AlertsPresentationCompletenessAudit = function'), app.indexOf('// LP235.4A:'));
   for (const field of [
