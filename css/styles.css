@@ -27448,6 +27448,10 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
 .gridly-lp236-header > span { color:var(--gridly-text-muted, rgba(226,240,252,.76)); font-size:.82rem; }
 .gridly-lp236-sections { display:grid; grid-template-columns:minmax(0, 1fr); width:100%; min-width:0; gap:8px; }
 .gridly-lp236-source, .gridly-lp236-group { width:100%; min-width:0; max-width:100%; box-sizing:border-box; border:1px solid rgba(255,255,255,.11); border-radius:12px; background:rgba(255,255,255,.025); overflow:visible; }
+.gridly-lp236-source-status { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:48px; padding:10px 12px; box-sizing:border-box; border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(255,255,255,.018); }
+.gridly-lp236-source-status > span { display:grid; min-width:0; text-transform:uppercase; letter-spacing:.045em; }
+.gridly-lp236-source-status small { margin-top:2px; opacity:.67; font-size:.68rem; text-transform:none; letter-spacing:0; }
+.gridly-lp236-source-status > b { flex:0 0 auto; opacity:.72; font-variant-numeric:tabular-nums; }
 .gridly-lp236-source > summary, .gridly-lp236-group > summary, .gridly-lp236-roadway-group > summary { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:48px; padding:10px 12px; cursor:pointer; list-style:none; }
 .gridly-lp236-source > summary::-webkit-details-marker, .gridly-lp236-group > summary::-webkit-details-marker, .gridly-lp236-roadway-group > summary::-webkit-details-marker, .gridly-lp236-condition-details > summary::-webkit-details-marker { display:none; }
 .gridly-lp236-source > summary::before, .gridly-lp236-group > summary::before, .gridly-lp236-roadway-group > summary::before { content:"›"; flex:0 0 auto; font-size:1.15rem; transform-origin:center; transition:transform .14s ease; }
