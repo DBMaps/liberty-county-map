@@ -124,3 +124,52 @@ test('LP235.1 remains passive and does not alter protected production authoritie
   assert.doesNotMatch(lp235, /fetch\(|setInterval|setTimeout|requestAnimationFrame|renderCrossings\(|setActiveCounty|pointInPolygon/);
   assert.doesNotMatch(lp235, /Dallas|4819000/);
 });
+
+test('LP235.3 exposes exact canonical Alerts source and disposition lineage', () => {
+  const lp2353 = app.slice(app.indexOf('// LP235.3:'), app.indexOf('// LP235 is passive'));
+  assert.match(lp2353, /gridlyLP235AlertsCanonicalSourceAudit/);
+  for (const field of [
+    'alertsSourceCollections', 'alertsStageAudit', 'governedToAlertsDisposition',
+    'finalAlertsPresentations', 'writerInputs', 'extraFinalPresentationIds',
+    'extraFinalProviderIds', 'extraFinalDisposition', 'unaccountedGovernedIds',
+    'countyFragmentationPredicate', 'stalePriorGenerationRows',
+    'legacyCollectionMixingDetected', 'countLabelMeaning'
+  ]) assert.match(lp2353, new RegExp(field), field);
+  for (const disposition of [
+    'DIRECT_PRESENTATION', 'GROUPED_INTO_PRESENTATION',
+    'INTENTIONALLY_NOT_ALERTS_ELIGIBLE', 'PROPAGATION_LOSS', 'UNACCOUNTED'
+  ]) assert.match(lp2353, new RegExp(disposition), disposition);
+});
+
+test('LP235.3 grouping, county fragmentation, and extras require identity proof', () => {
+  const lp2353 = app.slice(app.indexOf('// LP235.3:'), app.indexOf('// LP235 is passive'));
+  assert.match(lp2353, /representedGovernedIds\.length > 1/);
+  assert.match(lp2353, /__gridlyPresentationEvidenceRows/);
+  assert.doesNotMatch(lp2353, /governed\.length\s*>\s*finalRows\.length[^;]*(GROUPED|COUNTY)/);
+  assert.match(lp2353, /disposition === "COUNTY_FRAGMENTED"/);
+  assert.match(lp2353, /countyFragmentationPredicate: null/);
+  assert.match(lp2353, /validCurrentEquivalentLineage: false/);
+  assert.match(lp2353, /LEGACY_ALERTS_ONLY_DRIVETEXAS_COLLECTION/);
+});
+
+test('LP235.3 canonical PLACE source repair is bounded before LP223', () => {
+  const snapshotBoundary = app.slice(app.indexOf('// A canonical PLACE projection'), app.indexOf('const activeIncidentCount', app.indexOf('// A canonical PLACE projection')));
+  assert.match(snapshotBoundary, /canonicalPlaceAlertsAuthority/);
+  assert.match(snapshotBoundary, /CANONICAL_GOVERNED_PLACE_ONLY/);
+  assert.match(snapshotBoundary, /NON_PLACE_LEGACY_FALLBACK/);
+  assert.match(snapshotBoundary, /canonicalPlaceAlertsAuthority[\s\S]*areaFilteredAlertItems\.slice\(\)/);
+  assert.match(snapshotBoundary, /canonicalPlaceAlertsAuthority[\s\S]*mergeGridlyOfficialSituationAlerts/);
+  assert.doesNotMatch(snapshotBoundary, /render|innerHTML|querySelector|fetch\(|setInterval|setTimeout/);
+
+  const lp2353 = app.slice(app.indexOf('// LP235.3:'), app.indexOf('// LP235 is passive'));
+  assert.doesNotMatch(lp2353, /getAlertsSurfaceSnapshot\s*\(/, 'audit must not rebuild/refetch Alerts');
+  assert.doesNotMatch(lp2353, /document\.|querySelector|innerHTML|fetch\(|setInterval|setTimeout/, 'audit does not scrape or mutate DOM and never polls');
+  assert.doesNotMatch(lp2353, /Dallas|Austin|Katy|Corpus Christi|4819000/, 'no town-specific production branch');
+});
+
+test('LP235.3 leaves protected systems and LP223 writer implementation untouched', () => {
+  const changedBoundary = app.slice(app.indexOf('// A canonical PLACE projection'), app.indexOf('// LP235 is passive'));
+  assert.doesNotMatch(changedBoundary, /crossingCertifiedCount|kbygOfficialCount|topAwarenessActive|communityPulseActive/);
+  assert.match(app, /window\.gridlyAlertsAuthorityWriterAudit = function/);
+  assert.match(app, /firstLosingStage = "DOM_PARITY_PASS"/);
+});

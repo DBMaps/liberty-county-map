@@ -114264,13 +114264,30 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       };
     }), { caller: "getAlertsSurfaceSnapshot", reason: "snapshot normalized intelligence promotion" });
     gridlyAlertsOpenAuditMeasure("weather situation promotion", () => normalizedAlertItemsBeforeAreaFilter.filter((alert) => gridlyAlertsOpenAuditCountProvider(alert) === "weather").length, { caller: "getAlertsSurfaceSnapshot", reason: "snapshot weather provider classification" });
-    const areaFilteredAlertItems = gridlyAlertsOpenAuditMeasure("deduplication", () => gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot"), { caller: "getAlertsSurfaceSnapshot", reason: "alertsSurfaceSnapshot area eligibility" });
-    const normalizedAlertItems = gridlyAlertsOpenAuditMeasure("alert merge", () => mergeGridlyOfficialSituationAlerts(areaFilteredAlertItems)
+    // A canonical PLACE projection has already passed the governed lifecycle and
+    // canonical-community geography policies.  Reapplying the legacy area
+    // predicate here used record-shape geography, discarded those governed rows,
+    // and then allowed the LP039.3 legacy collection to replace them.  County-only
+    // and non-PLACE scopes retain the established fallback path.
+    const canonicalPlaceAlertsAuthority = Boolean(canonicalActiveCommunityRecords
+      && (typeof gridlyResolveCanonicalPlaceGeoid !== "function" || gridlyResolveCanonicalPlaceGeoid(getGridlySelectedAwarenessArea?.())));
+    const areaFilteredAlertItems = gridlyAlertsOpenAuditMeasure("deduplication", () => canonicalPlaceAlertsAuthority
+      ? normalizedAlertItemsBeforeAreaFilter.slice()
+      : gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot"), { caller: "getAlertsSurfaceSnapshot", reason: "alertsSurfaceSnapshot area eligibility" });
+    const normalizedAlertItems = gridlyAlertsOpenAuditMeasure("alert merge", () => (canonicalPlaceAlertsAuthority
+      ? areaFilteredAlertItems.slice()
+      : mergeGridlyOfficialSituationAlerts(areaFilteredAlertItems))
       .sort(compareGridlyIncidentPriorityModels), { caller: "getAlertsSurfaceSnapshot", reason: "snapshot official situation merge" });
     window.__gridlyLp2194AlertStages = Object.freeze({
       presentationCandidates: Object.freeze(normalizedAlertItemsBeforeAreaFilter.slice()),
       areaFilterEligible: Object.freeze(areaFilteredAlertItems.slice()),
-      finalAlertData: Object.freeze(normalizedAlertItems.slice())
+      finalAlertData: Object.freeze(normalizedAlertItems.slice()),
+      sourceAssembly: Object.freeze({
+        canonicalPlaceAlertsAuthority,
+        canonicalGovernedCount: canonicalActiveCommunityRecords?.length || 0,
+        legacyOfficialSituationContributionCount: canonicalPlaceAlertsAuthority ? 0 : Math.max(0, normalizedAlertItems.length - areaFilteredAlertItems.length),
+        policy: canonicalPlaceAlertsAuthority ? "CANONICAL_GOVERNED_PLACE_ONLY" : "NON_PLACE_LEGACY_FALLBACK"
+      })
     });
     gridlyLP226AlertsMembershipAuditState.governedProjectionIds = gridlyLP226MembershipIds(areaFilteredAlertItems, gridlyLP226CanonicalId);
     gridlyLP226AlertsMembershipAuditState.dedupedProjectionIds = gridlyLP226MembershipIds(normalizedAlertItems, gridlyLP226CanonicalId);
@@ -122446,6 +122463,163 @@ window.gridlyLP234AlertsCompletenessAudit = function gridlyLP234AlertsCompletene
   return Object.freeze(result);
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP234AlertsCompletenessAudit", window.gridlyLP234AlertsCompletenessAudit);
+
+// LP235.3: exact, passive reconciliation of the collections which already fed
+// the Alerts writer.  This report deliberately does not call the snapshot
+// builder: doing so would turn an acceptance observation into a source refresh.
+window.gridlyLP235AlertsCanonicalSourceAudit = function gridlyLP235AlertsCanonicalSourceAudit() {
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const activeCounty = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "";
+  const canonicalCommunity = selected?.label || selected?.name || "";
+  const placeGeoid = typeof gridlyResolveCanonicalPlaceGeoid === "function" ? gridlyResolveCanonicalPlaceGeoid(selected) : null;
+  const canonicalKey = placeGeoid ? `place-${placeGeoid}` : (selected?.canonicalKey || selected?.key || "");
+  const selectedMembership = selected?.countyId || selected?.membershipCountyId || "";
+  const projection = typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null;
+  const governed = (Array.isArray(projection?.lineage) ? projection.lineage : [])
+    .filter((row) => row?.sourceKind === "official_roadway" && row?.lifecycleEligible === true);
+  const eligible = (Array.isArray(projection?.surfaces?.alerts) ? projection.surfaces.alerts : [])
+    .filter((row) => row?.sourceKind === "official_roadway");
+  const stages = window.__gridlyLp2194AlertStages || {};
+  const candidates = Array.isArray(stages.presentationCandidates) ? stages.presentationCandidates : [];
+  const areaEligible = Array.isArray(stages.areaFilterEligible) ? stages.areaFilterEligible : [];
+  const finalRows = Array.isArray(stages.finalAlertData) ? stages.finalAlertData : [];
+  const writer = typeof window.gridlyAlertsAuthorityWriterAudit === "function" ? window.gridlyAlertsAuthorityWriterAudit() : {};
+  const snapshotState = window.gridlyAlertsSnapshotReconciliationState || {};
+  const clean = (value) => String(value ?? "").trim();
+  const evidenceIdOf = (row = {}) => clean(row.evidenceId || row.governedEvidenceId || row.raw?.evidenceId || row.raw?.governedEvidenceId);
+  const providerIdOf = (row = {}) => clean(row.providerRecordId || row.sourceProviderRecordId || row.raw?.providerRecordId || row.raw?.sourceProviderRecordId || row.sourceId).replace(/^provider:/, "");
+  const canonicalIdOf = (row = {}, index = 0) => typeof gridlyAlertWriterRecordId === "function" ? clean(gridlyAlertWriterRecordId(row, index)) : (evidenceIdOf(row) || clean(row.id || row.incidentId || `alert-${index}`));
+  const evidenceRowsOf = (row) => Array.isArray(row?.__gridlyPresentationEvidenceRows) && row.__gridlyPresentationEvidenceRows.length ? row.__gridlyPresentationEvidenceRows : [row];
+  const identities = (rows) => [...new Set(rows.map(evidenceIdOf).filter(Boolean))];
+  const providers = (rows) => [...new Set(rows.map(providerIdOf).filter(Boolean))];
+  const stageIdentity = (rows) => identities(rows).concat(providers(rows).map((id) => `provider:${id}`));
+  const sourceCollectionOf = (row = {}) => clean(row.__gridlySourceCollection || row.raw?.__gridlySourceCollection)
+    || (evidenceIdOf(row) ? "canonical_governed_alerts_projection" : (/drivetexas|official roadways/i.test(clean(row.source || row.sourceLabel || row.providerId)) ? "legacy_official_situations" : "alerts_specific_or_community"));
+  const currentGeneration = Number(snapshotState.snapshotGeneration ?? snapshotState.membership?.generation ?? 0) || null;
+  const currentSignature = snapshotState.inputSignature || null;
+  const finalAlertsPresentations = finalRows.map((row, index) => {
+    const evidenceRows = evidenceRowsOf(row);
+    const writerCanonicalId = canonicalIdOf(row, index);
+    const mapping = (writer.canonicalToPresentationMapping || []).find((entry) => clean(entry.canonicalId) === writerCanonicalId);
+    const representedGovernedIds = identities(evidenceRows);
+    const representedProviderIds = providers(evidenceRows);
+    const sourceCollection = sourceCollectionOf(row);
+    return Object.freeze({
+      presentationId: clean(mapping?.presentationId || row.incidentId || row.id) || writerCanonicalId,
+      writerCanonicalId, providerRecordId: providerIdOf(row) || representedProviderIds[0] || null,
+      representedGovernedIds: Object.freeze(representedGovernedIds), representedProviderIds: Object.freeze(representedProviderIds),
+      sourceCollection, sourceKind: clean(row.sourceKind || row.raw?.sourceKind) || (sourceCollection === "canonical_governed_alerts_projection" ? "official_roadway" : "legacy_official_situation"),
+      groupingKey: clean(row.__gridlyPresentationClusterKey) || writerCanonicalId,
+      groupingReason: representedGovernedIds.length > 1 ? "explicit presentation evidence lineage" : "one source row to one presentation",
+      canonicalCommunity: clean(row.canonicalCommunity || row.raw?.canonicalCommunity) || canonicalCommunity,
+      sourceCounty: clean(row.countyId || row.county || row.raw?.countyId || row.raw?.county), selectedMembership,
+      whyIncluded: sourceCollection === "canonical_governed_alerts_projection" ? "current canonical governed Alerts-eligible evidence" : "non-PLACE legacy fallback contribution",
+      generation: Number(row.__gridlyGeneration ?? row.generation ?? currentGeneration) || null,
+      transaction: clean(row.transactionId || row.raw?.transactionId) || currentSignature,
+      freshness: Number(row.__gridlyGeneration ?? row.generation ?? currentGeneration) === currentGeneration ? "CURRENT_SELECTION_GENERATION" : "GENERATION_UNPROVEN",
+      sourceTimestamp: clean(row.updatedAt || row.sourceUpdatedAt || row.raw?.updatedAt || row.raw?.sourceUpdatedAt) || null,
+      currentCanonicalKey: canonicalKey, currentActiveCounty: activeCounty,
+      belongsToCurrentSelectionGeneration: Number(row.__gridlyGeneration ?? row.generation ?? currentGeneration) === currentGeneration
+    });
+  });
+  const presentationByGovernedId = new Map(finalAlertsPresentations.flatMap((presentation) => presentation.representedGovernedIds.map((id) => [id, presentation])));
+  const inStage = (rows, id) => rows.some((row) => evidenceRowsOf(row).some((evidence) => evidenceIdOf(evidence) === id));
+  const governedToAlertsDisposition = governed.map((lineage) => {
+    const governedEvidenceId = clean(lineage.evidenceId);
+    const eligibleRow = eligible.find((row) => clean(row.evidenceId) === governedEvidenceId);
+    const record = eligibleRow?.record || {};
+    const presentation = presentationByGovernedId.get(governedEvidenceId) || null;
+    const presentAtEligibility = Boolean(eligibleRow);
+    const presentAfterAreaFilter = inStage(areaEligible, governedEvidenceId);
+    const presentInAlertsSourceAssembly = inStage(candidates, governedEvidenceId) || presentAfterAreaFilter;
+    const presentAfterGrouping = inStage(finalRows, governedEvidenceId);
+    const presentAfterRanking = presentAfterGrouping;
+    const presentAtWriterInput = Boolean(presentation && (writer.writerInputCanonicalIds || []).includes(presentation.writerCanonicalId));
+    let disposition = "UNACCOUNTED";
+    let firstLosingStage = null;
+    let reason = "no explicit current presentation lineage";
+    if (presentation) {
+      disposition = presentation.representedGovernedIds.length > 1 ? "GROUPED_INTO_PRESENTATION" : "DIRECT_PRESENTATION";
+      reason = disposition === "GROUPED_INTO_PRESENTATION" ? "explicit __gridlyPresentationEvidenceRows lineage" : "direct canonical governed evidence lineage";
+    } else if (!presentAtEligibility) { disposition = "INTENTIONALLY_NOT_ALERTS_ELIGIBLE"; firstLosingStage = "ALERTS_ELIGIBILITY"; reason = "governed lifecycle row is absent from the Alerts policy output"; }
+    else if (!presentInAlertsSourceAssembly) { disposition = "PROPAGATION_LOSS"; firstLosingStage = "ALERTS_SOURCE_COLLECTION_ASSEMBLY"; reason = "eligible governed identity did not enter the cached Alerts source collection"; }
+    else if (!presentAfterAreaFilter) { disposition = "PROPAGATION_LOSS"; firstLosingStage = "ALERTS_AREA_COMMUNITY_FILTER"; reason = "canonical identity was removed by the record-shape area predicate; no county predicate is inferred"; }
+    else if (!presentAfterGrouping) { disposition = "PROPAGATION_LOSS"; firstLosingStage = "ALERTS_GROUPING_DEDUPLICATION"; reason = "source row has no explicit grouping or replacement lineage"; }
+    return Object.freeze({
+      governedEvidenceId, providerRecordId: clean(lineage.providerRecordId) || providerIdOf(record), roadway: clean(record.roadway || record.routeName || record.roadName),
+      sourceCounty: clean(record.countyId || record.county || record.sourceCounty), distance: Number.isFinite(Number(record.distanceFromSelectedAwarenessMiles)) ? Number(record.distanceFromSelectedAwarenessMiles) : null,
+      lifecycleState: clean(lineage.lifecycle?.classification || lineage.lifecycleState) || "CURRENT_ACTIVE",
+      presentAtEligibility, presentAfterAreaFilter, presentInAlertsSourceAssembly, presentAfterGrouping, presentAfterRanking, presentAtWriterInput,
+      finalPresentationIds: Object.freeze(presentation ? [presentation.presentationId] : []), representedByPresentationIds: Object.freeze(presentation ? [presentation.presentationId] : []),
+      disposition, firstLosingStage, reason
+    });
+  });
+  const governedIds = governed.map((row) => clean(row.evidenceId));
+  const governedProviderIds = new Set(governed.map((row) => clean(row.providerRecordId)).filter(Boolean));
+  const extraPresentations = finalAlertsPresentations.filter((row) => !row.representedGovernedIds.some((id) => governedIds.includes(id)));
+  const extraFinalPresentationIds = extraPresentations.map((row) => row.presentationId);
+  const extraFinalProviderIds = [...new Set(extraPresentations.flatMap((row) => row.representedProviderIds.concat(row.providerRecordId || [])).filter((id) => !governedProviderIds.has(id)))];
+  const extraFinalDisposition = Object.freeze(extraPresentations.map((row) => Object.freeze({
+    presentationId: row.presentationId, providerRecordId: row.providerRecordId,
+    classification: row.sourceCollection === "legacy_official_situations" ? "LEGACY_ALERTS_ONLY_DRIVETEXAS_COLLECTION" : "UNACCOUNTED_EXTRA_PRESENTATION",
+    validCurrentEquivalentLineage: false, reason: "no explicit mapping to a current canonical governed identity"
+  })));
+  const unaccountedGovernedIds = governedToAlertsDisposition.filter((row) => ["PROPAGATION_LOSS", "UNACCOUNTED", "COUNTY_FRAGMENTED", "STALE_GENERATION_REJECTED"].includes(row.disposition)).map((row) => row.governedEvidenceId);
+  const countyFragmented = governedToAlertsDisposition.filter((row) => row.disposition === "COUNTY_FRAGMENTED");
+  const propagationLoss = governedToAlertsDisposition.filter((row) => row.disposition === "PROPAGATION_LOSS");
+  const direct = governedToAlertsDisposition.filter((row) => row.disposition === "DIRECT_PRESENTATION");
+  const grouped = governedToAlertsDisposition.filter((row) => row.disposition === "GROUPED_INTO_PRESENTATION");
+  const excluded = governedToAlertsDisposition.filter((row) => row.disposition === "INTENTIONALLY_NOT_ALERTS_ELIGIBLE");
+  const writerInputCount = (writer.writerInputCanonicalIds || []).length;
+  const writerFinalCount = (writer.finalAuthorityCanonicalIds || []).length;
+  const domCount = (writer.finalDomPresentationIds || []).length;
+  const writerInputs = finalAlertsPresentations.filter((row) => (writer.writerInputCanonicalIds || []).includes(row.writerCanonicalId));
+  const collectionRows = [
+    ["canonical_governed_alerts_projection", eligible, "governedEvidenceId"],
+    ["alerts_presentation_candidates", candidates, "mixed canonical/provider presentation"],
+    ["alerts_area_eligible", areaEligible, "mixed canonical/provider presentation"],
+    ["alerts_final_authority", finalRows, "writer canonical/presentation"],
+    ["legacy_official_situations", extraPresentations, "provider/presentation"]
+  ];
+  const alertsSourceCollections = collectionRows.map(([name, rows, identityDomain]) => Object.freeze({ name, count: rows.length, identityDomain, canonicalCount: identities(rows).length, providerCount: providers(rows).length }));
+  const makeStage = (stageName, ownerFunction, inputRows, outputRows, inputIdentityDomain, outputIdentityDomain, reason) => {
+    const inputIds = stageIdentity(inputRows); const outputIds = stageIdentity(outputRows);
+    return Object.freeze({ stageName, ownerFunction, inputCount: inputRows.length, outputCount: outputRows.length, inputIdentityDomain, outputIdentityDomain,
+      removedIds: Object.freeze(inputIds.filter((id) => !outputIds.includes(id))), addedIds: Object.freeze(outputIds.filter((id) => !inputIds.includes(id))),
+      transformedIds: Object.freeze([]), groupingMergeLineage: Object.freeze(outputRows.map((row, index) => ({ outputId: canonicalIdOf(row, index), representedGovernedIds: identities(evidenceRowsOf(row)), representedProviderIds: providers(evidenceRowsOf(row)) })).filter((row) => row.representedGovernedIds.length > 1)), reason });
+  };
+  const alertsStageAudit = Object.freeze([
+    makeStage("GOVERNED_OFFICIAL_ROADWAY_PROJECTION", "gridlyGetGovernedConsumerProjection", governed, governed, "governedEvidenceId", "governedEvidenceId", "current lifecycle-eligible official-roadway lineage"),
+    makeStage("ALERTS_ELIGIBILITY", "gridlyGetGovernedConsumerProjection.surfaces.alerts", governed, eligible, "governedEvidenceId", "governedEvidenceId + record", "governed Alerts surface policy"),
+    makeStage("ALERTS_PRESENTATION_CONVERSION", "getAlertsSurfaceSnapshot canonical projection conversion", eligible.map((row) => row.record || row), candidates, "governed evidence record", "presentation candidate", "canonical incident shaping"),
+    makeStage("ALERTS_AREA_COMMUNITY_FILTER", "gridlyFilterAlertRecordsBySelectedAwarenessArea", candidates, areaEligible, "presentation candidate", "area-eligible candidate", stages.sourceAssembly?.canonicalPlaceAlertsAuthority ? "canonical PLACE authority bypasses redundant record-shape geography" : "legacy selected-area predicate"),
+    makeStage("ALERTS_SOURCE_COLLECTION_ASSEMBLY", "mergeGridlyOfficialSituationAlerts", areaEligible, finalRows, "area-eligible candidate", "canonical writer record", stages.sourceAssembly?.policy || "cached source assembly policy"),
+    makeStage("ALERTS_GROUPING_DEDUPLICATION", "mergeGridlyOfficialSituationAlerts cluster identity", finalRows, finalRows, "canonical writer record", "canonical writer record", "no reduction without explicit evidence lineage"),
+    makeStage("ALERTS_PRIORITIZATION_RANKING", "compareGridlyIncidentPriorityModels", finalRows, finalRows, "canonical writer record", "ranked writer record", "sort only; no cap"),
+    makeStage("WRITER_INPUT", "LP223 authoritative writer", finalRows, writerInputs, "ranked writer record", "writer canonical id", writer.firstLosingStage || "writer observation unavailable")
+  ]);
+  const allGovernedEvidenceAccountedFor = unaccountedGovernedIds.length === 0;
+  const validExtras = extraFinalDisposition.every((row) => row.validCurrentEquivalentLineage === true);
+  const firstLosingStage = governedToAlertsDisposition.find((row) => row.firstLosingStage)?.firstLosingStage || (writer.parity === false ? writer.firstLosingStage : null);
+  return Object.freeze({
+    canonicalCommunity, canonicalKey, selectedMembership, activeCounty,
+    governedOfficialRoadwayCount: governed.length, alertsEligibilityCount: eligible.length,
+    alertsSourceCollections: Object.freeze(alertsSourceCollections), alertsStageAudit,
+    governedToAlertsDisposition: Object.freeze(governedToAlertsDisposition), finalAlertsPresentations: Object.freeze(finalAlertsPresentations), writerInputs: Object.freeze(writerInputs),
+    writerInputCount, writerFinalCount, domCount,
+    directlyRepresentedGovernedCount: direct.length, groupedRepresentedGovernedCount: grouped.length, intentionallyExcludedGovernedCount: excluded.length,
+    countyFragmentedGovernedCount: countyFragmented.length, propagationLossCount: propagationLoss.length, unaccountedGovernedIds: Object.freeze(unaccountedGovernedIds),
+    extraFinalPresentationIds: Object.freeze(extraFinalPresentationIds), extraFinalProviderIds: Object.freeze(extraFinalProviderIds), extraFinalDisposition,
+    countyFragmentationDetected: countyFragmented.length > 0, countyFragmentationPredicate: null, countyFragmentationIds: Object.freeze([]),
+    stalePriorGenerationRows: Object.freeze(finalAlertsPresentations.filter((row) => row.belongsToCurrentSelectionGeneration === false).map((row) => row.presentationId)),
+    legacyCollectionMixingDetected: Boolean(stages.sourceAssembly?.canonicalPlaceAlertsAuthority && extraPresentations.length),
+    allGovernedEvidenceAccountedFor, countLabelValue: finalAlertsPresentations.length,
+    countLabelMeaning: "final Alerts writer rows / mounted grouped presentations; not total governed roadway conditions",
+    firstLosingStage, writerParity: writer.parity === true,
+    overallPass: Boolean(allGovernedEvidenceAccountedFor && countyFragmented.length === 0 && (extraPresentations.length === 0 || validExtras) && writer.parity === true && firstLosingStage === null)
+  });
+};
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP235AlertsCanonicalSourceAudit", window.gridlyLP235AlertsCanonicalSourceAudit);
 
 // LP235 is passive: it reconciles production collections and never fetches,
 // changes selection, renders, or manufactures attribution.
