@@ -207,7 +207,7 @@ test('LP235.4 detects grouping key and cap state without inventing either', () =
   assert.match(lp2354, /__gridlyPresentationClusterKey/);
   assert.match(lp2354, /same situation type, roadway corridor, and location cluster/);
   assert.match(lp2354, /presentationCap: null, presentationCapApplied: false/);
-  assert.match(app, /const key = `\$\{kind\}\|\$\{corridor\}\|\$\{locationCluster\}`/);
+  assert.match(app, /const key = `\$\{sourceClass\}\|\$\{kind\}\|\$\{corridor\}\|\$\{locationCluster\}`/);
 });
 
 test('LP235.4 stays passive, O(current inputs), provider-free, and town-neutral', () => {
@@ -215,7 +215,8 @@ test('LP235.4 stays passive, O(current inputs), provider-free, and town-neutral'
   assert.doesNotMatch(lp2354, /document\.|querySelector|fetch\(|setTimeout|setInterval|requestAnimationFrame|while\s*\(/);
   assert.doesNotMatch(lp2354, /Dallas|Austin|Katy|4819000|4805000|4827348/);
   assert.doesNotMatch(lp2354, /getAlertsSurfaceSnapshot\s*\(|gridlyOpenAlertsSurface\w*\s*\(|renderAlertCard\s*\(/);
-  assert.match(lp2354, /alertsOpenRenderContext/);
+  assert.match(lp2354, /gridlyAlertsGetAuditRenderContext/);
+  assert.doesNotMatch(lp2354, /alertsOpenRenderContext/);
 });
 
 test('LP235.4 preserves LP223 ownership and protected regressions', () => {
