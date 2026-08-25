@@ -66,3 +66,38 @@ test('provider and consumer authorities remain protected and fail closed', () =>
   assert.match(app, /allGovernedEvidenceAccountedFor/);
   assert.doesNotMatch(app.slice(app.indexOf('// LP235 is passive')), /setInterval|setTimeout|pointInPolygon|setActiveCounty/);
 });
+
+test('LP235.1 reuses observed LP234 DriveTexas authority and never manufactures false zero', () => {
+  const lp235 = app.slice(app.indexOf('// LP235 is passive'), app.indexOf('/* LP221: Val Verde'));
+  assert.match(lp235, /driveTexasAudit\.driveTexasRelevantCount/);
+  assert.match(lp235, /driveTexasAudit\?\.lifecycleCounts\?\.activeAfterLifecycle/);
+  assert.match(lp235, /driveTexasAuthorityAvailable[\s\S]*\? driveTexasAudit\.driveTexasRelevantCount : null/);
+  assert.doesNotMatch(lp235, /relevantCount \|\| driveTexasAudit\.canonicalRelevantCount \|\| 0/);
+  assert.doesNotMatch(lp235, /governedActiveCount \|\| driveTexasAudit\.governedCount \|\| 0/);
+  assert.match(app, /LP039\.3 gridlyStoryTransportationConnectorRecords consumer-visible situations/);
+  assert.match(app, /LP234 governed projection official_roadway lifecycle-eligible lineage/);
+});
+
+test('LP235.1 county fragmentation requires explicit identity-backed removal', () => {
+  assert.match(app, /Never diagnose county removal for an identity proven downstream/);
+  assert.match(app, /!presentation && !areaRow/);
+  assert.match(app, /alertsRemovedIds\.length/);
+  assert.match(app, /removedGovernedIds: alertsRemovedIds/);
+  assert.match(app, /evidenceAuthority: "LP234 cached identity-bearing Alerts stage audit"/);
+  assert.doesNotMatch(app, /selectedMembership being present/);
+});
+
+test('LP235.1 reconciles canonical, viewport, selected, layer and DOM crossing identities', () => {
+  for (const field of ['canonicalInputIds', 'visibleIds', 'representativeCandidateIds', 'crossingSelectedMarkerIds', 'crossingRenderedMarkerIds', 'crossingDuplicateRenderedIds', 'crossingLegacyCountyOnlyRenderedIds', 'crossingRenderCountInvariantPass']) {
+    assert.match(app, new RegExp(field));
+  }
+  assert.match(app, /crossingRenderedLayerCount === crossingSelectedMarkerCount/);
+  assert.match(app, /crossingSelectedMarkerCount <= Number\(lastRender\.hardCapLimit\)/);
+  assert.match(app, /canonicalResolution\?\.authorityAvailable[\s\S]*canonicalResolution\.records/);
+});
+
+test('LP235.1 remains passive and does not alter protected production authorities', () => {
+  const lp235 = app.slice(app.indexOf('// LP235 is passive'), app.indexOf('/* LP221: Val Verde'));
+  assert.doesNotMatch(lp235, /fetch\(|setInterval|setTimeout|requestAnimationFrame|renderCrossings\(|setActiveCounty|pointInPolygon/);
+  assert.doesNotMatch(lp235, /Dallas|4819000/);
+});
