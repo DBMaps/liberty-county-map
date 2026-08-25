@@ -69,17 +69,39 @@ test('LP236.9 uses only source, type, and repeated-roadway disclosures', () => {
   assert.match(app, /filter\(\(section\) => section\.activeConditionCount > 0\)/);
 });
 
-test('compact rows retain width and containment at 320/360/390/430px', () => {
-  assert.match(css, /\.gridly-lp236-row-main \{[^}]*width:100%; min-width:0; max-width:100%; overflow:clip/);
-  assert.match(css, /\.gridly-lp236-row-copy strong \{[^}]*overflow-wrap:break-word; word-break:normal/);
-  assert.doesNotMatch(css, /word-break:break-all|overflow-wrap:anywhere/);
-  for (const width of [320, 360, 390, 430]) assert.ok(width >= 320 && !css.includes(`width:${width + 1}px`));
+test('LP236.10 isolated condition copy preserves full governed DOM text', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'bridge', sourceClass: 'official_roadway', category: 'Bridge Restriction', routeName: 'I-30', description: '- The roadway is closed due to construction.', freshnessLabel: 'now', latitude: 32.8, longitude: -96.8 }]);
+  assert.match(rendered, /gridly-lp236-condition-title">Bridge Restriction<\/span>/);
+  assert.match(rendered, /gridly-lp236-condition-summary"[^>]*>The roadway is closed due to construction\.<\/span>/);
+  assert.doesNotMatch(rendered, />- The roadway/);
+  assert.match(rendered, /gridly-lp236-condition-time">now<\/span>/);
 });
 
-test('LP236.9 mobile rows are vertical with a full-width action line', () => {
-  assert.match(css, /\.gridly-lp236-actions \{[^}]*width:100%; min-width:0; justify-content:flex-end/);
+test('LP236.10 condition geometry stays usable at 320/360/390/430px', () => {
+  const isolatedCss = css.slice(css.indexOf('/* LP236.10 condition isolation'), css.indexOf('.gridly-lp236-critical'));
+  assert.match(css, /\.gridly-lp236-alerts \{[^}]*grid-template-columns:minmax\(0, 1fr\); width:100%; min-width:0; max-width:100%/);
+  assert.match(css, /\.gridly-lp236-groups \{[^}]*grid-template-columns:minmax\(0, 1fr\); width:100%; min-width:0; box-sizing:border-box/);
+  assert.match(css, /\.gridly-lp236-roadway-group \{[^}]*width:100%; min-width:0; max-width:100%; box-sizing:border-box/);
+  assert.match(css, /\.gridly-lp236-roadway-rows \{[^}]*width:100%; min-width:0; box-sizing:border-box/);
+  assert.match(isolatedCss, /\.gridly-lp236-condition-item \{[^}]*position:static; display:block; float:none; width:100%; min-width:0; max-width:none; box-sizing:border-box;[^}]*overflow:visible; contain:none; transform:none/);
+  assert.match(isolatedCss, /\.gridly-lp236-condition-body \{[^}]*width:100%; min-width:0; max-width:none; box-sizing:border-box; overflow:visible/);
+  assert.match(isolatedCss, /text-overflow:clip; white-space:normal; overflow-wrap:break-word; word-break:normal/);
+  assert.doesNotMatch(isolatedCss, /position:absolute|max-width:(?!none)|min-content|(?:^|[;{]\s*)overflow:(?:hidden|clip)|text-overflow:ellipsis|word-break:break-all|overflow-wrap:anywhere|flex-shrink/);
+  // Deterministic box-model fixture: nested insets are 16 + 10 + 16px and the
+  // action is a following block, so it consumes none of the copy inline-size.
+  for (const viewportWidth of [320, 360, 390, 430]) {
+    const conditionElementWidth = viewportWidth - 42;
+    const summaryElementWidth = conditionElementWidth - 16;
+    assert.ok(conditionElementWidth >= 278);
+    assert.ok(summaryElementWidth >= 262);
+  }
+});
+
+test('LP236.10 mobile rows are vertical with a non-competing action line', () => {
+  assert.match(css, /\.gridly-lp236-condition-actions \{[^}]*position:static; display:flex; width:100%; min-width:0; box-sizing:border-box; justify-content:flex-end/);
   assert.match(css, /\.gridly-lp236-show-me \{[^}]*min-height:44px/);
-  assert.match(app, /gridly-lp236-row-main[\s\S]*gridly-lp236-actions/);
+  assert.match(app, /gridly-lp236-condition-body[\s\S]*gridly-lp236-condition-actions/);
+  assert.doesNotMatch(app.slice(app.indexOf('const renderRow'), app.indexOf('const renderGroup')), /View details|<details|gridly-lp236-row-main|gridly-lp236-row-copy/);
 });
 
 test('LP236.9 uses the trusted roadway formatter without truncating route identity', () => {
@@ -135,7 +157,7 @@ test('LP236.9 readable summaries use trusted clues, concise governed condition, 
 
 test('LP236.9 singleton roadway presents roadway and trusted clue without another disclosure', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'single', sourceClass: 'official_roadway', category: 'Bridge Restriction', roadName: 'SL 12', referenceRoadA: 'Loop 12', lat: 32.8, lng: -96.8 }]);
-  assert.match(rendered, /<strong>SL 12<\/strong>[\s\S]*near Loop 12[\s\S]*Bridge Restriction[\s\S]*Show me/);
+  assert.match(rendered, /<strong class="gridly-lp236-condition-roadway">SL 12<\/strong>[\s\S]*near Loop 12[\s\S]*Bridge Restriction[\s\S]*Show me/);
   assert.doesNotMatch(rendered, /gridly-lp236-roadway-group/);
 });
 
