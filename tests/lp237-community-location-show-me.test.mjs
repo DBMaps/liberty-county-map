@@ -73,3 +73,38 @@ test('LP237.3 remains generic across flooding, road closure, blocked crossing an
   assert.doesNotMatch(production, /fetch\(|setTimeout|setInterval/);
   for (const fixture of ['flooding', 'road_closed', 'blocked_crossing']) assert.match(app, new RegExp(fixture));
 });
+
+test('LP237.5 governed community markers satisfy the shared focus eligibility contract', () => {
+  const focus = functionSource('focusGridlyAlertIncident');
+  assert.match(focus, /focusTargetType.*governed_marker/);
+  assert.match(focus, /focusEligibilityPredicate = "governed coordinates && shared map center action"/);
+  assert.match(focus, /focusEligibilityResult = Boolean\(coords && mapRef && mapCenterActionAvailable\)/);
+  assert.doesNotMatch(focus.slice(focus.indexOf('const focusEligibilityPredicate')), /official|drivetexas|txdot|crossingId|sourceKind/);
+  assert.match(focus, /focusDispatchAttempted: true/);
+  assert.match(focus, /focusDispatchResult: true/);
+});
+
+test('LP237.5 legacy selection metadata cannot block governed map dispatch', () => {
+  const focus = functionSource('focusGridlyAlertIncident');
+  const selection = focus.slice(focus.indexOf('// Historical/presentation selection'), focus.indexOf('const markerDebug'));
+  assert.match(selection, /gridlyLp0546BindIncidentSelection/);
+  assert.match(selection, /catch \(error\)/);
+  assert.match(selection, /focusSelectionMetadataFailure/);
+  assert.ok(focus.indexOf('const focusEligibilityPredicate') < focus.indexOf('focusDispatchAttempted: true'));
+  assert.ok(focus.indexOf('focusDispatchAttempted: true') < focus.indexOf('gridlyLp019WaitForLayoutSettle'));
+});
+
+test('LP237.5 handler retains canonical target, marker and lifecycle-owned minimize contract', () => {
+  const handler = functionSource('gridlyLp019BindAlertFocusHandlers');
+  assert.match(handler, /targetType: showOnMapTarget\?\.targetType/);
+  assert.match(handler, /marker: showOnMapTarget\?\.marker \|\| null/);
+  assert.match(handler, /markerResolved: Boolean\(showOnMapAction\)/);
+  assert.equal((handler.match(/focusGridlyAlertIncident\(/g) || []).length, 1);
+  assert.match(handler, /closeSurface: showOnMapAction \? minimizeSurface : undefined/);
+  assert.doesNotMatch(handler, /\.flyTo\(|geocod|fetch\(|setInterval|Austin/i);
+});
+
+test('LP237.5 bounded audit exposes focus entry, eligibility and dispatch ownership', () => {
+  const audit = functionSource('gridlyLP236AlertsInformationArchitectureAudit');
+  for (const field of ['showMeLastFocusFunctionEntered', 'showMeLastFocusRecordIdentity', 'showMeLastFocusTargetType', 'showMeLastFocusMarkerAvailable', 'showMeLastFocusCoordinatesAvailable', 'showMeLastFocusEligibilityPredicate', 'showMeLastFocusEligibilityResult', 'showMeLastFocusDispatchOwner', 'showMeLastFocusDispatchAttempted', 'showMeLastFocusDispatchResult', 'showMeLastFocusFailureReason']) assert.match(audit, new RegExp(field));
+});
