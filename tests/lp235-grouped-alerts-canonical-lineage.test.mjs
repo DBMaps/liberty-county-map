@@ -65,3 +65,45 @@ test('repair stays passive and preserves grouping/source/runtime boundaries', ()
   assert.match(app, /sourceClass === "community_report"/);
   assert.doesNotMatch(helper, /RenderCompleteAlertCard|slice\(0,/);
 });
+
+test('LP235.4C retains grouped lineage through normalization and completed context', () => {
+  const renderPipeline = app.slice(app.indexOf('alertsOpenRenderContext = {'), app.indexOf('return opened;', app.indexOf('alertsOpenRenderContext = {')));
+  assert.match(renderPipeline, /POST_GROUP_BUILD/);
+  assert.match(renderPipeline, /POST_PRESENTATION_NORMALIZATION/);
+  assert.match(renderPipeline, /PRE_RENDER_COMPLETE_ALERT_CARD/);
+  assert.match(renderPipeline, /COMPLETED_RENDER_CONTEXT/);
+  assert.match(renderPipeline, /presentationModel = \{ \.\.\.presentationCountModel, alerts: presentationAlerts \}/);
+  assert.match(renderPipeline, /lastCompletedRenderContext = alertsOpenRenderContext/);
+  assert.ok(renderPipeline.indexOf('lastCompletedRenderContext = alertsOpenRenderContext') > renderPipeline.indexOf('const opened ='));
+  assert.doesNotMatch(renderPipeline.slice(renderPipeline.indexOf('presentationModel ='), renderPipeline.indexOf('lastCompletedRenderContext =')), /__gridlyPresentationEvidenceRows\s*=/);
+});
+
+test('lineage stage audit detects field loss without DOM reconstruction', () => {
+  const summaryStart = app.indexOf('function gridlySummarizeAlertsGroupedLineage');
+  const summaryEnd = app.indexOf('\nfunction gridlyAlertsWithActiveRenderContext', summaryStart);
+  const summarySource = app.slice(summaryStart, summaryEnd);
+  const sandbox = { gridlyAlertWriterRecordId: (row, index = 0) => String(row?.evidenceId || `alert-${index}`) };
+  vm.runInNewContext(`${summarySource}\nthis.summarize = gridlySummarizeAlertsGroupedLineage;`, sandbox);
+  const writer = ['a', 'b', 'c'].map(evidenceId => ({ evidenceId }));
+  const retained = group('p-1', ['a', 'b', 'c']);
+  const complete = sandbox.summarize('COMPLETED_RENDER_CONTEXT', [retained], writer);
+  assert.equal(complete.representedCanonicalCount, 3);
+  assert.equal(complete.groupsMissingEvidenceRows, 0);
+  assert.deepEqual(Array.from(complete.missingCanonicalIds), []);
+  const lost = sandbox.summarize('COMPLETED_RENDER_CONTEXT', [{ evidenceId: 'a' }], writer);
+  assert.equal(lost.representedCanonicalCount, 1);
+  assert.equal(lost.groupsMissingEvidenceRows, 1);
+  assert.deepEqual(Array.from(lost.missingCanonicalIds), ['b', 'c']);
+  assert.doesNotMatch(summarySource, /document\.|querySelector|textContent|fetch\(|setTimeout|setInterval/);
+});
+
+test('completeness audit publishes all passive grouped-lineage checkpoints', () => {
+  const audit = app.slice(app.indexOf('window.gridlyLP235AlertsPresentationCompletenessAudit = function'), app.indexOf('// LP235.4A:'));
+  for (const field of [
+    'groupedLineageStageAudit', 'postGroupBuildRepresentedCanonicalCount', 'preRenderRepresentedCanonicalCount',
+    'postNormalizationRepresentedCanonicalCount', 'completedRenderContextRepresentedCanonicalCount',
+    'mappingBuilderInputRepresentedCanonicalCount', 'groupedLineageFirstLosingStage',
+    'groupsMissingEvidenceRowsAtCompletedContext'
+  ]) assert.match(audit, new RegExp(field));
+  assert.doesNotMatch(audit, /fetch\(|setTimeout|setInterval|querySelector|openGridlyPortraitV2Sheet/);
+});
