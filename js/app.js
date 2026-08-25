@@ -122941,7 +122941,7 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   const postGroupStage = retainedStages.find((entry) => entry.stage === "POST_GROUP_BUILD");
   const groupObjectIdentityAuthorityAvailable = Boolean(authorityAvailable && postGroupStage && Array.isArray(postGroupStage.groups));
   const groupObjectIdentityAuthorityReason = groupObjectIdentityAuthorityAvailable ? null
-    : (!authorityAvailable ? authorityReason : "POST_GROUP_OBJECT_IDENTITY_CHECKPOINT_UNAVAILABLE");
+    : "POST_GROUP_OBJECT_IDENTITY_CHECKPOINT_UNAVAILABLE";
   const groupObjectIdentityAudit = Object.freeze((groupObjectIdentityAuthorityAvailable ? finalRows : []).map((row, groupIndex) => {
     const trace = row?.__gridlyGroupObjectIdentityTrace || {};
     const presentation = gridlyAlertGroupObjectIdentityCheckpoint(row);
@@ -122959,7 +122959,7 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
       groupIndex, clusterKey: clean(row?.__gridlyPresentationClusterKey) || null,
       accumulatorHasEvidenceRows: Boolean(trace.accumulator?.hasEvidenceRows), mapStoredHasEvidenceRows: Boolean(trace.mapStored?.hasEvidenceRows),
       mapToArrayHasEvidenceRows: Boolean(trace.mapToArray?.hasEvidenceRows), presentationModelHasEvidenceRows: presentation.hasEvidenceRows,
-      functionReturnHasEvidenceRows: presentation.hasEvidenceRows, postGroupAuditHasEvidenceRows,
+      functionReturnHasEvidenceRows: presentation.hasEvidenceRows, postGroupAuditHasEvidenceRows: postGroupHasEvidenceRows,
       accumulatorEvidenceRowCount: trace.accumulator?.evidenceRowCount || 0, mapStoredEvidenceRowCount: trace.mapStored?.evidenceRowCount || 0,
       mapToArrayEvidenceRowCount: trace.mapToArray?.evidenceRowCount || 0, presentationModelEvidenceRowCount: presentation.evidenceRowCount,
       functionReturnEvidenceRowCount: presentation.evidenceRowCount, postGroupAuditEvidenceRowCount: postGroup?.evidenceRowCount || 0,
