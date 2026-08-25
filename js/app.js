@@ -84020,7 +84020,11 @@ window.submitHazardNearMe = function (hazardType) {
         lastMobileReportSubmitDebug.roadCandidateCount = snapped.roadCandidateCount ?? null;
         lastMobileReportSubmitDebug.nearestCandidateDistanceMeters = snapped.nearestCandidateDistanceMeters ?? null;
         lastMobileReportSubmitDebug.placementCoordinateReason = snapped.representativeCoordinateReason || "Road-aware placement selected the final hazard marker coordinate from GPS and nearest road candidate.";
-        const submitted = await createSharedHazardReport(selectedType, finalPlacement.lat, finalPlacement.lng, "gps hazard report", "", snapped.originalTapCoords);
+        const submitted = await createSharedHazardReport(selectedType, finalPlacement.lat, finalPlacement.lng, "gps hazard report", "", snapped.originalTapCoords, {
+          selectedRoadName: snapped.selectedRoadName,
+          primaryRoad: snapped.selectedRoadName,
+          roadName: snapped.selectedRoadName
+        });
         if (!submitted) {
           markReportActionCompletionAudit({
             reportUseLocationError: reportingState.lastReportError || lastMobileReportSubmitDebug.lastSubmitError || "Hazard report was not submitted.",
@@ -85287,20 +85291,21 @@ function gridlyBuildRoadHazardSubmissionLocationPayload(options = {}) {
   const submittedCoordinate = gridlyCoordinateFromRecord(options.submittedCoordinate);
   const cachedCoordinate = gridlyCoordinateFromRecord(options.cachedCoordinate);
   const cachedDistanceMeters = submittedCoordinate && cachedCoordinate ? gridlyCoordinateDeltaMeters(submittedCoordinate, cachedCoordinate) : null;
-  const explicitRoad = cleanRoad(options.roadName) || cleanRoad(options.routeName) || cleanRoad(options.street) || cleanRoad(options.streetName) || cleanRoad(options.primaryRoad) || cleanRoad(options.selectedRoadName);
+  const explicitRoad = cleanRoad(options.selectedRoadName) || cleanRoad(options.roadName) || cleanRoad(options.routeName) || cleanRoad(options.street) || cleanRoad(options.streetName) || cleanRoad(options.primaryRoad);
+  const crossingRoad = cleanRoad(options.crossStreet) || cleanRoad(options.referenceRoadA);
   const cachedRoad = cleanRoad(options.cachedRoadName || options.cachedPrimaryRoad || options.cachedSelectedRoadName);
   const cachedCoordinateMatchesSubmitted = Number.isFinite(cachedDistanceMeters) && cachedDistanceMeters <= 0.5;
   const cachedRoadAccepted = Boolean(!explicitRoad && cachedRoad && cachedCoordinateMatchesSubmitted);
   const resolvedRoad = cleanRoad(options.resolvedRoadName || options.resolverRoadName);
-  const selectedPrimaryRoad = explicitRoad || (cachedRoadAccepted ? cachedRoad : "") || resolvedRoad;
+  const selectedPrimaryRoad = explicitRoad || crossingRoad || (cachedRoadAccepted ? cachedRoad : "") || resolvedRoad;
   const fallbackText = cleanRoad(options.nearbyPairFallbackText || options.crossingFallbackText || options.locationName || options.knownLocation || options.locationLabel);
   const nearbyPairFallbackSuppressed = Boolean(selectedPrimaryRoad && fallbackText && fallbackText !== selectedPrimaryRoad && /\b(?:at|&)\b/i.test(fallbackText));
   const staleCachedRoadStateRejected = Boolean(!explicitRoad && cachedRoad && !cachedRoadAccepted);
   const submittedStructuredFields = gridlyPickRoadHazardLocationIdentityFields(options);
   const payload = selectedPrimaryRoad ? {
     ...submittedStructuredFields,
-    roadName: cleanRoad(options.roadName) || selectedPrimaryRoad,
-    primaryRoad: cleanRoad(options.primaryRoad) || selectedPrimaryRoad,
+    roadName: selectedPrimaryRoad,
+    primaryRoad: selectedPrimaryRoad,
     locationName: selectedPrimaryRoad,
     knownLocation: selectedPrimaryRoad,
     locationLabel: selectedPrimaryRoad,
@@ -85317,7 +85322,8 @@ function gridlyBuildRoadHazardSubmissionLocationPayload(options = {}) {
       savedPayloadLocationFields: gridlyPickRoadHazardLocationIdentityFields(payload),
       cachedCoordinateMatchesSubmitted,
       cachedDistanceMeters: Number.isFinite(cachedDistanceMeters) ? cachedDistanceMeters : null,
-      identitySource: explicitRoad ? "current_submit" : (cachedRoadAccepted ? "coordinate_matched_cache" : (resolvedRoad ? "resolver" : "none"))
+      selectedRoadAuthority: explicitRoad ? "selected_road" : (crossingRoad ? "selected_crossing_reference_road" : (cachedRoadAccepted ? "coordinate_matched_cache" : (resolvedRoad ? "existing_resolver" : "NO_STRUCTURED_ROAD_AUTHORITY"))),
+      identitySource: explicitRoad ? "current_submit" : (crossingRoad ? "crossing_reference" : (cachedRoadAccepted ? "coordinate_matched_cache" : (resolvedRoad ? "resolver" : "none")))
     }
   };
 }
@@ -85445,6 +85451,9 @@ const gridlyReportSubmissionOwnershipState = {
 };
 
 const gridlyLocalAcceptedHazardRegistrations = new Map();
+// LP238 observes only values already owned by the submission workflow. It is
+// intentionally a single bounded last-submission record, not a second store.
+let gridlyLP238LastSubmissionLocation = null;
 const gridlyLocalAcceptedCrossingRegistrations = new Map();
 
 function gridlyCanonicalReportIdForRecord(record = {}, fallback = "") {
@@ -86561,6 +86570,17 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     appendOtherHazardStructuredMetadata(baseDetail, normalizedOtherSubtype),
     detailLocationMetadata
   );
+  gridlyLP238LastSubmissionLocation = {
+    submissionId: null,
+    hazardType,
+    selectedRoadValue: locationPayload.roadName || locationPayload.primaryRoad || locationPayload.crossStreet || locationPayload.referenceRoadA || null,
+    selectedRoadAuthority: locationPayloadResult.audit?.selectedRoadAuthority || "NO_STRUCTURED_ROAD_AUTHORITY",
+    crossStreet: locationPayload.crossStreet || null,
+    resolvedLocation: detailLocationMetadata.resolvedLocation || detailLocationMetadata.resolvedLocationLabel || detailLocationMetadata.canonicalDisplayLocation || null,
+    submissionPayload: { ...locationPayload },
+    persistencePayload: null,
+    acceptedLocal: null
+  };
   if (confidence === "tap map placement" && options?.lp034ReportTapMapInteractionId) {
     gridlyLp034CaptureReportTapMapObservation({
       observationType: "report_tap_map_structured_metadata_created",
@@ -86647,6 +86667,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   gridlyHazardPropagationTimingState.lastFingerprint = gridlyHazardPropagationFingerprint(row);
   gridlyRecordReportSubmissionOwnershipAttempt(row, "hazard");
   const reportInsertRow = gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS);
+  gridlyLP238LastSubmissionLocation.submissionId = row.crossing_id;
+  gridlyLP238LastSubmissionLocation.persistencePayload = { ...row };
   lastGridlyRoadHazardSubmitShapeAudit = gridlyBuildRoadHazardSubmitShapeAudit(reportInsertRow, reportInsertRow);
   const localPreviewLocationPayload = { ...detailLocationMetadata };
   const localRow = normalizedOtherSubtype
@@ -86737,6 +86759,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
         report: localHazardEntry
       });
       gridlyRegisterAcceptedLocalHazard(localHazardEntry, row.crossing_id);
+      gridlyLP238LastSubmissionLocation.acceptedLocal = { ...localHazardEntry };
       applyGridlyCanonicalRoadHazardDisplayLocation(localHazardEntry, { submittedCoordinate: { lat, lng } });
       activeHazards = [localHazardEntry, ...activeHazards.filter((hazard) => gridlyCanonicalReportIdForRecord(hazard) !== gridlyCanonicalReportIdForRecord(localHazardEntry))];
       gridlyRecordReportSubmissionOwnershipAccepted(localHazardEntry, "hazard");
@@ -123102,12 +123125,77 @@ function gridlyLP237CommunityHazardIdentityAudit(options = {}) {
     passiveOnly: true
   });
 }
+function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
+  const clean = (value) => String(value ?? "").trim();
+  const locationRecord = (record = {}) => ({
+    ...(record && typeof record === "object" ? record : {}),
+    ...(typeof gridlyExtractStructuredMetadata === "function" ? gridlyExtractStructuredMetadata(record) : {})
+  });
+  const roadOf = (record = {}) => {
+    const row = locationRecord(record);
+    return clean(row.selectedRoadName || row.roadName || row.routeName || row.street || row.streetName || row.primaryRoad || row.crossStreet || row.referenceRoadA);
+  };
+  const state = options.lastSubmission || gridlyLP238LastSubmissionLocation;
+  if (!state) return Object.freeze({
+    canonicalCommunity: null, activeCounty: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null,
+    lastSubmission: null, submissionLocationCapturePass: null, persistenceLocationPass: null,
+    governedLocationPass: null, overallPass: null, status: "NO_SUBMISSION_OBSERVED", passiveOnly: true
+  });
+  const submissionId = clean(state.submissionId);
+  const submissionRoad = clean(state.selectedRoadValue) || roadOf(state.submissionPayload);
+  const payloadRoad = roadOf(state.submissionPayload);
+  const acceptedLocalRoad = roadOf(state.acceptedLocal);
+  const persistedRoad = roadOf(state.persistencePayload);
+  const governedSnapshot = options.governedSnapshot || (typeof gridlyGovernedAwarenessAudit === "function"
+    ? gridlyGovernedAwarenessAudit({ reason: "lp238-passive-audit" }) : null);
+  const governed = (governedSnapshot?.evidence || []).find((row) => {
+    const ids = [row?.evidenceId, row?.canonicalReportIdentity, row?.persistedReportId, ...(row?.aliasCandidates || row?.aliases || [])].map(clean);
+    return submissionId && ids.some((id) => id === submissionId || id.endsWith(`:${submissionId}`));
+  }) || null;
+  const normalizedHazard = (Array.isArray(options.normalizedHazards) ? options.normalizedHazards : (Array.isArray(activeHazards) ? activeHazards : [])).find((row) => {
+    const ids = [row?.id, row?.persistedReportId, row?.canonicalReportIdentity, row?.canonicalReportId, row?.submittedReportId, row?.providerRecordId, row?.crossingId, row?.crossing_id].map(clean);
+    return submissionId && ids.includes(submissionId);
+  }) || null;
+  // Governed evidence intentionally contains identity/policy, not a duplicate
+  // location payload. Join its exact alias to the authoritative normalized row.
+  const governedRoad = governed ? roadOf(normalizedHazard) : "";
+  const structuredRoadAuthorityAvailable = Boolean(submissionRoad);
+  const submissionLocationCapturePass = !structuredRoadAuthorityAvailable || Boolean(payloadRoad);
+  const persistenceLocationPass = !payloadRoad || Boolean(persistedRoad && acceptedLocalRoad);
+  const governedLocationPass = !persistedRoad || Boolean(governedRoad);
+  const firstLocationLosingStage = structuredRoadAuthorityAvailable && !payloadRoad ? "SUBMISSION_TO_PAYLOAD"
+    : payloadRoad && !acceptedLocalRoad ? "PAYLOAD_TO_ACCEPTED_LOCAL"
+      : payloadRoad && !persistedRoad ? "PAYLOAD_TO_PERSISTENCE"
+        : persistedRoad && !governedRoad ? "PERSISTENCE_TO_GOVERNED_EVIDENCE" : null;
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const result = Object.freeze({
+    canonicalCommunity: selected?.displayName || selected?.label || selected?.storageValue || null,
+    activeCounty: governedSnapshot?.countyId || (typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null),
+    lastSubmission: Object.freeze({
+      submissionId: submissionId || null, hazardType: state.hazardType || null,
+      structuredRoadAuthorityAvailable, selectedRoadValue: submissionRoad || null,
+      selectedRoadAuthority: structuredRoadAuthorityAvailable ? (state.selectedRoadAuthority || "selected_road") : "NO_STRUCTURED_ROAD_AUTHORITY",
+      crossStreet: state.crossStreet || null, resolvedLocation: state.resolvedLocation || null,
+      payloadRoadValue: payloadRoad || null, acceptedLocalRoadValue: acceptedLocalRoad || null,
+      persistedRoadValue: persistedRoad || null, governedRoadValue: governedRoad || null,
+      firstLocationLosingStage
+    }),
+    submissionLocationCapturePass, persistenceLocationPass, governedLocationPass,
+    overallPass: submissionLocationCapturePass && persistenceLocationPass && governedLocationPass,
+    status: structuredRoadAuthorityAvailable ? "STRUCTURED_ROAD_AUTHORITY_CAPTURED" : "NO_STRUCTURED_ROAD_AUTHORITY",
+    passiveOnly: true
+  });
+  console.info("gridlyLP238CommunityReportSubmissionLocationAudit", result);
+  return result;
+}
 window.gridlyGovernedAwarenessAudit = gridlyGovernedAwarenessAudit;
 window.gridlyLocationContextProductionAudit = gridlyLocationContextProductionAudit;
 window.gridlyLP237CommunityHazardIdentityAudit = gridlyLP237CommunityHazardIdentityAudit;
+window.gridlyLP238CommunityReportSubmissionLocationAudit = gridlyLP238CommunityReportSubmissionLocationAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGovernedAwarenessAudit", gridlyGovernedAwarenessAudit);
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLocationContextProductionAudit", gridlyLocationContextProductionAudit);
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP237CommunityHazardIdentityAudit", gridlyLP237CommunityHazardIdentityAudit);
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP238CommunityReportSubmissionLocationAudit", gridlyLP238CommunityReportSubmissionLocationAudit);
 
 // LP234 is a passive lineage report over the existing DriveTexas authority,
 // governed evidence engine, and consumer projections. It performs no refresh.
