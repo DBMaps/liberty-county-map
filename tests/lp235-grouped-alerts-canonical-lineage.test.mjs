@@ -172,6 +172,38 @@ test('object identity audit identifies an intentional reconstruction loss at its
   }), 'POST_GROUP_AUDIT');
 });
 
+test('LP235.4F audit checkpoint is accessible without a window binding and stays pure', () => {
+  const auditStart = app.indexOf('// LP235.4: passive presentation-completeness reconciliation');
+  const auditEnd = app.indexOf('// LP235.4A:', auditStart);
+  const auditSource = app.slice(auditStart, auditEnd);
+  const declaration = auditSource.indexOf('function gridlyAlertGroupObjectIdentityCheckpoint');
+  const call = auditSource.indexOf('gridlyAlertGroupObjectIdentityCheckpoint(row)');
+  assert.ok(declaration >= 0 && call > declaration, 'checkpoint declaration must share the passive audit lexical scope');
+  assert.doesNotMatch(auditSource, /window\.gridlyAlertGroupObjectIdentityCheckpoint\s*=/);
+  const pureHelper = auditSource.slice(declaration, auditSource.indexOf('\n\nfunction gridlyAlertGroupObjectIdentityFirstLosingStage', declaration));
+  assert.doesNotMatch(pureHelper, /document\.|fetch\(|setTimeout|setInterval|openGridlyPortraitV2Sheet|gridlyMap|selected/);
+
+  const sandbox = {};
+  vm.runInNewContext(`${pureHelper}\nthis.checkpoint = gridlyAlertGroupObjectIdentityCheckpoint;`, sandbox);
+  for (const rows of [
+    buildRealGroups([officialRow(1, 1), officialRow(2, 1), officialRow(3, 1)]).alerts,
+    buildRealGroups(Array.from({ length: 26 }, (_, index) => officialRow(index + 1, (index % 12) + 1))).alerts
+  ]) {
+    const groupObjectIdentityAudit = rows.map(sandbox.checkpoint);
+    assert.ok(groupObjectIdentityAudit.length > 0);
+    assert.ok(groupObjectIdentityAudit.every(checkpoint => checkpoint.hasEvidenceRows && checkpoint.evidenceRowCount > 0));
+  }
+});
+
+test('LP235.4F object identity authority fails closed when its checkpoint is unavailable', () => {
+  const audit = app.slice(app.indexOf('// LP235.4: passive presentation-completeness reconciliation'), app.indexOf('// LP235.4A:'));
+  assert.match(audit, /groupObjectIdentityAuthorityAvailable = Boolean\(authorityAvailable && postGroupStage && Array\.isArray\(postGroupStage\.groups\)\)/);
+  assert.match(audit, /POST_GROUP_OBJECT_IDENTITY_CHECKPOINT_UNAVAILABLE/);
+  assert.match(audit, /groupObjectIdentityAuthorityAvailable \? finalRows : \[\]/);
+  assert.match(audit, /&& groupObjectIdentityAuthorityAvailable/);
+  assert.match(audit, /groupObjectIdentityAuthorityAvailable, groupObjectIdentityAuthorityReason/);
+});
+
 test('completeness audit publishes all passive grouped-lineage checkpoints', () => {
   const audit = app.slice(app.indexOf('window.gridlyLP235AlertsPresentationCompletenessAudit = function'), app.indexOf('// LP235.4A:'));
   for (const field of [
