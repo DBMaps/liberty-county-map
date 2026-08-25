@@ -3382,7 +3382,7 @@ function gridlyProjectAlertIncidentLocation(record = {}) {
   capture("consumerLocation", consumerEntry, consumerEntry?.value?.displayLocation || consumerEntry?.value?.primaryLocation || consumerEntry?.value?.roadway);
   capture("lp023ConsumerLocation", lp023Entry, lp023Entry?.value?.displayLocation || lp023Entry?.value?.primaryLocation || lp023Entry?.value?.roadway);
 
-  const structuredRoad = read(["record.roadName", "record.routeName", "record.road_name", "record.road", "record.primaryRoad", "record.street", "record.streetName", "record.street_name", "raw.roadName", "raw.routeName", "raw.road_name", "raw.road", "raw.primaryRoad", "raw.street", "raw.streetName", "source.roadName", "source.routeName", "source.road_name", "source.road", "source.primaryRoad", "source.street", "source.streetName", "latest.roadName", "latest.routeName", "latest.road_name", "latest.road", "latest.primaryRoad", "latest.street", "latest.streetName"]);
+  const structuredRoad = read(["record.roadName", "record.routeName", "record.street", "record.streetName", "record.primaryRoad", "record.road_name", "record.road", "raw.roadName", "raw.routeName", "raw.street", "raw.streetName", "raw.primaryRoad", "raw.road_name", "raw.road", "source.roadName", "source.routeName", "source.street", "source.streetName", "source.primaryRoad", "source.road_name", "source.road", "latest.roadName", "latest.routeName", "latest.street", "latest.streetName", "latest.primaryRoad", "latest.road_name", "latest.road"]);
   const structuredCross = read(["record.crossStreet", "record.cross_street", "record.nearbyCrossStreet", "record.nearestCrossStreet", "record.referenceRoadA", "raw.crossStreet", "raw.cross_street", "raw.referenceRoadA", "source.crossStreet", "source.cross_street", "source.referenceRoadA", "latest.crossStreet", "latest.cross_street"]);
   const structuredResolved = read(["record.resolvedLocation", "record.authoritativeLocationLabel", "record.popupLocation", "record.locationPhrase", "record.locationLabel", "raw.resolvedLocation", "raw.authoritativeLocationLabel", "raw.popupLocation", "source.resolvedLocation", "source.authoritativeLocationLabel", "source.popupLocation"]);
   const establishedConsumer = consumerEntry || lp023Entry;
@@ -3414,7 +3414,13 @@ function gridlyProjectAlertIncidentLocation(record = {}) {
   return {
     ...record,
     roadName: String(roadName || record?.roadName || "").trim(),
+    routeName: String(record?.routeName || latest?.routeName || source?.routeName || raw?.routeName || "").trim(),
+    street: String(record?.street || latest?.street || source?.street || raw?.street || "").trim(),
+    streetName: String(record?.streetName || latest?.streetName || source?.streetName || raw?.streetName || "").trim(),
+    primaryRoad: String(record?.primaryRoad || latest?.primaryRoad || source?.primaryRoad || raw?.primaryRoad || roadName || "").trim(),
+    nearestRoad: String(record?.nearestRoad || latest?.nearestRoad || source?.nearestRoad || raw?.nearestRoad || "").trim(),
     crossStreet: String(crossStreet || record?.crossStreet || "").trim(),
+    referenceRoadA: String(record?.referenceRoadA || latest?.referenceRoadA || source?.referenceRoadA || raw?.referenceRoadA || "").trim(),
     resolvedLocation: String(resolvedLocation || record?.resolvedLocation || "").trim(),
     __gridlyPresentationLocationLabel: String(resolvedLocation || record?.__gridlyPresentationLocationLabel || "").trim(),
     locationSourceAuthority: selectedLocationAuthority,
@@ -3472,10 +3478,14 @@ function gridlyCommunityStreetLineage(record = {}) {
   };
   const selected = gridlyResolveCommunityTravelerLocation(record);
   const stages = [
-    ["SUBMISSION", record?.submission || record?.acceptedLocal || record?.localSubmission],
+    ["SUBMISSION_PAYLOAD", record?.submissionPayload || record?.submission || record?.localSubmission],
+    ["ACCEPTED_LOCAL_HAZARD", record?.acceptedLocal || record?.acceptedLocalHazard],
     ["PERSISTED_REPORT", record?.persistedReport || record?.raw],
     ["AUTHORITATIVE_NORMALIZED_HAZARD", record?.normalizedHazard || record?.source],
-    ["LATEST_REPORT", record?.latestReport],
+    ["RAW_LINEAGE", record?.raw],
+    ["SOURCE_LINEAGE", record?.source],
+    ["LATEST_REPORT_LINEAGE", record?.latestReport],
+    ["GROUPED_REPORTS_LINEAGE", Array.isArray(record?.reports) ? record.reports.find((report) => valueAt(report)) : null],
     ["GOVERNED_EVIDENCE", record?.governedEvidence || record],
     ["ALERTS_CONSUMER_RECORD", record],
     ["LP236_PRESENTATION_MODEL", { roadName: selected.authority === "governed_road" || selected.authority === "governed_reference_road" ? selected.value : "" }]
@@ -3485,7 +3495,7 @@ function gridlyCommunityStreetLineage(record = {}) {
     firstStreetLineageLosingStage = `${stages[index - 1].stage}_TO_${stages[index].stage}`;
     break;
   }
-  return Object.freeze({ stages: Object.freeze(stages), streetAuthorityAvailable: stages.some((stage) => stage.value),
+  return Object.freeze({ stages: Object.freeze(stages), submissionStreetAuthorityAvailable: Boolean(stages[0].value), governedStreetAuthorityAvailable: Boolean(stages.find((stage) => stage.stage === "GOVERNED_EVIDENCE")?.value), streetAuthorityAvailable: stages.some((stage) => stage.value),
     selectedStreetValue: selected.authority === "governed_road" || selected.authority === "governed_reference_road" ? selected.value : null,
     firstStreetLineageLosingStage });
 }
@@ -58072,6 +58082,7 @@ function normalizeReports(rows) {
       crossStreet: otherHazardMetadata?.crossStreet || row.crossStreet || row.cross_street || "",
       referenceRoadA: otherHazardMetadata?.referenceRoadA || row.referenceRoadA || row.reference_road_a || "",
       locationLabel: otherHazardMetadata?.locationLabel || row.locationLabel || "",
+      resolvedLocation: otherHazardMetadata?.resolvedLocation || row.resolvedLocation || row.resolved_location || "",
       nearbyLocationPhrase: otherHazardMetadata?.nearbyLocationPhrase || row.nearbyLocationPhrase || "",
       source: row.source || "user",
       confidence: row.confidence || "shared live report",
@@ -85189,7 +85200,13 @@ function gridlyBuildRoadHazardSubmitShapeAudit(row, legacyRow, error = null, fal
 function gridlyPickRoadHazardLocationIdentityFields(source = {}) {
   const keys = [
     "roadName",
+    "routeName",
+    "street",
+    "streetName",
     "primaryRoad",
+    "nearestRoad",
+    "crossStreet",
+    "referenceRoadA",
     "locationName",
     "knownLocation",
     "locationLabel",
@@ -85270,7 +85287,7 @@ function gridlyBuildRoadHazardSubmissionLocationPayload(options = {}) {
   const submittedCoordinate = gridlyCoordinateFromRecord(options.submittedCoordinate);
   const cachedCoordinate = gridlyCoordinateFromRecord(options.cachedCoordinate);
   const cachedDistanceMeters = submittedCoordinate && cachedCoordinate ? gridlyCoordinateDeltaMeters(submittedCoordinate, cachedCoordinate) : null;
-  const explicitRoad = cleanRoad(options.roadName) || cleanRoad(options.primaryRoad) || cleanRoad(options.selectedRoadName);
+  const explicitRoad = cleanRoad(options.roadName) || cleanRoad(options.routeName) || cleanRoad(options.street) || cleanRoad(options.streetName) || cleanRoad(options.primaryRoad) || cleanRoad(options.selectedRoadName);
   const cachedRoad = cleanRoad(options.cachedRoadName || options.cachedPrimaryRoad || options.cachedSelectedRoadName);
   const cachedCoordinateMatchesSubmitted = Number.isFinite(cachedDistanceMeters) && cachedDistanceMeters <= 0.5;
   const cachedRoadAccepted = Boolean(!explicitRoad && cachedRoad && cachedCoordinateMatchesSubmitted);
@@ -85279,15 +85296,17 @@ function gridlyBuildRoadHazardSubmissionLocationPayload(options = {}) {
   const fallbackText = cleanRoad(options.nearbyPairFallbackText || options.crossingFallbackText || options.locationName || options.knownLocation || options.locationLabel);
   const nearbyPairFallbackSuppressed = Boolean(selectedPrimaryRoad && fallbackText && fallbackText !== selectedPrimaryRoad && /\b(?:at|&)\b/i.test(fallbackText));
   const staleCachedRoadStateRejected = Boolean(!explicitRoad && cachedRoad && !cachedRoadAccepted);
+  const submittedStructuredFields = gridlyPickRoadHazardLocationIdentityFields(options);
   const payload = selectedPrimaryRoad ? {
-    roadName: selectedPrimaryRoad,
-    primaryRoad: selectedPrimaryRoad,
+    ...submittedStructuredFields,
+    roadName: cleanRoad(options.roadName) || selectedPrimaryRoad,
+    primaryRoad: cleanRoad(options.primaryRoad) || selectedPrimaryRoad,
     locationName: selectedPrimaryRoad,
     knownLocation: selectedPrimaryRoad,
     locationLabel: selectedPrimaryRoad,
     authoritativeLocationLabel: selectedPrimaryRoad,
     strongestLocationLabel: selectedPrimaryRoad
-  } : {};
+  } : submittedStructuredFields;
   return {
     payload,
     audit: {
@@ -86493,7 +86512,15 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     : `${copy.detail} (future_source: ${sourceTag})`;
   const locationPayloadResult = gridlyBuildRoadHazardSubmissionLocationPayload({
     roadName: options?.roadName,
+    routeName: options?.routeName,
+    street: options?.street,
+    streetName: options?.streetName,
     primaryRoad: options?.primaryRoad,
+    nearestRoad: options?.nearestRoad,
+    crossStreet: options?.crossStreet,
+    referenceRoadA: options?.referenceRoadA,
+    locationName: options?.locationName || locationName,
+    locationLabel: options?.locationLabel,
     selectedRoadName: options?.selectedRoadName || lastMobileReportSubmitDebug?.selectedRoadName || lastRoadSnapDebug?.selectedRoadName,
     submittedCoordinate: { lat, lng },
     cachedRoadName: lastRoadSnapDebug?.selectedRoadName,
@@ -115142,7 +115169,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const location = gridlyResolveCommunityTravelerLocation(alert);
         const streetLineage = gridlyCommunityStreetLineage(alert);
         const target = typeof gridlyResolveAlertShowOnMapTarget === "function" ? gridlyResolveAlertShowOnMapTarget(alert, canonicalGovernedId) : null;
-        return Object.freeze({ canonicalGovernedId, streetAuthorityAvailable: streetLineage.streetAuthorityAvailable, selectedStreetValue: streetLineage.selectedStreetValue, selectedLocationValue: location.value || null, selectedLocationAuthority: location.authority, firstStreetLineageLosingStage: streetLineage.firstStreetLineageLosingStage, county: alert?.countyName || alert?.county || alert?.countyId || alert?.county_id || null, targetResolved: Boolean(target?.coords), targetType: target?.targetType || null, showMeEligible: Boolean(target?.coords) });
+        return Object.freeze({ canonicalGovernedId, submissionStreetAuthorityAvailable: streetLineage.submissionStreetAuthorityAvailable, governedStreetAuthorityAvailable: streetLineage.governedStreetAuthorityAvailable, streetAuthorityAvailable: streetLineage.streetAuthorityAvailable, selectedStreetValue: streetLineage.selectedStreetValue, selectedLocationValue: location.value || null, selectedLocationAuthority: location.authority, firstStreetLineageLosingStage: streetLineage.firstStreetLineageLosingStage, county: alert?.countyName || alert?.county || alert?.countyId || alert?.county_id || null, targetResolved: Boolean(target?.coords), targetType: target?.targetType || null, showMeEligible: Boolean(target?.coords) });
       });
     const communityReportLocationCoverageCount = communityReportSummaries.filter((row) => row.selectedLocationValue).length;
     const communityReportCountyOnlyLocationCount = communityReportSummaries.filter((row) => row.selectedLocationAuthority === "county_fallback").length;

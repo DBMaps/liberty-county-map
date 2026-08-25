@@ -44,9 +44,26 @@ test('LP237.4 selects every structured road alias ahead of a generic resolved lo
 
 test('LP237.3 preserves submitted location lineage through persistence normalization and Alerts projection', () => {
   const normalization = functionSource('normalizeReports');
-  for (const field of ['roadName', 'routeName', 'street', 'streetName', 'primaryRoad', 'locationName', 'location', 'crossStreet', 'referenceRoadA']) assert.match(normalization, new RegExp(`${field}:`));
+  for (const field of ['roadName', 'routeName', 'street', 'streetName', 'primaryRoad', 'nearestRoad', 'locationName', 'location', 'locationLabel', 'resolvedLocation', 'crossStreet', 'referenceRoadA', 'canonicalRoadContext']) assert.match(normalization, new RegExp(`${field}:`));
   const projection = functionSource('gridlyProjectAlertIncidentLocation');
-  for (const field of ['routeName', 'street', 'streetName', 'primaryRoad', 'crossStreet', 'resolvedLocation']) assert.match(projection, new RegExp(field));
+  for (const field of ['roadName', 'routeName', 'street', 'streetName', 'primaryRoad', 'nearestRoad', 'crossStreet', 'referenceRoadA', 'resolvedLocation']) assert.match(projection, new RegExp(field));
+});
+
+test('LP237.6 submission capture serializes every governed street alias into structured metadata', () => {
+  const capture = functionSource('gridlyBuildRoadHazardSubmissionLocationPayload');
+  assert.match(capture, /options\.roadName.*options\.routeName.*options\.street.*options\.streetName.*options\.primaryRoad/);
+  const submit = functionSource('createSharedHazardReport');
+  for (const field of ['roadName', 'routeName', 'street', 'streetName', 'primaryRoad', 'nearestRoad', 'crossStreet', 'referenceRoadA']) assert.match(submit, new RegExp(`${field}: options\\?\\.${field}`));
+  assert.match(submit, /appendGridlyStructuredMetadata/);
+  assert.doesNotMatch(capture + submit, /reverse.?geocod|fetch\(|setInterval/i);
+});
+
+test('LP237.6 fail-closed summary distinguishes submission and governed street authority', () => {
+  const audit = functionSource('gridlyLP236AlertsInformationArchitectureAudit');
+  assert.match(audit, /submissionStreetAuthorityAvailable/);
+  assert.match(audit, /governedStreetAuthorityAvailable/);
+  const lineage = functionSource('gridlyCommunityStreetLineage');
+  for (const stage of ['SUBMISSION_PAYLOAD', 'ACCEPTED_LOCAL_HAZARD', 'PERSISTED_REPORT', 'AUTHORITATIVE_NORMALIZED_HAZARD', 'RAW_LINEAGE', 'SOURCE_LINEAGE', 'LATEST_REPORT_LINEAGE', 'GROUPED_REPORTS_LINEAGE', 'GOVERNED_EVIDENCE', 'ALERTS_CONSUMER_RECORD', 'LP236_PRESENTATION_MODEL']) assert.match(lineage, new RegExp(stage));
 });
 
 test('LP237.3 community Show me shares the governed resolver and coordinate focus contract', () => {
