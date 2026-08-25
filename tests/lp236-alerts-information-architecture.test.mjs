@@ -503,3 +503,45 @@ test('LP236.13 has no refetch, polling, town branch, search, or crossing product
   const changedProduction = `${lp236}\n${app.slice(app.indexOf('function gridlyGetGovernedConsumerProjection'), app.indexOf('function gridlyGetGovernedActiveAwarenessRows'))}`;
   assert.doesNotMatch(changedProduction, /geocode|countyUnion|searchResults/);
 });
+
+test('LP236.15 Show me focuses through governed targeting then lifecycle-owned minimize', () => {
+  const handler = app.slice(app.indexOf('function gridlyLp019BindAlertFocusHandlers'), app.indexOf('if (typeof window !== "undefined")', app.indexOf('function gridlyLp019BindAlertFocusHandlers')));
+  assert.match(handler, /gridlyResolveAlertShowOnMapTarget\(record, id\)/);
+  assert.match(handler, /focusGridlyAlertIncident\(/);
+  assert.match(handler, /closeSurface: showOnMapAction \? minimizeSurface : undefined/);
+  assert.match(handler, /window\.minimizePortraitV2Sheet\("alerts"\)/);
+  assert.match(handler, /sheetMinimizeInvoked: true/);
+  assert.doesNotMatch(handler.slice(handler.indexOf('const minimizeSurface'), handler.indexOf('window.__gridlyLp019AlertFocusDebug.mapMovementRequested')), /closePortraitV2Sheet|closeButton\.click/);
+});
+
+test('LP236.15 portrait owner minimizes without closing or destroying Alerts', () => {
+  const minimize = app.slice(app.indexOf('function minimizePortraitV2Sheet'), app.indexOf('function closePortraitV2Sheet'));
+  const close = app.slice(app.indexOf('function closePortraitV2Sheet'), app.indexOf('const gridlyLiveServerRuntimeRecoveryState'));
+  assert.match(minimize, /gridlyLP236CaptureDisclosureState/);
+  assert.match(minimize, /dataset\.sheetState = "minimized"/);
+  assert.match(minimize, /classList\.add\("is-minimized"\)/);
+  assert.doesNotMatch(minimize, /activeSheet = ""|removeAttribute\("data-active-sheet"\)|gridlyMarkAlertsSheetClosed|innerHTML/);
+  assert.match(close, /gridlyMarkAlertsSheetClosed/);
+  assert.match(close, /activeSheet = ""/);
+  assert.match(close, /removeAttribute\("data-active-sheet"\)/);
+});
+
+test('LP236.15 audit observes behavior, minimize, disclosure preservation, and first loss', () => {
+  const lp236 = app.slice(app.indexOf('const gridlyLP236AlertsState'), app.indexOf('function buildAlertsSurfaceHtml'));
+  for (const field of ['physicalClickReceived', 'conditionId', 'targetResolved', 'targetType', 'coordinatesResolved', 'mapFocusInvoked', 'mapFocusResult', 'sheetMinimizeInvoked', 'sheetMinimizeResult', 'disclosureStateCaptured', 'disclosureStateRestored', 'showMeLastSheetMinimizeInvoked', 'showMeLastSheetMinimizeResult', 'showMeDisclosureStatePreserved', 'sheetMinimizeOwner', 'sheetMinimizeFunction', 'sheetStateBefore', 'sheetStateAfter']) assert.match(lp236, new RegExp(field));
+  assert.match(lp236, /behavior\.mapFocusResult && behavior\.sheetMinimizeInvoked && behavior\.sheetMinimizeResult && showMeDisclosureStatePreserved/);
+  assert.match(lp236, /!behavior\.tested \? "NOT_TESTED"/);
+});
+
+test('LP236.15 physical hit audit only evaluates visible actionable mounted controls', () => {
+  const lp236 = app.slice(app.indexOf('function gridlyLP236AlertsInformationArchitectureAudit'), app.indexOf('function gridlyLP236RenderAlertsPresentation'));
+  for (const proof of ['!button.disabled', 'aria-disabled', '[hidden], [inert]', 'rect.bottom > 0', 'rect.top < window.innerHeight', 'getComputedStyle(button)', 'document.elementFromPoint']) assert.match(lp236, new RegExp(proof.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.doesNotMatch(lp236, /showMePhysicalHitTargetPass\s*=\s*true/);
+});
+
+test('LP236.15 remains family-neutral and preserves approved presentation constraints', () => {
+  const handler = app.slice(app.indexOf('function gridlyLp019BindAlertFocusHandlers'), app.indexOf('if (typeof window !== "undefined")', app.indexOf('function gridlyLp019BindAlertFocusHandlers')));
+  assert.doesNotMatch(handler, /official_roadway|community_report|weather/);
+  const minimize = app.slice(app.indexOf('function minimizePortraitV2Sheet'), app.indexOf('function closePortraitV2Sheet'));
+  assert.doesNotMatch(minimize, /fetch\(|setInterval|setTimeout|Dallas|town/i);
+});
