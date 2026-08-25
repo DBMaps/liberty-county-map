@@ -114927,6 +114927,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const secondaryLocation = !insideRoadwayGroup && roadway && clue ? `near ${clue}` : "";
       const condition = gridlyLP236ConciseCondition(alert, source.sourceClass);
       const summarySentence = gridlyLP236SummarySentence(alert, condition);
+      // Provider summaries sometimes carry a list marker even though each alert
+      // is already presented as its own row. Remove only that visual artifact;
+      // the governed summary text and its authority remain unchanged.
+      const presentedSummarySentence = summarySentence.replace(/^(?:[-–—•]\s+)+/, "");
       const governedTiming = pickFirstNonEmptyText([alert?.freshnessLabel, alert?.timingLabel, alert?.updatedLabel, alert?.minutesText, alert?.updatedAt]);
       const timing = governedTiming || (alert?.startTime ? `Starts ${alert.startTime}` : (alert?.endTime ? `Until ${alert.endTime}` : ""));
       const crossingTarget = gridlyLp0952ResolveCrossingAlertTarget(alert, null);
@@ -114934,9 +114938,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const lng = Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng ?? crossingTarget.coords?.lng);
       const coords = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${sanitizeText(lat)}" data-gridly-alert-lng="${sanitizeText(lng)}"` : "";
       const accessibleLocation = primaryLocation || roadway || governedFallbackLocation;
-      return `<article class="gridly-lp236-condition" data-gridly-lp236-condition-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-title="${sanitizeText(title)}" data-gridly-alert-location="${sanitizeText(accessibleLocation)}" data-gridly-alert-condition="${sanitizeText(condition)}"${gridlyLp0952AlertCardInteractionAttributes(crossingTarget.crossingId, sanitizeText)}${coords}>
-        <div class="gridly-lp236-row-main"><div class="gridly-lp236-row-copy">${primaryLocation ? `<strong${insideRoadwayGroup && clue ? " data-gridly-lp236-location-clue=\"true\"" : ""}>${sanitizeText(primaryLocation)}</strong>` : ""}${secondaryLocation ? `<span class="gridly-lp236-location-copy" data-gridly-lp236-location-clue="true">${sanitizeText(secondaryLocation)}</span>` : ""}<span class="gridly-lp236-condition-copy">${sanitizeText(condition)}</span>${summarySentence ? `<span class="gridly-lp236-summary-sentence" data-gridly-lp236-summary-sentence="true">${sanitizeText(summarySentence)}</span>` : ""}${timing ? `<span class="gridly-lp236-timing">${sanitizeText(timing)}</span>` : ""}</div></div>
-        ${Number.isFinite(lat) && Number.isFinite(lng) ? `<div class="gridly-lp236-actions"><button class="gridly-alert-show-on-map gridly-lp236-show-me" type="button" aria-label="Show ${sanitizeText(accessibleLocation)} on map">Show me</button></div>` : ""}
+      return `<article class="gridly-lp236-condition gridly-lp236-condition-item" data-gridly-lp236-condition-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-title="${sanitizeText(title)}" data-gridly-alert-location="${sanitizeText(accessibleLocation)}" data-gridly-alert-condition="${sanitizeText(condition)}"${gridlyLp0952AlertCardInteractionAttributes(crossingTarget.crossingId, sanitizeText)}${coords}>
+        <div class="gridly-lp236-condition-body">${primaryLocation ? `<strong class="gridly-lp236-condition-roadway"${insideRoadwayGroup && clue ? " data-gridly-lp236-location-clue=\"true\"" : ""}>${sanitizeText(primaryLocation)}</strong>` : ""}${secondaryLocation ? `<span class="gridly-lp236-condition-location" data-gridly-lp236-location-clue="true">${sanitizeText(secondaryLocation)}</span>` : ""}<span class="gridly-lp236-condition-title">${sanitizeText(condition)}</span>${presentedSummarySentence ? `<span class="gridly-lp236-condition-summary" data-gridly-lp236-summary-sentence="true">${sanitizeText(presentedSummarySentence)}</span>` : ""}${timing ? `<span class="gridly-lp236-condition-time">${sanitizeText(timing)}</span>` : ""}</div>
+        ${Number.isFinite(lat) && Number.isFinite(lng) ? `<div class="gridly-lp236-condition-actions"><button class="gridly-alert-show-on-map gridly-lp236-show-me" type="button" aria-label="Show ${sanitizeText(accessibleLocation)} on map">Show me</button></div>` : ""}
       </article>`;
     };
     const renderGroup = (group, source, groupIndex) => {
