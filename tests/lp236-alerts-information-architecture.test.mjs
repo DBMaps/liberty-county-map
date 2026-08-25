@@ -91,3 +91,33 @@ test('live hierarchy renderer consumes supplied governed conditions without refe
   assert.match(renderer, /Array\.isArray\(suppliedAlerts\) \? suppliedAlerts/);
   assert.doesNotMatch(renderer, /fetch\(|setTimeout|setInterval|RenderCompleteAlertCard|Dallas/);
 });
+
+test('quiet state requires explicit governed authority and official evidence cannot render quiet', () => {
+  const official = build([{ id: 'txdot-78', sourceClass: 'official_roadway', category: 'Lane Closure' }]);
+  assert.equal(official.total, 1);
+  assert.equal(official.sections[0].sourceClass, 'official_roadway');
+  const renderer = app.slice(app.indexOf('function gridlyLP236RenderAlertsPresentation'), app.indexOf('\n  function buildAlertsSurfaceHtml'));
+  assert.match(renderer, /activeConditionAuthorityAvailable !== true/);
+  assert.match(renderer, /Active conditions are still loading/);
+  assert.match(renderer, /if \(!model\.total\) return/);
+  assert.ok(renderer.indexOf('activeConditionAuthorityAvailable !== true') < renderer.indexOf("You're all caught up"));
+});
+
+test('source handoff remains governed and separates all three families without consumer dependencies', () => {
+  const model = build([
+    { id: 'official', sourceClass: 'official_roadway' },
+    { id: 'community', sourceClass: 'community_report' },
+    { id: 'weather', sourceClass: 'weather' }
+  ]);
+  assert.deepEqual(Array.from(model.sections, section => section.sourceClass), ['official_roadway', 'community_report', 'weather']);
+  const snapshot = app.slice(app.indexOf('function getAlertsSurfaceSnapshot()'), app.indexOf('window.getAlertsSurfaceSnapshot = getAlertsSurfaceSnapshot'));
+  assert.match(snapshot, /governedConsumerProjection\?\.surfaces\?\.alerts/);
+  assert.doesNotMatch(snapshot, /querySelector|textContent|fetch\(/);
+  assert.doesNotMatch(snapshot, /Dallas|KBYG|Location Context/);
+});
+
+test('audit exposes active-condition authority, lineage counts, and quiet-state proof', () => {
+  const lp236 = app.slice(app.indexOf('// LP236 is a presentation projection'), app.indexOf('function escapeV2SettingsText'));
+  for (const field of ['sourceConditionCount', 'sourceConditionIds', 'officialRoadwayConditionCount', 'communityReportConditionCount', 'weatherConditionCount', 'quietStateRendered', 'quietStateAuthorityPass', 'firstStageWhereActiveConditionsBecomeEmpty']) assert.match(lp236, new RegExp(field));
+  assert.match(lp236, /overallPass: Boolean\(root\) && authorityAvailable && quietStateAuthorityPass/);
+});
