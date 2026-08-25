@@ -9,6 +9,8 @@ const incident = (overrides = {}) => ({
   geographicEligible: true, status: 'active', expiresAt: '2026-08-25T12:00:00Z', ...overrides
 });
 
+const DALLAS_TARGET = '0D47C4E8-4B4D-48E9-ADCF-508432056A1F';
+
 test('relevant current DriveTexas identity reaches every governed awareness projection once', () => {
   const row = incident();
   const projection = governed.buildConsumerProjection({ records: [row, { ...row }], nowMs: NOW, canonicalCommunity: 'Katy', canonicalKey: '4838476' });
@@ -41,4 +43,32 @@ test('production wiring admits the existing geographic projection without county
   assert.doesNotMatch(boundary, /Katy|harris-tx|fort-bend-tx|waller-tx|county\s*===/i);
   assert.doesNotMatch(boundary, /setInterval|setTimeout|fetch\s*\(/);
   assert.match(app, /gridlyLP234DriveTexasGovernedPropagationAudit/);
+  assert.match(app, /preDedupCollectionCardinality: productionCandidates\.length/);
+  assert.match(app, /providerRecordId: record\?\.providerRecordId \|\| record\?\.sourceProviderRecordId/);
+  assert.doesNotMatch(app, new RegExp(DALLAS_TARGET));
+});
+
+test('Dallas LP039.3 fixture preserves 23 provider identities through lifecycle, policy, and dedup', () => {
+  const records = Array.from({ length: 23 }, (_, index) => incident({
+    providerId: `provider:${index === 0 ? DALLAS_TARGET : `DALLAS-${index}`}`,
+    providerRecordId: index === 0 ? DALLAS_TARGET : `DALLAS-${index}`,
+    roadway: index === 0 ? 'SH0078' : `SH${String(index).padStart(4, '0')}`
+  }));
+  const projection = governed.buildConsumerProjection({ records: [...records, { ...records[0] }], nowMs: NOW });
+  const targetId = `official_roadway:${DALLAS_TARGET}`;
+  assert.equal(projection.lineage.length, 23);
+  assert.equal(projection.snapshot.duplicateEvidenceIds.filter(id => id === targetId).length, 1);
+  assert.equal(projection.lineage.filter(row => row.lifecycleEligible).length, 23);
+  for (const surface of ['locationContext', 'communityPulse', 'alerts', 'kbygOfficialRoadways']) {
+    assert.equal(projection.surfaces[surface].length, 23);
+    assert.equal(projection.surfaces[surface].filter(row => row.evidenceId === targetId).length, 1);
+  }
+  assert.equal(projection.surfaces.kbygCommunity.length, 0);
+});
+
+test('LP039.3 publishes the raw provider record identity for governed admission', () => {
+  const fs = require('node:fs');
+  const integration = fs.readFileSync(require.resolve('../js/gridlyDriveTexasAuthoritySourceIntegration.js'), 'utf8');
+  assert.match(integration, /providerRecordId: record\.providerRecordId \|\| record\.sourceProviderRecordId/);
+  assert.doesNotMatch(integration, /providerRecordId:\s*(?:record\.)?routeName/);
 });

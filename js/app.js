@@ -3315,7 +3315,8 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
   const governedDriveTexasRecords = driveTexasRecords.map((record) => ({
     ...record,
     sourceKind: "official_roadway",
-    providerRecordId: record?.providerRecordId || record?.providerId || record?.sourceId || record?.id || "",
+    providerRecordId: record?.providerRecordId || record?.sourceProviderRecordId
+      || String(record?.providerId || record?.sourceId || record?.id || "").replace(/^provider:/, ""),
     geographicEligible: true
   }));
   const records = Array.isArray(options.records) ? options.records : [
@@ -41361,18 +41362,32 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const activeIssueCount = Number.isFinite(alertsGroupedIssueCount) && alertsGroupedIssueCount > 0
     ? Math.max(0, alertsGroupedIssueCount, reconciledActiveIssueCount)
     : reconciledActiveIssueCount;
-  const productionItems = [
+  const productionCandidates = [
     ...activeReportRows.map((record) => ({ record, countedReason: "activeReportsInArea retained collection member" })),
     ...(Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea : []).map((record) => ({ record, countedReason: "activeHazardsInArea collection member" })),
     ...gridlyGetGovernedActiveAwarenessRows().filter((row) => row.sourceKind === "official_roadway")
       .map((row) => ({ record: row.record, countedReason: "governed official roadway collection member" }))
   ];
+  // The shared summary can already contain the LP039 official rows in its
+  // legacy hazard collection. Reconcile that representation with the governed
+  // contribution by stable provider identity before cardinality is audited.
+  const productionItems = [...new Map(productionCandidates.map((entry, index) => {
+    const record = entry?.record || {};
+    const providerId = String(record.providerRecordId || record.sourceProviderRecordId || record.providerId || record.sourceId || "").replace(/^provider:/, "");
+    const sourceKind = window.GridlyGovernedAwareness?.sourceKindOf?.(record);
+    const officialRoadway = sourceKind === "official_roadway" || /^drivetexas:/i.test(String(record.consumerSituationId || ""));
+    const governedId = officialRoadway && providerId
+      ? `official_roadway:${providerId}`
+      : (window.GridlyGovernedAwareness?.identity?.(record) || `unidentified:${index}`);
+    return [governedId, entry];
+  })).values()];
   gridlyObserveLocationContextProductionProjection({
     summary: safeSummary, productionItems, productionCount: activeIssueCount,
     operands: {
       sharedActiveIssueCount: Number(safeSummary.sharedActiveIssueContract?.activeIssueCount || 0), rawActiveIssueCount,
       hazardCount, reportCount: reportCount + crossingReportCount, activeReportsInAreaLength: activeReportRows.length,
       activeHazardsInAreaLength: Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea.length : 0,
+      preDedupCollectionCardinality: productionCandidates.length, postDedupCollectionCardinality: productionItems.length,
       alertsGroupedIssueCount: Number.isFinite(alertsGroupedIssueCount) ? alertsGroupedIssueCount : null,
       reconciledActiveIssueCount, finalActiveIssueCount: activeIssueCount
     }, invocation: gridlyActiveIssueReconciliationInvocation, reason: "normalize-mobile-awareness-panel-summary"
@@ -122022,11 +122037,18 @@ function gridlyGovernedAwarenessAudit(options = {}) {
   };
   if (typeof unifiedIncidentLayer?.eachLayer === "function") unifiedIncidentLayer.eachLayer((layer) => collectMarker(layer, "unifiedIncidentLayer"));
   if (crossingMarkers instanceof Map) crossingMarkers.forEach((layer) => collectMarker(layer, "crossingMarkers"));
-  const consumerProjection = engine.buildConsumerProjection({ records: reportRows, nowMs: options.nowMs });
+  const auditDriveTexasRecords = typeof gridlyStoryTransportationConnectorRecords === "function" ? gridlyStoryTransportationConnectorRecords() : [];
+  const auditGovernedRecords = auditDriveTexasRecords.map((record) => ({
+    ...record, sourceKind: "official_roadway",
+    providerRecordId: record?.providerRecordId || record?.sourceProviderRecordId || String(record?.providerId || record?.sourceId || record?.id || "").replace(/^provider:/, ""),
+    geographicEligible: true
+  }));
+  const governedAuditRecords = [...reportRows, ...auditGovernedRecords];
+  const consumerProjection = engine.buildConsumerProjection({ records: governedAuditRecords, nowMs: options.nowMs });
   const kbygProductionItems = consumerProjection.surfaces.kbygCommunity.map((row) => ({ ...row.record, evidenceId: row.evidenceId }));
   gridlyRecordGovernedAwarenessAuditEvent(options.reason || "manual-audit", { generation: gridlyActiveCountyTransitionGeneration });
   const snapshot = engine.buildSnapshot({
-    records: reportRows, nowMs: options.nowMs, canonicalCommunity: selected?.label || selected?.name || "", canonicalKey: selected?.canonicalKey || selected?.placeGeoid || "",
+    records: governedAuditRecords, nowMs: options.nowMs, canonicalCommunity: selected?.label || selected?.name || "", canonicalKey: selected?.canonicalKey || selected?.placeGeoid || "",
     countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "", transitionGeneration: gridlyActiveCountyTransitionGeneration,
     evidenceGeneration: Number(options.evidenceGeneration ?? gridlyActiveCountyTransitionGeneration ?? 0), providerRefreshGeneration: Number(window.__gridlyDriveTexasRefreshGeneration || 0),
     displayedActiveIssueCount: domCount, locationContextProductionCount: productionCount, locationContextDomCount: domCount, updateReason: options.reason || "manual-audit", events: gridlyGovernedAwarenessAuditEvents,
@@ -122120,7 +122142,7 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 
 // LP234 is a passive lineage report over the existing DriveTexas authority,
 // governed evidence engine, and consumer projections. It performs no refresh.
-window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234DriveTexasGovernedPropagationAudit() {
+window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234DriveTexasGovernedPropagationAudit(options = {}) {
   const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   const source = typeof window.gridlyDriveTexasConnector?.getAllNormalizedRecords === "function"
     ? window.gridlyDriveTexasConnector.getAllNormalizedRecords()
@@ -122131,48 +122153,68 @@ window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234Drive
   const relevant = typeof gridlyStoryTransportationConnectorRecords === "function" ? gridlyStoryTransportationConnectorRecords() : [];
   const roadOf = (row = {}) => String(row.roadway || row.routeName || row.roadName || row.canonicalRoad || row.locationPhrase || "").trim();
   const providerIdOf = (row = {}) => String(row.providerRecordId || row.sourceProviderRecordId || row.sourceId || row.id || row.incidentId || row.providerId || "").replace(/^provider:/, "").trim();
-  const target = source.find((row) => /FM\s*0?529/i.test(roadOf(row))) || source[0] || null;
-  const targetProviderId = providerIdOf(target || {});
-  const matches = (row = {}) => Boolean(target && (providerIdOf(row) === targetProviderId || (/FM\s*0?529/i.test(roadOf(target)) && roadOf(row) === roadOf(target))));
+  const requestedProviderId = String(options?.providerRecordId || "").replace(/^provider:/, "").trim();
+  const target = (requestedProviderId ? relevant.find((row) => providerIdOf(row) === requestedProviderId) : null)
+    || relevant.find((row) => /FM\s*0?529/i.test(roadOf(row))) || relevant[0] || null;
+  const targetProviderId = requestedProviderId || providerIdOf(target || {});
+  const matches = (row = {}) => Boolean(targetProviderId && providerIdOf(row) === targetProviderId);
+  const governedInput = relevant.map((record) => ({ ...record, sourceKind: "official_roadway", providerRecordId: providerIdOf(record), geographicEligible: true }));
   const projection = gridlyGetGovernedConsumerProjection({ driveTexasRecords: relevant });
-  const targetProof = authorityProof.find((row) => [row.sourceId, row.authorityIdentity].some((id) => id === targetProviderId || id === `provider:${targetProviderId}`)) || null;
-  const allRows = projection?.lineage || [];
-  const governed = allRows.find((row) => row.sourceKind === "official_roadway" && (row.providerRecordId === targetProviderId || String(row.evidenceId).endsWith(`:${targetProviderId}`))) || null;
+  const targetProof = authorityProof.find((row) => [row.sourceId, row.authorityIdentity].some((id) => String(id || "").replace(/^provider:/, "") === targetProviderId)) || null;
+  const lineage = projection?.lineage || [];
+  const governed = lineage.find((row) => row.sourceKind === "official_roadway" && row.providerRecordId === targetProviderId) || null;
   const surfaceHas = (name) => (projection?.surfaces?.[name] || []).some((row) => row.evidenceId === governed?.evidenceId);
   const domHas = (selector) => Array.from(document.querySelectorAll(selector)).some((node) => matches({ providerRecordId: node.getAttribute("data-gridly-provider-record-id"), roadway: node.getAttribute("data-gridly-alert-location") || node.textContent }));
   const locationAudit = gridlyLocationContextProductionAudit();
   const locationItems = locationAudit.locationContextProductionItems || [];
-  const targetPresentInLocationContextCollection = locationItems.some((row) => row.governedEvidenceId === governed?.evidenceId || row.productionIdentity === governed?.evidenceId);
+  const locationIds = locationItems.map((row) => row.governedEvidenceId || row.productionIdentity).filter(Boolean);
+  const locationContextDuplicateIds = [...new Set(locationIds.filter((id, index) => locationIds.indexOf(id) !== index))];
+  const targetPresentInLp0393 = relevant.some(matches);
+  const targetPresentInGovernedInput = governedInput.some(matches);
+  const targetPresentAfterLifecycle = Boolean(governed?.lifecycleEligible);
+  const targetPresentAfterPolicy = Boolean(governed && governed.kbygOfficialRoadwaysEligible);
+  const targetPresentAfterDedup = Boolean(governed && lineage.filter((row) => row.evidenceId === governed.evidenceId).length === 1);
+  const targetPresentInLocationContextCollection = locationIds.includes(governed?.evidenceId);
   const targetPresentInAlertsProjection = surfaceHas("alerts");
   const targetPresentInKbygOfficialRoadways = surfaceHas("kbygOfficialRoadways");
   const targetPresentInCommunityPulse = surfaceHas("communityPulse");
   const targetPresentInTopAwareness = gridlyGetGovernedActiveAwarenessRows({ driveTexasRecords: relevant }).some((row) => row.evidenceId === governed?.evidenceId);
-  const parityValues = [targetPresentInAlertsProjection, targetPresentInKbygOfficialRoadways, targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection];
-  const firstLosingStage = !target ? "drivetexas_source_to_geographic_relevance" : !governed ? "governed_active_evidence_ingestion" : !governed.lifecycleEligible ? "governed_active_lifecycle" : parityValues.every(Boolean) ? null : "governed_consumer_projection";
+  const stages = [
+    ["lp0393_consumer_visible_situations", targetPresentInLp0393],
+    ["governed_adapter_input", targetPresentInGovernedInput],
+    ["governed_active_lifecycle", targetPresentAfterLifecycle],
+    ["governed_official_roadway_policy", targetPresentAfterPolicy],
+    ["governed_identity_deduplication", targetPresentAfterDedup],
+    ["governed_active_evidence", Boolean(governed?.lifecycleEligible)]
+  ];
+  const firstLosingStage = stages.find(([, present]) => !present)?.[0]
+    || ([targetPresentInAlertsProjection, targetPresentInKbygOfficialRoadways, targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection].every(Boolean) ? null : "governed_consumer_projection");
+  const locationContextPostDedupCardinality = new Set(locationIds).size;
+  const locationContextPreDedupCardinality = Number(locationAudit.locationContextProductionOperands?.preDedupCollectionCardinality ?? locationItems.length);
   const result = {
     canonicalCommunity: selected?.label || selected?.name || "", canonicalKey: selected?.canonicalKey || selected?.key || selected?.placeGeoid || "",
     selectedAwarenessKey: selected?.canonicalKey || selected?.key || selected?.placeGeoid || null,
-    selectedAwarenessAnchor: authority.selectedAwarenessAnchor || null,
-    selectedAwarenessAnchorAuthority: authority.selectedAwarenessAnchorAuthority || null,
-    selectedAwarenessRadiusMiles: authority.selectedAwarenessRadiusMiles ?? null,
-    anchorResolutionPass: authority.anchorResolutionPass === true,
+    selectedAwarenessAnchor: authority.selectedAwarenessAnchor || null, selectedAwarenessAnchorAuthority: authority.selectedAwarenessAnchorAuthority || null,
+    selectedAwarenessRadiusMiles: authority.selectedAwarenessRadiusMiles ?? null, anchorResolutionPass: authority.anchorResolutionPass === true,
     selectedMembership: selected?.countyId || selected?.membershipCountyId || "", activeCounty: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "",
     driveTexasSourceCount: source.length, driveTexasDistanceEvaluatedCount: authorityProof.filter((row) => Number.isFinite(row.distanceFromSelectedAwarenessMiles)).length, driveTexasRelevantCount: relevant.length,
-    targetIncidentId: target?.consumerSituationId || target?.incidentId || target?.id || null, targetProviderId: targetProviderId || null,
-    targetRoad: target ? roadOf(target) : null,
+    targetIncidentId: target?.consumerSituationId || target?.incidentId || target?.id || null, targetProviderId: targetProviderId || null, targetRoad: target ? roadOf(target) : null,
     targetCoordinates: target ? { lat: Number(target.sourceCoordinates?.latitude ?? target.sourceCoordinates?.lat ?? target.latitude ?? target.lat), lng: Number(target.sourceCoordinates?.longitude ?? target.sourceCoordinates?.lng ?? target.sourceCoordinates?.lon ?? target.longitude ?? target.lng ?? target.lon) } : null,
-    targetDistanceMiles: targetProof?.distanceFromSelectedAwarenessMiles ?? null,
-    targetEligibilityReason: targetProof?.finalEligibility === true ? "eligible" : (targetProof?.ineligibilityReasons?.[0] || null),
+    targetDistanceMiles: targetProof?.distanceFromSelectedAwarenessMiles ?? null, targetEligibilityReason: targetProof?.finalEligibility === true ? "eligible" : (targetProof?.ineligibilityReasons?.[0] || null),
     missingAnchorRecordCount: authority.ineligibilityReasonCounts?.missing_selected_awareness_anchor || 0,
-    targetPresentInDriveTexasSource: source.some(matches), targetRelevantToCanonicalCommunity: Boolean(target),
+    targetPresentInDriveTexasSource: source.some(matches), targetRelevantToCanonicalCommunity: targetPresentInLp0393,
+    targetPresentInLp0393, targetLp0393Identity: target?.providerId || target?.consumerSituationId || null,
+    targetPresentInGovernedInput, targetGovernedInputIdentity: targetPresentInGovernedInput ? `official_roadway:${targetProviderId}` : null,
+    targetPresentAfterLifecycle, targetPresentAfterPolicy, targetPresentAfterDedup,
     targetPresentInGovernedActiveEvidence: Boolean(governed?.lifecycleEligible), governedEvidenceId: governed?.evidenceId || null,
-    targetPresentInAlertsProjection, targetPresentInAlertsDom: domHas("[data-gridly-alert-id]"),
-    targetPresentInKbygOfficialRoadways, targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection,
-    locationContextProductionCollectionCardinality: locationItems.length,
-    locationContextProductionCount: locationAudit.locationContextProductionCount,
-    firstLosingStage, consumerParity: parityValues.every(Boolean)
+    targetPresentInAlertsProjection, targetPresentInAlertsDom: domHas("[data-gridly-alert-id]"), targetPresentInKbygOfficialRoadways,
+    targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection,
+    locationContextPreDedupCardinality, locationContextPostDedupCardinality, locationContextDuplicateIds: Object.freeze(locationContextDuplicateIds),
+    locationContextProductionCollectionCardinality: locationItems.length, locationContextProductionCount: locationAudit.locationContextProductionCount,
+    lifecycleCounts: Object.freeze({ eligibleBeforeLifecycle: governedInput.length, activeAfterLifecycle: lineage.filter((row) => row.sourceKind === "official_roadway" && row.lifecycleEligible).length, staleExcluded: lineage.filter((row) => row.sourceKind === "official_roadway" && !row.current).length, clearedExcluded: lineage.filter((row) => row.sourceKind === "official_roadway" && row.lifecycleRole === "CLEAR_HISTORY").length, expiredExcluded: governedInput.filter((row) => Number.isFinite(Date.parse(row.expiresAt || row.expirationTime || "")) && Date.parse(row.expiresAt || row.expirationTime) <= Date.now()).length, identityUnavailable: governedInput.filter((row) => !providerIdOf(row)).length }),
+    firstLosingStage, consumerParity: [targetPresentInAlertsProjection, targetPresentInKbygOfficialRoadways, targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection].every(Boolean)
   };
-  result.overallPass = Boolean(result.targetPresentInDriveTexasSource && result.targetRelevantToCanonicalCommunity && result.targetPresentInGovernedActiveEvidence && result.targetPresentInAlertsDom && result.consumerParity && result.locationContextProductionCollectionCardinality === result.locationContextProductionCount);
+  result.overallPass = Boolean(result.targetPresentInLp0393 && result.targetPresentInGovernedInput && result.targetPresentAfterLifecycle && result.targetPresentAfterPolicy && result.targetPresentAfterDedup && result.targetPresentInGovernedActiveEvidence && result.consumerParity && !locationContextDuplicateIds.length && locationContextPostDedupCardinality === result.locationContextProductionCount);
   return Object.freeze(result);
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP234DriveTexasGovernedPropagationAudit", window.gridlyLP234DriveTexasGovernedPropagationAudit);

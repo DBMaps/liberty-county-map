@@ -477,6 +477,10 @@
       return freeze({
         consumerSituationId: `drivetexas:${key}`,
         providerId: proof.authorityIdentity || record.authorityIdentity || record.sourceId || record.providerId || record.id || null,
+        // Preserve the provider's record key separately from LP039's namespaced
+        // authority identity. Downstream governance must not have to recover a
+        // UUID by parsing "provider:<id>" presentation/authority keys.
+        providerRecordId: record.providerRecordId || record.sourceProviderRecordId || record.globalId || record.eventId || null,
         category,
         headline,
         description,
