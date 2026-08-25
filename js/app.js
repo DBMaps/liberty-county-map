@@ -122164,7 +122164,13 @@ window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234Drive
   const lineage = projection?.lineage || [];
   const governed = lineage.find((row) => row.sourceKind === "official_roadway" && row.providerRecordId === targetProviderId) || null;
   const surfaceHas = (name) => (projection?.surfaces?.[name] || []).some((row) => row.evidenceId === governed?.evidenceId);
-  const domHas = (selector) => Array.from(document.querySelectorAll(selector)).some((node) => matches({ providerRecordId: node.getAttribute("data-gridly-provider-record-id"), roadway: node.getAttribute("data-gridly-alert-location") || node.textContent }));
+  // LP223 owns the canonical-to-presentation join.  Observe that authority
+  // rather than assuming the presentation id is a provider or governed id.
+  const alertsWriterAudit = typeof window.gridlyAlertsAuthorityWriterAudit === "function" ? window.gridlyAlertsAuthorityWriterAudit() : null;
+  const alertsCanonicalToPresentationMapping = Array.isArray(alertsWriterAudit?.canonicalToPresentationMapping)
+    ? alertsWriterAudit.canonicalToPresentationMapping : [];
+  const alertsDomPresentationIds = Array.isArray(alertsWriterAudit?.finalDomPresentationIds)
+    ? alertsWriterAudit.finalDomPresentationIds : [];
   const locationAudit = gridlyLocationContextProductionAudit();
   const locationItems = locationAudit.locationContextProductionItems || [];
   const locationIds = locationItems.map((row) => row.governedEvidenceId || row.productionIdentity).filter(Boolean);
@@ -122176,6 +122182,13 @@ window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234Drive
   const targetPresentAfterDedup = Boolean(governed && lineage.filter((row) => row.evidenceId === governed.evidenceId).length === 1);
   const targetPresentInLocationContextCollection = locationIds.includes(governed?.evidenceId);
   const targetPresentInAlertsProjection = surfaceHas("alerts");
+  const targetAlertsMapping = alertsCanonicalToPresentationMapping.find((identity) => identity.canonicalId === governed?.evidenceId)
+    || alertsCanonicalToPresentationMapping.find((identity) => String(identity.providerId || "").replace(/^provider:/, "") === targetProviderId)
+    || null;
+  const alertsPresentationIncidentId = targetAlertsMapping?.presentationId || null;
+  const targetPresentInAlertsDom = Boolean(alertsPresentationIncidentId && alertsDomPresentationIds.includes(alertsPresentationIncidentId));
+  const targetAlertsDomMatchMethod = targetPresentInAlertsDom ? "authoritative_governed_to_presentation_mapping" : null;
+  const alertsDomMounted = alertsCanonicalToPresentationMapping.length > 0;
   const targetPresentInKbygOfficialRoadways = surfaceHas("kbygOfficialRoadways");
   const targetPresentInCommunityPulse = surfaceHas("communityPulse");
   const targetPresentInTopAwareness = gridlyGetGovernedActiveAwarenessRows({ driveTexasRecords: relevant }).some((row) => row.evidenceId === governed?.evidenceId);
@@ -122191,6 +122204,19 @@ window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234Drive
     || ([targetPresentInAlertsProjection, targetPresentInKbygOfficialRoadways, targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection].every(Boolean) ? null : "governed_consumer_projection");
   const locationContextPostDedupCardinality = new Set(locationIds).size;
   const locationContextPreDedupCardinality = Number(locationAudit.locationContextProductionOperands?.preDedupCollectionCardinality ?? locationItems.length);
+  const locationContextPostDedupItems = locationItems.map((entry, index) => {
+    const governedIdentity = entry?.governedEvidenceId || entry?.productionIdentity || locationIds[index] || null;
+    const lifecycleState = entry?.lifecycle || "UNRECONCILED";
+    const countedInProduction = entry?.matchStatus === "MATCHED_GOVERNED";
+    return Object.freeze({
+      governedIdentity,
+      sourceKind: entry?.sourceKind || "unknown",
+      lifecycleState,
+      countedInProduction,
+      reasonIfNotCounted: countedInProduction ? null : `${entry?.matchStatus || "UNCLASSIFIED"}: retained diagnostic collection member is not governed active count evidence`
+    });
+  });
+  const locationContextUncountedItems = locationContextPostDedupItems.filter((item) => !item.countedInProduction);
   const result = {
     canonicalCommunity: selected?.label || selected?.name || "", canonicalKey: selected?.canonicalKey || selected?.key || selected?.placeGeoid || "",
     selectedAwarenessKey: selected?.canonicalKey || selected?.key || selected?.placeGeoid || null,
@@ -122207,14 +122233,19 @@ window.gridlyLP234DriveTexasGovernedPropagationAudit = function gridlyLP234Drive
     targetPresentInGovernedInput, targetGovernedInputIdentity: targetPresentInGovernedInput ? `official_roadway:${targetProviderId}` : null,
     targetPresentAfterLifecycle, targetPresentAfterPolicy, targetPresentAfterDedup,
     targetPresentInGovernedActiveEvidence: Boolean(governed?.lifecycleEligible), governedEvidenceId: governed?.evidenceId || null,
-    targetPresentInAlertsProjection, targetPresentInAlertsDom: domHas("[data-gridly-alert-id]"), targetPresentInKbygOfficialRoadways,
+    targetPresentInAlertsProjection, targetPresentInAlertsDom, alertsPresentationIncidentId,
+    alertsDomPresentationIds: Object.freeze([...alertsDomPresentationIds]),
+    alertsCanonicalToPresentationMapping: Object.freeze(alertsCanonicalToPresentationMapping.map((identity) => Object.freeze({ ...identity }))),
+    targetAlertsDomMatchMethod, alertsDomMounted, targetPresentInKbygOfficialRoadways,
     targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection,
     locationContextPreDedupCardinality, locationContextPostDedupCardinality, locationContextDuplicateIds: Object.freeze(locationContextDuplicateIds),
     locationContextProductionCollectionCardinality: locationItems.length, locationContextProductionCount: locationAudit.locationContextProductionCount,
+    locationContextPostDedupItems: Object.freeze(locationContextPostDedupItems), locationContextUncountedItems: Object.freeze(locationContextUncountedItems),
     lifecycleCounts: Object.freeze({ eligibleBeforeLifecycle: governedInput.length, activeAfterLifecycle: lineage.filter((row) => row.sourceKind === "official_roadway" && row.lifecycleEligible).length, staleExcluded: lineage.filter((row) => row.sourceKind === "official_roadway" && !row.current).length, clearedExcluded: lineage.filter((row) => row.sourceKind === "official_roadway" && row.lifecycleRole === "CLEAR_HISTORY").length, expiredExcluded: governedInput.filter((row) => Number.isFinite(Date.parse(row.expiresAt || row.expirationTime || "")) && Date.parse(row.expiresAt || row.expirationTime) <= Date.now()).length, identityUnavailable: governedInput.filter((row) => !providerIdOf(row)).length }),
     firstLosingStage, consumerParity: [targetPresentInAlertsProjection, targetPresentInKbygOfficialRoadways, targetPresentInCommunityPulse, targetPresentInTopAwareness, targetPresentInLocationContextCollection].every(Boolean)
   };
-  result.overallPass = Boolean(result.targetPresentInLp0393 && result.targetPresentInGovernedInput && result.targetPresentAfterLifecycle && result.targetPresentAfterPolicy && result.targetPresentAfterDedup && result.targetPresentInGovernedActiveEvidence && result.consumerParity && !locationContextDuplicateIds.length && locationContextPostDedupCardinality === result.locationContextProductionCount);
+  const alertsDomContractPass = !result.alertsDomMounted || result.targetPresentInAlertsDom;
+  result.overallPass = Boolean(result.targetPresentInLp0393 && result.targetPresentInGovernedInput && result.targetPresentAfterLifecycle && result.targetPresentAfterPolicy && result.targetPresentAfterDedup && result.targetPresentInGovernedActiveEvidence && result.consumerParity && result.firstLosingStage === null && alertsDomContractPass && !locationContextDuplicateIds.length && result.locationContextUncountedItems.length === Math.max(0, locationContextPostDedupCardinality - Number(result.locationContextProductionCount || 0)));
   return Object.freeze(result);
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP234DriveTexasGovernedPropagationAudit", window.gridlyLP234DriveTexasGovernedPropagationAudit);
