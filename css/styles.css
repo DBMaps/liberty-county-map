@@ -24109,7 +24109,9 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   box-shadow: none !important;
 }
 
-body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-row="true"] > div:first-child {
+/* The legacy alert card's first child is its icon. LP236 condition rows reuse the
+   governed alert-row attribute, but their first child is full-width copy. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-row="true"] > div:first-child:not(.gridly-lp236-condition-body) {
   width: 24px !important;
   min-width: 24px !important;
   height: 24px !important;
@@ -27462,7 +27464,7 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
 .gridly-lp236-roadway-group > summary span { min-width:0; font-weight:700; white-space:normal; overflow-wrap:break-word; word-break:normal; }
 .gridly-lp236-roadway-group > summary strong { flex:0 0 auto; font-size:.72rem; opacity:.72; }
 .gridly-lp236-roadway-rows { display:block; width:100%; min-width:0; box-sizing:border-box; padding-left:10px; border-top:1px solid rgba(255,255,255,.06); }
-/* LP236.10 condition isolation: legacy row/card geometry must not participate. */
+/* LP236.11 condition isolation: legacy row/card geometry must not participate. */
 .gridly-lp236-condition-item { position:static; display:block; float:none; width:100%; min-width:0; max-width:none; box-sizing:border-box; padding:12px 10px; border:0; border-bottom:1px solid rgba(255,255,255,.075); border-radius:0; background:transparent; overflow:visible; contain:none; transform:none; }
 .gridly-lp236-condition-item:last-child { border-bottom:0; }
 .gridly-lp236-condition-body { position:static; display:block; width:100%; min-width:0; max-width:none; box-sizing:border-box; overflow:visible; white-space:normal; }

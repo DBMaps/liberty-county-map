@@ -77,14 +77,23 @@ test('LP236.10 isolated condition copy preserves full governed DOM text', () => 
   assert.match(rendered, /gridly-lp236-condition-time">now<\/span>/);
 });
 
-test('LP236.10 condition geometry stays usable at 320/360/390/430px', () => {
-  const isolatedCss = css.slice(css.indexOf('/* LP236.10 condition isolation'), css.indexOf('.gridly-lp236-critical'));
+test('LP236.11 excludes condition copy from the legacy fixed-size alert icon rule', () => {
+  const legacyIconRule = css.match(/body\[data-layout-mode="portrait"\][^{]+> div:first-child:not\(\.gridly-lp236-condition-body\) \{[^}]+\}/)?.[0] || '';
+  assert.match(legacyIconRule, /width: 24px !important;/);
+  assert.match(legacyIconRule, /min-width: 24px !important;/);
+  assert.doesNotMatch(css, /\[data-gridly-alert-row="true"\] > div:first-child\s*\{[^}]*width:\s*24px/);
+});
+
+test('LP236.11 condition geometry stays usable at 320/360/390/430px', () => {
+  const isolatedCss = css.slice(css.indexOf('/* LP236.11 condition isolation'), css.indexOf('.gridly-lp236-critical'));
   assert.match(css, /\.gridly-lp236-alerts \{[^}]*grid-template-columns:minmax\(0, 1fr\); width:100%; min-width:0; max-width:100%/);
   assert.match(css, /\.gridly-lp236-groups \{[^}]*grid-template-columns:minmax\(0, 1fr\); width:100%; min-width:0; box-sizing:border-box/);
   assert.match(css, /\.gridly-lp236-roadway-group \{[^}]*width:100%; min-width:0; max-width:100%; box-sizing:border-box/);
   assert.match(css, /\.gridly-lp236-roadway-rows \{[^}]*width:100%; min-width:0; box-sizing:border-box/);
   assert.match(isolatedCss, /\.gridly-lp236-condition-item \{[^}]*position:static; display:block; float:none; width:100%; min-width:0; max-width:none; box-sizing:border-box;[^}]*overflow:visible; contain:none; transform:none/);
   assert.match(isolatedCss, /\.gridly-lp236-condition-body \{[^}]*width:100%; min-width:0; max-width:none; box-sizing:border-box; overflow:visible/);
+  assert.doesNotMatch(isolatedCss, /\.gridly-lp236-condition-body\s*\{[^}]*(?:width|min-width|inline-size):\s*24px/);
+  assert.match(isolatedCss, /\.gridly-lp236-condition-body > :is\(strong, span\) \{[^}]*display:block;[^}]*width:auto; min-width:0; max-width:none/);
   assert.match(isolatedCss, /text-overflow:clip; white-space:normal; overflow-wrap:break-word; word-break:normal/);
   assert.doesNotMatch(isolatedCss, /position:absolute|max-width:(?!none)|min-content|(?:^|[;{]\s*)overflow:(?:hidden|clip)|text-overflow:ellipsis|word-break:break-all|overflow-wrap:anywhere|flex-shrink/);
   // Deterministic box-model fixture: nested insets are 16 + 10 + 16px and the
