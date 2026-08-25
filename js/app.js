@@ -37429,10 +37429,19 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
         });
       };
       if (!(await cooperativeYieldOrCancel(true, "cancelled_before_presentation_model"))) return false;
+      const presentationRouteContext = {
+        generation: cooperativeBuildGeneration, canonicalKey: cooperativeBuildContextKey,
+        selectedMembership: cooperativeBuildRevisionKey, activeCounty: String(window.__gridlyActiveCountyName || window.__gridlySelectedCountyName || "") || null,
+        renderEntryFunction: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync",
+        decisionOwner: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync.presentationModelMs",
+        decisionReason: typeof gridlyGetAlertsPresentationCountModelCooperative === "function" ? "COOPERATIVE_BUILDER_AVAILABLE" : "COOPERATIVE_BUILDER_UNAVAILABLE_FALLBACK",
+        selectedBuilder: typeof gridlyGetAlertsPresentationCountModelCooperative === "function" ? "gridlyGetAlertsPresentationCountModelCooperative" : "getGridlyAlertsPresentationCountModel"
+      };
       const presentationCountModel = await cooperativePhase("presentationModelMs", async () => gridlyAlertsOpenAuditMeasure("presentation model creation", () => gridlyLp016AlertsPostPaintDelayMeasureAsync("getGridlyAlertsPresentationCountModel", "presentation", () => (typeof gridlyGetAlertsPresentationCountModelCooperative === "function"
         ? gridlyGetAlertsPresentationCountModelCooperative(alertsForRender, {
           cooperativeBuildAudit,
           cooperativeChunkStartedAt: cooperativeChunkStartedAt,
+          routeContext: presentationRouteContext,
           isCancelled: () => !gridlyAlertsAuthoritativeBuildStillCurrent(alertsSheetGeneration, cooperativeBuildGeneration, cooperativeBuildContextKey, cooperativeBuildRevisionKey)
         })
         : (typeof getGridlyAlertsPresentationCountModel === "function" ? getGridlyAlertsPresentationCountModel(alertsForRender) : { alerts: buildAlertPresentationGroups(alertsForRender), groupedAlertCount: alertsForRender.length, rawAlertRecordCount: alertsForRender.length, communityReportCount: alertsForRender.length })), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", inputCount: alertsForRender.length }), { caller: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync", reason: "authoritative Alerts presentation build", inputCount: alertsForRender.length }));
@@ -113965,6 +113974,34 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   // LP235.4I: the presentation builders publish value-only observations of
   // their real private and public objects. This is the single live authority;
   // it is bounded and deliberately contains no source object references.
+  // LP235.4J: this bounded diagnostic is written only at an actual builder
+  // entry (or by a future explicit cache-reuse decision), never by selection.
+  function gridlyRecordAlertsPresentationBuilderRoute(invokedBuilder, executionMode, inputCount, routeContext = {}, patch = {}) {
+    const previous = globalThis.__gridlyAlertsPresentationBuilderRouteAuthority;
+    const sameInvocation = previous?.invokedBuilder === invokedBuilder && previous?.generation === (routeContext.generation ?? previous?.generation ?? null);
+    const invocationCount = patch.invocationCount ?? (sameInvocation ? Number(previous.invocationCount || 0) : 0) + (patch.entry === true ? 1 : 0);
+    globalThis.__gridlyAlertsPresentationBuilderRouteAuthority = Object.freeze({
+      authorityName: "__gridlyAlertsPresentationBuilderRouteAuthority",
+      generation: routeContext.generation ?? previous?.generation ?? null,
+      canonicalKey: routeContext.canonicalKey ?? previous?.canonicalKey ?? null,
+      selectedMembership: routeContext.selectedMembership ?? previous?.selectedMembership ?? null,
+      activeCounty: routeContext.activeCounty ?? previous?.activeCounty ?? null,
+      renderEntryFunction: routeContext.renderEntryFunction ?? previous?.renderEntryFunction ?? null,
+      decisionOwner: routeContext.decisionOwner ?? previous?.decisionOwner ?? null,
+      decisionReason: routeContext.decisionReason ?? previous?.decisionReason ?? null,
+      selectedBuilder: routeContext.selectedBuilder ?? previous?.selectedBuilder ?? null,
+      invokedBuilder, executionMode, invocationCount,
+      reusedCachedModel: executionMode === "CACHED_REUSE",
+      reuseAuthority: patch.reuseAuthority ?? null, reuseReason: patch.reuseReason ?? null,
+      checkpointPublisherReached: patch.checkpointPublisherReached ?? (patch.entry === true ? false : previous?.checkpointPublisherReached) ?? false,
+      checkpointAuthorityWritten: patch.checkpointAuthorityWritten ?? (patch.entry === true ? false : previous?.checkpointAuthorityWritten) ?? false,
+      bypassStage: patch.bypassStage ?? (patch.entry === true ? null : previous?.bypassStage) ?? null,
+      presentationInputCount: Number(inputCount || 0),
+      presentationOutputCount: patch.presentationOutputCount ?? (patch.entry === true ? null : previous?.presentationOutputCount) ?? null,
+      recordedAt: typeof performance !== "undefined" && typeof performance.now === "function" ? performance.now() : Date.now()
+    });
+  }
+
   function gridlyPublishAlertsGroupCheckpointAuthority(executionMode, inputCount, groups, presentations) {
     const privateStages = ["ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY_GROUP_OBJECT"];
     const publicStages = ["PRESENTATION_MODEL_ROW", "FUNCTION_RETURN_ROW", "POST_GROUP_BUILD_AUDIT_ROW"];
@@ -113999,7 +114036,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return gridlyBuildGridlyAlertsPresentationCountModelSync(alerts, null);
   }
 
-  function gridlyBuildGridlyAlertsPresentationCountModelSync(alerts = [], audit = null) {
+  function gridlyBuildGridlyAlertsPresentationCountModelSync(alerts = [], audit = null, routeContext = {}) {
+    gridlyRecordAlertsPresentationBuilderRoute("gridlyBuildGridlyAlertsPresentationCountModelSync", "SYNCHRONOUS", Array.isArray(alerts) ? alerts.length : 0, routeContext, { entry: true });
     const startedAt = gridlyAlertsCooperativeNow();
     const rawAlerts = gridlyAlertsGroupingMeasure(audit, "inputPreparationMs", "input normalization", () => Array.isArray(alerts) ? alerts : [], { collectionSize: Array.isArray(alerts) ? alerts.length : 0 });
     const filteredAlerts = gridlyAlertsGroupingMeasure(audit, "inputPreparationMs", "alert filtering", () => rawAlerts.filter(Boolean), { collectionSize: rawAlerts.length, fullCollectionScan: true });
@@ -114027,7 +114065,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return { ...representative, title: situationLabel, count: priorityCount, __gridlyEventSituationType: situationType, __gridlyEventSituationLabel: situationLabel, __gridlyPresentationGroupCount: group.rawRecordCount, __gridlyPresentationSourceCount: group.rawRecordCount, __gridlyPresentationSourceIndexes: group.sourceIndexes, __gridlyPresentationEvidenceRows: group.evidenceRows, __gridlyGroupAccumulationTrace: group.accumulationTrace, __gridlyGroupObjectIdentityTrace: gridlyBuildAlertGroupObjectIdentityTrace(group, groups.get(group.key), group), __gridlyPresentationGrouped: group.rawRecordCount > 1, __gridlyRepresentedEvidenceCount: group.representedEvidenceCount, __gridlyCountContributionType: group.sourceClass, __gridlyCommunityReportEvidenceCount: group.sourceClass === "community_report" ? group.representedEvidenceCount : 0, __gridlyPresentationClusterKey: group.key };
     }), { collectionSize: groupRows.length });
     const rankedAlerts = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "sorting/finalization", () => groupedAlerts, { collectionSize: groupedAlerts.length });
+    gridlyRecordAlertsPresentationBuilderRoute("gridlyBuildGridlyAlertsPresentationCountModelSync", "SYNCHRONOUS", filteredAlerts.length, routeContext, { checkpointPublisherReached: true });
     gridlyPublishAlertsGroupCheckpointAuthority("SYNCHRONOUS", filteredAlerts.length, groupRows, rankedAlerts);
+    gridlyRecordAlertsPresentationBuilderRoute("gridlyBuildGridlyAlertsPresentationCountModelSync", "SYNCHRONOUS", filteredAlerts.length, routeContext, { checkpointPublisherReached: true, checkpointAuthorityWritten: true, presentationOutputCount: rankedAlerts.length });
     const communityReportCount = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "community-row extraction", () => rankedAlerts.reduce((sum, alert) => sum + (alert.__gridlyCountContributionType === "community_report" ? Math.max(1, Number(alert.__gridlyCommunityReportEvidenceCount || alert.count || 1)) : 0), 0), { collectionSize: rankedAlerts.length, fullCollectionScan: true });
     const model = { rawAlertRecordCount: filteredAlerts.length, groupedAlertCount: rankedAlerts.length, duplicateGroupCount: groupRows.filter((group) => group.rawRecordCount > 1).length, alerts: rankedAlerts, communityReportCount };
     if (audit) { audit.groupCount = groups.size; audit.presentationRecordCount = rankedAlerts.length; audit.totalDurationMs = Number((gridlyAlertsCooperativeNow() - startedAt).toFixed(2)); }
@@ -114035,6 +114075,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   async function gridlyGetAlertsPresentationCountModelCooperative(alerts = [], options = {}) {
+    const routeContext = options.routeContext || {};
+    gridlyRecordAlertsPresentationBuilderRoute("gridlyGetAlertsPresentationCountModelCooperative", "COOPERATIVE", Array.isArray(alerts) ? alerts.length : 0, routeContext, { entry: true });
     const audit = gridlyCreateAlertsGroupingHotLoopAudit(Array.isArray(alerts) ? alerts.length : 0);
     const startedAt = gridlyAlertsCooperativeNow();
     const chunkStartedAt = { value: startedAt };
@@ -114071,11 +114113,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         return { ...representative, title: situationLabel, count: priorityCount, __gridlyEventSituationType: situationType, __gridlyEventSituationLabel: situationLabel, __gridlyPresentationGroupCount: group.rawRecordCount, __gridlyPresentationSourceCount: group.rawRecordCount, __gridlyPresentationSourceIndexes: group.sourceIndexes, __gridlyPresentationEvidenceRows: group.evidenceRows, __gridlyGroupAccumulationTrace: group.accumulationTrace, __gridlyGroupObjectIdentityTrace: gridlyBuildAlertGroupObjectIdentityTrace(group, groups.get(group.key), group), __gridlyPresentationGrouped: group.rawRecordCount > 1, __gridlyRepresentedEvidenceCount: group.representedEvidenceCount, __gridlyCountContributionType: group.sourceClass, __gridlyCommunityReportEvidenceCount: group.sourceClass === "community_report" ? group.representedEvidenceCount : 0, __gridlyPresentationClusterKey: group.key };
       }), { collectionSize: groupRows.length });
       const rankedAlerts = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "sorting/finalization", () => groupedAlerts, { collectionSize: groupedAlerts.length });
+      gridlyRecordAlertsPresentationBuilderRoute("gridlyGetAlertsPresentationCountModelCooperative", "COOPERATIVE", filteredAlerts.length, routeContext, { checkpointPublisherReached: true });
       gridlyPublishAlertsGroupCheckpointAuthority("COOPERATIVE", filteredAlerts.length, groupRows, rankedAlerts);
+      gridlyRecordAlertsPresentationBuilderRoute("gridlyGetAlertsPresentationCountModelCooperative", "COOPERATIVE", filteredAlerts.length, routeContext, { checkpointPublisherReached: true, checkpointAuthorityWritten: true, presentationOutputCount: rankedAlerts.length });
       const communityReportCount = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "community-row extraction", () => rankedAlerts.reduce((sum, alert) => sum + (alert.__gridlyCountContributionType === "community_report" ? Math.max(1, Number(alert.__gridlyCommunityReportEvidenceCount || alert.count || 1)) : 0), 0), { collectionSize: rankedAlerts.length, fullCollectionScan: true });
       model = { rawAlertRecordCount: filteredAlerts.length, groupedAlertCount: rankedAlerts.length, duplicateGroupCount: groupRows.filter((group) => group.rawRecordCount > 1).length, alerts: rankedAlerts, communityReportCount };
       audit.presentationRecordCount = rankedAlerts.length;
     }
+    if (audit.cancelled) gridlyRecordAlertsPresentationBuilderRoute("gridlyGetAlertsPresentationCountModelCooperative", "COOPERATIVE", filteredAlerts.length, routeContext, { bypassStage: "GENERATION_CANCELLED_DURING_SOURCE_ITERATION", presentationOutputCount: 0 });
     audit.totalDurationMs = Number((gridlyAlertsCooperativeNow() - startedAt).toFixed(2));
     audit.longestWorkSegmentMs = Math.max(audit.longestWorkSegmentMs, Number((gridlyAlertsCooperativeNow() - chunkStartedAt.value).toFixed(2)));
     gridlyFinalizeAlertsGroupingHotLoopAudit(audit);
@@ -123003,6 +123048,27 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   const stageCount = (stage) => groupedLineageStageAudit.find((entry) => entry.stage === stage)?.representedCanonicalCount ?? 0;
   const groupedLineageFirstLosingStage = groupedLineageStageAudit.slice(1).find((entry) => entry.representedCanonicalCount < preGroupCanonicalIds.length)?.stage || null;
   const postGroupStage = retainedStages.find((entry) => entry.stage === "POST_GROUP_BUILD");
+  const presentationBuilderRouteAuthority = globalThis.__gridlyAlertsPresentationBuilderRouteAuthority;
+  const presentationBuilderRouteAuthorityAvailable = Boolean(authorityAvailable && presentationBuilderRouteAuthority
+    && Number(presentationBuilderRouteAuthority.presentationInputCount) === writerInputs.length
+    && Number(presentationBuilderRouteAuthority.presentationOutputCount) === finalRows.length);
+  const presentationBuilderRouteAuthorityReason = presentationBuilderRouteAuthorityAvailable ? null
+    : (presentationBuilderRouteAuthority ? "PRESENTATION_BUILDER_ROUTE_DOES_NOT_MATCH_COMPLETED_RENDER" : "PRESENTATION_BUILDER_ROUTE_NOT_RECORDED");
+  const presentationBuilderExecutionMode = presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.executionMode : null;
+  const checkpointPublisherReached = presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.checkpointPublisherReached === true : false;
+  const checkpointAuthorityWritten = presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.checkpointAuthorityWritten === true : false;
+  const runtimeRouteConsistentWithCheckpointAuthority = presentationBuilderRouteAuthorityAvailable
+    && (presentationBuilderExecutionMode !== "COOPERATIVE" || (checkpointPublisherReached && checkpointAuthorityWritten));
+  const runtimeRouteConsistencyReason = !presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthorityReason
+    : presentationBuilderExecutionMode === "COOPERATIVE" && !checkpointPublisherReached ? "COOPERATIVE_CHECKPOINT_PUBLISHER_NOT_REACHED"
+      : presentationBuilderExecutionMode === "COOPERATIVE" && !checkpointAuthorityWritten ? "COOPERATIVE_CHECKPOINT_AUTHORITY_NOT_WRITTEN" : null;
+  const runtimeRouteRcaClassification = !presentationBuilderRouteAuthorityAvailable ? "COOPERATIVE_BUILDER_NOT_ACTUALLY_INVOKED"
+    : presentationBuilderExecutionMode === "CACHED_REUSE" ? "CACHED_PRESENTATION_MODEL_REUSE"
+      : presentationBuilderExecutionMode === "SYNCHRONOUS" ? "SYNCHRONOUS_BUILDER_ACTIVE"
+        : presentationBuilderExecutionMode !== "COOPERATIVE" ? "OTHER_RUNTIME_ROUTE"
+          : presentationBuilderRouteAuthority.bypassStage ? "COOPERATIVE_BUILDER_EARLY_RETURN_BEFORE_CHECKPOINT"
+            : !checkpointPublisherReached ? "COOPERATIVE_CHECKPOINT_PUBLISHER_NOT_REACHED"
+              : !checkpointAuthorityWritten ? "COOPERATIVE_CHECKPOINT_WRITE_DEFECT" : null;
   const groupCheckpointAuthority = globalThis.__gridlyAlertsGroupCheckpointAuthority;
   const groupCheckpointRecords = Array.isArray(groupCheckpointAuthority?.records) ? groupCheckpointAuthority.records : null;
   const groupObjectIdentityAuthorityAvailable = Boolean(authorityAvailable && groupCheckpointRecords
@@ -123082,7 +123148,7 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     ? privateCheckpointIdentityCount === new Set(preGroupCanonicalIds).size && publicCheckpointIdentityCount === privateCheckpointIdentityCount : false;
   const checkpointLossStages = ["ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY_GROUP_OBJECT", "PRESENTATION_MODEL_ROW", "FUNCTION_RETURN_ROW", "POST_GROUP_BUILD_AUDIT_ROW"];
   const correctedGroupObjectIdentityFirstLosingStage = groupObjectIdentityAuthorityAvailable ? checkpointLossStages.find((stage) => checkpointStageIdentityCount(stage) < new Set(preGroupCanonicalIds).size) || null : null;
-  const groupCheckpointRcaClassification = !groupObjectIdentityAuthorityAvailable ? "COOPERATIVE_CHECKPOINT_PUBLICATION_GAP"
+  const groupCheckpointRcaClassification = !groupObjectIdentityAuthorityAvailable ? runtimeRouteRcaClassification
     : privateCheckpointIdentityCount < new Set(preGroupCanonicalIds).size ? "PRIVATE_ACCUMULATOR_LINEAGE_LOSS"
       : publicCheckpointIdentityCount < privateCheckpointIdentityCount ? "PRIVATE_TO_PUBLIC_BRIDGE_LOSS"
         : correctedGroupObjectIdentityFirstLosingStage ? "DOWNSTREAM_LINEAGE_LOSS" : null;
@@ -123114,6 +123180,18 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   ].map(([stageName, ownerFunction, inputCount, outputCount, removedCanonicalIds, addedPresentationIds, reason]) => Object.freeze({ stageName, ownerFunction, inputCount, outputCount, removedCanonicalIds: Object.freeze(removedCanonicalIds), removedProviderIds: Object.freeze(writerInputDisposition.filter((row) => removedCanonicalIds.includes(row.canonicalId)).map((row) => row.providerRecordId).filter(Boolean)), addedPresentationIds: Object.freeze(addedPresentationIds), reason })));
   return Object.freeze({
     authorityAvailable, authorityReason, canonicalCommunity, canonicalKey, writerInputCount: writerInputs.length, writerFinalCanonicalCount: authorityRows.length,
+    presentationBuilderRouteAuthorityAvailable, presentationBuilderRouteAuthorityReason,
+    alertsRenderEntryFunction: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.renderEntryFunction : null,
+    presentationBuilderDecisionOwner: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.decisionOwner : null,
+    presentationBuilderDecisionReason: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.decisionReason : null,
+    presentationBuilderSelected: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.selectedBuilder : null,
+    presentationBuilderActuallyInvoked: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.invokedBuilder : null,
+    presentationBuilderExecutionMode, presentationBuilderInvocationCount: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.invocationCount : 0,
+    presentationBuilderReusedCachedModel: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.reusedCachedModel === true : false,
+    presentationBuilderReuseAuthority: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.reuseAuthority : null,
+    presentationBuilderReuseReason: presentationBuilderRouteAuthorityAvailable ? presentationBuilderRouteAuthority.reuseReason : null,
+    checkpointPublisherReached, checkpointAuthorityWritten, runtimeRouteConsistentWithCheckpointAuthority,
+    runtimeRouteConsistencyReason, runtimeRouteRcaClassification,
     presentationCandidateCount: writerInputs.length, presentationOutputCount: finalRows.length, canonicalToPresentationMappingCount: mappingCount,
     writerInputDisposition: Object.freeze(writerInputDisposition), finalPresentations: Object.freeze(finalPresentations), presentationStages,
     // directPresentationCount counts final presentation groups (mounted cards),

@@ -34,10 +34,11 @@ function buildRealGroups(rows) {
   vm.runInNewContext(`${source}\nthis.buildGroups = gridlyBuildGridlyAlertsPresentationCountModelSync;`, sandbox);
   const model = sandbox.buildGroups(rows);
   model.testCheckpointAuthority = sandbox.globalThis.__gridlyAlertsGroupCheckpointAuthority;
+  model.testRouteAuthority = sandbox.globalThis.__gridlyAlertsPresentationBuilderRouteAuthority;
   return model;
 }
 
-async function buildRealGroupsCooperative(rows) {
+async function buildRealGroupsCooperative(rows, options = {}) {
   const source = app.slice(app.indexOf('function getAlertLocationClusterLabel'), app.indexOf('\n  // LP226 owns only snapshot preparation'));
   const audit = { subphases: { sourceIterationMs: 0 }, sourceLoopIterations: 0, longestWorkSegmentMs: 0 };
   const sandbox = {
@@ -51,8 +52,9 @@ async function buildRealGroupsCooperative(rows) {
     gridlyAlertsGroupingYieldIfNeeded: async () => {}, gridlyFinalizeAlertsGroupingHotLoopAudit: () => {}
   };
   vm.runInNewContext(`${source}\nthis.buildGroupsCooperative = gridlyGetAlertsPresentationCountModelCooperative;`, sandbox);
-  const model = await sandbox.buildGroupsCooperative(rows);
+  const model = await sandbox.buildGroupsCooperative(rows, options);
   model.testCheckpointAuthority = sandbox.globalThis.__gridlyAlertsGroupCheckpointAuthority;
+  model.testRouteAuthority = sandbox.globalThis.__gridlyAlertsPresentationBuilderRouteAuthority;
   return model;
 }
 
@@ -252,12 +254,13 @@ test('LP235.4F object identity authority fails closed when its checkpoint is una
   assert.match(audit, /groupObjectIdentityAuthorityAvailable, groupObjectIdentityAuthorityReason/);
 });
 
-function runPresentationCompletenessAudit(auditRenderContext, checkpointAuthority = null) {
+function runPresentationCompletenessAudit(auditRenderContext, checkpointAuthority = null, routeAuthority = null) {
   const auditStart = app.indexOf('(() => {', app.indexOf('// LP235.4: passive presentation-completeness reconciliation'));
   const auditEnd = app.indexOf('// LP235.4A:', auditStart);
   const auditSource = app.slice(auditStart, auditEnd);
   const sandbox = {
     __gridlyAlertsGroupCheckpointAuthority: checkpointAuthority,
+    __gridlyAlertsPresentationBuilderRouteAuthority: routeAuthority,
     window: {
       __gridlyLp2194AlertStages: { finalAlertData: auditRenderContext?.alerts || [] },
       gridlyAlertsAuthorityWriterAudit: () => ({
@@ -376,10 +379,58 @@ test('LP235.4I audit distinguishes unavailable authority from explicitly observe
   assert.equal(missing.privateCheckpointIdentityCount, null);
   assert.equal(missing.publicCheckpointEvidenceRowCount, null);
   assert.equal(missing.correctedGroupObjectIdentityFirstLosingStage, null);
-  assert.equal(missing.groupCheckpointRcaClassification, 'COOPERATIVE_CHECKPOINT_PUBLICATION_GAP');
+  assert.equal(missing.groupCheckpointRcaClassification, 'COOPERATIVE_BUILDER_NOT_ACTUALLY_INVOKED');
   const emptyAuthority = Object.freeze({ authorityName:'__gridlyAlertsGroupCheckpointAuthority', executionMode:'COOPERATIVE', builderFunctionName:'gridlyGetAlertsPresentationCountModelCooperative', groupingFunctionName:'gridlyAccumulateAlertPresentationGroup', accumulatorOwner:'groups Map', inputCount:0, groupCount:0, writeCount:0, stagesWritten:Object.freeze([]), records:Object.freeze([]) });
   const observed = runPresentationCompletenessAudit({ alerts:[], presentationModel:{ alerts:[] }, groupedLineageStages:[] }, emptyAuthority).result;
   assert.equal(observed.groupCheckpointAuthorityAvailable, true);
   assert.equal(observed.privateCheckpointIdentityCount, 0);
   assert.equal(observed.privateCheckpointEvidenceRowCount, 0);
+});
+
+test('LP235.4J builder entries certify actual synchronous and cooperative invocation', async () => {
+  const synchronous = buildRealGroups([officialRow(1, 1)]).testRouteAuthority;
+  const cooperative = (await buildRealGroupsCooperative([officialRow(1, 1)])).testRouteAuthority;
+  assert.equal(synchronous.invokedBuilder, 'gridlyBuildGridlyAlertsPresentationCountModelSync');
+  assert.equal(synchronous.executionMode, 'SYNCHRONOUS');
+  assert.equal(cooperative.invokedBuilder, 'gridlyGetAlertsPresentationCountModelCooperative');
+  assert.equal(cooperative.executionMode, 'COOPERATIVE');
+  for (const route of [synchronous, cooperative]) {
+    assert.equal(route.invocationCount, 1);
+    assert.equal(route.reusedCachedModel, false);
+    assert.equal(route.checkpointPublisherReached, true);
+    assert.equal(route.checkpointAuthorityWritten, true);
+    assert.equal(route.presentationOutputCount, 1);
+  }
+});
+
+test('LP235.4J route contract keeps selection distinct and recognizes cache reuse without a build', () => {
+  const routeBlock = app.slice(app.indexOf('function gridlyRecordAlertsPresentationBuilderRoute'), app.indexOf('\n  function gridlyPublishAlertsGroupCheckpointAuthority'));
+  const sandbox = { globalThis: {}, performance: { now: () => 1 } };
+  vm.runInNewContext(`${routeBlock}\nthis.recordRoute = gridlyRecordAlertsPresentationBuilderRoute;`, sandbox);
+  sandbox.recordRoute(null, 'CACHED_REUSE', 26, { selectedBuilder:'gridlyGetAlertsPresentationCountModelCooperative' }, { entry:false, reuseAuthority:'completed render context', reuseReason:'UNCHANGED_GENERATION', presentationOutputCount:12 });
+  const route = sandbox.globalThis.__gridlyAlertsPresentationBuilderRouteAuthority;
+  assert.equal(route.selectedBuilder, 'gridlyGetAlertsPresentationCountModelCooperative');
+  assert.equal(route.invokedBuilder, null);
+  assert.equal(route.invocationCount, 0);
+  assert.equal(route.executionMode, 'CACHED_REUSE');
+  assert.equal(route.reusedCachedModel, true);
+  assert.equal(route.checkpointAuthorityWritten, false);
+});
+
+test('LP235.4J cooperative generation cancellation exposes the exact pre-checkpoint bypass', async () => {
+  const model = await buildRealGroupsCooperative([officialRow(1, 1)], { isCancelled: () => true });
+  assert.equal(model.testRouteAuthority.executionMode, 'COOPERATIVE');
+  assert.equal(model.testRouteAuthority.checkpointPublisherReached, false);
+  assert.equal(model.testRouteAuthority.checkpointAuthorityWritten, false);
+  assert.equal(model.testRouteAuthority.bypassStage, 'GENERATION_CANCELLED_DURING_SOURCE_ITERATION');
+  assert.equal(model.testRouteAuthority.presentationOutputCount, 0);
+});
+
+test('LP235.4J runtime route authority is passive, bounded, and changes no product paths', () => {
+  const routeSource = app.slice(app.indexOf('// LP235.4J:'), app.indexOf('\n  function gridlyPublishAlertsGroupCheckpointAuthority'));
+  assert.doesNotMatch(routeSource, /fetch\(|setTimeout|setInterval|querySelector|openGridlyPortraitV2Sheet/);
+  assert.doesNotMatch(app.slice(app.indexOf('async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync'), app.indexOf('function invokeMobileAlertsEntry')), /__gridlyAlertsPresentationBuilderRouteAuthority/);
+  for (const forbidden of ['gridlyAccumulateAlertPresentationGroup(groups', 'gridlyBuildAlertCanonicalToPresentationMapping', 'RenderCompleteAlertCard', 'gridlyAlertSemanticContract']) {
+    assert.doesNotMatch(routeSource, new RegExp(forbidden.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
 });
