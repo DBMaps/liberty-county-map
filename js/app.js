@@ -31010,6 +31010,37 @@ window.gridlyAlertPanelDiagnostic = function () {
   };
 };
 
+// Expand the existing presentation evidence lineage at the LP223 accounting
+// boundary. One mounted presentation may legitimately cover many canonical
+// writer inputs; duplicate canonical/presentation pairs are never emitted.
+function gridlyBuildAlertCanonicalToPresentationMapping(presentationRows = [], finalDomIdentity = []) {
+  const seenPairs = new Set();
+  const duplicatePairs = [];
+  const mapping = [];
+  presentationRows.forEach((presentation, presentationIndex) => {
+    const expectedPresentationId = gridlyAlertPresentationId(presentation, presentationIndex, presentation?.__gridlyCanonicalPresentation?.incidentId);
+    const domIdentity = finalDomIdentity.find((identity) => identity.presentationId === expectedPresentationId) || finalDomIdentity[presentationIndex];
+    if (!domIdentity) return;
+    const evidenceRows = Array.isArray(presentation?.__gridlyPresentationEvidenceRows) && presentation.__gridlyPresentationEvidenceRows.length
+      ? presentation.__gridlyPresentationEvidenceRows : [presentation];
+    const sourceIndexes = Array.isArray(presentation?.__gridlyPresentationSourceIndexes) ? presentation.__gridlyPresentationSourceIndexes : [];
+    const leaderCanonicalId = gridlyAlertWriterRecordId(presentation, presentationIndex);
+    evidenceRows.forEach((record, evidenceIndex) => {
+      const canonicalId = gridlyAlertWriterRecordId(record, sourceIndexes[evidenceIndex] ?? evidenceIndex);
+      const presentationId = domIdentity.presentationId || expectedPresentationId;
+      const pair = `${canonicalId}\u0000${presentationId}`;
+      if (seenPairs.has(pair)) { duplicatePairs.push(`${canonicalId}::${presentationId}`); return; }
+      seenPairs.add(pair);
+      const providerId = String(record?.providerRecordId || record?.provider_record_id || record?.sourceId || record?.source_id || record?.raw?.providerRecordId || domIdentity.providerId || "").trim();
+      const persistedId = String(record?.persistedId || record?.persisted_id || record?.reportId || record?.report_id || domIdentity.persistedId || "").trim();
+      mapping.push(Object.freeze({ canonicalId, presentationId, providerId, persistedId,
+        presentationContract: domIdentity.presentationContract, presentationTemplateUsed: domIdentity.presentationTemplateUsed,
+        representationRole: canonicalId === leaderCanonicalId ? "LEADER" : "GROUP_MEMBER", representedByCanonicalId: leaderCanonicalId }));
+    });
+  });
+  return Object.freeze({ mapping: Object.freeze(mapping), duplicatePairs: Object.freeze(duplicatePairs) });
+}
+
 window.gridlyAlertsAuthorityWriterAudit = function () {
   const finalAuthority = Array.isArray(window.__gridlyLp2194AlertStages?.finalAlertData) ? window.__gridlyLp2194AlertStages.finalAlertData : [];
   const dataStore = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
@@ -31023,13 +31054,8 @@ window.gridlyAlertsAuthorityWriterAudit = function () {
   const authorityAvailable = Boolean(auditRenderContext?.presentationModel && Array.isArray(auditRenderContext.presentationModel.alerts));
   const authorityReason = authorityAvailable ? null : "NO_COMPLETED_ALERTS_RENDER_CONTEXT";
   const presentationRows = authorityAvailable ? auditRenderContext.presentationModel.alerts : [];
-  const canonicalToPresentationMapping = presentationRows.flatMap((presentation, index) => {
-    const expectedPresentationId = gridlyAlertPresentationId(presentation, index, presentation?.__gridlyCanonicalPresentation?.incidentId);
-    const domIdentity = finalDomIdentity.find((identity) => identity.presentationId === expectedPresentationId) || finalDomIdentity[index];
-    if (!domIdentity) return [];
-    const evidenceRows = Array.isArray(presentation?.__gridlyPresentationEvidenceRows) && presentation.__gridlyPresentationEvidenceRows.length ? presentation.__gridlyPresentationEvidenceRows : [presentation];
-    return evidenceRows.map((record, evidenceIndex) => Object.freeze({ ...domIdentity, canonicalId: gridlyAlertWriterRecordId(record, presentation?.__gridlyPresentationSourceIndexes?.[evidenceIndex] ?? evidenceIndex), presentationId: domIdentity.presentationId || expectedPresentationId, representedByCanonicalId: gridlyAlertWriterRecordId(presentation, index) }));
-  });
+  const groupedMapping = gridlyBuildAlertCanonicalToPresentationMapping(presentationRows, finalDomIdentity);
+  const canonicalToPresentationMapping = groupedMapping.mapping;
   const finalDomCanonicalIds = [...new Set(canonicalToPresentationMapping.map((identity) => identity.canonicalId).filter(Boolean))];
   const duplicateCanonicalDomIds = directDomCanonicalIds.filter((id, index) => directDomCanonicalIds.indexOf(id) !== index);
   const presentationContracts = [...new Set(finalDomIdentity.map((identity) => identity.presentationContract).filter(Boolean))];
@@ -31040,6 +31066,7 @@ window.gridlyAlertsAuthorityWriterAudit = function () {
   const parity = finalAuthorityIds.length === finalDomCanonicalIds.length
     && finalAuthorityIds.every((id) => finalDomCanonicalIds.includes(id))
     && duplicateCanonicalDomIds.length === 0
+    && groupedMapping.duplicatePairs.length === 0
     && concisePresentation;
   const laterEmptyOverwrite = finalAuthorityIds.length > 0 && state.invocations.some((row, index, rows) => row.inputIds.length > 0 && rows.slice(index + 1).some((later) => later.opened && later.inputIds.length === 0));
   let firstLosingStage = "AUTHORITY_READY";
@@ -31066,6 +31093,7 @@ window.gridlyAlertsAuthorityWriterAudit = function () {
     finalDomPresentationIds,
     finalDomIds: finalDomCanonicalIds,
     canonicalToPresentationMapping,
+    canonicalToPresentationMappingDuplicatePairs: groupedMapping.duplicatePairs,
     duplicateCanonicalDomIds,
     duplicateDomIds: duplicateCanonicalDomIds,
     presentationContract,
@@ -122696,6 +122724,7 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
   const writerInputs = authorityAvailable ? auditRenderContext.alerts : [];
   const finalRows = authorityAvailable ? auditRenderContext.presentationModel.alerts : [];
   const authorityRows = Array.isArray(window.__gridlyLp2194AlertStages?.finalAlertData) ? window.__gridlyLp2194AlertStages.finalAlertData : writerInputs;
+  const writerAudit = typeof window.gridlyAlertsAuthorityWriterAudit === "function" ? window.gridlyAlertsAuthorityWriterAudit() : {};
   const inputById = new Map(writerInputs.map((row, index) => [gridlyAlertWriterRecordId(row, index), { row, index }]));
   const lineage = new Map();
   const finalPresentations = finalRows.map((row, presentationIndex) => {
@@ -122735,12 +122764,29 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     });
   });
   const dispositionCount = (name) => writerInputDisposition.filter((row) => row.disposition === name).length;
-  const presentationCoverageCanonicalIds = [...lineage.keys()].filter((id) => inputById.has(id));
-  const unaccountedWriterCanonicalIds = [...inputById.keys()].filter((id) => !lineage.has(id));
-  const presentationIdentityCoveragePass = unaccountedWriterCanonicalIds.length === 0 && presentationCoverageCanonicalIds.length === inputById.size;
+  const lineageCoverageCanonicalIds = [...lineage.keys()].filter((id) => inputById.has(id));
   const genericPresentationIdCount = finalPresentations.filter((row) => /^alert-\d+$/.test(row.presentationId)).length;
-  const mappingCount = presentationCoverageCanonicalIds.length;
-  const overallPass = Boolean(writerInputs.length === authorityRows.length && presentationIdentityCoveragePass && mappingCount === writerInputs.length && dispositionCount("MISSING_REQUIRED_FIELD") === 0);
+  const canonicalToPresentationMapping = Array.isArray(writerAudit.canonicalToPresentationMapping) ? writerAudit.canonicalToPresentationMapping : [];
+  const mappedCanonicalIds = [...new Set(canonicalToPresentationMapping.map((entry) => clean(entry?.canonicalId)).filter(Boolean))];
+  const mappingPairs = canonicalToPresentationMapping.map((entry) => `${clean(entry?.canonicalId)}::${clean(entry?.presentationId)}`);
+  const canonicalToPresentationMappingDuplicatePairs = [...new Set(mappingPairs.filter((pair, index) => mappingPairs.indexOf(pair) !== index)
+    .concat(Array.isArray(writerAudit.canonicalToPresentationMappingDuplicatePairs) ? writerAudit.canonicalToPresentationMappingDuplicatePairs : []))];
+  const mappingCount = canonicalToPresentationMapping.length;
+  const mappedWriterCanonicalIds = mappedCanonicalIds.filter((id) => inputById.has(id));
+  const presentationCoverageCanonicalIds = mappedWriterCanonicalIds;
+  const unaccountedWriterCanonicalIds = [...inputById.keys()].filter((id) => !mappedCanonicalIds.includes(id));
+  const presentationIdentityCoveragePass = unaccountedWriterCanonicalIds.length === 0 && presentationCoverageCanonicalIds.length === inputById.size;
+  const groupedLineageCoveragePass = canonicalToPresentationMappingDuplicatePairs.length === 0
+    && lineageCoverageCanonicalIds.length === inputById.size && mappedWriterCanonicalIds.length === inputById.size
+    && [...inputById.keys()].every((id) => mappedCanonicalIds.includes(id));
+  const groupedPresentationLineage = finalPresentations.map((presentation) => Object.freeze({
+    presentationId: presentation.presentationId, leaderCanonicalId: presentation.sourceCanonicalId,
+    representedCanonicalIds: presentation.canonicalIdsRepresented,
+    representedProviderIds: presentation.providerRecordIdsRepresented,
+    representationCount: presentation.canonicalIdsRepresented.length
+  }));
+  const overallPass = Boolean(writerInputs.length === authorityRows.length && presentationIdentityCoveragePass && groupedLineageCoveragePass
+    && mappingCount === writerInputs.length && dispositionCount("MISSING_REQUIRED_FIELD") === 0 && writerAudit.parity === true);
   const inputCanonicalIds = [...inputById.keys()];
   const presentationIds = finalPresentations.map((row) => row.presentationId);
   const presentationStages = Object.freeze([
@@ -122762,11 +122808,19 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     authorityAvailable, authorityReason, canonicalCommunity, canonicalKey, writerInputCount: writerInputs.length, writerFinalCanonicalCount: authorityRows.length,
     presentationCandidateCount: writerInputs.length, presentationOutputCount: finalRows.length, canonicalToPresentationMappingCount: mappingCount,
     writerInputDisposition: Object.freeze(writerInputDisposition), finalPresentations: Object.freeze(finalPresentations), presentationStages,
-    directPresentationCount: dispositionCount("DIRECT_PRESENTATION"), groupedRepresentationCount: dispositionCount("GROUPED_INTO_PRESENTATION"), deduplicatedEquivalentCount: dispositionCount("DEDUPLICATED_EQUIVALENT"), intentionallySuppressedCount: dispositionCount("INTENTIONALLY_SUPPRESSED_BY_PRODUCT_RULE"),
+    // directPresentationCount counts final presentation groups (mounted cards),
+    // while directOneMemberPresentationCount counts only one-member groups.
+    directPresentationCount: finalPresentations.length, directPresentationCountMeaning: "FINAL_PRESENTATION_GROUPS",
+    directOneMemberPresentationCount: dispositionCount("DIRECT_PRESENTATION"),
+    groupedRepresentationCount: canonicalToPresentationMapping.filter((entry) => entry.representationRole === "GROUP_MEMBER").length,
+    deduplicatedEquivalentCount: dispositionCount("DEDUPLICATED_EQUIVALENT"), intentionallySuppressedCount: dispositionCount("INTENTIONALLY_SUPPRESSED_BY_PRODUCT_RULE"),
     invalidShapeCount: dispositionCount("INVALID_PRESENTATION_SHAPE"), missingRequiredFieldCount: dispositionCount("MISSING_REQUIRED_FIELD"), presentationIdFailureCount: dispositionCount("PRESENTATION_ID_FAILURE"), cardConstructionFailureCount: dispositionCount("CARD_CONSTRUCTION_FAILURE"), mappingInsertionFailureCount: dispositionCount("MAPPING_INSERTION_FAILURE"), propagationLossCount: dispositionCount("PROPAGATION_LOSS"),
     unaccountedWriterCanonicalIds: Object.freeze(unaccountedWriterCanonicalIds), presentationCoverageCanonicalIds: Object.freeze(presentationCoverageCanonicalIds), presentationCoverageCount: presentationCoverageCanonicalIds.length, presentationIdentityCoveragePass,
+    groupedPresentationLineage: Object.freeze(groupedPresentationLineage), canonicalToPresentationMappingUniqueCanonicalCount: mappedCanonicalIds.length,
+    canonicalToPresentationMappingDuplicatePairs: Object.freeze(canonicalToPresentationMappingDuplicatePairs), groupedLineageCoveragePass,
+    writerParity: writerAudit.parity === true, writerParityAuthority: "GROUPED_CANONICAL_TO_PRESENTATION_IDENTITY_COVERAGE",
     presentationCap: null, presentationCapApplied: false, genericPresentationIdCount,
-    firstLosingStage: writerInputs.length !== finalRows.length ? "ALERTS_PRESENTATION_GROUPING" : (overallPass ? null : "PRESENTATION_COMPLETENESS_FAILURE"), overallPass
+    firstLosingStage: overallPass ? "DOM_PARITY_PASS" : (!presentationIdentityCoveragePass || !groupedLineageCoveragePass ? "CANONICAL_MAPPING_INSERTION" : "PRESENTATION_COMPLETENESS_FAILURE"), overallPass
   });
 };
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP235AlertsPresentationCompletenessAudit", window.gridlyLP235AlertsPresentationCompletenessAudit);
