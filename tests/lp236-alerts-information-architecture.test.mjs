@@ -65,7 +65,7 @@ test('markup preserves compact detail, Show me, empty omission, and accessible n
   assert.match(css, /min-height:48px/);
   assert.match(css, /\.gridly-lp236-row-copy \{[^}]*display:block; width:100%; min-width:0; max-width:100%/);
   assert.match(css, /\.gridly-lp236-row-copy strong \{[^}]*white-space:normal; overflow-wrap:break-word; word-break:normal/);
-  assert.match(css, /\.gridly-lp236-condition-details \{[^}]*width:100%; min-width:0; max-width:100%; overflow:hidden/);
+  assert.match(css, /\.gridly-lp236-condition-details \{[^}]*flex:1 1 auto; min-width:0; max-width:100%/);
   assert.match(css, /\.gridly-lp236-condition-details p \{[^}]*overflow-wrap:break-word; word-break:normal/);
   assert.doesNotMatch(css, /\.gridly-lp236-row-copy \{[^}]*overflow-wrap:anywhere/);
   assert.match(app, /filter\(\(section\) => section\.activeConditionCount > 0\)/);
@@ -99,7 +99,7 @@ test('LP236.6 governed route labels and secondary labels retain word-based wrapp
   }));
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, rows);
   for (const route of ['SH0078', 'IH0030', 'SS0366', 'US0175']) assert.match(rendered, new RegExp(`<strong>${route}<\\/strong>`));
-  assert.match(rendered, /<span>Bridge Restriction<\/span>/);
+  assert.match(rendered, /<span class="gridly-lp236-condition-copy">Bridge Restriction<\/span>/);
   assert.match(css, /\.gridly-lp236-row-copy span \{[^}]*white-space:normal; overflow-wrap:break-word; word-break:normal/);
   assert.doesNotMatch(css, /\.gridly-lp236-row-copy (?:strong|span) \{[^}]*(?:word-break:break-all|overflow-wrap:anywhere)/);
 });
@@ -109,6 +109,47 @@ test('LP236.6 details use full contained width while provenance stays out of com
   assert.match(rendered, /<div class="gridly-lp236-details-content"><p>Long governed location detail<\/p><small>Official source · DriveTexas<\/small><\/div>/);
   assert.doesNotMatch(rendered, /gridly-lp236-row-copy[^<]*Official source · DriveTexas/);
   assert.match(css, /\.gridly-lp236-details-content \{[^}]*width:100%; min-width:0; max-width:100%; overflow:hidden/);
+});
+
+test('LP236.7 condition types conditionally group only repeated governed roadways', () => {
+  const model = build([
+    { id: 'i30-a', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'Buckner Blvd' },
+    { id: 'i30-b', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'I-45' },
+    { id: 'us175', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'US 175' },
+    { id: 'i30-road', sourceClass: 'official_roadway', category: 'Road Closure', roadName: 'I-30' }
+  ]);
+  const lanes = model.sections[0].groups.find(group => group.conditionType === 'lane_closures');
+  const roads = model.sections[0].groups.find(group => group.conditionType === 'road_closures');
+  assert.equal(lanes.roadwayGroups.length, 1);
+  assert.equal(lanes.roadwayGroups[0].roadway, 'I-30');
+  assert.deepEqual(Array.from(lanes.roadwayGroups[0].rows, row => row.canonicalId), ['i30-a', 'i30-b']);
+  assert.deepEqual(Array.from(lanes.directRows, row => row.canonicalId), ['us175']);
+  assert.equal(roads.roadwayGroups.length, 0);
+  assert.deepEqual(Array.from(roads.directRows, row => row.canonicalId), ['i30-road']);
+});
+
+test('LP236.7 weather stays direct and every identity is represented once', () => {
+  const model = build([
+    { id: 'w1', sourceClass: 'weather', event: 'Flood Warning', roadName: 'I-30' },
+    { id: 'w2', sourceClass: 'weather', event: 'Flood Warning', roadName: 'I-30' }
+  ]);
+  const group = model.sections[0].groups[0];
+  assert.equal(group.roadwayGroups.length, 0);
+  assert.deepEqual(Array.from(group.directRows, row => row.canonicalId), ['w1', 'w2']);
+});
+
+test('LP236.7 compact information, safe details, location authority, and map contract render in priority order', () => {
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [
+    { id: 'a', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'Buckner Blvd', conciseSummary: 'Right lane closed', freshnessLabel: 'Updated recently', description: 'First<br>Second<script>bad()</script>', lat: 32.8, lng: -96.8 },
+    { id: 'b', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30', crossStreet: 'I-45', lat: 32.81, lng: -96.81 }
+  ]);
+  assert.match(rendered, /gridly-lp236-roadway-group/);
+  assert.match(rendered, /I-30, 2 conditions/);
+  assert.match(rendered, /near Buckner Blvd[\s\S]*Right lane closed[\s\S]*Updated recently[\s\S]*View details[\s\S]*Show me/);
+  assert.match(rendered, /First · Second bad\(\)/);
+  assert.doesNotMatch(rendered, /<br>|<script>/i);
+  assert.doesNotMatch(rendered, /Show all/);
+  assert.match(rendered, /data-gridly-alert-lat="32.8" data-gridly-alert-lng="-96.8"/);
 });
 
 test('sheet and content expose one primary count without repeating Alerts', () => {
@@ -231,7 +272,7 @@ test('LP236 audit fails closed with an array when mounted authority is unavailab
 
 test('live hierarchy renderer consumes supplied governed conditions without refetching', () => {
   const renderer = app.slice(app.indexOf('function gridlyLP236RenderAlertsPresentation'), app.indexOf('\n  function buildAlertsSurfaceHtml'));
-  for (const token of ['gridly-lp236-group', 'gridly-lp236-condition', 'Show me', 'Details']) assert.match(renderer, new RegExp(token));
+  for (const token of ['gridly-lp236-group', 'gridly-lp236-condition', 'Show me', 'View details']) assert.match(renderer, new RegExp(token));
   for (const sourceLabel of ['Official Roadways', 'Community Reports', 'Weather']) assert.match(source, new RegExp(sourceLabel));
   assert.match(renderer, /Array\.isArray\(suppliedAlerts\) \? suppliedAlerts/);
   assert.doesNotMatch(renderer, /fetch\(|setTimeout|setInterval|RenderCompleteAlertCard|Dallas/);
