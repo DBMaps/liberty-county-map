@@ -35,6 +35,23 @@ function buildRealGroups(rows) {
   return sandbox.buildGroups(rows);
 }
 
+async function buildRealGroupsCooperative(rows) {
+  const source = app.slice(app.indexOf('function getAlertLocationClusterLabel'), app.indexOf('\n  // LP226 owns only snapshot preparation'));
+  const audit = { subphases: { sourceIterationMs: 0 }, sourceLoopIterations: 0, longestWorkSegmentMs: 0 };
+  const sandbox = {
+    globalThis: { gridlyAlertSemanticContract: { classify: row => ({ classification: row.situationType }) } },
+    pickFirstNonEmptyText: values => String(values.find(value => value != null && String(value).trim()) || ''),
+    coerceDisplayText: value => String(value || ''), gridlyResolveCountyAwareFallbackLocation: () => 'Texas',
+    gridlyAlertsPresentationSourceClass: row => row.sourceKind || 'official_roadway', gridlyAlertsGroupingRecordHelper: () => {},
+    gridlyAlertsCooperativeNow: () => 0, gridlyAlertsGroupingMeasure: (_audit, _field, _label, fn) => fn(),
+    gridlyAlertWriterRecordId: (row, index = 0) => String(row.evidenceId || `alert-${index}`),
+    gridlyCreateAlertsGroupingHotLoopAudit: () => audit, gridlyAlertsGroupingHotLoopState: {},
+    gridlyAlertsGroupingYieldIfNeeded: async () => {}, gridlyFinalizeAlertsGroupingHotLoopAudit: () => {}
+  };
+  vm.runInNewContext(`${source}\nthis.buildGroupsCooperative = gridlyGetAlertsPresentationCountModelCooperative;`, sandbox);
+  return sandbox.buildGroupsCooperative(rows);
+}
+
 const officialRow = (index, cluster) => ({ evidenceId:`canonical-${index}`, providerRecordId:`provider-${index}`, sourceKind:'official_roadway', situationType:'construction', corridor:`road-${cluster}`, crossingRoad:`cluster-${cluster}`, title:'Construction' });
 
 test('real group create and append paths retain three identities and source indexes', () => {
@@ -69,6 +86,16 @@ test('real 26 input grouping path retains all identities in 12 groups', () => {
   assert.equal(model.alerts.reduce((sum, row) => sum + row.__gridlyRepresentedEvidenceCount, 0), 26);
   assert.equal(model.alerts.reduce((sum, row) => sum + row.__gridlyPresentationEvidenceRows.length, 0), 26);
   assert.equal(new Set(model.alerts.flatMap(row => row.__gridlyPresentationEvidenceRows.map(member => member.evidenceId))).size, 26);
+});
+
+test('cooperative production builder bridges private lineage to public rows', async () => {
+  const rows = [officialRow(1, 1), officialRow(2, 1), officialRow(3, 1)];
+  const model = await buildRealGroupsCooperative(rows);
+  assert.equal(model.alerts.length, 1);
+  assert.deepEqual(Array.from(model.alerts[0].__gridlyPresentationEvidenceRows), rows);
+  assert.deepEqual(Array.from(model.alerts[0].__gridlyPresentationSourceIndexes), [0, 1, 2]);
+  assert.equal(model.alerts[0].__gridlyPresentationClusterKey, 'official_roadway|construction|road-1|cluster-1');
+  assert.equal(model.alerts[0].__gridlyRepresentedEvidenceCount, 3);
 });
 
 test('three canonical identities expand to one leader and two grouped mappings without cards', () => {
@@ -161,15 +188,32 @@ test('object identity audit identifies an intentional reconstruction loss at its
   assert.equal(good.evidenceRowsEnumerable, true);
   assert.equal(dropped.hasEvidenceRows, false);
   assert.equal(sandbox.firstLoss({
-    ACCUMULATOR_GROUP_OBJECT: good, MAP_STORED_GROUP_OBJECT: good,
-    MAP_TO_ARRAY: dropped, PRESENTATION_COUNT_MODEL: dropped,
-    FUNCTION_RETURN: dropped, POST_GROUP_AUDIT: dropped
-  }), 'MAP_TO_ARRAY');
+    PRE_GROUP_INPUT: good, ACCUMULATOR_GROUP_OBJECT: good, MAP_STORED_GROUP_OBJECT: good,
+    MAP_TO_ARRAY_GROUP_OBJECT: dropped, PRESENTATION_MODEL_ROW: dropped,
+    FUNCTION_RETURN_ROW: dropped, POST_GROUP_BUILD_AUDIT_ROW: dropped
+  }), 'MAP_TO_ARRAY_GROUP_OBJECT');
   assert.equal(sandbox.firstLoss({
-    ACCUMULATOR_GROUP_OBJECT: good, MAP_STORED_GROUP_OBJECT: good,
-    MAP_TO_ARRAY: good, PRESENTATION_COUNT_MODEL: good,
-    FUNCTION_RETURN: good, POST_GROUP_AUDIT: dropped
-  }), 'POST_GROUP_AUDIT');
+    PRE_GROUP_INPUT: good, ACCUMULATOR_GROUP_OBJECT: good, MAP_STORED_GROUP_OBJECT: good,
+    MAP_TO_ARRAY_GROUP_OBJECT: good, PRESENTATION_MODEL_ROW: good,
+    FUNCTION_RETURN_ROW: good, POST_GROUP_BUILD_AUDIT_ROW: dropped
+  }), 'POST_GROUP_BUILD_AUDIT_ROW');
+});
+
+test('private checkpoints use private fields and first loss occurs only at the public bridge', () => {
+  const source = app.slice(app.indexOf('function gridlyAlertGroupObjectIdentityCheckpoint'), app.indexOf('\n  function getGridlyAlertsPresentationCountModel'));
+  const sandbox = {};
+  vm.runInNewContext(`${source}\nthis.checkpoint = gridlyAlertGroupObjectIdentityCheckpoint; this.firstLoss = gridlyAlertGroupObjectIdentityFirstLosingStage;`, sandbox);
+  const members = [{ evidenceId: 'a' }, { evidenceId: 'b' }, { evidenceId: 'c' }];
+  const privateGroup = { evidenceRows: members, sourceIndexes: [0, 1, 2] };
+  const privateCheckpoint = sandbox.checkpoint(privateGroup, 'private');
+  const wrongDomainCheckpoint = sandbox.checkpoint(privateGroup, 'public');
+  const publicLoss = sandbox.checkpoint({ __gridlyPresentationEvidenceRows: [members[0]], __gridlyPresentationSourceIndexes: [0] });
+  assert.equal(privateCheckpoint.evidenceRowCount, 3);
+  assert.equal(privateCheckpoint.sourceIndexCount, 3);
+  assert.equal(wrongDomainCheckpoint.evidenceRowCount, 0, 'intentional wrong-field lookup exposes AUDIT_FIELD_DOMAIN_DEFECT');
+  assert.equal(sandbox.firstLoss({ PRE_GROUP_INPUT: privateCheckpoint, ACCUMULATOR_GROUP_OBJECT: privateCheckpoint,
+    MAP_STORED_GROUP_OBJECT: privateCheckpoint, MAP_TO_ARRAY_GROUP_OBJECT: privateCheckpoint,
+    PRESENTATION_MODEL_ROW: publicLoss, FUNCTION_RETURN_ROW: publicLoss, POST_GROUP_BUILD_AUDIT_ROW: publicLoss }), 'PRESENTATION_MODEL_ROW');
 });
 
 test('LP235.4F audit checkpoint is accessible without a window binding and stays pure', () => {

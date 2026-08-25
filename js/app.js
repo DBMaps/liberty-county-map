@@ -113914,26 +113914,42 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   // LP235.4E: describe the bounded grouping return path without publishing
   // object references. The trace is deliberately based on own-property state,
   // so a selected-field reconstruction cannot masquerade as retained lineage.
-  function gridlyAlertGroupObjectIdentityCheckpoint(row) {
-    const has = Object.prototype.hasOwnProperty.call(row || {}, "__gridlyPresentationEvidenceRows");
-    const rows = has && Array.isArray(row.__gridlyPresentationEvidenceRows) ? row.__gridlyPresentationEvidenceRows : [];
+  function gridlyAlertGroupObjectIdentityCheckpoint(row, domain = "public") {
+    const evidenceField = domain === "private" ? "evidenceRows" : "__gridlyPresentationEvidenceRows";
+    const sourceIndexesField = domain === "private" ? "sourceIndexes" : "__gridlyPresentationSourceIndexes";
+    const has = Object.prototype.hasOwnProperty.call(row || {}, evidenceField);
+    const rows = has && Array.isArray(row?.[evidenceField]) ? row[evidenceField] : [];
+    const sourceIndexes = Array.isArray(row?.[sourceIndexesField]) ? row[sourceIndexesField] : [];
     return Object.freeze({
       hasEvidenceRows: has,
       evidenceRowCount: rows.length,
+      sourceIndexCount: sourceIndexes.length,
       evidenceRowsOwnProperty: has,
-      evidenceRowsEnumerable: has && Object.prototype.propertyIsEnumerable.call(row, "__gridlyPresentationEvidenceRows")
+      evidenceRowsEnumerable: has && Object.prototype.propertyIsEnumerable.call(row, evidenceField)
     });
   }
 
   function gridlyAlertGroupObjectIdentityFirstLosingStage(checkpoints = {}) {
-    return ["ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY", "PRESENTATION_COUNT_MODEL", "FUNCTION_RETURN", "POST_GROUP_AUDIT"]
-      .find((stage) => !checkpoints?.[stage]?.hasEvidenceRows) || null;
+    const stages = ["PRE_GROUP_INPUT", "ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY_GROUP_OBJECT", "PRESENTATION_MODEL_ROW", "FUNCTION_RETURN_ROW", "POST_GROUP_BUILD_AUDIT_ROW"];
+    let previousCount = Number(checkpoints?.PRE_GROUP_INPUT?.evidenceRowCount || 0);
+    return stages.slice(1).find((stage) => {
+      const count = Number(checkpoints?.[stage]?.evidenceRowCount || 0);
+      const lost = count < previousCount;
+      previousCount = count;
+      return lost;
+    }) || null;
   }
 
   function gridlyBuildAlertGroupObjectIdentityTrace(group, mapStoredGroup, mapToArrayGroup) {
     const internal = (row) => Object.freeze({
       hasEvidenceRows: Object.prototype.hasOwnProperty.call(row || {}, "evidenceRows") && Array.isArray(row?.evidenceRows),
-      evidenceRowCount: Array.isArray(row?.evidenceRows) ? row.evidenceRows.length : 0
+      evidenceRowCount: Array.isArray(row?.evidenceRows) ? row.evidenceRows.length : 0,
+      sourceIndexCount: Array.isArray(row?.sourceIndexes) ? row.sourceIndexes.length : 0,
+      representedCount: Number(row?.representedEvidenceCount || 0),
+      clusterKey: String(row?.key || ""),
+      leadCanonicalId: typeof gridlyAlertWriterRecordId === "function" && row?.lead ? gridlyAlertWriterRecordId(row.lead, row?.sourceIndexes?.[0] ?? 0) : "",
+      canonicalIds: Object.freeze((Array.isArray(row?.evidenceRows) ? row.evidenceRows : []).map((evidence, index) => typeof gridlyAlertWriterRecordId === "function" ? gridlyAlertWriterRecordId(evidence, row?.sourceIndexes?.[index] ?? index) : "").filter(Boolean)),
+      providerIds: Object.freeze((Array.isArray(row?.evidenceRows) ? row.evidenceRows : []).map((evidence) => String(evidence?.providerRecordId || evidence?.provider_record_id || evidence?.sourceId || evidence?.source_id || evidence?.raw?.providerRecordId || "").replace(/^provider:/, "")).filter(Boolean))
     });
     return Object.freeze({
       accumulator: internal(group),
@@ -122820,20 +122836,30 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 // purpose inside its IIFE, but those helpers are not visible after that IIFE
 // has completed.
 (() => {
-function gridlyAlertGroupObjectIdentityCheckpoint(row) {
-  const hasEvidenceRows = Object.prototype.hasOwnProperty.call(row || {}, "__gridlyPresentationEvidenceRows");
-  const evidenceRows = hasEvidenceRows && Array.isArray(row.__gridlyPresentationEvidenceRows) ? row.__gridlyPresentationEvidenceRows : [];
+function gridlyAlertGroupObjectIdentityCheckpoint(row, domain = "public") {
+  const evidenceField = domain === "private" ? "evidenceRows" : "__gridlyPresentationEvidenceRows";
+  const sourceIndexesField = domain === "private" ? "sourceIndexes" : "__gridlyPresentationSourceIndexes";
+  const hasEvidenceRows = Object.prototype.hasOwnProperty.call(row || {}, evidenceField);
+  const evidenceRows = hasEvidenceRows && Array.isArray(row?.[evidenceField]) ? row[evidenceField] : [];
+  const sourceIndexes = Array.isArray(row?.[sourceIndexesField]) ? row[sourceIndexesField] : [];
   return Object.freeze({
     hasEvidenceRows,
     evidenceRowCount: evidenceRows.length,
+    sourceIndexCount: sourceIndexes.length,
     evidenceRowsOwnProperty: hasEvidenceRows,
-    evidenceRowsEnumerable: hasEvidenceRows && Object.prototype.propertyIsEnumerable.call(row, "__gridlyPresentationEvidenceRows")
+    evidenceRowsEnumerable: hasEvidenceRows && Object.prototype.propertyIsEnumerable.call(row, evidenceField)
   });
 }
 
 function gridlyAlertGroupObjectIdentityFirstLosingStage(checkpoints = {}) {
-  return ["ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY", "PRESENTATION_COUNT_MODEL", "FUNCTION_RETURN", "POST_GROUP_AUDIT"]
-    .find((stage) => !checkpoints?.[stage]?.hasEvidenceRows) || null;
+  const stages = ["PRE_GROUP_INPUT", "ACCUMULATOR_GROUP_OBJECT", "MAP_STORED_GROUP_OBJECT", "MAP_TO_ARRAY_GROUP_OBJECT", "PRESENTATION_MODEL_ROW", "FUNCTION_RETURN_ROW", "POST_GROUP_BUILD_AUDIT_ROW"];
+  let previousCount = Number(checkpoints?.PRE_GROUP_INPUT?.evidenceRowCount || 0);
+  return stages.slice(1).find((stage) => {
+    const count = Number(checkpoints?.[stage]?.evidenceRowCount || 0);
+    const lost = count < previousCount;
+    previousCount = count;
+    return lost;
+  }) || null;
 }
 
 window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235AlertsPresentationCompletenessAudit() {
@@ -122948,12 +122974,13 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     const postGroup = postGroupStage?.groups?.[groupIndex];
     const postGroupHasEvidenceRows = postGroup?.hasEvidenceRows === true;
     const checkpoints = {
+      PRE_GROUP_INPUT: { evidenceRowCount: trace.accumulator?.evidenceRowCount || 0 },
       ACCUMULATOR_GROUP_OBJECT: trace.accumulator || { hasEvidenceRows: false },
       MAP_STORED_GROUP_OBJECT: trace.mapStored || { hasEvidenceRows: false },
-      MAP_TO_ARRAY: trace.mapToArray || { hasEvidenceRows: false },
-      PRESENTATION_COUNT_MODEL: presentation,
-      FUNCTION_RETURN: presentation,
-      POST_GROUP_AUDIT: { hasEvidenceRows: postGroupHasEvidenceRows }
+      MAP_TO_ARRAY_GROUP_OBJECT: trace.mapToArray || { hasEvidenceRows: false },
+      PRESENTATION_MODEL_ROW: presentation,
+      FUNCTION_RETURN_ROW: presentation,
+      POST_GROUP_BUILD_AUDIT_ROW: { hasEvidenceRows: postGroupHasEvidenceRows, evidenceRowCount: postGroup?.evidenceRowCount || 0 }
     };
     return Object.freeze({
       groupIndex, clusterKey: clean(row?.__gridlyPresentationClusterKey) || null,
@@ -122969,6 +122996,36 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     });
   }));
   const groupObjectIdentityFirstLosingStage = groupObjectIdentityAudit.find((row) => row.firstObjectIdentityLosingStage)?.firstObjectIdentityLosingStage || null;
+  const privateGroupEvidenceRowCount = groupObjectIdentityAudit.reduce((sum, row) => sum + row.mapToArrayEvidenceRowCount, 0);
+  const publicPresentationEvidenceRowCount = groupObjectIdentityAudit.reduce((sum, row) => sum + row.presentationModelEvidenceRowCount, 0);
+  const privateGroupCanonicalIds = [...new Set(finalRows.flatMap((row) => row?.__gridlyGroupObjectIdentityTrace?.mapToArray?.canonicalIds || []))];
+  const publicPresentationCanonicalIds = [...new Set(presentationGroups.flatMap((group) => group.representedCanonicalIds))];
+  const privateToPublicBridgeAudit = Object.freeze(finalRows.map((row, groupIndex) => {
+    const privateGroup = row?.__gridlyGroupObjectIdentityTrace?.mapToArray || {};
+    const publicGroup = presentationGroups[groupIndex] || {};
+    const evidenceRowsBridgePass = Number(privateGroup.evidenceRowCount || 0) === Number(publicGroup.evidenceRowCount || 0)
+      && (privateGroup.canonicalIds || []).every((id) => publicGroup.representedCanonicalIds?.includes(id));
+    const sourceIndexesBridgePass = Number(privateGroup.sourceIndexCount || 0) === Number(publicGroup.sourceIndexCount || 0);
+    const representedCountBridgePass = Number(privateGroup.representedCount || 0) === Number(publicGroup.representedCountAuthority || 0);
+    return Object.freeze({
+      groupIndex, clusterKey: clean(row?.__gridlyPresentationClusterKey) || null,
+      privateRepresentedCount: Number(privateGroup.representedCount || 0), privateEvidenceRowCount: Number(privateGroup.evidenceRowCount || 0),
+      privateClusterKey: clean(privateGroup.clusterKey) || null, privateLeadCanonicalId: clean(privateGroup.leadCanonicalId) || null,
+      privateSourceIndexCount: Number(privateGroup.sourceIndexCount || 0), privateCanonicalIds: Object.freeze([...(privateGroup.canonicalIds || [])]),
+      privateProviderIds: Object.freeze([...(privateGroup.providerIds || [])]), publicPresentationId: gridlyAlertPresentationId(row, groupIndex),
+      publicRepresentedCount: Number(publicGroup.representedCountAuthority || 0), publicEvidenceRowCount: Number(publicGroup.evidenceRowCount || 0),
+      publicSourceIndexCount: Number(publicGroup.sourceIndexCount || 0), publicCanonicalIds: Object.freeze([...(publicGroup.representedCanonicalIds || [])]),
+      publicProviderIds: Object.freeze([...(publicGroup.representedProviderIds || [])]),
+      evidenceRowsBridgePass, sourceIndexesBridgePass, representedCountBridgePass,
+      firstBridgeFailure: !evidenceRowsBridgePass ? "EVIDENCE_ROWS" : (!sourceIndexesBridgePass ? "SOURCE_INDEXES" : (!representedCountBridgePass ? "REPRESENTED_COUNT" : null))
+    });
+  }));
+  const privateGroupIdentityCount = privateGroupCanonicalIds.length;
+  const publicPresentationIdentityCount = publicPresentationCanonicalIds.length;
+  const privateGroupIdentityCoveragePass = privateGroupIdentityCount === new Set(preGroupCanonicalIds).size;
+  const privateToPublicBridgeCoveragePass = privateToPublicBridgeAudit.every((group) => group.firstBridgeFailure === null)
+    && publicPresentationIdentityCount === privateGroupIdentityCount;
+  const correctedGroupObjectIdentityFirstLosingStage = groupObjectIdentityFirstLosingStage;
   const authoritativePostGroupRepresentedCanonicalCount = stageCount("POST_GROUP_BUILD");
   const postGroupAuditObservationMatchesAuthority = authoritativePostGroupRepresentedCanonicalCount === new Set(preGroupCanonicalIds).size
     && groupObjectIdentityAudit.every((row) => row.postGroupAuditHasEvidenceRows);
@@ -123015,6 +123072,10 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     presentationGroups: Object.freeze(presentationGroups), groupAccumulationTrace,
     groupObjectIdentityAuthorityAvailable, groupObjectIdentityAuthorityReason,
     groupObjectIdentityAudit, groupObjectIdentityFirstLosingStage,
+    privateGroupIdentityCount, privateGroupEvidenceRowCount,
+    publicPresentationIdentityCount, publicPresentationEvidenceRowCount,
+    privateToPublicBridgeAudit, privateGroupIdentityCoveragePass, privateToPublicBridgeCoveragePass,
+    correctedGroupObjectIdentityFirstLosingStage,
     authoritativePostGroupCollectionName: "presentationCountModel.alerts",
     authoritativePostGroupRepresentedCanonicalCount, postGroupAuditObservationMatchesAuthority,
     postGroupBuildAuditCollectionName: "presentationCountModel.alerts",
