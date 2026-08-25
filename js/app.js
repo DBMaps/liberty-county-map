@@ -3333,12 +3333,21 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
     ...governedDriveTexasRecords,
     ...governedWeatherRecords
   ];
-  return engine.buildConsumerProjection({
+  const projection = engine.buildConsumerProjection({
     records,
     canonicalCommunity: selectedArea?.label || selectedArea?.name || "",
     canonicalKey: selectedArea?.canonicalKey || selectedArea?.placeGeoid || "",
     countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : selectedArea?.countyId || ""
   });
+  // Certify each input authority at the point where it is actually evaluated.
+  // Empty governed arrays are meaningful only when their owning selector ran.
+  const communityChecked = Array.isArray(activeReports) && Array.isArray(activeHazards);
+  const weatherChecked = typeof window.gridlySelectConsumerVisibleWeatherSituations === "function";
+  return projection ? Object.freeze({ ...projection, alertsFamilyAuthority: Object.freeze({
+    official_roadway: Object.freeze({ checked: Array.isArray(driveTexasRecords), available: Array.isArray(driveTexasRecords), reason: Array.isArray(driveTexasRecords) ? "governed DriveTexas projection evaluated" : "governed DriveTexas projection unavailable" }),
+    community_report: Object.freeze({ checked: communityChecked, available: communityChecked, reason: communityChecked ? "governed active community report and hazard lifecycle evaluated for canonical community" : "governed community report or hazard lifecycle unavailable" }),
+    weather: Object.freeze({ checked: weatherChecked, available: Boolean(weatherChecked && weatherSelection && Array.isArray(weatherSelection.consumerVisibleSituations)), reason: weatherChecked && weatherSelection && Array.isArray(weatherSelection.consumerVisibleSituations) ? "gridlySelectConsumerVisibleWeatherSituations evaluated with provider geography" : "governed weather selector unavailable" })
+  }) }) : null;
 }
 
 function gridlyGetGovernedActiveAwarenessRows(options = {}) {
@@ -105557,6 +105566,7 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
       if (!row || !panel.contains(row)) { gridlyLp0953Fail("alert_row", "delegated handler did not identify an alert row", { returnPath: "delegated handler row guard" }); return; }
       gridlyLp0953Record("Alert row identified", { alertRowIdentified: true });
       const showOnMapAction = event.target?.closest?.("[data-gridly-show-on-map='true']");
+      window.gridlyLP236RecordShowMeBehavior?.({ clickReceived: Boolean(showOnMapAction), conditionId: gridlyLp019SafeText(row.getAttribute("data-gridly-alert-id")) });
       if (event.target?.closest?.("button, a, input, select, textarea, [data-v2-action], [data-gridly-alert-expand]") && !showOnMapAction && event.target?.closest?.("[role='button']") !== row) { gridlyLp0953Fail("delegated_guard", "nested interactive control guard returned", { returnPath: "delegated handler nested control guard" }); return; }
       const id = gridlyLp019SafeText(row.getAttribute("data-gridly-alert-id"));
       const record = gridlyLp019ResolveAlertRecord(id);
@@ -105570,6 +105580,7 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
         row.getAttribute("data-gridly-alert-lat") ?? record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.source?.lat,
         row.getAttribute("data-gridly-alert-lng") ?? record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.source?.lng ?? record?.source?.lon
       );
+      window.gridlyLP236RecordShowMeBehavior?.({ targetResolved: Boolean(showOnMapTarget || crossingTarget.coords || coords), targetType: showOnMapTarget?.marker ? "governed_marker" : (crossingTarget.coords ? "canonical_crossing" : (coords ? "governed_coordinates" : null)), coordinatesResolved: Boolean(coords) });
       window.__gridlyLp019AlertFocusDebug = {
         cardIdentifier: id || null,
         sourceRecord: record ? "latestAlertsForRender" : "dom-only",
@@ -105631,6 +105642,7 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
         markerResolved: Boolean(showOnMapAction),
         record
         });
+        window.gridlyLP236RecordShowMeBehavior?.({ mapFocusInvoked: true, mapFocusResult: Boolean(focused) });
         gridlyLp0953Record("Post-popup-request focus call returned", { postPopupRequestFocusCallReturned: true, mapFocusDispatched: Boolean(focused) }, focused ? "PASS" : "FAIL");
       } catch (error) {
         gridlyLp0953Record("Exception after popup request", { exceptionAfterPopupRequest: true, exceptionMessage: String(error?.message || error) }, "FAIL");
@@ -114630,6 +114642,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       unifiedIncidentSourceCount,
       activeHazardSourceCount,
       normalizedAlertItems,
+      alertsFamilyAuthority: governedConsumerProjection?.alertsFamilyAuthority || null,
       routeState: route.routeState,
       topStatus: unifiedIntel.topStatus,
       commuteImpactHeadline: unifiedIntel.commuteImpactHeadline,
@@ -114695,8 +114708,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   // deliberately does not collect, refetch, geofence, or mint identities.
   const gridlyLP236AlertsState = {
     model: null,
-    disclosure: { initialized: false, sourceKeys: new Set(), conditionTypeKeys: new Set(), roadwayGroupKeys: new Set(), restoredAfterRender: false }
+    disclosure: { initialized: false, sourceKeys: new Set(), conditionTypeKeys: new Set(), roadwayGroupKeys: new Set(), restoredAfterRender: false },
+    showMe: { tested: false, clickReceived: false, conditionId: null, targetResolved: false, targetType: null, coordinatesResolved: false, mapFocusInvoked: false, mapFocusResult: null }
   };
+
+  function gridlyLP236RecordShowMeBehavior(update = {}) {
+    if (update.clickReceived) Object.assign(gridlyLP236AlertsState.showMe, { tested: true, targetResolved: false, targetType: null, coordinatesResolved: false, mapFocusInvoked: false, mapFocusResult: null });
+    Object.assign(gridlyLP236AlertsState.showMe, update);
+  }
+  window.gridlyLP236RecordShowMeBehavior = gridlyLP236RecordShowMeBehavior;
 
   function gridlyLP236CanonicalId(alert, index) {
     return String(typeof gridlyAlertWriterRecordId === "function"
@@ -114851,7 +114871,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       { sourceClass: "community_report", label: "Community Reports", provenance: "Community-submitted conditions" },
       { sourceClass: "weather", label: "Weather", provenance: "Governed weather alerts" }
     ];
-    const bySource = new Map(definitions.map((item) => [item.sourceClass, { ...item, groups: new Map(), activeConditionCount: 0 }]));
+    const familyAuthority = snapshot?.alertsFamilyAuthority || {};
+    const bySource = new Map(definitions.map((item) => {
+      const authority = familyAuthority[item.sourceClass] || { checked: false, available: false, reason: `${item.label} authority was not evaluated` };
+      return [item.sourceClass, { ...item, groups: new Map(), activeConditionCount: 0, authorityChecked: authority.checked === true, authorityAvailable: authority.available === true, authorityReason: authority.reason || "authority unavailable" }];
+    }));
     alerts.forEach((alert, index) => {
       const sourceClass = gridlyLP236SourceClass(alert);
       const section = bySource.get(sourceClass);
@@ -114868,15 +114892,24 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       }
       section.activeConditionCount += 1;
     });
-    const sections = definitions.map((definition) => bySource.get(definition.sourceClass)).filter((section) => section.activeConditionCount > 0).map((section) => ({
+    const sections = definitions.map((definition) => bySource.get(definition.sourceClass)).map((section) => {
+      // A governed row is itself positive evidence that its family was checked;
+      // unlike an empty array, it can safely certify ACTIVE for compatibility
+      // with callers predating the explicit family-authority envelope.
+      const positiveAuthority = section.activeConditionCount > 0 && snapshot?.activeConditionAuthorityAvailable === true;
+      return {
       ...section,
+      authorityChecked: section.authorityChecked || positiveAuthority,
+      authorityAvailable: section.authorityAvailable || positiveAuthority,
+      authorityReason: positiveAuthority && !section.authorityChecked ? "governed active family conditions evaluated" : section.authorityReason,
+      authorityState: (section.authorityChecked && section.authorityAvailable) || positiveAuthority ? (section.activeConditionCount > 0 ? "ACTIVE" : "QUIET") : "UNAVAILABLE",
       groups: [...section.groups.values()].map((group) => {
         const rows = group.rows.sort((a, b) => a.canonicalId.localeCompare(b.canonicalId));
         const roadwayGroups = [...group.roadwayBuckets.values()].filter((bucket) => bucket.rows.length >= 2).map((bucket) => ({ ...bucket, rows: bucket.rows.sort((a, b) => a.canonicalId.localeCompare(b.canonicalId)) }));
         const groupedIds = new Set(roadwayGroups.flatMap((bucket) => bucket.rows.map((row) => row.canonicalId)));
         return { conditionType: group.conditionType, label: group.label, rows, roadwayGroups, directRows: rows.filter((row) => !groupedIds.has(row.canonicalId)) };
       }).sort((a, b) => a.label.localeCompare(b.label))
-    }));
+    }});
     const total = alerts.length;
     const firstSource = sections.slice().sort((a, b) => b.activeConditionCount - a.activeConditionCount || a.label.localeCompare(b.label))[0]?.sourceClass || "";
     const critical = alerts.map((alert, index) => ({ alert, canonicalId: gridlyLP236CanonicalId(alert, index) })).filter(({ alert }) => {
@@ -114946,10 +114979,24 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const eligibleShowMeIds = model.alerts.map((alert, index) => ({ id: gridlyLP236CanonicalId(alert, index), target: gridlyLP236MapTarget(alert, gridlyLp0952ResolveCrossingAlertTarget(alert, null)) })).filter((row) => Number.isFinite(row.target.lat) && Number.isFinite(row.target.lng)).map((row) => row.id);
     const renderedShowMeIds = Array.from(root?.querySelectorAll?.(".gridly-alert-show-on-map") || []).map((node) => node.closest?.("[data-gridly-lp236-condition-id]")?.dataset?.gridlyLp236ConditionId).filter(Boolean);
     const showMeMissingConditionIds = missingIds(eligibleShowMeIds, renderedShowMeIds);
-    const sourceCoveragePass = missingOfficialRoadwayIds.length === 0 && missingCommunityReportIds.length === 0 && missingWeatherIds.length === 0;
+    const identitySourceCoveragePass = missingOfficialRoadwayIds.length === 0 && missingCommunityReportIds.length === 0 && missingWeatherIds.length === 0;
     const showMeCoveragePass = showMeMissingConditionIds.length === 0 && renderedShowMeIds.every((id) => eligibleShowMeIds.includes(id));
     const identityCoveragePass = unrepresented.length === 0 && duplicates.length === 0 && [officialRoadwayInputIds, communityReportInputIds, weatherInputIds].every((ids) => duplicateIds(ids).length === 0);
-    return { available: true, governedAlertsInputCount: model.total, officialRoadwayInputCount: officialRoadwayInputIds.length, communityReportInputCount: communityReportInputIds.length, weatherInputCount: weatherInputIds.length, officialRoadwayRenderedCount: officialRoadwayRenderedIds.length, communityReportRenderedCount: communityReportRenderedIds.length, weatherRenderedCount: weatherRenderedIds.length, officialRoadwayInputIds, communityReportInputIds, weatherInputIds, officialRoadwayRenderedIds, communityReportRenderedIds, weatherRenderedIds, missingOfficialRoadwayIds, missingCommunityReportIds, missingWeatherIds, duplicateOfficialRoadwayIds: duplicateIds(officialRoadwayRenderedIds), duplicateCommunityReportIds: duplicateIds(communityReportRenderedIds), duplicateWeatherIds: duplicateIds(weatherRenderedIds), showMeEligibleConditionCount: eligibleShowMeIds.length, showMeRenderedActionCount: renderedShowMeIds.length, showMeMissingConditionIds, sourceCoveragePass, showMeCoveragePass, authorityAvailable, authorityState: model.authorityState, authorityReason: model.snapshot?.activeConditionAuthorityReason || "governed Alerts authority unavailable", sourceConditionCount: model.total, sourceConditionIds: authorityIds, alertsSnapshotAuthority: handoff.alertsSnapshotAuthority ?? authorityAvailable, alertsSnapshotCount: handoff.alertsSnapshotCount ?? model.total, alertsForRenderAuthority: handoff.alertsForRenderAuthority ?? authorityAvailable, alertsForRenderCount: handoff.alertsForRenderCount ?? model.total, governedActiveConditionAuthority: handoff.governedActiveConditionAuthority ?? false, governedActiveConditionCount: handoff.governedActiveConditionCount ?? 0, kbygOfficialConditionCount: handoff.kbygOfficialConditionCount ?? 0, locationContextActiveConditionCount: handoff.locationContextActiveConditionCount ?? 0, firstStageWhereActiveConditionsBecomeEmpty: handoff.firstStageWhereActiveConditionsBecomeEmpty ?? (model.total ? null : (authorityAvailable ? null : "authority unavailable")), canonicalCommunity: model.snapshot?.authoritativeMembership?.community || "", canonicalKey: model.snapshot?.canonicalKey || model.snapshot?.authoritativeMembership?.contextKey || "", totalActiveConditionCount: model.total, sections, criticalCalloutCount: model.critical.length, officialRoadwayConditionCount: model.sections.find((section) => section.sourceClass === "official_roadway")?.activeConditionCount || 0, communityReportConditionCount: model.sections.find((section) => section.sourceClass === "community_report")?.activeConditionCount || 0, weatherConditionCount: model.sections.find((section) => section.sourceClass === "weather")?.activeConditionCount || 0, roadwayGroupCount, roadwayGroupedConditionCount, directConditionCount, representedConditionIdentityCount: new Set(displayedIds).size, locationClueCoverageCount, invalidLocationClueCount, rawMarkupLeakCount, openSourceKeys, openConditionTypeKeys, openRoadwayGroupKeys, userDisclosureStatePreserved, autoCollapseDetected, disclosurePersistencePass, summarySentenceCoverageCount, quietStateRendered, quietStateAuthorityPass, displayedConditionIdentityCount: new Set(displayedIds).size, unrepresentedConditionIds: unrepresented, duplicateRepresentedConditionIds: duplicates, duplicateDisplayedConditionIds: duplicates, sourceSemanticsPass, countSemanticsPass, identityCoveragePass, showMeActionCount: root?.querySelectorAll?.(".gridly-alert-show-on-map")?.length || 0, emptySectionsRendered, accessibilityPass, overallPass: Boolean(root) && quietStateAuthorityPass && sourceSemanticsPass && countSemanticsPass && disclosurePersistencePass && invalidLocationClueCount === 0 && unrepresented.length === 0 && duplicates.length === 0 && rawMarkupLeakCount === 0 && emptySectionsRendered.length === 0 && accessibilityPass && sourceCoveragePass && showMeCoveragePass && identityCoveragePass };
+    const family = (sourceClass) => model.sections.find((section) => section.sourceClass === sourceClass);
+    const statusPresented = (section) => Boolean(root?.querySelector?.(`[data-gridly-lp236-source="${section.sourceClass}"][data-gridly-lp236-authority-state="${section.authorityState}"]`));
+    const sourceStatusPresentationPass = model.sections.length === 3 && model.sections.every(statusPresented);
+    const familyPass = (section) => section.authorityState === "ACTIVE"
+      ? section.authorityChecked && section.authorityAvailable && section.activeConditionCount > 0 && statusPresented(section)
+      : section.authorityState === "QUIET"
+        ? section.authorityChecked && section.authorityAvailable && section.activeConditionCount === 0 && statusPresented(section)
+        : section.authorityChecked && !section.authorityAvailable && statusPresented(section);
+    const familyCoveragePass = model.sections.length === 3 && model.sections.every(familyPass);
+    const official = family("official_roadway");
+    const community = family("community_report");
+    const weather = family("weather");
+    const behavior = gridlyLP236AlertsState.showMe;
+    const showMeBehaviorPass = behavior.tested ? Boolean(behavior.clickReceived && behavior.targetResolved && behavior.coordinatesResolved && behavior.mapFocusInvoked && behavior.mapFocusResult) : null;
+    return { available: true, officialRoadwayAuthorityChecked: official.authorityChecked, officialRoadwayAuthorityAvailable: official.authorityAvailable, officialRoadwayAuthorityReason: official.authorityReason, officialRoadwayAuthorityState: official.authorityState, communityReportAuthorityChecked: community.authorityChecked, communityReportAuthorityAvailable: community.authorityAvailable, communityReportAuthorityReason: community.authorityReason, communityReportAuthorityState: community.authorityState, weatherAuthorityChecked: weather.authorityChecked, weatherAuthorityAvailable: weather.authorityAvailable, weatherAuthorityReason: weather.authorityReason, weatherAuthorityState: weather.authorityState, sourceStatusPresentationPass, sourceCoveragePass: identitySourceCoveragePass && familyCoveragePass, showMeButtonSelector: "[data-gridly-show-on-map='true']", showMeListenerOwner: "gridlyLp019BindAlertFocusHandlers", showMeListenerActuallyBound: root?.closest?.("[data-alert-focus-bound='true']") != null || root?.dataset?.alertFocusBound === "true", showMeBehaviorAuthorityAvailable: true, showMeLastClickConditionId: behavior.conditionId, showMeLastTargetResolved: behavior.targetResolved, showMeLastTargetType: behavior.targetType, showMeLastCoordinatesResolved: behavior.coordinatesResolved, showMeLastMapFocusInvoked: behavior.mapFocusInvoked, showMeLastMapFocusResult: behavior.mapFocusResult, showMeBehaviorPass, firstLosingStage: !behavior.tested ? "NOT_TESTED" : (!behavior.clickReceived ? "delegated_click_listener" : (!behavior.targetResolved ? "governed_target_resolution" : (!behavior.coordinatesResolved ? "coordinate_resolution" : (!behavior.mapFocusInvoked ? "focusGridlyAlertIncident" : (!behavior.mapFocusResult ? "map_focus_result" : null))))), governedAlertsInputCount: model.total, officialRoadwayInputCount: officialRoadwayInputIds.length, communityReportInputCount: communityReportInputIds.length, weatherInputCount: weatherInputIds.length, officialRoadwayRenderedCount: officialRoadwayRenderedIds.length, communityReportRenderedCount: communityReportRenderedIds.length, weatherRenderedCount: weatherRenderedIds.length, officialRoadwayInputIds, communityReportInputIds, weatherInputIds, officialRoadwayRenderedIds, communityReportRenderedIds, weatherRenderedIds, missingOfficialRoadwayIds, missingCommunityReportIds, missingWeatherIds, duplicateOfficialRoadwayIds: duplicateIds(officialRoadwayRenderedIds), duplicateCommunityReportIds: duplicateIds(communityReportRenderedIds), duplicateWeatherIds: duplicateIds(weatherRenderedIds), showMeEligibleConditionCount: eligibleShowMeIds.length, showMeRenderedActionCount: renderedShowMeIds.length, showMeMissingConditionIds, showMeCoveragePass, authorityAvailable, authorityState: model.authorityState, authorityReason: model.snapshot?.activeConditionAuthorityReason || "governed Alerts authority unavailable", sourceConditionCount: model.total, sourceConditionIds: authorityIds, alertsSnapshotAuthority: handoff.alertsSnapshotAuthority ?? authorityAvailable, alertsSnapshotCount: handoff.alertsSnapshotCount ?? model.total, alertsForRenderAuthority: handoff.alertsForRenderAuthority ?? authorityAvailable, alertsForRenderCount: handoff.alertsForRenderCount ?? model.total, governedActiveConditionAuthority: handoff.governedActiveConditionAuthority ?? false, governedActiveConditionCount: handoff.governedActiveConditionCount ?? 0, kbygOfficialConditionCount: handoff.kbygOfficialConditionCount ?? 0, locationContextActiveConditionCount: handoff.locationContextActiveConditionCount ?? 0, firstStageWhereActiveConditionsBecomeEmpty: handoff.firstStageWhereActiveConditionsBecomeEmpty ?? (model.total ? null : (authorityAvailable ? null : "authority unavailable")), canonicalCommunity: model.snapshot?.authoritativeMembership?.community || "", canonicalKey: model.snapshot?.canonicalKey || model.snapshot?.authoritativeMembership?.contextKey || "", totalActiveConditionCount: model.total, sections, criticalCalloutCount: model.critical.length, officialRoadwayConditionCount: model.sections.find((section) => section.sourceClass === "official_roadway")?.activeConditionCount || 0, communityReportConditionCount: model.sections.find((section) => section.sourceClass === "community_report")?.activeConditionCount || 0, weatherConditionCount: model.sections.find((section) => section.sourceClass === "weather")?.activeConditionCount || 0, roadwayGroupCount, roadwayGroupedConditionCount, directConditionCount, representedConditionIdentityCount: new Set(displayedIds).size, locationClueCoverageCount, invalidLocationClueCount, rawMarkupLeakCount, openSourceKeys, openConditionTypeKeys, openRoadwayGroupKeys, userDisclosureStatePreserved, autoCollapseDetected, disclosurePersistencePass, summarySentenceCoverageCount, quietStateRendered, quietStateAuthorityPass, displayedConditionIdentityCount: new Set(displayedIds).size, unrepresentedConditionIds: unrepresented, duplicateRepresentedConditionIds: duplicates, duplicateDisplayedConditionIds: duplicates, sourceSemanticsPass, countSemanticsPass, identityCoveragePass, showMeActionCount: root?.querySelectorAll?.(".gridly-alert-show-on-map")?.length || 0, emptySectionsRendered, accessibilityPass, overallPass: Boolean(root) && quietStateAuthorityPass && sourceSemanticsPass && countSemanticsPass && disclosurePersistencePass && invalidLocationClueCount === 0 && unrepresented.length === 0 && duplicates.length === 0 && rawMarkupLeakCount === 0 && emptySectionsRendered.length === 0 && accessibilityPass && sourceStatusPresentationPass && familyCoveragePass && identitySourceCoveragePass && showMeCoveragePass && identityCoveragePass && showMeBehaviorPass !== false };
   }
   window.gridlyLP236AlertsInformationArchitectureAudit = gridlyLP236AlertsInformationArchitectureAudit;
   if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP236AlertsInformationArchitectureAudit", gridlyLP236AlertsInformationArchitectureAudit);
@@ -114961,9 +115008,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       : snapshotAlerts);
     const model = gridlyLP236BuildModel(alerts.filter(Boolean), snapshot);
     gridlyLP236AlertsState.model = model;
-    if (!model.total && snapshot?.activeConditionAuthorityAvailable !== true) return `<div class="gridly-alerts-active" data-gridly-lp236-alerts="true"><div class="gridly-alert-headline">Alerts unavailable</div><div class="gridly-alert-row gridly-alert-authority-unavailable"><div class="gridly-alert-title">Active conditions are still loading.</div><div class="gridly-alert-subtitle">We couldn't confirm the current Alerts inventory. Please try again.</div></div></div>`;
-    if (!model.total) return `<div class="gridly-alerts-active" data-gridly-lp236-alerts="true"><div class="gridly-alert-headline">No Active Alerts</div><div class="gridly-alert-row gridly-alert-empty-state"><div class="gridly-alert-title">You're all caught up.</div><div class="gridly-alert-subtitle">No active conditions in your Awareness Area.</div></div></div>`;
-
     const renderRow = (row, source, insideRoadwayGroup = false) => {
       const alert = row.alert;
       const canonical = gridlyBuildCanonicalLiveIncidentPresentation(alert);
@@ -114987,7 +115031,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const accessibleLocation = primaryLocation || roadway || governedFallbackLocation;
       return `<article class="gridly-lp236-condition gridly-lp236-condition-item" data-gridly-lp236-condition-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-title="${sanitizeText(title)}" data-gridly-alert-location="${sanitizeText(accessibleLocation)}" data-gridly-alert-condition="${sanitizeText(condition)}"${gridlyLp0952AlertCardInteractionAttributes(crossingTarget.crossingId, sanitizeText)}${coords}>
         <div class="gridly-lp236-condition-body">${primaryLocation ? `<strong class="gridly-lp236-condition-roadway"${insideRoadwayGroup && clue ? " data-gridly-lp236-location-clue=\"true\"" : ""}>${sanitizeText(primaryLocation)}</strong>` : ""}${secondaryLocation ? `<span class="gridly-lp236-condition-location" data-gridly-lp236-location-clue="true">${sanitizeText(secondaryLocation)}</span>` : ""}<span class="gridly-lp236-condition-title">${sanitizeText(condition)}</span>${presentedSummarySentence ? `<span class="gridly-lp236-condition-summary" data-gridly-lp236-summary-sentence="true">${sanitizeText(presentedSummarySentence)}</span>` : ""}${timing ? `<span class="gridly-lp236-condition-time">${sanitizeText(timing)}</span>` : ""}</div>
-        ${Number.isFinite(lat) && Number.isFinite(lng) ? `<div class="gridly-lp236-condition-actions"><button class="gridly-alert-show-on-map gridly-lp236-show-me" type="button" aria-label="Show ${sanitizeText(accessibleLocation)} on map">Show me</button></div>` : ""}
+        ${Number.isFinite(lat) && Number.isFinite(lng) ? `<div class="gridly-lp236-condition-actions"><button class="gridly-alert-show-on-map gridly-lp236-show-me" data-gridly-show-on-map="true" type="button" aria-label="Show ${sanitizeText(accessibleLocation)} on map">Show me</button></div>` : ""}
       </article>`;
     };
     const renderGroup = (group, source, groupIndex) => {
@@ -115008,8 +115052,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }).join("");
     const sectionsHtml = model.sections.map((source) => {
       const sourceKey = source.sourceClass;
+      if (source.authorityState !== "ACTIVE") {
+        const quiet = source.authorityState === "QUIET";
+        const status = quiet ? (source.sourceClass === "community_report" ? "No active community reports" : (source.sourceClass === "weather" ? "No active weather alerts" : "No active official roadway conditions")) : (source.sourceClass === "community_report" ? "Community report information unavailable" : (source.sourceClass === "weather" ? "Weather information unavailable" : "Official roadway information unavailable"));
+        return `<div class="gridly-lp236-source-status gridly-lp236-source-${source.authorityState.toLowerCase()}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="0" data-gridly-lp236-authority-state="${source.authorityState}" role="status"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(status)}</small></span><b aria-label="0 active conditions">0</b></div>`;
+      }
       const open = gridlyLP236AlertsState.disclosure.initialized ? gridlyLP236AlertsState.disclosure.sourceKeys.has(sourceKey) : model.total === 1 || source.sourceClass === model.firstSource;
-      return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active conditions"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active conditions">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${source.groups.map((group, groupIndex) => renderGroup(group, source, groupIndex)).join("")}</div></details>`;
+      return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="ACTIVE"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active conditions"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active conditions">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${source.groups.map((group, groupIndex) => renderGroup(group, source, groupIndex)).join("")}</div></details>`;
     }).join("");
     return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong aria-label="${model.total} active condition${model.total === 1 ? "" : "s"}">${model.total} active condition${model.total === 1 ? "" : "s"}</strong></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
   }

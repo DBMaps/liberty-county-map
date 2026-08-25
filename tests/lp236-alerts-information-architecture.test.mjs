@@ -66,7 +66,7 @@ test('LP236.9 uses only source, type, and repeated-roadway disclosures', () => {
   assert.match(rendered, /gridly-lp236-group/);
   assert.match(rendered, /SH0078[\s\S]*Lane Closure[\s\S]*Show me/);
   assert.doesNotMatch(rendered, /View details|gridly-lp236-condition-details/);
-  assert.match(app, /filter\(\(section\) => section\.activeConditionCount > 0\)/);
+  assert.doesNotMatch(app.slice(app.indexOf('function gridlyLP236BuildModel'), app.indexOf('function gridlyLP236AlertsInformationArchitectureAudit')), /filter\(\(section\) => section\.activeConditionCount > 0\)/);
 });
 
 test('LP236.10 isolated condition copy preserves full governed DOM text', () => {
@@ -148,7 +148,7 @@ test('LP236.7 weather stays direct and every identity is represented once', () =
     { id: 'w1', sourceClass: 'weather', event: 'Flood Warning', roadName: 'I-30' },
     { id: 'w2', sourceClass: 'weather', event: 'Flood Warning', roadName: 'I-30' }
   ]);
-  const group = model.sections[0].groups[0];
+  const group = model.sections.find(section => section.sourceClass === 'weather').groups[0];
   assert.equal(group.roadwayGroups.length, 0);
   assert.deepEqual(Array.from(group.directRows, row => row.canonicalId), ['w1', 'w2']);
 });
@@ -234,14 +234,16 @@ test('positive, authoritative zero, and unavailable transactions all render thro
   assert.match(positive, /1 active condition/);
   assert.match(positive, /Official Roadways/);
 
-  const quiet = sandbox.renderLP236({ activeConditionAuthorityAvailable: true, alerts: [] }, []);
-  assert.match(quiet, /No Active Alerts/);
-  assert.match(quiet, /You're all caught up/);
+  const familyQuiet = { official_roadway: { checked: true, available: true }, community_report: { checked: true, available: true }, weather: { checked: true, available: true } };
+  const quiet = sandbox.renderLP236({ activeConditionAuthorityAvailable: true, alertsFamilyAuthority: familyQuiet, alerts: [] }, []);
+  assert.match(quiet, /No active official roadway conditions/);
+  assert.match(quiet, /No active community reports/);
+  assert.match(quiet, /No active weather alerts/);
 
   const unavailable = sandbox.renderLP236({ activeConditionAuthorityAvailable: false, activeConditionAuthorityReason: 'governed authority loading', alerts: [] }, []);
-  assert.match(unavailable, /Alerts unavailable/);
-  assert.match(unavailable, /Active conditions are still loading/);
-  assert.doesNotMatch(unavailable, /all caught up/i);
+  assert.match(unavailable, /Official roadway information unavailable/);
+  assert.match(unavailable, /Community report information unavailable/);
+  assert.match(unavailable, /Weather information unavailable/);
 });
 
 test('audit recognizes mounted positive, zero, and unavailable LP236 states', () => {
@@ -285,7 +287,7 @@ test('LP236 audit fails closed with an array when mounted authority is unavailab
   assert.equal(audit.authorityAvailable, false);
   assert.equal(typeof audit.authorityReason, 'string');
   assert.ok(audit.authorityReason.length > 0);
-  assert.deepEqual(Array.from(audit.sections), []);
+  assert.deepEqual(Array.from(audit.sections, section => section.sourceClass), ['official_roadway', 'community_report', 'weather']);
 });
 
 test('live hierarchy consumes supplied governed conditions without refetch or nested detail', () => {
@@ -299,10 +301,9 @@ test('quiet state requires explicit governed authority and official evidence can
   assert.equal(official.total, 1);
   assert.equal(official.sections[0].sourceClass, 'official_roadway');
   const renderer = app.slice(app.indexOf('function gridlyLP236RenderAlertsPresentation'), app.indexOf('\n  function buildAlertsSurfaceHtml'));
-  assert.match(renderer, /activeConditionAuthorityAvailable !== true/);
-  assert.match(renderer, /Active conditions are still loading/);
-  assert.match(renderer, /if \(!model\.total\) return/);
-  assert.ok(renderer.indexOf('activeConditionAuthorityAvailable !== true') < renderer.indexOf("You're all caught up"));
+  assert.match(renderer, /source\.authorityState !== "ACTIVE"/);
+  assert.match(renderer, /Weather information unavailable/);
+  assert.doesNotMatch(renderer, /if \(!model\.total\) return|You're all caught up/);
 });
 
 test('source handoff remains governed and separates all three families without consumer dependencies', () => {
@@ -416,4 +417,73 @@ test('LP236.9 Show me remains a button and cannot toggle disclosure ancestors', 
 test('LP236.9 audit exposes the full passive identity and accordion contract', () => {
   for (const field of ['totalActiveConditionCount','roadwayGroupCount','directConditionCount','representedConditionIdentityCount','unrepresentedConditionIds','duplicateRepresentedConditionIds','locationClueCoverageCount','invalidLocationClueCount','rawMarkupLeakCount','showMeActionCount','openSourceKeys','openConditionTypeKeys','openRoadwayGroupKeys','userDisclosureStatePreserved','autoCollapseDetected','disclosurePersistencePass','summarySentenceCoverageCount','identityCoveragePass','sourceSemanticsPass','overallPass']) assert.match(source, new RegExp(field));
   assert.doesNotMatch(source, /fetch\(|setInterval|setTimeout|navigator\.geolocation|Dallas/);
+});
+
+test('LP236.13 always models three independently certified source families in deterministic order', () => {
+  const authority = {
+    official_roadway: { checked: true, available: true, reason: 'official checked' },
+    community_report: { checked: true, available: true, reason: 'community checked' },
+    weather: { checked: true, available: false, reason: 'weather unavailable' }
+  };
+  const model = sandbox.buildLP236([{ id: 'o', sourceClass: 'official_roadway' }], { activeConditionAuthorityAvailable: true, alertsFamilyAuthority: authority });
+  assert.deepEqual(Array.from(model.sections, row => row.sourceClass), ['official_roadway', 'community_report', 'weather']);
+  assert.deepEqual(Array.from(model.sections, row => row.authorityState), ['ACTIVE', 'QUIET', 'UNAVAILABLE']);
+  assert.equal(model.total, 1);
+});
+
+test('LP236.13 quiet and unavailable families are restrained status rows, not empty disclosures', () => {
+  const authority = {
+    official_roadway: { checked: true, available: true, reason: 'checked' },
+    community_report: { checked: true, available: true, reason: 'checked' },
+    weather: { checked: true, available: false, reason: 'selector unavailable' }
+  };
+  const html = sandbox.renderLP236({ activeConditionAuthorityAvailable: true, alertsFamilyAuthority: authority }, [{ id: 'o', sourceClass: 'official_roadway' }]);
+  assert.match(html, /data-gridly-lp236-source="official_roadway"[^>]*data-gridly-lp236-authority-state="ACTIVE"/);
+  assert.match(html, /data-gridly-lp236-source="community_report"[^>]*data-gridly-lp236-authority-state="QUIET"[\s\S]*No active community reports/);
+  assert.match(html, /data-gridly-lp236-source="weather"[^>]*data-gridly-lp236-authority-state="UNAVAILABLE"[\s\S]*Weather information unavailable/);
+  assert.doesNotMatch(html, /<details[^>]+data-gridly-lp236-source="community_report"|<details[^>]+data-gridly-lp236-source="weather"/);
+  assert.match(html, /1 active condition/);
+});
+
+test('LP236.13 authority certification preserves governed community and weather geography', () => {
+  const handoff = app.slice(app.indexOf('function gridlyGetGovernedConsumerProjection'), app.indexOf('function gridlyGetGovernedActiveAwarenessRows'));
+  assert.match(handoff, /gridlySelectConsumerVisibleWeatherSituations\(\{ selectedAwarenessArea: selectedArea \}\)/);
+  assert.match(handoff, /governed active community report and hazard lifecycle evaluated for canonical community/);
+  assert.match(handoff, /point,[\s\S]*polygon,[\s\S]*zone,[\s\S]*forecast zone,[\s\S]*county warning/);
+  assert.doesNotMatch(handoff, /countyUnion|county union|Dallas|Austin|Corpus Christi|San Antonio/);
+});
+
+test('LP236.13 Show me markup exactly satisfies the established delegated handler contract', () => {
+  const handler = app.slice(app.indexOf('function gridlyLp019BindAlertFocusHandlers'), app.indexOf('if (typeof window !== "undefined")', app.indexOf('function gridlyLp019BindAlertFocusHandlers')));
+  const renderer = app.slice(app.indexOf('function gridlyLP236RenderAlertsPresentation'), app.indexOf('function buildAlertsSurfaceHtml'));
+  assert.match(renderer, /class="gridly-alert-show-on-map gridly-lp236-show-me" data-gridly-show-on-map="true"/);
+  assert.match(handler, /closest\?\.\("\[data-gridly-show-on-map='true'\]"\)/);
+  assert.match(renderer, /data-gridly-alert-id=/);
+  assert.match(renderer, /data-gridly-alert-lat=/);
+  assert.match(renderer, /data-gridly-alert-lng=/);
+  assert.match(handler, /focusGridlyAlertIncident\(/);
+  assert.equal((handler.match(/panel\.addEventListener\("click"/g) || []).length, 1);
+});
+
+test('LP236.13 behavior audit is NOT_TESTED until a click and cannot pass from coverage alone', () => {
+  for (const token of ['showMeBehaviorPass = behavior.tested ?', 'showMeLastClickConditionId', 'showMeLastTargetResolved', 'showMeLastTargetType', 'showMeLastMapFocusInvoked', 'showMeLastMapFocusResult', 'firstLosingStage']) assert.match(source, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.match(source, /!behavior\.tested \? "NOT_TESTED"/);
+  assert.doesNotMatch(source, /showMeBehaviorPass\s*=\s*showMeCoveragePass/);
+});
+
+test('LP236.13 Show me preserves the sheet and disclosure state and does not fabricate targets', () => {
+  const handler = app.slice(app.indexOf('function gridlyLp019BindAlertFocusHandlers'), app.indexOf('if (typeof window !== "undefined")', app.indexOf('function gridlyLp019BindAlertFocusHandlers')));
+  assert.match(app, /preserveZoom = focus\?\.source === "alerts_show_on_map"/);
+  assert.match(handler, /source: showOnMapAction \? "alerts_show_on_map"/);
+  const withoutCoordinates = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'x', sourceClass: 'official_roadway' }]);
+  assert.doesNotMatch(withoutCoordinates, />Show me<\/button>/);
+  assert.doesNotMatch(source, /sibling\.open\s*=\s*false/);
+});
+
+test('LP236.13 has no refetch, polling, town branch, search, or crossing production change', () => {
+  const lp236 = app.slice(app.indexOf('// LP236 is a presentation projection'), app.indexOf('function escapeV2SettingsText'));
+  assert.doesNotMatch(lp236, /fetch\(|setInterval|setTimeout|Dallas|Austin|Corpus Christi|San Antonio/);
+  assert.match(lp236, /gridlyLp0952ResolveCrossingAlertTarget/);
+  const changedProduction = `${lp236}\n${app.slice(app.indexOf('function gridlyGetGovernedConsumerProjection'), app.indexOf('function gridlyGetGovernedActiveAwarenessRows'))}`;
+  assert.doesNotMatch(changedProduction, /geocode|countyUnion|searchResults/);
 });
