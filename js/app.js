@@ -113881,6 +113881,35 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return { situationTypeByAlert, situationLabelByType };
   }
 
+  // LP235.4D: count accumulation and member-lineage accumulation are one
+  // operation.  A source index can therefore never increase the represented
+  // count without retaining the exact row which caused that increase.
+  function gridlyAccumulateAlertPresentationGroup(groups, key, alert, sourceIndex, reportEvidenceCount) {
+    const existing = groups.get(key);
+    const beforeEvidenceRowCount = existing?.evidenceRows?.length || 0;
+    const beforeRepresentedCount = existing?.representedEvidenceCount || 0;
+    if (existing && existing.sourceIndexes.includes(sourceIndex)) return existing;
+    const group = existing || { key, lead: alert, rawRecordCount: 0, representedEvidenceCount: 0, sourceClass: gridlyAlertsPresentationSourceClass(alert), sourceIndexes: [], evidenceRows: [], accumulationTrace: [] };
+    group.rawRecordCount += 1;
+    group.representedEvidenceCount += reportEvidenceCount;
+    group.sourceIndexes.push(sourceIndex);
+    group.evidenceRows.push(alert);
+    if (group.accumulationTrace.length < 250) group.accumulationTrace.push(Object.freeze({
+      sourceIndex,
+      canonicalId: typeof gridlyAlertWriterRecordId === "function" ? gridlyAlertWriterRecordId(alert, sourceIndex) : "",
+      providerId: String(alert?.providerRecordId || alert?.provider_record_id || alert?.sourceId || alert?.source_id || alert?.raw?.providerRecordId || "").replace(/^provider:/, ""),
+      clusterKey: key,
+      action: existing ? "APPEND_GROUP_MEMBER" : "CREATE_GROUP",
+      beforeEvidenceRowCount,
+      afterEvidenceRowCount: group.evidenceRows.length,
+      beforeRepresentedCount,
+      afterRepresentedCount: group.representedEvidenceCount,
+      memberRetained: group.evidenceRows[group.evidenceRows.length - 1] === alert && group.sourceIndexes[group.sourceIndexes.length - 1] === sourceIndex
+    }));
+    if (!existing) groups.set(key, group);
+    return group;
+  }
+
   function getGridlyAlertsPresentationCountModel(alerts = []) {
     // LP004D compatibility labels retained for direct nested instrumentation: "input normalization", "alert filtering", "event-grouping pass: source iteration", "getAlertClusterKey loop", "cluster-map construction", "cluster member normalization", "representative alert selection", "priority calculation", "ranking/sorting", "community-row extraction", "presentation-record construction", "trust model attachment", "location model attachment", "awareness-area resolution", "canonical presentation helper", "final model assembly".
     return gridlyBuildGridlyAlertsPresentationCountModelSync(alerts, null);
@@ -113901,16 +113930,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           .map((value) => Number(value)).filter((value) => Number.isFinite(value) && value > 0);
         return Math.max(1, Math.round(evidenceCandidates[0] || 1));
       }, { collectionSize: 6 });
-      const existing = gridlyAlertsGroupingMeasure(audit, "groupLookupMs", "existing-group lookup", () => groups.get(key), { inputKey: key, collectionSize: groups.size });
-      if (!existing) {
-        groups.set(key, { key, lead: alert, rawRecordCount: 1, representedEvidenceCount: reportEvidenceCount, sourceClass: gridlyAlertsPresentationSourceClass(alert), sourceIndexes: [sourceIndex], evidenceRows: [alert] });
-        gridlyAlertsGroupingMeasure(audit, "sourceIndexAccumulationMs", "source-index accumulation", () => null);
-        gridlyAlertsGroupingMeasure(audit, "evidenceAccumulationMs", "evidence-row accumulation", () => null);
-        return;
-      }
-      gridlyAlertsGroupingMeasure(audit, "countAccumulationMs", "count accumulation", () => { existing.rawRecordCount += 1; existing.representedEvidenceCount += reportEvidenceCount; });
-      gridlyAlertsGroupingMeasure(audit, "sourceIndexAccumulationMs", "source-index accumulation", () => { existing.sourceIndexes.push(sourceIndex); });
-      gridlyAlertsGroupingMeasure(audit, "evidenceAccumulationMs", "evidence-row accumulation", () => { existing.evidenceRows.push(alert); });
+      gridlyAlertsGroupingMeasure(audit, "groupLookupMs", "existing-group lookup", () => groups.get(key), { inputKey: key, collectionSize: groups.size });
+      gridlyAlertsGroupingMeasure(audit, "evidenceAccumulationMs", "atomic count and member-lineage accumulation", () => gridlyAccumulateAlertPresentationGroup(groups, key, alert, sourceIndex, reportEvidenceCount));
     });
     if (audit) audit.subphases.sourceIterationMs = Number((audit.subphases.sourceIterationMs + (gridlyAlertsCooperativeNow() - iterStarted)).toFixed(2));
     const groupRows = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "grouped row extraction", () => [...groups.values()], { collectionSize: groups.size });
@@ -113919,7 +113940,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const situationType = context.situationTypeByAlert.get(representative) || getGridlyAlertSituationType(representative);
       const situationLabel = context.situationLabelByType.get(situationType) || getGridlyAlertSituationLabel(representative);
       const priorityCount = gridlyAlertsGroupingMeasure(audit, "trustPriorityMs", "trust/priority calculation", () => Math.max(Number(representative?.count || 0), group.representedEvidenceCount, group.rawRecordCount), { collectionSize: group.rawRecordCount });
-      return { ...representative, title: situationLabel, count: priorityCount, __gridlyEventSituationType: situationType, __gridlyEventSituationLabel: situationLabel, __gridlyPresentationGroupCount: group.rawRecordCount, __gridlyPresentationSourceCount: group.rawRecordCount, __gridlyPresentationSourceIndexes: group.sourceIndexes, __gridlyPresentationEvidenceRows: group.evidenceRows, __gridlyPresentationGrouped: group.rawRecordCount > 1, __gridlyRepresentedEvidenceCount: group.representedEvidenceCount, __gridlyCountContributionType: group.sourceClass, __gridlyCommunityReportEvidenceCount: group.sourceClass === "community_report" ? group.representedEvidenceCount : 0, __gridlyPresentationClusterKey: group.key };
+      return { ...representative, title: situationLabel, count: priorityCount, __gridlyEventSituationType: situationType, __gridlyEventSituationLabel: situationLabel, __gridlyPresentationGroupCount: group.rawRecordCount, __gridlyPresentationSourceCount: group.rawRecordCount, __gridlyPresentationSourceIndexes: group.sourceIndexes, __gridlyPresentationEvidenceRows: group.evidenceRows, __gridlyGroupAccumulationTrace: group.accumulationTrace, __gridlyPresentationGrouped: group.rawRecordCount > 1, __gridlyRepresentedEvidenceCount: group.representedEvidenceCount, __gridlyCountContributionType: group.sourceClass, __gridlyCommunityReportEvidenceCount: group.sourceClass === "community_report" ? group.representedEvidenceCount : 0, __gridlyPresentationClusterKey: group.key };
     }), { collectionSize: groupRows.length });
     const rankedAlerts = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "sorting/finalization", () => groupedAlerts, { collectionSize: groupedAlerts.length });
     const communityReportCount = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "community-row extraction", () => rankedAlerts.reduce((sum, alert) => sum + (alert.__gridlyCountContributionType === "community_report" ? Math.max(1, Number(alert.__gridlyCommunityReportEvidenceCount || alert.count || 1)) : 0), 0), { collectionSize: rankedAlerts.length, fullCollectionScan: true });
@@ -113947,9 +113968,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const evidenceCandidates = [alert?.incidentReportCount, alert?.activeReportCount, alert?.reports_count, alert?.count, alert?.confirmationCount, Array.isArray(alert?.reports) ? alert.reports.length : null].map((value) => Number(value)).filter((value) => Number.isFinite(value) && value > 0);
         return Math.max(1, Math.round(evidenceCandidates[0] || 1));
       }, { collectionSize: 6 });
-      const existing = gridlyAlertsGroupingMeasure(audit, "groupLookupMs", "existing-group lookup", () => groups.get(key), { inputKey: key, collectionSize: groups.size });
-      if (!existing) groups.set(key, { key, lead: alert, rawRecordCount: 1, representedEvidenceCount: reportEvidenceCount, sourceClass: gridlyAlertsPresentationSourceClass(alert), sourceIndexes: [sourceIndex], evidenceRows: [alert] });
-      else { gridlyAlertsGroupingMeasure(audit, "countAccumulationMs", "count accumulation", () => { existing.rawRecordCount += 1; existing.representedEvidenceCount += reportEvidenceCount; }); gridlyAlertsGroupingMeasure(audit, "sourceIndexAccumulationMs", "source-index accumulation", () => { existing.sourceIndexes.push(sourceIndex); }); gridlyAlertsGroupingMeasure(audit, "evidenceAccumulationMs", "evidence-row accumulation", () => { existing.evidenceRows.push(alert); }); }
+      gridlyAlertsGroupingMeasure(audit, "groupLookupMs", "existing-group lookup", () => groups.get(key), { inputKey: key, collectionSize: groups.size });
+      gridlyAlertsGroupingMeasure(audit, "evidenceAccumulationMs", "atomic count and member-lineage accumulation", () => gridlyAccumulateAlertPresentationGroup(groups, key, alert, sourceIndex, reportEvidenceCount));
       if (options.isCancelled?.()) { audit.cancelled = true; audit.superseded = true; break; }
       await gridlyAlertsGroupingYieldIfNeeded(audit, chunkStartedAt, options.cooperativeBuildAudit, options.cooperativeChunkStartedAt);
     }
@@ -113963,7 +113983,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const situationType = context.situationTypeByAlert.get(representative) || getGridlyAlertSituationType(representative);
         const situationLabel = context.situationLabelByType.get(situationType) || getGridlyAlertSituationLabel(representative);
         const priorityCount = gridlyAlertsGroupingMeasure(audit, "trustPriorityMs", "trust/priority calculation", () => Math.max(Number(representative?.count || 0), group.representedEvidenceCount, group.rawRecordCount), { collectionSize: group.rawRecordCount });
-        return { ...representative, title: situationLabel, count: priorityCount, __gridlyEventSituationType: situationType, __gridlyEventSituationLabel: situationLabel, __gridlyPresentationGroupCount: group.rawRecordCount, __gridlyPresentationSourceCount: group.rawRecordCount, __gridlyPresentationSourceIndexes: group.sourceIndexes, __gridlyPresentationEvidenceRows: group.evidenceRows, __gridlyPresentationGrouped: group.rawRecordCount > 1, __gridlyRepresentedEvidenceCount: group.representedEvidenceCount, __gridlyCountContributionType: group.sourceClass, __gridlyCommunityReportEvidenceCount: group.sourceClass === "community_report" ? group.representedEvidenceCount : 0, __gridlyPresentationClusterKey: group.key };
+        return { ...representative, title: situationLabel, count: priorityCount, __gridlyEventSituationType: situationType, __gridlyEventSituationLabel: situationLabel, __gridlyPresentationGroupCount: group.rawRecordCount, __gridlyPresentationSourceCount: group.rawRecordCount, __gridlyPresentationSourceIndexes: group.sourceIndexes, __gridlyPresentationEvidenceRows: group.evidenceRows, __gridlyGroupAccumulationTrace: group.accumulationTrace, __gridlyPresentationGrouped: group.rawRecordCount > 1, __gridlyRepresentedEvidenceCount: group.representedEvidenceCount, __gridlyCountContributionType: group.sourceClass, __gridlyCommunityReportEvidenceCount: group.sourceClass === "community_report" ? group.representedEvidenceCount : 0, __gridlyPresentationClusterKey: group.key };
       }), { collectionSize: groupRows.length });
       const rankedAlerts = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "sorting/finalization", () => groupedAlerts, { collectionSize: groupedAlerts.length });
       const communityReportCount = gridlyAlertsGroupingMeasure(audit, "sortingFinalizationMs", "community-row extraction", () => rankedAlerts.reduce((sum, alert) => sum + (alert.__gridlyCountContributionType === "community_report" ? Math.max(1, Number(alert.__gridlyCommunityReportEvidenceCount || alert.count || 1)) : 0), 0), { collectionSize: rankedAlerts.length, fullCollectionScan: true });
@@ -122834,13 +122854,39 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     representedProviderIds: presentation.providerRecordIdsRepresented,
     representationCount: presentation.canonicalIdsRepresented.length
   }));
+  const preGroupCanonicalIds = writerInputs.map((row, index) => gridlyAlertWriterRecordId(row, index)).filter(Boolean);
+  const preGroupProviderIds = writerInputs.map((row) => clean(row?.providerRecordId || row?.provider_record_id || row?.sourceId || row?.source_id || row?.raw?.providerRecordId).replace(/^provider:/, "")).filter(Boolean);
+  const preGroupDuplicateCanonicalIds = [...new Set(preGroupCanonicalIds.filter((id, index) => preGroupCanonicalIds.indexOf(id) !== index))];
+  const preGroupSourceKindBreakdown = Object.freeze(writerInputs.reduce((counts, row) => {
+    const sourceKind = clean(row?.sourceKind || row?.raw?.sourceKind) || gridlyAlertsPresentationSourceClass(row);
+    counts[sourceKind] = (counts[sourceKind] || 0) + 1;
+    return counts;
+  }, {}));
+  const presentationGroups = finalRows.map((row, groupIndex) => {
+    const evidenceRows = Array.isArray(row?.__gridlyPresentationEvidenceRows) ? row.__gridlyPresentationEvidenceRows : [];
+    const sourceIndexes = Array.isArray(row?.__gridlyPresentationSourceIndexes) ? row.__gridlyPresentationSourceIndexes : [];
+    const representedCanonicalIds = evidenceRows.map((evidence, index) => gridlyAlertWriterRecordId(evidence, sourceIndexes[index] ?? index)).filter(Boolean);
+    const representedProviderIds = evidenceRows.map((evidence) => clean(evidence?.providerRecordId || evidence?.provider_record_id || evidence?.sourceId || evidence?.source_id || evidence?.raw?.providerRecordId).replace(/^provider:/, "")).filter(Boolean);
+    const duplicateCanonicalIds = [...new Set(representedCanonicalIds.filter((id, index) => representedCanonicalIds.indexOf(id) !== index))];
+    const duplicateSourceIndexes = [...new Set(sourceIndexes.filter((value, index) => sourceIndexes.indexOf(value) !== index))];
+    const representedCountAuthority = Math.max(1, Number(row?.__gridlyRepresentedEvidenceCount || row?.count || evidenceRows.length) || evidenceRows.length);
+    return Object.freeze({ groupIndex, clusterKey: clean(row?.__gridlyPresentationClusterKey) || null, sourceClass: gridlyAlertsPresentationSourceClass(row),
+      leaderCanonicalId: gridlyAlertWriterRecordId(row, groupIndex), representedCountAuthority, evidenceRowCount: evidenceRows.length, sourceIndexCount: sourceIndexes.length,
+      representedCanonicalIds: Object.freeze(representedCanonicalIds), representedProviderIds: Object.freeze(representedProviderIds),
+      countIdentityParity: representedCountAuthority === new Set(representedCanonicalIds).size, missingMemberCount: Math.max(0, representedCountAuthority - new Set(representedCanonicalIds).size),
+      duplicateCanonicalIds: Object.freeze(duplicateCanonicalIds), duplicateSourceIndexes: Object.freeze(duplicateSourceIndexes) });
+  });
+  const groupAccumulationTrace = Object.freeze(finalRows.flatMap((row) => Array.isArray(row?.__gridlyGroupAccumulationTrace) ? row.__gridlyGroupAccumulationTrace : []).slice(0, 250));
   const retainedStages = Array.isArray(auditRenderContext?.groupedLineageStages) ? auditRenderContext.groupedLineageStages : [];
   const mappingBuilderInputStage = gridlySummarizeAlertsGroupedLineage("MAPPING_BUILDER_INPUT", finalRows, writerInputs);
-  const groupedLineageStageAudit = Object.freeze([...retainedStages, mappingBuilderInputStage]);
+  const preGroupInputStage = gridlySummarizeAlertsGroupedLineage("PRE_GROUP_INPUT", writerInputs, writerInputs);
+  const groupedLineageStageAudit = Object.freeze([preGroupInputStage, ...retainedStages, mappingBuilderInputStage]);
   const stageCount = (stage) => groupedLineageStageAudit.find((entry) => entry.stage === stage)?.representedCanonicalCount ?? 0;
-  const firstCompleteCount = groupedLineageStageAudit[0]?.representedCanonicalCount ?? 0;
-  const groupedLineageFirstLosingStage = groupedLineageStageAudit.find((entry) => entry.representedCanonicalCount < firstCompleteCount)?.stage || null;
+  const groupedLineageFirstLosingStage = groupedLineageStageAudit.slice(1).find((entry) => entry.representedCanonicalCount < preGroupCanonicalIds.length)?.stage || null;
+  const groupCountIdentityParityPass = presentationGroups.every((group) => group.countIdentityParity && group.evidenceRowCount === group.sourceIndexCount && group.duplicateCanonicalIds.length === 0 && group.duplicateSourceIndexes.length === 0);
+  const groupBuildIdentityCoveragePass = stageCount("POST_GROUP_BUILD") === new Set(preGroupCanonicalIds).size && groupCountIdentityParityPass;
   const overallPass = Boolean(writerInputs.length === authorityRows.length && presentationIdentityCoveragePass && groupedLineageCoveragePass
+    && groupBuildIdentityCoveragePass && groupCountIdentityParityPass
     && mappingCount === writerInputs.length && dispositionCount("MISSING_REQUIRED_FIELD") === 0 && writerAudit.parity === true);
   const inputCanonicalIds = [...inputById.keys()];
   const presentationIds = finalPresentations.map((row) => row.presentationId);
@@ -122874,12 +122920,17 @@ window.gridlyLP235AlertsPresentationCompletenessAudit = function gridlyLP235Aler
     groupedPresentationLineage: Object.freeze(groupedPresentationLineage), canonicalToPresentationMappingUniqueCanonicalCount: mappedCanonicalIds.length,
     canonicalToPresentationMappingDuplicatePairs: Object.freeze(canonicalToPresentationMappingDuplicatePairs), groupedLineageCoveragePass,
     groupedLineageStageAudit,
+    preGroupInputCount: writerInputs.length, preGroupCanonicalIds: Object.freeze(preGroupCanonicalIds), preGroupProviderIds: Object.freeze(preGroupProviderIds),
+    preGroupSourceKindBreakdown, preGroupDuplicateCanonicalIds: Object.freeze(preGroupDuplicateCanonicalIds),
+    presentationGroups: Object.freeze(presentationGroups), groupAccumulationTrace,
+    representedCountFieldName: "__gridlyRepresentedEvidenceCount", representedCountAccumulationOwner: "gridlyAccumulateAlertPresentationGroup",
     postGroupBuildRepresentedCanonicalCount: stageCount("POST_GROUP_BUILD"),
     preRenderRepresentedCanonicalCount: stageCount("PRE_RENDER_COMPLETE_ALERT_CARD"),
     postNormalizationRepresentedCanonicalCount: stageCount("POST_PRESENTATION_NORMALIZATION"),
     completedRenderContextRepresentedCanonicalCount: stageCount("COMPLETED_RENDER_CONTEXT"),
     mappingBuilderInputRepresentedCanonicalCount: stageCount("MAPPING_BUILDER_INPUT"),
     groupedLineageFirstLosingStage,
+    groupBuildIdentityCoveragePass, groupCountIdentityParityPass,
     groupsMissingEvidenceRowsAtCompletedContext: groupedLineageStageAudit.find((entry) => entry.stage === "COMPLETED_RENDER_CONTEXT")?.groupsMissingEvidenceRows ?? 0,
     writerParity: writerAudit.parity === true, writerParityAuthority: "GROUPED_CANONICAL_TO_PRESENTATION_IDENTITY_COVERAGE",
     presentationCap: null, presentationCapApplied: false, genericPresentationIdCount,
