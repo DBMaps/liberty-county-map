@@ -14,7 +14,7 @@
     "fflate": "0.8.3"
   },
   "scripts": {
-    "test:lp240": "node --test tests/lp240-weather-authority-audit.test.cjs",
+    "test:lp240": "node --test tests/lp240-weather-authority-audit.test.cjs tests/lp2401f-nws-point-authority-audit.test.mjs",
     "build:post-manual-statewide-certification": "node tools/statewide-audit/build-post-manual-statewide-certification.mjs --write",
     "verify:post-manual-statewide-certification": "node tools/statewide-audit/build-post-manual-statewide-certification.mjs --verify",
     "test:post-manual-statewide-certification": "node --test tests/post-manual-statewide-certification.test.mjs",
