@@ -47230,13 +47230,51 @@ function resolveGridlyCanonicalPlacePresentationFocus(identity) {
   });
 }
 
+// Resolve a thin selected-area projection through the same generated statewide
+// PLACE rows embedded in GRIDLY_COUNTY_REGISTRY.  Older operational anchors
+// predate PLACE_GEOID propagation, so their county + canonical display name is
+// an identity lookup key, not an invitation to infer identity from consumers.
+function gridlyResolveCanonicalPlaceRegistryIdentity(area) {
+  if (!area || area.countyWide === true || area.fallback === true) return null;
+  const countyId = gridlyNormalizeCountyId(area.countyId || "");
+  const canonicalName = normalizeGridlyAwarenessAreaLookupText(area.label || area.storageValue || area.displayName || "");
+  if (!countyId || !canonicalName) return null;
+  const candidates = (GRIDLY_COUNTY_REGISTRY[countyId]?.consumerAwarenessAreas || [])
+    .filter((place) => normalizeGridlyAwarenessAreaLookupText(place.displayName) === canonicalName);
+  if (candidates.length !== 1 || !/^48\d{5}$/.test(String(candidates[0].placeGeoid || ""))) return null;
+  return candidates[0];
+}
+
 function gridlyResolveCanonicalPlaceGeoid(area) {
   const explicit = String(area?.placeGeoid || area?.communityId || "").trim();
   const keyGeoid = /^place-(48\d{5})$/.exec(String(area?.canonicalKey || area?.key || "").trim())?.[1] || null;
   if (keyGeoid && explicit && keyGeoid !== explicit) return null;
-  const geoid = keyGeoid || explicit;
+  const registryIdentity = !keyGeoid && !explicit ? gridlyResolveCanonicalPlaceRegistryIdentity(area) : null;
+  const geoid = keyGeoid || explicit || String(registryIdentity?.placeGeoid || "");
   return /^48\d{5}$/.test(geoid) ? geoid : null;
 }
+
+// LP239.4 deterministic browser parity surface.  Each unique canonical PLACE
+// exposed by the live county/runtime projection is reduced to the thin shape
+// used by legacy selected-area anchors, then compared with its statewide row.
+function gridlyLiveCanonicalPlaceIdentityParityAudit() {
+  const statewideByPlaceId = new Map();
+  Object.entries(GRIDLY_COUNTY_REGISTRY).forEach(([countyId, county]) => {
+    (county.consumerAwarenessAreas || []).forEach((place) => {
+      const placeGeoid = String(place.placeGeoid || "");
+      if (!statewideByPlaceId.has(placeGeoid)) statewideByPlaceId.set(placeGeoid, { ...place, countyId });
+    });
+  });
+  const rows = [...statewideByPlaceId.values()].sort((a, b) => String(a.placeGeoid).localeCompare(String(b.placeGeoid))).map((place) => {
+    const liveCanonicalCommunity = place.displayName;
+    const liveCanonicalPlaceId = gridlyResolveCanonicalPlaceGeoid({ label: liveCanonicalCommunity, countyId: place.countyId });
+    const statewideCanonicalPlaceId = String(place.placeGeoid || "") || null;
+    return Object.freeze({ liveCanonicalCommunity, liveCanonicalPlaceId, statewideCanonicalPlaceId, identityParityPass: liveCanonicalPlaceId === statewideCanonicalPlaceId });
+  });
+  return Object.freeze({ rows: Object.freeze(rows), canonicalCommunityCount: rows.length, mismatchCount: rows.filter((row) => !row.identityParityPass).length, overallPass: rows.length > 0 && rows.every((row) => row.identityParityPass) });
+}
+window.gridlyLiveCanonicalPlaceIdentityParityAudit = gridlyLiveCanonicalPlaceIdentityParityAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLiveCanonicalPlaceIdentityParityAudit", gridlyLiveCanonicalPlaceIdentityParityAudit);
 
 function gridlyResolveCanonicalCountyIdForOperationalContext(area, countyId) {
   const placeGeoid = gridlyResolveCanonicalPlaceGeoid(area);
