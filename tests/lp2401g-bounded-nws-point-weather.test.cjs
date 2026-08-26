@@ -43,3 +43,46 @@ test("I/J: late Dayton/Tarkington responses are suppressed across both transitio
 test("K/L/M/N: multi-county point is conserved; unsupported/county-wide fail closed; statewide endpoint retained",async()=>{
  const katy={awarenessKey:"place-4838476",identityClass:"CANONICAL_PLACE",countyId:"harris-tx",stableIdentity:"4838476",lat:29.7858,lng:-95.8244,placeGeoid:"4838476"}; const h=harness(katy); await settle(); assert.match(h.pending[0].url,/point=29.7858,-95.8244/); assert.equal(h.audit().selectedPoint.stableIdentity,"4838476"); assert.equal(h.audit().statewideDiagnosticEndpoint,"https://api.weather.gov/alerts/active?area=TX"); (await take(h)).resolve({ok:true,json:async()=>payload()}); await settle(); h.set(null); await h.context.gridlyWeatherConnector.refreshAwarenessView(); assert.equal(h.audit().currentAwarenessIdentity,null); assert.equal(h.audit().requestSucceeded,false);
 });
+
+test("B/N: identity transition atomically invalidates old authority before the new response",async()=>{
+  const h=harness(dayton); await settle(); (await take(h)).resolve({ok:true,json:async()=>payload([feature("dayton")])}); await settle();
+  const daytonFetchedAt=h.audit().fetchedAt;
+  h.set(tarkington); const transition=h.context.gridlyWeatherConnector.refreshAwarenessView(); await settle();
+  const pending=h.audit();
+  assert.equal(pending.selectedPoint.identityClass,"GOVERNED_NON_PLACE");
+  assert.equal(pending.selectedPoint.awarenessKey,"tarkington");
+  assert.equal(pending.currentAwarenessIdentity,"liberty-tx:tarkington|tarkington|30.3205,-94.996");
+  assert.equal(pending.pointRequestIdentity,pending.currentAwarenessIdentity);
+  assert.equal(pending.responseIdentity,null);
+  assert.equal(pending.requestSucceeded,false);
+  assert.equal(pending.responseValid,false);
+  assert.equal(pending.fetchedAt,null);
+  assert.notEqual(pending.fetchedAt,daytonFetchedAt);
+  assert.equal(h.context.gridlyWeatherConnector.getNormalizedRecords().length,0);
+  (await take(h)).resolve({ok:true,json:async()=>payload([feature("tarkington")])}); await transition;
+  assert.equal(h.audit().responseIdentity,h.audit().currentAwarenessIdentity);
+});
+
+test("G/H/O/P: bounded cache is retained but reused only by its exact identity",async()=>{
+  const h=harness(dayton); await settle(); (await take(h)).resolve({ok:true,json:async()=>payload([feature("dayton")])}); await settle();
+  h.set(tarkington); let transition=h.context.gridlyWeatherConnector.refreshAwarenessView(); await settle(); (await take(h)).resolve({ok:true,json:async()=>payload([feature("tarkington")])}); await transition;
+  assert.equal(h.audit().cacheSize,2);
+  h.set(dayton); const daytonReturn=await h.context.gridlyWeatherConnector.refreshAwarenessView();
+  assert.equal(daytonReturn.cached,true); assert.equal(h.context.gridlyWeatherConnector.getNormalizedRecords()[0].id,"dayton");
+  assert.equal(h.audit().responseIdentity,"4819492|dayton|30.0466,-94.8852");
+  h.set(tarkington); const tarkingtonReturn=await h.context.gridlyWeatherConnector.refreshAwarenessView();
+  assert.equal(tarkingtonReturn.cached,true); assert.equal(h.context.gridlyWeatherConnector.getNormalizedRecords()[0].id,"tarkington");
+  assert.equal(h.audit().responseIdentity,"liberty-tx:tarkington|tarkington|30.3205,-94.996");
+});
+
+test("I/J/K: authority and Weather family reject mixed identity lineage",()=>{
+  const selected="liberty-tx:tarkington|tarkington|30.3205,-94.996";
+  const daytonIdentity="4819492|dayton|30.0466,-94.8852";
+  const context={console,globalThis:null,gridlyWeatherConnector:{getNormalizedRecords:()=>[feature("dayton")]},gridlyWeatherProvider:{},gridlyResolveGovernedWeatherPoint:()=>tarkington,
+    gridlyWeatherConnectorRuntimeAudit:()=>({applicabilityMode:"NWS_POINT_QUERY",requestSucceeded:true,responseValid:true,freshEnough:true,currentAwarenessIdentity:selected,pointRequestIdentity:selected,responseIdentity:daytonIdentity})};
+  context.globalThis=context; vm.createContext(context); vm.runInContext(fs.readFileSync("js/gridlyWeatherAuthoritySourceIntegration.js","utf8"),context);
+  const snapshot=context.gridlyGetWeatherAuthoritySnapshot({selectedAwarenessArea:{name:"Tarkington"}});
+  assert.equal(snapshot.authorityIdentity,null); assert.equal(snapshot.authorityEligibleRecordCount,0);
+  const family=context.gridlySelectConsumerVisibleWeatherSituations({snapshot});
+  assert.equal(family.weatherFamilyIdentity,null); assert.equal(family.consumerVisibleSituationCount,0);
+});

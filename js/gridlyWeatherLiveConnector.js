@@ -66,6 +66,19 @@
     notify(entry.succeeded ? "weather-point-fetch-success" : "weather-point-fetch-failure");
     return true;
   }
+  function invalidateCurrentAuthority(nextIdentity, nextPoint) {
+    if (currentIdentity === nextIdentity || (currentIdentity === null && state.pointRequestIdentity === nextIdentity && state.pointResponseValid === false)) return;
+    currentIdentity = null;
+    normalizedRecords = [];
+    state.connected = false;
+    state.lastFetchSucceeded = false;
+    state.lastError = null;
+    state.normalizedRecordCount = 0;
+    state.pointRequestIdentity = nextIdentity;
+    state.pointEndpoint = nextPoint ? endpoint(nextPoint) : null;
+    state.pointResponseValid = false;
+    notify("weather-point-identity-transition");
+  }
   async function fetchPoint(point, requestGeneration) {
     const requestIdentity=identity(point), url=endpoint(point); state.lastRequestAt=iso(); state.pointRequestIdentity=requestIdentity; state.pointEndpoint=url;
     try {
@@ -87,6 +100,7 @@
     const point=resolvePoint(); const nextIdentity=identity(point);
     if (!point) { generation+=1; currentIdentity=null; normalizedRecords=[]; state.connected=false; state.lastFetchSucceeded=false; state.lastError="Unsupported governed awareness identity"; state.pointRequestIdentity=null; state.pointEndpoint=null; state.pointResponseValid=false; notify("weather-point-unavailable"); return Promise.resolve(freeze({connected:false,error:state.lastError})); }
     if (fetchInFlight?.identity === nextIdentity) return fetchInFlight.promise;
+    invalidateCurrentAuthority(nextIdentity, point);
     const requestGeneration=++generation;
     const promise=fetchPoint(point,requestGeneration).finally(() => { if(fetchInFlight?.promise===promise) fetchInFlight=null; });
     fetchInFlight={identity:nextIdentity,promise}; return promise;
@@ -94,13 +108,14 @@
   function refreshAwarenessView() {
     const point=resolvePoint(), next=identity(point), cached=next ? cache.get(next) : null;
     generation+=1;
+    invalidateCurrentAuthority(next, point);
     if (cached && Date.now()-Date.parse(cached.fetchedAt)<=REFRESH_INTERVAL_MS) { publish(cached,generation); return Promise.resolve(freeze({connected:true,cached:true,normalizedRecordCount:cached.records.length})); }
     return fetchNow();
   }
   function startPolling() { state.automaticPolling=true; const tick=async()=>{await fetchNow(); if(state.automaticPolling) refreshTimer=globalScope.setTimeout(tick,REFRESH_INTERVAL_MS);}; tick(); return runtimeAudit(); }
   function stopPolling(){state.automaticPolling=false;if(refreshTimer!=null)globalScope.clearTimeout?.(refreshTimer);refreshTimer=null;return runtimeAudit();}
   function getNormalizedRecords(){return freeze(normalizedRecords.map(clone).filter(Boolean));}
-  function runtimeAudit(){const entry=currentIdentity?cache.get(currentIdentity):null;const age=entry?Date.now()-Date.parse(entry.fetchedAt):Infinity;if(state.providerActivated!==true)return freeze({connected:false,networkingAvailable:typeof globalScope.fetch === "function",automaticPolling:false,providerActivated:false,renderingPerformed:false,normalizedRecordCount:0,requestAttempted:false,requestSucceeded:false,lastRequestAt:null,lastSuccessAt:null,lastFailureAt:null,lastError:null,refreshIntervalMs:REFRESH_INTERVAL_MS});return freeze({ ...state, applicabilityMode:"NWS_POINT_QUERY", statewideDiagnosticEndpoint:DEFAULT_ENDPOINT, pointAlertEndpoint:state.pointEndpoint, requestAttempted:Boolean(entry?.attempted), requestSucceeded:Boolean(entry?.succeeded), responseValid:Boolean(entry?.valid), fetchedAt:entry?.fetchedAt||null, freshEnough:Boolean(entry?.succeeded&&entry?.valid&&age>=0&&age<=REFRESH_INTERVAL_MS), pointActiveAlertCount:entry?.records?.length||0, pointActiveAlertIds:freeze((entry?.records||[]).map(r=>r.id)), currentAwarenessIdentity:identity(resolvePoint()), selectedPoint:entry?.point||resolvePoint(), cacheSize:cache.size });}
+  function runtimeAudit(){const selectedPoint=resolvePoint();const selectedIdentity=identity(selectedPoint);const entry=currentIdentity&&currentIdentity===selectedIdentity?cache.get(currentIdentity):null;const age=entry?Date.now()-Date.parse(entry.fetchedAt):Infinity;if(state.providerActivated!==true)return freeze({connected:false,networkingAvailable:typeof globalScope.fetch === "function",automaticPolling:false,providerActivated:false,renderingPerformed:false,normalizedRecordCount:0,requestAttempted:false,requestSucceeded:false,lastRequestAt:null,lastSuccessAt:null,lastFailureAt:null,lastError:null,refreshIntervalMs:REFRESH_INTERVAL_MS});return freeze({ ...state, applicabilityMode:"NWS_POINT_QUERY", statewideDiagnosticEndpoint:DEFAULT_ENDPOINT, pointAlertEndpoint:state.pointEndpoint, requestAttempted:Boolean(entry?.attempted), requestSucceeded:Boolean(entry?.succeeded), responseValid:Boolean(entry?.valid), fetchedAt:entry?.fetchedAt||null, freshEnough:Boolean(entry?.succeeded&&entry?.valid&&age>=0&&age<=REFRESH_INTERVAL_MS), pointActiveAlertCount:entry?.records?.length||0, pointActiveAlertIds:freeze((entry?.records||[]).map(r=>r.id)), currentAwarenessIdentity:selectedIdentity, responseIdentity:entry?.requestIdentity||null, selectedPoint, cacheSize:cache.size });}
   globalScope.gridlyWeatherConnector=freeze({providerId:PROVIDER_ID,providerName:PROVIDER_NAME,timeoutMs:TIMEOUT_MS,maxAttempts:MAX_ATTEMPTS,refreshIntervalMs:REFRESH_INTERVAL_MS,fetchNow,refreshAwarenessView,startPolling,stopPolling,getNormalizedRecords});
   globalScope.gridlyWeatherConnectorRuntimeAudit=runtimeAudit;
   if(typeof module!=="undefined"&&module.exports)module.exports=globalScope.gridlyWeatherConnector;
