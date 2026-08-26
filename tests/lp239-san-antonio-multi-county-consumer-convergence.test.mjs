@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { test } from 'node:test';
+import vm from 'node:vm';
 
 const read = path => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const app = read('js/app.js');
@@ -106,4 +107,27 @@ test('protected roadway, weather, reports, and viewport contracts remain shared'
   assert.match(app, /provider point\/polygon\/zone\/forecast-zone\/county-warning geography/);
   assert.match(app, /selectedArea\.countyMemberships \|\| \[\]\)\.map\(String\)\.includes\(reportCountyFips\)/);
   assert.match(app, /gridlyAlertWriterRecordId/);
+});
+
+test('LP239.3 live audit resolves the owner cohort through the complete LP149 browser identity contract', () => {
+  const identitySource = read('js/gridlyRuntimeCountyIdentity.js');
+  assert.match(identitySource, /rows\.length !== 254/);
+  assert.match(app.slice(app.indexOf('// LP239:')), /gridlyRuntimeCountyIdentity\?\.resolveFips/);
+  assert.doesNotMatch(app.slice(app.indexOf('// LP239:')), /Object\.entries\(GRIDLY_COUNTY_REGISTRY \|\| \{\}\)[\s\S]{0,100}countyFips/);
+  const lp149 = JSON.parse(read('data/lp149/runtime-county-registry.json'));
+  const sandbox = { window: {} };
+  vm.createContext(sandbox); vm.runInContext(identitySource, sandbox);
+  const runtimeIdentity = sandbox.window.gridlyRuntimeCountyIdentity;
+  assert.equal(runtimeIdentity.identityCount, lp149.identityCount);
+  assert.ok(lp149.identities.every(({ fips, countyId }) => runtimeIdentity.resolveFips(fips)?.countyId === countyId));
+  const cohort = {
+    Waskom: ['48203'], Texarkana: ['48037'], Katy: ['48157', '48201', '48473'],
+    Pearland: ['48039', '48157', '48201'], 'League City': ['48167', '48201']
+  };
+  for (const [name, fips] of Object.entries(cohort)) {
+    assert.deepEqual(fips.map(value => runtimeIdentity.resolveFips(value)?.countyId), {
+      Waskom: ['harrison-tx'], Texarkana: ['bowie-tx'], Katy: ['fort-bend-tx', 'harris-tx', 'waller-tx'],
+      Pearland: ['brazoria-tx', 'fort-bend-tx', 'harris-tx'], 'League City': ['galveston-tx', 'harris-tx']
+    }[name]);
+  }
 });
