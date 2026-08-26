@@ -18378,6 +18378,26 @@ function gridlyLp0517ResolveGovernedSelectedIdentity(record = {}) {
   if (!(community.countyMemberships || []).map(String).includes(countyFips)) return null;
   return Object.freeze({ countyId, countyFips, placeGeoid, county, community });
 }
+function gridlyLp240ResolveGovernedHomeIdentity(record = {}, area = null) {
+  const supportedArea = area || (record.awarenessAreaKey ? GRIDLY_AWARENESS_AREA_BY_KEY?.[record.awarenessAreaKey] : null);
+  const countyId = gridlyNormalizeCountyId(record.countyId || "");
+  const county = GRIDLY_COUNTY_REGISTRY?.[countyId] || null;
+  if (!supportedArea || !county || supportedArea !== GRIDLY_AWARENESS_AREA_BY_KEY?.[supportedArea.key]) return null;
+  if (record.awarenessAreaKey !== supportedArea.key || gridlyNormalizeCountyId(supportedArea.countyId || "") !== countyId) return null;
+
+  const governedPlace = gridlyLp0517ResolveGovernedSelectedIdentity(record);
+  if (governedPlace) return Object.freeze({ identityClass: "CANONICAL_PLACE", stableIdentity: governedPlace.placeGeoid, ...governedPlace });
+  if (supportedArea.countyWide === true || supportedArea.fallback === true || supportedArea.sanAntonioRegion === true) return null;
+  if (supportedArea.placeGeoid || supportedArea.canonicalCommunityIdentity === "PLACE_GEOID" || /^48\d{5}$/.test(String(supportedArea.communityId || ""))) return null;
+  if (!supportedArea.key || record.communityKey !== supportedArea.key || record.identityType || record.canonicalRegionId) return null;
+  const governedLabels = new Set([supportedArea.label, supportedArea.storageValue].filter(Boolean).map(String));
+  if (!governedLabels.has(String(record.consumerLabel || "")) || !governedLabels.has(String(record.communityLabel || record.consumerLabel || ""))) return null;
+  if (!supportedArea.source) return null;
+  if (Object.hasOwn(record, "lat") && Number(record.lat) !== Number(supportedArea.lat)) return null;
+  if (Object.hasOwn(record, "lng") && Number(record.lng) !== Number(supportedArea.lng)) return null;
+  if (Object.hasOwn(record, "radiusMiles") && Number(record.radiusMiles) !== Number(supportedArea.radiusMiles)) return null;
+  return Object.freeze({ identityClass: "GOVERNED_NON_PLACE", stableIdentity: `${countyId}:${supportedArea.key}`, countyId, county, area: supportedArea });
+}
 function gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity(record = {}) {
   if (record.identityType !== "PLACE_GEOID" || !/^48\d{5}$/.test(String(record.communityKey || ""))) return null;
   const placeGeoid = String(record.communityKey);
@@ -18399,9 +18419,10 @@ function gridlyLp0517ValidateHomeRecord(record = {}) {
   const zipValid = /^\d{5}$/.test(String(record.zip || ""));
   const countywideManual = area?.countyWide === true && record.resolutionStatus === "manual_countywide_confirmed" && !record.communityKey;
   const governedPlaceIdentity = record.resolutionStatus === "manual_confirmed" ? gridlyLp0517ResolveGovernedSelectedIdentity(record) : null;
+  const governedHomeIdentity = record.resolutionStatus === "manual_confirmed" ? gridlyLp240ResolveGovernedHomeIdentity(record, area) : null;
   const governedRegionIdentity = record.resolutionStatus === "manual_confirmed" ? gridlyLp194ResolveGovernedSelectedRegionIdentity(record) : null;
   const canonicalMultiCountyPlace = gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity(record);
-  const governedManualIdentity = governedPlaceIdentity || governedRegionIdentity || canonicalMultiCountyPlace;
+  const governedManualIdentity = governedHomeIdentity || governedPlaceIdentity || governedRegionIdentity || canonicalMultiCountyPlace;
   const areaCountyMatches = Boolean(area && gridlyNormalizeCountyId(area.countyId || "") === gridlyNormalizeCountyId(record.countyId || ""));
   const canonicalCountyId = canonicalMultiCountyPlace ? gridlyResolvePersistedCanonicalPlaceOperationalCounty(canonicalMultiCountyPlace.area, record) : null;
   const canonicalPlaceValid = Boolean(canonicalMultiCountyPlace && canonicalCountyId && record.awarenessAreaKey === `place-${record.communityKey}`);
@@ -18409,6 +18430,17 @@ function gridlyLp0517ValidateHomeRecord(record = {}) {
   return { valid, area: valid ? (canonicalMultiCountyPlace ? gridlyProjectCanonicalPlaceOperationalCounty(canonicalMultiCountyPlace.area, canonicalCountyId) : area) : null, selectedIdentity: valid ? governedManualIdentity : null, reason: valid ? "valid" : "invalid_home_personalization_record" };
 }
 function gridlyReadHomePersonalizationRecord() { try { const parsed = JSON.parse(localStorage.getItem(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY) || "null"); if (!parsed) return null; const validation = gridlyLp0517ValidateHomeRecord(parsed); if (!validation.valid) { gridlyLp0517IntegrationMetrics.invalidStoredRecords.push({ at: new Date().toISOString(), reason: validation.reason }); return null; } return parsed; } catch (error) { gridlyLp0517IntegrationMetrics.invalidStoredRecords.push({ at: new Date().toISOString(), reason: error?.message || String(error) }); return null; } }
+function gridlyGovernedHomeIdentityAcceptanceAudit(areaKey = "tarkington") {
+  const area = GRIDLY_AWARENESS_AREA_BY_KEY?.[String(areaKey || "")] || null;
+  if (!area) return Object.freeze({ supported: false, acceptedBySharedResolver: false, rehydrationAccepted: false, rejectionReason: "unsupported_awareness_area", firstLosingStage: "supported_record_lookup", passiveOnly: true });
+  const communityKey = area.sanAntonioRegion || area.countyWide ? null : (area.placeGeoid || area.communityId || area.key);
+  const record = gridlyBuildHomePersonalizationRecord({ countyId: area.countyId, countyName: gridlyLp0516CountyName(area.countyId), communityKey, communityLabel: area.label, awarenessAreaKey: area.key, consumerLabel: area.label, identityType: area.sanAntonioRegion ? "SAN_ANTONIO_CONSUMER_REGION" : null, canonicalRegionId: area.sanAntonioRegion ? area.key : null, resolutionStatus: area.countyWide ? "manual_countywide_confirmed" : "manual_confirmed" }, "acceptance_audit");
+  const validation = gridlyLp0517ValidateHomeRecord(record);
+  const rehydratedValidation = gridlyLp0517ValidateHomeRecord(JSON.parse(JSON.stringify(record)));
+  const identity = validation.selectedIdentity;
+  return Object.freeze({ supported: true, identityClass: identity?.identityClass || (area.sanAntonioRegion ? "SAN_ANTONIO_CONSUMER_REGION" : area.countyWide ? "COUNTY_WIDE" : area.fallback ? "FALLBACK" : null), stableIdentity: identity?.stableIdentity || null, countyAuthority: area.countyId, eligible: area.fallback !== true, acceptedBySharedResolver: validation.valid, rehydrationAccepted: rehydratedValidation.valid, rejectionReason: validation.valid ? null : validation.reason, firstLosingStage: validation.valid ? null : "gridlyLp0517ValidateHomeRecord", passiveOnly: true });
+}
+if (typeof window !== "undefined") window.gridlyGovernedHomeIdentityAcceptanceAudit = gridlyGovernedHomeIdentityAcceptanceAudit;
 function gridlyBuildHomePersonalizationRecord(selection = {}, method = "zip_confirmed") { return { zip: selection.zip, countyId: selection.countyId, countyName: selection.countyName, communityKey: selection.communityKey, communityLabel: selection.communityLabel, awarenessAreaKey: selection.awarenessAreaKey, consumerLabel: selection.consumerLabel, identityType: selection.identityType || null, canonicalRegionId: selection.canonicalRegionId || null, resolutionStatus: selection.resolutionStatus, resolutionMethod: method, sourceVersion: "LP051.7", confirmedAt: new Date().toISOString(), schemaVersion: GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION }; }
 let gridlyLp0517ApplyInFlight = false;
 function gridlyApplyConfirmedHomePersonalization(selectionInput = {}, options = {}) { if (gridlyLp0517ApplyInFlight) { gridlyLp0517IntegrationMetrics.duplicateApplyBlocked += 1; return { success: false, error: "duplicate_apply_blocked" }; } gridlyLp0517ApplyInFlight = true; const previous = { record: gridlySafeLocalStorageGet(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY), homeTown: gridlySafeLocalStorageGet("gridlyHomeTown"), settings: gridlySafeLocalStorageGet(GRIDLY_SETTINGS_STORAGE_KEY), profile: gridlySafeLocalStorageGet(GRIDLY_PROFILE_STORAGE_KEY), countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null }; try { const selection = gridlyLp0517NormalizeSelectedOption(selectionInput, options.resolverResult || {}, selectionInput.zip || options.zip || ""); const validation = gridlyLp0517ValidateHomeRecord({ ...gridlyBuildHomePersonalizationRecord(selection), schemaVersion: GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION }); if (!validation.valid) throw new Error("invalid_selected_identity"); gridlyBeginConfirmedCameraTransaction(validation.area, selection.countyId); const record = gridlyBuildHomePersonalizationRecord(selection, options.resolutionMethod || "zip_confirmed"); localStorage.setItem(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY, JSON.stringify(record)); gridlyLp0517IntegrationMetrics.canonicalHomeWrites += 1; gridlyLp0517IntegrationMetrics.productionSetupWrites += 1; gridlyLp0517RecordMetric("writeOperations", { key: GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY, kind: "canonical_home" }); const savedTown = saveGridlyHomeTownPreference(record.consumerLabel, { source: "lp0517_zip_personalization", preserveSemanticCamera: validation.area.countyWide !== true }); if (!savedTown) throw new Error("compatibility_setup_apply_failed"); gridlyLp0517IntegrationMetrics.compatibilitySetupWrites += 3; gridlyLp0517IntegrationMetrics.activeCountyUpdates += 1; gridlyLp0517IntegrationMetrics.activeCommunityUpdates += 1; gridlyLp0517IntegrationMetrics.activeAwarenessUpdates += 1; gridlyLp0517RecordMetric("stateTransitions", { toCountyId: record.countyId, toCommunityKey: record.communityKey, toAwarenessAreaKey: record.awarenessAreaKey }); let mapFocused = false;
