@@ -262,6 +262,27 @@ test('positive, authoritative zero, and unavailable transactions all render thro
   assert.match(unavailable, /Weather information unavailable/);
 });
 
+test('LP240.1I reconciles a reused empty snapshot only from proven current Weather authority', () => {
+  const stale = { activeConditionAuthorityAvailable: true, alertsFamilyAuthority: { weather: { checked: true, available: false, state: 'UNAVAILABLE' } } };
+  sandbox.window.gridlyGetWeatherRuntimeAuthorityEnvelope = () => ({
+    configured: true, requestAttempted: true, requestSucceeded: true, healthy: true,
+    freshEnoughForAuthority: true, canonicalGeographyResolved: true,
+    geographyAgreementPass: true, currentApplicableCount: 0
+  });
+  sandbox.window.gridlyLP240ClassifyWeatherAuthority = input => ({
+    weatherAuthorityState: 'QUIET',
+    quietProven: input.sourceConfigured && input.sourceRequestAttempted && input.sourceRequestSucceeded
+      && input.sourceHealthy && input.sourceFreshEnough && input.canonicalGeographyResolved
+      && input.geographyAgreementPass && input.currentApplicableCount === 0
+  });
+  assert.match(sandbox.renderLP236(stale, []), /data-gridly-lp236-source="weather"[^>]*data-gridly-lp236-authority-state="QUIET"[\s\S]*No active weather alerts/);
+
+  sandbox.window.gridlyLP240ClassifyWeatherAuthority = () => ({ weatherAuthorityState: 'UNAVAILABLE', quietProven: false });
+  assert.match(sandbox.renderLP236(stale, []), /data-gridly-lp236-source="weather"[^>]*data-gridly-lp236-authority-state="UNAVAILABLE"[\s\S]*Weather information unavailable/);
+  delete sandbox.window.gridlyGetWeatherRuntimeAuthorityEnvelope;
+  delete sandbox.window.gridlyLP240ClassifyWeatherAuthority;
+});
+
 test('audit recognizes mounted positive, zero, and unavailable LP236 states', () => {
   const root = {
     querySelector: () => null,

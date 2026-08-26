@@ -115438,8 +115438,32 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       { sourceClass: "weather", label: "Weather", provenance: "Governed weather alerts" }
     ];
     const familyAuthority = snapshot?.alertsFamilyAuthority || {};
+    // An empty Alerts snapshot may be reused while the point request moves
+    // from pending to a proven result.  For the Weather empty-state only,
+    // reconcile that compatibility envelope with the current governed
+    // authority.  Never infer QUIET from the empty presentation array.
+    const currentWeatherEnvelope = typeof window.gridlyGetWeatherRuntimeAuthorityEnvelope === "function"
+      ? window.gridlyGetWeatherRuntimeAuthorityEnvelope() : null;
+    const currentWeatherClassification = alerts.every((alert) => gridlyLP236SourceClass(alert) !== "weather")
+      && currentWeatherEnvelope && typeof window.gridlyLP240ClassifyWeatherAuthority === "function"
+      ? window.gridlyLP240ClassifyWeatherAuthority({
+        sourceConfigured: currentWeatherEnvelope.configured,
+        sourceRequestAttempted: currentWeatherEnvelope.requestAttempted,
+        sourceRequestSucceeded: currentWeatherEnvelope.requestSucceeded,
+        sourceHealthy: currentWeatherEnvelope.healthy,
+        sourceFreshEnough: currentWeatherEnvelope.freshEnoughForAuthority,
+        sourceError: currentWeatherEnvelope.error,
+        canonicalGeographyResolved: currentWeatherEnvelope.canonicalGeographyResolved,
+        geographyAgreementPass: currentWeatherEnvelope.geographyAgreementPass,
+        currentApplicableCount: currentWeatherEnvelope.currentApplicableCount
+      }) : null;
+    const weatherPresentationAuthority = currentWeatherClassification?.quietProven === true
+      ? { checked: true, available: true, state: "QUIET", reason: currentWeatherClassification.authorityReason }
+      : currentWeatherClassification?.weatherAuthorityState === "UNAVAILABLE"
+        ? { checked: true, available: false, state: "UNAVAILABLE", reason: currentWeatherClassification.authorityReason }
+        : familyAuthority.weather;
     const bySource = new Map(definitions.map((item) => {
-      const authority = familyAuthority[item.sourceClass] || { checked: false, available: false, reason: `${item.label} authority was not evaluated` };
+      const authority = (item.sourceClass === "weather" ? weatherPresentationAuthority : familyAuthority[item.sourceClass]) || { checked: false, available: false, reason: `${item.label} authority was not evaluated` };
       return [item.sourceClass, { ...item, groups: new Map(), activeConditionCount: 0, authorityChecked: authority.checked === true, authorityAvailable: authority.available === true, authorityReason: authority.reason || "authority unavailable", explicitAuthorityState: authority.state || null }];
     }));
     alerts.forEach((alert, index) => {
