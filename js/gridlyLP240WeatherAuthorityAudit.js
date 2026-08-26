@@ -279,8 +279,10 @@
     const communitySelection = describeCommunitySpatialSelection({ selected });
 
     const connectorRecords = safeCall(connector?.getNormalizedRecords) || [];
-    const weatherDom = globalScope.document?.querySelector?.('[data-gridly-lp236-source="weather"]') || null;
-    const presentationCount = Number(weatherDom?.dataset?.gridlyLp236Count ?? alertsAudit.weatherRenderedCount ?? 0) || 0;
+    const weatherDoms = Array.from(globalScope.document?.querySelectorAll?.('[data-gridly-lp236-source="weather"]') || []);
+    const weatherDom = weatherDoms.find((node) => node.querySelector?.('[data-gridly-lp236-condition-id]')) || weatherDoms[0] || null;
+    const displayedWeatherNodes = Array.from(weatherDom?.querySelectorAll?.('[data-gridly-lp236-condition-id]') || []);
+    const presentationCount = displayedWeatherNodes.length || Number(weatherDom?.dataset?.gridlyLp236Count ?? alertsAudit.weatherRenderedCount ?? 0) || 0;
     const presentationText = text(weatherDom?.textContent);
     const envelope = getWeatherAuthorityEnvelope({ provider, providerRuntime, connectorRuntime: connectorAudit, snapshot, selected, canonical, geographyAgreementPass: governedGeometry.available });
     const sourceConfigured = envelope.configured;
@@ -297,8 +299,10 @@
       canonicalGeographyResolved, geographyAgreementPass, currentApplicableCount,
       presentationCount, presentationEmptyState: presentationText
     });
-    const alertsWeatherInputCount = Number(alertsAudit.weatherInputCount || 0);
-    const alertsWeatherPublishedCount = Number(alertsAudit.weatherConditionCount ?? alertsWeatherInputCount) || 0;
+    const alertsStages = globalScope.__gridlyLp2194AlertStages || {};
+    const isWeather = (record) => text(record?.sourceKind).toLowerCase() === "weather_provider";
+    const alertsWeatherInputCount = Array.isArray(alertsStages.presentationCandidates) ? alertsStages.presentationCandidates.filter(isWeather).length : Number(alertsAudit.weatherInputCount || 0);
+    const alertsWeatherPublishedCount = Array.isArray(alertsStages.finalAlertData) ? alertsStages.finalAlertData.filter(isWeather).length : Number(alertsAudit.weatherConditionCount ?? alertsWeatherInputCount) || 0;
     const selectedContextIdentity = connectorAudit.currentAwarenessIdentity || null;
     const requestIdentity = connectorAudit.pointRequestIdentity || null;
     const responseIdentity = connectorAudit.responseIdentity || null;
@@ -428,6 +432,13 @@
       alertsWeatherInputCount,
       alertsWeatherPublishedCount,
       alertsWeatherDisplayedCount: presentationCount,
+      alertsWeatherDomIdentityCount: new Set(displayedWeatherNodes.map((node) => node?.dataset?.gridlyLp236ConditionId).filter(Boolean)).size,
+      weatherEvent: consumer?.consumerVisibleSituations?.[0]?.event || consumer?.consumerVisibleSituations?.[0]?.title || null,
+      weatherDisplayLabel: text(weatherDom?.querySelector?.('[data-gridly-weather-event="true"]')?.textContent) || null,
+      alertsDetailEvent: text(weatherDom?.querySelector?.('[data-gridly-weather-event="true"]')?.textContent) || null,
+      alertsDetailTiming: text(weatherDom?.querySelector?.('[data-gridly-weather-timing="true"]')?.textContent) || null,
+      alertsDetailSource: text(weatherDom?.querySelector?.('[data-gridly-weather-source="true"]')?.textContent) || null,
+      kbygWeatherSummary: text(globalScope.document?.querySelector?.('[data-gridly-travel-brief-section="weather"]')?.textContent) || null,
       ...classification,
       presentationCount,
       presentationEmptyState: presentationText || null,
