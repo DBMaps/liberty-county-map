@@ -98,6 +98,12 @@ const sampleJsonLd = {
     providerActivated: false,
     renderingPerformed: false,
     normalizedRecordCount: 0,
+    requestAttempted: false,
+    requestSucceeded: false,
+    lastRequestAt: null,
+    lastSuccessAt: null,
+    lastFailureAt: null,
+    lastError: null,
     refreshIntervalMs: 120000
   }));
 
