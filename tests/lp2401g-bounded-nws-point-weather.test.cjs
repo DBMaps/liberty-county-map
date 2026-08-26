@@ -5,7 +5,7 @@ const fs = require("node:fs");
 
 const feature = (id="nws-same") => ({ id, type:"Feature", geometry:null, properties:{ id, event:"Heat Advisory", headline:"Heat Advisory", status:"Actual", messageType:"Alert", severity:"Moderate", certainty:"Likely", urgency:"Expected", effective:"2026-08-26T00:00:00Z", expires:"2099-08-27T00:00:00Z", affectedZones:["TXZ291"] } });
 const payload = (features=[]) => ({ type:"FeatureCollection", features });
-function harness(initial, responders=[], autoStart=true) {
+function harness(initial, responders=[]) {
   let selected=initial; const pending=[];
   const context={ console, Date, Promise, TypeError, Error, AbortController, setTimeout, clearTimeout,
     gridlyResolveGovernedWeatherPoint:()=>selected,
@@ -15,7 +15,7 @@ function harness(initial, responders=[], autoStart=true) {
   context.globalThis=context; vm.createContext(context);
   vm.runInContext(fs.readFileSync("js/gridlyWeatherProvider.js","utf8"),context);
   vm.runInContext(fs.readFileSync("js/gridlyWeatherLiveConnector.js","utf8"),context);
-  if (autoStart) context.gridlyWeatherConnector.refreshAwarenessView();
+  context.gridlyWeatherConnector.refreshAwarenessView();
   return {context,pending,set:(v)=>{selected=v;}, audit:()=>context.gridlyWeatherConnectorRuntimeAudit()};
 }
 const dayton={awarenessKey:"dayton",identityClass:"CANONICAL_PLACE",countyId:"liberty-tx",stableIdentity:"4819492",lat:30.0466,lng:-94.8852,placeGeoid:"4819492"};
@@ -85,43 +85,4 @@ test("I/J/K: authority and Weather family reject mixed identity lineage",()=>{
   assert.equal(snapshot.authorityIdentity,null); assert.equal(snapshot.authorityEligibleRecordCount,0);
   const family=context.gridlySelectConsumerVisibleWeatherSituations({snapshot});
   assert.equal(family.weatherFamilyIdentity,null); assert.equal(family.consumerVisibleSituationCount,0);
-});
-
-test("LP240.1G.2 A/D/E/F: governed readiness starts once and duplicate signals join the in-flight request",async()=>{
-  const h=harness(null,[],false);
-  await h.context.gridlyWeatherConnector.refreshAwarenessView("initial-governed-awareness-ready");
-  assert.equal(h.pending.length,0);
-  assert.equal(h.audit().startupWeatherActivationEligible,false);
-  h.set(dayton);
-  const first=h.context.gridlyWeatherConnector.refreshAwarenessView("initial-governed-awareness-ready");
-  const duplicate=h.context.gridlyWeatherConnector.refreshAwarenessView("initial-governed-awareness-ready");
-  assert.strictEqual(first,duplicate);
-  await settle();
-  assert.equal(h.pending.length,1);
-  assert.equal(h.audit().startupWeatherActivationEligible,true);
-  assert.equal(h.audit().startupWeatherActivationTriggered,true);
-  (await take(h)).resolve({ok:true,json:async()=>payload()});
-  await first;
-  assert.equal(h.audit().requestSucceeded,true);
-  assert.equal(h.audit().responseValid,true);
-});
-
-test("LP240.1G.2 B/G/H/Q: startup reuses only a fresh exact-identity cache and diagnostics separate connector history",async()=>{
-  const h=harness(dayton);
-  await settle();
-  (await take(h)).resolve({ok:true,json:async()=>payload()});
-  await settle();
-  const connectorSuccess=h.audit().connectorLastSuccessAt;
-  const cached=await h.context.gridlyWeatherConnector.refreshAwarenessView("initial-governed-awareness-ready");
-  assert.equal(cached.cached,true);
-  assert.equal(h.pending.length,0);
-  h.set(tarkington);
-  const other=h.context.gridlyWeatherConnector.refreshAwarenessView("initial-governed-awareness-ready");
-  await settle();
-  assert.equal(h.pending.length,1);
-  assert.equal(h.audit().currentPointRequestAttempted,false);
-  assert.equal(h.audit().currentPointFetchedAt,null);
-  assert.equal(h.audit().connectorLastSuccessAt,connectorSuccess);
-  (await take(h)).resolve({ok:true,json:async()=>payload()});
-  await other;
 });

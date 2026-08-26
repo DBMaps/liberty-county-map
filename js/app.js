@@ -46791,25 +46791,11 @@ function gridlyResolveGovernedWeatherPoint(selected = null) {
   const countyId = area.countyId || registered?.countyId || null;
   return Object.freeze({ awarenessKey, identityClass, countyId, stableIdentity: canonicalPlace || `${countyId}:${awarenessKey}`, lat, lng, placeGeoid: canonicalPlace || null });
 }
-let gridlyWeatherReadinessScheduled = false;
-function gridlySignalGovernedWeatherReadiness(reason = "governed-awareness-ready") {
-  if (gridlyWeatherReadinessScheduled) return;
-  gridlyWeatherReadinessScheduled = true;
-  const run = () => {
-    gridlyWeatherReadinessScheduled = false;
-    if (!gridlyResolveGovernedWeatherPoint()) return;
-    window.gridlyWeatherConnector?.refreshAwarenessView?.(reason);
-  };
-  if (typeof window.queueMicrotask === "function") window.queueMicrotask(run);
-  else Promise.resolve().then(run);
-}
 if (typeof window !== "undefined") {
   window.gridlyResolveGovernedWeatherPoint = gridlyResolveGovernedWeatherPoint;
-  window.gridlySignalGovernedWeatherReadiness = gridlySignalGovernedWeatherReadiness;
-  // Resolve the rehydrated selection through its existing owner, then hand off
-  // readiness without a timer or a parallel startup lifecycle.
-  getGridlySelectedAwarenessArea();
-  gridlySignalGovernedWeatherReadiness("initial-governed-awareness-ready");
+  // One readiness activation after the governed resolver exists; subsequent
+  // requests are identity-change/cache-expiry/explicit-refresh driven.
+  window.setTimeout?.(() => window.gridlyWeatherConnector?.refreshAwarenessView?.("initial-governed-awareness-ready"), 0);
 }
 
 function getGridlySelectedAwarenessArea() {
@@ -46835,7 +46821,7 @@ function getGridlySelectedAwarenessArea() {
     const identityChanged = gridlySelectedAwarenessAreaResolutionCache.signature !== projectedSignature;
     gridlySelectedAwarenessAreaResolutionCache.signature = projectedSignature;
     gridlySelectedAwarenessAreaResolutionCache.area = projectedArea;
-    if (identityChanged) gridlySignalGovernedWeatherReadiness("canonical-place-awareness-resolved");
+    if (identityChanged) window.setTimeout?.(() => window.gridlyWeatherConnector?.refreshAwarenessView?.("canonical-place-awareness-resolved"), 0);
     return projectedArea;
   }
   const community = typeof getGridlySettingsPreferences === "function" ? (getGridlySettingsPreferences()?.community || {}) : {};
@@ -46859,7 +46845,7 @@ function getGridlySelectedAwarenessArea() {
   gridlySelectedAwarenessAreaResolutionCache.area = area;
   gridlySelectedAwarenessAreaResolutionCache.resolverCalls = Number(gridlySelectedAwarenessAreaResolutionCache.underlyingResolverCalls || 0);
   try { if (window.__gridlyDriveTexasAwarenessDerivationActive !== true && typeof window.gridlyDriveTexasConnector?.refreshAwarenessView === "function") window.gridlyDriveTexasConnector.refreshAwarenessView("awareness-area-resolved"); } catch (_error) {}
-  try { gridlySignalGovernedWeatherReadiness("awareness-area-resolved"); } catch (_error) {}
+  try { window.gridlyWeatherConnector?.refreshAwarenessView?.("awareness-area-resolved"); } catch (_error) {}
   return area;
 }
 
