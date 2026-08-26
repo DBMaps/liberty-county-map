@@ -124564,7 +124564,13 @@ function gridlyMultiCountyConsumerConvergenceAudit() {
   const officialAudit = typeof window.gridlyLP235AlertsCanonicalSourceAudit === "function" ? window.gridlyLP235AlertsCanonicalSourceAudit() : null;
   const officialAuthorityAvailable = Boolean(projection && officialAudit?.authorityAvailable !== false);
 
-  const crossing = window.gridlyCanonicalCrossingRuntime?.resolveRecords?.(area) || null;
+  // The LP233 runtime accepts canonical identity, not a lossy selected-area
+  // projection.  Production may rejoin that projection for the watched-count
+  // selector (and falls back to the active county for marker input), but an
+  // audit must not pass the thin projection directly and misreport the loaded
+  // canonical authority as empty.  Reuse the already-resolved LP201 GEOID.
+  const crossingIdentity = canonicalPlaceId ? Object.freeze({ placeGeoid: canonicalPlaceId }) : null;
+  const crossing = crossingIdentity ? window.gridlyCanonicalCrossingRuntime?.resolveRecords?.(crossingIdentity) || null : null;
   const crossingInventoryCountByCounty = Object.fromEntries(membershipCountyIds.map((id) => [id, 0]));
   const crossingIds = [];
   (crossing?.records || []).forEach((record) => {
@@ -124572,7 +124578,22 @@ function gridlyMultiCountyConsumerConvergenceAudit() {
     if (id in crossingInventoryCountByCounty) crossingInventoryCountByCounty[id] += 1;
     if (identity) crossingIds.push(identity);
   });
+  const crossingAuthorityOwner = "gridlyCanonicalCrossingRuntime.resolveRecords(canonical PLACE GEOID)";
   const crossingAuthorityAvailable = Boolean(crossing?.authorityAvailable);
+  const crossingAuthorityReason = crossingAuthorityAvailable ? null
+    : !canonicalPlaceId ? "CANONICAL_PLACE_UNRESOLVED"
+      : !window.gridlyCanonicalCrossingRuntime ? "CANONICAL_CROSSING_RUNTIME_UNAVAILABLE"
+        : (crossing?.reason || "CANONICAL_CROSSING_AUTHORITY_UNRESOLVED");
+  const crossingCanonicalInventoryCount = crossingIds.length;
+  // These are observations of the two independent production consumers. They
+  // are deliberately not used as substitutes for canonical PLACE inventory.
+  const watchedCrossings = typeof gridlySelectConsumerVisibleCrossings === "function"
+    ? gridlySelectConsumerVisibleCrossings(area) : [];
+  const crossingWatchedCount = watchedCrossings.length;
+  const crossingRenderedMarkerCount = crossingMarkers instanceof Map ? crossingMarkers.size : 0;
+  const crossingAuthorityAgreementPass = Boolean(crossingAuthorityAvailable
+    && crossingCanonicalInventoryCount > 0
+    && crossing?.membership?.placeGeoid === canonicalPlaceId);
 
   const presentation = canonicalPlaceId ? resolveGridlyCanonicalPlacePresentationFocus({ placeGeoid: canonicalPlaceId }) : null;
   const weatherAuthority = presentation ? "canonical PLACE presentation coordinate -> existing provider point/polygon/zone geography" : "UNAVAILABLE";
@@ -124582,12 +124603,12 @@ function gridlyMultiCountyConsumerConvergenceAudit() {
     .filter((row) => !isGridlyCrossingReportRecord(row));
   const communityReportCountyIds = [...new Set(communityRows.map(countyIdForRecord).filter((id) => membershipCountyIds.includes(id)))].sort();
   const missingOfficialRoadwayMemberships = officialAuthorityAvailable ? [] : [...membershipCountyIds];
-  const missingCrossingMemberships = crossingAuthorityAvailable ? [] : [...membershipCountyIds];
+  const missingCrossingMemberships = crossingAuthorityAgreementPass ? [] : [...membershipCountyIds];
   const missingWeatherMemberships = weatherAuthorityAvailable ? [] : [...membershipCountyIds];
   const duplicateOfficialRoadwayIds = duplicates(officialIds);
   const duplicateCrossingIds = duplicates(crossingIds);
   const canonicalPlaceConsumerConvergencePass = Boolean(canonicalPlaceId && membershipAuthorityAvailable
-    && officialAuthorityAvailable && crossingAuthorityAvailable && weatherAuthorityAvailable
+    && officialAuthorityAvailable && crossingAuthorityAvailable && crossingAuthorityAgreementPass && weatherAuthorityAvailable
     && !missingOfficialRoadwayMemberships.length && !missingCrossingMemberships.length && !missingWeatherMemberships.length
     && !duplicateOfficialRoadwayIds.length && !duplicateCrossingIds.length);
   return Object.freeze({
@@ -124599,8 +124620,11 @@ function gridlyMultiCountyConsumerConvergenceAudit() {
     officialRoadwayCountyIds: Object.freeze([...membershipCountyIds]), officialRoadwayMembershipCount: membershipCountyIds.length,
     officialRoadwayCandidatesByCounty: Object.freeze(officialRoadwayCandidatesByCounty), officialRoadwayInputCount: officialRows.length,
     officialRoadwayCanonicalPlaceInputCount: officialRows.length, crossingCountyIds: Object.freeze([...membershipCountyIds]),
-    crossingInventoryCountByCounty: Object.freeze(crossingInventoryCountByCounty), crossingCombinedInventoryCount: crossingIds.length,
-    crossingCombinedCanonicalPlaceInventoryCount: crossingIds.length, weatherAuthority, weatherMembershipScope: "canonical PLACE presentation plus existing provider geography",
+    crossingAuthorityOwner, crossingAuthorityAvailable, crossingAuthorityReason,
+    crossingCanonicalInventoryCount, crossingWatchedCount, crossingRenderedMarkerCount,
+    crossingAuthorityAgreementPass,
+    crossingInventoryCountByCounty: Object.freeze(crossingInventoryCountByCounty), crossingCombinedInventoryCount: crossingCanonicalInventoryCount,
+    crossingCombinedCanonicalPlaceInventoryCount: crossingCanonicalInventoryCount, weatherAuthority, weatherMembershipScope: "canonical PLACE presentation plus existing provider geography",
     weatherCountyIds: Object.freeze([...membershipCountyIds]), weatherCountyIdsConsidered: Object.freeze([...membershipCountyIds]), communityReportCountyIds: Object.freeze(communityReportCountyIds),
     missingOfficialRoadwayMemberships: Object.freeze(missingOfficialRoadwayMemberships), missingCrossingMemberships: Object.freeze(missingCrossingMemberships),
     missingWeatherMemberships: Object.freeze(missingWeatherMemberships), duplicateOfficialRoadwayIds: Object.freeze(duplicateOfficialRoadwayIds),
