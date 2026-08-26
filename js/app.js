@@ -86573,6 +86573,10 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   gridlyLP238LastSubmissionLocation = {
     submissionId: null,
     hazardType,
+    canonicalCommunitySource: "gridlyGetReportSubmissionCommunityMetadata.communityName",
+    canonicalCommunityValue: detailLocationMetadata.communityName || null,
+    activeCountySource: "gridlyGetReportSubmissionCountyScopedMetadata.county_id",
+    activeCountyValue: countyScopedReportMetadata.county_id,
     selectedRoadValue: locationPayload.roadName || locationPayload.primaryRoad || locationPayload.crossStreet || locationPayload.referenceRoadA || null,
     selectedRoadAuthority: locationPayloadResult.audit?.selectedRoadAuthority || "NO_STRUCTURED_ROAD_AUTHORITY",
     crossStreet: locationPayload.crossStreet || null,
@@ -123135,19 +123139,56 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
     const row = locationRecord(record);
     return clean(row.selectedRoadName || row.roadName || row.routeName || row.street || row.streetName || row.primaryRoad || row.crossStreet || row.referenceRoadA);
   };
-  const state = options.lastSubmission || gridlyLP238LastSubmissionLocation;
+  // Resolve context before inspecting submission evidence.  In particular, a
+  // missing LP238 submission must not make this audit fall back to the mutable
+  // active-county runtime.  The governed audit is the canonical-community
+  // owner used to scope the community-facing submission experience; the
+  // report writer independently derives persistence county/community metadata
+  // from the submitted coordinate.
+  const governedSnapshot = options.governedSnapshot || (typeof gridlyGovernedAwarenessAudit === "function"
+    ? gridlyGovernedAwarenessAudit({ reason: "lp238-passive-audit" }) : null);
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const governedCanonicalCommunity = clean(governedSnapshot?.canonicalCommunity) || null;
+  const authorityAvailable = Boolean(governedSnapshot && governedSnapshot.available !== false && governedCanonicalCommunity);
+  const authorityReason = authorityAvailable ? null : (governedSnapshot?.reason || "GOVERNED_CANONICAL_COMMUNITY_UNAVAILABLE");
+  const canonicalCommunity = governedCanonicalCommunity;
+  const canonicalCommunityAuthority = authorityAvailable ? "gridlyGovernedAwarenessAudit.canonicalCommunity" : null;
+  const selectedMembershipCounty = clean(options.selectedMembershipCounty ?? selected?.countyId) || null;
+  const selectedMembershipAuthority = selectedMembershipCounty
+    ? (Object.prototype.hasOwnProperty.call(options, "selectedMembershipCounty") ? "options.selectedMembershipCounty" : "getGridlySelectedAwarenessArea.countyId") : null;
+  const authoritativeMembershipCounty = clean(options.authoritativeMembershipCounty ?? selectedMembershipCounty) || null;
+  const authoritativeMembershipAuthority = authoritativeMembershipCounty
+    ? (Object.prototype.hasOwnProperty.call(options, "authoritativeMembershipCounty") ? "options.authoritativeMembershipCounty" : selectedMembershipAuthority) : null;
+  const activeCounty = clean(governedSnapshot?.countyId) || null;
+  const activeCountyAuthority = activeCounty ? "gridlyGovernedAwarenessAudit.countyId" : null;
+  const state = Object.prototype.hasOwnProperty.call(options, "lastSubmission") ? options.lastSubmission : gridlyLP238LastSubmissionLocation;
+  const submissionContextValue = clean(options.submissionContextValue ?? state?.canonicalCommunityValue ?? canonicalCommunity) || null;
+  const submissionContextSource = Object.prototype.hasOwnProperty.call(options, "submissionContextValue")
+    ? "options.submissionContextValue" : (state?.canonicalCommunityValue ? (state.canonicalCommunitySource || "gridlyGetReportSubmissionCommunityMetadata.communityName") : canonicalCommunityAuthority);
+  const contextAlignmentPass = authorityAvailable ? submissionContextValue === canonicalCommunity : null;
+  const context = {
+    authorityAvailable, authorityReason,
+    canonicalCommunity, canonicalCommunityAuthority,
+    canonicalCommunitySource: canonicalCommunityAuthority, canonicalCommunityValue: canonicalCommunity,
+    selectedMembershipCounty, selectedMembershipAuthority,
+    selectedMembershipSource: selectedMembershipAuthority, selectedMembershipValue: selectedMembershipCounty,
+    authoritativeMembershipCounty, authoritativeMembershipAuthority,
+    authoritativeMembershipSource: authoritativeMembershipAuthority, authoritativeMembershipValue: authoritativeMembershipCounty,
+    activeCounty, activeCountyAuthority,
+    activeCountySource: activeCountyAuthority, activeCountyValue: activeCounty,
+    submissionContextSource, submissionContextValue,
+    contextAlignmentPass
+  };
   if (!state) return Object.freeze({
-    canonicalCommunity: null, activeCounty: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null,
-    lastSubmission: null, submissionLocationCapturePass: null, persistenceLocationPass: null,
-    governedLocationPass: null, overallPass: null, status: "NO_SUBMISSION_OBSERVED", passiveOnly: true
+    ...context, lastSubmission: null, submissionLocationCapturePass: null, persistenceLocationPass: null,
+    governedLocationPass: null, overallPass: contextAlignmentPass === false ? false : null,
+    status: contextAlignmentPass === false ? "CONTEXT_MISMATCH" : "NOT_TESTED", passiveOnly: true
   });
   const submissionId = clean(state.submissionId);
   const submissionRoad = clean(state.selectedRoadValue) || roadOf(state.submissionPayload);
   const payloadRoad = roadOf(state.submissionPayload);
   const acceptedLocalRoad = roadOf(state.acceptedLocal);
   const persistedRoad = roadOf(state.persistencePayload);
-  const governedSnapshot = options.governedSnapshot || (typeof gridlyGovernedAwarenessAudit === "function"
-    ? gridlyGovernedAwarenessAudit({ reason: "lp238-passive-audit" }) : null);
   const governed = (governedSnapshot?.evidence || []).find((row) => {
     const ids = [row?.evidenceId, row?.canonicalReportIdentity, row?.persistedReportId, ...(row?.aliasCandidates || row?.aliases || [])].map(clean);
     return submissionId && ids.some((id) => id === submissionId || id.endsWith(`:${submissionId}`));
@@ -123167,12 +123208,14 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
     : payloadRoad && !acceptedLocalRoad ? "PAYLOAD_TO_ACCEPTED_LOCAL"
       : payloadRoad && !persistedRoad ? "PAYLOAD_TO_PERSISTENCE"
         : persistedRoad && !governedRoad ? "PERSISTENCE_TO_GOVERNED_EVIDENCE" : null;
-  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   const result = Object.freeze({
-    canonicalCommunity: selected?.displayName || selected?.label || selected?.storageValue || null,
-    activeCounty: governedSnapshot?.countyId || (typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null),
+    ...context,
     lastSubmission: Object.freeze({
       submissionId: submissionId || null, hazardType: state.hazardType || null,
+      canonicalCommunitySource: state.canonicalCommunitySource || null,
+      canonicalCommunityValue: state.canonicalCommunityValue || null,
+      activeCountySource: state.activeCountySource || null,
+      activeCountyValue: state.activeCountyValue || null,
       structuredRoadAuthorityAvailable, selectedRoadValue: submissionRoad || null,
       selectedRoadAuthority: structuredRoadAuthorityAvailable ? (state.selectedRoadAuthority || "selected_road") : "NO_STRUCTURED_ROAD_AUTHORITY",
       crossStreet: state.crossStreet || null, resolvedLocation: state.resolvedLocation || null,
@@ -123181,7 +123224,7 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
       firstLocationLosingStage
     }),
     submissionLocationCapturePass, persistenceLocationPass, governedLocationPass,
-    overallPass: submissionLocationCapturePass && persistenceLocationPass && governedLocationPass,
+    overallPass: contextAlignmentPass !== false && submissionLocationCapturePass && persistenceLocationPass && governedLocationPass,
     status: structuredRoadAuthorityAvailable ? "STRUCTURED_ROAD_AUTHORITY_CAPTURED" : "NO_STRUCTURED_ROAD_AUTHORITY",
     passiveOnly: true
   });
