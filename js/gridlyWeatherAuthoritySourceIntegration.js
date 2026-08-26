@@ -185,11 +185,20 @@
       id: text(record?.providerRecordId || record?.id || record?.eventId) || title,
       providerRecordId: text(record?.providerRecordId || record?.id || record?.eventId) || null,
       title,
+      // LP240.1H: these are presentation evidence, not new authority.  Keep the
+      // official NWS fields beside the governed identity so downstream
+      // consumers do not have to recover them from prose or raw payloads.
+      event: text(record?.event) || null,
+      headline: text(record?.headline) || null,
       summary: text(record?.description || record?.summary || record?.instruction || record?.areaDescription) || location.phrase,
+      description: text(record?.description || record?.summary) || null,
+      instruction: text(record?.instruction) || null,
+      senderName: text(record?.senderName || record?.office) || null,
       locationLabel: location.label,
       locationPhrase: location.phrase,
       localityPrecision: location.precise ? "specific" : "area",
       effectiveTime: record?.effectiveTime || record?.onsetTime || record?.sentTime || null,
+      onsetTime: record?.onsetTime || null,
       expirationTime: record?.expirationTime || null,
       authority: freeze(clone(record?.authority || {}) || {})
     });

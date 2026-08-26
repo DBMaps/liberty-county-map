@@ -2794,6 +2794,11 @@ function gridlyBriefInteractionWeatherFromAuthority() {
     title: first.title,
     headline: first.title,
     event: first.title,
+    expirationTime: first.expirationTime || null,
+    effectiveTime: first.effectiveTime || null,
+    senderName: first.senderName || null,
+    description: first.description || first.summary || null,
+    instruction: first.instruction || null,
     sourceName: "gridlySelectConsumerVisibleWeatherSituations",
     authorityOwned: true,
     consumerVisibleSituationCount: consumer.consumerVisibleSituationCount
@@ -4455,7 +4460,10 @@ function gridlyTravelBriefWeatherLines(weather, completeness = gridlyGetAwarenes
   if (!impact) return completeness.canStateNoWeatherImpact ? ["No travel-impacting weather."] : [];
   const alert = gridlyTravelBriefCleanLine(weather?.alertTitle || weather?.event || weather?.headline || weather?.title || "");
   const lines = [];
-  if (alert && gridlyBriefInteractionLooksLikeWeatherAlert(alert)) lines.push(alert);
+  if (alert && gridlyBriefInteractionLooksLikeWeatherAlert(alert)) {
+    const timing = typeof window.gridlyWeatherTravelerTiming === "function" ? window.gridlyWeatherTravelerTiming(weather, { includeZone: false }) : "";
+    lines.push(`${alert}${timing ? ` ${timing.toLowerCase()}` : " active"}`);
+  }
   lines.push(gridlyTravelBriefCleanLine(impact.detail || impact.situation || "Weather may affect travel."));
   return [...new Set(lines.filter(Boolean))].slice(0, 2);
 }
@@ -115312,7 +115320,37 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       .replace(/\s*·\s*(?:·\s*)+/g, " · ").replace(/\s+/g, " ").trim();
   }
 
+  function gridlyWeatherDisplayLabel(alert = {}) {
+    const event = gridlyLP236SafeProviderText(alert?.event);
+    return event && !/^(?:hazard|weather|weather alert|alert)$/i.test(event) ? event : "Weather Alert";
+  }
+
+  function gridlyWeatherTravelerTiming(alert = {}, options = {}) {
+    const raw = pickFirstNonEmptyText([alert?.expirationTime, alert?.expires, alert?.endsAt, alert?.endTime]);
+    const instant = Date.parse(raw || "");
+    if (!Number.isFinite(instant)) return "Active";
+    const formatted = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Chicago", hour: "numeric", minute: "2-digit",
+      ...(options.includeZone === false ? {} : { timeZoneName: "short" })
+    }).format(new Date(instant)).replace(":00 ", " ");
+    return `Until ${formatted}`;
+  }
+
+  function gridlyWeatherDetailParts(alert = {}) {
+    const clean = gridlyLP236SafeProviderText(alert?.description || alert?.summary);
+    if (!clean) return [];
+    const marked = clean.match(/(?:^|\s)(?:\*\s*)?(WHAT|IMPACTS?)\s*\.\.\.\s*([\s\S]*?)(?=(?:\s)(?:\*\s*)?(?:WHERE|WHEN|IMPACTS?|PRECAUTIONARY|ADDITIONAL)\s*\.\.\.|$)/gi) || [];
+    const parts = (marked.length ? marked : clean.split(/(?<=[.!?])\s+/).slice(0, 2))
+      .map((part) => part.replace(/^\s*\*?\s*(?:WHAT|IMPACTS?)\s*\.\.\.\s*/i, "").trim())
+      .filter(Boolean).map((part) => part.length > 180 ? `${part.slice(0, 177).trimEnd()}…` : part);
+    return [...new Set(parts)].slice(0, 2);
+  }
+  window.gridlyWeatherDisplayLabel = gridlyWeatherDisplayLabel;
+  window.gridlyWeatherTravelerTiming = gridlyWeatherTravelerTiming;
+  window.gridlyWeatherDetailParts = gridlyWeatherDetailParts;
+
   function gridlyLP236ConciseCondition(alert, sourceClass) {
+    if (sourceClass === "weather") return gridlyWeatherDisplayLabel(alert);
     const governed = pickFirstNonEmptyText([alert?.conciseSummary, alert?.conditionSummary, alert?.presentationCondition, alert?.category, alert?.type]);
     const clean = gridlyLP236SafeProviderText(governed);
     if (clean) return clean.length > 72 ? `${clean.slice(0, 69).trimEnd()}…` : clean;
@@ -115591,7 +115629,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const governedFallbackLocation = canonical.locationLabel || pickFirstNonEmptyText([alert?.locationName, alert?.location, alert?.subtitle]) || title;
       const clue = gridlyLP236LocationClue(alert, roadway);
       const communityLocation = source.sourceClass === "community_report" && typeof gridlyResolveCommunityTravelerLocation === "function" ? gridlyResolveCommunityTravelerLocation(alert) : null;
-      const primaryLocation = insideRoadwayGroup ? (clue ? `near ${clue}` : "") : (communityLocation?.value || roadway || governedFallbackLocation);
+      const weatherLocation = source.sourceClass === "weather" ? `${pickFirstNonEmptyText([alert?.locationLabel, alert?.locality, governedFallbackLocation]) || "Selected"} area` : "";
+      const primaryLocation = weatherLocation || (insideRoadwayGroup ? (clue ? `near ${clue}` : "") : (communityLocation?.value || roadway || governedFallbackLocation));
       const secondaryLocation = !insideRoadwayGroup && roadway && clue ? `near ${clue}` : "";
       const condition = gridlyLP236ConciseCondition(alert, source.sourceClass);
       const summarySentence = gridlyLP236SummarySentence(alert, condition);
@@ -115600,13 +115639,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       // the governed summary text and its authority remain unchanged.
       const presentedSummarySentence = summarySentence.replace(/^(?:[-–—•]\s+)+/, "");
       const governedTiming = pickFirstNonEmptyText([alert?.freshnessLabel, alert?.timingLabel, alert?.updatedLabel, alert?.minutesText, alert?.updatedAt]);
-      const timing = governedTiming || (alert?.startTime ? `Starts ${alert.startTime}` : (alert?.endTime ? `Until ${alert.endTime}` : ""));
+      const timing = source.sourceClass === "weather" ? gridlyWeatherTravelerTiming(alert) : (governedTiming || (alert?.startTime ? `Starts ${alert.startTime}` : (alert?.endTime ? `Until ${alert.endTime}` : "")));
+      const weatherSource = source.sourceClass === "weather" ? gridlyLP236SafeProviderText(alert?.senderName || alert?.office || alert?.provider) : "";
+      const weatherDetails = source.sourceClass === "weather" ? gridlyWeatherDetailParts(alert) : [];
       const crossingTarget = gridlyLp0952ResolveCrossingAlertTarget(alert, null);
       const { lat, lng } = gridlyLP236MapTarget(alert, crossingTarget, row.canonicalId);
       const coords = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${sanitizeText(lat)}" data-gridly-alert-lng="${sanitizeText(lng)}"` : "";
       const accessibleLocation = primaryLocation || roadway || governedFallbackLocation;
       return `<article class="gridly-lp236-condition gridly-lp236-condition-item" data-gridly-lp236-condition-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-title="${sanitizeText(title)}" data-gridly-alert-location="${sanitizeText(accessibleLocation)}" data-gridly-alert-condition="${sanitizeText(condition)}"${gridlyLp0952AlertCardInteractionAttributes(crossingTarget.crossingId, sanitizeText)}${coords}>
-        <div class="gridly-lp236-condition-body">${primaryLocation ? `<strong class="gridly-lp236-condition-roadway"${insideRoadwayGroup && clue ? " data-gridly-lp236-location-clue=\"true\"" : ""}>${sanitizeText(primaryLocation)}</strong>` : ""}${secondaryLocation ? `<span class="gridly-lp236-condition-location" data-gridly-lp236-location-clue="true">${sanitizeText(secondaryLocation)}</span>` : ""}<span class="gridly-lp236-condition-title">${sanitizeText(condition)}</span>${presentedSummarySentence ? `<span class="gridly-lp236-condition-summary" data-gridly-lp236-summary-sentence="true">${sanitizeText(presentedSummarySentence)}</span>` : ""}${timing ? `<span class="gridly-lp236-condition-time">${sanitizeText(timing)}</span>` : ""}</div>
+        <div class="gridly-lp236-condition-body">${primaryLocation ? `<strong class="gridly-lp236-condition-roadway"${insideRoadwayGroup && clue ? " data-gridly-lp236-location-clue=\"true\"" : ""}>${sanitizeText(primaryLocation)}</strong>` : ""}${secondaryLocation ? `<span class="gridly-lp236-condition-location" data-gridly-lp236-location-clue="true">${sanitizeText(secondaryLocation)}</span>` : ""}<span class="gridly-lp236-condition-title"${source.sourceClass === "weather" ? " data-gridly-weather-event=\"true\"" : ""}>${sanitizeText(condition)}</span>${source.sourceClass !== "weather" && presentedSummarySentence ? `<span class="gridly-lp236-condition-summary" data-gridly-lp236-summary-sentence="true">${sanitizeText(presentedSummarySentence)}</span>` : ""}${timing ? `<span class="gridly-lp236-condition-time"${source.sourceClass === "weather" ? " data-gridly-weather-timing=\"true\"" : ""}>${sanitizeText(timing)}</span>` : ""}${weatherDetails.map((detail) => `<span class="gridly-lp236-condition-summary" data-gridly-weather-detail="true">${sanitizeText(detail)}</span>`).join("")}${weatherSource ? `<span class="gridly-lp236-condition-source" data-gridly-weather-source="true">${sanitizeText(weatherSource)}</span>` : ""}</div>
         ${Number.isFinite(lat) && Number.isFinite(lng) ? `<div class="gridly-lp236-condition-actions"><button class="gridly-alert-show-on-map gridly-lp236-show-me" data-gridly-show-on-map="true" type="button" aria-label="Show ${sanitizeText(accessibleLocation)} on map">Show me</button></div>` : ""}
       </article>`;
     };
