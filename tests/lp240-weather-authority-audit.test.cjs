@@ -99,7 +99,7 @@ test("CASE I - false unavailable presentation fails for QUIET", () => {
   assert.equal(result.presentationAgreementPass, false);
 });
 
-const { evaluatePlaceAlertGeography } = require("../js/gridlyLP240WeatherAuthorityAudit.js");
+const { evaluatePlaceAlertGeography, resolveGovernedCommunityGeometry } = require("../js/gridlyLP240WeatherAuthorityAudit.js");
 const square = (x, y, size = 2) => ({ type: "Polygon", coordinates: [[[x,y],[x+size,y],[x+size,y+size],[x,y+size],[x,y]]] });
 const place = square(0, 0);
 
@@ -134,6 +134,22 @@ test("geography CASE I - full multi-county PLACE geometry is not truncated by se
   const multiCountyPlace = { type: "MultiPolygon", coordinates: [square(0,0).coordinates, square(10,10).coordinates] };
   const result = evaluatePlaceAlertGeography({ placeGeometry: multiCountyPlace, selectedGovernedMembership: "county-a", alerts: [{ id: "I", geometry: square(11,11) }] });
   assert.deepEqual(result.applicableAlertIds, ["I"]);
+});
+
+test("LP240.1C bridge resolves Dayton and preserves all governed memberships", () => {
+  const oldRegistry = global.GRIDLY_COUNTY_REGISTRY;
+  global.GRIDLY_COUNTY_REGISTRY = { "liberty-tx": { countyFips: "48291" }, "harris-tx": { countyFips: "48201" } };
+  const rows = { "liberty-tx": { countyId: "liberty-tx", geometry: square(0, 0) }, "harris-tx": { countyId: "harris-tx", geometry: square(10, 10) } };
+  const geometryLoader = { getCandidateGeometries: (ids) => ids.map((id) => rows[id]).filter(Boolean) };
+  try {
+    const dayton = resolveGovernedCommunityGeometry({ placeGeoid: "4819432", membership: { governedCountyFips: ["48291"] }, geometryLoader });
+    assert.equal(dayton.available, true, "CASE A"); assert.equal(dayton.lookupKey, "liberty-tx");
+    assert.equal(dayton.records[0], rows["liberty-tx"], "CASE G shares the production record");
+    const multi = resolveGovernedCommunityGeometry({ placeGeoid: "multi", membership: { governedCountyFips: ["48291", "48201"] }, geometryLoader });
+    assert.equal(multi.geometry.coordinates.length, 2, "CASE H preserves every membership polygon");
+    assert.equal(dayton.available, true, "CASE I needs canonical identity, not selected-area geometry");
+    assert.equal(resolveGovernedCommunityGeometry({ placeGeoid: null, membership: null, geometryLoader }).available, false, "CASE J fails closed");
+  } finally { global.GRIDLY_COUNTY_REGISTRY = oldRegistry; }
 });
 
 test("provider retains bounded NWS geography audit metadata without exposing raw geometry", () => {

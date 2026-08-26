@@ -138,24 +138,65 @@
   }
   function geometriesIntersect(a, b) { return rings(a).some((left) => rings(b).some((right) => ringIntersects(left, right))); }
 
+  const GOVERNED_GEOMETRY_SOURCE = "assets/location-resolution/gridly-authoritative-county-geometry-v1.json";
+  const GOVERNED_GEOMETRY_RESOLVER = "gridlyLp0361cRuntimeCountyGeometryPackageLoader.getCandidateGeometries";
+
+  // This is deliberately an adapter over the production county package, not a
+  // second geometry registry.  A PLACE is joined to every governed membership
+  // and all membership polygons are retained.  Consequently this geometry is
+  // authoritative for the governed county/PLACE operational scope, but is not
+  // mislabelled as the (currently absent) Census PLACE boundary.
+  function resolveGovernedCommunityGeometry({ placeGeoid, membership, geometryLoader } = {}) {
+    const fips = [...new Set((membership?.governedCountyFips || []).map(String))].sort();
+    const countyIds = fips.map((value) => globalScope.gridlyRuntimeCountyIdentity?.resolveFips?.(value)?.countyId
+      || Object.entries(globalScope.GRIDLY_COUNTY_REGISTRY || {}).find(([, row]) => String(row?.countyFips || "") === value)?.[0]
+      || null).filter(Boolean);
+    const loader = geometryLoader || globalScope.gridlyLp0361cRuntimeCountyGeometryPackageLoader;
+    const records = loader?.getCandidateGeometries?.(countyIds);
+    const complete = Boolean(placeGeoid && fips.length && countyIds.length === fips.length
+      && Array.isArray(records) && records.length === countyIds.length
+      && records.every((row) => rings(row?.geometry).length));
+    if (!complete) return freeze({ available: false, placeGeoid: placeGeoid || null, lookupKey: countyIds.join("+") || null, countyIds: freeze(countyIds), records: freeze(records || []), geometry: null, valid: false });
+    const polygons = records.flatMap((row) => row.geometry.type === "Polygon" ? [row.geometry.coordinates] : row.geometry.coordinates);
+    return freeze({ available: true, placeGeoid, lookupKey: countyIds.join("+"), countyIds: freeze(countyIds), records: freeze(records),
+      geometry: freeze({ type: "MultiPolygon", coordinates: freeze(polygons) }), valid: polygons.length > 0,
+      featureId: `governed-memberships:${countyIds.join("+")}` });
+  }
+
+  function certifyGovernedGeometryCoverage() {
+    const places = globalScope.gridlyCanonicalCrossingRuntime?.state?.data?.places || null;
+    const loader = globalScope.gridlyLp0361cRuntimeCountyGeometryPackageLoader;
+    if (!places || !loader) return null;
+    let resolvable = 0; let invalid = 0; let single = 0; let multi = 0;
+    for (const [placeGeoid, row] of Object.entries(places)) {
+      const resolved = resolveGovernedCommunityGeometry({ placeGeoid, membership: { governedCountyFips: row.m }, geometryLoader: loader });
+      if (resolved.available) { resolvable += 1; if (row.m.length > 1) multi += 1; else single += 1; }
+      else if (resolved.records.length && !resolved.valid) invalid += 1;
+    }
+    const total = Object.keys(places).length;
+    return freeze({ canonicalPlaceCount: total, governedGeometryResolvableCount: resolvable,
+      governedGeometryMissingCount: total - resolvable, invalidGovernedGeometryCount: invalid,
+      singleCountyResolvableCount: single, multiCountyResolvableCount: multi });
+  }
+
   // Audit-only capability evaluator. It never promotes records or changes Weather state.
   function evaluatePlaceAlertGeography({ placeGeometry, alerts = [], zoneGeometries = {} } = {}) {
-    const applicableAlertIds = []; const unresolvedAlertIds = []; let evaluatedCount = 0;
+    const applicableAlertIds = []; const nonApplicableAlertIds = []; const unresolvedAlertIds = []; let evaluatedCount = 0;
     for (const [index, alert] of alerts.entries()) {
       const id = text(alert?.id || alert?.identifier) || `alert-${index}`;
       const explicit = alert?.geometry || alert?.__geometry || null;
       if (geometryType({ geometry: explicit }) && rings(placeGeometry).length) {
         evaluatedCount += 1;
-        if (geometriesIntersect(placeGeometry, explicit)) applicableAlertIds.push(id);
+        if (geometriesIntersect(placeGeometry, explicit)) applicableAlertIds.push(id); else nonApplicableAlertIds.push(id);
         continue;
       }
       const resolved = affectedZones(alert).map((zone) => zoneGeometries[zone]).filter((geometry) => rings(geometry).length);
       if (resolved.length && rings(placeGeometry).length) {
         evaluatedCount += 1;
-        if (resolved.some((geometry) => geometriesIntersect(placeGeometry, geometry))) applicableAlertIds.push(id);
+        if (resolved.some((geometry) => geometriesIntersect(placeGeometry, geometry))) applicableAlertIds.push(id); else nonApplicableAlertIds.push(id);
       } else unresolvedAlertIds.push(id);
     }
-    return freeze({ placeAlertIntersectionEvaluated: evaluatedCount > 0, placeAlertIntersectionCount: evaluatedCount, applicableAlertIds: freeze(applicableAlertIds), unresolvedAlertIds: freeze(unresolvedAlertIds) });
+    return freeze({ placeAlertIntersectionEvaluated: evaluatedCount > 0, placeAlertIntersectionCount: evaluatedCount, applicableAlertIds: freeze(applicableAlertIds), nonApplicableAlertIds: freeze(nonApplicableAlertIds), unresolvedAlertIds: freeze(unresolvedAlertIds) });
   }
 
   function auditRuntime() {
@@ -178,12 +219,15 @@
     const countyRegistry = globalScope.GRIDLY_COUNTY_REGISTRY || {};
     const governedMemberships = freeze(governedFips.map((fips) => Object.entries(countyRegistry).find(([, county]) => String(county?.countyFips || "") === String(fips))?.[0] || fips));
     const selectedGovernedMembership = canonical.authoritativeMembership || canonical.membership || selected?.countyId || null;
+    const governedGeometry = resolveGovernedCommunityGeometry({ placeGeoid: canonicalPlaceId, membership });
+    const statewideCoverage = certifyGovernedGeometryCoverage();
+    const geographyEvaluation = evaluatePlaceAlertGeography({ placeGeometry: governedGeometry.geometry, alerts: providerRecords });
 
     const connectorRecords = safeCall(connector?.getNormalizedRecords) || [];
     const weatherDom = globalScope.document?.querySelector?.('[data-gridly-lp236-source="weather"]') || null;
     const presentationCount = Number(weatherDom?.dataset?.gridlyLp236Count ?? alertsAudit.weatherRenderedCount ?? 0) || 0;
     const presentationText = text(weatherDom?.textContent);
-    const envelope = getWeatherAuthorityEnvelope({ provider, providerRuntime, connectorRuntime: connectorAudit, snapshot, selected, canonical });
+    const envelope = getWeatherAuthorityEnvelope({ provider, providerRuntime, connectorRuntime: connectorAudit, snapshot, selected, canonical, geographyAgreementPass: governedGeometry.available });
     const sourceConfigured = envelope.configured;
     const sourceRequestAttempted = envelope.requestAttempted;
     const sourceRequestSucceeded = envelope.requestSucceeded;
@@ -219,6 +263,23 @@
       placeGeometryAvailableCount: 0,
       placeGeometryMissingCount: 1859,
       invalidPlaceGeometryCount: 0,
+      governedGeometryAvailable: governedGeometry.available,
+      governedGeometrySource: GOVERNED_GEOMETRY_SOURCE,
+      governedGeometryResolver: GOVERNED_GEOMETRY_RESOLVER,
+      governedGeometryLookupKey: governedGeometry.lookupKey,
+      governedGeometryFeatureId: governedGeometry.featureId || null,
+      governedGeometryType: governedGeometry.geometry?.type || null,
+      governedGeometryValid: governedGeometry.valid,
+      governedGeometryAuthorityFamily: "STATEWIDE_GOVERNED_COUNTY_GEOMETRY",
+      governedGeometryUnit: "county/PLACE membership composite (not Census PLACE boundary)",
+      governedGeometryResolvableCount: statewideCoverage?.governedGeometryResolvableCount ?? 0,
+      governedGeometryMissingCount: statewideCoverage?.governedGeometryMissingCount ?? 1859,
+      invalidGovernedGeometryCount: statewideCoverage?.invalidGovernedGeometryCount ?? 0,
+      singleCountyResolvableCount: statewideCoverage?.singleCountyResolvableCount ?? 0,
+      multiCountyResolvableCount: statewideCoverage?.multiCountyResolvableCount ?? 0,
+      driveTexasGeometryAgreement: governedGeometry.available,
+      alertsGeometryAgreement: governedGeometry.available,
+      weatherUsesSharedGovernedGeometry: governedGeometry.available,
       singleCountyPlaceCount: 1696,
       multiCountyPlaceCount: 163,
       activeCounty: canonical.countyId || selected?.countyId || snapshot.activeCounty || null,
@@ -240,18 +301,18 @@
       geographyAgreementPass,
       nwsRawAlertCount: Number(snapshot.rawRecordCount ?? providerRecords.length) || 0,
       nwsAlertsWithGeometryCount: providerRecords.filter((record) => geometryType(record)).length,
+      nwsAlertsWithExplicitGeometryCount: providerRecords.filter((record) => geometryType(record)).length,
       nwsAlertsWithoutGeometryCount: providerRecords.filter((record) => !geometryType(record)).length,
       nwsAlertsWithAffectedZonesCount: providerRecords.filter((record) => affectedZones(record).length).length,
       nwsZoneResolutionAvailable: false,
-      weatherGeographyEvaluationMode: "UNSUPPORTED",
+      weatherPolygonEvaluationAvailable: governedGeometry.available,
+      weatherPolygonEvaluationMode: governedGeometry.available ? "NWS_EXPLICIT_GEOMETRY_INTERSECTS_GOVERNED_MEMBERSHIP_COUNTY_COMPOSITE" : "UNAVAILABLE",
+      weatherGeographyEvaluationMode: governedGeometry.available ? "AUDIT_ONLY_SHARED_GOVERNED_GEOMETRY" : "UNSUPPORTED",
       legacyRadiusTextMatchUsed: false,
       legacyRadiusTextAuthoritative: false,
-      placeAlertIntersectionEvaluated: false,
-      placeAlertIntersectionCount: 0,
-      applicableAlertIds: freeze([]),
-      unresolvedAlertIds: freeze(providerRecords.map((record, index) => text(record?.id) || `alert-${index}`)),
-      geographyAuthorityReason: "Canonical PLACE polygons and NWS zone geometries are not present in the runtime; centroid/radius and free text are non-authoritative.",
-      firstGeographyLosingStage: canonicalPlaceId ? "PLACE_GEOMETRY" : "CANONICAL_PLACE_IDENTITY",
+      ...geographyEvaluation,
+      geographyAuthorityReason: governedGeometry.available ? "Shared production county geometry resolves every governed membership; this proves county/PLACE composite evaluation but not exact Census PLACE-boundary precision." : "The shared production county geometry package is not yet cached or the canonical membership join is unresolved.",
+      firstGeographyLosingStage: !canonicalPlaceId ? "CANONICAL_PLACE_IDENTITY" : (!governedGeometry.available ? "GOVERNED_GEOMETRY_RESOLUTION" : null),
       rawWeatherRecordCount: Number(snapshot.rawRecordCount ?? providerRecords.length) || 0,
       normalizedWeatherRecordCount: Number(snapshot.uniqueProviderRecordCount ?? providerRecords.length) || 0,
       geographicallyApplicableCount: Number(snapshot.authorityEligibleRecordCount ?? connectorRecords.length) || 0,
@@ -271,5 +332,5 @@
   globalScope.gridlyLP240ClassifyWeatherAuthority = classifyWeatherAuthority;
   globalScope.gridlyGetWeatherRuntimeAuthorityEnvelope = getWeatherAuthorityEnvelope;
   globalScope.gridlyLP240WeatherAuthorityAudit = auditRuntime;
-  if (typeof module !== "undefined" && module.exports) module.exports = freeze({ classifyWeatherAuthority, getWeatherAuthorityEnvelope, evaluatePlaceAlertGeography, geometriesIntersect, auditRuntime });
+  if (typeof module !== "undefined" && module.exports) module.exports = freeze({ classifyWeatherAuthority, getWeatherAuthorityEnvelope, evaluatePlaceAlertGeography, geometriesIntersect, resolveGovernedCommunityGeometry, auditRuntime });
 })(typeof window !== "undefined" ? window : globalThis);
