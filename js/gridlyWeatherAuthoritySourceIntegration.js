@@ -125,7 +125,13 @@
     const loaded = readLoadedWeatherRecords(options);
     const adapted = gridlyAdaptWeatherRecordsForAuthority(loaded, options);
     const selector = globalScope.gridlySelectConsumerWeatherAuthority;
-    const authority = typeof selector === "function" ? selector(Object.assign({}, options, { selectedAwarenessArea, records: adapted.records })) : null;
+    const connectorRuntime = typeof globalScope.gridlyWeatherConnectorRuntimeAudit === "function" ? globalScope.gridlyWeatherConnectorRuntimeAudit() : null;
+    // NWS has already evaluated applicability for this exact governed point.
+    // Do not run point results through the legacy statewide radius/text owner.
+    const pointAuthority = connectorRuntime?.applicabilityMode === "NWS_POINT_QUERY" && connectorRuntime?.requestSucceeded === true && connectorRuntime?.responseValid === true && connectorRuntime?.freshEnough === true && connectorRuntime?.pointRequestIdentity === connectorRuntime?.currentAwarenessIdentity;
+    const authority = pointAuthority
+      ? { consumerEligibleWeather: adapted.records, containsAlerts: adapted.records.length > 0, uniqueSituationCount: adapted.records.length, quietStateReason: adapted.records.length ? null : "fresh_point_response_empty" }
+      : (typeof selector === "function" ? selector(Object.assign({}, options, { selectedAwarenessArea, records: adapted.records })) : null);
     const eligible = asArray(authority?.consumerEligibleWeather);
     const ownershipMethods = eligible.map((record) => record?.authority?.ownershipMethod || record?.ownershipMethod).filter(Boolean);
     const fallbackMethods = eligible.filter((record) => record?.authority?.fallbackReason || record?.fallbackUsed).map((record) => record?.authority?.ownershipMethod || record?.ownershipMethod || "fallback");

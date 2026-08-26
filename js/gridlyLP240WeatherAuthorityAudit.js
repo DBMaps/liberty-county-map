@@ -78,23 +78,22 @@
       && Number.isFinite(lastSuccessMs) && now - lastSuccessMs >= 0 && now - lastSuccessMs <= freshnessLimitMs;
     const selected = options.selected || safeCall(globalScope.getGridlySelectedAwarenessArea) || null;
     const canonical = options.canonical || safeCall(globalScope.gridlyGetCanonicalActiveCommunityState) || {};
-    const canonicalGeographyResolved = Boolean(selected && (canonical.community || selected.storageValue || selected.label)
-      && (canonical.countyId || selected.countyId));
-    // The current centroid/radius and locality-text filters are useful
-    // selection heuristics, but are not certified governed PLACE intersection.
-    const geographyAgreementPass = options.geographyAgreementPass === true;
+    const pointMode = connectorRuntime.applicabilityMode === "NWS_POINT_QUERY";
+    const point = connectorRuntime.selectedPoint || null;
+    const canonicalGeographyResolved = pointMode ? Boolean(point?.awarenessKey && point?.stableIdentity && Number.isFinite(Number(point?.lat)) && Number.isFinite(Number(point?.lng))) : Boolean(selected && (canonical.community || selected.storageValue || selected.label) && (canonical.countyId || selected.countyId));
+    const geographyAgreementPass = pointMode ? connectorRuntime.pointRequestIdentity === connectorRuntime.currentAwarenessIdentity : options.geographyAgreementPass === true;
     return freeze({
-      configured: providerRuntime.enabled === true,
-      enabled: providerRuntime.enabled === true,
+      configured: pointMode || providerRuntime.enabled === true,
+      enabled: pointMode || providerRuntime.enabled === true,
       requestAttempted: connectorRuntime.requestAttempted === true,
       requestSucceeded: connectorRuntime.requestSucceeded === true,
       lastAttemptAt: connectorRuntime.lastRequestAt || null,
       lastSuccessAt: connectorRuntime.lastSuccessAt || null,
       lastFailureAt: connectorRuntime.lastFailureAt || null,
       error: providerRuntime.lastError || connectorRuntime.lastError || null,
-      healthy: providerRuntime.enabled === true && connectorRuntime.requestSucceeded === true && connectorRuntime.connected === true && !connectorRuntime.lastError,
-      freshEnoughForAuthority,
-      freshness: freshEnoughForAuthority ? "FRESH" : (connectorRuntime.lastSuccessAt ? "STALE" : "UNKNOWN"),
+      healthy: (pointMode || providerRuntime.enabled === true) && connectorRuntime.requestSucceeded === true && connectorRuntime.connected === true && connectorRuntime.responseValid !== false && !connectorRuntime.lastError,
+      freshEnoughForAuthority: pointMode ? connectorRuntime.freshEnough === true : freshEnoughForAuthority,
+      freshness: (pointMode ? connectorRuntime.freshEnough === true : freshEnoughForAuthority) ? "FRESH" : (connectorRuntime.lastSuccessAt ? "STALE" : "UNKNOWN"),
       canonicalGeographyResolved,
       geographyAgreementPass,
       geographyEvaluation: geographyAgreementPass ? "GOVERNED_AGREEMENT_PROVEN" : "UNSUPPORTED_OR_UNRESOLVED",
@@ -303,6 +302,25 @@
     const result = {
       available: true,
       auditOnly: true,
+      applicabilityMode: connectorAudit.applicabilityMode || null,
+      selectedAwarenessKey: connectorAudit.selectedPoint?.awarenessKey || selected?.key || null,
+      selectedIdentityClass: connectorAudit.selectedPoint?.identityClass || null,
+      selectedCountyId: connectorAudit.selectedPoint?.countyId || selected?.countyId || null,
+      selectedGovernedLat: connectorAudit.selectedPoint?.lat ?? null,
+      selectedGovernedLng: connectorAudit.selectedPoint?.lng ?? null,
+      pointAlertEndpoint: connectorAudit.pointAlertEndpoint || null,
+      pointRequestAttempted: connectorAudit.requestAttempted === true,
+      pointRequestSucceeded: connectorAudit.requestSucceeded === true,
+      pointResponseValid: connectorAudit.responseValid === true,
+      pointFetchedAt: connectorAudit.fetchedAt || null,
+      pointFreshEnough: connectorAudit.freshEnough === true,
+      pointActiveAlertCount: Number(connectorAudit.pointActiveAlertCount || 0),
+      pointActiveAlertIds: connectorAudit.pointActiveAlertIds || freeze([]),
+      pointActiveAlertEvents: connectorAudit.pointActiveAlertEvents || freeze([]),
+      pointRequestIdentity: connectorAudit.pointRequestIdentity || null,
+      currentAwarenessIdentity: connectorAudit.currentAwarenessIdentity || null,
+      identityAgreementPass: Boolean(connectorAudit.pointRequestIdentity && connectorAudit.pointRequestIdentity === connectorAudit.currentAwarenessIdentity),
+      staleResponseSuppressedCount: Number(connectorAudit.staleResponseSuppressedCount || 0),
       canonicalCommunity,
       canonicalPlaceId,
       canonicalPlaceResolved: Boolean(canonicalPlaceId && membership),
@@ -381,7 +399,7 @@
       presentationCount,
       presentationEmptyState: presentationText || null,
       presentationText: presentationText || null,
-      overallPass: classification.presentationAgreementPass
+      overallPass: classification.presentationAgreementPass && (connectorAudit.applicabilityMode !== "NWS_POINT_QUERY" || Boolean(connectorAudit.pointRequestIdentity && connectorAudit.pointRequestIdentity === connectorAudit.currentAwarenessIdentity))
     };
     return freeze(result);
   }

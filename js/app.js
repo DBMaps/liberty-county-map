@@ -46773,6 +46773,31 @@ function gridlyBeginCommunityTransitionTrace(input = {}) {
 }
 if (typeof window !== "undefined") { window.gridlyBeginCommunityTransitionTrace = gridlyBeginCommunityTransitionTrace; window.gridlyRecordCommunityTransitionStage = gridlyRecordCommunityTransitionStage; }
 
+function gridlyResolveGovernedWeatherPoint(selected = null) {
+  const area = selected || getGridlySelectedAwarenessArea();
+  if (!area || area.fallback === true || area.countyWide === true) return null;
+  const registered = GRIDLY_AWARENESS_AREA_BY_KEY?.[area.key] || null;
+  const canonicalPlace = gridlyResolveCanonicalPlaceGeoid(area);
+  const canonicalFocus = canonicalPlace ? resolveGridlyCanonicalPlacePresentationFocus(area) : null;
+  // Single-county/non-PLACE areas must be the registry object itself. Canonical
+  // multi-county PLACE projections are re-derived from their registered PLACE
+  // membership and presentation focus rather than trusting caller coordinates.
+  if (!canonicalPlace && registered !== area) return null;
+  const lat = Number(canonicalFocus?.lat ?? registered?.lat);
+  const lng = Number(canonicalFocus?.lng ?? registered?.lng);
+  if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) return null;
+  const identityClass = canonicalPlace ? "CANONICAL_PLACE" : "GOVERNED_NON_PLACE";
+  const awarenessKey = canonicalPlace ? (area.key || `place-${canonicalPlace}`) : registered.key;
+  const countyId = area.countyId || registered?.countyId || null;
+  return Object.freeze({ awarenessKey, identityClass, countyId, stableIdentity: canonicalPlace || `${countyId}:${awarenessKey}`, lat, lng, placeGeoid: canonicalPlace || null });
+}
+if (typeof window !== "undefined") {
+  window.gridlyResolveGovernedWeatherPoint = gridlyResolveGovernedWeatherPoint;
+  // One readiness activation after the governed resolver exists; subsequent
+  // requests are identity-change/cache-expiry/explicit-refresh driven.
+  window.setTimeout?.(() => window.gridlyWeatherConnector?.refreshAwarenessView?.("initial-governed-awareness-ready"), 0);
+}
+
 function getGridlySelectedAwarenessArea() {
   gridlySelectedAwarenessAreaResolutionCache.totalGetterCalls += 1;
   gridlyRecordSelectedAwarenessAreaGetterCaller(gridlySelectedAwarenessAreaResolutionCache.totalGetterCalls);
@@ -46792,8 +46817,11 @@ function getGridlySelectedAwarenessArea() {
       window?.GRIDLY_ACTIVE_COUNTY_ID
     );
     const projectedArea = gridlyProjectCanonicalPlaceOperationalCounty(persistedIdentity.area, operationalCountyId);
-    gridlySelectedAwarenessAreaResolutionCache.signature = `PLACE_GEOID|${persistedIdentity.placeGeoid}|${persistedIdentity.memberships.join("|")}|${operationalCountyId || ""}`;
+    const projectedSignature = `PLACE_GEOID|${persistedIdentity.placeGeoid}|${persistedIdentity.memberships.join("|")}|${operationalCountyId || ""}`;
+    const identityChanged = gridlySelectedAwarenessAreaResolutionCache.signature !== projectedSignature;
+    gridlySelectedAwarenessAreaResolutionCache.signature = projectedSignature;
     gridlySelectedAwarenessAreaResolutionCache.area = projectedArea;
+    if (identityChanged) window.setTimeout?.(() => window.gridlyWeatherConnector?.refreshAwarenessView?.("canonical-place-awareness-resolved"), 0);
     return projectedArea;
   }
   const community = typeof getGridlySettingsPreferences === "function" ? (getGridlySettingsPreferences()?.community || {}) : {};
@@ -46817,6 +46845,7 @@ function getGridlySelectedAwarenessArea() {
   gridlySelectedAwarenessAreaResolutionCache.area = area;
   gridlySelectedAwarenessAreaResolutionCache.resolverCalls = Number(gridlySelectedAwarenessAreaResolutionCache.underlyingResolverCalls || 0);
   try { if (window.__gridlyDriveTexasAwarenessDerivationActive !== true && typeof window.gridlyDriveTexasConnector?.refreshAwarenessView === "function") window.gridlyDriveTexasConnector.refreshAwarenessView("awareness-area-resolved"); } catch (_error) {}
+  try { window.gridlyWeatherConnector?.refreshAwarenessView?.("awareness-area-resolved"); } catch (_error) {}
   return area;
 }
 
