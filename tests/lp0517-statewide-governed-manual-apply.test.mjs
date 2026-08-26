@@ -95,6 +95,7 @@ function makeHarness() {
   vm.runInContext([
     extractFunction("gridlyLp194ResolveGovernedSelectedRegionIdentity"),
     extractFunction("gridlyLp0517ResolveGovernedSelectedIdentity"),
+    extractFunction("gridlyLp240ResolveGovernedHomeIdentity"),
     extractFunction("gridlyLp0517ValidateHomeRecord"),
     extractFunction("gridlyBuildHomePersonalizationRecord"),
     extractFunction("gridlyLp0517NormalizeSelectedOption"),
