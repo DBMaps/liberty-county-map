@@ -2793,7 +2793,7 @@ function gridlyBriefInteractionWeatherFromAuthority() {
     alertTitle: first.title,
     title: first.title,
     headline: first.title,
-    event: first.title,
+    event: first.event || first.title,
     expirationTime: first.expirationTime || null,
     effectiveTime: first.effectiveTime || null,
     senderName: first.senderName || null,
@@ -4466,7 +4466,7 @@ function gridlyTravelBriefWeatherLines(weather, completeness = gridlyGetAwarenes
   const lines = [];
   if (alert && gridlyBriefInteractionLooksLikeWeatherAlert(alert)) {
     const timing = typeof window.gridlyWeatherTravelerTiming === "function" ? window.gridlyWeatherTravelerTiming(weather, { includeZone: false }) : "";
-    lines.push(`${alert}${timing ? ` ${timing.toLowerCase()}` : " active"}`);
+    lines.push(`${alert}${timing ? ` ${timing.replace(/^Until\b/, "until")}` : " active"}`);
   }
   lines.push(gridlyTravelBriefCleanLine(impact.kind === "heat" ? "Hot conditions may affect travel." : (impact.detail || impact.situation || "Weather may affect travel.")));
   return [...new Set(lines.filter(Boolean))].slice(0, 2);
