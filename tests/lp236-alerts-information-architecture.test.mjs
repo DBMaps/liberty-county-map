@@ -60,11 +60,11 @@ test('critical callouts require weather source and governed severity', () => {
   assert.deepEqual(Array.from(model.critical, row => row.canonicalId), ['severe-weather']);
 });
 
-test('LP236.9 uses only source, type, and repeated-roadway disclosures', () => {
+test('LP240.2A suppresses the Official Roadways type disclosure', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'one', sourceClass: 'official_roadway', category: 'Lane Closure', routeName: 'SH0078', latitude: 32.8, longitude: -96.8 }]);
   assert.match(rendered, /gridly-lp236-source/);
-  assert.match(rendered, /gridly-lp236-group/);
-  assert.match(rendered, /SH0078[\s\S]*Lane Closure[\s\S]*Show me/);
+  assert.doesNotMatch(rendered, /class="gridly-lp236-group"/);
+  assert.match(rendered, /Lane Closure[\s\S]*SH0078[\s\S]*Show me/);
   assert.doesNotMatch(rendered, /View details|gridly-lp236-condition-details/);
   assert.doesNotMatch(app.slice(app.indexOf('function gridlyLP236BuildModel'), app.indexOf('function gridlyLP236AlertsInformationArchitectureAudit')), /filter\(\(section\) => section\.activeConditionCount > 0\)/);
 });
@@ -182,7 +182,7 @@ test('LP236.9 readable summaries use trusted clues, concise governed condition, 
 
 test('LP236.9 singleton roadway presents roadway and trusted clue without another disclosure', () => {
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'single', sourceClass: 'official_roadway', category: 'Bridge Restriction', roadName: 'SL 12', referenceRoadA: 'Loop 12', lat: 32.8, lng: -96.8 }]);
-  assert.match(rendered, /<strong class="gridly-lp236-condition-roadway">SL 12<\/strong>[\s\S]*near Loop 12[\s\S]*Bridge Restriction[\s\S]*Show me/);
+  assert.match(rendered, /Bridge Restriction[\s\S]*<strong class="gridly-lp236-condition-roadway">SL 12<\/strong>[\s\S]*near Loop 12[\s\S]*Show me/);
   assert.doesNotMatch(rendered, /gridly-lp236-roadway-group/);
 });
 
@@ -439,9 +439,9 @@ test('LP236.9 stable disclosure keys survive ordinary rerenders', () => {
   assert.equal(sandbox.captureLP236(root), true);
   const rerendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, rows);
   assert.match(rerendered, /data-gridly-disclosure-key="official_roadway"[^>]* open/);
-  assert.match(rerendered, /data-gridly-disclosure-key="official_roadway:lane_closures"[^>]* open/);
-  assert.match(rerendered, /data-gridly-disclosure-key="official_roadway:road_closures"[^>]* open/);
-  assert.match(rerendered, /data-gridly-disclosure-key="official_roadway:lane_closures:i-30"[^>]* open/);
+  assert.doesNotMatch(rerendered, /data-gridly-disclosure-key="official_roadway:(?:lane|road)_closures"/);
+  assert.match(rerendered, /data-gridly-disclosure-key="official_roadway:road:i-30"[^>]* open/);
+  assert.match(rerendered, /data-gridly-legacy-disclosure-keys="official_roadway:lane_closures:i-30"/);
   assert.doesNotMatch(source, /gridlyLP236BindAccordions|sibling\.open\s*=\s*false|DOM index|card position/);
 });
 

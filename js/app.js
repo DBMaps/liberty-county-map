@@ -115710,7 +115710,34 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.gridlyLP236AlertsInformationArchitectureAudit = gridlyLP236AlertsInformationArchitectureAudit;
   if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP236AlertsInformationArchitectureAudit", gridlyLP236AlertsInformationArchitectureAudit);
 
-  // LP240.2 audit-only projection. This reads the already-built LP236 model;
+  // LP240.2A visible-only adapter. LP236 remains the authority for source,
+  // type, roadway, ordering, and identity; this projection only decides which
+  // of those presentation layers earns space in Official Roadways.
+  function gridlyLP240OfficialRoadwaysVisibleProjection(source) {
+    if (!source || source.sourceClass !== "official_roadway") return null;
+    const rows = source.groups.flatMap((group) => group.rows.map((row) => ({
+      ...row,
+      conditionType: group.conditionType,
+      typeLabel: gridlyLP236ConciseCondition(row.alert, source.sourceClass),
+      legacyRoadDisclosureKey: row.roadway ? `${source.sourceClass}:${group.conditionType}:${row.roadway.toLocaleLowerCase()}` : null
+    })));
+    const roadwayBuckets = new Map();
+    rows.forEach((row) => {
+      if (!row.roadway) return;
+      const roadKey = row.roadway.toLocaleLowerCase();
+      if (!roadwayBuckets.has(roadKey)) roadwayBuckets.set(roadKey, { roadKey, roadLabel: row.roadway, rows: [] });
+      roadwayBuckets.get(roadKey).rows.push(row);
+    });
+    const roadGroups = [...roadwayBuckets.values()].filter((road) => road.rows.length >= 2).map((road) => ({
+      ...road,
+      disclosureKey: `${source.sourceClass}:road:${road.roadKey}`,
+      legacyDisclosureKeys: [...new Set(road.rows.map((row) => row.legacyRoadDisclosureKey).filter(Boolean))]
+    }));
+    const groupedIds = new Set(roadGroups.flatMap((road) => road.rows.map((row) => row.canonicalId)));
+    return { rows, roadGroups, directRows: rows.filter((row) => !groupedIds.has(row.canonicalId)) };
+  }
+
+  // LP240.2/2A audit-only projection. This reads the already-built LP236 model;
   // it does not rebuild, sort, group, mount, or change disclosure state.
   function gridlyLP240AlertsStackAudit() {
     const model = gridlyLP236AlertsState.model;
@@ -115744,13 +115771,34 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       })
     }));
     const conditions = sources.flatMap((source) => source.groups.flatMap((group) => [...group.conditions, ...group.roadGroups.flatMap((road) => road.conditions)]));
+    const officialSource = model.sections.find((source) => source.sourceClass === "official_roadway");
+    const officialVisible = gridlyLP240OfficialRoadwaysVisibleProjection(officialSource);
+    const visibleCondition = (row) => {
+      const target = gridlyLP236MapTarget(row.alert, gridlyLp0952ResolveCrossingAlertTarget(row.alert, null), row.canonicalId);
+      return { conditionId: row.canonicalId, typeLabel: row.typeLabel, roadLabel: row.roadway || null, showMeAvailable: Number.isFinite(target.lat) && Number.isFinite(target.lng) };
+    };
+    const visibleHierarchy = officialVisible ? {
+      sourceCount: officialSource.activeConditionCount,
+      visibleRoadGroupCount: officialVisible.roadGroups.length,
+      directConditionCount: officialVisible.directRows.length,
+      roadGroups: officialVisible.roadGroups.map((road) => ({ roadLabel: road.roadLabel, conditionCount: road.rows.length, disclosureKey: road.disclosureKey, legacyDisclosureKeys: road.legacyDisclosureKeys, conditionIds: road.rows.map((row) => row.canonicalId), conditionTypes: road.rows.map((row) => row.typeLabel) })),
+      directConditions: officialVisible.directRows.map(visibleCondition),
+      visibleLayerDepth: officialVisible.roadGroups.length ? 3 : 2,
+      suppressedTypeGroupCount: officialSource.groups.length,
+      duplicateVisibleLabelCount: 0
+    } : null;
     return {
       available: true,
       totalCount: model.total,
       sourceOrder: sources.map((source) => source.sourceClass),
       sources,
+      modelHierarchy: { sources },
+      visibleHierarchy,
       conditionIds: conditions.map((row) => row.conditionId),
-      duplicateConditionIds: [...new Set(conditions.map((row) => row.conditionId).filter((id, index, ids) => ids.indexOf(id) !== index))]
+      duplicateConditionIds: [...new Set(conditions.map((row) => row.conditionId).filter((id, index, ids) => ids.indexOf(id) !== index))],
+      identityCount: officialVisible?.rows.length || 0,
+      domIdentityCount: document?.querySelectorAll?.('[data-gridly-lp236-source="official_roadway"] [data-gridly-lp236-condition-id]')?.length || 0,
+      duplicateIdentityCount: officialVisible ? officialVisible.rows.length - new Set(officialVisible.rows.map((row) => row.canonicalId)).size : 0
     };
   }
   window.gridlyLP240AlertsStackAudit = gridlyLP240AlertsStackAudit;
@@ -115763,7 +115811,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       : snapshotAlerts);
     const model = gridlyLP236BuildModel(alerts.filter(Boolean), snapshot);
     gridlyLP236AlertsState.model = model;
-    const renderRow = (row, source, insideRoadwayGroup = false, groupLabel = "") => {
+    const renderRow = (row, source, insideRoadwayGroup = false, groupLabel = "", projectedTypeLabel = "") => {
       const alert = row.alert;
       const canonical = gridlyBuildCanonicalLiveIncidentPresentation(alert);
       const title = canonical.title || resolveAlertTitleText(alert);
@@ -115774,7 +115822,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const weatherLocation = source.sourceClass === "weather" ? `${pickFirstNonEmptyText([alert?.locationLabel, alert?.locality, governedFallbackLocation]) || "Selected"} area` : "";
       const primaryLocation = weatherLocation || (insideRoadwayGroup ? (clue ? `near ${clue}` : "") : (communityLocation?.value || roadway || governedFallbackLocation));
       const secondaryLocation = !insideRoadwayGroup && roadway && clue ? `near ${clue}` : "";
-      const condition = gridlyLP236ConciseCondition(alert, source.sourceClass);
+      const condition = projectedTypeLabel || gridlyLP236ConciseCondition(alert, source.sourceClass);
       const conditionIsGroupLabel = source.sourceClass === "weather" && condition.toLocaleLowerCase() === String(groupLabel).toLocaleLowerCase();
       const summarySentence = gridlyLP236SummarySentence(alert, condition);
       // Provider summaries sometimes carry a list marker even though each alert
@@ -115790,7 +115838,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const coords = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${sanitizeText(lat)}" data-gridly-alert-lng="${sanitizeText(lng)}"` : "";
       const accessibleLocation = primaryLocation || roadway || governedFallbackLocation;
       return `<article class="gridly-lp236-condition gridly-lp236-condition-item" data-gridly-lp236-condition-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-id="${sanitizeText(row.canonicalId)}" data-gridly-alert-title="${sanitizeText(title)}" data-gridly-alert-location="${sanitizeText(accessibleLocation)}" data-gridly-alert-condition="${sanitizeText(condition)}"${gridlyLp0952AlertCardInteractionAttributes(crossingTarget.crossingId, sanitizeText)}${coords}>
-        <div class="gridly-lp236-condition-body">${primaryLocation ? `<strong class="gridly-lp236-condition-roadway"${insideRoadwayGroup && clue ? " data-gridly-lp236-location-clue=\"true\"" : ""}>${sanitizeText(primaryLocation)}</strong>` : ""}${secondaryLocation ? `<span class="gridly-lp236-condition-location" data-gridly-lp236-location-clue="true">${sanitizeText(secondaryLocation)}</span>` : ""}${conditionIsGroupLabel ? "" : `<span class="gridly-lp236-condition-title"${source.sourceClass === "weather" ? " data-gridly-weather-event=\"true\"" : ""}>${sanitizeText(condition)}</span>`}${source.sourceClass !== "weather" && presentedSummarySentence ? `<span class="gridly-lp236-condition-summary" data-gridly-lp236-summary-sentence="true">${sanitizeText(presentedSummarySentence)}</span>` : ""}${timing ? `<span class="gridly-lp236-condition-time"${source.sourceClass === "weather" ? " data-gridly-weather-timing=\"true\"" : ""}>${sanitizeText(timing)}</span>` : ""}${weatherDetails.map((detail) => `<span class="gridly-lp236-condition-summary" data-gridly-weather-detail="true">${sanitizeText(detail)}</span>`).join("")}${weatherSource ? `<span class="gridly-lp236-condition-source" data-gridly-weather-source="true">${sanitizeText(weatherSource)}</span>` : ""}</div>
+        <div class="gridly-lp236-condition-body">${source.sourceClass === "official_roadway" ? `${conditionIsGroupLabel ? "" : `<span class="gridly-lp236-condition-title">${sanitizeText(condition)}</span>`}${primaryLocation ? `<strong class="gridly-lp236-condition-roadway"${insideRoadwayGroup && clue ? " data-gridly-lp236-location-clue=\"true\"" : ""}>${sanitizeText(primaryLocation)}</strong>` : ""}${secondaryLocation ? `<span class="gridly-lp236-condition-location" data-gridly-lp236-location-clue="true">${sanitizeText(secondaryLocation)}</span>` : ""}` : `${primaryLocation ? `<strong class="gridly-lp236-condition-roadway"${insideRoadwayGroup && clue ? " data-gridly-lp236-location-clue=\"true\"" : ""}>${sanitizeText(primaryLocation)}</strong>` : ""}${secondaryLocation ? `<span class="gridly-lp236-condition-location" data-gridly-lp236-location-clue="true">${sanitizeText(secondaryLocation)}</span>` : ""}${conditionIsGroupLabel ? "" : `<span class="gridly-lp236-condition-title"${source.sourceClass === "weather" ? " data-gridly-weather-event=\"true\"" : ""}>${sanitizeText(condition)}</span>`}`}${source.sourceClass !== "weather" && presentedSummarySentence ? `<span class="gridly-lp236-condition-summary" data-gridly-lp236-summary-sentence="true">${sanitizeText(presentedSummarySentence)}</span>` : ""}${timing ? `<span class="gridly-lp236-condition-time"${source.sourceClass === "weather" ? " data-gridly-weather-timing=\"true\"" : ""}>${sanitizeText(timing)}</span>` : ""}${weatherDetails.map((detail) => `<span class="gridly-lp236-condition-summary" data-gridly-weather-detail="true">${sanitizeText(detail)}</span>`).join("")}${weatherSource ? `<span class="gridly-lp236-condition-source" data-gridly-weather-source="true">${sanitizeText(weatherSource)}</span>` : ""}</div>
         ${Number.isFinite(lat) && Number.isFinite(lng) ? `<div class="gridly-lp236-condition-actions"><button class="gridly-alert-show-on-map gridly-lp236-show-me" data-gridly-show-on-map="true" type="button" aria-label="Show ${sanitizeText(accessibleLocation)} on map">Show me</button></div>` : ""}
       </article>`;
     };
@@ -115805,6 +115853,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const directHtml = group.directRows.map((row) => renderRow(row, source, false, group.label)).join("");
       return `<details class="gridly-lp236-group" data-gridly-disclosure-key="${sanitizeText(typeKey)}" data-gridly-lp236-group="${sanitizeText(group.conditionType)}"${open ? " open" : ""}><summary aria-label="${sanitizeText(group.label)}, ${group.rows.length} active condition${group.rows.length === 1 ? "" : "s"}"><span${source.sourceClass === "weather" ? " data-gridly-weather-group-label=\"true\"" : ""}>${sanitizeText(group.label)}</span><strong aria-label="${group.rows.length} active condition${group.rows.length === 1 ? "" : "s"}">${group.rows.length}</strong></summary><div class="gridly-lp236-rows">${roadwayHtml}${directHtml}</div></details>`;
     };
+    const renderOfficialRoadways = (source) => {
+      const visible = gridlyLP240OfficialRoadwaysVisibleProjection(source);
+      const roadwayHtml = visible.roadGroups.map((road) => {
+        const roadwayOpen = gridlyLP236AlertsState.disclosure.initialized && (gridlyLP236AlertsState.disclosure.roadwayGroupKeys.has(road.disclosureKey) || road.legacyDisclosureKeys.some((key) => gridlyLP236AlertsState.disclosure.roadwayGroupKeys.has(key)));
+        return `<details class="gridly-lp236-roadway-group" data-gridly-disclosure-key="${sanitizeText(road.disclosureKey)}" data-gridly-legacy-disclosure-keys="${sanitizeText(road.legacyDisclosureKeys.join("|"))}" data-gridly-lp236-roadway="${sanitizeText(road.roadLabel)}"${roadwayOpen ? " open" : ""}><summary aria-label="${sanitizeText(road.roadLabel)}, ${road.rows.length} conditions"><span>${sanitizeText(road.roadLabel)}</span><strong>${road.rows.length} conditions</strong></summary><div class="gridly-lp236-roadway-rows">${road.rows.map((row) => renderRow(row, source, true, "", row.typeLabel)).join("")}</div></details>`;
+      }).join("");
+      return `${roadwayHtml}${visible.directRows.map((row) => renderRow(row, source, false, "", row.typeLabel)).join("")}`;
+    };
     const criticalHtml = model.critical.map(({ alert }) => {
       const title = resolveAlertTitleText(alert);
       const timing = pickFirstNonEmptyText([alert?.timeframe, alert?.expires, alert?.endsAt, alert?.updatedAt]);
@@ -115818,7 +115874,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         return `<div class="gridly-lp236-source-status gridly-lp236-source-${source.authorityState.toLowerCase()}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="0" data-gridly-lp236-authority-state="${source.authorityState}" role="status"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(status)}</small></span><b aria-label="0 active conditions">0</b></div>`;
       }
       const open = gridlyLP236AlertsState.disclosure.initialized ? gridlyLP236AlertsState.disclosure.sourceKeys.has(sourceKey) : model.total === 1 || source.sourceClass === model.firstSource;
-      return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="ACTIVE"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active conditions"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active conditions">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${source.groups.map((group, groupIndex) => renderGroup(group, source, groupIndex)).join("")}</div></details>`;
+      const groupsHtml = source.sourceClass === "official_roadway" ? renderOfficialRoadways(source) : source.groups.map((group, groupIndex) => renderGroup(group, source, groupIndex)).join("");
+      return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="ACTIVE"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active conditions"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active conditions">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${groupsHtml}</div></details>`;
     }).join("");
     return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong aria-label="${model.total} active condition${model.total === 1 ? "" : "s"}">${model.total} active condition${model.total === 1 ? "" : "s"}</strong></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
   }
