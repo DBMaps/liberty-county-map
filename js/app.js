@@ -45393,6 +45393,19 @@ localStorage.setItem("gridlyDeviceId", deviceId);
 
 const els = {};
 
+function gridlyEnsureWeatherAfterStartup() {
+  const startup = window.gridlyWeatherStartupActivation = {
+    safeStartupHookName: "DOMContentLoaded application bootstrap complete",
+    safeStartupHookReached: true,
+    startupWeatherEnsureAttempted: false,
+    settingsInitializationSafe: typeof GRIDLY_SETTINGS_DEFAULTS === "object",
+    communityPulseInitializationSafe: typeof gridlyCommunityPulseFirstPaintState === "object"
+  };
+  if (!gridlyResolveGovernedWeatherPoint?.()) return;
+  startup.startupWeatherEnsureAttempted = true;
+  window.gridlyWeatherConnector?.refreshAwarenessView?.("post-startup-governed-awareness-ready");
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const startupDiagnostics = window.gridlyStartupDiagnostics;
   startupDiagnostics?.markPostPaintLifecycle?.("domContentLoaded");
@@ -45464,6 +45477,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   startupDiagnostics?.markUiUsable?.("DOMContentLoaded bootstrap reached visible unlock checkpoint");
   startupDiagnostics?.completeStartup?.();
+  gridlyEnsureWeatherAfterStartup();
   }, { blocking: true, dependency: "primary app.js DOMContentLoaded handler" });
 
   setInterval(() => {
