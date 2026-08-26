@@ -84800,6 +84800,56 @@ function gridlyBuildRoadAwareHazardPlacement(rawCoordinate, snappedCoordinate, o
   };
 }
 
+function gridlySelectHazardRoadNameCandidate({ localCandidates = [], osrmCandidates = null, searchRadiusMeters = 150, localAuthorityReady = roadwayDatasetLoaded } = {}) {
+  const normalizeName = (value) => {
+    const normalized = normalizeGridlyUserFacingRoadText(value);
+    return normalized && !/^(unknown(?: road)?|unnamed(?: road)?|null|undefined)$/i.test(normalized) ? normalized : "";
+  };
+  const local = (Array.isArray(localCandidates) ? localCandidates : []).map((candidate) => ({
+    authority: "active roadwaySegmentFeatures",
+    candidate,
+    distance: Number(candidate?.distanceFromTapMeters),
+    rawNameFields: { roadName: candidate?.roadName ?? null, ref: candidate?.ref ?? null },
+    nameBeforeFormatting: candidate?.roadName || candidate?.ref || "",
+    selectedRoadName: normalizeName(candidate?.roadName || candidate?.ref)
+  }));
+  const osrm = (Array.isArray(osrmCandidates) ? osrmCandidates : []).map((candidate) => ({
+    authority: "OSRM_NEAREST_API.waypoints",
+    candidate,
+    distance: Number(candidate?.distance),
+    rawNameFields: { name: candidate?.name ?? null },
+    nameBeforeFormatting: candidate?.name || "",
+    selectedRoadName: normalizeName(candidate?.name)
+  }));
+  const candidates = [...local, ...osrm].filter((entry) => Number.isFinite(entry.distance));
+  const eligible = candidates.filter((entry) => entry.distance <= searchRadiusMeters && entry.selectedRoadName);
+  const winner = eligible.sort((a, b) => a.distance - b.distance || (a.authority === "active roadwaySegmentFeatures" ? -1 : 1))[0] || null;
+  const nearestDistance = candidates.length ? Math.min(...candidates.map((entry) => entry.distance)) : null;
+  const authorityAvailable = Array.isArray(osrmCandidates) || Boolean(localAuthorityReady);
+  const failureReason = winner ? null
+    : !authorityAvailable ? "ROAD_AUTHORITY_NOT_READY"
+      : candidates.length === 0 ? "ROAD_CANDIDATE_COLLECTION_EMPTY"
+        : candidates.some((entry) => entry.distance <= searchRadiusMeters) ? "CANDIDATE_NAME_NORMALIZATION_EMPTY"
+          : "NO_VALID_ROAD_NEAR_SUBMISSION";
+  return {
+    selectedRoadName: winner?.selectedRoadName || null,
+    trace: {
+      roadSelectionAttempted: true,
+      roadSelectionAuthorityAvailable: authorityAvailable,
+      roadSelectionAuthorityName: winner?.authority || (localAuthorityReady ? "active roadwaySegmentFeatures + OSRM_NEAREST_API.waypoints" : "OSRM_NEAREST_API.waypoints"),
+      roadSelectionCandidateCount: candidates.length,
+      roadSelectionEligibleCandidateCount: eligible.length,
+      roadSelectionSearchRadius: searchRadiusMeters,
+      roadSelectionNearestCandidateDistance: gridlyRoundAuditMeters(nearestDistance),
+      roadSelectionWinningCandidateFound: Boolean(winner),
+      roadSelectionWinningCandidateName: winner?.nameBeforeFormatting || null,
+      roadSelectionWinningCandidateRawNameFields: winner?.rawNameFields || null,
+      roadSelectionSelectedRoadName: winner?.selectedRoadName || null,
+      roadSelectionFailureReason: failureReason
+    }
+  };
+}
+
 async function snapHazardToRoad(lat, lng, options = {}) {
   const regionContext = { ...LOCATION_DEFAULTS };
   const snapAttemptRadii = [75, 150];
@@ -84835,7 +84885,18 @@ async function snapHazardToRoad(lat, lng, options = {}) {
     hazardPlacementUsesTapCoordinate: true,
     lastHazardPlacementSource: options?.source || "unknown",
     lastHazardSnapResult: "pending",
-    rawHazardCoordinatesBlockedWhenInvalid: false
+    rawHazardCoordinatesBlockedWhenInvalid: false,
+    roadSelectionAttempted: true,
+    roadSelectionAuthorityAvailable: false,
+    roadSelectionAuthorityName: "OSRM_NEAREST_API.waypoints + active roadwaySegmentFeatures",
+    roadSelectionCandidateCount: 0,
+    roadSelectionEligibleCandidateCount: 0,
+    roadSelectionSearchRadius: snapAttemptRadii[snapAttemptRadii.length - 1],
+    roadSelectionNearestCandidateDistance: null,
+    roadSelectionWinningCandidateFound: false,
+    roadSelectionWinningCandidateName: null,
+    roadSelectionSelectedRoadName: null,
+    roadSelectionFailureReason: "ROAD_AUTHORITY_NOT_READY"
   };
   for (const radiusMeters of snapAttemptRadii) {
     try {
@@ -84868,6 +84929,11 @@ async function snapHazardToRoad(lat, lng, options = {}) {
       if (!Number.isFinite(snappedLat) || !Number.isFinite(snappedLng)) throw new Error("nearest_no_geometry");
       const snapDistanceMeters = Number(nearest?.distance || 0);
       const geometryAwareSelection = gridlyGeometryAwarePlacementDecision({ lat, lng }, { maxDistanceMeters: radiusMeters, limit: 16 });
+      const roadSelection = gridlySelectHazardRoadNameCandidate({
+        localCandidates: geometryAwareSelection?.candidateSegments || [],
+        osrmCandidates: candidates,
+        searchRadiusMeters: radiusMeters
+      });
       const geometrySelectedCoordinate = gridlyCoordinateFromRecord(geometryAwareSelection?.selectedSegment?.candidateCoordinate);
       const geometryCandidateDistancesMeters = Array.isArray(geometryAwareSelection?.candidateSegments)
         ? geometryAwareSelection.candidateSegments.map((candidate) => Number(candidate?.distanceFromTapMeters)).filter(Number.isFinite).sort((a, b) => a - b)
@@ -84887,7 +84953,7 @@ async function snapHazardToRoad(lat, lng, options = {}) {
           geometryAwarePlacement: geometryAwareSelection,
           selectedRoadwaySegment: geometryAwareSelection?.selectedSegment || null,
           projectionCoordinate: geometrySelectedCoordinate || null,
-          selectedRoadName: geometryAwareSelection?.selectedSegment?.roadName || null,
+          selectedRoadName: roadSelection.selectedRoadName,
           selectedSideConfidence: geometryAwareSelection?.selectedSideConfidence || "low",
           recommendedDirection: geometryAwareSelection?.recommendedDirection || null
         }
@@ -84903,7 +84969,7 @@ async function snapHazardToRoad(lat, lng, options = {}) {
         parallelRoadRisk: Boolean(placementDecision.parallelRoadRisk || geometryAwareSelection?.sameRoadParallelCandidates?.length || geometryAwareSelection?.dividedRoadRisk),
         dividedRoadRisk: Boolean(placementDecision.dividedRoadRisk || geometryAwareSelection?.dividedRoadRisk),
         selectedSideConfidence,
-        selectedRoadName: geometryAwareSelection?.selectedSegment?.roadName || null,
+        selectedRoadName: roadSelection.selectedRoadName,
         selectedSegmentDistanceMeters: geometryAwareSelection?.selectedSegment?.distanceFromTapMeters ?? null,
         candidateDistanceGapMeters: geometryAwareSelection?.candidateDistanceGapMeters ?? placementDecision.candidateDistanceGapMeters ?? null,
         minimumConfidenceRequired,
@@ -84940,7 +85006,8 @@ async function snapHazardToRoad(lat, lng, options = {}) {
       debug.osrmNearestCandidates = diagnosticCandidates;
       debug.geometryAwarePlacement = geometryAwareSelection;
       debug.selectedRoadwaySegment = geometryAwareSelection?.selectedSegment || null;
-      debug.selectedRoadName = geometryAwareSelection?.selectedSegment?.roadName || null;
+      debug.selectedRoadName = roadSelection.selectedRoadName;
+      Object.assign(debug, roadSelection.trace);
       debug.selectedSegmentDistanceMeters = geometryAwareSelection?.selectedSegment?.distanceFromTapMeters ?? null;
       debug.selectedSegmentBearing = geometryAwareSelection?.selectedSegment?.bearing ?? null;
       debug.selectedSegmentReason = geometryAwareSelection?.selectedSegmentReason || null;
@@ -84987,7 +85054,7 @@ async function snapHazardToRoad(lat, lng, options = {}) {
         snapRejectionDecisionAudit,
         geometryAwarePlacement: geometryAwareSelection,
         selectedRoadwaySegment: geometryAwareSelection?.selectedSegment || null,
-        selectedRoadName: geometryAwareSelection?.selectedSegment?.roadName || null,
+        selectedRoadName: roadSelection.selectedRoadName,
         selectedSegmentDistanceMeters: geometryAwareSelection?.selectedSegment?.distanceFromTapMeters ?? null,
         selectedSegmentBearing: geometryAwareSelection?.selectedSegment?.bearing ?? null,
         selectedSegmentReason: geometryAwareSelection?.selectedSegmentReason || null,
@@ -84995,7 +85062,8 @@ async function snapHazardToRoad(lat, lng, options = {}) {
         geometryAwarePlacementAvailable: Boolean(placementDecision.geometryAwarePlacementAvailable || geometryAwareSelection?.selectedSegment),
         canSupportFutureDirectionalLabels: Boolean(geometryAwareSelection?.canSupportFutureDirectionalLabels),
         recommendedDirection: geometryAwareSelection?.recommendedDirection || null,
-        directionConfidence: geometryAwareSelection?.directionConfidence || "low"
+        directionConfidence: geometryAwareSelection?.directionConfidence || "low",
+        roadSelectionTrace: { ...roadSelection.trace }
       };
     } catch (error) {
       debug.fallbackReason = String(error?.message || error || "nearest_unknown_failure");
@@ -85009,6 +85077,7 @@ async function snapHazardToRoad(lat, lng, options = {}) {
   debug.placementMode = "raw_tap";
   debug.placementRiskLevel = "high";
   debug.representativeCoordinateReason = "No nearby road candidate was found by OSRM nearest; tap-map hazard submission remains blocked for road proximity validation.";
+  debug.roadSelectionFailureReason = debug.osrmNearestStatus === null ? "ROAD_AUTHORITY_NOT_READY" : "ROAD_CANDIDATE_COLLECTION_EMPTY";
   lastRoadSnapDebug = debug;
   return { lat, lng, fallbackUsed: true, invalid: true, originalTapCoords: debug.originalTapCoords };
 }
@@ -86577,6 +86646,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     canonicalCommunityValue: detailLocationMetadata.communityName || null,
     activeCountySource: "gridlyGetReportSubmissionCountyScopedMetadata.county_id",
     activeCountyValue: countyScopedReportMetadata.county_id,
+    roadSelectionTrace: { ...lastRoadSnapDebug },
     selectedRoadValue: locationPayload.roadName || locationPayload.primaryRoad || locationPayload.crossStreet || locationPayload.referenceRoadA || null,
     selectedRoadAuthority: locationPayloadResult.audit?.selectedRoadAuthority || "NO_STRUCTURED_ROAD_AUTHORITY",
     crossStreet: locationPayload.crossStreet || null,
@@ -123181,7 +123251,7 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
   };
   if (!state) return Object.freeze({
     ...context, lastSubmission: null, submissionLocationCapturePass: null, persistenceLocationPass: null,
-    governedLocationPass: null, overallPass: contextAlignmentPass === false ? false : null,
+    governedLocationPass: null, roadSelectionPass: null, overallPass: contextAlignmentPass === false ? false : null,
     status: contextAlignmentPass === false ? "CONTEXT_MISMATCH" : "NOT_TESTED", passiveOnly: true
   });
   const submissionId = clean(state.submissionId);
@@ -123200,6 +123270,14 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
   // Governed evidence intentionally contains identity/policy, not a duplicate
   // location payload. Join its exact alias to the authoritative normalized row.
   const governedRoad = governed ? roadOf(normalizedHazard) : "";
+  const roadSelection = state.roadSelectionTrace || {};
+  const roadSelectionFailureReason = clean(roadSelection.roadSelectionFailureReason) || null;
+  const roadSelectionPipelineFailure = Boolean(roadSelection.roadSelectionAttempted && !roadSelection.roadSelectionWinningCandidateFound
+    && roadSelectionFailureReason !== "NO_VALID_ROAD_NEAR_SUBMISSION");
+  const roadSelectionPass = roadSelection.roadSelectionWinningCandidateFound
+    ? Boolean(clean(roadSelection.roadSelectionSelectedRoadName))
+    : roadSelectionFailureReason === "NO_VALID_ROAD_NEAR_SUBMISSION" ? true
+      : roadSelection.roadSelectionAttempted ? false : null;
   const structuredRoadAuthorityAvailable = Boolean(submissionRoad);
   const submissionLocationCapturePass = !structuredRoadAuthorityAvailable || Boolean(payloadRoad);
   const persistenceLocationPass = !payloadRoad || Boolean(persistedRoad && acceptedLocalRoad);
@@ -123223,8 +123301,21 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
       persistedRoadValue: persistedRoad || null, governedRoadValue: governedRoad || null,
       firstLocationLosingStage
     }),
+    roadSelectionAttempted: Boolean(roadSelection.roadSelectionAttempted),
+    roadSelectionAuthorityAvailable: Boolean(roadSelection.roadSelectionAuthorityAvailable),
+    roadSelectionAuthorityName: roadSelection.roadSelectionAuthorityName || null,
+    roadSelectionCandidateCount: Number.isFinite(Number(roadSelection.roadSelectionCandidateCount)) ? Number(roadSelection.roadSelectionCandidateCount) : null,
+    roadSelectionEligibleCandidateCount: Number.isFinite(Number(roadSelection.roadSelectionEligibleCandidateCount)) ? Number(roadSelection.roadSelectionEligibleCandidateCount) : null,
+    roadSelectionSearchRadius: Number.isFinite(Number(roadSelection.roadSelectionSearchRadius)) ? Number(roadSelection.roadSelectionSearchRadius) : null,
+    roadSelectionNearestCandidateDistance: Number.isFinite(Number(roadSelection.roadSelectionNearestCandidateDistance)) ? Number(roadSelection.roadSelectionNearestCandidateDistance) : null,
+    roadSelectionWinningCandidateFound: Boolean(roadSelection.roadSelectionWinningCandidateFound),
+    roadSelectionWinningCandidateName: roadSelection.roadSelectionWinningCandidateName || null,
+    roadSelectionSelectedRoadName: roadSelection.roadSelectionSelectedRoadName || null,
+    roadSelectionFailureReason,
+    roadSelectionOutcome: roadSelectionPipelineFailure ? "ROAD_SELECTION_PIPELINE_FAILURE" : (roadSelectionFailureReason || "ROAD_SELECTED"),
+    roadSelectionPass,
     submissionLocationCapturePass, persistenceLocationPass, governedLocationPass,
-    overallPass: contextAlignmentPass !== false && submissionLocationCapturePass && persistenceLocationPass && governedLocationPass,
+    overallPass: contextAlignmentPass !== false && roadSelectionPass !== false && submissionLocationCapturePass && persistenceLocationPass && governedLocationPass,
     status: structuredRoadAuthorityAvailable ? "STRUCTURED_ROAD_AUTHORITY_CAPTURED" : "NO_STRUCTURED_ROAD_AUTHORITY",
     passiveOnly: true
   });
