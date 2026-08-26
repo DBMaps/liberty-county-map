@@ -67,8 +67,62 @@ test('LP238 governed evidence, Alerts and LP236 retain road-over-resolved priori
 
 test('LP238 audit is bounded, passive and fail-closed at every location boundary', () => {
   const audit = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
-  for (const field of ['structuredRoadAuthorityAvailable', 'payloadRoadValue', 'acceptedLocalRoadValue', 'persistedRoadValue', 'governedRoadValue', 'firstLocationLosingStage', 'submissionLocationCapturePass', 'persistenceLocationPass', 'governedLocationPass', 'overallPass', 'NO_STRUCTURED_ROAD_AUTHORITY']) assert.match(audit, new RegExp(field));
+  for (const field of ['authorityAvailable', 'authorityReason', 'canonicalCommunityAuthority', 'selectedMembershipCounty', 'selectedMembershipAuthority', 'authoritativeMembershipCounty', 'authoritativeMembershipAuthority', 'activeCountyAuthority', 'contextAlignmentPass', 'structuredRoadAuthorityAvailable', 'payloadRoadValue', 'acceptedLocalRoadValue', 'persistedRoadValue', 'governedRoadValue', 'firstLocationLosingStage', 'submissionLocationCapturePass', 'persistenceLocationPass', 'governedLocationPass', 'overallPass', 'NO_STRUCTURED_ROAD_AUTHORITY']) assert.match(audit, new RegExp(field));
   assert.doesNotMatch(audit, /fetch\(|setTimeout|setInterval|reverse.?geocod/i);
+});
+
+test('LP238 preflight uses governed canonical community without inheriting a stale runtime county', () => {
+  const auditSource = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
+  const audit = Function('gridlyLP238LastSubmissionLocation', 'gridlyGovernedAwarenessAudit', 'getGridlySelectedAwarenessArea', 'gridlyExtractStructuredMetadata', 'activeHazards',
+    `${auditSource}; return gridlyLP238CommunityReportSubmissionLocationAudit;`)(
+    null,
+    () => ({ available: true, canonicalCommunity: 'Austin', countyId: null, evidence: [] }),
+    () => ({ label: 'Austin', countyId: null, canonicalMultiCountyPlace: true }),
+    () => ({}),
+    []
+  );
+  const result = audit();
+  assert.equal(result.authorityAvailable, true);
+  assert.equal(result.canonicalCommunity, 'Austin');
+  assert.equal(result.canonicalCommunityAuthority, 'gridlyGovernedAwarenessAudit.canonicalCommunity');
+  assert.equal(result.activeCounty, null);
+  assert.equal(result.selectedMembershipCounty, null);
+  assert.equal(result.authoritativeMembershipCounty, null);
+  assert.equal(result.contextAlignmentPass, true);
+  assert.equal(result.lastSubmission, null);
+  assert.equal(result.submissionLocationCapturePass, null);
+  assert.equal(result.overallPass, null);
+  assert.equal(result.status, 'NOT_TESTED');
+  assert.doesNotMatch(auditSource, /gridlyGetActiveCountyId/);
+});
+
+test('LP238 context mismatch fails closed while membership and active county remain separate', () => {
+  const auditSource = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
+  const audit = Function('gridlyLP238LastSubmissionLocation', 'gridlyGovernedAwarenessAudit', 'getGridlySelectedAwarenessArea', 'gridlyExtractStructuredMetadata', 'activeHazards',
+    `${auditSource}; return gridlyLP238CommunityReportSubmissionLocationAudit;`)(
+    null,
+    () => ({ available: true, canonicalCommunity: 'Canonical Place', countyId: null, evidence: [] }),
+    () => ({ label: 'Canonical Place', countyId: null }),
+    () => ({}),
+    []
+  );
+  const result = audit({ selectedMembershipCounty: 'selected-tx', authoritativeMembershipCounty: 'authoritative-tx', submissionContextValue: 'Different Place' });
+  assert.equal(result.selectedMembershipCounty, 'selected-tx');
+  assert.equal(result.authoritativeMembershipCounty, 'authoritative-tx');
+  assert.equal(result.activeCounty, null);
+  assert.equal(result.contextAlignmentPass, false);
+  assert.equal(result.overallPass, false);
+  assert.equal(result.status, 'CONTEXT_MISMATCH');
+});
+
+test('LP238 production submission context is coordinate-scoped and does not consume runtime active county', () => {
+  const submit = functionSource('createSharedHazardReport');
+  assert.match(submit, /gridlyResolveCountyIdForCoordinate\(lat, lng\)/);
+  assert.match(submit, /gridlyGetReportSubmissionCountyScopedMetadata\(lat, lng\)/);
+  assert.match(submit, /gridlyGetReportSubmissionCommunityMetadata\(countyScopedReportMetadata\.county_id, lat, lng\)/);
+  assert.match(submit, /canonicalCommunitySource: "gridlyGetReportSubmissionCommunityMetadata\.communityName"/);
+  assert.match(submit, /activeCountySource: "gridlyGetReportSubmissionCountyScopedMetadata\.county_id"/);
+  assert.doesNotMatch(submit, /gridlyGetActiveCountyId/);
 });
 
 test('LP238 adds no coordinate-to-road inference, provider fetch, polling, or town branch', () => {
