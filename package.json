@@ -627,6 +627,8 @@
     "test:lp236": "node --test tests/lp236-*",
     "test:lp237": "node --test tests/lp237-*",
     "test:lp238": "node --test tests/lp238-*",
+    "build:lp239-crossing-statewide": "node tools/lp239/build-statewide-crossing-certification.mjs --write",
+    "verify:lp239-crossing-statewide": "node tools/lp239/build-statewide-crossing-certification.mjs --verify",
     "build:lp239-statewide": "node tools/lp239/build-statewide-place-membership-certification.mjs --write",
     "verify:lp239-statewide": "node tools/lp239/build-statewide-place-membership-certification.mjs --verify",
     "test:lp239": "node --test tests/lp239-*"
