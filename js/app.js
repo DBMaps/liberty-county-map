@@ -124478,3 +124478,77 @@ function gridlyValVerdeCommunityRuntimeAudit() {
 }
 window.gridlyValVerdeCommunityRuntimeAudit = gridlyValVerdeCommunityRuntimeAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyValVerdeCommunityRuntimeAudit", gridlyValVerdeCommunityRuntimeAudit);
+
+// LP239: one governed PLACE consumer-geography audit.  This intentionally
+// consumes the same statewide identity, membership, crossing, provider, and
+// community-evidence authorities used by every canonical PLACE.  A membership
+// with zero eligible records is represented with a zero count; it is not
+// silently removed from the geography considered by a consumer.
+function gridlyMultiCountyConsumerConvergenceAudit() {
+  const area = getGridlySelectedAwarenessArea();
+  const canonicalPlaceId = gridlyResolveCanonicalPlaceGeoid(area);
+  const membershipCountyFips = [...new Set((area?.countyMemberships || []).map(String))].sort();
+  const countyEntry = (fips) => Object.entries(GRIDLY_COUNTY_REGISTRY || {})
+    .find(([, county]) => String(county?.countyFips || "") === fips) || [];
+  const membershipCountyIds = membershipCountyFips.map((fips) => countyEntry(fips)[0]).filter(Boolean);
+  const membershipCountyNames = membershipCountyFips.map((fips) => countyEntry(fips)[1]?.name || null);
+  const countyIdForRecord = (record = {}) => {
+    const direct = gridlyNormalizeCountyId(record.sourceCounty || record.countyId || record.county_id || record.raw?.countyId || "");
+    if (direct && GRIDLY_COUNTY_REGISTRY[direct]) return direct;
+    const fips = String(record.countyFips || record.county_fips || record.raw?.countyFips || "");
+    return countyEntry(fips)[0] || null;
+  };
+  const stableId = (record = {}) => String(record.evidenceId || record.canonicalGovernedEvidenceId || record.providerRecordId || record.crossingId || record.crossing_id || record.reportId || record.report_id || record.incidentId || record.id || "").trim();
+  const duplicates = (ids) => [...new Set(ids.filter((id, index) => id && ids.indexOf(id) !== index))].sort();
+  const projection = typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null;
+  const officialRows = Array.isArray(projection?.surfaces?.kbygOfficialRoadways) ? projection.surfaces.kbygOfficialRoadways : [];
+  const officialIds = officialRows.map(stableId).filter(Boolean);
+  const officialRoadwayCandidatesByCounty = Object.fromEntries(membershipCountyIds.map((id) => [id, 0]));
+  officialRows.forEach((row) => { const id = countyIdForRecord(row); if (id in officialRoadwayCandidatesByCounty) officialRoadwayCandidatesByCounty[id] += 1; });
+  const officialAudit = typeof window.gridlyLP235AlertsCanonicalSourceAudit === "function" ? window.gridlyLP235AlertsCanonicalSourceAudit() : null;
+  const officialAuthorityAvailable = Boolean(projection && officialAudit?.authorityAvailable !== false);
+
+  const crossing = window.gridlyCanonicalCrossingRuntime?.resolveRecords?.(area) || null;
+  const crossingInventoryCountByCounty = Object.fromEntries(membershipCountyIds.map((id) => [id, 0]));
+  const crossingIds = [];
+  (crossing?.records || []).forEach((record) => {
+    const id = countyIdForRecord(record); const identity = stableId(record);
+    if (id in crossingInventoryCountByCounty) crossingInventoryCountByCounty[id] += 1;
+    if (identity) crossingIds.push(identity);
+  });
+  const crossingAuthorityAvailable = Boolean(crossing?.authorityAvailable);
+
+  const presentation = canonicalPlaceId ? resolveGridlyCanonicalPlacePresentationFocus({ placeGeoid: canonicalPlaceId }) : null;
+  const weatherAuthority = presentation ? "canonical PLACE presentation coordinate -> existing provider point/polygon/zone geography" : "UNAVAILABLE";
+  const weatherAuthorityAvailable = Boolean(presentation);
+  const summary = buildGridlyCommunityAwarenessIntelligenceSummary();
+  const communityRows = [...(summary?.activeReportsInArea || []), ...(summary?.activeHazardsInArea || [])]
+    .filter((row) => !isGridlyCrossingReportRecord(row));
+  const communityReportCountyIds = [...new Set(communityRows.map(countyIdForRecord).filter((id) => membershipCountyIds.includes(id)))].sort();
+  const missingOfficialRoadwayMemberships = officialAuthorityAvailable ? [] : [...membershipCountyIds];
+  const missingCrossingMemberships = crossingAuthorityAvailable ? [] : [...membershipCountyIds];
+  const missingWeatherMemberships = weatherAuthorityAvailable ? [] : [...membershipCountyIds];
+  const duplicateOfficialRoadwayIds = duplicates(officialIds);
+  const duplicateCrossingIds = duplicates(crossingIds);
+  const canonicalPlaceConsumerConvergencePass = Boolean(canonicalPlaceId && membershipCountyIds.length === membershipCountyFips.length
+    && officialAuthorityAvailable && crossingAuthorityAvailable && weatherAuthorityAvailable
+    && !missingOfficialRoadwayMemberships.length && !missingCrossingMemberships.length && !missingWeatherMemberships.length
+    && !duplicateOfficialRoadwayIds.length && !duplicateCrossingIds.length);
+  return Object.freeze({
+    canonicalCommunity: area?.label || area?.storageValue || crossing?.membership?.canonicalCommunity || null,
+    canonicalPlaceId, membershipCountyIds: Object.freeze(membershipCountyIds), membershipCountyNames: Object.freeze(membershipCountyNames),
+    membershipCount: membershipCountyIds.length, presentationCoordinate: presentation ? Object.freeze({ lat: presentation.lat, lng: presentation.lng, authority: presentation.authority }) : null,
+    officialRoadwayCountyIds: Object.freeze([...membershipCountyIds]), officialRoadwayMembershipCount: membershipCountyIds.length,
+    officialRoadwayCandidatesByCounty: Object.freeze(officialRoadwayCandidatesByCounty), officialRoadwayInputCount: officialRows.length,
+    officialRoadwayCanonicalPlaceInputCount: officialRows.length, crossingCountyIds: Object.freeze([...membershipCountyIds]),
+    crossingInventoryCountByCounty: Object.freeze(crossingInventoryCountByCounty), crossingCombinedInventoryCount: crossingIds.length,
+    crossingCombinedCanonicalPlaceInventoryCount: crossingIds.length, weatherAuthority, weatherMembershipScope: "canonical PLACE presentation plus existing provider geography",
+    weatherCountyIds: Object.freeze([...membershipCountyIds]), weatherCountyIdsConsidered: Object.freeze([...membershipCountyIds]), communityReportCountyIds: Object.freeze(communityReportCountyIds),
+    missingOfficialRoadwayMemberships: Object.freeze(missingOfficialRoadwayMemberships), missingCrossingMemberships: Object.freeze(missingCrossingMemberships),
+    missingWeatherMemberships: Object.freeze(missingWeatherMemberships), duplicateOfficialRoadwayIds: Object.freeze(duplicateOfficialRoadwayIds),
+    duplicateCrossingIds: Object.freeze(duplicateCrossingIds), canonicalPlaceConsumerConvergencePass, overallPass: canonicalPlaceConsumerConvergencePass,
+    activeCounty: gridlyGetActiveCountyId(), selectedOperationalMembership: gridlyGetActiveCountyId(), providerFetchPolicy: "reuse shared statewide/provider authority; no per-membership fetch", passiveOnly: true
+  });
+}
+window.gridlyMultiCountyConsumerConvergenceAudit = gridlyMultiCountyConsumerConvergenceAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyMultiCountyConsumerConvergenceAudit", gridlyMultiCountyConsumerConvergenceAudit);
