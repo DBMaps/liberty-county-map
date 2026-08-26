@@ -23,11 +23,11 @@ test("community canonical inventory and blocked semantics remain governed", () =
   assert.match(governed, /flooding:\s*"flooded_road"/);
 });
 
-test("audit documents rather than repairs competing display authorities", () => {
-  assert.match(app, /debris:\s*\{\s*label:\s*"Debris in Road"/s);
+test("audit records the repaired shared display authority", () => {
+  assert.match(app, /debris:\s*\{\s*label:\s*"Debris In Road"/s);
   assert.match(app, /function gridlyLp0541bCanonicalHazardLabel/);
   assert.match(app, /function gridlyBuildCanonicalLiveIncidentPresentation/);
-  assert.match(report, /NO PRODUCTION LABEL REPAIR/);
+  assert.match(report, /LP240\.3 audit baseline/);
   assert.match(report, /Debris \/ Obstruction/);
 });
 

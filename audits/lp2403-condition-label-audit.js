@@ -26,6 +26,7 @@
     return Object.freeze({
       sourceFamily: sourceFamilyFor(node),
       canonicalKey: canonical(raw || currentDisplayLabel),
+      displayLabel: currentDisplayLabel,
       currentDisplayLabel,
       surface: node.closest?.(".leaflet-popup") ? "popup" : (node.closest?.("[data-gridly-kbyg], #gridlyKnowBeforeYouGo") ? "kbyg" : (node.closest?.("[data-gridly-location-context], #gridlyLocationContext") ? "locationContext" : "alerts")),
       conditionId: clean(node.dataset.gridlyCanonicalIncidentId || node.dataset.gridlyAlertIncidentId || node.dataset.incidentId || node.dataset.reportId || node.id)
@@ -42,16 +43,17 @@
     const rows = [...doc.querySelectorAll(selector)].filter((node, index, all) => !all.some((parent, parentIndex) => parentIndex !== index && parent.contains?.(node))).map(rowFor).filter((row) => row.currentDisplayLabel || row.canonicalKey);
     const labelsByKey = new Map();
     rows.forEach((row) => {
-      if (!labelsByKey.has(row.canonicalKey)) labelsByKey.set(row.canonicalKey, new Set());
-      labelsByKey.get(row.canonicalKey).add(row.currentDisplayLabel);
+      const ownedKey = `${row.sourceFamily}:${row.canonicalKey}`;
+      if (!labelsByKey.has(ownedKey)) labelsByKey.set(ownedKey, new Set());
+      labelsByKey.get(ownedKey).add(row.displayLabel);
     });
     const summary = Object.freeze({
       conditionCount: rows.length,
       uniqueCanonicalKeyCount: labelsByKey.size,
       inconsistentLabelCount: [...labelsByKey.values()].filter((labels) => labels.size > 1).length,
-      rawKeyLeakCount: rows.filter((row) => row.currentDisplayLabel === row.canonicalKey).length,
-      snakeCaseLeakCount: rows.filter((row) => /_/.test(row.currentDisplayLabel)).length,
-      lowercaseLabelCount: rows.filter((row) => isLowercaseLabel(row.currentDisplayLabel)).length
+      rawKeyLeakCount: rows.filter((row) => row.displayLabel === row.canonicalKey).length,
+      snakeCaseLeakCount: rows.filter((row) => /_/.test(row.displayLabel)).length,
+      lowercaseLabelCount: rows.filter((row) => isLowercaseLabel(row.displayLabel)).length
     });
     return Object.freeze({ rows: Object.freeze(rows), summary, authorityAvailable: true });
   }
