@@ -1,339 +1,107 @@
 (function initGridlyWeatherLiveConnector(globalScope) {
   "use strict";
-
   if (!globalScope || typeof globalScope !== "object") return;
 
   const PROVIDER_ID = "weather";
   const PROVIDER_NAME = "Weather";
+  // Retained for diagnostics/future discovery; selected-area authority never uses it.
   const DEFAULT_ENDPOINT = "https://api.weather.gov/alerts/active?area=TX";
+  const POINT_ENDPOINT = "https://api.weather.gov/alerts/active?point={lat},{lng}";
   const TIMEOUT_MS = 8000;
   const MAX_ATTEMPTS = 2;
   const REFRESH_INTERVAL_MS = 120000;
-
-  const state = {
-    connected: false,
-    networkingAvailable: typeof globalScope.fetch === "function",
-    automaticPolling: false,
-    providerActivated: false,
-    renderingPerformed: false,
-    normalizedRecordCount: 0,
-    lastFetchSucceeded: false,
-    lastError: null,
-    lastRequestAt: null,
-    lastSuccessAt: null,
-    lastFailureAt: null,
-    refreshIntervalMs: REFRESH_INTERVAL_MS
-  };
-
-  let refreshTimer = null;
-  let fetchInFlight = null;
-
+  const CACHE_MAX = 8;
+  const state = { connected:false, networkingAvailable:typeof globalScope.fetch === "function", automaticPolling:false, providerActivated:false, normalizedRecordCount:0, lastFetchSucceeded:false, lastError:null, lastRequestAt:null, lastSuccessAt:null, lastFailureAt:null, refreshIntervalMs:REFRESH_INTERVAL_MS, pointRequestIdentity:null, pointEndpoint:null, pointResponseValid:false, staleResponseSuppressedCount:0 };
+  const cache = new Map();
   let normalizedRecords = [];
-  let lastRecordSignature = null;
+  let fetchInFlight = null;
+  let currentIdentity = null;
+  let generation = 0;
+  let refreshTimer = null;
 
-  function freeze(value) {
-    if (!value || typeof value !== "object") return value;
-    return Object.freeze(value);
-  }
-
-  function clone(value) {
-    try {
-      return JSON.parse(JSON.stringify(value));
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function toSafeString(value) {
-    return typeof value === "string" ? value.trim() : "";
-  }
-
-  const TRAVEL_IMPACT_PATTERN = /flash flood warning|flood warning|severe thunderstorm warning|tornado warning|dense fog advisory|winter storm warning|winter weather advisory|ice storm warning|blizzard warning|high wind warning|wind advisory|tropical storm warning|hurricane warning|red flag warning/i;
-
-  function activeAwarenessArea() {
-    try {
-      if (typeof globalScope.getGridlySelectedAwarenessArea === "function") return globalScope.getGridlySelectedAwarenessArea();
-      if (typeof globalScope.getGridlyHomeTownAwarenessAnchor === "function") return globalScope.getGridlyHomeTownAwarenessAnchor();
-    } catch (error) {}
-    return null;
-  }
-
-  function recordText(record) {
-    return [record?.title, record?.description, record?.category, record?.headline, record?.event, record?.affectedAreas].flat().map(toSafeString).filter(Boolean).join(" ").toLowerCase();
-  }
-
-  function isTravelImpacting(record) {
-    return TRAVEL_IMPACT_PATTERN.test(recordText(record));
-  }
-
-  function matchesAwarenessArea(record) {
-    const awareness = activeAwarenessArea();
-    if (!awareness) return false;
-    const rawLat = record?.latitude;
-    const rawLng = record?.longitude;
-    const lat = rawLat == null || rawLat === "" ? NaN : Number(rawLat);
-    const lng = rawLng == null || rawLng === "" ? NaN : Number(rawLng);
-    const areaLat = Number(awareness.lat);
-    const areaLng = Number(awareness.lng);
-    if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(areaLat) && Number.isFinite(areaLng) && typeof globalScope.getDistanceMiles === "function") {
-      const radius = Number(awareness.radiusMiles);
-      const allowedMiles = awareness.countyWide || !Number.isFinite(radius) ? 35 : radius + 2;
-      return globalScope.getDistanceMiles(areaLat, areaLng, lat, lng) <= allowedMiles;
-    }
-    const terms = [awareness.label, awareness.storageValue, awareness.key, awareness.countyId]
-      .map(toSafeString)
-      .map((value) => value.toLowerCase().replace(/-tx$/, "").replace(/ county$/, ""))
-      .filter(Boolean);
-    const text = recordText(record);
-    return Boolean(text && terms.some((term) => term && text.includes(term)));
-  }
-
-  function filterAwarenessRecords(records) {
-    return (Array.isArray(records) ? records : []).filter((record) => isTravelImpacting(record) && matchesAwarenessArea(record));
-  }
-
-
-  function stableRecordValue(value) {
-    if (Array.isArray(value)) return value.map(stableRecordValue);
-    if (value && typeof value === "object") {
-      return Object.keys(value).sort().reduce((memo, key) => {
-        if (key === "raw" || key === "rawPayload" || key === "rawPayloadExposed") return memo;
-        const nextValue = value[key];
-        if (typeof nextValue === "function" || typeof nextValue === "undefined") return memo;
-        memo[key] = stableRecordValue(nextValue);
-        return memo;
-      }, {});
-    }
-    return value;
-  }
-
-  function buildRecordSignature(records) {
-    const stableRecords = (Array.isArray(records) ? records : []).map(stableRecordValue);
-    stableRecords.sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
-    return `${PROVIDER_ID}:${stableRecords.length}:${JSON.stringify(stableRecords)}`;
-  }
-
-  function notifyOfficialProviderEvidence(signature, changed, reason) {
-    if (typeof globalScope.gridlyOfficialProviderConsumerRefresh === "function") {
-      globalScope.gridlyOfficialProviderConsumerRefresh({ providerId: PROVIDER_ID, signature, evidenceChanged: changed, reason });
-      return;
-    }
-    if (!changed) return;
-    try { if (typeof globalScope.gridlyRenderTravelBrief === "function") globalScope.gridlyRenderTravelBrief(); } catch (error) {}
-    try { if (typeof globalScope.gridlyUnifiedIntelligencePrototype?.runtime === "function") globalScope.gridlyUnifiedIntelligencePrototype.runtime(); } catch (error) {}
-  }
-
-  function getProvider() {
-    return globalScope.gridlyWeatherProvider || globalScope.gridlyIntelligenceProviders?.[PROVIDER_ID] || null;
-  }
-
-  function getConnectorConfig() {
-    const gridlyConfig = globalScope.GRIDLY_CONFIG && typeof globalScope.GRIDLY_CONFIG === "object"
-      ? globalScope.GRIDLY_CONFIG
-      : {};
-    const weather = gridlyConfig.weather && typeof gridlyConfig.weather === "object"
-      ? gridlyConfig.weather
-      : {};
-
-    return {
-      endpointTemplate: toSafeString(weather.endpointTemplate) || DEFAULT_ENDPOINT
-    };
-  }
-
-  function buildEndpoint() {
-    return getConnectorConfig().endpointTemplate;
-  }
-
-  function createTimeoutController() {
-    if (typeof globalScope.AbortController !== "function") return { controller: null, timeoutId: null };
-    const controller = new globalScope.AbortController();
-    const timeoutId = globalScope.setTimeout(() => controller.abort(), TIMEOUT_MS);
-    return { controller, timeoutId };
-  }
-
-  function isSupportedNwsPayload(payload) {
-    if (!payload || typeof payload !== "object") return false;
-    if (payload.type === "FeatureCollection" && Array.isArray(payload.features)) return true;
-    if (Array.isArray(payload["@graph"])) return true;
-    if (Array.isArray(payload.alerts)) return true;
-    return Array.isArray(payload.records);
-  }
-
-  function normalizeJsonLdGraph(payload) {
-    if (!payload || !Array.isArray(payload["@graph"])) return payload;
-    return { records: payload["@graph"] };
-  }
-
-  function normalizePayload(payload) {
-    if (!isSupportedNwsPayload(payload)) {
-      const error = new Error("Weather connector schema validation failed");
-      error.gridlyNonRetryable = true;
-      throw error;
-    }
-
-    const provider = getProvider();
-    if (!provider || typeof provider.normalizeRecords !== "function") {
-      const error = new Error("Weather provider normalizer unavailable");
-      error.gridlyNonRetryable = true;
-      throw error;
-    }
-
-    return provider.normalizeRecords(normalizeJsonLdGraph(payload)).map(clone).filter(Boolean);
-  }
-
-  function isTransientError(error) {
-    if (error?.gridlyNonRetryable === true) return false;
-    if (error?.gridlyHttpStatus) {
-      return error.gridlyHttpStatus === 408 || error.gridlyHttpStatus === 429 || error.gridlyHttpStatus >= 500;
-    }
-    return error?.name === "AbortError" || error instanceof TypeError || error?.gridlyNetworkError === true;
-  }
-
-  async function requestPayload(endpoint) {
-    if (typeof globalScope.fetch !== "function") {
-      const error = new Error("Weather connector fetch is unavailable");
-      error.gridlyNonRetryable = true;
-      throw error;
-    }
-
-    const { controller, timeoutId } = createTimeoutController();
-    try {
-      const response = await globalScope.fetch(endpoint, {
-        method: "GET",
-        cache: "no-store",
-        headers: { Accept: "application/geo+json, application/ld+json, application/json" },
-        signal: controller ? controller.signal : undefined
-      });
-      if (!response || response.ok !== true) {
-        const status = Number(response?.status) || 0;
-        const error = new Error(`Weather connector request failed: ${status || "unknown"}`);
-        error.gridlyHttpStatus = status;
-        error.gridlyNonRetryable = status >= 400 && status < 500 && status !== 408 && status !== 429;
-        throw error;
-      }
-      return response.json();
-    } catch (error) {
-      if (error?.gridlyHttpStatus || error?.gridlyNonRetryable) throw error;
-      error.gridlyNetworkError = true;
-      throw error;
-    } finally {
-      if (timeoutId != null && typeof globalScope.clearTimeout === "function") globalScope.clearTimeout(timeoutId);
-    }
-  }
-
-  function notifyBriefWeatherRefresh(signature, changed, reason) {
-    notifyOfficialProviderEvidence(signature, changed, reason || "weather-provider-evidence");
-  }
-
-  async function fetchNow() {
-    if (fetchInFlight) return fetchInFlight;
-    fetchInFlight = fetchNowInternal().finally(() => { fetchInFlight = null; });
-    return fetchInFlight;
-  }
-
-  async function fetchNowInternal() {
-    state.networkingAvailable = typeof globalScope.fetch === "function";
-    state.lastRequestAt = new Date().toISOString();
-    let attempt = 0;
-    let lastError = null;
-
-    try {
-      const endpoint = buildEndpoint();
-      while (attempt < MAX_ATTEMPTS) {
-        try {
-          const payload = await requestPayload(endpoint);
-          normalizedRecords = filterAwarenessRecords(normalizePayload(payload));
-          const recordSignature = buildRecordSignature(normalizedRecords);
-          const evidenceChanged = recordSignature !== lastRecordSignature;
-          lastRecordSignature = recordSignature;
-          state.connected = true;
-          state.lastFetchSucceeded = true;
-          state.lastSuccessAt = new Date().toISOString();
-          state.normalizedRecordCount = normalizedRecords.length;
-          state.lastError = null;
-          notifyBriefWeatherRefresh(recordSignature, evidenceChanged, "weather-fetch-success");
-          return freeze({ connected: true, normalizedRecordCount: normalizedRecords.length, evidenceChanged });
-        } catch (error) {
-          lastError = error;
-          attempt += 1;
-          if (attempt >= MAX_ATTEMPTS || !isTransientError(error)) throw error;
-        }
-      }
-      throw lastError || new Error("Weather connector request failed");
-    } catch (error) {
-      normalizedRecords = [];
-      const recordSignature = buildRecordSignature(normalizedRecords);
-      const evidenceChanged = recordSignature !== lastRecordSignature;
-      lastRecordSignature = recordSignature;
-      state.connected = false;
-      state.lastFetchSucceeded = false;
-      state.lastFailureAt = new Date().toISOString();
-      state.normalizedRecordCount = 0;
-      state.lastError = error instanceof Error ? error.message : String(error);
-      notifyBriefWeatherRefresh(recordSignature, evidenceChanged, "weather-fetch-failure");
-      return freeze({ connected: false, normalizedRecordCount: 0, error: state.lastError, evidenceChanged });
-    }
-  }
-
-  function scheduleNextFetch(delayMs) {
-    if (refreshTimer != null || typeof globalScope.setTimeout !== "function") return;
-    refreshTimer = globalScope.setTimeout(async () => {
-      refreshTimer = null;
-      await fetchNow();
-      if (state.automaticPolling === true) scheduleNextFetch(REFRESH_INTERVAL_MS);
-    }, Math.max(0, Number(delayMs) || 0));
-  }
-
-  function startPolling() {
-    state.automaticPolling = true;
-    state.providerActivated = true;
-    scheduleNextFetch(0);
-    return runtimeAudit();
-  }
-
-  function stopPolling() {
-    state.automaticPolling = false;
-    if (refreshTimer != null && typeof globalScope.clearTimeout === "function") globalScope.clearTimeout(refreshTimer);
-    refreshTimer = null;
-    return runtimeAudit();
-  }
-
-  function getNormalizedRecords() {
-    return freeze(normalizedRecords.map(clone).filter(Boolean));
-  }
-
-  function runtimeAudit() {
-    return freeze({
-      connected: state.connected === true,
-      networkingAvailable: typeof globalScope.fetch === "function",
-      automaticPolling: state.automaticPolling === true,
-      providerActivated: state.providerActivated === true,
-      renderingPerformed: false,
-      normalizedRecordCount: state.normalizedRecordCount,
-      requestAttempted: state.lastRequestAt != null,
-      requestSucceeded: state.lastFetchSucceeded === true,
-      lastRequestAt: state.lastRequestAt,
-      lastSuccessAt: state.lastSuccessAt,
-      lastFailureAt: state.lastFailureAt,
-      lastError: state.lastError,
-      refreshIntervalMs: REFRESH_INTERVAL_MS
+  const freeze = (value) => value && typeof value === "object" ? Object.freeze(value) : value;
+  const clone = (value) => { try { return JSON.parse(JSON.stringify(value)); } catch (_) { return null; } };
+  const iso = () => new Date().toISOString();
+  function resolvePoint() { try { return globalScope.gridlyResolveGovernedWeatherPoint?.() || null; } catch (_) { return null; } }
+  function identity(point) { return point ? `${point.stableIdentity}|${point.awarenessKey}|${point.lat},${point.lng}` : null; }
+  function endpoint(point) { return POINT_ENDPOINT.replace("{lat}", encodeURIComponent(String(point.lat))).replace("{lng}", encodeURIComponent(String(point.lng))); }
+  function provider() { return globalScope.gridlyWeatherProvider || globalScope.gridlyIntelligenceProviders?.[PROVIDER_ID] || null; }
+  function validPayload(payload) { return Boolean(payload && payload.type === "FeatureCollection" && Array.isArray(payload.features)); }
+  function currentRecords(records) {
+    const now = Date.now();
+    return records.filter((record) => {
+      const status = String(record.status || "Actual").toLowerCase();
+      const message = String(record.messageType || "Alert").toLowerCase();
+      const effective = Date.parse(record.effectiveTime || record.onsetTime || "");
+      const expires = Date.parse(record.expirationTime || record.endTime || "");
+      return status !== "test" && status !== "draft" && message !== "cancel" && (!Number.isFinite(effective) || effective <= now) && (!Number.isFinite(expires) || expires > now);
     });
   }
-
-  globalScope.gridlyWeatherConnector = freeze({
-    providerId: PROVIDER_ID,
-    providerName: PROVIDER_NAME,
-    timeoutMs: TIMEOUT_MS,
-    maxAttempts: MAX_ATTEMPTS,
-    fetchNow,
-    startPolling,
-    stopPolling,
-    refreshIntervalMs: REFRESH_INTERVAL_MS,
-    getNormalizedRecords
-  });
-  globalScope.gridlyWeatherConnectorRuntimeAudit = runtimeAudit;
-
-  if (typeof module !== "undefined" && module.exports) {
-    module.exports = globalScope.gridlyWeatherConnector;
+  function notify(reason) {
+    try { globalScope.gridlyOfficialProviderConsumerRefresh?.({ providerId:PROVIDER_ID, reason, evidenceChanged:true }); } catch (_) {}
   }
-})(typeof window !== "undefined" ? window : globalThis);
+  async function requestPayload(url) {
+    if (typeof globalScope.fetch !== "function") throw new Error("Weather connector fetch is unavailable");
+    let last;
+    for (let attempt=0; attempt<MAX_ATTEMPTS; attempt+=1) {
+      const controller = typeof globalScope.AbortController === "function" ? new globalScope.AbortController() : null;
+      const timer = controller && typeof globalScope.setTimeout === "function" ? globalScope.setTimeout(() => controller.abort(), TIMEOUT_MS) : null;
+      try {
+        const response = await globalScope.fetch(url, { method:"GET", cache:"no-store", headers:{ Accept:"application/geo+json, application/json" }, signal:controller?.signal });
+        if (!response?.ok) { const error = new Error(`Weather connector request failed: ${response?.status || "unknown"}`); error.status=Number(response?.status)||0; throw error; }
+        return await response.json();
+      } catch (error) {
+        last=error; const transient = error?.name === "AbortError" || error instanceof TypeError || error?.status === 408 || error?.status === 429 || error?.status >= 500;
+        if (!transient || attempt === MAX_ATTEMPTS-1) throw error;
+      } finally { if (timer != null) globalScope.clearTimeout?.(timer); }
+    }
+    throw last;
+  }
+  function publish(entry, requestGeneration) {
+    const live = resolvePoint();
+    if (requestGeneration !== generation || identity(live) !== entry.requestIdentity) { state.staleResponseSuppressedCount += 1; return false; }
+    currentIdentity = entry.requestIdentity;
+    normalizedRecords = entry.records.map(clone).filter(Boolean);
+    state.connected=entry.succeeded && entry.valid; state.lastFetchSucceeded=entry.succeeded; state.lastError=entry.error; state.lastSuccessAt=entry.succeeded ? entry.fetchedAt : state.lastSuccessAt; state.lastFailureAt=entry.succeeded ? state.lastFailureAt : entry.fetchedAt; state.normalizedRecordCount=normalizedRecords.length; state.pointRequestIdentity=entry.requestIdentity; state.pointEndpoint=entry.endpoint; state.pointResponseValid=entry.valid;
+    notify(entry.succeeded ? "weather-point-fetch-success" : "weather-point-fetch-failure");
+    return true;
+  }
+  async function fetchPoint(point, requestGeneration) {
+    const requestIdentity=identity(point), url=endpoint(point); state.lastRequestAt=iso(); state.pointRequestIdentity=requestIdentity; state.pointEndpoint=url;
+    try {
+      const payload=await requestPayload(url);
+      if (!validPayload(payload)) throw new Error("Weather connector schema validation failed");
+      const normalizer=provider()?.normalizeRecords;
+      if (typeof normalizer !== "function") throw new Error("Weather provider normalizer unavailable");
+      const records=currentRecords(normalizer(payload).map(clone).filter(Boolean));
+      const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:true, valid:true, fetchedAt:iso(), records, error:null };
+      cache.delete(requestIdentity); cache.set(requestIdentity,entry); while(cache.size>CACHE_MAX) cache.delete(cache.keys().next().value);
+      publish(entry,requestGeneration); return freeze({ connected:true, normalizedRecordCount:records.length, requestIdentity });
+    } catch(error) {
+      const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:false, valid:false, fetchedAt:iso(), records:[], error:error?.message||String(error) };
+      publish(entry,requestGeneration); return freeze({ connected:false, normalizedRecordCount:0, error:entry.error, requestIdentity });
+    }
+  }
+  function fetchNow() {
+    state.providerActivated = true;
+    const point=resolvePoint(); const nextIdentity=identity(point);
+    if (!point) { generation+=1; currentIdentity=null; normalizedRecords=[]; state.connected=false; state.lastFetchSucceeded=false; state.lastError="Unsupported governed awareness identity"; state.pointRequestIdentity=null; state.pointEndpoint=null; state.pointResponseValid=false; notify("weather-point-unavailable"); return Promise.resolve(freeze({connected:false,error:state.lastError})); }
+    if (fetchInFlight?.identity === nextIdentity) return fetchInFlight.promise;
+    const requestGeneration=++generation;
+    const promise=fetchPoint(point,requestGeneration).finally(() => { if(fetchInFlight?.promise===promise) fetchInFlight=null; });
+    fetchInFlight={identity:nextIdentity,promise}; return promise;
+  }
+  function refreshAwarenessView() {
+    const point=resolvePoint(), next=identity(point), cached=next ? cache.get(next) : null;
+    generation+=1;
+    if (cached && Date.now()-Date.parse(cached.fetchedAt)<=REFRESH_INTERVAL_MS) { publish(cached,generation); return Promise.resolve(freeze({connected:true,cached:true,normalizedRecordCount:cached.records.length})); }
+    return fetchNow();
+  }
+  function startPolling() { state.automaticPolling=true; const tick=async()=>{await fetchNow(); if(state.automaticPolling) refreshTimer=globalScope.setTimeout(tick,REFRESH_INTERVAL_MS);}; tick(); return runtimeAudit(); }
+  function stopPolling(){state.automaticPolling=false;if(refreshTimer!=null)globalScope.clearTimeout?.(refreshTimer);refreshTimer=null;return runtimeAudit();}
+  function getNormalizedRecords(){return freeze(normalizedRecords.map(clone).filter(Boolean));}
+  function runtimeAudit(){const entry=currentIdentity?cache.get(currentIdentity):null;const age=entry?Date.now()-Date.parse(entry.fetchedAt):Infinity;if(state.providerActivated!==true)return freeze({connected:false,networkingAvailable:typeof globalScope.fetch === "function",automaticPolling:false,providerActivated:false,renderingPerformed:false,normalizedRecordCount:0,requestAttempted:false,requestSucceeded:false,lastRequestAt:null,lastSuccessAt:null,lastFailureAt:null,lastError:null,refreshIntervalMs:REFRESH_INTERVAL_MS});return freeze({ ...state, applicabilityMode:"NWS_POINT_QUERY", statewideDiagnosticEndpoint:DEFAULT_ENDPOINT, pointAlertEndpoint:state.pointEndpoint, requestAttempted:Boolean(entry?.attempted), requestSucceeded:Boolean(entry?.succeeded), responseValid:Boolean(entry?.valid), fetchedAt:entry?.fetchedAt||null, freshEnough:Boolean(entry?.succeeded&&entry?.valid&&age>=0&&age<=REFRESH_INTERVAL_MS), pointActiveAlertCount:entry?.records?.length||0, pointActiveAlertIds:freeze((entry?.records||[]).map(r=>r.id)), currentAwarenessIdentity:identity(resolvePoint()), selectedPoint:entry?.point||resolvePoint(), cacheSize:cache.size });}
+  globalScope.gridlyWeatherConnector=freeze({providerId:PROVIDER_ID,providerName:PROVIDER_NAME,timeoutMs:TIMEOUT_MS,maxAttempts:MAX_ATTEMPTS,refreshIntervalMs:REFRESH_INTERVAL_MS,fetchNow,refreshAwarenessView,startPolling,stopPolling,getNormalizedRecords});
+  globalScope.gridlyWeatherConnectorRuntimeAudit=runtimeAudit;
+  if(typeof module!=="undefined"&&module.exports)module.exports=globalScope.gridlyWeatherConnector;
+})(typeof window!=="undefined"?window:globalThis);
