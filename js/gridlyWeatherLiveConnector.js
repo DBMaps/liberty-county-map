@@ -20,6 +20,8 @@
     lastFetchSucceeded: false,
     lastError: null,
     lastRequestAt: null,
+    lastSuccessAt: null,
+    lastFailureAt: null,
     refreshIntervalMs: REFRESH_INTERVAL_MS
   };
 
@@ -246,6 +248,7 @@
           lastRecordSignature = recordSignature;
           state.connected = true;
           state.lastFetchSucceeded = true;
+          state.lastSuccessAt = new Date().toISOString();
           state.normalizedRecordCount = normalizedRecords.length;
           state.lastError = null;
           notifyBriefWeatherRefresh(recordSignature, evidenceChanged, "weather-fetch-success");
@@ -264,6 +267,7 @@
       lastRecordSignature = recordSignature;
       state.connected = false;
       state.lastFetchSucceeded = false;
+      state.lastFailureAt = new Date().toISOString();
       state.normalizedRecordCount = 0;
       state.lastError = error instanceof Error ? error.message : String(error);
       notifyBriefWeatherRefresh(recordSignature, evidenceChanged, "weather-fetch-failure");
@@ -306,6 +310,12 @@
       providerActivated: state.providerActivated === true,
       renderingPerformed: false,
       normalizedRecordCount: state.normalizedRecordCount,
+      requestAttempted: state.lastRequestAt != null,
+      requestSucceeded: state.lastFetchSucceeded === true,
+      lastRequestAt: state.lastRequestAt,
+      lastSuccessAt: state.lastSuccessAt,
+      lastFailureAt: state.lastFailureAt,
+      lastError: state.lastError,
       refreshIntervalMs: REFRESH_INTERVAL_MS
     });
   }

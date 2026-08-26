@@ -12,6 +12,7 @@
     const sourceRequestAttempted = input.sourceRequestAttempted === true;
     const sourceRequestSucceeded = input.sourceRequestSucceeded === true;
     const sourceHealthy = input.sourceHealthy === true;
+    const sourceFreshEnough = input.sourceFreshEnough === true;
     const canonicalGeographyResolved = input.canonicalGeographyResolved === true;
     const geographyAgreementPass = input.geographyAgreementPass === true;
     const currentApplicableCount = count(input.currentApplicableCount);
@@ -29,6 +30,9 @@
     } else if (!sourceRequestSucceeded || !sourceHealthy) {
       authorityReason = text(input.sourceError) || "Weather source request failed or is unhealthy.";
       firstLosingStage = "SOURCE_HEALTH";
+    } else if (!sourceFreshEnough) {
+      authorityReason = "Weather source evidence is not fresh enough for authority.";
+      firstLosingStage = "SOURCE_FRESHNESS";
     } else if (!canonicalGeographyResolved || !geographyAgreementPass) {
       authorityReason = "Provider geography is not authoritatively associated with the selected governed geography.";
       firstLosingStage = "GOVERNED_GEOGRAPHY";
@@ -62,6 +66,42 @@
     try { return typeof fn === "function" ? fn() : null; } catch (error) { return { auditError: text(error?.message || error) }; }
   }
 
+  function getWeatherAuthorityEnvelope(options = {}) {
+    const provider = options.provider || globalScope.gridlyWeatherProvider || null;
+    const providerRuntime = options.providerRuntime || safeCall(provider?.getRuntimeState) || {};
+    const connectorRuntime = options.connectorRuntime || safeCall(globalScope.gridlyWeatherConnectorRuntimeAudit) || {};
+    const snapshot = options.snapshot || safeCall(globalScope.gridlyGetWeatherAuthoritySnapshot) || {};
+    const now = Number(options.now) || Date.now();
+    const freshnessLimitMs = Math.max(1, Number(connectorRuntime.refreshIntervalMs) || 120000) * 2;
+    const lastSuccessMs = Date.parse(connectorRuntime.lastSuccessAt || "");
+    const freshEnoughForAuthority = connectorRuntime.requestSucceeded === true
+      && Number.isFinite(lastSuccessMs) && now - lastSuccessMs >= 0 && now - lastSuccessMs <= freshnessLimitMs;
+    const selected = options.selected || safeCall(globalScope.getGridlySelectedAwarenessArea) || null;
+    const canonical = options.canonical || safeCall(globalScope.gridlyGetCanonicalActiveCommunityState) || {};
+    const canonicalGeographyResolved = Boolean(selected && (canonical.community || selected.storageValue || selected.label)
+      && (canonical.countyId || selected.countyId));
+    // The current centroid/radius and locality-text filters are useful
+    // selection heuristics, but are not certified governed PLACE intersection.
+    const geographyAgreementPass = options.geographyAgreementPass === true;
+    return freeze({
+      configured: providerRuntime.enabled === true,
+      enabled: providerRuntime.enabled === true,
+      requestAttempted: connectorRuntime.requestAttempted === true,
+      requestSucceeded: connectorRuntime.requestSucceeded === true,
+      lastAttemptAt: connectorRuntime.lastRequestAt || null,
+      lastSuccessAt: connectorRuntime.lastSuccessAt || null,
+      lastFailureAt: connectorRuntime.lastFailureAt || null,
+      error: providerRuntime.lastError || connectorRuntime.lastError || null,
+      healthy: providerRuntime.enabled === true && connectorRuntime.requestSucceeded === true && connectorRuntime.connected === true && !connectorRuntime.lastError,
+      freshEnoughForAuthority,
+      freshness: freshEnoughForAuthority ? "FRESH" : (connectorRuntime.lastSuccessAt ? "STALE" : "UNKNOWN"),
+      canonicalGeographyResolved,
+      geographyAgreementPass,
+      geographyEvaluation: geographyAgreementPass ? "GOVERNED_AGREEMENT_PROVEN" : "UNSUPPORTED_OR_UNRESOLVED",
+      currentApplicableCount: Number(snapshot.authorityEligibleRecordCount || 0)
+    });
+  }
+
   function auditRuntime() {
     const provider = globalScope.gridlyWeatherProvider || null;
     const connector = globalScope.gridlyWeatherConnector || null;
@@ -78,17 +118,17 @@
     const weatherDom = globalScope.document?.querySelector?.('[data-gridly-lp236-source="weather"]') || null;
     const presentationCount = Number(weatherDom?.dataset?.gridlyLp236Count ?? alertsAudit.weatherRenderedCount ?? 0) || 0;
     const presentationText = text(weatherDom?.textContent);
-    const sourceConfigured = providerRuntime.enabled === true;
-    const sourceRequestAttempted = connectorAudit.providerActivated === true || connectorAudit.automaticPolling === true || connectorAudit.connected === true;
-    const sourceRequestSucceeded = connectorAudit.connected === true;
-    const sourceHealthy = sourceConfigured && sourceRequestSucceeded && providerAudit.runtimeHealthy === true;
-    const canonicalGeographyResolved = Boolean(selected && (canonical.community || selected.storageValue || selected.label) && (canonical.countyId || selected.countyId));
-    // Production filtering is radius/centroid or free-text matching.  It does
-    // not intersect NWS polygons/zones with certified canonical PLACE geometry.
-    const geographyAgreementPass = false;
-    const currentApplicableCount = Number(snapshot.authorityEligibleRecordCount ?? consumer.consumerVisibleSituationCount ?? 0) || 0;
+    const envelope = getWeatherAuthorityEnvelope({ provider, providerRuntime, connectorRuntime: connectorAudit, snapshot, selected, canonical });
+    const sourceConfigured = envelope.configured;
+    const sourceRequestAttempted = envelope.requestAttempted;
+    const sourceRequestSucceeded = envelope.requestSucceeded;
+    const sourceHealthy = envelope.healthy;
+    const canonicalGeographyResolved = envelope.canonicalGeographyResolved;
+    const geographyAgreementPass = envelope.geographyAgreementPass;
+    const currentApplicableCount = Number(envelope.currentApplicableCount ?? consumer.consumerVisibleSituationCount ?? 0) || 0;
     const classification = classifyWeatherAuthority({
       sourceConfigured, sourceRequestAttempted, sourceRequestSucceeded, sourceHealthy,
+      sourceFreshEnough: envelope.freshEnoughForAuthority,
       sourceError: providerRuntime.lastError || connectorAudit.auditError || null,
       canonicalGeographyResolved, geographyAgreementPass, currentApplicableCount,
       presentationCount, presentationEmptyState: presentationText
@@ -108,6 +148,11 @@
       sourceRequestAttempted,
       sourceRequestSucceeded,
       sourceHealthy,
+      sourceFreshness: envelope.freshness,
+      sourceFreshEnough: envelope.freshEnoughForAuthority,
+      sourceLastAttemptAt: envelope.lastAttemptAt,
+      sourceLastSuccessAt: envelope.lastSuccessAt,
+      sourceLastFailureAt: envelope.lastFailureAt,
       sourceError: providerRuntime.lastError || connectorAudit.auditError || null,
       providerGeographyType: "Texas statewide NWS active-alert feed; record centroid/radius or locality-text runtime filter",
       providerGeographyValue: globalScope.GRIDLY_CONFIG?.weather?.endpointTemplate || "https://api.weather.gov/alerts/active?area=TX",
@@ -124,12 +169,13 @@
       presentationCount,
       presentationEmptyState: presentationText || null,
       presentationText: presentationText || null,
-      overallPass: classification.presentationAgreementPass && classification.weatherAuthorityState !== "UNAVAILABLE"
+      overallPass: classification.presentationAgreementPass
     };
     return freeze(result);
   }
 
   globalScope.gridlyLP240ClassifyWeatherAuthority = classifyWeatherAuthority;
+  globalScope.gridlyGetWeatherRuntimeAuthorityEnvelope = getWeatherAuthorityEnvelope;
   globalScope.gridlyLP240WeatherAuthorityAudit = auditRuntime;
-  if (typeof module !== "undefined" && module.exports) module.exports = freeze({ classifyWeatherAuthority, auditRuntime });
+  if (typeof module !== "undefined" && module.exports) module.exports = freeze({ classifyWeatherAuthority, getWeatherAuthorityEnvelope, auditRuntime });
 })(typeof window !== "undefined" ? window : globalThis);

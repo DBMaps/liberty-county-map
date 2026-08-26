@@ -3343,10 +3343,30 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
   // Empty governed arrays are meaningful only when their owning selector ran.
   const communityChecked = Array.isArray(activeReports) && Array.isArray(activeHazards);
   const weatherChecked = typeof window.gridlySelectConsumerVisibleWeatherSituations === "function";
+  const weatherEnvelope = typeof window.gridlyGetWeatherRuntimeAuthorityEnvelope === "function"
+    ? window.gridlyGetWeatherRuntimeAuthorityEnvelope({ selected: selectedArea }) : null;
+  const weatherClassification = typeof window.gridlyLP240ClassifyWeatherAuthority === "function"
+    ? window.gridlyLP240ClassifyWeatherAuthority({
+      sourceConfigured: weatherEnvelope?.configured,
+      sourceRequestAttempted: weatherEnvelope?.requestAttempted,
+      sourceRequestSucceeded: weatherEnvelope?.requestSucceeded,
+      sourceHealthy: weatherEnvelope?.healthy,
+      sourceFreshEnough: weatherEnvelope?.freshEnoughForAuthority,
+      sourceError: weatherEnvelope?.error,
+      canonicalGeographyResolved: weatherEnvelope?.canonicalGeographyResolved,
+      geographyAgreementPass: weatherEnvelope?.geographyAgreementPass,
+      currentApplicableCount: governedWeatherRecords.length
+    }) : null;
   return projection ? Object.freeze({ ...projection, alertsFamilyAuthority: Object.freeze({
     official_roadway: Object.freeze({ checked: Array.isArray(driveTexasRecords), available: Array.isArray(driveTexasRecords), reason: Array.isArray(driveTexasRecords) ? "governed DriveTexas projection evaluated" : "governed DriveTexas projection unavailable" }),
     community_report: Object.freeze({ checked: communityChecked, available: communityChecked, reason: communityChecked ? "governed active community report and hazard lifecycle evaluated for canonical community" : "governed community report or hazard lifecycle unavailable" }),
-    weather: Object.freeze({ checked: weatherChecked, available: Boolean(weatherChecked && weatherSelection && Array.isArray(weatherSelection.consumerVisibleSituations)), reason: weatherChecked && weatherSelection && Array.isArray(weatherSelection.consumerVisibleSituations) ? "gridlySelectConsumerVisibleWeatherSituations evaluated with provider geography" : "governed weather selector unavailable" })
+    weather: Object.freeze({
+      checked: weatherChecked,
+      available: weatherClassification?.weatherAuthorityState === "ACTIVE" || weatherClassification?.weatherAuthorityState === "QUIET",
+      state: weatherClassification?.weatherAuthorityState || "UNAVAILABLE",
+      reason: weatherClassification?.authorityReason || "governed weather runtime authority envelope unavailable",
+      runtimeAuthority: weatherEnvelope
+    })
   }) }) : null;
 }
 
@@ -115277,7 +115297,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const familyAuthority = snapshot?.alertsFamilyAuthority || {};
     const bySource = new Map(definitions.map((item) => {
       const authority = familyAuthority[item.sourceClass] || { checked: false, available: false, reason: `${item.label} authority was not evaluated` };
-      return [item.sourceClass, { ...item, groups: new Map(), activeConditionCount: 0, authorityChecked: authority.checked === true, authorityAvailable: authority.available === true, authorityReason: authority.reason || "authority unavailable" }];
+      return [item.sourceClass, { ...item, groups: new Map(), activeConditionCount: 0, authorityChecked: authority.checked === true, authorityAvailable: authority.available === true, authorityReason: authority.reason || "authority unavailable", explicitAuthorityState: authority.state || null }];
     }));
     alerts.forEach((alert, index) => {
       const sourceClass = gridlyLP236SourceClass(alert);
@@ -115305,7 +115325,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       authorityChecked: section.authorityChecked || positiveAuthority,
       authorityAvailable: section.authorityAvailable || positiveAuthority,
       authorityReason: positiveAuthority && !section.authorityChecked ? "governed active family conditions evaluated" : section.authorityReason,
-      authorityState: (section.authorityChecked && section.authorityAvailable) || positiveAuthority ? (section.activeConditionCount > 0 ? "ACTIVE" : "QUIET") : "UNAVAILABLE",
+      authorityState: section.explicitAuthorityState === "ACTIVE" || section.explicitAuthorityState === "QUIET" || section.explicitAuthorityState === "UNAVAILABLE"
+        ? section.explicitAuthorityState
+        : ((section.authorityChecked && section.authorityAvailable) || positiveAuthority ? (section.activeConditionCount > 0 ? "ACTIVE" : "QUIET") : "UNAVAILABLE"),
       groups: [...section.groups.values()].map((group) => {
         const rows = group.rows.sort((a, b) => a.canonicalId.localeCompare(b.canonicalId));
         const roadwayGroups = [...group.roadwayBuckets.values()].filter((bucket) => bucket.rows.length >= 2).map((bucket) => ({ ...bucket, rows: bucket.rows.sort((a, b) => a.canonicalId.localeCompare(b.canonicalId)) }));
