@@ -109,6 +109,49 @@ test('protected roadway, weather, reports, and viewport contracts remain shared'
   assert.match(app, /gridlyAlertWriterRecordId/);
 });
 
+test('LP239 reconciles through the established canonical crossing runtime using resolved PLACE identity', () => {
+  const source = app.slice(app.indexOf('// LP239:'));
+  assert.match(source, /crossingIdentity = canonicalPlaceId \? Object\.freeze\(\{ placeGeoid: canonicalPlaceId \}\)/);
+  assert.match(source, /gridlyCanonicalCrossingRuntime\?\.resolveRecords\?\.\(crossingIdentity\)/);
+  assert.doesNotMatch(source, /resolveRecords\?\.\(area\)/);
+  assert.match(source, /crossingAuthorityOwner/);
+  assert.match(source, /crossingAuthorityAgreementPass/);
+  assert.match(source, /crossingCanonicalInventoryCount > 0/);
+});
+
+test('canonical inventory, watched selection, and rendered marker observations remain distinct', () => {
+  const source = app.slice(app.indexOf('// LP239:'));
+  assert.match(source, /crossingCanonicalInventoryCount = crossingIds\.length/);
+  assert.match(source, /gridlySelectConsumerVisibleCrossings\(area\)/);
+  assert.match(source, /crossingRenderedMarkerCount = crossingMarkers instanceof Map \? crossingMarkers\.size : 0/);
+  assert.doesNotMatch(source, /crossingWatchedCount\s*=\s*crossingCanonicalInventoryCount/);
+  assert.doesNotMatch(source, /crossingRenderedMarkerCount\s*=\s*crossingCanonicalInventoryCount/);
+});
+
+test('Beaumont populated canonical authority retains Jefferson attribution', () => {
+  const place = memberships.places['4807000'];
+  assert.equal(place.n, 'Beaumont');
+  assert.deepEqual(place.m, ['48245']);
+  assert.ok(place.x.length > 0);
+  assert.ok(place.x.some(([, countyFips]) => countyFips === '48245'));
+  assert.equal(place.x.filter(([id]) => records[id]).length, place.x.length);
+});
+
+test('League City and owner controls keep populated shared canonical records', () => {
+  for (const geoid of ['4841980', '4865000', '4805000', '4819000', '4876636']) {
+    const place = memberships.places[geoid];
+    assert.ok(place.x.length > 0, geoid);
+    assert.equal(place.x.filter(([id]) => records[id]).length, place.x.length, geoid);
+  }
+});
+
+test('audit reconciliation creates no inventory, activation, viewport, or town-specific production branch', () => {
+  const source = app.slice(app.indexOf('// LP239:'));
+  assert.doesNotMatch(source, /new Map|new Set\(crossing|fetch\s*\(|loadCrossings|ensureGridlyActiveCountyCrossingInventory|setActiveCounty|renderCrossings\s*\(|map\.getBounds/);
+  assert.doesNotMatch(source, /Beaumont|Jefferson|4807000|San Antonio|Austin|Dallas|League City|Waskom/);
+  assert.match(source, /crossingCountyIds: Object\.freeze\(\[\.\.\.membershipCountyIds\]\)/);
+});
+
 test('LP239.3 live audit resolves the owner cohort through the complete LP149 browser identity contract', () => {
   const identitySource = read('js/gridlyRuntimeCountyIdentity.js');
   assert.match(identitySource, /rows\.length !== 254/);
