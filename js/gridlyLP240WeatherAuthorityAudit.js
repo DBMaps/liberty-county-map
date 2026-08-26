@@ -304,7 +304,10 @@
     const responseIdentity = connectorAudit.responseIdentity || null;
     const authorityIdentity = snapshot.authorityIdentity || null;
     const weatherFamilyIdentity = consumer.weatherFamilyIdentity || null;
-    const alertsWeatherIdentity = alertsWeatherInputCount === currentApplicableCount && alertsWeatherPublishedCount === currentApplicableCount ? weatherFamilyIdentity : null;
+    const alertsHandoff = globalScope.__gridlyLp2194AlertStages?.weatherAuthorityHandoff || {};
+    const alertsWeatherCandidateIdentity = alertsHandoff.candidateIdentity || null;
+    const alertsWeatherIdentity = alertsHandoff.acceptedIdentity
+      || (alertsWeatherInputCount === currentApplicableCount && alertsWeatherPublishedCount === currentApplicableCount ? weatherFamilyIdentity : null);
     const selectedRequestAgreement = Boolean(selectedContextIdentity && selectedContextIdentity === requestIdentity);
     const requestResponseAgreement = Boolean(requestIdentity && requestIdentity === responseIdentity);
     const responseAuthorityAgreement = Boolean(responseIdentity && responseIdentity === authorityIdentity);
@@ -337,7 +340,13 @@
       responseIdentity,
       authorityIdentity,
       weatherFamilyIdentity,
+      alertsWeatherCandidateIdentity,
       alertsWeatherIdentity,
+      alertsWeatherCandidateCount: Number(alertsHandoff.candidateCount || 0),
+      alertsWeatherAcceptedCount: Number(alertsHandoff.acceptedCount || 0),
+      alertsWeatherRejectedCount: Number(alertsHandoff.rejectedCount || 0),
+      alertsWeatherFirstLosingStage: alertsHandoff.firstLosingStage || null,
+      alertsWeatherRejectionReason: alertsHandoff.rejectionReason || null,
       selectedRequestAgreement,
       requestResponseAgreement,
       responseAuthorityAgreement,
