@@ -179,6 +179,61 @@
       singleCountyResolvableCount: single, multiCountyResolvableCount: multi });
   }
 
+  // LP240.1D describes (but does not alter) the production DriveTexas
+  // community gate.  The selected PLACE contributes a presentation anchor,
+  // not a boundary.  A provider point or trusted provider road line must come
+  // within the configured awareness radius; text and county membership do not
+  // override that spatial result in LP039.2/LP043.
+  function describeCommunitySpatialSelection(options = {}) {
+    const selected = options.selected || safeCall(globalScope.getGridlySelectedAwarenessArea) || null;
+    const driveTexas = options.driveTexas || safeCall(globalScope.gridlyGetDriveTexasAuthoritySnapshot) || {};
+    const authority = driveTexas.authority || driveTexas;
+    const anchor = options.anchor || authority.selectedAwarenessAnchor || (Number.isFinite(Number(selected?.lat)) && Number.isFinite(Number(selected?.lng))
+      ? { lat: Number(selected.lat), lng: Number(selected.lng) } : null);
+    const radius = Number(options.radiusMiles ?? authority.selectedAwarenessRadiusMiles ?? selected?.radiusMiles ?? 7);
+    return freeze({
+      communitySpatialSelectionAvailable: Boolean(anchor && Number.isFinite(radius)),
+      communitySpatialSelectionOwner: "gridlySelectDriveTexasAuthority (LP039.2/LP043 geometry authority)",
+      communitySpatialSelectionFunction: "buildEligibilityProof -> gridlyQualifyDriveTexasGeometryAuthority.qualify",
+      communitySpatialSelectionSource: "js/gridlyDriveTexasAuthoritySourceIntegration.js + js/gridlyDriveTexasGeometryAuthority.js",
+      communitySpatialSelectionMode: "PRESENTATION_ANCHOR_RADIUS_WITH_TRUSTED_PROVIDER_POINT_OR_ROAD_LINE",
+      communitySpatialSignals: freeze([
+        "COUNTY_AUTHORITY: upstream governed county scope only",
+        "PRESENTATION_ANCHOR: LP201 canonical PLACE focus",
+        "DETERMINISTIC_PROXIMITY: inclusive distance <= awareness radius",
+        "AUTHORITATIVE_NETWORK_GEOMETRY: trusted DriveTexas LineString/MultiLineString distance to anchor radius",
+        "TEXTUAL_ASSOCIATION: retained metadata, never an LP039.2 eligibility override"
+      ]),
+      communityBoundaryGeometryAvailable: false,
+      communityBoundaryGeometrySource: null,
+      communityBoundaryGeometryType: null,
+      communityPresentationCoordinateUsed: Boolean(anchor),
+      communityPresentationCoordinate: anchor ? freeze({ latitude: Number(anchor.lat), longitude: Number(anchor.lng) }) : null,
+      communityAwarenessRadiusUsed: Number.isFinite(radius),
+      communityAwarenessRadiusMiles: Number.isFinite(radius) ? radius : null,
+      communityDistancePredicateUsed: true,
+      communityRoadwayGeometryUsed: true,
+      communityRoadwayGeometryRole: "Trusted provider LineString/MultiLineString qualifies when its closest segment is within the same circular awareness radius; it does not prove municipal containment or use a named-road/corridor association.",
+      communityTextAssociationUsed: false,
+      communityTextAssociationRole: "Provider city, locality, county, route, title, and description are preserved for identity/presentation only; they cannot override the spatial gate.",
+      communityCountyContainmentUsed: true,
+      communitySelectionFallbackUsed: false,
+      communitySelectionFallbackReason: null,
+      communitySelectionAuthorityClass: "HYBRID_DETERMINISTIC_PROXIMITY_AUTHORITATIVE_NETWORK_GEOMETRY",
+      exactCommunityApplicabilityProven: false,
+      driveTexasCommunityPrecisionReason: "Dayton is distinguished by distance from its canonical presentation anchor (or distance from trusted provider roadway geometry to that anchor), not by a Dayton boundary.",
+      weatherReuseClassification: "REUSABLE_FOR_WEATHER_AS_AWARENESS_ONLY",
+      weatherReuseReason: "The circular proximity gate can approximate local awareness, but roadway-line authority is provider-domain-specific and neither signal proves that an area-hazard polygon intersects the canonical PLACE.",
+      canonicalPlaceCount: 1859,
+      communitySelectorSupportedCount: 1859,
+      communitySelectorUnsupportedCount: 0,
+      exactBoundarySupportedCount: 0,
+      proximityOnlyCount: 1859,
+      roadwayAuthorityCount: null,
+      textFallbackCount: 0
+    });
+  }
+
   // Audit-only capability evaluator. It never promotes records or changes Weather state.
   function evaluatePlaceAlertGeography({ placeGeometry, alerts = [], zoneGeometries = {} } = {}) {
     const applicableAlertIds = []; const nonApplicableAlertIds = []; const unresolvedAlertIds = []; let evaluatedCount = 0;
@@ -222,6 +277,7 @@
     const governedGeometry = resolveGovernedCommunityGeometry({ placeGeoid: canonicalPlaceId, membership });
     const statewideCoverage = certifyGovernedGeometryCoverage();
     const geographyEvaluation = evaluatePlaceAlertGeography({ placeGeometry: governedGeometry.geometry, alerts: providerRecords });
+    const communitySelection = describeCommunitySpatialSelection({ selected });
 
     const connectorRecords = safeCall(connector?.getNormalizedRecords) || [];
     const weatherDom = globalScope.document?.querySelector?.('[data-gridly-lp236-source="weather"]') || null;
@@ -284,6 +340,7 @@
       multiCountyPlaceCount: 163,
       activeCounty: canonical.countyId || selected?.countyId || snapshot.activeCounty || null,
       awarenessArea: selected || snapshot.selectedAwarenessArea || null,
+      ...communitySelection,
       weatherProvider: provider?.name || providerAudit.provider || "Weather / NWS api.weather.gov",
       sourceConfigured,
       sourceRequestAttempted,
@@ -332,5 +389,5 @@
   globalScope.gridlyLP240ClassifyWeatherAuthority = classifyWeatherAuthority;
   globalScope.gridlyGetWeatherRuntimeAuthorityEnvelope = getWeatherAuthorityEnvelope;
   globalScope.gridlyLP240WeatherAuthorityAudit = auditRuntime;
-  if (typeof module !== "undefined" && module.exports) module.exports = freeze({ classifyWeatherAuthority, getWeatherAuthorityEnvelope, evaluatePlaceAlertGeography, geometriesIntersect, resolveGovernedCommunityGeometry, auditRuntime });
+  if (typeof module !== "undefined" && module.exports) module.exports = freeze({ classifyWeatherAuthority, getWeatherAuthorityEnvelope, evaluatePlaceAlertGeography, geometriesIntersect, resolveGovernedCommunityGeometry, describeCommunitySpatialSelection, auditRuntime });
 })(typeof window !== "undefined" ? window : globalThis);

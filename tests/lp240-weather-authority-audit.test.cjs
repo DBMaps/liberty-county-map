@@ -1,7 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
-const { classifyWeatherAuthority, getWeatherAuthorityEnvelope } = require("../js/gridlyLP240WeatherAuthorityAudit.js");
+const { classifyWeatherAuthority, getWeatherAuthorityEnvelope, describeCommunitySpatialSelection } = require("../js/gridlyLP240WeatherAuthorityAudit.js");
+const { qualify } = require("../js/gridlyDriveTexasGeometryAuthority.js");
 
 const healthy = { sourceConfigured: true, sourceRequestAttempted: true, sourceRequestSucceeded: true, sourceHealthy: true, sourceFreshEnough: true, canonicalGeographyResolved: true, geographyAgreementPass: true };
 
@@ -157,4 +158,50 @@ test("provider retains bounded NWS geography audit metadata without exposing raw
   const [record] = provider.normalizeRecords({ features: [{ id: "nws-1", geometry: square(0,0), properties: { event: "Tornado Warning", affectedZones: ["https://api.weather.gov/zones/forecast/TXZ001"] } }] });
   assert.deepEqual(record.geographyAudit, { geometryType: "Polygon", affectedZones: ["https://api.weather.gov/zones/forecast/TXZ001"] });
   assert.equal(record.geometry, undefined);
+});
+
+const dayton = { key: "dayton", label: "Dayton", countyId: "liberty-tx", lat: 30.0466, lng: -94.8852, radiusMiles: 8 };
+const liberty = { key: "liberty", label: "Liberty", countyId: "liberty-tx", lat: 30.0579, lng: -94.7955, radiusMiles: 8 };
+const q = (record, selected = dayton, communities = [dayton, liberty]) => qualify(record, { selectedAwarenessArea: selected, communities });
+
+test("LP240.1D CASE A/B - same county points diverge solely at the inclusive community radius", () => {
+  assert.equal(q({ latitude: 30.0466, longitude: -94.88 }).geometryQualified, true);
+  const outside = q({ latitude: 30.25, longitude: -94.65, county: "Liberty" });
+  assert.equal(outside.geometryQualified, false);
+  assert.equal(outside.rejectionReason, "outside_awareness_radius_miles");
+});
+
+test("LP240.1D CASE C/D - overlap can select both; another community anchor produces a different result", () => {
+  const overlap = q({ latitude: 30.052, longitude: -94.84 });
+  assert.deepEqual(overlap.communityIdsIntersected, ["dayton", "liberty"]);
+  assert.equal(q({ latitude: liberty.lat, longitude: liberty.lng }).geometryQualified, true, "the 8-mile circles overlap at these governed anchors");
+  const farOther = { key: "cleveland", label: "Cleveland", countyId: "liberty-tx", lat: 30.3413, lng: -95.0855, radiusMiles: 8 };
+  assert.equal(q({ latitude: farOther.lat, longitude: farOther.lng }, dayton, [dayton, farOther]).geometryQualified, false);
+  assert.equal(q({ latitude: farOther.lat, longitude: farOther.lng }, farOther, [dayton, farOther]).geometryQualified, true);
+});
+
+test("LP240.1D CASE E - trusted road line can qualify outside-radius representative point", () => {
+  const result = q({ latitude: 30.25, longitude: -94.65, sourceGeometry: { type: "LineString", coordinates: [[-94.89, 30.05], [-94.65, 30.25]] } });
+  assert.equal(result.geometryQualified, true);
+  assert.equal(result.ownershipMethod, "trusted_source_geometry_intersects_awareness_radius");
+});
+
+test("LP240.1D CASE F/G - provider text neither vetoes proximity nor overrides distance", () => {
+  assert.equal(q({ latitude: dayton.lat, longitude: dayton.lng, city: "Cleveland" }).geometryQualified, true);
+  assert.equal(q({ latitude: 30.4, longitude: -94.5, city: "Dayton", routeName: "US 90" }).geometryQualified, false);
+});
+
+test("LP240.1D CASE H - community selection retains multi-county identity rather than choosing a county", () => {
+  const multi = { key: "place-4849068", communityId: "4849068", label: "Mont Belvieu", countyId: "liberty-tx", countyMemberships: ["48071", "48291"], lat: 29.8477, lng: -94.8908, radiusMiles: 7 };
+  const result = q({ latitude: multi.lat, longitude: multi.lng }, multi, [multi]);
+  assert.equal(result.geometryQualified, true);
+  assert.equal(multi.countyMemberships.length, 2);
+});
+
+test("LP240.1D CASE I/J - county polygons and radius circles cannot prove exact Weather applicability", () => {
+  const audit = describeCommunitySpatialSelection({ selected: dayton });
+  assert.equal(audit.communityBoundaryGeometryAvailable, false);
+  assert.equal(audit.exactCommunityApplicabilityProven, false);
+  assert.equal(audit.weatherReuseClassification, "REUSABLE_FOR_WEATHER_AS_AWARENESS_ONLY");
+  assert.equal(audit.communityAwarenessRadiusMiles, 8);
 });
