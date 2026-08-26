@@ -107,6 +107,7 @@
   }
   function refreshAwarenessView() {
     const point=resolvePoint(), next=identity(point), cached=next ? cache.get(next) : null;
+    if (fetchInFlight?.identity === next) return fetchInFlight.promise;
     generation+=1;
     invalidateCurrentAuthority(next, point);
     if (cached && Date.now()-Date.parse(cached.fetchedAt)<=REFRESH_INTERVAL_MS) { publish(cached,generation); return Promise.resolve(freeze({connected:true,cached:true,normalizedRecordCount:cached.records.length})); }
