@@ -124493,8 +124493,13 @@ function gridlyMultiCountyConsumerConvergenceAudit() {
   // row and are never used to infer county membership.
   const canonicalMembership = canonicalPlaceId ? window.gridlyCanonicalCrossingRuntime?.lookup?.({ placeGeoid: canonicalPlaceId }) : null;
   const membershipCountyFips = [...new Set((canonicalMembership?.governedCountyFips || []).map(String))].sort();
-  const countyEntry = (fips) => Object.entries(GRIDLY_COUNTY_REGISTRY || {})
-    .find(([, county]) => String(county?.countyFips || "") === fips) || [];
+  // Resolve governed FIPS through the complete LP149 identity authority, not
+  // the operational GRIDLY_COUNTY_REGISTRY projection (whose rows do not own
+  // countyFips and whose membership is intentionally narrower than 254).
+  const countyEntry = (fips) => {
+    const identity = window.gridlyRuntimeCountyIdentity?.resolveFips?.(fips);
+    return identity ? [identity.countyId, { name: identity.countyName, countyFips: identity.fips }] : [];
+  };
   const membershipCountyIds = membershipCountyFips.map((fips) => countyEntry(fips)[0]).filter(Boolean);
   const membershipCountyNames = membershipCountyFips.map((fips) => countyEntry(fips)[1]?.name || null);
   const membershipAuthorityAvailable = Boolean(canonicalPlaceId && canonicalMembership && membershipCountyFips.length

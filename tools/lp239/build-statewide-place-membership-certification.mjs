@@ -14,13 +14,17 @@ function duplicates(values) {
   return [...new Set(values.filter(value => seen.has(value) || !seen.add(value)))].sort();
 }
 
-export function certifyPlaceMemberships({ canonicalPlaces, countyRegistry, operationalRows = [], crossingPlaces = {}, roadwayCountyIds = [], weatherPlaceIds = [] }) {
+export function certifyPlaceMemberships({ canonicalPlaces, countyRegistry, countyIdentityResolver = null, operationalRows = [], crossingPlaces = {}, roadwayCountyIds = [], weatherPlaceIds = [] }) {
   const countiesByFips = new Map();
   for (const [key, county] of Object.entries(countyRegistry || {})) {
     const fips = String(county?.countyFips || '');
     if (!countiesByFips.has(fips)) countiesByFips.set(fips, []);
     countiesByFips.get(fips).push({ id: String(county?.id || key), name: String(county?.name || '') });
   }
+  const resolveCountyFips = countyIdentityResolver || ((fips) => {
+    const matches = countiesByFips.get(String(fips)) || [];
+    return matches.length === 1 ? { fips: String(fips), countyId: matches[0].id, countyName: matches[0].name } : null;
+  });
   const operationalByPlace = Map.groupBy(operationalRows, row => String(row?.placeGeoid || ''));
   const roadway = new Set(roadwayCountyIds.map(String));
   const weather = new Set(weatherPlaceIds.map(String));
@@ -29,11 +33,14 @@ export function certifyPlaceMemberships({ canonicalPlaces, countyRegistry, opera
     const governed = Array.isArray(place?.countyMemberships) ? place.countyMemberships.map(String) : [];
     const duplicateCountyFips = duplicates(governed);
     const membershipCountyFips = [...new Set(governed)].sort();
-    const resolved = membershipCountyFips.flatMap(fips => (countiesByFips.get(fips)?.length === 1 ? [{ fips, ...countiesByFips.get(fips)[0] }] : []));
-    const unresolvedCountyFips = membershipCountyFips.filter(fips => countiesByFips.get(fips)?.length !== 1);
+    const resolved = membershipCountyFips.flatMap(fips => {
+      const identity = resolveCountyFips(fips);
+      return identity ? [{ fips, id: identity.countyId, name: identity.countyName }] : [];
+    });
+    const unresolvedCountyFips = membershipCountyFips.filter(fips => !resolveCountyFips(fips));
     const duplicateCountyIds = duplicates(resolved.map(entry => entry.id));
     const operational = operationalByPlace.get(canonicalPlaceId || '') || [];
-    const operationalProjectionCountyIds = [...new Set(operational.flatMap(row => Array.isArray(row.countyMemberships) ? row.countyMemberships : []).map(String).flatMap(fips => countiesByFips.get(fips)?.length === 1 ? [countiesByFips.get(fips)[0].id] : []))].sort();
+    const operationalProjectionCountyIds = [...new Set(operational.flatMap(row => Array.isArray(row.countyMemberships) ? row.countyMemberships : []).map(String).flatMap(fips => { const identity = resolveCountyFips(fips); return identity ? [identity.countyId] : []; }))].sort();
     const membershipCountyIds = resolved.map(entry => entry.id);
     const identityMismatch = !canonicalPlaceId || operational.some(row => String(row.displayName) !== String(place.displayName));
     const authorityAvailable = Boolean(canonicalPlaceId && Array.isArray(place?.countyMemberships));
@@ -88,6 +95,9 @@ function loadInputs() {
   const sandbox = { Object };
   vm.createContext(sandbox);
   vm.runInContext(`${app.slice(0, range.end)};this.registry=GRIDLY_COUNTY_REGISTRY`, sandbox);
+  const identitySandbox = { window: {} };
+  vm.createContext(identitySandbox);
+  vm.runInContext(read('js/gridlyRuntimeCountyIdentity.js'), identitySandbox);
   const canonical = json('data/generated/gridly-statewide-consumer-community-projection-v1.json');
   const runtimeCounties = json('data/lp149/runtime-county-registry.json');
   const crossings = json('data/runtime/canonical-crossing-memberships-v1.json');
@@ -96,6 +106,7 @@ function loadInputs() {
   return {
     canonicalPlaces: canonical.communities,
     countyRegistry: Object.fromEntries(runtimeCounties.identities.map(county => [county.countyId, { id: county.countyId, name: county.countyName, countyFips: county.fips }])),
+    countyIdentityResolver: fips => identitySandbox.window.gridlyRuntimeCountyIdentity.resolveFips(fips),
     operationalRows: Object.values(sandbox.registry).flatMap(county => county.consumerAwarenessAreas || []),
     crossingPlaces: crossings.places, roadwayCountyIds: Object.keys(roadways.counties || {}),
     weatherPlaceIds: Object.keys(presentation.places || {})
