@@ -3325,7 +3325,8 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
   const weatherSelection = typeof window.gridlySelectConsumerVisibleWeatherSituations === "function"
     ? window.gridlySelectConsumerVisibleWeatherSituations({ selectedAwarenessArea: selectedArea }) : null;
   const governedWeatherRecords = (Array.isArray(weatherSelection?.consumerVisibleSituations) ? weatherSelection.consumerVisibleSituations : []).map((record) => ({
-    ...record, sourceKind: "weather_provider", providerId: record?.providerId || "weather", geographicEligible: true
+    ...record, sourceKind: "weather_provider", providerId: record?.providerId || "weather", geographicEligible: true,
+    weatherFamilyIdentity: weatherSelection?.weatherFamilyIdentity || null
   }));
   const records = Array.isArray(options.records) ? options.records : [
     ...(Array.isArray(activeReports) ? activeReports : []),
@@ -115082,16 +115083,27 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       };
     }), { caller: "getAlertsSurfaceSnapshot", reason: "snapshot normalized intelligence promotion" });
     gridlyAlertsOpenAuditMeasure("weather situation promotion", () => normalizedAlertItemsBeforeAreaFilter.filter((alert) => gridlyAlertsOpenAuditCountProvider(alert) === "weather").length, { caller: "getAlertsSurfaceSnapshot", reason: "snapshot weather provider classification" });
-    // A canonical PLACE projection has already passed the governed lifecycle and
-    // canonical-community geography policies.  Reapplying the legacy area
-    // predicate here used record-shape geography, discarded those governed rows,
-    // and then allowed the LP039.3 legacy collection to replace them.  County-only
-    // and non-PLACE scopes retain the established fallback path.
+    // Canonical PLACE non-Weather rows already passed the governed lifecycle and
+    // community policies. Weather uses its stricter point-authority identity
+    // handoff below; it never relies on the legacy record-shape area predicate.
     const canonicalPlaceAlertsAuthority = Boolean(canonicalActiveCommunityRecords
       && (typeof gridlyResolveCanonicalPlaceGeoid !== "function" || gridlyResolveCanonicalPlaceGeoid(getGridlySelectedAwarenessArea?.())));
-    const areaFilteredAlertItems = gridlyAlertsOpenAuditMeasure("deduplication", () => canonicalPlaceAlertsAuthority
-      ? normalizedAlertItemsBeforeAreaFilter.slice()
-      : gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot"), { caller: "getAlertsSurfaceSnapshot", reason: "alertsSurfaceSnapshot area eligibility" });
+    const weatherSelectionForAlerts = typeof window.gridlySelectConsumerVisibleWeatherSituations === "function"
+      ? window.gridlySelectConsumerVisibleWeatherSituations({ selectedAwarenessArea: getGridlySelectedAwarenessArea?.() }) : null;
+    const weatherConnectorRuntimeForAlerts = typeof window.gridlyWeatherConnectorRuntimeAudit === "function"
+      ? window.gridlyWeatherConnectorRuntimeAudit() : null;
+    const weatherHandoff = window.GridlyAlertsWeatherAuthorityHandoff;
+    const weatherHandoffEvaluations = normalizedAlertItemsBeforeAreaFilter
+      .filter((record) => String(record?.sourceKind || "").toLowerCase() === "weather_provider")
+      .map((candidate) => ({ candidate, result: weatherHandoff?.evaluate?.({ candidate, weatherSelection: weatherSelectionForAlerts, connectorRuntime: weatherConnectorRuntimeForAlerts }) || { accepted: false, firstLosingStage: "ALERTS_WEATHER_AUTHORITY_HANDOFF", rejectionReason: "WEATHER_HANDOFF_CONTRACT_UNAVAILABLE" } }));
+    const acceptedWeatherCandidates = new Set(weatherHandoffEvaluations.filter((row) => row.result.accepted).map((row) => row.candidate));
+    const areaFilteredAlertItems = gridlyAlertsOpenAuditMeasure("deduplication", () => {
+      const nonWeather = normalizedAlertItemsBeforeAreaFilter.filter((record) => String(record?.sourceKind || "").toLowerCase() !== "weather_provider");
+      const eligibleNonWeather = canonicalPlaceAlertsAuthority
+        ? nonWeather
+        : gridlyFilterAlertRecordsBySelectedAwarenessArea(nonWeather, "alertsSurfaceSnapshot");
+      return normalizedAlertItemsBeforeAreaFilter.filter((record) => eligibleNonWeather.includes(record) || acceptedWeatherCandidates.has(record));
+    }, { caller: "getAlertsSurfaceSnapshot", reason: "alertsSurfaceSnapshot area eligibility" });
     const normalizedAlertItems = gridlyAlertsOpenAuditMeasure("alert merge", () => (canonicalPlaceAlertsAuthority
       ? areaFilteredAlertItems.slice()
       : mergeGridlyOfficialSituationAlerts(areaFilteredAlertItems))
@@ -115105,6 +115117,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         canonicalGovernedCount: canonicalActiveCommunityRecords?.length || 0,
         legacyOfficialSituationContributionCount: canonicalPlaceAlertsAuthority ? 0 : Math.max(0, normalizedAlertItems.length - areaFilteredAlertItems.length),
         policy: canonicalPlaceAlertsAuthority ? "CANONICAL_GOVERNED_PLACE_ONLY" : "NON_PLACE_LEGACY_FALLBACK"
+      }),
+      weatherAuthorityHandoff: Object.freeze({
+        candidateIdentity: weatherHandoffEvaluations[0]?.result?.candidateIdentity || null,
+        acceptedIdentity: weatherHandoffEvaluations.find((row) => row.result.accepted)?.result?.candidateIdentity || null,
+        candidateCount: weatherHandoffEvaluations.length,
+        acceptedCount: weatherHandoffEvaluations.filter((row) => row.result.accepted).length,
+        rejectedCount: weatherHandoffEvaluations.filter((row) => !row.result.accepted).length,
+        firstLosingStage: weatherHandoffEvaluations.find((row) => !row.result.accepted)?.result?.firstLosingStage || null,
+        rejectionReason: weatherHandoffEvaluations.find((row) => !row.result.accepted)?.result?.rejectionReason || null
       })
     });
     gridlyLP226AlertsMembershipAuditState.governedProjectionIds = gridlyLP226MembershipIds(areaFilteredAlertItems, gridlyLP226CanonicalId);
