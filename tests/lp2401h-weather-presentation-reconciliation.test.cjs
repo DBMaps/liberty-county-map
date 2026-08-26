@@ -13,13 +13,27 @@ test("A-D/G-I: official event, local timing, source, detail, and fallback are pr
   assert.match(app, /timeZone: "America\/Chicago"/);
   assert.match(app, /senderName \|\| alert\?\.office/);
   assert.match(app, /\(WHAT\|IMPACTS\?\)/);
+  assert.match(app, /sourceClass === "weather"\) return gridlyWeatherDisplayLabel\(alert\)/);
+  assert.match(app, /data-gridly-weather-group-label/);
+  assert.match(app, /conditionIsGroupLabel \? ""/);
 });
 
 test("J-K/T: KBYG is bounded to event plus timing and one travel-impact line", () => {
   const weatherLines = app.slice(app.indexOf("function gridlyTravelBriefWeatherLines"), app.indexOf("function gridlyTravelBriefSettledFreshnessCopy"));
   assert.match(weatherLines, /gridlyWeatherTravelerTiming/);
+  assert.match(weatherLines, /gridlyWeatherDisplayLabel/);
+  assert.match(weatherLines, /Hot conditions may affect travel\./);
   assert.match(weatherLines, /slice\(0, 2\)/);
   assert.doesNotMatch(weatherLines, /instruction|senderName|description/);
+});
+
+test("A-H: weather grouping and KBYG refinement retain deterministic multi-event rows", () => {
+  const model = app.slice(app.indexOf("function gridlyLP236BuildModel"), app.indexOf("function gridlyLP236InformationArchitectureAudit"));
+  const conditionType = app.slice(app.indexOf("function gridlyLP236ConditionType"), app.indexOf("function gridlyLP236TypeLabel"));
+  assert.match(conditionType, /provider-record identity continues to own each condition row/);
+  assert.match(model, /section\.groups\.has\(conditionType\)/);
+  assert.match(model, /canonicalId: gridlyLP236CanonicalId\(alert, index\)/);
+  assert.doesNotMatch(model, /alert\.(?:category|type)\s*=/);
 });
 
 test("L-M/P/S: presentation evidence does not alter governed or provider identity", () => {
@@ -42,4 +56,6 @@ test("N-O: counts observe candidates, authoritative snapshot, and mounted identi
   assert.match(audit, /alertsStages\.finalAlertData/);
   assert.match(audit, /querySelectorAll\?\.\('\[data-gridly-lp236-condition-id\]'/);
   assert.match(audit, /alertsWeatherDomIdentityCount/);
+  assert.match(audit, /alertsWeatherGroupLabel/);
+  assert.match(audit, /kbygWeatherLineCount/);
 });
