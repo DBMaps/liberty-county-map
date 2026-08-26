@@ -1,6 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const vm = require("node:vm");
 
 const app = fs.readFileSync("js/app.js", "utf8");
 const audit = fs.readFileSync("js/gridlyLP240WeatherAuthorityAudit.js", "utf8");
@@ -19,12 +20,41 @@ test("A-D/G-I: official event, local timing, source, detail, and fallback are pr
 });
 
 test("J-K/T: KBYG is bounded to event plus timing and one travel-impact line", () => {
+  const weatherBridge = app.slice(app.indexOf("function gridlyBriefInteractionWeatherFromAuthority"), app.indexOf("function gridlyBriefInteractionWeatherCandidates"));
   const weatherLines = app.slice(app.indexOf("function gridlyTravelBriefWeatherLines"), app.indexOf("function gridlyTravelBriefSettledFreshnessCopy"));
+  assert.match(weatherBridge, /event: first\.event \|\| first\.title/);
+  assert.doesNotMatch(weatherBridge, /event: first\.title,/);
   assert.match(weatherLines, /gridlyWeatherTravelerTiming/);
   assert.match(weatherLines, /gridlyWeatherDisplayLabel/);
+  assert.match(weatherLines, /replace\(\/\^Until\\b\/, "until"\)/);
+  assert.doesNotMatch(weatherLines, /timing\.toLowerCase/);
   assert.match(weatherLines, /Hot conditions may affect travel\./);
   assert.match(weatherLines, /slice\(0, 2\)/);
   assert.doesNotMatch(weatherLines, /instruction|senderName|description/);
+});
+
+test("J-K/T: KBYG authority bridge renders the official event with one expiration", () => {
+  const weatherBridge = app.slice(app.indexOf("function gridlyBriefInteractionWeatherFromAuthority"), app.indexOf("function gridlyBriefInteractionWeatherCandidates"));
+  const weatherLines = app.slice(app.indexOf("function gridlyTravelBriefWeatherLines"), app.indexOf("function gridlyTravelBriefSettledFreshnessCopy"));
+  const context = {
+    window: {
+      gridlySelectConsumerVisibleWeatherSituations: () => ({ consumerVisibleSituations: [{
+        title: "Heat Advisory issued August 26 at 11:31AM CDT by NWS Houston/Galveston TX",
+        headline: "Heat Advisory issued August 26 at 11:31AM CDT by NWS Houston/Galveston TX",
+        event: "Heat Advisory", expirationTime: "2026-08-27T00:00:00Z"
+      }] }),
+      gridlyWeatherDisplayLabel: (weather) => weather.event,
+      gridlyWeatherTravelerTiming: () => "Until 7 PM"
+    },
+    gridlyGetAwarenessEvidenceCompleteness: () => ({ canStateNoWeatherImpact: true }),
+    gridlyStoryWeatherMeaningfulImpact: () => ({ kind: "heat" }),
+    gridlyTravelBriefCleanLine: (value) => String(value || "").trim(),
+    gridlyBriefInteractionLooksLikeWeatherAlert: () => true
+  };
+  vm.runInNewContext(`${weatherBridge}\n${weatherLines}`, context);
+  const model = context.gridlyBriefInteractionWeatherFromAuthority();
+  assert.equal(model.event, "Heat Advisory");
+  assert.deepEqual(Array.from(context.gridlyTravelBriefWeatherLines(model)), ["Heat Advisory until 7 PM", "Hot conditions may affect travel."]);
 });
 
 test("A-H: weather grouping and KBYG refinement retain deterministic multi-event rows", () => {
