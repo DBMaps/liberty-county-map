@@ -214,6 +214,10 @@
       longitude: coordinates.longitude,
       severity: normalizeSeverity(record),
       affectedAreas: normalizeAreas(record),
+      geographyAudit: freeze({
+        geometryType: record.__geometry?.type === "Polygon" || record.__geometry?.type === "MultiPolygon" ? record.__geometry.type : null,
+        affectedZones: freeze((Array.isArray(record.affectedZones) ? record.affectedZones : []).filter((zone) => typeof zone === "string" && zone.trim()))
+      }),
       effectiveTime: startTime || null,
       expirationTime: endTime || null,
       startTime: startTime || null,
