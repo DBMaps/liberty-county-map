@@ -60,11 +60,44 @@ test('LP238 deterministic precedence retains selected road then crossing authori
 test('LP238 submission, accepted-local, persistence and authoritative normalization preserve metadata', () => {
   const submit = functionSource('createSharedHazardReport');
   assert.match(submit, /appendGridlyStructuredMetadata[\s\S]*detailLocationMetadata/);
-  assert.match(submit, /gridlyLP238PatchSubmissionCapture\(\{ submissionId: row\.crossing_id \}\)/);
-  assert.match(submit, /successfulSubmissionObserved = true;[\s\S]*gridlyLP238PatchSubmissionCapture\(\{ persistedRoadValue:/);
+  assert.match(submit, /gridlyLP238PatchSubmissionCapture\(\{ submissionId: row\.crossing_id, persistencePayloadRoadValue \}\)/);
+  assert.match(submit, /const persistencePayloadMetadata = extractOtherHazardStructuredMetadata\(reportInsertRow\)/);
+  assert.match(submit, /successfulSubmissionObserved = true;[\s\S]*persistedRoadValue: persistencePayloadRoadValue/);
   assert.match(submit, /gridlyLP238PatchSubmissionCapture\(\{ acceptedLocalRoadValue:/);
   const normalize = functionSource('normalizeReports');
   for (const field of ['roadName', 'routeName', 'street', 'streetName', 'primaryRoad', 'crossStreet', 'referenceRoadA', 'resolvedLocation']) assert.match(normalize, new RegExp(`${field}:`));
+});
+
+test('LP238.5 parses the actual rehydrated reports.detail structured container including nested JSON', () => {
+  const parserSource = functionSource('gridlyParsePersistedReportStructuredMetadataDetail');
+  const extractSource = functionSource('extractOtherHazardStructuredMetadata');
+  const prefix = 'gridly_structured=';
+  const parse = Function('OTHER_HAZARD_STRUCTURED_METADATA_PREFIX', `${parserSource}; return gridlyParsePersistedReportStructuredMetadataDetail;`)(prefix);
+  const extract = Function('normalizeOtherHazardSubtype', 'buildOtherHazardStructuredMetadata', 'gridlyParsePersistedReportStructuredMetadataDetail', 'OTHER_HAZARD_STRUCTURED_METADATA_PREFIX',
+    `${extractSource}; return extractOtherHazardStructuredMetadata;`)(value => String(value || '').trim(), subtype => ({ category: 'other_hazard', subtype }), parse, prefix);
+  const detail = `Shared report ${prefix}${JSON.stringify({ roadName: 'East 8th Street', canonicalRoadContext: { primaryRoad: 'East 8th Street' }, subtype: 'other_hazard' })}`;
+  assert.equal(parse(detail).canonicalRoadContext.primaryRoad, 'East 8th Street');
+  assert.equal(extract({ detail }).roadName, 'East 8th Street');
+  assert.deepEqual(parse('ordinary arbitrary text'), {});
+});
+
+test('LP238.5 normalization recovers all bounded persisted aliases globally', () => {
+  const normalize = functionSource('normalizeReports');
+  for (const alias of ['roadName', 'routeName', 'street', 'streetName', 'primaryRoad', 'nearestRoad', 'crossStreet', 'referenceRoadA']) {
+    assert.match(normalize, new RegExp(`otherHazardMetadata\\?\\.${alias}`));
+  }
+  assert.doesNotMatch(normalize, /Austin|East 8th Street/);
+});
+
+test('LP238.5 certifies persistence payload separately from the rehydrated row and classifies first adjacent loss', () => {
+  const loader = functionSource('loadSharedReports');
+  const audit = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
+  assert.match(loader, /lp238RehydratedRow/);
+  assert.match(loader, /reports\.detail\.gridly_structured\.roadName/);
+  for (const field of ['persistencePayloadRoadValue', 'rehydratedPersistedRoadValue', 'persistedStreetStorageOwner', 'persistedStreetStoragePath', 'persistedStreetRawValue']) assert.match(audit + loader, new RegExp(field));
+  for (const stage of ['ROAD_SELECTION', 'SUBMISSION_PAYLOAD', 'ACCEPTED_LOCAL', 'PERSISTENCE_PAYLOAD', 'REHYDRATED_PERSISTENCE', 'NORMALIZATION', 'ACTIVE_HAZARD', 'GOVERNED_EVIDENCE', 'ALERTS_PROJECTION', 'LP236_PRESENTATION']) assert.match(audit, new RegExp(stage));
+  assert.match(audit, /PERSISTENCE_WRITE_OR_REHYDRATION/);
+  assert.match(audit, /PERSISTENCE_TO_NORMALIZATION/);
 });
 
 test('LP238 successful map and GPS submissions share a generation-stable bounded capture owner', () => {
@@ -144,7 +177,7 @@ test('LP238.4 governed location projection is bounded and leaves identity, count
 
 test('LP238 audit is bounded, passive and fail-closed at every location boundary', () => {
   const audit = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
-  for (const field of ['authorityAvailable', 'authorityReason', 'canonicalCommunityAuthority', 'selectedMembershipCounty', 'selectedMembershipAuthority', 'authoritativeMembershipCounty', 'authoritativeMembershipAuthority', 'activeCountyAuthority', 'contextAlignmentPass', 'structuredRoadAuthorityAvailable', 'payloadRoadValue', 'acceptedLocalRoadValue', 'persistedRoadValue', 'normalizedRoadValue', 'activeHazardRoadValue', 'governedRoadValue', 'alertsRoadValue', 'lp236SelectedLocationValue', 'lp236SelectedLocationAuthority', 'firstLocationLosingStage', 'submissionLocationCapturePass', 'persistenceLocationPass', 'governedLocationPass', 'overallPass', 'NO_STRUCTURED_ROAD_AUTHORITY']) assert.match(audit, new RegExp(field));
+  for (const field of ['authorityAvailable', 'authorityReason', 'canonicalCommunityAuthority', 'selectedMembershipCounty', 'selectedMembershipAuthority', 'authoritativeMembershipCounty', 'authoritativeMembershipAuthority', 'activeCountyAuthority', 'contextAlignmentPass', 'structuredRoadAuthorityAvailable', 'payloadRoadValue', 'acceptedLocalRoadValue', 'persistencePayloadRoadValue', 'rehydratedPersistedRoadValue', 'persistedRoadValue', 'normalizedRoadValue', 'activeHazardRoadValue', 'governedRoadValue', 'alertsRoadValue', 'lp236SelectedLocationValue', 'lp236SelectedLocationAuthority', 'firstLocationLosingStage', 'submissionLocationCapturePass', 'persistenceLocationPass', 'governedLocationPass', 'overallPass', 'NO_STRUCTURED_ROAD_AUTHORITY']) assert.match(audit, new RegExp(field));
   assert.doesNotMatch(audit, /fetch\(|setTimeout|setInterval|reverse.?geocod/i);
 });
 
