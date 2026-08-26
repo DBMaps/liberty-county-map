@@ -66,6 +66,42 @@
     try { return typeof fn === "function" ? fn() : null; } catch (error) { return { auditError: text(error?.message || error) }; }
   }
 
+  // LP236 has one production mount: the Portrait V2 sheet body. The sheet may
+  // remain mounted when minimized, so DOM membership -- not disclosure/open
+  // state -- defines "displayed" here. Historical projections elsewhere in
+  // the document are deliberately ineligible while that canonical mount
+  // contains an LP236 Alerts root.
+  function observeAlertsWeatherPresentation(documentRoot = globalScope.document) {
+    const activeSheet = documentRoot?.querySelector?.('#gridlyPortraitV2Sheet[data-active-sheet="alerts"]');
+    const portraitSheet = documentRoot?.querySelector?.("#gridlyPortraitV2Sheet");
+    const mountedRoot = activeSheet?.querySelector?.('[data-gridly-lp236-alerts="true"]')
+      || portraitSheet?.querySelector?.('[data-gridly-lp236-alerts="true"]')
+      || Array.from(documentRoot?.querySelectorAll?.('[data-gridly-lp236-alerts="true"]') || []).filter((node) => node?.isConnected !== false && !node?.closest?.("template")).at(-1)
+      || null;
+    const weatherSection = mountedRoot?.querySelector?.('[data-gridly-lp236-source="weather"]') || null;
+    const conditionNodes = Array.from(weatherSection?.querySelectorAll?.('[data-gridly-lp236-condition-id]') || []);
+    const conditions = conditionNodes.map((node) => {
+      const group = node.closest?.("[data-gridly-lp236-group]") || weatherSection;
+      const event = text(node.querySelector?.('[data-gridly-weather-event="true"]')?.textContent
+        || group?.querySelector?.('[data-gridly-weather-group-label="true"]')?.textContent) || null;
+      return freeze({
+        conditionId: text(node?.dataset?.gridlyLp236ConditionId) || null,
+        event,
+        timing: text(node.querySelector?.('[data-gridly-weather-timing="true"]')?.textContent) || null,
+        source: text(node.querySelector?.('[data-gridly-weather-source="true"]')?.textContent) || null
+      });
+    });
+    return freeze({
+      mountedRoot,
+      weatherSection,
+      conditionNodes: freeze(conditionNodes),
+      conditions: freeze(conditions),
+      displayedCount: conditionNodes.length,
+      identityCount: new Set(conditions.map((condition) => condition.conditionId).filter(Boolean)).size,
+      presentationText: text(weatherSection?.textContent) || null
+    });
+  }
+
   function getWeatherAuthorityEnvelope(options = {}) {
     const provider = options.provider || globalScope.gridlyWeatherProvider || null;
     const providerRuntime = options.providerRuntime || safeCall(provider?.getRuntimeState) || {};
@@ -279,11 +315,10 @@
     const communitySelection = describeCommunitySpatialSelection({ selected });
 
     const connectorRecords = safeCall(connector?.getNormalizedRecords) || [];
-    const weatherDoms = Array.from(globalScope.document?.querySelectorAll?.('[data-gridly-lp236-source="weather"]') || []);
-    const weatherDom = weatherDoms.find((node) => node.querySelector?.('[data-gridly-lp236-condition-id]')) || weatherDoms[0] || null;
-    const displayedWeatherNodes = Array.from(weatherDom?.querySelectorAll?.('[data-gridly-lp236-condition-id]') || []);
-    const presentationCount = displayedWeatherNodes.length || Number(weatherDom?.dataset?.gridlyLp236Count ?? alertsAudit.weatherRenderedCount ?? 0) || 0;
-    const presentationText = text(weatherDom?.textContent);
+    const weatherPresentation = observeAlertsWeatherPresentation();
+    const weatherDom = weatherPresentation.weatherSection;
+    const presentationCount = weatherPresentation.displayedCount;
+    const presentationText = weatherPresentation.presentationText || "";
     const envelope = getWeatherAuthorityEnvelope({ provider, providerRuntime, connectorRuntime: connectorAudit, snapshot, selected, canonical, geographyAgreementPass: governedGeometry.available });
     const sourceConfigured = envelope.configured;
     const sourceRequestAttempted = envelope.requestAttempted;
@@ -432,13 +467,14 @@
       alertsWeatherInputCount,
       alertsWeatherPublishedCount,
       alertsWeatherDisplayedCount: presentationCount,
-      alertsWeatherDomIdentityCount: new Set(displayedWeatherNodes.map((node) => node?.dataset?.gridlyLp236ConditionId).filter(Boolean)).size,
+      alertsWeatherDomIdentityCount: weatherPresentation.identityCount,
+      alertsWeatherDetails: weatherPresentation.conditions,
       weatherEvent: consumer?.consumerVisibleSituations?.[0]?.event || consumer?.consumerVisibleSituations?.[0]?.title || null,
       weatherDisplayLabel: text(weatherDom?.querySelector?.('[data-gridly-weather-group-label="true"]')?.textContent || weatherDom?.querySelector?.('[data-gridly-weather-event="true"]')?.textContent) || null,
       alertsWeatherGroupLabel: text(weatherDom?.querySelector?.('[data-gridly-weather-group-label="true"]')?.textContent) || null,
-      alertsDetailEvent: text(weatherDom?.querySelector?.('[data-gridly-weather-group-label="true"]')?.textContent || weatherDom?.querySelector?.('[data-gridly-weather-event="true"]')?.textContent) || null,
-      alertsDetailTiming: text(weatherDom?.querySelector?.('[data-gridly-weather-timing="true"]')?.textContent) || null,
-      alertsDetailSource: text(weatherDom?.querySelector?.('[data-gridly-weather-source="true"]')?.textContent) || null,
+      alertsDetailEvent: weatherPresentation.conditions[0]?.event || null,
+      alertsDetailTiming: weatherPresentation.conditions[0]?.timing || null,
+      alertsDetailSource: weatherPresentation.conditions[0]?.source || null,
       kbygWeatherSummary: text(globalScope.document?.querySelector?.('[data-gridly-travel-brief-section="weather"]')?.textContent) || null,
       kbygWeatherLine1: text(globalScope.document?.querySelectorAll?.('[data-gridly-travel-brief-section="weather"] .gridly-travel-brief-lines p')?.[0]?.textContent) || null,
       kbygWeatherLine2: text(globalScope.document?.querySelectorAll?.('[data-gridly-travel-brief-section="weather"] .gridly-travel-brief-lines p')?.[1]?.textContent) || null,
@@ -455,5 +491,5 @@
   globalScope.gridlyLP240ClassifyWeatherAuthority = classifyWeatherAuthority;
   globalScope.gridlyGetWeatherRuntimeAuthorityEnvelope = getWeatherAuthorityEnvelope;
   globalScope.gridlyLP240WeatherAuthorityAudit = auditRuntime;
-  if (typeof module !== "undefined" && module.exports) module.exports = freeze({ classifyWeatherAuthority, getWeatherAuthorityEnvelope, evaluatePlaceAlertGeography, geometriesIntersect, resolveGovernedCommunityGeometry, describeCommunitySpatialSelection, auditRuntime });
+  if (typeof module !== "undefined" && module.exports) module.exports = freeze({ classifyWeatherAuthority, getWeatherAuthorityEnvelope, evaluatePlaceAlertGeography, geometriesIntersect, resolveGovernedCommunityGeometry, describeCommunitySpatialSelection, observeAlertsWeatherPresentation, auditRuntime });
 })(typeof window !== "undefined" ? window : globalThis);
