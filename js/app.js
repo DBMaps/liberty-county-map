@@ -3259,10 +3259,17 @@ function gridlyResolveCanonicalLiveIncidentIdentity(record = {}) {
 
 function gridlyBuildCanonicalLiveIncidentPresentation(record = {}) {
   const identity = gridlyResolveCanonicalLiveIncidentIdentity(record);
+  const raw = record?.canonicalSourceRecord || record?.raw || record?.source || record?.latestReport || {};
+  const isCrossing = identity.crossingOwnershipExplicit;
+  const sourceText = String(record?.sourceKind || record?.providerId || record?.sourceId || raw?.sourceKind || raw?.providerId || "").toLowerCase();
+  const sourceFamily = /weather|nws|noaa/.test(sourceText) ? "WEATHER" : (isCrossing ? "CROSSING_REPORTS" : (/official|drivetexas|txdot/.test(sourceText) ? "OFFICIAL_ROADWAYS" : "COMMUNITY_REPORTS"));
+  const canonicalKey = record?.submittedHazardType || record?.submitted_hazard_type || record?.hazardType || record?.hazard_type || record?.report_type || record?.reportType || record?.category || record?.type || identity.hazardType;
+  const subtype = record?.subtype || record?.hazardSubtype || record?.otherHazardSubtype || raw?.subtype || raw?.hazardSubtype;
+  const displayCondition = typeof gridlyConditionDisplayLabel === "function" ? gridlyConditionDisplayLabel({ sourceFamily, canonicalKey, subtype, providerEvent: record?.event || raw?.event, trustedLabel: identity.presentationCondition }) : identity.presentationCondition;
   const locationLabel = typeof normalizeGridlyAlertCardLocationLabel === "function" ? normalizeGridlyAlertCardLocationLabel(record) : (record?.locationName || record?.roadName || record?.crossingName || "Local roadway");
   const freshnessLabel = typeof formatGridlyHazardPopupFreshnessLine === "function" ? formatGridlyHazardPopupFreshnessLine(record) : (record?.minutesText || "Updated just now");
   const reportCount = Math.max(1, Number(record?.incidentReportCount || record?.activeReportCount || record?.reports_count || record?.count || (Array.isArray(record?.reports) ? record.reports.length : 1)) || 1);
-  return Object.freeze({ incidentId: identity.incidentId, reportId: identity.sourceReportId, hazardType: identity.hazardType, conditionFamily: identity.conditionFamily, title: identity.presentationTitle, conditionLabel: identity.presentationCondition, locationLabel, freshnessLabel, reportCount, active: !identity.clearedState, cleared: identity.clearedState, sourceKind: identity.sourceKind, canonicalIdentity: identity });
+  return Object.freeze({ incidentId: identity.incidentId, reportId: identity.sourceReportId, hazardType: identity.hazardType, conditionFamily: identity.conditionFamily, title: displayCondition, conditionLabel: displayCondition, locationLabel, freshnessLabel, reportCount, active: !identity.clearedState, cleared: identity.clearedState, sourceKind: identity.sourceKind, canonicalIdentity: identity });
 }
 
 function gridlyBuildCanonicalActiveCommunityRevision({ activeRecords = [], selectedCounty = "", selectedAwarenessArea = null } = {}) {
@@ -10032,7 +10039,7 @@ const HAZARD_TYPES = {
     detail: "Shared report: icy roadway conditions may affect travel."
   },
   debris: {
-    label: "Debris in Road",
+    label: "Debris In Road",
     icon: "⚠️",
     severity: "moderate",
     detail: "Shared report: debris in the road may affect travel."
@@ -10096,7 +10103,7 @@ const ROAD_HAZARD_TYPE_OPTIONS = [
   { value: "flooding", label: "Flooding" },
   { value: "crash", label: "Crash / Wreck" },
   { value: "disabled_vehicle", label: "Disabled Vehicle" },
-  { value: "debris", label: "Debris in Road" },
+  { value: "debris", label: "Debris In Road" },
   { value: "road_closed", label: "Road Closed" },
   { value: "construction", label: "Construction" },
   { value: "traffic_backup", label: "Traffic Backup / Heavy Delay" },
@@ -115425,7 +115432,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (sourceClass === "weather") return gridlyWeatherDisplayLabel(alert);
     const governed = pickFirstNonEmptyText([alert?.conciseSummary, alert?.conditionSummary, alert?.presentationCondition, alert?.category, alert?.type]);
     const clean = gridlyLP236SafeProviderText(governed);
-    if (clean) return clean.length > 72 ? `${clean.slice(0, 69).trimEnd()}…` : clean;
+    if (clean) {
+      const formatted = typeof gridlyConditionDisplayLabel === "function" ? gridlyConditionDisplayLabel({ sourceFamily: sourceClass === "community_report" ? "COMMUNITY_REPORTS" : "OFFICIAL_ROADWAYS", canonicalKey: alert?.submittedHazardType || alert?.hazard_type || alert?.reportType || alert?.report_type || alert?.category || alert?.type, subtype: alert?.subtype || alert?.hazardSubtype, trustedLabel: clean }) : clean;
+      return formatted.length > 72 ? `${formatted.slice(0, 69).trimEnd()}…` : formatted;
+    }
     return gridlyLP236TypeLabel(gridlyLP236ConditionType(alert, sourceClass), alert);
   }
 
