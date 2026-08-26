@@ -1,0 +1,1860 @@
+canonicalCommunity,canonicalPlaceId,membershipCountyIds,membershipCount,crossingAuthorityAvailable,crossingAuthorityReason,canonicalCrossingIdentityCount,resolvedCrossingRecordCount,crossingCountyIds,unresolvedCrossingIds,duplicateCrossingIds,missingCrossingMemberships,crossingAuthorityState,crossingIdentityParityPass,crossingMembershipParityPass,crossingAuthorityPass
+Abbott,4800100,hill-tx,1,true,,2,2,hill-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Abernathy,4800160,hale-tx|lubbock-tx,2,true,,3,3,hale-tx|lubbock-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Abilene,4801000,jones-tx|taylor-tx,2,true,,49,49,jones-tx|taylor-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Abram,4801060,hidalgo-tx,1,true,,2,2,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Acala,4801084,hudspeth-tx,1,true,,1,1,hudspeth-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ackerly,4801108,dawson-tx|martin-tx,2,true,,0,0,dawson-tx|martin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Addison,4801240,dallas-tx,1,true,,7,7,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Adrian,4801324,oldham-tx,1,true,,0,0,oldham-tx,,,,AVAILABLE_EMPTY,true,true,true
+Agua Dulce,4801390,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Agua Dulce,4801396,nueces-tx,1,true,,3,3,nueces-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Aguilares,4801420,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Airport Heights,4801500,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Airport Road Addition,4801514,brooks-tx,1,true,,0,0,brooks-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alamo,4801576,hidalgo-tx,1,true,,10,10,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Alamo Beach,4801594,calhoun-tx,1,true,,0,0,calhoun-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alamo Heights,4801600,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alanreed,4801612,gray-tx,1,true,,0,0,gray-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alba,4801636,rains-tx|wood-tx,2,true,,0,0,rains-tx|wood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Albany,4801648,shackelford-tx,1,true,,0,0,shackelford-tx,,,,AVAILABLE_EMPTY,true,true,true
+Aldine,4801696,harris-tx,1,true,,2,2,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Aledo,4801744,parker-tx,1,true,,2,2,parker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Alfred,4801816,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alice,4801852,jim-wells-tx,1,true,,26,26,jim-wells-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Alice Acres,4801858,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Allen,4801924,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Allison,4802032,wheeler-tx,1,true,,0,0,wheeler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alma,4802044,ellis-tx,1,true,,5,5,ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Alpine,4802104,brewster-tx,1,true,,11,11,brewster-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Alto,4802188,cherokee-tx,1,true,,0,0,cherokee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alto Bonito Heights,4802194,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alton,4802212,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Alvarado,4802260,johnson-tx,1,true,,17,17,johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Alvin,4802272,brazoria-tx,1,true,,10,10,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Alvord,4802284,wise-tx,1,true,,3,3,wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Amada Acres,4802286,starr-tx,1,true,,1,1,starr-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Amargosa,4802290,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Amarillo,4803000,potter-tx|randall-tx,2,true,,84,84,potter-tx|randall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Amaya,4803008,zavala-tx,1,true,,0,0,zavala-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ames,4803072,liberty-tx,1,true,,2,2,liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Amherst,4803084,lamb-tx,1,true,,1,1,lamb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Amistad,4803096,val-verde-tx,1,true,,0,0,val-verde-tx,,,,AVAILABLE_EMPTY,true,true,true
+Anacua,4803126,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Anahuac,4803144,chambers-tx,1,true,,0,0,chambers-tx,,,,AVAILABLE_EMPTY,true,true,true
+Anderson,4803192,grimes-tx,1,true,,0,0,grimes-tx,,,,AVAILABLE_EMPTY,true,true,true
+Andrews,4803216,andrews-tx,1,true,,0,0,andrews-tx,,,,AVAILABLE_EMPTY,true,true,true
+Angleton,4803264,brazoria-tx,1,true,,12,12,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Angus,4803288,navarro-tx,1,true,,4,4,navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Anna,4803300,collin-tx,1,true,,6,6,collin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Annetta,4803336,parker-tx,1,true,,2,2,parker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Annetta North,4803340,parker-tx,1,true,,6,6,parker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Annetta South,4803342,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Annona,4803360,red-river-tx,1,true,,0,0,red-river-tx,,,,AVAILABLE_EMPTY,true,true,true
+Anson,4803372,jones-tx,1,true,,0,0,jones-tx,,,,AVAILABLE_EMPTY,true,true,true
+Anthony,4803432,el-paso-tx,1,true,,3,3,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Anton,4803540,hockley-tx,1,true,,3,3,hockley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Appleby,4803564,nacogdoches-tx,1,true,,2,2,nacogdoches-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Aquilla,4803588,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Aransas Pass,4803600,aransas-tx|nueces-tx|san-patricio-tx,3,true,,7,7,aransas-tx|nueces-tx|san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Archer City,4803696,archer-tx,1,true,,0,0,archer-tx,,,,AVAILABLE_EMPTY,true,true,true
+Arcola,4803708,fort-bend-tx,1,true,,8,8,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Argyle,4803768,denton-tx,1,true,,5,5,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Arlington,4804000,tarrant-tx,1,true,,41,41,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Arp,4804156,smith-tx,1,true,,5,5,smith-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Arroyo Colorado Estates,4804174,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Arroyo Gardens,4804176,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Asherton,4804300,dimmit-tx,1,true,,0,0,dimmit-tx,,,,AVAILABLE_EMPTY,true,true,true
+Aspermont,4804408,stonewall-tx,1,true,,0,0,stonewall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Atascocita,4804462,harris-tx,1,true,,2,2,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Athens,4804504,henderson-tx,1,true,,24,24,henderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Atlanta,4804516,cass-tx,1,true,,5,5,cass-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Aubrey,4804600,denton-tx,1,true,,4,4,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Aurora,4804672,wise-tx,1,true,,0,0,wise-tx,,,,AVAILABLE_EMPTY,true,true,true
+Austin,4805000,bastrop-tx|hays-tx|travis-tx|williamson-tx,4,true,,154,154,bastrop-tx|hays-tx|travis-tx|williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Austwell,4805036,refugio-tx,1,true,,0,0,refugio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Avery,4805072,red-river-tx,1,true,,0,0,red-river-tx,,,,AVAILABLE_EMPTY,true,true,true
+Avinger,4805084,cass-tx,1,true,,3,3,cass-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Azle,4805168,parker-tx|tarrant-tx,2,true,,0,0,parker-tx|tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bacliff,4805180,galveston-tx,1,true,,0,0,galveston-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bailey,4805264,fannin-tx,1,true,,0,0,fannin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bailey's Prairie,4805288,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Baird,4805336,callahan-tx,1,true,,2,2,callahan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Balch Springs,4805372,dallas-tx,1,true,,0,0,dallas-tx,,,,AVAILABLE_EMPTY,true,true,true
+Balcones Heights,4805384,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ballinger,4805456,runnels-tx,1,true,,6,6,runnels-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Balmorhea,4805468,reeves-tx,1,true,,0,0,reeves-tx,,,,AVAILABLE_EMPTY,true,true,true
+B and E,4805520,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bandera,4805528,bandera-tx,1,true,,0,0,bandera-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bangs,4805552,brown-tx,1,true,,5,5,brown-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Banquete,4805576,nueces-tx,1,true,,4,4,nueces-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bardwell,4805612,ellis-tx,1,true,,2,2,ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Barksdale,4805648,edwards-tx,1,true,,0,0,edwards-tx,,,,AVAILABLE_EMPTY,true,true,true
+Barrera,4805690,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Barrett,4805696,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Barry,4805708,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Barstow,4805720,ward-tx,1,true,,1,1,ward-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bartlett,4805732,bell-tx|williamson-tx,2,true,,4,4,bell-tx|williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Barton Creek,4805750,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bartonville,4805768,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bastrop,4805864,bastrop-tx,1,true,,16,16,bastrop-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Batesville,4805924,zavala-tx,1,true,,0,0,zavala-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bay City,4805984,matagorda-tx,1,true,,25,25,matagorda-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bayou Vista,4806060,galveston-tx,1,true,,0,0,galveston-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bayside,4806104,refugio-tx,1,true,,0,0,refugio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Baytown,4806128,chambers-tx|harris-tx,2,true,,58,58,chambers-tx|harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bayview,4806140,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Beach City,4806200,chambers-tx,1,true,,0,0,chambers-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bear Creek,4806242,hays-tx,1,true,,0,0,hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bear Creek Ranch,4806244,dallas-tx,1,true,,0,0,dallas-tx,,,,AVAILABLE_EMPTY,true,true,true
+Beasley,4806272,fort-bend-tx,1,true,,2,2,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Beaumont,4807000,jefferson-tx,1,true,,146,146,jefferson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Beauxart Gardens,4807036,jefferson-tx,1,true,,1,1,jefferson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Beaver Creek,4807042,burleson-tx,1,true,,0,0,burleson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Beckville,4807108,panola-tx,1,true,,2,2,panola-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bedford,4807132,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bedias,4807144,grimes-tx,1,true,,0,0,grimes-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bee Cave,4807156,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Beeville,4807192,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bellaire,4807300,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bellevue,4807396,clay-tx,1,true,,2,2,clay-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bellmead,4807408,mclennan-tx,1,true,,9,9,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bells,4807420,grayson-tx,1,true,,2,2,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bellville,4807432,austin-tx,1,true,,4,4,austin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Belterra,4807486,hays-tx,1,true,,0,0,hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Belton,4807492,bell-tx,1,true,,7,7,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ben Arnold,4807516,milam-tx,1,true,,0,0,milam-tx,,,,AVAILABLE_EMPTY,true,true,true
+Benavides,4807528,duval-tx,1,true,,7,7,duval-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ben Bolt,4807540,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Benbrook,4807552,tarrant-tx,1,true,,3,3,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Benjamin,4807636,knox-tx,1,true,,0,0,knox-tx,,,,AVAILABLE_EMPTY,true,true,true
+Benjamin Perez,4807642,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ben Wheeler,4807708,van-zandt-tx,1,true,,0,0,van-zandt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Berryville,4807852,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bertram,4807864,burnet-tx,1,true,,7,7,burnet-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Beverly Hills,4808104,mclennan-tx,1,true,,1,1,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bevil Oaks,4808128,jefferson-tx,1,true,,0,0,jefferson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bigfoot,4808164,frio-tx,1,true,,0,0,frio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Big Lake,4808212,reagan-tx,1,true,,2,2,reagan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Big Sandy,4808224,upshur-tx,1,true,,5,5,upshur-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Big Spring,4808236,howard-tx,1,true,,11,11,howard-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Big Thicket Lake Estates,4808240,liberty-tx|polk-tx,2,true,,0,0,liberty-tx|polk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Big Wells,4808260,dimmit-tx,1,true,,0,0,dimmit-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bishop,4808392,nueces-tx,1,true,,10,10,nueces-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bishop Hills,4808398,potter-tx,1,true,,0,0,potter-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bivins,4808404,cass-tx,1,true,,1,1,cass-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bixby,4808410,cameron-tx,1,true,,1,1,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Blackwell,4808488,coke-tx|nolan-tx,2,true,,0,0,coke-tx|nolan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Blanco,4808536,blanco-tx,1,true,,0,0,blanco-tx,,,,AVAILABLE_EMPTY,true,true,true
+Blanket,4808596,brown-tx,1,true,,3,3,brown-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bledsoe,4808644,cochran-tx,1,true,,0,0,cochran-tx,,,,AVAILABLE_EMPTY,true,true,true
+Blessing,4808668,matagorda-tx,1,true,,5,5,matagorda-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bloomburg,4808752,cass-tx,1,true,,2,2,cass-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Blooming Grove,4808788,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bloomington,4808800,victoria-tx,1,true,,4,4,victoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Blossom,4808812,lamar-tx,1,true,,0,0,lamar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Blue Berry Hill,4808830,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Blue Mound,4808860,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Blue Ridge,4808872,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bluetown,4808908,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bluff Dale,4808932,erath-tx,1,true,,3,3,erath-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Blum,4809004,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Boerne,4809160,kendall-tx,1,true,,0,0,kendall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bogata,4809172,red-river-tx,1,true,,0,0,red-river-tx,,,,AVAILABLE_EMPTY,true,true,true
+Boling,4809232,wharton-tx,1,true,,0,0,wharton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bolivar Peninsula,4809250,galveston-tx,1,true,,0,0,galveston-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bonanza Hills,4809310,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bonham,4809328,fannin-tx,1,true,,4,4,fannin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bonney,4809388,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Booker,4809448,lipscomb-tx|ochiltree-tx,2,true,,0,0,lipscomb-tx|ochiltree-tx,,,,AVAILABLE_EMPTY,true,true,true
+Borger,4809556,hutchinson-tx,1,true,,16,16,hutchinson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Botines,4809598,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bovina,4809628,parmer-tx,1,true,,2,2,parmer-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bowie,4809640,montague-tx,1,true,,9,9,montague-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Box Canyon,4809656,val-verde-tx,1,true,,0,0,val-verde-tx,,,,AVAILABLE_EMPTY,true,true,true
+Boyd,4809748,wise-tx,1,true,,4,4,wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Boys Ranch,4809796,oldham-tx,1,true,,0,0,oldham-tx,,,,AVAILABLE_EMPTY,true,true,true
+Brackettville,4809868,kinney-tx,1,true,,0,0,kinney-tx,,,,AVAILABLE_EMPTY,true,true,true
+Brady,4809916,mcculloch-tx,1,true,,7,7,mcculloch-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brazoria,4810072,brazoria-tx,1,true,,5,5,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brazos,4810084,palo-pinto-tx,1,true,,1,1,palo-pinto-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brazos Country,4810090,austin-tx,1,true,,0,0,austin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Breckenridge,4810132,stephens-tx,1,true,,0,0,stephens-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bremond,4810144,robertson-tx,1,true,,6,6,robertson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brenham,4810156,washington-tx,1,true,,27,27,washington-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Briar,4810192,parker-tx|tarrant-tx|wise-tx,3,true,,0,0,parker-tx|tarrant-tx|wise-tx,,,,AVAILABLE_EMPTY,true,true,true
+Briarcliff,4810197,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Briaroaks,4810216,johnson-tx,1,true,,0,0,johnson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bridge City,4810252,orange-tx,1,true,,1,1,orange-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bridgeport,4810264,wise-tx,1,true,,9,9,wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Briggs,4810276,burnet-tx,1,true,,0,0,burnet-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bristol,4810336,ellis-tx,1,true,,0,0,ellis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Broaddus,4810384,san-augustine-tx,1,true,,0,0,san-augustine-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bronte,4810528,coke-tx,1,true,,0,0,coke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Brookshire,4810636,waller-tx,1,true,,6,6,waller-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brookside Village,4810648,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Brookston,4810660,lamar-tx,1,true,,0,0,lamar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Browndell,4810708,jasper-tx,1,true,,0,0,jasper-tx,,,,AVAILABLE_EMPTY,true,true,true
+Brownfield,4810720,terry-tx,1,true,,7,7,terry-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brownsboro,4810756,henderson-tx,1,true,,3,3,henderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brownsville,4810768,cameron-tx,1,true,,52,52,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brownwood,4810780,brown-tx,1,true,,26,26,brown-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bruceville-Eddy,4810828,falls-tx|mclennan-tx,2,true,,4,4,falls-tx|mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brundage,4810852,dimmit-tx,1,true,,0,0,dimmit-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bruni,4810876,webb-tx,1,true,,1,1,webb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Brushy Creek,4810897,williamson-tx,1,true,,0,0,williamson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bryan,4810912,brazos-tx,1,true,,43,43,brazos-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bryson,4810960,jack-tx,1,true,,0,0,jack-tx,,,,AVAILABLE_EMPTY,true,true,true
+Buchanan Dam,4810984,llano-tx,1,true,,0,0,llano-tx,,,,AVAILABLE_EMPTY,true,true,true
+Buchanan Lake Village,4810990,llano-tx,1,true,,0,0,llano-tx,,,,AVAILABLE_EMPTY,true,true,true
+Buckholts,4811020,milam-tx,1,true,,1,1,milam-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Buda,4811080,hays-tx,1,true,,2,2,hays-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Buena Vista,4811102,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Buffalo,4811116,leon-tx,1,true,,7,7,leon-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Buffalo Gap,4811128,taylor-tx,1,true,,2,2,taylor-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Buffalo Springs Lake,4811155,lubbock-tx,1,true,,0,0,lubbock-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bullard,4811212,cherokee-tx|smith-tx,2,true,,0,0,cherokee-tx|smith-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bulverde,4811224,comal-tx,1,true,,0,0,comal-tx,,,,AVAILABLE_EMPTY,true,true,true
+Buna,4811236,jasper-tx,1,true,,12,12,jasper-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Bunker Hill Village,4811300,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Burkburnett,4811368,wichita-tx,1,true,,9,9,wichita-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Burke,4811380,angelina-tx,1,true,,5,5,angelina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Burleson,4811428,johnson-tx|tarrant-tx,2,true,,25,25,johnson-tx|tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Burlington,4811440,milam-tx,1,true,,0,0,milam-tx,,,,AVAILABLE_EMPTY,true,true,true
+Burnet,4811464,burnet-tx,1,true,,7,7,burnet-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Burton,4811536,washington-tx,1,true,,0,0,washington-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bushland,4811572,potter-tx|randall-tx,2,true,,0,0,potter-tx|randall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Butterfield,4811626,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Byers,4811644,clay-tx,1,true,,0,0,clay-tx,,,,AVAILABLE_EMPTY,true,true,true
+Bynum,4811656,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cactus,4811692,moore-tx,1,true,,2,2,moore-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Caddo Mills,4811716,hunt-tx,1,true,,5,5,hunt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cade Lakes,4811725,burleson-tx,1,true,,0,0,burleson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Caldwell,4811836,burleson-tx,1,true,,9,9,burleson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Callender Lake,4811940,van-zandt-tx,1,true,,0,0,van-zandt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Callisburg,4811968,cooke-tx,1,true,,0,0,cooke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Calvert,4811992,robertson-tx,1,true,,7,7,robertson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Camargito,4812010,starr-tx,1,true,,1,1,starr-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cameron,4812040,milam-tx,1,true,,17,17,milam-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cameron Park,4812045,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Campbell,4812112,hunt-tx,1,true,,6,6,hunt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Campo Verde,4812226,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Camp Swift,4812334,bastrop-tx,1,true,,0,0,bastrop-tx,,,,AVAILABLE_EMPTY,true,true,true
+Camp Wood,4812388,real-tx,1,true,,0,0,real-tx,,,,AVAILABLE_EMPTY,true,true,true
+Canadian,4812412,hemphill-tx,1,true,,1,1,hemphill-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Caney City,4812472,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Canton,4812496,van-zandt-tx,1,true,,0,0,van-zandt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cantu Addition,4812502,brooks-tx,1,true,,0,0,brooks-tx,,,,AVAILABLE_EMPTY,true,true,true
+Canutillo,4812508,el-paso-tx,1,true,,8,8,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Canyon,4812532,randall-tx,1,true,,5,5,randall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Canyon Creek,4812562,hood-tx,1,true,,0,0,hood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Canyon Lake,4812580,comal-tx,1,true,,0,0,comal-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cape Royale,4812600,san-jacinto-tx,1,true,,0,0,san-jacinto-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carbon,4812736,eastland-tx,1,true,,0,0,eastland-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carlsbad,4812892,tom-green-tx,1,true,,0,0,tom-green-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carl's Corner,4812895,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carlton,4812904,hamilton-tx,1,true,,0,0,hamilton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carmine,4812916,fayette-tx,1,true,,0,0,fayette-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carrizo Hill,4812982,dimmit-tx,1,true,,0,0,dimmit-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carrizo Springs,4812988,dimmit-tx,1,true,,0,0,dimmit-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carrollton,4813024,collin-tx|dallas-tx|denton-tx,3,true,,72,72,collin-tx|dallas-tx|denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Carter,4813075,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Carthage,4813108,panola-tx,1,true,,10,10,panola-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Casa Blanca,4813128,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Casas,4813150,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cashion Community,4813198,wichita-tx,1,true,,0,0,wichita-tx,,,,AVAILABLE_EMPTY,true,true,true
+Castle Hills,4813276,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Castroville,4813312,medina-tx,1,true,,0,0,medina-tx,,,,AVAILABLE_EMPTY,true,true,true
+Catarina,4813324,dimmit-tx,1,true,,0,0,dimmit-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cedar Creek,4813432,bastrop-tx,1,true,,0,0,bastrop-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cedar Hill,4813492,dallas-tx|ellis-tx,2,true,,10,10,dallas-tx|ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cedar Park,4813552,travis-tx|williamson-tx,2,true,,13,13,travis-tx|williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cedar Point,4813570,polk-tx,1,true,,0,0,polk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Celeste,4813672,hunt-tx,1,true,,6,6,hunt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Celina,4813684,collin-tx|denton-tx,2,true,,10,10,collin-tx|denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Center,4813732,shelby-tx,1,true,,8,8,shelby-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Center Point,4813828,kerr-tx,1,true,,0,0,kerr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Centerville,4813900,leon-tx,1,true,,0,0,leon-tx,,,,AVAILABLE_EMPTY,true,true,true
+Central Gardens,4813972,jefferson-tx,1,true,,7,7,jefferson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+CÃ©sar ChÃ¡vez,4814038,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Chandler,4814224,henderson-tx,1,true,,4,4,henderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Channelview,4814236,harris-tx,1,true,,12,12,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Channing,4814260,hartley-tx,1,true,,2,2,hartley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Chaparrito,4814266,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Chapeno,4814290,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Charlotte,4814404,atascosa-tx,1,true,,0,0,atascosa-tx,,,,AVAILABLE_EMPTY,true,true,true
+Chester,4814584,tyler-tx,1,true,,0,0,tyler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Chico,4814620,wise-tx,1,true,,3,3,wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Childress,4814668,childress-tx,1,true,,4,4,childress-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Chillicothe,4814680,hardeman-tx,1,true,,3,3,hardeman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Chilton,4814692,falls-tx,1,true,,0,0,falls-tx,,,,AVAILABLE_EMPTY,true,true,true
+China,4814704,jefferson-tx,1,true,,3,3,jefferson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+China Grove,4814716,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+China Spring,4814740,mclennan-tx,1,true,,0,0,mclennan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Chireno,4814776,nacogdoches-tx,1,true,,0,0,nacogdoches-tx,,,,AVAILABLE_EMPTY,true,true,true
+Christine,4814860,atascosa-tx,1,true,,0,0,atascosa-tx,,,,AVAILABLE_EMPTY,true,true,true
+Christoval,4814872,tom-green-tx,1,true,,0,0,tom-green-tx,,,,AVAILABLE_EMPTY,true,true,true
+Chula Vista,4814880,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Chula Vista,4814881,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Chula Vista,4814882,zavala-tx,1,true,,0,0,zavala-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cibolo,4814920,bexar-tx|guadalupe-tx,2,true,,4,4,bexar-tx|guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cienegas Terrace,4814927,val-verde-tx,1,true,,0,0,val-verde-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cinco Ranch,4814929,fort-bend-tx|harris-tx,2,true,,0,0,fort-bend-tx|harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Circle D-KC Estates,4814986,bastrop-tx,1,true,,0,0,bastrop-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cisco,4815004,eastland-tx,1,true,,2,2,eastland-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Citrus City,4815028,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Clarendon,4815112,donley-tx,1,true,,3,3,donley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Clarksville,4815160,red-river-tx,1,true,,0,0,red-river-tx,,,,AVAILABLE_EMPTY,true,true,true
+Clarksville City,4815172,gregg-tx|upshur-tx,2,true,,1,1,gregg-tx|upshur-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Claude,4815196,armstrong-tx,1,true,,3,3,armstrong-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Clay,4815232,burleson-tx,1,true,,2,2,burleson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Clear Lake Shores,4815328,galveston-tx,1,true,,0,0,galveston-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cleburne,4815364,johnson-tx,1,true,,42,42,johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cleveland,4815436,liberty-tx|montgomery-tx|san-jacinto-tx,3,true,,21,21,liberty-tx|montgomery-tx|san-jacinto-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Clifton,4815472,bosque-tx,1,true,,2,2,bosque-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Clint,4815544,el-paso-tx,1,true,,3,3,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cloverleaf,4815628,harris-tx,1,true,,1,1,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Clute,4815652,brazoria-tx,1,true,,6,6,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Clyde,4815676,callahan-tx,1,true,,5,5,callahan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Coahoma,4815700,howard-tx,1,true,,2,2,howard-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cockrell Hill,4815796,dallas-tx,1,true,,0,0,dallas-tx,,,,AVAILABLE_EMPTY,true,true,true
+Coffee City,4815820,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Coldspring,4815892,san-jacinto-tx,1,true,,0,0,san-jacinto-tx,,,,AVAILABLE_EMPTY,true,true,true
+Coleman,4815916,coleman-tx,1,true,,8,8,coleman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+College Station,4815976,brazos-tx,1,true,,15,15,brazos-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Colleyville,4815988,tarrant-tx,1,true,,3,3,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Collinsville,4816036,grayson-tx,1,true,,4,4,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Colmesneil,4816048,tyler-tx,1,true,,0,0,tyler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Colorado Acres,4816110,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Colorado City,4816120,mitchell-tx,1,true,,4,4,mitchell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Columbus,4816168,colorado-tx,1,true,,10,10,colorado-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Comanche,4816192,comanche-tx,1,true,,11,11,comanche-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Combes,4816204,cameron-tx,1,true,,5,5,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Combine,4816216,dallas-tx|kaufman-tx,2,true,,0,0,dallas-tx|kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Comfort,4816228,kendall-tx,1,true,,0,0,kendall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Commerce,4816240,hunt-tx,1,true,,13,13,hunt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Como,4816252,hopkins-tx,1,true,,7,7,hopkins-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Concepcion,4816300,duval-tx,1,true,,0,0,duval-tx,,,,AVAILABLE_EMPTY,true,true,true
+Conroe,4816432,montgomery-tx,1,true,,38,38,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Converse,4816468,bexar-tx,1,true,,4,4,bexar-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cool,4816540,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Coolidge,4816552,limestone-tx,1,true,,0,0,limestone-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cooper,4816564,delta-tx,1,true,,0,0,delta-tx,,,,AVAILABLE_EMPTY,true,true,true
+Coppell,4816612,dallas-tx|denton-tx,2,true,,11,11,dallas-tx|denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Copperas Cove,4816624,bell-tx|coryell-tx|lampasas-tx,3,true,,7,7,bell-tx|coryell-tx|lampasas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Copper Canyon,4816636,denton-tx,1,true,,4,4,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Corinth,4816696,denton-tx,1,true,,7,7,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Corpus Christi,4817000,aransas-tx|kleberg-tx|nueces-tx|san-patricio-tx,4,true,,59,59,aransas-tx|kleberg-tx|nueces-tx|san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Corral City,4817021,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Corrigan,4817036,polk-tx,1,true,,5,5,polk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Corsicana,4817060,navarro-tx,1,true,,51,51,navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cottonwood,4817200,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cottonwood Shores,4817208,burnet-tx,1,true,,0,0,burnet-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cotulla,4817216,la-salle-tx,1,true,,5,5,la-salle-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Coupland,4817312,williamson-tx,1,true,,4,4,williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cove,4817336,chambers-tx,1,true,,0,0,chambers-tx,,,,AVAILABLE_EMPTY,true,true,true
+Covington,4817372,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Coyanosa,4817408,pecos-tx,1,true,,0,0,pecos-tx,,,,AVAILABLE_EMPTY,true,true,true
+Coyote Acres,4817426,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Coyote Flats,4817429,johnson-tx,1,true,,0,0,johnson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Crandall,4817504,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Crane,4817516,crane-tx,1,true,,0,0,crane-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cranfills Gap,4817540,bosque-tx,1,true,,0,0,bosque-tx,,,,AVAILABLE_EMPTY,true,true,true
+Crawford,4817564,mclennan-tx,1,true,,6,6,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Creedmoor,4817612,hays-tx|travis-tx,2,true,,0,0,hays-tx|travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cresson,4817648,hood-tx|johnson-tx|parker-tx,3,true,,3,3,hood-tx|johnson-tx|parker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Crockett,4817744,houston-tx,1,true,,7,7,houston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Crosby,4817756,harris-tx,1,true,,6,6,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Crosbyton,4817768,crosby-tx,1,true,,0,0,crosby-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cross Mountain,4817811,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cross Plains,4817816,callahan-tx,1,true,,0,0,callahan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cross Roads,4817852,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cross Timber,4817917,johnson-tx,1,true,,2,2,johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Crowell,4817948,foard-tx,1,true,,0,0,foard-tx,,,,AVAILABLE_EMPTY,true,true,true
+Crowley,4817960,johnson-tx|tarrant-tx,2,true,,5,5,johnson-tx|tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Crystal City,4818020,zavala-tx,1,true,,0,0,zavala-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cuero,4818092,dewitt-tx,1,true,,12,12,dewitt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cuevitas,4818104,hidalgo-tx,1,true,,4,4,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cumby,4818128,hopkins-tx,1,true,,4,4,hopkins-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Cumings,4818134,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cuney,4818152,cherokee-tx,1,true,,0,0,cherokee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cushing,4818224,nacogdoches-tx,1,true,,0,0,nacogdoches-tx,,,,AVAILABLE_EMPTY,true,true,true
+Cut and Shoot,4818260,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+Daingerfield,4818464,morris-tx,1,true,,3,3,morris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Daisetta,4818476,liberty-tx,1,true,,0,0,liberty-tx,,,,AVAILABLE_EMPTY,true,true,true
+Dalhart,4818524,dallam-tx|hartley-tx,2,true,,10,10,dallam-tx|hartley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dallas,4819000,collin-tx|dallas-tx|denton-tx|kaufman-tx|rockwall-tx,5,true,,415,415,collin-tx|dallas-tx|denton-tx|kaufman-tx|rockwall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dalworthington Gardens,4819084,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Damon,4819108,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Danbury,4819120,brazoria-tx,1,true,,3,3,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Darrouzett,4819288,lipscomb-tx,1,true,,1,1,lipscomb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dawson,4819420,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Dayton,4819432,liberty-tx,1,true,,21,21,liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dayton Lakes,4819435,liberty-tx,1,true,,0,0,liberty-tx,,,,AVAILABLE_EMPTY,true,true,true
+Dean,4819456,clay-tx,1,true,,0,0,clay-tx,,,,AVAILABLE_EMPTY,true,true,true
+Deanville,4819492,burleson-tx,1,true,,0,0,burleson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Decatur,4819528,wise-tx,1,true,,7,7,wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+DeCordova,4819570,hood-tx,1,true,,0,0,hood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Deer Park,4819624,harris-tx,1,true,,22,22,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Deerwood,4819632,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+De Kalb,4819648,bowie-tx,1,true,,0,0,bowie-tx,,,,AVAILABLE_EMPTY,true,true,true
+De Leon,4819672,comanche-tx,1,true,,5,5,comanche-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dell City,4819708,hudspeth-tx,1,true,,0,0,hudspeth-tx,,,,AVAILABLE_EMPTY,true,true,true
+Del Mar Heights,4819714,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Delmita,4819732,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Del Rio,4819792,val-verde-tx,1,true,,9,9,val-verde-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Del Sol,4819808,san-patricio-tx,1,true,,2,2,san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Denison,4819900,grayson-tx,1,true,,38,38,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dennis,4819924,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Denton,4819972,denton-tx,1,true,,61,61,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Denver City,4819984,gaines-tx|yoakum-tx,2,true,,0,0,gaines-tx|yoakum-tx,,,,AVAILABLE_EMPTY,true,true,true
+Deport,4820020,lamar-tx|red-river-tx,2,true,,0,0,lamar-tx|red-river-tx,,,,AVAILABLE_EMPTY,true,true,true
+DeSoto,4820092,dallas-tx,1,true,,0,0,dallas-tx,,,,AVAILABLE_EMPTY,true,true,true
+Detroit,4820128,red-river-tx,1,true,,0,0,red-river-tx,,,,AVAILABLE_EMPTY,true,true,true
+Devers,4820140,liberty-tx,1,true,,1,1,liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Devine,4820152,medina-tx,1,true,,4,4,medina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Deweyville,4820212,newton-tx,1,true,,1,1,newton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+D'Hanis,4820248,medina-tx,1,true,,3,3,medina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Diboll,4820308,angelina-tx,1,true,,18,18,angelina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dickens,4820332,dickens-tx,1,true,,0,0,dickens-tx,,,,AVAILABLE_EMPTY,true,true,true
+Dickinson,4820344,galveston-tx,1,true,,5,5,galveston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dilley,4820428,frio-tx,1,true,,5,5,frio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dime Box,4820452,lee-tx,1,true,,1,1,lee-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dimmitt,4820464,castro-tx,1,true,,3,3,castro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+DISH,4820540,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Dodd City,4820680,fannin-tx,1,true,,4,4,fannin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dodson,4820716,collingsworth-tx,1,true,,0,0,collingsworth-tx,,,,AVAILABLE_EMPTY,true,true,true
+Doffing,4820734,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Domino,4820848,cass-tx,1,true,,1,1,cass-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Donna,4820884,hidalgo-tx,1,true,,16,16,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Doolittle,4820926,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Dorchester,4820932,grayson-tx,1,true,,3,3,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Double Oak,4821028,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Double Horn,4821031,burnet-tx,1,true,,0,0,burnet-tx,,,,AVAILABLE_EMPTY,true,true,true
+Douglassville,4821112,cass-tx,1,true,,0,0,cass-tx,,,,AVAILABLE_EMPTY,true,true,true
+Driftwood,4821412,hays-tx,1,true,,0,0,hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Dripping Springs,4821424,hays-tx,1,true,,0,0,hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Driscoll,4821436,nueces-tx,1,true,,4,4,nueces-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dublin,4821484,erath-tx,1,true,,11,11,erath-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Dumas,4821556,moore-tx,1,true,,3,3,moore-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Duncanville,4821628,dallas-tx,1,true,,12,12,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Eagle Lake,4821844,colorado-tx,1,true,,17,17,colorado-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Eagle Pass,4821892,maverick-tx,1,true,,13,13,maverick-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Early,4821904,brown-tx,1,true,,0,0,brown-tx,,,,AVAILABLE_EMPTY,true,true,true
+Earth,4821928,lamb-tx,1,true,,0,0,lamb-tx,,,,AVAILABLE_EMPTY,true,true,true
+East Alto Bonito,4821958,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+East Bernard,4821988,wharton-tx,1,true,,4,4,wharton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+East Columbia,4822000,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Eastland,4822132,eastland-tx,1,true,,2,2,eastland-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+East Mountain,4822168,gregg-tx|upshur-tx,2,true,,0,0,gregg-tx|upshur-tx,,,,AVAILABLE_EMPTY,true,true,true
+Easton,4822192,gregg-tx|rusk-tx,2,true,,4,4,gregg-tx|rusk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+East Tawakoni,4822276,rains-tx,1,true,,0,0,rains-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ector,4822516,fannin-tx,1,true,,6,6,fannin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Edcouch,4822528,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Eden,4822552,concho-tx,1,true,,0,0,concho-tx,,,,AVAILABLE_EMPTY,true,true,true
+Edgecliff Village,4822588,tarrant-tx,1,true,,1,1,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Edgewater Estates,4822593,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Edgewood,4822612,van-zandt-tx,1,true,,2,2,van-zandt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Edinburg,4822660,hidalgo-tx,1,true,,17,17,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Edmonson,4822708,hale-tx,1,true,,3,3,hale-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Edna,4822720,jackson-tx,1,true,,6,6,jackson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Edom,4822744,van-zandt-tx,1,true,,0,0,van-zandt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Edroy,4822768,san-patricio-tx,1,true,,2,2,san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Eidson Road,4822810,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Elbert,4822840,throckmorton-tx,1,true,,0,0,throckmorton-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Brazil,4822853,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Camino Angosto,4822858,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Campo,4822864,wharton-tx,1,true,,15,15,wharton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+El Castillo,4822892,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Cenizo,4822898,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Cenizo,4822905,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Chaparral,4822920,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Eldorado,4822960,schleicher-tx,1,true,,0,0,schleicher-tx,,,,AVAILABLE_EMPTY,true,true,true
+Electra,4822984,wichita-tx,1,true,,6,6,wichita-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Elgin,4823044,bastrop-tx|travis-tx,2,true,,21,21,bastrop-tx|travis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Elias-Fela Solis,4823062,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Indio,4823080,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Elkhart,4823140,anderson-tx,1,true,,2,2,anderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+El Lago,4823164,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ellinger,4823176,fayette-tx,1,true,,0,0,fayette-tx,,,,AVAILABLE_EMPTY,true,true,true
+Elm Creek,4823254,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Elmendorf,4823272,bexar-tx|wilson-tx,2,true,,4,4,bexar-tx|wilson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+El Mesquite,4823278,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Elmo,4823356,kaufman-tx,1,true,,2,2,kaufman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+E. Lopez,4823398,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Paso,4824000,el-paso-tx,1,true,,151,151,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+El Quiote,4824013,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Rancho Vela,4824015,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Refugio,4824018,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Elsa,4824036,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+El Socio,4824055,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Emerald Bay,4824158,smith-tx,1,true,,0,0,smith-tx,,,,AVAILABLE_EMPTY,true,true,true
+Emhouse,4824168,navarro-tx,1,true,,1,1,navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Emory,4824216,rains-tx,1,true,,0,0,rains-tx,,,,AVAILABLE_EMPTY,true,true,true
+Encantada-Ranchito-El Calaboz,4824223,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Enchanted Oaks,4824228,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Encinal,4824240,la-salle-tx,1,true,,3,3,la-salle-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Encino,4824252,brooks-tx,1,true,,0,0,brooks-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ennis,4824348,ellis-tx,1,true,,23,23,ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Escobares,4824552,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Estelline,4824636,hall-tx,1,true,,1,1,hall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Eugenio Saenz,4824738,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Euless,4824768,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Eureka,4824816,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Eustace,4824828,henderson-tx,1,true,,3,3,henderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Evadale,4824840,jasper-tx,1,true,,5,5,jasper-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Evant,4824864,coryell-tx|hamilton-tx,2,true,,0,0,coryell-tx|hamilton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Evergreen,4824894,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Everman,4824912,tarrant-tx,1,true,,1,1,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fabens,4825032,el-paso-tx,1,true,,4,4,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fabrica,4825038,maverick-tx,1,true,,1,1,maverick-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fairchilds,4825068,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fairfield,4825104,freestone-tx,1,true,,0,0,freestone-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fair Oaks Ranch,4825168,bexar-tx|comal-tx|kendall-tx,3,true,,0,0,bexar-tx|comal-tx|kendall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fairview,4825224,collin-tx,1,true,,1,1,collin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Falconaire,4825338,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Falcon Heights,4825344,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Falcon Lake Estates,4825348,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Falcon Mesa,4825352,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Falcon Village,4825356,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Falfurrias,4825368,brooks-tx,1,true,,0,0,brooks-tx,,,,AVAILABLE_EMPTY,true,true,true
+Falls City,4825392,karnes-tx,1,true,,0,0,karnes-tx,,,,AVAILABLE_EMPTY,true,true,true
+Falman,4825397,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fannett,4825404,jefferson-tx,1,true,,0,0,jefferson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Farmers Branch,4825452,dallas-tx,1,true,,20,20,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Farmersville,4825488,collin-tx,1,true,,9,9,collin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Farnsworth,4825512,ochiltree-tx,1,true,,0,0,ochiltree-tx,,,,AVAILABLE_EMPTY,true,true,true
+Farwell,4825548,parmer-tx,1,true,,3,3,parmer-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fate,4825572,rockwall-tx,1,true,,3,3,rockwall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fayetteville,4825644,fayette-tx,1,true,,6,6,fayette-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fernando Salinas,4825744,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ferris,4825752,dallas-tx|ellis-tx,2,true,,6,6,dallas-tx|ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fifth Street,4825795,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Flat,4826004,coryell-tx,1,true,,0,0,coryell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Flatonia,4826028,fayette-tx,1,true,,10,10,fayette-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Flor del Rio,4826130,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Florence,4826136,williamson-tx,1,true,,0,0,williamson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Floresville,4826160,wilson-tx,1,true,,0,0,wilson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Flowella,4826220,brooks-tx,1,true,,0,0,brooks-tx,,,,AVAILABLE_EMPTY,true,true,true
+Flower Mound,4826232,denton-tx|tarrant-tx,2,true,,4,4,denton-tx|tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Floydada,4826268,floyd-tx,1,true,,1,1,floyd-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fluvanna,4826280,scurry-tx,1,true,,0,0,scurry-tx,,,,AVAILABLE_EMPTY,true,true,true
+Follett,4826328,lipscomb-tx,1,true,,0,0,lipscomb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Forest Heights,4826516,orange-tx,1,true,,0,0,orange-tx,,,,AVAILABLE_EMPTY,true,true,true
+Forest Hill,4826544,tarrant-tx,1,true,,8,8,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Forney,4826604,kaufman-tx,1,true,,10,10,kaufman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Forsan,4826640,howard-tx,1,true,,0,0,howard-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fort Bliss,4826664,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fort Cavazos,4826666,bell-tx|coryell-tx,2,true,,4,4,bell-tx|coryell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fort Clark Springs,4826680,kinney-tx,1,true,,0,0,kinney-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fort Davis,4826688,jeff-davis-tx,1,true,,0,0,jeff-davis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fort Hancock,4826724,hudspeth-tx,1,true,,2,2,hudspeth-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fort Stockton,4826808,pecos-tx,1,true,,8,8,pecos-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fort Worth,4827000,denton-tx|johnson-tx|parker-tx|tarrant-tx|wise-tx,5,true,,379,379,denton-tx|johnson-tx|parker-tx|tarrant-tx|wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Four Corners,4827102,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Four Points,4827124,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fowlerton,4827144,la-salle-tx,1,true,,0,0,la-salle-tx,,,,AVAILABLE_EMPTY,true,true,true
+Franklin,4827288,robertson-tx,1,true,,5,5,robertson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Frankston,4827300,anderson-tx|henderson-tx,2,true,,0,0,anderson-tx|henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fredericksburg,4827348,gillespie-tx,1,true,,0,0,gillespie-tx,,,,AVAILABLE_EMPTY,true,true,true
+Freeport,4827420,brazoria-tx,1,true,,25,25,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Freer,4827432,duval-tx,1,true,,0,0,duval-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fresno,4827540,fort-bend-tx,1,true,,1,1,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Friendswood,4827648,galveston-tx|harris-tx,2,true,,0,0,galveston-tx|harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Friona,4827660,parmer-tx,1,true,,1,1,parmer-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Frisco,4827684,collin-tx|denton-tx,2,true,,15,15,collin-tx|denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fritch,4827696,hutchinson-tx|moore-tx,2,true,,0,0,hutchinson-tx|moore-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fronton,4827744,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fronton Ranchettes,4827748,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Frost,4827768,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fruitvale,4827804,van-zandt-tx,1,true,,4,4,van-zandt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Fulshear,4827876,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Fulton,4827888,aransas-tx,1,true,,0,0,aransas-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gail,4827972,borden-tx,1,true,,0,0,borden-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gainesville,4827984,cooke-tx,1,true,,17,17,cooke-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Galena Park,4827996,harris-tx,1,true,,10,10,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Gallatin,4828008,cherokee-tx,1,true,,0,0,cherokee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Galveston,4828068,galveston-tx,1,true,,33,33,galveston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ganado,4828080,jackson-tx,1,true,,3,3,jackson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Garceno,4828128,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Garciasville,4828152,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Garden City,4828176,glasscock-tx,1,true,,0,0,glasscock-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gardendale,4828200,ector-tx,1,true,,0,0,ector-tx,,,,AVAILABLE_EMPTY,true,true,true
+Garden Ridge,4828248,comal-tx,1,true,,3,3,comal-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Garfield,4828320,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Garland,4829000,collin-tx|dallas-tx,2,true,,59,59,collin-tx|dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Garner,4829012,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Garrett,4829036,ellis-tx,1,true,,3,3,ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Garrison,4829060,nacogdoches-tx,1,true,,5,5,nacogdoches-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Garwood,4829096,colorado-tx,1,true,,0,0,colorado-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gary City,4829108,panola-tx,1,true,,3,3,panola-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Garza-Salinas II,4829114,starr-tx,1,true,,1,1,starr-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Gatesville,4829168,coryell-tx,1,true,,0,0,coryell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gause,4829216,milam-tx,1,true,,3,3,milam-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Georgetown,4829336,williamson-tx,1,true,,8,8,williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+George West,4829348,live-oak-tx,1,true,,4,4,live-oak-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Geronimo,4829384,guadalupe-tx,1,true,,0,0,guadalupe-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gholson,4829408,mclennan-tx,1,true,,0,0,mclennan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Giddings,4829432,lee-tx,1,true,,10,10,lee-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Gilmer,4829564,upshur-tx,1,true,,11,11,upshur-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Girard,4829612,kent-tx,1,true,,0,0,kent-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gladewater,4829660,gregg-tx|upshur-tx,2,true,,8,8,gregg-tx|upshur-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Glazier,4829732,hemphill-tx,1,true,,1,1,hemphill-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Glenn Heights,4829840,dallas-tx|ellis-tx,2,true,,0,0,dallas-tx|ellis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Glen Rose,4829876,somervell-tx,1,true,,0,0,somervell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Glidden,4829912,colorado-tx,1,true,,0,0,colorado-tx,,,,AVAILABLE_EMPTY,true,true,true
+Godley,4829972,johnson-tx,1,true,,10,10,johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Goldsmith,4830044,ector-tx,1,true,,0,0,ector-tx,,,,AVAILABLE_EMPTY,true,true,true
+Goldthwaite,4830056,mills-tx,1,true,,5,5,mills-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Goliad,4830080,goliad-tx,1,true,,0,0,goliad-tx,,,,AVAILABLE_EMPTY,true,true,true
+Golinda,4830092,falls-tx|mclennan-tx,2,true,,0,0,falls-tx|mclennan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gonzales,4830116,gonzales-tx,1,true,,5,5,gonzales-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Goodlow,4830188,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Goodrich,4830224,polk-tx,1,true,,1,1,polk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Gordon,4830272,palo-pinto-tx,1,true,,2,2,palo-pinto-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Goree,4830296,knox-tx,1,true,,0,0,knox-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gorman,4830308,eastland-tx,1,true,,3,3,eastland-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Graford,4830380,palo-pinto-tx,1,true,,0,0,palo-pinto-tx,,,,AVAILABLE_EMPTY,true,true,true
+Graham,4830392,young-tx,1,true,,0,0,young-tx,,,,AVAILABLE_EMPTY,true,true,true
+Granbury,4830416,hood-tx,1,true,,9,9,hood-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Grandfalls,4830440,ward-tx,1,true,,0,0,ward-tx,,,,AVAILABLE_EMPTY,true,true,true
+Grand Prairie,4830464,dallas-tx|ellis-tx|johnson-tx|tarrant-tx,4,true,,54,54,dallas-tx|ellis-tx|johnson-tx|tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Grand Saline,4830476,van-zandt-tx,1,true,,5,5,van-zandt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Grandview,4830512,johnson-tx,1,true,,3,3,johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Granger,4830548,williamson-tx,1,true,,3,3,williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Grangerland,4830560,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+Granite Shoals,4830584,burnet-tx,1,true,,0,0,burnet-tx,,,,AVAILABLE_EMPTY,true,true,true
+Granjeno,4830608,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Grape Creek,4830629,tom-green-tx,1,true,,0,0,tom-green-tx,,,,AVAILABLE_EMPTY,true,true,true
+Grapeland,4830632,houston-tx,1,true,,4,4,houston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Grapevine,4830644,dallas-tx|denton-tx|tarrant-tx,3,true,,29,29,dallas-tx|denton-tx|tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Grays Prairie,4830752,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Green Valley Farms,4830890,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Greenville,4830920,hunt-tx,1,true,,46,46,hunt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Gregory,4831064,san-patricio-tx,1,true,,15,15,san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Grey Forest,4831100,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Groesbeck,4831280,limestone-tx,1,true,,6,6,limestone-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Groom,4831292,carson-tx,1,true,,0,0,carson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Groves,4831328,jefferson-tx,1,true,,3,3,jefferson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Groveton,4831340,trinity-tx,1,true,,0,0,trinity-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gruver,4831412,hansford-tx,1,true,,0,0,hansford-tx,,,,AVAILABLE_EMPTY,true,true,true
+Guadalupe Guerra,4831442,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Guerra,4831484,jim-hogg-tx,1,true,,0,0,jim-hogg-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gun Barrel City,4831592,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gunter,4831616,grayson-tx,1,true,,8,8,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Gustine,4831628,comanche-tx,1,true,,0,0,comanche-tx,,,,AVAILABLE_EMPTY,true,true,true
+Guthrie,4831640,king-tx,1,true,,0,0,king-tx,,,,AVAILABLE_EMPTY,true,true,true
+Gutierrez,4831646,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hackberry,4831715,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hale Center,4831820,hale-tx,1,true,,3,3,hale-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hallettsville,4831868,lavaca-tx,1,true,,0,0,lavaca-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hallsburg,4831880,mclennan-tx,1,true,,0,0,mclennan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hallsville,4831904,harrison-tx,1,true,,3,3,harrison-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Haltom City,4831928,tarrant-tx,1,true,,15,15,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hamilton,4831952,hamilton-tx,1,true,,0,0,hamilton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hamlin,4831964,fisher-tx|jones-tx,2,true,,0,0,fisher-tx|jones-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hamshire,4832012,jefferson-tx,1,true,,0,0,jefferson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Happy,4832156,randall-tx|swisher-tx,2,true,,2,2,randall-tx|swisher-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hardin,4832240,liberty-tx,1,true,,3,3,liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Harding Gill Tract,4832246,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hargill,4832300,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Harker Heights,4832312,bell-tx,1,true,,3,3,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Harlingen,4832372,cameron-tx,1,true,,89,89,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Harper,4832456,gillespie-tx,1,true,,0,0,gillespie-tx,,,,AVAILABLE_EMPTY,true,true,true
+Harrold,4832552,wilbarger-tx,1,true,,3,3,wilbarger-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hart,4832576,castro-tx,1,true,,1,1,castro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hartley,4832612,hartley-tx,1,true,,1,1,hartley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Haskell,4832696,haskell-tx,1,true,,0,0,haskell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Haslet,4832720,denton-tx|tarrant-tx,2,true,,3,3,denton-tx|tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Havana,4832792,hidalgo-tx,1,true,,2,2,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hawk Cove,4832810,hunt-tx,1,true,,0,0,hunt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hawkins,4832816,wood-tx,1,true,,2,2,wood-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hawley,4832840,jones-tx,1,true,,0,0,jones-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hays,4832906,hays-tx,1,true,,0,0,hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+H. Cuellar Estates,4832910,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hearne,4832972,robertson-tx,1,true,,12,12,robertson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Heartland,4832978,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Heath,4832984,kaufman-tx|rockwall-tx,2,true,,0,0,kaufman-tx|rockwall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hebbronville,4833008,jim-hogg-tx,1,true,,11,11,jim-hogg-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hebron,4833020,collin-tx|denton-tx,2,true,,0,0,collin-tx|denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hedley,4833044,donley-tx,1,true,,3,3,donley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hedwig Village,4833068,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Heidelberg,4833092,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Helotes,4833146,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hemphill,4833188,sabine-tx,1,true,,0,0,sabine-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hempstead,4833200,waller-tx,1,true,,7,7,waller-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Henderson,4833212,rusk-tx,1,true,,7,7,rusk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Henrietta,4833284,clay-tx,1,true,,4,4,clay-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hereford,4833320,deaf-smith-tx,1,true,,10,10,deaf-smith-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hermleigh,4833356,scurry-tx,1,true,,4,4,scurry-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hewitt,4833428,mclennan-tx,1,true,,5,5,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hickory Creek,4833476,denton-tx,1,true,,2,2,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hico,4833548,erath-tx|hamilton-tx,2,true,,0,0,erath-tx|hamilton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hidalgo,4833560,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hideaway,4833578,smith-tx,1,true,,0,0,smith-tx,,,,AVAILABLE_EMPTY,true,true,true
+Higgins,4833608,lipscomb-tx,1,true,,1,1,lipscomb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Highland Haven,4833794,burnet-tx,1,true,,0,0,burnet-tx,,,,AVAILABLE_EMPTY,true,true,true
+Highland Park,4833824,dallas-tx,1,true,,0,0,dallas-tx,,,,AVAILABLE_EMPTY,true,true,true
+Highlands,4833836,harris-tx,1,true,,7,7,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Highland Village,4833848,denton-tx,1,true,,4,4,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hill Country Village,4833968,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hillcrest Village,4834018,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hillsboro,4834088,hill-tx,1,true,,12,12,hill-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hillside Acres,4834105,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hilltop,4834130,frio-tx,1,true,,0,0,frio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hilltop,4834133,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hilltop Lakes,4834136,leon-tx,1,true,,0,0,leon-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hilshire Village,4834148,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hitchcock,4834220,galveston-tx,1,true,,14,14,galveston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Holiday Beach,4834478,aransas-tx,1,true,,0,0,aransas-tx,,,,AVAILABLE_EMPTY,true,true,true
+Holiday Lakes,4834502,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Holland,4834508,bell-tx,1,true,,3,3,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Holliday,4834532,archer-tx,1,true,,0,0,archer-tx,,,,AVAILABLE_EMPTY,true,true,true
+Holly Lake Ranch,4834586,wood-tx,1,true,,0,0,wood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hollywood Park,4834628,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Homestead Meadows North,4834671,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Homestead Meadows South,4834673,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hondo,4834676,medina-tx,1,true,,8,8,medina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Honey Grove,4834700,fannin-tx,1,true,,6,6,fannin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hooks,4834736,bowie-tx,1,true,,3,3,bowie-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Horizon City,4834832,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hornsby Bend,4834856,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Horseshoe Bay,4834862,burnet-tx|llano-tx,2,true,,0,0,burnet-tx|llano-tx,,,,AVAILABLE_EMPTY,true,true,true
+Horseshoe Bend,4834865,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Houston,4835000,fort-bend-tx|harris-tx|montgomery-tx|waller-tx,4,true,,703,703,fort-bend-tx|harris-tx|montgomery-tx|waller-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Howardwick,4835072,donley-tx,1,true,,0,0,donley-tx,,,,AVAILABLE_EMPTY,true,true,true
+Howe,4835084,grayson-tx,1,true,,7,7,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hubbard,4835180,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Huckabay,4835204,erath-tx,1,true,,0,0,erath-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hudson,4835228,angelina-tx,1,true,,0,0,angelina-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hudson Bend,4835253,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hudson Oaks,4835254,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Hughes Springs,4835300,cass-tx|morris-tx,2,true,,4,4,cass-tx|morris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hull,4835324,liberty-tx,1,true,,1,1,liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Humble,4835348,harris-tx,1,true,,6,6,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hungerford,4835420,wharton-tx,1,true,,2,2,wharton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hunters Creek Village,4835480,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Huntington,4835492,angelina-tx,1,true,,0,0,angelina-tx,,,,AVAILABLE_EMPTY,true,true,true
+Huntsville,4835528,walker-tx,1,true,,1,1,walker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hurst,4835576,tarrant-tx,1,true,,4,4,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hutchins,4835612,dallas-tx,1,true,,12,12,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Hutto,4835624,williamson-tx,1,true,,12,12,williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Huxley,4835636,shelby-tx,1,true,,0,0,shelby-tx,,,,AVAILABLE_EMPTY,true,true,true
+Iago,4835684,wharton-tx,1,true,,0,0,wharton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Idalou,4835732,lubbock-tx,1,true,,0,0,lubbock-tx,,,,AVAILABLE_EMPTY,true,true,true
+Iglesia Antigua,4835754,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Impact,4835816,taylor-tx,1,true,,0,0,taylor-tx,,,,AVAILABLE_EMPTY,true,true,true
+Imperial,4835828,pecos-tx,1,true,,0,0,pecos-tx,,,,AVAILABLE_EMPTY,true,true,true
+Indian Hills,4835915,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Indian Lake,4835918,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Indian Springs,4835954,polk-tx,1,true,,0,0,polk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Indio,4835966,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Industry,4835984,austin-tx,1,true,,0,0,austin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Inez,4835996,victoria-tx,1,true,,8,8,victoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ingleside,4836008,nueces-tx|san-patricio-tx,2,true,,10,10,nueces-tx|san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ingleside on the Bay,4836020,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ingram,4836032,kerr-tx,1,true,,0,0,kerr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Iola,4836068,grimes-tx,1,true,,0,0,grimes-tx,,,,AVAILABLE_EMPTY,true,true,true
+Iowa Colony,4836092,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Iowa Park,4836104,wichita-tx,1,true,,4,4,wichita-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Iraan,4836128,pecos-tx,1,true,,0,0,pecos-tx,,,,AVAILABLE_EMPTY,true,true,true
+Iredell,4836140,bosque-tx,1,true,,0,0,bosque-tx,,,,AVAILABLE_EMPTY,true,true,true
+Irving,4837000,dallas-tx,1,true,,97,97,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Italy,4837072,ellis-tx,1,true,,0,0,ellis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Itasca,4837084,hill-tx,1,true,,2,2,hill-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ivanhoe,4837112,tyler-tx,1,true,,0,0,tyler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Jacinto City,4837156,harris-tx,1,true,,11,11,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Jacksboro,4837168,jack-tx,1,true,,0,0,jack-tx,,,,AVAILABLE_EMPTY,true,true,true
+Jacksonville,4837216,cherokee-tx,1,true,,11,11,cherokee-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Jamaica Beach,4837252,galveston-tx,1,true,,0,0,galveston-tx,,,,AVAILABLE_EMPTY,true,true,true
+Jardin de San Julian,4837390,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Jarrell,4837396,williamson-tx,1,true,,0,0,williamson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Jasper,4837420,jasper-tx,1,true,,5,5,jasper-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Jayton,4837468,kent-tx,1,true,,0,0,kent-tx,,,,AVAILABLE_EMPTY,true,true,true
+Jefferson,4837528,marion-tx,1,true,,21,21,marion-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Jersey Village,4837612,harris-tx,1,true,,3,3,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Jewett,4837648,leon-tx,1,true,,3,3,leon-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+J.F. Villareal,4837665,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Joaquin,4837684,shelby-tx,1,true,,5,5,shelby-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Johnson City,4837780,blanco-tx,1,true,,0,0,blanco-tx,,,,AVAILABLE_EMPTY,true,true,true
+Jolly,4837924,clay-tx,1,true,,2,2,clay-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Jones Creek,4837984,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Jonestown,4838020,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Josephine,4838068,collin-tx|hunt-tx,2,true,,0,0,collin-tx|hunt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Joshua,4838080,johnson-tx,1,true,,9,9,johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Jourdanton,4838116,atascosa-tx,1,true,,0,0,atascosa-tx,,,,AVAILABLE_EMPTY,true,true,true
+Juarez,4838168,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Junction,4838248,kimble-tx,1,true,,0,0,kimble-tx,,,,AVAILABLE_EMPTY,true,true,true
+Justin,4838332,denton-tx,1,true,,3,3,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Karnes City,4838452,karnes-tx,1,true,,0,0,karnes-tx,,,,AVAILABLE_EMPTY,true,true,true
+Katy,4838476,fort-bend-tx|harris-tx|waller-tx,3,true,,11,11,fort-bend-tx|harris-tx|waller-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kaufman,4838488,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+K-Bar Ranch,4838518,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Keene,4838548,johnson-tx,1,true,,3,3,johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Keller,4838632,tarrant-tx,1,true,,3,3,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kemah,4838776,galveston-tx,1,true,,0,0,galveston-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kemp,4838788,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kempner,4838800,lampasas-tx,1,true,,1,1,lampasas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kendleton,4838848,fort-bend-tx,1,true,,3,3,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kenedy,4838860,karnes-tx,1,true,,0,0,karnes-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kenefick,4838872,liberty-tx,1,true,,1,1,liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kennard,4838884,houston-tx,1,true,,0,0,houston-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kennedale,4838896,tarrant-tx,1,true,,5,5,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kerens,4838992,navarro-tx,1,true,,8,8,navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kermit,4839004,winkler-tx,1,true,,1,1,winkler-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kerrville,4839040,kerr-tx,1,true,,0,0,kerr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kilgore,4839124,gregg-tx|rusk-tx,2,true,,8,8,gregg-tx|rusk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Killeen,4839148,bell-tx,1,true,,16,16,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kingsbury,4839292,guadalupe-tx,1,true,,0,0,guadalupe-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kingsland,4839304,llano-tx,1,true,,1,1,llano-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kingsville,4839352,kleberg-tx,1,true,,15,15,kleberg-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kirby,4839448,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kirbyville,4839460,jasper-tx,1,true,,2,2,jasper-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kirvin,4839520,freestone-tx,1,true,,3,3,freestone-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Knippa,4839664,uvalde-tx,1,true,,6,6,uvalde-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Knollwood,4839680,grayson-tx,1,true,,0,0,grayson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Knox City,4839700,knox-tx,1,true,,0,0,knox-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kopperl,4839784,bosque-tx,1,true,,0,0,bosque-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kosse,4839844,limestone-tx,1,true,,5,5,limestone-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kountze,4839868,hardin-tx,1,true,,3,3,hardin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kress,4839904,swisher-tx,1,true,,2,2,swisher-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Krugerville,4839916,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Krum,4839928,denton-tx,1,true,,1,1,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Kurten,4839940,brazos-tx,1,true,,0,0,brazos-tx,,,,AVAILABLE_EMPTY,true,true,true
+Kyle,4839952,hays-tx,1,true,,7,7,hays-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Blanca,4839988,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Carla,4839994,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Casita,4840000,starr-tx,1,true,,1,1,starr-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Chuparosa,4840018,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lackland AFB,4840036,bexar-tx,1,true,,2,2,bexar-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Coma,4840100,webb-tx,1,true,,1,1,webb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Coma Heights,4840104,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+LaCoste,4840108,medina-tx,1,true,,2,2,medina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lacy-Lakeview,4840168,mclennan-tx,1,true,,8,8,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ladonia,4840180,fannin-tx,1,true,,0,0,fannin-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Escondida,4840186,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Esperanza,4840188,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Feria,4840204,cameron-tx,1,true,,9,9,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Feria North,4840210,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lago,4840258,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lago Vista,4840262,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lago Vista,4840264,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Grange,4840276,fayette-tx,1,true,,9,9,fayette-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Grulla,4840288,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Laguna Heights,4840300,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Laguna Park,4840312,bosque-tx,1,true,,0,0,bosque-tx,,,,AVAILABLE_EMPTY,true,true,true
+Laguna Seca,4840320,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Laguna Vista,4840336,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Homa,4840342,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Joya,4840384,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Bridgeport,4840450,wise-tx,1,true,,0,0,wise-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Brownwood,4840456,brown-tx,1,true,,0,0,brown-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Bryan,4840462,brazos-tx,1,true,,1,1,brazos-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lake Cherokee,4840468,gregg-tx|rusk-tx,2,true,,0,0,gregg-tx|rusk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake City,4840472,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Colorado City,4840475,mitchell-tx,1,true,,0,0,mitchell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Dallas,4840516,denton-tx,1,true,,5,5,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lake Dunlap,4840522,guadalupe-tx,1,true,,0,0,guadalupe-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakehills,4840576,bandera-tx,1,true,,0,0,bandera-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Jackson,4840588,brazoria-tx,1,true,,3,3,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lake Kiowa,4840624,cooke-tx,1,true,,0,0,cooke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Medina Shores,4840674,bandera-tx|medina-tx,2,true,,0,0,bandera-tx|medina-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Meredith Estates,4840676,hutchinson-tx,1,true,,0,0,hutchinson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakeport,4840696,gregg-tx,1,true,,0,0,gregg-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakeshore Gardens-Hidden Acres,4840714,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakeside,4840738,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakeside,4840744,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakeside City,4840756,archer-tx,1,true,,0,0,archer-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Tanglewood,4840804,randall-tx,1,true,,0,0,randall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakeview,4840888,hall-tx,1,true,,0,0,hall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake View,4840966,val-verde-tx,1,true,,0,0,val-verde-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakeway,4840984,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lakewood Village,4841050,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lake Worth,4841056,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Loma de Falcon,4841086,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lamar,4841092,aransas-tx,1,true,,0,0,aransas-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Marque,4841116,galveston-tx,1,true,,21,21,galveston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lamesa,4841164,dawson-tx,1,true,,0,0,dawson-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Minita,4841170,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lamkin,4841176,comanche-tx,1,true,,0,0,comanche-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Moca Ranch,4841180,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lampasas,4841188,lampasas-tx,1,true,,2,2,lampasas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lancaster,4841212,dallas-tx,1,true,,10,10,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lantana,4841404,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Paloma,4841416,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Paloma Addition,4841420,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Paloma-Lost Creek,4841422,nueces-tx,1,true,,4,4,nueces-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Paloma Ranchettes,4841424,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Porte,4841440,harris-tx,1,true,,26,26,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Presa,4841449,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Pryor,4841452,zavala-tx,1,true,,0,0,zavala-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Puerta,4841458,starr-tx,1,true,,2,2,starr-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Laredo,4841464,webb-tx,1,true,,112,112,webb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Laredo Ranchettes,4841473,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Laredo Ranchettes West,4841475,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Rosita,4841503,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lasana,4841542,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lasara,4841548,willacy-tx,1,true,,0,0,willacy-tx,,,,AVAILABLE_EMPTY,true,true,true
+Las Haciendas,4841565,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Las Lomas,4841566,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Las Lomitas,4841569,jim-hogg-tx,1,true,,0,0,jim-hogg-tx,,,,AVAILABLE_EMPTY,true,true,true
+Las Palmas,4841579,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Las Palmas II,4841580,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Las Pilas,4841582,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Las Quintas Fronterizas,4841583,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Latexo,4841644,houston-tx,1,true,,5,5,houston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Tina Ranch,4841660,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Laughlin AFB,4841704,val-verde-tx,1,true,,0,0,val-verde-tx,,,,AVAILABLE_EMPTY,true,true,true
+Laureles,4841728,cameron-tx,1,true,,4,4,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+La Vernia,4841764,wilson-tx,1,true,,0,0,wilson-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Victoria,4841782,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Villa,4841788,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lavon,4841800,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+La Ward,4841848,jackson-tx,1,true,,2,2,jackson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lawn,4841872,taylor-tx,1,true,,1,1,taylor-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+League City,4841980,galveston-tx|harris-tx,2,true,,8,8,galveston-tx|harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Leakey,4842004,real-tx,1,true,,0,0,real-tx,,,,AVAILABLE_EMPTY,true,true,true
+Leander,4842016,travis-tx|williamson-tx,2,true,,10,10,travis-tx|williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Leary,4842028,bowie-tx,1,true,,3,3,bowie-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lefors,4842148,gray-tx,1,true,,0,0,gray-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lelia Lake,4842244,donley-tx,1,true,,4,4,donley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Leming,4842256,atascosa-tx,1,true,,3,3,atascosa-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Leona,4842340,leon-tx,1,true,,0,0,leon-tx,,,,AVAILABLE_EMPTY,true,true,true
+Leonard,4842352,fannin-tx,1,true,,3,3,fannin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Leon Valley,4842388,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Leroy,4842400,mclennan-tx,1,true,,0,0,mclennan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Levelland,4842448,hockley-tx,1,true,,11,11,hockley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lewisville,4842508,dallas-tx|denton-tx,2,true,,27,27,dallas-tx|denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lexington,4842532,lee-tx,1,true,,0,0,lee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Liberty,4842568,liberty-tx,1,true,,17,17,liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Liberty City,4842616,gregg-tx,1,true,,0,0,gregg-tx,,,,AVAILABLE_EMPTY,true,true,true
+Liberty Hill,4842664,williamson-tx,1,true,,5,5,williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lindale,4842820,smith-tx,1,true,,0,0,smith-tx,,,,AVAILABLE_EMPTY,true,true,true
+Linden,4842844,cass-tx,1,true,,0,0,cass-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lindsay,4842868,cooke-tx,1,true,,0,0,cooke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lindsay,4842874,reeves-tx,1,true,,0,0,reeves-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lingleville,4842880,erath-tx,1,true,,0,0,erath-tx,,,,AVAILABLE_EMPTY,true,true,true
+Linn,4842916,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lipan,4842940,hood-tx,1,true,,0,0,hood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lipscomb,4842952,lipscomb-tx,1,true,,0,0,lipscomb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Little Cypress,4843000,orange-tx,1,true,,2,2,orange-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Little Elm,4843012,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Littlefield,4843024,lamb-tx,1,true,,7,7,lamb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Little River-Academy,4843066,bell-tx,1,true,,3,3,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Live Oak,4843096,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Liverpool,4843120,brazoria-tx,1,true,,3,3,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Livingston,4843132,polk-tx,1,true,,15,15,polk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Llano,4843144,llano-tx,1,true,,0,0,llano-tx,,,,AVAILABLE_EMPTY,true,true,true
+Llano Grande,4843150,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lockett,4843216,wilbarger-tx,1,true,,0,0,wilbarger-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lockhart,4843240,caldwell-tx,1,true,,8,8,caldwell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lockney,4843252,floyd-tx,1,true,,0,0,floyd-tx,,,,AVAILABLE_EMPTY,true,true,true
+Log Cabin,4843354,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lolita,4843432,jackson-tx,1,true,,1,1,jackson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Loma Grande,4843458,zavala-tx,1,true,,0,0,zavala-tx,,,,AVAILABLE_EMPTY,true,true,true
+Loma Linda,4843460,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Loma Linda East,4843462,jim-wells-tx,1,true,,10,10,jim-wells-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Loma Linda East,4843463,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Loma Linda West,4843465,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Loma Vista,4843474,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lometa,4843516,lampasas-tx,1,true,,5,5,lampasas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lone Oak,4843636,hunt-tx,1,true,,0,0,hunt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lone Star,4843684,morris-tx,1,true,,0,0,morris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Longoria,4843822,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Longview,4843888,gregg-tx|harrison-tx,2,true,,47,47,gregg-tx|harrison-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Loop,4843948,gaines-tx,1,true,,0,0,gaines-tx,,,,AVAILABLE_EMPTY,true,true,true
+LopeÃ±o,4843960,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lopezville,4843972,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Loraine,4843996,mitchell-tx,1,true,,3,3,mitchell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lorena,4844020,mclennan-tx,1,true,,3,3,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lorenzo,4844032,crosby-tx,1,true,,0,0,crosby-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Altos,4844038,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Alvarez,4844044,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Angeles,4844062,willacy-tx,1,true,,0,0,willacy-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Arcos,4844072,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Arrieros,4844075,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Barreras,4844076,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Centenarios,4844077,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Corralitos,4844079,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Ebanos,4844104,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Ebanos,4844110,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Fresnos,4844116,cameron-tx,1,true,,9,9,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Los Fresnos,4844120,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Huisaches,4844123,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Indios,4844128,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Lobos,4844142,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Minerales,4844145,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Nopalitos,4844146,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lost Creek,4844162,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Veteranos I,4844167,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Veteranos II,4844168,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Los Ybanez,4844170,dawson-tx,1,true,,0,0,dawson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lott,4844176,falls-tx,1,true,,0,0,falls-tx,,,,AVAILABLE_EMPTY,true,true,true
+Louise,4844212,wharton-tx,1,true,,4,4,wharton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lovelady,4844260,houston-tx,1,true,,3,3,houston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Loving,4844284,young-tx,1,true,,0,0,young-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lowry Crossing,4844308,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lozano,4844344,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lubbock,4845000,lubbock-tx,1,true,,103,103,lubbock-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lucas,4845012,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lueders,4845048,jones-tx|shackelford-tx,2,true,,0,0,jones-tx|shackelford-tx,,,,AVAILABLE_EMPTY,true,true,true
+Lufkin,4845072,angelina-tx,1,true,,51,51,angelina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Luling,4845096,caldwell-tx|guadalupe-tx,2,true,,11,11,caldwell-tx|guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lumberton,4845120,hardin-tx,1,true,,9,9,hardin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lyford,4845228,willacy-tx,1,true,,7,7,willacy-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lyons,4845276,burleson-tx,1,true,,2,2,burleson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Lytle,4845288,atascosa-tx|bexar-tx|medina-tx,3,true,,7,7,atascosa-tx|bexar-tx|medina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mabank,4845324,henderson-tx|kaufman-tx|van-zandt-tx,3,true,,0,0,henderson-tx|kaufman-tx|van-zandt-tx,,,,AVAILABLE_EMPTY,true,true,true
+McAllen,4845384,hidalgo-tx,1,true,,53,53,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+McCamey,4845432,upton-tx,1,true,,3,3,upton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+McCaulley,4845444,fisher-tx,1,true,,0,0,fisher-tx,,,,AVAILABLE_EMPTY,true,true,true
+McDade,4845564,bastrop-tx,1,true,,9,9,bastrop-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Macdona,4845576,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+McGregor,4845672,coryell-tx|mclennan-tx,2,true,,12,12,coryell-tx|mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+McKinney,4845744,collin-tx,1,true,,16,16,collin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+McKinney Acres,4845750,andrews-tx,1,true,,0,0,andrews-tx,,,,AVAILABLE_EMPTY,true,true,true
+McLean,4845780,gray-tx,1,true,,0,0,gray-tx,,,,AVAILABLE_EMPTY,true,true,true
+McLendon-Chisholm,4845804,kaufman-tx|rockwall-tx,2,true,,0,0,kaufman-tx|rockwall-tx,,,,AVAILABLE_EMPTY,true,true,true
+McLeod,4845816,cass-tx,1,true,,0,0,cass-tx,,,,AVAILABLE_EMPTY,true,true,true
+McQueeney,4845948,guadalupe-tx,1,true,,7,7,guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Madisonville,4845996,madison-tx,1,true,,0,0,madison-tx,,,,AVAILABLE_EMPTY,true,true,true
+Magnolia,4846056,montgomery-tx,1,true,,3,3,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Magnolia Beach,4846080,calhoun-tx,1,true,,0,0,calhoun-tx,,,,AVAILABLE_EMPTY,true,true,true
+Malakoff,4846224,henderson-tx,1,true,,3,3,henderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Malone,4846260,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Manchaca,4846308,travis-tx,1,true,,1,1,travis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Manor,4846440,travis-tx,1,true,,9,9,travis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mansfield,4846452,ellis-tx|johnson-tx|tarrant-tx,3,true,,15,15,ellis-tx|johnson-tx|tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Manuel Garcia,4846492,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Manuel Garcia II,4846494,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Manvel,4846500,brazoria-tx,1,true,,4,4,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Marathon,4846572,brewster-tx,1,true,,3,3,brewster-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Marble Falls,4846584,burnet-tx,1,true,,3,3,burnet-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Marfa,4846620,presidio-tx,1,true,,4,4,presidio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Marietta,4846668,cass-tx,1,true,,0,0,cass-tx,,,,AVAILABLE_EMPTY,true,true,true
+Marion,4846692,guadalupe-tx,1,true,,2,2,guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Markham,4846716,matagorda-tx,1,true,,0,0,matagorda-tx,,,,AVAILABLE_EMPTY,true,true,true
+Marlin,4846740,falls-tx,1,true,,11,11,falls-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Marquez,4846752,leon-tx,1,true,,4,4,leon-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Marshall,4846776,harrison-tx,1,true,,16,16,harrison-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mart,4846824,limestone-tx|mclennan-tx,2,true,,0,0,limestone-tx|mclennan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Martindale,4846848,caldwell-tx,1,true,,0,0,caldwell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Martinez,4846854,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mason,4846968,mason-tx,1,true,,0,0,mason-tx,,,,AVAILABLE_EMPTY,true,true,true
+Matador,4847004,motley-tx,1,true,,0,0,motley-tx,,,,AVAILABLE_EMPTY,true,true,true
+Matagorda,4847016,matagorda-tx,1,true,,0,0,matagorda-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mathis,4847040,san-patricio-tx,1,true,,6,6,san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Maud,4847088,bowie-tx,1,true,,4,4,bowie-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mauriceville,4847100,orange-tx,1,true,,24,24,orange-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+May,4847172,brown-tx,1,true,,0,0,brown-tx,,,,AVAILABLE_EMPTY,true,true,true
+Maypearl,4847268,ellis-tx,1,true,,0,0,ellis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Meadow,4847316,terry-tx,1,true,,2,2,terry-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Meadowlakes,4847330,burnet-tx,1,true,,0,0,burnet-tx,,,,AVAILABLE_EMPTY,true,true,true
+Meadows Place,4847337,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Medina,4847406,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Megargel,4847460,archer-tx,1,true,,0,0,archer-tx,,,,AVAILABLE_EMPTY,true,true,true
+Melissa,4847496,collin-tx,1,true,,5,5,collin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Melvin,4847568,mcculloch-tx,1,true,,0,0,mcculloch-tx,,,,AVAILABLE_EMPTY,true,true,true
+Memphis,4847616,hall-tx,1,true,,4,4,hall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Menard,4847628,menard-tx,1,true,,0,0,menard-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mentone,4847676,loving-tx,1,true,,0,0,loving-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mercedes,4847700,hidalgo-tx,1,true,,20,20,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Meridian,4847760,bosque-tx,1,true,,1,1,bosque-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Merkel,4847796,taylor-tx,1,true,,4,4,taylor-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mertens,4847820,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mertzon,4847832,irion-tx,1,true,,8,8,irion-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mesquite,4847892,dallas-tx|kaufman-tx,2,true,,16,16,dallas-tx|kaufman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mesquite,4847898,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mexia,4847916,limestone-tx,1,true,,8,8,limestone-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Miami,4847988,roberts-tx,1,true,,2,2,roberts-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Midfield,4848048,matagorda-tx,1,true,,0,0,matagorda-tx,,,,AVAILABLE_EMPTY,true,true,true
+Midland,4848072,martin-tx|midland-tx,2,true,,15,15,martin-tx|midland-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Midlothian,4848096,ellis-tx,1,true,,30,30,ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Midway,4848180,madison-tx,1,true,,0,0,madison-tx,,,,AVAILABLE_EMPTY,true,true,true
+Midway North,4848272,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Midway South,4848280,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Miguel Barrera,4848315,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mikes,4848318,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mila Doce,4848320,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Milam,4848324,sabine-tx,1,true,,0,0,sabine-tx,,,,AVAILABLE_EMPTY,true,true,true
+Milano,4848336,milam-tx,1,true,,5,5,milam-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mildred,4848372,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Miles,4848396,runnels-tx,1,true,,4,4,runnels-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Milford,4848408,ellis-tx,1,true,,0,0,ellis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Miller's Cove,4848478,titus-tx,1,true,,0,0,titus-tx,,,,AVAILABLE_EMPTY,true,true,true
+Millsap,4848564,parker-tx,1,true,,1,1,parker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mineola,4848648,wood-tx,1,true,,5,5,wood-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mineral Wells,4848684,palo-pinto-tx|parker-tx,2,true,,0,0,palo-pinto-tx|parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mingus,4848720,palo-pinto-tx,1,true,,1,1,palo-pinto-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mi Ranchito Estate,4848750,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mirando City,4848756,webb-tx,1,true,,3,3,webb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mission,4848768,hidalgo-tx,1,true,,52,52,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mission Bend,4848772,fort-bend-tx|harris-tx,2,true,,0,0,fort-bend-tx|harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Missouri City,4848804,fort-bend-tx|harris-tx,2,true,,5,5,fort-bend-tx|harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mobeetie,4848852,wheeler-tx,1,true,,0,0,wheeler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mobile City,4848858,rockwall-tx,1,true,,0,0,rockwall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Monahans,4848936,ward-tx|winkler-tx,2,true,,3,3,ward-tx|winkler-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Montague,4849032,montague-tx,1,true,,0,0,montague-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mont Belvieu,4849068,chambers-tx|liberty-tx,2,true,,4,4,chambers-tx|liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Monte Alto,4849080,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Montgomery,4849128,montgomery-tx,1,true,,1,1,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Moody,4849200,mclennan-tx,1,true,,7,7,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Moore,4849224,frio-tx,1,true,,4,4,frio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Moore Station,4849272,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Moraida,4849300,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Morales-Sanchez,4849314,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Moran,4849320,shackelford-tx,1,true,,0,0,shackelford-tx,,,,AVAILABLE_EMPTY,true,true,true
+Morgan,4849356,bosque-tx,1,true,,1,1,bosque-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Morgan Farm,4849359,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Morgan's Point,4849380,chambers-tx|harris-tx,2,true,,1,1,chambers-tx|harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Morgan's Point Resort,4849392,bell-tx,1,true,,0,0,bell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Morning Glory,4849411,el-paso-tx,1,true,,1,1,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Morse,4849440,hansford-tx,1,true,,0,0,hansford-tx,,,,AVAILABLE_EMPTY,true,true,true
+Morton,4849464,cochran-tx,1,true,,0,0,cochran-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mosheim,4849512,bosque-tx,1,true,,0,0,bosque-tx,,,,AVAILABLE_EMPTY,true,true,true
+Moulton,4849560,lavaca-tx,1,true,,5,5,lavaca-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mound,4849572,coryell-tx,1,true,,0,0,coryell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mountain City,4849600,hays-tx,1,true,,0,0,hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mount Calm,4849692,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mount Enterprise,4849728,rusk-tx,1,true,,0,0,rusk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Mount Pleasant,4849800,titus-tx,1,true,,20,20,titus-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mount Vernon,4849860,franklin-tx,1,true,,4,4,franklin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Muenster,4849932,cooke-tx,1,true,,0,0,cooke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Muleshoe,4849968,bailey-tx,1,true,,5,5,bailey-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mullin,4849992,mills-tx,1,true,,2,2,mills-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Munday,4850040,knox-tx,1,true,,0,0,knox-tx,,,,AVAILABLE_EMPTY,true,true,true
+Muniz,4850058,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Murchison,4850076,henderson-tx,1,true,,2,2,henderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Murillo,4850092,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Murphy,4850100,collin-tx,1,true,,4,4,collin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Mustang Ridge,4850200,bastrop-tx|caldwell-tx|travis-tx,3,true,,0,0,bastrop-tx|caldwell-tx|travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Myra,4850220,cooke-tx,1,true,,0,0,cooke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Myrtle Springs,4850232,van-zandt-tx,1,true,,0,0,van-zandt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nacogdoches,4850256,nacogdoches-tx,1,true,,24,24,nacogdoches-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Nada,4850268,colorado-tx,1,true,,0,0,colorado-tx,,,,AVAILABLE_EMPTY,true,true,true
+Naples,4850316,morris-tx,1,true,,5,5,morris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Narciso Pena,4850322,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nash,4850352,bowie-tx,1,true,,4,4,bowie-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Nassau Bay,4850376,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Natalia,4850400,medina-tx,1,true,,1,1,medina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Navarro,4850448,navarro-tx,1,true,,2,2,navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Navasota,4850472,brazos-tx|grimes-tx,2,true,,19,19,brazos-tx|grimes-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Nazareth,4850496,castro-tx,1,true,,0,0,castro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Neches,4850544,anderson-tx,1,true,,3,3,anderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Nederland,4850580,jefferson-tx,1,true,,5,5,jefferson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Needville,4850628,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Netos,4850742,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nevada,4850760,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Newark,4850772,tarrant-tx|wise-tx,2,true,,4,4,tarrant-tx|wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+New Berlin,4850796,guadalupe-tx,1,true,,0,0,guadalupe-tx,,,,AVAILABLE_EMPTY,true,true,true
+New Boston,4850808,bowie-tx,1,true,,0,0,bowie-tx,,,,AVAILABLE_EMPTY,true,true,true
+New Braunfels,4850820,comal-tx|guadalupe-tx,2,true,,53,53,comal-tx|guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Newcastle,4850868,young-tx,1,true,,0,0,young-tx,,,,AVAILABLE_EMPTY,true,true,true
+New Chapel Hill,4850876,smith-tx,1,true,,0,0,smith-tx,,,,AVAILABLE_EMPTY,true,true,true
+New Deal,4850916,lubbock-tx,1,true,,4,4,lubbock-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+New Fairview,4850920,denton-tx|wise-tx,2,true,,4,4,denton-tx|wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+New Falcon,4850924,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+New Home,4851012,lynn-tx,1,true,,0,0,lynn-tx,,,,AVAILABLE_EMPTY,true,true,true
+New Hope,4851036,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+New London,4851168,rusk-tx,1,true,,8,8,rusk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+New Summerfield,4851336,cherokee-tx,1,true,,0,0,cherokee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Newton,4851372,newton-tx,1,true,,0,0,newton-tx,,,,AVAILABLE_EMPTY,true,true,true
+New Ulm,4851384,austin-tx,1,true,,7,7,austin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+New Waverly,4851396,walker-tx,1,true,,2,2,walker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Neylandville,4851444,hunt-tx,1,true,,0,0,hunt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Niederwald,4851492,caldwell-tx|hays-tx,2,true,,0,0,caldwell-tx|hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nina,4851552,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nixon,4851588,gonzales-tx|wilson-tx,2,true,,0,0,gonzales-tx|wilson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nocona,4851648,montague-tx,1,true,,0,0,montague-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nocona Hills,4851654,montague-tx,1,true,,0,0,montague-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nolanville,4851708,bell-tx,1,true,,7,7,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Nome,4851720,jefferson-tx,1,true,,5,5,jefferson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Noonday,4851756,smith-tx,1,true,,0,0,smith-tx,,,,AVAILABLE_EMPTY,true,true,true
+Nordheim,4851792,dewitt-tx,1,true,,0,0,dewitt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Normandy,4851828,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Normangee,4851840,leon-tx|madison-tx,2,true,,2,2,leon-tx|madison-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Normanna,4851852,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+North Alamo,4851900,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+North Cleveland,4851984,liberty-tx,1,true,,1,1,liberty-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+North Escobares,4852068,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Northlake,4852212,denton-tx,1,true,,2,2,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+North Pearsall,4852302,frio-tx,1,true,,0,0,frio-tx,,,,AVAILABLE_EMPTY,true,true,true
+North Richland Hills,4852356,tarrant-tx,1,true,,13,13,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+North San Pedro,4852404,nueces-tx,1,true,,0,0,nueces-tx,,,,AVAILABLE_EMPTY,true,true,true
+Novice,4852668,coleman-tx,1,true,,2,2,coleman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Oak Grove,4852902,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oakhurst,4852992,san-jacinto-tx,1,true,,0,0,san-jacinto-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oak Island,4853004,chambers-tx,1,true,,0,0,chambers-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oak Leaf,4853115,ellis-tx,1,true,,0,0,ellis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oak Point,4853130,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oak Ridge,4853154,cooke-tx,1,true,,0,0,cooke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oak Ridge,4853160,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oak Ridge North,4853190,montgomery-tx,1,true,,1,1,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Oak Trail Shores,4853212,hood-tx,1,true,,0,0,hood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oak Valley,4853217,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oakwood,4853232,freestone-tx|leon-tx,2,true,,3,3,freestone-tx|leon-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+O'Brien,4853304,haskell-tx,1,true,,0,0,haskell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Odem,4853376,san-patricio-tx,1,true,,7,7,san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Odessa,4853388,ector-tx|midland-tx,2,true,,30,30,ector-tx|midland-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+O'Donnell,4853436,dawson-tx|lynn-tx,2,true,,0,0,dawson-tx|lynn-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oglesby,4853520,coryell-tx,1,true,,0,0,coryell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oilton,4853556,webb-tx,1,true,,1,1,webb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Oklaunion,4853616,wilbarger-tx,1,true,,1,1,wilbarger-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Old River-Winfree,4853824,chambers-tx|liberty-tx,2,true,,0,0,chambers-tx|liberty-tx,,,,AVAILABLE_EMPTY,true,true,true
+Olivarez,4853934,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Olivia Lopez de Gutierrez,4853946,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Olmito,4853964,cameron-tx,1,true,,4,4,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Olmito and Olmito,4853970,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Olmos Park,4853988,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Olney,4854000,young-tx,1,true,,0,0,young-tx,,,,AVAILABLE_EMPTY,true,true,true
+Olton,4854012,lamb-tx,1,true,,0,0,lamb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Omaha,4854024,morris-tx,1,true,,2,2,morris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Onalaska,4854048,polk-tx,1,true,,0,0,polk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Opdyke West,4854075,hockley-tx,1,true,,1,1,hockley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Orange,4854132,orange-tx,1,true,,35,35,orange-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Orange Grove,4854168,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Orason,4854186,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Orchard,4854192,fort-bend-tx,1,true,,1,1,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ore City,4854216,upshur-tx,1,true,,0,0,upshur-tx,,,,AVAILABLE_EMPTY,true,true,true
+Overton,4854432,rusk-tx|smith-tx,2,true,,10,10,rusk-tx|smith-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ovilla,4854444,dallas-tx|ellis-tx,2,true,,0,0,dallas-tx|ellis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Owl Ranch,4854509,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Oyster Creek,4854528,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ozona,4854552,crockett-tx,1,true,,0,0,crockett-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pablo Pena,4854558,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Paducah,4854600,cottle-tx,1,true,,0,0,cottle-tx,,,,AVAILABLE_EMPTY,true,true,true
+Paige,4854624,bastrop-tx,1,true,,3,3,bastrop-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Paint Rock,4854636,concho-tx,1,true,,0,0,concho-tx,,,,AVAILABLE_EMPTY,true,true,true
+Paisano Park,4854666,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Palacios,4854684,matagorda-tx,1,true,,0,0,matagorda-tx,,,,AVAILABLE_EMPTY,true,true,true
+Palestine,4854708,anderson-tx,1,true,,31,31,anderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Palisades,4854726,randall-tx,1,true,,0,0,randall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Palmer,4854744,ellis-tx,1,true,,4,4,ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Palmer,4854748,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Palmhurst,4854780,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Palm Valley,4854798,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Palmview,4854804,hidalgo-tx,1,true,,7,7,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Palmview South,4854810,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Palo Blanco,4854846,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Paloma Creek,4854868,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Paloma Creek South,4854872,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Palo Pinto,4854876,palo-pinto-tx,1,true,,0,0,palo-pinto-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pampa,4854912,gray-tx,1,true,,4,4,gray-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Panhandle,4854960,carson-tx,1,true,,4,4,carson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Panorama Village,4855008,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pantego,4855020,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Paradise,4855056,wise-tx,1,true,,2,2,wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Paris,4855080,lamar-tx,1,true,,28,28,lamar-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Parker,4855152,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pasadena,4856000,harris-tx,1,true,,30,30,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pattison,4856108,waller-tx,1,true,,0,0,waller-tx,,,,AVAILABLE_EMPTY,true,true,true
+Patton Village,4856156,montgomery-tx,1,true,,1,1,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pawnee,4856252,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Payne Springs,4856276,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pearland,4856348,brazoria-tx|fort-bend-tx|harris-tx,3,true,,5,5,brazoria-tx|fort-bend-tx|harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pearsall,4856384,frio-tx,1,true,,7,7,frio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Peaster,4856432,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pecan Acres,4856462,tarrant-tx|wise-tx,2,true,,6,6,tarrant-tx|wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pecan Gap,4856468,delta-tx|fannin-tx,2,true,,0,0,delta-tx|fannin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pecan Grove,4856482,fort-bend-tx,1,true,,4,4,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pecan Hill,4856485,ellis-tx,1,true,,0,0,ellis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pecan Plantation,4856498,hood-tx|johnson-tx,2,true,,0,0,hood-tx|johnson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pelican Bay,4856640,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pena,4856644,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pendleton,4856660,bell-tx,1,true,,3,3,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Penelope,4856672,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Penitas,4856696,hidalgo-tx,1,true,,6,6,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Perezville,4856804,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Perrin,4856864,jack-tx,1,true,,0,0,jack-tx,,,,AVAILABLE_EMPTY,true,true,true
+Perryton,4856912,ochiltree-tx,1,true,,0,0,ochiltree-tx,,,,AVAILABLE_EMPTY,true,true,true
+Petersburg,4856996,hale-tx,1,true,,0,0,hale-tx,,,,AVAILABLE_EMPTY,true,true,true
+Petrolia,4857044,clay-tx,1,true,,0,0,clay-tx,,,,AVAILABLE_EMPTY,true,true,true
+Petronila,4857056,nueces-tx,1,true,,0,0,nueces-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pettus,4857116,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Petty,4857128,lamar-tx,1,true,,0,0,lamar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pflugerville,4857176,travis-tx|williamson-tx,2,true,,1,1,travis-tx|williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pharr,4857200,hidalgo-tx,1,true,,19,19,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pilot Point,4857476,cooke-tx|denton-tx|grayson-tx,3,true,,12,12,cooke-tx|denton-tx|grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pinebrook,4857494,grimes-tx,1,true,,2,2,grimes-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pine Forest,4857524,orange-tx,1,true,,0,0,orange-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pine Harbor,4857566,marion-tx,1,true,,0,0,marion-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pinehurst,4857596,montgomery-tx,1,true,,2,2,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pinehurst,4857608,orange-tx,1,true,,0,0,orange-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pine Island,4857615,waller-tx,1,true,,1,1,waller-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pineland,4857644,sabine-tx,1,true,,4,4,sabine-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pinewood Estates,4857752,hardin-tx,1,true,,0,0,hardin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Piney Point Village,4857800,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pittsburg,4857908,camp-tx,1,true,,16,16,camp-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Placedo,4857932,victoria-tx,1,true,,4,4,victoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Plains,4857968,yoakum-tx,1,true,,0,0,yoakum-tx,,,,AVAILABLE_EMPTY,true,true,true
+Plainview,4857980,hale-tx,1,true,,46,46,hale-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Plano,4858016,collin-tx|denton-tx,2,true,,39,39,collin-tx|denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Plantersville,4858040,grimes-tx,1,true,,4,4,grimes-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pleak,4858088,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pleasant Hill,4858232,polk-tx,1,true,,0,0,polk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pleasanton,4858280,atascosa-tx,1,true,,4,4,atascosa-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pleasant Valley,4858400,wichita-tx,1,true,,2,2,wichita-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Plum,4858436,fayette-tx,1,true,,4,4,fayette-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Plum Grove,4858448,liberty-tx,1,true,,0,0,liberty-tx,,,,AVAILABLE_EMPTY,true,true,true
+Poetry,4858502,hunt-tx|kaufman-tx,2,true,,0,0,hunt-tx|kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Point,4858532,rains-tx,1,true,,0,0,rains-tx,,,,AVAILABLE_EMPTY,true,true,true
+Point Blank,4858556,san-jacinto-tx,1,true,,0,0,san-jacinto-tx,,,,AVAILABLE_EMPTY,true,true,true
+Point Comfort,4858568,calhoun-tx,1,true,,3,3,calhoun-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Point Venture,4858586,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ponder,4858664,denton-tx,1,true,,4,4,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Port Aransas,4858808,nueces-tx,1,true,,0,0,nueces-tx,,,,AVAILABLE_EMPTY,true,true,true
+Port Arthur,4858820,jefferson-tx|orange-tx,2,true,,78,78,jefferson-tx|orange-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Porter Heights,4858850,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+Port Isabel,4858892,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Portland,4858904,nueces-tx|san-patricio-tx,2,true,,0,0,nueces-tx|san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Port Lavaca,4858916,calhoun-tx,1,true,,13,13,calhoun-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Port Mansfield,4858928,willacy-tx,1,true,,0,0,willacy-tx,,,,AVAILABLE_EMPTY,true,true,true
+Port Neches,4858940,jefferson-tx,1,true,,18,18,jefferson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Port O'Connor,4858952,calhoun-tx,1,true,,0,0,calhoun-tx,,,,AVAILABLE_EMPTY,true,true,true
+Post,4859012,garza-tx,1,true,,4,4,garza-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Post Oak Bend,4859065,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Poteet,4859084,atascosa-tx,1,true,,0,0,atascosa-tx,,,,AVAILABLE_EMPTY,true,true,true
+Poth,4859096,wilson-tx,1,true,,0,0,wilson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Potosi,4859108,taylor-tx,1,true,,0,0,taylor-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pottsboro,4859132,grayson-tx,1,true,,5,5,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Powderly,4859156,lamar-tx,1,true,,3,3,lamar-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Powell,4859168,navarro-tx,1,true,,5,5,navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Poynor,4859192,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Prado Verde,4859210,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Praesel,4859216,milam-tx,1,true,,2,2,milam-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Prairie View,4859336,waller-tx,1,true,,2,2,waller-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Premont,4859384,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Presidio,4859396,presidio-tx,1,true,,4,4,presidio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Preston,4859420,grayson-tx,1,true,,0,0,grayson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Priddy,4859528,mills-tx,1,true,,0,0,mills-tx,,,,AVAILABLE_EMPTY,true,true,true
+Primera,4859540,cameron-tx,1,true,,5,5,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Princeton,4859576,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Proctor,4859612,comanche-tx,1,true,,3,3,comanche-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Progreso,4859636,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Progreso Lakes,4859642,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Prosper,4859696,collin-tx|denton-tx,2,true,,3,3,collin-tx|denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Providence Village,4859748,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pueblo East,4859794,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Pueblo Nuevo,4859798,webb-tx,1,true,,1,1,webb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Putnam,4859984,callahan-tx,1,true,,2,2,callahan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Pyote,4859996,ward-tx,1,true,,2,2,ward-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Quail,4860020,collingsworth-tx,1,true,,0,0,collingsworth-tx,,,,AVAILABLE_EMPTY,true,true,true
+Quail Creek,4860026,victoria-tx,1,true,,1,1,victoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Quanah,4860044,hardeman-tx,1,true,,9,9,hardeman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Queen City,4860080,cass-tx,1,true,,3,3,cass-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Quemado,4860092,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Quesada,4860098,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Quinlan,4860140,hunt-tx,1,true,,0,0,hunt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Quintana,4860164,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Quitaque,4860176,briscoe-tx,1,true,,0,0,briscoe-tx,,,,AVAILABLE_EMPTY,true,true,true
+Quitman,4860188,wood-tx,1,true,,0,0,wood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Radar Base,4860278,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rafael Pena,4860290,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ralls,4860356,crosby-tx,1,true,,0,0,crosby-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ramireno,4860380,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ramirez-Perez,4860408,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ramos,4860422,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ranchette Estates,4860458,willacy-tx,1,true,,0,0,willacy-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ranchitos del Norte,4860478,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ranchitos East,4860480,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ranchitos Las Lomas,4860482,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rancho Alegre,4860518,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rancho Banquete,4860529,nueces-tx,1,true,,0,0,nueces-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rancho Chico,4860534,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ranchos Penitas West,4860539,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rancho Viejo,4860544,cameron-tx,1,true,,1,1,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rancho Viejo,4860554,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Randolph AFB,4860608,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ranger,4860632,eastland-tx,1,true,,5,5,eastland-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rankin,4860668,upton-tx,1,true,,3,3,upton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ransom Canyon,4860672,lubbock-tx,1,true,,0,0,lubbock-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ratamosa,4860686,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ravenna,4860752,fannin-tx,1,true,,0,0,fannin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Raymondville,4860836,willacy-tx,1,true,,11,11,willacy-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Realitos,4860932,duval-tx,1,true,,3,3,duval-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Redfield,4861040,nacogdoches-tx,1,true,,0,0,nacogdoches-tx,,,,AVAILABLE_EMPTY,true,true,true
+Redford,4861076,presidio-tx,1,true,,0,0,presidio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Redland,4861124,angelina-tx,1,true,,0,0,angelina-tx,,,,AVAILABLE_EMPTY,true,true,true
+Red Lick,4861172,bowie-tx,1,true,,0,0,bowie-tx,,,,AVAILABLE_EMPTY,true,true,true
+Red Oak,4861196,ellis-tx,1,true,,6,6,ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Red Rock,4861280,bastrop-tx,1,true,,5,5,bastrop-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Redwater,4861340,bowie-tx,1,true,,4,4,bowie-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Redwood,4861352,guadalupe-tx,1,true,,0,0,guadalupe-tx,,,,AVAILABLE_EMPTY,true,true,true
+Refugio,4861436,refugio-tx,1,true,,10,10,refugio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Regino Ramirez,4861454,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Reid Hope King,4861466,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Reklaw,4861508,cherokee-tx|rusk-tx,2,true,,0,0,cherokee-tx|rusk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Relampago,4861532,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rendon,4861568,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Reno,4861592,lamar-tx,1,true,,0,0,lamar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Reno,4861604,parker-tx|tarrant-tx,2,true,,0,0,parker-tx|tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Retreat,4861616,navarro-tx,1,true,,0,0,navarro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rhome,4861700,wise-tx,1,true,,2,2,wise-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ricardo,4861724,kleberg-tx,1,true,,3,3,kleberg-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rice,4861736,navarro-tx,1,true,,3,3,navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rice Tracts,4861766,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Richards,4861784,grimes-tx,1,true,,1,1,grimes-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Richardson,4861796,collin-tx|dallas-tx,2,true,,39,39,collin-tx|dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Richland,4861820,navarro-tx,1,true,,2,2,navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Richland Hills,4861844,tarrant-tx,1,true,,4,4,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Richland Springs,4861880,san-saba-tx,1,true,,5,5,san-saba-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Richmond,4861892,fort-bend-tx,1,true,,11,11,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Richwood,4861904,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Riesel,4862108,mclennan-tx,1,true,,4,4,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Ringgold,4862132,montague-tx,1,true,,2,2,montague-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rio Bravo,4862138,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rio Grande City,4862168,starr-tx,1,true,,6,6,starr-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rio Hondo,4862180,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rio Vista,4862240,johnson-tx,1,true,,3,3,johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rising Star,4862252,eastland-tx,1,true,,0,0,eastland-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rivereno,4862318,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+River Oaks,4862384,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Riverside,4862408,walker-tx,1,true,,2,2,walker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Riviera,4862468,kleberg-tx,1,true,,2,2,kleberg-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Road Runner,4862486,cooke-tx,1,true,,0,0,cooke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Roanoke,4862504,denton-tx|tarrant-tx,2,true,,15,15,denton-tx|tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Roaring Springs,4862528,motley-tx,1,true,,0,0,motley-tx,,,,AVAILABLE_EMPTY,true,true,true
+Robert Lee,4862564,coke-tx,1,true,,0,0,coke-tx,,,,AVAILABLE_EMPTY,true,true,true
+Robinson,4862588,mclennan-tx,1,true,,0,0,mclennan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Robstown,4862600,nueces-tx,1,true,,25,25,nueces-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Roby,4862612,fisher-tx,1,true,,0,0,fisher-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rochelle,4862624,mcculloch-tx,1,true,,0,0,mcculloch-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rochester,4862636,haskell-tx,1,true,,0,0,haskell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rockdale,4862672,milam-tx,1,true,,6,6,milam-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rock Island,4862732,colorado-tx,1,true,,0,0,colorado-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rockport,4862804,aransas-tx,1,true,,0,0,aransas-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rocksprings,4862816,edwards-tx,1,true,,0,0,edwards-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rockwall,4862828,rockwall-tx,1,true,,6,6,rockwall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rockwell Place,4862834,randall-tx,1,true,,0,0,randall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rocky Mound,4862870,camp-tx,1,true,,0,0,camp-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rogers,4862924,bell-tx,1,true,,6,6,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rollingwood,4863008,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Roma,4863020,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Roman Forest,4863044,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ropesville,4863140,hockley-tx,1,true,,3,3,hockley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rosanky,4863164,bastrop-tx,1,true,,2,2,bastrop-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Roscoe,4863176,nolan-tx,1,true,,5,5,nolan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rosebud,4863188,falls-tx,1,true,,0,0,falls-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rose City,4863200,orange-tx,1,true,,5,5,orange-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rose Hill Acres,4863272,hardin-tx,1,true,,0,0,hardin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rosenberg,4863284,fort-bend-tx,1,true,,28,28,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rosharon,4863332,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rosita,4863350,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Ross,4863380,mclennan-tx,1,true,,1,1,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rosser,4863404,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rotan,4863464,fisher-tx,1,true,,0,0,fisher-tx,,,,AVAILABLE_EMPTY,true,true,true
+Round Mountain,4863476,blanco-tx,1,true,,0,0,blanco-tx,,,,AVAILABLE_EMPTY,true,true,true
+Round Rock,4863500,travis-tx|williamson-tx,2,true,,26,26,travis-tx|williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Round Top,4863524,fayette-tx,1,true,,0,0,fayette-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rowena,4863560,runnels-tx,1,true,,0,0,runnels-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rowlett,4863572,dallas-tx|rockwall-tx,2,true,,8,8,dallas-tx|rockwall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Roxton,4863584,lamar-tx,1,true,,0,0,lamar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Royse City,4863668,collin-tx|hunt-tx|rockwall-tx,3,true,,7,7,collin-tx|hunt-tx|rockwall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Rule,4863752,haskell-tx,1,true,,0,0,haskell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Runaway Bay,4863782,wise-tx,1,true,,0,0,wise-tx,,,,AVAILABLE_EMPTY,true,true,true
+Runge,4863788,karnes-tx,1,true,,0,0,karnes-tx,,,,AVAILABLE_EMPTY,true,true,true
+Rusk,4863848,cherokee-tx,1,true,,8,8,cherokee-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sabinal,4864004,uvalde-tx,1,true,,4,4,uvalde-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sachse,4864064,collin-tx|dallas-tx,2,true,,6,6,collin-tx|dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sadler,4864088,grayson-tx,1,true,,2,2,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Saginaw,4864112,tarrant-tx,1,true,,27,27,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+St. Hedwig,4864172,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Saint Jo,4864184,montague-tx,1,true,,0,0,montague-tx,,,,AVAILABLE_EMPTY,true,true,true
+St. Paul,4864220,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+St. Paul,4864244,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Salado,4864268,bell-tx,1,true,,0,0,bell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Salida del Sol Estates,4864307,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+SalineÃ±o,4864316,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+SalineÃ±o North,4864322,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sammy Martinez,4864442,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Samnorwood,4864448,collingsworth-tx,1,true,,0,0,collingsworth-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sam Rayburn,4864460,jasper-tx,1,true,,0,0,jasper-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Angelo,4864472,tom-green-tx,1,true,,61,61,tom-green-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Antonio,4865000,bexar-tx|comal-tx|medina-tx,3,true,,318,318,bexar-tx|comal-tx|medina-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Augustine,4865024,san-augustine-tx,1,true,,4,4,san-augustine-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Benito,4865036,cameron-tx,1,true,,17,17,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Carlos,4865048,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Carlos I,4865049,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Carlos II,4865050,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sanctuary,4865066,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sanderson,4865084,terrell-tx,1,true,,3,3,terrell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sandia,4865168,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Diego,4865180,duval-tx|jim-wells-tx,2,true,,16,16,duval-tx|jim-wells-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sandoval,4865210,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sand Springs,4865240,howard-tx,1,true,,1,1,howard-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sandy Hollow-Escondidas,4865342,nueces-tx,1,true,,0,0,nueces-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sandy Oaks,4865344,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sandy Point,4865345,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Elizario,4865360,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Felipe,4865372,austin-tx,1,true,,4,4,austin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Fernando,4865378,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sanford,4865384,hutchinson-tx,1,true,,0,0,hutchinson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sanger,4865408,cooke-tx|denton-tx,2,true,,6,6,cooke-tx|denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Isidro,4865432,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Juan,4865516,hidalgo-tx,1,true,,9,9,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Juan,4865532,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Leanna,4865552,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Leon,4865564,galveston-tx,1,true,,0,0,galveston-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Marcos,4865600,caldwell-tx|guadalupe-tx|hays-tx,3,true,,34,34,caldwell-tx|guadalupe-tx|hays-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Patricio,4865612,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Pedro,4865620,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Perlita,4865636,willacy-tx,1,true,,0,0,willacy-tx,,,,AVAILABLE_EMPTY,true,true,true
+San Saba,4865648,san-saba-tx,1,true,,5,5,san-saba-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sansom Park,4865660,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Santa Anna,4865672,coleman-tx,1,true,,5,5,coleman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Santa Anna,4865678,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Santa Clara,4865690,guadalupe-tx,1,true,,2,2,guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Santa Cruz,4865708,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Santa Fe,4865726,galveston-tx,1,true,,8,8,galveston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Santa Maria,4865744,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Santa Monica,4865756,willacy-tx,1,true,,0,0,willacy-tx,,,,AVAILABLE_EMPTY,true,true,true
+Santa Rita Ranch,4865762,williamson-tx,1,true,,0,0,williamson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Santa Rosa,4865768,cameron-tx,1,true,,3,3,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Santa Rosa,4865774,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Santel,4865777,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Santo,4865780,palo-pinto-tx,1,true,,3,3,palo-pinto-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+San Ygnacio,4865792,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sargent,4865864,matagorda-tx,1,true,,0,0,matagorda-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sarita,4865876,kenedy-tx,1,true,,2,2,kenedy-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Savannah,4866000,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Savoy,4866008,fannin-tx,1,true,,4,4,fannin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Scenic Oaks,4866089,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Schertz,4866128,bexar-tx|comal-tx|guadalupe-tx,3,true,,22,22,bexar-tx|comal-tx|guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Schulenburg,4866188,fayette-tx,1,true,,10,10,fayette-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Scissors,4866248,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Scotland,4866284,archer-tx,1,true,,0,0,archer-tx,,,,AVAILABLE_EMPTY,true,true,true
+Scottsville,4866332,harrison-tx,1,true,,1,1,harrison-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Scurry,4866368,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Seabrook,4866392,chambers-tx|harris-tx,2,true,,5,5,chambers-tx|harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Seadrift,4866416,calhoun-tx,1,true,,0,0,calhoun-tx,,,,AVAILABLE_EMPTY,true,true,true
+Seagoville,4866428,dallas-tx|kaufman-tx,2,true,,0,0,dallas-tx|kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Seagraves,4866440,gaines-tx,1,true,,2,2,gaines-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sealy,4866464,austin-tx,1,true,,25,25,austin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sebastian,4866512,willacy-tx,1,true,,5,5,willacy-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Seco Mines,4866536,maverick-tx,1,true,,0,0,maverick-tx,,,,AVAILABLE_EMPTY,true,true,true
+Seguin,4866644,guadalupe-tx,1,true,,13,13,guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Seis Lagos,4866686,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Selma,4866704,bexar-tx|comal-tx|guadalupe-tx,3,true,,1,1,bexar-tx|comal-tx|guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Seminole,4866764,gaines-tx,1,true,,0,0,gaines-tx,,,,AVAILABLE_EMPTY,true,true,true
+Serenada,4866806,williamson-tx,1,true,,0,0,williamson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Seth Ward,4866848,hale-tx,1,true,,6,6,hale-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Seven Oaks,4866884,polk-tx,1,true,,1,1,polk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Seven Points,4866908,henderson-tx|kaufman-tx,2,true,,0,0,henderson-tx|kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Seymour,4866968,baylor-tx,1,true,,0,0,baylor-tx,,,,AVAILABLE_EMPTY,true,true,true
+Shadybrook,4867010,cherokee-tx,1,true,,0,0,cherokee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Shady Hollow,4867082,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Shady Shores,4867100,denton-tx,1,true,,0,0,denton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Shallowater,4867136,lubbock-tx,1,true,,1,1,lubbock-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Shamrock,4867160,wheeler-tx,1,true,,0,0,wheeler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Shavano Park,4867268,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sheffield,4867340,pecos-tx,1,true,,0,0,pecos-tx,,,,AVAILABLE_EMPTY,true,true,true
+Shelbyville,4867364,shelby-tx,1,true,,0,0,shelby-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sheldon,4867376,harris-tx,1,true,,6,6,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Shenandoah,4867400,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+Shepherd,4867424,san-jacinto-tx,1,true,,4,4,san-jacinto-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sheridan,4867472,colorado-tx,1,true,,0,0,colorado-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sherman,4867496,grayson-tx,1,true,,68,68,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sherwood Shores,4867554,grayson-tx,1,true,,0,0,grayson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Shiner,4867640,lavaca-tx,1,true,,4,4,lavaca-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Shiro,4867664,grimes-tx,1,true,,3,3,grimes-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Shoreacres,4867688,chambers-tx|harris-tx,2,true,,0,0,chambers-tx|harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sienna,4867763,fort-bend-tx,1,true,,4,4,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sierra Blanca,4867772,hudspeth-tx,1,true,,5,5,hudspeth-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Siesta Acres,4867775,maverick-tx,1,true,,1,1,maverick-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Siesta Shores,4867778,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Silsbee,4867832,hardin-tx,1,true,,22,22,hardin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Silverton,4867904,briscoe-tx,1,true,,0,0,briscoe-tx,,,,AVAILABLE_EMPTY,true,true,true
+Simonton,4867964,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sinton,4868036,san-patricio-tx,1,true,,10,10,san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Skellytown,4868120,carson-tx,1,true,,0,0,carson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Skidmore,4868132,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Slaton,4868180,lubbock-tx,1,true,,4,4,lubbock-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Smiley,4868300,gonzales-tx,1,true,,0,0,gonzales-tx,,,,AVAILABLE_EMPTY,true,true,true
+Smithville,4868456,bastrop-tx,1,true,,9,9,bastrop-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Smyer,4868504,hockley-tx,1,true,,1,1,hockley-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Snook,4868576,burleson-tx,1,true,,0,0,burleson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Snyder,4868624,scurry-tx,1,true,,10,10,scurry-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Socorro,4868636,el-paso-tx,1,true,,5,5,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Solis,4868678,cameron-tx,1,true,,1,1,cameron-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Somerset,4868708,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Somerville,4868720,burleson-tx,1,true,,5,5,burleson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sonora,4868756,sutton-tx,1,true,,0,0,sutton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sonterra,4868762,williamson-tx,1,true,,0,0,williamson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sour Lake,4868828,hardin-tx,1,true,,1,1,hardin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+South Alamo,4868846,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+South Fork Estates,4868966,jim-hogg-tx,1,true,,0,0,jim-hogg-tx,,,,AVAILABLE_EMPTY,true,true,true
+South Frydek,4868978,austin-tx,1,true,,0,0,austin-tx,,,,AVAILABLE_EMPTY,true,true,true
+South Houston,4869020,harris-tx,1,true,,5,5,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Southlake,4869032,denton-tx|tarrant-tx,2,true,,0,0,denton-tx|tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+South La Paloma,4869072,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Southmayd,4869104,grayson-tx,1,true,,0,0,grayson-tx,,,,AVAILABLE_EMPTY,true,true,true
+South Mountain,4869120,coryell-tx,1,true,,0,0,coryell-tx,,,,AVAILABLE_EMPTY,true,true,true
+South Padre Island,4869140,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+South Point,4869194,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Southside Place,4869272,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+South Toledo Bend,4869326,newton-tx,1,true,,0,0,newton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Southwest Sandhill,4869353,ward-tx,1,true,,0,0,ward-tx,,,,AVAILABLE_EMPTY,true,true,true
+Spade,4869380,lamb-tx,1,true,,0,0,lamb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sparks,4869432,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Spearman,4869476,hansford-tx,1,true,,0,0,hansford-tx,,,,AVAILABLE_EMPTY,true,true,true
+Splendora,4869548,montgomery-tx,1,true,,3,3,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Spofford,4869560,kinney-tx,1,true,,1,1,kinney-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Spring,4869596,harris-tx,1,true,,15,15,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Spring Branch,4869608,comal-tx,1,true,,0,0,comal-tx,,,,AVAILABLE_EMPTY,true,true,true
+Spring Gardens,4869708,nueces-tx,1,true,,0,0,nueces-tx,,,,AVAILABLE_EMPTY,true,true,true
+Springlake,4869764,lamb-tx,1,true,,0,0,lamb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Springtown,4869800,parker-tx|wise-tx,2,true,,0,0,parker-tx|wise-tx,,,,AVAILABLE_EMPTY,true,true,true
+Spring Valley Village,4869830,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Spur,4869848,dickens-tx,1,true,,0,0,dickens-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stafford,4869908,fort-bend-tx|harris-tx,2,true,,8,8,fort-bend-tx|harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Stagecoach,4869932,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stamford,4869980,haskell-tx|jones-tx,2,true,,0,0,haskell-tx|jones-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stanton,4870040,martin-tx,1,true,,4,4,martin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Staples,4870052,guadalupe-tx,1,true,,0,0,guadalupe-tx,,,,AVAILABLE_EMPTY,true,true,true
+Star Harbor,4870076,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Steiner Ranch,4870154,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stephenville,4870208,erath-tx,1,true,,17,17,erath-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sterling City,4870232,sterling-tx,1,true,,0,0,sterling-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stinnett,4870340,hutchinson-tx,1,true,,0,0,hutchinson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stockdale,4870376,wilson-tx,1,true,,0,0,wilson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stockton Bend,4870406,hood-tx,1,true,,0,0,hood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stonewall,4870460,gillespie-tx,1,true,,0,0,gillespie-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stowell,4870520,chambers-tx,1,true,,0,0,chambers-tx,,,,AVAILABLE_EMPTY,true,true,true
+Stratford,4870544,sherman-tx,1,true,,7,7,sherman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Strawn,4870580,palo-pinto-tx,1,true,,3,3,palo-pinto-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Streetman,4870604,freestone-tx|navarro-tx,2,true,,5,5,freestone-tx|navarro-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Study Butte,4870688,brewster-tx,1,true,,0,0,brewster-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sudan,4870772,lamb-tx,1,true,,2,2,lamb-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sugar Land,4870808,fort-bend-tx,1,true,,21,21,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sullivan City,4870868,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sulphur Springs,4870904,hopkins-tx,1,true,,36,36,hopkins-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Summerfield,4870940,castro-tx,1,true,,0,0,castro-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sundown,4871060,hockley-tx,1,true,,0,0,hockley-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sunnyvale,4871156,dallas-tx,1,true,,9,9,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sunray,4871180,moore-tx,1,true,,3,3,moore-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sunrise Beach Village,4871228,llano-tx,1,true,,0,0,llano-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sunrise Shores,4871236,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sunset,4871264,montague-tx,1,true,,3,3,montague-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sunset,4871274,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sunset Acres,4871289,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sunset Valley,4871324,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sun Valley,4871356,lamar-tx,1,true,,0,0,lamar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Surfside Beach,4871384,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Sweeny,4871492,brazoria-tx,1,true,,2,2,brazoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sweetwater,4871540,nolan-tx,1,true,,27,27,nolan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Sylvester,4871636,fisher-tx,1,true,,0,0,fisher-tx,,,,AVAILABLE_EMPTY,true,true,true
+Taft,4871684,san-patricio-tx,1,true,,5,5,san-patricio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Taft Southwest,4871696,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tahoka,4871708,lynn-tx,1,true,,0,0,lynn-tx,,,,AVAILABLE_EMPTY,true,true,true
+Talco,4871732,titus-tx,1,true,,0,0,titus-tx,,,,AVAILABLE_EMPTY,true,true,true
+Talty,4871756,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tanquecitos South Acres,4871820,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tanquecitos South Acres II,4871824,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tatum,4871924,panola-tx|rusk-tx,2,true,,3,3,panola-tx|rusk-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Taylor,4871948,williamson-tx,1,true,,22,22,williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Taylor Lake Village,4871960,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Taylor Landing,4871966,jefferson-tx,1,true,,0,0,jefferson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Teague,4872020,freestone-tx,1,true,,5,5,freestone-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tehuacana,4872080,limestone-tx,1,true,,0,0,limestone-tx,,,,AVAILABLE_EMPTY,true,true,true
+Temple,4872176,bell-tx,1,true,,54,54,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tenaha,4872188,shelby-tx,1,true,,10,10,shelby-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Terlingua,4872248,brewster-tx,1,true,,0,0,brewster-tx,,,,AVAILABLE_EMPTY,true,true,true
+Terrell,4872284,kaufman-tx,1,true,,26,26,kaufman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Terrell Hills,4872296,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Texarkana,4872368,bowie-tx,1,true,,45,45,bowie-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Texas City,4872392,chambers-tx|galveston-tx,2,true,,52,52,chambers-tx|galveston-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Texhoma,4872464,sherman-tx,1,true,,0,0,sherman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Texline,4872476,dallam-tx,1,true,,2,2,dallam-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+The Colony,4872530,denton-tx,1,true,,3,3,denton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+The Hills,4872578,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+The Homesteads,4872581,johnson-tx,1,true,,0,0,johnson-tx,,,,AVAILABLE_EMPTY,true,true,true
+The Woodlands,4872656,harris-tx|montgomery-tx,2,true,,1,1,harris-tx|montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Thompsons,4872740,fort-bend-tx,1,true,,11,11,fort-bend-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Thompsonville,4872758,jim-hogg-tx,1,true,,0,0,jim-hogg-tx,,,,AVAILABLE_EMPTY,true,true,true
+Thorndale,4872776,milam-tx|williamson-tx,2,true,,3,3,milam-tx|williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Thornton,4872788,limestone-tx,1,true,,4,4,limestone-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Thorntonville,4872800,ward-tx,1,true,,0,0,ward-tx,,,,AVAILABLE_EMPTY,true,true,true
+Thrall,4872824,williamson-tx,1,true,,3,3,williamson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Three Rivers,4872872,live-oak-tx,1,true,,5,5,live-oak-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Throckmorton,4872896,throckmorton-tx,1,true,,0,0,throckmorton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Thunderbird Bay,4872902,brown-tx,1,true,,0,0,brown-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tierra Bonita,4872948,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tierra Dorada,4872950,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tierra Grande,4872952,nueces-tx,1,true,,0,0,nueces-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tierra Verde,4872954,nueces-tx,1,true,,0,0,nueces-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tiki Island,4872989,galveston-tx,1,true,,0,0,galveston-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tilden,4872992,mcmullen-tx,1,true,,0,0,mcmullen-tx,,,,AVAILABLE_EMPTY,true,true,true
+Timbercreek Canyon,4873030,randall-tx,1,true,,0,0,randall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Timberwood Park,4873057,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Timpson,4873076,shelby-tx,1,true,,7,7,shelby-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tioga,4873112,grayson-tx,1,true,,4,4,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tira,4873124,hopkins-tx,1,true,,0,0,hopkins-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tivoli,4873148,refugio-tx,1,true,,0,0,refugio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Toco,4873196,lamar-tx,1,true,,0,0,lamar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Todd Mission,4873224,grimes-tx,1,true,,4,4,grimes-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tolar,4873268,hood-tx,1,true,,11,11,hood-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tomball,4873316,harris-tx|montgomery-tx,2,true,,7,7,harris-tx|montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tom Bean,4873328,grayson-tx,1,true,,0,0,grayson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tool,4873352,henderson-tx,1,true,,0,0,henderson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tornillo,4873376,el-paso-tx,1,true,,1,1,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tow,4873424,llano-tx,1,true,,0,0,llano-tx,,,,AVAILABLE_EMPTY,true,true,true
+Town of Pecos,4873493,reeves-tx,1,true,,40,40,reeves-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Toyah,4873496,reeves-tx,1,true,,2,2,reeves-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tradewinds,4873526,san-patricio-tx,1,true,,0,0,san-patricio-tx,,,,AVAILABLE_EMPTY,true,true,true
+Travis Ranch,4873562,kaufman-tx,1,true,,0,0,kaufman-tx,,,,AVAILABLE_EMPTY,true,true,true
+Trent,4873580,taylor-tx,1,true,,2,2,taylor-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Trenton,4873592,collin-tx|fannin-tx|grayson-tx,3,true,,4,4,collin-tx|fannin-tx|grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Trinidad,4873652,henderson-tx,1,true,,2,2,henderson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Trinity,4873664,trinity-tx,1,true,,8,8,trinity-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Trophy Club,4873710,denton-tx|tarrant-tx,2,true,,0,0,denton-tx|tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Troup,4873724,cherokee-tx|smith-tx,2,true,,5,5,cherokee-tx|smith-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Troy,4873748,bell-tx,1,true,,4,4,bell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tuleta,4873856,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tulia,4873868,swisher-tx,1,true,,4,4,swisher-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tulsita,4873904,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tunis,4873928,burleson-tx,1,true,,0,0,burleson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Turkey,4873964,hall-tx,1,true,,0,0,hall-tx,,,,AVAILABLE_EMPTY,true,true,true
+Tuscola,4874048,taylor-tx,1,true,,3,3,taylor-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tye,4874132,taylor-tx,1,true,,4,4,taylor-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tyler,4874144,smith-tx,1,true,,64,64,smith-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Tynan,4874168,bee-tx,1,true,,0,0,bee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Uhland,4874216,caldwell-tx|hays-tx,2,true,,0,0,caldwell-tx|hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Umbarger,4874228,randall-tx,1,true,,2,2,randall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Uncertain,4874240,harrison-tx,1,true,,0,0,harrison-tx,,,,AVAILABLE_EMPTY,true,true,true
+Union Grove,4874312,upshur-tx,1,true,,0,0,upshur-tx,,,,AVAILABLE_EMPTY,true,true,true
+Union Valley,4874372,hunt-tx,1,true,,0,0,hunt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Universal City,4874408,bexar-tx|guadalupe-tx,2,true,,1,1,bexar-tx|guadalupe-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+University Park,4874492,dallas-tx,1,true,,1,1,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Utopia,4874576,uvalde-tx,1,true,,0,0,uvalde-tx,,,,AVAILABLE_EMPTY,true,true,true
+Uvalde,4874588,uvalde-tx,1,true,,3,3,uvalde-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Uvalde Estates,4874594,uvalde-tx,1,true,,0,0,uvalde-tx,,,,AVAILABLE_EMPTY,true,true,true
+Valentine,4874648,jeff-davis-tx,1,true,,1,1,jeff-davis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Valera,4874660,coleman-tx,1,true,,1,1,coleman-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Valle Hermoso,4874667,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Valle Verde,4874668,webb-tx,1,true,,0,0,webb-tx,,,,AVAILABLE_EMPTY,true,true,true
+Valle Vista,4874670,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Valley Mills,4874732,bosque-tx|mclennan-tx,2,true,,3,3,bosque-tx|mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Valley View,4874756,cooke-tx,1,true,,2,2,cooke-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Val Verde Park,4874895,val-verde-tx,1,true,,0,0,val-verde-tx,,,,AVAILABLE_EMPTY,true,true,true
+Van,4874912,van-zandt-tx,1,true,,0,0,van-zandt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Van Alstyne,4874924,collin-tx|grayson-tx,2,true,,8,8,collin-tx|grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Vanderbilt,4874984,jackson-tx,1,true,,0,0,jackson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Van Horn,4875032,culberson-tx,1,true,,3,3,culberson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Van Vleck,4875068,matagorda-tx,1,true,,0,0,matagorda-tx,,,,AVAILABLE_EMPTY,true,true,true
+Vega,4875188,oldham-tx,1,true,,0,0,oldham-tx,,,,AVAILABLE_EMPTY,true,true,true
+Venus,4875236,ellis-tx|johnson-tx,2,true,,6,6,ellis-tx|johnson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Vernon,4875308,wilbarger-tx,1,true,,6,6,wilbarger-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Victoria,4875428,victoria-tx,1,true,,65,65,victoria-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Victoria Vera,4875432,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Vidor,4875476,orange-tx,1,true,,10,10,orange-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Villa del Sol,4875554,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Villa Pancho,4875614,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Villarreal,4875617,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Villa Verde,4875626,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+Vinton,4875668,el-paso-tx,1,true,,2,2,el-paso-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Volente,4875752,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Von Ormy,4875764,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Waco,4876000,mclennan-tx,1,true,,52,52,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wadsworth,4876012,matagorda-tx,1,true,,7,7,matagorda-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Waelder,4876024,gonzales-tx,1,true,,3,3,gonzales-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Waka,4876048,ochiltree-tx,1,true,,0,0,ochiltree-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wake Village,4876096,bowie-tx,1,true,,0,0,bowie-tx,,,,AVAILABLE_EMPTY,true,true,true
+Waller,4876228,harris-tx|waller-tx,2,true,,5,5,harris-tx|waller-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wallis,4876240,austin-tx,1,true,,4,4,austin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Walnut Springs,4876348,bosque-tx,1,true,,0,0,bosque-tx,,,,AVAILABLE_EMPTY,true,true,true
+Warren,4876564,tyler-tx,1,true,,0,0,tyler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Warren City,4876576,gregg-tx|upshur-tx,2,true,,0,0,gregg-tx|upshur-tx,,,,AVAILABLE_EMPTY,true,true,true
+Washburn,4876612,armstrong-tx,1,true,,0,0,armstrong-tx,,,,AVAILABLE_EMPTY,true,true,true
+Waskom,4876636,harrison-tx,1,true,,6,6,harrison-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Watauga,4876672,tarrant-tx,1,true,,2,2,tarrant-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Waxahachie,4876816,ellis-tx,1,true,,46,46,ellis-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Weatherford,4876864,parker-tx,1,true,,10,10,parker-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Webberville,4876924,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Webster,4876948,harris-tx,1,true,,7,7,harris-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Weimar,4877020,colorado-tx,1,true,,7,7,colorado-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Weinert,4877044,haskell-tx,1,true,,0,0,haskell-tx,,,,AVAILABLE_EMPTY,true,true,true
+Weir,4877056,williamson-tx,1,true,,0,0,williamson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Welch,4877080,dawson-tx,1,true,,0,0,dawson-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wellington,4877152,collingsworth-tx,1,true,,0,0,collingsworth-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wellman,4877164,terry-tx,1,true,,3,3,terry-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wells,4877176,cherokee-tx,1,true,,0,0,cherokee-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wells Branch,4877196,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+Weslaco,4877272,hidalgo-tx,1,true,,25,25,hidalgo-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+West,4877332,mclennan-tx,1,true,,9,9,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+West Alto Bonito,4877336,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Westbrook,4877380,mitchell-tx,1,true,,1,1,mitchell-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+West Columbia,4877416,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Westdale,4877422,jim-wells-tx,1,true,,0,0,jim-wells-tx,,,,AVAILABLE_EMPTY,true,true,true
+Western Lake,4877490,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Westlake,4877620,denton-tx|tarrant-tx,2,true,,0,0,denton-tx|tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+West Lake Hills,4877632,travis-tx,1,true,,0,0,travis-tx,,,,AVAILABLE_EMPTY,true,true,true
+West Livingston,4877662,polk-tx,1,true,,0,0,polk-tx,,,,AVAILABLE_EMPTY,true,true,true
+Westminster,4877680,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+West Odessa,4877728,ector-tx,1,true,,0,0,ector-tx,,,,AVAILABLE_EMPTY,true,true,true
+Weston,4877740,collin-tx,1,true,,0,0,collin-tx,,,,AVAILABLE_EMPTY,true,true,true
+Weston Lakes,4877746,fort-bend-tx,1,true,,0,0,fort-bend-tx,,,,AVAILABLE_EMPTY,true,true,true
+West Orange,4877752,orange-tx,1,true,,8,8,orange-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Westover Hills,4877788,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+West Sharyland,4877866,hidalgo-tx,1,true,,0,0,hidalgo-tx,,,,AVAILABLE_EMPTY,true,true,true
+West Tawakoni,4877896,hunt-tx,1,true,,0,0,hunt-tx,,,,AVAILABLE_EMPTY,true,true,true
+West University Place,4877956,harris-tx,1,true,,0,0,harris-tx,,,,AVAILABLE_EMPTY,true,true,true
+Westway,4878016,el-paso-tx,1,true,,0,0,el-paso-tx,,,,AVAILABLE_EMPTY,true,true,true
+Westwood Shores,4878040,trinity-tx,1,true,,0,0,trinity-tx,,,,AVAILABLE_EMPTY,true,true,true
+Westworth Village,4878076,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wharton,4878136,wharton-tx,1,true,,8,8,wharton-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wheeler,4878208,wheeler-tx,1,true,,0,0,wheeler-tx,,,,AVAILABLE_EMPTY,true,true,true
+White Deer,4878316,carson-tx,1,true,,1,1,carson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Whiteface,4878328,cochran-tx,1,true,,4,4,cochran-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Whitehouse,4878388,smith-tx,1,true,,3,3,smith-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+White Oak,4878436,gregg-tx,1,true,,3,3,gregg-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Whitesboro,4878532,grayson-tx,1,true,,4,4,grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+White Settlement,4878544,tarrant-tx,1,true,,0,0,tarrant-tx,,,,AVAILABLE_EMPTY,true,true,true
+Whitewright,4878628,fannin-tx|grayson-tx,2,true,,6,6,fannin-tx|grayson-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Whitharral,4878640,hockley-tx,1,true,,0,0,hockley-tx,,,,AVAILABLE_EMPTY,true,true,true
+Whitney,4878664,hill-tx,1,true,,0,0,hill-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wichita Falls,4879000,clay-tx|wichita-tx,2,true,,66,66,clay-tx|wichita-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wickett,4879036,ward-tx,1,true,,2,2,ward-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wildorado,4879180,oldham-tx,1,true,,0,0,oldham-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wild Peach Village,4879192,brazoria-tx,1,true,,0,0,brazoria-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wildwood,4879204,hardin-tx|tyler-tx,2,true,,0,0,hardin-tx|tyler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Willis,4879408,montgomery-tx,1,true,,3,3,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Willow Grove,4879456,mclennan-tx,1,true,,0,0,mclennan-tx,,,,AVAILABLE_EMPTY,true,true,true
+Willow Park,4879492,parker-tx,1,true,,0,0,parker-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wills Point,4879564,van-zandt-tx,1,true,,5,5,van-zandt-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wilmer,4879576,dallas-tx,1,true,,7,7,dallas-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wilson,4879612,lynn-tx,1,true,,0,0,lynn-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wimberley,4879624,hays-tx,1,true,,0,0,hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Windcrest,4879672,bexar-tx,1,true,,0,0,bexar-tx,,,,AVAILABLE_EMPTY,true,true,true
+Windom,4879684,fannin-tx,1,true,,2,2,fannin-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Windthorst,4879696,archer-tx|clay-tx,2,true,,0,0,archer-tx|clay-tx,,,,AVAILABLE_EMPTY,true,true,true
+Winfield,4879720,titus-tx,1,true,,3,3,titus-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wingate,4879756,runnels-tx,1,true,,0,0,runnels-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wink,4879768,winkler-tx,1,true,,0,0,winkler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Winnie,4879792,chambers-tx,1,true,,0,0,chambers-tx,,,,AVAILABLE_EMPTY,true,true,true
+Winnsboro,4879816,franklin-tx|wood-tx,2,true,,5,5,franklin-tx|wood-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Winona,4879828,smith-tx,1,true,,2,2,smith-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Winters,4879876,runnels-tx,1,true,,0,0,runnels-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wixon Valley,4879919,brazos-tx,1,true,,0,0,brazos-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wolfe City,4879948,hunt-tx,1,true,,0,0,hunt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wolfforth,4879972,lubbock-tx,1,true,,5,5,lubbock-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Woodbranch,4880044,montgomery-tx,1,true,,1,1,montgomery-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Woodcreek,4880058,hays-tx,1,true,,0,0,hays-tx,,,,AVAILABLE_EMPTY,true,true,true
+Woodloch,4880144,montgomery-tx,1,true,,0,0,montgomery-tx,,,,AVAILABLE_EMPTY,true,true,true
+Woodsboro,4880176,refugio-tx,1,true,,2,2,refugio-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Woodson,4880188,throckmorton-tx,1,true,,0,0,throckmorton-tx,,,,AVAILABLE_EMPTY,true,true,true
+Woodville,4880212,tyler-tx,1,true,,0,0,tyler-tx,,,,AVAILABLE_EMPTY,true,true,true
+Woodway,4880224,mclennan-tx,1,true,,1,1,mclennan-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wortham,4880296,freestone-tx,1,true,,5,5,freestone-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Wyldwood,4880350,bastrop-tx,1,true,,0,0,bastrop-tx,,,,AVAILABLE_EMPTY,true,true,true
+Wylie,4880356,collin-tx|dallas-tx|rockwall-tx,3,true,,15,15,collin-tx|dallas-tx|rockwall-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Yancey,4880428,medina-tx,1,true,,0,0,medina-tx,,,,AVAILABLE_EMPTY,true,true,true
+Yantis,4880440,wood-tx,1,true,,0,0,wood-tx,,,,AVAILABLE_EMPTY,true,true,true
+Yoakum,4880560,dewitt-tx|lavaca-tx,2,true,,6,6,dewitt-tx|lavaca-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Yorktown,4880584,dewitt-tx,1,true,,0,0,dewitt-tx,,,,AVAILABLE_EMPTY,true,true,true
+Yznaga,4880686,cameron-tx,1,true,,0,0,cameron-tx,,,,AVAILABLE_EMPTY,true,true,true
+Zapata,4880716,zapata-tx,1,true,,0,0,zapata-tx,,,,AVAILABLE_EMPTY,true,true,true
+Zapata Ranch,4880722,willacy-tx,1,true,,0,0,willacy-tx,,,,AVAILABLE_EMPTY,true,true,true
+Zarate,4880724,starr-tx,1,true,,0,0,starr-tx,,,,AVAILABLE_EMPTY,true,true,true
+Zavalla,4880728,angelina-tx,1,true,,0,0,angelina-tx,,,,AVAILABLE_EMPTY,true,true,true
+Zephyr,4880740,brown-tx,1,true,,3,3,brown-tx,,,,AVAILABLE_NONEMPTY,true,true,true
+Zuehl,4880836,guadalupe-tx,1,true,,0,0,guadalupe-tx,,,,AVAILABLE_EMPTY,true,true,true
