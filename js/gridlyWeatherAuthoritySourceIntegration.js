@@ -126,9 +126,12 @@
     const adapted = gridlyAdaptWeatherRecordsForAuthority(loaded, options);
     const selector = globalScope.gridlySelectConsumerWeatherAuthority;
     const connectorRuntime = typeof globalScope.gridlyWeatherConnectorRuntimeAudit === "function" ? globalScope.gridlyWeatherConnectorRuntimeAudit() : null;
+    const selectedContextIdentity = connectorRuntime?.currentAwarenessIdentity || null;
+    const requestIdentity = connectorRuntime?.pointRequestIdentity || null;
+    const responseIdentity = connectorRuntime?.responseIdentity || null;
     // NWS has already evaluated applicability for this exact governed point.
     // Do not run point results through the legacy statewide radius/text owner.
-    const pointAuthority = connectorRuntime?.applicabilityMode === "NWS_POINT_QUERY" && connectorRuntime?.requestSucceeded === true && connectorRuntime?.responseValid === true && connectorRuntime?.freshEnough === true && connectorRuntime?.pointRequestIdentity === connectorRuntime?.currentAwarenessIdentity;
+    const pointAuthority = connectorRuntime?.applicabilityMode === "NWS_POINT_QUERY" && connectorRuntime?.requestSucceeded === true && connectorRuntime?.responseValid === true && connectorRuntime?.freshEnough === true && selectedContextIdentity === requestIdentity && requestIdentity === responseIdentity;
     const authority = pointAuthority
       ? { consumerEligibleWeather: adapted.records, containsAlerts: adapted.records.length > 0, uniqueSituationCount: adapted.records.length, quietStateReason: adapted.records.length ? null : "fresh_point_response_empty" }
       : (typeof selector === "function" ? selector(Object.assign({}, options, { selectedAwarenessArea, records: adapted.records })) : null);
@@ -142,6 +145,10 @@
       selectedAwarenessArea: selectedAwarenessArea?.name || selectedAwarenessArea?.label || selectedAwarenessArea?.id || null,
       activeCounty: selectedAwarenessArea?.county || selectedAwarenessArea?.countyName || selectedAwarenessArea?.countyId || null,
       activeCommunity: selectedAwarenessArea?.community || selectedAwarenessArea?.label || selectedAwarenessArea?.name || null,
+      selectedContextIdentity,
+      requestIdentity,
+      responseIdentity,
+      authorityIdentity: pointAuthority ? responseIdentity : null,
       sourceIntegrationStatus: status,
       freshnessStatus: adapted.staleRecordCount ? "stale_records_present" : adapted.expiredRecordCount ? "expired_records_excluded" : adapted.rawRecordCount ? "loaded_records_evaluated" : "no_loaded_records",
       geographicOwnershipStatus: ownershipMethods.length ? "ownership_evaluated" : adapted.rawRecordCount ? "filtered_outside_awareness_or_ineligible" : "no_loaded_records",
@@ -224,6 +231,8 @@
       selectedAwarenessArea: snapshot?.selectedAwarenessArea || null,
       activeCounty: snapshot?.activeCounty || null,
       activeCommunity: snapshot?.activeCommunity || null,
+      weatherAuthorityIdentity: snapshot?.authorityIdentity || null,
+      weatherFamilyIdentity: snapshot?.authorityIdentity || null,
       authorityStatus: situations.length ? "ACTIVE" : "QUIET",
       consumerVisibleSituations: situations,
       consumerVisibleSituationCount: situations.length,

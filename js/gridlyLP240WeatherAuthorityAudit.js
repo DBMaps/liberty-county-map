@@ -299,6 +299,18 @@
     });
     const alertsWeatherInputCount = Number(alertsAudit.weatherInputCount || 0);
     const alertsWeatherPublishedCount = Number(alertsAudit.weatherConditionCount ?? alertsWeatherInputCount) || 0;
+    const selectedContextIdentity = connectorAudit.currentAwarenessIdentity || null;
+    const requestIdentity = connectorAudit.pointRequestIdentity || null;
+    const responseIdentity = connectorAudit.responseIdentity || null;
+    const authorityIdentity = snapshot.authorityIdentity || null;
+    const weatherFamilyIdentity = consumer.weatherFamilyIdentity || null;
+    const alertsWeatherIdentity = alertsWeatherInputCount === currentApplicableCount && alertsWeatherPublishedCount === currentApplicableCount ? weatherFamilyIdentity : null;
+    const selectedRequestAgreement = Boolean(selectedContextIdentity && selectedContextIdentity === requestIdentity);
+    const requestResponseAgreement = Boolean(requestIdentity && requestIdentity === responseIdentity);
+    const responseAuthorityAgreement = Boolean(responseIdentity && responseIdentity === authorityIdentity);
+    const authorityFamilyAgreement = Boolean(authorityIdentity && authorityIdentity === weatherFamilyIdentity);
+    const familyAlertsAgreement = Boolean(weatherFamilyIdentity && weatherFamilyIdentity === alertsWeatherIdentity);
+    const allIdentityLineageAgreement = selectedRequestAgreement && requestResponseAgreement && responseAuthorityAgreement && authorityFamilyAgreement && familyAlertsAgreement;
     const result = {
       available: true,
       auditOnly: true,
@@ -320,6 +332,18 @@
       pointRequestIdentity: connectorAudit.pointRequestIdentity || null,
       currentAwarenessIdentity: connectorAudit.currentAwarenessIdentity || null,
       identityAgreementPass: Boolean(connectorAudit.pointRequestIdentity && connectorAudit.pointRequestIdentity === connectorAudit.currentAwarenessIdentity),
+      selectedContextIdentity,
+      requestIdentity,
+      responseIdentity,
+      authorityIdentity,
+      weatherFamilyIdentity,
+      alertsWeatherIdentity,
+      selectedRequestAgreement,
+      requestResponseAgreement,
+      responseAuthorityAgreement,
+      authorityFamilyAgreement,
+      familyAlertsAgreement,
+      allIdentityLineageAgreement,
       staleResponseSuppressedCount: Number(connectorAudit.staleResponseSuppressedCount || 0),
       canonicalCommunity,
       canonicalPlaceId,
@@ -399,7 +423,7 @@
       presentationCount,
       presentationEmptyState: presentationText || null,
       presentationText: presentationText || null,
-      overallPass: classification.presentationAgreementPass && (connectorAudit.applicabilityMode !== "NWS_POINT_QUERY" || Boolean(connectorAudit.pointRequestIdentity && connectorAudit.pointRequestIdentity === connectorAudit.currentAwarenessIdentity))
+      overallPass: classification.presentationAgreementPass && (connectorAudit.applicabilityMode !== "NWS_POINT_QUERY" || allIdentityLineageAgreement)
     };
     return freeze(result);
   }
