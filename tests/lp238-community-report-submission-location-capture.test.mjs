@@ -17,6 +17,13 @@ function functionSource(name) {
 }
 
 const builderSource = functionSource('gridlyBuildRoadHazardSubmissionLocationPayload');
+const selectorSource = functionSource('gridlySelectHazardRoadNameCandidate');
+const selectRoad = Function('normalizeGridlyUserFacingRoadText', 'gridlyRoundAuditMeters', 'roadwayDatasetLoaded',
+  `${selectorSource}; return gridlySelectHazardRoadNameCandidate;`)(
+  value => String(value || '').replace(/\s+/g, ' ').trim(),
+  value => Number.isFinite(Number(value)) ? Math.round(Number(value) * 10) / 10 : null,
+  false
+);
 const build = Function('safeDisplayText', 'gridlyCoordinateFromRecord', 'gridlyCoordinateDeltaMeters', 'gridlyPickRoadHazardLocationIdentityFields',
   `${builderSource}; return gridlyBuildRoadHazardSubmissionLocationPayload;`)(
   value => String(value || '').trim(),
@@ -129,6 +136,64 @@ test('LP238 adds no coordinate-to-road inference, provider fetch, polling, or to
   const captureContract = builderSource + functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
   assert.doesNotMatch(captureContract, /fetch\(|setTimeout|setInterval|reverse.?geocod|Austin|San Antonio|Corpus Christi/i);
   assert.doesNotMatch(builderSource, /lat.*roadName|lng.*roadName/i);
+});
+
+test('LP238 map placement and GPS invoke one shared snap contract and forward its selected road', () => {
+  const mapPlacement = functionSource('handleHazardPlacementMapClick');
+  const gpsStart = app.indexOf('window.submitHazardNearMe = function');
+  const gpsEnd = app.indexOf('\n};', gpsStart) + 3;
+  const gps = app.slice(gpsStart, gpsEnd);
+  for (const source of [mapPlacement, gps]) {
+    assert.match(source, /await snapHazardToRoad\(.*lat.*lng/s);
+    assert.match(source, /selectedRoadName: snapped\.selectedRoadName/);
+    assert.match(source, /createSharedHazardReport/);
+  }
+});
+
+test('LP238 deterministic authority selects and normalizes the nearest valid named road', () => {
+  const result = selectRoad({
+    localCandidates: [{ roadName: '  South   Congress Avenue ', ref: 'FM 1', distanceFromTapMeters: 12 }],
+    osrmCandidates: [{ name: 'Barton Springs Road', distance: 8 }],
+    searchRadiusMeters: 75,
+    localAuthorityReady: true
+  });
+  assert.equal(result.selectedRoadName, 'Barton Springs Road');
+  assert.equal(result.trace.roadSelectionCandidateCount, 2);
+  assert.equal(result.trace.roadSelectionEligibleCandidateCount, 2);
+  assert.equal(result.trace.roadSelectionNearestCandidateDistance, 8);
+  assert.deepEqual(result.trace.roadSelectionWinningCandidateRawNameFields, { name: 'Barton Springs Road' });
+});
+
+test('LP238 current radius and distance boundary reject distant roads without fabricating unnamed roads', () => {
+  assert.equal(selectRoad({ osrmCandidates: [{ name: 'Boundary Road', distance: 75 }], searchRadiusMeters: 75 }).selectedRoadName, 'Boundary Road');
+  const distant = selectRoad({ osrmCandidates: [{ name: 'Distant Road', distance: 75.1 }], searchRadiusMeters: 75 });
+  assert.equal(distant.selectedRoadName, null);
+  assert.equal(distant.trace.roadSelectionFailureReason, 'NO_VALID_ROAD_NEAR_SUBMISSION');
+  const unnamed = selectRoad({ osrmCandidates: [{ name: '', hint: 'opaque-routing-hint', distance: 2 }], searchRadiusMeters: 75 });
+  assert.equal(unnamed.selectedRoadName, null);
+  assert.equal(unnamed.trace.roadSelectionFailureReason, 'CANDIDATE_NAME_NORMALIZATION_EMPTY');
+  assert.match(functionSource('snapHazardToRoad'), /const snapAttemptRadii = \[75, 150\]/);
+});
+
+test('LP238 distinguishes authority-not-ready, empty authority, and truthful no-nearby-road', () => {
+  assert.equal(selectRoad({ osrmCandidates: null, localAuthorityReady: false }).trace.roadSelectionFailureReason, 'ROAD_AUTHORITY_NOT_READY');
+  assert.equal(selectRoad({ osrmCandidates: [], localAuthorityReady: false }).trace.roadSelectionFailureReason, 'ROAD_CANDIDATE_COLLECTION_EMPTY');
+  assert.equal(selectRoad({ osrmCandidates: [{ name: 'Far Road', distance: 151 }], searchRadiusMeters: 150 }).trace.roadSelectionFailureReason, 'NO_VALID_ROAD_NEAR_SUBMISSION');
+});
+
+test('LP238 road selection uses existing deterministic sources and no added provider behavior', () => {
+  assert.match(selectorSource, /active roadwaySegmentFeatures/);
+  assert.match(selectorSource, /OSRM_NEAREST_API\.waypoints/);
+  assert.doesNotMatch(selectorSource, /fetch\(|setTimeout|setInterval|reverse.?geocod|Austin/i);
+  const snap = functionSource('snapHazardToRoad');
+  assert.match(snap, /gridlyGeometryAwarePlacementDecision/);
+  assert.match(snap, /gridlySelectHazardRoadNameCandidate/);
+  assert.equal((snap.match(/fetch\(/g) || []).length, 1);
+});
+
+test('LP238 audit publishes bounded road-selection pass and failure semantics', () => {
+  const audit = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
+  for (const field of ['roadSelectionAttempted', 'roadSelectionAuthorityAvailable', 'roadSelectionAuthorityName', 'roadSelectionCandidateCount', 'roadSelectionEligibleCandidateCount', 'roadSelectionSearchRadius', 'roadSelectionNearestCandidateDistance', 'roadSelectionWinningCandidateFound', 'roadSelectionWinningCandidateName', 'roadSelectionSelectedRoadName', 'roadSelectionFailureReason', 'roadSelectionPass', 'NO_VALID_ROAD_NEAR_SUBMISSION', 'ROAD_SELECTION_PIPELINE_FAILURE']) assert.match(audit, new RegExp(field));
 });
 
 test('LP238 freezes lifecycle identity, Show me, official roadways, weather and multi-county ownership', () => {
