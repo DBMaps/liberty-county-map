@@ -115710,6 +115710,52 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.gridlyLP236AlertsInformationArchitectureAudit = gridlyLP236AlertsInformationArchitectureAudit;
   if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP236AlertsInformationArchitectureAudit", gridlyLP236AlertsInformationArchitectureAudit);
 
+  // LP240.2 audit-only projection. This reads the already-built LP236 model;
+  // it does not rebuild, sort, group, mount, or change disclosure state.
+  function gridlyLP240AlertsStackAudit() {
+    const model = gridlyLP236AlertsState.model;
+    if (!model) return { available: false, message: "Open Alerts before running the LP240.2 stack audit.", sources: [] };
+    const sources = model.sections.map((source) => ({
+      sourceClass: source.sourceClass,
+      sourceLabel: source.label,
+      sourceCount: source.activeConditionCount,
+      authorityState: source.authorityState,
+      disclosureKey: source.authorityState === "ACTIVE" ? source.sourceClass : null,
+      groups: source.groups.map((group) => {
+        const groupKey = `${source.sourceClass}:${group.conditionType}`;
+        const condition = (row, roadDisclosureKey = null) => {
+          const target = gridlyLP236MapTarget(row.alert, gridlyLp0952ResolveCrossingAlertTarget(row.alert, null), row.canonicalId);
+          return {
+            conditionId: row.canonicalId,
+            providerId: pickFirstNonEmptyText([row.alert?.providerRecordId, row.alert?.providerId, row.alert?.incidentId, row.alert?.reportId, row.alert?.id]) || null,
+            title: gridlyLP236ConciseCondition(row.alert, source.sourceClass),
+            road: row.roadway || null,
+            type: group.conditionType,
+            disclosureKey: null,
+            parentRoadDisclosureKey: roadDisclosureKey,
+            showMeTargetAvailable: Number.isFinite(target.lat) && Number.isFinite(target.lng)
+          };
+        };
+        const roadGroups = group.roadwayGroups.map((road) => {
+          const disclosureKey = `${groupKey}:${road.roadway.toLocaleLowerCase()}`;
+          return { roadKey: road.roadway.toLocaleLowerCase(), roadLabel: road.roadway, roadCount: road.rows.length, disclosureKey, conditions: road.rows.map((row) => condition(row, disclosureKey)) };
+        });
+        return { groupKey: group.conditionType, groupLabel: group.label, groupCount: group.rows.length, disclosureKey: groupKey, roadGroups, conditions: group.directRows.map((row) => condition(row)) };
+      })
+    }));
+    const conditions = sources.flatMap((source) => source.groups.flatMap((group) => [...group.conditions, ...group.roadGroups.flatMap((road) => road.conditions)]));
+    return {
+      available: true,
+      totalCount: model.total,
+      sourceOrder: sources.map((source) => source.sourceClass),
+      sources,
+      conditionIds: conditions.map((row) => row.conditionId),
+      duplicateConditionIds: [...new Set(conditions.map((row) => row.conditionId).filter((id, index, ids) => ids.indexOf(id) !== index))]
+    };
+  }
+  window.gridlyLP240AlertsStackAudit = gridlyLP240AlertsStackAudit;
+  if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP240AlertsStackAudit", gridlyLP240AlertsStackAudit);
+
   function gridlyLP236RenderAlertsPresentation(snapshot, suppliedAlerts = null) {
     const snapshotAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
     const alerts = Array.isArray(suppliedAlerts) ? suppliedAlerts : (typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
