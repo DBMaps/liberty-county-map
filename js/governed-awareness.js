@@ -224,6 +224,26 @@
     if (sourceKind === "community_report" && subtype === "blocked_crossing") return BLOCKED_CROSSING_OWNERS[surface] || "none";
     return "governed_awareness";
   }
+  const LOCATION_FIELDS = Object.freeze([
+    "roadName", "routeName", "street", "streetName", "primaryRoad", "nearestRoad",
+    "crossStreet", "referenceRoadA", "locationName", "location", "resolvedLocation"
+  ]);
+  const LOCATION_CONTAINERS = Object.freeze(["structuredMetadata", "gridlyStructuredMetadata", "canonicalRoadContext"]);
+  // Governed evidence is also the authority handed to consumer projections.
+  // Preserve already-normalized location facts at that boundary; do not derive
+  // geography, rewrite identity, or create a second location authority.
+  function governedLocationEvidence(record = {}) {
+    const projection = {};
+    for (const field of LOCATION_FIELDS) {
+      const value = text(record[field]);
+      if (value) projection[field] = value;
+    }
+    for (const field of LOCATION_CONTAINERS) {
+      const value = record[field];
+      if (value && typeof value === "object") projection[field] = value;
+    }
+    return Object.freeze(projection);
+  }
   function buildSnapshot(input = {}) {
     const nowMs = Number.isFinite(Number(input.nowMs)) ? Number(input.nowMs) : Date.now();
     const generation = Number(input.evidenceGeneration ?? input.transitionGeneration ?? 0) || 0;
@@ -265,8 +285,10 @@
       const eligible = Object.fromEntries(SURFACES.map((surface) => [surface, geographicEligible && policy[surface] === true && (surface === "history" ? lifecycleState.retainedForHistory : lifecycleState.active)]));
       const aliasCandidates = communityHazardAliasCandidates(record, sourceKind, subtype);
       const published = Object.fromEntries(SURFACES.map((surface) => [surface, aliasCandidates.some((candidate) => actualSets[surface].has(candidate))]));
+      const locationEvidence = governedLocationEvidence(record);
       evidence.push(Object.freeze({
         evidenceId, sourceKind, sourceId: text(record.sourceId || record.provider || record.source), subtype,
+        ...locationEvidence,
         persistedReportId: alias?.persistedReportId || persistedReportId(record) || null,
         providerRecordId: alias?.providerRecordId || crossingProviderId(record) || null,
         crossingFraIdentity: alias?.crossingFraIdentity || null,
@@ -349,7 +371,13 @@
     }).filter(([id]) => id));
     const surfaces = Object.freeze(Object.fromEntries(SURFACES.map((surface) => [surface, Object.freeze(snapshot.evidence
       .filter((row) => row.eligible[surface] === true)
-      .map((row) => Object.freeze({ evidenceId: row.evidenceId, sourceKind: row.sourceKind, subtype: row.subtype, record: byId.get(row.evidenceId) })))])));
+      .map((row) => {
+        const record = byId.get(row.evidenceId);
+        return Object.freeze({
+          evidenceId: row.evidenceId, sourceKind: row.sourceKind, subtype: row.subtype,
+          record: Object.freeze({ ...record, governedEvidence: governedLocationEvidence(row) })
+        });
+      }))])));
     const lineage = Object.freeze(snapshot.evidence.map((row) => Object.freeze({
       evidenceId: row.evidenceId, deduplicationIdentity: row.evidenceId,
       governedEvidenceId: row.evidenceId, persistedReportId: row.persistedReportId,
@@ -601,5 +629,5 @@
         || hazardCountyAuthority.find((row) => row.lifecycleFirstLosingStage)?.lifecycleFirstLosingStage || null
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, buildCommunityHazardAcceptanceAudit, isGovernedActiveLifecycle, identity, communityHazardAliasCandidates, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases });
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, buildCommunityHazardAcceptanceAudit, isGovernedActiveLifecycle, identity, communityHazardAliasCandidates, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases, governedLocationEvidence });
 });

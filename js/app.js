@@ -123328,9 +123328,13 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
     const ids = [row?.id, row?.persistedReportId, row?.canonicalReportIdentity, row?.canonicalReportId, row?.submittedReportId, row?.providerRecordId, row?.crossingId, row?.crossing_id].map(clean);
     return submissionId && ids.includes(submissionId);
   }) || null;
-  // Governed evidence intentionally contains identity/policy, not a duplicate
-  // location payload. Join its exact alias to the authoritative normalized row.
-  const governedRoad = governed ? roadOf(normalizedHazard) : "";
+  const normalizedRoad = roadOf(normalizedHazard);
+  const activeHazardRoad = normalizedRoad;
+  const governedRoad = roadOf(governed);
+  const alertsRecord = governed && normalizedHazard
+    ? gridlyProjectAlertIncidentLocation({ ...normalizedHazard, governedEvidence: governed }) : null;
+  const alertsRoad = roadOf(alertsRecord);
+  const lp236Location = alertsRecord ? gridlyResolveCommunityTravelerLocation(alertsRecord) : { value: "", authority: "unavailable" };
   const roadSelection = state.roadSelectionTrace || {};
   const roadSelectionFailureReason = clean(roadSelection.roadSelectionFailureReason) || null;
   const roadSelectionPipelineFailure = Boolean(roadSelection.roadSelectionAttempted && !roadSelection.roadSelectionWinningCandidateFound
@@ -123365,7 +123369,10 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
       selectedRoadAuthority: structuredRoadAuthorityAvailable ? (state.selectedRoadAuthority || "selected_road") : "NO_STRUCTURED_ROAD_AUTHORITY",
       crossStreet: state.crossStreet || null, resolvedLocation: state.resolvedLocation || null,
       payloadRoadValue: payloadRoad || null, acceptedLocalRoadValue: acceptedLocalRoad || null,
-      persistedRoadValue: persistedRoad || null, governedRoadValue: governedRoad || null,
+      persistedRoadValue: persistedRoad || null, normalizedRoadValue: normalizedRoad || null,
+      activeHazardRoadValue: activeHazardRoad || null, governedRoadValue: governedRoad || null,
+      alertsRoadValue: alertsRoad || null, lp236SelectedLocationValue: lp236Location.value || null,
+      lp236SelectedLocationAuthority: lp236Location.authority || null,
       firstLocationLosingStage,
       ...roadSelection
     }),
@@ -123382,6 +123389,10 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
     roadSelectionFailureReason,
     roadSelectionOutcome: roadSelectionPipelineFailure ? "ROAD_SELECTION_PIPELINE_FAILURE" : (roadSelectionFailureReason || "ROAD_SELECTED"),
     roadSelectionPass,
+    persistedRoadValue: persistedRoad || null, normalizedRoadValue: normalizedRoad || null,
+    activeHazardRoadValue: activeHazardRoad || null, governedRoadValue: governedRoad || null,
+    alertsRoadValue: alertsRoad || null, lp236SelectedLocationValue: lp236Location.value || null,
+    lp236SelectedLocationAuthority: lp236Location.authority || null, firstLocationLosingStage,
     submissionLocationCapturePass, persistenceLocationPass, governedLocationPass,
     overallPass: contextAlignmentPass !== false && roadSelectionPass !== false && submissionLocationCapturePass && persistenceLocationPass && governedLocationPass,
     status: structuredRoadAuthorityAvailable ? "STRUCTURED_ROAD_AUTHORITY_CAPTURED" : "NO_STRUCTURED_ROAD_AUTHORITY",

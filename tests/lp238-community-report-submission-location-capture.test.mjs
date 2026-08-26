@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const app = fs.readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
+const governedModule = await import('../js/governed-awareness.js');
+const governedApi = governedModule.default || globalThis.GridlyGovernedAwareness;
 
 function functionSource(name) {
   const start = app.indexOf(`function ${name}(`);
@@ -98,9 +100,51 @@ test('LP238 governed evidence, Alerts and LP236 retain road-over-resolved priori
   assert.ok(resolver.indexOf('"governed_resolved_location"') < resolver.indexOf('"county_fallback"'));
 });
 
+for (const [label, type] of [
+  ['debris', 'debris'],
+  ['flooding', 'flooding'],
+  ['road closed', 'road_closed'],
+  ['blocked crossing', 'blocked']
+]) {
+  test(`LP238.4 ${label} street survives active hazard, governed evidence and Alerts projection`, () => {
+    const id = `hazard-device-lp2384-${type}`;
+    const activeHazard = {
+      id, persistedReportId: id, source: 'user', reportKind: 'hazard', type,
+      roadName: 'San Antonio Street', resolvedLocation: '2 miles south of Austin',
+      structuredMetadata: { roadName: 'San Antonio Street' },
+      gridlyStructuredMetadata: { roadName: 'San Antonio Street' },
+      canonicalRoadContext: { primaryRoad: 'San Antonio Street', roadContextAvailable: true }
+    };
+    const projection = governedApi.buildConsumerProjection({ records: [activeHazard], nowMs: Date.now() });
+    assert.equal(projection.lineage.length, 1, 'canonical identity is not duplicated');
+    const evidence = governedApi.buildSnapshot({ records: [activeHazard], nowMs: Date.now() }).evidence[0];
+    assert.equal(evidence.persistedReportId, id);
+    assert.equal(evidence.roadName, 'San Antonio Street');
+    assert.equal(evidence.structuredMetadata.roadName, 'San Antonio Street');
+    assert.equal(evidence.gridlyStructuredMetadata.roadName, 'San Antonio Street');
+    assert.equal(evidence.canonicalRoadContext.primaryRoad, 'San Antonio Street');
+    const alert = projection.surfaces.alerts[0];
+    assert.equal(alert.evidenceId, `active_hazard:${id}`);
+    assert.equal(alert.record.roadName, 'San Antonio Street');
+    assert.equal(alert.record.governedEvidence.roadName, 'San Antonio Street');
+    assert.equal(alert.record.resolvedLocation, '2 miles south of Austin');
+  });
+}
+
+test('LP238.4 governed location projection is bounded and leaves identity, county and source ownership unchanged', () => {
+  const record = { id: 'fixture-id', source: 'user', reportKind: 'hazard', type: 'debris', countyId: 'travis-tx', roadName: 'Named Road', resolvedLocation: 'provider phrase' };
+  const projected = governedApi.buildConsumerProjection({ records: [record] }).surfaces.alerts[0];
+  assert.equal(projected.evidenceId, 'active_hazard:fixture-id');
+  assert.equal(projected.record.id, 'fixture-id');
+  assert.equal(projected.record.countyId, 'travis-tx');
+  assert.equal(projected.record.source, 'user');
+  assert.equal(projected.record.governedEvidence.roadName, 'Named Road');
+  assert.deepEqual(Object.keys(projected.record.governedEvidence).sort(), ['resolvedLocation', 'roadName']);
+});
+
 test('LP238 audit is bounded, passive and fail-closed at every location boundary', () => {
   const audit = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
-  for (const field of ['authorityAvailable', 'authorityReason', 'canonicalCommunityAuthority', 'selectedMembershipCounty', 'selectedMembershipAuthority', 'authoritativeMembershipCounty', 'authoritativeMembershipAuthority', 'activeCountyAuthority', 'contextAlignmentPass', 'structuredRoadAuthorityAvailable', 'payloadRoadValue', 'acceptedLocalRoadValue', 'persistedRoadValue', 'governedRoadValue', 'firstLocationLosingStage', 'submissionLocationCapturePass', 'persistenceLocationPass', 'governedLocationPass', 'overallPass', 'NO_STRUCTURED_ROAD_AUTHORITY']) assert.match(audit, new RegExp(field));
+  for (const field of ['authorityAvailable', 'authorityReason', 'canonicalCommunityAuthority', 'selectedMembershipCounty', 'selectedMembershipAuthority', 'authoritativeMembershipCounty', 'authoritativeMembershipAuthority', 'activeCountyAuthority', 'contextAlignmentPass', 'structuredRoadAuthorityAvailable', 'payloadRoadValue', 'acceptedLocalRoadValue', 'persistedRoadValue', 'normalizedRoadValue', 'activeHazardRoadValue', 'governedRoadValue', 'alertsRoadValue', 'lp236SelectedLocationValue', 'lp236SelectedLocationAuthority', 'firstLocationLosingStage', 'submissionLocationCapturePass', 'persistenceLocationPass', 'governedLocationPass', 'overallPass', 'NO_STRUCTURED_ROAD_AUTHORITY']) assert.match(audit, new RegExp(field));
   assert.doesNotMatch(audit, /fetch\(|setTimeout|setInterval|reverse.?geocod/i);
 });
 
