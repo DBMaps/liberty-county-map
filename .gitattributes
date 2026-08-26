@@ -9,6 +9,9 @@ reports/lp151/*.json text eol=lf
 # Governed generated LP JSON and Markdown reports must be byte-stable on every platform.
 reports/lp*/**/*.json text eol=lf
 reports/lp*/**/*.md text eol=lf
+# LP239 CSV certification artifacts are canonical LF; verifiers tolerate CRLF checkouts.
+reports/lp239-statewide/statewide-place-membership-certification.csv text eol=lf
+reports/lp239-crossing-statewide/statewide-crossing-certification.csv text eol=lf
 
 # Other governed generated JSON reports must be byte-stable on every platform.
 reports/*.json text eol=lf

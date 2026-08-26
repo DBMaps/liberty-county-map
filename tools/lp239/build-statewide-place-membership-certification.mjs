@@ -4,6 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { countyRegistryRange } from '../../scripts/lp189-statewide-runtime-activation-guarded.mjs';
+import { canonicalizeCsvNewlines, lp239ArtifactMatches } from './csv-artifact-newlines.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
@@ -114,7 +115,7 @@ function loadInputs() {
 }
 
 function csvCell(value) { const text = Array.isArray(value) ? value.join('|') : String(value ?? ''); return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text; }
-function renderCsv(rows) { const fields = Object.keys(rows[0] || {}); return `${fields.join(',')}\n${rows.map(row => fields.map(field => csvCell(row[field])).join(',')).join('\n')}\n`; }
+export function renderCsv(rows) { const fields = Object.keys(rows[0] || {}); return canonicalizeCsvNewlines(`${fields.join(',')}\n${rows.map(row => fields.map(field => csvCell(row[field])).join(',')).join('\n')}\n`); }
 function renderMarkdown(result) {
   const s = result.summary;
   return `# LP239.2 Statewide Canonical PLACE Membership Certification\n\nGenerated deterministically from the exact statewide canonical PLACE projection and governed county FIPS authority. No registry data was modified.\n\n## Summary\n\n| Metric | Total |\n|---|---:|\n${Object.entries(s).map(([key, value]) => `| ${key} | ${value} |`).join('\n')}\n\n## Failure ledger\n\n${result.failures.length ? result.failures.map(row => `- ${row.canonicalCommunity} (${row.canonicalPlaceId}): ${row.failureClass}`).join('\n') : 'Empty — every authoritative membership row passed.'}\n`;
@@ -132,7 +133,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     ['failure-ledger.json', `${JSON.stringify(result.failures, null, 2)}\n`]
   ]);
   if (process.argv.includes('--write')) { fs.mkdirSync(dir, { recursive: true }); for (const [name, value] of outputs) fs.writeFileSync(path.join(dir, name), value); }
-  else { for (const [name, value] of outputs) if (!fs.existsSync(path.join(dir, name)) || fs.readFileSync(path.join(dir, name), 'utf8') !== value) throw new Error(`LP239.2 artifact missing or stale: ${name}`); }
+  else { for (const [name, value] of outputs) {
+    const file = path.join(dir, name);
+    const matches = fs.existsSync(file) && lp239ArtifactMatches(name, fs.readFileSync(file, 'utf8'), value);
+    if (!matches) throw new Error(`LP239.2 artifact missing or stale: ${name}`);
+  } }
   if (!result.summary.overallPass) throw new Error(`LP239.2 authoritative registry certification failed for ${result.failures.length} PLACE(s); stop before registry edits`);
   console.log(`LP239.2 ${process.argv.includes('--write') ? 'build' : 'verify'} PASS: ${result.summary.canonicalPlaceCount} PLACEs, ${result.summary.totalMembershipCount} memberships, ${result.summary.operationalProjectionThinnerPlaceCount} thinner operational projections`);
 }

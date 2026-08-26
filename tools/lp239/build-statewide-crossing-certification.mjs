@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { canonicalizeCsvNewlines, lp239ArtifactMatches } from './csv-artifact-newlines.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
@@ -88,7 +89,7 @@ async function loadInputs() {
 }
 
 function csvCell(value) { const text = Array.isArray(value) ? value.join('|') : String(value ?? ''); return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text; }
-function renderCsv(rows) { const fields = Object.keys(rows[0] || {}).filter(key => !['unexpectedCrossingCountyIds', 'identityMismatch'].includes(key)); return `${fields.join(',')}\n${rows.map(row => fields.map(field => csvCell(row[field])).join(',')).join('\n')}\n`; }
+export function renderCsv(rows) { const fields = Object.keys(rows[0] || {}).filter(key => !['unexpectedCrossingCountyIds', 'identityMismatch'].includes(key)); return canonicalizeCsvNewlines(`${fields.join(',')}\n${rows.map(row => fields.map(field => csvCell(row[field])).join(',')).join('\n')}\n`); }
 function renderMarkdown(result) { return `# LP239.6 Statewide Canonical Crossing Authority Parity Certification\n\nDeterministically audits the LP239.2 registry through \`gridlyCanonicalCrossingRuntime.resolveRecords({ placeGeoid })\`. No production behavior was changed.\n\n## Summary\n\n| Metric | Total |\n|---|---:|\n${Object.entries(result.summary).map(([key, value]) => `| ${key} | ${value} |`).join('\n')}\n\n## Beaumont control\n\n${JSON.stringify(result.rows.find(row => row.canonicalPlaceId === '4807000'))}\n\n## Failure ledger\n\n${result.failures.length ? result.failures.map(row => `- ${row.canonicalCommunity} (${row.canonicalPlaceId}): ${row.failureClass}`).join('\n') : 'Empty — all canonical PLACE crossing authority rows passed.'}\n`; }
 export async function buildCertification() { return certifyCrossingAuthority(await loadInputs()); }
 
@@ -96,7 +97,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const result = await buildCertification(); const dir = path.join(root, 'reports/lp239-crossing-statewide');
   const outputs = new Map([['statewide-crossing-certification.json', `${JSON.stringify({ schemaVersion: 'gridly.lp239.6.statewide-crossing-certification.v1', generatedAt: '1970-01-01T00:00:00.000Z', ...result }, null, 2)}\n`], ['statewide-crossing-certification.csv', renderCsv(result.rows)], ['README.md', renderMarkdown(result)], ['failure-ledger.json', `${JSON.stringify(result.failures, null, 2)}\n`]]);
   if (process.argv.includes('--write')) { fs.mkdirSync(dir, { recursive: true }); for (const [name, value] of outputs) fs.writeFileSync(path.join(dir, name), value); }
-  else for (const [name, value] of outputs) if (!fs.existsSync(path.join(dir, name)) || fs.readFileSync(path.join(dir, name), 'utf8') !== value) throw new Error(`LP239.6 artifact missing or stale: ${name}`);
+  else for (const [name, value] of outputs) {
+    const file = path.join(dir, name);
+    const matches = fs.existsSync(file) && lp239ArtifactMatches(name, fs.readFileSync(file, 'utf8'), value);
+    if (!matches) throw new Error(`LP239.6 artifact missing or stale: ${name}`);
+  }
   if (!result.summary.overallPass) throw new Error(`LP239.6 certification failed for ${result.failures.length} PLACE(s); inspect failure ledger before production changes`);
   console.log(`LP239.6 ${process.argv.includes('--write') ? 'build' : 'verify'} PASS: ${result.summary.canonicalPlaceCount} PLACEs, ${result.summary.totalCanonicalCrossingIdentityCount} canonical crossings`);
 }
