@@ -98,3 +98,47 @@ test("CASE I - false unavailable presentation fails for QUIET", () => {
   assert.equal(result.weatherAuthorityState, "QUIET");
   assert.equal(result.presentationAgreementPass, false);
 });
+
+const { evaluatePlaceAlertGeography } = require("../js/gridlyLP240WeatherAuthorityAudit.js");
+const square = (x, y, size = 2) => ({ type: "Polygon", coordinates: [[[x,y],[x+size,y],[x+size,y+size],[x,y+size],[x,y]]] });
+const place = square(0, 0);
+
+test("geography CASE A - alert Polygon intersects PLACE", () => {
+  assert.deepEqual(evaluatePlaceAlertGeography({ placeGeometry: place, alerts: [{ id: "A", geometry: square(1, 1) }] }).applicableAlertIds, ["A"]);
+});
+test("geography CASE B - disjoint Polygon proves not applicable", () => {
+  const result = evaluatePlaceAlertGeography({ placeGeometry: place, alerts: [{ id: "B", geometry: square(5, 5) }] });
+  assert.equal(result.placeAlertIntersectionCount, 1); assert.deepEqual(result.applicableAlertIds, []); assert.deepEqual(result.unresolvedAlertIds, []);
+});
+test("geography CASE C - MultiPolygon intersects PLACE", () => {
+  const geometry = { type: "MultiPolygon", coordinates: [square(5,5).coordinates, square(1,1).coordinates] };
+  assert.deepEqual(evaluatePlaceAlertGeography({ placeGeometry: place, alerts: [{ id: "C", geometry }] }).applicableAlertIds, ["C"]);
+});
+test("geography CASE D - null geometry uses resolvable affected zone", () => {
+  assert.deepEqual(evaluatePlaceAlertGeography({ placeGeometry: place, alerts: [{ id: "D", geometry: null, affectedZones: ["TXZ001"] }], zoneGeometries: { TXZ001: square(1,1) } }).applicableAlertIds, ["D"]);
+});
+test("geography CASE E - unresolved zones leave applicability unavailable", () => {
+  assert.deepEqual(evaluatePlaceAlertGeography({ placeGeometry: place, alerts: [{ id: "E", affectedZones: ["TXZ404"] }] }).unresolvedAlertIds, ["E"]);
+});
+test("geography CASE F - free-text locality is not authoritative", () => {
+  assert.deepEqual(evaluatePlaceAlertGeography({ placeGeometry: place, alerts: [{ id: "F", areaDesc: "Dayton" }] }).unresolvedAlertIds, ["F"]);
+});
+test("geography CASE G - centroid/radius is not authoritative", () => {
+  assert.deepEqual(evaluatePlaceAlertGeography({ placeGeometry: place, alerts: [{ id: "G", latitude: 1, longitude: 1, radiusMiles: 7 }] }).unresolvedAlertIds, ["G"]);
+});
+test("geography CASE H - county text does not activate a disjoint PLACE", () => {
+  const result = evaluatePlaceAlertGeography({ placeGeometry: place, alerts: [{ id: "H", county: "Liberty", geometry: square(20,20) }] });
+  assert.equal(result.placeAlertIntersectionCount, 1); assert.deepEqual(result.applicableAlertIds, []);
+});
+test("geography CASE I - full multi-county PLACE geometry is not truncated by selected membership", () => {
+  const multiCountyPlace = { type: "MultiPolygon", coordinates: [square(0,0).coordinates, square(10,10).coordinates] };
+  const result = evaluatePlaceAlertGeography({ placeGeometry: multiCountyPlace, selectedGovernedMembership: "county-a", alerts: [{ id: "I", geometry: square(11,11) }] });
+  assert.deepEqual(result.applicableAlertIds, ["I"]);
+});
+
+test("provider retains bounded NWS geography audit metadata without exposing raw geometry", () => {
+  const provider = require("../js/gridlyWeatherProvider.js");
+  const [record] = provider.normalizeRecords({ features: [{ id: "nws-1", geometry: square(0,0), properties: { event: "Tornado Warning", affectedZones: ["https://api.weather.gov/zones/forecast/TXZ001"] } }] });
+  assert.deepEqual(record.geographyAudit, { geometryType: "Polygon", affectedZones: ["https://api.weather.gov/zones/forecast/TXZ001"] });
+  assert.equal(record.geometry, undefined);
+});
