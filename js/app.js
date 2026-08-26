@@ -46674,6 +46674,9 @@ function invalidateGridlySelectedAwarenessAreaResolutionCache(reason = "unknown"
   if (/saveGridlyHomeTownPreference|settings_awareness_area|legacy_settings_awareness_area/i.test(String(reason || "")) && typeof gridlyLp016RecordAwarenessSwitchEvent === "function") {
     gridlyLp016RecordAwarenessSwitchEvent("selectionChanged", { fromArea: gridlyLp016AwarenessAreaLabel(gridlySelectedAwarenessAreaResolutionCache.area), toArea: null });
   }
+  if (/saveGridlyHomeTownPreference|settings_awareness_area|legacy_settings_awareness_area/i.test(String(reason || "")) && typeof gridlyLP238ResetSubmissionCapture === "function") {
+    gridlyLP238ResetSubmissionCapture(`canonical_community_selection:${String(reason || "unknown")}`);
+  }
   gridlySelectedAwarenessAreaResolutionCache.signature = "";
   gridlySelectedAwarenessAreaResolutionCache.area = null;
   gridlySelectedAwarenessAreaResolutionCache.invalidations += 1;
@@ -85522,7 +85525,54 @@ const gridlyReportSubmissionOwnershipState = {
 const gridlyLocalAcceptedHazardRegistrations = new Map();
 // LP238 observes only values already owned by the submission workflow. It is
 // intentionally a single bounded last-submission record, not a second store.
-let gridlyLP238LastSubmissionLocation = null;
+// Window ownership deliberately survives non-navigation script generation changes.
+// This fixes LP238.2's split authority: the writer used a generation-local `let`
+// while the owner audit could be replaced independently and consequently read a
+// newly initialized null capture after a successful report was already visible.
+const gridlyLP238SubmissionCaptureAuthority = (() => {
+  const existing = typeof window !== "undefined" && window.__gridlyLP238SubmissionCaptureAuthority;
+  if (existing && typeof existing === "object") return existing;
+  const authority = { lastSubmission: null, successfulSubmissionObserved: false, lastResetReason: "page_load", writeReached: false };
+  if (typeof window !== "undefined") window.__gridlyLP238SubmissionCaptureAuthority = authority;
+  return authority;
+})();
+
+function gridlyLP238BoundedRoadSelectionTrace(source = {}) {
+  const numberOrNull = (value) => Number.isFinite(Number(value)) ? Number(value) : null;
+  return Object.freeze({
+    roadSelectionAttempted: Boolean(source.roadSelectionAttempted),
+    roadSelectionAuthorityAvailable: Boolean(source.roadSelectionAuthorityAvailable),
+    roadSelectionAuthorityName: source.roadSelectionAuthorityName || null,
+    roadSelectionCandidateCount: numberOrNull(source.roadSelectionCandidateCount),
+    roadSelectionEligibleCandidateCount: numberOrNull(source.roadSelectionEligibleCandidateCount),
+    roadSelectionSearchRadius: numberOrNull(source.roadSelectionSearchRadius),
+    roadSelectionNearestCandidateDistance: numberOrNull(source.roadSelectionNearestCandidateDistance),
+    roadSelectionWinningCandidateFound: Boolean(source.roadSelectionWinningCandidateFound),
+    roadSelectionWinningCandidateName: source.roadSelectionWinningCandidateName || null,
+    roadSelectionSelectedRoadName: source.roadSelectionSelectedRoadName || null,
+    roadSelectionFailureReason: source.roadSelectionFailureReason || null
+  });
+}
+
+function gridlyLP238WriteSubmissionCapture(snapshot = {}) {
+  gridlyLP238SubmissionCaptureAuthority.writeReached = true;
+  gridlyLP238SubmissionCaptureAuthority.lastSubmission = Object.freeze({ ...snapshot });
+  return gridlyLP238SubmissionCaptureAuthority.lastSubmission;
+}
+
+function gridlyLP238PatchSubmissionCapture(patch = {}) {
+  if (!gridlyLP238SubmissionCaptureAuthority.lastSubmission) return null;
+  return gridlyLP238WriteSubmissionCapture({ ...gridlyLP238SubmissionCaptureAuthority.lastSubmission, ...patch });
+}
+
+function gridlyLP238ResetSubmissionCapture(reason = "explicit_diagnostic_reset") {
+  gridlyLP238SubmissionCaptureAuthority.lastSubmission = null;
+  gridlyLP238SubmissionCaptureAuthority.successfulSubmissionObserved = false;
+  gridlyLP238SubmissionCaptureAuthority.writeReached = false;
+  gridlyLP238SubmissionCaptureAuthority.lastResetReason = String(reason || "explicit_diagnostic_reset");
+  return true;
+}
+if (typeof window !== "undefined") window.gridlyLP238ResetCommunityReportSubmissionLocationAudit = gridlyLP238ResetSubmissionCapture;
 const gridlyLocalAcceptedCrossingRegistrations = new Map();
 
 function gridlyCanonicalReportIdForRecord(record = {}, fallback = "") {
@@ -86639,22 +86689,22 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     appendOtherHazardStructuredMetadata(baseDetail, normalizedOtherSubtype),
     detailLocationMetadata
   );
-  gridlyLP238LastSubmissionLocation = {
+  gridlyLP238WriteSubmissionCapture({
     submissionId: null,
     hazardType,
     canonicalCommunitySource: "gridlyGetReportSubmissionCommunityMetadata.communityName",
     canonicalCommunityValue: detailLocationMetadata.communityName || null,
     activeCountySource: "gridlyGetReportSubmissionCountyScopedMetadata.county_id",
     activeCountyValue: countyScopedReportMetadata.county_id,
-    roadSelectionTrace: { ...lastRoadSnapDebug },
+    roadSelectionTrace: gridlyLP238BoundedRoadSelectionTrace(lastRoadSnapDebug),
     selectedRoadValue: locationPayload.roadName || locationPayload.primaryRoad || locationPayload.crossStreet || locationPayload.referenceRoadA || null,
     selectedRoadAuthority: locationPayloadResult.audit?.selectedRoadAuthority || "NO_STRUCTURED_ROAD_AUTHORITY",
     crossStreet: locationPayload.crossStreet || null,
     resolvedLocation: detailLocationMetadata.resolvedLocation || detailLocationMetadata.resolvedLocationLabel || detailLocationMetadata.canonicalDisplayLocation || null,
-    submissionPayload: { ...locationPayload },
-    persistencePayload: null,
-    acceptedLocal: null
-  };
+    payloadRoadValue: locationPayload.roadName || locationPayload.primaryRoad || locationPayload.crossStreet || locationPayload.referenceRoadA || null,
+    persistedRoadValue: null,
+    acceptedLocalRoadValue: null
+  });
   if (confidence === "tap map placement" && options?.lp034ReportTapMapInteractionId) {
     gridlyLp034CaptureReportTapMapObservation({
       observationType: "report_tap_map_structured_metadata_created",
@@ -86741,8 +86791,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   gridlyHazardPropagationTimingState.lastFingerprint = gridlyHazardPropagationFingerprint(row);
   gridlyRecordReportSubmissionOwnershipAttempt(row, "hazard");
   const reportInsertRow = gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS);
-  gridlyLP238LastSubmissionLocation.submissionId = row.crossing_id;
-  gridlyLP238LastSubmissionLocation.persistencePayload = { ...row };
+  gridlyLP238PatchSubmissionCapture({ submissionId: row.crossing_id });
   lastGridlyRoadHazardSubmitShapeAudit = gridlyBuildRoadHazardSubmitShapeAudit(reportInsertRow, reportInsertRow);
   const localPreviewLocationPayload = { ...detailLocationMetadata };
   const localRow = normalizedOtherSubtype
@@ -86782,6 +86831,9 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     );
 
     if (error) throw error;
+
+    gridlyLP238SubmissionCaptureAuthority.successfulSubmissionObserved = true;
+    gridlyLP238PatchSubmissionCapture({ persistedRoadValue: locationPayload.roadName || locationPayload.primaryRoad || locationPayload.crossStreet || locationPayload.referenceRoadA || null });
 
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
     markSubmitStage("supabase_insert_succeeded");
@@ -86833,7 +86885,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
         report: localHazardEntry
       });
       gridlyRegisterAcceptedLocalHazard(localHazardEntry, row.crossing_id);
-      gridlyLP238LastSubmissionLocation.acceptedLocal = { ...localHazardEntry };
+      gridlyLP238PatchSubmissionCapture({ acceptedLocalRoadValue: locationPayload.roadName || locationPayload.primaryRoad || locationPayload.crossStreet || locationPayload.referenceRoadA || null });
       applyGridlyCanonicalRoadHazardDisplayLocation(localHazardEntry, { submittedCoordinate: { lat, lng } });
       activeHazards = [localHazardEntry, ...activeHazards.filter((hazard) => gridlyCanonicalReportIdForRecord(hazard) !== gridlyCanonicalReportIdForRecord(localHazardEntry))];
       gridlyRecordReportSubmissionOwnershipAccepted(localHazardEntry, "hazard");
@@ -123231,7 +123283,9 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
     ? (Object.prototype.hasOwnProperty.call(options, "authoritativeMembershipCounty") ? "options.authoritativeMembershipCounty" : selectedMembershipAuthority) : null;
   const activeCounty = clean(governedSnapshot?.countyId) || null;
   const activeCountyAuthority = activeCounty ? "gridlyGovernedAwarenessAudit.countyId" : null;
-  const state = Object.prototype.hasOwnProperty.call(options, "lastSubmission") ? options.lastSubmission : gridlyLP238LastSubmissionLocation;
+  const state = Object.prototype.hasOwnProperty.call(options, "lastSubmission") ? options.lastSubmission : gridlyLP238SubmissionCaptureAuthority.lastSubmission;
+  const successfulSubmissionObserved = Boolean(gridlyLP238SubmissionCaptureAuthority.successfulSubmissionObserved
+    || (typeof lastMobileReportSubmitDebug === "object" && lastMobileReportSubmitDebug?.supabaseInsertSucceeded && lastMobileReportSubmitDebug?.submittedCrossingId));
   const submissionContextValue = clean(options.submissionContextValue ?? state?.canonicalCommunityValue ?? canonicalCommunity) || null;
   const submissionContextSource = Object.prototype.hasOwnProperty.call(options, "submissionContextValue")
     ? "options.submissionContextValue" : (state?.canonicalCommunityValue ? (state.canonicalCommunitySource || "gridlyGetReportSubmissionCommunityMetadata.communityName") : canonicalCommunityAuthority);
@@ -123251,14 +123305,21 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
   };
   if (!state) return Object.freeze({
     ...context, lastSubmission: null, submissionLocationCapturePass: null, persistenceLocationPass: null,
-    governedLocationPass: null, roadSelectionPass: null, overallPass: contextAlignmentPass === false ? false : null,
-    status: contextAlignmentPass === false ? "CONTEXT_MISMATCH" : "NOT_TESTED", passiveOnly: true
+    governedLocationPass: null, roadSelectionPass: null,
+    submissionCaptureOwner: "window.__gridlyLP238SubmissionCaptureAuthority",
+    submissionCaptureWriteFunction: "gridlyLP238WriteSubmissionCapture",
+    submissionCaptureWriteReached: Boolean(gridlyLP238SubmissionCaptureAuthority.writeReached),
+    submissionCaptureStored: false,
+    submissionCaptureResetOwner: "gridlyLP238ResetSubmissionCapture",
+    submissionCaptureResetReason: gridlyLP238SubmissionCaptureAuthority.lastResetReason || null,
+    overallPass: contextAlignmentPass === false || successfulSubmissionObserved ? false : null,
+    status: contextAlignmentPass === false ? "CONTEXT_MISMATCH" : (successfulSubmissionObserved ? "SUBMISSION_CAPTURE_UNAVAILABLE" : "NOT_TESTED"), passiveOnly: true
   });
   const submissionId = clean(state.submissionId);
-  const submissionRoad = clean(state.selectedRoadValue) || roadOf(state.submissionPayload);
-  const payloadRoad = roadOf(state.submissionPayload);
-  const acceptedLocalRoad = roadOf(state.acceptedLocal);
-  const persistedRoad = roadOf(state.persistencePayload);
+  const submissionRoad = clean(state.selectedRoadValue);
+  const payloadRoad = clean(state.payloadRoadValue);
+  const acceptedLocalRoad = clean(state.acceptedLocalRoadValue);
+  const persistedRoad = clean(state.persistedRoadValue);
   const governed = (governedSnapshot?.evidence || []).find((row) => {
     const ids = [row?.evidenceId, row?.canonicalReportIdentity, row?.persistedReportId, ...(row?.aliasCandidates || row?.aliases || [])].map(clean);
     return submissionId && ids.some((id) => id === submissionId || id.endsWith(`:${submissionId}`));
@@ -123288,6 +123349,12 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
         : persistedRoad && !governedRoad ? "PERSISTENCE_TO_GOVERNED_EVIDENCE" : null;
   const result = Object.freeze({
     ...context,
+    submissionCaptureOwner: "window.__gridlyLP238SubmissionCaptureAuthority",
+    submissionCaptureWriteFunction: "gridlyLP238WriteSubmissionCapture",
+    submissionCaptureWriteReached: Boolean(gridlyLP238SubmissionCaptureAuthority.writeReached),
+    submissionCaptureStored: true,
+    submissionCaptureResetOwner: "gridlyLP238ResetSubmissionCapture",
+    submissionCaptureResetReason: gridlyLP238SubmissionCaptureAuthority.lastResetReason || null,
     lastSubmission: Object.freeze({
       submissionId: submissionId || null, hazardType: state.hazardType || null,
       canonicalCommunitySource: state.canonicalCommunitySource || null,
@@ -123299,7 +123366,8 @@ function gridlyLP238CommunityReportSubmissionLocationAudit(options = {}) {
       crossStreet: state.crossStreet || null, resolvedLocation: state.resolvedLocation || null,
       payloadRoadValue: payloadRoad || null, acceptedLocalRoadValue: acceptedLocalRoad || null,
       persistedRoadValue: persistedRoad || null, governedRoadValue: governedRoad || null,
-      firstLocationLosingStage
+      firstLocationLosingStage,
+      ...roadSelection
     }),
     roadSelectionAttempted: Boolean(roadSelection.roadSelectionAttempted),
     roadSelectionAuthorityAvailable: Boolean(roadSelection.roadSelectionAuthorityAvailable),

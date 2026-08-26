@@ -58,10 +58,36 @@ test('LP238 deterministic precedence retains selected road then crossing authori
 test('LP238 submission, accepted-local, persistence and authoritative normalization preserve metadata', () => {
   const submit = functionSource('createSharedHazardReport');
   assert.match(submit, /appendGridlyStructuredMetadata[\s\S]*detailLocationMetadata/);
-  assert.match(submit, /persistencePayload = \{ \.\.\.row \}/);
-  assert.match(submit, /acceptedLocal = \{ \.\.\.localHazardEntry \}/);
+  assert.match(submit, /gridlyLP238PatchSubmissionCapture\(\{ submissionId: row\.crossing_id \}\)/);
+  assert.match(submit, /successfulSubmissionObserved = true;[\s\S]*gridlyLP238PatchSubmissionCapture\(\{ persistedRoadValue:/);
+  assert.match(submit, /gridlyLP238PatchSubmissionCapture\(\{ acceptedLocalRoadValue:/);
   const normalize = functionSource('normalizeReports');
   for (const field of ['roadName', 'routeName', 'street', 'streetName', 'primaryRoad', 'crossStreet', 'referenceRoadA', 'resolvedLocation']) assert.match(normalize, new RegExp(`${field}:`));
+});
+
+test('LP238 successful map and GPS submissions share a generation-stable bounded capture owner', () => {
+  const submit = functionSource('createSharedHazardReport');
+  const bounded = functionSource('gridlyLP238BoundedRoadSelectionTrace');
+  const audit = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
+  assert.match(app, /window\.__gridlyLP238SubmissionCaptureAuthority/);
+  assert.match(submit, /gridlyLP238WriteSubmissionCapture/);
+  assert.match(submit, /successfulSubmissionObserved = true/);
+  assert.match(submit, /submissionId: row\.crossing_id/);
+  for (const field of ['roadSelectionAttempted', 'roadSelectionAuthorityAvailable', 'roadSelectionAuthorityName', 'roadSelectionCandidateCount', 'roadSelectionEligibleCandidateCount', 'roadSelectionSearchRadius', 'roadSelectionNearestCandidateDistance', 'roadSelectionWinningCandidateFound', 'roadSelectionWinningCandidateName', 'roadSelectionSelectedRoadName', 'roadSelectionFailureReason']) assert.match(bounded, new RegExp(field));
+  assert.match(audit, /SUBMISSION_CAPTURE_UNAVAILABLE/);
+  assert.doesNotMatch(bounded, /waypoints|provider|geometry|candidates/);
+});
+
+test('LP238 capture only resets explicitly, on reload, or canonical town selection', () => {
+  const reset = functionSource('gridlyLP238ResetSubmissionCapture');
+  const invalidate = functionSource('invalidateGridlySelectedAwarenessAreaResolutionCache');
+  assert.match(reset, /lastSubmission = null/);
+  assert.match(app, /window\.gridlyLP238ResetCommunityReportSubmissionLocationAudit/);
+  assert.match(invalidate, /gridlyLP238ResetSubmissionCapture/);
+  for (const survivor of ['loadSharedReports', 'openAlertsSurfaceFromDock', 'gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply']) {
+    const source = functionSource(survivor);
+    assert.doesNotMatch(source, /gridlyLP238ResetSubmissionCapture/);
+  }
 });
 
 test('LP238 governed evidence, Alerts and LP236 retain road-over-resolved priority', () => {
@@ -80,9 +106,9 @@ test('LP238 audit is bounded, passive and fail-closed at every location boundary
 
 test('LP238 preflight uses governed canonical community without inheriting a stale runtime county', () => {
   const auditSource = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
-  const audit = Function('gridlyLP238LastSubmissionLocation', 'gridlyGovernedAwarenessAudit', 'getGridlySelectedAwarenessArea', 'gridlyExtractStructuredMetadata', 'activeHazards',
+  const audit = Function('gridlyLP238SubmissionCaptureAuthority', 'gridlyGovernedAwarenessAudit', 'getGridlySelectedAwarenessArea', 'gridlyExtractStructuredMetadata', 'activeHazards',
     `${auditSource}; return gridlyLP238CommunityReportSubmissionLocationAudit;`)(
-    null,
+    { lastSubmission: null, successfulSubmissionObserved: false, writeReached: false, lastResetReason: 'page_load' },
     () => ({ available: true, canonicalCommunity: 'Austin', countyId: null, evidence: [] }),
     () => ({ label: 'Austin', countyId: null, canonicalMultiCountyPlace: true }),
     () => ({}),
@@ -105,9 +131,9 @@ test('LP238 preflight uses governed canonical community without inheriting a sta
 
 test('LP238 context mismatch fails closed while membership and active county remain separate', () => {
   const auditSource = functionSource('gridlyLP238CommunityReportSubmissionLocationAudit');
-  const audit = Function('gridlyLP238LastSubmissionLocation', 'gridlyGovernedAwarenessAudit', 'getGridlySelectedAwarenessArea', 'gridlyExtractStructuredMetadata', 'activeHazards',
+  const audit = Function('gridlyLP238SubmissionCaptureAuthority', 'gridlyGovernedAwarenessAudit', 'getGridlySelectedAwarenessArea', 'gridlyExtractStructuredMetadata', 'activeHazards',
     `${auditSource}; return gridlyLP238CommunityReportSubmissionLocationAudit;`)(
-    null,
+    { lastSubmission: null, successfulSubmissionObserved: false, writeReached: false, lastResetReason: 'page_load' },
     () => ({ available: true, canonicalCommunity: 'Canonical Place', countyId: null, evidence: [] }),
     () => ({ label: 'Canonical Place', countyId: null }),
     () => ({}),
