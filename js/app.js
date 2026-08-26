@@ -4436,6 +4436,36 @@ function gridlyAwarenessSourceLabel(sourceKind) {
   return "Gridly awareness";
 }
 
+const GRIDLY_KBYG_FAMILY_COPY = Object.freeze({
+  community: Object.freeze({ activeFallback: "Community travel condition reported.", quiet: "No community travel conditions reported.", unavailable: "" }),
+  drivetexas: Object.freeze({ activeFallback: "Official roadway condition reported.", quiet: "No active official roadway conditions.", unavailable: "Official roadway updates temporarily unavailable." }),
+  weather: Object.freeze({ activeFallback: "Active weather alert.", quiet: "No active weather alerts.", unavailable: "Weather information temporarily unavailable." })
+});
+
+function gridlyKbygFamilyPresentation(key, state, activeLines = []) {
+  const normalizedState = ["ACTIVE", "QUIET", "UNAVAILABLE"].includes(state) ? state : "UNAVAILABLE";
+  const specificLines = (Array.isArray(activeLines) ? activeLines : []).map(gridlyTravelBriefCleanLine).filter(Boolean);
+  const copy = GRIDLY_KBYG_FAMILY_COPY[key] || GRIDLY_KBYG_FAMILY_COPY.community;
+  const lines = normalizedState === "ACTIVE" ? (specificLines.length ? specificLines : [copy.activeFallback]) : [normalizedState === "QUIET" ? copy.quiet : copy.unavailable].filter(Boolean);
+  return Object.freeze({ state: normalizedState, summary: lines[0] || "", lines: Object.freeze(lines) });
+}
+
+function gridlyKbygRoadwayAuthorityState(records = [], sourceEnvelope = null) {
+  const hasActive = (Array.isArray(records) ? records : []).some((record) => Boolean(gridlyStoryTransportationImpact(record)));
+  if (hasActive) return "ACTIVE";
+  if (sourceEnvelope?.healthyEmpty === true || sourceEnvelope?.quietEligible === true) return "QUIET";
+  return "UNAVAILABLE";
+}
+
+function gridlyKbygWeatherAuthorityState(weather, completeness = gridlyGetAwarenessEvidenceCompleteness()) {
+  if (gridlyStoryWeatherMeaningfulImpact(weather)) return "ACTIVE";
+  try {
+    const governed = typeof window.gridlyLP240WeatherAuthorityAudit === "function" ? window.gridlyLP240WeatherAuthorityAudit() : null;
+    if (["QUIET", "UNAVAILABLE"].includes(governed?.weatherAuthorityState)) return governed.weatherAuthorityState;
+  } catch (_error) {}
+  return completeness?.canStateNoActiveWeatherAlerts === true ? "QUIET" : "UNAVAILABLE";
+}
+
 function gridlyTravelBriefDriveTexasLines(records = [], completeness = gridlyGetAwarenessEvidenceCompleteness(), sourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope()) {
   const impacted = (Array.isArray(records) ? records : [])
     .map((record) => ({ record, impact: gridlyStoryTransportationImpact(record) }))
@@ -4455,6 +4485,12 @@ function gridlyTravelBriefDriveTexasLines(records = [], completeness = gridlyGet
   return consolidated;
 }
 
+function gridlyKbygRoadwayFamily(records = [], completeness = gridlyGetAwarenessEvidenceCompleteness(), sourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope()) {
+  const state = gridlyKbygRoadwayAuthorityState(records, sourceEnvelope);
+  const activeLines = state === "ACTIVE" ? gridlyTravelBriefDriveTexasLines(records, completeness, sourceEnvelope) : [];
+  return gridlyKbygFamilyPresentation("drivetexas", state, activeLines);
+}
+
 function gridlyTravelBriefWeatherLines(weather, completeness = gridlyGetAwarenessEvidenceCompleteness()) {
   const impact = gridlyStoryWeatherMeaningfulImpact(weather);
   if (!impact) return completeness.canStateNoWeatherImpact ? ["No travel-impacting weather."] : [];
@@ -4470,6 +4506,12 @@ function gridlyTravelBriefWeatherLines(weather, completeness = gridlyGetAwarenes
   }
   lines.push(gridlyTravelBriefCleanLine(impact.kind === "heat" ? "Hot conditions may affect travel." : (impact.detail || impact.situation || "Weather may affect travel.")));
   return [...new Set(lines.filter(Boolean))].slice(0, 2);
+}
+
+function gridlyKbygWeatherFamily(weather, completeness = gridlyGetAwarenessEvidenceCompleteness()) {
+  const state = gridlyKbygWeatherAuthorityState(weather, completeness);
+  const activeLines = state === "ACTIVE" ? gridlyTravelBriefWeatherLines(weather, completeness) : [];
+  return gridlyKbygFamilyPresentation("weather", state, activeLines);
 }
 
 function gridlyTravelBriefSettledFreshnessCopy(prefix, minutes) {
@@ -4650,6 +4692,11 @@ function gridlyBuildTravelBriefModel(storyInput) {
   const driveTexasRecords = gridlyStoryTransportationConnectorRecords();
   const weather = gridlyBriefInteractionWeatherModel();
   const kbygPresentationContext = typeof getGridlyCanonicalAwarenessPresentationContext === "function" ? getGridlyCanonicalAwarenessPresentationContext() : {};
+  const communityLines = gridlyTravelBriefCommunityLines(records, kbygPresentationContext);
+  const communityActive = communityLines.some((line) => !/no community travel conditions reported/i.test(line));
+  const communityFamily = gridlyKbygFamilyPresentation("community", communityActive ? "ACTIVE" : "QUIET", communityLines);
+  const roadwayFamily = gridlyKbygRoadwayFamily(driveTexasRecords, gridlyGetAwarenessEvidenceCompleteness(), driveTexasSourceEnvelope);
+  const weatherFamily = gridlyKbygWeatherFamily(weather, gridlyGetAwarenessEvidenceCompleteness());
   // A caller may have built storyInput before the governed snapshot arrived.
   // Once KBYG authority is active, rebuild from that final record collection so
   // stale quiet copy cannot overwrite the expanded portrait consumer.
@@ -4660,9 +4707,9 @@ function gridlyBuildTravelBriefModel(storyInput) {
     driverDecisionPattern: true,
     sections: Object.freeze([
       gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecords }),
-      Object.freeze({ key: "community", title: "Community", sourceLine: gridlyAwarenessSourceLabel("community"), lines: Object.freeze(gridlyTravelBriefCommunityLines(records, kbygPresentationContext)) }),
-      Object.freeze({ key: "drivetexas", title: "Official Roadways", sourceLine: gridlyAwarenessSourceLabel("official-roadways"), lines: Object.freeze(gridlyTravelBriefDriveTexasLines(driveTexasRecords, gridlyGetAwarenessEvidenceCompleteness(), driveTexasSourceEnvelope)) }),
-      Object.freeze({ key: "weather", title: "Weather", sourceLine: gridlyAwarenessSourceLabel("weather"), lines: Object.freeze(gridlyTravelBriefWeatherLines(weather)) })
+      Object.freeze({ key: "community", title: "Community", sourceLine: gridlyAwarenessSourceLabel("community"), familyState: communityFamily.state, summary: communityFamily.summary, lines: communityFamily.lines }),
+      Object.freeze({ key: "drivetexas", title: "Official Roadways", sourceLine: gridlyAwarenessSourceLabel("official-roadways"), familyState: roadwayFamily.state, summary: roadwayFamily.summary, lines: roadwayFamily.lines }),
+      Object.freeze({ key: "weather", title: "Weather", sourceLine: gridlyAwarenessSourceLabel("weather"), familyState: weatherFamily.state, summary: weatherFamily.summary, lines: weatherFamily.lines })
     ]),
     unifiedEvidence: gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather, sourceEnvelope: driveTexasSourceEnvelope }),
     officialRoadwaySourceStatus: driveTexasSourceEnvelope,
@@ -4779,6 +4826,22 @@ function gridlyRenderTravelBrief(storyInput) {
 
 window.gridlyBuildTravelBriefModel = gridlyBuildTravelBriefModel;
 window.gridlyAwarenessCardinalityLanguageAudit = gridlyAwarenessCardinalityLanguageAudit;
+window.gridlyKbygFamilyStateSnapshot = function gridlyKbygFamilyStateSnapshot() {
+  const model = gridlyBuildTravelBriefModel();
+  const family = (key) => model.sections.find((section) => section.key === key) || {};
+  const community = family("community");
+  const roadways = family("drivetexas");
+  const weather = family("weather");
+  const known = [community, roadways, weather].filter((section) => ["ACTIVE", "QUIET", "UNAVAILABLE"].includes(section.familyState));
+  const canonical = typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState() : {};
+  return Object.freeze({
+    community: canonical?.community || model.kbygPresentationContext?.community || "",
+    communityState: community.familyState || null, communitySummary: community.summary || "",
+    officialRoadwaysState: roadways.familyState || null, officialRoadwaysSummary: roadways.summary || "",
+    weatherState: weather.familyState || null, weatherSummary: weather.summary || "",
+    knownFamilyBlankCount: known.filter((section) => !gridlyTravelBriefCleanLine(section.summary)).length
+  });
+};
 
 function gridlyLp061DriverDecisionPatternAudit() {
   const model = typeof gridlyBuildTravelBriefModel === "function" ? gridlyBuildTravelBriefModel() : null;
