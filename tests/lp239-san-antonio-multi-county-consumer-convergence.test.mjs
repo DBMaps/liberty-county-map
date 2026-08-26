@@ -41,12 +41,60 @@ test('LP239 audit reuses governed authorities and fails closed without them', ()
   assert.match(source, /missingOfficialRoadwayMemberships/);
   assert.match(source, /missingCrossingMemberships/);
   assert.match(source, /missingWeatherMemberships/);
+  assert.match(source, /canonicalPlaceId && membershipAuthorityAvailable/);
+  assert.match(source, /MEMBERSHIP_AUTHORITY_UNRESOLVED/);
+  assert.match(source, /membershipAuthorityAvailable/);
+  assert.match(source, /membershipAuthorityReason/);
+  assert.match(source, /membershipApplicability/);
   assert.match(source, /no per-membership fetch/);
+});
+
+test('canonical PLACE with zero governed membership cannot pass', () => {
+  const source = app.slice(app.indexOf('// LP239:'));
+  assert.match(source, /membershipCountyFips\.length/);
+  assert.match(source, /canonicalPlaceConsumerConvergencePass = Boolean\(canonicalPlaceId && membershipAuthorityAvailable/);
+  assert.match(source, /convergencePass: canonicalPlaceConsumerConvergencePass/);
+  assert.match(source, /overallPass: canonicalPlaceConsumerConvergencePass/);
+  assert.doesNotMatch(source, /membershipCountyIds\.length === membershipCountyFips\.length\s*&& officialAuthorityAvailable/);
+});
+
+test('Waskom resolves as authoritative single-county Harrison control', () => {
+  const place = memberships.places['4876636'];
+  assert.equal(place.n, 'Waskom');
+  assert.deepEqual(place.m, ['48203']);
+  assert.equal(place.x.length, 6);
+  assert.ok(place.x.every(([, countyFips]) => countyFips === '48203'));
+  assert.match(app.slice(app.indexOf('// LP239:')), /membershipCountyIds\.length === 1 \? "SINGLE_COUNTY_CONTROL"/);
+});
+
+test('crossing inventory cannot substitute for PLACE membership authority', () => {
+  const source = app.slice(app.indexOf('// LP239:'));
+  assert.ok(source.includes('gridlyCanonicalCrossingRuntime?.lookup?.'));
+  assert.match(source, /canonicalMembership\?\.governedCountyFips/);
+  assert.doesNotMatch(source, /crossingIds.*membershipCountyFips|crossing\.records.*membershipCountyFips/);
+  const waskom = memberships.places['4876636'];
+  assert.notEqual(waskom.m, waskom.x);
+});
+
+test('owner-proven cohort membership contracts are unchanged', () => {
+  const expected = {
+    '4865000': ['48029', '48091', '48325'],
+    '4805000': ['48021', '48209', '48453', '48491'],
+    '4819000': ['48085', '48113', '48121', '48257', '48397'],
+    '4801000': ['48253', '48441'],
+    '4848072': ['48317', '48329'],
+    '4817000': ['48007', '48273', '48355', '48409'],
+    '4850820': ['48091', '48187'],
+    '4811428': ['48251', '48439']
+  };
+  for (const [placeGeoid, countyFips] of Object.entries(expected)) {
+    assert.deepEqual(memberships.places[placeGeoid].m, countyFips);
+  }
 });
 
 test('production repair is town-neutral, passive, and leaves active membership separate', () => {
   const source = app.slice(app.indexOf('// LP239:'));
-  assert.doesNotMatch(source, /San Antonio|Bexar|4865000|bexar-tx|Dallas|Austin/);
+  assert.doesNotMatch(source, /San Antonio|Bexar|4865000|bexar-tx|Dallas|Austin|Waskom|4876636|Harrison/);
   assert.doesNotMatch(source, /fetch\s*\(|setInterval|setTimeout|requestAnimationFrame|setActiveCounty|renderCrossings\s*\(/);
   assert.match(source, /activeCounty: gridlyGetActiveCountyId\(\)/);
   assert.match(source, /selectedOperationalMembership: gridlyGetActiveCountyId\(\)/);
