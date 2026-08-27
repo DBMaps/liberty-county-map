@@ -8,6 +8,21 @@ test('OA-2 Android compatibility is bounded to deterministic and emulated browse
   for(const token of ['DETERMINISTIC_EMULATION_CONTRACT','390,height:844','844,height:390','hasTouch:true','pointer:\'coarse\'','textZoomPercent:200','Physical Android hardware for launch','Android font rasterization','real Chrome browser-chrome occlusion','device rotation/compositor repaint']) assert.match(source,new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));
   assert.doesNotMatch(source,/One reduced Android Chrome touch, increased-text, and rotation smoke/);
 });
+test('OA-4 is bounded to the installed Edge PWA supported portrait viewport',()=>{
+  const source=fs.readFileSync('tools/lp2417/certify.mjs','utf8');
+  const matrix=JSON.parse(fs.readFileSync('reports/lp2417/owner-acceptance-matrix.json','utf8'));
+  const oa4=matrix.tests.find(({id})=>id==='OA-4');
+  assert.equal(oa4.deviceBrowser,'Installed Windows Edge PWA, supported mobile-width viewport');
+  assert.equal(oa4.status,'PARTIAL_PASS');
+  assert.equal(oa4.viewportAuthority.maxCssViewportWidthPx,980);
+  assert.equal(oa4.viewportAuthority.inclusive,true);
+  assert.match(oa4.viewportAuthority.orientation,/portrait/);
+  assert.match(source,/supportedPortraitViewport:\{maxCssViewportWidthPx:980,inclusive:true,orientation:'portrait',heightAtLeastWidth:true/);
+  assert.match(html,/width <= 980[\s\S]{0,80}\? "portrait"/);
+  assert.match(app,/const mobileWidth = viewportWidth > 0 && viewportWidth <= 980/);
+  assert.match(oa4.exactJourney,/Alerts[\s\S]*My Area[\s\S]*close\/relaunch[\s\S]*persists/);
+  assert.ok(oa4.notClaimed.includes('full desktop PWA support'));
+});
 test('PWA contract is valid and referenced icons exist',()=>{ const m=JSON.parse(fs.readFileSync('manifest.json')); assert.equal(m.display,'standalone'); for(const icon of m.icons) assert.ok(fs.existsSync(icon.src.replace(/^\.\//,'')),icon.src); assert.match(fs.readFileSync('service-worker.js','utf8'),/install/); });
 test('OA-1 rendered keyboard helper is passive and exposes the bounded acceptance contract',()=>{
   const start=app.indexOf('function gridlyLP2417KeyboardAcceptance()');

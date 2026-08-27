@@ -6,18 +6,63 @@
   "productionDefectOpen": false,
   "launchPolicy": "DETERMINISTIC_CROSS_PLATFORM_PLUS_AVAILABLE_REPRESENTATIVE_PHYSICAL_ACCEPTANCE_AND_POST_LAUNCH_MONITORING",
   "evidence": {
-    "deterministic": {"classification":"CERTIFIED_DETERMINISTIC","status":"PASS","keyboardFocusableCount":18,"essentialControlCount":4,"exceptionCount":0},
-    "ownerRuntime": {"classification":"OWNER_RUNTIME_PASS","keyboard":"PASS","settings":"PASS","alerts":"PASS"},
-    "emulatedBrowser": {"classification":"DETERMINISTIC_EMULATION_CONTRACT","androidCompatibility":"PASS","physicalAndroidClaim":false},
-    "physicalDevice": {"windowsNarratorSemanticEntry":"PHYSICAL_DEVICE_PASS","androidChrome":"OPTIONAL_POST_LAUNCH_VALIDATION","iphoneSafari":"AVAILABILITY_CONFIRMATION_REMAINING","installedWindowsEdgePwa":"UNEXECUTED"}
+    "deterministic": {
+      "classification": "CERTIFIED_DETERMINISTIC",
+      "status": "PASS",
+      "keyboardFocusableCount": 18,
+      "essentialControlCount": 4,
+      "exceptionCount": 0
+    },
+    "ownerRuntime": {
+      "classification": "OWNER_RUNTIME_PASS",
+      "keyboard": "PASS",
+      "settings": "PASS",
+      "alerts": "PASS"
+    },
+    "emulatedBrowser": {
+      "classification": "DETERMINISTIC_EMULATION_CONTRACT",
+      "androidCompatibility": "PASS",
+      "physicalAndroidClaim": false
+    },
+    "physicalDevice": {
+      "windowsNarratorSemanticEntry": "PHYSICAL_DEVICE_PASS",
+      "androidChrome": "OPTIONAL_POST_LAUNCH_VALIDATION",
+      "iphoneSafari": "AVAILABILITY_CONFIRMATION_REMAINING",
+      "installedWindowsEdgePwa": "PARTIAL_PASS_SUPPORTED_VIEWPORT_JOURNEY_REMAINING"
+    }
   },
   "dimensions": [
-    {"dimension":"Windows Edge keyboard, focus, Settings, and Alerts","classification":"OWNER_RUNTIME_PASS"},
-    {"dimension":"Android responsive/touch/zoom compatibility contract","classification":"DETERMINISTIC_COMPATIBILITY_PASS","evidenceLabel":"DETERMINISTIC_EMULATION_CONTRACT"},
-    {"dimension":"Physical Android font, browser chrome, gesture region, and compositor repaint","classification":"OPTIONAL_POST_LAUNCH_VALIDATION"},
-    {"dimension":"iPhone Safari safe-area/layout/rotation","classification":"AVAILABILITY_CONFIRMATION_REMAINING"},
-    {"dimension":"generic installed PWA lifecycle on Windows Edge","classification":"MANDATORY_OWNER_ACCEPTANCE_REMAINING"},
-    {"dimension":"Android WebAPK, task eviction, permissions, and OS integration","classification":"OPTIONAL_POST_LAUNCH_VALIDATION"}
+    {
+      "dimension": "Windows Edge keyboard, focus, Settings, and Alerts",
+      "classification": "OWNER_RUNTIME_PASS"
+    },
+    {
+      "dimension": "Android responsive/touch/zoom compatibility contract",
+      "classification": "DETERMINISTIC_COMPATIBILITY_PASS",
+      "evidenceLabel": "DETERMINISTIC_EMULATION_CONTRACT"
+    },
+    {
+      "dimension": "Physical Android font, browser chrome, gesture region, and compositor repaint",
+      "classification": "OPTIONAL_POST_LAUNCH_VALIDATION"
+    },
+    {
+      "dimension": "iPhone Safari safe-area/layout/rotation",
+      "classification": "AVAILABILITY_CONFIRMATION_REMAINING"
+    },
+    {
+      "dimension": "generic installed PWA lifecycle on Windows Edge",
+      "classification": "OWNER_RUNTIME_PASS",
+      "scope": "installation, standalone-window launch, nonblank shell, and intentional desktop gate observation"
+    },
+    {
+      "dimension": "Installed Windows Edge PWA, supported mobile-width viewport",
+      "classification": "MANDATORY_OWNER_ACCEPTANCE_REMAINING",
+      "viewportContract": "portrait CSS viewport at or below 980 px; no desktop experience claim"
+    },
+    {
+      "dimension": "Android WebAPK, task eviction, permissions, and OS integration",
+      "classification": "OPTIONAL_POST_LAUNCH_VALIDATION"
+    }
   ],
   "mandatoryOwnerActionsRemaining": 2,
   "androidOwnerActionsRemaining": 0,

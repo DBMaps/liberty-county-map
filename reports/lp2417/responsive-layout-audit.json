@@ -62,9 +62,16 @@
       "device rotation/compositor repaint"
     ]
   },
+  "supportedPortraitViewport": {
+    "maxCssViewportWidthPx": 980,
+    "inclusive": true,
+    "orientation": "portrait",
+    "heightAtLeastWidth": true,
+    "desktopGatePolicy": "intentional and preserved"
+  },
   "ownerEvidenceRequired": [
     "Confirm iPhone availability through the normal acceptance process; if available, run the reduced Safari notch/mobile-chrome, increased-text, and rotation smoke",
-    "Run the generic installed-PWA lifecycle smoke in installed Microsoft Edge on the owner Windows device"
+    "In the installed Windows Edge standalone app, resize to a portrait CSS viewport at or below 980 px, then exercise Alerts, My Area, close/relaunch, and persistence"
   ],
   "optionalPostLaunch": [
     "Physical Android Chrome font, browser-chrome, gesture-region, and rotation/compositor observation"
