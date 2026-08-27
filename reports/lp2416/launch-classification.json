@@ -1,21 +1,18 @@
 {
   "staticCertification": "STATIC_CERTIFIED",
-  "providerExecution": "NOT_EXECUTED",
-  "ownerVisualAcceptance": "NOT_EXECUTED",
-  "launchClassification": "OWNER_ACCEPTANCE_REQUIRED",
-  "countyOutcomeTotals": {
-    "totalCounties": 254,
-    "executed": 0,
-    "pass": 0,
-    "noResult": 0,
-    "wrongCounty": 0,
-    "ambiguous": 0,
-    "providerUnavailable": 0,
-    "invalidCoordinate": 0,
-    "handoffFailure": 0,
-    "mapFailure": 0,
-    "uiFailure": 0,
-    "fixtureRequired": 0,
-    "notExecuted": 254
+  "providerEvidenceState": "PROVIDER_CERTIFIED",
+  "ownerVisualAcceptance": "PENDING",
+  "launchClassification": "OWNER_VISUAL_ACCEPTANCE_REQUIRED",
+  "totals": {
+    "totalCount": 254,
+    "staticCertifiedCount": 254,
+    "providerExecutedCount": 254,
+    "providerPassCount": 254,
+    "noResultCount": 0,
+    "wrongCountyCount": 0,
+    "ambiguousCount": 0,
+    "providerUnavailableCount": 0,
+    "remainingCount": 0,
+    "safeStop": null
   }
 }
