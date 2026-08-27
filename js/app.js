@@ -35887,6 +35887,10 @@ function gridlyLp017DisabledVehiclePresentationTrace() {
 if (typeof window !== "undefined") window.gridlyLp017DisabledVehiclePresentationTrace = gridlyLp017DisabledVehiclePresentationTrace;
 
 function openAlertsSurfaceFromDock() {
+  const activationCandidate = typeof document !== "undefined" ? document.activeElement : null;
+  if (activationCandidate?.matches?.("#gridlyAlertsDockButton, [data-v2-sheet='alerts'], #mobileDockAlertsBtn")) {
+    gridlyAlertsLastActivationOpener = activationCandidate;
+  }
   const lp224ShellStartedAt = gridlyAlertsOpenAuditNow();
   gridlyLp017DisabledVehiclePresentationAuditState.lastFunctionEntered = "openAlertsSurfaceFromDock";
   gridlyLP012RecordAlertsClick("openAlertsSurfaceFromDock");
@@ -38542,6 +38546,41 @@ const gridlySettingsActivationAudit = {
   settingsOpenFailureReason: null
 };
 let gridlySettingsLastActivationOpener = null;
+let gridlyAlertsLastActivationOpener = null;
+let gridlyAlertsInertRestoration = [];
+
+function gridlyGetAlertsOpener() {
+  return document.getElementById("gridlyAlertsDockButton")
+    || document.querySelector("[data-v2-sheet='alerts']")
+    || document.getElementById("mobileDockAlertsBtn");
+}
+
+// The Portrait V2 sheet declares aria-modal, so Alerts must exclusively own
+// sequential focus while it is open. Inert every sibling along the sheet's
+// ancestor path rather than maintaining a brittle list of individual stops.
+function gridlySetAlertsModalFocusOwnership(sheet, active) {
+  if (!sheet) return;
+  if (!active) {
+    gridlyAlertsInertRestoration.forEach(({ node, hadInert }) => {
+      if (!node?.isConnected || hadInert) return;
+      node.inert = false;
+      node.removeAttribute("inert");
+    });
+    gridlyAlertsInertRestoration = [];
+    return;
+  }
+  gridlySetAlertsModalFocusOwnership(sheet, false);
+  let child = sheet;
+  for (let parent = sheet.parentElement; parent; child = parent, parent = parent.parentElement) {
+    Array.from(parent.children).forEach((node) => {
+      if (node === child || node.id === "gridlyPortraitV2SheetBackdrop") return;
+      const hadInert = node.hasAttribute("inert");
+      gridlyAlertsInertRestoration.push({ node, hadInert });
+      node.inert = true;
+      node.setAttribute("inert", "");
+    });
+  }
+}
 
 function countGridlyAttachedSettingsActivationListeners() {
   return Array.from(document.querySelectorAll(GRIDLY_SETTINGS_DOCK_SELECTOR))
@@ -117092,6 +117131,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function openGridlyPortraitV2Sheet(sheetName, templateOverride = null) {
+    if (sheetName === "alerts") {
+      const candidate = document.activeElement;
+      if (candidate?.matches?.("#gridlyAlertsDockButton, [data-v2-sheet='alerts'], #mobileDockAlertsBtn")) {
+        gridlyAlertsLastActivationOpener = candidate;
+      }
+    }
     const portraitAuthorization = getGridlyPortraitCleanupGateState(getCanonicalGridlyPortraitLayoutMode());
     if (!portraitAuthorization.isStrictPortraitMobile) {
       deactivateGridlyPortraitV2Owner();
@@ -117141,6 +117186,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
 
     activeSheet = sheetName;
+    document.getElementById("gridlyPortraitV2SheetClose")?.setAttribute("aria-label", `Close ${sheetName.charAt(0).toUpperCase()}${sheetName.slice(1)}`);
     if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; });
     else { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; }
     if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "final visible official card DOM sanitation", () => gridlyLp0462SanitizeVisibleOfficialAlertsSheetDom(body));
@@ -117194,6 +117240,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           }
         );
       });
+      gridlySetAlertsModalFocusOwnership(sheet, true);
+      const alertsClose = document.getElementById("gridlyPortraitV2SheetClose");
+      alertsClose?.focus?.();
     }
 
     const bindStartedAt = sheetName === "settings" ? getGridlySettingsPerfNow() : 0;
@@ -117369,6 +117418,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }
 
     document.body.classList.remove("modal-open", "report-pulse");
+    if (closingSheetName === "alerts") {
+      gridlySetAlertsModalFocusOwnership(sheet, false);
+      if (gridlyAlertsLastActivationOpener?.isConnected) gridlyAlertsLastActivationOpener.focus();
+      gridlyAlertsLastActivationOpener = null;
+    }
     if (closingSheetName === "settings" && gridlySettingsLastActivationOpener?.isConnected) {
       gridlySettingsLastActivationOpener.focus();
     }
@@ -118329,6 +118383,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     window.gridlyStartupDiagnostics?.markPostPaintLifecycle?.("dockHandlersInstalled");
     { const closeBtn = document.getElementById("gridlyPortraitV2SheetClose"); if (closeBtn && closeBtn.dataset.gridlyV2CloseBound !== "true") { closeBtn.addEventListener("click",closePortraitV2Sheet); closeBtn.dataset.gridlyV2CloseBound = "true"; gridlyAlertsSheetLifecycleState.closeButtonBound = true; } }
     document.getElementById("gridlyPortraitV2SheetBackdrop")?.addEventListener("click",closePortraitV2Sheet);
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      const sheet = document.getElementById("gridlyPortraitV2Sheet");
+      if (sheet?.dataset?.activeSheet !== "alerts" || sheet.hidden) return;
+      event.preventDefault();
+      closePortraitV2Sheet();
+    });
     document.querySelectorAll(".gridly-v2-segments button").forEach((b)=>b.addEventListener("click",()=>{document.querySelectorAll(".gridly-v2-segments button").forEach(x=>x.classList.remove("is-active"));b.classList.add("is-active");const gf=b.dataset.geoFilter;document.querySelector(`.geo-filter-pill[data-geo-filter='${gf}']`)?.click();}));
     document.querySelector("[data-v2-control='zoom-in']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-in")?.click());
     document.querySelector("[data-v2-control='zoom-out']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-out")?.click());
@@ -126206,3 +126267,76 @@ function gridlyLP2417SettingsAcceptance() {
 }
 window.gridlyLP2417SettingsAcceptance = gridlyLP2417SettingsAcceptance;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP2417SettingsAcceptance", gridlyLP2417SettingsAcceptance);
+
+async function gridlyLP2417AlertsAcceptance() {
+  const opener = gridlyGetAlertsOpener();
+  const visible = (node) => {
+    if (!node || node.hidden || node.closest?.("[hidden], [inert]")) return false;
+    const style = getComputedStyle(node);
+    const rect = node.getBoundingClientRect();
+    return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || "1") !== 0
+      && rect.width > 0 && rect.height > 0;
+  };
+  const focusableSelector = "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])";
+  const describe = (node) => node ? {
+    tag: node.tagName?.toLowerCase() || null,
+    id: node.id || null,
+    text: String(node.textContent || "").replace(/\s+/g, " ").trim().slice(0, 120),
+    ariaLabel: node.getAttribute?.("aria-label") || null,
+    tabIndex: node.tabIndex
+  } : null;
+  const settle = async (predicate, attempts = 60) => {
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      if (predicate()) return true;
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    }
+    return false;
+  };
+  const result = {
+    openerFound: Boolean(opener), productionActiveAlertsSurface: null,
+    visibleAlertsSurfaceCount: 0, focusedElementAfterOpen: null,
+    focusContainedByAlertsSurface: false, closeControl: null,
+    closeControlVisible: false, closeControlFocusable: false,
+    backgroundFocusableLeakCount: null, closed: false,
+    focusRestoredToOpener: false, escapeSourceRuntimeContract: false,
+    escapeClosed: false, escapeFocusRestoredToOpener: false, pass: false
+  };
+  if (!opener || !visible(opener) || opener.disabled) return Object.freeze(result);
+  const openAndWait = async () => {
+    opener.focus();
+    opener.click();
+    return settle(() => {
+      const sheet = document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])");
+      return Boolean(sheet && visible(sheet) && sheet.contains(document.activeElement));
+    });
+  };
+  await openAndWait();
+  const surfaces = Array.from(document.querySelectorAll("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])")).filter(visible);
+  const surface = surfaces[0] || null;
+  const closeControl = surface?.querySelector("#gridlyPortraitV2SheetClose") || null;
+  const leaks = Array.from(document.querySelectorAll(focusableSelector)).filter((node) => visible(node) && !surface?.contains(node));
+  result.productionActiveAlertsSurface = describe(surface);
+  result.visibleAlertsSurfaceCount = surfaces.length;
+  result.focusedElementAfterOpen = describe(document.activeElement);
+  result.focusContainedByAlertsSurface = Boolean(surface?.contains(document.activeElement));
+  result.closeControl = describe(closeControl);
+  result.closeControlVisible = visible(closeControl);
+  result.closeControlFocusable = Boolean(result.closeControlVisible && closeControl.tabIndex >= 0 && !closeControl.disabled && closeControl.getAttribute("aria-label"));
+  result.backgroundFocusableLeakCount = leaks.length;
+  closeControl?.click();
+  await settle(() => !document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])"));
+  result.closed = !document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])");
+  result.focusRestoredToOpener = document.activeElement === opener;
+  await openAndWait();
+  document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+  await settle(() => !document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])"));
+  result.escapeClosed = !document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])");
+  result.escapeFocusRestoredToOpener = document.activeElement === opener;
+  result.escapeSourceRuntimeContract = result.escapeClosed && result.escapeFocusRestoredToOpener;
+  result.pass = result.visibleAlertsSurfaceCount === 1 && result.focusContainedByAlertsSurface
+    && result.closeControlVisible && result.closeControlFocusable && result.backgroundFocusableLeakCount === 0
+    && result.closed && result.focusRestoredToOpener && result.escapeSourceRuntimeContract;
+  return Object.freeze(result);
+}
+window.gridlyLP2417AlertsAcceptance = gridlyLP2417AlertsAcceptance;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP2417AlertsAcceptance", gridlyLP2417AlertsAcceptance);
