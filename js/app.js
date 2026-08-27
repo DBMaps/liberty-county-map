@@ -25250,6 +25250,9 @@ let routePreviewPolylinePointCount = 0;
 let routePreviewCorridorLayer = null;
 let gridlyDestinationRouteIntelligenceCache = null;
 let gridlyDestinationRouteImpactCache = null;
+let gridlyDestinationCoverageSnapshotCache = null;
+let gridlyDestinationCoverageSnapshotGeneration = 0;
+let gridlyDestinationCoverageLastInvalidation = Object.freeze({ at: null, reason: null });
 const gridlyDestinationPerformanceAuditState = {
   routePreviewStatus: "idle",
   routePreviewRequestStartedAt: null,
@@ -25311,9 +25314,13 @@ function cloneGridlyDestinationAuditSnapshot(snapshot) {
   }
 }
 
-function invalidateGridlyDestinationRouteIntelligenceCache() {
+function invalidateGridlyDestinationRouteIntelligenceCache(reason = "explicit_route_intelligence_invalidation") {
   gridlyDestinationRouteIntelligenceCache = null;
   gridlyDestinationRouteImpactCache = null;
+  if (gridlyDestinationCoverageSnapshotCache) {
+    gridlyDestinationCoverageLastInvalidation = Object.freeze({ at: Date.now(), reason });
+    gridlyDestinationCoverageSnapshotCache = null;
+  }
 }
 
 function resetGridlyDestinationPerformanceAudit(status = "idle") {
@@ -41041,30 +41048,76 @@ function buildGridlyDestinationSourceAuthority(options = {}) {
   return Object.freeze({ routeCountyIds, sourceFamilyAuthority });
 }
 
-function getGridlyDestinationCoverageState() {
+function getGridlyDestinationCoverageAuthorityContext() {
   const selected = normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination);
-  const destinationCountyId = gridlyNormalizeCountyId(selected?.countyId || selected?.raw?.countyId || "") || null;
+  const destinationCoordinate = normalizeCoordinatePair(selected?.lat, selected?.lng);
+  const coordinateCounty = destinationCoordinate && typeof gridlyResolveCountyIdForCoordinate === "function"
+    ? gridlyResolveCountyIdForCoordinate(destinationCoordinate.lat, destinationCoordinate.lng)
+    : null;
+  const destinationCountyId = gridlyNormalizeCountyId(
+    selected?.countyId || selected?.raw?.countyId || coordinateCounty?.countyId || coordinateCounty?.id || ""
+  ) || null;
   const awareness = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   const awarenessCountyId = gridlyNormalizeCountyId(awareness?.countyId || "") || null;
-  const familySnapshot = typeof window.gridlyKbygFamilyStateSnapshot === "function"
-    ? window.gridlyKbygFamilyStateSnapshot() : null;
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function" ? getGridlyDestinationRoutePreviewState() : {};
+  const originCoordinate = normalizeCoordinatePair(preview?.source?.lat, preview?.source?.lng);
+  const originCounty = originCoordinate && typeof gridlyResolveCountyIdForCoordinate === "function"
+    ? gridlyResolveCountyIdForCoordinate(originCoordinate.lat, originCoordinate.lng)
+    : null;
+  const routeOriginAuthority = gridlyNormalizeCountyId(originCounty?.countyId || originCounty?.id || "") || preview?.source?.source || null;
+  const destinationIdentity = selected?.placeGeoid || selected?.raw?.placeGeoid || selected?.id || null;
+  const routeDestination = preview?.destination?.id || destinationIdentity;
+  const familySnapshot = typeof window.gridlyKbygFamilyStateSnapshot === "function" ? window.gridlyKbygFamilyStateSnapshot() : null;
+  const coverageSourceState = Object.freeze({
+    officialRoadwaysState: familySnapshot?.officialRoadwaysState || null,
+    weatherState: familySnapshot?.weatherState || null
+  });
+  const signature = JSON.stringify({ awarenessCountyId, destinationIdentity, destinationCountyId, routeOriginAuthority, routeDestination, requiredCoverageScope: GRIDLY_DESTINATION_REQUIRED_QUIET_SOURCES, coverageSourceState });
+  return Object.freeze({ selected, awarenessCountyId, destinationCountyId, destinationIdentity, routeOriginAuthority, routeDestination, familySnapshot, signature });
+}
+
+function getGridlyDestinationCoverageState(options = {}) {
+  const context = getGridlyDestinationCoverageAuthorityContext();
+  if (options.skipCacheRead !== true && gridlyDestinationCoverageSnapshotCache?.signature === context.signature) {
+    return Object.freeze({ ...cloneGridlyDestinationAuditSnapshot(gridlyDestinationCoverageSnapshotCache.snapshot), snapshotPreserved: true, snapshotPreservationReason: "semantic authority signature unchanged" });
+  }
+  if (gridlyDestinationCoverageSnapshotCache && gridlyDestinationCoverageSnapshotCache.signature !== context.signature) {
+    gridlyDestinationCoverageLastInvalidation = Object.freeze({ at: Date.now(), reason: "destination coverage authority signature changed" });
+  }
   const authority = buildGridlyDestinationSourceAuthority({
-    awarenessCountyId,
-    destinationCountyId,
+    awarenessCountyId: context.awarenessCountyId,
+    destinationCountyId: context.destinationCountyId,
     alertsAvailable: Array.isArray(getGridlyDestinationRouteAlertSource()),
     communityReportsAvailable: Array.isArray(activeReports),
     hazardsAvailable: Array.isArray(activeHazards),
-    familyState: familySnapshot
+    familyState: context.familySnapshot
   });
   const completed = authority.sourceFamilyAuthority.filter((family) => family.state === "completed").map((family) => family.family);
   const failed = authority.sourceFamilyAuthority.filter((family) => family.state === "failed").map((family) => family.family);
-  return Object.freeze({
+  const snapshotBuiltAt = Date.now();
+  const snapshotGeneration = ++gridlyDestinationCoverageSnapshotGeneration;
+  const snapshot = Object.freeze({
     ...buildGridlyDestinationCoverageState({ completedSourceFamilies: completed, failedSourceFamilies: failed }),
-    destinationCountyId,
+    destinationCountyId: context.destinationCountyId,
     routeCountyIds: authority.routeCountyIds,
     sourceFamilyAuthority: authority.sourceFamilyAuthority,
-    sourceFreshness: Object.freeze(Object.fromEntries(GRIDLY_DESTINATION_REQUIRED_QUIET_SOURCES.map((family) => [family, completed.includes(family) ? "checked" : failed.includes(family) ? "unavailable" : "not_acquired"])))
+    sourceFreshness: Object.freeze(Object.fromEntries(GRIDLY_DESTINATION_REQUIRED_QUIET_SOURCES.map((family) => [family, completed.includes(family) ? "checked" : failed.includes(family) ? "unavailable" : "not_acquired"]))),
+    snapshotBuiltAt,
+    snapshotGeneration,
+    snapshotBuildReason: options.buildReason || (gridlyDestinationCoverageLastInvalidation.reason ? "authority_signature_invalidation" : "initial_coverage_request"),
+    snapshotAwarenessCountyId: context.awarenessCountyId,
+    snapshotDestinationCountyId: context.destinationCountyId,
+    snapshotRouteCountyIds: authority.routeCountyIds,
+    authorityReducerInput: Object.freeze({ awarenessCountyId: context.awarenessCountyId, destinationCountyId: context.destinationCountyId }),
+    authorityReducerOutput: Object.freeze({ routeCountyIds: authority.routeCountyIds, sourceFamilyAuthority: authority.sourceFamilyAuthority }),
+    snapshotPreserved: false,
+    snapshotPreservationReason: null,
+    snapshotInvalidatedAt: gridlyDestinationCoverageLastInvalidation.at,
+    snapshotInvalidationReason: gridlyDestinationCoverageLastInvalidation.reason,
+    authoritySignature: context.signature
   });
+  gridlyDestinationCoverageSnapshotCache = { signature: context.signature, snapshot: cloneGridlyDestinationAuditSnapshot(snapshot) };
+  return snapshot;
 }
 
 if (typeof window !== "undefined") {
@@ -44725,6 +44778,7 @@ function getGridlyDestinationRouteCacheKey() {
       return coordinate ? [Number(coordinate.lat.toFixed(5)), Number(coordinate.lng.toFixed(5))] : null;
     })(),
     routeWatchActivated: Boolean(routeWatchActivated),
+    destinationCoverageAuthoritySignature: getGridlyDestinationCoverageAuthorityContext().signature,
     sourceSignature: getGridlyDestinationRouteSourceSignature()
   });
 }
@@ -45256,6 +45310,20 @@ window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudi
       sourceFamilyAuthority: coverage.sourceFamilyAuthority,
       routeCountyIds: coverage.routeCountyIds,
       sourceFreshness: coverage.sourceFreshness,
+      snapshotBuiltAt: coverage.snapshotBuiltAt,
+      snapshotGeneration: coverage.snapshotGeneration,
+      snapshotBuildReason: coverage.snapshotBuildReason,
+      snapshotAwarenessCountyId: coverage.snapshotAwarenessCountyId,
+      snapshotDestinationCountyId: coverage.snapshotDestinationCountyId,
+      snapshotRouteCountyIds: coverage.snapshotRouteCountyIds,
+      currentAwarenessCountyId: gridlyNormalizeCountyId(awareness?.countyId || "") || null,
+      currentDestinationCountyId: destinationCountyId,
+      authorityReducerInput: coverage.authorityReducerInput,
+      authorityReducerOutput: coverage.authorityReducerOutput,
+      snapshotPreserved: coverage.snapshotPreserved,
+      snapshotPreservationReason: coverage.snapshotPreservationReason,
+      snapshotInvalidatedAt: coverage.snapshotInvalidatedAt,
+      snapshotInvalidationReason: coverage.snapshotInvalidationReason,
       matchedEvidence,
       matchedCounts: Object.freeze({
         hazards: intelligence?.hazardsNearRoute || 0,
