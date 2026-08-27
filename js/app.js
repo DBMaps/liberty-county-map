@@ -30983,39 +30983,23 @@ function computeLayoutModeSignals() {
   const hasHorizontalOverflow = document.documentElement.scrollWidth - document.documentElement.clientWidth > 2;
   const coarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches === true;
   const finePointer = window.matchMedia?.("(pointer: fine)")?.matches === true;
-  return { viewportWidth, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer, finePointer };
+  const hoverNone = window.matchMedia?.("(hover: none)")?.matches === true;
+  return { viewportWidth, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer, finePointer, hoverNone };
 }
 
-function resolveLayoutMode({ viewportWidth, viewportHeight, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer, finePointer, orientationLandscape }) {
-  const tacticalLandscapeByHeight =
-    orientationLandscape &&
-    viewportWidth <= 1100 &&
-    viewportHeight <= 520;
-  if (tacticalLandscapeByHeight) {
-    return {
-      nextMode: "tactical-landscape",
-      tacticalLandscapeByHeight,
-      forcedPortrait: false,
-      forcedDesktop: false
-    };
-  }
-  const desktopStyleLandscape = orientationLandscape && finePointer && !coarsePointer;
-  if (desktopStyleLandscape) {
-    return {
-      nextMode: "desktop",
-      tacticalLandscapeByHeight,
-      desktopStyleLandscape,
-      forcedPortrait: false,
-      forcedDesktop: true
-    };
-  }
-  const mobileByWidth = viewportWidth <= 980;
-  const desktopByWidth = viewportWidth >= 1160;
-  const containerCollapsed = shellWidth <= 1020 || commandWidth <= 760;
-  const forcedPortrait = mobileByWidth || containerCollapsed || (hasHorizontalOverflow && viewportWidth < 1220);
-  const forcedDesktop = desktopByWidth && !containerCollapsed && !hasHorizontalOverflow && !coarsePointer;
-  const nextMode = forcedPortrait ? "portrait" : forcedDesktop ? "desktop" : activeLayoutMode;
-  return { nextMode, tacticalLandscapeByHeight, desktopStyleLandscape, forcedPortrait, forcedDesktop };
+function resolveLayoutMode({ viewportWidth, viewportHeight, coarsePointer, finePointer, hoverNone, orientationLandscape }) {
+  const mobileByWidth = viewportWidth > 0 && viewportWidth <= 980;
+  const validatedMobileAuthority = Boolean(
+    mobileByWidth && !orientationLandscape && coarsePointer && !finePointer && hoverNone
+  );
+  return {
+    nextMode: validatedMobileAuthority ? "portrait" : "desktop",
+    validatedMobileAuthority,
+    forcedPortrait: validatedMobileAuthority,
+    forcedDesktop: !validatedMobileAuthority,
+    tacticalLandscapeByHeight: false,
+    desktopStyleLandscape: Boolean(orientationLandscape && finePointer && !coarsePointer)
+  };
 }
 
 function evaluateLayoutMode() {
@@ -31029,6 +31013,7 @@ function evaluateLayoutMode() {
     hasHorizontalOverflow: s.hasHorizontalOverflow,
     coarsePointer: s.coarsePointer,
     finePointer: s.finePointer,
+    hoverNone: s.hoverNone,
     orientationLandscape
   });
   const { nextMode, forcedPortrait, forcedDesktop, tacticalLandscapeByHeight, desktopStyleLandscape } = resolved;
@@ -31067,7 +31052,7 @@ function applyLayoutMode(nextMode) {
   const previousLayoutMode = activeLayoutMode;
   const validModes = ["desktop", "portrait", "tactical-landscape"];
   const viewportWidth = window.visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0;
-  const fallbackMode = viewportWidth <= 980 ? "portrait" : "desktop";
+  const fallbackMode = "desktop";
   const safePreviousMode = validModes.includes(previousLayoutMode) ? previousLayoutMode : fallbackMode;
   activeLayoutMode = validModes.includes(nextMode) ? nextMode : safePreviousMode;
   if (!document?.body) return;
@@ -31082,10 +31067,23 @@ function applyLayoutMode(nextMode) {
     window.resetMobileSurfaceState("layout_transition", { previousLayoutMode, nextLayoutMode: activeLayoutMode });
   }
   if (activeLayoutMode === "portrait" && typeof activateGridlyPortraitV2StartupOwner === "function") {
-    activateGridlyPortraitV2StartupOwner("applyLayoutMode");
+    if (!activateGridlyPortraitV2StartupOwner("applyLayoutMode")) activeLayoutMode = "desktop";
   } else if (activeLayoutMode !== "portrait") {
     deactivateGridlyPortraitV2Owner();
   }
+  const supported = activeLayoutMode === "portrait";
+  if (!supported) {
+    document.body.removeAttribute("data-mobile-mode");
+    deactivateGridlyPortraitV2Owner();
+  }
+  document.body.setAttribute("data-layout-mode", activeLayoutMode);
+  document.body.setAttribute("data-layout-mode-legacy", supported ? "mobile" : "desktop");
+  const legacyDashboard = document.getElementById("dashboardSection");
+  legacyDashboard?.toggleAttribute("inert", !supported);
+  if (legacyDashboard) legacyDashboard.setAttribute("aria-hidden", supported ? "false" : "true");
+  const developmentGate = document.getElementById("gridlyDesktopGate");
+  developmentGate?.toggleAttribute("inert", supported);
+  if (developmentGate) developmentGate.setAttribute("aria-hidden", supported ? "true" : "false");
   syncTacticalMapSurfaceVisibility();
   document.documentElement?.classList.remove("gridly-desktop-startup-containment");
 }
@@ -31136,6 +31134,7 @@ window.gridlyLayoutDebug = function gridlyLayoutDebug() {
     hasHorizontalOverflow: s.hasHorizontalOverflow,
     coarsePointer: s.coarsePointer,
     finePointer: s.finePointer,
+    hoverNone: s.hoverNone,
     orientationLandscape: orientation === "landscape"
   });
   return {
@@ -31151,6 +31150,29 @@ window.gridlyLayoutDebug = function gridlyLayoutDebug() {
       mobileMode: document.body?.dataset?.mobileMode || null
     }
   };
+};
+
+window.gridlyLP2417PresentationSafetyAudit = function gridlyLP2417PresentationSafetyAudit() {
+  const visible = (node) => Boolean(node && !node.hidden && node.getClientRects().length && getComputedStyle(node).display !== "none" && getComputedStyle(node).visibility !== "hidden");
+  const focusable = (root) => root ? Array.from(root.querySelectorAll('a[href],button,input,select,textarea,[tabindex]')).some((node) => !node.disabled && node.tabIndex >= 0 && !node.closest('[inert],[aria-hidden="true"]')) : false;
+  const legacy = document.getElementById("dashboardSection");
+  const mobile = document.getElementById("gridlyPortraitV2");
+  const gate = document.getElementById("gridlyDesktopGate");
+  const validatedMobileVisible = visible(mobile);
+  const developmentGateVisible = visible(gate) && gate.getAttribute("aria-hidden") !== "true";
+  const legacyDashboardVisible = visible(legacy) && legacy?.getAttribute("aria-hidden") !== "true" && !legacy?.hasAttribute("inert") && document.body?.dataset?.layoutMode !== "portrait";
+  const result = {
+    viewport: { width: window.innerWidth, height: window.innerHeight },
+    pointerClass: computeLayoutModeSignals().coarsePointer ? "coarse" : computeLayoutModeSignals().finePointer ? "fine" : "unknown",
+    displayMode: window.matchMedia?.("(display-mode: standalone)")?.matches ? "standalone" : "browser",
+    selectedPresentationAuthority: validatedMobileVisible ? "validated-mobile" : developmentGateVisible ? "development-gate" : "none",
+    validatedMobileVisible, developmentGateVisible, legacyDashboardVisible,
+    legacyDashboardFocusable: document.body?.dataset?.layoutMode !== "portrait" && focusable(legacy),
+    legacyDashboardAccessibilityExposed: document.body?.dataset?.layoutMode !== "portrait" && legacy?.getAttribute("aria-hidden") !== "true",
+    acceptableSurfaceCount: Number(validatedMobileVisible) + Number(developmentGateVisible)
+  };
+  result.pass = !result.legacyDashboardVisible && !result.legacyDashboardFocusable && !result.legacyDashboardAccessibilityExposed && result.acceptableSurfaceCount === 1;
+  return result;
 };
 
 function isMobileUiViewport() {
@@ -114822,6 +114844,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.addEventListener("resize", scheduleAuthoritativeLayoutModeSync, { passive: true });
   window.addEventListener("orientationchange", scheduleAuthoritativeLayoutModeSync, { passive: true });
   window.visualViewport?.addEventListener("resize", scheduleAuthoritativeLayoutModeSync, { passive: true });
+  for (const query of ["(pointer: coarse)", "(pointer: fine)", "(hover: none)", "(display-mode: standalone)"]) {
+    window.matchMedia?.(query)?.addEventListener?.("change", scheduleAuthoritativeLayoutModeSync);
+  }
 
   window.gridlyPortraitLayoutDebug = () => {
     const isVisible = (node) => Boolean(node && node.getClientRects().length > 0 && window.getComputedStyle(node).display !== "none" && window.getComputedStyle(node).visibility !== "hidden");

@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "evidenceType": "DETERMINISTIC_SOURCE_AUDIT_PLUS_EMULATED_BROWSER_CONTRACT",
   "viewports": [
     "desktop",
-    "tablet/narrow desktop",
+    "narrow fine-pointer desktop",
     "Android-like 390x844 portrait",
     "Android-like 844x390 landscape",
     "200% zoom pressure"
@@ -26,7 +26,8 @@
         },
         "orientation": "portrait",
         "hasTouch": true,
-        "pointer": "coarse"
+        "pointer": "coarse",
+        "hover": "none"
       },
       {
         "viewport": {
@@ -35,7 +36,8 @@
         },
         "orientation": "landscape",
         "hasTouch": true,
-        "pointer": "coarse"
+        "pointer": "coarse",
+        "hover": "none"
       },
       {
         "viewport": {
@@ -45,11 +47,12 @@
         "orientation": "portrait",
         "hasTouch": true,
         "pointer": "coarse",
+        "hover": "none",
         "textZoomPercent": 200
       }
     ],
     "certifiedClaims": [
-      "responsive breakpoint selection",
+      "capability-based presentation selection",
       "zoom/reflow pressure",
       "touch and coarse-pointer media-query contract",
       "safe/dynamic viewport sizing",
@@ -62,22 +65,25 @@
       "device rotation/compositor repaint"
     ]
   },
-  "supportedPortraitViewport": {
+  "validatedMobileAuthority": {
     "maxCssViewportWidthPx": 980,
     "inclusive": true,
     "orientation": "portrait",
-    "heightAtLeastWidth": true,
-    "desktopGatePolicy": "intentional and preserved"
+    "primaryPointer": "coarse",
+    "finePointer": false,
+    "hover": "none",
+    "failClosedAuthority": "development-gate"
   },
   "ownerEvidenceRequired": [
-    "Confirm iPhone availability through the normal acceptance process; if available, run the reduced Safari notch/mobile-chrome, increased-text, and rotation smoke",
-    "In the installed Windows Edge standalone app, resize to a portrait CSS viewport at or below 980 px, then exercise Alerts, My Area, close/relaunch, and persistence"
+    "Confirm iPhone availability through the normal acceptance process; if available, run the reduced Safari notch/mobile-chrome, increased-text, and rotation smoke"
   ],
   "optionalPostLaunch": [
-    "Physical Android Chrome font, browser-chrome, gesture-region, and rotation/compositor observation"
+    "Physical Android Chrome font, browser-chrome, gesture-region, and rotation/compositor observation",
+    "Installed-PWA interactive traveler acceptance"
   ],
   "notRequired": [
     "Physical Android hardware for launch",
+    "Installed-PWA traveler experience for this launch",
     "A separate desktop 200% owner journey",
     "A repeated Windows Narrator journey"
   ]
