@@ -40955,14 +40955,71 @@ function gridlyDestinationDecisionFreshnessLine(intelligence = {}) {
   return minutes <= 1 ? "Updated just now" : `Updated ${minutes} minutes ago`;
 }
 
-function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence = null } = {}) {
+const GRIDLY_DESTINATION_REQUIRED_QUIET_SOURCES = Object.freeze([
+  "destination_alerts",
+  "official_roadways",
+  "destination_weather",
+  "route_community_reports",
+  "route_hazards",
+  "statewide_crossings"
+]);
+
+// Quiet is an affirmative coverage claim, not the absence of matches. Keep
+// this reducer independent from impact scoring so valid route evidence remains
+// visible when another authority has not completed its destination snapshot.
+function buildGridlyDestinationCoverageState(options = {}) {
+  const requiredSourceFamilies = Object.freeze([...(options.requiredSourceFamilies || GRIDLY_DESTINATION_REQUIRED_QUIET_SOURCES)]);
+  const completed = new Set(Array.isArray(options.completedSourceFamilies) ? options.completedSourceFamilies : []);
+  const failed = new Set(Array.isArray(options.failedSourceFamilies) ? options.failedSourceFamilies : []);
+  const completedSourceFamilies = Object.freeze(requiredSourceFamilies.filter((family) => completed.has(family) && !failed.has(family)));
+  const failedSourceFamilies = Object.freeze(requiredSourceFamilies.filter((family) => failed.has(family)));
+  const missingSourceFamilies = Object.freeze(requiredSourceFamilies.filter((family) => !completed.has(family) && !failed.has(family)));
+  const coverageState = completedSourceFamilies.length === requiredSourceFamilies.length
+    ? "COVERAGE_COMPLETE"
+    : failedSourceFamilies.length > 0
+      ? "COVERAGE_UNAVAILABLE"
+      : "COVERAGE_PARTIAL";
+  return Object.freeze({ coverageState, requiredSourceFamilies, completedSourceFamilies, missingSourceFamilies, failedSourceFamilies });
+}
+
+function getGridlyDestinationCoverageState() {
+  const selected = normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination);
+  const destinationCountyId = gridlyNormalizeCountyId(selected?.countyId || selected?.raw?.countyId || "") || null;
+  const awareness = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const awarenessCountyId = gridlyNormalizeCountyId(awareness?.countyId || "") || null;
+  const sameCountyAuthority = Boolean(destinationCountyId && awarenessCountyId && destinationCountyId === awarenessCountyId);
+  const completed = ["statewide_crossings"];
+  const failed = [];
+  const familySnapshot = sameCountyAuthority && typeof window.gridlyKbygFamilyStateSnapshot === "function"
+    ? window.gridlyKbygFamilyStateSnapshot() : null;
+  if (sameCountyAuthority) {
+    if (Array.isArray(activeHazards)) completed.push("route_hazards");
+    if (Array.isArray(activeReports)) completed.push("route_community_reports", "destination_alerts");
+    if (["ACTIVE", "QUIET"].includes(familySnapshot?.officialRoadwaysState)) completed.push("official_roadways");
+    else if (familySnapshot?.officialRoadwaysState === "UNAVAILABLE") failed.push("official_roadways");
+    if (["ACTIVE", "QUIET"].includes(familySnapshot?.weatherState)) completed.push("destination_weather");
+    else if (familySnapshot?.weatherState === "UNAVAILABLE") failed.push("destination_weather");
+  }
+  return Object.freeze({
+    ...buildGridlyDestinationCoverageState({ completedSourceFamilies: completed, failedSourceFamilies: failed }),
+    destinationCountyId,
+    routeCountyIds: Object.freeze([awarenessCountyId, destinationCountyId].filter(Boolean).filter((id, index, all) => all.indexOf(id) === index)),
+    sourceFreshness: Object.freeze(Object.fromEntries(GRIDLY_DESTINATION_REQUIRED_QUIET_SOURCES.map((family) => [family, completed.includes(family) ? "checked" : failed.includes(family) ? "unavailable" : "not_acquired"])))
+  });
+}
+
+if (typeof window !== "undefined") window.gridlyBuildDestinationCoverageState = buildGridlyDestinationCoverageState;
+
+function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence = null, coverage = null } = {}) {
   const existingAudit = audit || (typeof window.gridlyDestinationRouteImpactAudit === "function" ? window.gridlyDestinationRouteImpactAudit() : {});
   const existingIntelligence = intelligence || (typeof window.gridlyDestinationRouteIntelligenceAudit === "function" ? window.gridlyDestinationRouteIntelligenceAudit() : {});
   const impactLevel = String(existingAudit?.impactLevel || "none").toLowerCase();
   const conditionCount = Math.max(0, Number(existingAudit?.hazardsConsidered || 0))
     + Math.max(0, Number(existingAudit?.alertsConsidered || 0))
     + Math.max(0, Number(existingAudit?.reportsConsidered || 0));
-  const quiet = impactLevel === "none" || conditionCount === 0;
+  const quiet = impactLevel === "none" && conditionCount === 0;
+  const coverageSnapshot = coverage || getGridlyDestinationCoverageState();
+  const quietAllowed = quiet && coverageSnapshot.coverageState === "COVERAGE_COMPLETE";
   const multiple = !quiet && conditionCount > 1;
   let interpretation = "Stay aware while traveling.";
   let reason = "No active concerns are reported in the available local intelligence.";
@@ -40978,20 +41035,29 @@ function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence
         : "Nearby roadway conditions could affect travel to your destination.";
   }
   const existingConfidence = String(existingAudit?.confidenceLabel || "");
-  const confidence = quiet
+  const confidence = quietAllowed
     ? "Quiet conditions"
+    : quiet
+      ? coverageSnapshot.coverageState === "COVERAGE_UNAVAILABLE" ? "Route information unavailable" : "Route check incomplete"
     : conditionCount > 1
       ? "Multiple recent signals"
       : /live reports checked/i.test(existingConfidence)
         ? "Strong supporting evidence"
         : "Developing conditions";
+  if (quiet && !quietAllowed) {
+    interpretation = coverageSnapshot.coverageState === "COVERAGE_UNAVAILABLE"
+      ? "Some route information is currently unavailable."
+      : "Route conditions are still being checked.";
+    reason = "Required route and destination sources have not all completed.";
+  }
   return Object.freeze({
     pattern: "LP063 Destination Decision Pattern",
-    state: quiet ? "quiet" : multiple ? "multiple" : "active",
+    state: quietAllowed ? "quiet" : quiet ? "incomplete" : multiple ? "multiple" : "active",
     interpretation,
     reason,
     confidence,
-    freshness: gridlyDestinationDecisionFreshnessLine(existingIntelligence),
+    freshness: quietAllowed || !quiet ? gridlyDestinationDecisionFreshnessLine(existingIntelligence) : "Coverage check incomplete",
+    coverageState: coverageSnapshot.coverageState,
     existingDestinationIntelligencePreserved: true
   });
 }
@@ -45049,7 +45115,8 @@ window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudi
   const preview = getGridlyDestinationRoutePreviewState();
   const intelligence = window.gridlyDestinationRouteIntelligenceAudit();
   const impact = window.gridlyDestinationRouteImpactAudit();
-  const decision = buildGridlyDestinationDecisionPresentation({ audit: impact, intelligence });
+  const coverage = getGridlyDestinationCoverageState();
+  const decision = buildGridlyDestinationDecisionPresentation({ audit: impact, intelligence, coverage });
   const destinationCoordinate = normalizeCoordinatePair(selectedDestination?.lat, selectedDestination?.lng);
   const coordinateCounty = destinationCoordinate && typeof gridlyResolveCountyIdForCoordinate === "function"
     ? gridlyResolveCountyIdForCoordinate(destinationCoordinate.lat, destinationCoordinate.lng)
@@ -45119,6 +45186,13 @@ window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudi
         currentAwarenessCountyId: awareness?.countyId || null
       }),
       sourceFamilies,
+      coverageState: coverage.coverageState,
+      requiredSourceFamilies: coverage.requiredSourceFamilies,
+      completedSourceFamilies: coverage.completedSourceFamilies,
+      missingSourceFamilies: coverage.missingSourceFamilies,
+      failedSourceFamilies: coverage.failedSourceFamilies,
+      routeCountyIds: coverage.routeCountyIds,
+      sourceFreshness: coverage.sourceFreshness,
       matchedEvidence,
       matchedCounts: Object.freeze({
         hazards: intelligence?.hazardsNearRoute || 0,
@@ -45126,7 +45200,13 @@ window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudi
         communityReports: intelligence?.reportsNearRoute || 0,
         crossings: intelligence?.crossingsNearRoute || 0
       }),
-      finalDecision: decision
+      finalDecision: decision,
+      finalCopy: Object.freeze({
+        interpretation: decision.interpretation,
+        reason: decision.reason,
+        confidence: decision.confidence,
+        freshness: decision.freshness
+      })
     }),
     route: Object.freeze({
       origin: preview?.source || null,
