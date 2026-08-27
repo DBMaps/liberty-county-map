@@ -32,3 +32,19 @@ test('non-actionable route status container is not a false keyboard stop',()=>{
   assert.match(html,/id="mobileEditRouteBtn"[^>]+aria-label="Edit saved route"/);
   assert.match(app,/mobileDestinationCommandImpact[\s\S]*?addEventListener\("keydown"[\s\S]*?event\.key !== "Enter" && event\.key !== " "/);
 });
+test('OA-1 Settings uses one native click authority for Enter, Space, and pointer activation',()=>{
+  const start=app.indexOf('function bindGridlySettingsActivation(');
+  const end=app.indexOf('window.gridlySettingsActivationAudit =',start);
+  assert.ok(start>0&&end>start);
+  const binding=app.slice(start,end);
+  assert.match(binding,/gridlySettingsActivationBound/);
+  assert.match(binding,/addEventListener\("click"/);
+  assert.match(binding,/openSettingsSurfaceFromDock\("native_settings_button_click"\)/);
+  assert.doesNotMatch(binding,/event\.key\s*===|\.click\(\)|dispatchEvent/);
+  assert.match(app,/if \(intent === 'settings'\) \{\s*bindGridlySettingsActivation\(button\)/);
+});
+test('OA-1 Settings audit is bounded to button identity, native events, and open outcome',()=>{
+  for(const field of ['settingsButtonIdentity','settingsButtonConnected','settingsButtonVisible','settingsButtonListenerAuthority','keydown','keyup','click','settingsOpenAttempted','settingsOpenSucceeded','settingsOpenFailureReason']) assert.match(app,new RegExp(field));
+  assert.match(app,/isTrusted: Boolean\(event\.isTrusted\)/);
+  assert.match(app,/pointerType: event\.pointerType \|\| null/);
+});

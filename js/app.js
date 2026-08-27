@@ -38491,6 +38491,76 @@ function openGridlyRouteDock(source = "route_dock") {
   }
 }
 
+// LP241.7 OA-1: the native button's click event is the single Settings
+// activation authority.  Enter and Space are intentionally left to the
+// browser so keyboard and assistive-technology activation use this same path.
+const gridlySettingsActivationAudit = {
+  settingsButtonIdentity: null,
+  settingsButtonConnected: false,
+  settingsButtonVisible: false,
+  settingsButtonListenerAuthority: "native-click:openSettingsSurfaceFromDock",
+  listenerBindCount: 0,
+  keydown: null,
+  keyup: null,
+  click: null,
+  settingsOpenAttempted: 0,
+  settingsOpenSucceeded: 0,
+  settingsOpenFailureReason: null
+};
+
+function snapshotGridlySettingsActivationButton(button) {
+  const style = button && typeof getComputedStyle === "function" ? getComputedStyle(button) : null;
+  const rect = button?.getBoundingClientRect?.();
+  gridlySettingsActivationAudit.settingsButtonIdentity = describeGridlyTapElement(button);
+  gridlySettingsActivationAudit.settingsButtonConnected = Boolean(button?.isConnected);
+  gridlySettingsActivationAudit.settingsButtonVisible = Boolean(button && !button.hidden
+    && style?.display !== "none" && style?.visibility !== "hidden"
+    && (!rect || (rect.width > 0 && rect.height > 0)));
+}
+
+function bindGridlySettingsActivation(button = getGridlySettingsDockButton()) {
+  if (!(button instanceof HTMLButtonElement)) return false;
+  ensureGridlySettingsDockActionContract(button);
+  snapshotGridlySettingsActivationButton(button);
+  if (button.dataset.gridlySettingsActivationBound === "true") return true;
+  button.dataset.gridlySettingsActivationBound = "true";
+  gridlySettingsActivationAudit.listenerBindCount += 1;
+  const recordKey = (event) => {
+    gridlySettingsActivationAudit[event.type] = {
+      key: event.key,
+      defaultPrevented: Boolean(event.defaultPrevented),
+      at: Date.now()
+    };
+  };
+  button.addEventListener("keydown", recordKey);
+  button.addEventListener("keyup", recordKey);
+  button.addEventListener("click", (event) => {
+    snapshotGridlySettingsActivationButton(button);
+    gridlySettingsActivationAudit.click = {
+      isTrusted: Boolean(event.isTrusted),
+      detail: event.detail,
+      pointerType: event.pointerType || null,
+      defaultPrevented: Boolean(event.defaultPrevented),
+      at: Date.now()
+    };
+    gridlySettingsActivationAudit.settingsOpenAttempted += 1;
+    const opened = openSettingsSurfaceFromDock("native_settings_button_click");
+    if (opened) {
+      gridlySettingsActivationAudit.settingsOpenSucceeded += 1;
+      gridlySettingsActivationAudit.settingsOpenFailureReason = null;
+    } else {
+      gridlySettingsActivationAudit.settingsOpenFailureReason = gridlySettingsDockTapTrace.lastOpenResult?.target || "settings_surface_not_visible";
+    }
+  });
+  return true;
+}
+
+window.gridlySettingsActivationAudit = function gridlySettingsActivationAuditSnapshot() {
+  const button = getGridlySettingsDockButton();
+  snapshotGridlySettingsActivationButton(button);
+  return { ...gridlySettingsActivationAudit };
+};
+
 function bindBottomDockRealButtons() {
   ensureGridlySettingsDockActionContract();
   const buttons = getBottomDockButtons();
@@ -38498,7 +38568,7 @@ function bindBottomDockRealButtons() {
     const intent = classifyBottomDockIntent(button);
     if (!intent) return;
     if (intent === 'settings') {
-      ensureGridlySettingsDockActionContract(button);
+      bindGridlySettingsActivation(button);
       return;
     }
     const boundKey = 'gridlyDockBound';
@@ -118186,25 +118256,22 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     ensureGridlySettingsDockActionContract();
     document.querySelectorAll("[data-v2-sheet]").forEach((b)=>{
       if (b.dataset.gridlyV2SheetBound === "true") return;
-      b.addEventListener("click",(event)=>{
-        window.gridlyStartupDiagnostics?.markInteractionProbe?.("clickHandler", event);
-        window.gridlyStartupDiagnostics?.markPostPaintLifecycle?.("firstResponsiveInteraction");
-        if (b.dataset.v2Sheet === "settings") {
-          ensureGridlySettingsDockActionContract(b);
-          gridlySettingsDockTapTrace.settingsDockHandlerRuns += 1;
-          recordGridlySettingsDockTapEvent(event, "click", { v2SheetHandler: true });
-          return openSettingsSurfaceFromDock("v2_sheet_handler");
-        }
-        openPortraitV2Sheet(b.dataset.v2Sheet);
-      });
-      b.dataset.gridlyV2SheetBound = "true";
       if (b.dataset.v2Sheet === "settings") {
+        bindGridlySettingsActivation(b);
+        b.dataset.gridlyV2SheetBound = "true";
         gridlyGlobalDockEventTrace.settingsButtonBindings = {
           nodeBound: true,
           boundAt: Date.now(),
-          reboundCount: (gridlyGlobalDockEventTrace.settingsButtonBindings.reboundCount || 0) + 1
+          reboundCount: gridlySettingsActivationAudit.listenerBindCount
         };
+        return;
       }
+      b.addEventListener("click",(event)=>{
+        window.gridlyStartupDiagnostics?.markInteractionProbe?.("clickHandler", event);
+        window.gridlyStartupDiagnostics?.markPostPaintLifecycle?.("firstResponsiveInteraction");
+        openPortraitV2Sheet(b.dataset.v2Sheet);
+      });
+      b.dataset.gridlyV2SheetBound = "true";
     });
     window.gridlyStartupDiagnostics?.markPostPaintLifecycle?.("dockHandlersInstalled");
     { const closeBtn = document.getElementById("gridlyPortraitV2SheetClose"); if (closeBtn && closeBtn.dataset.gridlyV2CloseBound !== "true") { closeBtn.addEventListener("click",closePortraitV2Sheet); closeBtn.dataset.gridlyV2CloseBound = "true"; gridlyAlertsSheetLifecycleState.closeButtonBound = true; } }
