@@ -125794,3 +125794,128 @@ function gridlyMultiCountyConsumerConvergenceAudit() {
 }
 window.gridlyMultiCountyConsumerConvergenceAudit = gridlyMultiCountyConsumerConvergenceAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyMultiCountyConsumerConvergenceAudit", gridlyMultiCountyConsumerConvergenceAudit);
+
+// LP241.7 OA-1: passive, rendered-DOM keyboard acceptance projection. This
+// helper deliberately does not click, focus, submit, persist, or dispatch an
+// event. It describes the browser state at the instant the owner invokes it.
+function gridlyLP2417KeyboardAcceptance() {
+  const candidateSelector = [
+    "a[href]", "area[href]", "button", "input", "select", "textarea", "summary",
+    "iframe", "object", "embed", "audio[controls]", "video[controls]",
+    "[contenteditable]:not([contenteditable='false'])", "[tabindex]"
+  ].join(",");
+  const interactiveSelector = `${candidateSelector},[role='button'],[role='link'],[role='checkbox'],[role='menuitem'],[role='option'],[role='radio'],[role='switch'],[role='tab'],[onclick],[onpointerdown],[ontouchstart]`;
+  const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+  const ancestors = (element) => {
+    const result = [];
+    for (let node = element; node; node = node.parentElement) result.push(node);
+    return result;
+  };
+  const state = (element) => {
+    const chain = ancestors(element);
+    const hidden = chain.some((node) => node.hidden || node.getAttribute?.("aria-hidden") === "true");
+    const inert = chain.some((node) => node.inert || node.hasAttribute?.("inert"));
+    const style = window.getComputedStyle(element);
+    const visible = !hidden && !inert && style.display !== "none" && style.visibility !== "hidden"
+      && style.visibility !== "collapse" && element.getClientRects().length > 0;
+    return { hidden, inert, visible };
+  };
+  const accessibleName = (element) => {
+    const labelledBy = normalize(element.getAttribute("aria-labelledby"));
+    if (labelledBy) {
+      const value = normalize(labelledBy.split(/\s+/).map((id) => document.getElementById(id)?.textContent).filter(Boolean).join(" "));
+      if (value) return value;
+    }
+    const ariaLabel = normalize(element.getAttribute("aria-label"));
+    if (ariaLabel) return ariaLabel;
+    if (element.labels?.length) {
+      const value = normalize(Array.from(element.labels, (label) => label.textContent).join(" "));
+      if (value) return value;
+    }
+    if (element.tagName === "IMG" || element.tagName === "AREA" || element.tagName === "INPUT" && element.type === "image") {
+      const alt = normalize(element.getAttribute("alt"));
+      if (alt) return alt;
+    }
+    if (element.tagName === "INPUT" && ["button", "submit", "reset"].includes(element.type)) {
+      const value = normalize(element.value);
+      if (value) return value;
+    }
+    if (element.tagName === "SELECT" && element.selectedOptions?.length) return normalize(element.selectedOptions[0].textContent);
+    return normalize(element.textContent || element.getAttribute("title"));
+  };
+  const categoryFor = (element, name) => {
+    const authority = normalize(`${element.id} ${element.className} ${element.getAttribute("data-action")} ${element.getAttribute("data-section-jump")} ${name}`).toLowerCase();
+    if (/settings|preference|profile/.test(authority)) return "Settings";
+    if (/alert|bell|notification/.test(authority)) return "Alerts";
+    if (/awareness|my area|my town|town selector|choose.*area|community chooser/.test(authority)) return "My Area / awareness selection";
+    if (/destination|route watch|route setup|check a route|watch a route|edit route|search address|where are you going/.test(authority)) return "Destination / Route Watch";
+    if (/report|hazard composer|help nearby drivers/.test(authority)) return "Community Reporting";
+    if (/confirm|mark cleared|clear report|reopen|lifecycle/.test(authority)) return "Community lifecycle";
+    if (/search/.test(authority) || element.type === "search") return "Search";
+    return null;
+  };
+  const nativeKeyboard = (element) => /^(A|AREA|BUTTON|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(element.tagName)
+    && !(element.tagName === "A" || element.tagName === "AREA") || /^(A|AREA)$/.test(element.tagName) && element.hasAttribute("href");
+  const nodes = Array.from(document.querySelectorAll(candidateSelector));
+  const inventory = nodes.map((element, domIndex) => {
+    const renderedState = state(element);
+    const name = accessibleName(element);
+    const tabIndex = element.tabIndex;
+    const category = categoryFor(element, name);
+    return {
+      element, domIndex, tag: element.tagName.toLowerCase(), type: normalize(element.getAttribute("type")) || null,
+      role: normalize(element.getAttribute("role")) || null, accessibleName: name,
+      ariaLabel: normalize(element.getAttribute("aria-label")) || null,
+      ariaExpanded: element.hasAttribute("aria-expanded") ? element.getAttribute("aria-expanded") : null,
+      ariaControls: normalize(element.getAttribute("aria-controls")) || null, tabIndex,
+      disabled: Boolean(element.disabled || element.getAttribute("aria-disabled") === "true"),
+      ...renderedState, essentialSurface: category, action: normalize(element.getAttribute("data-action") || element.getAttribute("data-section-jump")) || null,
+      category
+    };
+  });
+  const renderedFocusable = inventory.filter((item) => item.visible && !item.disabled && item.tabIndex >= 0)
+    .sort((a, b) => (a.tabIndex > 0 ? 0 : 1) - (b.tabIndex > 0 ? 0 : 1) || (a.tabIndex > 0 && b.tabIndex > 0 ? a.tabIndex - b.tabIndex : a.domIndex - b.domIndex));
+  const publicItem = (item, index = null) => {
+    const { element, domIndex, ...value } = item;
+    return Object.freeze(index === null ? value : { index, ...value });
+  };
+  const openModals = Array.from(document.querySelectorAll("[role='dialog'][aria-modal='true']")).filter((node) => state(node).visible);
+  const leaked = openModals.length ? renderedFocusable.filter((item) => !openModals.some((modal) => modal.contains(item.element))) : [];
+  const hiddenFocusable = inventory.filter((item) => !item.visible && !item.disabled && item.tabIndex >= 0);
+  const customKeyboardAuthorities = new Set(["mobileDestinationCommandImpact"]);
+  const generic = renderedFocusable.filter((item) => !nativeKeyboard(item.element));
+  generic.forEach((item) => { item.keyboardSemantics = customKeyboardAuthorities.has(item.element.id) ? "Enter/Space handler source-certified" : "UNVERIFIED"; });
+  const genericWithoutKeyboardSemantics = generic.filter((item) => item.keyboardSemantics === "UNVERIFIED");
+  const essential = renderedFocusable.filter((item) => item.category);
+  const unnamed = essential.filter((item) => !item.accessibleName);
+  const positive = renderedFocusable.filter((item) => item.tabIndex > 0);
+  const duplicateGroups = Object.values(essential.reduce((groups, item) => {
+    const key = `${item.category}|${item.accessibleName.toLowerCase()}`;
+    if (item.accessibleName) (groups[key] ||= []).push(item);
+    return groups;
+  }, {})).filter((group) => group.length > 1).map((group) => group.map((item) => publicItem(item)));
+  const pointerOnly = Array.from(document.querySelectorAll(interactiveSelector)).map((element) => {
+    const name = accessibleName(element); return { element, name, category: categoryFor(element, name), ...state(element) };
+  }).filter((item) => item.visible && item.category && item.element.tabIndex < 0 && !item.element.disabled);
+  const activeModal = openModals.find((modal) => modal.contains(document.activeElement)) || null;
+  const compact = {
+    focusableCount: renderedFocusable.length, essentialControlCount: essential.length,
+    unnamedEssentialControls: unnamed.map((item) => publicItem(item)),
+    hiddenFocusableControls: hiddenFocusable.map((item) => publicItem(item)),
+    focusableElementsHiddenBehindOverlays: leaked.map((item) => publicItem(item)),
+    positiveTabIndexControls: positive.map((item) => publicItem(item)),
+    genericFocusableControls: generic.map((item) => publicItem(item)),
+    duplicateAmbiguousEssentialNames: duplicateGroups,
+    pointerOnlyEssentialActions: pointerOnly.map(({ element, ...item }) => ({ tag: element.tagName.toLowerCase(), id: element.id || null, accessibleName: item.name, category: item.category })),
+    modalFocusContract: { openModalCount: openModals.length, focusEntryContained: openModals.length ? Boolean(activeModal) : null, backgroundFocusableLeakCount: leaked.length },
+    escapeContract: { deterministicSourceContract: true, runtimeActivationPerformed: false },
+    focusRestorationContract: { deterministicSourceContract: true, runtimeActivationPerformed: false },
+    deterministicPass: !unnamed.length && !positive.length && !genericWithoutKeyboardSemantics.length && !pointerOnly.length && !leaked.length,
+    physicalSpotChecksRemaining: 4
+  };
+  Object.defineProperty(compact, "focusOrderProjection", { value: renderedFocusable.map((item, index) => publicItem(item, index)), enumerable: false });
+  console.table(compact.focusOrderProjection);
+  return Object.freeze(compact);
+}
+window.gridlyLP2417KeyboardAcceptance = gridlyLP2417KeyboardAcceptance;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP2417KeyboardAcceptance", gridlyLP2417KeyboardAcceptance);

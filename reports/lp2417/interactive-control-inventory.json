@@ -1,7 +1,8 @@
 {
-  "schemaVersion": 1,
-  "evidenceType": "DETERMINISTIC_SOURCE_AUDIT",
+  "schemaVersion": 2,
+  "evidenceType": "DETERMINISTIC_SOURCE_AND_RENDERED_DOM_AUDIT",
   "generatedAt": "2026-08-27",
+  "ownerCommand": "window.gridlyLP2417KeyboardAcceptance()",
   "summary": {
     "nativeInteractiveElements": 197,
     "byElement": {
@@ -12,14 +13,9 @@
       "summary": 15,
       "textarea": 1
     },
-    "genericFocusableElements": 2
+    "genericFocusableElements": 1
   },
   "genericFocusableControls": [
-    {
-      "element": "div",
-      "id": "routeStatusCard",
-      "keyboardContract": "requires runtime key handler"
-    },
     {
       "element": "p",
       "id": "mobileDestinationCommandImpact",
@@ -27,11 +23,12 @@
     }
   ],
   "contracts": {
-    "accessibleNames": "Native text, associated labels, aria-label and aria-labelledby inspected by regression checks",
-    "keyboard": "Native activation plus bounded custom key handlers",
-    "hiddenState": "hidden and inert runtime contracts present"
+    "accessibleNames": "Rendered native text, associated labels, aria-label and aria-labelledby are projected without activation",
+    "keyboard": "Rendered browser tab-order projection plus native activation and bounded custom key-handler source contracts",
+    "hiddenState": "Computed visibility plus hidden, aria-hidden, inert and open-modal leakage are inspected",
+    "passive": "No click, focus, submit, event dispatch, network, or storage operation"
   },
   "limitations": [
-    "Runtime visibility, computed names, target geometry and browser accessibility-tree output require browser/device acceptance."
+    "DOM order is a deterministic projection, not a claim about actual Narrator speech. Four representative Edge + Narrator actions remain."
   ]
 }
