@@ -15,8 +15,8 @@ assert(app.includes('gridlyPwaInstallReadinessState.autoPromptPrevented = true')
 assert(app.includes('gridlyHandlePwaInstallButtonClick'), 'user-initiated install button workflow is preserved');
 assert(app.includes('gridlyIsStandaloneMode()'), 'standalone launch detection remains in use');
 
-assert(serviceWorker.includes('const GRIDLY_SW_VERSION = "lp052.2-update-lifecycle";'), 'service worker exposes lightweight LP052.2 version identifier');
-assert(serviceWorker.includes('const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp0522-v1";'), 'cache name safely advances out of beta-era naming');
+assert(serviceWorker.includes('const GRIDLY_SW_VERSION = "lp101.1-runtime-recovery";'), 'legacy lifecycle contract follows the governed current service-worker version authority');
+assert(serviceWorker.includes('const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp235-v1";'), 'legacy lifecycle contract follows the governed current cache authority');
 assert(serviceWorker.includes('fetch(request, { cache: "no-store" })'), 'navigation network-first strategy remains valid');
 assert(serviceWorker.includes('caches.delete(cacheName)'), 'obsolete cache cleanup remains active');
 assert(serviceWorker.includes('GRIDLY_GET_SW_VERSION'), 'service worker supports passive version inspection');
