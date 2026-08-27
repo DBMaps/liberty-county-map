@@ -25253,6 +25253,14 @@ let gridlyDestinationRouteImpactCache = null;
 let gridlyDestinationCoverageSnapshotCache = null;
 let gridlyDestinationCoverageSnapshotGeneration = 0;
 let gridlyDestinationCoverageLastInvalidation = Object.freeze({ at: null, reason: null });
+let gridlyDestinationRouteGeneration = 0;
+let gridlyDestinationLastRouteProviderFailureReason = "";
+const gridlyDestinationRouteLifecycleAuditState = {
+  routeGeneration: 0, routeBuildReason: "", routeOriginBefore: null, routeOriginAfter: null,
+  routeOriginAuthority: "none", routeRequestAttempted: false, routeRequestSucceeded: false,
+  routeRequestFailed: false, routeFailureReason: "", routeSuperseded: false,
+  routeStatus: "idle", routeGeometryPublished: false
+};
 const gridlyDestinationPerformanceAuditState = {
   routePreviewStatus: "idle",
   routePreviewRequestStartedAt: null,
@@ -40978,15 +40986,18 @@ function buildGridlyDestinationCoverageState(options = {}) {
   const requiredSourceFamilies = Object.freeze([...(options.requiredSourceFamilies || GRIDLY_DESTINATION_REQUIRED_QUIET_SOURCES)]);
   const completed = new Set(Array.isArray(options.completedSourceFamilies) ? options.completedSourceFamilies : []);
   const failed = new Set(Array.isArray(options.failedSourceFamilies) ? options.failedSourceFamilies : []);
+  const pending = new Set(Array.isArray(options.pendingSourceFamilies) ? options.pendingSourceFamilies : []);
   const completedSourceFamilies = Object.freeze(requiredSourceFamilies.filter((family) => completed.has(family) && !failed.has(family)));
   const failedSourceFamilies = Object.freeze(requiredSourceFamilies.filter((family) => failed.has(family)));
-  const missingSourceFamilies = Object.freeze(requiredSourceFamilies.filter((family) => !completed.has(family) && !failed.has(family)));
+  const pendingSourceFamilies = Object.freeze(requiredSourceFamilies.filter((family) => pending.has(family) && !completed.has(family) && !failed.has(family)));
+  const notAcquiredSourceFamilies = Object.freeze(requiredSourceFamilies.filter((family) => !completed.has(family) && !failed.has(family) && !pending.has(family)));
+  const missingSourceFamilies = Object.freeze([...pendingSourceFamilies, ...notAcquiredSourceFamilies]);
   const coverageState = completedSourceFamilies.length === requiredSourceFamilies.length
     ? "COVERAGE_COMPLETE"
     : failedSourceFamilies.length > 0
       ? "COVERAGE_UNAVAILABLE"
       : "COVERAGE_PARTIAL";
-  return Object.freeze({ coverageState, requiredSourceFamilies, completedSourceFamilies, missingSourceFamilies, failedSourceFamilies });
+  return Object.freeze({ coverageState, requiredSourceFamilies, completedSourceFamilies, missingSourceFamilies, pendingSourceFamilies, notAcquiredSourceFamilies, failedSourceFamilies });
 }
 
 function buildGridlyDestinationSourceAuthority(options = {}) {
@@ -41160,10 +41171,17 @@ function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence
         ? "Strong supporting evidence"
         : "Developing conditions";
   if (quiet && !quietAllowed) {
+    const coveragePending = Array.isArray(coverageSnapshot.pendingSourceFamilies) && coverageSnapshot.pendingSourceFamilies.length > 0;
     interpretation = coverageSnapshot.coverageState === "COVERAGE_UNAVAILABLE"
       ? "Some route information is currently unavailable."
-      : "Route conditions are still being checked.";
-    reason = "Required route and destination sources have not all completed.";
+      : coveragePending
+        ? "Route conditions are still being checked."
+        : "Route information is limited for this trip.";
+    reason = coverageSnapshot.coverageState === "COVERAGE_UNAVAILABLE"
+      ? "A required route or destination source was attempted but is unavailable."
+      : coveragePending
+        ? "A required route or destination source check is in progress."
+        : "Some required route and destination sources were not acquired.";
   }
   return Object.freeze({
     pattern: "LP063 Destination Decision Pattern",
@@ -41171,8 +41189,9 @@ function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence
     interpretation,
     reason,
     confidence,
-    freshness: quietAllowed || !quiet ? gridlyDestinationDecisionFreshnessLine(existingIntelligence) : "Coverage check incomplete",
+    freshness: quietAllowed || !quiet ? gridlyDestinationDecisionFreshnessLine(existingIntelligence) : "Route coverage incomplete",
     coverageState: coverageSnapshot.coverageState,
+    coverageCopyReason: coverageSnapshot.coverageState === "COVERAGE_UNAVAILABLE" ? "failed_required_authority" : (coverageSnapshot.pendingSourceFamilies?.length ? "pending_acquisition" : "partial_not_acquired"),
     existingDestinationIntelligencePreserved: true
   });
 }
@@ -43150,6 +43169,8 @@ function drawGridlyDestinationRoutePreviewLine(latLngs = []) {
 async function buildGridlyDestinationRoutePreview(options = {}) {
   const state = ensureGridlySearchState();
   const destination = normalizeGridlySearchResult(state?.selectedDestination);
+  const priorPreview = getGridlyDestinationRoutePreviewState();
+  const priorOrigin = priorPreview?.source ? { ...priorPreview.source } : null;
   clearGridlyDestinationRoutePreview({ silent: true, syncCard: false, preservePerformanceAudit: true });
   const flowStartedAt = Number.isFinite(Number(gridlyDestinationPerformanceAuditState.destinationFlowStartedAt))
     ? Number(gridlyDestinationPerformanceAuditState.destinationFlowStartedAt)
@@ -43161,6 +43182,13 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   gridlyDestinationPerformanceAuditState.lastUpdatedAt = Date.now();
   const preview = getGridlyDestinationRoutePreviewState();
   const requestId = Number(preview.requestId || 0) + 1;
+  const routeGeneration = ++gridlyDestinationRouteGeneration;
+  Object.assign(gridlyDestinationRouteLifecycleAuditState, {
+    routeGeneration, routeBuildReason: options.reason || "destination_selection",
+    routeOriginBefore: priorOrigin, routeOriginAfter: null, routeOriginAuthority: "none",
+    routeRequestAttempted: false, routeRequestSucceeded: false, routeRequestFailed: false,
+    routeFailureReason: "", routeSuperseded: false, routeStatus: "preparing", routeGeometryPublished: false
+  });
   preview.requestId = requestId;
   preview.destination = destination ? {
     label: destination.title || destination.displayName || destination.address || "Destination",
@@ -43200,6 +43228,8 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   preview.autoLocationFallbackReason = preview.autoLocationFallbackUsed ? (autoLocationResult.fallbackReason || "location_unavailable") : "";
 
   const origin = getGridlyDestinationRouteOrigin({ destination, allowSameDestination: isGridlySavedPlaceDestination(destination) });
+  gridlyDestinationRouteLifecycleAuditState.routeOriginAfter = origin ? { ...origin } : null;
+  gridlyDestinationRouteLifecycleAuditState.routeOriginAuthority = origin?.source === "current_location" ? "authoritative_current_location" : origin ? "provisional_fallback" : "none";
   if (origin && preview.autoLocationAttempted && origin.source !== "current_location") {
     preview.autoLocationFallbackUsed = true;
     preview.autoLocationFallbackReason = preview.autoLocationFallbackReason || origin.fallbackReason || `using_${origin.source || "fallback_origin"}`;
@@ -43219,6 +43249,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   if (!origin) {
     preview.status = "unavailable";
     preview.error = "origin_unavailable";
+    Object.assign(gridlyDestinationRouteLifecycleAuditState, { routeFailureReason: "origin_unavailable", routeStatus: "unavailable", routeGeometryPublished: false });
     window.GridlyDestinationRoutePreview = preview;
     gridlyDestinationPerformanceAuditState.routePreviewStatus = preview.status;
     gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = getGridlyDestinationPerfNow();
@@ -43268,10 +43299,13 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   applyGridlyDestinationVisibilityOffset(destination, { reason: "destination-preview-loading" });
 
   const routeRequestStartedAt = getGridlyDestinationPerfNow();
+  gridlyDestinationRouteLifecycleAuditState.routeRequestAttempted = true;
+  gridlyDestinationRouteLifecycleAuditState.routeStatus = "loading";
   const routeData = await fetchRoadRoutePreviewData([origin.lat, origin.lng], [destination.lat, destination.lng], { auditSource: "destination_route_preview" });
   setGridlyDestinationPerformanceTiming("routeRequestMs", getGridlyDestinationPerfNow() - routeRequestStartedAt);
   const latestPreview = getGridlyDestinationRoutePreviewState();
   if (latestPreview.requestId !== requestId) {
+    gridlyDestinationRouteLifecycleAuditState.routeSuperseded = true;
     addGridlyDestinationPerformanceNote("stale destination route preview request ignored");
     return latestPreview;
   }
@@ -43286,6 +43320,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     latestPreview.durationSeconds = null;
     latestPreview.etaMinutes = null;
     latestPreview.error = "route_unavailable";
+    Object.assign(gridlyDestinationRouteLifecycleAuditState, { routeRequestFailed: true, routeFailureReason: gridlyDestinationLastRouteProviderFailureReason || "provider_route_unavailable", routeStatus: "unavailable", routeGeometryPublished: false });
     latestPreview.routeLayer = null;
     window.GridlyDestinationRoutePreview = latestPreview;
     gridlyDestinationPerformanceAuditState.routePreviewStatus = latestPreview.status;
@@ -43309,6 +43344,11 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   latestPreview.etaMinutes = routeData.etaMinutes;
   latestPreview.routeProvider = routeData.provider || "osrm";
   latestPreview.error = renderedLayer ? "" : "render_unavailable";
+  Object.assign(gridlyDestinationRouteLifecycleAuditState, {
+    routeRequestSucceeded: true, routeRequestFailed: !renderedLayer,
+    routeFailureReason: renderedLayer ? "" : "render_unavailable",
+    routeStatus: latestPreview.status, routeGeometryPublished: Boolean(renderedLayer)
+  });
   recordGridlyDestinationLocationRecoveryPreviewState(latestPreview.source, destination, latestPreview, options);
   gridlyDestinationPerformanceAuditState.routePreviewStatus = latestPreview.status;
   gridlyDestinationPerformanceAuditState.routeGeometryPointCount = Array.isArray(latestPreview.geometry) ? latestPreview.geometry.length : 0;
@@ -45306,6 +45346,8 @@ window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudi
       requiredSourceFamilies: coverage.requiredSourceFamilies,
       completedSourceFamilies: coverage.completedSourceFamilies,
       missingSourceFamilies: coverage.missingSourceFamilies,
+      pendingSourceFamilies: coverage.pendingSourceFamilies,
+      notAcquiredSourceFamilies: coverage.notAcquiredSourceFamilies,
       failedSourceFamilies: coverage.failedSourceFamilies,
       sourceFamilyAuthority: coverage.sourceFamilyAuthority,
       routeCountyIds: coverage.routeCountyIds,
@@ -45336,14 +45378,17 @@ window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudi
         interpretation: decision.interpretation,
         reason: decision.reason,
         confidence: decision.confidence,
-        freshness: decision.freshness
+        freshness: decision.freshness,
+        coverageCopyReason: decision.coverageCopyReason
       })
     }),
     route: Object.freeze({
       origin: preview?.source || null,
       destination: preview?.destination || null,
       status: preview?.status || "idle",
-      fitReason: gridlyRouteViewportOwnershipState.lastShowFullRouteSource || "destination_visibility_offset"
+      fitReason: gridlyRouteViewportOwnershipState.lastShowFullRouteSource || "destination_visibility_offset",
+      ...cloneGridlyDestinationAuditSnapshot(gridlyDestinationRouteLifecycleAuditState),
+      routeWatchActive: Boolean(routeWatchActivated || window.__gridlyRouteWatchActive)
     })
   });
 };
@@ -74168,6 +74213,7 @@ async function fetchRoadRoutePreviewData(from, to, options = {}) {
   const timeoutMs = Number.isFinite(Number(options.timeoutMs)) ? Number(options.timeoutMs) : 4500;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  gridlyDestinationLastRouteProviderFailureReason = "";
 
   try {
     const osrmFetchStartedAt = getGridlyDestinationPerfNow();
@@ -74177,6 +74223,7 @@ async function fetchRoadRoutePreviewData(from, to, options = {}) {
     );
     setGridlyDestinationPerformanceTiming("osrmFetchMs", getGridlyDestinationPerfNow() - osrmFetchStartedAt);
     if (!response.ok) {
+      gridlyDestinationLastRouteProviderFailureReason = `provider_http_${response.status}`;
       addGridlyDestinationPerformanceNote(`OSRM response not ok: ${response.status}`);
       return null;
     }
@@ -74185,6 +74232,7 @@ async function fetchRoadRoutePreviewData(from, to, options = {}) {
     const route = data?.routes?.[0] || null;
     const coordinates = route?.geometry?.coordinates;
     if (!Array.isArray(coordinates) || coordinates.length < 2) {
+      gridlyDestinationLastRouteProviderFailureReason = "provider_geometry_unavailable";
       setGridlyDestinationPerformanceTiming("routeGeometryParseMs", getGridlyDestinationPerfNow() - parseStartedAt);
       addGridlyDestinationPerformanceNote("OSRM route geometry missing or too short");
       return null;
@@ -74194,7 +74242,10 @@ async function fetchRoadRoutePreviewData(from, to, options = {}) {
       .filter((pt) => Number.isFinite(pt[0]) && Number.isFinite(pt[1]));
     setGridlyDestinationPerformanceTiming("routeGeometryParseMs", getGridlyDestinationPerfNow() - parseStartedAt);
     gridlyDestinationPerformanceAuditState.routeGeometryPointCount = latLngs.length;
-    if (latLngs.length < 2) return null;
+    if (latLngs.length < 2) {
+      gridlyDestinationLastRouteProviderFailureReason = "provider_geometry_invalid";
+      return null;
+    }
     const distanceMeters = Number(route?.distance);
     const durationSeconds = Number(route?.duration);
     return {
@@ -74206,6 +74257,7 @@ async function fetchRoadRoutePreviewData(from, to, options = {}) {
       provider: "osrm"
     };
   } catch (error) {
+    gridlyDestinationLastRouteProviderFailureReason = error?.name === "AbortError" ? "provider_timeout" : "provider_request_failed";
     addGridlyDestinationPerformanceNote(`OSRM route preview fetch failed: ${String(error?.name || error?.message || error || "unknown")}`);
     return null;
   } finally {
