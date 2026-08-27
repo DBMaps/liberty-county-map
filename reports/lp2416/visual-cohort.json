@@ -1,0 +1,78 @@
+{
+  "fixed": true,
+  "count": 12,
+  "rows": [
+    {
+      "countyFips": "48071",
+      "countyName": "Chambers",
+      "riskClass": "multi-county community",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48073",
+      "countyName": "Cherokee",
+      "riskClass": "historically sensitive location context",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48113",
+      "countyName": "Dallas",
+      "riskClass": "dense urban",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48141",
+      "countyName": "El Paso",
+      "riskClass": "border",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48201",
+      "countyName": "Harris",
+      "riskClass": "major metro",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48229",
+      "countyName": "Hudspeth",
+      "riskClass": "sparse/frontier and west Texas",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48355",
+      "countyName": "Nueces",
+      "riskClass": "coastal",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48375",
+      "countyName": "Potter",
+      "riskClass": "panhandle",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48403",
+      "countyName": "Sabine",
+      "riskClass": "rural east Texas",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48439",
+      "countyName": "Tarrant",
+      "riskClass": "suburban",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48453",
+      "countyName": "Travis",
+      "riskClass": "central Texas",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    },
+    {
+      "countyFips": "48465",
+      "countyName": "Val Verde",
+      "riskClass": "west Texas and border",
+      "visualReviewState": "OWNER_REVIEW_REQUIRED"
+    }
+  ]
+}
