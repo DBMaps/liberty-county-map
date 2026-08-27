@@ -1,0 +1,370 @@
+{
+  "schemaVersion": "gridly.lp2416.consumer-search-reconciliation.v1",
+  "excludedOwnerProven": [
+    "48071",
+    "48073"
+  ],
+  "summary": {
+    "totalAudited": 10,
+    "pass": 10,
+    "exceptions": 0,
+    "exceptionCounties": [],
+    "perStageFailureTotals": {
+      "providerCanonicalCount": 0,
+      "normalizedCount": 0,
+      "containedCount": 0,
+      "countyQualifiedCount": 0,
+      "intentAcceptedCount": 0,
+      "qualityAcceptedCount": 0,
+      "dedupedCount": 0,
+      "publicationEligibleCount": 0,
+      "finalPublishedCount": 0
+    },
+    "wrongCountyTotal": 0,
+    "intentGeographyFailureTotal": 0,
+    "currentAwarenessFallbackTotal": 0,
+    "publicationLossTotal": 0
+  },
+  "rows": [
+    {
+      "countyFips": "48113",
+      "countyName": "Dallas",
+      "query": "Dallas County Courthouse, Dallas County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Dallas County Courthouse",
+        "county": "Dallas County",
+        "state": "Texas",
+        "countyId": "dallas-tx",
+        "coordinates": {
+          "latitude": 32.7786089,
+          "longitude": -96.8073166
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    },
+    {
+      "countyFips": "48141",
+      "countyName": "El Paso",
+      "query": "El Paso County Courthouse, El Paso County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "El Paso County Courthouse",
+        "county": "El Paso County",
+        "state": "Texas",
+        "countyId": "el-paso-tx",
+        "coordinates": {
+          "latitude": 31.7582149,
+          "longitude": -106.4841605
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    },
+    {
+      "countyFips": "48201",
+      "countyName": "Harris",
+      "query": "Harris County Courthouse, Harris County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Harris County Courthouse",
+        "county": "Harris County",
+        "state": "Texas",
+        "countyId": "harris-tx",
+        "coordinates": {
+          "latitude": 29.7687,
+          "longitude": -94.9711
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    },
+    {
+      "countyFips": "48229",
+      "countyName": "Hudspeth",
+      "query": "Hudspeth County Courthouse, Hudspeth County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Hudspeth County Courthouse",
+        "county": "Hudspeth County",
+        "state": "Texas",
+        "countyId": "hudspeth-tx",
+        "coordinates": {
+          "latitude": 31.1798277,
+          "longitude": -105.3575571
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    },
+    {
+      "countyFips": "48355",
+      "countyName": "Nueces",
+      "query": "Nueces County Courthouse, Nueces County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Nueces County Courthouse",
+        "county": "Nueces County",
+        "state": "Texas",
+        "countyId": "nueces-tx",
+        "coordinates": {
+          "latitude": 27.7949247,
+          "longitude": -97.4004083
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    },
+    {
+      "countyFips": "48375",
+      "countyName": "Potter",
+      "query": "Potter County Courthouse, Potter County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Potter County Courthouse",
+        "county": "Potter County",
+        "state": "Texas",
+        "countyId": "potter-tx",
+        "coordinates": {
+          "latitude": 35.2078839,
+          "longitude": -101.8347091
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    },
+    {
+      "countyFips": "48403",
+      "countyName": "Sabine",
+      "query": "Sabine County Courthouse, Sabine County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Sabine County Courthouse",
+        "county": "Sabine County",
+        "state": "Texas",
+        "countyId": "sabine-tx",
+        "coordinates": {
+          "latitude": 31.3420227,
+          "longitude": -93.8493805
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": "FIXTURE_COPY_CLEANUP_CONFIRMED_CLEAN"
+    },
+    {
+      "countyFips": "48439",
+      "countyName": "Tarrant",
+      "query": "Tarrant County Courthouse, Tarrant County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Tarrant County Courthouse",
+        "county": "Tarrant County",
+        "state": "Texas",
+        "countyId": "tarrant-tx",
+        "coordinates": {
+          "latitude": 32.7574794,
+          "longitude": -97.3331906
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    },
+    {
+      "countyFips": "48453",
+      "countyName": "Travis",
+      "query": "Travis County Courthouse, Travis County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Texas Supreme Court Building",
+        "county": "Travis County",
+        "state": "Texas",
+        "countyId": "travis-tx",
+        "coordinates": {
+          "latitude": 30.2758267,
+          "longitude": -97.7411506
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    },
+    {
+      "countyFips": "48465",
+      "countyName": "Val Verde",
+      "query": "Val Verde County Courthouse, Val Verde County, Texas",
+      "providerCertifiedCandidateCount": 1,
+      "stageCounts": {
+        "providerCanonicalCount": 1,
+        "normalizedCount": 1,
+        "containedCount": 1,
+        "countyQualifiedCount": 1,
+        "intentAcceptedCount": 1,
+        "qualityAcceptedCount": 1,
+        "dedupedCount": 1,
+        "publicationEligibleCount": 1,
+        "finalPublishedCount": 1
+      },
+      "selectedCandidate": {
+        "title": "Val Verde County Courthouse",
+        "county": "Val Verde County",
+        "state": "Texas",
+        "countyId": "val-verde-tx",
+        "coordinates": {
+          "latitude": 29.3591358,
+          "longitude": -100.897155
+        }
+      },
+      "structuredGeographyUsed": true,
+      "missingIntentTerms": [],
+      "firstLosingStage": null,
+      "rejectionCode": null,
+      "classification": "PASS",
+      "currentAwarenessFallbackUsed": false,
+      "observation": null
+    }
+  ]
+}

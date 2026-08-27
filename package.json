@@ -18,6 +18,8 @@
     "build:lp2416": "node tools/lp2416/statewide-address-certification.mjs --write",
     "verify:lp2416": "node tools/lp2416/statewide-address-certification.mjs --verify",
     "test:lp2416": "node --test tests/lp2416-statewide-address-certification.test.mjs",
+    "build:lp2416:reconcile": "node tools/lp2416/consumer-search-reconciliation.mjs",
+    "test:lp2416:reconcile": "node --test tests/lp2416-consumer-search-reconciliation.test.mjs tests/lp2416-cherokee-intent-geography-repair.test.mjs tests/lp2416-destination-coverage-aware-quiet.test.mjs",
     "execute:lp2416": "node tools/lp2416/statewide-address-certification.mjs --execute --owner-authorized",
     "test:lp2413": "node --test tests/lp2413-weather-startup-authority.test.cjs",
     "test:lp240": "node --test tests/lp240-weather-authority-audit.test.cjs tests/lp2401f-nws-point-authority-audit.test.mjs tests/lp2401g-bounded-nws-point-weather.test.cjs tests/lp2401g2-safe-startup-weather.test.cjs tests/lp2401g3-alerts-weather-handoff.test.cjs tests/lp2401h-weather-presentation-reconciliation.test.cjs tests/lp2401h4-passive-dom-observation.test.cjs tests/lp2402-alerts-stack-semantic-audit.test.mjs tests/lp2402a-official-roadways-visible-projection.test.mjs tests/lp2403-condition-label-audit.test.cjs tests/lp2403a-condition-label-authority.test.cjs",
