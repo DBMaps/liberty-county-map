@@ -122,3 +122,25 @@ test('production Settings lifecycle enters the sheet and restores its activation
   assert.match(app,/closingSheetName === "settings" && gridlySettingsLastActivationOpener\?\.isConnected/);
   assert.match(app,/gridlySettingsLastActivationOpener\.focus\(\)/);
 });
+test('OA-1 Alerts modal lifecycle owns focus, close, Escape, and restoration',()=>{
+  assert.match(html,/id="gridlyAlertsDockButton"[^>]+aria-haspopup="dialog"[^>]+aria-controls="gridlyPortraitV2Sheet"/);
+  assert.match(html,/id="gridlyPortraitV2Sheet"[^>]+role="dialog"[^>]+aria-modal="true"/);
+  const openStart=app.indexOf('function openGridlyPortraitV2Sheet('), closeStart=app.indexOf('function closePortraitV2Sheet(');
+  const lifecycle=app.slice(openStart,app.indexOf('\n\n  const gridlyLiveServerRuntimeRecoveryState',closeStart));
+  assert.match(lifecycle,/gridlySetAlertsModalFocusOwnership\(sheet, true\)/);
+  assert.match(lifecycle,/alertsClose\?\.focus\?\.\(\)/);
+  assert.match(lifecycle,/gridlySetAlertsModalFocusOwnership\(sheet, false\)/);
+  assert.match(lifecycle,/gridlyAlertsLastActivationOpener\.focus\(\)/);
+  assert.match(app,/event\.key !== "Escape"[\s\S]*?dataset\?\.activeSheet !== "alerts"[\s\S]*?closePortraitV2Sheet\(\)/);
+});
+test('OA-1 Alerts acceptance uses production controls and reports the complete pass contract',()=>{
+  const start=app.indexOf('async function gridlyLP2417AlertsAcceptance()');
+  const end=app.indexOf('window.gridlyLP2417AlertsAcceptance = gridlyLP2417AlertsAcceptance;',start);
+  assert.ok(start>0&&end>start);
+  const helper=app.slice(start,end);
+  for(const field of ['productionActiveAlertsSurface','visibleAlertsSurfaceCount','focusedElementAfterOpen','focusContainedByAlertsSurface','closeControl','closeControlVisible','closeControlFocusable','backgroundFocusableLeakCount','focusRestoredToOpener','escapeSourceRuntimeContract','pass']) assert.match(helper,new RegExp(field));
+  assert.match(helper,/opener\.click\(\)/);
+  assert.match(helper,/closeControl\?\.click\(\)/);
+  assert.match(helper,/new KeyboardEvent\("keydown", \{ key: "Escape"/);
+  assert.doesNotMatch(helper,/openAlertsSurfaceFromDock\(|openGridlyPortraitV2Sheet\(|closePortraitV2Sheet\(|fetch\(|XMLHttpRequest|localStorage|sessionStorage/);
+});
