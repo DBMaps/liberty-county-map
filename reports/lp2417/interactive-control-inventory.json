@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "evidenceType": "DETERMINISTIC_SOURCE_AUDIT",
+  "generatedAt": "2026-08-27",
+  "summary": {
+    "nativeInteractiveElements": 197,
+    "byElement": {
+      "button": 130,
+      "input": 23,
+      "select": 13,
+      "details": 15,
+      "summary": 15,
+      "textarea": 1
+    },
+    "genericFocusableElements": 2
+  },
+  "genericFocusableControls": [
+    {
+      "element": "div",
+      "id": "routeStatusCard",
+      "keyboardContract": "requires runtime key handler"
+    },
+    {
+      "element": "p",
+      "id": "mobileDestinationCommandImpact",
+      "keyboardContract": "requires runtime key handler"
+    }
+  ],
+  "contracts": {
+    "accessibleNames": "Native text, associated labels, aria-label and aria-labelledby inspected by regression checks",
+    "keyboard": "Native activation plus bounded custom key handlers",
+    "hiddenState": "hidden and inert runtime contracts present"
+  },
+  "limitations": [
+    "Runtime visibility, computed names, target geometry and browser accessibility-tree output require browser/device acceptance."
+  ]
+}
