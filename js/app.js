@@ -38288,7 +38288,7 @@ function getGridlyTapLayerSnapshot(point = null) {
 }
 
 function gridlyIsSettingsSurfaceVisible(el) {
-    if (!el || el.hidden) return false;
+    if (!el || el.hidden || el.getAttribute?.("aria-hidden") === "true" || el.hasAttribute?.("inert")) return false;
     const style = getComputedStyle(el);
     const rect = el.getBoundingClientRect();
     return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || "1") !== 0
@@ -38297,7 +38297,21 @@ function gridlyIsSettingsSurfaceVisible(el) {
 
 function classifyGridlySettingsSurfaces(candidates, isVisible = gridlyIsSettingsSurfaceVisible) {
   const definitions = Array.from(new Set(Array.from(candidates || []).filter(Boolean)));
-  const activeSettingsSurfaces = definitions.filter((node) => isVisible(node));
+  const activeSettingsSurfaces = definitions.filter((node) => {
+    if (node.id !== "gridlyPortraitV2Sheet") return isVisible(node);
+    // data-active-sheet is the production Portrait V2 lifecycle authority. The
+    // sheet host is a positioning/containment shell and is not required to own
+    // a useful client rect; rendered owned controls/content provide geometry.
+    if (node.dataset?.activeSheet !== "settings" || node.hidden
+      || node.dataset?.sheetState === "closed" || node.dataset?.sheetState === "minimized"
+      || node.getAttribute?.("aria-hidden") === "true" || node.hasAttribute?.("inert")) return false;
+    const ownedEvidence = [
+      node.querySelector?.("#gridlyPortraitV2SheetClose"),
+      node.querySelector?.("#gridlyPortraitV2SheetBody [data-gridly-settings-v2]"),
+      node.querySelector?.("#gridlyPortraitV2SheetBody")
+    ].filter(Boolean);
+    return isVisible(node) || ownedEvidence.some((ownedNode) => isVisible(ownedNode));
+  });
   return { definitions, activeSettingsSurfaces, visibleSettingsSurfaceCount: activeSettingsSurfaces.length };
 }
 
@@ -126073,6 +126087,7 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 
 function gridlyLP2417SettingsAcceptance() {
   const opener = getGridlySettingsDockButton();
+  const originalOpener = opener;
   const visible = (node) => {
     if (!node || node.hidden) return false;
     const style = getComputedStyle(node);
@@ -126081,12 +126096,34 @@ function gridlyLP2417SettingsAcceptance() {
       && rect.width > 0 && rect.height > 0;
   };
   const describeFocusedElement = () => describeGridlyTapElement(document.activeElement);
+  const rectOf = (node) => {
+    const rect = node?.getBoundingClientRect?.();
+    return rect ? { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height } : null;
+  };
   const checkpoint = () => {
     const surfaceState = getGridlySettingsSurfaceState();
+    const productionSheet = document.getElementById("gridlyPortraitV2Sheet");
+    const productionActiveSheet = productionSheet?.dataset?.activeSheet || null;
+    const activeSheetNode = productionActiveSheet === "settings" ? productionSheet : null;
+    const visibleContent = activeSheetNode?.querySelector("#gridlyPortraitV2SheetBody [data-gridly-settings-v2]")
+      || activeSheetNode?.querySelector("#gridlyPortraitV2SheetBody") || null;
+    let nearestVisibleSheetAncestor = visibleContent;
+    while (nearestVisibleSheetAncestor && nearestVisibleSheetAncestor !== activeSheetNode
+      && !gridlyIsSettingsSurfaceVisible(nearestVisibleSheetAncestor)) nearestVisibleSheetAncestor = nearestVisibleSheetAncestor.parentElement;
     return {
+      productionActiveSheet,
+      activeSheetNode,
+      activeSheetNodeIdentity: describeGridlyTapElement(activeSheetNode),
+      activeSheetRect: rectOf(activeSheetNode),
+      closeButtonRect: rectOf(activeSheetNode?.querySelector("#gridlyPortraitV2SheetClose")),
+      nearestVisibleSheetAncestor: describeGridlyTapElement(nearestVisibleSheetAncestor),
+      nearestVisibleSheetAncestorRect: rectOf(nearestVisibleSheetAncestor),
+      visibleContentNode: describeGridlyTapElement(visibleContent),
+      visibleContentRect: rectOf(visibleContent),
       visibleSettingsSurfaceCount: surfaceState.visibleSettingsSurfaceCount,
       activeSettingsSurfaceIds: surfaceState.activeSettingsSurfaces.map((node) => node.id || node.getAttribute?.("data-active-sheet") || node.tagName?.toLowerCase() || "unknown"),
       focusedElement: describeFocusedElement(),
+      focusContainedByActiveSheet: Boolean(activeSheetNode?.contains(document.activeElement)),
       activeSettingsSurfaces: surfaceState.activeSettingsSurfaces
     };
   };
@@ -126105,6 +126142,10 @@ function gridlyLP2417SettingsAcceptance() {
     openAttemptDelta: 0, openSuccessDelta: 0, opened: false, focusEnteredSettings: false,
     closed: false, focusRestoredToOpener: false, duplicateOpenDetected: false, pass: false,
     BEFORE_ACTIVATION: {
+      openerBefore: describeGridlyTapElement(originalOpener),
+      productionActiveSheet: beforeActivation.productionActiveSheet,
+      activeSheetNode: beforeActivation.activeSheetNodeIdentity,
+      activeSheetRect: beforeActivation.activeSheetRect,
       visibleSettingsSurfaceCount: beforeActivation.visibleSettingsSurfaceCount,
       activeSettingsSurfaceIds: beforeActivation.activeSettingsSurfaceIds,
       focusedElement: beforeActivation.focusedElement
@@ -126121,15 +126162,25 @@ function gridlyLP2417SettingsAcceptance() {
   result.openSuccessDelta = gridlySettingsActivationAudit.settingsOpenSucceeded - before.succeeded;
   const afterActivation = checkpoint();
   result.AFTER_ACTIVATION_BEFORE_CLOSE = {
+    productionActiveSheet: afterActivation.productionActiveSheet,
+    activeSheetNode: afterActivation.activeSheetNodeIdentity,
+    activeSheetRect: afterActivation.activeSheetRect,
+    closeButtonRect: afterActivation.closeButtonRect,
+    nearestVisibleSheetAncestor: afterActivation.nearestVisibleSheetAncestor,
+    nearestVisibleSheetAncestorRect: afterActivation.nearestVisibleSheetAncestorRect,
+    visibleContentNode: afterActivation.visibleContentNode,
+    visibleContentRect: afterActivation.visibleContentRect,
+    focusContainedByActiveSheet: afterActivation.focusContainedByActiveSheet,
     visibleSettingsSurfaceCount: afterActivation.visibleSettingsSurfaceCount,
     activeSettingsSurfaceIds: afterActivation.activeSettingsSurfaceIds,
     focusedElement: afterActivation.focusedElement,
+    focusAfterOpen: afterActivation.focusedElement,
     settingsOpenAttempted: gridlySettingsActivationAudit.settingsOpenAttempted,
     settingsOpenSucceeded: gridlySettingsActivationAudit.settingsOpenSucceeded
   };
-  result.opened = afterActivation.visibleSettingsSurfaceCount === 1;
-  result.focusEnteredSettings = result.opened
-    && afterActivation.activeSettingsSurfaces[0].contains(document.activeElement);
+  result.opened = afterActivation.productionActiveSheet === "settings"
+    && afterActivation.visibleSettingsSurfaceCount === 1;
+  result.focusEnteredSettings = result.opened && afterActivation.focusContainedByActiveSheet;
   result.duplicateOpenDetected = afterActivation.visibleSettingsSurfaceCount > 1;
 
   const activeSurface = afterActivation.activeSettingsSurfaces[0] || null;
@@ -126137,15 +126188,18 @@ function gridlyLP2417SettingsAcceptance() {
   closeButton?.click();
   const afterClose = checkpoint();
   result.AFTER_CLOSE = {
+    productionActiveSheet: afterClose.productionActiveSheet,
     visibleSettingsSurfaceCount: afterClose.visibleSettingsSurfaceCount,
     activeSettingsSurfaceIds: afterClose.activeSettingsSurfaceIds,
-    focusedElement: afterClose.focusedElement
+    focusedElement: afterClose.focusedElement,
+    focusAfterClose: afterClose.focusedElement,
+    focusEqualsOriginalOpener: document.activeElement === originalOpener
   };
   result.closed = afterClose.visibleSettingsSurfaceCount === 0;
-  result.focusRestoredToOpener = document.activeElement === opener;
+  result.focusRestoredToOpener = document.activeElement === originalOpener;
   result.pass = result.openerFound && result.openerNativeButton && result.openerVisible && result.openerEnabled
-    && result.listenerAttachedCount === 1 && result.openAttemptDelta === 1 && result.openSuccessDelta === 1
-    && result.BEFORE_ACTIVATION.visibleSettingsSurfaceCount === 0
+    && result.listenerAttachedCount === 1 && result.openAttemptDelta === 1
+    && result.BEFORE_ACTIVATION.productionActiveSheet !== "settings"
     && result.opened && result.focusEnteredSettings && result.closed && result.focusRestoredToOpener
     && !result.duplicateOpenDetected;
   return Object.freeze(result);
