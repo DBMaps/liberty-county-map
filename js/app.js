@@ -38287,15 +38287,30 @@ function getGridlyTapLayerSnapshot(point = null) {
   };
 }
 
-function gridlyVisibleSettingsSurfaceProduced() {
-  const isVisible = (el) => {
+function gridlyIsSettingsSurfaceVisible(el) {
     if (!el || el.hidden) return false;
     const style = getComputedStyle(el);
     const rect = el.getBoundingClientRect();
-    return style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0" && rect.width > 0 && rect.height > 0;
-  };
-  const sheet = document.getElementById("gridlyPortraitV2Sheet");
-  return Boolean((sheet?.dataset?.activeSheet === "settings" && isVisible(sheet)) || isVisible(document.getElementById("settingsModal")));
+    return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || "1") !== 0
+      && rect.width > 0 && rect.height > 0;
+}
+
+function classifyGridlySettingsSurfaces(candidates, isVisible = gridlyIsSettingsSurfaceVisible) {
+  const definitions = Array.from(new Set(Array.from(candidates || []).filter(Boolean)));
+  const activeSettingsSurfaces = definitions.filter((node) => isVisible(node));
+  return { definitions, activeSettingsSurfaces, visibleSettingsSurfaceCount: activeSettingsSurfaces.length };
+}
+
+function getGridlySettingsSurfaceState() {
+  // Query every matching definition rather than getElementById: responsive
+  // deployments may retain dormant alternate markup (and malformed duplicate
+  // IDs must not hide a second *visible* surface from this diagnostic).
+  const candidates = document.querySelectorAll("#gridlyPortraitV2Sheet[data-active-sheet='settings'], #settingsModal");
+  return classifyGridlySettingsSurfaces(candidates);
+}
+
+function gridlyVisibleSettingsSurfaceProduced() {
+  return getGridlySettingsSurfaceState().visibleSettingsSurfaceCount > 0;
 }
 
 function recordGridlySettingsDockTapEvent(event, phase, extra = {}) {
@@ -38331,15 +38346,18 @@ function openSettingsSurfaceFromDock(source = "dock") {
   const openV2Sheet = window.openPortraitV2Sheet || window.openGridlyPortraitV2Sheet;
   if (v2SettingsBtn && typeof openV2Sheet === 'function') {
     gridlySettingsDockTapTrace.openPortraitV2SheetSettingsRuns += 1;
-    const opened = Boolean(openV2Sheet('settings'));
+    const lifecycleReportedOpen = Boolean(openV2Sheet('settings'));
     const visible = gridlyVisibleSettingsSurfaceProduced();
     const duration = Number((getGridlySettingsPerfNow() - startedAt).toFixed(2));
     gridlySettingsPerformanceTrace.lastOpenDurationMs = duration;
     gridlySettingsPerformanceTrace.slowInteractionSuspected = duration > 120 || Boolean(gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected);
     if (duration > 120) recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", `Settings V2 open took ${duration}ms; inspect synchronous Settings render/bind work.`);
     else recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", `Last Settings V2 open completed in ${duration}ms.`);
-    gridlySettingsDockTapTrace.lastOpenResult = { source, opened, visible, target: 'portrait_v2_settings', durationMs: duration, at: Date.now() };
-    return opened && visible;
+    gridlySettingsDockTapTrace.lastOpenResult = { source, opened: lifecycleReportedOpen, visible, target: 'portrait_v2_settings', durationMs: duration, at: Date.now() };
+    // The rendered production surface is the completion authority.  This also
+    // keeps the audit counter truthful if an adapter omits/loses its return
+    // value after completing the synchronous DOM transition.
+    return visible;
   }
   if (typeof openGridlySurface === 'function') {
     openGridlySurface('settings', () => openSettingsModal?.());
@@ -126062,10 +126080,21 @@ function gridlyLP2417SettingsAcceptance() {
     return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || "1") !== 0
       && rect.width > 0 && rect.height > 0;
   };
+  const describeFocusedElement = () => describeGridlyTapElement(document.activeElement);
+  const checkpoint = () => {
+    const surfaceState = getGridlySettingsSurfaceState();
+    return {
+      visibleSettingsSurfaceCount: surfaceState.visibleSettingsSurfaceCount,
+      activeSettingsSurfaceIds: surfaceState.activeSettingsSurfaces.map((node) => node.id || node.getAttribute?.("data-active-sheet") || node.tagName?.toLowerCase() || "unknown"),
+      focusedElement: describeFocusedElement(),
+      activeSettingsSurfaces: surfaceState.activeSettingsSurfaces
+    };
+  };
   const before = {
     attempted: gridlySettingsActivationAudit.settingsOpenAttempted,
     succeeded: gridlySettingsActivationAudit.settingsOpenSucceeded
   };
+  const beforeActivation = checkpoint();
   const result = {
     openerFound: Boolean(opener),
     openerNativeButton: opener instanceof HTMLButtonElement,
@@ -126074,27 +126103,49 @@ function gridlyLP2417SettingsAcceptance() {
     listenerBindAttemptCount: gridlySettingsActivationAudit.listenerBindAttemptCount,
     listenerAttachedCount: countGridlyAttachedSettingsActivationListeners(),
     openAttemptDelta: 0, openSuccessDelta: 0, opened: false, focusEnteredSettings: false,
-    closed: false, focusRestoredToOpener: false, duplicateOpenDetected: false, pass: false
+    closed: false, focusRestoredToOpener: false, duplicateOpenDetected: false, pass: false,
+    BEFORE_ACTIVATION: {
+      visibleSettingsSurfaceCount: beforeActivation.visibleSettingsSurfaceCount,
+      activeSettingsSurfaceIds: beforeActivation.activeSettingsSurfaceIds,
+      focusedElement: beforeActivation.focusedElement
+    },
+    AFTER_ACTIVATION_BEFORE_CLOSE: null,
+    AFTER_CLOSE: null
   };
   if (!result.openerFound || !opener.isConnected || !result.openerNativeButton || !result.openerVisible
     || !result.openerEnabled || result.listenerAttachedCount !== 1) return Object.freeze(result);
 
   opener.focus();
   opener.click();
-  const sheet = document.getElementById("gridlyPortraitV2Sheet");
   result.openAttemptDelta = gridlySettingsActivationAudit.settingsOpenAttempted - before.attempted;
   result.openSuccessDelta = gridlySettingsActivationAudit.settingsOpenSucceeded - before.succeeded;
-  result.opened = Boolean(gridlyVisibleSettingsSurfaceProduced() && sheet?.dataset?.activeSheet === "settings");
-  result.focusEnteredSettings = Boolean(sheet?.contains(document.activeElement));
-  result.duplicateOpenDetected = result.openAttemptDelta !== 1 || result.openSuccessDelta !== 1
-    || document.querySelectorAll("#gridlyPortraitV2Sheet[data-active-sheet='settings']").length !== 1;
+  const afterActivation = checkpoint();
+  result.AFTER_ACTIVATION_BEFORE_CLOSE = {
+    visibleSettingsSurfaceCount: afterActivation.visibleSettingsSurfaceCount,
+    activeSettingsSurfaceIds: afterActivation.activeSettingsSurfaceIds,
+    focusedElement: afterActivation.focusedElement,
+    settingsOpenAttempted: gridlySettingsActivationAudit.settingsOpenAttempted,
+    settingsOpenSucceeded: gridlySettingsActivationAudit.settingsOpenSucceeded
+  };
+  result.opened = afterActivation.visibleSettingsSurfaceCount === 1;
+  result.focusEnteredSettings = result.opened
+    && afterActivation.activeSettingsSurfaces[0].contains(document.activeElement);
+  result.duplicateOpenDetected = afterActivation.visibleSettingsSurfaceCount > 1;
 
-  const closeButton = sheet?.querySelector("#gridlyPortraitV2SheetClose");
+  const activeSurface = afterActivation.activeSettingsSurfaces[0] || null;
+  const closeButton = activeSurface?.querySelector("#gridlyPortraitV2SheetClose, #closeSettingsModalBtn, [data-close-settings], .settings-modal-close");
   closeButton?.click();
-  result.closed = !gridlyVisibleSettingsSurfaceProduced();
+  const afterClose = checkpoint();
+  result.AFTER_CLOSE = {
+    visibleSettingsSurfaceCount: afterClose.visibleSettingsSurfaceCount,
+    activeSettingsSurfaceIds: afterClose.activeSettingsSurfaceIds,
+    focusedElement: afterClose.focusedElement
+  };
+  result.closed = afterClose.visibleSettingsSurfaceCount === 0;
   result.focusRestoredToOpener = document.activeElement === opener;
   result.pass = result.openerFound && result.openerNativeButton && result.openerVisible && result.openerEnabled
     && result.listenerAttachedCount === 1 && result.openAttemptDelta === 1 && result.openSuccessDelta === 1
+    && result.BEFORE_ACTIVATION.visibleSettingsSurfaceCount === 0
     && result.opened && result.focusEnteredSettings && result.closed && result.focusRestoredToOpener
     && !result.duplicateOpenDetected;
   return Object.freeze(result);

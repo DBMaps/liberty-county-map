@@ -53,7 +53,7 @@ test('OA-1 Settings console acceptance exercises one production open and close l
   const end=app.indexOf('window.gridlyLP2417SettingsAcceptance = gridlyLP2417SettingsAcceptance;',start);
   assert.ok(start>0&&end>start);
   const helper=app.slice(start,end);
-  for(const field of ['openerFound','openerNativeButton','openerVisible','openerEnabled','listenerBindAttemptCount','listenerAttachedCount','openAttemptDelta','openSuccessDelta','opened','focusEnteredSettings','closed','focusRestoredToOpener','duplicateOpenDetected','pass']) assert.match(helper,new RegExp(field));
+  for(const field of ['openerFound','openerNativeButton','openerVisible','openerEnabled','listenerBindAttemptCount','listenerAttachedCount','openAttemptDelta','openSuccessDelta','opened','focusEnteredSettings','closed','focusRestoredToOpener','duplicateOpenDetected','BEFORE_ACTIVATION','AFTER_ACTIVATION_BEFORE_CLOSE','AFTER_CLOSE','visibleSettingsSurfaceCount','activeSettingsSurfaceIds','focusedElement','pass']) assert.match(helper,new RegExp(field));
   assert.match(helper,/getGridlySettingsDockButton\(\)/);
   assert.match(helper,/opener\.click\(\)/);
   assert.match(helper,/gridlySettingsActivationAudit\.settingsOpenAttempted/);
@@ -61,6 +61,37 @@ test('OA-1 Settings console acceptance exercises one production open and close l
   assert.match(helper,/closeButton\?\.click\(\)/);
   assert.doesNotMatch(helper,/openSettingsSurfaceFromDock\(|openPortraitV2Sheet\(|closePortraitV2Sheet\(/);
   assert.doesNotMatch(helper,/\.hidden\s*=|\.style\.|setAttribute\(["'](?:hidden|style)|localStorage|sessionStorage|fetch\(|XMLHttpRequest|submit|saveGridly|awareness|route|report/i);
+});
+test('Settings surface classification ignores dormant markup and detects simultaneous visible surfaces',()=>{
+  const start=app.indexOf('function classifyGridlySettingsSurfaces(');
+  const end=app.indexOf('\n}\n\nfunction getGridlySettingsSurfaceState()',start)+2;
+  assert.ok(start>0&&end>start);
+  const classify=Function(`${app.slice(start,end)}; return classifyGridlySettingsSurfaces;`)();
+  const portrait={id:'gridlyPortraitV2Sheet'}, legacy={id:'settingsModal'};
+  let state=classify([portrait,legacy],(node)=>node===portrait);
+  assert.equal(state.visibleSettingsSurfaceCount,1,'dormant alternate markup is not an active duplicate');
+  assert.deepEqual(state.activeSettingsSurfaces,[portrait]);
+  state=classify([portrait,legacy],()=>true);
+  assert.equal(state.visibleSettingsSurfaceCount,2,'two simultaneously visible Settings surfaces are a duplicate');
+});
+test('Settings acceptance samples the active visible surface before close and bounds focus to it',()=>{
+  const start=app.indexOf('function gridlyLP2417SettingsAcceptance()');
+  const end=app.indexOf('window.gridlyLP2417SettingsAcceptance = gridlyLP2417SettingsAcceptance;',start);
+  const helper=app.slice(start,end);
+  assert.ok(helper.indexOf('const afterActivation = checkpoint()') < helper.indexOf('closeButton?.click()'));
+  assert.match(helper,/opened = afterActivation\.visibleSettingsSurfaceCount === 1/);
+  assert.match(helper,/afterActivation\.activeSettingsSurfaces\[0\]\.contains\(document\.activeElement\)/);
+  assert.match(helper,/duplicateOpenDetected = afterActivation\.visibleSettingsSurfaceCount > 1/);
+  assert.match(helper,/AFTER_CLOSE[\s\S]*?afterClose\.visibleSettingsSurfaceCount === 0/);
+});
+test('production Settings success follows the completed visible lifecycle',()=>{
+  const start=app.indexOf('function openSettingsSurfaceFromDock(');
+  const end=app.indexOf('\n}\n\nfunction bindGridlySettingsDockTapDiagnostics',start)+2;
+  const lifecycle=app.slice(start,end);
+  assert.match(lifecycle,/lifecycleReportedOpen = Boolean\(openV2Sheet\('settings'\)\)/);
+  assert.match(lifecycle,/return visible;/);
+  assert.doesNotMatch(lifecycle,/return lifecycleReportedOpen && visible/);
+  assert.match(app,/if \(opened\) \{\s*gridlySettingsActivationAudit\.settingsOpenSucceeded \+= 1/);
 });
 test('OA-1 Settings listener accounting separates binding attempts from the one live attachment',()=>{
   assert.match(app,/listenerBindAttemptCount:\s*0/);
