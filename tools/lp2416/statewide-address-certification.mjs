@@ -7,6 +7,10 @@ const artifactJson = 'LP241-STATEWIDE-ADDRESS-FIXTURE-PLAN.json';
 const artifactCsv = 'LP241-STATEWIDE-ADDRESS-FIXTURE-PLAN.csv';
 const reportDir = 'reports/lp2416';
 const localProgress = path.join(root, 'owner-local/lp2416/statewide-address-progress.json');
+const materializedFiles = Object.freeze({
+  json:'statewide-provider-results.json', csv:'statewide-provider-results.csv',
+  exceptions:'exception-ledger.json', summary:'summary.md', launch:'launch-classification.json', visual:'visual-cohort.json'
+});
 export const publicRequestContract = Object.freeze({
   endpoint:'https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-geocode',
   origin:'https://gridly.app',
@@ -75,6 +79,67 @@ function writeArtifacts(plan) {
   fs.writeFileSync(path.join(root, `${reportDir}/exception-ledger.json`), `${JSON.stringify({evidenceState:'NOT_EXECUTED',exceptionDefinition:'Every non-PASS row',count:254,exceptions:plan.fixtures.map(x=>({countyFips:x.countyFips,countyName:x.countyName,classification:'NOT_EXECUTED',visualReviewState:x.visualReviewState}))},null,2)}\n`);
   fs.writeFileSync(path.join(root, `${reportDir}/launch-classification.json`), `${JSON.stringify({staticCertification:'STATIC_CERTIFIED',providerExecution:'NOT_EXECUTED',ownerVisualAcceptance:'NOT_EXECUTED',launchClassification:'OWNER_ACCEPTANCE_REQUIRED',countyOutcomeTotals:totals},null,2)}\n`);
   fs.writeFileSync(path.join(root, `${reportDir}/summary.md`), `# LP241.6 Statewide Address Launch Certification\n\n- Static fixture certification: **STATIC_CERTIFIED (254/254)**\n- Provider execution: **NOT_EXECUTED**\n- Owner visual acceptance: **NOT_EXECUTED**\n- Launch classification: **OWNER_ACCEPTANCE_REQUIRED**\n- Production code changed: **No**\n\nThe prior plan derived names from absent LP130 fields, producing blank names and generic queries. This revision joins the LP130 governed FIPS/county keys to LP158 governed public courthouse fixtures. It does not claim provider, handoff, map, or UI evidence.\n\n## Outcome totals\n\n| Total | Executed | Pass | No result | Wrong county | Ambiguous | Provider unavailable | Invalid coordinate | Handoff | Map | UI | Fixture required | Not executed |\n|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n| 254 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 254 |\n\nMulti-county handoff, truthful no-result, map movement, awareness convergence, desktop/mobile, keyboard/touch, focus, reset, wrapping, and stale-state behavior remain **NOT_EXECUTED** for this statewide run. Existing deterministic regression suites are supporting contract evidence only, not statewide runtime or owner visual evidence. Geography/provider-result failure grouping is unavailable until provider execution and is not inferred.\n\n## Owner-authorized execution\n\n\`node tools/lp2416/statewide-address-certification.mjs --execute --owner-authorized\`\n\nExecution is sequential, FIPS ordered, and resumable in ignored \`owner-local/\`. HTTP 429 honors the provider-directed delay plus a one-second safety margin and retries the same county once; a repeated 429 and all authentication, provider-health, or contract failures safe-stop.\n`);
+}
+
+const texasCoordinate = (latitude, longitude) => Number.isFinite(Number(latitude)) && Number.isFinite(Number(longitude)) && Number(latitude) >= 25 && Number(latitude) <= 37 && Number(longitude) >= -107 && Number(longitude) <= -93;
+const materializedRow = (governed, executed) => ({
+  countyFips:governed.countyFips, countyName:governed.countyName,
+  expectedCountyId:governed.expectedCountyId, expectedCountyName:governed.expectedCountyName,
+  seedQuery:governed.privacySafeSeedQuery, executionState:executed.executionState,
+  providerOutcome:executed.providerOutcome, resolvedLabel:executed.resolvedLabel ?? executed.resolvedAddress ?? '',
+  resolvedLatitude:Number(executed.resolvedLatitude), resolvedLongitude:Number(executed.resolvedLongitude),
+  resolvedCounty:executed.resolvedCounty, countyMatch:executed.countyMatch,
+  providerEvidenceState:'PROVIDER_CERTIFIED', ownerVisualState:'PENDING'
+});
+
+/** Reconcile ignored owner evidence without performing any provider or network operation. */
+export function reconcileOwnerEvidence(plan, progress) {
+  verifyPlan(plan);
+  if (!progress || !Array.isArray(progress.rows)) throw Error('owner evidence rows are missing');
+  if (progress.safeStop != null) throw Error('owner evidence contains a final safe stop');
+  if (progress.rows.length !== 254) throw Error('expected exactly 254 completed provider rows');
+  const governedByFips=new Map(plan.fixtures.map(row=>[row.countyFips,row]));
+  const seen=new Set();
+  const rows=progress.rows.map(executed=>{
+    if (!/^48\d{3}$/.test(executed.countyFips) || seen.has(executed.countyFips)) throw Error(`duplicate or invalid completed county ${executed.countyFips}`);
+    seen.add(executed.countyFips);
+    const governed=governedByFips.get(executed.countyFips);
+    if (!governed) throw Error(`extra completed county ${executed.countyFips}`);
+    if (executed.countyName!==governed.countyName || executed.expectedCountyId!==governed.expectedCountyId || executed.expectedCountyName!==governed.expectedCountyName) throw Error(`wrong governed county identity ${executed.countyFips}`);
+    const executedQuery=executed.privacySafeSeedQuery ?? executed.seedQuery;
+    if (executedQuery!==governed.privacySafeSeedQuery) throw Error(`wrong seed query ${executed.countyFips}`);
+    if (executed.executionState!=='PROVIDER_EXECUTED') throw Error(`county was not provider executed ${executed.countyFips}`);
+    if (executed.providerOutcome!=='PASS') throw Error(`non-PASS provider outcome ${executed.countyFips}`);
+    if (executed.countyMatch!==true || canonical(executed.resolvedCounty)!==canonical(governed.expectedCountyName)) throw Error(`wrong governed county result ${executed.countyFips}`);
+    if (!texasCoordinate(executed.resolvedLatitude,executed.resolvedLongitude)) throw Error(`invalid Texas coordinate ${executed.countyFips}`);
+    return materializedRow(governed,executed);
+  }).sort((a,b)=>a.countyFips.localeCompare(b.countyFips));
+  if (seen.size!==254 || [...governedByFips.keys()].some(fips=>!seen.has(fips))) throw Error('completed and governed FIPS sets differ');
+  const supplied=progress.summary;
+  if (supplied && (supplied.executedCount!==254 || supplied.passCount!==254 || supplied.noResultCount!==0 || supplied.wrongCountyCount!==0 || supplied.ambiguousCount!==0 || supplied.providerUnavailableCount!==0 || supplied.remainingCount!==0 || supplied.safeStop!=null)) throw Error('owner evidence summary does not certify 254/254 completion');
+  return rows;
+}
+
+export function materializeOwnerEvidence({plan=read(artifactJson),progressPath=localProgress,outputDir=path.join(root,reportDir)}={}) {
+  if (!fs.existsSync(progressPath)) throw Error(`owner evidence file missing: ${progressPath}`);
+  const progress=JSON.parse(fs.readFileSync(progressPath,'utf8').replace(/^\uFEFF/,''));
+  const rows=reconcileOwnerEvidence(plan,progress); // No writes occur unless the entire reconciliation succeeds.
+  const visualRows=rows.filter(row=>cohortFips.includes(row.countyFips)).map(row=>({...row,riskClass:riskClasses[row.countyFips]}));
+  if (visualRows.length!==12) throw Error('fixed visual cohort must contain exactly 12 rows');
+  const totals={totalCount:254,staticCertifiedCount:254,providerExecutedCount:254,providerPassCount:254,noResultCount:0,wrongCountyCount:0,ambiguousCount:0,providerUnavailableCount:0,remainingCount:0,safeStop:null};
+  const sabine=rows.find(row=>row.countyFips==='48403');
+  const observations=sabine?.seedQuery==='Sabine County Courthouse, Sabine County, Texas, Texas' ? [{classification:'FIXTURE_COPY_CLEANUP_OBSERVATION',countyFips:'48403',seedQuery:sabine.seedQuery}] : [];
+  const artifacts={
+    [materializedFiles.json]:`${JSON.stringify({schemaVersion:'gridly.lp2416.provider-results.v1',providerEvidenceState:'PROVIDER_CERTIFIED',ownerVisualAcceptance:'PENDING',totals,rows},null,2)}\n`,
+    [materializedFiles.csv]:csv(rows),
+    [materializedFiles.exceptions]:`${JSON.stringify({providerEvidenceState:'PROVIDER_CERTIFIED',exceptionDefinition:'Every non-PASS provider result',count:0,exceptions:[],observations},null,2)}\n`,
+    [materializedFiles.launch]:`${JSON.stringify({staticCertification:'STATIC_CERTIFIED',providerEvidenceState:'PROVIDER_CERTIFIED',ownerVisualAcceptance:'PENDING',launchClassification:'OWNER_VISUAL_ACCEPTANCE_REQUIRED',totals},null,2)}\n`,
+    [materializedFiles.visual]:`${JSON.stringify({fixed:true,count:12,providerEvidenceState:'PROVIDER_CERTIFIED',ownerVisualAcceptance:'PENDING',rows:visualRows},null,2)}\n`,
+    [materializedFiles.summary]:`# LP241.6 Statewide Address Launch Certification\n\n- Static fixture certification: **STATIC_CERTIFIED (254/254)**\n- Provider evidence: **PROVIDER_CERTIFIED (254/254)**\n- Provider exceptions: **0**\n- Owner visual acceptance: **PENDING (12 rows)**\n- Launch classification: **OWNER_VISUAL_ACCEPTANCE_REQUIRED**\n- Production code changed: **No**\n\nThe provider evidence is a privacy-safe derivation of ignored owner-local evidence reconciled exactly against the governed fixture plan. Raw payloads, request headers, credentials, cookies, and latency diagnostics are not promoted.\n${observations.length?`\n## Observations\n\n- **FIXTURE_COPY_CLEANUP_OBSERVATION** — Sabine retained its exact executed query: \`${sabine.seedQuery}\`. This cosmetic observation does not invalidate provider evidence.\n`:''}`
+  };
+  fs.mkdirSync(outputDir,{recursive:true});
+  for (const [name,content] of Object.entries(artifacts)) fs.writeFileSync(path.join(outputDir,name),content);
+  return {totals,providerExceptionCount:0,ownerVisualPendingCount:12};
 }
 
 export class SafeStopError extends Error {
@@ -173,6 +238,13 @@ export async function executePlan(plan, {fetchImpl=fetch, progressPath=localProg
 
 async function main() {
   const plan=buildPlan(); verifyPlan(plan);
+  if (process.argv.includes('--materialize')) {
+    const governedPlan=read(artifactJson); verifyPlan(governedPlan);
+    if (JSON.stringify(governedPlan)!==JSON.stringify(plan)) throw Error('governed fixture plan drift; materialization refused');
+    const result=materializeOwnerEvidence({plan:governedPlan});
+    console.log(`LP241.6 OWNER EVIDENCE MATERIALIZED\n${result.totals.providerExecutedCount}/254 provider executed\n${result.totals.providerPassCount}/254 pass\n${result.providerExceptionCount} provider exceptions\n${result.ownerVisualPendingCount} owner visual rows pending`);
+    return;
+  }
   if (process.argv.includes('--write')) writeArtifacts(plan);
   if (process.argv.includes('--verify')) { const tracked=read(artifactJson); verifyPlan(tracked); if (JSON.stringify(tracked)!==JSON.stringify(plan)) throw Error('tracked artifact drift'); }
   if (process.argv.includes('--execute')) {

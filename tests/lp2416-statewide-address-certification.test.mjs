@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {buildPlan, buildProviderRequest, classifyProviderResult, executePlan, publicRequestContract, SafeStopError, summarizeProgress, verifyPlan} from '../tools/lp2416/statewide-address-certification.mjs';
+import {buildPlan, buildProviderRequest, classifyProviderResult, executePlan, materializeOwnerEvidence, publicRequestContract, reconcileOwnerEvidence, SafeStopError, summarizeProgress, verifyPlan} from '../tools/lp2416/statewide-address-certification.mjs';
 
 const plan=buildPlan();
 test('254 governed, unique, deterministic, privacy-safe county fixtures fail closed',()=>{assert.equal(verifyPlan(plan),true);assert.equal(new Set(plan.fixtures.map(x=>x.countyFips)).size,254);assert.ok(plan.fixtures.every(x=>x.countyName&&x.expectedCountyId&&x.queryStrategy==='GOVERNED_PUBLIC_COUNTY_COURTHOUSE'));assert.ok(plan.fixtures.every(x=>!/^\s*County Courthouse, Texas\s*$/i.test(x.privacySafeSeedQuery)));});
@@ -77,4 +77,40 @@ test('summary total and remaining counts use the plan, not physical progress row
 test('mock execution cannot alter tracked launch evidence',()=>{
   const launch=JSON.parse(fs.readFileSync('reports/lp2416/launch-classification.json'));
   assert.equal(launch.providerExecution,'NOT_EXECUTED'); assert.equal(launch.countyOutcomeTotals.executed,0); assert.equal(launch.countyOutcomeTotals.notExecuted,254);
+});
+
+const completeOwnerEvidence=()=>({safeStop:null,summary:{executedCount:254,passCount:254,noResultCount:0,wrongCountyCount:0,ambiguousCount:0,providerUnavailableCount:0,remainingCount:0,safeStop:null},rows:plan.fixtures.map(row=>({...row,executionState:'PROVIDER_EXECUTED',providerOutcome:'PASS',resolvedAddress:`${row.countyName} courthouse result`,resolvedLatitude:31,resolvedLongitude:-96,resolvedCounty:`${row.expectedCountyName} County`,countyMatch:true,Authorization:'secret',apikey:'secret',rawRequestHeaders:{cookie:'secret'},providerPayload:{secret:'secret'}}))});
+
+test('materialization fails closed when owner-local evidence is missing',()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'lp2416-materialize-'));
+  assert.throws(()=>materializeOwnerEvidence({plan,progressPath:path.join(dir,'missing.json'),outputDir:path.join(dir,'out')}),/missing/);
+  assert.equal(fs.existsSync(path.join(dir,'out')),false); fs.rmSync(dir,{recursive:true,force:true});
+});
+
+for (const [name,mutate,pattern] of [
+  ['incomplete progress',e=>e.rows.pop(),/254 completed/],
+  ['duplicate county',e=>{e.rows[1]={...e.rows[0]};},/duplicate/],
+  ['wrong seed query',e=>{e.rows[0].privacySafeSeedQuery='different';},/wrong seed query/],
+  ['wrong governed county',e=>{e.rows[0].expectedCountyId='wrong';},/wrong governed county identity/],
+  ['invalid coordinate',e=>{e.rows[0].resolvedLatitude=NaN;},/invalid Texas coordinate/],
+  ['non-PASS row',e=>{e.rows[0].providerOutcome='WRONG_COUNTY';},/non-PASS/],
+  ['safeStop present',e=>{e.safeStop={countyFips:'48001'};},/safe stop/]
+]) test(`${name} prevents completed certification materialization`,()=>{const evidence=completeOwnerEvidence();mutate(evidence);assert.throws(()=>reconcileOwnerEvidence(plan,evidence),pattern);});
+
+test('exact 254/254 evidence materializes only privacy-safe governed artifacts without provider calls',()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'lp2416-materialize-')),progressPath=path.join(dir,'progress.json'),outputDir=path.join(dir,'out');
+  fs.writeFileSync(progressPath,JSON.stringify(completeOwnerEvidence()));
+  const originalFetch=globalThis.fetch; let calls=0; globalThis.fetch=()=>{calls++;throw Error('network forbidden');};
+  try {
+    const result=materializeOwnerEvidence({plan,progressPath,outputDir}); assert.equal(result.totals.providerPassCount,254); assert.equal(calls,0);
+    const files=fs.readdirSync(outputDir); assert.deepEqual(files.sort(),['exception-ledger.json','launch-classification.json','statewide-provider-results.csv','statewide-provider-results.json','summary.md','visual-cohort.json']);
+    const promoted=files.map(file=>fs.readFileSync(path.join(outputDir,file),'utf8')).join('\n');
+    assert.doesNotMatch(promoted,/"(?:Authorization|apikey|rawRequestHeaders|providerPayload|cookie)"\s*:|"secret"/);
+    const visual=JSON.parse(fs.readFileSync(path.join(outputDir,'visual-cohort.json'))); assert.equal(visual.count,12); assert.equal(visual.ownerVisualAcceptance,'PENDING'); assert.ok(visual.rows.every(row=>row.ownerVisualState==='PENDING'));
+    assert.deepEqual(visual.rows.map(row=>row.countyFips),['48071','48073','48113','48141','48201','48229','48355','48375','48403','48439','48453','48465']);
+  } finally { globalThis.fetch=originalFetch; fs.rmSync(dir,{recursive:true,force:true}); }
+});
+
+test('owner-local evidence remains ignored',()=>{
+  assert.match(fs.readFileSync('.gitignore','utf8'),/^\/owner-local\/$/m);
 });
