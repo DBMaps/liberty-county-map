@@ -45505,8 +45505,18 @@ function buildGridlyLiveSearchAuditReport(query, results = [], metadata = {}) {
     },
     seedResultsRenderImmediately: localSeedCount > 0,
     emptyStateWouldRender: finalResultCount === 0 && localSeedCount === 0,
+    emptyStateReconciled: (finalResultCount === 0 && localSeedCount === 0) === Boolean(providerDiagnostics.emptyStateWouldRender),
+    auditRenderMode: "read_only_no_render",
+    renderedMeaning: "This audit invocation does not mutate the DOM; rendered describes this invocation, not a prior interactive search.",
     seedResultsIncluded: normalizedResults.some((result) => result.provider === "local_poi_seed" || result.localPoiSeed),
     providerVariants: Array.isArray(providerDiagnostics.variants) ? providerDiagnostics.variants : [],
+    candidateLineage: Array.isArray(providerDiagnostics.candidateLineage) ? providerDiagnostics.candidateLineage : [],
+    stageCounts: providerDiagnostics.stageCounts || {
+      providerCanonicalCount: Number(providerDiagnostics.providerResultCount) || 0,
+      normalizedCount: finalResultCount, containedCount: finalResultCount, countyQualifiedCount: finalResultCount,
+      intentAcceptedCount: finalResultCount, qualityAcceptedCount: finalResultCount, dedupedCount: finalResultCount,
+      publicationEligibleCount: finalResultCount, finalPublishedCount: finalResultCount
+    },
     futureArchitecture: providerDiagnostics.futureArchitecture || gridlyDestinationProviderState.futureArchitecture,
     laterAsyncResponseOverwroteResults: Boolean(metadata.laterAsyncResponseOverwroteResults),
     requestId: metadata.requestId ?? null,
@@ -92610,6 +92620,82 @@ function finalizeGridlyDestinationProviderDiagnostics(diagnostics, providerResul
   return diagnostics;
 }
 
+function getGridlySearchCandidateAuditId(result, index = 0) {
+  const normalized = normalizeGridlySearchResult(result);
+  return String(normalized?.providerId || result?.place_id || result?.providerResultId
+    || normalized?.id || `provider-candidate-${index + 1}`);
+}
+
+function buildGridlySearchCandidateLineage(rawCandidates = [], stages = {}, options = {}) {
+  const query = String(options.query || "");
+  const intent = options.intent || classifyGridlyDestinationSearchIntent(query);
+  const stageOrder = ["normalization", "texasContainment", "countyQualification", "dedupe", "intent", "quality", "distance", "publication"];
+  const stageKeys = {
+    normalization: "normalized", texasContainment: "contained", countyQualification: "countyQualified",
+    intent: "intentAccepted", quality: "qualityAccepted", distance: "distanceAccepted",
+    dedupe: "deduped", publication: "publicationEligible"
+  };
+  const keySet = (values) => new Set((Array.isArray(values) ? values : []).map((value, index) => getGridlySearchCandidateAuditId(value, index)));
+  const memberships = Object.fromEntries(Object.entries(stageKeys).map(([name, key]) => [name, keySet(stages[key])]));
+  const rejection = {
+    normalization: ["result_normalization_failed", "Candidate has missing or invalid coordinates and cannot be normalized."],
+    texasContainment: ["texas_containment_failed", "Candidate failed the active search containment predicate."],
+    countyQualification: ["county_qualification_failed", "Candidate failed the active county qualification predicate."],
+    intent: [intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE ? "business_place_intent_mismatch" : "explicit_intent_mismatch",
+      intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE
+        ? "businessResultRelevant requires every normalized governed query term to occur in the candidate result text."
+        : "Candidate failed explicit destination relevance."],
+    quality: ["quality_threshold_failed", "Candidate failed the generic-local quality predicate."],
+    distance: ["distance_bias_failed", "Candidate failed distance/current-area eligibility."],
+    dedupe: ["duplicate_suppressed", "Candidate was removed by governed duplicate resolution."],
+    publication: ["publication_ineligible", "Candidate did not enter the final published result set (boundary truthfulness or result limit)."]
+  };
+  const understood = window.GRIDLY_LP101_SEARCH_QUALITY?.understand?.(query);
+  return (Array.isArray(rawCandidates) ? rawCandidates : []).map((rawCandidate, index) => {
+    const normalized = normalizeGridlySearchResult(rawCandidate);
+    const candidateId = getGridlySearchCandidateAuditId(rawCandidate, index);
+    const address = rawCandidate?.address && typeof rawCandidate.address === "object" ? rawCandidate.address
+      : normalized?.raw?.address && typeof normalized.raw.address === "object" ? normalized.raw.address : {};
+    const decisions = {};
+    let priorAccepted = true;
+    let firstLosingStage = "none";
+    for (const stage of stageOrder) {
+      const accepted = priorAccepted && memberships[stage].has(candidateId);
+      decisions[`${stage}Accepted`] = accepted;
+      if (priorAccepted && !accepted && firstLosingStage === "none") firstLosingStage = stage;
+      priorAccepted = accepted;
+    }
+    const [rejectionCode, rejectionReason] = firstLosingStage === "none" ? ["none", ""] : rejection[firstLosingStage];
+    const resultWords = new Set(window.GRIDLY_LP101_SEARCH_QUALITY?.normalize?.([
+      normalized?.title, normalized?.label, normalized?.type, ...(normalized?.raw?.categories || []),
+      address.city, address.town, address.county
+    ].filter(Boolean).join(" "))?.split(" ").filter(Boolean) || []);
+    const requiredIntentTerms = intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE ? [...(understood?.destinationTerms || [])] : [];
+    return Object.freeze({
+      candidateId,
+      raw: Object.freeze({
+        title: String(rawCandidate?.name || rawCandidate?.title || ""), label: String(rawCandidate?.label || rawCandidate?.display_name || ""),
+        address: String(rawCandidate?.display_name || rawCandidate?.formatted || ""), city: String(address.city || address.town || address.village || ""),
+        county: String(address.county || ""), state: String(address.state || ""),
+        coordinates: normalized ? Object.freeze({ latitude: normalized.lat, longitude: normalized.lng }) : null,
+        category: String(rawCandidate?.category || ""), type: String(rawCandidate?.type || ""), provider: String(normalized?.provider || rawCandidate?.provider || "unknown")
+      }),
+      normalized: normalized ? Object.freeze({
+        title: normalized.title, subtitle: normalized.subtitle,
+        countyId: gridlyNormalizeCountyId(address.county || "") || null,
+        locality: String(address.city || address.town || address.village || address.hamlet || ""),
+        coordinates: Object.freeze({ latitude: normalized.lat, longitude: normalized.lng }),
+        intentType: intent.type, category: String(rawCandidate?.category || normalized.type || "")
+      }) : null,
+      providerCanonicalAccepted: true, ...decisions,
+      finalPublished: memberships.publication.has(candidateId) && keySet(stages.published).has(candidateId),
+      requiredIntentTerms: Object.freeze(requiredIntentTerms),
+      missingIntentTerms: Object.freeze(requiredIntentTerms.filter((term) => !resultWords.has(term))),
+      firstLosingStage, rejectionCode, rejectionReason
+    });
+  });
+}
+
 async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0", diagnostics = null, structured = null, variantIndex = 0 } = {}) {
   const intent = structured ? "address" : "business_place";
   const viewbox = String(searchContext?.viewbox || "").split(",").map(Number);
@@ -92686,6 +92772,7 @@ async function gridlySearchAddress(query, options = {}) {
   const lp101CaseName = getGridlyLp101CaseName(rawQuery);
   setGridlyLp101PipelineStage(lp101CaseName, "localCandidates", seedResults, rawQuery);
   let remoteProviderResultCount = 0;
+  const remoteProviderCandidates = [];
 
   for (const [variantIndex, variant] of queryVariants.entries()) {
     const variantResults = await fetchGridlyNominatimSearch(variant, {
@@ -92698,6 +92785,7 @@ async function gridlySearchAddress(query, options = {}) {
       structured: intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && variantIndex === 0 ? addressModel.structured : null
     });
     remoteProviderResultCount += variantResults.length;
+    remoteProviderCandidates.push(...variantResults);
     providerResults.push(...variantResults);
     setGridlyLp101PipelineStage(lp101CaseName, "providerCandidates", providerResults.slice(seedResults.length), rawQuery);
     const exactInAttempt = variantResults.map((item) => normalizeGridlySearchResult(item)).filter(Boolean)
@@ -92757,6 +92845,29 @@ async function gridlySearchAddress(query, options = {}) {
     ? localityReservedResults.filter((result) => result?.provider === "saved_place" || result?.raw?.savedPlace === true || result?.raw?.seedSource === "lp097_governed_curated")
     : localityReservedResults;
   const finalResults = truthfulResults.slice(0, limit);
+  const lineageStages = {
+    normalized: prioritizedResults,
+    contained: containmentFilteredResults,
+    countyQualified: containmentFilteredResults,
+    intentAccepted: explicitRelevantResults,
+    qualityAccepted: qualityFilteredResults,
+    distanceAccepted: localityReservedResults,
+    deduped: dedupedResults,
+    publicationEligible: truthfulResults,
+    published: finalResults
+  };
+  diagnostics.candidateLineage = buildGridlySearchCandidateLineage(remoteProviderCandidates, lineageStages, { query: rawQuery, intent });
+  diagnostics.stageCounts = Object.freeze({
+    providerCanonicalCount: remoteProviderCandidates.length,
+    normalizedCount: diagnostics.candidateLineage.filter((candidate) => candidate.normalizationAccepted).length,
+    containedCount: diagnostics.candidateLineage.filter((candidate) => candidate.texasContainmentAccepted).length,
+    countyQualifiedCount: diagnostics.candidateLineage.filter((candidate) => candidate.countyQualificationAccepted).length,
+    intentAcceptedCount: diagnostics.candidateLineage.filter((candidate) => candidate.intentAccepted).length,
+    qualityAcceptedCount: diagnostics.candidateLineage.filter((candidate) => candidate.qualityAccepted).length,
+    dedupedCount: diagnostics.candidateLineage.filter((candidate) => candidate.dedupeAccepted).length,
+    publicationEligibleCount: diagnostics.candidateLineage.filter((candidate) => candidate.publicationAccepted).length,
+    finalPublishedCount: finalResults.filter((result) => result?.provider !== "local_poi_seed" && result?.provider !== "saved_place").length
+  });
   setGridlyLp101PipelineStage(lp101CaseName, "finalRenderInput", finalResults, rawQuery);
   finalizeGridlyDestinationProviderDiagnostics(diagnostics, remoteProviderResultCount, finalResults.length);
   Object.defineProperty(finalResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
