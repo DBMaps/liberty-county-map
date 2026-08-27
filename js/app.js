@@ -40982,33 +40982,95 @@ function buildGridlyDestinationCoverageState(options = {}) {
   return Object.freeze({ coverageState, requiredSourceFamilies, completedSourceFamilies, missingSourceFamilies, failedSourceFamilies });
 }
 
+function buildGridlyDestinationSourceAuthority(options = {}) {
+  const awarenessCountyId = options.awarenessCountyId || null;
+  const destinationCountyId = options.destinationCountyId || null;
+  const routeCountyIds = Object.freeze([awarenessCountyId, destinationCountyId]
+    .filter(Boolean)
+    .filter((id, index, all) => all.indexOf(id) === index));
+  const sameCountyAuthority = Boolean(destinationCountyId && awarenessCountyId && destinationCountyId === awarenessCountyId);
+  const familyState = options.familyState && typeof options.familyState === "object" ? options.familyState : {};
+  const currentCountyIds = Object.freeze(awarenessCountyId ? [awarenessCountyId] : []);
+  const authority = ({ family, scopeType, requiredAuthority, requiredCountyIds = [], observedAuthority, observedCountyIds = [], state, completionReason }) => Object.freeze({
+    family,
+    scopeType,
+    requiredAuthority,
+    requiredCountyIds: Object.freeze([...requiredCountyIds]),
+    observedAuthority,
+    observedCountyIds: Object.freeze([...observedCountyIds]),
+    completionReason,
+    state
+  });
+  const currentCountyFamily = (family, scopeType, available, providerState = null) => {
+    const failed = sameCountyAuthority && providerState === "UNAVAILABLE";
+    const completed = sameCountyAuthority && available && (!providerState || ["ACTIVE", "QUIET"].includes(providerState));
+    return authority({
+      family,
+      scopeType,
+      requiredAuthority: scopeType === "route" ? "route" : "county",
+      requiredCountyIds: scopeType === "route" ? routeCountyIds : destinationCountyId ? [destinationCountyId] : [],
+      observedAuthority: awarenessCountyId ? "current_awareness_county" : "none",
+      observedCountyIds: currentCountyIds,
+      state: failed ? "failed" : completed ? "completed" : "missing",
+      completionReason: failed
+        ? `current-awareness provider unavailable for required county ${destinationCountyId}`
+        : completed
+          ? scopeType === "route"
+            ? `current-awareness collection covers the single-county route ${destinationCountyId}`
+            : `current-awareness authority matches destination county ${destinationCountyId}`
+          : sameCountyAuthority
+            ? `required ${scopeType} source was not acquired`
+            : `current-awareness county ${awarenessCountyId || "unknown"} does not cover required ${scopeType} county scope`
+    });
+  };
+  const sourceFamilyAuthority = Object.freeze([
+    currentCountyFamily("destination_alerts", "destination", Boolean(options.alertsAvailable)),
+    currentCountyFamily("official_roadways", "destination", Boolean(familyState.officialRoadwaysState), familyState.officialRoadwaysState),
+    currentCountyFamily("destination_weather", "destination", Boolean(familyState.weatherState), familyState.weatherState),
+    currentCountyFamily("route_community_reports", "route", Boolean(options.communityReportsAvailable)),
+    currentCountyFamily("route_hazards", "route", Boolean(options.hazardsAvailable)),
+    authority({
+      family: "statewide_crossings",
+      scopeType: "statewide",
+      requiredAuthority: "statewide",
+      observedAuthority: "statewide_crossings_collection",
+      state: "completed",
+      completionReason: "statewide crossings authority is available for route-corridor matching"
+    })
+  ]);
+  return Object.freeze({ routeCountyIds, sourceFamilyAuthority });
+}
+
 function getGridlyDestinationCoverageState() {
   const selected = normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination);
   const destinationCountyId = gridlyNormalizeCountyId(selected?.countyId || selected?.raw?.countyId || "") || null;
   const awareness = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   const awarenessCountyId = gridlyNormalizeCountyId(awareness?.countyId || "") || null;
-  const sameCountyAuthority = Boolean(destinationCountyId && awarenessCountyId && destinationCountyId === awarenessCountyId);
-  const completed = ["statewide_crossings"];
-  const failed = [];
-  const familySnapshot = sameCountyAuthority && typeof window.gridlyKbygFamilyStateSnapshot === "function"
+  const familySnapshot = typeof window.gridlyKbygFamilyStateSnapshot === "function"
     ? window.gridlyKbygFamilyStateSnapshot() : null;
-  if (sameCountyAuthority) {
-    if (Array.isArray(activeHazards)) completed.push("route_hazards");
-    if (Array.isArray(activeReports)) completed.push("route_community_reports", "destination_alerts");
-    if (["ACTIVE", "QUIET"].includes(familySnapshot?.officialRoadwaysState)) completed.push("official_roadways");
-    else if (familySnapshot?.officialRoadwaysState === "UNAVAILABLE") failed.push("official_roadways");
-    if (["ACTIVE", "QUIET"].includes(familySnapshot?.weatherState)) completed.push("destination_weather");
-    else if (familySnapshot?.weatherState === "UNAVAILABLE") failed.push("destination_weather");
-  }
+  const authority = buildGridlyDestinationSourceAuthority({
+    awarenessCountyId,
+    destinationCountyId,
+    alertsAvailable: Array.isArray(getGridlyDestinationRouteAlertSource()),
+    communityReportsAvailable: Array.isArray(activeReports),
+    hazardsAvailable: Array.isArray(activeHazards),
+    familyState: familySnapshot
+  });
+  const completed = authority.sourceFamilyAuthority.filter((family) => family.state === "completed").map((family) => family.family);
+  const failed = authority.sourceFamilyAuthority.filter((family) => family.state === "failed").map((family) => family.family);
   return Object.freeze({
     ...buildGridlyDestinationCoverageState({ completedSourceFamilies: completed, failedSourceFamilies: failed }),
     destinationCountyId,
-    routeCountyIds: Object.freeze([awarenessCountyId, destinationCountyId].filter(Boolean).filter((id, index, all) => all.indexOf(id) === index)),
+    routeCountyIds: authority.routeCountyIds,
+    sourceFamilyAuthority: authority.sourceFamilyAuthority,
     sourceFreshness: Object.freeze(Object.fromEntries(GRIDLY_DESTINATION_REQUIRED_QUIET_SOURCES.map((family) => [family, completed.includes(family) ? "checked" : failed.includes(family) ? "unavailable" : "not_acquired"])))
   });
 }
 
-if (typeof window !== "undefined") window.gridlyBuildDestinationCoverageState = buildGridlyDestinationCoverageState;
+if (typeof window !== "undefined") {
+  window.gridlyBuildDestinationCoverageState = buildGridlyDestinationCoverageState;
+  window.gridlyBuildDestinationSourceAuthority = buildGridlyDestinationSourceAuthority;
+}
 
 function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence = null, coverage = null } = {}) {
   const existingAudit = audit || (typeof window.gridlyDestinationRouteImpactAudit === "function" ? window.gridlyDestinationRouteImpactAudit() : {});
@@ -45191,6 +45253,7 @@ window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudi
       completedSourceFamilies: coverage.completedSourceFamilies,
       missingSourceFamilies: coverage.missingSourceFamilies,
       failedSourceFamilies: coverage.failedSourceFamilies,
+      sourceFamilyAuthority: coverage.sourceFamilyAuthority,
       routeCountyIds: coverage.routeCountyIds,
       sourceFreshness: coverage.sourceFreshness,
       matchedEvidence,
