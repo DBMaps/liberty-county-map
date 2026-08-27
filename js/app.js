@@ -45039,6 +45039,104 @@ window.gridlyDestinationRouteImpactDebug = function gridlyDestinationRouteImpact
   };
 };
 
+// LP241.6 audit-only authority snapshot. This deliberately observes the
+// destination, awareness, and route authorities without joining or mutating
+// them; destination search and Home Area remain separate product paths.
+window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudit() {
+  const searchState = ensureGridlySearchState();
+  const selectedDestination = normalizeGridlySearchResult(searchState?.selectedDestination);
+  const awareness = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const preview = getGridlyDestinationRoutePreviewState();
+  const intelligence = window.gridlyDestinationRouteIntelligenceAudit();
+  const impact = window.gridlyDestinationRouteImpactAudit();
+  const decision = buildGridlyDestinationDecisionPresentation({ audit: impact, intelligence });
+  const destinationCoordinate = normalizeCoordinatePair(selectedDestination?.lat, selectedDestination?.lng);
+  const coordinateCounty = destinationCoordinate && typeof gridlyResolveCountyIdForCoordinate === "function"
+    ? gridlyResolveCountyIdForCoordinate(destinationCoordinate.lat, destinationCoordinate.lng)
+    : null;
+  const destinationCountyId = gridlyNormalizeCountyId(
+    selectedDestination?.countyId
+      || selectedDestination?.raw?.countyId
+      || coordinateCounty?.countyId
+      || coordinateCounty?.id
+      || ""
+  ) || null;
+  const summarizeEvidence = (records = [], family = "unknown") => (Array.isArray(records) ? records : []).map((record) => {
+    const coordinates = normalizeCoordinatePair(record?.lat, record?.lng);
+    const countyResolution = coordinates && typeof gridlyResolveCountyIdForCoordinate === "function"
+      ? gridlyResolveCountyIdForCoordinate(coordinates.lat, coordinates.lng)
+      : null;
+    return Object.freeze({
+      family,
+      id: record?.id || null,
+      title: record?.title || null,
+      coordinates: coordinates ? Object.freeze({ ...coordinates }) : null,
+      countyId: record?.countyId || countyResolution?.countyId || null,
+      distanceFromRouteFeet: record?.distanceFromRouteFeet ?? null,
+      sourceType: record?.sourceType || null
+    });
+  });
+  const matchedEvidence = Object.freeze([
+    ...summarizeEvidence(intelligence?.matchedHazards, "hazards"),
+    ...summarizeEvidence(intelligence?.matchedAlerts, "alerts"),
+    ...summarizeEvidence(intelligence?.matchedReports, "communityReports"),
+    ...summarizeEvidence(intelligence?.matchedCrossings, "crossings")
+  ]);
+  const sourceFamilies = Object.freeze({
+    hazards: "activeHazards route-corridor matches",
+    alerts: "Alerts surface snapshot route-corridor matches",
+    communityReports: "activeReports route-corridor matches",
+    crossings: "statewide crossings route-corridor matches",
+    weather: "corroboration only when a matched route record is local to the selected awareness area",
+    officialRoadways: "not directly queried by Destination Intelligence"
+  });
+  return Object.freeze({
+    contract: "destination selection preserves governed awareness; Destination Intelligence is route-corridor intelligence",
+    selectedDestination: Object.freeze({
+      label: selectedDestination?.title || selectedDestination?.displayName || selectedDestination?.address || null,
+      coordinates: destinationCoordinate ? Object.freeze({ ...destinationCoordinate }) : null,
+      countyId: destinationCountyId,
+      governedIdentity: selectedDestination?.placeGeoid || selectedDestination?.raw?.placeGeoid || selectedDestination?.id || null,
+      provider: selectedDestination?.provider || null
+    }),
+    currentAwareness: Object.freeze({
+      label: awareness?.label || awareness?.storageValue || null,
+      countyId: awareness?.countyId || null,
+      governedIdentity: awareness?.placeGeoid || awareness?.key || null,
+      coordinates: normalizeCoordinatePair(awareness?.lat, awareness?.lng)
+    }),
+    destinationIntelligence: Object.freeze({
+      authority: "origin-to-destination route corridor",
+      destinationIdentity: preview?.destination?.id || selectedDestination?.id || null,
+      destinationCountyId,
+      destinationCoordinates: destinationCoordinate ? Object.freeze({ ...destinationCoordinate }) : null,
+      corridorWidthFeet: intelligence?.corridorWidthFeet ?? null,
+      evidenceCollectionScope: Object.freeze({
+        hazards: "current activeHazards collection",
+        alerts: "current Alerts surface snapshot",
+        communityReports: "current activeReports collection",
+        crossings: "statewide crossings collection",
+        currentAwarenessCountyId: awareness?.countyId || null
+      }),
+      sourceFamilies,
+      matchedEvidence,
+      matchedCounts: Object.freeze({
+        hazards: intelligence?.hazardsNearRoute || 0,
+        alerts: intelligence?.alertsNearRoute || 0,
+        communityReports: intelligence?.reportsNearRoute || 0,
+        crossings: intelligence?.crossingsNearRoute || 0
+      }),
+      finalDecision: decision
+    }),
+    route: Object.freeze({
+      origin: preview?.source || null,
+      destination: preview?.destination || null,
+      status: preview?.status || "idle",
+      fitReason: gridlyRouteViewportOwnershipState.lastShowFullRouteSource || "destination_visibility_offset"
+    })
+  });
+};
+
 function selectGridlySearchResult(result, options = {}) {
   resetGridlyDestinationPerformanceAudit("selecting");
   const destinationSelectStartedAt = getGridlyDestinationPerfNow();
