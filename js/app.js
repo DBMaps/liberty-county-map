@@ -83021,6 +83021,12 @@ function buildUnifiedIncidentPopup(incident, options = {}){
   };
   const isActive = incident.status === "active";
   const typeCategory = incident.id?.startsWith("rail-") ? "rail" : "road";
+  const communityLifecycleTarget = typeCategory === "road"
+    ? gridlyResolveCommunityIncidentLifecycleTarget(incident)
+    : null;
+  const communityLifecycleAttributes = communityLifecycleTarget?.persistedReportId && communityLifecycleTarget?.hazardType
+    ? ` data-lifecycle-report-id="${sanitizeText(communityLifecycleTarget.persistedReportId)}" data-lifecycle-report-type="${sanitizeText(communityLifecycleTarget.hazardType)}"`
+    : "";
   if (typeCategory === "rail") {
     const model = buildGridlyCrossingPopupConsumerModel(incident, { auditRow });
     const lp021LocationPresentation = gridlyLp021ResolvedLocationPresentation(incident, { fallback: model.locationLine });
@@ -83063,7 +83069,7 @@ function buildUnifiedIncidentPopup(incident, options = {}){
     return finishPopupAudit(`<div class="gridly-popup" data-gridly-hazard-popup="consumer">${popupLines}</div>`);
   }
 
-  return finishPopupAudit(`<div class="gridly-popup gridly-premium-popup" data-gridly-hazard-popup="consumer">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button></div></div>`);
+  return finishPopupAudit(`<div class="gridly-popup gridly-premium-popup" data-gridly-hazard-popup="consumer">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}"${communityLifecycleAttributes}>Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}"${communityLifecycleAttributes}>Mark Cleared</button></div></div>`);
 }
 
 function gridlyHazardPopupAudit() {
@@ -83592,20 +83598,24 @@ function mapUnifiedRailConfirmType(reportType) {
   return "heavy";
 }
 
-function gridlyResolveCommunityIncidentLifecycleTarget(incident = {}) {
+function gridlyResolveCommunityIncidentLifecycleTarget(incident = {}, renderedTarget = {}) {
   const clean = (value) => String(value || "").trim();
   const sourceReportIds = Array.isArray(incident?.sourceReportIds) ? incident.sourceReportIds.map(clean) : [];
   const sourceReportTypes = Array.isArray(incident?.sourceReportTypes) ? incident.sourceReportTypes.map((value) => clean(value).toLowerCase()) : [];
   const pairedSourceIndex = sourceReportIds.findIndex(Boolean);
   const persistedReportId = sourceReportIds[pairedSourceIndex]
-    || clean(incident?.sourceReportId || incident?.persistedReportId || incident?.canonicalReportIdentity || incident?.lifecycleIdentity);
+    || clean(incident?.sourceReportId || incident?.persistedReportId || incident?.canonicalReportIdentity || incident?.lifecycleIdentity)
+    || clean(renderedTarget?.lifecycleReportId);
   const hazardType = sourceReportTypes[pairedSourceIndex]
-    || clean(incident?.report_type || incident?.reportType || incident?.hazardType || incident?.type).toLowerCase();
+    || clean(incident?.sourceReportType || incident?.report_type || incident?.reportType || incident?.hazardType || incident?.type).toLowerCase()
+    || clean(renderedTarget?.lifecycleReportType).toLowerCase();
+  const incidentLat = incident?.lat ?? incident?.latitude;
+  const incidentLng = incident?.lng ?? incident?.lon ?? incident?.longitude;
   return Object.freeze({
     persistedReportId,
     hazardType,
-    lat: Number(incident?.lat ?? incident?.latitude),
-    lng: Number(incident?.lng ?? incident?.lon ?? incident?.longitude),
+    lat: Number(incidentLat ?? renderedTarget?.lat),
+    lng: Number(incidentLng ?? renderedTarget?.lng),
     source: sourceReportIds[pairedSourceIndex] ? "sourceReportIds" : (persistedReportId ? "persisted_identity" : "unresolved")
   });
 }
@@ -83619,7 +83629,9 @@ async function handleUnifiedIncidentAction(button) {
   const crossingId = button?.dataset?.crossingId || incident?.crossing_id || (incidentId.startsWith("rail-") ? incidentId.replace("rail-", "") : "");
   const lat = Number(button?.dataset?.lat ?? incident?.lat);
   const lng = Number(button?.dataset?.lng ?? incident?.lng);
-  const communityLifecycleTarget = category === "road" ? gridlyResolveCommunityIncidentLifecycleTarget(incident || {}) : null;
+  const communityLifecycleTarget = category === "road"
+    ? gridlyResolveCommunityIncidentLifecycleTarget(incident || {}, button?.dataset || {})
+    : null;
 
   if (action === "view-area") {
     if (Number.isFinite(lat) && Number.isFinite(lng)) {

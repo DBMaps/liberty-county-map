@@ -75,12 +75,23 @@ const liveRoadIncident = {
   sourceReportTypes: ['road_closed']
 };
 
-function actionHarness() {
+const liveDisabledVehicleIncident = {
+  id: 'road-disabled_vehicle-33.1353--95.5956',
+  report_type: '',
+  type: '',
+  status: 'active',
+  lat: 33.1352602667037,
+  lng: -95.5955708026886,
+  sourceReportIds: ['6c158f84-bd6a-4a9e-b542-850784191ffe'],
+  sourceReportTypes: ['disabled_vehicle']
+};
+
+function actionHarness(incident = liveRoadIncident) {
   const actionContext = vm.createContext({
     console: { debug() {} },
     crossings: [],
     window: {},
-    getUnifiedIncidents: () => [liveRoadIncident],
+    getUnifiedIncidents: () => [incident],
     createSharedHazardReport: async (...args) => actionContext.confirmCalls.push(args),
     createSharedReport: async () => { throw new Error('rail path must not execute'); },
     setConfirmation: (...args) => actionContext.messages.push(args),
@@ -132,6 +143,46 @@ test('Mark Cleared targets the same live source lineage once', async () => {
   assert.equal(actionContext.confirmCalls.length, 0);
 });
 
+test('Mark Cleared serializes and writes the exact live Disabled Vehicle lifecycle target once', async () => {
+  const actionContext = actionHarness(liveDisabledVehicleIncident);
+  await actionContext.handleUnifiedIncidentAction({ dataset: {
+    unifiedAction: 'cleared',
+    incidentId: liveDisabledVehicleIncident.id,
+    incidentCategory: 'road',
+    reportType: '',
+    lifecycleReportId: liveDisabledVehicleIncident.sourceReportIds[0],
+    lifecycleReportType: liveDisabledVehicleIncident.sourceReportTypes[0],
+    lat: String(liveDisabledVehicleIncident.lat),
+    lng: String(liveDisabledVehicleIncident.lng)
+  } });
+
+  assert.deepEqual(actionContext.clearCalls, [[
+    'disabled_vehicle',
+    liveDisabledVehicleIncident.lat,
+    liveDisabledVehicleIncident.lng,
+    liveDisabledVehicleIncident.sourceReportIds[0]
+  ]]);
+  assert.equal(actionContext.confirmCalls.length, 0, 'clear does not create an active replacement hazard');
+  assert.match(popupSource, /data-lifecycle-report-id=/);
+  assert.match(popupSource, /data-lifecycle-report-type=/);
+});
+
+test('rendered lifecycle target survives incident projection turnover before Mark Cleared', async () => {
+  const actionContext = actionHarness(liveDisabledVehicleIncident);
+  actionContext.getUnifiedIncidents = () => [];
+  await actionContext.handleUnifiedIncidentAction({ dataset: {
+    unifiedAction: 'cleared',
+    incidentId: liveDisabledVehicleIncident.id,
+    incidentCategory: 'road',
+    lifecycleReportId: liveDisabledVehicleIncident.sourceReportIds[0],
+    lifecycleReportType: liveDisabledVehicleIncident.sourceReportTypes[0],
+    lat: String(liveDisabledVehicleIncident.lat),
+    lng: String(liveDisabledVehicleIncident.lng)
+  } });
+  assert.equal(actionContext.clearCalls.length, 1);
+  assert.equal(actionContext.clearCalls[0][0], 'disabled_vehicle');
+});
+
 test('community lifecycle actions fail closed rather than creating other_hazard without lineage', async () => {
   const actionContext = actionHarness();
   actionContext.getUnifiedIncidents = () => [{ ...liveRoadIncident, sourceReportIds: [], sourceReportTypes: [] }];
@@ -149,4 +200,8 @@ test('authorized hazard writers persist lifecycle lineage for confirmation and c
   assert.match(confirmWriter, /lifecycle_report_id:/);
   assert.match(clearWriter, /lifecycleTargetReportId/);
   assert.match(clearWriter, /lifecycle_report_id:/);
+  assert.match(clearWriter, /report_type: "hazard_cleared"/);
+  assert.match(clearWriter, /gridlyInsertWithCountyMetadataFallback\(supabaseClient, "reports", row\)/);
+  assert.match(clearWriter, /roadHazardClearInFlightKeys\.has/);
+  assert.match(clearWriter, /roadHazardClearInFlightKeys\.add/);
 });
