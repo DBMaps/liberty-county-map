@@ -82981,6 +82981,27 @@ function gridlyDevRemoveCorruptedIncidentRecordsById(ids = []) {
 }
 if (typeof window !== "undefined") window.gridlyDevRemoveCorruptedIncidentRecordsById = gridlyDevRemoveCorruptedIncidentRecordsById;
 
+function gridlyCommunityPopupActionsEligible(incident = {}) {
+  const sourceAuthority = [
+    incident?.sourceFamily,
+    incident?.sourceKind,
+    incident?.providerId,
+    incident?.provider,
+    incident?.sourceId,
+    incident?.source,
+    incident?.authority
+  ].map((value) => String(value || "").trim().toLowerCase()).filter(Boolean).join(" ");
+  if (/weather|nws|noaa|official|drivetexas|txdot/.test(sourceAuthority)) return false;
+  const lifecycleState = typeof getIncidentLifecycleState === "function"
+    ? getIncidentLifecycleState(incident)
+    : String(incident?.lifecycleState || incident?.lifecycle || incident?.status || incident?.state || "").trim().toLowerCase();
+  if (lifecycleState !== "active") return false;
+  const identity = String(incident?.id || "").trim();
+  const rawLat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
+  const rawLng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
+  return Boolean(identity && rawLat != null && rawLng != null && Number.isFinite(Number(rawLat)) && Number.isFinite(Number(rawLng)));
+}
+
 function buildUnifiedIncidentPopup(incident, options = {}){
   const popupBuildStart = gridlyNowMs();
   const auditRow = {
@@ -83038,11 +83059,11 @@ function buildUnifiedIncidentPopup(incident, options = {}){
   `;
   gridlyAddPopupAuditDuration(auditRow, "htmlGenerationDurationMs", htmlGenerationStart);
 
-  if (!isActive) {
+  if (!gridlyCommunityPopupActionsEligible(incident)) {
     return finishPopupAudit(`<div class="gridly-popup" data-gridly-hazard-popup="consumer">${popupLines}</div>`);
   }
 
-  return finishPopupAudit(`<div class="gridly-popup gridly-premium-popup" data-gridly-hazard-popup="consumer">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button></div></div>`);
+  return finishPopupAudit(`<div class="gridly-popup gridly-premium-popup" data-gridly-hazard-popup="consumer">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button></div></div>`);
 }
 
 function gridlyHazardPopupAudit() {
@@ -88932,7 +88953,17 @@ function bindEvents() {
     if (unifiedButton) {
       event.preventDefault();
       event.stopPropagation();
-      await handleUnifiedIncidentAction(unifiedButton);
+      if (unifiedButton.dataset.gridlyActionPending === "1") return;
+      unifiedButton.dataset.gridlyActionPending = "1";
+      unifiedButton.disabled = true;
+      try {
+        await handleUnifiedIncidentAction(unifiedButton);
+      } finally {
+        window.setTimeout(() => {
+          delete unifiedButton.dataset.gridlyActionPending;
+          unifiedButton.disabled = false;
+        }, 500);
+      }
       return;
     }
 
