@@ -67,22 +67,39 @@ test('Settings surface classification ignores dormant markup and detects simulta
   const end=app.indexOf('\n}\n\nfunction getGridlySettingsSurfaceState()',start)+2;
   assert.ok(start>0&&end>start);
   const classify=Function(`${app.slice(start,end)}; return classifyGridlySettingsSurfaces;`)();
-  const portrait={id:'gridlyPortraitV2Sheet'}, legacy={id:'settingsModal'};
-  let state=classify([portrait,legacy],(node)=>node===portrait);
+  const visibleContent={id:'gridlyPortraitV2SheetBody'};
+  const portrait={id:'gridlyPortraitV2Sheet',hidden:false,dataset:{activeSheet:'settings',sheetState:'open'},getAttribute:()=>null,hasAttribute:()=>false,querySelector:()=>visibleContent};
+  const legacy={id:'settingsModal'};
+  let state=classify([portrait,legacy],(node)=>node===visibleContent);
   assert.equal(state.visibleSettingsSurfaceCount,1,'dormant alternate markup is not an active duplicate');
   assert.deepEqual(state.activeSettingsSurfaces,[portrait]);
   state=classify([portrait,legacy],()=>true);
   assert.equal(state.visibleSettingsSurfaceCount,2,'two simultaneously visible Settings surfaces are a duplicate');
+});
+test('Portrait V2 production state accepts visible owned content when its structural host has no rect',()=>{
+  const start=app.indexOf('function classifyGridlySettingsSurfaces(');
+  const end=app.indexOf('\n}\n\nfunction getGridlySettingsSurfaceState()',start)+2;
+  const classify=Function(`${app.slice(start,end)}; return classifyGridlySettingsSurfaces;`)();
+  const close={id:'gridlyPortraitV2SheetClose'};
+  const sheet={id:'gridlyPortraitV2Sheet',hidden:false,dataset:{activeSheet:'settings',sheetState:'open'},getAttribute:()=>null,hasAttribute:()=>false,querySelector:(selector)=>selector.includes('Close')?close:null};
+  const state=classify([sheet],(node)=>node===close);
+  assert.equal(state.visibleSettingsSurfaceCount,1);
+  sheet.dataset.activeSheet='alerts';
+  assert.equal(classify([sheet],()=>true).visibleSettingsSurfaceCount,0,'non-Settings active production sheet is excluded');
+  sheet.dataset.activeSheet='settings'; sheet.dataset.sheetState='closed';
+  assert.equal(classify([sheet],()=>true).visibleSettingsSurfaceCount,0,'closed production state is excluded');
 });
 test('Settings acceptance samples the active visible surface before close and bounds focus to it',()=>{
   const start=app.indexOf('function gridlyLP2417SettingsAcceptance()');
   const end=app.indexOf('window.gridlyLP2417SettingsAcceptance = gridlyLP2417SettingsAcceptance;',start);
   const helper=app.slice(start,end);
   assert.ok(helper.indexOf('const afterActivation = checkpoint()') < helper.indexOf('closeButton?.click()'));
-  assert.match(helper,/opened = afterActivation\.visibleSettingsSurfaceCount === 1/);
-  assert.match(helper,/afterActivation\.activeSettingsSurfaces\[0\]\.contains\(document\.activeElement\)/);
+  assert.match(helper,/opened = afterActivation\.productionActiveSheet === "settings"/);
+  assert.match(helper,/focusEnteredSettings = result\.opened && afterActivation\.focusContainedByActiveSheet/);
   assert.match(helper,/duplicateOpenDetected = afterActivation\.visibleSettingsSurfaceCount > 1/);
   assert.match(helper,/AFTER_CLOSE[\s\S]*?afterClose\.visibleSettingsSurfaceCount === 0/);
+  assert.match(helper,/focusEqualsOriginalOpener: document\.activeElement === originalOpener/);
+  assert.doesNotMatch(helper,/openSuccessDelta === 1/,'diagnostic success counter is not an acceptance gate');
 });
 test('production Settings success follows the completed visible lifecycle',()=>{
   const start=app.indexOf('function openSettingsSurfaceFromDock(');
