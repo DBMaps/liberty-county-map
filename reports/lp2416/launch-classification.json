@@ -1,0 +1,21 @@
+{
+  "staticCertification": "STATIC_CERTIFIED",
+  "providerExecution": "NOT_EXECUTED",
+  "ownerVisualAcceptance": "NOT_EXECUTED",
+  "launchClassification": "OWNER_ACCEPTANCE_REQUIRED",
+  "countyOutcomeTotals": {
+    "totalCounties": 254,
+    "executed": 0,
+    "pass": 0,
+    "noResult": 0,
+    "wrongCounty": 0,
+    "ambiguous": 0,
+    "providerUnavailable": 0,
+    "invalidCoordinate": 0,
+    "handoffFailure": 0,
+    "mapFailure": 0,
+    "uiFailure": 0,
+    "fixtureRequired": 0,
+    "notExecuted": 254
+  }
+}
