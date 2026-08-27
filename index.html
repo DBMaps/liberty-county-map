@@ -147,13 +147,12 @@
           finePointer = Boolean(window.matchMedia && window.matchMedia("(pointer: fine)").matches);
           coarsePointer = Boolean(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
         } catch (error) {}
-        var mode = existingMode || (landscape && width <= 1100 && height <= 520
-          ? "tactical-landscape"
-          : landscape && finePointer && !coarsePointer
-            ? "desktop"
-            : width <= 980
-              ? "portrait"
-              : "desktop");
+        var noHover = false;
+        try { noHover = Boolean(window.matchMedia && window.matchMedia("(hover: none)").matches); } catch (error) {}
+        /* LP241.7 launch authority is capability-based. Geometry alone must never
+           promote a resized desktop/PWA window into the validated mobile owner. */
+        var validatedMobile = width <= 980 && !landscape && coarsePointer && !finePointer && noHover;
+        var mode = existingMode || (validatedMobile ? "portrait" : "desktop");
         document.documentElement.classList.toggle("gridly-desktop-startup-containment", mode === "desktop");
         if (body && !existingMode) {
           body.setAttribute("data-layout-mode", mode);
@@ -257,7 +256,7 @@
     </div>
   </section>
 
-  <section id="gridlyDesktopGate" class="gridly-desktop-gate" aria-live="polite" aria-label="Gridly desktop beta launch board">
+  <section id="gridlyDesktopGate" class="gridly-desktop-gate" aria-live="polite" aria-label="Gridly desktop beta launch board" aria-hidden="true" inert>
     <div class="gridly-desktop-gate-shell">
       <img
         class="gridly-desktop-gate-board-image"

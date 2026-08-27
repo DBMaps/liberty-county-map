@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "status": "OWNER_ACCEPTANCE_REQUIRED",
   "policy": "Deterministic cross-platform compatibility certification; physical acceptance on available representative platforms; no known defects; post-launch monitoring for additional device/platform combinations.",
   "tests": [
@@ -54,36 +54,29 @@
     },
     {
       "id": "OA-4",
-      "deviceBrowser": "Installed Windows Edge PWA, supported mobile-width viewport",
-      "classification": "PARTIAL_OWNER_PASS_MANDATORY_SUPPORTED_VIEWPORT_ACCEPTANCE_REMAINING",
-      "status": "PARTIAL_PASS",
-      "exactJourney": "Reopen the installed standalone Edge app; resize until the CSS content viewport is portrait and no wider than 980 px; confirm the mobile shell replaces the desktop-development board; open/close Alerts; change My Area; close/relaunch from the installed-app entry; restore the supported viewport if needed; confirm state persists.",
-      "pass": "Previously accepted install, standalone launch, and nonblank shell remain pass; supported mobile shell, Alerts, My Area, close/relaunch, and expected area persistence pass in the supported viewport.",
-      "androidOnlyExcluded": [
-        "Android WebAPK packaging",
-        "Android OS task/background eviction",
-        "Android permission prompts",
-        "Android-specific Chrome/OS update integration"
-      ],
-      "acceptedOwnerEvidence": [
-        "Edge installation succeeded",
-        "installed app launched in its own standalone window",
-        "shell was nonblank",
-        "default desktop-width window displayed the intentional desktop-development gate"
-      ],
-      "viewportAuthority": {
-        "maxCssViewportWidthPx": 980,
-        "inclusive": true,
-        "orientation": "portrait (viewport height greater than or equal to viewport width)",
-        "practicalTarget": "approximately 800x900 CSS-pixel content viewport",
-        "unsupported": "desktop-width and landscape presentation remain intentionally gated"
+      "deviceBrowser": "Installed PWA traveler experience",
+      "classification": "DEFERRED_OUT_OF_CURRENT_LAUNCH_SCOPE",
+      "status": "DEFERRED",
+      "foundation": {
+        "classification": "CERTIFIED_DETERMINISTIC",
+        "covered": [
+          "manifest",
+          "service worker",
+          "installability metadata",
+          "cache/update foundations"
+        ]
       },
       "notClaimed": [
-        "full desktop PWA support",
-        "desktop application experience"
-      ]
+        "installed PWA traveler support",
+        "desktop PWA interactive experience"
+      ],
+      "remainingAction": null
     }
   ],
-  "mandatoryActionsRemaining": 2,
-  "androidOwnerActionsRemaining": 0
+  "mandatoryActionsRemaining": 1,
+  "androidOwnerActionsRemaining": 0,
+  "legacyDashboardExposure": {
+    "classification": "FIXED",
+    "contract": "Legacy/original dashboard is never a traveler presentation owner; unsupported environments fail closed to the development gate."
+  }
 }
