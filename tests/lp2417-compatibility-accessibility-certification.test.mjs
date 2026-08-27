@@ -48,3 +48,29 @@ test('OA-1 Settings audit is bounded to button identity, native events, and open
   assert.match(app,/isTrusted: Boolean\(event\.isTrusted\)/);
   assert.match(app,/pointerType: event\.pointerType \|\| null/);
 });
+test('OA-1 Settings console acceptance exercises one production open and close lifecycle',()=>{
+  const start=app.indexOf('function gridlyLP2417SettingsAcceptance()');
+  const end=app.indexOf('window.gridlyLP2417SettingsAcceptance = gridlyLP2417SettingsAcceptance;',start);
+  assert.ok(start>0&&end>start);
+  const helper=app.slice(start,end);
+  for(const field of ['openerFound','openerNativeButton','openerVisible','openerEnabled','listenerBindAttemptCount','listenerAttachedCount','openAttemptDelta','openSuccessDelta','opened','focusEnteredSettings','closed','focusRestoredToOpener','duplicateOpenDetected','pass']) assert.match(helper,new RegExp(field));
+  assert.match(helper,/getGridlySettingsDockButton\(\)/);
+  assert.match(helper,/opener\.click\(\)/);
+  assert.match(helper,/gridlySettingsActivationAudit\.settingsOpenAttempted/);
+  assert.match(helper,/gridlySettingsActivationAudit\.settingsOpenSucceeded/);
+  assert.match(helper,/closeButton\?\.click\(\)/);
+  assert.doesNotMatch(helper,/openSettingsSurfaceFromDock\(|openPortraitV2Sheet\(|closePortraitV2Sheet\(/);
+  assert.doesNotMatch(helper,/\.hidden\s*=|\.style\.|setAttribute\(["'](?:hidden|style)|localStorage|sessionStorage|fetch\(|XMLHttpRequest|submit|saveGridly|awareness|route|report/i);
+});
+test('OA-1 Settings listener accounting separates binding attempts from the one live attachment',()=>{
+  assert.match(app,/listenerBindAttemptCount:\s*0/);
+  assert.match(app,/listenerAttachedCount:\s*0/);
+  assert.match(app,/gridlySettingsActivationAudit\.listenerBindAttemptCount \+= 1/);
+  assert.match(app,/countGridlyAttachedSettingsActivationListeners\(\)/);
+  assert.match(app,/node\.isConnected && node\.dataset\.gridlySettingsActivationBound === "true"/);
+});
+test('production Settings lifecycle enters the sheet and restores its activation opener',()=>{
+  assert.match(app,/settingsFocusTarget\?\.focus\?\.\(\)/);
+  assert.match(app,/closingSheetName === "settings" && gridlySettingsLastActivationOpener\?\.isConnected/);
+  assert.match(app,/gridlySettingsLastActivationOpener\.focus\(\)/);
+});

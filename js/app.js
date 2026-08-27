@@ -38499,6 +38499,8 @@ const gridlySettingsActivationAudit = {
   settingsButtonConnected: false,
   settingsButtonVisible: false,
   settingsButtonListenerAuthority: "native-click:openSettingsSurfaceFromDock",
+  listenerBindAttemptCount: 0,
+  listenerAttachedCount: 0,
   listenerBindCount: 0,
   keydown: null,
   keyup: null,
@@ -38507,6 +38509,12 @@ const gridlySettingsActivationAudit = {
   settingsOpenSucceeded: 0,
   settingsOpenFailureReason: null
 };
+let gridlySettingsLastActivationOpener = null;
+
+function countGridlyAttachedSettingsActivationListeners() {
+  return Array.from(document.querySelectorAll(GRIDLY_SETTINGS_DOCK_SELECTOR))
+    .filter((node) => node.isConnected && node.dataset.gridlySettingsActivationBound === "true").length;
+}
 
 function snapshotGridlySettingsActivationButton(button) {
   const style = button && typeof getComputedStyle === "function" ? getComputedStyle(button) : null;
@@ -38519,12 +38527,17 @@ function snapshotGridlySettingsActivationButton(button) {
 }
 
 function bindGridlySettingsActivation(button = getGridlySettingsDockButton()) {
+  gridlySettingsActivationAudit.listenerBindAttemptCount += 1;
   if (!(button instanceof HTMLButtonElement)) return false;
   ensureGridlySettingsDockActionContract(button);
   snapshotGridlySettingsActivationButton(button);
-  if (button.dataset.gridlySettingsActivationBound === "true") return true;
+  if (button.dataset.gridlySettingsActivationBound === "true") {
+    gridlySettingsActivationAudit.listenerAttachedCount = countGridlyAttachedSettingsActivationListeners();
+    return true;
+  }
   button.dataset.gridlySettingsActivationBound = "true";
   gridlySettingsActivationAudit.listenerBindCount += 1;
+  gridlySettingsActivationAudit.listenerAttachedCount = countGridlyAttachedSettingsActivationListeners();
   const recordKey = (event) => {
     gridlySettingsActivationAudit[event.type] = {
       key: event.key,
@@ -38535,6 +38548,7 @@ function bindGridlySettingsActivation(button = getGridlySettingsDockButton()) {
   button.addEventListener("keydown", recordKey);
   button.addEventListener("keyup", recordKey);
   button.addEventListener("click", (event) => {
+    gridlySettingsLastActivationOpener = button;
     snapshotGridlySettingsActivationButton(button);
     gridlySettingsActivationAudit.click = {
       isTrusted: Boolean(event.isTrusted),
@@ -38558,6 +38572,7 @@ function bindGridlySettingsActivation(button = getGridlySettingsDockButton()) {
 window.gridlySettingsActivationAudit = function gridlySettingsActivationAuditSnapshot() {
   const button = getGridlySettingsDockButton();
   snapshotGridlySettingsActivationButton(button);
+  gridlySettingsActivationAudit.listenerAttachedCount = countGridlyAttachedSettingsActivationListeners();
   return { ...gridlySettingsActivationAudit };
 };
 
@@ -117160,6 +117175,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       gridlySettingsPerformanceTrace.slowInteractionSuspected = openDuration > 120 || bindDuration > 50 || Boolean(gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected);
       if (bindDuration > 50) recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", `Settings binding took ${bindDuration}ms.`);
       recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", `Settings V2 sheet render+bind completed in ${openDuration}ms.`);
+      const settingsFocusTarget = document.getElementById("gridlyPortraitV2SheetClose")
+        || body.querySelector("button, input, select, textarea, [tabindex]:not([tabindex='-1'])");
+      settingsFocusTarget?.focus?.();
     }
     return true;
   }
@@ -117319,6 +117337,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }
 
     document.body.classList.remove("modal-open", "report-pulse");
+    if (closingSheetName === "settings" && gridlySettingsLastActivationOpener?.isConnected) {
+      gridlySettingsLastActivationOpener.focus();
+    }
   }
 
 
@@ -126031,3 +126052,52 @@ function gridlyLP2417KeyboardAcceptance() {
 }
 window.gridlyLP2417KeyboardAcceptance = gridlyLP2417KeyboardAcceptance;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP2417KeyboardAcceptance", gridlyLP2417KeyboardAcceptance);
+
+function gridlyLP2417SettingsAcceptance() {
+  const opener = getGridlySettingsDockButton();
+  const visible = (node) => {
+    if (!node || node.hidden) return false;
+    const style = getComputedStyle(node);
+    const rect = node.getBoundingClientRect();
+    return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || "1") !== 0
+      && rect.width > 0 && rect.height > 0;
+  };
+  const before = {
+    attempted: gridlySettingsActivationAudit.settingsOpenAttempted,
+    succeeded: gridlySettingsActivationAudit.settingsOpenSucceeded
+  };
+  const result = {
+    openerFound: Boolean(opener),
+    openerNativeButton: opener instanceof HTMLButtonElement,
+    openerVisible: visible(opener),
+    openerEnabled: Boolean(opener && !opener.disabled && opener.getAttribute("aria-disabled") !== "true"),
+    listenerBindAttemptCount: gridlySettingsActivationAudit.listenerBindAttemptCount,
+    listenerAttachedCount: countGridlyAttachedSettingsActivationListeners(),
+    openAttemptDelta: 0, openSuccessDelta: 0, opened: false, focusEnteredSettings: false,
+    closed: false, focusRestoredToOpener: false, duplicateOpenDetected: false, pass: false
+  };
+  if (!result.openerFound || !opener.isConnected || !result.openerNativeButton || !result.openerVisible
+    || !result.openerEnabled || result.listenerAttachedCount !== 1) return Object.freeze(result);
+
+  opener.focus();
+  opener.click();
+  const sheet = document.getElementById("gridlyPortraitV2Sheet");
+  result.openAttemptDelta = gridlySettingsActivationAudit.settingsOpenAttempted - before.attempted;
+  result.openSuccessDelta = gridlySettingsActivationAudit.settingsOpenSucceeded - before.succeeded;
+  result.opened = Boolean(gridlyVisibleSettingsSurfaceProduced() && sheet?.dataset?.activeSheet === "settings");
+  result.focusEnteredSettings = Boolean(sheet?.contains(document.activeElement));
+  result.duplicateOpenDetected = result.openAttemptDelta !== 1 || result.openSuccessDelta !== 1
+    || document.querySelectorAll("#gridlyPortraitV2Sheet[data-active-sheet='settings']").length !== 1;
+
+  const closeButton = sheet?.querySelector("#gridlyPortraitV2SheetClose");
+  closeButton?.click();
+  result.closed = !gridlyVisibleSettingsSurfaceProduced();
+  result.focusRestoredToOpener = document.activeElement === opener;
+  result.pass = result.openerFound && result.openerNativeButton && result.openerVisible && result.openerEnabled
+    && result.listenerAttachedCount === 1 && result.openAttemptDelta === 1 && result.openSuccessDelta === 1
+    && result.opened && result.focusEnteredSettings && result.closed && result.focusRestoredToOpener
+    && !result.duplicateOpenDetected;
+  return Object.freeze(result);
+}
+window.gridlyLP2417SettingsAcceptance = gridlyLP2417SettingsAcceptance;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP2417SettingsAcceptance", gridlyLP2417SettingsAcceptance);
