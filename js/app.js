@@ -83592,6 +83592,24 @@ function mapUnifiedRailConfirmType(reportType) {
   return "heavy";
 }
 
+function gridlyResolveCommunityIncidentLifecycleTarget(incident = {}) {
+  const clean = (value) => String(value || "").trim();
+  const sourceReportIds = Array.isArray(incident?.sourceReportIds) ? incident.sourceReportIds.map(clean) : [];
+  const sourceReportTypes = Array.isArray(incident?.sourceReportTypes) ? incident.sourceReportTypes.map((value) => clean(value).toLowerCase()) : [];
+  const pairedSourceIndex = sourceReportIds.findIndex(Boolean);
+  const persistedReportId = sourceReportIds[pairedSourceIndex]
+    || clean(incident?.sourceReportId || incident?.persistedReportId || incident?.canonicalReportIdentity || incident?.lifecycleIdentity);
+  const hazardType = sourceReportTypes[pairedSourceIndex]
+    || clean(incident?.report_type || incident?.reportType || incident?.hazardType || incident?.type).toLowerCase();
+  return Object.freeze({
+    persistedReportId,
+    hazardType,
+    lat: Number(incident?.lat ?? incident?.latitude),
+    lng: Number(incident?.lng ?? incident?.lon ?? incident?.longitude),
+    source: sourceReportIds[pairedSourceIndex] ? "sourceReportIds" : (persistedReportId ? "persisted_identity" : "unresolved")
+  });
+}
+
 async function handleUnifiedIncidentAction(button) {
   const action = button?.dataset?.unifiedAction;
   const incidentId = button?.dataset?.incidentId || "";
@@ -83601,6 +83619,7 @@ async function handleUnifiedIncidentAction(button) {
   const crossingId = button?.dataset?.crossingId || incident?.crossing_id || (incidentId.startsWith("rail-") ? incidentId.replace("rail-", "") : "");
   const lat = Number(button?.dataset?.lat ?? incident?.lat);
   const lng = Number(button?.dataset?.lng ?? incident?.lng);
+  const communityLifecycleTarget = category === "road" ? gridlyResolveCommunityIncidentLifecycleTarget(incident || {}) : null;
 
   if (action === "view-area") {
     if (Number.isFinite(lat) && Number.isFinite(lng)) {
@@ -83621,7 +83640,19 @@ async function handleUnifiedIncidentAction(button) {
       return;
     }
 
-    await createSharedHazardReport(reportType || "other_hazard", lat, lng, "unified incident confirm still active");
+    if (!communityLifecycleTarget?.persistedReportId || !communityLifecycleTarget?.hazardType) {
+      setConfirmation("This community condition could not be matched to its original report.", "error");
+      return;
+    }
+    await createSharedHazardReport(
+      communityLifecycleTarget.hazardType,
+      communityLifecycleTarget.lat,
+      communityLifecycleTarget.lng,
+      "unified incident confirm still active",
+      "",
+      null,
+      { lifecycleTargetReportId: communityLifecycleTarget.persistedReportId }
+    );
     return;
   }
 
@@ -83638,7 +83669,16 @@ async function handleUnifiedIncidentAction(button) {
     }
 
     if (typeof window.clearHazard === "function") {
-      await window.clearHazard(reportType || "other_hazard", lat, lng);
+      if (!communityLifecycleTarget?.persistedReportId || !communityLifecycleTarget?.hazardType) {
+        setConfirmation("This community condition could not be matched to its original report.", "error");
+        return;
+      }
+      await window.clearHazard(
+        communityLifecycleTarget.hazardType,
+        communityLifecycleTarget.lat,
+        communityLifecycleTarget.lng,
+        communityLifecycleTarget.persistedReportId
+      );
       return;
     }
 
@@ -86908,6 +86948,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   const baseDetail = normalizedOtherSubtype
     ? `Shared report: ${subtypeLabel.toLowerCase()} may affect travel. (future_source: ${sourceTag})`
     : `${copy.detail} (future_source: ${sourceTag})`;
+  const lifecycleTargetReportId = String(options?.lifecycleTargetReportId || "").trim();
+  const lifecycleDetail = lifecycleTargetReportId ? ` (lifecycle_report_id: ${lifecycleTargetReportId})` : "";
   const locationPayloadResult = gridlyBuildRoadHazardSubmissionLocationPayload({
     roadName: options?.roadName,
     routeName: options?.routeName,
@@ -86956,7 +86998,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     locationPayloadResult.audit.normalizedPayloadLocationFields = gridlyPickRoadHazardLocationIdentityFields(detailLocationMetadata);
   }
   const detailWithMetadata = appendGridlyStructuredMetadata(
-    appendOtherHazardStructuredMetadata(baseDetail, normalizedOtherSubtype),
+    appendOtherHazardStructuredMetadata(`${baseDetail}${lifecycleDetail}`, normalizedOtherSubtype),
     detailLocationMetadata
   );
   gridlyLP238WriteSubmissionCapture({
@@ -87622,7 +87664,7 @@ function gridlyApplyClearedHazardAwarenessContainment(clearRow = {}) {
   if (typeof updateDailyHabitStatus === "function") updateDailyHabitStatus();
 }
 
-window.clearHazard = async function (hazardType, lat, lng) {
+window.clearHazard = async function (hazardType, lat, lng, lifecycleTargetReportId = "") {
   const lp0534bHazardClearKey = [hazardType, Number(lat).toFixed(4), Number(lng).toFixed(4)].join(":");
   gridlyLp0534bClearDiagnostics.roadHazardClearClickCount += 1;
   if (gridlyLp0534bClearDiagnostics.roadHazardClearInFlightKeys.has(lp0534bHazardClearKey)) {
@@ -87649,7 +87691,7 @@ window.clearHazard = async function (hazardType, lat, lng) {
     lng,
     report_type: "hazard_cleared",
     severity: "low",
-    detail: `Shared report: ${copy.label} appears cleared.`,
+    detail: `Shared report: ${copy.label} appears cleared.${String(lifecycleTargetReportId || "").trim() ? ` (lifecycle_report_id: ${String(lifecycleTargetReportId).trim()})` : ""}`,
     source: "user",
     confidence: "hazard cleared by user",
     device_id: deviceId,
