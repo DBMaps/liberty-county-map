@@ -1,11 +1,11 @@
 {
-  "schemaVersion": 2,
-  "evidenceType": "DETERMINISTIC_SOURCE_AUDIT",
+  "schemaVersion": 3,
+  "evidenceType": "DETERMINISTIC_SOURCE_AUDIT_PLUS_EMULATED_BROWSER_CONTRACT",
   "viewports": [
     "desktop",
     "tablet/narrow desktop",
-    "mobile portrait",
-    "mobile landscape",
+    "Android-like 390x844 portrait",
+    "Android-like 844x390 landscape",
     "200% zoom pressure"
   ],
   "certified": {
@@ -15,11 +15,62 @@
     "reducedMotion": true,
     "scrollableOverlays": true
   },
+  "androidCompatibility": {
+    "classification": "DETERMINISTIC_COMPATIBILITY_PASS",
+    "evidenceLabel": "DETERMINISTIC_EMULATION_CONTRACT",
+    "scenarios": [
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "orientation": "portrait",
+        "hasTouch": true,
+        "pointer": "coarse"
+      },
+      {
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "orientation": "landscape",
+        "hasTouch": true,
+        "pointer": "coarse"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "orientation": "portrait",
+        "hasTouch": true,
+        "pointer": "coarse",
+        "textZoomPercent": 200
+      }
+    ],
+    "certifiedClaims": [
+      "responsive breakpoint selection",
+      "zoom/reflow pressure",
+      "touch and coarse-pointer media-query contract",
+      "safe/dynamic viewport sizing",
+      "scrollable overlays and sheets"
+    ],
+    "physicalClaimsNotMade": [
+      "Android font rasterization",
+      "real Chrome browser-chrome occlusion",
+      "OS gesture-region interaction",
+      "device rotation/compositor repaint"
+    ]
+  },
   "ownerEvidenceRequired": [
-    "One reduced iPhone Safari notch/mobile-chrome, increased-text, and rotation smoke",
-    "One reduced Android Chrome touch, increased-text, and rotation smoke"
+    "Confirm iPhone availability through the normal acceptance process; if available, run the reduced Safari notch/mobile-chrome, increased-text, and rotation smoke",
+    "Run the generic installed-PWA lifecycle smoke in installed Microsoft Edge on the owner Windows device"
+  ],
+  "optionalPostLaunch": [
+    "Physical Android Chrome font, browser-chrome, gesture-region, and rotation/compositor observation"
   ],
   "notRequired": [
+    "Physical Android hardware for launch",
     "A separate desktop 200% owner journey",
     "A repeated Windows Narrator journey"
   ]

@@ -3,6 +3,11 @@ const html=fs.readFileSync('index.html','utf8'), css=fs.readFileSync('css/styles
 test('document semantics and user zoom remain accessible',()=>{ assert.match(html,/<html[^>]+lang="en"/); assert.match(html,/<title>Gridly/); assert.doesNotMatch(html,/user-scalable\s*=\s*no|maximum-scale\s*=\s*1/i); });
 test('shared modal and focus contracts are present',()=>{ assert.match(html,/role="dialog"/); assert.match(html,/aria-live=/); assert.match(app,/event\.key\s*===?\s*["']Escape/); assert.match(app,/__opener\.focus|previousActive\.focus|lastRouteSetupTrigger/); assert.match(app,/\binert\b/); });
 test('responsive accessibility contracts are present',()=>{ assert.match(css,/env\(safe-area-inset-/); assert.match(css,/100dvh|100svh/); assert.match(css,/prefers-reduced-motion\s*:\s*reduce/); assert.match(css,/:focus-visible/); });
+test('OA-2 Android compatibility is bounded to deterministic and emulated browser evidence',()=>{
+  const source=fs.readFileSync('tools/lp2417/certify.mjs','utf8');
+  for(const token of ['DETERMINISTIC_EMULATION_CONTRACT','390,height:844','844,height:390','hasTouch:true','pointer:\'coarse\'','textZoomPercent:200','Physical Android hardware for launch','Android font rasterization','real Chrome browser-chrome occlusion','device rotation/compositor repaint']) assert.match(source,new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));
+  assert.doesNotMatch(source,/One reduced Android Chrome touch, increased-text, and rotation smoke/);
+});
 test('PWA contract is valid and referenced icons exist',()=>{ const m=JSON.parse(fs.readFileSync('manifest.json')); assert.equal(m.display,'standalone'); for(const icon of m.icons) assert.ok(fs.existsSync(icon.src.replace(/^\.\//,'')),icon.src); assert.match(fs.readFileSync('service-worker.js','utf8'),/install/); });
 test('OA-1 rendered keyboard helper is passive and exposes the bounded acceptance contract',()=>{
   const start=app.indexOf('function gridlyLP2417KeyboardAcceptance()');
