@@ -11,7 +11,7 @@
   const MAX_ATTEMPTS = 2;
   const REFRESH_INTERVAL_MS = 120000;
   const CACHE_MAX = 8;
-  const state = { connected:false, networkingAvailable:typeof globalScope.fetch === "function", automaticPolling:false, providerActivated:false, normalizedRecordCount:0, lastFetchSucceeded:false, lastError:null, lastRequestAt:null, lastSuccessAt:null, lastFailureAt:null, refreshIntervalMs:REFRESH_INTERVAL_MS, pointRequestIdentity:null, pointEndpoint:null, pointResponseValid:false, staleResponseSuppressedCount:0 };
+  const state = { connected:false, networkingAvailable:typeof globalScope.fetch === "function", automaticPolling:false, providerActivated:false, authorityReady:false, authorityWaitReason:null, normalizedRecordCount:0, lastFetchSucceeded:false, lastError:null, lastRequestAt:null, lastSuccessAt:null, lastFailureAt:null, refreshIntervalMs:REFRESH_INTERVAL_MS, pointRequestIdentity:null, pointEndpoint:null, pointResponseValid:false, staleResponseSuppressedCount:0 };
   const cache = new Map();
   let normalizedRecords = [];
   let fetchInFlight = null;
@@ -23,6 +23,16 @@
   const clone = (value) => { try { return JSON.parse(JSON.stringify(value)); } catch (_) { return null; } };
   const iso = () => new Date().toISOString();
   function resolvePoint() { try { return globalScope.gridlyResolveGovernedWeatherPoint?.() || null; } catch (_) { return null; } }
+  // This is the network boundary for the canonical NWS point contract. Zero is
+  // valid for either axis independently; only the unresolved sentinel pair is
+  // rejected.
+  function validGovernedPoint(point) {
+    const lat = point?.lat;
+    const lng = point?.lng;
+    return typeof lat === "number" && Number.isFinite(lat) && lat >= -90 && lat <= 90
+      && typeof lng === "number" && Number.isFinite(lng) && lng >= -180 && lng <= 180
+      && !(lat === 0 && lng === 0);
+  }
   function identity(point) { return point ? `${point.stableIdentity}|${point.awarenessKey}|${point.lat},${point.lng}` : null; }
   function endpoint(point) { return POINT_ENDPOINT.replace("{lat}", encodeURIComponent(String(point.lat))).replace("{lng}", encodeURIComponent(String(point.lng))); }
   function provider() { return globalScope.gridlyWeatherProvider || globalScope.gridlyIntelligenceProviders?.[PROVIDER_ID] || null; }
@@ -62,7 +72,7 @@
     if (requestGeneration !== generation || identity(live) !== entry.requestIdentity) { state.staleResponseSuppressedCount += 1; return false; }
     currentIdentity = entry.requestIdentity;
     normalizedRecords = entry.records.map(clone).filter(Boolean);
-    state.connected=entry.succeeded && entry.valid; state.lastFetchSucceeded=entry.succeeded; state.lastError=entry.error; state.lastSuccessAt=entry.succeeded ? entry.fetchedAt : state.lastSuccessAt; state.lastFailureAt=entry.succeeded ? state.lastFailureAt : entry.fetchedAt; state.normalizedRecordCount=normalizedRecords.length; state.pointRequestIdentity=entry.requestIdentity; state.pointEndpoint=entry.endpoint; state.pointResponseValid=entry.valid;
+    state.connected=entry.succeeded && entry.valid; state.authorityReady=true; state.authorityWaitReason=null; state.lastFetchSucceeded=entry.succeeded; state.lastError=entry.error; state.lastSuccessAt=entry.succeeded ? entry.fetchedAt : state.lastSuccessAt; state.lastFailureAt=entry.succeeded ? state.lastFailureAt : entry.fetchedAt; state.normalizedRecordCount=normalizedRecords.length; state.pointRequestIdentity=entry.requestIdentity; state.pointEndpoint=entry.endpoint; state.pointResponseValid=entry.valid;
     notify(entry.succeeded ? "weather-point-fetch-success" : "weather-point-fetch-failure");
     return true;
   }
@@ -98,7 +108,13 @@
   function fetchNow() {
     state.providerActivated = true;
     const point=resolvePoint(); const nextIdentity=identity(point);
-    if (!point) { generation+=1; currentIdentity=null; normalizedRecords=[]; state.connected=false; state.lastFetchSucceeded=false; state.lastError="Unsupported governed awareness identity"; state.pointRequestIdentity=null; state.pointEndpoint=null; state.pointResponseValid=false; notify("weather-point-unavailable"); return Promise.resolve(freeze({connected:false,error:state.lastError})); }
+    if (!validGovernedPoint(point)) {
+      generation+=1;
+      state.authorityReady=false;
+      state.authorityWaitReason="WAITING_FOR_AUTHORITY";
+      return Promise.resolve(freeze({connected:false,notReady:true,reason:state.authorityWaitReason}));
+    }
+    state.authorityReady=true; state.authorityWaitReason=null;
     if (fetchInFlight?.identity === nextIdentity) return fetchInFlight.promise;
     invalidateCurrentAuthority(nextIdentity, point);
     const requestGeneration=++generation;
@@ -107,6 +123,7 @@
   }
   function refreshAwarenessView() {
     const point=resolvePoint(), next=identity(point), cached=next ? cache.get(next) : null;
+    if (!validGovernedPoint(point)) return fetchNow();
     if (fetchInFlight?.identity === next) return fetchInFlight.promise;
     generation+=1;
     invalidateCurrentAuthority(next, point);
