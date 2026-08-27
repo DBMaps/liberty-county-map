@@ -48,7 +48,7 @@
   ],
   "unexecutedEvidence": [
     "OA-3 iPhone Safari availability confirmation and, if available, reduced physical smoke",
-    "OA-4 installed Windows Edge PWA reduced lifecycle smoke"
+    "OA-4 supported mobile-width viewport: Alerts, My Area, close/relaunch, and persistence"
   ],
   "waivers": [],
   "optionalPostLaunchEvidence": [

@@ -3,10 +3,86 @@
   "status": "OWNER_ACCEPTANCE_REQUIRED",
   "policy": "Deterministic cross-platform compatibility certification; physical acceptance on available representative platforms; no known defects; post-launch monitoring for additional device/platform combinations.",
   "tests": [
-    {"id":"OA-1","deviceBrowser":"Windows desktop / current Microsoft Edge","classification":"OWNER_RUNTIME_PASS","status":"PASS","evidence":{"narratorSemanticEntry":"PHYSICAL_DEVICE_PASS","keyboard":"OWNER_RUNTIME_PASS","settings":"OWNER_RUNTIME_PASS","alerts":"OWNER_RUNTIME_PASS"},"remainingAction":null},
-    {"id":"OA-2","deviceBrowser":"Android compatibility / Chromium mobile conditions","classification":"DETERMINISTIC_COMPATIBILITY_PASS","status":"PASS","evidenceLabel":"DETERMINISTIC_EMULATION_CONTRACT","covered":["portrait and landscape responsive layout","zoom/reflow pressure","touch/coarse-pointer media-query contract","safe/dynamic viewport sizing","scrollable sheets"],"notClaimed":["physical Android pass","Android font rasterization","real Chrome UI occlusion","OS gesture-region interaction","device rotation/compositor repaint"],"remainingAction":null,"postLaunch":"OPTIONAL_POST_LAUNCH_PHYSICAL_VALIDATION"},
-    {"id":"OA-3","deviceBrowser":"Notched iPhone / current Safari","classification":"AVAILABILITY_CONFIRMATION_REMAINING","status":"UNEXECUTED","exactJourney":"First confirm owner access through the normal acceptance process. If available: with increased text, choose an area, open/close Settings, rotate once.","pass":"Fixed controls and sheet endpoints remain visible, readable, scrollable, and outside notch, home indicator, and Safari chrome.","distinctPhysicalClaim":"WebKit viewport and physical safe-area behavior remain separate from Android.","voiceOver":{"classification":"OPTIONAL_SPOT_CHECK","required":false}},
-    {"id":"OA-4","deviceBrowser":"Windows desktop / installed Microsoft Edge PWA","classification":"MANDATORY_OWNER_ACCEPTANCE_REMAINING","status":"UNEXECUTED","exactJourney":"Install in Edge, close it, cold-launch standalone, open/close Alerts, change My Area, close/relaunch, and confirm the shell is nonblank and state persists.","pass":"Installability, standalone scope, reachable controls, service-worker-controlled nonblank startup, cold launch, and expected area persistence pass.","androidOnlyExcluded":["Android WebAPK packaging","Android OS task/background eviction","Android permission prompts","Android-specific Chrome/OS update integration"]}
+    {
+      "id": "OA-1",
+      "deviceBrowser": "Windows desktop / current Microsoft Edge",
+      "classification": "OWNER_RUNTIME_PASS",
+      "status": "PASS",
+      "evidence": {
+        "narratorSemanticEntry": "PHYSICAL_DEVICE_PASS",
+        "keyboard": "OWNER_RUNTIME_PASS",
+        "settings": "OWNER_RUNTIME_PASS",
+        "alerts": "OWNER_RUNTIME_PASS"
+      },
+      "remainingAction": null
+    },
+    {
+      "id": "OA-2",
+      "deviceBrowser": "Android compatibility / Chromium mobile conditions",
+      "classification": "DETERMINISTIC_COMPATIBILITY_PASS",
+      "status": "PASS",
+      "evidenceLabel": "DETERMINISTIC_EMULATION_CONTRACT",
+      "covered": [
+        "portrait and landscape responsive layout",
+        "zoom/reflow pressure",
+        "touch/coarse-pointer media-query contract",
+        "safe/dynamic viewport sizing",
+        "scrollable sheets"
+      ],
+      "notClaimed": [
+        "physical Android pass",
+        "Android font rasterization",
+        "real Chrome UI occlusion",
+        "OS gesture-region interaction",
+        "device rotation/compositor repaint"
+      ],
+      "remainingAction": null,
+      "postLaunch": "OPTIONAL_POST_LAUNCH_PHYSICAL_VALIDATION"
+    },
+    {
+      "id": "OA-3",
+      "deviceBrowser": "Notched iPhone / current Safari",
+      "classification": "AVAILABILITY_CONFIRMATION_REMAINING",
+      "status": "UNEXECUTED",
+      "exactJourney": "First confirm owner access through the normal acceptance process. If available: with increased text, choose an area, open/close Settings, rotate once.",
+      "pass": "Fixed controls and sheet endpoints remain visible, readable, scrollable, and outside notch, home indicator, and Safari chrome.",
+      "distinctPhysicalClaim": "WebKit viewport and physical safe-area behavior remain separate from Android.",
+      "voiceOver": {
+        "classification": "OPTIONAL_SPOT_CHECK",
+        "required": false
+      }
+    },
+    {
+      "id": "OA-4",
+      "deviceBrowser": "Installed Windows Edge PWA, supported mobile-width viewport",
+      "classification": "PARTIAL_OWNER_PASS_MANDATORY_SUPPORTED_VIEWPORT_ACCEPTANCE_REMAINING",
+      "status": "PARTIAL_PASS",
+      "exactJourney": "Reopen the installed standalone Edge app; resize until the CSS content viewport is portrait and no wider than 980 px; confirm the mobile shell replaces the desktop-development board; open/close Alerts; change My Area; close/relaunch from the installed-app entry; restore the supported viewport if needed; confirm state persists.",
+      "pass": "Previously accepted install, standalone launch, and nonblank shell remain pass; supported mobile shell, Alerts, My Area, close/relaunch, and expected area persistence pass in the supported viewport.",
+      "androidOnlyExcluded": [
+        "Android WebAPK packaging",
+        "Android OS task/background eviction",
+        "Android permission prompts",
+        "Android-specific Chrome/OS update integration"
+      ],
+      "acceptedOwnerEvidence": [
+        "Edge installation succeeded",
+        "installed app launched in its own standalone window",
+        "shell was nonblank",
+        "default desktop-width window displayed the intentional desktop-development gate"
+      ],
+      "viewportAuthority": {
+        "maxCssViewportWidthPx": 980,
+        "inclusive": true,
+        "orientation": "portrait (viewport height greater than or equal to viewport width)",
+        "practicalTarget": "approximately 800x900 CSS-pixel content viewport",
+        "unsupported": "desktop-width and landscape presentation remain intentionally gated"
+      },
+      "notClaimed": [
+        "full desktop PWA support",
+        "desktop application experience"
+      ]
+    }
   ],
   "mandatoryActionsRemaining": 2,
   "androidOwnerActionsRemaining": 0
