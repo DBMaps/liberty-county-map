@@ -82,7 +82,15 @@
 
   function resultText(result) {
     const address = result?.address && typeof result.address === "object" ? result.address : result?.raw?.address || {};
-    return normalize([result?.title, result?.label, result?.type, ...(result?.raw?.categories || []), address.city, address.town, address.county].filter(Boolean).join(" "));
+    // Business identity remains title/type/category qualified, while explicit
+    // geography may be proven by the provider's structured address authority.
+    // Do not depend on the display subtitle: it is presentation, not authority.
+    return normalize([
+      result?.title, result?.label, result?.type, ...(result?.raw?.categories || []),
+      address.city, address.town, address.village, address.hamlet,
+      address.county, address.state, address.state_code, address.stateCode,
+      result?.state, result?.stateCode
+    ].filter(Boolean).join(" "));
   }
 
   function evaluate(query, result, context = {}) {

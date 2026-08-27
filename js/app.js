@@ -92626,6 +92626,22 @@ function getGridlySearchCandidateAuditId(result, index = 0) {
     || normalized?.id || `provider-candidate-${index + 1}`);
 }
 
+function resolveGridlySearchCandidateCountyId(normalized, address = {}) {
+  const countyName = normalizeGridlySearchDisplayLabel(address.county || "").replace(/\s+county$/, "");
+  if (countyName) {
+    const registryMatch = Object.entries(GRIDLY_COUNTY_REGISTRY).find(([countyId, county]) => {
+      const configuredName = normalizeGridlySearchDisplayLabel(county?.name || county?.displayName || countyId.replace(/-tx$/, ""))
+        .replace(/\s+county$/, "");
+      return configuredName === countyName;
+    });
+    if (registryMatch) return registryMatch[0];
+  }
+  if (normalized && typeof gridlyResolveCountyIdForCoordinate === "function") {
+    return gridlyResolveCountyIdForCoordinate(normalized.lat, normalized.lng)?.countyId || null;
+  }
+  return null;
+}
+
 function buildGridlySearchCandidateLineage(rawCandidates = [], stages = {}, options = {}) {
   const query = String(options.query || "");
   const intent = options.intent || classifyGridlyDestinationSearchIntent(query);
@@ -92668,7 +92684,8 @@ function buildGridlySearchCandidateLineage(rawCandidates = [], stages = {}, opti
     const [rejectionCode, rejectionReason] = firstLosingStage === "none" ? ["none", ""] : rejection[firstLosingStage];
     const resultWords = new Set(window.GRIDLY_LP101_SEARCH_QUALITY?.normalize?.([
       normalized?.title, normalized?.label, normalized?.type, ...(normalized?.raw?.categories || []),
-      address.city, address.town, address.county
+      address.city, address.town, address.village, address.hamlet, address.county,
+      address.state, address.state_code, address.stateCode, normalized?.raw?.state, normalized?.raw?.stateCode
     ].filter(Boolean).join(" "))?.split(" ").filter(Boolean) || []);
     const requiredIntentTerms = intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE ? [...(understood?.destinationTerms || [])] : [];
     return Object.freeze({
@@ -92682,7 +92699,7 @@ function buildGridlySearchCandidateLineage(rawCandidates = [], stages = {}, opti
       }),
       normalized: normalized ? Object.freeze({
         title: normalized.title, subtitle: normalized.subtitle,
-        countyId: gridlyNormalizeCountyId(address.county || "") || null,
+        countyId: resolveGridlySearchCandidateCountyId(normalized, address),
         locality: String(address.city || address.town || address.village || address.hamlet || ""),
         coordinates: Object.freeze({ latitude: normalized.lat, longitude: normalized.lng }),
         intentType: intent.type, category: String(rawCandidate?.category || normalized.type || "")
