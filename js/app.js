@@ -46880,9 +46880,15 @@ function gridlyResolveGovernedWeatherPoint(selected = null) {
   // multi-county PLACE projections are re-derived from their registered PLACE
   // membership and presentation focus rather than trusting caller coordinates.
   if (!canonicalPlace && registered !== area) return null;
-  const lat = Number(canonicalFocus?.lat ?? registered?.lat);
-  const lng = Number(canonicalFocus?.lng ?? registered?.lng);
+  const rawLat = canonicalFocus?.lat ?? registered?.lat;
+  const rawLng = canonicalFocus?.lng ?? registered?.lng;
+  // Do not let Number(null) turn incomplete startup authority into the 0,0
+  // sentinel. A single zero remains a globally valid coordinate component.
+  if (rawLat == null || rawLng == null || (typeof rawLat === "string" && rawLat.trim() === "") || (typeof rawLng === "string" && rawLng.trim() === "")) return null;
+  const lat = Number(rawLat);
+  const lng = Number(rawLng);
   if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) return null;
+  if (lat === 0 && lng === 0) return null;
   const identityClass = canonicalPlace ? "CANONICAL_PLACE" : "GOVERNED_NON_PLACE";
   const awarenessKey = canonicalPlace ? (area.key || `place-${canonicalPlace}`) : registered.key;
   const countyId = area.countyId || registered?.countyId || null;
