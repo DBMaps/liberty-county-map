@@ -68,3 +68,33 @@ test('loader retains clear lifecycle authority for active TTL while presentation
   assert.match(source, /recentRoadClearedCutoffIso = new Date\(Date\.now\(\) - HAZARD_REPORT_EXPIRATION_MINUTES \* 60000\)/);
   assert.match(source, /Number\(ageMinutes\) <= RECENTLY_CLEARED_WINDOW_MINUTES/);
 });
+
+test('A-H: governed anonymous contributors persist independent lifecycle evidence without multiplying incidents', () => {
+  const persisted = [];
+  const condition = 'disabled-vehicle-33.1382--95.6121';
+  const write = (id, device, type, minutesAgo) => {
+    const candidate = type === 'hazard_cleared'
+      ? clear(id, minutesAgo, device, condition)
+      : { ...active(id, minutesAgo, device, condition), type: 'disabled_vehicle' };
+    const duplicate = persisted.find(row => row.device_id === device && row.type === type && row.condition === condition);
+    if (!duplicate) persisted.push(candidate);
+    return !duplicate;
+  };
+
+  assert.equal(write('active-a', 'normal-edge-installation', 'disabled_vehicle', 30), true, 'A initial report persists');
+  assert.equal(persisted.length, 1);
+  assert.equal(write('active-a-repeat', 'normal-edge-installation', 'disabled_vehicle', 25), false, 'B same contributor is suppressed');
+  assert.equal(write('active-b', 'inprivate-edge-installation', 'disabled_vehicle', 20), true, 'C distinct governed identity persists');
+  assert.equal(new Set(persisted.map(row => row.condition)).size, 1, 'D one governed condition');
+
+  let resolution = resolve(persisted[0], persisted, now);
+  assert.equal(resolution.recentActiveEvidenceCount, 2, 'E two independent active observations');
+  assert.equal(write('clear-c', 'private-session-c', 'hazard_cleared', 10), true);
+  resolution = resolve(persisted[0], persisted, now);
+  assert.equal(resolution.state, 'conflict', 'F one independent newer clear conflicts');
+  assert.equal(write('clear-d', 'private-session-d', 'hazard_cleared', 5), true);
+  resolution = resolve(persisted[0], persisted, now);
+  assert.equal(resolution.state, 'recently_cleared', 'G second independent clear resolves');
+  assert.equal(resolution.clearEvidenceCount, 2);
+  assert.notEqual('inprivate-edge-installation', 'private-session-c', 'H isolated stores receiving distinct IDs are independent');
+});

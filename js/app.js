@@ -86995,7 +86995,17 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.placementCoordinateReason = "Tap Map payload lat/lng are locked to the original user-selected coordinate; resolver coordinate is diagnostic only.";
   }
   lastMobileReportSubmitDebug.lastSubmitAttempt = "final_submit_handler_entered";
-  if (reportingState.submissionInProgress) { gridlyFinalizeReportSubmissionRecovery(recoveryLifecycleId, "already_submitting"); return false; }
+  const lifecycleTargetReportId = String(options?.lifecycleTargetReportId || "").trim();
+  // A popup confirmation is an independent lifecycle write, not a continuation
+  // of the report composer.  The composer flag can remain true after its sheet
+  // has closed (and was the silent live-acceptance blocker).  Confirmation has
+  // its own device/type/cluster pending lock below, so the composer flag must
+  // not prevent a valid second contributor from reaching duplicate resolution
+  // and persistence.
+  if (reportingState.submissionInProgress && !lifecycleTargetReportId) {
+    gridlyFinalizeReportSubmissionRecovery(recoveryLifecycleId, "already_submitting");
+    return false;
+  }
 
   if (!supabaseClient) {
     const message = "Reports are not available right now. Please try again soon.";
@@ -87017,7 +87027,6 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   const baseDetail = normalizedOtherSubtype
     ? `Shared report: ${subtypeLabel.toLowerCase()} may affect travel. (future_source: ${sourceTag})`
     : `${copy.detail} (future_source: ${sourceTag})`;
-  const lifecycleTargetReportId = String(options?.lifecycleTargetReportId || "").trim();
   const lifecycleDetail = lifecycleTargetReportId ? ` (lifecycle_report_id: ${lifecycleTargetReportId})` : "";
   const locationPayloadResult = gridlyBuildRoadHazardSubmissionLocationPayload({
     roadName: options?.roadName,

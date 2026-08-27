@@ -205,3 +205,12 @@ test('authorized hazard writers persist lifecycle lineage for confirmation and c
   assert.match(clearWriter, /roadHazardClearInFlightKeys\.has/);
   assert.match(clearWriter, /roadHazardClearInFlightKeys\.add/);
 });
+
+test('lifecycle confirmation is not silently blocked by report-composer state', () => {
+  const confirmWriter = readFunction('createSharedHazardReport');
+  assert.match(confirmWriter, /const lifecycleTargetReportId = String\(options\?\.lifecycleTargetReportId/);
+  assert.match(confirmWriter, /reportingState\.submissionInProgress && !lifecycleTargetReportId/);
+  assert.match(confirmWriter, /gridlyFindExistingActiveRoadHazardDuplicate\(\{ hazardType, lat, lng, reportDeviceId: deviceId \}\)/);
+  assert.match(confirmWriter, /gridlyBeginRoadHazardPendingSubmitLock\(duplicateGuardLockKey\)/);
+  assert.match(confirmWriter, /gridlyInsertWithCountyMetadataFallback\(supabaseClient, "reports", row\)/);
+});
