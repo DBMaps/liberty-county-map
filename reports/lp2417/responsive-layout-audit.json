@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "evidenceType": "DETERMINISTIC_SOURCE_AUDIT",
+  "viewports": [
+    "desktop",
+    "tablet/narrow desktop",
+    "mobile portrait",
+    "mobile landscape",
+    "200% zoom pressure"
+  ],
+  "certified": {
+    "viewportZoomEnabled": true,
+    "safeAreaTokens": true,
+    "dynamicViewportUnits": true,
+    "reducedMotion": true,
+    "scrollableOverlays": true
+  },
+  "ownerEvidenceRequired": [
+    "Physical iOS Safari notch/mobile-chrome rendering",
+    "Android Chrome touch target and reflow rendering",
+    "Desktop 200% zoom computed layout"
+  ]
+}

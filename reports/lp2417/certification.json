@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "workPackage": "LP241.7",
+  "asOf": "2026-08-27",
+  "evidencePolicy": "Source and deterministic tests certify contracts only; no physical device, browser-engine, screen-reader, or installed-PWA result is implied.",
+  "launchClassification": "OWNER_ACCEPTANCE_REQUIRED",
+  "productionDefects": [{"id":"LP2417-A11Y-001","status":"REPAIRED","journey":"Text scaling / reflow","rootCause":"The viewport meta disabled pinch/browser scaling with user-scalable=no and maximum-scale=1.0.","repair":"Removed both zoom restrictions while retaining width, initial scale, and viewport-fit=cover.","launchCritical":true,"regressionTest":"tests/lp2417-compatibility-accessibility-certification.test.mjs"}],
+  "domains": [
+    {"domain":"desktop pointer/mouse","classification":"CERTIFIED","basis":"Native controls and click journeys have deterministic semantic/runtime contracts."},
+    {"domain":"touch/mobile","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Source proves responsive and touch-capable contracts; physical hit testing and browser chrome cannot be simulated truthfully."},
+    {"domain":"keyboard-only","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Native controls, Escape handlers and restoration helpers are deterministic; complete rendered tab order and absence of traps require browser execution."},
+    {"domain":"screen-reader/semantic accessibility","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Language, title, names, labels, dialogs and live regions are source-certified; actual announcements require AT."},
+    {"domain":"text scaling/responsive reflow","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Zoom restriction repaired and responsive CSS certified; rendered 200% reflow remains manual."},
+    {"domain":"orientation/viewport changes","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Orientation modes and dynamic viewport units exist; physical rotation/browser chrome remains manual."},
+    {"domain":"safe area/mobile chrome/notch","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Safe-area tokens exist throughout active CSS; iOS rendering remains manual."},
+    {"domain":"installed PWA/standalone","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Manifest, icons, registration/cache source contracts are deterministic; installation lifecycle remains manual."},
+    {"domain":"focus management","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Focus entry, Escape, inert background and restoration helpers exist; end-to-end rendered focus requires keyboard run."},
+    {"domain":"modals/drawers/popups","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Dialog, aria-modal, hidden/inert and Escape contracts exist; browser focus containment requires acceptance."},
+    {"domain":"map/non-map boundary","classification":"CERTIFIED","basis":"Alerts, KBYG, Location Context, Destination Intelligence, crossing and incident surfaces expose essential summaries outside raw map gestures."},
+    {"domain":"color/contrast/non-color signals","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"Text labels accompany critical states; computed styles and dynamic tiles require visual tooling/acceptance."},
+    {"domain":"motion/reduced motion","classification":"CERTIFIED","basis":"Active CSS contains prefers-reduced-motion reduction and essential actions do not depend on animation completion."},
+    {"domain":"forms/validation/errors","classification":"CERTIFIED","basis":"Native form elements, labels/status regions, disabled properties and visible validation copy are present."},
+    {"domain":"browser compatibility","classification":"OWNER_ACCEPTANCE_REQUIRED","basis":"API guards, storage failure handling, location fallback, viewport and service-worker guards are present; Safari/Chrome engine execution remains manual."}
+  ],
+  "journeysAudited": ["First load/onboarding and geolocation denial","Settings > My Area > Find/choose county-qualified or multi-county area","Search > destination > route preview/watch/stop/clear","Alerts grouped conditions and Show on Map","Community report submit/cancel/confirm/clear","Crossing marker/details/watched count","Settings sections/toggles/Home Area/Saved Places","Destination Intelligence disclosure and availability/impact states"],
+  "deterministicChecks": ["node tools/lp2417/certify.mjs","node --test tests/lp2417-compatibility-accessibility-certification.test.mjs"],
+  "ownerEvidenceCount": 4
+}
