@@ -42,16 +42,29 @@ test('crossing consumer rejoins every canonical PLACE to governed presentation g
   assert.match(selector, /gridlyProjectAwarenessAreaForGeographicConsumer\(awarenessArea\)/);
 });
 
-test('Val Verde is active-positive and Box Canyon truthfully watches one public crossing in seven miles', () => {
+test('Val Verde is active-positive and Box Canyon has no public, reportable at-grade crossing in seven miles', () => {
   assert.equal(manifest.crossingCount, 47);
   assert.equal(inventory.features.length, 47);
   const inRadius = inventory.features.filter(feature => {
     const [lng, lat] = feature.geometry.coordinates;
     return distanceMiles(point.lat, point.lon, lat, lng) <= 7;
   });
-  const governedVisible = inRadius.filter(feature => feature.properties.TYPEXING === 'Public');
+  const governedVisible = inRadius.filter(feature => feature.properties.TYPEXING === 'Public' && feature.properties.POSXING === 'At Grade' && feature.properties.XPURPOSE === '1');
   assert.equal(inRadius.length, 6);
-  assert.deepEqual(governedVisible.map(feature => feature.properties.CROSSING), ['924451G']);
+  assert.deepEqual(governedVisible.map(feature => feature.properties.CROSSING), []);
+  assert.equal(inRadius.find(feature => feature.properties.CROSSING === '924451G').properties.POSXING, 'RR Under');
+  assert.equal(inRadius.find(feature => feature.properties.CROSSING === '920408M').properties.TYPEXING, 'Private');
+});
+
+test('shared watched and marker policy honors FRA access, position, and purpose fields', () => {
+  const publicPolicy = app.slice(app.indexOf('function isGridlyPublicRoadwayCrossing'), app.indexOf('function getGridlyCachedCrossingStaticMetadata'));
+  const reportPolicy = app.slice(app.indexOf('function gridlyGetCrossingReportEligibility'), app.indexOf('function isGridlyReportableCrossing'));
+  const consumerPolicy = app.slice(app.indexOf('function gridlyCrossingSatisfiesConsumerVisibilityPolicy'), app.indexOf('function gridlyCrossingOwnedByAwarenessArea'));
+  assert.match(publicPolicy, /props\.TYPEXING/);
+  assert.match(publicPolicy, /sourceCrossingType === "PRIVATE"/);
+  assert.match(reportPolicy, /props\.POSXING/);
+  assert.match(reportPolicy, /props\.XPURPOSE/);
+  assert.match(consumerPolicy, /isGridlyPublicRoadwayCrossing\(crossing\)/);
 });
 
 test('crossing audit exposes the governed presentation coordinate at its authority boundary', () => {
