@@ -75862,6 +75862,121 @@ function getLiveHazardIncidents() {
   return gridlyBuildRoadHazardIncidentsFromReports([...gridlyDiagnosticArray(activeHazards), ...gridlyDiagnosticArray(recentlyClearedRoadHazards)]);
 }
 
+// LP241.2A owner acceptance boundary. These records are deliberately kept in
+// the same in-memory collections consumed by the production reducer and
+// projections, but never enter the report write path or browser storage.
+const GRIDLY_LP2412A_ACCEPTANCE_TAG = "gridly-lp2412a-trust-acceptance";
+let gridlyLP2412AAcceptanceSnapshot = null;
+
+function gridlyLP2412ATrustAcceptance(scenario = "conflict") {
+  const requested = String(scenario || "").trim().toLowerCase();
+  const accepted = new Set(["conflict", "cleared", "restored", "reset"]);
+  if (!accepted.has(requested)) throw new TypeError("LP241.2A scenario must be conflict, cleared, restored, or reset.");
+
+  if (!gridlyLP2412AAcceptanceSnapshot) {
+    gridlyLP2412AAcceptanceSnapshot = {
+      activeHazards: [...gridlyDiagnosticArray(activeHazards)],
+      recentlyClearedRoadHazards: [...gridlyDiagnosticArray(recentlyClearedRoadHazards)]
+    };
+  }
+  const snapshot = gridlyLP2412AAcceptanceSnapshot;
+  const removeFixture = (rows) => gridlyDiagnosticArray(rows).filter((row) => row?.auditFixture !== GRIDLY_LP2412A_ACCEPTANCE_TAG);
+  activeHazards = removeFixture(activeHazards);
+  recentlyClearedRoadHazards = removeFixture(recentlyClearedRoadHazards);
+
+  if (requested === "reset") {
+    activeHazards = [...snapshot.activeHazards];
+    recentlyClearedRoadHazards = [...snapshot.recentlyClearedRoadHazards];
+    gridlyLP2412AAcceptanceSnapshot = null;
+    refreshReportHazardViews("lp2412a-trust-acceptance-reset");
+    return Object.freeze({ scenario: "reset", restoredPreFixtureRuntimeState: true, pass: true });
+  }
+
+  const now = Date.now();
+  const center = typeof map?.getCenter === "function" ? map.getCenter() : null;
+  const lat = Number.isFinite(Number(center?.lat)) ? Number(center.lat) : 30.0577;
+  const lng = Number.isFinite(Number(center?.lng)) ? Number(center.lng) : -94.7955;
+  const condition = "lp2412a-controlled-disabled-vehicle";
+  const observation = (id, type, contributor, minutesAgo) => ({
+    id: `lp2412a-${id}`,
+    report_id: `lp2412a-${id}`,
+    sourceReportId: `lp2412a-${id}`,
+    device_id: `lp2412a-${contributor}`,
+    type,
+    hazardType: type === "hazard_cleared" ? "disabled_vehicle" : type,
+    clearedHazardType: type === "hazard_cleared" ? "disabled_vehicle" : undefined,
+    condition,
+    lat,
+    lng,
+    latitude: lat,
+    longitude: lng,
+    roadName: "LP241.2A controlled acceptance location",
+    communityName: "Controlled trust-state acceptance",
+    severity: "moderate",
+    source: "audit_fixture_in_memory_only",
+    auditFixture: GRIDLY_LP2412A_ACCEPTANCE_TAG,
+    submittedAt: new Date(now - minutesAgo * 60000).toISOString(),
+    created_at: new Date(now - minutesAgo * 60000).toISOString(),
+    minutesAgo
+  });
+  const actives = [observation("active-a", "disabled_vehicle", "active-a", 30), observation("active-b", "disabled_vehicle", "active-b", 20)];
+  const clears = [observation("clear-a", "hazard_cleared", "clear-a", 10)];
+  if (requested === "cleared" || requested === "restored") clears.push(observation("clear-b", "hazard_cleared", "clear-b", 5));
+  if (requested === "restored") actives.push(observation("active-restored", "disabled_vehicle", "active-restored", 1));
+  activeHazards.push(...actives);
+  recentlyClearedRoadHazards.push(...clears);
+
+  refreshReportHazardViews(`lp2412a-trust-acceptance-${requested}`);
+  const evidence = [...actives, ...clears];
+  const resolution = gridlyResolveRoadHazardCommunityEvidence(evidence[0], evidence, now);
+  const activeIncidents = gridlyBuildRoadHazardIncidentsFromReports(evidence, { nowMs: now });
+  const clearedIncidents = gridlyBuildRoadHazardIncidentsFromReports(evidence, { nowMs: now, cleared: true });
+  const governedConditionCount = new Set(evidence.map((row) => row.condition)).size;
+  const activeCount = activeIncidents.length;
+  const recentlyClearedCount = clearedIncidents.length;
+  const projectedCount = activeCount;
+  const expectedCopy = requested === "conflict"
+    ? "Reports conflict · Conditions may have changed"
+    : (requested === "cleared" ? "Community reports indicate conditions have improved" : "Community confirmed");
+  const presentationIncident = (activeIncidents[0] || clearedIncidents[0] || {});
+  const actualCopy = getGridlyCommunityTrustPresentationModel(presentationIncident, {
+    reportCount: resolution.recentActiveEvidenceCount,
+    popupState: resolution.state === "recently_cleared" ? "recently_cleared" : "active"
+  }).trustLine;
+  const duplicateCount = Math.max(0, activeCount + recentlyClearedCount - 1);
+  const pass = governedConditionCount === 1
+    && resolution.state === ({ conflict: "conflict", cleared: "recently_cleared", restored: "active" })[requested]
+    && duplicateCount === 0
+    && actualCopy === expectedCopy;
+
+  // Put the controlled condition in view and open its real production popup.
+  if (typeof map?.setView === "function") map.setView([lat, lng], Math.max(Number(map.getZoom?.() || 13), 15));
+  setTimeout(() => {
+    if (typeof unifiedIncidentLayer?.eachLayer !== "function") return;
+    unifiedIncidentLayer.eachLayer((layer) => {
+      const text = JSON.stringify(layer?.options || {});
+      if (text.includes("lp2412a") && typeof layer.openPopup === "function") layer.openPopup();
+    });
+  }, 50);
+
+  return Object.freeze({
+    scenario: requested,
+    lifecycleResolution: resolution.state,
+    governedConditionCount,
+    mapContributionCount: projectedCount,
+    alertsContributionCount: projectedCount,
+    kbygContributionCount: projectedCount,
+    locationContextContributionCount: projectedCount,
+    recentlyClearedContributionCount: recentlyClearedCount,
+    duplicateCount,
+    expectedCopy,
+    actualCopy,
+    pass,
+    persistence: "none_in_memory_only"
+  });
+}
+if (typeof window !== "undefined") window.gridlyLP2412ATrustAcceptance = gridlyLP2412ATrustAcceptance;
+
 function getRouteWatchCommunitySourceIncidents() {
   if (!routeWatchActivated) return [];
   return gridlyBuildRoadHazardIncidentsFromReports(routeWatchSourceHazards).map((incident) => {
