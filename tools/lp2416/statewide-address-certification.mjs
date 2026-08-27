@@ -74,7 +74,7 @@ function writeArtifacts(plan) {
   const totals={totalCounties:254,executed:0,pass:0,noResult:0,wrongCounty:0,ambiguous:0,providerUnavailable:0,invalidCoordinate:0,handoffFailure:0,mapFailure:0,uiFailure:0,fixtureRequired:0,notExecuted:254};
   fs.writeFileSync(path.join(root, `${reportDir}/exception-ledger.json`), `${JSON.stringify({evidenceState:'NOT_EXECUTED',exceptionDefinition:'Every non-PASS row',count:254,exceptions:plan.fixtures.map(x=>({countyFips:x.countyFips,countyName:x.countyName,classification:'NOT_EXECUTED',visualReviewState:x.visualReviewState}))},null,2)}\n`);
   fs.writeFileSync(path.join(root, `${reportDir}/launch-classification.json`), `${JSON.stringify({staticCertification:'STATIC_CERTIFIED',providerExecution:'NOT_EXECUTED',ownerVisualAcceptance:'NOT_EXECUTED',launchClassification:'OWNER_ACCEPTANCE_REQUIRED',countyOutcomeTotals:totals},null,2)}\n`);
-  fs.writeFileSync(path.join(root, `${reportDir}/summary.md`), `# LP241.6 Statewide Address Launch Certification\n\n- Static fixture certification: **STATIC_CERTIFIED (254/254)**\n- Provider execution: **NOT_EXECUTED**\n- Owner visual acceptance: **NOT_EXECUTED**\n- Launch classification: **OWNER_ACCEPTANCE_REQUIRED**\n- Production code changed: **No**\n\nThe prior plan derived names from absent LP130 fields, producing blank names and generic queries. This revision joins the LP130 governed FIPS/county keys to LP158 governed public courthouse fixtures. It does not claim provider, handoff, map, or UI evidence.\n\n## Outcome totals\n\n| Total | Executed | Pass | No result | Wrong county | Ambiguous | Provider unavailable | Invalid coordinate | Handoff | Map | UI | Fixture required | Not executed |\n|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n| 254 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 254 |\n\nMulti-county handoff, truthful no-result, map movement, awareness convergence, desktop/mobile, keyboard/touch, focus, reset, wrapping, and stale-state behavior remain **NOT_EXECUTED** for this statewide run. Existing deterministic regression suites are supporting contract evidence only, not statewide runtime or owner visual evidence. Geography/provider-result failure grouping is unavailable until provider execution and is not inferred.\n\n## Owner-authorized execution\n\n\`node tools/lp2416/statewide-address-certification.mjs --execute --owner-authorized\`\n\nExecution is sequential, FIPS ordered, resumable in ignored \`owner-local/\`, uses no retries, and stops on authentication, quota, provider-health, or contract failures.\n`);
+  fs.writeFileSync(path.join(root, `${reportDir}/summary.md`), `# LP241.6 Statewide Address Launch Certification\n\n- Static fixture certification: **STATIC_CERTIFIED (254/254)**\n- Provider execution: **NOT_EXECUTED**\n- Owner visual acceptance: **NOT_EXECUTED**\n- Launch classification: **OWNER_ACCEPTANCE_REQUIRED**\n- Production code changed: **No**\n\nThe prior plan derived names from absent LP130 fields, producing blank names and generic queries. This revision joins the LP130 governed FIPS/county keys to LP158 governed public courthouse fixtures. It does not claim provider, handoff, map, or UI evidence.\n\n## Outcome totals\n\n| Total | Executed | Pass | No result | Wrong county | Ambiguous | Provider unavailable | Invalid coordinate | Handoff | Map | UI | Fixture required | Not executed |\n|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n| 254 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 254 |\n\nMulti-county handoff, truthful no-result, map movement, awareness convergence, desktop/mobile, keyboard/touch, focus, reset, wrapping, and stale-state behavior remain **NOT_EXECUTED** for this statewide run. Existing deterministic regression suites are supporting contract evidence only, not statewide runtime or owner visual evidence. Geography/provider-result failure grouping is unavailable until provider execution and is not inferred.\n\n## Owner-authorized execution\n\n\`node tools/lp2416/statewide-address-certification.mjs --execute --owner-authorized\`\n\nExecution is sequential, FIPS ordered, and resumable in ignored \`owner-local/\`. HTTP 429 honors the provider-directed delay plus a one-second safety margin and retries the same county once; a repeated 429 and all authentication, provider-health, or contract failures safe-stop.\n`);
 }
 
 export class SafeStopError extends Error {
@@ -92,7 +92,41 @@ function persistProgress(file, progress) {
   fs.renameSync(temporary,file);
 }
 
-export async function executePlan(plan, {fetchImpl=fetch, progressPath=localProgress, contract=publicRequestContract}={}) {
+export function summarizeProgress(plan, progress) {
+  const rows=Array.isArray(progress.rows) ? progress.rows : [];
+  const count=outcome=>rows.filter(row=>row.executionState==='PROVIDER_EXECUTED'&&row.providerOutcome===outcome).length;
+  const executedCount=rows.filter(row=>row.executionState==='PROVIDER_EXECUTED').length;
+  return {
+    totalCount:plan.fixtures.length,
+    executedCount,
+    passCount:count('PASS'),
+    noResultCount:count('NO_RESULT'),
+    wrongCountyCount:count('WRONG_COUNTY'),
+    ambiguousCount:count('AMBIGUOUS_RESULT'),
+    providerUnavailableCount:count('PROVIDER_UNAVAILABLE'),
+    remainingCount:Math.max(0,plan.fixtures.length-executedCount),
+    safeStop:progress.safeStop??null
+  };
+}
+
+function retryDelaySeconds(response, payload) {
+  const header=response.headers?.get?.('retry-after');
+  if (header) {
+    const seconds=Number(header);
+    if (Number.isFinite(seconds)&&seconds>=0) return Math.ceil(seconds);
+    const date=Date.parse(header);
+    if (Number.isFinite(date)) return Math.max(0,Math.ceil((date-Date.now())/1000));
+  }
+  const seconds=Number(payload?.retryAfterSeconds);
+  return Number.isFinite(seconds)&&seconds>=0 ? Math.ceil(seconds) : null;
+}
+
+async function consumeResponse(response) {
+  const body=await response.text();
+  try { return body ? JSON.parse(body) : null; } catch { return null; }
+}
+
+export async function executePlan(plan, {fetchImpl=fetch, progressPath=localProgress, contract=publicRequestContract, sleepImpl=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds)), logImpl=console.log, safetyMarginSeconds=1}={}) {
   fs.mkdirSync(path.dirname(progressPath), {recursive:true});
   const progress = fs.existsSync(progressPath) ? JSON.parse(fs.readFileSync(progressPath,'utf8')) : {rows:[]};
   const done = new Set(progress.rows.map(x => x.countyFips));
@@ -100,19 +134,40 @@ export async function executePlan(plan, {fetchImpl=fetch, progressPath=localProg
     if (done.has(row.countyFips)) continue;
     const started = Date.now();
     const request=buildProviderRequest(row,contract);
-    const response = await fetchImpl(request.url,request.init);
-    if ([401,403,429].includes(response.status) || response.status >= 500) {
-      await response.text().catch(()=>{});
+    let response = await fetchImpl(request.url,request.init);
+    let payload=await consumeResponse(response);
+    if (response.status===429) {
       progress.safeStop={countyFips:row.countyFips,httpStatus:response.status,executionState:'NOT_EXECUTED',providerOutcome:'NOT_EXECUTED'};
+      progress.summary=summarizeProgress(plan,progress);
+      persistProgress(progressPath,progress);
+      const directedSeconds=retryDelaySeconds(response,payload);
+      if (directedSeconds===null) throw new SafeStopError(response.status,row.countyFips);
+      const waitSeconds=directedSeconds+safetyMarginSeconds;
+      logImpl(`RATE LIMITED: county ${row.countyFips}; waiting ${waitSeconds} seconds before one retry.`);
+      await sleepImpl(waitSeconds*1000);
+      response=await fetchImpl(request.url,request.init);
+      payload=await consumeResponse(response);
+      if (response.status===429) {
+        progress.safeStop={countyFips:row.countyFips,httpStatus:429,executionState:'NOT_EXECUTED',providerOutcome:'NOT_EXECUTED'};
+        progress.summary=summarizeProgress(plan,progress);
+        persistProgress(progressPath,progress);
+        throw new SafeStopError(429,row.countyFips);
+      }
+    }
+    if ([401,403].includes(response.status) || response.status >= 500) {
+      progress.safeStop={countyFips:row.countyFips,httpStatus:response.status,executionState:'NOT_EXECUTED',providerOutcome:'NOT_EXECUTED'};
+      progress.summary=summarizeProgress(plan,progress);
       persistProgress(progressPath,progress);
       throw new SafeStopError(response.status,row.countyFips);
     }
-    let payload; try { payload=await response.json(); } catch { throw Error(`safe stop: malformed provider response at ${row.countyFips}`); }
+    if (!payload) throw Error(`safe stop: malformed provider response at ${row.countyFips}`);
     const outcome=classifyProviderResult(row,payload); if (outcome==='PROVIDER_UNAVAILABLE') throw Error(`safe stop: provider health/contract failure at ${row.countyFips}`);
     const result=payload.results?.[0]; progress.rows.push({...row,executionState:'PROVIDER_EXECUTED',providerOutcome:outcome,resolvedAddress:result?.displayName||'',resolvedLatitude:result?.latitude??null,resolvedLongitude:result?.longitude??null,resolvedCounty:result?.address?.county||'',resolvedCommunity:result?.address?.community||result?.address?.city||'',countyMatch:outcome==='PASS',requestLatencyMs:Date.now()-started,blockerClassification:outcome});
     delete progress.safeStop;
+    progress.summary=summarizeProgress(plan,progress);
     persistProgress(progressPath,progress);
   }
+  progress.summary=summarizeProgress(plan,progress);
   return progress;
 }
 
@@ -122,7 +177,7 @@ async function main() {
   if (process.argv.includes('--verify')) { const tracked=read(artifactJson); verifyPlan(tracked); if (JSON.stringify(tracked)!==JSON.stringify(plan)) throw Error('tracked artifact drift'); }
   if (process.argv.includes('--execute')) {
     if (!process.argv.includes('--owner-authorized')) throw Error('READY_FOR_OWNER_AUTHORIZED_EXECUTION: pass --owner-authorized only after the owner approves provider use');
-    try { await executePlan(plan); }
+    try { const progress=await executePlan(plan); console.log(JSON.stringify(progress.summary)); }
     catch (error) {
       if (!(error instanceof SafeStopError)) throw error;
       console.error(`SAFE STOP: county ${error.countyFips}; HTTP ${error.status}; progress persisted; county remains NOT_EXECUTED.`);
