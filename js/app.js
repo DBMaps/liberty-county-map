@@ -27862,6 +27862,14 @@ function buildCrossingRenderSignature(visibleCrossings = [], visibilityPolicy = 
 }
 
 function isGridlyPublicRoadwayCrossing(crossing = {}) {
+  const props = crossing?.props || crossing?.properties || crossing?.raw?.props || crossing?.raw?.properties || {};
+  const sourceCrossingType = String(props.TYPEXING || props.typexing || props.crossingTypeAccess || "").trim().toUpperCase();
+  // FRA TYPEXING is the authoritative public/private designation.  The
+  // Gridly class remains a compatibility fallback for sources that do not
+  // provide that field; production package manufacture historically defaulted
+  // it to PUBLIC_ROADWAY and therefore cannot override an explicit Private.
+  if (sourceCrossingType === "PUBLIC") return true;
+  if (sourceCrossingType === "PRIVATE") return false;
   const classification = String(
     crossing?.gridlyClassification
     || crossing?.props?.gridlyClassification
@@ -27884,6 +27892,9 @@ function getGridlyCachedCrossingStaticMetadata(crossing = {}) {
     crossing.lat,
     crossing.lng,
     rawClassification,
+    crossing?.props?.TYPEXING || crossing?.properties?.TYPEXING || "",
+    crossing?.props?.POSXING || crossing?.properties?.POSXING || "",
+    crossing?.props?.XPURPOSE || crossing?.properties?.XPURPOSE || "",
     crossing?.reportable,
     crossing?.props?.reportable,
     crossing?.properties?.reportable
@@ -27896,7 +27907,7 @@ function getGridlyCachedCrossingStaticMetadata(crossing = {}) {
     lng: Number(crossing?.lng),
     classification: rawClassification,
     reportable: isGridlyReportableCrossing(crossing),
-    publicRoadway: !rawClassification || rawClassification === "PUBLIC_ROADWAY"
+    publicRoadway: isGridlyPublicRoadwayCrossing(crossing)
   };
   try { Object.defineProperty(crossing, "__gridlyV924StaticMetadata", { value: metadata, configurable: true, writable: true }); } catch (_error) { crossing.__gridlyV924StaticMetadata = metadata; }
   return metadata;
@@ -51246,13 +51257,7 @@ function gridlyGetConsumerCrossingFraId(crossing = {}) {
 
 function gridlyCrossingSatisfiesConsumerVisibilityPolicy(crossing = {}) {
   if (typeof shouldShowCrossingInLaunchMode === "function" && !shouldShowCrossingInLaunchMode(crossing)) return false;
-  const classification = String(
-    crossing.gridlyClassification ||
-    crossing.props?.gridlyClassification ||
-    crossing.properties?.gridlyClassification ||
-    ""
-  ).trim().toUpperCase();
-  return !classification || classification === "PUBLIC_ROADWAY";
+  return isGridlyPublicRoadwayCrossing(crossing);
 }
 
 function gridlyCrossingOwnedByAwarenessArea(crossing = {}, awarenessArea = getGridlySelectedAwarenessArea()) {
@@ -52638,11 +52643,15 @@ function gridlyGetCrossingReportEligibility(crossing = {}) {
   const props = crossing?.props || crossing?.properties || crossing?.raw?.props || crossing?.raw?.properties || {};
   const id = gridlyNormalizeCrossingEligibilityId(crossing?.id || crossing?.crossingId || crossing?.crossing_id || props.crossingid || props.crossing_id || props.crossingId);
   const nameText = [crossing?.name, crossing?.displayName, crossing?.crossingName, crossing?.crossing_name, crossing?.primaryRoad, crossing?.secondaryRoad, props.street, props.highwayname, props.roadwayname, props.name].filter(Boolean).join(" ");
-  const positionText = String(props.crossingposition || props.crossing_position || crossing?.crossingPosition || "").trim();
+  // Production FRA packages preserve the source schema's uppercase fields.
+  // Read those fields before falling back to normalized aliases; otherwise an
+  // authoritative RR Under/RR Over or non-highway purpose silently appears to
+  // be an at-grade, reportable crossing.
+  const positionText = String(props.POSXING || props.crossingposition || props.crossing_position || crossing?.crossingPosition || "").trim();
   const positionCode = String(props.crossingpositioncode || props.crossing_position_code || crossing?.crossingPositionCode || "").trim();
   const closedText = String(props.crossingclosed || props.crossing_closed || crossing?.crossingClosed || "").trim();
   const typeText = String(props.crossingtype || props.crossing_type || crossing?.crossingType || "").trim();
-  const purposeText = String(props.crossingpurpose || props.crossing_purpose || crossing?.crossingPurpose || "").trim();
+  const purposeText = String(props.XPURPOSE || props.crossingpurpose || props.crossing_purpose || crossing?.crossingPurpose || "").trim();
   const evidenceText = [nameText, positionText, positionCode, closedText, typeText, purposeText].filter(Boolean).join(" ");
   const reasons = [];
 
@@ -52651,7 +52660,7 @@ function gridlyGetCrossingReportEligibility(crossing = {}) {
   if (positionCode && positionCode !== "1") reasons.push(`non_at_grade_position_code:${positionCode}`);
   if (/\b(?:underpass|overpass|grade[-\s]?separated|separator|separated|bridge)\b/i.test(evidenceText)) reasons.push("grade_separated_text");
   if (/\bclosed\b/i.test(closedText) && !/^no$/i.test(closedText)) reasons.push("crossing_closed");
-  if (/\b(?:pedestrian|pathway|station|railroad|rr)\b/i.test(purposeText) && !/\bhighway\b/i.test(purposeText)) reasons.push("non_highway_purpose");
+  if (/^(?:2|3)$/.test(purposeText) || (/\b(?:pedestrian|pathway|station|railroad|rr)\b/i.test(purposeText) && !/\bhighway\b/i.test(purposeText))) reasons.push("non_highway_purpose");
 
   return {
     reportable: reasons.length === 0,
