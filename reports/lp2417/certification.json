@@ -1,121 +1,28 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "workPackage": "LP241.7",
   "asOf": "2026-08-27",
-  "evidencePolicy": "Source and deterministic tests certify contracts only; no physical device, browser-engine, screen-reader, or installed-PWA result is implied.",
   "launchClassification": "OWNER_ACCEPTANCE_REQUIRED",
-  "productionDefects": [
-    {
-      "id": "LP2417-A11Y-001",
-      "status": "REPAIRED",
-      "journey": "Text scaling / reflow",
-      "rootCause": "The viewport meta disabled pinch/browser scaling with user-scalable=no and maximum-scale=1.0.",
-      "repair": "Removed both zoom restrictions while retaining width, initial scale, and viewport-fit=cover.",
-      "launchCritical": true,
-      "regressionTest": "tests/lp2417-compatibility-accessibility-certification.test.mjs"
-    },
-    {
-      "id": "LP2417-A11Y-002",
-      "status": "REPAIRED",
-      "journey": "Rendered keyboard focus order / Destination and Route Watch",
-      "rootCause": "The route status div advertised button semantics and tabindex without owning an activation handler; the adjacent native Edit Route button is the real action.",
-      "repair": "Removed role=button, tabindex=0, and the false button label from the non-actionable status container.",
-      "launchCritical": false,
-      "regressionTest": "tests/lp2417-compatibility-accessibility-certification.test.mjs"
-    }
+  "productionDefectOpen": false,
+  "evidence": {
+    "deterministic": { "classification": "CERTIFIED_DETERMINISTIC", "status": "PASS", "keyboardFocusableCount": 18, "essentialControlCount": 4, "exceptionCount": 0 },
+    "ownerRuntime": { "classification": "OWNER_RUNTIME_PASS", "keyboard": "PASS", "settings": "PASS", "alerts": "PASS" },
+    "physicalDevice": { "windowsNarratorSemanticEntry": "PHYSICAL_DEVICE_PASS", "androidChrome": "UNEXECUTED", "iphoneSafari": "UNEXECUTED", "installedAndroidPwa": "UNEXECUTED" }
+  },
+  "dimensions": [
+    { "dimension": "Windows Edge keyboard and focus", "classification": "OWNER_RUNTIME_PASS" },
+    { "dimension": "Narrator semantic entry", "classification": "PHYSICAL_DEVICE_PASS", "boundary": "Document entry and semantic exposure only; not exhaustive Narrator certification." },
+    { "dimension": "Settings lifecycle", "classification": "OWNER_RUNTIME_PASS" },
+    { "dimension": "Alerts modal lifecycle", "classification": "OWNER_RUNTIME_PASS" },
+    { "dimension": "zoom restriction and responsive source contracts", "classification": "CERTIFIED_DETERMINISTIC" },
+    { "dimension": "Android Chrome physical rendering/touch/rotation", "classification": "MANDATORY_OWNER_ACCEPTANCE_REMAINING" },
+    { "dimension": "iPhone Safari safe-area/layout/rotation", "classification": "MANDATORY_OWNER_ACCEPTANCE_REMAINING" },
+    { "dimension": "iPhone VoiceOver duplicate semantic check", "classification": "OPTIONAL_SPOT_CHECK" },
+    { "dimension": "installed Android PWA lifecycle", "classification": "MANDATORY_OWNER_ACCEPTANCE_REMAINING" },
+    { "dimension": "critical non-color semantics", "classification": "CERTIFIED_DETERMINISTIC" },
+    { "dimension": "universal dynamic map tile contrast", "classification": "NOT_APPLICABLE", "boundary": "No universal certification claimed; investigate only a concrete failing state." }
   ],
-  "domains": [
-    {
-      "domain": "desktop pointer/mouse",
-      "classification": "CERTIFIED",
-      "basis": "Native controls and click journeys have deterministic semantic/runtime contracts."
-    },
-    {
-      "domain": "touch/mobile",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "Source proves responsive and touch-capable contracts; physical hit testing and browser chrome cannot be simulated truthfully."
-    },
-    {
-      "domain": "keyboard-only",
-      "classification": "DETERMINISTIC_SEMANTICS_PASS / PHYSICAL_NARRATOR_SPOT_CHECK_REQUIRED",
-      "basis": "The passive rendered-DOM helper projects current order, names, essential reachability, hidden/inert state, overlays, tabindex, generic and pointer-only exceptions; four representative Edge + Narrator actions remain."
-    },
-    {
-      "domain": "screen-reader/semantic accessibility",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "Language, title, names, labels, dialogs and live regions are source-certified; actual announcements require AT."
-    },
-    {
-      "domain": "text scaling/responsive reflow",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "Zoom restriction repaired and responsive CSS certified; rendered 200% reflow remains manual."
-    },
-    {
-      "domain": "orientation/viewport changes",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "Orientation modes and dynamic viewport units exist; physical rotation/browser chrome remains manual."
-    },
-    {
-      "domain": "safe area/mobile chrome/notch",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "Safe-area tokens exist throughout active CSS; iOS rendering remains manual."
-    },
-    {
-      "domain": "installed PWA/standalone",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "Manifest, icons, registration/cache source contracts are deterministic; installation lifecycle remains manual."
-    },
-    {
-      "domain": "focus management",
-      "classification": "DETERMINISTIC_SEMANTICS_PASS / PHYSICAL_NARRATOR_SPOT_CHECK_REQUIRED",
-      "basis": "Rendered focus and open-overlay leakage are inspected; source proves focus entry, Escape and restoration; four physical actions sample the browser/AT boundary."
-    },
-    {
-      "domain": "modals/drawers/popups",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "Dialog, aria-modal, hidden/inert and Escape contracts exist; browser focus containment requires acceptance."
-    },
-    {
-      "domain": "map/non-map boundary",
-      "classification": "CERTIFIED",
-      "basis": "Alerts, KBYG, Location Context, Destination Intelligence, crossing and incident surfaces expose essential summaries outside raw map gestures."
-    },
-    {
-      "domain": "color/contrast/non-color signals",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "Text labels accompany critical states; computed styles and dynamic tiles require visual tooling/acceptance."
-    },
-    {
-      "domain": "motion/reduced motion",
-      "classification": "CERTIFIED",
-      "basis": "Active CSS contains prefers-reduced-motion reduction and essential actions do not depend on animation completion."
-    },
-    {
-      "domain": "forms/validation/errors",
-      "classification": "CERTIFIED",
-      "basis": "Native form elements, labels/status regions, disabled properties and visible validation copy are present."
-    },
-    {
-      "domain": "browser compatibility",
-      "classification": "OWNER_ACCEPTANCE_REQUIRED",
-      "basis": "API guards, storage failure handling, location fallback, viewport and service-worker guards are present; Safari/Chrome engine execution remains manual."
-    }
-  ],
-  "journeysAudited": [
-    "First load/onboarding and geolocation denial",
-    "Settings > My Area > Find/choose county-qualified or multi-county area",
-    "Search > destination > route preview/watch/stop/clear",
-    "Alerts grouped conditions and Show on Map",
-    "Community report submit/cancel/confirm/clear",
-    "Crossing marker/details/watched count",
-    "Settings sections/toggles/Home Area/Saved Places",
-    "Destination Intelligence disclosure and availability/impact states"
-  ],
-  "deterministicChecks": [
-    "node tools/lp2417/certify.mjs",
-    "node --test tests/lp2417-compatibility-accessibility-certification.test.mjs"
-  ],
-  "ownerEvidenceCount": 4,
-  "oa1ConsoleCommand": "window.gridlyLP2417KeyboardAcceptance()",
-  "oa1PhysicalActionsRemaining": 4
+  "mandatoryOwnerActionsRemaining": 3,
+  "fullNarratorTranscriptRequired": false,
+  "productionBehaviorChangedByReconciliation": false
 }

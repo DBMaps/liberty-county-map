@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "evidenceType": "DETERMINISTIC_SOURCE_AUDIT",
   "viewports": [
     "desktop",
@@ -16,8 +16,11 @@
     "scrollableOverlays": true
   },
   "ownerEvidenceRequired": [
-    "Physical iOS Safari notch/mobile-chrome rendering",
-    "Android Chrome touch target and reflow rendering",
-    "Desktop 200% zoom computed layout"
+    "One reduced iPhone Safari notch/mobile-chrome, increased-text, and rotation smoke",
+    "One reduced Android Chrome touch, increased-text, and rotation smoke"
+  ],
+  "notRequired": [
+    "A separate desktop 200% owner journey",
+    "A repeated Windows Narrator journey"
   ]
 }

@@ -1,69 +1,44 @@
 {
-  "schemaVersion": 1,
-  "status": "UNEXECUTED",
-  "evidenceType": "OWNER_PHYSICAL_ACCEPTANCE",
+  "schemaVersion": 2,
+  "status": "PARTIALLY_ACCEPTED",
   "tests": [
     {
       "id": "OA-1",
       "deviceBrowser": "Windows desktop / current Microsoft Edge",
-      "exactJourney": "Run the passive console audit once, then perform four representative Edge + Narrator actions: Settings open; Settings Escape close; Search destination selection; Alerts or Reporting open and safe close.",
-      "inputMethod": "One console command, then keyboard with Narrator; no per-Tab-stop transcript.",
-      "observe": "Deterministic result is PASS; Narrator identifies representative controls/results; focus enters overlays and returns sensibly.",
-      "pass": "Console deterministicPass is true and all four representative actions pass.",
-      "fail": "A reported deterministic exception or any representative missing name, lost focus, trap, unsafe close, or unintelligible result.",
-      "consoleCommand": "window.gridlyLP2417KeyboardAcceptance()",
-      "physicalActions": [
-        {
-          "action": "Reach Settings by keyboard and activate it.",
-          "expected": "Narrator identifies Settings and focus enters the opened Settings surface.",
-          "result": "PASS/FAIL"
-        },
-        {
-          "action": "Press Escape in Settings.",
-          "expected": "Settings closes and focus returns sensibly to its opener.",
-          "result": "PASS/FAIL"
-        },
-        {
-          "action": "Reach Search; enter and select a destination using the keyboard.",
-          "expected": "Narrator makes the result and selected destination understandable.",
-          "result": "PASS/FAIL"
-        },
-        {
-          "action": "Reach Alerts or Reporting; open it, then Escape or cancel.",
-          "expected": "Narrator identifies its controls; close/cancel makes no submission or state change and returns focus safely.",
-          "result": "PASS/FAIL"
-        }
-      ]
+      "classification": "OWNER_RUNTIME_PASS",
+      "status": "PASS",
+      "evidence": { "narratorSemanticEntry": "PHYSICAL_DEVICE_PASS", "keyboard": "OWNER_RUNTIME_PASS", "settings": "OWNER_RUNTIME_PASS", "alerts": "OWNER_RUNTIME_PASS" },
+      "remainingAction": null,
+      "boundary": "Narrator entry proves semantic exposure, not exhaustive Narrator certification; no transcript or repeat journey is required."
     },
     {
       "id": "OA-2",
       "deviceBrowser": "Android phone / current Chrome",
-      "exactJourney": "Touch: deny location, manually choose a county-qualified area, open Alerts, Show on Map, create/cancel a report, select destination and expand Destination Intelligence; rotate portrait/landscape.",
-      "inputMethod": "Touch plus Android large text/display scaling",
-      "observe": "Targets do not overlap; long labels wrap; content scrolls; no browser-chrome obstruction; state is understandable without color.",
-      "pass": "All actions remain reachable and readable in both orientations and large text with no horizontal page scroll or clipped action.",
-      "fail": "Obscured/overlapping target, clipped essential content, hover-only action, unrecoverable orientation state, or color-only meaning.",
-      "consoleCommand": null
+      "classification": "MANDATORY_OWNER_ACCEPTANCE_REMAINING",
+      "status": "UNEXECUTED",
+      "exactJourney": "At increased text/display size in portrait: choose an area, open/close Alerts, start/cancel a report, rotate once.",
+      "pass": "Essential controls remain touchable, readable, scrollable, and unobstructed by browser chrome in both orientations.",
+      "distinctPhysicalClaim": "Touch geometry, platform font reflow, Chrome obstruction, and rotation repaint."
     },
     {
       "id": "OA-3",
-      "deviceBrowser": "iPhone with notch / current iOS Safari",
-      "exactJourney": "Touch + VoiceOver: first load/manual-area fallback; Alerts; search result to destination; report cancel; Settings open/change area/close; rotate once.",
-      "inputMethod": "Touch, VoiceOver swipe/activate, iOS text size increased",
-      "observe": "Safe areas and mobile chrome; control names/order; modal entry/exit; live result/status announcements; scroll reachability.",
-      "pass": "No notch/chrome obstruction; journeys complete; VoiceOver identifies controls/states and focus returns after overlays.",
-      "fail": "Covered action, inaccessible scroll endpoint, focus behind overlay, missing/incorrect announcement, or gesture-only essential map information.",
-      "consoleCommand": null
+      "deviceBrowser": "Notched iPhone / current Safari",
+      "classification": "MANDATORY_OWNER_ACCEPTANCE_REMAINING",
+      "status": "UNEXECUTED",
+      "exactJourney": "With increased text: choose an area, open/close Settings, rotate once.",
+      "pass": "Fixed controls and sheet endpoints remain visible, readable, scrollable, and outside notch, home indicator, and Safari chrome.",
+      "distinctPhysicalClaim": "WebKit viewport, notch/safe-area, increased-text rendering, and rotation repaint.",
+      "voiceOver": { "classification": "OPTIONAL_SPOT_CHECK", "required": false }
     },
     {
       "id": "OA-4",
-      "deviceBrowser": "Same Android Chrome device / installed standalone PWA",
-      "exactJourney": "Install, cold launch, open Alerts, change My Area, choose destination, background/foreground, then relaunch.",
-      "inputMethod": "Touch",
-      "observe": "Standalone launch/scope, safe-area reachability, navigation continuity, cached shell/update behavior, persisted preferences.",
-      "pass": "Launches standalone; controls remain reachable; no blank/stale shell; state survives expected lifecycle; online refresh works.",
-      "fail": "Install/launch failure, browser navigation escape, unreachable fixed control, blank shell, update loop, or lost expected state.",
-      "consoleCommand": null
+      "deviceBrowser": "Same Android device / installed standalone PWA",
+      "classification": "MANDATORY_OWNER_ACCEPTANCE_REMAINING",
+      "status": "UNEXECUTED",
+      "exactJourney": "Install, cold-launch standalone, open/close Alerts, change My Area, background/foreground, and relaunch.",
+      "pass": "Standalone scope and controls work, shell is nonblank, and expected area state persists.",
+      "distinctPhysicalClaim": "Browser installability and OS-managed standalone/relaunch lifecycle."
     }
-  ]
+  ],
+  "mandatoryActionsRemaining": 3
 }

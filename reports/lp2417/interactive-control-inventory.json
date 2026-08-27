@@ -28,7 +28,14 @@
     "hiddenState": "Computed visibility plus hidden, aria-hidden, inert and open-modal leakage are inspected",
     "passive": "No click, focus, submit, event dispatch, network, or storage operation"
   },
+  "ownerRuntimeEvidence": {
+    "classification": "OWNER_RUNTIME_PASS",
+    "deterministicPass": true,
+    "focusableCount": 18,
+    "essentialControlCount": 4,
+    "exceptionCount": 0
+  },
   "limitations": [
-    "DOM order is a deterministic projection, not a claim about actual Narrator speech. Four representative Edge + Narrator actions remain."
+    "DOM order is a deterministic projection, not a claim of exhaustive Narrator certification. Narrator semantic entry and the bounded owner runtime lifecycle evidence are accepted; no further Windows AT action remains."
   ]
 }

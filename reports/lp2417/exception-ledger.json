@@ -1,1 +1,16 @@
-{"schemaVersion":1,"asOf":"2026-08-27","openExceptions":[],"repairedExceptions":[{"id":"LP2417-A11Y-001","severity":"launch-critical","status":"CLOSED_BY_REPAIR_AND_DETERMINISTIC_REGRESSION","affectedJourney":"200% zoom / equivalent large-text pressure","rootCause":"Viewport explicitly prohibited user scaling.","files":["index.html","tests/lp2417-compatibility-accessibility-certification.test.mjs"]}],"ownerAcceptanceGaps":["Actual Edge keyboard/Narrator behavior","Actual Android Chrome touch/reflow/orientation behavior","Actual iOS Safari/VoiceOver/safe-area behavior","Actual installed Android PWA lifecycle behavior"],"waivers":[]}
+{
+  "schemaVersion": 2,
+  "asOf": "2026-08-27",
+  "activeExceptions": [],
+  "resolvedDefects": [
+    { "id": "LP2417-A11Y-001", "name": "viewport zoom restriction", "status": "FIXED", "evidence": "CERTIFIED_DETERMINISTIC" },
+    { "id": "LP2417-A11Y-002", "name": "false route-status keyboard stop", "status": "FIXED", "evidence": "CERTIFIED_DETERMINISTIC" },
+    { "id": "LP2417-A11Y-003", "name": "crossing-marker anonymous focus stops", "status": "FIXED", "evidence": "OWNER_RUNTIME_PASS" },
+    { "id": "LP2417-A11Y-004", "name": "DriveTexas TX misleading focus stops", "status": "FIXED", "evidence": "OWNER_RUNTIME_PASS" },
+    { "id": "LP2417-A11Y-005", "name": "Settings activation ownership", "status": "OWNER_RUNTIME_ACCEPTED", "evidence": "OWNER_RUNTIME_PASS" },
+    { "id": "LP2417-A11Y-006", "name": "Settings acceptance harness authority", "status": "OWNER_RUNTIME_ACCEPTED", "evidence": "OWNER_RUNTIME_PASS" },
+    { "id": "LP2417-A11Y-007", "name": "Alerts modal focus ownership", "status": "OWNER_RUNTIME_ACCEPTED", "evidence": "OWNER_RUNTIME_PASS" }
+  ],
+  "unexecutedEvidence": ["OA-2 Android Chrome reduced physical smoke", "OA-3 iPhone Safari reduced layout/safe-area smoke", "OA-4 installed Android PWA reduced lifecycle smoke"],
+  "waivers": []
+}
