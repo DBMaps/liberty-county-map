@@ -28394,6 +28394,7 @@ window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
     crossingSourceCounty: gridlyGetActiveCrossingSourceDiagnostics().crossingSourceCounty || gridlyCrossingInventoryCountyId || null,
     awarenessAnchor: awarenessAnchor ? { lat: Number(awarenessAnchor.lat), lng: Number(awarenessAnchor.lng) } : null,
     awarenessAnchorSource: awarenessAnchor?.source || awarenessAnchor?.focusAuthority || null,
+    presentationCoordinate: canonicalFocus ? { lat: canonicalFocus.lat, lng: canonicalFocus.lng, authority: canonicalFocus.authority } : null,
     canonicalPresentationCoordinate: canonicalFocus ? { lat: canonicalFocus.lat, lng: canonicalFocus.lng } : null,
     actualMapCenter: mapCenter ? { lat: Number(mapCenter.lat), lng: Number(mapCenter.lng) } : null,
     actualMapBounds: boundsParts,
@@ -51283,10 +51284,29 @@ function gridlyParseOptionalGeographicCoordinate(value) {
   return Number.isFinite(coordinate) ? coordinate : null;
 }
 
+// Selected-area records intentionally remain identity projections.  Rejoin a
+// canonical PLACE to the governed LP201 presentation authority at the
+// geographic consumer boundary instead of persisting or duplicating its
+// coordinates on selection state.
+function gridlyProjectAwarenessAreaForGeographicConsumer(awarenessArea) {
+  if (!awarenessArea || awarenessArea.countyWide === true || awarenessArea.fallback === true) return awarenessArea;
+  const canonicalFocus = typeof resolveGridlyCanonicalPlacePresentationFocus === "function"
+    ? resolveGridlyCanonicalPlacePresentationFocus(awarenessArea) : null;
+  if (!canonicalFocus) return awarenessArea;
+  return Object.freeze({
+    ...awarenessArea,
+    lat: canonicalFocus.lat,
+    lng: canonicalFocus.lng,
+    radiusMiles: canonicalFocus.radiusMiles,
+    presentationCoordinateAuthority: canonicalFocus.authority
+  });
+}
+
 function gridlySelectConsumerVisibleCrossings(awarenessArea = getGridlySelectedAwarenessArea(), options = {}) {
   const activeCountyId = gridlyNormalizeCountyId(options.countyId || awarenessArea?.countyId || gridlyGetActiveCountyId());
   const runtimeInventory = Array.isArray(options.inventory) ? options.inventory : gridlyGetActiveCountyCrossingInventory();
-  const selectedArea = awarenessArea || gridlyBuildCountywideAwarenessFallbackOption(activeCountyId, GRIDLY_COUNTY_REGISTRY[activeCountyId] || {});
+  const selectedArea = gridlyProjectAwarenessAreaForGeographicConsumer(awarenessArea)
+    || gridlyBuildCountywideAwarenessFallbackOption(activeCountyId, GRIDLY_COUNTY_REGISTRY[activeCountyId] || {});
   const visible = [];
   const seenFraIds = new Set();
   let duplicateFraIdsRemoved = 0;
