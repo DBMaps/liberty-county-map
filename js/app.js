@@ -59558,7 +59558,10 @@ function renderCrossings(reason = "unspecified", options = {}) {
     });
 
     const popupContent = buildPopup(crossing, report);
-    const marker = L.marker([crossing.lat, crossing.lng], { icon, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id), gridlyCommunityStatus: hasActiveIssue ? "active" : "inventory", status: hasActiveIssue ? "active" : "inventory", gridlyCountyId: gridlyGetActiveCountyId(), gridlyCrossingCountyId: crossing.countyId || gridlyGetActiveCountyId() })
+    // Crossing details are authoritatively exposed by Alerts/KBYG and the
+    // crossing detail surfaces. The icon remains pointer-operable as a map
+    // enhancement, but must not become an anonymous duplicate Tab stop.
+    const marker = L.marker([crossing.lat, crossing.lng], { icon, keyboard: false, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id), gridlyCommunityStatus: hasActiveIssue ? "active" : "inventory", status: hasActiveIssue ? "active" : "inventory", gridlyCountyId: gridlyGetActiveCountyId(), gridlyCrossingCountyId: crossing.countyId || gridlyGetActiveCountyId() })
       .bindPopup(popupContent, getGridlyCrossingPopupOptions(map))
       .addTo(crossingLayer);
     marker.__gridlyCrossingPopupContentSignature = String(popupContent || "");
@@ -75508,6 +75511,9 @@ function renderUnifiedIncidents(reason = "auto") {
       if (markerTrace) markerTrace.markerConstructorReached = true;
       const marker = L.marker([lat, lng], {
         icon,
+        // The accessible Alerts/KBYG projections own incident information;
+        // avoid a second, unnamed Leaflet marker stop in sequential focus.
+        keyboard: false,
         incidentId: String(incident?.id || incident?.report_id || incident?.key || ""),
         incidentSource: String(incident?.source || ""),
         gridlyCommunityStatus: markerState,
@@ -105972,6 +105978,9 @@ function renderGridlyDriveTexasOfficialMarkers(reason = "unspecified") {
       trace.leafletMarkerConstructorInvoked = true;
       marker = L.marker([coords.lat, coords.lng], {
         icon,
+        // The TX badge is visual source attribution, not the control name.
+        // Official-roadway details remain available in non-map surfaces.
+        keyboard: false,
         incidentId: id,
         id,
         sourceRecord: record,
@@ -125813,12 +125822,16 @@ function gridlyLP2417KeyboardAcceptance() {
   };
   const state = (element) => {
     const chain = ancestors(element);
-    const hidden = chain.some((node) => node.hidden || node.getAttribute?.("aria-hidden") === "true");
+    const hiddenByMarkup = chain.some((node) => node.hidden);
+    const ariaHidden = chain.some((node) => node.getAttribute?.("aria-hidden") === "true");
     const inert = chain.some((node) => node.inert || node.hasAttribute?.("inert"));
     const style = window.getComputedStyle(element);
-    const visible = !hidden && !inert && style.display !== "none" && style.visibility !== "hidden"
-      && style.visibility !== "collapse" && element.getClientRects().length > 0;
-    return { hidden, inert, visible };
+    const hiddenByCss = style.display === "none" || style.visibility === "hidden" || style.visibility === "collapse"
+      || element.getClientRects().length === 0;
+    const excludedFromSequentialFocus = hiddenByMarkup || inert || hiddenByCss;
+    const visuallyHidden = excludedFromSequentialFocus || ariaHidden;
+    const visible = !visuallyHidden;
+    return { hidden: visuallyHidden, hiddenByMarkup, ariaHidden, inert, hiddenByCss, excludedFromSequentialFocus, visible };
   };
   const accessibleName = (element) => {
     const labelledBy = normalize(element.getAttribute("aria-labelledby"));
@@ -125856,6 +125869,23 @@ function gridlyLP2417KeyboardAcceptance() {
   };
   const nativeKeyboard = (element) => /^(A|AREA|BUTTON|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(element.tagName)
     && !(element.tagName === "A" || element.tagName === "AREA") || /^(A|AREA)$/.test(element.tagName) && element.hasAttribute("href");
+  const mapIdentity = (element) => {
+    if (!element.closest?.("#map")) return { mapAccessibilityOwner: null, mapObjectId: null };
+    if (element.id === "map") return { mapAccessibilityOwner: "Leaflet map keyboard container", mapObjectId: "map" };
+    const content = element.querySelector?.("[data-crossing-id],[data-gridly-official-source],[data-category]") || element;
+    const owner = element.matches?.(".gridly-official-roadway-marker-icon") || content.hasAttribute?.("data-gridly-official-source")
+      ? "Gridly DriveTexas official-roadway Leaflet marker"
+      : element.matches?.(".gridly-crossing-production-marker-icon") || content.hasAttribute?.("data-crossing-id")
+        ? "Gridly crossing-inventory Leaflet marker"
+        : element.matches?.(".gridly-production-marker-icon") || content.hasAttribute?.("data-category")
+          ? "Gridly unified-incident Leaflet marker"
+          : element.classList?.contains("leaflet-control") ? "Leaflet native control" : "Leaflet layer object";
+    const registryKey = (registry) => registry instanceof Map
+      ? Array.from(registry.entries()).find(([, marker]) => marker?._icon === element)?.[0] || null : null;
+    const objectId = content.getAttribute?.("data-crossing-id")
+      || registryKey(crossingMarkers) || registryKey(gridlyDriveTexasOfficialMarkers) || null;
+    return { mapAccessibilityOwner: owner, mapObjectId: objectId };
+  };
   const nodes = Array.from(document.querySelectorAll(candidateSelector));
   const inventory = nodes.map((element, domIndex) => {
     const renderedState = state(element);
@@ -125870,7 +125900,7 @@ function gridlyLP2417KeyboardAcceptance() {
       ariaControls: normalize(element.getAttribute("aria-controls")) || null, tabIndex,
       disabled: Boolean(element.disabled || element.getAttribute("aria-disabled") === "true"),
       ...renderedState, essentialSurface: category, action: normalize(element.getAttribute("data-action") || element.getAttribute("data-section-jump")) || null,
-      category
+      category, ...mapIdentity(element)
     };
   });
   const renderedFocusable = inventory.filter((item) => item.visible && !item.disabled && item.tabIndex >= 0)
@@ -125881,10 +125911,21 @@ function gridlyLP2417KeyboardAcceptance() {
   };
   const openModals = Array.from(document.querySelectorAll("[role='dialog'][aria-modal='true']")).filter((node) => state(node).visible);
   const leaked = openModals.length ? renderedFocusable.filter((item) => !openModals.some((modal) => modal.contains(item.element))) : [];
+  // `tabIndex >= 0` describes the element's markup/interface definition. It
+  // does not mean a descendant of hidden/display:none/inert content appears in
+  // the browser's sequential focus navigation. aria-hidden is different: it
+  // hides content from the accessibility tree without removing its Tab stop.
   const hiddenFocusable = inventory.filter((item) => !item.visible && !item.disabled && item.tabIndex >= 0);
+  const hiddenButTabReachable = hiddenFocusable.filter((item) => !item.excludedFromSequentialFocus);
+  const properlyExcludedHidden = hiddenFocusable.filter((item) => item.excludedFromSequentialFocus);
   const customKeyboardAuthorities = new Set(["mobileDestinationCommandImpact"]);
   const generic = renderedFocusable.filter((item) => !nativeKeyboard(item.element));
-  generic.forEach((item) => { item.keyboardSemantics = customKeyboardAuthorities.has(item.element.id) ? "Enter/Space handler source-certified" : "UNVERIFIED"; });
+  generic.forEach((item) => {
+    const leafletKeyboardContainer = item.element.id === "map" && item.element.classList.contains("leaflet-container")
+      && Boolean(map?.keyboard?.enabled?.());
+    item.keyboardSemantics = customKeyboardAuthorities.has(item.element.id) ? "Enter/Space handler source-certified"
+      : leafletKeyboardContainer ? "Leaflet keyboard pan source/runtime-certified" : "UNVERIFIED";
+  });
   const genericWithoutKeyboardSemantics = generic.filter((item) => item.keyboardSemantics === "UNVERIFIED");
   const essential = renderedFocusable.filter((item) => item.category);
   const unnamed = essential.filter((item) => !item.accessibleName);
@@ -125901,16 +125942,20 @@ function gridlyLP2417KeyboardAcceptance() {
   const compact = {
     focusableCount: renderedFocusable.length, essentialControlCount: essential.length,
     unnamedEssentialControls: unnamed.map((item) => publicItem(item)),
+    hiddenFocusableDefinedCount: hiddenFocusable.length,
     hiddenFocusableControls: hiddenFocusable.map((item) => publicItem(item)),
+    hiddenButTabReachableControls: hiddenButTabReachable.map((item) => publicItem(item)),
+    properlyExcludedHiddenControls: properlyExcludedHidden.map((item) => publicItem(item)),
     focusableElementsHiddenBehindOverlays: leaked.map((item) => publicItem(item)),
     positiveTabIndexControls: positive.map((item) => publicItem(item)),
     genericFocusableControls: generic.map((item) => publicItem(item)),
+    genericFocusableControlsWithoutKeyboardSemantics: genericWithoutKeyboardSemantics.map((item) => publicItem(item)),
     duplicateAmbiguousEssentialNames: duplicateGroups,
     pointerOnlyEssentialActions: pointerOnly.map(({ element, ...item }) => ({ tag: element.tagName.toLowerCase(), id: element.id || null, accessibleName: item.name, category: item.category })),
     modalFocusContract: { openModalCount: openModals.length, focusEntryContained: openModals.length ? Boolean(activeModal) : null, backgroundFocusableLeakCount: leaked.length },
     escapeContract: { deterministicSourceContract: true, runtimeActivationPerformed: false },
     focusRestorationContract: { deterministicSourceContract: true, runtimeActivationPerformed: false },
-    deterministicPass: !unnamed.length && !positive.length && !genericWithoutKeyboardSemantics.length && !pointerOnly.length && !leaked.length,
+    deterministicPass: !unnamed.length && !positive.length && !genericWithoutKeyboardSemantics.length && !pointerOnly.length && !leaked.length && !hiddenButTabReachable.length,
     physicalSpotChecksRemaining: 4
   };
   Object.defineProperty(compact, "focusOrderProjection", { value: renderedFocusable.map((item, index) => publicItem(item, index)), enumerable: false });

@@ -9,10 +9,23 @@ test('OA-1 rendered keyboard helper is passive and exposes the bounded acceptanc
   const end=app.indexOf('window.gridlyLP2417KeyboardAcceptance = gridlyLP2417KeyboardAcceptance;',start);
   assert.ok(start>0&&end>start);
   const helper=app.slice(start,end);
-  for(const field of ['focusableCount','essentialControlCount','unnamedEssentialControls','hiddenFocusableControls','positiveTabIndexControls','genericFocusableControls','pointerOnlyEssentialActions','modalFocusContract','escapeContract','focusRestorationContract','deterministicPass','physicalSpotChecksRemaining','focusOrderProjection']) assert.match(helper,new RegExp(field));
+  for(const field of ['focusableCount','essentialControlCount','unnamedEssentialControls','hiddenFocusableDefinedCount','hiddenFocusableControls','hiddenButTabReachableControls','properlyExcludedHiddenControls','positiveTabIndexControls','genericFocusableControls','genericFocusableControlsWithoutKeyboardSemantics','pointerOnlyEssentialActions','modalFocusContract','escapeContract','focusRestorationContract','deterministicPass','physicalSpotChecksRemaining','focusOrderProjection']) assert.match(helper,new RegExp(field));
   assert.match(helper,/getComputedStyle|getClientRects/);
   assert.match(helper,/aria-labelledby|aria-label|element\.labels/);
   assert.doesNotMatch(helper,/\.click\(|\.focus\(|dispatchEvent|\.submit\(|localStorage|sessionStorage|fetch\(/);
+});
+test('map keyboard contract keeps the named map while excluding redundant marker stops',()=>{
+  assert.match(html,/id="map"[^>]+role="region"[^>]+aria-label="Interactive travel conditions map\. Use arrow keys to pan\."/);
+  assert.match(app,/leafletKeyboardContainer[\s\S]*?map\?\.keyboard\?\.enabled/);
+  assert.match(app,/"Gridly crossing-inventory Leaflet marker"/);
+  assert.match(app,/L\.marker\(\[crossing\.lat, crossing\.lng\], \{ icon, keyboard: false/);
+  assert.match(app,/gridlyMarkerType: "drivetexas_official"[\s\S]*?keyboard: false|keyboard: false[\s\S]*?gridlyMarkerType: "drivetexas_official"/);
+  assert.match(app,/sourceIncident: incident[\s\S]*?keyboard: false|keyboard: false[\s\S]*?sourceIncident: incident/);
+});
+test('hidden focus definitions are separated from real hidden Tab leaks',()=>{
+  assert.match(app,/hiddenButTabReachable = hiddenFocusable\.filter\(\(item\) => !item\.excludedFromSequentialFocus\)/);
+  assert.match(app,/properlyExcludedHidden = hiddenFocusable\.filter\(\(item\) => item\.excludedFromSequentialFocus\)/);
+  assert.match(app,/deterministicPass:[^\n]+!hiddenButTabReachable\.length/);
 });
 test('non-actionable route status container is not a false keyboard stop',()=>{
   assert.doesNotMatch(html,/<div[^>]+id="routeStatusCard"[^>]+(?:role="button"|tabindex="0")/);
