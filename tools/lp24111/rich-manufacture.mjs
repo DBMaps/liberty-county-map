@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {pathToFileURL} from 'node:url';
 
 const root=path.resolve(import.meta.dirname,'../..');
 const local=path.join(root,'owner-local/lp24111');
@@ -111,4 +112,5 @@ async function main(){
  if(!fs.existsSync(authority))throw Error(`Missing owner-local authority: ${path.relative(root,authority)}`);
  await executeShards(shards,{rebuildInvalid:cli.rebuildInvalid});console.log(`processed ${shards.length} bounded rich-field shard(s); normalization/certification remains separate`);
 }
-if(import.meta.url===`file://${process.argv[1]}`)main().catch(error=>{console.error(error.message);process.exitCode=1;});
+const isMain=process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href;
+if(isMain)main().catch(error=>{console.error(error.message);process.exitCode=1;});
