@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "statuses": [
+    "SUPPORTED",
+    "PARTIAL",
+    "NOT_SUPPORTED",
+    "UNKNOWN"
+  ],
+  "providers": [
+    {
+      "provider": "Gridly curated LP097/LP098",
+      "capabilities": {
+        "exactAddress": "PARTIAL",
+        "cityPlace": "SUPPORTED",
+        "zip": "PARTIAL",
+        "businessName": "PARTIAL",
+        "chainName": "PARTIAL",
+        "category": "PARTIAL",
+        "poiType": "SUPPORTED",
+        "nearbyBias": "SUPPORTED",
+        "boundingBox": "NOT_SUPPORTED",
+        "radius": "NOT_SUPPORTED",
+        "reverseGeocoding": "NOT_SUPPORTED",
+        "statewideTexasCoverage": "NOT_SUPPORTED",
+        "ruralTexasCoverage": "PARTIAL"
+      },
+      "basis": "Checked-in 28-county curated records; only two Walmart records and no statewide chain inventory."
+    },
+    {
+      "provider": "Gridly gridly-geocode / Nominatim",
+      "capabilities": {
+        "exactAddress": "PARTIAL",
+        "cityPlace": "SUPPORTED",
+        "zip": "SUPPORTED",
+        "businessName": "PARTIAL",
+        "chainName": "PARTIAL",
+        "category": "PARTIAL",
+        "poiType": "PARTIAL",
+        "nearbyBias": "PARTIAL",
+        "boundingBox": "SUPPORTED",
+        "radius": "NOT_SUPPORTED",
+        "reverseGeocoding": "NOT_SUPPORTED",
+        "statewideTexasCoverage": "UNKNOWN",
+        "ruralTexasCoverage": "UNKNOWN"
+      },
+      "basis": "Runtime forwards free-form q and optional viewbox to Nominatim; repository has no statewide live POI coverage evidence."
+    },
+    {
+      "provider": "TxGIO certified address packages",
+      "capabilities": {
+        "exactAddress": "SUPPORTED",
+        "cityPlace": "PARTIAL",
+        "zip": "SUPPORTED",
+        "businessName": "NOT_SUPPORTED",
+        "chainName": "NOT_SUPPORTED",
+        "category": "NOT_SUPPORTED",
+        "poiType": "NOT_SUPPORTED",
+        "nearbyBias": "NOT_SUPPORTED",
+        "boundingBox": "NOT_SUPPORTED",
+        "radius": "NOT_SUPPORTED",
+        "reverseGeocoding": "NOT_SUPPORTED",
+        "statewideTexasCoverage": "SUPPORTED",
+        "ruralTexasCoverage": "SUPPORTED"
+      },
+      "basis": "Government address points only; deliberately ineligible for business/place intent."
+    },
+    {
+      "provider": "Saved places",
+      "capabilities": {
+        "exactAddress": "PARTIAL",
+        "cityPlace": "PARTIAL",
+        "zip": "PARTIAL",
+        "businessName": "PARTIAL",
+        "chainName": "PARTIAL",
+        "category": "NOT_SUPPORTED",
+        "poiType": "PARTIAL",
+        "nearbyBias": "SUPPORTED",
+        "boundingBox": "NOT_SUPPORTED",
+        "radius": "NOT_SUPPORTED",
+        "reverseGeocoding": "NOT_SUPPORTED",
+        "statewideTexasCoverage": "NOT_SUPPORTED",
+        "ruralTexasCoverage": "NOT_SUPPORTED"
+      },
+      "basis": "User-created local records, not a discovery dataset."
+    }
+  ]
+}

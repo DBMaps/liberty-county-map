@@ -643,6 +643,7 @@
     "test:lp239": "node --test tests/lp239-*",
     "test:lp2418c": "node --test tests/lp2418c-artifact-and-portrait-ownership.test.mjs",
     "test:lp2418d": "node --test tests/lp2418d-portrait-map-substrate.test.mjs",
-    "test:lp2419": "node --test tests/lp2419-home-area-selection-simplification.test.mjs tests/lp240x1-governed-home-identity-repair.test.mjs"
+    "test:lp2419": "node --test tests/lp2419-home-area-selection-simplification.test.mjs tests/lp240x1-governed-home-identity-repair.test.mjs",
+    "test:lp24110": "node --test tests/lp24110-statewide-poi-search-certification.test.mjs"
   }
 }

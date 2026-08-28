@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "openExceptions": [
+    {
+      "id": "LP24110-E01",
+      "severity": "BLOCKER",
+      "defect": "No governed statewide live named-business/category evidence.",
+      "disposition": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "LP24110-E02",
+      "severity": "BLOCKER",
+      "defect": "Nominatim POI completeness, production rate capacity, caching permission, and statewide rural coverage are unknown.",
+      "disposition": "HYBRID_PROVIDER_REQUIRED"
+    },
+    {
+      "id": "LP24110-E03",
+      "severity": "HIGH",
+      "defect": "Curated destination inventory covers only 28 counties and sparse business chains.",
+      "disposition": "LOCAL_DATASET_INSUFFICIENT"
+    }
+  ]
+}
