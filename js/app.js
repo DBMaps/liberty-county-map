@@ -99055,11 +99055,12 @@ function renderGridlySettingsAwarenessControl() {
 let gridlySettingsAwarenessSearchResult = null;
 let gridlySettingsAwarenessSearchApplied = false;
 
-function renderGridlySettingsAwarenessSearchResult(result) {
+function renderGridlySettingsAwarenessSearchResult(result, surface = {}) {
   gridlySettingsAwarenessSearchResult = result;
   gridlySettingsAwarenessSearchApplied = false;
-  const container = els.settingsAwarenessAreaSearchResult;
-  const status = els.settingsAwarenessAreaSearchStatus;
+  const container = surface.container || els.settingsAwarenessAreaSearchResult;
+  const status = surface.status || els.settingsAwarenessAreaSearchStatus;
+  const root = surface.root || els.settingsModal || document;
   if (!container || !status) return;
   container.replaceChildren();
   container.hidden = true;
@@ -99095,11 +99096,11 @@ function renderGridlySettingsAwarenessSearchResult(result) {
       const apply = document.createElement("button");
       apply.type = "button";
       apply.className = "primary-btn settings-awareness-watch-btn";
-      apply.textContent = candidate ? `Use ${candidate.county}` : "Watch this area";
+      apply.textContent = candidate ? `Use this Home Area — ${candidate.county}` : "Use this Home Area";
       apply.addEventListener("click", () => {
         const applied = candidate
           ? gridlySaveCanonicalMultiCountyPlaceHome(result, "settings_awareness_area_search", candidate.countyId)
-          : selectGridlySettingsAwarenessArea(result.awarenessArea?.storageValue || result.awarenessAreaKey, "settings_awareness_area_search", els.settingsModal || document);
+          : selectGridlySettingsAwarenessArea(result.awarenessArea?.storageValue || result.awarenessAreaKey, "settings_awareness_area_search", root);
       if (applied) {
         gridlySettingsAwarenessSearchApplied = true;
         status.textContent = candidate ? `Gridly is now watching ${result.community}, ${candidate.county}.` : `Gridly is now watching ${result.community}, ${result.county}.`;
@@ -99155,14 +99156,14 @@ function gridlySaveCanonicalMultiCountyPlaceHome(result = {}, source = "canonica
   }
 }
 
-function searchGridlySettingsAwarenessArea(query = "") {
+function searchGridlySettingsAwarenessArea(query = "", surface = {}) {
   try {
     const result = resolveGridlyAwarenessAreaQuery(query);
-    renderGridlySettingsAwarenessSearchResult(result);
+    renderGridlySettingsAwarenessSearchResult(result, surface);
     return result;
   } catch (_error) {
     const result = Object.freeze({ status: "TEMPORARILY_UNAVAILABLE", query: String(query || "").trim(), candidates: [] });
-    renderGridlySettingsAwarenessSearchResult(result);
+    renderGridlySettingsAwarenessSearchResult(result, surface);
     return result;
   }
 }
@@ -99173,6 +99174,46 @@ function gridlyAwarenessAreaSearchAudit() {
 }
 
 if (typeof window !== "undefined") window.gridlyAwarenessAreaSearchAudit = gridlyAwarenessAreaSearchAudit;
+
+// LP241.9 is a read-only acceptance view over the shared chooser and the
+// existing governed save/rehydration authority. It never writes selection
+// state and intentionally reports an invalid stored record as unaccepted.
+function gridlyLP2419HomeAreaAcceptance() {
+  const doc = typeof document !== "undefined" ? document : null;
+  const settingsSearch = doc?.getElementById("settingsAwarenessAreaSearchInput") || null;
+  const onboardingSearch = doc?.getElementById("gridlyWelcomeHomeAreaSearchInput") || null;
+  const visible = (node) => Boolean(node && !node.hidden && node.getAttribute("aria-hidden") !== "true" && !node.closest?.("[hidden]"));
+  const chooser = visible(onboardingSearch) ? onboardingSearch : (visible(settingsSearch) ? settingsSearch : null);
+  const result = gridlySettingsAwarenessSearchResult;
+  const record = typeof gridlyReadHomePersonalizationRecord === "function" ? gridlyReadHomePersonalizationRecord() : null;
+  const validation = record && typeof gridlyLp0517ValidateHomeRecord === "function" ? gridlyLp0517ValidateHomeRecord(record) : { valid: false, area: null };
+  const identity = validation.valid ? gridlyLp240ResolveGovernedHomeIdentity(record, validation.area) : null;
+  const rehydration = record ? gridlyLp0517ValidateHomeRecord(JSON.parse(JSON.stringify(record))) : { valid: false };
+  const selectedCountyId = record?.countyId || null;
+  const multiCounty = Array.isArray(record?.countyMemberships) && record.countyMemberships.length > 1;
+  const multiCountyMembershipExplicit = !multiCounty || Boolean(selectedCountyId && GRIDLY_COUNTY_REGISTRY?.[selectedCountyId]);
+  const redundantManualGatePresent = Boolean(doc?.querySelector("#settingsChooseCommunityManuallyBtn, [data-gridly-home-manual-gate]"));
+  const separateZipGateRequired = Boolean(doc?.querySelector("#gridlyWelcomeZipSetupBtn:not([hidden]), [data-gridly-home-zip-gate-required]"));
+  const currentLocation = doc?.getElementById("gridlyWelcomeEnableLocationBtn") || null;
+  const audit = {
+    primaryChooserAvailable: Boolean(settingsSearch && onboardingSearch),
+    primarySearchVisible: Boolean(chooser),
+    redundantManualGatePresent,
+    separateZipGateRequired,
+    currentLocationSecondary: Boolean(currentLocation && onboardingSearch && currentLocation.compareDocumentPosition(onboardingSearch) & Node.DOCUMENT_POSITION_PRECEDING),
+    governedResultCount: Array.isArray(result?.candidates) ? result.candidates.length : (result?.awarenessArea ? 1 : 0),
+    selectedIdentityClass: identity?.identityClass || null,
+    selectedStableGovernedIdentity: identity?.stableIdentity || null,
+    selectedPlaceGeoid: identity?.placeGeoid || null,
+    selectedCountyId,
+    multiCountyMembershipExplicit,
+    saveAccepted: validation.valid === true,
+    rehydrationAccepted: rehydration.valid === true
+  };
+  return Object.freeze({ ...audit, pass: audit.primaryChooserAvailable && !audit.redundantManualGatePresent && !audit.separateZipGateRequired && audit.currentLocationSecondary && audit.multiCountyMembershipExplicit && (!record || (audit.saveAccepted && audit.rehydrationAccepted)) });
+}
+
+if (typeof window !== "undefined") window.gridlyLP2419HomeAreaAcceptance = gridlyLP2419HomeAreaAcceptance;
 
 function setGridlySettingsAwarenessChooserOpen(open, root = null) {
   const scope = root || (typeof document !== "undefined" ? document : null);
@@ -101206,6 +101247,18 @@ function bindGridlySettingsPreferences() {
     els.settingsAwarenessAreaSearchForm.addEventListener("submit", (event) => {
       event.preventDefault();
       searchGridlySettingsAwarenessArea(els.settingsAwarenessAreaSearchInput?.value || "");
+    });
+  }
+  const welcomeHomeAreaSearchForm = typeof document !== "undefined" ? document.getElementById("gridlyWelcomeHomeAreaSearchForm") : null;
+  if (welcomeHomeAreaSearchForm && welcomeHomeAreaSearchForm.dataset.gridlySettingsBound !== "1") {
+    welcomeHomeAreaSearchForm.dataset.gridlySettingsBound = "1";
+    welcomeHomeAreaSearchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      searchGridlySettingsAwarenessArea(document.getElementById("gridlyWelcomeHomeAreaSearchInput")?.value || "", {
+        container: document.getElementById("gridlyWelcomeHomeAreaSearchResult"),
+        status: document.getElementById("gridlyWelcomeHomeAreaSearchStatus"),
+        root: els.gridlyWelcomeOnboarding || document
+      });
     });
   }
   if (els.settingsChangeAwarenessAreaBtn && els.settingsChangeAwarenessAreaBtn.dataset.gridlySettingsBound !== "1") {
