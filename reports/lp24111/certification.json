@@ -1,14 +1,14 @@
 {
-  "schemaVersion": "gridly.lp24111.certification.v2",
+  "schemaVersion": "gridly.lp24111.certification.v3",
   "classifications": [
-    "OVERTURE_TEXAS_SPATIAL_AUTHORITY_MEASURED",
-    "OVERTURE_TEXAS_AUTHORITY_VIABLE_WITH_NORMALIZATION",
-    "MANUFACTURING_EXECUTION_REQUIRED",
+    "OVERTURE_TEXAS_SPATIAL_AUTHORITY_CERTIFIED_EXACT",
+    "RICH_FIELD_MANUFACTURING_NOT_EXECUTED",
     "LEGAL_REVIEW_REQUIRED",
     "OWNER_DECISION_REQUIRED"
   ],
   "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
   "zeroCostContract": "NON_RUNTIME",
-  "mergeRecommendation": "MERGE_AUDIT_TOOLING_AND_EVIDENCE_ONLY",
-  "nextAction": "Rerun repaired extraction to emit per-ID county assignment certification, then execute literal-bound rich shard manufacturing and normalization."
+  "phaseCCertification": "BLOCKED_MISSING_OWNER_LOCAL_AUTHORITY_ARTIFACTS",
+  "mergeRecommendation": "MERGE_SPATIAL_CERTIFICATION_AND_MANUFACTURING_TOOLING_ONLY",
+  "nextAction": "Restore the owner-local authority and county-assignment Parquets, then run node tools/lp24111/rich-manufacture.mjs --execute before rebuilding certification."
 }

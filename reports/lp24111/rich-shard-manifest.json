@@ -1,0 +1,2380 @@
+{
+  "schemaVersion": "gridly.lp24111.rich-shards.v1",
+  "releaseId": "2026-08-19.0",
+  "immutableInput": true,
+  "design": "ONE_DEGREE_GEOGRAPHIC_GRID_CLIPPED_TO_TEXAS_PREFILTER",
+  "countyHardWalls": false,
+  "borderAndMultiCountySupported": true,
+  "radiusExpansion": "LOAD_ALL_INTERSECTING_SHARDS",
+  "projection": [
+    "id",
+    "geometry",
+    "categories",
+    "confidence",
+    "websites",
+    "phones",
+    "brand",
+    "addresses",
+    "names",
+    "sources",
+    "operating_status",
+    "basic_category",
+    "taxonomy",
+    "bbox"
+  ],
+  "shardCount": 168,
+  "rows": [
+    {
+      "shardId": "tx-25-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 25.8,
+        "xmax": -106,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 25.8,
+        "xmax": -105,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 25.8,
+        "xmax": -104,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 25.8,
+        "xmax": -103,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 25.8,
+        "xmax": -102,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 25.8,
+        "xmax": -101,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 25.8,
+        "xmax": -100,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 25.8,
+        "xmax": -99,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 25.8,
+        "xmax": -98,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 25.8,
+        "xmax": -97,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 25.8,
+        "xmax": -96,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 25.8,
+        "xmax": -95,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 25.8,
+        "xmax": -94,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-25-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 25.8,
+        "xmax": -93.5,
+        "ymax": 26
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 26,
+        "xmax": -106,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 26,
+        "xmax": -105,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 26,
+        "xmax": -104,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 26,
+        "xmax": -103,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 26,
+        "xmax": -102,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 26,
+        "xmax": -101,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 26,
+        "xmax": -100,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 26,
+        "xmax": -99,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 26,
+        "xmax": -98,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 26,
+        "xmax": -97,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 26,
+        "xmax": -96,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 26,
+        "xmax": -95,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 26,
+        "xmax": -94,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-26-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 26,
+        "xmax": -93.5,
+        "ymax": 27
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 27,
+        "xmax": -106,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 27,
+        "xmax": -105,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 27,
+        "xmax": -104,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 27,
+        "xmax": -103,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 27,
+        "xmax": -102,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 27,
+        "xmax": -101,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 27,
+        "xmax": -100,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 27,
+        "xmax": -99,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 27,
+        "xmax": -98,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 27,
+        "xmax": -97,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 27,
+        "xmax": -96,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 27,
+        "xmax": -95,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 27,
+        "xmax": -94,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-27-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 27,
+        "xmax": -93.5,
+        "ymax": 28
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 28,
+        "xmax": -106,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 28,
+        "xmax": -105,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 28,
+        "xmax": -104,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 28,
+        "xmax": -103,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 28,
+        "xmax": -102,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 28,
+        "xmax": -101,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 28,
+        "xmax": -100,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 28,
+        "xmax": -99,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 28,
+        "xmax": -98,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 28,
+        "xmax": -97,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 28,
+        "xmax": -96,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 28,
+        "xmax": -95,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 28,
+        "xmax": -94,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-28-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 28,
+        "xmax": -93.5,
+        "ymax": 29
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 29,
+        "xmax": -106,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 29,
+        "xmax": -105,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 29,
+        "xmax": -104,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 29,
+        "xmax": -103,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 29,
+        "xmax": -102,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 29,
+        "xmax": -101,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 29,
+        "xmax": -100,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 29,
+        "xmax": -99,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 29,
+        "xmax": -98,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 29,
+        "xmax": -97,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 29,
+        "xmax": -96,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 29,
+        "xmax": -95,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 29,
+        "xmax": -94,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-29-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 29,
+        "xmax": -93.5,
+        "ymax": 30
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 30,
+        "xmax": -106,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 30,
+        "xmax": -105,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 30,
+        "xmax": -104,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 30,
+        "xmax": -103,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 30,
+        "xmax": -102,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 30,
+        "xmax": -101,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 30,
+        "xmax": -100,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 30,
+        "xmax": -99,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 30,
+        "xmax": -98,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 30,
+        "xmax": -97,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 30,
+        "xmax": -96,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 30,
+        "xmax": -95,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 30,
+        "xmax": -94,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-30-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 30,
+        "xmax": -93.5,
+        "ymax": 31
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 31,
+        "xmax": -106,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 31,
+        "xmax": -105,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 31,
+        "xmax": -104,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 31,
+        "xmax": -103,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 31,
+        "xmax": -102,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 31,
+        "xmax": -101,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 31,
+        "xmax": -100,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 31,
+        "xmax": -99,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 31,
+        "xmax": -98,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 31,
+        "xmax": -97,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 31,
+        "xmax": -96,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 31,
+        "xmax": -95,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 31,
+        "xmax": -94,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-31-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 31,
+        "xmax": -93.5,
+        "ymax": 32
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 32,
+        "xmax": -106,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 32,
+        "xmax": -105,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 32,
+        "xmax": -104,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 32,
+        "xmax": -103,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 32,
+        "xmax": -102,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 32,
+        "xmax": -101,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 32,
+        "xmax": -100,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 32,
+        "xmax": -99,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 32,
+        "xmax": -98,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 32,
+        "xmax": -97,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 32,
+        "xmax": -96,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 32,
+        "xmax": -95,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 32,
+        "xmax": -94,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-32-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 32,
+        "xmax": -93.5,
+        "ymax": 33
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 33,
+        "xmax": -106,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 33,
+        "xmax": -105,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 33,
+        "xmax": -104,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 33,
+        "xmax": -103,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 33,
+        "xmax": -102,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 33,
+        "xmax": -101,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 33,
+        "xmax": -100,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 33,
+        "xmax": -99,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 33,
+        "xmax": -98,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 33,
+        "xmax": -97,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 33,
+        "xmax": -96,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 33,
+        "xmax": -95,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 33,
+        "xmax": -94,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-33-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 33,
+        "xmax": -93.5,
+        "ymax": 34
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 34,
+        "xmax": -106,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 34,
+        "xmax": -105,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 34,
+        "xmax": -104,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 34,
+        "xmax": -103,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 34,
+        "xmax": -102,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 34,
+        "xmax": -101,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 34,
+        "xmax": -100,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 34,
+        "xmax": -99,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 34,
+        "xmax": -98,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 34,
+        "xmax": -97,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 34,
+        "xmax": -96,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 34,
+        "xmax": -95,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 34,
+        "xmax": -94,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-34-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 34,
+        "xmax": -93.5,
+        "ymax": 35
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 35,
+        "xmax": -106,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 35,
+        "xmax": -105,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 35,
+        "xmax": -104,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 35,
+        "xmax": -103,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 35,
+        "xmax": -102,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 35,
+        "xmax": -101,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 35,
+        "xmax": -100,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 35,
+        "xmax": -99,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 35,
+        "xmax": -98,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 35,
+        "xmax": -97,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 35,
+        "xmax": -96,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 35,
+        "xmax": -95,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 35,
+        "xmax": -94,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-35-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 35,
+        "xmax": -93.5,
+        "ymax": 36
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-107",
+      "bounds": {
+        "xmin": -106.7,
+        "ymin": 36,
+        "xmax": -106,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-106",
+      "bounds": {
+        "xmin": -106,
+        "ymin": 36,
+        "xmax": -105,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-105",
+      "bounds": {
+        "xmin": -105,
+        "ymin": 36,
+        "xmax": -104,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-104",
+      "bounds": {
+        "xmin": -104,
+        "ymin": 36,
+        "xmax": -103,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-103",
+      "bounds": {
+        "xmin": -103,
+        "ymin": 36,
+        "xmax": -102,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-102",
+      "bounds": {
+        "xmin": -102,
+        "ymin": 36,
+        "xmax": -101,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-101",
+      "bounds": {
+        "xmin": -101,
+        "ymin": 36,
+        "xmax": -100,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-100",
+      "bounds": {
+        "xmin": -100,
+        "ymin": 36,
+        "xmax": -99,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-099",
+      "bounds": {
+        "xmin": -99,
+        "ymin": 36,
+        "xmax": -98,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-098",
+      "bounds": {
+        "xmin": -98,
+        "ymin": 36,
+        "xmax": -97,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-097",
+      "bounds": {
+        "xmin": -97,
+        "ymin": 36,
+        "xmax": -96,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-096",
+      "bounds": {
+        "xmin": -96,
+        "ymin": 36,
+        "xmax": -95,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-095",
+      "bounds": {
+        "xmin": -95,
+        "ymin": 36,
+        "xmax": -94,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "shardId": "tx-36-094",
+      "bounds": {
+        "xmin": -94,
+        "ymin": 36,
+        "xmax": -93.5,
+        "ymax": 36.6
+      },
+      "rawRows": null,
+      "richFieldBytes": null,
+      "normalizedRows": null,
+      "compressedPackageBytes": null,
+      "measurement": "NOT_EXECUTED"
+    }
+  ]
+}

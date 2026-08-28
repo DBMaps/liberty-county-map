@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "gridly.lp24111.rich-extraction.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Required owner-local spatial-authority Parquet is not present in this checkout; no remote rich-field measurement was inferred.",
+  "projection": [
+    "id",
+    "geometry",
+    "bbox",
+    "names",
+    "categories",
+    "basic_category",
+    "taxonomy",
+    "confidence",
+    "brand",
+    "addresses",
+    "operating_status",
+    "sources",
+    "websites",
+    "phones"
+  ],
+  "remoteStrategy": "LITERAL_BBOX_SHARDS",
+  "localAuthorityMatch": true,
+  "globalSelectStar": false,
+  "globalAuthorityJoin": false
+}

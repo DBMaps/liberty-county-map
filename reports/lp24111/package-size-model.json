@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "gridly.lp24111.shards.v1",
+  "schemaVersion": "gridly.lp24111.shards.v2",
   "executionState": "NOT_EXECUTED",
   "architecture": [
     "literal/precomputed shard bounds",
@@ -13,17 +13,21 @@
     "verify",
     "immutable manifest"
   ],
+  "manifest": "reports/lp24111/rich-shard-manifest.json",
   "literalPushdownEvidence": {
     "kingRows": 14,
     "seconds": 6.46
   },
   "measurements": {
     "rawRowsPerShard": null,
+    "richFieldBytesPerShard": null,
     "normalizedRowsPerShard": null,
     "compressedBytes": null,
-    "denseMetroWorstCase": null,
-    "ruralShardBytes": null,
-    "queryFanout": null
+    "largestShard": null,
+    "smallestShard": null,
+    "denseMetroExamples": null,
+    "ruralShardExamples": null,
+    "expectedSearchFanout": null
   },
   "constraints": {
     "singleAssetBytes": 26214400,
