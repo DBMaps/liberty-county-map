@@ -31083,6 +31083,9 @@ function applyLayoutMode(nextMode) {
   legacyDashboard?.setAttribute("inert", "");
   legacyDashboard?.setAttribute("aria-hidden", "true");
   syncGridlyPortraitPresentationOwnership(supported);
+  if (supported && previousLayoutMode !== activeLayoutMode) {
+    syncGridlyPortraitMapSubstrateAfterLayout();
+  }
   const developmentGate = document.getElementById("gridlyDesktopGate");
   developmentGate?.toggleAttribute("inert", supported);
   if (developmentGate) developmentGate.setAttribute("aria-hidden", supported ? "true" : "false");
@@ -31091,12 +31094,28 @@ function applyLayoutMode(nextMode) {
 }
 
 const GRIDLY_PORTRAIT_DUPLICATE_ROOTS = Object.freeze([
-  ".app-shell > :not(#mapSection)",
+  ".app-shell > :not(.main-column)",
+  ".app-shell > .main-column > :not(#mapSection)",
   "#mapSection > :not(.map-card)",
   "#mapSection > .map-card > :not(.map-frame)",
   "#mapSection > .map-card > .map-frame > :not(#map)",
   ".mobile-floating-action-dock"
 ]);
+
+function syncGridlyPortraitMapSubstrateAfterLayout() {
+  // Layout mode is the authority that reveals the retained shared host. Wait
+  // for that CSS layout, then let the already-owned Leaflet instance measure
+  // its restored container; no independent timer or map is introduced.
+  window.requestAnimationFrame(() => {
+    const mapInstance = typeof getGridlyMapInstance === "function"
+      ? getGridlyMapInstance()
+      : (typeof map !== "undefined" ? map : null);
+    const rect = document.getElementById("map")?.getBoundingClientRect?.();
+    if (mapInstance && rect?.width > 0 && rect?.height > 0 && typeof mapInstance.invalidateSize === "function") {
+      mapInstance.invalidateSize({ pan: false, animate: false, debounceMoveend: true });
+    }
+  });
+}
 
 function syncGridlyPortraitPresentationOwnership(portraitActive) {
   for (const node of document.querySelectorAll(GRIDLY_PORTRAIT_DUPLICATE_ROOTS.join(","))) {
@@ -126426,13 +126445,59 @@ function gridlyLP2418PortraitOwnershipAudit() {
     .filter((node) => outsidePortrait(node) && !map?.contains(node) && visible(node)).map(describe);
   const visualBleedCandidates = visibleDuplicatePresentationNodes;
   const legacyDashboard = document.getElementById("dashboardSection");
-  const sharedMapRequired = Boolean(map && visible(map) && map.classList.contains("leaflet-container"));
+  const rectValue = (node) => {
+    const rect = node?.getBoundingClientRect?.();
+    return rect ? Object.freeze({ width: rect.width, height: rect.height, top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left }) : null;
+  };
+  const mapContainerRect = rectValue(map);
+  const mapAncestorNodes = [
+    document.querySelector("main.app-shell"),
+    document.querySelector("main.app-shell > .main-column"),
+    document.getElementById("mapSection"),
+    document.querySelector("#mapSection > .map-card"),
+    document.querySelector("#mapSection > .map-card > .map-frame")
+  ].filter(Boolean);
+  const mapAncestorRects = mapAncestorNodes.map((node) => {
+    const style = getComputedStyle(node);
+    return Object.freeze({ selector: node.id ? `#${node.id}` : `${node.tagName.toLowerCase()}.${Array.from(node.classList).join(".")}`,
+      rect: rectValue(node), display: style.display, visibility: style.visibility, overflow: style.overflow });
+  });
+  const suppressedMapOwner = map?.closest?.("[hidden], [inert], [aria-hidden='true']") || null;
+  const zeroGeometryAncestor = mapAncestorRects.find((entry) => !entry.rect || entry.rect.width <= 0 || entry.rect.height <= 0 || entry.display === "none" || entry.visibility === "hidden");
+  const mapSuppressionConflict = suppressedMapOwner
+    ? (suppressedMapOwner.id ? `#${suppressedMapOwner.id}` : suppressedMapOwner.tagName.toLowerCase())
+    : (zeroGeometryAncestor?.selector || null);
+  const mapInstance = typeof getGridlyMapInstance === "function"
+    ? getGridlyMapInstance()
+    : (typeof window.gridlyMapInstance !== "undefined" ? window.gridlyMapInstance : null);
+  const leafletInstanceAvailable = Boolean(mapInstance && typeof mapInstance.getContainer === "function" && mapInstance.getContainer() === map);
+  const leafletPanes = map ? Array.from(map.querySelectorAll(".leaflet-pane")) : [];
+  const leafletPaneCount = leafletPanes.filter((pane) => {
+    const style = getComputedStyle(pane);
+    return style.display !== "none" && style.visibility !== "hidden";
+  }).length;
+  const renderedTiles = map ? Array.from(map.querySelectorAll(".leaflet-tile-pane img.leaflet-tile")) : [];
+  const tileLayerCount = renderedTiles.filter((tile) => {
+    const rect = tile.getBoundingClientRect();
+    const style = getComputedStyle(tile);
+    return rect.width > 0 && rect.height > 0 && style.display !== "none" && style.visibility !== "hidden";
+  }).length;
+  let leafletLayerCount = 0;
+  mapInstance?.eachLayer?.(() => { leafletLayerCount += 1; });
+  const mapRenderStateValid = Boolean(leafletInstanceAvailable && mapInstance?.loaded?.() && leafletPaneCount > 0 && leafletLayerCount > 0);
+  const mapRenderable = Boolean(map && map.classList.contains("leaflet-container")
+    && mapContainerRect?.width > 0 && mapContainerRect?.height > 0
+    && !zeroGeometryAncestor && !mapSuppressionConflict && leafletInstanceAvailable
+    && (tileLayerCount > 0 || mapRenderStateValid));
+  const sharedMapRequired = mapRenderable;
   const duplicateSemanticOwnerCount = new Set([
     ...focusableOutsidePortrait.map((node) => node.selector),
     ...accessibilityExposedOutsidePortrait.map((node) => node.selector)
   ]).size;
   const legacyDashboardUnavailable = Boolean(legacyDashboard?.hasAttribute("inert") && legacyDashboard.getAttribute("aria-hidden") === "true" && !visible(legacyDashboard));
-  return Object.freeze({ portraitActive, sharedMapRequired, visibleDuplicatePresentationNodes,
+  return Object.freeze({ portraitActive, sharedMapRequired, mapContainerRect, mapAncestorRects,
+    leafletInstanceAvailable, leafletPaneCount, tileLayerCount, leafletLayerCount,
+    mapRenderStateValid, mapRenderable, mapSuppressionConflict, visibleDuplicatePresentationNodes,
     focusableOutsidePortrait, accessibilityExposedOutsidePortrait, activeLiveRegionsOutsidePortrait,
     duplicateSemanticOwnerCount, visualBleedCandidates,
     pass: Boolean(portraitActive && sharedMapRequired && !visibleDuplicatePresentationNodes.length

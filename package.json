@@ -641,6 +641,7 @@
     "build:lp239-statewide": "node tools/lp239/build-statewide-place-membership-certification.mjs --write",
     "verify:lp239-statewide": "node tools/lp239/build-statewide-place-membership-certification.mjs --verify",
     "test:lp239": "node --test tests/lp239-*",
-    "test:lp2418c": "node --test tests/lp2418c-artifact-and-portrait-ownership.test.mjs"
+    "test:lp2418c": "node --test tests/lp2418c-artifact-and-portrait-ownership.test.mjs",
+    "test:lp2418d": "node --test tests/lp2418d-portrait-map-substrate.test.mjs"
   }
 }
