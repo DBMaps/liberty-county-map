@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {BEFORE,COMPACT_FIELDS,compactProjection,detectInputs,execute,intersectedShardCount,jsonReportField,jsonReportText,measurementQueries,packageMeasurementQueries,packageStatistics,policy,shardId,taxonomyDecision} from '../tools/lp24111/taxonomy-review.mjs';
+import {BEFORE,COMPACT_FIELDS,EXPECTED_PROMOTIONS,SHARD_ID_PATTERN,compactProjection,detectInputs,execute,intersectedShardCount,jsonReportField,jsonReportText,measurementQueries,packageMeasurementQueries,packageStatistics,policy,shardId,shardIdSql,taxonomyDecision} from '../tools/lp24111/taxonomy-review.mjs';
 
 const read=name=>JSON.parse(fs.readFileSync(`reports/lp24111/${name}`));
 test('D.2 baseline conserves the certified statewide authority',()=>assert.equal(BEFORE.eligible+BEFORE.nonDestination+BEFORE.excluded+BEFORE.reviewRequired,BEFORE.normalizedUniquePois));
@@ -25,6 +25,13 @@ test('package measurements report actual compression thresholds and dense shards
  const rows=[{shardId:'tx-29-096',eligibleRows:20,rawBytes:40,compressedBytes:30*1024**2},{shardId:'tx-30-100',eligibleRows:2,rawBytes:4,compressedBytes:500}];
  const stats=packageStatistics(rows);assert.equal(stats.totalEligibleRows,22);assert.equal(stats.shardsOver25MiB,1);assert.equal(stats.shardsUnder1MiB,1);assert.equal(stats.largestShard.shardId,'tx-29-096');
  assert.equal(shardId(29.2,-95.8),'tx-29-096');assert.ok(intersectedShardCount(30,-95,25)>=intersectedShardCount(30,-95,5));
+});
+test('D.2C fixes the measured promotion gate and canonical package identities',()=>{
+ assert.equal(EXPECTED_PROMOTIONS,28079);
+ assert.deepEqual([[29.2,-95.8],[29.1,-98.2],[32.5,-96.1],[33.4,-94.2]].map(x=>shardId(...x)),['tx-29-096','tx-29-099','tx-32-097','tx-33-095']);
+ for(const id of ['tx-29-096','tx-29-099','tx-32-097','tx-33-095','tx-33-100'])assert.match(id,SHARD_ID_PATTERN);
+ assert.doesNotMatch('tx-29-96.',SHARD_ID_PATTERN);
+ assert.match(shardIdSql(),/printf\('%02d'/);assert.match(shardIdSql(),/printf\('%03d'/);
 });
 test('absent owner-local inputs remain truthful rather than fabricating D.2 measurements',()=>{
  const found=detectInputs();if(!found.normalized||!found.deduplicated){assert.equal(read('review-taxonomy-census.json').executionState,'NOT_EXECUTED');assert.equal(read('compact-package-measurements.json').statistics,null);}
