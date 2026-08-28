@@ -1,8 +1,13 @@
 {
-  "schemaVersion": "gridly.lp24111.exceptions.v3",
+  "schemaVersion": "gridly.lp24111.exceptions.v4",
   "exceptions": [
     {
-      "id": "RICH_FIELDS_NOT_MATERIALIZED",
+      "id": "OWNER_CERTIFIED_RICH_SHARDS_ABSENT_FROM_CHECKOUT",
+      "severity": "BLOCKER",
+      "expectedFiles": 168
+    },
+    {
+      "id": "DEDUP_ARTIFACT_NOT_MATERIALIZED",
       "severity": "BLOCKER"
     },
     {
@@ -12,10 +17,6 @@
     {
       "id": "PACKAGE_MEASUREMENTS_NOT_EXECUTED",
       "severity": "BLOCKER"
-    },
-    {
-      "id": "NON_PLACE_RADIUS_MEASUREMENT_NOT_EXECUTED",
-      "severity": "OPEN"
     },
     {
       "id": "LICENSE_COUNSEL_REVIEW",
