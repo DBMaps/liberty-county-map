@@ -5,6 +5,7 @@ import { areas, report } from "../tools/lp240x/supported-area-identity-audit.mjs
 
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const source = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+const styles = fs.readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 
 function functionSource(name) {
   const start = source.indexOf(`function ${name}(`);
@@ -40,6 +41,21 @@ test("Portrait Settings exposes one Home Area action and opens the primary choos
   for (const field of ["changeAreaOpensPrimarySearchDirectly", "zipOnlyModalRequired", "chooseManuallyRequired", "chooseAvailableAreasPrimary", "separateHomeZipPrimary", "primaryJourneyStepCount"]) {
     assert.match(acceptance, new RegExp(field));
   }
+});
+
+test("Home Area chooser keeps one traveler vocabulary and the full Settings column", () => {
+  const builder = functionSource("buildGridlySettingsAwarenessOptionsHtml");
+  const renderer = functionSource("renderGridlyManualAwarenessAreaPicker");
+  assert.match(builder, /Choose your home area/);
+  assert.match(builder, /Search your Texas community/);
+  assert.match(builder, /Use this Home Area/);
+  assert.doesNotMatch(builder, /Choose from available areas|Search ZIP, town, or county|Watch this area/);
+  assert.doesNotMatch(builder, /placeholder="[^"]*77535/);
+  assert.match(renderer, /renderGridlyManualAwarenessAreaPicker\(container, options\)/);
+  assert.match(styles, /settings-awareness-area-chooser:has\(\.settings-awareness-manual-picker\)[\s\S]*width: 100%/);
+  assert.match(styles, /grid-template-columns: minmax\(0, 1fr\)/);
+  assert.match(styles, /padding-bottom: max\(24px, env\(safe-area-inset-bottom\)\)/);
+  assert.match(styles, /settings-manual-pending \.primary-btn \{ width: 100%; min-height: 48px;[\s\S]*white-space: normal/);
 });
 
 test("selection presentation preserves explicit multi-county membership", () => {
