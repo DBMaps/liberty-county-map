@@ -55,11 +55,11 @@ test('invalid, unknown, unsupported, and ambiguous input fail closed', () => {
   assert.equal(ambiguous.candidates.length, 2);
 });
 
-test('Settings is search-first and keeps manual selection collapsed and functional', () => {
+test('Settings is search-first without a manual traveler gate', () => {
   assert.match(html, /id="settingsAwarenessAreaSearchInput"[^>]*placeholder="77535 or Dayton"/);
   assert.match(html, /id="settingsAwarenessAreaSearchResult" hidden/);
   assert.match(html, /id="settingsAwarenessAreaChooser"[^>]*hidden/);
-  assert.match(html, />Choose from available areas</);
+  assert.doesNotMatch(html, />Choose from available areas</);
   assert.match(app, /selectGridlySettingsAwarenessArea\(target\.value \|\| "", "legacy_settings_awareness_area"/);
   assert.match(css, /@media \(max-width: 430px\)[\s\S]*settings-awareness-search-row/);
 });

@@ -16,15 +16,16 @@ function extractFunction(name) {
   throw new Error(`Could not extract ${name}`);
 }
 
-test('Portrait V2 exposes the accepted available-area action and shared picker', () => {
+test('Portrait V2 exposes one Home Area action and the shared picker', () => {
   const surface = extractFunction('buildSettingsSurfaceHtml');
-  const availableActionStart = app.indexOf('"settings-choose-available-areas": () =>');
-  assert.notEqual(availableActionStart, -1, 'Portrait V2 available-area action exists');
-  const actions = app.slice(availableActionStart, availableActionStart + 1400);
-  assert.match(surface, /Current view[\s\S]*Change Area[\s\S]*settings-choose-available-areas[\s\S]*Choose from available areas/);
+  const actionStart = app.indexOf('"settings-change-home-area": () =>');
+  assert.notEqual(actionStart, -1, 'Portrait V2 Home Area action exists');
+  const actions = app.slice(actionStart, actionStart + 500);
+  assert.match(surface, /Home area[\s\S]*settings-change-home-area/);
+  assert.doesNotMatch(surface, /Current view|Home ZIP|settings-choose-available-areas|Choose from available areas/);
   assert.doesNotMatch(surface, /Choose community manually|data-gridly-awareness-(?:county|community)-select|<select[^>]*awareness/i);
-  assert.match(surface, /buildGridlySettingsAwarenessOptionsHtml/);
-  assert.match(actions, /"settings-choose-available-areas"[\s\S]*openGridlySettingsAvailableAreaPicker/);
+  assert.match(surface, /data-gridly-home-area-primary-chooser="settings"/);
+  assert.match(actions, /"settings-change-home-area"[\s\S]*openGridlyPrimaryHomeAreaChooser/);
   assert.doesNotMatch(actions, /settings-choose-community-manually|updateGridlySettingsAwarenessCommunityOptions/);
 });
 

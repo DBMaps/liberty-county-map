@@ -98957,7 +98957,7 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
   const results = normalizedQuery
     ? `<div class="settings-manual-results"><span class="settings-manual-results-label">Results</span><div class="settings-manual-county-list" aria-live="polite">${resultHtml || `<p class="settings-manual-no-results" role="status">${emptyResult}</p>`}</div></div>`
     : '<p class="settings-manual-search-instruction">Start typing to find an available Gridly area.</p>';
-  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true">${options.consumerFlow ? "" : '<h3>Choose from available areas</h3><p class="settings-manual-search-helper">Search an available Gridly area by ZIP, town, or county.</p>'}<label>${options.consumerFlow ? "Search Texas community" : "Search ZIP, town, or county"}<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="off" placeholder="77535, Dayton, or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${pendingHtml}${results}</div>`;
+  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true">${options.consumerFlow ? '<h2>Choose your home area</h2><p class="settings-manual-search-helper">Search for your Texas community.</p>' : '<h3>Choose from available areas</h3><p class="settings-manual-search-helper">Search an available Gridly area by ZIP, town, or county.</p>'}<label>${options.consumerFlow ? "Search Texas community" : "Search ZIP, town, or county"}<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="postal-code" placeholder="77535, Dayton, or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${pendingHtml}${results}</div>`;
 }
 
 function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
@@ -99010,6 +99010,22 @@ function openGridlySettingsAvailableAreaPicker(root = null) {
   gridlySettingsManualAwarenessPendingCountyId = "";
   renderGridlyManualAwarenessAreaPicker(container, { focusSearch: true });
   setGridlySettingsAwarenessChooserOpen(true, scope);
+  return true;
+}
+
+// LP241.9A: every traveler-facing Set/Change Home Area action terminates here.
+// The ZIP prototype remains available as a guarded diagnostic, but is not an
+// authority for opening the primary Home Area journey.
+function openGridlyPrimaryHomeAreaChooser(root = null) {
+  const scope = root || (typeof document !== "undefined" ? document : null);
+  const container = scope?.querySelector?.("[data-gridly-home-area-primary-chooser='settings'], [data-gridly-settings-awareness-options], #settingsAwarenessAreaChooser") || null;
+  if (!container) return false;
+  gridlySettingsManualAwarenessQuery = "";
+  gridlySettingsManualAwarenessPending = "";
+  gridlySettingsManualAwarenessPendingCountyId = "";
+  renderGridlyManualAwarenessAreaPicker(container, { consumerFlow: true, focusSearch: true });
+  setGridlySettingsAwarenessChooserOpen(true, scope);
+  container.scrollIntoView?.({ block: "nearest" });
   return true;
 }
 
@@ -99192,14 +99208,25 @@ function gridlyLP2419HomeAreaAcceptance() {
   const selectedCountyId = record?.countyId || null;
   const multiCounty = Array.isArray(record?.countyMemberships) && record.countyMemberships.length > 1;
   const multiCountyMembershipExplicit = !multiCounty || Boolean(selectedCountyId && GRIDLY_COUNTY_REGISTRY?.[selectedCountyId]);
+  const primarySettingsAction = doc?.querySelector('[data-v2-action="settings-change-home-area"], [data-gridly-change-home-area]') || null;
   const redundantManualGatePresent = Boolean(doc?.querySelector("#settingsChooseCommunityManuallyBtn, [data-gridly-home-manual-gate]"));
-  const separateZipGateRequired = Boolean(doc?.querySelector("#gridlyWelcomeZipSetupBtn:not([hidden]), [data-gridly-home-zip-gate-required]"));
+  const zipOnlyModalRequired = Boolean(doc?.querySelector('[data-gridly-home-zip-gate-required], #gridlyWelcomeZipSetupBtn:not([hidden]), [data-v2-action="settings-change-home-zip"]'));
+  const chooseManuallyRequired = redundantManualGatePresent || Boolean(doc?.querySelector('[data-gridly-choose-manually-required]'));
+  const chooseAvailableAreasPrimary = Boolean(doc?.querySelector('[data-v2-action="settings-choose-available-areas"], [data-gridly-choose-available-primary]'));
+  const separateHomeZipPrimary = Boolean(doc?.querySelector('[data-gridly-settings-home-zip], [data-gridly-home-zip-primary]'));
+  const changeAreaOpensPrimarySearchDirectly = Boolean(primarySettingsAction && primarySettingsAction.dataset.v2Action === "settings-change-home-area");
+  const primaryJourneyStepCount = changeAreaOpensPrimarySearchDirectly ? 1 : null;
   const currentLocation = doc?.getElementById("gridlyWelcomeEnableLocationBtn") || null;
   const audit = {
     primaryChooserAvailable: Boolean(settingsSearch && onboardingSearch),
     primarySearchVisible: Boolean(chooser),
     redundantManualGatePresent,
-    separateZipGateRequired,
+    changeAreaOpensPrimarySearchDirectly,
+    zipOnlyModalRequired,
+    chooseManuallyRequired,
+    chooseAvailableAreasPrimary,
+    separateHomeZipPrimary,
+    primaryJourneyStepCount,
     currentLocationSecondary: Boolean(currentLocation && onboardingSearch && currentLocation.compareDocumentPosition(onboardingSearch) & Node.DOCUMENT_POSITION_PRECEDING),
     governedResultCount: Array.isArray(result?.candidates) ? result.candidates.length : (result?.awarenessArea ? 1 : 0),
     selectedIdentityClass: identity?.identityClass || null,
@@ -99210,7 +99237,7 @@ function gridlyLP2419HomeAreaAcceptance() {
     saveAccepted: validation.valid === true,
     rehydrationAccepted: rehydration.valid === true
   };
-  return Object.freeze({ ...audit, pass: audit.primaryChooserAvailable && !audit.redundantManualGatePresent && !audit.separateZipGateRequired && audit.currentLocationSecondary && audit.multiCountyMembershipExplicit && (!record || (audit.saveAccepted && audit.rehydrationAccepted)) });
+  return Object.freeze({ ...audit, pass: audit.primaryChooserAvailable && audit.changeAreaOpensPrimarySearchDirectly && !audit.zipOnlyModalRequired && !audit.chooseManuallyRequired && !audit.chooseAvailableAreasPrimary && !audit.separateHomeZipPrimary && audit.primaryJourneyStepCount === 1 && audit.currentLocationSecondary && audit.multiCountyMembershipExplicit && (!record || (audit.saveAccepted && audit.rehydrationAccepted)) });
 }
 
 if (typeof window !== "undefined") window.gridlyLP2419HomeAreaAcceptance = gridlyLP2419HomeAreaAcceptance;
@@ -117006,7 +117033,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const work = describe(places.work, "Work");
     const awareness = typeof getGridlySettingsAwarenessAreaDisplay === "function" ? getGridlySettingsAwarenessAreaDisplay() : { label: "Not selected", meta: "Choose the community-watch area Gridly should follow.", storageValue: "" };
     const homeDisplay = typeof getGridlyLp0517SettingsHomeDisplay === "function" ? getGridlyLp0517SettingsHomeDisplay() : { label: awareness.label, county: awareness.meta, zip: "Not set", zipSet: false, canonical: false };
-    const homeZipActionLabel = homeDisplay.zipSet ? "Change home ZIP" : "Add home ZIP";
+    const homeAreaActionLabel = homeDisplay.label && homeDisplay.label !== "Not selected" ? "Change Home Area" : "Choose Home Area";
     const checked = (value) => value ? " checked" : "";
     const selected = (value, target) => value === target ? " selected" : "";
     const html = `
@@ -117017,10 +117044,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           <div class="settings-list-detail">
             <p class="settings-placeholder-note">Choose the local area Gridly should watch first. Your area and name stay on this device.</p>
             <div class="settings-place-grid" aria-label="Awareness settings">
-              <article class="settings-place-card settings-place-card-wide settings-awareness-home-card" data-gridly-lp0517-settings-home="true"><span class="settings-place-label">Home area</span><strong data-gridly-settings-home-area>${escapeV2SettingsText(homeDisplay.label)}</strong><small data-gridly-settings-home-county>${escapeV2SettingsText(homeDisplay.county)}</small><span class="settings-place-label">Home ZIP</span><strong data-gridly-settings-home-zip>${escapeV2SettingsText(homeDisplay.zipSet ? homeDisplay.zip : "Not set")}</strong><button class="gridly-v2-tile settings-place-action" data-v2-action="settings-change-home-zip" type="button">${escapeV2SettingsText(homeZipActionLabel)}</button></article>
-              <article class="settings-place-card settings-place-card-wide settings-awareness-area-card" data-gridly-current-awareness-view="true"><span class="settings-place-label">Current view</span><strong data-gridly-settings-awareness-current>${escapeV2SettingsText(awareness.label)}</strong><small data-gridly-settings-awareness-meta>${escapeV2SettingsText(awareness.meta)}</small><button class="gridly-v2-tile settings-place-action" data-v2-action="settings-change-awareness-area" type="button" aria-expanded="false">Change Area</button><button class="gridly-v2-tile settings-place-action" data-v2-action="settings-choose-available-areas" type="button" aria-expanded="false">Choose from available areas</button></article>
+              <article class="settings-place-card settings-place-card-wide settings-awareness-home-card" data-gridly-lp0517-settings-home="true"><span class="settings-place-label">Home area</span><strong data-gridly-settings-home-area>${escapeV2SettingsText(homeDisplay.label)}</strong><small data-gridly-settings-home-county>${escapeV2SettingsText(homeDisplay.county)}</small><button class="gridly-v2-tile settings-place-action" data-v2-action="settings-change-home-area" type="button" aria-expanded="false">${escapeV2SettingsText(homeAreaActionLabel)}</button></article>
             </div>
-            <div class="settings-awareness-area-chooser" data-gridly-settings-awareness-options aria-label="Choose an awareness area" hidden>${typeof buildGridlySettingsAwarenessOptionsHtml === "function" ? buildGridlySettingsAwarenessOptionsHtml(awareness.storageValue) : ""}</div>
+            <section class="settings-awareness-area-chooser" data-gridly-home-area-primary-chooser="settings" data-gridly-settings-awareness-options aria-label="Choose your home area" hidden><h2>Choose your home area</h2><p>Search for your Texas community.</p></section>
             <div class="settings-select-grid">
               <label>Preferred Name<input data-v2-settings-field="personalization.preferredName" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher" value="${escapeV2SettingsText(settings.personalization?.preferredName || "")}"></label>
             </div>
@@ -118178,8 +118204,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "settings-alert-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-route-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-app-preferences": () => triggerV2DockAdapter("settings-open"),
-      "settings-change-home-zip": () => {
-        if (typeof gridlyOpenLp0516ZipConfirmationPrototype === "function") gridlyOpenLp0516ZipConfirmationPrototype();
+      "settings-change-home-area": () => {
+        const body = document.getElementById("gridlyPortraitV2SheetBody");
+        openGridlyPrimaryHomeAreaChooser(body || document);
       },
       "settings-choose-available-areas": () => {
         const body = document.getElementById("gridlyPortraitV2SheetBody");
@@ -118246,6 +118273,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         "route-edit-work-open",
         "route-manage-places-open",
         "settings-change-awareness-area",
+        "settings-change-home-area",
         "settings-select-awareness-area",
         "settings-replay-setup",
         "settings-feedback-open",

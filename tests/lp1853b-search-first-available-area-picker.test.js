@@ -17,11 +17,10 @@ function extractFunction(name) {
   throw new Error(`Could not extract ${name}`);
 }
 
-test('consumer copy consistently names the available-area path', () => {
-  assert.match(html, />Choose from available areas</);
+test('consumer copy removes the available-area gate from primary markup', () => {
+  assert.doesNotMatch(html, />Choose from available areas</);
   assert.doesNotMatch(html, /Browse areas manually/);
   const binding = app.slice(app.indexOf('const manualCommunityBtn'), app.indexOf('if (els.settingsFeedbackBtn'));
-  assert.match(binding, /Choose from available areas/);
   assert.doesNotMatch(binding, /Browse areas manually|Choose manually/);
   assert.match(extractFunction('renderGridlySettingsAwarenessSearchResult'), /Choose from available areas or enter a more specific area/);
 });
