@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build:lp24111": "node tools/lp24111/manufacture.mjs --write",
+    "execute:lp24111-normalization": "node tools/lp24111/normalize.mjs --execute",
     "verify:lp24111": "node tools/lp24111/manufacture.mjs --verify",
     "test:lp24111": "node --test tests/lp24111-overture-authority.test.mjs",
     "materialize:lp2416": "node tools/lp2416/statewide-address-certification.mjs --materialize",

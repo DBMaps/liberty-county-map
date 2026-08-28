@@ -71,6 +71,15 @@ function artifacts(){
  files['owner-poc-reconciliation.json']={schemaVersion:'gridly.lp24111.owner-poc.v1',executionState:'OWNER_OBSERVED_NOT_INDEPENDENTLY_REPRODUCED',areas:[{area:'Dayton / Liberty',evidence:['Walmart inventory','fuel','hospital/medical']},{area:'Tarkington / rural Liberty County',evidence:['H-E-B','Brookshire Brothers','Walmart','Tarkington Country Mart','local markets','convenience stores','gas','Dollar General','Family Dollar']},{area:'Pecos / West Texas',evidence:['Best Western','Holiday Inn Express','Hampton Inn','Fairfield','Comfort Suites','Home2 Suites','Motel 6','local/other lodging']} ]};
  files['exception-ledger.json']={schemaVersion:'gridly.lp24111.exceptions.v4',exceptions:[{id:'OWNER_CERTIFIED_RICH_SHARDS_ABSENT_FROM_CHECKOUT',severity:'BLOCKER',expectedFiles:168},{id:'DEDUP_ARTIFACT_NOT_MATERIALIZED',severity:'BLOCKER'},{id:'NORMALIZED_STATEWIDE_ANALYSIS_NOT_EXECUTED',severity:'BLOCKER'},{id:'PACKAGE_MEASUREMENTS_NOT_EXECUTED',severity:'BLOCKER'},{id:'LICENSE_COUNSEL_REVIEW',severity:'BLOCKER'},{id:'OSM_INCREMENT_NOT_MEASURED',severity:'OPEN'}]};
  files['certification.json']={schemaVersion:'gridly.lp24111.certification.v4',executiveResult:'PHASE_D_NOT_EXECUTED_INPUT_ARTIFACTS_UNAVAILABLE',richAuthorityConservation:'OWNER_CERTIFIED',productViability:'OVERTURE_TEXAS_POI_AUTHORITY_NOT_YET_PRODUCT_VIABLE',classifications:['OVERTURE_TEXAS_SPATIAL_AUTHORITY_CERTIFIED_EXACT','RICH_AUTHORITY_CONSERVATION_OWNER_CERTIFIED','NORMALIZATION_NOT_EXECUTED','LEGAL_REVIEW_REQUIRED'],productionPoiSearch:'NOT_LAUNCHED_NOT_CERTIFIED',zeroCostContract:'NON_RUNTIME',mergeRecommendation:'DO_NOT_MERGE_PRODUCT_VIABILITY_CERTIFICATION',nextAction:'Place all 168 tx-*.authority-matched.parquet files plus both certified authority Parquets in owner-local/lp24111, then rerun npm run build:lp24111.'};
+ const measuredPath=path.join(root,'owner-local/lp24111/normalized-measurements.json');
+ if(fs.existsSync(measuredPath)){
+  const localMeasured=JSON.parse(fs.readFileSync(measuredPath,'utf8'));
+  if(localMeasured.schemaVersion!=='gridly.lp24111.measured-normalization.v1'||localMeasured.releaseId!==release||!localMeasured.reports) throw Error('Invalid owner-local normalized measurements');
+  for(const [name,value] of Object.entries(localMeasured.reports)){
+   if(!(name in files)) throw Error(`Unknown measured report ${name}`);
+   files[name]={...files[name],...value};
+  }
+ }
  return files;
 }
 
