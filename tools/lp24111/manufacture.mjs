@@ -88,6 +88,12 @@ export function artifacts(options={}){
   const normalization=files['normalization-summary.json'];
   if(normalization.executionState==='OWNER_LOCAL_MEASURED'&&normalization.reason===unavailableReason)delete normalization.reason;
  }
+ const d2Path=options.d2MeasurementsPath??path.join(root,'owner-local/lp24111/phase-d2-certified-measurements.json');
+ if(fs.existsSync(d2Path)){
+  const d2=JSON.parse(fs.readFileSync(d2Path,'utf8'));
+  if(d2.schemaVersion!=='gridly.lp24111.measured-taxonomy-package.v1'||!d2.reports)throw Error('Invalid owner-local D.2 measurements');
+  for(const [name,value] of Object.entries(d2.reports)){if(!(name in files))throw Error(`Unknown D.2 measured report ${name}`);files[name]={...files[name],...value};delete files[name].reason;}
+ }
  return files;
 }
 
