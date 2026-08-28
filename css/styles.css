@@ -27495,3 +27495,14 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
   display: none !important;
   pointer-events: none !important;
 }
+
+/* LP241.8C: Portrait V2 owns presentation; the legacy tree retains only the
+   shared Leaflet canvas.  The matching runtime boundary also removes these
+   roots from focus and the accessibility tree. */
+body[data-layout-mode="portrait"] .app-shell > :not(#mapSection),
+body[data-layout-mode="portrait"] #mapSection > :not(.map-card),
+body[data-layout-mode="portrait"] #mapSection > .map-card > :not(.map-frame),
+body[data-layout-mode="portrait"] #mapSection > .map-card > .map-frame > :not(#map),
+body[data-layout-mode="portrait"] .mobile-floating-action-dock {
+  display: none !important;
+}

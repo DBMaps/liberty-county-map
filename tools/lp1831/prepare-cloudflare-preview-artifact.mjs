@@ -10,7 +10,10 @@ export const REPORT_DIR = 'reports/lp1831';
 export const STAGE_DIR = '.artifacts/lp1831/cloudflare-pages';
 export const GENERATED_AT = '1970-01-01T00:00:00.000Z';
 const ENTRY = ['index.html', 'beta-closed.html', 'beta-closure.html', 'manifest.json', 'service-worker.js'];
-const FAMILIES = ['js/', 'css/', 'assets/', 'data/', 'Community-Packages/', 'Crossing-Packages/'];
+// Runtime families are staged generically.  `audits/` contains browser-loaded
+// audit authorities (not test fixtures), and therefore has the same artifact
+// status as js/ rather than being selected one filename at a time.
+const FAMILIES = ['js/', 'css/', 'assets/', 'data/', 'audits/', 'Community-Packages/', 'Crossing-Packages/'];
 const addressManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/generated/lp104/txgio-addresses/runtime-manifest.json'), 'utf8'));
 const roadwayManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/roadway-runtime-manifest.json'), 'utf8'));
 const runtimeAddressPaths = new Set(['data/generated/lp104/txgio-addresses/runtime-manifest.json', ...addressManifest.packages.flatMap(entry => [entry.path, entry.certificate].filter(Boolean))]);
