@@ -98946,7 +98946,7 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
     })).join("");
   const pendingSelection = pendingArea || pendingOption;
   const pendingContext = pendingOption?.canonicalResolution ? "Multi-county community" : (GRIDLY_COUNTY_REGISTRY[pendingArea?.countyId]?.name || "");
-  const pendingHtml = pendingSelection ? `<div class="settings-manual-pending"><span>Selected area</span><strong>${escapeGridlySettingsAttribute(pendingSelection.label || pendingSelection.storageValue)}</strong><small>${escapeGridlySettingsAttribute(pendingContext)}</small><button type="button" class="primary-btn" data-gridly-manual-awareness-apply>${options.consumerFlow ? "Use this home area" : "Watch this area"}</button></div>` : "";
+  const pendingHtml = pendingSelection ? `<div class="settings-manual-pending"><span>Selected area</span><strong>${escapeGridlySettingsAttribute(pendingSelection.label || pendingSelection.storageValue)}</strong><small>${escapeGridlySettingsAttribute(pendingContext)}</small><button type="button" class="primary-btn" data-gridly-manual-awareness-apply>Use this Home Area</button></div>` : "";
   const emptyResult = search.status === "INVALID_ZIP"
     ? "Enter a valid 5-digit ZIP code."
     : search.status === "RESOLVED_NOT_OPERATIONAL" || (search.status === "NOT_FOUND" && /^\d{5}$/.test(normalizedQuery))
@@ -98957,7 +98957,7 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
   const results = normalizedQuery
     ? `<div class="settings-manual-results"><span class="settings-manual-results-label">Results</span><div class="settings-manual-county-list" aria-live="polite">${resultHtml || `<p class="settings-manual-no-results" role="status">${emptyResult}</p>`}</div></div>`
     : '<p class="settings-manual-search-instruction">Start typing to find an available Gridly area.</p>';
-  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true">${options.consumerFlow ? '<h2>Choose your home area</h2><p class="settings-manual-search-helper">Search for your Texas community.</p>' : '<h3>Choose from available areas</h3><p class="settings-manual-search-helper">Search an available Gridly area by ZIP, town, or county.</p>'}<label>${options.consumerFlow ? "Search Texas community" : "Search ZIP, town, or county"}<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="postal-code" placeholder="77535, Dayton, or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${pendingHtml}${results}</div>`;
+  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h2>Choose your home area</h2><label>Search your Texas community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="postal-code" placeholder="Dayton or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${results}${pendingHtml}</div>`;
 }
 
 function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
@@ -98992,7 +98992,7 @@ function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
     if (applied) {
       gridlySettingsManualAwarenessPending = "";
       gridlySettingsManualAwarenessPendingCountyId = "";
-      renderGridlyManualAwarenessAreaPicker(container);
+      renderGridlyManualAwarenessAreaPicker(container, options);
     }
   });
   if (options.focusSearch) {
