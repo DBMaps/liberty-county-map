@@ -1,42 +1,34 @@
 {
-  "schemaVersion": "gridly.lp24111.package-size.v1",
+  "schemaVersion": "gridly.lp24111.shards.v1",
   "executionState": "NOT_EXECUTED",
-  "measurements": {
-    "normalizedTexasBytes": null,
-    "gzipBytes": null,
-    "brotliBytes": null,
-    "averageCountyBytes": null,
-    "largestCountyBytes": null,
-    "ruralCountyBytes": null,
-    "metroCountyBytes": null,
-    "communityRadiusBytes": null
-  },
-  "options": [
-    {
-      "id": "A",
-      "design": "county JSON/JSONL",
-      "boundaryHandling": "county plus intersecting neighbor/radius manifest"
-    },
-    {
-      "id": "B",
-      "design": "compressed geographic shards"
-    },
-    {
-      "id": "C",
-      "design": "compact client index"
-    },
-    {
-      "id": "D",
-      "design": "Supabase governed index"
-    },
-    {
-      "id": "E",
-      "design": "hybrid static manifest plus bounded server search"
-    }
+  "architecture": [
+    "literal/precomputed shard bounds",
+    "remote bounded rich projection",
+    "local authoritative-ID match",
+    "normalize",
+    "category map",
+    "identity audit",
+    "quality audit",
+    "package",
+    "verify",
+    "immutable manifest"
   ],
-  "provisionalRecommendation": "B: compressed spatial shards with small manifest and adjacent/radius shard expansion; certify only after measured extract",
+  "literalPushdownEvidence": {
+    "kingRows": 14,
+    "seconds": 6.46
+  },
+  "measurements": {
+    "rawRowsPerShard": null,
+    "normalizedRowsPerShard": null,
+    "compressedBytes": null,
+    "denseMetroWorstCase": null,
+    "ruralShardBytes": null,
+    "queryFanout": null
+  },
   "constraints": {
-    "cloudflareSingleAssetBytes": 26214400,
-    "wholeTexasPhoneDownloadForbidden": true
-  }
+    "singleAssetBytes": 26214400,
+    "wholeTexasPhoneDownloadForbidden": true,
+    "neighborAndRadiusExpansionRequired": true
+  },
+  "productionChoice": "NOT_SELECTED_PENDING_MEASUREMENTS"
 }

@@ -1,11 +1,11 @@
 {
-  "schemaVersion": "gridly.lp24111.address-quality.v1",
-  "executionState": "NOT_EXECUTED",
-  "metrics": {
-    "freeformAddress": null,
+  "schemaVersion": "gridly.lp24111.address.v2",
+  "executionState": "KING_SAMPLE_ONLY",
+  "statewideMetrics": {
+    "address": null,
     "locality": null,
     "region": null,
     "postcode": null
   },
-  "fallbackPolicy": "Use governed nearest community and spatially assigned county as context labels only; never fabricate a street address."
+  "policy": "Compare against governed spatial identity; do not fabricate or silently correct source addresses."
 }

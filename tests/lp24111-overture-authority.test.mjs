@@ -2,21 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {verify} from '../tools/lp24111/manufacture.mjs';
+const sql=()=>fs.readFileSync('tools/lp24111/extract-texas.sql','utf8');
 
-test('LP241.11 deterministic audit contracts are complete and non-runtime',()=>{
- const a=verify();
- assert.equal(a['overture-release.json'].releaseId,'2026-08-19.0');
- assert.equal(a['county-coverage.json'].accountedCountyCount,254);
- assert.equal(a['community-coverage.json'].canonicalPlaceAccounted,1859);
- assert.equal(a['texas-extraction-summary.json'].executionState,'NOT_EXECUTED');
- assert.equal(a['certification.json'].productionPoiSearch,'NOT_LAUNCHED_NOT_CERTIFIED');
- assert.equal(a['normalized-schema-proposal.json'].zeroQueryCost,true);
- assert.match(fs.readFileSync('tools/lp24111/extract-texas.sql','utf8'),/ST_Intersects/);
- assert.doesNotMatch(fs.readFileSync('js/app.js','utf8'),/lp24111|overture-texas-places/i);
-});
-
-test('medical categories cannot absorb veterinary records',()=>{
- const a=verify(), m=a['category-coverage.json'].mapping;
- assert.ok(m.humanMedicalExclusions.includes('veterinarian'));
- assert.ok(m.humanMedicalExclusions.includes('animal_hospital'));
-});
+test('owner statewide evidence is conserved without overstating uniqueness',()=>{const a=verify(); assert.equal(a['texas-extraction-summary.json'].spatialAuthority.rows,1462815); assert.equal(a['county-coverage.json'].measured,254); assert.equal(a['county-coverage.json'].withoutPois,0); assert.equal(a['county-assignment-certification.json'].exactUniqueIdConservation,'NOT_EXECUTED');});
+test('launcher and staged CRS authority are explicit',()=>{const ps=fs.readFileSync('tools/lp24111/extract-texas.ps1','utf8'); assert.match(ps,/Get-Content -Raw/); assert.match(ps,/\$program \| & \$DuckDb/); assert.doesNotMatch(ps,/\.read/); assert.match(sql(),/ST_Transform\(geom, 'EPSG:4269', 'OGC:CRS84', always_xy := true\)/); assert.match(sql(),/BOUNDARY_MULTI_INTERSECTION/);});
+test('remote extraction is lightweight and literal-pruned',()=>{assert.match(sql(),/SELECT id, geometry, bbox/); assert.doesNotMatch(sql(),/SELECT p\.\*/i); assert.match(sql(),/bbox\.xmin <= -93\.5/); assert.match(sql(),/PERFORMANCE|literal/i);});
+test('quality dimensions are independent',()=>{const a=verify(); assert.ok(a['category-coverage.json'].mapping.humanMedicalExclusions.includes('animal_hospital')); assert.ok(a['category-coverage.json'].mapping.nonDestinationExclusions.includes('structure_and_geography')); assert.equal(a['spatial-metadata-conflicts.json'].classification,'SPATIAL_METADATA_CONFLICT'); assert.match(a['confidence-analysis.json'].policy,/NO_CUTOFF/); assert.ok(a['duplicate-child-poi-analysis.json'].classifications.includes('CHILD_POI'));});
+test('governed PLACE and non-PLACE coverage remain represented',()=>{const a=verify(); assert.equal(a['community-coverage.json'].canonicalPlaceAccounted,1859); assert.equal(a['governed-non-place-coverage.json'].governedInventory.total,29); assert.equal(a['lp24110-cohort-reconciliation.json'].communityCount,22);});
+test('runtime and deployment remain untouched',()=>{const a=verify(); assert.equal(a['certification.json'].productionPoiSearch,'NOT_LAUNCHED_NOT_CERTIFIED'); assert.equal(a['refresh-pipeline.json'].deployIncluded,false); assert.doesNotMatch(fs.readFileSync('js/app.js','utf8'),/lp24111|overture-texas-places/i);});

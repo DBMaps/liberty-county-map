@@ -1,31 +1,35 @@
 {
-  "schemaVersion": "gridly.lp24111.normalized-schema.v1",
-  "status": "PROPOSAL_NOT_RUNTIME",
-  "runtimeFields": {
-    "poiId": "string",
-    "name": "string",
-    "normalizedName": "string",
-    "brand": "string|null",
-    "primaryCategory": "string|null",
-    "gridlyCategories": "string[]",
-    "latitude": "number",
-    "longitude": "number",
-    "address": "string|null",
-    "locality": "string|null",
-    "postcode": "string|null",
-    "countyId": "string",
-    "confidence": "number|null",
-    "operatingStatus": "string|null",
-    "source": "OVERTURE"
-  },
-  "buildOnlyFields": [
+  "schemaVersion": "gridly.lp24111.normalized.v2",
+  "status": "BUILD_PROPOSAL_NOT_RUNTIME",
+  "fields": [
+    "poiId",
+    "name",
+    "normalizedName",
+    "brand",
+    "gridlyCategories",
+    "latitude",
+    "longitude",
+    "sourceAddress",
+    "sourceLocality",
+    "sourceRegion",
+    "sourcePostcode",
+    "countyFips",
+    "spatialAuthority",
+    "metadataConsistency",
+    "identityClassification",
+    "confidence",
+    "operatingStatus",
+    "source"
+  ],
+  "buildOnly": [
+    "bbox",
     "alternateNames",
     "alternateCategories",
+    "taxonomy",
     "phones",
     "websites",
-    "sourceRecords",
-    "conflationSignals",
-    "bbox"
+    "sources",
+    "conflationSignals"
   ],
   "zeroQueryCost": true
 }

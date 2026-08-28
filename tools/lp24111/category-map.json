@@ -12,6 +12,7 @@
     "SCHOOL": ["school"],
     "CONVENIENCE": ["convenience_store"]
   },
-  "humanMedicalExclusions": ["veterinarian", "veterinary_clinic", "animal_hospital", "pet_wellness"],
+  "humanMedicalExclusions": ["veterinarian", "veterinary_clinic", "animal_hospital", "animal_clinic", "pet_wellness"],
+  "nonDestinationExclusions": ["mountain", "river", "structure_and_geography"],
   "notes": "Exact governed mapping candidates. Alternate categories may add a category but cannot override the human-medical exclusions. Resort requires build review before inclusion."
 }

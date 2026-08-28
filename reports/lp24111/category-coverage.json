@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "gridly.lp24111.category-coverage.v1",
+  "schemaVersion": "gridly.lp24111.categories.v2",
   "executionState": "NOT_EXECUTED",
-  "mappingSha256": "ed9e90641d36e8325404375139c64952ddea03defb17a063c0e3854423520aaa",
+  "mappingSha256": "0cc715ad67dccc49448a8003ec749af149414630ae2c507dd65debd74a7d1286",
   "mapping": {
     "schemaVersion": "gridly.lp24111.category-map.v1",
     "categories": {
@@ -45,7 +45,13 @@
       "veterinarian",
       "veterinary_clinic",
       "animal_hospital",
+      "animal_clinic",
       "pet_wellness"
+    ],
+    "nonDestinationExclusions": [
+      "mountain",
+      "river",
+      "structure_and_geography"
     ],
     "notes": "Exact governed mapping candidates. Alternate categories may add a category but cannot override the human-medical exclusions. Resort requires build review before inclusion."
   },
