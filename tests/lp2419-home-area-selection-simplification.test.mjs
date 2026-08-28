@@ -27,6 +27,21 @@ test("onboarding and Settings start with the shared community-or-ZIP search", ()
   assert.match(source, /searchGridlySettingsAwarenessArea\(document\.getElementById\("gridlyWelcomeHomeAreaSearchInput"\)/);
 });
 
+test("Portrait Settings exposes one Home Area action and opens the primary chooser directly", () => {
+  const surface = functionSource("buildSettingsSurfaceHtml");
+  const opener = functionSource("openGridlyPrimaryHomeAreaChooser");
+  const acceptance = functionSource("gridlyLP2419HomeAreaAcceptance");
+  assert.match(surface, /data-v2-action="settings-change-home-area"/);
+  assert.match(surface, /Change Home Area/);
+  assert.match(surface, /Choose Home Area/);
+  assert.doesNotMatch(surface, /Home ZIP|Current view|settings-change-home-zip|settings-choose-available-areas|Choose from available areas/);
+  assert.match(opener, /renderGridlyManualAwarenessAreaPicker\(container, \{ consumerFlow: true, focusSearch: true \}\)/);
+  assert.doesNotMatch(opener, /gridlyOpenLp0516ZipConfirmationPrototype/);
+  for (const field of ["changeAreaOpensPrimarySearchDirectly", "zipOnlyModalRequired", "chooseManuallyRequired", "chooseAvailableAreasPrimary", "separateHomeZipPrimary", "primaryJourneyStepCount"]) {
+    assert.match(acceptance, new RegExp(field));
+  }
+});
+
 test("selection presentation preserves explicit multi-county membership", () => {
   const renderer = functionSource("renderGridlySettingsAwarenessSearchResult");
   const saver = functionSource("gridlySaveCanonicalMultiCountyPlaceHome");

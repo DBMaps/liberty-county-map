@@ -19,9 +19,9 @@ function extractFunction(name) {
   throw new Error(`Could not extract ${name}`);
 }
 
-test('available-area search stays secondary, collapsed, and replaces native county/community selects', () => {
+test('governed inventory remains available without a primary available-area gate', () => {
   assert.match(html, /id="settingsAwarenessAreaChooser"[^>]*hidden/);
-  assert.match(html, />Choose from available areas</);
+  assert.doesNotMatch(html, />Choose from available areas</);
   assert.match(html, /id="settingsAwarenessAreaSearchInput"[^>]*placeholder="77535 or Dayton"/);
   const builder = extractFunction('buildGridlySettingsAwarenessOptionsHtml');
   assert.doesNotMatch(builder, /<select|data-gridly-awareness-county-select|data-gridly-awareness-community-select/);
