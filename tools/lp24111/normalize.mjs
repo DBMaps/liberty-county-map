@@ -10,6 +10,7 @@ const releaseId='2026-08-19.0';
 const q=x=>`'${String(x).replaceAll("'","''")}'`;
 export const required={authority:'overture-texas-spatial-authority.geoparquet',assignment:'county-assignment-certification.parquet'};
 export const expected={shards:168,inputRows:1462893,uniqueIds:1462815,multiShardIds:52,extraRows:78,maxOccurrences:4};
+export const matchedColumns=['id','geometry','names','categories','basic_category','taxonomy','confidence','brand','addresses','operating_status','sources'];
 
 export function detectInputs(directory=local){
  const files=fs.existsSync(directory)?fs.readdirSync(directory):[];
@@ -25,32 +26,50 @@ export function categoryFor(text){
 export function eligibilityFor(text){const s=String(text??'').toLowerCase();if(/mountain|river|structure_and_geography|natural_feature|waterfall|glacier|volcano|forest|island/.test(s))return 'GRIDLY_EXCLUDED';if(categoryFor(s))return 'GRIDLY_ELIGIBLE_DESTINATION';if(/place_of_worship|residential|building|intersection|neighborhood|administrative/.test(s))return 'GRIDLY_NON_DESTINATION';return 'GRIDLY_REVIEW_REQUIRED';}
 export function duplicateWinner(rows){return [...rows].sort((a,b)=>String(a.shard).localeCompare(String(b.shard))||String(a.id).localeCompare(String(b.id)))[0];}
 
-function duck(sql,options={}){const run=(options.spawn??spawnSync)(options.duckdb??process.env.DUCKDB??'duckdb',['-json'],{input:sql,encoding:'utf8',maxBuffer:1024**3});if(run.error)throw run.error;if(run.status!==0)throw Error(run.stderr?.trim()||`DuckDB exited ${run.status}`);return run.stdout?.trim()?JSON.parse(run.stdout):[];}
+function duck(sql,options={}){const run=(options.spawn??spawnSync)(options.duckdb??process.env.DUCKDB??'duckdb',['-bail','-json'],{input:sql,encoding:'utf8',maxBuffer:1024**3});if(run.error)throw run.error;if(run.status!==0)throw Error(run.stderr?.trim()||`DuckDB exited ${run.status}`);return run.stdout?.trim()?JSON.parse(run.stdout):[];}
 const queryOne=(sql,o)=>duck(sql,o)[0];
 const number=(x,k)=>Number(x[k]);
 function atomicJson(file,value){const tmp=`${file}.tmp-${process.pid}`;fs.writeFileSync(tmp,JSON.stringify(value,null,2)+'\n');fs.renameSync(tmp,file);}
 
-export function normalizationSql(directory=local){
+export function normalizationStages(directory=local){
  const glob=path.join(directory,'tx-*.authority-matched.parquet'),authority=path.join(directory,required.authority),assignment=path.join(directory,required.assignment);
  const dedup=path.join(directory,'overture-texas-rich-authority-dedup.parquet'),normalized=path.join(directory,'overture-texas-normalized-poi.parquet'),eligible=path.join(directory,'overture-texas-eligible-poi.parquet');
- return `LOAD spatial; SET preserve_insertion_order=false;
-CREATE OR REPLACE TEMP TABLE rich AS SELECT *, filename FROM read_parquet(${q(glob)}, filename=true);
-CREATE OR REPLACE TEMP TABLE ranked AS SELECT *, row_number() OVER(PARTITION BY id ORDER BY filename, to_json(struct_pack(names:=names,categories:=categories,brand:=brand,addresses:=addresses,sources:=sources))) rn, count(*) OVER(PARTITION BY id) occurrences, count(DISTINCT md5(to_json(struct_pack(names:=names,categories:=categories,brand:=brand,addresses:=addresses,confidence:=confidence,operating_status:=operating_status,sources:=sources)))) OVER(PARTITION BY id) content_versions FROM rich;
-COPY (SELECT * EXCLUDE(filename,rn) FROM ranked WHERE rn=1 ORDER BY id) TO ${q(dedup)} (FORMAT PARQUET,COMPRESSION ZSTD,ROW_GROUP_SIZE 100000);
-CREATE OR REPLACE TEMP TABLE base AS SELECT r.*, a.county_fips, lower(to_json(struct_pack(categories:=r.categories,basic_category:=r.basic_category,taxonomy:=r.taxonomy,names:=r.names,brand:=r.brand))) searchable, ST_X(ST_GeomFromWKB(r.geometry)) longitude, ST_Y(ST_GeomFromWKB(r.geometry)) latitude FROM read_parquet(${q(dedup)}) r JOIN read_parquet(${q(assignment)}) a USING(id);
-CREATE OR REPLACE TEMP TABLE normalized AS SELECT *, CASE
+ const settings='LOAD spatial; SET preserve_insertion_order=false;';
+ const ranked=`SELECT *, row_number() OVER(PARTITION BY id ORDER BY filename, to_json(struct_pack(names:=names,categories:=categories,brand:=brand,addresses:=addresses,sources:=sources))) rn, count(*) OVER(PARTITION BY id) occurrences, count(DISTINCT md5(to_json(struct_pack(names:=names,categories:=categories,brand:=brand,addresses:=addresses,confidence:=confidence,operating_status:=operating_status,sources:=sources)))) OVER(PARTITION BY id) content_versions FROM read_parquet(${q(glob)}, filename=true, union_by_name=true)`;
+ const base=`SELECT r.*, a.county_fips, lower(to_json(struct_pack(categories:=r.categories,basic_category:=r.basic_category,taxonomy:=r.taxonomy,names:=r.names,brand:=r.brand))) searchable, ST_X(r.geometry) longitude, ST_Y(r.geometry) latitude FROM read_parquet(${q(dedup)}) r JOIN read_parquet(${q(assignment)}) a USING(id)`;
+ const category=`SELECT *, CASE
  WHEN regexp_matches(searchable,'veterinar|animal_hospital|animal_clinic|pet_wellness') THEN NULL
  WHEN regexp_matches(searchable,'emergency_room|emergency_department') THEN 'EMERGENCY_CARE' WHEN regexp_matches(searchable,'urgent_care') THEN 'URGENT_CARE' WHEN regexp_matches(searchable,'hospital') THEN 'HOSPITAL' WHEN regexp_matches(searchable,'pharmacy') THEN 'PHARMACY'
  WHEN regexp_matches(searchable,'gas_station|fuel_station') THEN 'FUEL' WHEN regexp_matches(searchable,'charging_station|ev_charging') THEN 'EV_CHARGING' WHEN regexp_matches(searchable,'truck_stop') THEN 'TRUCK_STOP' WHEN regexp_matches(searchable,'convenience_store') THEN 'CONVENIENCE_STORE'
  WHEN regexp_matches(searchable,'grocery_store|supermarket') THEN 'GROCERY' WHEN regexp_matches(searchable,'restaurant|fast_food|cafe') THEN 'RESTAURANT' WHEN regexp_matches(searchable,'hotel|motel|lodge|resort') THEN 'LODGING' WHEN regexp_matches(searchable,'school') THEN 'SCHOOL'
- WHEN regexp_matches(searchable,'bank') THEN 'BANK' WHEN regexp_matches(searchable,'atm') THEN 'ATM' WHEN regexp_matches(searchable,'auto_repair|car_repair') THEN 'AUTO_REPAIR' WHEN regexp_matches(searchable,'tire_shop|tire_service') THEN 'TIRE_SERVICE' WHEN regexp_matches(searchable,'parking') THEN 'PARKING' WHEN regexp_matches(searchable,'airport') THEN 'AIRPORT' WHEN regexp_matches(searchable,'bus_station') THEN 'BUS_STATION' WHEN regexp_matches(searchable,'train_station') THEN 'TRAIN_STATION' WHEN regexp_matches(searchable,'police') THEN 'POLICE' WHEN regexp_matches(searchable,'fire_station') THEN 'FIRE' WHEN regexp_matches(searchable,'post_office') THEN 'POST_OFFICE' WHEN regexp_matches(searchable,'government') THEN 'GOVERNMENT' WHEN regexp_matches(searchable,'shopping_mall') THEN 'SHOPPING' WHEN regexp_matches(searchable,'department_store|discount_store|general_store') THEN 'GENERAL_RETAIL' WHEN regexp_matches(searchable,'agricultural_service|farm_supply') THEN 'AGRICULTURAL_SERVICE' END gridly_category FROM base;
-COPY (SELECT *, CASE WHEN regexp_matches(searchable,'mountain|river|structure_and_geography|natural_feature|waterfall|glacier|volcano|forest|island') THEN 'GRIDLY_EXCLUDED' WHEN gridly_category IS NOT NULL THEN 'GRIDLY_ELIGIBLE_DESTINATION' WHEN regexp_matches(searchable,'place_of_worship|residential|building|intersection|neighborhood|administrative') THEN 'GRIDLY_NON_DESTINATION' ELSE 'GRIDLY_REVIEW_REQUIRED' END eligibility_class FROM normalized ORDER BY id) TO ${q(normalized)} (FORMAT PARQUET,COMPRESSION ZSTD,ROW_GROUP_SIZE 100000);
-COPY (SELECT * FROM read_parquet(${q(normalized)}) WHERE eligibility_class='GRIDLY_ELIGIBLE_DESTINATION' ORDER BY id) TO ${q(eligible)} (FORMAT PARQUET,COMPRESSION ZSTD,ROW_GROUP_SIZE 100000);`;
+ WHEN regexp_matches(searchable,'bank') THEN 'BANK' WHEN regexp_matches(searchable,'atm') THEN 'ATM' WHEN regexp_matches(searchable,'auto_repair|car_repair') THEN 'AUTO_REPAIR' WHEN regexp_matches(searchable,'tire_shop|tire_service') THEN 'TIRE_SERVICE' WHEN regexp_matches(searchable,'parking') THEN 'PARKING' WHEN regexp_matches(searchable,'airport') THEN 'AIRPORT' WHEN regexp_matches(searchable,'bus_station') THEN 'BUS_STATION' WHEN regexp_matches(searchable,'train_station') THEN 'TRAIN_STATION' WHEN regexp_matches(searchable,'police') THEN 'POLICE' WHEN regexp_matches(searchable,'fire_station') THEN 'FIRE' WHEN regexp_matches(searchable,'post_office') THEN 'POST_OFFICE' WHEN regexp_matches(searchable,'government') THEN 'GOVERNMENT' WHEN regexp_matches(searchable,'shopping_mall') THEN 'SHOPPING' WHEN regexp_matches(searchable,'department_store|discount_store|general_store') THEN 'GENERAL_RETAIL' WHEN regexp_matches(searchable,'agricultural_service|farm_supply') THEN 'AGRICULTURAL_SERVICE' END gridly_category FROM (${base}) base`;
+ return [
+  {name:'RICH_INPUT_READ',artifact:glob,sql:`${settings} SELECT count(*)::BIGINT row_count FROM read_parquet(${q(glob)}, filename=true, union_by_name=true);`},
+  {name:'MATERIALIZE_DEDUP',artifact:dedup,sql:`${settings} COPY (SELECT * EXCLUDE(filename,rn) FROM (${ranked}) ranked WHERE rn=1 ORDER BY id) TO ${q(dedup)} (FORMAT PARQUET,COMPRESSION ZSTD,ROW_GROUP_SIZE 100000);`},
+  {name:'MATERIALIZE_NORMALIZED',artifact:normalized,sql:`${settings} COPY (SELECT *, CASE WHEN regexp_matches(searchable,'mountain|river|structure_and_geography|natural_feature|waterfall|glacier|volcano|forest|island') THEN 'GRIDLY_EXCLUDED' WHEN gridly_category IS NOT NULL THEN 'GRIDLY_ELIGIBLE_DESTINATION' WHEN regexp_matches(searchable,'place_of_worship|residential|building|intersection|neighborhood|administrative') THEN 'GRIDLY_NON_DESTINATION' ELSE 'GRIDLY_REVIEW_REQUIRED' END eligibility_class FROM (${category}) normalized ORDER BY id) TO ${q(normalized)} (FORMAT PARQUET,COMPRESSION ZSTD,ROW_GROUP_SIZE 100000);`},
+  {name:'MATERIALIZE_ELIGIBLE',artifact:eligible,sql:`${settings} COPY (SELECT * FROM read_parquet(${q(normalized)}) WHERE eligibility_class='GRIDLY_ELIGIBLE_DESTINATION' ORDER BY id) TO ${q(eligible)} (FORMAT PARQUET,COMPRESSION ZSTD,ROW_GROUP_SIZE 100000);`}
+ ];
+}
+
+export function normalizationSql(directory=local){return normalizationStages(directory).map(x=>x.sql).join('\n');}
+
+export function validateMatchedSchemas(directory=local,options={}){
+ const input=detectInputs(directory),query=options.query??(sql=>duck(sql,options));
+ for(const shard of input.shards){
+  const file=path.join(directory,shard); let schema;
+  try{schema=query(`LOAD spatial; DESCRIBE SELECT * FROM read_parquet(${q(file)});`);}catch(error){throw Error(`Stage VALIDATE_INPUT_SCHEMA failed; input=${file}; DuckDB: ${error.message}`);}
+  const columns=new Map(schema.map(x=>[x.column_name,String(x.column_type??x.column_type_name??'')]));
+  const missing=matchedColumns.filter(x=>!columns.has(x));if(missing.length)throw Error(`Stage VALIDATE_INPUT_SCHEMA failed; input=${file}; missing columns: ${missing.join(', ')}`);
+  const geometry=columns.get('geometry');if(!/^GEOMETRY(?:\b|\()/i.test(geometry)||/^BLOB$/i.test(geometry))throw Error(`Stage VALIDATE_INPUT_SCHEMA failed; input=${file}; incompatible geometry logical type ${geometry||'(unknown)'}; expected native GEOMETRY / OGC:CRS84`);
+ }
+ return {shardCount:input.shards.length,geometry:'native GEOMETRY / OGC:CRS84'};
 }
 
 export function execute(options={}){
  const directory=options.directory??local,input=detectInputs(directory);if(!input.ready)throw Error(`Phase D normalization requires authority, county assignment, and exactly 168 matched shards; detected authority=${input.authority} assignment=${input.assignment} shards=${input.shards.length}`);
- const run=options.query??(sql=>duck(sql,options));run(normalizationSql(directory));
+ const run=options.query??(sql=>duck(sql,options));validateMatchedSchemas(directory,{...options,query:run});
+ const stages=normalizationStages(directory);for(const output of stages.slice(1).map(x=>x.artifact))if(fs.existsSync(output))fs.rmSync(output);
+ for(const stage of stages)try{run(stage.sql);}catch(error){for(const output of stages.slice(1).map(x=>x.artifact))if(fs.existsSync(output))fs.rmSync(output);throw Error(`Stage ${stage.name} failed; artifact/input=${stage.artifact}; DuckDB: ${error.message}`);}
  const glob=q(path.join(directory,'tx-*.authority-matched.parquet')),dedup=q(path.join(directory,'overture-texas-rich-authority-dedup.parquet')),normalized=q(path.join(directory,'overture-texas-normalized-poi.parquet')),authority=q(path.join(directory,required.authority));
  const conservation=queryOne(`WITH x AS (SELECT id,count(*) n,count(DISTINCT md5(to_json(struct_pack(names:=names,categories:=categories,brand:=brand,addresses:=addresses,confidence:=confidence,operating_status:=operating_status,sources:=sources)))) versions FROM read_parquet(${glob}) GROUP BY id) SELECT (SELECT count(*) FROM read_parquet(${glob})) input_rows,count(*) unique_ids,count(*) FILTER(WHERE n>1) multi_ids,sum(n-1) extra_rows,max(n) max_occurrences,sum(CASE WHEN versions>1 THEN 1 ELSE 0 END) content_conflicts,(SELECT count(*) FROM read_parquet(${authority}) a LEFT JOIN x USING(id) WHERE x.id IS NULL) missing_authority,(SELECT count(*) FROM x LEFT JOIN read_parquet(${authority}) a USING(id) WHERE a.id IS NULL) outside_authority FROM x`,options);
  const got=[number(conservation,'input_rows'),number(conservation,'unique_ids'),number(conservation,'multi_ids'),number(conservation,'extra_rows'),number(conservation,'max_occurrences')],want=[expected.inputRows,expected.uniqueIds,expected.multiShardIds,expected.extraRows,expected.maxOccurrences];if(got.some((x,i)=>x!==want[i])||number(conservation,'missing_authority')||number(conservation,'outside_authority'))throw Error(`Certified conservation mismatch: got ${got.join('/')}`);
