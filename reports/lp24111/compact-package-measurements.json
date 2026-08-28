@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp24111.compact-packages.v1",
+  "executionState": "NOT_EXECUTED",
+  "eligibleOnly": true,
+  "compression": "gzip-9",
+  "compactFields": [
+    "id",
+    "displayName",
+    "normalizedName",
+    "brand",
+    "gridlyCategory",
+    "latitude",
+    "longitude",
+    "countyFips",
+    "locality",
+    "operatingStatus"
+  ],
+  "statistics": null,
+  "denseShard": null,
+  "thresholdBytes": 26214400,
+  "searchFanout": null,
+  "reason": "Compact artifacts must be measured from the absent owner-local normalized Parquet; estimates are prohibited."
+}
