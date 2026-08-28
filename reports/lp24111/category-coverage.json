@@ -1,7 +1,7 @@
 {
   "schemaVersion": "gridly.lp24111.categories.v2",
-  "executionState": "NOT_EXECUTED",
-  "mappingSha256": "0cc715ad67dccc49448a8003ec749af149414630ae2c507dd65debd74a7d1286",
+  "executionState": "OWNER_LOCAL_MEASURED",
+  "mappingSha256": "689163116ee8451dd856c12d1a5e1adde1a3049918321fb1e9f0e7e3a3251ac7",
   "mapping": {
     "schemaVersion": "gridly.lp24111.category-map.v1",
     "categories": {
@@ -57,64 +57,139 @@
   },
   "results": [
     {
-      "category": "FUEL",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "category": "AGRICULTURAL_SERVICE",
+      "count": 7989,
+      "countiesRepresented": 253
     },
     {
-      "category": "HOSPITAL",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "category": "AIRPORT",
+      "count": 2199,
+      "countiesRepresented": 232
+    },
+    {
+      "category": "ATM",
+      "count": 13073,
+      "countiesRepresented": 217
+    },
+    {
+      "category": "AUTO_REPAIR",
+      "count": 743,
+      "countiesRepresented": 94
+    },
+    {
+      "category": "BANK",
+      "count": 15830,
+      "countiesRepresented": 245
+    },
+    {
+      "category": "BUS_STATION",
+      "count": 418,
+      "countiesRepresented": 74
+    },
+    {
+      "category": "CONVENIENCE_STORE",
+      "count": 11406,
+      "countiesRepresented": 248
     },
     {
       "category": "EMERGENCY_CARE",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "count": 1253,
+      "countiesRepresented": 119
     },
     {
-      "category": "URGENT_CARE",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "category": "EV_CHARGING",
+      "count": 247,
+      "countiesRepresented": 43
     },
     {
-      "category": "PHARMACY",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "category": "FIRE",
+      "count": 2415,
+      "countiesRepresented": 226
     },
     {
-      "category": "RESTAURANT",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "category": "FUEL",
+      "count": 21512,
+      "countiesRepresented": 250
+    },
+    {
+      "category": "GENERAL_RETAIL",
+      "count": 7553,
+      "countiesRepresented": 229
+    },
+    {
+      "category": "GOVERNMENT",
+      "count": 48160,
+      "countiesRepresented": 253
     },
     {
       "category": "GROCERY",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "count": 12667,
+      "countiesRepresented": 244
+    },
+    {
+      "category": "HOSPITAL",
+      "count": 10722,
+      "countiesRepresented": 231
     },
     {
       "category": "LODGING",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "count": 17155,
+      "countiesRepresented": 249
+    },
+    {
+      "category": "PARKING",
+      "count": 2027,
+      "countiesRepresented": 124
+    },
+    {
+      "category": "PHARMACY",
+      "count": 7391,
+      "countiesRepresented": 227
+    },
+    {
+      "category": "POLICE",
+      "count": 2415,
+      "countiesRepresented": 245
+    },
+    {
+      "category": "POST_OFFICE",
+      "count": 4759,
+      "countiesRepresented": 254
+    },
+    {
+      "category": "RESTAURANT",
+      "count": 127225,
+      "countiesRepresented": 252
     },
     {
       "category": "SCHOOL",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "count": 44797,
+      "countiesRepresented": 253
     },
     {
-      "category": "CONVENIENCE",
-      "rawCount": null,
-      "normalizedCount": null,
-      "countiesRepresented": null
+      "category": "SHOPPING",
+      "count": 1877,
+      "countiesRepresented": 112
+    },
+    {
+      "category": "TIRE_SERVICE",
+      "count": 1590,
+      "countiesRepresented": 150
+    },
+    {
+      "category": "TRAIN_STATION",
+      "count": 505,
+      "countiesRepresented": 105
+    },
+    {
+      "category": "TRUCK_STOP",
+      "count": 44,
+      "countiesRepresented": 31
+    },
+    {
+      "category": "URGENT_CARE",
+      "count": 1882,
+      "countiesRepresented": 177
     }
   ]
 }

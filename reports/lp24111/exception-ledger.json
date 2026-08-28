@@ -2,29 +2,17 @@
   "schemaVersion": "gridly.lp24111.exceptions.v4",
   "exceptions": [
     {
-      "id": "OWNER_CERTIFIED_RICH_SHARDS_ABSENT_FROM_CHECKOUT",
-      "severity": "BLOCKER",
-      "expectedFiles": 168
+      "id": "RICH_DUPLICATE_CONTENT_CONFLICT",
+      "severity": "CLOSED",
+      "count": 0
     },
     {
-      "id": "DEDUP_ARTIFACT_NOT_MATERIALIZED",
-      "severity": "BLOCKER"
-    },
-    {
-      "id": "NORMALIZED_STATEWIDE_ANALYSIS_NOT_EXECUTED",
-      "severity": "BLOCKER"
-    },
-    {
-      "id": "PACKAGE_MEASUREMENTS_NOT_EXECUTED",
+      "id": "REMAINING_PHASE_D_MEASUREMENTS_NOT_EXECUTED",
       "severity": "BLOCKER"
     },
     {
       "id": "LICENSE_COUNSEL_REVIEW",
       "severity": "BLOCKER"
-    },
-    {
-      "id": "OSM_INCREMENT_NOT_MEASURED",
-      "severity": "OPEN"
     }
   ]
 }

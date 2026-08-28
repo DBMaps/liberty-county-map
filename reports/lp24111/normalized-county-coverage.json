@@ -1,3056 +1,2040 @@
 {
   "schemaVersion": "gridly.lp24111.normalized-counties.v1",
-  "executionState": "NOT_EXECUTED",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "expectedCountyCount": 254,
   "accountedCountyCount": 254,
   "rows": [
     {
-      "countyFips": "48001",
-      "countyName": "Anderson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48003",
-      "countyName": "Andrews",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48005",
-      "countyName": "Angelina",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48007",
-      "countyName": "Aransas",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48009",
-      "countyName": "Archer",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48011",
-      "countyName": "Armstrong",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48013",
-      "countyName": "Atascosa",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48015",
-      "countyName": "Austin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48017",
-      "countyName": "Bailey",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48019",
-      "countyName": "Bandera",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48021",
-      "countyName": "Bastrop",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48023",
-      "countyName": "Baylor",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48025",
-      "countyName": "Bee",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48027",
-      "countyName": "Bell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48029",
-      "countyName": "Bexar",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48031",
-      "countyName": "Blanco",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48033",
-      "countyName": "Borden",
-      "rawPoiCount": 38,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48035",
-      "countyName": "Bosque",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48037",
-      "countyName": "Bowie",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48039",
-      "countyName": "Brazoria",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48041",
-      "countyName": "Brazos",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48043",
-      "countyName": "Brewster",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48045",
-      "countyName": "Briscoe",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48047",
-      "countyName": "Brooks",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48049",
-      "countyName": "Brown",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48051",
-      "countyName": "Burleson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48053",
-      "countyName": "Burnet",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48055",
-      "countyName": "Caldwell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48057",
-      "countyName": "Calhoun",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48059",
-      "countyName": "Callahan",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48061",
-      "countyName": "Cameron",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48063",
-      "countyName": "Camp",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48065",
-      "countyName": "Carson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48067",
-      "countyName": "Cass",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48069",
-      "countyName": "Castro",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48071",
-      "countyName": "Chambers",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48073",
-      "countyName": "Cherokee",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48075",
-      "countyName": "Childress",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48077",
-      "countyName": "Clay",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48079",
-      "countyName": "Cochran",
-      "rawPoiCount": 102,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48081",
-      "countyName": "Coke",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48083",
-      "countyName": "Coleman",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48085",
-      "countyName": "Collin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48087",
-      "countyName": "Collingsworth",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48089",
-      "countyName": "Colorado",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48091",
-      "countyName": "Comal",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48093",
-      "countyName": "Comanche",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48095",
-      "countyName": "Concho",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48097",
-      "countyName": "Cooke",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48099",
-      "countyName": "Coryell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48101",
-      "countyName": "Cottle",
-      "rawPoiCount": 92,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48103",
-      "countyName": "Crane",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48105",
-      "countyName": "Crockett",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48107",
-      "countyName": "Crosby",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48109",
-      "countyName": "Culberson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48111",
-      "countyName": "Dallam",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48113",
-      "countyName": "Dallas",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48115",
-      "countyName": "Dawson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48117",
-      "countyName": "Deaf Smith",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48119",
-      "countyName": "Delta",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48121",
-      "countyName": "Denton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48123",
-      "countyName": "DeWitt",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48125",
-      "countyName": "Dickens",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48127",
-      "countyName": "Dimmit",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48129",
-      "countyName": "Donley",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48131",
-      "countyName": "Duval",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48133",
-      "countyName": "Eastland",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48135",
-      "countyName": "Ector",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48137",
-      "countyName": "Edwards",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48139",
-      "countyName": "Ellis",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48141",
-      "countyName": "El Paso",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48143",
-      "countyName": "Erath",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48145",
-      "countyName": "Falls",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48147",
-      "countyName": "Fannin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48149",
-      "countyName": "Fayette",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48151",
-      "countyName": "Fisher",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48153",
-      "countyName": "Floyd",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48155",
-      "countyName": "Foard",
-      "rawPoiCount": 75,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48157",
-      "countyName": "Fort Bend",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48159",
-      "countyName": "Franklin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48161",
-      "countyName": "Freestone",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48163",
-      "countyName": "Frio",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48165",
-      "countyName": "Gaines",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48167",
-      "countyName": "Galveston",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48169",
-      "countyName": "Garza",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48171",
-      "countyName": "Gillespie",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48173",
-      "countyName": "Glasscock",
-      "rawPoiCount": 47,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48175",
-      "countyName": "Goliad",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48177",
-      "countyName": "Gonzales",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48179",
-      "countyName": "Gray",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48181",
-      "countyName": "Grayson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48183",
-      "countyName": "Gregg",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48185",
-      "countyName": "Grimes",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48187",
-      "countyName": "Guadalupe",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48189",
-      "countyName": "Hale",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48191",
-      "countyName": "Hall",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48193",
-      "countyName": "Hamilton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48195",
-      "countyName": "Hansford",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48197",
-      "countyName": "Hardeman",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48199",
-      "countyName": "Hardin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48201",
-      "countyName": "Harris",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48203",
-      "countyName": "Harrison",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48205",
-      "countyName": "Hartley",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48207",
-      "countyName": "Haskell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48209",
-      "countyName": "Hays",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48211",
-      "countyName": "Hemphill",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48213",
-      "countyName": "Henderson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48215",
-      "countyName": "Hidalgo",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48217",
-      "countyName": "Hill",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48219",
-      "countyName": "Hockley",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48221",
-      "countyName": "Hood",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48223",
-      "countyName": "Hopkins",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48225",
-      "countyName": "Houston",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48227",
-      "countyName": "Howard",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48229",
-      "countyName": "Hudspeth",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48231",
-      "countyName": "Hunt",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48233",
-      "countyName": "Hutchinson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48235",
-      "countyName": "Irion",
-      "rawPoiCount": 86,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48237",
-      "countyName": "Jack",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48239",
-      "countyName": "Jackson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48241",
-      "countyName": "Jasper",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48243",
-      "countyName": "Jeff Davis",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48245",
-      "countyName": "Jefferson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48247",
-      "countyName": "Jim Hogg",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48249",
-      "countyName": "Jim Wells",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48251",
-      "countyName": "Johnson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48253",
-      "countyName": "Jones",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48255",
-      "countyName": "Karnes",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48257",
-      "countyName": "Kaufman",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48259",
-      "countyName": "Kendall",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48261",
-      "countyName": "Kenedy",
-      "rawPoiCount": 55,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48263",
-      "countyName": "Kent",
-      "rawPoiCount": 42,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48265",
-      "countyName": "Kerr",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48267",
-      "countyName": "Kimble",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48269",
-      "countyName": "King",
-      "rawPoiCount": 14,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48271",
-      "countyName": "Kinney",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48273",
-      "countyName": "Kleberg",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48275",
-      "countyName": "Knox",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48277",
-      "countyName": "Lamar",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48279",
-      "countyName": "Lamb",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48281",
-      "countyName": "Lampasas",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48283",
-      "countyName": "La Salle",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48285",
-      "countyName": "Lavaca",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48287",
-      "countyName": "Lee",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48289",
-      "countyName": "Leon",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48291",
-      "countyName": "Liberty",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48293",
-      "countyName": "Limestone",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48295",
-      "countyName": "Lipscomb",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48297",
-      "countyName": "Live Oak",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48299",
-      "countyName": "Llano",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48301",
-      "countyName": "Loving",
-      "rawPoiCount": 21,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48303",
-      "countyName": "Lubbock",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48305",
-      "countyName": "Lynn",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48307",
-      "countyName": "McCulloch",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48309",
-      "countyName": "McLennan",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48311",
-      "countyName": "McMullen",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48313",
-      "countyName": "Madison",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48315",
-      "countyName": "Marion",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48317",
-      "countyName": "Martin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48319",
-      "countyName": "Mason",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48321",
-      "countyName": "Matagorda",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48323",
-      "countyName": "Maverick",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48325",
-      "countyName": "Medina",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48327",
-      "countyName": "Menard",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48329",
-      "countyName": "Midland",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48331",
-      "countyName": "Milam",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48333",
-      "countyName": "Mills",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48335",
-      "countyName": "Mitchell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48337",
-      "countyName": "Montague",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48339",
-      "countyName": "Montgomery",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48341",
-      "countyName": "Moore",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48343",
-      "countyName": "Morris",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48345",
-      "countyName": "Motley",
-      "rawPoiCount": 81,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48347",
-      "countyName": "Nacogdoches",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48349",
-      "countyName": "Navarro",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48351",
-      "countyName": "Newton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48353",
-      "countyName": "Nolan",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48355",
-      "countyName": "Nueces",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48357",
-      "countyName": "Ochiltree",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48359",
-      "countyName": "Oldham",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48361",
-      "countyName": "Orange",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48363",
-      "countyName": "Palo Pinto",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48365",
-      "countyName": "Panola",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48367",
-      "countyName": "Parker",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48369",
-      "countyName": "Parmer",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48371",
-      "countyName": "Pecos",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48373",
-      "countyName": "Polk",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48375",
-      "countyName": "Potter",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48377",
-      "countyName": "Presidio",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48379",
-      "countyName": "Rains",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48381",
-      "countyName": "Randall",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48383",
-      "countyName": "Reagan",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48385",
-      "countyName": "Real",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48387",
-      "countyName": "Red River",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48389",
-      "countyName": "Reeves",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48391",
-      "countyName": "Refugio",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48393",
-      "countyName": "Roberts",
-      "rawPoiCount": 41,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48395",
-      "countyName": "Robertson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48397",
-      "countyName": "Rockwall",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48399",
-      "countyName": "Runnels",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48401",
-      "countyName": "Rusk",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48403",
-      "countyName": "Sabine",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48405",
-      "countyName": "San Augustine",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48407",
-      "countyName": "San Jacinto",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48409",
-      "countyName": "San Patricio",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48411",
-      "countyName": "San Saba",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48413",
-      "countyName": "Schleicher",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48415",
-      "countyName": "Scurry",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48417",
-      "countyName": "Shackelford",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48419",
-      "countyName": "Shelby",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48421",
-      "countyName": "Sherman",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48423",
-      "countyName": "Smith",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48425",
-      "countyName": "Somervell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48427",
-      "countyName": "Starr",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48429",
-      "countyName": "Stephens",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48431",
-      "countyName": "Sterling",
-      "rawPoiCount": 84,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48433",
-      "countyName": "Stonewall",
-      "rawPoiCount": 85,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48435",
-      "countyName": "Sutton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48437",
-      "countyName": "Swisher",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48439",
-      "countyName": "Tarrant",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48441",
-      "countyName": "Taylor",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48443",
-      "countyName": "Terrell",
-      "rawPoiCount": 74,
-      "evidence": "OWNER_MEASURED_EXACT",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48445",
-      "countyName": "Terry",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48447",
-      "countyName": "Throckmorton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48449",
-      "countyName": "Titus",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48451",
-      "countyName": "Tom Green",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48453",
-      "countyName": "Travis",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48455",
-      "countyName": "Trinity",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48457",
-      "countyName": "Tyler",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48459",
-      "countyName": "Upshur",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48461",
-      "countyName": "Upton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48463",
-      "countyName": "Uvalde",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48465",
-      "countyName": "Val Verde",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48467",
-      "countyName": "Van Zandt",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48469",
-      "countyName": "Victoria",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48471",
-      "countyName": "Walker",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48473",
-      "countyName": "Waller",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48475",
-      "countyName": "Ward",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48477",
-      "countyName": "Washington",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48479",
-      "countyName": "Webb",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48481",
-      "countyName": "Wharton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48483",
-      "countyName": "Wheeler",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48485",
-      "countyName": "Wichita",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48487",
-      "countyName": "Wilbarger",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48489",
-      "countyName": "Willacy",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48491",
-      "countyName": "Williamson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48493",
-      "countyName": "Wilson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48495",
-      "countyName": "Winkler",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48497",
-      "countyName": "Wise",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48499",
-      "countyName": "Wood",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48501",
-      "countyName": "Yoakum",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48503",
-      "countyName": "Young",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48505",
-      "countyName": "Zapata",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
-    },
-    {
-      "countyFips": "48507",
-      "countyName": "Zavala",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY",
-      "eligibleDestinations": null,
-      "excludedNonDestinations": null,
-      "reviewRequired": null,
-      "metadataConflicts": null,
-      "childOrDuplicate": null,
-      "coverageClass": "UNKNOWN"
+      "county_fips": "48001",
+      "rawUniqueRich": 2831,
+      "eligibleDestination": 733,
+      "nonDestination": 227,
+      "excluded": 18,
+      "reviewRequired": 1853
+    },
+    {
+      "county_fips": "48003",
+      "rawUniqueRich": 731,
+      "eligibleDestination": 216,
+      "nonDestination": 47,
+      "excluded": 1,
+      "reviewRequired": 467
+    },
+    {
+      "county_fips": "48005",
+      "rawUniqueRich": 4315,
+      "eligibleDestination": 1154,
+      "nonDestination": 348,
+      "excluded": 41,
+      "reviewRequired": 2772
+    },
+    {
+      "county_fips": "48007",
+      "rawUniqueRich": 1971,
+      "eligibleDestination": 533,
+      "nonDestination": 114,
+      "excluded": 46,
+      "reviewRequired": 1278
+    },
+    {
+      "county_fips": "48009",
+      "rawUniqueRich": 390,
+      "eligibleDestination": 153,
+      "nonDestination": 36,
+      "excluded": 2,
+      "reviewRequired": 199
+    },
+    {
+      "county_fips": "48011",
+      "rawUniqueRich": 123,
+      "eligibleDestination": 38,
+      "nonDestination": 12,
+      "excluded": 2,
+      "reviewRequired": 71
+    },
+    {
+      "county_fips": "48013",
+      "rawUniqueRich": 2127,
+      "eligibleDestination": 726,
+      "nonDestination": 126,
+      "excluded": 13,
+      "reviewRequired": 1262
+    },
+    {
+      "county_fips": "48015",
+      "rawUniqueRich": 1687,
+      "eligibleDestination": 545,
+      "nonDestination": 139,
+      "excluded": 16,
+      "reviewRequired": 987
+    },
+    {
+      "county_fips": "48017",
+      "rawUniqueRich": 349,
+      "eligibleDestination": 125,
+      "nonDestination": 29,
+      "excluded": 7,
+      "reviewRequired": 188
+    },
+    {
+      "county_fips": "48019",
+      "rawUniqueRich": 1163,
+      "eligibleDestination": 357,
+      "nonDestination": 68,
+      "excluded": 50,
+      "reviewRequired": 688
+    },
+    {
+      "county_fips": "48021",
+      "rawUniqueRich": 4309,
+      "eligibleDestination": 1291,
+      "nonDestination": 305,
+      "excluded": 69,
+      "reviewRequired": 2644
+    },
+    {
+      "county_fips": "48023",
+      "rawUniqueRich": 259,
+      "eligibleDestination": 91,
+      "nonDestination": 18,
+      "excluded": 9,
+      "reviewRequired": 141
+    },
+    {
+      "county_fips": "48025",
+      "rawUniqueRich": 1225,
+      "eligibleDestination": 432,
+      "nonDestination": 99,
+      "excluded": 8,
+      "reviewRequired": 686
+    },
+    {
+      "county_fips": "48027",
+      "rawUniqueRich": 16174,
+      "eligibleDestination": 4366,
+      "nonDestination": 989,
+      "excluded": 96,
+      "reviewRequired": 10723
+    },
+    {
+      "county_fips": "48029",
+      "rawUniqueRich": 91228,
+      "eligibleDestination": 22949,
+      "nonDestination": 4870,
+      "excluded": 731,
+      "reviewRequired": 62678
+    },
+    {
+      "county_fips": "48031",
+      "rawUniqueRich": 973,
+      "eligibleDestination": 307,
+      "nonDestination": 63,
+      "excluded": 45,
+      "reviewRequired": 558
+    },
+    {
+      "county_fips": "48033",
+      "rawUniqueRich": 38,
+      "eligibleDestination": 16,
+      "nonDestination": 1,
+      "excluded": 2,
+      "reviewRequired": 19
+    },
+    {
+      "county_fips": "48035",
+      "rawUniqueRich": 1048,
+      "eligibleDestination": 381,
+      "nonDestination": 89,
+      "excluded": 26,
+      "reviewRequired": 552
+    },
+    {
+      "county_fips": "48037",
+      "rawUniqueRich": 5460,
+      "eligibleDestination": 1389,
+      "nonDestination": 399,
+      "excluded": 66,
+      "reviewRequired": 3606
+    },
+    {
+      "county_fips": "48039",
+      "rawUniqueRich": 15819,
+      "eligibleDestination": 4142,
+      "nonDestination": 925,
+      "excluded": 118,
+      "reviewRequired": 10634
+    },
+    {
+      "county_fips": "48041",
+      "rawUniqueRich": 10752,
+      "eligibleDestination": 2845,
+      "nonDestination": 779,
+      "excluded": 65,
+      "reviewRequired": 7063
+    },
+    {
+      "county_fips": "48043",
+      "rawUniqueRich": 1060,
+      "eligibleDestination": 380,
+      "nonDestination": 78,
+      "excluded": 102,
+      "reviewRequired": 500
+    },
+    {
+      "county_fips": "48045",
+      "rawUniqueRich": 112,
+      "eligibleDestination": 44,
+      "nonDestination": 9,
+      "excluded": 7,
+      "reviewRequired": 52
+    },
+    {
+      "county_fips": "48047",
+      "rawUniqueRich": 351,
+      "eligibleDestination": 158,
+      "nonDestination": 21,
+      "excluded": 4,
+      "reviewRequired": 168
+    },
+    {
+      "county_fips": "48049",
+      "rawUniqueRich": 2273,
+      "eligibleDestination": 636,
+      "nonDestination": 166,
+      "excluded": 18,
+      "reviewRequired": 1453
+    },
+    {
+      "county_fips": "48051",
+      "rawUniqueRich": 888,
+      "eligibleDestination": 315,
+      "nonDestination": 87,
+      "excluded": 9,
+      "reviewRequired": 477
+    },
+    {
+      "county_fips": "48053",
+      "rawUniqueRich": 3600,
+      "eligibleDestination": 944,
+      "nonDestination": 211,
+      "excluded": 51,
+      "reviewRequired": 2394
+    },
+    {
+      "county_fips": "48055",
+      "rawUniqueRich": 1937,
+      "eligibleDestination": 609,
+      "nonDestination": 150,
+      "excluded": 31,
+      "reviewRequired": 1147
+    },
+    {
+      "county_fips": "48057",
+      "rawUniqueRich": 1182,
+      "eligibleDestination": 413,
+      "nonDestination": 77,
+      "excluded": 24,
+      "reviewRequired": 668
+    },
+    {
+      "county_fips": "48059",
+      "rawUniqueRich": 650,
+      "eligibleDestination": 225,
+      "nonDestination": 56,
+      "excluded": 10,
+      "reviewRequired": 359
+    },
+    {
+      "county_fips": "48061",
+      "rawUniqueRich": 17879,
+      "eligibleDestination": 5480,
+      "nonDestination": 1095,
+      "excluded": 332,
+      "reviewRequired": 10972
+    },
+    {
+      "county_fips": "48063",
+      "rawUniqueRich": 598,
+      "eligibleDestination": 177,
+      "nonDestination": 75,
+      "excluded": 5,
+      "reviewRequired": 341
+    },
+    {
+      "county_fips": "48065",
+      "rawUniqueRich": 294,
+      "eligibleDestination": 117,
+      "nonDestination": 36,
+      "excluded": 4,
+      "reviewRequired": 137
+    },
+    {
+      "county_fips": "48067",
+      "rawUniqueRich": 1320,
+      "eligibleDestination": 416,
+      "nonDestination": 169,
+      "excluded": 21,
+      "reviewRequired": 714
+    },
+    {
+      "county_fips": "48069",
+      "rawUniqueRich": 282,
+      "eligibleDestination": 130,
+      "nonDestination": 21,
+      "excluded": 3,
+      "reviewRequired": 128
+    },
+    {
+      "county_fips": "48071",
+      "rawUniqueRich": 2061,
+      "eligibleDestination": 652,
+      "nonDestination": 119,
+      "excluded": 52,
+      "reviewRequired": 1238
+    },
+    {
+      "county_fips": "48073",
+      "rawUniqueRich": 2297,
+      "eligibleDestination": 707,
+      "nonDestination": 239,
+      "excluded": 34,
+      "reviewRequired": 1317
+    },
+    {
+      "county_fips": "48075",
+      "rawUniqueRich": 427,
+      "eligibleDestination": 162,
+      "nonDestination": 29,
+      "excluded": 5,
+      "reviewRequired": 231
+    },
+    {
+      "county_fips": "48077",
+      "rawUniqueRich": 443,
+      "eligibleDestination": 148,
+      "nonDestination": 43,
+      "excluded": 11,
+      "reviewRequired": 241
+    },
+    {
+      "county_fips": "48079",
+      "rawUniqueRich": 102,
+      "eligibleDestination": 53,
+      "nonDestination": 11,
+      "excluded": 0,
+      "reviewRequired": 38
+    },
+    {
+      "county_fips": "48081",
+      "rawUniqueRich": 170,
+      "eligibleDestination": 62,
+      "nonDestination": 20,
+      "excluded": 12,
+      "reviewRequired": 76
+    },
+    {
+      "county_fips": "48083",
+      "rawUniqueRich": 558,
+      "eligibleDestination": 217,
+      "nonDestination": 43,
+      "excluded": 12,
+      "reviewRequired": 286
+    },
+    {
+      "county_fips": "48085",
+      "rawUniqueRich": 57239,
+      "eligibleDestination": 12303,
+      "nonDestination": 2106,
+      "excluded": 238,
+      "reviewRequired": 42592
+    },
+    {
+      "county_fips": "48087",
+      "rawUniqueRich": 146,
+      "eligibleDestination": 55,
+      "nonDestination": 19,
+      "excluded": 2,
+      "reviewRequired": 70
+    },
+    {
+      "county_fips": "48089",
+      "rawUniqueRich": 1336,
+      "eligibleDestination": 438,
+      "nonDestination": 113,
+      "excluded": 18,
+      "reviewRequired": 767
+    },
+    {
+      "county_fips": "48091",
+      "rawUniqueRich": 10177,
+      "eligibleDestination": 2195,
+      "nonDestination": 484,
+      "excluded": 299,
+      "reviewRequired": 7199
+    },
+    {
+      "county_fips": "48093",
+      "rawUniqueRich": 776,
+      "eligibleDestination": 283,
+      "nonDestination": 71,
+      "excluded": 11,
+      "reviewRequired": 411
+    },
+    {
+      "county_fips": "48095",
+      "rawUniqueRich": 169,
+      "eligibleDestination": 79,
+      "nonDestination": 9,
+      "excluded": 10,
+      "reviewRequired": 71
+    },
+    {
+      "county_fips": "48097",
+      "rawUniqueRich": 2410,
+      "eligibleDestination": 725,
+      "nonDestination": 156,
+      "excluded": 40,
+      "reviewRequired": 1489
+    },
+    {
+      "county_fips": "48099",
+      "rawUniqueRich": 2384,
+      "eligibleDestination": 782,
+      "nonDestination": 172,
+      "excluded": 32,
+      "reviewRequired": 1398
+    },
+    {
+      "county_fips": "48101",
+      "rawUniqueRich": 92,
+      "eligibleDestination": 49,
+      "nonDestination": 8,
+      "excluded": 3,
+      "reviewRequired": 32
+    },
+    {
+      "county_fips": "48103",
+      "rawUniqueRich": 209,
+      "eligibleDestination": 80,
+      "nonDestination": 13,
+      "excluded": 4,
+      "reviewRequired": 112
+    },
+    {
+      "county_fips": "48105",
+      "rawUniqueRich": 229,
+      "eligibleDestination": 98,
+      "nonDestination": 18,
+      "excluded": 9,
+      "reviewRequired": 104
+    },
+    {
+      "county_fips": "48107",
+      "rawUniqueRich": 254,
+      "eligibleDestination": 100,
+      "nonDestination": 25,
+      "excluded": 13,
+      "reviewRequired": 116
+    },
+    {
+      "county_fips": "48109",
+      "rawUniqueRich": 253,
+      "eligibleDestination": 104,
+      "nonDestination": 11,
+      "excluded": 40,
+      "reviewRequired": 98
+    },
+    {
+      "county_fips": "48111",
+      "rawUniqueRich": 471,
+      "eligibleDestination": 177,
+      "nonDestination": 27,
+      "excluded": 7,
+      "reviewRequired": 260
+    },
+    {
+      "county_fips": "48113",
+      "rawUniqueRich": 141604,
+      "eligibleDestination": 32054,
+      "nonDestination": 8290,
+      "excluded": 663,
+      "reviewRequired": 100597
+    },
+    {
+      "county_fips": "48115",
+      "rawUniqueRich": 531,
+      "eligibleDestination": 184,
+      "nonDestination": 51,
+      "excluded": 5,
+      "reviewRequired": 291
+    },
+    {
+      "county_fips": "48117",
+      "rawUniqueRich": 783,
+      "eligibleDestination": 269,
+      "nonDestination": 63,
+      "excluded": 5,
+      "reviewRequired": 446
+    },
+    {
+      "county_fips": "48119",
+      "rawUniqueRich": 251,
+      "eligibleDestination": 103,
+      "nonDestination": 26,
+      "excluded": 5,
+      "reviewRequired": 117
+    },
+    {
+      "county_fips": "48121",
+      "rawUniqueRich": 36321,
+      "eligibleDestination": 8669,
+      "nonDestination": 1795,
+      "excluded": 168,
+      "reviewRequired": 25689
+    },
+    {
+      "county_fips": "48123",
+      "rawUniqueRich": 1066,
+      "eligibleDestination": 379,
+      "nonDestination": 92,
+      "excluded": 8,
+      "reviewRequired": 587
+    },
+    {
+      "county_fips": "48125",
+      "rawUniqueRich": 134,
+      "eligibleDestination": 53,
+      "nonDestination": 9,
+      "excluded": 3,
+      "reviewRequired": 69
+    },
+    {
+      "county_fips": "48127",
+      "rawUniqueRich": 530,
+      "eligibleDestination": 224,
+      "nonDestination": 30,
+      "excluded": 3,
+      "reviewRequired": 273
+    },
+    {
+      "county_fips": "48129",
+      "rawUniqueRich": 226,
+      "eligibleDestination": 87,
+      "nonDestination": 22,
+      "excluded": 7,
+      "reviewRequired": 110
+    },
+    {
+      "county_fips": "48131",
+      "rawUniqueRich": 376,
+      "eligibleDestination": 184,
+      "nonDestination": 24,
+      "excluded": 7,
+      "reviewRequired": 161
+    },
+    {
+      "county_fips": "48133",
+      "rawUniqueRich": 1215,
+      "eligibleDestination": 421,
+      "nonDestination": 99,
+      "excluded": 16,
+      "reviewRequired": 679
+    },
+    {
+      "county_fips": "48135",
+      "rawUniqueRich": 7720,
+      "eligibleDestination": 2020,
+      "nonDestination": 445,
+      "excluded": 24,
+      "reviewRequired": 5231
+    },
+    {
+      "county_fips": "48137",
+      "rawUniqueRich": 161,
+      "eligibleDestination": 64,
+      "nonDestination": 12,
+      "excluded": 6,
+      "reviewRequired": 79
+    },
+    {
+      "county_fips": "48139",
+      "rawUniqueRich": 8362,
+      "eligibleDestination": 2152,
+      "nonDestination": 564,
+      "excluded": 36,
+      "reviewRequired": 5610
+    },
+    {
+      "county_fips": "48141",
+      "rawUniqueRich": 33821,
+      "eligibleDestination": 9110,
+      "nonDestination": 1655,
+      "excluded": 257,
+      "reviewRequired": 22799
+    },
+    {
+      "county_fips": "48143",
+      "rawUniqueRich": 2580,
+      "eligibleDestination": 693,
+      "nonDestination": 172,
+      "excluded": 37,
+      "reviewRequired": 1678
+    },
+    {
+      "county_fips": "48145",
+      "rawUniqueRich": 678,
+      "eligibleDestination": 260,
+      "nonDestination": 103,
+      "excluded": 2,
+      "reviewRequired": 313
+    },
+    {
+      "county_fips": "48147",
+      "rawUniqueRich": 1659,
+      "eligibleDestination": 539,
+      "nonDestination": 177,
+      "excluded": 29,
+      "reviewRequired": 914
+    },
+    {
+      "county_fips": "48149",
+      "rawUniqueRich": 1932,
+      "eligibleDestination": 662,
+      "nonDestination": 145,
+      "excluded": 25,
+      "reviewRequired": 1100
+    },
+    {
+      "county_fips": "48151",
+      "rawUniqueRich": 175,
+      "eligibleDestination": 77,
+      "nonDestination": 15,
+      "excluded": 7,
+      "reviewRequired": 76
+    },
+    {
+      "county_fips": "48153",
+      "rawUniqueRich": 281,
+      "eligibleDestination": 127,
+      "nonDestination": 24,
+      "excluded": 2,
+      "reviewRequired": 128
+    },
+    {
+      "county_fips": "48155",
+      "rawUniqueRich": 75,
+      "eligibleDestination": 30,
+      "nonDestination": 6,
+      "excluded": 4,
+      "reviewRequired": 35
+    },
+    {
+      "county_fips": "48157",
+      "rawUniqueRich": 30531,
+      "eligibleDestination": 7400,
+      "nonDestination": 1288,
+      "excluded": 217,
+      "reviewRequired": 21626
+    },
+    {
+      "county_fips": "48159",
+      "rawUniqueRich": 536,
+      "eligibleDestination": 168,
+      "nonDestination": 51,
+      "excluded": 6,
+      "reviewRequired": 311
+    },
+    {
+      "county_fips": "48161",
+      "rawUniqueRich": 1053,
+      "eligibleDestination": 356,
+      "nonDestination": 102,
+      "excluded": 11,
+      "reviewRequired": 584
+    },
+    {
+      "county_fips": "48163",
+      "rawUniqueRich": 845,
+      "eligibleDestination": 354,
+      "nonDestination": 46,
+      "excluded": 15,
+      "reviewRequired": 430
+    },
+    {
+      "county_fips": "48165",
+      "rawUniqueRich": 879,
+      "eligibleDestination": 281,
+      "nonDestination": 77,
+      "excluded": 5,
+      "reviewRequired": 516
+    },
+    {
+      "county_fips": "48167",
+      "rawUniqueRich": 17426,
+      "eligibleDestination": 4763,
+      "nonDestination": 1051,
+      "excluded": 345,
+      "reviewRequired": 11267
+    },
+    {
+      "county_fips": "48169",
+      "rawUniqueRich": 281,
+      "eligibleDestination": 116,
+      "nonDestination": 27,
+      "excluded": 4,
+      "reviewRequired": 134
+    },
+    {
+      "county_fips": "48171",
+      "rawUniqueRich": 2801,
+      "eligibleDestination": 886,
+      "nonDestination": 131,
+      "excluded": 46,
+      "reviewRequired": 1738
+    },
+    {
+      "county_fips": "48173",
+      "rawUniqueRich": 47,
+      "eligibleDestination": 22,
+      "nonDestination": 3,
+      "excluded": 2,
+      "reviewRequired": 20
+    },
+    {
+      "county_fips": "48175",
+      "rawUniqueRich": 387,
+      "eligibleDestination": 139,
+      "nonDestination": 44,
+      "excluded": 14,
+      "reviewRequired": 190
+    },
+    {
+      "county_fips": "48177",
+      "rawUniqueRich": 1121,
+      "eligibleDestination": 403,
+      "nonDestination": 100,
+      "excluded": 16,
+      "reviewRequired": 602
+    },
+    {
+      "county_fips": "48179",
+      "rawUniqueRich": 1135,
+      "eligibleDestination": 326,
+      "nonDestination": 77,
+      "excluded": 11,
+      "reviewRequired": 721
+    },
+    {
+      "county_fips": "48181",
+      "rawUniqueRich": 7828,
+      "eligibleDestination": 2079,
+      "nonDestination": 530,
+      "excluded": 83,
+      "reviewRequired": 5136
+    },
+    {
+      "county_fips": "48183",
+      "rawUniqueRich": 8885,
+      "eligibleDestination": 2156,
+      "nonDestination": 611,
+      "excluded": 36,
+      "reviewRequired": 6082
+    },
+    {
+      "county_fips": "48185",
+      "rawUniqueRich": 1354,
+      "eligibleDestination": 466,
+      "nonDestination": 120,
+      "excluded": 16,
+      "reviewRequired": 752
+    },
+    {
+      "county_fips": "48187",
+      "rawUniqueRich": 5989,
+      "eligibleDestination": 1549,
+      "nonDestination": 337,
+      "excluded": 91,
+      "reviewRequired": 4012
+    },
+    {
+      "county_fips": "48189",
+      "rawUniqueRich": 1456,
+      "eligibleDestination": 476,
+      "nonDestination": 126,
+      "excluded": 5,
+      "reviewRequired": 849
+    },
+    {
+      "county_fips": "48191",
+      "rawUniqueRich": 207,
+      "eligibleDestination": 100,
+      "nonDestination": 17,
+      "excluded": 4,
+      "reviewRequired": 86
+    },
+    {
+      "county_fips": "48193",
+      "rawUniqueRich": 634,
+      "eligibleDestination": 235,
+      "nonDestination": 50,
+      "excluded": 14,
+      "reviewRequired": 335
+    },
+    {
+      "county_fips": "48195",
+      "rawUniqueRich": 285,
+      "eligibleDestination": 113,
+      "nonDestination": 27,
+      "excluded": 5,
+      "reviewRequired": 140
+    },
+    {
+      "county_fips": "48197",
+      "rawUniqueRich": 264,
+      "eligibleDestination": 119,
+      "nonDestination": 17,
+      "excluded": 6,
+      "reviewRequired": 122
+    },
+    {
+      "county_fips": "48199",
+      "rawUniqueRich": 2337,
+      "eligibleDestination": 672,
+      "nonDestination": 208,
+      "excluded": 21,
+      "reviewRequired": 1436
+    },
+    {
+      "county_fips": "48201",
+      "rawUniqueRich": 264066,
+      "eligibleDestination": 55938,
+      "nonDestination": 12904,
+      "excluded": 1494,
+      "reviewRequired": 193730
+    },
+    {
+      "county_fips": "48203",
+      "rawUniqueRich": 3061,
+      "eligibleDestination": 850,
+      "nonDestination": 339,
+      "excluded": 26,
+      "reviewRequired": 1846
+    },
+    {
+      "county_fips": "48205",
+      "rawUniqueRich": 203,
+      "eligibleDestination": 76,
+      "nonDestination": 18,
+      "excluded": 12,
+      "reviewRequired": 97
+    },
+    {
+      "county_fips": "48207",
+      "rawUniqueRich": 372,
+      "eligibleDestination": 147,
+      "nonDestination": 32,
+      "excluded": 3,
+      "reviewRequired": 190
+    },
+    {
+      "county_fips": "48209",
+      "rawUniqueRich": 11724,
+      "eligibleDestination": 2949,
+      "nonDestination": 625,
+      "excluded": 134,
+      "reviewRequired": 8016
+    },
+    {
+      "county_fips": "48211",
+      "rawUniqueRich": 296,
+      "eligibleDestination": 103,
+      "nonDestination": 15,
+      "excluded": 12,
+      "reviewRequired": 166
+    },
+    {
+      "county_fips": "48213",
+      "rawUniqueRich": 4278,
+      "eligibleDestination": 1244,
+      "nonDestination": 333,
+      "excluded": 46,
+      "reviewRequired": 2655
+    },
+    {
+      "county_fips": "48215",
+      "rawUniqueRich": 36370,
+      "eligibleDestination": 10686,
+      "nonDestination": 1767,
+      "excluded": 124,
+      "reviewRequired": 23793
+    },
+    {
+      "county_fips": "48217",
+      "rawUniqueRich": 1986,
+      "eligibleDestination": 705,
+      "nonDestination": 177,
+      "excluded": 20,
+      "reviewRequired": 1084
+    },
+    {
+      "county_fips": "48219",
+      "rawUniqueRich": 921,
+      "eligibleDestination": 292,
+      "nonDestination": 74,
+      "excluded": 3,
+      "reviewRequired": 552
+    },
+    {
+      "county_fips": "48221",
+      "rawUniqueRich": 3630,
+      "eligibleDestination": 871,
+      "nonDestination": 191,
+      "excluded": 39,
+      "reviewRequired": 2529
+    },
+    {
+      "county_fips": "48223",
+      "rawUniqueRich": 2089,
+      "eligibleDestination": 597,
+      "nonDestination": 179,
+      "excluded": 12,
+      "reviewRequired": 1301
+    },
+    {
+      "county_fips": "48225",
+      "rawUniqueRich": 1111,
+      "eligibleDestination": 363,
+      "nonDestination": 123,
+      "excluded": 18,
+      "reviewRequired": 607
+    },
+    {
+      "county_fips": "48227",
+      "rawUniqueRich": 1474,
+      "eligibleDestination": 485,
+      "nonDestination": 106,
+      "excluded": 18,
+      "reviewRequired": 865
+    },
+    {
+      "county_fips": "48229",
+      "rawUniqueRich": 151,
+      "eligibleDestination": 65,
+      "nonDestination": 5,
+      "excluded": 32,
+      "reviewRequired": 49
+    },
+    {
+      "county_fips": "48231",
+      "rawUniqueRich": 4913,
+      "eligibleDestination": 1324,
+      "nonDestination": 442,
+      "excluded": 31,
+      "reviewRequired": 3116
+    },
+    {
+      "county_fips": "48233",
+      "rawUniqueRich": 980,
+      "eligibleDestination": 328,
+      "nonDestination": 91,
+      "excluded": 9,
+      "reviewRequired": 552
+    },
+    {
+      "county_fips": "48235",
+      "rawUniqueRich": 86,
+      "eligibleDestination": 38,
+      "nonDestination": 8,
+      "excluded": 1,
+      "reviewRequired": 39
+    },
+    {
+      "county_fips": "48237",
+      "rawUniqueRich": 493,
+      "eligibleDestination": 162,
+      "nonDestination": 53,
+      "excluded": 9,
+      "reviewRequired": 269
+    },
+    {
+      "county_fips": "48239",
+      "rawUniqueRich": 666,
+      "eligibleDestination": 230,
+      "nonDestination": 60,
+      "excluded": 13,
+      "reviewRequired": 363
+    },
+    {
+      "county_fips": "48241",
+      "rawUniqueRich": 1711,
+      "eligibleDestination": 476,
+      "nonDestination": 183,
+      "excluded": 23,
+      "reviewRequired": 1029
+    },
+    {
+      "county_fips": "48243",
+      "rawUniqueRich": 201,
+      "eligibleDestination": 65,
+      "nonDestination": 15,
+      "excluded": 57,
+      "reviewRequired": 64
+    },
+    {
+      "county_fips": "48245",
+      "rawUniqueRich": 12682,
+      "eligibleDestination": 3462,
+      "nonDestination": 992,
+      "excluded": 77,
+      "reviewRequired": 8151
+    },
+    {
+      "county_fips": "48247",
+      "rawUniqueRich": 230,
+      "eligibleDestination": 103,
+      "nonDestination": 14,
+      "excluded": 2,
+      "reviewRequired": 111
+    },
+    {
+      "county_fips": "48249",
+      "rawUniqueRich": 1798,
+      "eligibleDestination": 563,
+      "nonDestination": 112,
+      "excluded": 9,
+      "reviewRequired": 1114
+    },
+    {
+      "county_fips": "48251",
+      "rawUniqueRich": 7842,
+      "eligibleDestination": 1886,
+      "nonDestination": 546,
+      "excluded": 54,
+      "reviewRequired": 5356
+    },
+    {
+      "county_fips": "48253",
+      "rawUniqueRich": 723,
+      "eligibleDestination": 256,
+      "nonDestination": 70,
+      "excluded": 9,
+      "reviewRequired": 388
+    },
+    {
+      "county_fips": "48255",
+      "rawUniqueRich": 757,
+      "eligibleDestination": 296,
+      "nonDestination": 58,
+      "excluded": 5,
+      "reviewRequired": 398
+    },
+    {
+      "county_fips": "48257",
+      "rawUniqueRich": 5693,
+      "eligibleDestination": 1550,
+      "nonDestination": 391,
+      "excluded": 31,
+      "reviewRequired": 3721
+    },
+    {
+      "county_fips": "48259",
+      "rawUniqueRich": 3226,
+      "eligibleDestination": 707,
+      "nonDestination": 163,
+      "excluded": 57,
+      "reviewRequired": 2299
+    },
+    {
+      "county_fips": "48261",
+      "rawUniqueRich": 55,
+      "eligibleDestination": 21,
+      "nonDestination": 2,
+      "excluded": 14,
+      "reviewRequired": 18
+    },
+    {
+      "county_fips": "48263",
+      "rawUniqueRich": 42,
+      "eligibleDestination": 17,
+      "nonDestination": 5,
+      "excluded": 3,
+      "reviewRequired": 17
+    },
+    {
+      "county_fips": "48265",
+      "rawUniqueRich": 3434,
+      "eligibleDestination": 883,
+      "nonDestination": 202,
+      "excluded": 112,
+      "reviewRequired": 2237
+    },
+    {
+      "county_fips": "48267",
+      "rawUniqueRich": 422,
+      "eligibleDestination": 176,
+      "nonDestination": 24,
+      "excluded": 29,
+      "reviewRequired": 193
+    },
+    {
+      "county_fips": "48269",
+      "rawUniqueRich": 14,
+      "eligibleDestination": 6,
+      "nonDestination": 1,
+      "excluded": 5,
+      "reviewRequired": 2
+    },
+    {
+      "county_fips": "48271",
+      "rawUniqueRich": 156,
+      "eligibleDestination": 59,
+      "nonDestination": 18,
+      "excluded": 7,
+      "reviewRequired": 72
+    },
+    {
+      "county_fips": "48273",
+      "rawUniqueRich": 1519,
+      "eligibleDestination": 531,
+      "nonDestination": 122,
+      "excluded": 14,
+      "reviewRequired": 852
+    },
+    {
+      "county_fips": "48275",
+      "rawUniqueRich": 223,
+      "eligibleDestination": 106,
+      "nonDestination": 17,
+      "excluded": 3,
+      "reviewRequired": 97
+    },
+    {
+      "county_fips": "48277",
+      "rawUniqueRich": 2953,
+      "eligibleDestination": 786,
+      "nonDestination": 252,
+      "excluded": 46,
+      "reviewRequired": 1869
+    },
+    {
+      "county_fips": "48279",
+      "rawUniqueRich": 545,
+      "eligibleDestination": 220,
+      "nonDestination": 55,
+      "excluded": 0,
+      "reviewRequired": 270
+    },
+    {
+      "county_fips": "48281",
+      "rawUniqueRich": 1122,
+      "eligibleDestination": 298,
+      "nonDestination": 80,
+      "excluded": 22,
+      "reviewRequired": 722
+    },
+    {
+      "county_fips": "48283",
+      "rawUniqueRich": 445,
+      "eligibleDestination": 229,
+      "nonDestination": 21,
+      "excluded": 11,
+      "reviewRequired": 184
+    },
+    {
+      "county_fips": "48285",
+      "rawUniqueRich": 984,
+      "eligibleDestination": 332,
+      "nonDestination": 75,
+      "excluded": 8,
+      "reviewRequired": 569
+    },
+    {
+      "county_fips": "48287",
+      "rawUniqueRich": 885,
+      "eligibleDestination": 299,
+      "nonDestination": 79,
+      "excluded": 3,
+      "reviewRequired": 504
+    },
+    {
+      "county_fips": "48289",
+      "rawUniqueRich": 899,
+      "eligibleDestination": 356,
+      "nonDestination": 95,
+      "excluded": 12,
+      "reviewRequired": 436
+    },
+    {
+      "county_fips": "48291",
+      "rawUniqueRich": 3599,
+      "eligibleDestination": 1076,
+      "nonDestination": 333,
+      "excluded": 53,
+      "reviewRequired": 2137
+    },
+    {
+      "county_fips": "48293",
+      "rawUniqueRich": 1212,
+      "eligibleDestination": 390,
+      "nonDestination": 137,
+      "excluded": 16,
+      "reviewRequired": 669
+    },
+    {
+      "county_fips": "48295",
+      "rawUniqueRich": 146,
+      "eligibleDestination": 66,
+      "nonDestination": 18,
+      "excluded": 2,
+      "reviewRequired": 60
+    },
+    {
+      "county_fips": "48297",
+      "rawUniqueRich": 655,
+      "eligibleDestination": 217,
+      "nonDestination": 50,
+      "excluded": 66,
+      "reviewRequired": 322
+    },
+    {
+      "county_fips": "48299",
+      "rawUniqueRich": 1432,
+      "eligibleDestination": 412,
+      "nonDestination": 79,
+      "excluded": 84,
+      "reviewRequired": 857
+    },
+    {
+      "county_fips": "48301",
+      "rawUniqueRich": 21,
+      "eligibleDestination": 12,
+      "nonDestination": 0,
+      "excluded": 1,
+      "reviewRequired": 8
+    },
+    {
+      "county_fips": "48303",
+      "rawUniqueRich": 16338,
+      "eligibleDestination": 4092,
+      "nonDestination": 1041,
+      "excluded": 38,
+      "reviewRequired": 11167
+    },
+    {
+      "county_fips": "48305",
+      "rawUniqueRich": 218,
+      "eligibleDestination": 95,
+      "nonDestination": 23,
+      "excluded": 3,
+      "reviewRequired": 97
+    },
+    {
+      "county_fips": "48307",
+      "rawUniqueRich": 554,
+      "eligibleDestination": 175,
+      "nonDestination": 47,
+      "excluded": 11,
+      "reviewRequired": 321
+    },
+    {
+      "county_fips": "48309",
+      "rawUniqueRich": 13326,
+      "eligibleDestination": 3524,
+      "nonDestination": 1008,
+      "excluded": 92,
+      "reviewRequired": 8702
+    },
+    {
+      "county_fips": "48311",
+      "rawUniqueRich": 104,
+      "eligibleDestination": 51,
+      "nonDestination": 2,
+      "excluded": 8,
+      "reviewRequired": 43
+    },
+    {
+      "county_fips": "48313",
+      "rawUniqueRich": 659,
+      "eligibleDestination": 220,
+      "nonDestination": 63,
+      "excluded": 5,
+      "reviewRequired": 371
+    },
+    {
+      "county_fips": "48315",
+      "rawUniqueRich": 614,
+      "eligibleDestination": 199,
+      "nonDestination": 72,
+      "excluded": 21,
+      "reviewRequired": 322
+    },
+    {
+      "county_fips": "48317",
+      "rawUniqueRich": 205,
+      "eligibleDestination": 82,
+      "nonDestination": 15,
+      "excluded": 2,
+      "reviewRequired": 106
+    },
+    {
+      "county_fips": "48319",
+      "rawUniqueRich": 360,
+      "eligibleDestination": 119,
+      "nonDestination": 21,
+      "excluded": 18,
+      "reviewRequired": 202
+    },
+    {
+      "county_fips": "48321",
+      "rawUniqueRich": 2016,
+      "eligibleDestination": 703,
+      "nonDestination": 169,
+      "excluded": 48,
+      "reviewRequired": 1096
+    },
+    {
+      "county_fips": "48323",
+      "rawUniqueRich": 2186,
+      "eligibleDestination": 777,
+      "nonDestination": 119,
+      "excluded": 20,
+      "reviewRequired": 1270
+    },
+    {
+      "county_fips": "48325",
+      "rawUniqueRich": 2030,
+      "eligibleDestination": 652,
+      "nonDestination": 133,
+      "excluded": 34,
+      "reviewRequired": 1211
+    },
+    {
+      "county_fips": "48327",
+      "rawUniqueRich": 169,
+      "eligibleDestination": 67,
+      "nonDestination": 20,
+      "excluded": 6,
+      "reviewRequired": 76
+    },
+    {
+      "county_fips": "48329",
+      "rawUniqueRich": 9099,
+      "eligibleDestination": 2272,
+      "nonDestination": 507,
+      "excluded": 35,
+      "reviewRequired": 6285
+    },
+    {
+      "county_fips": "48331",
+      "rawUniqueRich": 1199,
+      "eligibleDestination": 428,
+      "nonDestination": 128,
+      "excluded": 22,
+      "reviewRequired": 621
+    },
+    {
+      "county_fips": "48333",
+      "rawUniqueRich": 309,
+      "eligibleDestination": 105,
+      "nonDestination": 30,
+      "excluded": 12,
+      "reviewRequired": 162
+    },
+    {
+      "county_fips": "48335",
+      "rawUniqueRich": 386,
+      "eligibleDestination": 151,
+      "nonDestination": 32,
+      "excluded": 3,
+      "reviewRequired": 200
+    },
+    {
+      "county_fips": "48337",
+      "rawUniqueRich": 1207,
+      "eligibleDestination": 372,
+      "nonDestination": 96,
+      "excluded": 31,
+      "reviewRequired": 708
+    },
+    {
+      "county_fips": "48339",
+      "rawUniqueRich": 31483,
+      "eligibleDestination": 6920,
+      "nonDestination": 1453,
+      "excluded": 353,
+      "reviewRequired": 22757
+    },
+    {
+      "county_fips": "48341",
+      "rawUniqueRich": 903,
+      "eligibleDestination": 302,
+      "nonDestination": 69,
+      "excluded": 6,
+      "reviewRequired": 526
+    },
+    {
+      "county_fips": "48343",
+      "rawUniqueRich": 582,
+      "eligibleDestination": 200,
+      "nonDestination": 64,
+      "excluded": 1,
+      "reviewRequired": 317
+    },
+    {
+      "county_fips": "48345",
+      "rawUniqueRich": 81,
+      "eligibleDestination": 35,
+      "nonDestination": 8,
+      "excluded": 1,
+      "reviewRequired": 37
+    },
+    {
+      "county_fips": "48347",
+      "rawUniqueRich": 3346,
+      "eligibleDestination": 915,
+      "nonDestination": 335,
+      "excluded": 27,
+      "reviewRequired": 2069
+    },
+    {
+      "county_fips": "48349",
+      "rawUniqueRich": 2606,
+      "eligibleDestination": 790,
+      "nonDestination": 256,
+      "excluded": 16,
+      "reviewRequired": 1544
+    },
+    {
+      "county_fips": "48351",
+      "rawUniqueRich": 361,
+      "eligibleDestination": 131,
+      "nonDestination": 69,
+      "excluded": 5,
+      "reviewRequired": 156
+    },
+    {
+      "county_fips": "48353",
+      "rawUniqueRich": 865,
+      "eligibleDestination": 320,
+      "nonDestination": 73,
+      "excluded": 9,
+      "reviewRequired": 463
+    },
+    {
+      "county_fips": "48355",
+      "rawUniqueRich": 18752,
+      "eligibleDestination": 4979,
+      "nonDestination": 1090,
+      "excluded": 356,
+      "reviewRequired": 12327
+    },
+    {
+      "county_fips": "48357",
+      "rawUniqueRich": 531,
+      "eligibleDestination": 170,
+      "nonDestination": 40,
+      "excluded": 4,
+      "reviewRequired": 317
+    },
+    {
+      "county_fips": "48359",
+      "rawUniqueRich": 155,
+      "eligibleDestination": 76,
+      "nonDestination": 6,
+      "excluded": 8,
+      "reviewRequired": 65
+    },
+    {
+      "county_fips": "48361",
+      "rawUniqueRich": 3441,
+      "eligibleDestination": 1019,
+      "nonDestination": 271,
+      "excluded": 38,
+      "reviewRequired": 2113
+    },
+    {
+      "county_fips": "48363",
+      "rawUniqueRich": 1831,
+      "eligibleDestination": 607,
+      "nonDestination": 124,
+      "excluded": 56,
+      "reviewRequired": 1044
+    },
+    {
+      "county_fips": "48365",
+      "rawUniqueRich": 1152,
+      "eligibleDestination": 349,
+      "nonDestination": 134,
+      "excluded": 13,
+      "reviewRequired": 656
+    },
+    {
+      "county_fips": "48367",
+      "rawUniqueRich": 7694,
+      "eligibleDestination": 1811,
+      "nonDestination": 422,
+      "excluded": 67,
+      "reviewRequired": 5394
+    },
+    {
+      "county_fips": "48369",
+      "rawUniqueRich": 373,
+      "eligibleDestination": 159,
+      "nonDestination": 26,
+      "excluded": 4,
+      "reviewRequired": 184
+    },
+    {
+      "county_fips": "48371",
+      "rawUniqueRich": 817,
+      "eligibleDestination": 305,
+      "nonDestination": 43,
+      "excluded": 27,
+      "reviewRequired": 442
+    },
+    {
+      "county_fips": "48373",
+      "rawUniqueRich": 2273,
+      "eligibleDestination": 669,
+      "nonDestination": 199,
+      "excluded": 16,
+      "reviewRequired": 1389
+    },
+    {
+      "county_fips": "48375",
+      "rawUniqueRich": 7603,
+      "eligibleDestination": 2022,
+      "nonDestination": 423,
+      "excluded": 51,
+      "reviewRequired": 5107
+    },
+    {
+      "county_fips": "48377",
+      "rawUniqueRich": 431,
+      "eligibleDestination": 178,
+      "nonDestination": 33,
+      "excluded": 25,
+      "reviewRequired": 195
+    },
+    {
+      "county_fips": "48379",
+      "rawUniqueRich": 601,
+      "eligibleDestination": 178,
+      "nonDestination": 58,
+      "excluded": 6,
+      "reviewRequired": 359
+    },
+    {
+      "county_fips": "48381",
+      "rawUniqueRich": 5677,
+      "eligibleDestination": 1271,
+      "nonDestination": 362,
+      "excluded": 26,
+      "reviewRequired": 4018
+    },
+    {
+      "county_fips": "48383",
+      "rawUniqueRich": 214,
+      "eligibleDestination": 90,
+      "nonDestination": 12,
+      "excluded": 0,
+      "reviewRequired": 112
+    },
+    {
+      "county_fips": "48385",
+      "rawUniqueRich": 320,
+      "eligibleDestination": 127,
+      "nonDestination": 20,
+      "excluded": 39,
+      "reviewRequired": 134
+    },
+    {
+      "county_fips": "48387",
+      "rawUniqueRich": 566,
+      "eligibleDestination": 194,
+      "nonDestination": 76,
+      "excluded": 47,
+      "reviewRequired": 249
+    },
+    {
+      "county_fips": "48389",
+      "rawUniqueRich": 784,
+      "eligibleDestination": 328,
+      "nonDestination": 45,
+      "excluded": 19,
+      "reviewRequired": 392
+    },
+    {
+      "county_fips": "48391",
+      "rawUniqueRich": 409,
+      "eligibleDestination": 167,
+      "nonDestination": 34,
+      "excluded": 17,
+      "reviewRequired": 191
+    },
+    {
+      "county_fips": "48393",
+      "rawUniqueRich": 41,
+      "eligibleDestination": 23,
+      "nonDestination": 3,
+      "excluded": 0,
+      "reviewRequired": 15
+    },
+    {
+      "county_fips": "48395",
+      "rawUniqueRich": 867,
+      "eligibleDestination": 332,
+      "nonDestination": 85,
+      "excluded": 12,
+      "reviewRequired": 438
+    },
+    {
+      "county_fips": "48397",
+      "rawUniqueRich": 5879,
+      "eligibleDestination": 1252,
+      "nonDestination": 222,
+      "excluded": 27,
+      "reviewRequired": 4378
+    },
+    {
+      "county_fips": "48399",
+      "rawUniqueRich": 545,
+      "eligibleDestination": 203,
+      "nonDestination": 45,
+      "excluded": 7,
+      "reviewRequired": 290
+    },
+    {
+      "county_fips": "48401",
+      "rawUniqueRich": 1976,
+      "eligibleDestination": 613,
+      "nonDestination": 246,
+      "excluded": 20,
+      "reviewRequired": 1097
+    },
+    {
+      "county_fips": "48403",
+      "rawUniqueRich": 598,
+      "eligibleDestination": 186,
+      "nonDestination": 68,
+      "excluded": 9,
+      "reviewRequired": 335
+    },
+    {
+      "county_fips": "48405",
+      "rawUniqueRich": 388,
+      "eligibleDestination": 141,
+      "nonDestination": 61,
+      "excluded": 5,
+      "reviewRequired": 181
+    },
+    {
+      "county_fips": "48407",
+      "rawUniqueRich": 870,
+      "eligibleDestination": 297,
+      "nonDestination": 103,
+      "excluded": 13,
+      "reviewRequired": 457
+    },
+    {
+      "county_fips": "48409",
+      "rawUniqueRich": 2915,
+      "eligibleDestination": 1004,
+      "nonDestination": 216,
+      "excluded": 19,
+      "reviewRequired": 1676
+    },
+    {
+      "county_fips": "48411",
+      "rawUniqueRich": 433,
+      "eligibleDestination": 153,
+      "nonDestination": 39,
+      "excluded": 25,
+      "reviewRequired": 216
+    },
+    {
+      "county_fips": "48413",
+      "rawUniqueRich": 119,
+      "eligibleDestination": 49,
+      "nonDestination": 8,
+      "excluded": 3,
+      "reviewRequired": 59
+    },
+    {
+      "county_fips": "48415",
+      "rawUniqueRich": 851,
+      "eligibleDestination": 276,
+      "nonDestination": 62,
+      "excluded": 7,
+      "reviewRequired": 506
+    },
+    {
+      "county_fips": "48417",
+      "rawUniqueRich": 251,
+      "eligibleDestination": 95,
+      "nonDestination": 22,
+      "excluded": 9,
+      "reviewRequired": 125
+    },
+    {
+      "county_fips": "48419",
+      "rawUniqueRich": 1192,
+      "eligibleDestination": 384,
+      "nonDestination": 153,
+      "excluded": 16,
+      "reviewRequired": 639
+    },
+    {
+      "county_fips": "48421",
+      "rawUniqueRich": 143,
+      "eligibleDestination": 65,
+      "nonDestination": 11,
+      "excluded": 1,
+      "reviewRequired": 66
+    },
+    {
+      "county_fips": "48423",
+      "rawUniqueRich": 14058,
+      "eligibleDestination": 3294,
+      "nonDestination": 1011,
+      "excluded": 72,
+      "reviewRequired": 9681
+    },
+    {
+      "county_fips": "48425",
+      "rawUniqueRich": 705,
+      "eligibleDestination": 235,
+      "nonDestination": 45,
+      "excluded": 30,
+      "reviewRequired": 395
+    },
+    {
+      "county_fips": "48427",
+      "rawUniqueRich": 2183,
+      "eligibleDestination": 888,
+      "nonDestination": 127,
+      "excluded": 28,
+      "reviewRequired": 1140
+    },
+    {
+      "county_fips": "48429",
+      "rawUniqueRich": 578,
+      "eligibleDestination": 158,
+      "nonDestination": 44,
+      "excluded": 14,
+      "reviewRequired": 362
+    },
+    {
+      "county_fips": "48431",
+      "rawUniqueRich": 84,
+      "eligibleDestination": 39,
+      "nonDestination": 6,
+      "excluded": 0,
+      "reviewRequired": 39
+    },
+    {
+      "county_fips": "48433",
+      "rawUniqueRich": 85,
+      "eligibleDestination": 32,
+      "nonDestination": 11,
+      "excluded": 9,
+      "reviewRequired": 33
+    },
+    {
+      "county_fips": "48435",
+      "rawUniqueRich": 266,
+      "eligibleDestination": 116,
+      "nonDestination": 18,
+      "excluded": 10,
+      "reviewRequired": 122
+    },
+    {
+      "county_fips": "48437",
+      "rawUniqueRich": 317,
+      "eligibleDestination": 113,
+      "nonDestination": 32,
+      "excluded": 2,
+      "reviewRequired": 170
+    },
+    {
+      "county_fips": "48439",
+      "rawUniqueRich": 101566,
+      "eligibleDestination": 23780,
+      "nonDestination": 5423,
+      "excluded": 685,
+      "reviewRequired": 71678
+    },
+    {
+      "county_fips": "48441",
+      "rawUniqueRich": 8093,
+      "eligibleDestination": 2026,
+      "nonDestination": 518,
+      "excluded": 25,
+      "reviewRequired": 5524
+    },
+    {
+      "county_fips": "48443",
+      "rawUniqueRich": 74,
+      "eligibleDestination": 34,
+      "nonDestination": 7,
+      "excluded": 2,
+      "reviewRequired": 31
+    },
+    {
+      "county_fips": "48445",
+      "rawUniqueRich": 494,
+      "eligibleDestination": 188,
+      "nonDestination": 35,
+      "excluded": 2,
+      "reviewRequired": 269
+    },
+    {
+      "county_fips": "48447",
+      "rawUniqueRich": 112,
+      "eligibleDestination": 46,
+      "nonDestination": 9,
+      "excluded": 3,
+      "reviewRequired": 54
+    },
+    {
+      "county_fips": "48449",
+      "rawUniqueRich": 1772,
+      "eligibleDestination": 520,
+      "nonDestination": 155,
+      "excluded": 9,
+      "reviewRequired": 1088
+    },
+    {
+      "county_fips": "48451",
+      "rawUniqueRich": 5975,
+      "eligibleDestination": 1589,
+      "nonDestination": 383,
+      "excluded": 58,
+      "reviewRequired": 3945
+    },
+    {
+      "county_fips": "48453",
+      "rawUniqueRich": 79126,
+      "eligibleDestination": 17990,
+      "nonDestination": 3944,
+      "excluded": 556,
+      "reviewRequired": 56636
+    },
+    {
+      "county_fips": "48455",
+      "rawUniqueRich": 588,
+      "eligibleDestination": 203,
+      "nonDestination": 65,
+      "excluded": 14,
+      "reviewRequired": 306
+    },
+    {
+      "county_fips": "48457",
+      "rawUniqueRich": 801,
+      "eligibleDestination": 276,
+      "nonDestination": 110,
+      "excluded": 9,
+      "reviewRequired": 406
+    },
+    {
+      "county_fips": "48459",
+      "rawUniqueRich": 1587,
+      "eligibleDestination": 476,
+      "nonDestination": 183,
+      "excluded": 28,
+      "reviewRequired": 900
+    },
+    {
+      "county_fips": "48461",
+      "rawUniqueRich": 192,
+      "eligibleDestination": 87,
+      "nonDestination": 11,
+      "excluded": 3,
+      "reviewRequired": 91
+    },
+    {
+      "county_fips": "48463",
+      "rawUniqueRich": 1655,
+      "eligibleDestination": 485,
+      "nonDestination": 95,
+      "excluded": 110,
+      "reviewRequired": 965
+    },
+    {
+      "county_fips": "48465",
+      "rawUniqueRich": 1942,
+      "eligibleDestination": 644,
+      "nonDestination": 114,
+      "excluded": 42,
+      "reviewRequired": 1142
+    },
+    {
+      "county_fips": "48467",
+      "rawUniqueRich": 3029,
+      "eligibleDestination": 904,
+      "nonDestination": 239,
+      "excluded": 21,
+      "reviewRequired": 1865
+    },
+    {
+      "county_fips": "48469",
+      "rawUniqueRich": 5105,
+      "eligibleDestination": 1295,
+      "nonDestination": 294,
+      "excluded": 45,
+      "reviewRequired": 3471
+    },
+    {
+      "county_fips": "48471",
+      "rawUniqueRich": 3086,
+      "eligibleDestination": 909,
+      "nonDestination": 281,
+      "excluded": 46,
+      "reviewRequired": 1850
+    },
+    {
+      "county_fips": "48473",
+      "rawUniqueRich": 2215,
+      "eligibleDestination": 652,
+      "nonDestination": 222,
+      "excluded": 27,
+      "reviewRequired": 1314
+    },
+    {
+      "county_fips": "48475",
+      "rawUniqueRich": 654,
+      "eligibleDestination": 258,
+      "nonDestination": 39,
+      "excluded": 4,
+      "reviewRequired": 353
+    },
+    {
+      "county_fips": "48477",
+      "rawUniqueRich": 2438,
+      "eligibleDestination": 687,
+      "nonDestination": 191,
+      "excluded": 14,
+      "reviewRequired": 1546
+    },
+    {
+      "county_fips": "48479",
+      "rawUniqueRich": 11968,
+      "eligibleDestination": 3313,
+      "nonDestination": 514,
+      "excluded": 34,
+      "reviewRequired": 8107
+    },
+    {
+      "county_fips": "48481",
+      "rawUniqueRich": 2235,
+      "eligibleDestination": 714,
+      "nonDestination": 181,
+      "excluded": 21,
+      "reviewRequired": 1319
+    },
+    {
+      "county_fips": "48483",
+      "rawUniqueRich": 411,
+      "eligibleDestination": 165,
+      "nonDestination": 43,
+      "excluded": 3,
+      "reviewRequired": 200
+    },
+    {
+      "county_fips": "48485",
+      "rawUniqueRich": 6547,
+      "eligibleDestination": 1725,
+      "nonDestination": 477,
+      "excluded": 59,
+      "reviewRequired": 4286
+    },
+    {
+      "county_fips": "48487",
+      "rawUniqueRich": 706,
+      "eligibleDestination": 250,
+      "nonDestination": 57,
+      "excluded": 11,
+      "reviewRequired": 388
+    },
+    {
+      "county_fips": "48489",
+      "rawUniqueRich": 691,
+      "eligibleDestination": 276,
+      "nonDestination": 54,
+      "excluded": 5,
+      "reviewRequired": 356
+    },
+    {
+      "county_fips": "48491",
+      "rawUniqueRich": 29684,
+      "eligibleDestination": 6551,
+      "nonDestination": 1393,
+      "excluded": 199,
+      "reviewRequired": 21541
+    },
+    {
+      "county_fips": "48493",
+      "rawUniqueRich": 1919,
+      "eligibleDestination": 572,
+      "nonDestination": 108,
+      "excluded": 18,
+      "reviewRequired": 1221
+    },
+    {
+      "county_fips": "48495",
+      "rawUniqueRich": 376,
+      "eligibleDestination": 166,
+      "nonDestination": 30,
+      "excluded": 2,
+      "reviewRequired": 178
+    },
+    {
+      "county_fips": "48497",
+      "rawUniqueRich": 3802,
+      "eligibleDestination": 1035,
+      "nonDestination": 274,
+      "excluded": 43,
+      "reviewRequired": 2450
+    },
+    {
+      "county_fips": "48499",
+      "rawUniqueRich": 2477,
+      "eligibleDestination": 741,
+      "nonDestination": 192,
+      "excluded": 15,
+      "reviewRequired": 1529
+    },
+    {
+      "county_fips": "48501",
+      "rawUniqueRich": 364,
+      "eligibleDestination": 147,
+      "nonDestination": 26,
+      "excluded": 0,
+      "reviewRequired": 191
+    },
+    {
+      "county_fips": "48503",
+      "rawUniqueRich": 1147,
+      "eligibleDestination": 353,
+      "nonDestination": 86,
+      "excluded": 16,
+      "reviewRequired": 692
+    },
+    {
+      "county_fips": "48505",
+      "rawUniqueRich": 578,
+      "eligibleDestination": 230,
+      "nonDestination": 26,
+      "excluded": 14,
+      "reviewRequired": 308
+    },
+    {
+      "county_fips": "48507",
+      "rawUniqueRich": 373,
+      "eligibleDestination": 177,
+      "nonDestination": 24,
+      "excluded": 13,
+      "reviewRequired": 159
     }
   ]
 }

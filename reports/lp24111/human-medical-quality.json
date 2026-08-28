@@ -1,11 +1,11 @@
 {
   "schemaVersion": "gridly.lp24111.human-medical.v1",
-  "executionState": "NOT_EXECUTED",
-  "rawHumanMedicalCandidates": null,
-  "veterinaryExclusions": null,
-  "retainedHospital": null,
-  "retainedEmergencyCare": null,
-  "retainedUrgentCare": null,
-  "retainedPharmacy": null,
+  "executionState": "OWNER_LOCAL_MEASURED",
+  "rawHumanMedicalCandidates": 25881,
+  "veterinaryExclusions": 4633,
+  "retainedHospital": 10722,
+  "retainedEmergencyCare": 1253,
+  "retainedUrgentCare": 1882,
+  "retainedPharmacy": 7391,
   "animalHealthAcceptedAsHumanMedical": false
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.confidence.v2",
-  "executionState": "KING_SAMPLE_ONLY",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "candidateThresholds": [
     0.5,
     0.7,
@@ -17,7 +17,40 @@
     "probable duplicates",
     "child POIs"
   ],
-  "distributions": null,
+  "distributions": [
+    {
+      "segment": "GRIDLY_ELIGIBLE_DESTINATION",
+      "n": 364959,
+      "ge_05": 338456,
+      "ge_07": 300206,
+      "ge_08": 275575,
+      "ge_09": 240174
+    },
+    {
+      "segment": "GRIDLY_EXCLUDED",
+      "n": 12227,
+      "ge_05": 10564,
+      "ge_07": 8990,
+      "ge_08": 7630,
+      "ge_09": 6365
+    },
+    {
+      "segment": "GRIDLY_NON_DESTINATION",
+      "n": 83992,
+      "ge_05": 77144,
+      "ge_07": 70017,
+      "ge_08": 64105,
+      "ge_09": 59531
+    },
+    {
+      "segment": "GRIDLY_REVIEW_REQUIRED",
+      "n": 1001637,
+      "ge_05": 859080,
+      "ge_07": 757408,
+      "ge_08": 688213,
+      "ge_09": 596900
+    }
+  ],
   "policy": "NO_CUTOFF_RECOMMENDED_CONFIDENCE_IS_NOT_ACCEPTANCE_AUTHORITY",
   "evidence": "0.886 conflict and plausible rural records at 0.762, 0.485, and 0.176"
 }
