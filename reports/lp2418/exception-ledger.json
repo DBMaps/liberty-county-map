@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "gridly.lp2418.exceptionLedger.v1",
+  "milestone": "LP241.8",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "exceptions": [
+    {
+      "id": "LP2418-E1",
+      "status": "OPEN_OWNER_EVIDENCE_REQUIRED",
+      "subject": "current Cloudflare account state",
+      "missingEvidence": [
+        "Pages project gridly-preview current deployment list showing deployment ID, created time, branch, source/model, and active production alias",
+        "custom-domain binding for preview.gridlygo.com",
+        "Access application hostname and policy decision without email/token disclosure"
+      ],
+      "impact": "Exact present-day secured-link deployment authority cannot be certified from repository history."
+    },
+    {
+      "id": "LP2418-E2",
+      "status": "OPEN_REMOTE_IDENTITY_UNAVAILABLE",
+      "subject": "served byte identity",
+      "missingEvidence": [
+        "authenticated response hashes or copies of index.html, js/app.js, and service-worker.js",
+        "active service-worker version/cache response from the owner browser"
+      ],
+      "impact": "Cannot distinguish unchanged old artifact from later account-side replacement or browser cache contribution."
+    },
+    {
+      "id": "LP2418-E3",
+      "status": "KNOWN_DESIGN_LIMITATION",
+      "subject": "runtime identity contract",
+      "missingEvidence": [
+        "deployed current build containing a safe deterministic identity endpoint/helper"
+      ],
+      "impact": "The last proven remote predates LP241.8 and cannot expose an LP241.8 helper; adding one now would not identify what that old remote currently serves."
+    }
+  ],
+  "secretsRequired": false
+}

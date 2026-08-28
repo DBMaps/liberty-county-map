@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "gridly.lp2418.currentBuildIdentity.v1",
+  "milestone": "LP241.8",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "branch": "LP241.8-\u2014-Secure-Mobile-Acceptance-Deployment-Parity",
+  "gitCommit": "f019de62d6067aff21ef422eab8aafac2e5aded7",
+  "identityCommitMeaning": "approved application baseline audited before LP241.8 evidence-only commit",
+  "packageVersion": "276.1.0",
+  "appVersion": "Gridly V204.0B",
+  "appScriptVersion": "2403a",
+  "serviceWorkerVersion": "lp101.1-runtime-recovery",
+  "serviceWorkerCache": "gridly-pwa-shell-lp235-v1",
+  "sourceHashes": {
+    "indexHtmlSha256": "df0f661145976a20c83955b0d9095c0884c1b95acc704aaae2b91414faf7f4c4",
+    "appScriptSha256": "17e58441f490355dd95ccdcb77e3717d87cbef94b0100751b28456ab42c46fb8",
+    "serviceWorkerSha256": "22ab81ebe1594b7e7d0750b22e3720f94c04b2dfc091b987522aab298cf5ccde"
+  },
+  "launchPresentationAuthority": {
+    "contract": "LP241.7",
+    "supported": "validated mobile portrait with coarse pointer, no fine pointer, and no hover",
+    "unsupported": "Desktop Platform In Development gate",
+    "legacyDashboard": "NEVER_TRAVELER_FACING"
+  },
+  "buildIdentity": "sha256:2d4253036026661af2c0b73704ef6a236f7e367359edd7750114db3acc382dc3"
+}
