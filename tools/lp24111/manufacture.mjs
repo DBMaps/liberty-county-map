@@ -20,7 +20,9 @@ const measured={evidenceType:'OWNER_EXECUTED_AUTHORITATIVE_PHASE_B',duckdb:'1.5.
 const richConservation={inputShardRows:1462893,uniqueIds:1462815,crossShardDuplicateIds:52,extraDuplicateRows:78,maximumShardOccurrencesPerId:4,missingAuthorityIds:0,outsideAuthorityIds:0};
 const schema=['id','geometry','categories','confidence','websites','emails','socials','phones','brand','addresses','names','sources','operating_status','basic_category','taxonomy','version','bbox','theme','type'];
 
-function artifacts(){
+const unavailableReason='The 168 owner-local matched Parquet shards are absent from this checkout; counts are not inferred from raw authority totals.';
+
+export function artifacts(options={}){
  const counties=read('data/lp104/texas-counties.json').counties;
  const places=read('data/generated/gridly-statewide-place-presentation-v1.json').places;
  const projection=read('data/generated/gridly-statewide-consumer-community-projection-v1.json');
@@ -58,7 +60,7 @@ function artifacts(){
  files['normalized-schema-proposal.json']={schemaVersion:'gridly.lp24111.normalized.v2',status:'BUILD_PROPOSAL_NOT_RUNTIME',fields:['poiId','name','normalizedName','brand','gridlyCategories','latitude','longitude','sourceAddress','sourceLocality','sourceRegion','sourcePostcode','countyFips','spatialAuthority','metadataConsistency','identityClassification','confidence','operatingStatus','source'],buildOnly:['bbox','alternateNames','alternateCategories','taxonomy','phones','websites','sources','conflationSignals'],zeroQueryCost:true};
  files['rich-field-extraction.json']={schemaVersion:'gridly.lp24111.rich-extraction.v1',executionState:UNKNOWN,reason:'Required owner-local spatial-authority Parquet is not present in this checkout; no remote rich-field measurement was inferred.',projection:['id','geometry','bbox','names','categories','basic_category','taxonomy','confidence','brand','addresses','operating_status','sources','websites','phones'],remoteStrategy:'LITERAL_BBOX_SHARDS',localAuthorityMatch:true,globalSelectStar:false,globalAuthorityJoin:false};
  files['rich-authority-conservation.json']={schemaVersion:'gridly.lp24111.rich-conservation.v1',executionState:'OWNER_CERTIFIED',releaseId:release,authorityIds:assignment.authorityIds,...richConservation,conservationPassed:true,deduplicatedArtifact:'owner-local/lp24111/overture-texas-rich-authority-dedup.parquet',deduplicatedArtifactPresent:false,normalizationGate:'BLOCKED_LOCAL_INPUTS_ABSENT'};
- files['normalization-summary.json']={schemaVersion:'gridly.lp24111.normalization.v1',executionState:UNKNOWN,rawUniquePois:richConservation.uniqueIds,normalizedUniquePois:null,eligibleDestinations:null,nonDestination:null,excluded:null,reviewRequired:null,reason:'The 168 owner-local matched Parquet shards are absent from this checkout; counts are not inferred from raw authority totals.'};
+ files['normalization-summary.json']={schemaVersion:'gridly.lp24111.normalization.v1',executionState:UNKNOWN,rawUniquePois:richConservation.uniqueIds,normalizedUniquePois:null,eligibleDestinations:null,nonDestination:null,excluded:null,reviewRequired:null,reason:unavailableReason};
  files['human-medical-quality.json']={schemaVersion:'gridly.lp24111.human-medical.v1',executionState:UNKNOWN,rawHumanMedicalCandidates:null,veterinaryExclusions:null,retainedHospital:null,retainedEmergencyCare:null,retainedUrgentCare:null,retainedPharmacy:null,animalHealthAcceptedAsHumanMedical:false};
  files['metadata-conflicts.json']={...files['spatial-metadata-conflicts.json'],schemaVersion:'gridly.lp24111.metadata-conflict.v2',requiredClassifications:['SPATIAL_METADATA_CONSISTENT','SPATIAL_METADATA_CONFLICT','SPATIAL_METADATA_INCOMPLETE','SPATIAL_METADATA_REVIEW_REQUIRED']};
  files['normalized-county-coverage.json']={schemaVersion:'gridly.lp24111.normalized-counties.v1',executionState:UNKNOWN,expectedCountyCount:254,accountedCountyCount:countyRows.length,rows:countyRows.map(row=>({...row,eligibleDestinations:null,excludedNonDestinations:null,reviewRequired:null,metadataConflicts:null,childOrDuplicate:null,coverageClass:'UNKNOWN'}))};
@@ -71,7 +73,7 @@ function artifacts(){
  files['owner-poc-reconciliation.json']={schemaVersion:'gridly.lp24111.owner-poc.v1',executionState:'OWNER_OBSERVED_NOT_INDEPENDENTLY_REPRODUCED',areas:[{area:'Dayton / Liberty',evidence:['Walmart inventory','fuel','hospital/medical']},{area:'Tarkington / rural Liberty County',evidence:['H-E-B','Brookshire Brothers','Walmart','Tarkington Country Mart','local markets','convenience stores','gas','Dollar General','Family Dollar']},{area:'Pecos / West Texas',evidence:['Best Western','Holiday Inn Express','Hampton Inn','Fairfield','Comfort Suites','Home2 Suites','Motel 6','local/other lodging']} ]};
  files['exception-ledger.json']={schemaVersion:'gridly.lp24111.exceptions.v4',exceptions:[{id:'OWNER_CERTIFIED_RICH_SHARDS_ABSENT_FROM_CHECKOUT',severity:'BLOCKER',expectedFiles:168},{id:'DEDUP_ARTIFACT_NOT_MATERIALIZED',severity:'BLOCKER'},{id:'NORMALIZED_STATEWIDE_ANALYSIS_NOT_EXECUTED',severity:'BLOCKER'},{id:'PACKAGE_MEASUREMENTS_NOT_EXECUTED',severity:'BLOCKER'},{id:'LICENSE_COUNSEL_REVIEW',severity:'BLOCKER'},{id:'OSM_INCREMENT_NOT_MEASURED',severity:'OPEN'}]};
  files['certification.json']={schemaVersion:'gridly.lp24111.certification.v4',executiveResult:'PHASE_D_NOT_EXECUTED_INPUT_ARTIFACTS_UNAVAILABLE',richAuthorityConservation:'OWNER_CERTIFIED',productViability:'OVERTURE_TEXAS_POI_AUTHORITY_NOT_YET_PRODUCT_VIABLE',classifications:['OVERTURE_TEXAS_SPATIAL_AUTHORITY_CERTIFIED_EXACT','RICH_AUTHORITY_CONSERVATION_OWNER_CERTIFIED','NORMALIZATION_NOT_EXECUTED','LEGAL_REVIEW_REQUIRED'],productionPoiSearch:'NOT_LAUNCHED_NOT_CERTIFIED',zeroCostContract:'NON_RUNTIME',mergeRecommendation:'DO_NOT_MERGE_PRODUCT_VIABILITY_CERTIFICATION',nextAction:'Place all 168 tx-*.authority-matched.parquet files plus both certified authority Parquets in owner-local/lp24111, then rerun npm run build:lp24111.'};
- const measuredPath=path.join(root,'owner-local/lp24111/normalized-measurements.json');
+ const measuredPath=options.measurementsPath??path.join(root,'owner-local/lp24111/normalized-measurements.json');
  if(fs.existsSync(measuredPath)){
   const localMeasured=JSON.parse(fs.readFileSync(measuredPath,'utf8'));
   if(localMeasured.schemaVersion!=='gridly.lp24111.measured-normalization.v1'||localMeasured.releaseId!==release||!localMeasured.reports) throw Error('Invalid owner-local normalized measurements');
@@ -79,12 +81,14 @@ function artifacts(){
    if(!(name in files)) throw Error(`Unknown measured report ${name}`);
    files[name]={...files[name],...value};
   }
+  const normalization=files['normalization-summary.json'];
+  if(normalization.executionState==='OWNER_LOCAL_MEASURED'&&normalization.reason===unavailableReason)delete normalization.reason;
  }
  return files;
 }
 
-export function verify(){
- const a=artifacts();
+export function verify(options={}){
+ const a=artifacts(options);
  if(a['overture-release.json'].releaseId!==release || uri.includes('latest')) throw Error('release pin failed');
  if(a['texas-extraction-summary.json'].spatialAuthority.rows!==1462815) throw Error('owner authority count failed');
  if(a['county-assignment-certification.json'].uniqueIds!==1462815 || a['county-assignment-certification.json'].uniqueCountyAssignments!==1462815 || a['county-assignment-certification.json'].unassigned!==0 || a['county-assignment-certification.json'].boundaryMulti!==0 || !a['county-assignment-certification.json'].zeroCountLoss) throw Error('exact assignment conservation failed');
