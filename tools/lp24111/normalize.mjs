@@ -98,6 +98,8 @@ export function execute(options={}){
  const countyRows=measure('MEASURE_COUNTY_COVERAGE',measurements.counties);if(countyRows.length!==254)throw Error(`Stage MEASURE_COUNTY_COVERAGE failed; normalized county coverage is ${countyRows.length}, expected 254`);
  const packageRows=measure('MEASURE_PACKAGES',measurements.packages);
  const reportOverrides={
+  'execution-summary.json':{richFieldManufacturing:'OWNER_LOCAL_MEASURED',normalization:'OWNER_LOCAL_MEASURED'},
+  'rich-field-extraction.json':{executionState:'OWNER_LOCAL_MEASURED',reason:'Owner-local authority-matched shards were normalized and measured without a remote refetch.'},
   'normalization-summary.json':{schemaVersion:'gridly.lp24111.normalization.v1',executionState:'OWNER_LOCAL_MEASURED',rawUniquePois:expected.uniqueIds,normalizedUniquePois:expected.uniqueIds,eligibleDestinations:eligibleCount,nonDestination:byClass.GRIDLY_NON_DESTINATION??0,excluded:byClass.GRIDLY_EXCLUDED??0,reviewRequired:byClass.GRIDLY_REVIEW_REQUIRED??0},
   'category-coverage.json':{schemaVersion:'gridly.lp24111.categories.v2',executionState:'OWNER_LOCAL_MEASURED',results:categories.map(x=>({...x,count:Number(x.count),countiesRepresented:Number(x.countiesRepresented)}))},
   'human-medical-quality.json':{schemaVersion:'gridly.lp24111.human-medical.v1',executionState:'OWNER_LOCAL_MEASURED',rawHumanMedicalCandidates:number(medical,'raw_candidates'),veterinaryExclusions:number(medical,'veterinary_exclusions'),retainedHospital:number(medical,'hospital'),retainedEmergencyCare:number(medical,'emergency'),retainedUrgentCare:number(medical,'urgent'),retainedPharmacy:number(medical,'pharmacy'),animalHealthAcceptedAsHumanMedical:false},
