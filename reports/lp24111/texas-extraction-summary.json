@@ -1,16 +1,31 @@
 {
-  "schemaVersion": "gridly.lp24111.extraction.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "No pinned-release extract is present in the repository; counts and sizes are not fabricated.",
+  "schemaVersion": "gridly.lp24111.extraction.v2",
+  "executionState": "OWNER_EXECUTED",
   "releaseId": "2026-08-19.0",
-  "sourceUri": "s3://overturemaps-us-west-2/release/2026-08-19.0/theme=places/type=place/*",
-  "geographicSelectionAuthority": "US Census TIGER/Line 2025 county geometries with STATEFP=48, dissolved; exact intersection, not address or rectangle",
-  "tool": "tools/lp24111/extract-texas.ps1",
-  "sql": "tools/lp24111/extract-texas.sql",
-  "rawTexasPoiCount": null,
-  "rawBytes": null,
-  "geoParquetBytes": null,
-  "durationSeconds": null,
-  "sourcePartitionsTouched": null,
+  "coarsePrefilter": {
+    "bounds": {
+      "xmin": -106.7,
+      "xmax": -93.5,
+      "ymin": 25.8,
+      "ymax": 36.6
+    },
+    "role": "PERFORMANCE_PREFILTER_NOT_INCLUSION_AUTHORITY",
+    "rows": 1993312,
+    "probeSeconds": 16.354,
+    "materializeSeconds": 42.6501065,
+    "bytes": 79755333
+  },
+  "spatialAuthority": {
+    "rows": 1462815,
+    "seconds": 1353.794,
+    "bytes": 58107610,
+    "projection": [
+      "id",
+      "geometry",
+      "bbox"
+    ]
+  },
+  "inclusionAuthority": "2025_CENSUS_TEXAS_COUNTY_GEOMETRY_INTERSECTION",
+  "crsTransform": "EPSG:4269 -> OGC:CRS84; always_xy=true",
   "outputIgnored": true
 }

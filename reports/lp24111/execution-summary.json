@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "gridly.lp24111.phase-b.execution.v1",
+  "evidenceType": "OWNER_EXECUTED_AUTHORITATIVE_PHASE_B",
+  "duckdb": "1.5.5 (Variegata)",
+  "releaseId": "2026-08-19.0",
+  "bbox": {
+    "bounds": {
+      "xmin": -106.7,
+      "xmax": -93.5,
+      "ymin": 25.8,
+      "ymax": 36.6
+    },
+    "role": "PERFORMANCE_PREFILTER_NOT_INCLUSION_AUTHORITY",
+    "rows": 1993312,
+    "probeSeconds": 16.354,
+    "materializeSeconds": 42.6501065,
+    "bytes": 79755333
+  },
+  "authority": {
+    "rows": 1462815,
+    "seconds": 1353.794,
+    "bytes": 58107610,
+    "projection": [
+      "id",
+      "geometry",
+      "bbox"
+    ]
+  },
+  "counties": {
+    "measured": 254,
+    "withPois": 254,
+    "withoutPois": 0,
+    "assignmentTotal": 1462815,
+    "maximumPois": 264066
+  },
+  "king": {
+    "fips": "48269",
+    "count": 14,
+    "bounds": {
+      "xmin": -100.51869951397825,
+      "xmax": -99.99098835649599,
+      "ymin": 33.397002693291206,
+      "ymax": 33.83615278134176
+    },
+    "literalProbeSeconds": 6.46
+  },
+  "rural": [
+    [
+      "48269",
+      "King",
+      14
+    ],
+    [
+      "48301",
+      "Loving",
+      21
+    ],
+    [
+      "48033",
+      "Borden",
+      38
+    ],
+    [
+      "48393",
+      "Roberts",
+      41
+    ],
+    [
+      "48263",
+      "Kent",
+      42
+    ],
+    [
+      "48173",
+      "Glasscock",
+      47
+    ],
+    [
+      "48261",
+      "Kenedy",
+      55
+    ],
+    [
+      "48443",
+      "Terrell",
+      74
+    ],
+    [
+      "48155",
+      "Foard",
+      75
+    ],
+    [
+      "48345",
+      "Motley",
+      81
+    ],
+    [
+      "48431",
+      "Sterling",
+      84
+    ],
+    [
+      "48433",
+      "Stonewall",
+      85
+    ],
+    [
+      "48235",
+      "Irion",
+      86
+    ],
+    [
+      "48101",
+      "Cottle",
+      92
+    ],
+    [
+      "48079",
+      "Cochran",
+      102
+    ]
+  ],
+  "richFieldManufacturing": "NOT_EXECUTED",
+  "normalization": "NOT_EXECUTED",
+  "source": "OWNER_EXECUTED_EVIDENCE_INGESTED_2026-08-28"
+}

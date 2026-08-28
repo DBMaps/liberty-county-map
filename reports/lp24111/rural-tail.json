@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "gridly.lp24111.rural.v1",
+  "executionState": "OWNER_EXECUTED",
+  "minimumCounty": {
+    "fips": "48269",
+    "name": "King",
+    "rawPoiCount": 14
+  },
+  "rows": [
+    {
+      "countyFips": "48269",
+      "countyName": "King",
+      "rawPoiCount": 14
+    },
+    {
+      "countyFips": "48301",
+      "countyName": "Loving",
+      "rawPoiCount": 21
+    },
+    {
+      "countyFips": "48033",
+      "countyName": "Borden",
+      "rawPoiCount": 38
+    },
+    {
+      "countyFips": "48393",
+      "countyName": "Roberts",
+      "rawPoiCount": 41
+    },
+    {
+      "countyFips": "48263",
+      "countyName": "Kent",
+      "rawPoiCount": 42
+    },
+    {
+      "countyFips": "48173",
+      "countyName": "Glasscock",
+      "rawPoiCount": 47
+    },
+    {
+      "countyFips": "48261",
+      "countyName": "Kenedy",
+      "rawPoiCount": 55
+    },
+    {
+      "countyFips": "48443",
+      "countyName": "Terrell",
+      "rawPoiCount": 74
+    },
+    {
+      "countyFips": "48155",
+      "countyName": "Foard",
+      "rawPoiCount": 75
+    },
+    {
+      "countyFips": "48345",
+      "countyName": "Motley",
+      "rawPoiCount": 81
+    },
+    {
+      "countyFips": "48431",
+      "countyName": "Sterling",
+      "rawPoiCount": 84
+    },
+    {
+      "countyFips": "48433",
+      "countyName": "Stonewall",
+      "rawPoiCount": 85
+    },
+    {
+      "countyFips": "48235",
+      "countyName": "Irion",
+      "rawPoiCount": 86
+    },
+    {
+      "countyFips": "48101",
+      "countyName": "Cottle",
+      "rawPoiCount": 92
+    },
+    {
+      "countyFips": "48079",
+      "countyName": "Cochran",
+      "rawPoiCount": 102
+    }
+  ],
+  "rawPlacesNotBusinessCount": true
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "gridly.lp24111.owner-poc.v1",
+  "executionState": "OWNER_OBSERVED_NOT_INDEPENDENTLY_REPRODUCED",
+  "areas": [
+    {
+      "area": "Dayton / Liberty",
+      "evidence": [
+        "Walmart inventory",
+        "fuel",
+        "hospital/medical"
+      ]
+    },
+    {
+      "area": "Tarkington / rural Liberty County",
+      "evidence": [
+        "H-E-B",
+        "Brookshire Brothers",
+        "Walmart",
+        "Tarkington Country Mart",
+        "local markets",
+        "convenience stores",
+        "gas",
+        "Dollar General",
+        "Family Dollar"
+      ]
+    },
+    {
+      "area": "Pecos / West Texas",
+      "evidence": [
+        "Best Western",
+        "Holiday Inn Express",
+        "Hampton Inn",
+        "Fairfield",
+        "Comfort Suites",
+        "Home2 Suites",
+        "Motel 6",
+        "local/other lodging"
+      ]
+    }
+  ]
+}

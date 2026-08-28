@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "gridly.lp24111.lp24110-reconciliation.v1",
+  "schemaVersion": "gridly.lp24111.cohort.v2",
   "executionState": "NOT_EXECUTED",
-  "liveRuntimePassClaim": false,
+  "communityCount": 22,
   "communities": [
     {
       "community": "Dayton",
@@ -22,7 +22,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -44,7 +44,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -66,7 +66,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -88,7 +88,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -110,7 +110,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -132,7 +132,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -154,7 +154,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -176,7 +176,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -198,7 +198,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -220,7 +220,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -242,7 +242,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -264,7 +264,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -286,7 +286,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -308,7 +308,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -330,7 +330,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -352,7 +352,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -374,7 +374,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -396,7 +396,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -418,7 +418,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -440,7 +440,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -462,7 +462,7 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     },
     {
@@ -484,36 +484,9 @@
         "school",
         "urgent care"
       ],
-      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "observations": [],
       "normalizedCapability": "NOT_EXECUTED"
     }
   ],
-  "ownerObserved": [
-    {
-      "area": "Dayton",
-      "evidence": [
-        "Walmart and child records",
-        "gas stations"
-      ]
-    },
-    {
-      "area": "Dayton/Liberty",
-      "evidence": [
-        "hospital, emergency, urgent and other medical records"
-      ]
-    },
-    {
-      "area": "Tarkington/rural",
-      "evidence": [
-        "H-E-B, Brookshire Brothers, Walmart, local markets, fuel and discount retail"
-      ]
-    },
-    {
-      "area": "Pecos",
-      "evidence": [
-        "chain and local lodging"
-      ]
-    }
-  ],
-  "ownerEvidenceLabel": "OWNER_OBSERVED_NOT_INDEPENDENTLY_REPRODUCED"
+  "runtimeClaim": false
 }

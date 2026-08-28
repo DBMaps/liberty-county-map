@@ -1,28 +1,25 @@
 {
-  "schemaVersion": "gridly.lp24111.exceptions.v1",
+  "schemaVersion": "gridly.lp24111.exceptions.v2",
   "exceptions": [
     {
-      "id": "EXTRACT_NOT_EXECUTED",
-      "severity": "BLOCKER",
-      "affects": [
-        "county coverage",
-        "community coverage",
-        "categories",
-        "brands",
-        "duplicates",
-        "confidence",
-        "address quality",
-        "sizes"
-      ]
-    },
-    {
-      "id": "RELEASE_AUTHORITY_REVALIDATION",
-      "severity": "BLOCKER",
-      "detail": "Owner-supplied future-dated release could not be independently reached from this environment."
-    },
-    {
-      "id": "SCHEMA_NOT_OBSERVED",
+      "id": "UNIQUE_ASSIGNMENT_OWNER_RERUN_REQUIRED",
       "severity": "BLOCKER"
+    },
+    {
+      "id": "RICH_FIELDS_NOT_MATERIALIZED",
+      "severity": "BLOCKER"
+    },
+    {
+      "id": "NORMALIZED_STATEWIDE_ANALYSIS_NOT_EXECUTED",
+      "severity": "BLOCKER"
+    },
+    {
+      "id": "PACKAGE_MEASUREMENTS_NOT_EXECUTED",
+      "severity": "BLOCKER"
+    },
+    {
+      "id": "NON_PLACE_RADIUS_MEASUREMENT_NOT_EXECUTED",
+      "severity": "OPEN"
     },
     {
       "id": "LICENSE_COUNSEL_REVIEW",

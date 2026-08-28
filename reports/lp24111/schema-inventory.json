@@ -1,91 +1,98 @@
 {
-  "schemaVersion": "gridly.lp24111.schema-inventory.v1",
-  "evidenceState": "NOT_EXECUTED",
+  "schemaVersion": "gridly.lp24111.schema.v2",
+  "evidenceState": "OWNER_OBSERVED",
   "fields": [
     {
       "field": "id",
-      "classification": "REQUIRED_RUNTIME",
-      "observed": false
-    },
-    {
-      "field": "names.primary",
-      "classification": "REQUIRED_RUNTIME",
-      "observed": false
-    },
-    {
-      "field": "names.common/alternate",
-      "classification": "BUILD_ONLY",
-      "observed": false
-    },
-    {
-      "field": "categories.primary",
-      "classification": "REQUIRED_RUNTIME",
-      "observed": false
-    },
-    {
-      "field": "categories.alternate",
-      "classification": "BUILD_ONLY",
-      "observed": false
-    },
-    {
-      "field": "addresses",
-      "classification": "USEFUL_RUNTIME",
-      "observed": false
-    },
-    {
-      "field": "addresses.locality",
-      "classification": "USEFUL_RUNTIME",
-      "observed": false
-    },
-    {
-      "field": "addresses.region",
-      "classification": "BUILD_ONLY",
-      "observed": false
-    },
-    {
-      "field": "addresses.postcode",
-      "classification": "USEFUL_RUNTIME",
-      "observed": false
+      "observed": true
     },
     {
       "field": "geometry",
-      "classification": "REQUIRED_RUNTIME",
-      "observed": false
+      "observed": true
     },
     {
-      "field": "bbox",
-      "classification": "NOT_REQUIRED",
-      "observed": false
+      "field": "categories",
+      "observed": true
     },
     {
       "field": "confidence",
-      "classification": "USEFUL_RUNTIME",
-      "observed": false
-    },
-    {
-      "field": "brand",
-      "classification": "USEFUL_RUNTIME",
-      "observed": false
+      "observed": true
     },
     {
       "field": "websites",
-      "classification": "BUILD_ONLY",
-      "observed": false
+      "observed": true
+    },
+    {
+      "field": "emails",
+      "observed": true
+    },
+    {
+      "field": "socials",
+      "observed": true
     },
     {
       "field": "phones",
-      "classification": "BUILD_ONLY",
-      "observed": false
+      "observed": true
     },
     {
-      "field": "operating_status",
-      "classification": "USEFUL_RUNTIME",
-      "observed": false
+      "field": "brand",
+      "observed": true
+    },
+    {
+      "field": "addresses",
+      "observed": true
+    },
+    {
+      "field": "names",
+      "observed": true
     },
     {
       "field": "sources",
-      "classification": "BUILD_ONLY",
-      "observed": false
+      "observed": true
+    },
+    {
+      "field": "operating_status",
+      "observed": true
+    },
+    {
+      "field": "basic_category",
+      "observed": true
+    },
+    {
+      "field": "taxonomy",
+      "observed": true
+    },
+    {
+      "field": "version",
+      "observed": true
+    },
+    {
+      "field": "bbox",
+      "observed": true
+    },
+    {
+      "field": "theme",
+      "observed": true
+    },
+    {
+      "field": "type",
+      "observed": true
     }
+  ],
+  "richProjection": [
+    "id",
+    "geometry",
+    "bbox",
+    "names",
+    "categories",
+    "basic_category",
+    "taxonomy",
+    "confidence",
+    "brand",
+    "addresses",
+    "operating_status",
+    "sources",
+    "websites",
+    "phones"
   ]
 }
