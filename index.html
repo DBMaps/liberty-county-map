@@ -1046,16 +1046,15 @@
                 <div class="settings-awareness-search">
                   <span class="settings-place-label">Change area</span>
                   <form id="settingsAwarenessAreaSearchForm" novalidate>
-                    <label for="settingsAwarenessAreaSearchInput">Where do you want Gridly to watch?</label>
+                    <label for="settingsAwarenessAreaSearchInput">Search your Texas community</label>
                     <div class="settings-awareness-search-row">
                       <input id="settingsAwarenessAreaSearchInput" type="text" inputmode="search" autocomplete="postal-code" placeholder="77535 or Dayton" aria-describedby="settingsAwarenessAreaSearchStatus">
-                      <button type="submit" class="primary-btn" id="settingsChangeAwarenessAreaBtn">Find Area</button>
+                      <button type="submit" class="primary-btn" id="settingsChangeAwarenessAreaBtn">Search</button>
                     </div>
                   </form>
                   <div class="settings-awareness-search-result" id="settingsAwarenessAreaSearchResult" hidden></div>
                   <p class="settings-awareness-search-status" id="settingsAwarenessAreaSearchStatus" role="status" aria-live="polite"></p>
                 </div>
-                <button type="button" class="secondary-btn compact-btn settings-place-action settings-manual-awareness-action" id="settingsChooseCommunityManuallyBtn" aria-expanded="false" aria-controls="settingsAwarenessAreaChooser">Choose from available areas</button>
               </article>
             </div>
             <div class="settings-awareness-area-chooser" id="settingsAwarenessAreaChooser" data-gridly-settings-awareness-options aria-label="Choose an awareness area" hidden></div>
@@ -1319,11 +1318,23 @@
           <p>Community awareness helps drivers and families make better everyday travel decisions when local conditions change.</p>
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="3" hidden>
-          <p class="eyebrow">Awareness Area</p>
-          <h2>Choose Your County</h2>
-          <p>Enter your ZIP first so Gridly can find or narrow the familiar home area it should watch. You can still choose a community manually.</p>
-          <button class="primary-btn" type="button" id="gridlyWelcomeZipSetupBtn">What’s your ZIP Code?</button>
-          <label class="gridly-welcome-select-label">
+          <p class="eyebrow">Home Area</p>
+          <h2>Choose your home area</h2>
+          <p>Search for a Texas community or ZIP. Gridly will show the available county when it matters.</p>
+          <div class="settings-awareness-search" data-gridly-home-area-primary-chooser="onboarding">
+            <form id="gridlyWelcomeHomeAreaSearchForm" novalidate>
+              <label for="gridlyWelcomeHomeAreaSearchInput">Search your Texas community</label>
+              <div class="settings-awareness-search-row">
+                <input id="gridlyWelcomeHomeAreaSearchInput" type="search" inputmode="search" autocomplete="postal-code" placeholder="Dayton, Tarkington, or 77535" aria-describedby="gridlyWelcomeHomeAreaSearchStatus">
+                <button class="primary-btn" type="submit">Search</button>
+              </div>
+            </form>
+            <div class="settings-awareness-search-result" id="gridlyWelcomeHomeAreaSearchResult" hidden></div>
+            <p class="settings-awareness-search-status" id="gridlyWelcomeHomeAreaSearchStatus" role="status" aria-live="polite"></p>
+            <button class="secondary-btn" type="button" id="gridlyWelcomeEnableLocationBtn">Use my current location</button>
+            <p id="gridlyWelcomeLocationStatus" role="status" aria-live="polite"></p>
+          </div>
+          <label class="gridly-welcome-select-label" hidden aria-hidden="true">
             Select County
             <select id="gridlyWelcomeCountySelect" class="gridly-premium-select" data-gridly-county-select data-gridly-county-option-list aria-label="Select County">
               <option value="liberty-tx">Liberty County</option>
@@ -1331,7 +1342,7 @@
               <option value="san-jacinto-tx" data-gridly-county-option="san-jacinto-tx" data-gridly-validation-only="true">San Jacinto County</option>
             </select>
           </label>
-          <label class="gridly-welcome-select-label">
+          <label class="gridly-welcome-select-label" hidden aria-hidden="true">
             <span class="gridly-welcome-subtitle">Choose Your Home Area</span>
             <select id="gridlyWelcomeHomeAreaSelect" class="gridly-premium-select" data-gridly-home-area-select aria-label="Select Home Area"></select>
           </label>
