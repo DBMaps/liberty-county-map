@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "gridly.lp24111.certification.v1",
+  "classifications": [
+    "OVERTURE_TEXAS_AUTHORITY_VIABLE_WITH_NORMALIZATION",
+    "MANUFACTURING_EXECUTION_REQUIRED",
+    "LEGAL_REVIEW_REQUIRED",
+    "OWNER_DECISION_REQUIRED"
+  ],
+  "basis": [
+    "Owner-observed POC supports promising raw category, brand, rural and lodging availability.",
+    "Statewide extract and measurements are not executed, so viability remains provisional.",
+    "Normalization and conflation are required before any runtime decision."
+  ],
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "zeroCostContract": "DESIGNED_NOT_RUNTIME_ACTIVATED"
+}

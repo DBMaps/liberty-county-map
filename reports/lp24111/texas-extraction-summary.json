@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "gridly.lp24111.extraction.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "No pinned-release extract is present in the repository; counts and sizes are not fabricated.",
+  "releaseId": "2026-08-19.0",
+  "sourceUri": "s3://overturemaps-us-west-2/release/2026-08-19.0/theme=places/type=place/*",
+  "geographicSelectionAuthority": "US Census TIGER/Line 2025 county geometries with STATEFP=48, dissolved; exact intersection, not address or rectangle",
+  "tool": "tools/lp24111/extract-texas.ps1",
+  "sql": "tools/lp24111/extract-texas.sql",
+  "rawTexasPoiCount": null,
+  "rawBytes": null,
+  "geoParquetBytes": null,
+  "durationSeconds": null,
+  "sourcePartitionsTouched": null,
+  "outputIgnored": true
+}

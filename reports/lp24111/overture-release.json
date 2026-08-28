@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "gridly.lp24111.release.v1",
+  "releaseId": "2026-08-19.0",
+  "pinPolicy": "EXACT_RELEASE_ONLY",
+  "sourceUri": "s3://overturemaps-us-west-2/release/2026-08-19.0/theme=places/type=place/*",
+  "theme": "places",
+  "type": "place",
+  "retrievalDate": "2026-08-28",
+  "sourceFormat": "GeoParquet",
+  "observedSchemaVersion": "UNKNOWN_PENDING_EXTRACTION",
+  "authorityState": "OWNER_TESTED_RELEASE; NETWORK_AUTHORITY_REVALIDATION_REQUIRED",
+  "retrieval": {
+    "duckdb": "1.5.5",
+    "powershellCommand": "powershell -File tools/lp24111/extract-texas.ps1"
+  },
+  "licensingSources": [
+    "https://docs.overturemaps.org/attribution/",
+    "https://github.com/OvertureMaps/schema/blob/main/LICENSE"
+  ]
+}

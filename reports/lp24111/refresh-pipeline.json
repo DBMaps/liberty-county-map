@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "gridly.lp24111.refresh.v1",
+  "stages": [
+    "PIN",
+    "EXTRACT",
+    "NORMALIZE",
+    "CONFLATE",
+    "CATEGORY_MAP",
+    "SPATIAL_ASSIGN",
+    "PACKAGE",
+    "VERIFY",
+    "MANIFEST",
+    "DEPLOY"
+  ],
+  "cadence": "Evaluate each Overture release; promote only an explicitly pinned, verified release",
+  "changedRecordDetection": "stable place ID plus canonical normalized-record hash",
+  "invalidation": "rebuild changed spatial shards and dependency/neighbor manifests",
+  "manifest": "release, input hashes, tool hashes, row counts, shard hashes and sizes",
+  "rollback": "retain prior immutable manifest and shards",
+  "staleDetection": "alert when pinned release trails approved cadence; never silently follow latest"
+}

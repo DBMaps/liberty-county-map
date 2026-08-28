@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "gridly.lp24111.osm-evaluation.v1",
+  "classification": "INSUFFICIENT_EVIDENCE",
+  "reason": "Neither executed Overture county/category results nor a matched Texas OSM increment audit exists.",
+  "odblReview": "LEGAL_REVIEW_REQUIRED",
+  "automaticCombination": false
+}

@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "gridly.lp24111.schema-inventory.v1",
+  "evidenceState": "NOT_EXECUTED",
+  "fields": [
+    {
+      "field": "id",
+      "classification": "REQUIRED_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "names.primary",
+      "classification": "REQUIRED_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "names.common/alternate",
+      "classification": "BUILD_ONLY",
+      "observed": false
+    },
+    {
+      "field": "categories.primary",
+      "classification": "REQUIRED_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "categories.alternate",
+      "classification": "BUILD_ONLY",
+      "observed": false
+    },
+    {
+      "field": "addresses",
+      "classification": "USEFUL_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "addresses.locality",
+      "classification": "USEFUL_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "addresses.region",
+      "classification": "BUILD_ONLY",
+      "observed": false
+    },
+    {
+      "field": "addresses.postcode",
+      "classification": "USEFUL_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "geometry",
+      "classification": "REQUIRED_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "bbox",
+      "classification": "NOT_REQUIRED",
+      "observed": false
+    },
+    {
+      "field": "confidence",
+      "classification": "USEFUL_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "brand",
+      "classification": "USEFUL_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "websites",
+      "classification": "BUILD_ONLY",
+      "observed": false
+    },
+    {
+      "field": "phones",
+      "classification": "BUILD_ONLY",
+      "observed": false
+    },
+    {
+      "field": "operating_status",
+      "classification": "USEFUL_RUNTIME",
+      "observed": false
+    },
+    {
+      "field": "sources",
+      "classification": "BUILD_ONLY",
+      "observed": false
+    }
+  ]
+}

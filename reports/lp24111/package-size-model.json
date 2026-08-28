@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "gridly.lp24111.package-size.v1",
+  "executionState": "NOT_EXECUTED",
+  "measurements": {
+    "normalizedTexasBytes": null,
+    "gzipBytes": null,
+    "brotliBytes": null,
+    "averageCountyBytes": null,
+    "largestCountyBytes": null,
+    "ruralCountyBytes": null,
+    "metroCountyBytes": null,
+    "communityRadiusBytes": null
+  },
+  "options": [
+    {
+      "id": "A",
+      "design": "county JSON/JSONL",
+      "boundaryHandling": "county plus intersecting neighbor/radius manifest"
+    },
+    {
+      "id": "B",
+      "design": "compressed geographic shards"
+    },
+    {
+      "id": "C",
+      "design": "compact client index"
+    },
+    {
+      "id": "D",
+      "design": "Supabase governed index"
+    },
+    {
+      "id": "E",
+      "design": "hybrid static manifest plus bounded server search"
+    }
+  ],
+  "provisionalRecommendation": "B: compressed spatial shards with small manifest and adjacent/radius shard expansion; certify only after measured extract",
+  "constraints": {
+    "cloudflareSingleAssetBytes": 26214400,
+    "wholeTexasPhoneDownloadForbidden": true
+  }
+}

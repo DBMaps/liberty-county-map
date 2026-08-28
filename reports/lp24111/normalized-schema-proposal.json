@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "gridly.lp24111.normalized-schema.v1",
+  "status": "PROPOSAL_NOT_RUNTIME",
+  "runtimeFields": {
+    "poiId": "string",
+    "name": "string",
+    "normalizedName": "string",
+    "brand": "string|null",
+    "primaryCategory": "string|null",
+    "gridlyCategories": "string[]",
+    "latitude": "number",
+    "longitude": "number",
+    "address": "string|null",
+    "locality": "string|null",
+    "postcode": "string|null",
+    "countyId": "string",
+    "confidence": "number|null",
+    "operatingStatus": "string|null",
+    "source": "OVERTURE"
+  },
+  "buildOnlyFields": [
+    "alternateNames",
+    "alternateCategories",
+    "phones",
+    "websites",
+    "sourceRecords",
+    "conflationSignals",
+    "bbox"
+  ],
+  "zeroQueryCost": true
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.lp24111.category-map.v1",
+  "categories": {
+    "FUEL": ["gas_station", "fuel_station"],
+    "HOSPITAL": ["hospital"],
+    "EMERGENCY_CARE": ["emergency_room"],
+    "URGENT_CARE": ["urgent_care"],
+    "PHARMACY": ["pharmacy"],
+    "RESTAURANT": ["restaurant"],
+    "GROCERY": ["grocery_store", "supermarket"],
+    "LODGING": ["hotel", "motel", "lodge", "resort"],
+    "SCHOOL": ["school"],
+    "CONVENIENCE": ["convenience_store"]
+  },
+  "humanMedicalExclusions": ["veterinarian", "veterinary_clinic", "animal_hospital", "pet_wellness"],
+  "notes": "Exact governed mapping candidates. Alternate categories may add a category but cannot override the human-medical exclusions. Resort requires build review before inclusion."
+}

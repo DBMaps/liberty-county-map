@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "gridly.lp24111.conflation-audit.v1",
+  "executionState": "NOT_EXECUTED",
+  "classifications": [
+    "PARENT_POI",
+    "CHILD_POI",
+    "LIKELY_DUPLICATE",
+    "DISTINCT_POI",
+    "AMBIGUOUS"
+  ],
+  "signals": [
+    "stable ID/source relationship",
+    "normalized name",
+    "brand",
+    "address",
+    "coordinate proximity",
+    "phone",
+    "website",
+    "parent/child category",
+    "provenance",
+    "confidence"
+  ],
+  "rules": [
+    {
+      "id": "walmart-child",
+      "parentPattern": "^walmart$",
+      "childPatterns": [
+        "pharmacy",
+        "bakery",
+        "vision center",
+        "photo center",
+        "auto care center",
+        "garden center"
+      ],
+      "action": "CLASSIFY_CHILD_ONLY_NO_PRODUCTION_DEDUPE"
+    },
+    {
+      "id": "coincident-identity",
+      "distanceMeters": 25,
+      "requiresAny": [
+        "same normalized address",
+        "same phone",
+        "same website"
+      ],
+      "action": "LIKELY_DUPLICATE_REVIEW"
+    }
+  ],
+  "counts": null
+}

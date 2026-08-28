@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "gridly.lp24111.brand-coverage.v1",
+  "executionState": "NOT_EXECUTED",
+  "brands": [
+    {
+      "brand": "Walmart",
+      "rawRecordCount": null,
+      "probableParentLocationCount": null,
+      "childPoiCount": null,
+      "duplicateClusters": null,
+      "countiesRepresented": null,
+      "geographicDistribution": null
+    },
+    {
+      "brand": "H-E-B",
+      "rawRecordCount": null,
+      "probableParentLocationCount": null,
+      "childPoiCount": null,
+      "duplicateClusters": null,
+      "countiesRepresented": null,
+      "geographicDistribution": null
+    },
+    {
+      "brand": "CVS",
+      "rawRecordCount": null,
+      "probableParentLocationCount": null,
+      "childPoiCount": null,
+      "duplicateClusters": null,
+      "countiesRepresented": null,
+      "geographicDistribution": null
+    },
+    {
+      "brand": "Walgreens",
+      "rawRecordCount": null,
+      "probableParentLocationCount": null,
+      "childPoiCount": null,
+      "duplicateClusters": null,
+      "countiesRepresented": null,
+      "geographicDistribution": null
+    },
+    {
+      "brand": "Starbucks",
+      "rawRecordCount": null,
+      "probableParentLocationCount": null,
+      "childPoiCount": null,
+      "duplicateClusters": null,
+      "countiesRepresented": null,
+      "geographicDistribution": null
+    },
+    {
+      "brand": "McDonald's",
+      "rawRecordCount": null,
+      "probableParentLocationCount": null,
+      "childPoiCount": null,
+      "duplicateClusters": null,
+      "countiesRepresented": null,
+      "geographicDistribution": null
+    }
+  ]
+}
