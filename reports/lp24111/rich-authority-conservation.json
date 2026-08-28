@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.lp24111.rich-conservation.v1",
+  "executionState": "OWNER_CERTIFIED",
+  "releaseId": "2026-08-19.0",
+  "authorityIds": 1462815,
+  "inputShardRows": 1462893,
+  "uniqueIds": 1462815,
+  "crossShardDuplicateIds": 52,
+  "extraDuplicateRows": 78,
+  "maximumShardOccurrencesPerId": 4,
+  "missingAuthorityIds": 0,
+  "outsideAuthorityIds": 0,
+  "conservationPassed": true,
+  "deduplicatedArtifact": "owner-local/lp24111/overture-texas-rich-authority-dedup.parquet",
+  "deduplicatedArtifactPresent": false,
+  "normalizationGate": "BLOCKED_LOCAL_INPUTS_ABSENT"
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "gridly.lp24111.metadata-conflict.v2",
+  "executionState": "KING_SAMPLE_ONLY",
+  "classification": "SPATIAL_METADATA_CONFLICT",
+  "sample": {
+    "name": "Hitachi Energy Jefferson City",
+    "spatialCountyFips": "48269",
+    "region": "MO",
+    "locality": "Jefferson City",
+    "postcode": "65101-5032",
+    "confidence": 0.886
+  },
+  "statewideCount": null,
+  "policy": "QUARANTINE_OR_CLASSIFY; NEVER REWRITE SOURCE METADATA",
+  "requiredClassifications": [
+    "SPATIAL_METADATA_CONSISTENT",
+    "SPATIAL_METADATA_CONFLICT",
+    "SPATIAL_METADATA_INCOMPLETE",
+    "SPATIAL_METADATA_REVIEW_REQUIRED"
+  ]
+}

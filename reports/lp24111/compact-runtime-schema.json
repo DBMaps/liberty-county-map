@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "gridly.lp24111.compact-runtime-schema.v1",
+  "status": "PROPOSAL_NOT_RUNTIME",
+  "fields": [
+    "id",
+    "displayName",
+    "normalizedName",
+    "brand",
+    "gridlyCategory",
+    "latitude",
+    "longitude",
+    "countyFips",
+    "compactLocality",
+    "qualityClass",
+    "operatingStatus",
+    "sourceFamilyId"
+  ],
+  "buildOnly": [
+    "sourceMetadata",
+    "alternateNames",
+    "taxonomy",
+    "phones",
+    "websites",
+    "bbox",
+    "conflationEvidence"
+  ],
+  "estimatedPackageBytes": null
+}

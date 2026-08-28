@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "gridly.lp24111.normalization.v1",
+  "executionState": "NOT_EXECUTED",
+  "rawUniquePois": 1462815,
+  "normalizedUniquePois": null,
+  "eligibleDestinations": null,
+  "nonDestination": null,
+  "excluded": null,
+  "reviewRequired": null,
+  "reason": "The 168 owner-local matched Parquet shards are absent from this checkout; counts are not inferred from raw authority totals."
+}
