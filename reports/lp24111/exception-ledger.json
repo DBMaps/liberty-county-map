@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly.lp24111.exceptions.v1",
+  "exceptions": [
+    {
+      "id": "EXTRACT_NOT_EXECUTED",
+      "severity": "BLOCKER",
+      "affects": [
+        "county coverage",
+        "community coverage",
+        "categories",
+        "brands",
+        "duplicates",
+        "confidence",
+        "address quality",
+        "sizes"
+      ]
+    },
+    {
+      "id": "RELEASE_AUTHORITY_REVALIDATION",
+      "severity": "BLOCKER",
+      "detail": "Owner-supplied future-dated release could not be independently reached from this environment."
+    },
+    {
+      "id": "SCHEMA_NOT_OBSERVED",
+      "severity": "BLOCKER"
+    },
+    {
+      "id": "LICENSE_COUNSEL_REVIEW",
+      "severity": "BLOCKER"
+    },
+    {
+      "id": "OSM_INCREMENT_NOT_MEASURED",
+      "severity": "OPEN"
+    }
+  ]
+}

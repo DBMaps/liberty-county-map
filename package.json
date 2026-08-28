@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp24111": "node tools/lp24111/manufacture.mjs --write",
+    "verify:lp24111": "node tools/lp24111/manufacture.mjs --verify",
+    "test:lp24111": "node --test tests/lp24111-overture-authority.test.mjs",
     "materialize:lp2416": "node tools/lp2416/statewide-address-certification.mjs --materialize",
     "build:lp2416": "node tools/lp2416/statewide-address-certification.mjs --write",
     "verify:lp2416": "node tools/lp2416/statewide-address-certification.mjs --verify",

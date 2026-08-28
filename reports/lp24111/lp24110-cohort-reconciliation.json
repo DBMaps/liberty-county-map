@@ -1,0 +1,519 @@
+{
+  "schemaVersion": "gridly.lp24111.lp24110-reconciliation.v1",
+  "executionState": "NOT_EXECUTED",
+  "liveRuntimePassClaim": false,
+  "communities": [
+    {
+      "community": "Dayton",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Liberty",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Tarkington",
+      "contextType": "NON_PLACE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Houston",
+      "contextType": "METRO",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Dallas",
+      "contextType": "METRO",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Austin",
+      "contextType": "METRO",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "San Antonio",
+      "contextType": "METRO",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Abilene",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Midland",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Port Arthur",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Fredericksburg",
+      "contextType": "RURAL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Pecos",
+      "contextType": "RURAL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Sulphur Springs",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Huntsville",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Eastland",
+      "contextType": "RURAL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Cienegas Terrace",
+      "contextType": "NON_PLACE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Palestine",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Waskom",
+      "contextType": "BORDER_EDGE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "New Braunfels",
+      "contextType": "MULTI_COUNTY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Cleveland",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "New Caney",
+      "contextType": "NON_PLACE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    },
+    {
+      "community": "Porter",
+      "contextType": "NON_PLACE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "overtureCapability": "OWNER_OR_RAW_EVIDENCE_ONLY_OR_UNKNOWN",
+      "normalizedCapability": "NOT_EXECUTED"
+    }
+  ],
+  "ownerObserved": [
+    {
+      "area": "Dayton",
+      "evidence": [
+        "Walmart and child records",
+        "gas stations"
+      ]
+    },
+    {
+      "area": "Dayton/Liberty",
+      "evidence": [
+        "hospital, emergency, urgent and other medical records"
+      ]
+    },
+    {
+      "area": "Tarkington/rural",
+      "evidence": [
+        "H-E-B, Brookshire Brothers, Walmart, local markets, fuel and discount retail"
+      ]
+    },
+    {
+      "area": "Pecos",
+      "evidence": [
+        "chain and local lodging"
+      ]
+    }
+  ],
+  "ownerEvidenceLabel": "OWNER_OBSERVED_NOT_INDEPENDENTLY_REPRODUCED"
+}

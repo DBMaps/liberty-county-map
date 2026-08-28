@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "gridly.lp24111.confidence.v1",
+  "executionState": "NOT_EXECUTED",
+  "candidateThresholds": [
+    0.5,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "distributions": null,
+  "policy": "INSUFFICIENT_EVIDENCE_NO_THRESHOLD_RECOMMENDED"
+}

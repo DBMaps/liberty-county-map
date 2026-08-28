@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "gridly.lp24111.licensing.v1",
+  "reviewState": "LEGAL_REVIEW_REQUIRED",
+  "authoritativeLinks": [
+    "https://docs.overturemaps.org/attribution/",
+    "https://docs.overturemaps.org/getting-data/"
+  ],
+  "claims": [
+    "Attribution and source-specific notices must be derived from the pinned extract source metadata.",
+    "Centralized About/Map attribution suitability is not certified.",
+    "Provenance must be retained build-side until counsel approves runtime notice design."
+  ],
+  "legalGuarantee": false,
+  "networkVerificationState": "UNAVAILABLE_IN_BUILD_ENVIRONMENT"
+}
