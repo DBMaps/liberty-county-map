@@ -1,0 +1,470 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-08-28",
+  "executionStatus": "NOT_EXECUTED_LIVE",
+  "reason": "Repository/runtime audit proves architecture but contains no governed live statewide POI response capture. No results are fabricated.",
+  "communities": [
+    {
+      "community": "Dayton",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Liberty",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Tarkington",
+      "contextType": "NON_PLACE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Houston",
+      "contextType": "METRO",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Dallas",
+      "contextType": "METRO",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Austin",
+      "contextType": "METRO",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "San Antonio",
+      "contextType": "METRO",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Abilene",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Midland",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Port Arthur",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Fredericksburg",
+      "contextType": "RURAL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Pecos",
+      "contextType": "RURAL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Sulphur Springs",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Huntsville",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Eastland",
+      "contextType": "RURAL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Cienegas Terrace",
+      "contextType": "NON_PLACE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Palestine",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Waskom",
+      "contextType": "BORDER_EDGE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "New Braunfels",
+      "contextType": "MULTI_COUNTY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Cleveland",
+      "contextType": "SMALL_CITY",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "New Caney",
+      "contextType": "NON_PLACE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    },
+    {
+      "community": "Porter",
+      "contextType": "NON_PLACE",
+      "queries": [
+        "Walmart",
+        "HEB",
+        "CVS",
+        "Walgreens",
+        "Starbucks",
+        "McDonald's",
+        "gas station",
+        "hospital",
+        "pharmacy",
+        "restaurant",
+        "grocery store",
+        "hotel",
+        "school",
+        "urgent care"
+      ],
+      "observations": []
+    }
+  ]
+}

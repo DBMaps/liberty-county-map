@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "classification": "HYBRID_PROVIDER_REQUIRED",
+  "launchClassification": "PROVIDER_CAPABILITY_INSUFFICIENT",
+  "pass": false,
+  "productionBehaviorChanged": true,
+  "repairs": [
+    "Bound business/category provider requests to governed context viewbox when county bounds exist.",
+    "Suppress contextual POI candidates beyond 75 miles unless in bounds or locality-agreeing.",
+    "Add read-only LP241.10 acceptance helper with named/category distinction."
+  ],
+  "limitations": [
+    "No live statewide POI cohort was executed or captured.",
+    "Nominatim statewide/rural POI completeness and service suitability remain unproven.",
+    "Curated inventory is 28-county and is not a statewide business database."
+  ],
+  "ownerAcceptance": [
+    {
+      "community": "Dayton",
+      "queries": [
+        "Walmart",
+        "gas station",
+        "hospital"
+      ]
+    },
+    {
+      "community": "Tarkington",
+      "queries": [
+        "Walmart",
+        "grocery store"
+      ]
+    },
+    {
+      "community": "Abilene",
+      "queries": [
+        "Walmart",
+        "hospital"
+      ]
+    },
+    {
+      "community": "Pecos",
+      "queries": [
+        "gas station",
+        "hotel"
+      ]
+    },
+    {
+      "community": "Austin",
+      "queries": [
+        "HEB",
+        "pharmacy"
+      ]
+    }
+  ]
+}

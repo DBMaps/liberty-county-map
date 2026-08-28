@@ -40487,7 +40487,11 @@ function isGridlyCountyOnlyProviderDuplicate(result, localSeedTitles = new Set()
 function filterGridlyGenericLocalQualityResults(results = [], options = {}) {
   const intent = options.intent || classifyGridlyDestinationSearchIntent(options.query || ensureGridlySearchState().activeQuery || "");
   const diagnostics = options.diagnostics && typeof options.diagnostics === "object" ? options.diagnostics : null;
-  if (!Array.isArray(results) || !results.length || intent.type !== GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) {
+  const poiIntent = window.GRIDLY_LP24110_POI_SEARCH?.classify?.(options.query || "");
+  const contextualPoiSearch = intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL
+    || intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE
+    || poiIntent?.type === "CATEGORY_DISCOVERY";
+  if (!Array.isArray(results) || !results.length || !contextualPoiSearch) {
     if (diagnostics) {
       diagnostics.suppressedFarAwayCount = Number(diagnostics.suppressedFarAwayCount) || 0;
       diagnostics.visibleQualityFiltered = Boolean(diagnostics.visibleQualityFiltered);
@@ -40504,25 +40508,22 @@ function filterGridlyGenericLocalQualityResults(results = [], options = {}) {
     .filter(Boolean));
 
   let suppressedFarAwayCount = 0;
-  const filtered = localQualityResultCount > 0
-    ? results.filter((result) => {
+  const filtered = results.filter((result) => {
         const rank = result.searchRank && typeof result.searchRank === "object" ? result.searchRank : {};
         const anchorDistanceMiles = Number(rank.anchorDistanceMiles);
         const providerResult = result.provider !== "local_poi_seed" && !result.localPoiSeed;
+        const poiDistanceLimit = Number(window.GRIDLY_LP24110_POI_SEARCH?.maxLocalDistanceMiles) || 75;
         const farAwayProvider = providerResult
           && !rank.inBounds
-          && !rank.isLibertyCounty
           && !rank.isLocality
-          && !rank.isTexas
-          && (!Number.isFinite(anchorDistanceMiles) || anchorDistanceMiles > 150);
+          && (!Number.isFinite(anchorDistanceMiles) || anchorDistanceMiles > poiDistanceLimit);
         const countyOnlyProviderDuplicate = isGridlyCountyOnlyProviderDuplicate(result, localSeedTitles);
         if (farAwayProvider || countyOnlyProviderDuplicate) {
           suppressedFarAwayCount += 1;
           return false;
         }
         return true;
-      })
-    : results;
+      });
 
   if (diagnostics) {
     diagnostics.suppressedFarAwayCount = suppressedFarAwayCount;
@@ -93029,7 +93030,7 @@ async function gridlySearchAddress(query, options = {}) {
       limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT,
       countryCodes,
       searchContext,
-      bounded: options.bounded === "1" || (intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL && searchContext.boundedSearchEnabled) ? "1" : "0",
+      bounded: options.bounded === "1" || ([GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL, GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE].includes(intent.type) && searchContext.boundedSearchEnabled) ? "1" : "0",
       diagnostics,
       variantIndex,
       structured: intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && variantIndex === 0 ? addressModel.structured : null
@@ -93886,6 +93887,25 @@ if (typeof window !== "undefined") window.gridlyDestinationSearchBatchTest = gri
 window.gridlySearchDiscoveryAudit = buildGridlySearchDiscoveryAudit;
 window.gridlySearchCertificationDataset = buildGridlySearchCertificationDataset;
 window.gridlyRunSearchCertificationAudit = gridlyRunSearchCertificationAudit;
+
+if (window.GRIDLY_LP24110_POI_SEARCH?.createAudit) {
+  window.gridlyLP24110PoiSearchAudit = window.GRIDLY_LP24110_POI_SEARCH.createAudit({
+    search: (query) => gridlySearchAddress(query, { limit: GRIDLY_SEARCH_RENDER_LIMIT }),
+    context: () => {
+      const searchContext = getGridlyDestinationSearchContainmentContext(getGridlySearchMapContext());
+      const anchor = getGridlySearchAnchorContext(searchContext);
+      const awareness = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+      return {
+        community: awareness?.label || anchor?.label || "",
+        county: awareness?.county || awareness?.countyName || "",
+        countyId: awareness?.countyId ? gridlyNormalizeCountyId(awareness.countyId) : (searchContext.activeCounty || anchor?.countyId || ""),
+        lat: anchor?.lat,
+        lng: anchor?.lng,
+        source: anchor?.source || "unknown"
+      };
+    }
+  });
+}
 
 // LP096 is deliberately passive: this helper summarizes the current in-memory search
 // state and the most recent live-search diagnostics. It never starts a search, fetches,
