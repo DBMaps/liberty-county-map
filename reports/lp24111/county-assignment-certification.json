@@ -1,12 +1,17 @@
 {
-  "schemaVersion": "gridly.lp24111.assignment.v1",
-  "authorityUniqueRows": 1462815,
-  "assignmentRows": 1462815,
-  "aggregateConservation": true,
-  "exactUniqueIdConservation": "NOT_EXECUTED",
-  "unassignedPoiCount": null,
-  "multiAssignedPoiCount": null,
-  "boundaryBehavior": "GENERATED_CERTIFIER_CLASSIFIES_BOUNDARY_MULTI_INTERSECTION",
-  "certification": "PENDING_OWNER_RERUN_WITH_NEW_CERTIFICATION_ARTIFACT",
-  "reason": "Equal aggregate totals do not prove per-ID uniqueness."
+  "schemaVersion": "gridly.lp24111.assignment.v2",
+  "executionState": "OWNER_EXECUTED_MEASURED",
+  "artifact": "owner-local/lp24111/county-assignment-certification.parquet",
+  "authorityIds": 1462815,
+  "uniqueIds": 1462815,
+  "uniqueCountyAssignments": 1462815,
+  "unassigned": 0,
+  "boundaryMulti": 0,
+  "totalCountyIntersections": 1462815,
+  "elapsedSeconds": 41.4236056,
+  "artifactBytes": 29744844,
+  "zeroCountLoss": true,
+  "exactUniqueIdConservation": "CERTIFIED",
+  "certification": "CERTIFIED_EXACT_PER_ID_CONSERVATION",
+  "source": "OWNER_ACCEPTANCE_RESULT_2026-08-28"
 }

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "gridly.lp24111.phase-b.execution.v1",
+  "schemaVersion": "gridly.lp24111.phase-c.execution.v1",
   "evidenceType": "OWNER_EXECUTED_AUTHORITATIVE_PHASE_B",
   "duckdb": "1.5.5 (Variegata)",
   "releaseId": "2026-08-19.0",
@@ -121,6 +121,16 @@
       102
     ]
   ],
+  "countyAssignment": {
+    "authorityIds": 1462815,
+    "uniqueIds": 1462815,
+    "uniqueCountyAssignments": 1462815,
+    "unassigned": 0,
+    "boundaryMulti": 0,
+    "totalCountyIntersections": 1462815,
+    "elapsedSeconds": 41.4236056,
+    "artifactBytes": 29744844
+  },
   "richFieldManufacturing": "NOT_EXECUTED",
   "normalization": "NOT_EXECUTED",
   "source": "OWNER_EXECUTED_EVIDENCE_INGESTED_2026-08-28"
