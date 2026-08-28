@@ -111,5 +111,11 @@ export function execute(options={}){
  const output={schemaVersion:'gridly.lp24111.measured-normalization.v1',releaseId,executedAt:new Date().toISOString(),schemaValidation,conservation,reports:reportOverrides,productionRuntimeChanged:false};fs.mkdirSync(directory,{recursive:true});atomicJson(measurementsFile,output);return output;
 }
 
-function main(){if(!process.argv.includes('--execute'))throw Error('Explicit --execute is required; build never launches statewide normalization.');const result=execute();console.log(`normalized ${result.conservation.unique_ids} certified rich POIs; run npm run build:lp24111`);}
+function main(){
+ const args=process.argv.slice(2),directoryIndex=args.indexOf('--directory');
+ if(!args.includes('--execute'))throw Error('Explicit --execute is required; build never launches statewide normalization.');
+ if(directoryIndex>=0&&!args[directoryIndex+1])throw Error('--directory requires a path');
+ const result=execute({directory:directoryIndex>=0?path.resolve(args[directoryIndex+1]):local});
+ console.log(`normalized ${result.conservation.unique_ids} certified rich POIs; run npm run build:lp24111`);
+}
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)try{main();}catch(error){console.error(error.message);process.exitCode=1;}
