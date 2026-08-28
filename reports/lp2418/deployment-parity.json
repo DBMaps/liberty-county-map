@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "gridly.lp2418.deploymentParity.v1",
+  "milestone": "LP241.8",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsDeployment": false,
+  "securedUrl": "https://preview.gridlygo.com",
+  "currentApproved": {
+    "gitCommit": "f019de62d6067aff21ef422eab8aafac2e5aded7",
+    "buildIdentity": "sha256:2d4253036026661af2c0b73704ef6a236f7e367359edd7750114db3acc382dc3"
+  },
+  "lastRepositoryProvenRemote": {
+    "project": "gridly-preview",
+    "architecture": "CLOUDFLARE_PAGES_DIRECT_UPLOAD",
+    "gitIntegration": false,
+    "automaticDeployment": false,
+    "branchLabel": "preview",
+    "sourceCommit": "945527f05918dc002742e76de74165e1c8b2ae41",
+    "artifactIdentity": "sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f",
+    "deploymentId": "458fa7f4-ba68-44c7-82ea-c5e6475e456e",
+    "deploymentUrl": "https://458fa7f4.gridly-preview.pages.dev",
+    "access": "Cloudflare Access: approved owner ALLOW; anonymous and non-approved DENY"
+  },
+  "parityContract": {
+    "requiredEqual": [
+      "application git/source identity",
+      "index HTML and app-script query identity",
+      "service-worker source/version identity",
+      "service-worker cache identity",
+      "launch presentation authority"
+    ],
+    "visualSimilarityIsProof": false
+  },
+  "currentRemoteObservation": {
+    "accountStateInspected": false,
+    "remoteBytesInspected": false,
+    "safeRuntimeIdentityHelperPresentOnLastProvenArtifact": false
+  },
+  "classification": "AUTHENTICATED_OWNER_EVIDENCE_REQUIRED",
+  "lastProvenArtifactComparison": "VERSION_SKEW_CONFIRMED",
+  "reason": "Repository evidence proves the URL was bound to a one-time immutable Direct Upload from 945527f, not current approved baseline. It cannot prove that account-side binding or deployment has remained unchanged.",
+  "reuseDecision": "CONDITIONALLY_REUSE_EXISTING_ACCESS_AND_PAGES_PATH_AFTER_OWNER_PROVES_CURRENT_BINDING; DO_NOT_CREATE_NEW_ENVIRONMENT",
+  "productionBehaviorChanged": false
+}
