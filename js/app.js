@@ -31079,13 +31079,43 @@ function applyLayoutMode(nextMode) {
   document.body.setAttribute("data-layout-mode", activeLayoutMode);
   document.body.setAttribute("data-layout-mode-legacy", supported ? "mobile" : "desktop");
   const legacyDashboard = document.getElementById("dashboardSection");
-  legacyDashboard?.toggleAttribute("inert", !supported);
-  if (legacyDashboard) legacyDashboard.setAttribute("aria-hidden", supported ? "false" : "true");
+  // The retired dashboard is not a presentation owner in any launch layout.
+  legacyDashboard?.setAttribute("inert", "");
+  legacyDashboard?.setAttribute("aria-hidden", "true");
+  syncGridlyPortraitPresentationOwnership(supported);
   const developmentGate = document.getElementById("gridlyDesktopGate");
   developmentGate?.toggleAttribute("inert", supported);
   if (developmentGate) developmentGate.setAttribute("aria-hidden", supported ? "true" : "false");
   syncTacticalMapSurfaceVisibility();
   document.documentElement?.classList.remove("gridly-desktop-startup-containment");
+}
+
+const GRIDLY_PORTRAIT_DUPLICATE_ROOTS = Object.freeze([
+  ".app-shell > :not(#mapSection)",
+  "#mapSection > :not(.map-card)",
+  "#mapSection > .map-card > :not(.map-frame)",
+  "#mapSection > .map-card > .map-frame > :not(#map)",
+  ".mobile-floating-action-dock"
+]);
+
+function syncGridlyPortraitPresentationOwnership(portraitActive) {
+  for (const node of document.querySelectorAll(GRIDLY_PORTRAIT_DUPLICATE_ROOTS.join(","))) {
+    if (portraitActive) {
+      if (!node.hasAttribute("data-gridly-pre-portrait-aria-hidden")) {
+        node.setAttribute("data-gridly-pre-portrait-aria-hidden", node.getAttribute("aria-hidden") ?? "__absent__");
+        node.toggleAttribute("data-gridly-pre-portrait-inert", node.hasAttribute("inert"));
+      }
+      node.setAttribute("aria-hidden", "true");
+      node.setAttribute("inert", "");
+    } else if (node.hasAttribute("data-gridly-pre-portrait-aria-hidden")) {
+      const previous = node.getAttribute("data-gridly-pre-portrait-aria-hidden");
+      if (previous === "__absent__") node.removeAttribute("aria-hidden");
+      else node.setAttribute("aria-hidden", previous);
+      node.toggleAttribute("inert", node.hasAttribute("data-gridly-pre-portrait-inert"));
+      node.removeAttribute("data-gridly-pre-portrait-aria-hidden");
+      node.removeAttribute("data-gridly-pre-portrait-inert");
+    }
+  }
 }
 
 // Layout mode UX contracts:
@@ -126365,3 +126395,49 @@ async function gridlyLP2417AlertsAcceptance() {
 }
 window.gridlyLP2417AlertsAcceptance = gridlyLP2417AlertsAcceptance;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP2417AlertsAcceptance", gridlyLP2417AlertsAcceptance);
+
+function gridlyLP2418PortraitOwnershipAudit() {
+  const portrait = document.getElementById("gridlyPortraitV2");
+  const map = document.getElementById("map");
+  const portraitActive = document.body?.dataset?.layoutMode === "portrait"
+    && Boolean(portrait && !portrait.hidden && getComputedStyle(portrait).display !== "none");
+  const visible = (node) => {
+    if (!node || node.hidden || node.closest?.("[hidden], [inert], [aria-hidden='true']")) return false;
+    const style = getComputedStyle(node);
+    const rect = node.getBoundingClientRect();
+    return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || 1) !== 0
+      && rect.width > 0 && rect.height > 0;
+  };
+  const outsidePortrait = (node) => !portrait?.contains(node);
+  const describe = (node) => ({
+    selector: node.id ? `#${node.id}` : `${node.tagName.toLowerCase()}${node.classList.length ? `.${Array.from(node.classList).join(".")}` : ""}`,
+    text: String(node.textContent || "").replace(/\s+/g, " ").trim().slice(0, 160),
+    accessibleName: node.getAttribute("aria-label") || node.getAttribute("title") || String(node.textContent || "").replace(/\s+/g, " ").trim().slice(0, 160)
+  });
+  const duplicateRoots = Array.from(document.querySelectorAll(GRIDLY_PORTRAIT_DUPLICATE_ROOTS.join(",")));
+  const visibleDuplicatePresentationNodes = duplicateRoots.filter(visible).map(describe);
+  const focusableSelector = "a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex='-1'])";
+  const focusableOutsidePortrait = Array.from(document.querySelectorAll(focusableSelector))
+    .filter((node) => outsidePortrait(node) && !map?.contains(node) && visible(node)).map(describe);
+  const semanticSelector = "h1,h2,h3,h4,h5,h6,nav,[role='navigation'],[role='dialog'],[role='status'],[role='alert'],[aria-live]";
+  const accessibilityExposedOutsidePortrait = Array.from(document.querySelectorAll(semanticSelector))
+    .filter((node) => outsidePortrait(node) && !map?.contains(node) && visible(node)).map(describe);
+  const activeLiveRegionsOutsidePortrait = Array.from(document.querySelectorAll("[aria-live],[role='status'],[role='alert']"))
+    .filter((node) => outsidePortrait(node) && !map?.contains(node) && visible(node)).map(describe);
+  const visualBleedCandidates = visibleDuplicatePresentationNodes;
+  const legacyDashboard = document.getElementById("dashboardSection");
+  const sharedMapRequired = Boolean(map && visible(map) && map.classList.contains("leaflet-container"));
+  const duplicateSemanticOwnerCount = new Set([
+    ...focusableOutsidePortrait.map((node) => node.selector),
+    ...accessibilityExposedOutsidePortrait.map((node) => node.selector)
+  ]).size;
+  const legacyDashboardUnavailable = Boolean(legacyDashboard?.hasAttribute("inert") && legacyDashboard.getAttribute("aria-hidden") === "true" && !visible(legacyDashboard));
+  return Object.freeze({ portraitActive, sharedMapRequired, visibleDuplicatePresentationNodes,
+    focusableOutsidePortrait, accessibilityExposedOutsidePortrait, activeLiveRegionsOutsidePortrait,
+    duplicateSemanticOwnerCount, visualBleedCandidates,
+    pass: Boolean(portraitActive && sharedMapRequired && !visibleDuplicatePresentationNodes.length
+      && !focusableOutsidePortrait.length && !accessibilityExposedOutsidePortrait.length
+      && !activeLiveRegionsOutsidePortrait.length && duplicateSemanticOwnerCount === 0 && legacyDashboardUnavailable) });
+}
+window.gridlyLP2418PortraitOwnershipAudit = gridlyLP2418PortraitOwnershipAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP2418PortraitOwnershipAudit", gridlyLP2418PortraitOwnershipAudit);

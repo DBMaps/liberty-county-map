@@ -11,8 +11,8 @@
   "serviceWorkerVersion": "lp101.1-runtime-recovery",
   "serviceWorkerCache": "gridly-pwa-shell-lp235-v1",
   "sourceHashes": {
-    "indexHtmlSha256": "df0f661145976a20c83955b0d9095c0884c1b95acc704aaae2b91414faf7f4c4",
-    "appScriptSha256": "17e58441f490355dd95ccdcb77e3717d87cbef94b0100751b28456ab42c46fb8",
+    "indexHtmlSha256": "a99f7a1d0c75b24361c7a0b698278fbe921ca95cf7a263acebfb1b973010e286",
+    "appScriptSha256": "b7a11b50b5cc21e80fb4d4145080d2ad81808d6ddfc4c68b9743991c536c76fd",
     "serviceWorkerSha256": "22ab81ebe1594b7e7d0750b22e3720f94c04b2dfc091b987522aab298cf5ccde"
   },
   "launchPresentationAuthority": {
