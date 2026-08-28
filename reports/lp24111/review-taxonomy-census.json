@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.lp24111.review-taxonomy-census.v1",
+  "executionState": "NOT_EXECUTED",
+  "input": "owner-local/lp24111/overture-texas-normalized-poi.parquet",
+  "reviewRequiredBefore": 1001637,
+  "topPrimaryBasicFamilies": null,
+  "topHierarchyValues": null,
+  "topNameCategoryCombinations": null,
+  "evidencePresence": {
+    "brand": null,
+    "address": null,
+    "phoneOrWebsite": null
+  },
+  "byCounty": null,
+  "byDensity": null,
+  "reason": "The owner-local normalized and rich Parquets required for the D.2 census are absent from this checkout; no taxonomy frequencies are inferred."
+}

@@ -1,6 +1,7 @@
 {
-  "schemaVersion": "gridly.lp24111.compact-runtime-schema.v1",
-  "status": "PROPOSAL_NOT_RUNTIME",
+  "schemaVersion": "gridly.lp24111.compact-runtime-schema.v2",
+  "status": "MEASUREMENT_PROJECTION_NOT_RUNTIME",
+  "eligibleOnly": true,
   "fields": [
     "id",
     "displayName",
@@ -10,19 +11,22 @@
     "latitude",
     "longitude",
     "countyFips",
-    "compactLocality",
-    "qualityClass",
-    "operatingStatus",
-    "sourceFamilyId"
+    "locality",
+    "operatingStatus"
   ],
   "buildOnly": [
     "sourceMetadata",
+    "fullAddresses",
     "alternateNames",
+    "fullCategories",
     "taxonomy",
     "phones",
     "websites",
+    "emails",
+    "socials",
     "bbox",
     "conflationEvidence"
   ],
+  "qualityClassIncluded": false,
   "estimatedPackageBytes": null
 }

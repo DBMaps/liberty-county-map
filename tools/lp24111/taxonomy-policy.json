@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp24111.taxonomy-policy.v1",
+  "policy": "EXPLICIT_TAXONOMY_ONLY_CONFIDENCE_NEVER_CLASSIFIES",
+  "eligible": {
+    "CAR_WASH": ["car_wash"],
+    "HARDWARE": ["hardware_store", "building_supply_store"],
+    "LAUNDRY": ["laundromat", "laundry_service"],
+    "CAMPGROUND": ["campground", "rv_park"],
+    "VISITOR_CENTER": ["visitor_center"],
+    "MARINA": ["marina"],
+    "GOLF": ["golf_course"],
+    "TOURIST_ATTRACTION": ["tourist_attraction"],
+    "TOWING": ["towing_service"],
+    "STORAGE": ["self_storage"]
+  },
+  "nonDestination": ["place_of_worship", "residential", "building", "intersection", "neighborhood", "administrative"],
+  "excluded": ["mountain", "river", "structure_and_geography", "natural_feature", "waterfall", "glacier", "volcano", "forest", "island"],
+  "humanMedicalExclusions": ["veterinarian", "veterinary_clinic", "animal_hospital", "animal_clinic", "pet_wellness"]
+}

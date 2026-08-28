@@ -16,8 +16,9 @@
   "scripts": {
     "build:lp24111": "node tools/lp24111/manufacture.mjs --write",
     "execute:lp24111-normalization": "node tools/lp24111/normalize.mjs --execute",
+    "execute:lp24111-taxonomy": "node tools/lp24111/taxonomy-review.mjs --execute",
     "verify:lp24111": "node tools/lp24111/manufacture.mjs --verify",
-    "test:lp24111": "node --test tests/lp24111-overture-authority.test.mjs",
+    "test:lp24111": "node --test tests/lp24111-overture-authority.test.mjs tests/lp24111-taxonomy-package.test.mjs",
     "materialize:lp2416": "node tools/lp2416/statewide-address-certification.mjs --materialize",
     "build:lp2416": "node tools/lp2416/statewide-address-certification.mjs --write",
     "verify:lp2416": "node tools/lp2416/statewide-address-certification.mjs --verify",

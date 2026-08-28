@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "gridly.lp24111.taxonomy-resolution-ledger.v1",
+  "executionState": "NOT_EXECUTED",
+  "policy": "EXPLICIT_TAXONOMY_ONLY_CONFIDENCE_NEVER_CLASSIFIES",
+  "decisions": [],
+  "candidatePolicy": "tools/lp24111/taxonomy-policy.json",
+  "before": {
+    "eligible": 364959,
+    "nonDestination": 83992,
+    "excluded": 12227,
+    "reviewRequired": 1001637
+  },
+  "after": {
+    "eligible": null,
+    "nonDestination": null,
+    "excluded": null,
+    "reviewRequired": null
+  },
+  "reason": "Governed candidate rules require owner-local census measurement before their counts can be accepted as a D.2 resolution ledger."
+}
