@@ -5,7 +5,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {buildD5} from '../tools/lp24111/d5-readiness.mjs';
-import {recoverCommittedEvidence,BRANDS,CATEGORIES} from '../tools/lp24111/recover-d5-evidence.mjs';
+import {recoverCommittedEvidence,reconcileBrandAggregate,BRANDS,CATEGORIES} from '../tools/lp24111/recover-d5-evidence.mjs';
 
 const report=name=>JSON.parse(fs.readFileSync(new URL(`../reports/lp24111/${name}`,import.meta.url),'utf8'));
 const recovered=()=>recoverCommittedEvidence({radius:report('community-radius-coverage.json'),nonPlace:report('governed-non-place-coverage.json'),access:report('category-accessibility.json'),counties:report('county-coverage.json'),metadata:report('metadata-conflicts.json')});
@@ -50,7 +50,7 @@ test('D.5 fails closed on missing D.4 quality and brand detail',()=>{
 test('D.5A recovers only deterministic category evidence and fails closed elsewhere',()=>{
  const e=recovered();
  assert.deepEqual([e.quality.expectedRows,e.quality.placeRows,e.quality.nonPlaceRows],[1888,1859,29]);
- assert.equal(e.quality.status,'NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE');
+ assert.equal(e.quality.status,'QUALITY_CLASS_EVIDENCE_NOT_MATERIALIZED');
  assert.equal(e.quality.rows.length,0);
  assert.equal(e.categories.rows.length,CATEGORIES.length);
  assert.equal(e.categories.rows.find(x=>x.category==='CONVENIENCE').accountedCount,1888);
@@ -62,9 +62,32 @@ test('D.5A recovers only deterministic category evidence and fails closed elsewh
  assert.equal(e.metadata.retainedSample.name,'Hitachi Energy Jefferson City');
  assert.equal(e.metadata.retainedSample.sourceRegion,'MO');
  assert.equal(e.brands.rows.length,BRANDS.length);
- assert.ok(e.brands.rows.every(x=>x.status==='NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE'));
+ assert.equal(e.brands.classification,'BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION');
+ assert.deepEqual([e.brands.brandFieldPresent,e.brands.populatedBrandRows,e.brands.aggregateArtifactRows],[true,0,0]);
+ assert.ok(e.brands.rows.every(x=>x.status==='BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION'&&x.recordCount===null&&x.countyCount===null));
  assert.equal(e.brands.authorityRole,'DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY');
  assert.equal(e.legalState,'LEGAL_REVIEW_REQUIRED');
+});
+
+test('empty brand projection is not manufactured as zero while a measured aggregate can contain actual zero',()=>{
+ assert.equal(reconcileBrandAggregate([]),null);
+ const measured=reconcileBrandAggregate([{brand:'Walmart',standalone_record_count:12,counties_represented:4}]);
+ assert.equal(measured.rows.find(x=>x.brand==='Walmart').status,'MEASURED_PRESENT');
+ assert.equal(measured.rows.find(x=>x.brand==='H-E-B').status,'DATA_IS_MEASURED_ZERO');
+ const d=buildD5();
+ assert.equal(d['d5-brand-readiness.json'].classification,'BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION');
+ assert.ok(d['d5-brand-readiness.json'].rows.every(x=>x.recordCount===null));
+});
+
+test('unmaterialized evidence remains fail-closed and recovery plans are narrowly bounded',()=>{
+ const e=recovered();
+ assert.equal(e.quality.rows.length,0,'quality classes must not be invented');
+ assert.equal(e.categories.pharmacyRca.measurementStatus,'PHARMACY_TERLINGUA_MEASUREMENT_NOT_MATERIALIZED');
+ assert.equal(e.categories.pharmacyRca.recovered,false,'Terlingua PHARMACY must not be invented');
+ assert.equal(e.metadata.families,null,'metadata families must not be inferred');
+ assert.equal(e.metadata.retainedSample.name,'Hitachi Energy Jefferson City');
+ assert.equal(e.recoveryPlan.brand.population,'EXACT_D4_STANDALONE_IDS_391772');
+ assert.equal(e.recoveryPlan.metadata.population,'EXACT_149_D4_CONFLICT_IDS');
 });
 
 test('D.5A recovery has no upstream, network, merge, coverage execution, or activation path',()=>{

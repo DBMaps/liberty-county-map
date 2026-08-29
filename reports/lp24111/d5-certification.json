@@ -22,7 +22,7 @@
   "legalState": "LEGAL_REVIEW_REQUIRED",
   "runtimeActivated": false,
   "productionBehaviorChanged": false,
-  "ownerNextAction": "Publish missing D.4 quality-class and brand detail, then rerun this offline D.5 derivation; separately obtain counsel clearance.",
+  "ownerNextAction": "Mount the existing rich/normalized authority beside the exact D.4 standalone IDs and run only the bounded read-only brand/metadata ID-join audit; locate an existing D.4 quality policy and retained Terlingua PHARMACY measurement, otherwise leave those gates incomplete; separately obtain counsel clearance.",
   "mergeRecommendation": "MERGE_FAIL_CLOSED_D5_EVIDENCE_AS_INCOMPLETE",
   "nextMilestone": "D5_EVIDENCE_COMPLETION_THEN_BOUNDED_ACTIVATION_DESIGN_REVIEW"
 }

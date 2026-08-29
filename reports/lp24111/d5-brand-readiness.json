@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.d5.brands.v1",
-  "authorityRole": "DESCRIPTIVE_ONLY_NOT_LAUNCH_AUTHORITY",
+  "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY",
   "requestedBrands": [
     "Walmart",
     "H-E-B",
@@ -24,7 +24,192 @@
     "Walgreens"
   ],
   "recordsAudited": 391772,
-  "rows": [],
+  "brandFieldPresent": true,
+  "populatedBrandRows": 0,
+  "aggregateArtifactRows": 0,
+  "classification": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+  "rows": [
+    {
+      "brand": "Walmart",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "H-E-B",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Brookshire Brothers",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Dollar General",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Dollar Tree",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Family Dollar",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Shell",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Chevron",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Exxon",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Valero",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "O'Reilly Auto Parts",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "AutoZone",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Best Western",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Holiday Inn Express",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Hampton Inn",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Motel 6",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Starbucks",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Subway",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "CVS",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    },
+    {
+      "brand": "Walgreens",
+      "status": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+      "recordCount": null,
+      "countyCount": null,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null,
+      "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY"
+    }
+  ],
   "complete": false,
-  "reason": "Committed D.4 report has zero brand rows; counts, county/community representation, and rural presence cannot be invented."
+  "reason": "D.4 retained a brand field but populated zero rows; this is unavailable signal, not evidence that any requested brand is absent statewide."
 }
