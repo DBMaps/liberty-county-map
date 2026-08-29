@@ -5,7 +5,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {buildD5} from '../tools/lp24111/d5-readiness.mjs';
-import {recoverCommittedEvidence,reconcileBrandAggregate,reconcileRichBrandEvidence,reconcileMetadataEvidence,classifyMetadataFamily,BRANDS,CATEGORIES,EXPECTED_STANDALONE_IDS,BRAND_AUTHORITY_ROLE} from '../tools/lp24111/recover-d5-evidence.mjs';
+import {recoverCommittedEvidence,recoverOwnerEvidence,reconcileBrandAggregate,reconcileRichBrandEvidence,reconcileMetadataEvidence,classifyMetadataFamily,BRANDS,CATEGORIES,EXPECTED_STANDALONE_IDS,BRAND_AUTHORITY_ROLE} from '../tools/lp24111/recover-d5-evidence.mjs';
 
 const report=name=>JSON.parse(fs.readFileSync(new URL(`../reports/lp24111/${name}`,import.meta.url),'utf8'));
 const recovered=()=>recoverCommittedEvidence({radius:report('community-radius-coverage.json'),nonPlace:report('governed-non-place-coverage.json'),access:report('category-accessibility.json'),counties:report('county-coverage.json'),metadata:report('metadata-conflicts.json')});
@@ -166,4 +166,48 @@ test('D.5D recovery source is bounded to local ID joins and preserves legal and 
  assert.match(source,/LEGAL_REVIEW_REQUIRED/);
  assert.match(source,/DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY/);
  assert.doesNotMatch(source,/fetch\(|https?:\/\/|ST_Distance|OSM|runtimeActivated:true|productionBehaviorChanged:true/);
+});
+
+test('D.5E SQL assigns every structured dereference to its semantic owner',()=>{
+ const source=fs.readFileSync(new URL('../tools/lp24111/recover-d5-evidence.mjs',import.meta.url),'utf8');
+ assert.doesNotMatch(source,/\b[sm]\.sources\.(?:dataset|license|property)/);
+ assert.doesNotMatch(source,/\b[sm]\.brand\.names/);
+ assert.doesNotMatch(source,/\b[sm]\.addresses\.(?:region|locality|postcode)/);
+ assert.match(source,/r\.brand\.names\.primary/);
+ assert.match(source,/r\.sources\.dataset/);
+ assert.match(source,/r\.sources\.license/);
+ assert.match(source,/r\.sources\.property/);
+ assert.match(source,/r\.addresses\.region/);
+ assert.match(source,/r\.addresses\.locality/);
+ assert.match(source,/r\.addresses\.postcode/);
+ assert.match(source,/m\.governed_locality/);
+ assert.match(source,/EXPECTED_STANDALONE_IDS=391772/);
+ assert.match(source,/EXPECTED_CONFLICT_IDS=149/);
+});
+
+test('D.5E DuckDB recovery accepts textual standalone sources and fails closed on malformed rich structs',t=>{
+ const duckdb=process.env.DUCKDB||'duckdb';
+ if(spawnSync(duckdb,['--version'],{encoding:'utf8'}).status!==0)return t.skip('DuckDB CLI is not installed');
+ const directory=fs.mkdtempSync(path.join(process.cwd(),'.tmp-d5e-'));
+ const sql=(statement)=>{
+  const result=spawnSync(duckdb,['-c',statement],{encoding:'utf8',maxBuffer:16*1024*1024});
+  assert.equal(result.status,0,result.stderr);
+ };
+ const q=file=>file.replaceAll("'","''");
+ try{
+  const standalone=path.join(directory,'identity-governed-eligible.parquet');
+  const rich=path.join(directory,'overture-texas-rich-authority-dedup.parquet');
+  const metadata=path.join(directory,'metadata-conflicts.parquet');
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,'001' county_fips,'standalone text, not a struct' sources FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(standalone)}' (FORMAT PARQUET)`);
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':CASE WHEN i=0 THEN 'Walmart' ELSE NULL END,'common':MAP(['en'],[NULL])}} brand,{'property':'shops','dataset':'overture','license':'cdla'} sources,{'freeform':NULL,'locality':'Elsewhere','postcode':'65101','region':'MO','country':'US'} addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,CASE WHEN i=0 THEN 'Hitachi Energy Jefferson City' ELSE 'record-'||i END display_name,'SPATIAL_METADATA_CONFLICT' classification,'Governed' locality FROM range(149) t(i)) TO '${q(metadata)}' (FORMAT PARQUET)`);
+  const evidence=recoverOwnerEvidence(directory);
+  assert.equal(evidence.brands.joinConservation.standaloneInputIds,EXPECTED_STANDALONE_IDS);
+  assert.equal(evidence.metadata.joinConservation.conflictIdsInput,149);
+  assert.match(evidence.artifactAudit.schemaAudit.relations.standalone.columns.find(x=>x.name==='sources').type,/VARCHAR/);
+  assert.match(evidence.artifactAudit.schemaAudit.relations.rich.columns.find(x=>x.name==='sources').type,/STRUCT/);
+
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':'Walmart','common':MAP(['en'],['Walmart'])}} brand,'not structured' sources,{'locality':'x','postcode':'75001','region':'TX'} addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
+  assert.throws(()=>recoverOwnerEvidence(directory),/OWNER_ARTIFACT_SCHEMA_FAILED.*sources/);
+ }finally{fs.rmSync(directory,{recursive:true,force:true});}
 });

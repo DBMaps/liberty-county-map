@@ -50,6 +50,25 @@ function queryParquet(file,sql){
  return result.stdout.trim()?JSON.parse(result.stdout):[];
 }
 
+function describeParquet(file){
+ return queryParquet(file,'DESCRIBE SELECT * FROM read_parquet($FILE)').map(row=>({name:row.column_name,type:row.column_type}));
+}
+
+function requireSchema(artifact,schema,requirements){
+ const columns=new Map(schema.map(column=>[column.name,column.type]));
+ for(const [name,expected] of Object.entries(requirements)){
+  const observed=columns.get(name);
+  if(!observed||!expected.test(observed))throw Error(`OWNER_ARTIFACT_SCHEMA_FAILED for ${artifact}: required ${name} ${expected}; observed ${observed??'MISSING'}`);
+ }
+}
+
+function governedLocalityColumn(schema){
+ const names=new Set(schema.map(column=>column.name));
+ const name=['locality','governed_locality','spatial_locality'].find(candidate=>names.has(candidate));
+ if(!name)throw Error('OWNER_ARTIFACT_SCHEMA_FAILED for metadata-conflicts.parquet: required governed locality context; observed none of locality, governed_locality, spatial_locality');
+ return name;
+}
+
 const number=value=>Number(value??0);
 const normalized=value=>String(value??'').trim().toLocaleLowerCase('en-US');
 
@@ -93,14 +112,19 @@ export function recoverOwnerEvidence(directory=path.join(root,'owner-local/lp241
  const standaloneFile=path.join(directory,'identity-governed-eligible.parquet');
  const richFile=path.join(directory,'overture-texas-rich-authority-dedup.parquet');
  const conflictFile=path.join(directory,'metadata-conflicts.parquet');
+ const ownerFiles={standalone:standaloneFile,rich:richFile,metadata:conflictFile};
+ const schemas=Object.fromEntries(Object.entries(ownerFiles).filter(([,file])=>fs.existsSync(file)).map(([role,file])=>[role,describeParquet(file)]));
+ evidence.artifactAudit.schemaAudit={status:'OBSERVED_BEFORE_RECOVERY',relations:Object.fromEntries(Object.entries(schemas).map(([role,columns])=>[role,{artifact:path.basename(ownerFiles[role]),columns}]))};
  if(fs.existsSync(standaloneFile)&&fs.existsSync(richFile)){
+  requireSchema(path.basename(standaloneFile),schemas.standalone,{id:/./,county_fips:/./});
+  requireSchema(path.basename(richFile),schemas.rich,{id:/./,brand:/^STRUCT\((?=.*names)(?=.*primary)(?=.*common)/is,sources:/^STRUCT\((?=.*property)(?=.*dataset)(?=.*license)/is});
   present.push(path.basename(standaloneFile),path.basename(richFile));
   const files=`read_parquet('${standaloneFile.replaceAll("'","''")}')`,rich=`read_parquet('${richFile.replaceAll("'","''")}')`;
   const label="coalesce(nullif(trim(r.brand.names.primary),''),nullif(trim(map_extract_value(r.brand.names.common,'en')),''))";
-  const conservation=queryParquet(standaloneFile,`WITH s AS (SELECT cast(id AS varchar) id FROM ${files}), r AS (SELECT cast(id AS varchar) id, brand FROM ${rich}), rc AS (SELECT id,count(*) n,any_value(brand) brand FROM r GROUP BY id), j AS (SELECT s.id,rc.n,${label.replaceAll('r.','rc.')} brand_label FROM s LEFT JOIN rc USING(id)) SELECT count(*) standalone_rows,count(DISTINCT s.id) unique_standalone_ids,count(*) FILTER(WHERE j.n IS NOT NULL) joined_richer_ids,count(*) FILTER(WHERE j.n>1) duplicate_richer_ids,count(*) FILTER(WHERE brand_label IS NOT NULL) rows_with_brand,count(DISTINCT lower(brand_label)) distinct_brands FROM s JOIN j USING(id)`)[0];
+  const conservation=queryParquet(standaloneFile,`WITH s AS (SELECT cast(id AS varchar) id FROM ${files}), r AS (SELECT cast(id AS varchar) id,brand FROM ${rich}), duplicates AS (SELECT id,count(*) n FROM r GROUP BY id HAVING count(*)>1), j AS (SELECT s.id,r.id richer_id,${label} brand_label FROM s LEFT JOIN r ON s.id=r.id) SELECT (SELECT count(*) FROM s) standalone_rows,(SELECT count(DISTINCT id) FROM s) unique_standalone_ids,count(*) FILTER(WHERE j.richer_id IS NOT NULL) joined_richer_ids,(SELECT count(*) FROM duplicates) duplicate_richer_ids,count(*) FILTER(WHERE j.brand_label IS NOT NULL) rows_with_brand,count(DISTINCT lower(j.brand_label)) distinct_brands FROM j`)[0];
   const aggregates=queryParquet(standaloneFile,`WITH r AS (SELECT cast(id AS varchar) id,${label} brand FROM ${rich} r), s AS (SELECT cast(id AS varchar) id,lpad(cast(county_fips AS varchar),5,'0') county_fips FROM ${files}) SELECT r.brand,count(*) record_count,count(DISTINCT s.county_fips) county_count FROM s JOIN r USING(id) WHERE r.brand IS NOT NULL GROUP BY r.brand`);
-  const sourceInventory=queryParquet(standaloneFile,`WITH s AS (SELECT cast(id AS varchar) id FROM ${files}),r AS (SELECT cast(id AS varchar) id,sources FROM ${rich}),j AS (SELECT r.sources FROM s JOIN r USING(id)) SELECT count(*) FILTER(WHERE sources IS NOT NULL) rowsWithSourceStruct,list(DISTINCT sources.dataset ORDER BY sources.dataset) FILTER(WHERE sources.dataset IS NOT NULL) datasets,list(DISTINCT sources.license ORDER BY sources.license) FILTER(WHERE sources.license IS NOT NULL) licenses FROM j`);
-  sourceInventory[0].sourcePropertyFrequencies=queryParquet(standaloneFile,`WITH s AS (SELECT cast(id AS varchar) id FROM ${files}),r AS (SELECT cast(id AS varchar) id,sources FROM ${rich}) SELECT r.sources.property property,count(*) frequency FROM s JOIN r USING(id) WHERE r.sources.property IS NOT NULL GROUP BY 1 ORDER BY 2 DESC,1`);
+  const sourceInventory=queryParquet(standaloneFile,`WITH s AS (SELECT cast(id AS varchar) id FROM ${files}),r AS (SELECT cast(id AS varchar) id,sources FROM ${rich}) SELECT count(*) FILTER(WHERE r.sources IS NOT NULL) rowsWithSourceStruct,list(DISTINCT r.sources.dataset ORDER BY r.sources.dataset) FILTER(WHERE r.sources.dataset IS NOT NULL) datasets,list(DISTINCT r.sources.license ORDER BY r.sources.license) FILTER(WHERE r.sources.license IS NOT NULL) licenses FROM s JOIN r ON s.id=r.id`);
+  sourceInventory[0].sourcePropertyFrequencies=queryParquet(standaloneFile,`WITH s AS (SELECT cast(id AS varchar) id FROM ${files}),r AS (SELECT cast(id AS varchar) id,sources FROM ${rich}) SELECT r.sources.property property,count(*) frequency FROM s JOIN r ON s.id=r.id WHERE r.sources.property IS NOT NULL GROUP BY 1 ORDER BY 2 DESC,1`);
   evidence.brands=reconcileRichBrandEvidence({conservation,aggregates,sourceInventory});
   evidence.sourceInventory={...evidence.brands.sourceInventory,legalState:'LEGAL_REVIEW_REQUIRED',legalConclusion:false};
   evidence.artifactAudit.brands={status:'MEASURED_RECONCILED'};
@@ -110,10 +134,13 @@ export function recoverOwnerEvidence(directory=path.join(root,'owner-local/lp241
   present.push(path.basename(brandFile));const measured=queryParquet(brandFile,'SELECT brand, standalone_record_count, counties_represented FROM read_parquet($FILE)');
   evidence.brands=reconcileBrandAggregate(measured)??evidence.brands;
  }
- if(fs.existsSync(conflictFile)&&fs.existsSync(richFile)&&fs.existsSync(standaloneFile)){
+ if(fs.existsSync(conflictFile)&&fs.existsSync(richFile)){
+  requireSchema(path.basename(conflictFile),schemas.metadata,{id:/./,display_name:/./,classification:/./});
+  requireSchema(path.basename(richFile),schemas.rich,{id:/./,addresses:/^STRUCT\((?=.*region)(?=.*locality)(?=.*postcode)/is});
+  const governedLocality=governedLocalityColumn(schemas.metadata);
   present.push(path.basename(conflictFile));
-  const q=x=>`'${x.replaceAll("'","''")}'`,conflicts=`read_parquet(${q(conflictFile)})`,standalone=`read_parquet(${q(standaloneFile)})`,rich=`read_parquet(${q(richFile)})`;
-  const rows=queryParquet(conflictFile,`WITH c AS (SELECT cast(id AS varchar) id,cast(display_name AS varchar) name FROM ${conflicts} WHERE classification='SPATIAL_METADATA_CONFLICT'), s AS (SELECT cast(id AS varchar) id,cast(locality AS varchar) governed_locality FROM ${standalone}), r AS (SELECT cast(id AS varchar) id,addresses FROM ${rich}) SELECT c.id,c.name,r.id IS NOT NULL richerMatched,upper(trim(r.addresses.region)) NOT IN ('TX','TEXAS','') regionConflict,coalesce(trim(s.governed_locality),'')<>'' AND coalesce(trim(r.addresses.locality),'')<>'' AND lower(trim(s.governed_locality))<>lower(trim(r.addresses.locality)) localityConflict,coalesce(trim(r.addresses.postcode),'')<>'' AND NOT regexp_matches(trim(r.addresses.postcode),'^(733|7[5-9]|885)') postcodeConflict,r.addresses.region sourceRegion,r.addresses.locality sourceLocality,r.addresses.postcode sourcePostcode,s.governed_locality governedLocality FROM c LEFT JOIN s USING(id) LEFT JOIN r USING(id) ORDER BY c.id`);
+  const q=x=>`'${x.replaceAll("'","''")}'`,conflicts=`read_parquet(${q(conflictFile)})`,rich=`read_parquet(${q(richFile)})`;
+  const rows=queryParquet(conflictFile,`WITH m AS (SELECT cast(id AS varchar) id,cast(display_name AS varchar) name,cast(${governedLocality} AS varchar) governed_locality FROM ${conflicts} WHERE classification='SPATIAL_METADATA_CONFLICT'), r AS (SELECT cast(id AS varchar) id,addresses FROM ${rich}) SELECT m.id,m.name,r.id IS NOT NULL richerMatched,upper(trim(r.addresses.region)) NOT IN ('TX','TEXAS','') regionConflict,coalesce(trim(m.governed_locality),'')<>'' AND coalesce(trim(r.addresses.locality),'')<>'' AND lower(trim(m.governed_locality))<>lower(trim(r.addresses.locality)) localityConflict,coalesce(trim(r.addresses.postcode),'')<>'' AND NOT regexp_matches(trim(r.addresses.postcode),'^(733|7[5-9]|885)') postcodeConflict,r.addresses.region sourceRegion,r.addresses.locality sourceLocality,r.addresses.postcode sourcePostcode,m.governed_locality governedLocality FROM m LEFT JOIN r ON m.id=r.id ORDER BY m.id`);
   if(rows.some(x=>!x.richerMatched))throw Error(`METADATA_RICHER_JOIN_FAILED: ${rows.filter(x=>!x.richerMatched).length} missing IDs`);
   evidence.metadata=reconcileMetadataEvidence(rows);
   evidence.metadata.retainedSample=evidence.metadata.hitachi;
