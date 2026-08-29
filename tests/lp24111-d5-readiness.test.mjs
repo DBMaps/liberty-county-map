@@ -168,15 +168,17 @@ test('D.5D recovery source is bounded to local ID joins and preserves legal and 
  assert.doesNotMatch(source,/fetch\(|https?:\/\/|ST_Distance|OSM|runtimeActivated:true|productionBehaviorChanged:true/);
 });
 
-test('D.5E SQL assigns every structured dereference to its semantic owner',()=>{
+test('D.5F SQL unnests rich LIST<STRUCT> sources before source-field dereference',()=>{
  const source=fs.readFileSync(new URL('../tools/lp24111/recover-d5-evidence.mjs',import.meta.url),'utf8');
  assert.doesNotMatch(source,/\b[sm]\.sources\.(?:dataset|license|property)/);
  assert.doesNotMatch(source,/\b[sm]\.brand\.names/);
  assert.doesNotMatch(source,/\b[sm]\.addresses\.(?:region|locality|postcode)/);
  assert.match(source,/r\.brand\.names\.primary/);
- assert.match(source,/r\.sources\.dataset/);
- assert.match(source,/r\.sources\.license/);
- assert.match(source,/r\.sources\.property/);
+ assert.doesNotMatch(source,/sources\.(?:dataset|license|property)/);
+ assert.match(source,/CROSS JOIN UNNEST\(joined\.sources\) AS u\(src\)/);
+ assert.match(source,/src\.dataset/);
+ assert.match(source,/src\.license/);
+ assert.match(source,/src\.property/);
  assert.match(source,/r\.addresses\.region/);
  assert.match(source,/r\.addresses\.locality/);
  assert.match(source,/r\.addresses\.postcode/);
@@ -185,7 +187,7 @@ test('D.5E SQL assigns every structured dereference to its semantic owner',()=>{
  assert.match(source,/EXPECTED_CONFLICT_IDS=149/);
 });
 
-test('D.5E DuckDB recovery accepts textual standalone sources and fails closed on malformed rich structs',t=>{
+test('D.5F DuckDB recovery inventories rich source LIST<STRUCT> multiplicity without changing standalone conservation',t=>{
  const duckdb=process.env.DUCKDB||'duckdb';
  if(spawnSync(duckdb,['--version'],{encoding:'utf8'}).status!==0)return t.skip('DuckDB CLI is not installed');
  const directory=fs.mkdtempSync(path.join(process.cwd(),'.tmp-d5e-'));
@@ -199,10 +201,16 @@ test('D.5E DuckDB recovery accepts textual standalone sources and fails closed o
   const rich=path.join(directory,'overture-texas-rich-authority-dedup.parquet');
   const metadata=path.join(directory,'metadata-conflicts.parquet');
   sql(`COPY (SELECT cast(i AS VARCHAR) id,'001' county_fips,'standalone text, not a struct' sources FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(standalone)}' (FORMAT PARQUET)`);
-  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':CASE WHEN i=0 THEN 'Walmart' ELSE NULL END,'common':MAP(['en'],[NULL])}} brand,{'property':'shops','dataset':'overture','license':'cdla'} sources,{'freeform':NULL,'locality':'Elsewhere','postcode':'65101','region':'MO','country':'US'} addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':CASE WHEN i=0 THEN 'Walmart' ELSE NULL END,'common':MAP(['en'],[NULL])}} brand,CASE WHEN i=0 THEN [{'property':'shops','dataset':'overture','license':'cdla'},{'property':'websites','dataset':'partners','license':'other'}] WHEN i=1 THEN [{'property':'shops','dataset':'overture','license':'cdla'}] WHEN i=2 THEN NULL ELSE [] END sources,{'freeform':NULL,'locality':'Elsewhere','postcode':'65101','region':'MO','country':'US'} addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
   sql(`COPY (SELECT cast(i AS VARCHAR) id,CASE WHEN i=0 THEN 'Hitachi Energy Jefferson City' ELSE 'record-'||i END display_name,'SPATIAL_METADATA_CONFLICT' classification,'Governed' locality FROM range(149) t(i)) TO '${q(metadata)}' (FORMAT PARQUET)`);
   const evidence=recoverOwnerEvidence(directory);
   assert.equal(evidence.brands.joinConservation.standaloneInputIds,EXPECTED_STANDALONE_IDS);
+  assert.equal(evidence.sourceInventory.standalonePopulation,EXPECTED_STANDALONE_IDS);
+  assert.equal(evidence.sourceInventory.rowsWithSourceStruct,2);
+  assert.equal(evidence.sourceInventory.sourceEntryCount,3);
+  assert.deepEqual(evidence.sourceInventory.datasets,['overture','partners']);
+  assert.deepEqual(evidence.sourceInventory.licenses,['cdla','other']);
+  assert.deepEqual(evidence.sourceInventory.sourcePropertyFrequencies,[{property:'shops',frequency:2},{property:'websites',frequency:1}]);
   assert.equal(evidence.metadata.joinConservation.conflictIdsInput,149);
   assert.match(evidence.artifactAudit.schemaAudit.relations.standalone.columns.find(x=>x.name==='sources').type,/VARCHAR/);
   assert.match(evidence.artifactAudit.schemaAudit.relations.rich.columns.find(x=>x.name==='sources').type,/STRUCT/);
