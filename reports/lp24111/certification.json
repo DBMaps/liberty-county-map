@@ -1,17 +1,29 @@
 {
-  "schemaVersion": "gridly.lp24111.certification.v5",
-  "executiveResult": "PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING",
+  "schemaVersion": "gridly.lp24111.certification.v4",
+  "executiveResult": "PHASE_D3_MEASURED_POI_IDENTITY_CERTIFIED",
   "richAuthorityConservation": "OWNER_LOCAL_MEASURED",
   "productViability": "OVERTURE_TEXAS_POI_AUTHORITY_NOT_YET_PRODUCT_VIABLE",
   "classifications": [
     "TAXONOMY_PROMOTIONS_RECONCILED",
     "COMPACT_PACKAGE_IDENTITIES_CANONICAL",
-    "RUNTIME_NOT_ACTIVATED",
-    "D3_IDENTITY_POLICY_AND_BOUNDED_EXECUTION_READY",
-    "D3_OWNER_LOCAL_MEASUREMENT_NOT_EXECUTED"
+    "RUNTIME_NOT_ACTIVATED"
   ],
   "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
   "zeroCostContract": "NON_RUNTIME",
-  "mergeRecommendation": "MERGE_D3_GOVERNANCE_TOOLING_MEASURE_BEFORE_IDENTITY_CERTIFICATION",
-  "nextAction": "Restore the certified normalized Parquet in owner-local/lp24111 and run npm run execute:lp24111-identity; then run build, verify, and test."
+  "mergeRecommendation": "IDENTITY_EVIDENCE_COMPLETE_MERGE_ELIGIBLE",
+  "nextAction": "Review measured normalization and execute the remaining community, identity, metadata, package compression, attribution, and reconciliation audits.",
+  "evidenceCompletenessGate": {
+    "authority": true,
+    "fiveClassConservation": true,
+    "parentSelection": true,
+    "walmart": true,
+    "duplicates": true,
+    "ambiguity": true,
+    "lodging": true,
+    "fuel": true,
+    "medical": true,
+    "ownerPoc": true,
+    "package": true,
+    "runtime": true
+  }
 }

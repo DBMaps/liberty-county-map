@@ -1,11 +1,22 @@
 {
   "schemaVersion": "gridly.lp24111.fuel-convenience.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "overlapCandidates": null,
   "mergedIdentityProposals": null,
   "distinctColocated": null,
   "ambiguous": null,
-  "categoryRichnessPreserved": true
+  "categoryRichnessPreserved": true,
+  "candidateRecords": 3776,
+  "parentFacilities": 1,
+  "childDepartments": 0,
+  "likelyDuplicateRecords": 17,
+  "distinctRecords": 2297,
+  "ambiguousRecords": 1461,
+  "clusteredRecords": 17,
+  "countiesRepresented": 232,
+  "candidatePairs": 20977,
+  "candidateClusters": 17,
+  "selectedParentIdentities": 0,
+  "multiCategorySameDestinationCases": 0
 }

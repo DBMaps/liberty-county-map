@@ -1,7 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.poi-identity-summary.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "identityClasses": [
     "PARENT_POI",
@@ -11,11 +10,27 @@
     "AMBIGUOUS"
   ],
   "rawEligibleCount": 393038,
-  "parentDestinationCount": null,
-  "childPoiCount": null,
-  "likelyDuplicateCount": null,
-  "distinctPoiCount": null,
-  "ambiguousCount": null,
-  "identityGovernedStandaloneCount": null,
-  "sourceRecordsDeleted": 0
+  "parentDestinationCount": 166,
+  "childPoiCount": 151,
+  "likelyDuplicateCount": 1115,
+  "distinctPoiCount": 275223,
+  "ambiguousCount": 116383,
+  "identityGovernedStandaloneCount": 391772,
+  "sourceRecordsDeleted": 0,
+  "authorityReconciliation": {
+    "authorityRows": 393038,
+    "uniqueAuthorityIds": 393038,
+    "missingEligibleIds": 0,
+    "outsideEligibleIds": 0,
+    "invalidRows": 0,
+    "duplicateIds": 0,
+    "reasonRows": 393038,
+    "classificationTotals": {
+      "PARENT_POI": 166,
+      "CHILD_POI": 151,
+      "LIKELY_DUPLICATE": 1115,
+      "DISTINCT_POI": 275223,
+      "AMBIGUOUS": 116383
+    }
+  }
 }

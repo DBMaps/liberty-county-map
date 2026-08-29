@@ -1,7 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.identity-exceptions.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "requiredTypes": [
     "UNRESOLVED_AMBIGUOUS",
@@ -13,5 +12,18 @@
     "HOSPITAL_CAMPUS_AMBIGUITY",
     "FUEL_CONVENIENCE_AMBIGUITY"
   ],
-  "rows": []
+  "rows": [],
+  "reasonCounts": {
+    "NO_DETERMINISTIC_PARENT": 0,
+    "INSUFFICIENT_STRONG_SIGNALS": 116383,
+    "MULTI_PARENT_CANDIDATE": 0,
+    "CONFLICTING_ADDRESS_NAME": 0,
+    "SAME_ADDRESS_DISTINCT_BUSINESS": 0,
+    "SHARED_PHONE_FALSE_POSITIVE_RISK": 0,
+    "MALL_OR_STRIP_CENTER_COLOCATION": 0,
+    "HOSPITAL_CAMPUS_AMBIGUITY": 0,
+    "FUEL_CONVENIENCE_AMBIGUITY": 0,
+    "OTHER": 0
+  },
+  "reasonTotalsReconciled": true
 }

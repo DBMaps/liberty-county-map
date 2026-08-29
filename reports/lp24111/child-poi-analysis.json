@@ -1,7 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.child-poi.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "families": [
     "WALMART_DEPARTMENT",
@@ -15,5 +14,70 @@
     "within 100 metres",
     "brand/address/phone/domain corroboration"
   ],
-  "results": null
+  "results": {
+    "childPoiCount": 151,
+    "walmartDisposition": {
+      "parents": {
+        "candidateCount": 158,
+        "PARENT_POI": 81,
+        "CHILD_POI": 0,
+        "LIKELY_DUPLICATE": 2,
+        "DISTINCT_POI": 40,
+        "AMBIGUOUS": 35,
+        "selectedParentPresent": 0,
+        "unmatched": 0
+      },
+      "pharmacy": {
+        "candidateCount": 289,
+        "PARENT_POI": 0,
+        "CHILD_POI": 79,
+        "LIKELY_DUPLICATE": 6,
+        "DISTINCT_POI": 72,
+        "AMBIGUOUS": 132,
+        "selectedParentPresent": 79,
+        "unmatched": 0
+      },
+      "bakery": {
+        "candidateCount": 6,
+        "PARENT_POI": 0,
+        "CHILD_POI": 2,
+        "LIKELY_DUPLICATE": 0,
+        "DISTINCT_POI": 2,
+        "AMBIGUOUS": 2,
+        "selectedParentPresent": 2,
+        "unmatched": 0
+      },
+      "vision": {
+        "candidateCount": 0,
+        "PARENT_POI": 0,
+        "CHILD_POI": 0,
+        "LIKELY_DUPLICATE": 0,
+        "DISTINCT_POI": 0,
+        "AMBIGUOUS": 0,
+        "selectedParentPresent": 0,
+        "unmatched": 0
+      },
+      "photo": {
+        "candidateCount": 5,
+        "PARENT_POI": 0,
+        "CHILD_POI": 1,
+        "LIKELY_DUPLICATE": 0,
+        "DISTINCT_POI": 2,
+        "AMBIGUOUS": 2,
+        "selectedParentPresent": 1,
+        "unmatched": 0
+      },
+      "auto_care": {
+        "candidateCount": 13,
+        "PARENT_POI": 0,
+        "CHILD_POI": 2,
+        "LIKELY_DUPLICATE": 1,
+        "DISTINCT_POI": 5,
+        "AMBIGUOUS": 5,
+        "selectedParentPresent": 2,
+        "unmatched": 0
+      }
+    }
+  },
+  "walmartDispositionReconciled": true
 }

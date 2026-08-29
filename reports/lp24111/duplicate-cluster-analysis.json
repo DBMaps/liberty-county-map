@@ -1,7 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.duplicate-clusters.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "architecture": {
     "blocking": "county + 0.01-degree spatial cell",
@@ -10,8 +9,20 @@
     "unrestrictedN2": false
   },
   "candidatePairs": null,
-  "candidateClusters": null,
-  "largestClusterSize": null,
+  "candidateClusters": 1266,
+  "largestClusterSize": 1,
   "distanceDistribution": null,
-  "signalCombinations": null
+  "signalCombinations": null,
+  "clusteredRows": 1266,
+  "singletonClusterIds": 1266,
+  "clusteredByClassification": {
+    "PARENT_POI": 0,
+    "CHILD_POI": 151,
+    "LIKELY_DUPLICATE": 1115,
+    "DISTINCT_POI": 0,
+    "AMBIGUOUS": 0
+  },
+  "likelyDuplicateRecords": 1115,
+  "clusterMembershipReconciled": true,
+  "semantics": "cluster_id identifies suppressible authority members; it does not assert connected-component membership"
 }

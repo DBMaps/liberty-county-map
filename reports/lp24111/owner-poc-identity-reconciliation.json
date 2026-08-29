@@ -1,7 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.owner-poc-identity.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "areas": [
     {
@@ -17,5 +16,82 @@
       "result": "AMBIGUOUS"
     }
   ],
-  "runtimeClaim": false
+  "runtimeClaim": false,
+  "audits": [
+    {
+      "area": "DAYTON / LIBERTY",
+      "result": "PASS",
+      "families": [
+        "Walmart",
+        "fuel/convenience",
+        "hospital/medical"
+      ]
+    },
+    {
+      "area": "TARKINGTON",
+      "result": "PASS",
+      "families": [
+        "H-E-B",
+        "Brookshire Brothers",
+        "Walmart",
+        "Tarkington Country Mart",
+        "local markets/fuel/convenience"
+      ]
+    },
+    {
+      "area": "PECOS",
+      "result": "PASS",
+      "families": [
+        {
+          "brand": "Best Western",
+          "result": "DISTINCT_POI",
+          "dispositions": {
+            "DISTINCT_POI": 2
+          }
+        },
+        {
+          "brand": "Holiday Inn Express",
+          "result": "AMBIGUOUS",
+          "dispositions": {
+            "AMBIGUOUS": 1
+          }
+        },
+        {
+          "brand": "Hampton Inn",
+          "result": "DISTINCT_POI",
+          "dispositions": {
+            "DISTINCT_POI": 1
+          }
+        },
+        {
+          "brand": "Fairfield",
+          "result": "DISTINCT_POI",
+          "dispositions": {
+            "DISTINCT_POI": 2
+          }
+        },
+        {
+          "brand": "Comfort Suites",
+          "result": "DISTINCT_POI",
+          "dispositions": {
+            "DISTINCT_POI": 1
+          }
+        },
+        {
+          "brand": "Home2 Suites",
+          "result": "DISTINCT_POI",
+          "dispositions": {
+            "DISTINCT_POI": 1
+          }
+        },
+        {
+          "brand": "Motel 6",
+          "result": "AMBIGUOUS",
+          "dispositions": {
+            "AMBIGUOUS": 1
+          }
+        }
+      ]
+    }
+  ]
 }

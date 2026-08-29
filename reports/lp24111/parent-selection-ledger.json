@@ -1,7 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.parent-selection.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "precedence": [
     "explicit parent role",
@@ -10,5 +9,14 @@
     "lexical Overture ID"
   ],
   "confidenceAuthority": false,
-  "rows": []
+  "rows": [],
+  "parentRoleRecords": 166,
+  "childRowsWithSelectedParent": 151,
+  "childRowsMissingParent": 0,
+  "distinctSelectedParentIds": 145,
+  "selectedParentIdsPresentInAuthority": 151,
+  "selectedParentIdsOutsideAuthority": 0,
+  "selectedParentIdsClassifiedParentPoi": 151,
+  "selectedParentIdsNotParentPoi": 0,
+  "semantics": "selected_parent_id is a child relationship, not a count of all parent-role records"
 }

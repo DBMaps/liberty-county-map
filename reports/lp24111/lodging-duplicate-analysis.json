@@ -1,19 +1,69 @@
 {
   "schemaVersion": "gridly.lp24111.lodging-duplicates.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "pecosCohort": [
-    "Best Western",
-    "Holiday Inn Express",
-    "Hampton Inn",
-    "Fairfield",
-    "Comfort Suites",
-    "Home2 Suites",
-    "Motel 6"
+    {
+      "brand": "Best Western",
+      "result": "DISTINCT_POI",
+      "dispositions": {
+        "DISTINCT_POI": 2
+      }
+    },
+    {
+      "brand": "Holiday Inn Express",
+      "result": "AMBIGUOUS",
+      "dispositions": {
+        "AMBIGUOUS": 1
+      }
+    },
+    {
+      "brand": "Hampton Inn",
+      "result": "DISTINCT_POI",
+      "dispositions": {
+        "DISTINCT_POI": 1
+      }
+    },
+    {
+      "brand": "Fairfield",
+      "result": "DISTINCT_POI",
+      "dispositions": {
+        "DISTINCT_POI": 2
+      }
+    },
+    {
+      "brand": "Comfort Suites",
+      "result": "DISTINCT_POI",
+      "dispositions": {
+        "DISTINCT_POI": 1
+      }
+    },
+    {
+      "brand": "Home2 Suites",
+      "result": "DISTINCT_POI",
+      "dispositions": {
+        "DISTINCT_POI": 1
+      }
+    },
+    {
+      "brand": "Motel 6",
+      "result": "AMBIGUOUS",
+      "dispositions": {
+        "AMBIGUOUS": 1
+      }
+    }
   ],
-  "candidateClusters": null,
+  "candidateClusters": 42,
   "likelyDuplicateClusters": null,
   "distinctSameLocationClusters": null,
-  "ambiguousClusters": null
+  "ambiguousClusters": null,
+  "candidateRecords": 13016,
+  "parentFacilities": 1,
+  "childDepartments": 0,
+  "likelyDuplicateRecords": 42,
+  "distinctRecords": 9428,
+  "ambiguousRecords": 3545,
+  "clusteredRecords": 42,
+  "countiesRepresented": 246,
+  "candidatePairs": 58041
 }

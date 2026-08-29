@@ -1,13 +1,366 @@
 {
   "schemaVersion": "gridly.lp24111.identity-package-impact.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
   "baseline": {
     "eligibleRows": 393038,
     "statewideCompressedBytes": 24693819,
     "largestShardBytes": 4262172
   },
-  "measurement": null,
+  "measurement": {
+    "standaloneRows": 391772,
+    "statewideCompressedBytes": 24040589,
+    "largestShardBytes": 4144301,
+    "p95Bytes": 1776237,
+    "p99Bytes": 4144301,
+    "shardsOver10MiB": 0,
+    "shardsOver25MiB": 0,
+    "rows": [
+      {
+        "shardId": "tx-25-098",
+        "compressedBytes": 157681
+      },
+      {
+        "shardId": "tx-26-100",
+        "compressedBytes": 21683
+      },
+      {
+        "shardId": "tx-26-099",
+        "compressedBytes": 648885
+      },
+      {
+        "shardId": "tx-26-098",
+        "compressedBytes": 290480
+      },
+      {
+        "shardId": "tx-27-100",
+        "compressedBytes": 203180
+      },
+      {
+        "shardId": "tx-27-099",
+        "compressedBytes": 59220
+      },
+      {
+        "shardId": "tx-27-098",
+        "compressedBytes": 426487
+      },
+      {
+        "shardId": "tx-28-101",
+        "compressedBytes": 47942
+      },
+      {
+        "shardId": "tx-28-100",
+        "compressedBytes": 61087
+      },
+      {
+        "shardId": "tx-28-099",
+        "compressedBytes": 50258
+      },
+      {
+        "shardId": "tx-28-098",
+        "compressedBytes": 149165
+      },
+      {
+        "shardId": "tx-28-097",
+        "compressedBytes": 112380
+      },
+      {
+        "shardId": "tx-28-096",
+        "compressedBytes": 52006
+      },
+      {
+        "shardId": "tx-29-105",
+        "compressedBytes": 4607
+      },
+      {
+        "shardId": "tx-29-104",
+        "compressedBytes": 9471
+      },
+      {
+        "shardId": "tx-29-103",
+        "compressedBytes": 599
+      },
+      {
+        "shardId": "tx-29-102",
+        "compressedBytes": 2567
+      },
+      {
+        "shardId": "tx-29-101",
+        "compressedBytes": 46082
+      },
+      {
+        "shardId": "tx-29-100",
+        "compressedBytes": 80691
+      },
+      {
+        "shardId": "tx-29-099",
+        "compressedBytes": 1857757
+      },
+      {
+        "shardId": "tx-29-098",
+        "compressedBytes": 253017
+      },
+      {
+        "shardId": "tx-29-097",
+        "compressedBytes": 155940
+      },
+      {
+        "shardId": "tx-29-096",
+        "compressedBytes": 4144301
+      },
+      {
+        "shardId": "tx-29-095",
+        "compressedBytes": 293364
+      },
+      {
+        "shardId": "tx-29-094",
+        "compressedBytes": 71832
+      },
+      {
+        "shardId": "tx-30-105",
+        "compressedBytes": 7197
+      },
+      {
+        "shardId": "tx-30-104",
+        "compressedBytes": 22474
+      },
+      {
+        "shardId": "tx-30-103",
+        "compressedBytes": 19033
+      },
+      {
+        "shardId": "tx-30-102",
+        "compressedBytes": 8951
+      },
+      {
+        "shardId": "tx-30-101",
+        "compressedBytes": 13929
+      },
+      {
+        "shardId": "tx-30-100",
+        "compressedBytes": 80557
+      },
+      {
+        "shardId": "tx-30-099",
+        "compressedBytes": 220517
+      },
+      {
+        "shardId": "tx-30-098",
+        "compressedBytes": 1776237
+      },
+      {
+        "shardId": "tx-30-097",
+        "compressedBytes": 347561
+      },
+      {
+        "shardId": "tx-30-096",
+        "compressedBytes": 988499
+      },
+      {
+        "shardId": "tx-30-095",
+        "compressedBytes": 299549
+      },
+      {
+        "shardId": "tx-30-094",
+        "compressedBytes": 81497
+      },
+      {
+        "shardId": "tx-31-107",
+        "compressedBytes": 574788
+      },
+      {
+        "shardId": "tx-31-106",
+        "compressedBytes": 4825
+      },
+      {
+        "shardId": "tx-31-105",
+        "compressedBytes": 7670
+      },
+      {
+        "shardId": "tx-31-104",
+        "compressedBytes": 34569
+      },
+      {
+        "shardId": "tx-31-103",
+        "compressedBytes": 230714
+      },
+      {
+        "shardId": "tx-31-102",
+        "compressedBytes": 12550
+      },
+      {
+        "shardId": "tx-31-101",
+        "compressedBytes": 112419
+      },
+      {
+        "shardId": "tx-31-100",
+        "compressedBytes": 49052
+      },
+      {
+        "shardId": "tx-31-099",
+        "compressedBytes": 96637
+      },
+      {
+        "shardId": "tx-31-098",
+        "compressedBytes": 591782
+      },
+      {
+        "shardId": "tx-31-097",
+        "compressedBytes": 105164
+      },
+      {
+        "shardId": "tx-31-096",
+        "compressedBytes": 123828
+      },
+      {
+        "shardId": "tx-31-095",
+        "compressedBytes": 182471
+      },
+      {
+        "shardId": "tx-31-094",
+        "compressedBytes": 16641
+      },
+      {
+        "shardId": "tx-32-107",
+        "compressedBytes": 766
+      },
+      {
+        "shardId": "tx-32-104",
+        "compressedBytes": 851
+      },
+      {
+        "shardId": "tx-32-103",
+        "compressedBytes": 105836
+      },
+      {
+        "shardId": "tx-32-102",
+        "compressedBytes": 58529
+      },
+      {
+        "shardId": "tx-32-101",
+        "compressedBytes": 60877
+      },
+      {
+        "shardId": "tx-32-100",
+        "compressedBytes": 167238
+      },
+      {
+        "shardId": "tx-32-099",
+        "compressedBytes": 135402
+      },
+      {
+        "shardId": "tx-32-098",
+        "compressedBytes": 2041638
+      },
+      {
+        "shardId": "tx-32-097",
+        "compressedBytes": 2519812
+      },
+      {
+        "shardId": "tx-32-096",
+        "compressedBytes": 408364
+      },
+      {
+        "shardId": "tx-32-095",
+        "compressedBytes": 317605
+      },
+      {
+        "shardId": "tx-33-104",
+        "compressedBytes": 896
+      },
+      {
+        "shardId": "tx-33-103",
+        "compressedBytes": 53330
+      },
+      {
+        "shardId": "tx-33-102",
+        "compressedBytes": 285118
+      },
+      {
+        "shardId": "tx-33-101",
+        "compressedBytes": 7695
+      },
+      {
+        "shardId": "tx-33-100",
+        "compressedBytes": 25984
+      },
+      {
+        "shardId": "tx-33-099",
+        "compressedBytes": 151651
+      },
+      {
+        "shardId": "tx-33-098",
+        "compressedBytes": 459053
+      },
+      {
+        "shardId": "tx-33-097",
+        "compressedBytes": 1216316
+      },
+      {
+        "shardId": "tx-33-096",
+        "compressedBytes": 146475
+      },
+      {
+        "shardId": "tx-33-095",
+        "compressedBytes": 158217
+      },
+      {
+        "shardId": "tx-34-104",
+        "compressedBytes": 2354
+      },
+      {
+        "shardId": "tx-34-103",
+        "compressedBytes": 46342
+      },
+      {
+        "shardId": "tx-34-102",
+        "compressedBytes": 52828
+      },
+      {
+        "shardId": "tx-34-101",
+        "compressedBytes": 28928
+      },
+      {
+        "shardId": "tx-34-100",
+        "compressedBytes": 24743
+      },
+      {
+        "shardId": "tx-34-099",
+        "compressedBytes": 12541
+      },
+      {
+        "shardId": "tx-35-104",
+        "compressedBytes": 425
+      },
+      {
+        "shardId": "tx-35-103",
+        "compressedBytes": 10495
+      },
+      {
+        "shardId": "tx-35-102",
+        "compressedBytes": 245562
+      },
+      {
+        "shardId": "tx-35-101",
+        "compressedBytes": 40920
+      },
+      {
+        "shardId": "tx-36-104",
+        "compressedBytes": 1278
+      },
+      {
+        "shardId": "tx-36-103",
+        "compressedBytes": 17420
+      },
+      {
+        "shardId": "tx-36-102",
+        "compressedBytes": 10387
+      },
+      {
+        "shardId": "tx-36-101",
+        "compressedBytes": 14920
+      }
+    ]
+  },
   "separateFromD2": true
 }

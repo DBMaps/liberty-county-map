@@ -1,11 +1,17 @@
 {
   "schemaVersion": "gridly.lp24111.medical-identity.v1",
-  "executionState": "NOT_EXECUTED",
-  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "nonRuntime": true,
-  "parentFacilities": null,
-  "childDepartments": null,
+  "parentFacilities": 82,
+  "childDepartments": 140,
   "separateFacilities": null,
   "ambiguousCampusRelationships": null,
-  "veterinaryHumanMedicalMerges": 0
+  "veterinaryHumanMedicalMerges": 0,
+  "candidateRecords": 11177,
+  "likelyDuplicateRecords": 92,
+  "distinctRecords": 6504,
+  "ambiguousRecords": 4359,
+  "clusteredRecords": 232,
+  "countiesRepresented": 235,
+  "medicalCandidateClusters": 80333
 }
