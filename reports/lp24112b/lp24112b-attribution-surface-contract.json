@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly.lp24112b.attribution-surface.v1",
+  "runtimeActive": false,
+  "consumerUiPublished": false,
+  "informationArchitecture": {
+    "futureEntryPoint": "Settings > About & Support > About Gridly > Data Sources & Licenses",
+    "existingNavigationReused": true
+  },
+  "resultsAttribution": {
+    "attributionStatus": "COUNSEL_APPROVAL_REQUIRED",
+    "destination": "DATA_SOURCES_AND_LICENSES",
+    "compact": true,
+    "runtimeActive": false
+  },
+  "dataSourcesAndLicenses": {
+    "status": "COUNSEL_APPROVAL_REQUIRED",
+    "sections": [
+      "POI authority",
+      "Authority release and version",
+      "Overture Maps Places",
+      "Contributing source/provider inventory",
+      "Observed license families",
+      "Gridly transformation statement",
+      "U.S. Census geographic-context acknowledgement",
+      "OSM status",
+      "Legal and contact information"
+    ],
+    "releaseDisclosure": {
+      "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+      "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+      "upstreamOvertureRelease": "2026-08-19.0",
+      "sourceInventoryHash": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13"
+    }
+  },
+  "activationRule": "DORMANT_UNTIL_ALL_APPROVAL_GATES_AND_SEPARATE_RUNTIME_AUTHORIZATION"
+}

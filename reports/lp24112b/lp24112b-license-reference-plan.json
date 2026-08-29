@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "gridly.lp24112b.license-reference-plan.v1",
+  "authoritativeTextNotVendored": true,
+  "legalTermsParaphrased": false,
+  "references": [
+    {
+      "license": "CDLA-Permissive-2.0",
+      "authoritativeUrl": "https://cdla.dev/permissive-2-0/",
+      "displayLocation": "Data Sources & Licenses > License references",
+      "status": "COUNSEL_APPROVAL_REQUIRED"
+    },
+    {
+      "license": "Apache-2.0",
+      "authoritativeUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "displayLocation": "Data Sources & Licenses > License references",
+      "status": "COUNSEL_APPROVAL_REQUIRED"
+    },
+    {
+      "license": "CC0-1.0",
+      "authoritativeUrl": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+      "displayLocation": "Data Sources & Licenses > License references",
+      "status": "COUNSEL_APPROVAL_REQUIRED"
+    }
+  ]
+}

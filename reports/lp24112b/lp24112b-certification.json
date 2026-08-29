@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp24112b.certification.v1",
+  "phaseState": "PHASE_LP24112B_ATTRIBUTION_COMPLIANCE_SURFACES_PREPARED",
+  "meaning": "TECHNICAL_COMPLIANCE_SURFACES_PREPARED_FOR_COUNSEL_REVIEW_ONLY",
+  "legalClearanceGranted": false,
+  "legalState": "LEGAL_REVIEW_REQUIRED",
+  "legalClearanceStatus": "NOT_APPROVED",
+  "providerGate": "OFF",
+  "providerGateEligible": false,
+  "runtimeActive": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "productionBehaviorChanged": false,
+  "deployed": false,
+  "productionSupabaseMutation": false,
+  "remoteFetch": false,
+  "phoneTesting": false,
+  "osmMerged": false,
+  "nextOwnerAction": "Provide the preview, deterministic reports, exact upstream license references, and acquired Foursquare NOTICE to external counsel; obtain written release-specific wording and approval decisions without activating the provider."
+}

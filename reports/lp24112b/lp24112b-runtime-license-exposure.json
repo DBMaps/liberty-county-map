@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "gridly.lp24112b.runtime-license-exposure.v1",
+  "countingUnit": "UNIQUE_FINAL_RUNTIME_POIS",
+  "combinations": [
+    {
+      "licenses": [
+        "CDLA-Permissive-2.0"
+      ],
+      "count": 355925
+    },
+    {
+      "licenses": [
+        "Apache-2.0",
+        "CDLA-Permissive-2.0"
+      ],
+      "count": 23248
+    },
+    {
+      "licenses": [
+        "CC0-1.0",
+        "CDLA-Permissive-2.0"
+      ],
+      "count": 12599
+    }
+  ],
+  "total": 391772,
+  "apacheOnlyObserved": false,
+  "noOtherCombinationObserved": true,
+  "sourceEntryEvidence": {
+    "countingUnit": "SOURCE_ENTRIES_NOT_UNIQUE_POIS",
+    "entries": [
+      {
+        "dataset": "Overture",
+        "provider": "overture",
+        "license": "CDLA-Permissive-2.0",
+        "sourceEntryCount": 1462815
+      },
+      {
+        "dataset": "meta",
+        "provider": "meta",
+        "license": "CDLA-Permissive-2.0",
+        "sourceEntryCount": 903696
+      },
+      {
+        "dataset": "Overture-signals",
+        "provider": "overture",
+        "license": "CDLA-Permissive-2.0",
+        "sourceEntryCount": 861912
+      },
+      {
+        "dataset": "Microsoft",
+        "provider": "microsoft",
+        "license": "CDLA-Permissive-2.0",
+        "sourceEntryCount": 235223
+      },
+      {
+        "dataset": "BrightQuery",
+        "provider": "brightquery",
+        "license": "CDLA-Permissive-2.0",
+        "sourceEntryCount": 189064
+      },
+      {
+        "dataset": "Foursquare",
+        "provider": "foursquare",
+        "license": "Apache-2.0",
+        "sourceEntryCount": 101480
+      },
+      {
+        "dataset": "AllThePlaces",
+        "provider": "alltheplaces",
+        "license": "CC0-1.0",
+        "sourceEntryCount": 23971
+      },
+      {
+        "dataset": "DAC",
+        "provider": "dac",
+        "license": "CDLA-Permissive-2.0",
+        "sourceEntryCount": 8250
+      },
+      {
+        "dataset": "PinMeTo",
+        "provider": "pinmeto",
+        "license": "CDLA-Permissive-2.0",
+        "sourceEntryCount": 979
+      },
+      {
+        "dataset": "RenderSEO",
+        "provider": "renderseo",
+        "license": "CDLA-Permissive-2.0",
+        "sourceEntryCount": 152
+      }
+    ]
+  },
+  "legalConclusion": false
+}
