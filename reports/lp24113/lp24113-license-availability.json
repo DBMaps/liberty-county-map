@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp24113.license-availability.v1",
+  "distributionPosition": "COMPACT_POI_AUTHORITY_IS_SHARED_DATA",
+  "resultsExemptionReliedUpon": false,
+  "jsonGzipShardsAreRedistribution": true,
+  "references": {
+    "cdla": {
+      "url": "https://cdla.dev/permissive-2-0/",
+      "available": true
+    },
+    "apache": {
+      "url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "available": true
+    },
+    "cc0": {
+      "url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+      "available": true
+    }
+  },
+  "provenance": {
+    "overtureMapsPlaces": true,
+    "foursquareNotice": "poi/lp24111-d5-standalone-2026-08-28/legal/foursquare/NOTICE.txt",
+    "allThePlacesCc0": true
+  },
+  "licenseTextInvented": false
+}

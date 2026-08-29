@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "gridly.lp24113.rehearsal-eligibility.v1",
+  "bindings": {
+    "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+    "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+    "reviewedSourceInventoryHash": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13",
+    "foursquareNoticeSha256": "07cef40d0b0d1f5786b3e29983970aa0729ee6e508d1c4e3e18bbe0eef8878a3",
+    "foursquareNoticeBytes": 1805,
+    "foursquareSourceSnapshotSha256": "9ea389b0eb8cd530d1f5c90cee9084b57e5fa837b13798935de88f148c33f39a",
+    "overtureAttributionSnapshotSha256": "add8120c71e70efc1d13b93556ba9872c1b377ad5a09e1c31d3dd668c09038ac",
+    "modificationStatementVersion": "GRIDLY_POI_MODIFICATION_STATEMENT_V1",
+    "modificationStatementSha256": "0e8395cba2938ed21fbb0e5deff723674f189a9cc70a84f88c65a755493efc04",
+    "legalManifestSchemaVersion": "gridly.poi.release-legal-manifest.v1",
+    "licenseExposure": {
+      "combinations": [
+        {
+          "licenses": [
+            "CDLA-Permissive-2.0"
+          ],
+          "count": 355925
+        },
+        {
+          "licenses": [
+            "Apache-2.0",
+            "CDLA-Permissive-2.0"
+          ],
+          "count": 23248
+        },
+        {
+          "licenses": [
+            "CC0-1.0",
+            "CDLA-Permissive-2.0"
+          ],
+          "count": 12599
+        }
+      ],
+      "total": 391772,
+      "apacheOnlyObserved": false,
+      "cc0OnlyObserved": false,
+      "noOtherCombinationObserved": true
+    }
+  },
+  "checks": {
+    "identityExact": true,
+    "runtimeSchemaExact": true,
+    "inventoryHashExact": true,
+    "noticeHashExact": true,
+    "overtureHashExact": true,
+    "licenseConservation": true,
+    "legalManifestValid": true,
+    "licenseReferencesAvailable": true,
+    "noticeAvailable": true,
+    "modificationBound": true,
+    "surfacePresent": true,
+    "resultsAttributionPresent": true,
+    "censusAcknowledgementPresent": true,
+    "trademarkPolicyPresent": true,
+    "osmExcluded": true,
+    "externalCounselFalseAcknowledged": true,
+    "ownerAuthorized": true,
+    "productionGatesOff": true
+  },
+  "failClosed": true,
+  "nonProductionRehearsalEligible": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "gridly.lp24113.trademark-policy.v1",
+  "policyCharacterization": "CONSERVATIVE_GRIDLY_PRODUCT_POLICY_NOT_CLAIMED_LICENSE_REQUIREMENT",
+  "allowed": [
+    "plain-text business names",
+    "plain-text brand names",
+    "factual category",
+    "factual location",
+    "factual distance",
+    "factual descriptive information supported by governed authority"
+  ],
+  "enabledByDefault": {
+    "sourceDerivedBusinessLogos": false,
+    "stylizedTrademarks": false,
+    "brandImagery": false,
+    "officialPartnerBadges": false,
+    "endorsementLanguage": false,
+    "sponsorshipLanguage": false,
+    "alteredTrademarks": false
+  },
+  "nonAffiliationStatement": "Business names and trademarks are the property of their respective owners. Their appearance in Gridly does not imply affiliation with or endorsement of Gridly."
+}

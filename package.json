@@ -667,6 +667,9 @@
     "ingest:lp24112c-authoritative-notice": "node tools/lp24112c/ingest-authoritative-notice.mjs",
     "build:lp24112c": "node tools/lp24112c/final-counsel-handoff.mjs --write",
     "verify:lp24112c": "node tools/lp24112c/final-counsel-handoff.mjs --verify",
-    "test:lp24112c": "node --test tests/lp24112c-final-counsel-handoff.test.mjs"
+    "test:lp24112c": "node --test tests/lp24112c-final-counsel-handoff.test.mjs",
+    "build:lp24113": "node tools/lp24113/compliance-implementation.mjs --write",
+    "verify:lp24113": "node tools/lp24113/compliance-implementation.mjs --verify",
+    "test:lp24113": "node --test tests/lp24113-compliance-implementation.test.mjs"
   }
 }

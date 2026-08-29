@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp24113.owner-compliance-authorization.v1",
+  "complianceReviewState": "COMPLIANCE_REVIEW_COMPLETE_OWNER_AUTHORIZED",
+  "externalCounselReviewed": false,
+  "ownerAuthorizedProceed": true,
+  "ownerAuthorizationScope": "LP24111_D5_STANDALONE_2026_08_28",
+  "authorizationType": "INTERNAL_OWNER_AUTHORIZATION",
+  "legalAdvice": false,
+  "externalLegalClearance": false,
+  "complianceBasis": [
+    "Apache-2.0 review",
+    "CDLA-Permissive-2.0 review",
+    "CC0-1.0 review",
+    "Foursquare authoritative NOTICE",
+    "Overture attribution evidence",
+    "runtime license-exposure measurements",
+    "Gridly conservative compliance controls"
+  ]
+}

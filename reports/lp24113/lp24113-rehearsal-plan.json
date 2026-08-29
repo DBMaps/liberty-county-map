@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "gridly.lp24113.rehearsal-plan.v1",
+  "status": "PREPARED_NOT_EXECUTED",
+  "environment": "NON_PRODUCTION",
+  "providerGateDuringMilestone": "OFF",
+  "data": "LOCAL_STATIC_CERTIFIED_SHARDS",
+  "tests": [
+    "provider gate in NON-PRODUCTION mode",
+    "release manifest loading",
+    "license manifest loading",
+    "Data Sources & Licenses availability",
+    "results attribution link",
+    "Foursquare NOTICE accessibility",
+    "search behavior",
+    "5/10/25-mile radius",
+    "shard fanout",
+    "zero-result states",
+    "Tarkington GOVERNED_NON_PLACE",
+    "canonical PLACE identity",
+    "multi-county identities",
+    "rural sparse cases",
+    "dense metro cases",
+    "rollback",
+    "cache/version mismatch",
+    "hash mismatch",
+    "missing NOTICE",
+    "missing legal manifest"
+  ],
+  "cohorts": [
+    "Dayton",
+    "Tarkington",
+    "Pecos",
+    "Dallas",
+    "Austin",
+    "San Antonio",
+    "Abilene",
+    "Midland",
+    "Fredericksburg",
+    "Port Arthur",
+    "Sulphur Springs",
+    "Huntsville",
+    "Eastland",
+    "Cienegas Terrace"
+  ],
+  "acceptanceClasses": [
+    "canonical PLACE",
+    "GOVERNED_NON_PLACE",
+    "multi-county",
+    "dense metro",
+    "rural sparse",
+    "category zero-result"
+  ]
+}
