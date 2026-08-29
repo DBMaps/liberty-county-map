@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp24112a.license-observations.v1",
+  "legalConclusion": false,
+  "distinctObservedLicenseStrings": [],
+  "observation": {
+    "recordsAudited": 391772,
+    "recordsWithSourceMetadata": 0,
+    "providerFrequencies": [],
+    "provenanceField": "sources",
+    "limitation": "Identity-governed projection contains no structured sources column."
+  },
+  "counselQuestionForAnyUnderlyingLicenseIdentifier": "What attribution, notice, redistribution, derivative-data, or downstream-use obligations apply to Gridly's proposed use of records carrying this license identifier?",
+  "technicalEvidence": [
+    {
+      "artifact": "reports/lp24111/attribution-source-inventory.json",
+      "claim": "owner-local measured inventory"
+    },
+    {
+      "artifact": "reports/lp24111/attribution-licensing.json",
+      "claim": "observed provenance field and legal-review state"
+    }
+  ]
+}

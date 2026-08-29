@@ -1,0 +1,193 @@
+{
+  "schemaVersion": "gridly.lp24112a.counsel-decisions.v1",
+  "decisions": [
+    {
+      "id": 1,
+      "question": "Is Gridly’s proposed use of the certified source authority permitted?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "What attribution is required?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "Where must attribution appear?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "Is a link sufficient, or must notice appear directly with results/map?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "Are there redistribution requirements for the proposed compressed shard delivery?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-cache-delivery-contract.json",
+          "claim": "delivery/cache contract"
+        },
+        {
+          "artifact": "reports/lp24111/d5-package-delivery-readiness.json",
+          "claim": "package measurements"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "question": "Are there derivative/transformed-data obligations?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "question": "Must license/source information accompany each record, each shard, or the product generally?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "question": "Are there restrictions on caching?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-cache-delivery-contract.json",
+          "claim": "delivery/cache contract"
+        },
+        {
+          "artifact": "reports/lp24111/d5-package-delivery-readiness.json",
+          "claim": "package measurements"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "question": "Are there requirements for displaying source-derived brand names?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-brand-presentation.json",
+          "claim": "brand role"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "question": "Are there requirements around retaining/removing source metadata?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "question": "Is the proposed immutable release/version model acceptable?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "question": "Are there additional obligations before public production activation?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
+        },
+        {
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "gridly.lp24112a.release-identity.v1",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+  "governedStandalonePois": 391772,
+  "upstream": {
+    "overtureReleaseId": "2026-08-19.0",
+    "retrievalDate": "2026-08-28",
+    "duckdbVersion": "1.5.5 (Variegata)",
+    "geometryCrs": "OGC:CRS84",
+    "censusInputCrs": "EPSG:4269"
+  },
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "runtimeActivated": false,
+  "evidence": [
+    {
+      "artifact": "reports/lp24112/lp24112-runtime-data-contract.json",
+      "claim": "runtime identity and population"
+    },
+    {
+      "artifact": "reports/lp24111/overture-release.json",
+      "claim": "observed upstream release and tool identifiers"
+    }
+  ]
+}

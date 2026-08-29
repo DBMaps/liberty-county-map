@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "gridly.lp24112a.source-inventory.v1",
+  "legalConclusion": false,
+  "sources": [
+    {
+      "sourceDataset": "Overture Maps Places, pinned release 2026-08-19.0",
+      "provider": "Overture Maps Foundation",
+      "observedLicenseIdentifiers": [],
+      "role": "source place authority from which the governed standalone POIs are derived",
+      "sourceDataRedistributed": "COUNSEL_CHARACTERIZATION_REQUIRED; proposed runtime delivers a compact source-derived projection, not the raw authority",
+      "transformedOrDerivedData": true,
+      "sourceMetadataRetainedInRuntimePackages": false,
+      "attributionCurrentlyDesigned": "HOOKS_ONLY_UNAPPROVED",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24111/overture-release.json",
+          "claim": "pinned source"
+        },
+        {
+          "artifact": "reports/lp24111/attribution-source-inventory.json",
+          "claim": "measured projection has no structured sources column"
+        }
+      ]
+    },
+    {
+      "sourceDataset": "2025 Census Texas county geometry",
+      "provider": "United States Census Bureau",
+      "observedLicenseIdentifiers": [],
+      "role": "Texas inclusion and county spatial assignment authority; geometry is not a runtime POI field",
+      "sourceDataRedistributed": "NO_GEOMETRY_IN_PROPOSED_POI_RUNTIME_PACKAGE",
+      "transformedOrDerivedData": true,
+      "sourceMetadataRetainedInRuntimePackages": false,
+      "attributionCurrentlyDesigned": "NO_FINAL_WORDING",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24111/texas-extraction-summary.json",
+          "claim": "inclusion authority and CRS transformation"
+        },
+        {
+          "artifact": "reports/lp24111/county-assignment-certification.json",
+          "claim": "county assignment certification"
+        }
+      ]
+    },
+    {
+      "sourceDataset": "Gridly governance and classification artifacts",
+      "provider": "Gridly",
+      "observedLicenseIdentifiers": [],
+      "role": "normalization, taxonomy, eligibility, identity governance, suppression, coverage certification, and runtime projection",
+      "sourceDataRedistributed": "GRIDLY-DERIVED_FIELDS_DELIVERED_IN_PROPOSED_RUNTIME",
+      "transformedOrDerivedData": true,
+      "sourceMetadataRetainedInRuntimePackages": false,
+      "attributionCurrentlyDesigned": "SOURCE/VERSION DISCLOSURE HOOKS_ONLY_UNAPPROVED",
+      "technicalEvidence": [
+        {
+          "artifact": "reports/lp24111/d5-runtime-authority-contract.json",
+          "claim": "governed population"
+        },
+        {
+          "artifact": "reports/lp24112/lp24112-runtime-data-contract.json",
+          "claim": "runtime projection"
+        }
+      ]
+    }
+  ],
+  "observationLimitation": "The measured identity-governed projection contains no structured sources column; no distinct license strings were observed. No license value is inferred or invented."
+}
