@@ -1,11 +1,43 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import {buildD5} from '../tools/lp24111/d5-readiness.mjs';
 import {recoverCommittedEvidence,BRANDS,CATEGORIES} from '../tools/lp24111/recover-d5-evidence.mjs';
 
 const report=name=>JSON.parse(fs.readFileSync(new URL(`../reports/lp24111/${name}`,import.meta.url),'utf8'));
 const recovered=()=>recoverCommittedEvidence({radius:report('community-radius-coverage.json'),nonPlace:report('governed-non-place-coverage.json'),access:report('category-accessibility.json'),counties:report('county-coverage.json'),metadata:report('metadata-conflicts.json')});
+
+test('D.5 evidence recovery CLI uses a cross-platform entrypoint without import or help side effects',()=>{
+ const root=fileURLToPath(new URL('..',import.meta.url));
+ const entrypoint=path.join(root,'tools/lp24111/recover-d5-evidence.mjs');
+ const output=path.join(root,'owner-local/lp24111/phase-d5-recovered-evidence.json');
+ const previous=fs.existsSync(output)?fs.readFileSync(output):null;
+ try{
+  fs.rmSync(output,{force:true});
+
+  const imported=spawnSync(process.execPath,['--input-type=module','--eval',`import(${JSON.stringify(new URL('../tools/lp24111/recover-d5-evidence.mjs?import-regression',import.meta.url).href)})`],{cwd:root,encoding:'utf8'});
+  assert.equal(imported.status,0,imported.stderr);
+  assert.equal(fs.existsSync(output),false,'importing the module must not write owner evidence');
+
+  const invoked=spawnSync(process.execPath,[entrypoint],{cwd:root,encoding:'utf8'});
+  assert.equal(invoked.status,0,invoked.stderr);
+  assert.equal(invoked.stdout,`gridly.lp24111.d5.recovered-evidence.v1: ${output}\n`);
+  assert.equal(fs.existsSync(output),true,`CLI must write ${output}`);
+  assert.equal(JSON.parse(fs.readFileSync(output,'utf8')).schemaVersion,'gridly.lp24111.d5.recovered-evidence.v1');
+
+  fs.rmSync(output,{force:true});
+  const help=spawnSync(process.execPath,[entrypoint,'--help'],{cwd:root,encoding:'utf8'});
+  assert.equal(help.status,0,help.stderr);
+  assert.match(help.stdout,/phase-d5-recovered-evidence\.json/);
+  assert.equal(fs.existsSync(output),false,'--help must not write owner evidence');
+ }finally{
+  if(previous===null)fs.rmSync(output,{force:true});
+  else fs.writeFileSync(output,previous);
+ }
+});
 
 test('D.5 fails closed on missing D.4 quality and brand detail',()=>{
  const d=buildD5();

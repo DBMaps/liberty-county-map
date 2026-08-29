@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {pathToFileURL} from 'node:url';
 
 const root=path.resolve(import.meta.dirname,'../..');
 export const CATEGORIES=['FUEL','GROCERY','LODGING','HOSPITAL','PHARMACY','RESTAURANT','CONVENIENCE'];
@@ -60,7 +61,8 @@ export function recoverOwnerEvidence(directory=path.join(root,'owner-local/lp241
 }
 
 const args=new Set(process.argv.slice(2));
-if(import.meta.url===`file://${process.argv[1]}`){
+const isMain=process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href;
+if(isMain){
  if(args.has('--help'))console.log('Reads existing D.4 JSON/owner-local derived artifacts only; writes owner-local/lp24111/phase-d5-recovered-evidence.json.');
  else {const output=path.join(root,'owner-local/lp24111/phase-d5-recovered-evidence.json');fs.mkdirSync(path.dirname(output),{recursive:true});const evidence=recoverOwnerEvidence();fs.writeFileSync(output,stable(evidence));console.log(`${evidence.schemaVersion}: ${output}`);}
 }
