@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {artifacts} from '../tools/lp24111/manufacture.mjs';
+import {artifacts,verify} from '../tools/lp24111/manufacture.mjs';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -12,8 +12,16 @@ test('D.4 governed inventories and fail-closed boundaries are preserved',()=>{
  assert.equal(a['county-coverage.json'].rows.length,254);
  assert.equal(a['community-radius-coverage.json'].rows.length,1859);
  assert.equal(a['governed-non-place-coverage.json'].expectedCount,29);
- assert.equal(a['governed-non-place-coverage.json'].tarkington.identityType,'GOVERNED_NON_PLACE');
- assert.equal(a['governed-non-place-coverage.json'].tarkington.placeGeoid,null);
+ const nonPlace=a['governed-non-place-coverage.json'];
+ if(nonPlace.executionState==='OWNER_LOCAL_MEASURED'){
+  const tarkington=nonPlace.rows.find(row=>row.communityKey==='tarkington');
+  assert.equal(tarkington.identityClass,'GOVERNED_NON_PLACE');
+  assert.equal(tarkington.placeGeoid,null);
+ }else{
+  assert.equal(nonPlace.governedInventory.total,29);
+  assert.equal(nonPlace.tarkington.identityType,'GOVERNED_NON_PLACE');
+  assert.equal(nonPlace.tarkington.placeGeoid,null);
+ }
  assert.equal(a['lp24110-cohort-reconciliation.json'].rows.length,22);
  assert.equal(RURAL_TAIL.length,15);
  assert.equal(a['metadata-conflicts.json'].retainedSample.classification,'SPATIAL_METADATA_CONFLICT');
@@ -50,7 +58,9 @@ function measuredEnvelope(){
  Object.assign(reports['community-radius-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',measuredPlaceCount:1859});
  reports['community-radius-coverage.json'].rows=reports['community-radius-coverage.json'].rows.map(row=>({...row,measurement:'OWNER_LOCAL_MEASURED',radiiMiles}));
  const nonPlaceRows=Array.from({length:29},(_,i)=>({stableGovernedIdentity:i===0?'liberty-tx:tarkington':`fixture-${i}`,communityKey:i===0?'tarkington':`fixture-${i}`,displayLabel:i===0?'Tarkington':`Fixture ${i}`,identityClass:'GOVERNED_NON_PLACE',placeGeoid:null,radiiMiles}));
- Object.assign(reports['governed-non-place-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',measuredCount:29,missingAnchors:0,rows:nonPlaceRows,tarkington:nonPlaceRows[0]});
+ Object.assign(reports['governed-non-place-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',measuredCount:29,missingAnchors:0,rows:nonPlaceRows});
+ delete reports['governed-non-place-coverage.json'].governedInventory;
+ delete reports['governed-non-place-coverage.json'].tarkington;
  Object.assign(reports['metadata-conflicts.json'],{executionState:'OWNER_LOCAL_MEASURED',recordsAudited:391772});
  Object.assign(reports['brand-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',recordsAudited:391772});
  reports['lp24110-cohort-reconciliation.json'].rows=reports['lp24110-cohort-reconciliation.json'].rows.slice(0,22);
@@ -69,7 +79,7 @@ test('D.4 fallback remains truthful and a valid measured envelope reconciles eve
  assert.equal(fallback['certification.json'].executiveResult,'PHASE_D4_MEASUREMENT_INCOMPLETE');
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'lp24111-envelope-')),file=path.join(directory,'phase-d4.json');
  fs.writeFileSync(file,JSON.stringify(measuredEnvelope()));
- const measured=artifacts({d4MeasurementsPath:file});
+ const measured=verify({d4MeasurementsPath:file});
  assert.equal(measured['county-coverage.json'].executionState,'OWNER_LOCAL_MEASURED');
  assert.equal(measured['county-coverage.json'].accountedCountyCount,254);
  assert.equal(measured['community-radius-coverage.json'].rows.length,1859);
