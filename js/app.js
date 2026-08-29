@@ -47562,11 +47562,16 @@ function getGridlySelectedAwarenessArea() {
 function gridlyGetCurrentGovernedLocationContext() {
   const presentation = gridlyActiveGeographicPresentation;
   const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
+  const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const selectedAwarenessKey = String(selectedArea?.key || "").trim();
+  const governedPresentationOwnsCoordinate = presentation?.presentationAuthority === "GOVERNED_SELECTION"
+    && Boolean(selectedAwarenessKey)
+    && presentation.governedAwarenessKey === selectedAwarenessKey;
 
-  // A LOCAL presentation is an intentional coordinate/map context.  It is
-  // newer than a persisted awareness selection and therefore must not inherit
-  // that selection's community identity.
-  if (presentation?.semanticLevel === "LOCAL") {
+  // LOCAL describes the coordinate's presentation level, not who selected it.
+  // Only a standalone user/map transition abandons community authority. A
+  // governed non-PLACE selection legitimately uses a LOCAL presentation point.
+  if (presentation?.semanticLevel === "LOCAL" && !governedPresentationOwnsCoordinate) {
     const latitude = Number(presentation.lat);
     const longitude = Number(presentation.lng);
     const resolvedCountyId = Number.isFinite(latitude) && Number.isFinite(longitude)
@@ -47584,7 +47589,6 @@ function gridlyGetCurrentGovernedLocationContext() {
     });
   }
 
-  const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   if (!selectedArea || selectedArea.fallback === true) return null;
   const governedPoint = gridlyResolveGovernedWeatherPoint(selectedArea);
   if (!governedPoint) return null;
@@ -48303,7 +48307,7 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
     const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(targetLng) }, Number(targetZoom), { animate: options.animate === true, compensateForChrome: false });
     if (issued) {
       gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid, target: Object.freeze({ lat: Number(target.lat), lng: Number(targetLng) }), zoom: Number(targetZoom), presentationSource: consumerCamera?.source || "STATEWIDE_PLACE_PRESENTATION", source: options.source || "unknown" });
-      gridlyActiveGeographicPresentation = Object.freeze({ semanticLevel: "PLACE", placeGeoid, placeLabel: area.label || area.consumerLabel || area.storageValue || null, lat: Number(target.lat), lng: Number(targetLng), explicitCountyId: null });
+      gridlyActiveGeographicPresentation = Object.freeze({ semanticLevel: "PLACE", placeGeoid, placeLabel: area.label || area.consumerLabel || area.storageValue || null, lat: Number(target.lat), lng: Number(targetLng), explicitCountyId: null, presentationAuthority: "GOVERNED_SELECTION", governedAwarenessKey: String(area.key || `place-${placeGeoid}`) });
     }
     return issued;
   }
@@ -48315,7 +48319,7 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
     const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(target.lng) }, targetZoom, { animate: options.animate === true, compensateForChrome: false });
     if (issued) {
       gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid: null, target: Object.freeze({ lat: Number(target.lat), lng: Number(target.lng) }), zoom: targetZoom, presentationSource: area.source || null, source: options.source || "unknown" });
-      gridlyActiveGeographicPresentation = Object.freeze({ semanticLevel: "LOCAL", placeGeoid: null, placeLabel: area.label || area.storageValue || null, lat: Number(target.lat), lng: Number(target.lng), explicitCountyId: null });
+      gridlyActiveGeographicPresentation = Object.freeze({ semanticLevel: "LOCAL", placeGeoid: null, placeLabel: area.label || area.storageValue || null, lat: Number(target.lat), lng: Number(target.lng), explicitCountyId: null, presentationAuthority: "GOVERNED_SELECTION", governedAwarenessKey: String(area.key || "") });
     }
     return issued;
   }
