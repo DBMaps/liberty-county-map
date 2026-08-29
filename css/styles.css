@@ -14303,40 +14303,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-center {
   z-index: 1;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-right {
-  display: flex;
-  margin-left: 1px;
-  z-index: 2;
-}
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-destination-search-btn {
-  min-width: 76px;
-  min-height: 40px;
-  padding: 7px 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border: 1px solid var(--gridly-v2-control-border);
-  border-radius: 12px;
-  color: rgba(247, 251, 255, 0.92);
-  background: var(--gridly-v2-control-bg);
-  box-shadow: var(--gridly-v2-control-shadow);
-  font: inherit;
-  font-size: 0.72rem;
-  font-weight: 720;
-  line-height: 1;
-  touch-action: manipulation;
-}
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-destination-search-btn svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-destination-search-btn:focus-visible {
-  outline: 2px solid rgba(0, 245, 240, 0.82);
-  outline-offset: 2px;
+  display: none;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand {
   min-width: 0;

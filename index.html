@@ -539,7 +539,7 @@
 
     <section class="command-center" id="mapSection">
       <section class="map-card">
-        <article class="mobile-destination-command is-command-card-suppressed" aria-label="Destination route command" aria-hidden="true" hidden>
+        <article class="mobile-destination-command" aria-label="Destination route command">
           <div class="mobile-destination-command-copy">
             <span class="mobile-awareness-panel-kicker" id="mobileAwarenessPanelKicker">Location Context • Selected County</span>
             <strong id="mobileDestinationCommandTitle">Destination</strong>
@@ -547,6 +547,9 @@
             <p class="mobile-awareness-panel-crossings" id="mobileAwarenessPanelCrossings" hidden></p>
             <p class="mobile-awareness-panel-issues" id="mobileAwarenessPanelIssues" hidden></p>
             <p class="destination-route-impact-line" id="mobileDestinationCommandImpact" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="gridlyDestinationImpactPane" aria-expanded="false"></p>
+          </div>
+          <div class="mobile-destination-command-actions" aria-label="Route search action">
+            <button class="secondary-btn compact-btn" id="mobileDestinationCommandBtn" type="button" aria-haspopup="dialog" aria-controls="gridlySearchShell">Choose Route</button>
           </div>
         </article>
 
@@ -811,12 +814,6 @@
       </div></div>
       <div class="gridly-v2-header-region gridly-v2-header-center">
         <div class="gridly-v2-watch" aria-hidden="true"><span id="gridlyV2AwarenessGreeting">Good morning</span></div>
-      </div>
-      <div class="gridly-v2-header-region gridly-v2-header-right">
-        <button class="gridly-v2-destination-search-btn" id="mobileDestinationCommandBtn" type="button" aria-label="Open Destination Search" aria-haspopup="dialog" aria-controls="gridlySearchShell">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.75"></circle><path d="m15 15 4.25 4.25"></path></svg>
-          <span>Search</span>
-        </button>
       </div>
     </div>
     <div class="gridly-v2-brief-stack" data-gridly-brief-stack>
