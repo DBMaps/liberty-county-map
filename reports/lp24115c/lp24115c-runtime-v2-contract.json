@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "gridly.poi.runtime.v2",
+  "successorTo": "gridly.poi.runtime.v1",
+  "v1HistoryRewritten": false,
+  "poiRecord": {
+    "required": ["id", "displayName", "gridlyCategory", "latitude", "longitude", "countyContextId"],
+    "optional": ["brand", "provenanceSummary"],
+    "forbidden": ["communityIdentity", "freeformAddress", "rawSourceMetadata", "conflationEvidence", "suppressedMembers", "unrestrictedUpstreamPayload", "uncontrolledAddressContactExpansion"]
+  },
+  "requestContext": {
+    "fields": ["communityIdentity", "countyContextId", "originType", "latitude", "longitude", "radiusMiles"],
+    "communityIdentity": "ZERO_OR_ONE_GOVERNED_IDENTITY",
+    "communityIdentityAllowedOrigins": ["CANONICAL_PLACE", "GOVERNED_NON_PLACE"],
+    "communityIdentityAbsentOrigins": ["MAP_CENTER", "COUNTY_ONLY", "RURAL_COORDINATE", "DIRECT_COORDINATE", "UNINCORPORATED"]
+  },
+  "countyProjection": {
+    "source": "frozen county_fips",
+    "method": "EXACT_EQUALITY_LOOKUP_ONLY",
+    "registry": "data/lp149/runtime-county-registry.json",
+    "requiredRegistryCountyCount": 254,
+    "cardinality": "EXACTLY_ONE",
+    "forbidden": ["SPATIAL_INFERENCE", "NEAREST_COUNTY", "DISPLAY_TEXT_INFERENCE"],
+    "failure": "FAIL_MATERIALIZATION"
+  },
+  "cache": {
+    "pathTemplate": "gridly-poi/{authorityReleaseId}/gridly.poi.runtime.v2/{shardId}.json.gz",
+    "v1CacheCompatible": false,
+    "mismatchPolicy": "FAIL_CLOSED"
+  },
+  "designOnly": true,
+  "runtimeShardsMaterialized": false,
+  "runtimeActive": false
+}

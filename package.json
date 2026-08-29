@@ -677,6 +677,7 @@
     "rehearse:lp24114": "node tools/lp24114/non-production-rehearsal.mjs --rehearse",
     "audit:lp24115": "node tools/lp24115/authority-input-audit.mjs --write",
     "verify:lp24115": "node tools/lp24115/authority-input-audit.mjs --verify",
-    "test:lp24115": "node --test tests/lp24115-authority-input-audit.test.mjs"
+    "test:lp24115": "node --test tests/lp24115-authority-input-audit.test.mjs",
+    "test:lp24115c": "node --test tests/lp24115c-runtime-v2-reconciliation.test.mjs"
   }
 }
