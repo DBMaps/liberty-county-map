@@ -1,0 +1,13 @@
+{
+  "census": {
+    "wordingStatus": "COUNSEL_APPROVAL_REQUIRED",
+    "acknowledgementText": null,
+    "role": "Census geography is used for Texas scoping and county context; it is not the POI source authority."
+  },
+  "osm": {
+    "merged": false,
+    "supplement": "not part of this POI release",
+    "odblLegalQuestion": "separate/future if OSM supplementation is proposed",
+    "otherGridlyLayerAttributionDistinct": true
+  }
+}

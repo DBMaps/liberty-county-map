@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "gridly.lp24112b.attribution-approval-gates.v1",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+  "upstreamOvertureRelease": "2026-08-19.0",
+  "sourceInventoryHash": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13",
+  "legalClearanceStatus": "NOT_APPROVED",
+  "resultsAttributionApproved": false,
+  "dataSourcesPageApproved": false,
+  "cdlaNoticeApproved": false,
+  "apacheNoticeApproved": false,
+  "foursquareNoticeApproved": false,
+  "cc0NoticeReviewed": false,
+  "censusAcknowledgementApproved": false,
+  "providerGateEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "failClosedRule": "APPROVED + exact release + exact schema + exact source-inventory hash + every approval gate true",
+  "modeledEligibility": false,
+  "activationPathPresent": false
+}

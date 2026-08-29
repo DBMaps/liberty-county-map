@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp24112b.transformation-notice.v1",
+  "wordingStatus": "COUNSEL_APPROVAL_REQUIRED",
+  "technicalFactsOnly": true,
+  "legalEffectCharacterized": false,
+  "statement": "Gridly processes the source POI authority through Texas scoping, normalization, deduplication, taxonomy classification, destination eligibility, identity governance, child suppression, duplicate-member suppression, coverage certification, and compact runtime projection.",
+  "stages": [
+    "Texas scoping",
+    "normalization",
+    "deduplication",
+    "taxonomy classification",
+    "destination eligibility",
+    "identity governance",
+    "child suppression",
+    "duplicate-member suppression",
+    "coverage certification",
+    "compact runtime projection"
+  ]
+}

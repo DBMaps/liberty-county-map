@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "gridly.lp24112b.foursquare-notice-plan.v1",
+  "noticeStatus": "COUNSEL_APPROVAL_REQUIRED",
+  "runtimeActive": false,
+  "noticeTextPresent": false,
+  "noticeText": null,
+  "displayLocation": "Data Sources & Licenses > Foursquare NOTICE",
+  "acquisitionRequirement": "Obtain the exact applicable upstream Foursquare NOTICE from certified release evidence; preserve it verbatim with provenance; submit it to counsel before approval.",
+  "fabricated": false
+}
