@@ -49268,6 +49268,26 @@ function gridlyGetActiveCountyCrossingInventory() {
   return crossings.filter((crossing) => gridlyCrossingSampleMatchesCounty(crossing, activeCountyId));
 }
 
+// The canonical PLACE projection is a narrower presentation scope, not the
+// authority for whether the active county has crossing inventory.  Use its
+// exact IDs when it resolves to records owned by the currently loaded county,
+// but never let an available-yet-empty (or transition-stale) projection erase
+// the governed county runtime inventory used by the visibility policy.
+function gridlyResolveCrossingRenderInventory(canonicalResolution = null) {
+  const activeCountyId = gridlyGetActiveCountyId();
+  const governedInventory = gridlyGetActiveCountyCrossingInventory();
+  if (!canonicalResolution?.authorityAvailable || !Array.isArray(canonicalResolution.records)) {
+    return governedInventory;
+  }
+  const governedById = new Map(governedInventory
+    .map((crossing) => [String(crossing?.id || ""), crossing])
+    .filter(([id]) => Boolean(id)));
+  const governedCanonicalRecords = canonicalResolution.records
+    .map((crossing) => governedById.get(String(crossing?.id || "")))
+    .filter((crossing) => crossing && gridlyCrossingSampleMatchesCounty(crossing, activeCountyId));
+  return governedCanonicalRecords.length > 0 ? governedCanonicalRecords : governedInventory;
+}
+
 
 function gridlyExpectedCrossingCountyName(countyId = gridlyGetActiveCountyId()) {
   const expectedCountyId = gridlyNormalizeCountyId(countyId);
@@ -59527,13 +59547,10 @@ function renderCrossings(reason = "unspecified", options = {}) {
   const activeCountyId = gridlyGetActiveCountyId();
   const selectedCanonicalArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
   const canonicalResolution = window.gridlyCanonicalCrossingRuntime?.resolveRecords?.(selectedCanonicalArea);
-  // LP235 bridges only exact LP233 IDs to the governed runtime record index.
-  // County inventory remains the fallback for county selections and while the
-  // passive asset is unavailable; viewport and representative policies below
-  // are deliberately unchanged.
-  const activeCountyCrossings = gridlyV921Phase("input record acquisition", () => canonicalResolution?.authorityAvailable
-    ? [...canonicalResolution.records]
-    : gridlyGetActiveCountyCrossingInventory());
+  // LP235 exact IDs narrow a populated canonical PLACE projection. The
+  // governed active-county runtime inventory remains the empty-inventory
+  // authority, including while a PLACE projection is empty or transition-stale.
+  const activeCountyCrossings = gridlyV921Phase("input record acquisition", () => gridlyResolveCrossingRenderInventory(canonicalResolution));
   const renderCrossingsInputCount = activeCountyCrossings.length;
   const crossingDataChangeSignature = buildCrossingDataChangeSignature(activeCountyCrossings, activeCountyId);
   const crossingDataSignatureChanged = Boolean(!gridlyLastCrossingRenderDataSignature || crossingDataChangeSignature !== gridlyLastCrossingRenderDataSignature);
