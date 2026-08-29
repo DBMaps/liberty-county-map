@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp24111.child-poi.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "nonRuntime": true,
+  "families": [
+    "WALMART_DEPARTMENT",
+    "TARGET_CVS_DEPARTMENT",
+    "RETAIL_DEPARTMENT",
+    "KIOSK_LOCKER"
+  ],
+  "rules": [
+    "explicit department naming",
+    "parent role",
+    "within 100 metres",
+    "brand/address/phone/domain corroboration"
+  ],
+  "results": null
+}

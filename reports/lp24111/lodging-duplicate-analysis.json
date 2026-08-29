@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp24111.lodging-duplicates.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "nonRuntime": true,
+  "pecosCohort": [
+    "Best Western",
+    "Holiday Inn Express",
+    "Hampton Inn",
+    "Fairfield",
+    "Comfort Suites",
+    "Home2 Suites",
+    "Motel 6"
+  ],
+  "candidateClusters": null,
+  "likelyDuplicateClusters": null,
+  "distinctSameLocationClusters": null,
+  "ambiguousClusters": null
+}

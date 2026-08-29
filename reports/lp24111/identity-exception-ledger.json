@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.lp24111.identity-exceptions.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "nonRuntime": true,
+  "requiredTypes": [
+    "UNRESOLVED_AMBIGUOUS",
+    "MULTI_PARENT",
+    "CONFLICTING_ADDRESS_NAME",
+    "SAME_ADDRESS_DISTINCT_BUSINESSES",
+    "SHARED_PHONE_FALSE_POSITIVE",
+    "MALL_STRIP_CENTER_COLOCATION",
+    "HOSPITAL_CAMPUS_AMBIGUITY",
+    "FUEL_CONVENIENCE_AMBIGUITY"
+  ],
+  "rows": []
+}

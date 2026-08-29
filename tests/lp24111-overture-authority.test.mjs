@@ -27,7 +27,7 @@ test('Phase D measured and unmeasured result shapes remain explicit',()=>{
  const a=verify(),normalization=a['normalization-summary.json'],packages=a['package-size-model.json'],certification=a['certification.json'],ledger=a['taxonomy-resolution-ledger.json'],d2Reports=[a['review-taxonomy-census.json'],ledger,a['compact-package-measurements.json']],d2Measured=d2Reports.every(report=>report.executionState==='OWNER_LOCAL_MEASURED');
  if(normalization.executionState==='OWNER_LOCAL_MEASURED'){
   assert.equal(packages.executionState,'OWNER_LOCAL_MEASURED');
-  assert.equal(certification.executiveResult,d2Measured?'PHASE_D2_MEASURED_TAXONOMY_AND_PACKAGE_CERTIFIED':'PHASE_D_OWNER_LOCAL_NORMALIZATION_EXECUTED');
+  assert.equal(certification.executiveResult,d2Measured?'PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING':'PHASE_D_OWNER_LOCAL_NORMALIZATION_EXECUTED');
   assert.equal(normalization.normalizedUniquePois,1462815);
   if(d2Measured){
    assert.equal(ledger.before.normalizedUniquePois,1462815);

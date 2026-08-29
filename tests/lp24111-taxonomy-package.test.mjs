@@ -34,7 +34,7 @@ test('D.2C fixes the measured promotion gate and canonical package identities',(
  assert.match(shardIdSql(),/printf\('%02d'/);assert.match(shardIdSql(),/printf\('%03d'/);
 });
 test('absent owner-local inputs remain truthful rather than fabricating D.2 measurements',()=>{
- const found=detectInputs();if(!found.normalized||!found.deduplicated){assert.equal(read('review-taxonomy-census.json').executionState,'NOT_EXECUTED');assert.equal(read('compact-package-measurements.json').statistics,null);}
+ const found=detectInputs(),certifiedEnvelope=fs.existsSync('data/lp24111/phase-d2-certified-measurements.json');if((!found.normalized||!found.deduplicated)&&!certifiedEnvelope){assert.equal(read('review-taxonomy-census.json').executionState,'NOT_EXECUTED');assert.equal(read('compact-package-measurements.json').statistics,null);}
  assert.equal(read('normalization-summary.json').executionState,'OWNER_LOCAL_MEASURED');
  assert.equal(read('certification.json').productionPoiSearch,'NOT_LAUNCHED_NOT_CERTIFIED');
 });

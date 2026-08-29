@@ -74,6 +74,17 @@ export function artifacts(options={}){
  files['osm-supplement-evaluation.json']={schemaVersion:'gridly.lp24111.osm.v2',classification:'INSUFFICIENT_EVIDENCE',incrementalUniqueCoverage:null,duplicateOverlap:null,odbl:'LEGAL_REVIEW_REQUIRED',merged:false};
  files['lp24110-cohort-reconciliation.json']={schemaVersion:'gridly.lp24111.cohort.v2',executionState:UNKNOWN,communityCount:cohort.communities.length,communities:cohort.communities.map(c=>({...c,normalizedCapability:UNKNOWN})),runtimeClaim:false};
  files['owner-poc-reconciliation.json']={schemaVersion:'gridly.lp24111.owner-poc.v1',executionState:'OWNER_OBSERVED_NOT_INDEPENDENTLY_REPRODUCED',areas:[{area:'Dayton / Liberty',evidence:['Walmart inventory','fuel','hospital/medical']},{area:'Tarkington / rural Liberty County',evidence:['H-E-B','Brookshire Brothers','Walmart','Tarkington Country Mart','local markets','convenience stores','gas','Dollar General','Family Dollar']},{area:'Pecos / West Texas',evidence:['Best Western','Holiday Inn Express','Hampton Inn','Fairfield','Comfort Suites','Home2 Suites','Motel 6','local/other lodging']} ]};
+ const d3Pending={executionState:'NOT_EXECUTED',reason:'Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.',nonRuntime:true};
+ files['poi-identity-summary.json']={schemaVersion:'gridly.lp24111.poi-identity-summary.v1',...d3Pending,identityClasses:['PARENT_POI','CHILD_POI','LIKELY_DUPLICATE','DISTINCT_POI','AMBIGUOUS'],rawEligibleCount:393038,parentDestinationCount:null,childPoiCount:null,likelyDuplicateCount:null,distinctPoiCount:null,ambiguousCount:null,identityGovernedStandaloneCount:null,sourceRecordsDeleted:0};
+ files['child-poi-analysis.json']={schemaVersion:'gridly.lp24111.child-poi.v1',...d3Pending,families:['WALMART_DEPARTMENT','TARGET_CVS_DEPARTMENT','RETAIL_DEPARTMENT','KIOSK_LOCKER'],rules:['explicit department naming','parent role','within 100 metres','brand/address/phone/domain corroboration'],results:null};
+ files['duplicate-cluster-analysis.json']={schemaVersion:'gridly.lp24111.duplicate-clusters.v1',...d3Pending,architecture:{blocking:'county + 0.01-degree spatial cell',maximumBlockMembers:250,maximumPairDistanceMeters:150,unrestrictedN2:false},candidatePairs:null,candidateClusters:null,largestClusterSize:null,distanceDistribution:null,signalCombinations:null};
+ files['parent-selection-ledger.json']={schemaVersion:'gridly.lp24111.parent-selection.v1',...d3Pending,precedence:['explicit parent role','non-child role','metadata completeness','lexical Overture ID'],confidenceAuthority:false,rows:[]};
+ files['fuel-convenience-identity.json']={schemaVersion:'gridly.lp24111.fuel-convenience.v1',...d3Pending,overlapCandidates:null,mergedIdentityProposals:null,distinctColocated:null,ambiguous:null,categoryRichnessPreserved:true};
+ files['medical-identity-analysis.json']={schemaVersion:'gridly.lp24111.medical-identity.v1',...d3Pending,parentFacilities:null,childDepartments:null,separateFacilities:null,ambiguousCampusRelationships:null,veterinaryHumanMedicalMerges:0};
+ files['lodging-duplicate-analysis.json']={schemaVersion:'gridly.lp24111.lodging-duplicates.v1',...d3Pending,pecosCohort:['Best Western','Holiday Inn Express','Hampton Inn','Fairfield','Comfort Suites','Home2 Suites','Motel 6'],candidateClusters:null,likelyDuplicateClusters:null,distinctSameLocationClusters:null,ambiguousClusters:null};
+ files['owner-poc-identity-reconciliation.json']={schemaVersion:'gridly.lp24111.owner-poc-identity.v1',...d3Pending,areas:[{area:'DAYTON / LIBERTY',result:'AMBIGUOUS'},{area:'TARKINGTON',result:'AMBIGUOUS'},{area:'PECOS',result:'AMBIGUOUS'}],runtimeClaim:false};
+ files['identity-package-impact.json']={schemaVersion:'gridly.lp24111.identity-package-impact.v1',...d3Pending,baseline:{eligibleRows:393038,statewideCompressedBytes:24693819,largestShardBytes:4262172},measurement:null,separateFromD2:true};
+ files['identity-exception-ledger.json']={schemaVersion:'gridly.lp24111.identity-exceptions.v1',...d3Pending,requiredTypes:['UNRESOLVED_AMBIGUOUS','MULTI_PARENT','CONFLICTING_ADDRESS_NAME','SAME_ADDRESS_DISTINCT_BUSINESSES','SHARED_PHONE_FALSE_POSITIVE','MALL_STRIP_CENTER_COLOCATION','HOSPITAL_CAMPUS_AMBIGUITY','FUEL_CONVENIENCE_AMBIGUITY'],rows:[]};
  files['exception-ledger.json']={schemaVersion:'gridly.lp24111.exceptions.v4',exceptions:[{id:'OWNER_CERTIFIED_RICH_SHARDS_ABSENT_FROM_CHECKOUT',severity:'BLOCKER',expectedFiles:168},{id:'DEDUP_ARTIFACT_NOT_MATERIALIZED',severity:'BLOCKER'},{id:'NORMALIZED_STATEWIDE_ANALYSIS_NOT_EXECUTED',severity:'BLOCKER'},{id:'PACKAGE_MEASUREMENTS_NOT_EXECUTED',severity:'BLOCKER'},{id:'LICENSE_COUNSEL_REVIEW',severity:'BLOCKER'},{id:'OSM_INCREMENT_NOT_MEASURED',severity:'OPEN'}]};
  files['certification.json']={schemaVersion:'gridly.lp24111.certification.v4',executiveResult:'PHASE_D_NOT_EXECUTED_INPUT_ARTIFACTS_UNAVAILABLE',richAuthorityConservation:'OWNER_CERTIFIED',productViability:'OVERTURE_TEXAS_POI_AUTHORITY_NOT_YET_PRODUCT_VIABLE',classifications:['OVERTURE_TEXAS_SPATIAL_AUTHORITY_CERTIFIED_EXACT','RICH_AUTHORITY_CONSERVATION_OWNER_CERTIFIED','NORMALIZATION_NOT_EXECUTED','LEGAL_REVIEW_REQUIRED'],productionPoiSearch:'NOT_LAUNCHED_NOT_CERTIFIED',zeroCostContract:'NON_RUNTIME',mergeRecommendation:'DO_NOT_MERGE_PRODUCT_VIABILITY_CERTIFICATION',nextAction:'Place all 168 tx-*.authority-matched.parquet files plus both certified authority Parquets in owner-local/lp24111, then rerun npm run build:lp24111.'};
  const ownerMeasured=path.join(root,'owner-local/lp24111/normalized-measurements.json');
@@ -88,11 +99,20 @@ export function artifacts(options={}){
   const normalization=files['normalization-summary.json'];
   if(normalization.executionState==='OWNER_LOCAL_MEASURED'&&normalization.reason===unavailableReason)delete normalization.reason;
  }
- const d2Path=options.d2MeasurementsPath??path.join(root,'owner-local/lp24111/phase-d2-certified-measurements.json');
+ const ownerD2=path.join(root,'owner-local/lp24111/phase-d2-certified-measurements.json');
+ const d2Path=options.d2MeasurementsPath??(fs.existsSync(ownerD2)?ownerD2:path.join(root,'data/lp24111/phase-d2-certified-measurements.json'));
  if(fs.existsSync(d2Path)){
   const d2=JSON.parse(fs.readFileSync(d2Path,'utf8'));
   if(d2.schemaVersion!=='gridly.lp24111.measured-taxonomy-package.v1'||!d2.reports)throw Error('Invalid owner-local D.2 measurements');
   for(const [name,value] of Object.entries(d2.reports)){if(!(name in files))throw Error(`Unknown D.2 measured report ${name}`);files[name]={...files[name],...value};delete files[name].reason;}
+ }
+ const d3Path=options.d3MeasurementsPath??path.join(root,'owner-local/lp24111/phase-d3-identity-measurements.json');
+ if(fs.existsSync(d3Path)){
+  const d3=JSON.parse(fs.readFileSync(d3Path,'utf8'));
+  if(d3.schemaVersion!=='gridly.lp24111.measured-identity.v1'||d3.releaseId!==release||!d3.reports)throw Error('Invalid owner-local D.3 identity measurements');
+  for(const [name,value] of Object.entries(d3.reports)){if(!(name in files))throw Error(`Unknown D.3 measured report ${name}`);files[name]={...files[name],...value};delete files[name].reason;}
+ } else {
+  files['certification.json']={...files['certification.json'],schemaVersion:'gridly.lp24111.certification.v5',executiveResult:'PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING',classifications:[...files['certification.json'].classifications,'D3_IDENTITY_POLICY_AND_BOUNDED_EXECUTION_READY','D3_OWNER_LOCAL_MEASUREMENT_NOT_EXECUTED'],mergeRecommendation:'MERGE_D3_GOVERNANCE_TOOLING_MEASURE_BEFORE_IDENTITY_CERTIFICATION',nextAction:'Restore the certified normalized Parquet in owner-local/lp24111 and run npm run execute:lp24111-identity; then run build, verify, and test.'};
  }
  return files;
 }
@@ -110,6 +130,7 @@ export function verify(options={}){
  if(!a['category-coverage.json'].mapping.nonDestinationExclusions.includes('mountain') || !a['category-coverage.json'].mapping.humanMedicalExclusions.includes('animal_hospital')) throw Error('category exclusions failed');
  if(!a['confidence-analysis.json'].policy.startsWith('NO_CUTOFF_RECOMMENDED')) throw Error('confidence policy failed');
  if(a['certification.json'].productionPoiSearch!=='NOT_LAUNCHED_NOT_CERTIFIED') throw Error('runtime boundary failed');
+ if(a['poi-identity-summary.json'].rawEligibleCount!==393038||a['poi-identity-summary.json'].sourceRecordsDeleted!==0)throw Error('D.3 baseline/source conservation failed');
  return a;
 }
 const args=new Set(process.argv.slice(2)); const a=verify();

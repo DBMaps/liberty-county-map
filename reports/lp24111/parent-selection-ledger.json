@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "gridly.lp24111.parent-selection.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "nonRuntime": true,
+  "precedence": [
+    "explicit parent role",
+    "non-child role",
+    "metadata completeness",
+    "lexical Overture ID"
+  ],
+  "confidenceAuthority": false,
+  "rows": []
+}
