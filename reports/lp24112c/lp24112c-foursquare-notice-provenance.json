@@ -1,18 +1,16 @@
 {
-  "schemaVersion": "gridly.lp24112c.foursquare-notice-provenance.v1",
+  "schemaVersion": "gridly.lp24112c.foursquare-notice-provenance.v2",
   "sourceUrl": "https://opensource.foursquare.com/places-notice-txt/",
   "retrievedAt": null,
-  "contentSha256": null,
-  "contentBytes": null,
+  "sourceSnapshotSha256": null,
+  "sourceSnapshotBytes": null,
+  "noticeSha256": null,
+  "noticeBytes": null,
   "sourceAuthority": "FOURSQUARE_OFFICIAL",
   "documentRole": "FOURSQUARE_OS_PLACES_NOTICE",
   "licenseContext": "APACHE_2_0",
-  "upstreamDataset": "Foursquare OS Places",
-  "overtureAttributionReference": "https://docs.overturemaps.org/attribution/",
   "overtureRecordedChangeDate": "2026-03-18",
-  "acquisitionStatus": "BLOCKED_BY_ENVIRONMENT_HTTP_403",
   "provenanceStatus": "NOT_ACQUIRED",
-  "attemptedCommand": "curl --fail --location --silent --show-error https://opensource.foursquare.com/places-notice-txt/ -o legal/third-party/foursquare/NOTICE.txt",
   "authoritativeArtifactPresent": false,
   "legalApprovalImplied": false
 }

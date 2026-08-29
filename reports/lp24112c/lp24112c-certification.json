@@ -9,6 +9,7 @@
   "providerGate": "OFF",
   "providerGateEligible": false,
   "runtimeActive": false,
+  "runtimeActivated": false,
   "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
   "productionBehaviorChanged": false,
   "deployed": false,
@@ -19,5 +20,5 @@
   "normalization": false,
   "shardRegeneration": false,
   "phoneTesting": false,
-  "nextOwnerAction": "Acquire the exact authoritative NOTICE from the recorded Foursquare URL in a network environment that permits the request, then rerun LP241.12C and submit the hash-bound package to external counsel."
+  "nextOwnerAction": "Place both owner-authoritative HTML snapshots at the documented owner-local paths and run npm run ingest:lp24112c-authoritative-notice."
 }

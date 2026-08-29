@@ -40,15 +40,8 @@
     "cc0": "https://creativecommons.org/publicdomain/zero/1.0/legalcode"
   },
   "overtureCrossCheck": {
-    "status": "NOT_COMPLETED_ENVIRONMENT_HTTP_403",
-    "reference": "https://docs.overturemaps.org/attribution/",
-    "recordExpected": {
-      "provider": "Foursquare",
-      "license": "Apache 2.0",
-      "transformation": "Foursquare data transformed to Overture schema",
-      "changed": "2026-03-18",
-      "noticeReference": "https://opensource.foursquare.com/places-notice-txt/"
-    },
-    "substitutesForFoursquareNotice": false
-  }
+    "status": "NOT_COMPLETED",
+    "reference": "https://docs.overturemaps.org/attribution/"
+  },
+  "substitutesForFoursquareNotice": false
 }
