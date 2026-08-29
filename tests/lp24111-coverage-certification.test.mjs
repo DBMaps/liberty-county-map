@@ -39,6 +39,64 @@ test('certification envelope fails closed when measurements are absent',()=>{
  assert.ok(Object.values(result.gates).some(value=>!value));
 });
 
+function measuredEnvelope(){
+ const absent=artifacts({d4MeasurementsPath:path.join(os.tmpdir(),'lp24111-no-d4-envelope.json')});
+ const names=['county-coverage.json','community-radius-coverage.json','governed-non-place-coverage.json','category-accessibility.json','metadata-conflicts.json','brand-coverage.json','rural-tail-coverage.json','lp24110-cohort-reconciliation.json','owner-poc-coverage-reconciliation.json','community-coverage-quality.json','coverage-fanout.json','attribution-source-inventory.json','osm-supplement-evaluation.json','certification.json','exception-ledger.json'];
+ const reports=Object.fromEntries(names.map(name=>[name,structuredClone(absent[name])]));
+ const radiiMiles={5:{standalonePoiCount:1},10:{standalonePoiCount:1},25:{standalonePoiCount:1}};
+ Object.assign(reports['county-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',countyAssignmentTotal:391772,withoutPois:0});
+ reports['county-coverage.json'].rows=reports['county-coverage.json'].rows.map(row=>({...row,measurement:'OWNER_LOCAL_MEASURED',standalonePoiCount:1}));
+ Object.assign(reports['community-radius-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',measuredPlaceCount:1859});
+ reports['community-radius-coverage.json'].rows=reports['community-radius-coverage.json'].rows.map(row=>({...row,measurement:'OWNER_LOCAL_MEASURED',radiiMiles}));
+ const nonPlaceRows=Array.from({length:29},(_,i)=>({stableGovernedIdentity:i===0?'liberty-tx:tarkington':`fixture-${i}`,identityType:'GOVERNED_NON_PLACE',placeGeoid:null,radiiMiles}));
+ Object.assign(reports['governed-non-place-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',measuredCount:29,missingAnchors:0,rows:nonPlaceRows,tarkington:nonPlaceRows[0]});
+ Object.assign(reports['metadata-conflicts.json'],{executionState:'OWNER_LOCAL_MEASURED',recordsAudited:391772});
+ Object.assign(reports['brand-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',recordsAudited:391772});
+ reports['lp24110-cohort-reconciliation.json'].rows=reports['lp24110-cohort-reconciliation.json'].rows.slice(0,22);
+ reports['owner-poc-coverage-reconciliation.json'].rows=[{area:'Dayton / Liberty'},{area:'Tarkington'},{area:'Pecos'}];
+ reports['coverage-fanout.json'].executionState='OWNER_LOCAL_MEASURED';
+ reports['attribution-source-inventory.json'].executionState='OWNER_LOCAL_MEASURED';
+ Object.assign(reports['certification.json'],{executiveResult:'PHASE_D4_MEASURED_STATEWIDE_COVERAGE_AND_QUALITY_CERTIFIED',productViability:'OVERTURE_TEXAS_POI_AUTHORITY_VIABLE_WITH_TARGETED_COVERAGE_REFINEMENT',productionPoiSearch:'NOT_LAUNCHED_NOT_CERTIFIED',legalState:'LEGAL_REVIEW_REQUIRED'});
+ return {schemaVersion:'gridly.lp24111.measured-coverage.v1',releaseId:'2026-08-19.0',reports};
+}
+
+test('D.4 fallback remains truthful and a valid measured envelope reconciles every measured state',()=>{
+ const missing=path.join(os.tmpdir(),`missing-d4-${process.pid}.json`);
+ const fallback=artifacts({d4MeasurementsPath:missing});
+ assert.equal(fallback['county-coverage.json'].executionState,'NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT');
+ assert.equal(fallback['certification.json'].executiveResult,'PHASE_D4_MEASUREMENT_INCOMPLETE');
+ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'lp24111-envelope-')),file=path.join(directory,'phase-d4.json');
+ fs.writeFileSync(file,JSON.stringify(measuredEnvelope()));
+ const measured=artifacts({d4MeasurementsPath:file});
+ assert.equal(measured['county-coverage.json'].executionState,'OWNER_LOCAL_MEASURED');
+ assert.equal(measured['county-coverage.json'].accountedCountyCount,254);
+ assert.equal(measured['community-radius-coverage.json'].rows.length,1859);
+ assert.equal(measured['governed-non-place-coverage.json'].rows.length,29);
+ assert.deepEqual([measured['governed-non-place-coverage.json'].tarkington.identityType,measured['governed-non-place-coverage.json'].tarkington.placeGeoid],['GOVERNED_NON_PLACE',null]);
+ assert.equal(measured['certification.json'].executiveResult,'PHASE_D4_MEASURED_STATEWIDE_COVERAGE_AND_QUALITY_CERTIFIED');
+ assert.equal('reason' in measured['county-coverage.json'],false);
+ assert.doesNotMatch(JSON.stringify(measured['county-coverage.json']),/NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT|inputs are absent/i);
+});
+
+test('D.4 envelope schema, release, report allowlist, and report objects fail closed',()=>{
+ const write=envelope=>{const directory=fs.mkdtempSync(path.join(os.tmpdir(),'lp24111-invalid-d4-')),file=path.join(directory,'d4.json');fs.writeFileSync(file,JSON.stringify(envelope));return file;};
+ assert.throws(()=>artifacts({d4MeasurementsPath:write({...measuredEnvelope(),schemaVersion:'wrong'})}),/Invalid D\.4 measured envelope/);
+ assert.throws(()=>artifacts({d4MeasurementsPath:write({...measuredEnvelope(),releaseId:'latest'})}),/Invalid D\.4 measured release/);
+ const unknown=measuredEnvelope();unknown.reports['arbitrary.json']={schemaVersion:'arbitrary.v1'};
+ assert.throws(()=>artifacts({d4MeasurementsPath:write(unknown)}),/Unknown D\.4 measured report arbitrary\.json/);
+ const malformed=measuredEnvelope();malformed.reports['county-coverage.json']=null;
+ assert.throws(()=>artifacts({d4MeasurementsPath:write(malformed)}),/Malformed D\.4 measured report county-coverage\.json/);
+});
+
+test('ordinary build wiring cannot execute coverage, fetch, activate runtime, or publish Parquet',()=>{
+ const packageJson=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url)));
+ assert.equal(packageJson.scripts['build:lp24111'],'node tools/lp24111/manufacture.mjs --write');
+ const manufacture=fs.readFileSync(new URL('../tools/lp24111/manufacture.mjs',import.meta.url),'utf8');
+ const publisher=fs.readFileSync(new URL('../tools/lp24111/publish-coverage-envelope.mjs',import.meta.url),'utf8');
+ assert.doesNotMatch(manufacture,/import\s*\{[^}]*executeCoverage|spawnSync|execSync|fetch\(/i);
+ assert.doesNotMatch(publisher,/\.parquet|fetch\(|deploy|activate|spawn/i);
+});
+
 const duckdb=process.env.DUCKDB||'duckdb';
 const hasDuckdb=spawnSync(duckdb,['--version'],{encoding:'utf8'}).status===0;
 const sqlQuote=value=>`'${String(value).replaceAll("'","''")}'`;

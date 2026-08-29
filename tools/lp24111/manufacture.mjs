@@ -10,6 +10,7 @@ const read=f=>JSON.parse(fs.readFileSync(path.join(root,f),'utf8'));
 const stable=x=>`${JSON.stringify(x,null,2)}\n`;
 const sha=f=>crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex');
 const release='2026-08-19.0';
+export const D4_RELEASE=release;
 const uri=`s3://overturemaps-us-west-2/release/${release}/theme=places/type=place/*`;
 const UNKNOWN='NOT_EXECUTED';
 const assignment={authorityIds:1462815,uniqueIds:1462815,uniqueCountyAssignments:1462815,unassigned:0,boundaryMulti:0,totalCountyIntersections:1462815,elapsedSeconds:41.4236056,artifactBytes:29744844};
@@ -121,15 +122,29 @@ export function artifacts(options={}){
  }
  const d4Defaults=pendingReports({counties,places,cohort});
  for(const [name,value] of Object.entries(d4Defaults))files[name]=value;
- const d4Path=options.d4MeasurementsPath??path.join(root,'owner-local/lp24111/phase-d4-certified-measurements.json');
+ const ownerD4=path.join(root,'owner-local/lp24111/phase-d4-certified-measurements.json');
+ const d4Path=options.d4MeasurementsPath??(fs.existsSync(ownerD4)?ownerD4:path.join(root,'data/lp24111/phase-d4-certified-measurements.json'));
  if(fs.existsSync(d4Path)){
   const d4=JSON.parse(fs.readFileSync(d4Path,'utf8'));
-  if(d4.schemaVersion!=='gridly.lp24111.measured-coverage.v1'||!d4.reports)throw Error('Invalid owner-local D.4 measurements');
+  validateD4MeasuredEnvelope(d4,d4Defaults);
   for(const [name,value] of Object.entries(d4.reports)){if(!(name in d4Defaults))throw Error(`Unknown D.4 measured report ${name}`);files[name]=value;}
   const gate=validateEnvelope(d4);
   files['certification.json']={...files['certification.json'],evidenceCompletenessGate:gate.gates,executiveResult:gate.passed?'PHASE_D4_MEASURED_STATEWIDE_COVERAGE_AND_QUALITY_CERTIFIED':'PHASE_D4_MEASUREMENT_INCOMPLETE'};
  }
  return files;
+}
+
+export function validateD4MeasuredEnvelope(envelope,allowedReports){
+ if(!envelope||envelope.schemaVersion!=='gridly.lp24111.measured-coverage.v1'||!envelope.reports||Array.isArray(envelope.reports)||typeof envelope.reports!=='object')throw Error('Invalid D.4 measured envelope');
+ // Envelopes emitted before portable publication did not carry releaseId.  When
+ // supplied it is authoritative and must match the repository's pinned release.
+ if(envelope.releaseId!==undefined&&envelope.releaseId!==release)throw Error(`Invalid D.4 measured release ${envelope.releaseId}`);
+ const allow=allowedReports??pendingReports({counties:read('data/lp104/texas-counties.json').counties,places:read('data/generated/gridly-statewide-place-presentation-v1.json').places,cohort:read('reports/lp24110/statewide-poi-cohort.json')});
+ for(const [name,value] of Object.entries(envelope.reports)){
+  if(!(name in allow))throw Error(`Unknown D.4 measured report ${name}`);
+  if(!value||Array.isArray(value)||typeof value!=='object'||typeof value.schemaVersion!=='string')throw Error(`Malformed D.4 measured report ${name}`);
+ }
+ return envelope;
 }
 
 export function verify(options={}){
@@ -150,7 +165,9 @@ export function verify(options={}){
  if(a['certification.json'].productionPoiSearch!=='NOT_LAUNCHED_NOT_CERTIFIED'||a['osm-supplement-evaluation.json'].merged!==false)throw Error('D.4 non-runtime/no-merge boundary failed');
  return a;
 }
-const args=new Set(process.argv.slice(2)); const a=verify();
-if(args.has('--write')){fs.mkdirSync(out,{recursive:true}); for(const [f,v] of Object.entries(a)) fs.writeFileSync(path.join(out,f),stable(v)); console.log(`wrote ${Object.keys(a).length} LP241.11 artifacts`);}
-else if(args.has('--verify')){for(const [f,v] of Object.entries(a)){const p=path.join(out,f); if(!fs.existsSync(p)||fs.readFileSync(p,'utf8')!==stable(v)) throw Error(`stale/missing ${f}`);} console.log(`verified ${Object.keys(a).length} LP241.11 artifacts`);}
-else console.log('use --write or --verify');
+if(path.resolve(process.argv[1]??'')===path.resolve(import.meta.filename)){
+ const args=new Set(process.argv.slice(2)); const a=verify();
+ if(args.has('--write')){fs.mkdirSync(out,{recursive:true}); for(const [f,v] of Object.entries(a)) fs.writeFileSync(path.join(out,f),stable(v)); console.log(`wrote ${Object.keys(a).length} LP241.11 artifacts`);}
+ else if(args.has('--verify')){for(const [f,v] of Object.entries(a)){const p=path.join(out,f); if(!fs.existsSync(p)||fs.readFileSync(p,'utf8')!==stable(v)) throw Error(`stale/missing ${f}`);} console.log(`verified ${Object.keys(a).length} LP241.11 artifacts`);}
+ else console.log('use --write or --verify');
+}
