@@ -47556,6 +47556,69 @@ function getGridlySelectedAwarenessArea() {
   return area;
 }
 
+// Read-only consumer projection of Gridly's current governed location.  This
+// deliberately derives from the selected awareness area / active presentation
+// and active county; it does not persist location state or create a new owner.
+function gridlyGetCurrentGovernedLocationContext() {
+  const presentation = gridlyActiveGeographicPresentation;
+  const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
+
+  // A LOCAL presentation is an intentional coordinate/map context.  It is
+  // newer than a persisted awareness selection and therefore must not inherit
+  // that selection's community identity.
+  if (presentation?.semanticLevel === "LOCAL") {
+    const latitude = Number(presentation.lat);
+    const longitude = Number(presentation.lng);
+    const resolvedCountyId = Number.isFinite(latitude) && Number.isFinite(longitude)
+      ? gridlyResolveCountyIdForCoordinate(latitude, longitude)?.countyId
+      : null;
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || !resolvedCountyId) return null;
+    return Object.freeze({
+      label: presentation.placeLabel || "the area you're exploring",
+      latitude,
+      longitude,
+      countyContextId: resolvedCountyId,
+      originType: "DIRECT_COORDINATE",
+      communityIdentity: null,
+      source: "active_geographic_presentation"
+    });
+  }
+
+  const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  if (!selectedArea || selectedArea.fallback === true) return null;
+  const governedPoint = gridlyResolveGovernedWeatherPoint(selectedArea);
+  if (!governedPoint) return null;
+  const countyContextId = activeCountyId || governedPoint.countyId;
+  if (!countyContextId) return null;
+  const label = String(selectedArea.label || selectedArea.storageValue || selectedArea.name || "").trim();
+  if (!label) return null;
+
+  if (governedPoint.identityClass === "CANONICAL_PLACE") {
+    return Object.freeze({
+      label,
+      latitude: governedPoint.lat,
+      longitude: governedPoint.lng,
+      countyContextId,
+      originType: "CANONICAL_PLACE",
+      communityIdentity: Object.freeze({ stableGovernedIdentity: `place-${governedPoint.placeGeoid}`, placeGeoid: governedPoint.placeGeoid }),
+      source: "selected_awareness_area"
+    });
+  }
+  if (selectedArea.countyWide === true) {
+    return Object.freeze({ label, latitude: governedPoint.lat, longitude: governedPoint.lng, countyContextId, originType: "COUNTY_ONLY", communityIdentity: null, source: "selected_awareness_area" });
+  }
+  return Object.freeze({
+    label,
+    latitude: governedPoint.lat,
+    longitude: governedPoint.lng,
+    countyContextId,
+    originType: "GOVERNED_NON_PLACE",
+    communityIdentity: Object.freeze({ stableGovernedIdentity: governedPoint.stableIdentity, placeGeoid: null }),
+    source: "selected_awareness_area"
+  });
+}
+if (typeof window !== "undefined") window.gridlyGetCurrentGovernedLocationContext = gridlyGetCurrentGovernedLocationContext;
+
 function getGridlyCanonicalAwarenessPresentationContext(options = {}) {
   return gridlyLp016AlertsPostPaintDelayMeasure("getGridlyCanonicalAwarenessPresentationContext", "awareness", () => {
   const selectedArea = options?.awarenessArea || (typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null);
