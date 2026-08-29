@@ -13,6 +13,7 @@
     "INCOMPLETE_METADATA": 278
   },
   "familyBreakdownComplete": false,
+  "joinConservation": null,
   "presentationPolicy": "Keep spatially valid records searchable; quarantine source textual locality from trusted presentation. Never rewrite source values.",
   "launchBlockingConflicts": "NONE_IDENTIFIED_BY_D4_AGGREGATE",
   "retainedSample": {

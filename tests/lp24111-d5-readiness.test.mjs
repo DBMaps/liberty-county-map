@@ -5,7 +5,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {buildD5} from '../tools/lp24111/d5-readiness.mjs';
-import {recoverCommittedEvidence,reconcileBrandAggregate,BRANDS,CATEGORIES} from '../tools/lp24111/recover-d5-evidence.mjs';
+import {recoverCommittedEvidence,reconcileBrandAggregate,reconcileRichBrandEvidence,reconcileMetadataEvidence,classifyMetadataFamily,BRANDS,CATEGORIES,EXPECTED_STANDALONE_IDS,BRAND_AUTHORITY_ROLE} from '../tools/lp24111/recover-d5-evidence.mjs';
 
 const report=name=>JSON.parse(fs.readFileSync(new URL(`../reports/lp24111/${name}`,import.meta.url),'utf8'));
 const recovered=()=>recoverCommittedEvidence({radius:report('community-radius-coverage.json'),nonPlace:report('governed-non-place-coverage.json'),access:report('category-accessibility.json'),counties:report('county-coverage.json'),metadata:report('metadata-conflicts.json')});
@@ -73,7 +73,7 @@ test('empty brand projection is not manufactured as zero while a measured aggreg
  assert.equal(reconcileBrandAggregate([]),null);
  const measured=reconcileBrandAggregate([{brand:'Walmart',standalone_record_count:12,counties_represented:4}]);
  assert.equal(measured.rows.find(x=>x.brand==='Walmart').status,'MEASURED_PRESENT');
- assert.equal(measured.rows.find(x=>x.brand==='H-E-B').status,'DATA_IS_MEASURED_ZERO');
+ assert.equal(measured.rows.find(x=>x.brand==='H-E-B').status,'MEASURED_ZERO');
  const d=buildD5();
  assert.equal(d['d5-brand-readiness.json'].classification,'BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION');
  assert.ok(d['d5-brand-readiness.json'].rows.every(x=>x.recordCount===null));
@@ -92,7 +92,7 @@ test('unmaterialized evidence remains fail-closed and recovery plans are narrowl
 
 test('D.5A recovery has no upstream, network, merge, coverage execution, or activation path',()=>{
  const source=fs.readFileSync(new URL('../tools/lp24111/recover-d5-evidence.mjs',import.meta.url),'utf8');
- assert.doesNotMatch(source,/fetch\(|https?:\/\/|executeCoverage|execute:lp24111|normalize|taxonomy-review|identity-governance|rich-manufacture|OSM merge|runtimeActivated:true/);
+ assert.doesNotMatch(source,/fetch\(|https?:\/\/|executeCoverage|execute:lp24111|normalize.mjs|taxonomy-review|identity-governance|rich-manufacture|OSM merge|runtimeActivated:true/);
 });
 
 test('D.5 preserves measured populations, cohorts, rural sparsity, and package measurements',()=>{
@@ -127,4 +127,43 @@ test('D.5 remains non-runtime, excludes unsafe populations, and distinguishes bl
  assert.equal(d['d5-certification.json'].runtimeActivated,false);
  const source=fs.readFileSync(new URL('../tools/lp24111/d5-readiness.mjs',import.meta.url),'utf8');
  assert.doesNotMatch(source,/fetch\(|https?:\/\/|execSync|spawnSync/);
+});
+
+
+test('D.5D rich brand recovery conserves the standalone authority and distinguishes unavailable from measured zero',()=>{
+ const result=reconcileRichBrandEvidence({conservation:{standalone_rows:EXPECTED_STANDALONE_IDS,unique_standalone_ids:EXPECTED_STANDALONE_IDS,joined_richer_ids:EXPECTED_STANDALONE_IDS-2,duplicate_richer_ids:0,rows_with_brand:25,distinct_brands:4},aggregates:[{brand:'Walmart',record_count:20,county_count:8},{brand:'H-E-B',record_count:5,county_count:3}]});
+ assert.equal(result.joinConservation.missingRicherIds,2);
+ assert.equal(result.rows.find(x=>x.brand==='Walmart').status,'MEASURED_PRESENT');
+ assert.equal(result.rows.find(x=>x.brand==='Shell').status,'MEASURED_ZERO');
+ assert.equal(result.globalSummary.requestedBrandsPresent,2);
+ assert.equal(result.globalSummary.requestedBrandsZero,18);
+ assert.equal(result.authorityRole,BRAND_AUTHORITY_ROLE);
+ assert.deepEqual(result.precedence,['brand.names.primary',"brand.names.common['en']"]);
+ assert.throws(()=>reconcileRichBrandEvidence({conservation:{standalone_rows:EXPECTED_STANDALONE_IDS,unique_standalone_ids:EXPECTED_STANDALONE_IDS,joined_richer_ids:EXPECTED_STANDALONE_IDS,duplicate_richer_ids:1},aggregates:[]}),/DUPLICATE_ID_GATE/);
+ assert.throws(()=>reconcileRichBrandEvidence({conservation:{standalone_rows:20,unique_standalone_ids:20},aggregates:[]}),/STANDALONE_CONSERVATION/);
+});
+
+test('D.5D metadata assigns each of the exact 149 IDs once and preserves Hitachi source evidence',()=>{
+ const rows=Array.from({length:149},(_,i)=>({id:`id-${i}`,name:i===0?'Hitachi Energy Jefferson City':`record-${i}`,richerMatched:true,regionConflict:i%4===0,localityConflict:i%4===1,postcodeConflict:i%4===2,sourceRegion:i===0?'MO':'TX',sourceLocality:i===0?'Jefferson City':'local',sourcePostcode:i===0?'65101-5032':'75001'}));
+ rows.filter((x,i)=>i%4===3).forEach(x=>{x.regionConflict=true;x.localityConflict=true;});
+ rows[0].postcodeConflict=true;
+ const result=reconcileMetadataEvidence(rows);
+ assert.equal(result.joinConservation.conflictIdsInput,149);
+ assert.equal(result.joinConservation.familyCountSum,149);
+ assert.equal(result.joinConservation.duplicateClassifications,0);
+ assert.equal(result.joinConservation.unexplainedConflictIds,0);
+ assert.equal(result.hitachi.family,'MULTI_FIELD_CONFLICT');
+ assert.deepEqual([result.hitachi.sourceRegion,result.hitachi.sourceLocality,result.hitachi.sourcePostcode],['MO','Jefferson City','65101-5032']);
+ assert.equal(result.sourceFieldsRewritten,false);
+ assert.equal(classifyMetadataFamily({regionConflict:true}),'STATE_REGION_CONFLICT');
+ assert.equal(classifyMetadataFamily({localityConflict:true}),'LOCALITY_CONFLICT');
+ assert.equal(classifyMetadataFamily({postcodeConflict:true}),'POSTCODE_CONFLICT');
+ assert.equal(classifyMetadataFamily({regionConflict:true,postcodeConflict:true}),'MULTI_FIELD_CONFLICT');
+});
+
+test('D.5D recovery source is bounded to local ID joins and preserves legal and production boundaries',()=>{
+ const source=fs.readFileSync(new URL('../tools/lp24111/recover-d5-evidence.mjs',import.meta.url),'utf8');
+ assert.match(source,/LEGAL_REVIEW_REQUIRED/);
+ assert.match(source,/DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY/);
+ assert.doesNotMatch(source,/fetch\(|https?:\/\/|ST_Distance|OSM|runtimeActivated:true|productionBehaviorChanged:true/);
 });

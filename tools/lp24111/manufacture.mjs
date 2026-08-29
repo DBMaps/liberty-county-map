@@ -134,7 +134,12 @@ export function artifacts(options={}){
  }
  // D.5 is a derivation of the repository's committed D.4 authority. Alternate
  // envelopes are test/audit fixtures and must not be mistaken for that authority.
- if(!options.d4MeasurementsPath) Object.assign(files,buildD5(files));
+ if(!options.d4MeasurementsPath){
+  const recoveredPath=path.join(root,'owner-local/lp24111/phase-d5-recovered-evidence.json');
+  if(fs.existsSync(recoveredPath))files.__d5RecoveredEvidence=JSON.parse(fs.readFileSync(recoveredPath,'utf8'));
+  Object.assign(files,buildD5(files));
+  delete files.__d5RecoveredEvidence;
+ }
  return files;
 }
 
