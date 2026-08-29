@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.ledger.v1",
+  "ACTIVATION_BLOCKERS": [
+    {
+      "id": "LEGAL_ATTRIBUTION_CLEARANCE",
+      "scope": "public POI activation",
+      "reason": "Attribution/product obligations remain unresolved.",
+      "evidence": "LEGAL_REVIEW_REQUIRED",
+      "requiredAction": "Obtain counsel review of attribution, notices, provenance presentation, and any future ODbL supplement boundary.",
+      "ownerAction": "Route D.5 legal questions and source inventory to counsel.",
+      "blocking": true
+    }
+  ],
+  "POST_ACTIVATION_REFINEMENT_BACKLOG": [
+    {
+      "id": "QUALITY_CLASS_REPORTING_MATERIALIZATION",
+      "scope": "1,888 governed identities",
+      "reason": "D.4 quality classifications were not materialized and must not be invented.",
+      "evidence": "REPORTING_EVIDENCE_NOT_MATERIALIZED",
+      "requiredAction": "Materialize reporting evidence only in a separately authorized refinement; do not rerun D.4.",
+      "ownerAction": "Schedule reporting refinement after activation clearance.",
+      "blocking": false
+    },
+    {
+      "id": "TERLINGUA_PHARMACY_ACCESSIBILITY_ROW",
+      "scope": "governed identity 4872248",
+      "reason": "One known zero-result handling omission has no retained measurement.",
+      "evidence": "ZERO_RESULT_HANDLING_DEFECT / PHARMACY_TERLINGUA_MEASUREMENT_NOT_MATERIALIZED",
+      "requiredAction": "Repair the bounded accessibility report row without fabricating its measurement.",
+      "ownerAction": "Schedule targeted reporting repair.",
+      "blocking": false
+    },
+    {
+      "id": "D4_METADATA_TEXT_HEURISTIC_CLEANUP",
+      "scope": "historical D.4 classifier",
+      "reason": "The address_text Missouri-token predicate produced 149 false positives.",
+      "evidence": "149 reconciled; 0 structured conflicts",
+      "requiredAction": "Retire the heuristic in a future reporting milestone; preserve D.4 history.",
+      "ownerAction": "Schedule historical reporting cleanup.",
+      "blocking": false
+    },
+    {
+      "id": "BRAND_REPORTING_REFINEMENT",
+      "scope": "descriptive brand reporting",
+      "reason": "Brand is descriptive-only; the owner-certified 391,772-ID rich join is conserved.",
+      "evidence": "391772 standalone / 391772 unique / 391772 rich matches / 0 missing / 0 duplicate rich IDs",
+      "requiredAction": "Consume the existing bounded recovery when aggregate detail is available.",
+      "ownerAction": "Treat as non-launch-critical refinement.",
+      "blocking": false
+    },
+    {
+      "id": "RURAL_SERVICE_EXPECTATIONS",
+      "scope": "15 rural-tail counties",
+      "reason": "Real sparse/regional patterns should be monitored, not metro-normalized.",
+      "evidence": "D.4 rural-tail category counts",
+      "requiredAction": "Monitor zero results and evaluate only targeted supplements after evidence/legal review.",
+      "ownerAction": "Accept rural sparsity policy.",
+      "blocking": false
+    }
+  ]
+}

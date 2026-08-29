@@ -1,0 +1,414 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.rural.v1",
+  "requiredCount": 15,
+  "rows": [
+    {
+      "countyFips": "48269",
+      "countyName": "King",
+      "standalonePoiCount": 6,
+      "coreCategoryCounts": {
+        "FUEL": 1,
+        "GROCERY": 0,
+        "LODGING": 0,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 0,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "kingRawAuthorityContext": 14,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_AS_SPARSE_EXPECTED",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48301",
+      "countyName": "Loving",
+      "standalonePoiCount": 13,
+      "coreCategoryCounts": {
+        "FUEL": 4,
+        "GROCERY": 0,
+        "LODGING": 2,
+        "HOSPITAL": 1,
+        "PHARMACY": 0,
+        "RESTAURANT": 3,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48033",
+      "countyName": "Borden",
+      "standalonePoiCount": 18,
+      "coreCategoryCounts": {
+        "FUEL": 0,
+        "GROCERY": 2,
+        "LODGING": 0,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 3,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_AS_SPARSE_EXPECTED",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48393",
+      "countyName": "Roberts",
+      "standalonePoiCount": 24,
+      "coreCategoryCounts": {
+        "FUEL": 0,
+        "GROCERY": 0,
+        "LODGING": 3,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 1,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_AS_SPARSE_EXPECTED",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48263",
+      "countyName": "Kent",
+      "standalonePoiCount": 18,
+      "coreCategoryCounts": {
+        "FUEL": 0,
+        "GROCERY": 0,
+        "LODGING": 0,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 2,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_AS_SPARSE_EXPECTED",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48173",
+      "countyName": "Glasscock",
+      "standalonePoiCount": 26,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 1,
+        "LODGING": 1,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 0,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48261",
+      "countyName": "Kenedy",
+      "standalonePoiCount": 21,
+      "coreCategoryCounts": {
+        "FUEL": 0,
+        "GROCERY": 0,
+        "LODGING": 1,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 1,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_AS_SPARSE_EXPECTED",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48443",
+      "countyName": "Terrell",
+      "standalonePoiCount": 37,
+      "coreCategoryCounts": {
+        "FUEL": 4,
+        "GROCERY": 0,
+        "LODGING": 4,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 7,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48155",
+      "countyName": "Foard",
+      "standalonePoiCount": 32,
+      "coreCategoryCounts": {
+        "FUEL": 2,
+        "GROCERY": 2,
+        "LODGING": 1,
+        "HOSPITAL": 0,
+        "PHARMACY": 1,
+        "RESTAURANT": 5,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48345",
+      "countyName": "Motley",
+      "standalonePoiCount": 37,
+      "coreCategoryCounts": {
+        "FUEL": 6,
+        "GROCERY": 1,
+        "LODGING": 2,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 4,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48431",
+      "countyName": "Sterling",
+      "standalonePoiCount": 42,
+      "coreCategoryCounts": {
+        "FUEL": 6,
+        "GROCERY": 1,
+        "LODGING": 3,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 9,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48433",
+      "countyName": "Stonewall",
+      "standalonePoiCount": 34,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 0,
+        "LODGING": 2,
+        "HOSPITAL": 1,
+        "PHARMACY": 0,
+        "RESTAURANT": 6,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48235",
+      "countyName": "Irion",
+      "standalonePoiCount": 40,
+      "coreCategoryCounts": {
+        "FUEL": 7,
+        "GROCERY": 2,
+        "LODGING": 3,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 7,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48101",
+      "countyName": "Cottle",
+      "standalonePoiCount": 51,
+      "coreCategoryCounts": {
+        "FUEL": 4,
+        "GROCERY": 1,
+        "LODGING": 1,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 11,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    },
+    {
+      "countyFips": "48079",
+      "countyName": "Cochran",
+      "standalonePoiCount": 55,
+      "coreCategoryCounts": {
+        "FUEL": 5,
+        "GROCERY": 1,
+        "LODGING": 0,
+        "HOSPITAL": 2,
+        "PHARMACY": 0,
+        "RESTAURANT": 9,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0,
+      "nearestServiceDistances": {
+        "FUEL": null,
+        "GROCERY": null,
+        "LODGING": null,
+        "HOSPITAL": null,
+        "PHARMACY": null,
+        "RESTAURANT": null,
+        "CONVENIENCE": null
+      },
+      "readiness": "LAUNCH_READY_WITH_REGIONAL_DEPENDENCY",
+      "blockingDataDefect": false
+    }
+  ],
+  "sparseAutomaticallyBlocking": false,
+  "complete": true
+}

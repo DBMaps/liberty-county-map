@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.legal.v1",
+  "legalState": "LEGAL_REVIEW_REQUIRED",
+  "sourceProvenanceFields": {
+    "compactProjectionStructuredSources": false,
+    "recordsWithSourceMetadata": 0,
+    "providerFrequencies": []
+  },
+  "availableAttribution": "Pinned Overture release and repository source inventory.",
+  "questionsForCounsel": [
+    "Required Overture product attribution and notice placement",
+    "Whether compact provenance summary may be shown and what it must contain",
+    "Retention/presentation obligations for source metadata",
+    "ODbL separation requirements before any OSM evaluation"
+  ],
+  "publicActivationBlocked": true,
+  "legalConclusion": false
+}

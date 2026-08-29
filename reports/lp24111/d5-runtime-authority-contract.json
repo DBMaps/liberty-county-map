@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.runtime-contract.v1",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "includedPopulation": "IDENTITY_GOVERNED_STANDALONE_POIS_ONLY",
+  "excludedPopulations": [
+    "RAW_OVERTURE_AUTHORITY",
+    "REVIEW_REQUIRED",
+    "SUPPRESSED_CHILDREN",
+    "SUPPRESSED_DUPLICATE_MEMBERS"
+  ],
+  "requiredFields": [
+    "id",
+    "displayName",
+    "gridlyCategory",
+    "brand",
+    "latitude",
+    "longitude",
+    "countyFips",
+    "locality",
+    "operatingStatus",
+    "identityDisposition",
+    "provenanceSummaryAfterLegalClearance"
+  ],
+  "boundedRadiusRequired": true
+}

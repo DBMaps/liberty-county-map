@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.gaps.v1",
+  "findings": [
+    {
+      "classification": "IDENTITY_GOVERNANCE_REVIEW",
+      "scope": "public POI activation",
+      "countyCommunity": "STATEWIDE",
+      "evidenceFamily": "LEGAL_ATTRIBUTION_CLEARANCE",
+      "measuredValue": "LEGAL_REVIEW_REQUIRED",
+      "reason": "Attribution/product obligations remain unresolved.",
+      "severity": "BLOCKER",
+      "launchImpact": "BLOCKS_D5_CERTIFICATION",
+      "recommendedAction": "Obtain counsel review of attribution, notices, provenance presentation, and any future ODbL supplement boundary."
+    },
+    {
+      "classification": "METADATA_CONFLICT",
+      "scope": "1,888 governed identities",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "QUALITY_CLASS_REPORTING_MATERIALIZATION",
+      "measuredValue": "REPORTING_EVIDENCE_NOT_MATERIALIZED",
+      "reason": "D.4 quality classifications were not materialized and must not be invented.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Materialize reporting evidence only in a separately authorized refinement; do not rerun D.4."
+    },
+    {
+      "classification": "METADATA_CONFLICT",
+      "scope": "governed identity 4872248",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "TERLINGUA_PHARMACY_ACCESSIBILITY_ROW",
+      "measuredValue": "ZERO_RESULT_HANDLING_DEFECT / PHARMACY_TERLINGUA_MEASUREMENT_NOT_MATERIALIZED",
+      "reason": "One known zero-result handling omission has no retained measurement.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Repair the bounded accessibility report row without fabricating its measurement."
+    },
+    {
+      "classification": "METADATA_CONFLICT",
+      "scope": "historical D.4 classifier",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "D4_METADATA_TEXT_HEURISTIC_CLEANUP",
+      "measuredValue": "149 reconciled; 0 structured conflicts",
+      "reason": "The address_text Missouri-token predicate produced 149 false positives.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Retire the heuristic in a future reporting milestone; preserve D.4 history."
+    },
+    {
+      "classification": "METADATA_CONFLICT",
+      "scope": "descriptive brand reporting",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "BRAND_REPORTING_REFINEMENT",
+      "measuredValue": "391772 standalone / 391772 unique / 391772 rich matches / 0 missing / 0 duplicate rich IDs",
+      "reason": "Brand is descriptive-only; the owner-certified 391,772-ID rich join is conserved.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Consume the existing bounded recovery when aggregate detail is available."
+    },
+    {
+      "classification": "EXPECTED_SPARSE_RURAL",
+      "scope": "15 rural-tail counties",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "RURAL_SERVICE_EXPECTATIONS",
+      "measuredValue": "D.4 rural-tail category counts",
+      "reason": "Real sparse/regional patterns should be monitored, not metro-normalized.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Monitor zero results and evaluate only targeted supplements after evidence/legal review."
+    }
+  ]
+}

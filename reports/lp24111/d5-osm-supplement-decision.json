@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.osm.v1",
+  "decision": "INSUFFICIENT_EVIDENCE",
+  "targetCohorts": [
+    "CONVENIENCE candidate gaps",
+    "rural-tail zero-result cohorts after taxonomy triage"
+  ],
+  "odblReview": "LEGAL_REVIEW_REQUIRED",
+  "downloaded": false,
+  "merged": false,
+  "statewideSupplementRecommended": false
+}

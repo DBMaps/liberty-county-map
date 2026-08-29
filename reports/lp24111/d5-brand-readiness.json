@@ -1,0 +1,197 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.brands.v1",
+  "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY",
+  "requestedBrands": [
+    "Walmart",
+    "H-E-B",
+    "Brookshire Brothers",
+    "Dollar General",
+    "Dollar Tree",
+    "Family Dollar",
+    "Shell",
+    "Chevron",
+    "Exxon",
+    "Valero",
+    "O'Reilly Auto Parts",
+    "AutoZone",
+    "Best Western",
+    "Holiday Inn Express",
+    "Hampton Inn",
+    "Motel 6",
+    "Starbucks",
+    "Subway",
+    "CVS",
+    "Walgreens"
+  ],
+  "recordsAudited": 391772,
+  "brandFieldPresent": true,
+  "populatedBrandRows": 0,
+  "aggregateArtifactRows": 0,
+  "classification": "MEASURED_BRAND_AGGREGATE",
+  "joinConservation": null,
+  "globalSummary": null,
+  "rows": [
+    {
+      "brand": "Walmart",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "H-E-B",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Brookshire Brothers",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Dollar General",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Dollar Tree",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Family Dollar",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Shell",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Chevron",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Exxon",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Valero",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "O'Reilly Auto Parts",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "AutoZone",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Best Western",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Holiday Inn Express",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Hampton Inn",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Motel 6",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Starbucks",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Subway",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "CVS",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    },
+    {
+      "brand": "Walgreens",
+      "status": "MEASURED_ZERO",
+      "recordCount": 0,
+      "countyCount": 0,
+      "communityRadiusRepresentation": null,
+      "ruralTailPresence": null
+    }
+  ],
+  "complete": true,
+  "reason": null
+}
