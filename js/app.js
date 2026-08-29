@@ -99195,6 +99195,37 @@ function renderGridlySettingsAwarenessSearchResult(result, surface = {}) {
   if (result.status === "INVALID_INPUT") { status.textContent = "Enter a 5-digit ZIP code or a town name."; return; }
   if (result.status === "NOT_FOUND") { status.textContent = "We couldn't find that ZIP code or town."; return; }
   if (result.status === "TEMPORARILY_UNAVAILABLE") { status.textContent = "Area search is temporarily unavailable. Try again in a moment."; return; }
+  if (result.status === "RESOLVED_NOT_OPERATIONAL") { status.textContent = "This area is not available yet."; return; }
+  if (result.status === "RESULTS") {
+    const rows = (result.groups || []).flatMap((group) => (group.communities || []).map((community) => ({ group, community })));
+    if (!rows.length) { status.textContent = "We couldn't find that ZIP code or town."; return; }
+    const list = document.createElement("div");
+    list.className = "settings-awareness-candidates";
+    rows.forEach(({ group, community }) => {
+      const membershipCountyId = gridlyManualAwarenessMembershipCountyId(community, group);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "settings-manual-area-result";
+      const title = document.createElement("span");
+      title.textContent = community.label;
+      const context = document.createElement("small");
+      context.textContent = community.canonicalResolution ? "Multi-county community" : group.countyLabel;
+      button.append(title, context);
+      button.addEventListener("click", () => {
+        const applied = community.canonicalResolution
+          ? gridlySaveCanonicalMultiCountyPlaceHome(community.canonicalResolution, "settings_awareness_area_search", membershipCountyId)
+          : selectGridlySettingsAwarenessArea(community.value, "settings_awareness_area_search", root);
+        if (!applied) return;
+        gridlySettingsAwarenessSearchApplied = true;
+        status.textContent = `Gridly is now watching ${community.canonicalLabel || community.label}.`;
+        button.disabled = true;
+      });
+      list.append(button);
+    });
+    container.append(list);
+    container.hidden = false;
+    return;
+  }
   if (result.status === "AMBIGUOUS") {
     status.textContent = "More than one area matches. Choose from available areas or enter a more specific area.";
     const list = document.createElement("ul");
@@ -99215,11 +99246,8 @@ function renderGridlySettingsAwarenessSearchResult(result, surface = {}) {
     ? `${result.countyMemberships.length} governed county memberships`
     : result.county;
   container.append(title, county);
-  if (result.status === "RESOLVED_NOT_OPERATIONAL") {
-    status.textContent = "This area is not available yet.";
-  } else {
-    const choices = result.status === "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE" ? result.candidates : [null];
-    choices.forEach((candidate) => {
+  const choices = result.status === "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE" ? result.candidates : [null];
+  choices.forEach((candidate) => {
       const apply = document.createElement("button");
       apply.type = "button";
       apply.className = "primary-btn settings-awareness-watch-btn";
@@ -99235,8 +99263,7 @@ function renderGridlySettingsAwarenessSearchResult(result, surface = {}) {
       }
       });
       container.append(apply);
-    });
-  }
+  });
   container.hidden = false;
 }
 
@@ -99285,7 +99312,11 @@ function gridlySaveCanonicalMultiCountyPlaceHome(result = {}, source = "canonica
 
 function searchGridlySettingsAwarenessArea(query = "", surface = {}) {
   try {
-    const result = resolveGridlyAwarenessAreaQuery(query);
+    // The visible Settings and welcome Home Area surfaces share the same
+    // canonical community projection as the manual picker. Membership rows
+    // remain downstream candidates; they are not independently rendered
+    // search identities.
+    const result = resolveGridlyManualAwarenessAreaSearch(query);
     renderGridlySettingsAwarenessSearchResult(result, surface);
     return result;
   } catch (_error) {
