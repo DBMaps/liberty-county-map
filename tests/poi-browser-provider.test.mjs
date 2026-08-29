@@ -28,6 +28,12 @@ test('current governed non-PLACE context keeps stable identity and null PLACE GE
   assert.equal(request.communityIdentity.placeGeoid, null);
 });
 
+test('context/request agreement assertion rejects a mismatched governed authority', () => {
+  const assertion = runtime().GridlyPoiBrowserProvider._test.assertContextRequestAgreement;
+  const context = { label: 'Tarkington', countyContextId: 'liberty-tx', originType: 'GOVERNED_NON_PLACE', communityIdentity: { stableGovernedIdentity: 'liberty-tx:tarkington', placeGeoid: null } };
+  assert.throws(() => assertion(context, { name: 'Tarkington', countyContextId: 'liberty-tx', originType: 'DIRECT_COORDINATE' }), /CONTEXT_AUTHORITY/);
+});
+
 test('current multi-county selection preserves its authoritative county membership', () => {
   const context = { label: 'Austin', latitude: 30.2672, longitude: -97.7431, countyContextId: 'williamson-tx', originType: 'CANONICAL_PLACE', communityIdentity: { stableGovernedIdentity: 'place-4805000', placeGeoid: '4805000' } };
   const request = runtime({ gridlyGetCurrentGovernedLocationContext: () => context }).GridlyPoiBrowserProvider.requestForCurrentContext(25, 'HOSPITAL');
@@ -58,6 +64,9 @@ test('Gridly location projection reads governed selection, presentation, and act
   const helper = appSource.slice(start, end);
   assert.ok(start >= 0 && end > start);
   assert.match(helper, /gridlyActiveGeographicPresentation/);
+  assert.match(helper, /presentationAuthority === "GOVERNED_SELECTION"/);
+  assert.match(helper, /presentation\.governedAwarenessKey === selectedAwarenessKey/);
+  assert.match(helper, /semanticLevel === "LOCAL" && !governedPresentationOwnsCoordinate/);
   assert.match(helper, /getGridlySelectedAwarenessArea\(\)/);
   assert.match(helper, /gridlyGetActiveCountyId\(\)/);
   assert.match(helper, /gridlyResolveGovernedWeatherPoint\(selectedArea\)/);
@@ -66,4 +75,28 @@ test('Gridly location projection reads governed selection, presentation, and act
   assert.match(helper, /originType: "GOVERNED_NON_PLACE"/);
   assert.match(helper, /originType: "DIRECT_COORDINATE"/);
   assert.match(helper, /if \(!selectedArea \|\| selectedArea\.fallback === true\) return null/);
+});
+
+test('governed selection dispatch marks both PLACE and LOCAL coordinates with selection ownership', () => {
+  assert.match(appSource, /semanticLevel: "PLACE"[^\n]+presentationAuthority: "GOVERNED_SELECTION"[^\n]+governedAwarenessKey/);
+  assert.match(appSource, /semanticLevel: "LOCAL"[^\n]+presentationAuthority: "GOVERNED_SELECTION"[^\n]+governedAwarenessKey/);
+});
+
+test('an unowned or later standalone LOCAL presentation remains direct-coordinate authority', () => {
+  const start = appSource.indexOf('function gridlyGetCurrentGovernedLocationContext()');
+  const end = appSource.indexOf('\nfunction getGridlyCanonicalAwarenessPresentationContext', start);
+  const helper = appSource.slice(start, end);
+  assert.match(helper, /originType: "DIRECT_COORDINATE"/);
+  assert.match(helper, /communityIdentity: null/);
+  assert.ok(helper.indexOf('originType: "DIRECT_COORDINATE"') < helper.indexOf('originType: "GOVERNED_NON_PLACE"'));
+});
+
+test('multi-county acceptance cohorts retain selected county independently of identity', () => {
+  const api = runtime().GridlyPoiBrowserProvider;
+  for (const [name, county] of [['Austin', 'travis-tx'], ['Abilene', 'taylor-tx'], ['Midland', 'midland-tx']]) {
+    const request = api.requestForCohort(name, 5, '');
+    assert.equal(request.countyContextId, county);
+    assert.equal(request.originType, 'CANONICAL_PLACE');
+    assert.ok(request.communityIdentity.placeGeoid);
+  }
 });
