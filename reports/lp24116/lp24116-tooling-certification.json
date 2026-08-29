@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "gridly.lp24116.tooling-certification.v1",
+  "certificationState": "PHASE_LP24116_RUNTIME_V2_MATERIALIZATION_TOOLING_CERTIFIED",
+  "toolingReady": true,
+  "parquetReaderDecision": {
+    "existingReaderBeforeMilestone": false,
+    "duckDbCliReliablePrerequisite": false,
+    "dependency": "hyparquet",
+    "version": "1.17.0",
+    "pinned": true,
+    "pureJavaScript": true,
+    "nativeCompilation": false,
+    "usageScope": "LP241.16_LOCAL_BUILD_TOOLING_ONLY",
+    "memoryStrategy": "file-backed random-access reads with one projected object representation"
+  },
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v2",
+  "authorityInput": "owner-local/lp24111/identity-governed-eligible.parquet",
+  "authorityInputAvailableInCodex": false,
+  "ownerLocalMaterializationExecuted": false,
+  "runtimeShardsMaterialized": false,
+  "runtimeShardsCertified": false,
+  "boundedNegativeCases": 25,
+  "topology": {
+    "maxCandidateShards5Mi": 4,
+    "maxCandidateShards10Mi": 4,
+    "maxCandidateShards25Mi": 4
+  },
+  "readyForLp24114Rehearsal": false,
+  "productionBoundary": {
+    "deployed": false,
+    "productionSupabaseMutation": false,
+    "productionProviderEligible": false,
+    "providerGate": "OFF",
+    "runtimeActive": false,
+    "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+    "productionBehaviorChanged": false,
+    "remoteOvertureFetch": false,
+    "remoteFoursquareFetch": false,
+    "remoteAllThePlacesFetch": false,
+    "osmPoiMerge": false,
+    "authorityNormalizationRerun": false,
+    "d4Rerun": false,
+    "d3Rerun": false,
+    "d2Rerun": false
+  }
+}

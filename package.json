@@ -11,7 +11,8 @@
   "devDependencies": {
     "@capacitor/cli": "8.3.4",
     "@playwright/test": "1.54.2",
-    "fflate": "0.8.3"
+    "fflate": "0.8.3",
+    "hyparquet": "1.17.0"
   },
   "scripts": {
     "build:lp24111": "node tools/lp24111/manufacture.mjs --write",
@@ -678,6 +679,9 @@
     "audit:lp24115": "node tools/lp24115/authority-input-audit.mjs --write",
     "verify:lp24115": "node tools/lp24115/authority-input-audit.mjs --verify",
     "test:lp24115": "node --test tests/lp24115-authority-input-audit.test.mjs",
-    "test:lp24115c": "node --test tests/lp24115c-runtime-v2-reconciliation.test.mjs"
+    "test:lp24115c": "node --test tests/lp24115c-runtime-v2-reconciliation.test.mjs",
+    "build:lp24116": "node tools/lp24116/runtime-shard-materializer.mjs",
+    "verify:lp24116": "node tools/lp24116/runtime-shard-materializer.mjs --verify",
+    "test:lp24116": "node --test tests/lp24116-runtime-shard-materialization.test.mjs"
   }
 }
