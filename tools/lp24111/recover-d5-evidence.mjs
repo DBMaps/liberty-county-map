@@ -97,8 +97,15 @@ export function reconcileMetadataEvidence(rows){
  const classified=rows.map(row=>({...row,family:classifyMetadataFamily(row)}));
  if(classified.some(x=>!x.family))throw Error('METADATA_UNEXPLAINED_CONFLICT_ID_GATE_FAILED');
  const families=Object.fromEntries(['STATE_REGION_CONFLICT','LOCALITY_CONFLICT','POSTCODE_CONFLICT','MULTI_FIELD_CONFLICT'].map(name=>[name,classified.filter(x=>x.family===name).length]));
- const hitachi=classified.find(x=>x.name==='Hitachi Energy Jefferson City');
+ const hitachi=classified.find(x=>x.displayName==='Hitachi Energy Jefferson City');
  return {status:'MEASURED_RECONCILED',joinConservation:{conflictIdsInput:rows.length,uniqueConflictIds:new Set(rows.map(x=>x.id)).size,richerAuthorityMatches:rows.filter(x=>x.richerMatched).length,classifiedFamilyRows:classified.length,familyCountSum:Object.values(families).reduce((a,b)=>a+b,0),duplicateClassifications:0,unexplainedConflictIds:0},families,precedence:'MULTI_FIELD_CONFLICT_WHEN_MORE_THAN_ONE_INDEPENDENT_FIELD_CONFLICTS_OTHERWISE_SINGLE_FIELD',sourceFieldsRewritten:false,hitachi,rows:classified};
+}
+
+/** Build the bounded metadata ID-join query with parser-stable, explicit aliases. */
+export function metadataRecoveryQuery({conflictFile,richFile,governedLocality}){
+ const q=value=>`'${value.replaceAll("'","''")}'`;
+ const conflicts=`read_parquet(${q(conflictFile)})`,rich=`read_parquet(${q(richFile)})`;
+ return `WITH m AS (SELECT CAST(id AS VARCHAR) AS id,CAST(display_name AS VARCHAR) AS displayName,CAST(${governedLocality} AS VARCHAR) AS governedLocality FROM ${conflicts} WHERE classification='SPATIAL_METADATA_CONFLICT'), r AS (SELECT CAST(id AS VARCHAR) AS id,addresses FROM ${rich}) SELECT m.id AS id,m.displayName AS displayName,(r.id IS NOT NULL) AS richerMatched,(upper(trim(r.addresses.region)) NOT IN ('TX','TEXAS','')) AS regionConflict,(coalesce(trim(m.governedLocality),'')<>'' AND coalesce(trim(r.addresses.locality),'')<>'' AND lower(trim(m.governedLocality))<>lower(trim(r.addresses.locality))) AS localityConflict,(coalesce(trim(r.addresses.postcode),'')<>'' AND NOT regexp_matches(trim(r.addresses.postcode),'^(733|7[5-9]|885)')) AS postcodeConflict,r.addresses.region AS sourceRegion,r.addresses.locality AS sourceLocality,r.addresses.postcode AS sourcePostcode,m.governedLocality AS governedLocality FROM m LEFT JOIN r ON m.id=r.id ORDER BY m.id`;
 }
 
 export function reconcileBrandAggregate(measured){
@@ -140,8 +147,7 @@ export function recoverOwnerEvidence(directory=path.join(root,'owner-local/lp241
   requireSchema(path.basename(richFile),schemas.rich,{id:/./,addresses:/^STRUCT\((?=.*region)(?=.*locality)(?=.*postcode)/is});
   const governedLocality=governedLocalityColumn(schemas.metadata);
   present.push(path.basename(conflictFile));
-  const q=x=>`'${x.replaceAll("'","''")}'`,conflicts=`read_parquet(${q(conflictFile)})`,rich=`read_parquet(${q(richFile)})`;
-  const rows=queryParquet(conflictFile,`WITH m AS (SELECT cast(id AS varchar) id,cast(display_name AS varchar) name,cast(${governedLocality} AS varchar) governed_locality FROM ${conflicts} WHERE classification='SPATIAL_METADATA_CONFLICT'), r AS (SELECT cast(id AS varchar) id,addresses FROM ${rich}) SELECT m.id,m.name,r.id IS NOT NULL richerMatched,upper(trim(r.addresses.region)) NOT IN ('TX','TEXAS','') regionConflict,coalesce(trim(m.governed_locality),'')<>'' AND coalesce(trim(r.addresses.locality),'')<>'' AND lower(trim(m.governed_locality))<>lower(trim(r.addresses.locality)) localityConflict,coalesce(trim(r.addresses.postcode),'')<>'' AND NOT regexp_matches(trim(r.addresses.postcode),'^(733|7[5-9]|885)') postcodeConflict,r.addresses.region sourceRegion,r.addresses.locality sourceLocality,r.addresses.postcode sourcePostcode,m.governed_locality governedLocality FROM m LEFT JOIN r ON m.id=r.id ORDER BY m.id`);
+  const rows=queryParquet(conflictFile,metadataRecoveryQuery({conflictFile,richFile,governedLocality}));
   if(rows.some(x=>!x.richerMatched))throw Error(`METADATA_RICHER_JOIN_FAILED: ${rows.filter(x=>!x.richerMatched).length} missing IDs`);
   evidence.metadata=reconcileMetadataEvidence(rows);
   evidence.metadata.retainedSample=evidence.metadata.hitachi;

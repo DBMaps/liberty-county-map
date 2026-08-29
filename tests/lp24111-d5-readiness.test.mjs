@@ -5,7 +5,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {buildD5} from '../tools/lp24111/d5-readiness.mjs';
-import {recoverCommittedEvidence,recoverOwnerEvidence,reconcileBrandAggregate,reconcileRichBrandEvidence,reconcileMetadataEvidence,classifyMetadataFamily,BRANDS,CATEGORIES,EXPECTED_STANDALONE_IDS,BRAND_AUTHORITY_ROLE} from '../tools/lp24111/recover-d5-evidence.mjs';
+import {recoverCommittedEvidence,recoverOwnerEvidence,reconcileBrandAggregate,reconcileRichBrandEvidence,reconcileMetadataEvidence,classifyMetadataFamily,metadataRecoveryQuery,BRANDS,CATEGORIES,EXPECTED_STANDALONE_IDS,BRAND_AUTHORITY_ROLE} from '../tools/lp24111/recover-d5-evidence.mjs';
 
 const report=name=>JSON.parse(fs.readFileSync(new URL(`../reports/lp24111/${name}`,import.meta.url),'utf8'));
 const recovered=()=>recoverCommittedEvidence({radius:report('community-radius-coverage.json'),nonPlace:report('governed-non-place-coverage.json'),access:report('category-accessibility.json'),counties:report('county-coverage.json'),metadata:report('metadata-conflicts.json')});
@@ -144,7 +144,7 @@ test('D.5D rich brand recovery conserves the standalone authority and distinguis
 });
 
 test('D.5D metadata assigns each of the exact 149 IDs once and preserves Hitachi source evidence',()=>{
- const rows=Array.from({length:149},(_,i)=>({id:`id-${i}`,name:i===0?'Hitachi Energy Jefferson City':`record-${i}`,richerMatched:true,regionConflict:i%4===0,localityConflict:i%4===1,postcodeConflict:i%4===2,sourceRegion:i===0?'MO':'TX',sourceLocality:i===0?'Jefferson City':'local',sourcePostcode:i===0?'65101-5032':'75001'}));
+ const rows=Array.from({length:149},(_,i)=>({id:`id-${i}`,displayName:i===0?'Hitachi Energy Jefferson City':`record-${i}`,richerMatched:true,regionConflict:i%4===0,localityConflict:i%4===1,postcodeConflict:i%4===2,sourceRegion:i===0?'MO':'TX',sourceLocality:i===0?'Jefferson City':'local',sourcePostcode:i===0?'65101-5032':'75001'}));
  rows.filter((x,i)=>i%4===3).forEach(x=>{x.regionConflict=true;x.localityConflict=true;});
  rows[0].postcodeConflict=true;
  const result=reconcileMetadataEvidence(rows);
@@ -159,6 +159,15 @@ test('D.5D metadata assigns each of the exact 149 IDs once and preserves Hitachi
  assert.equal(classifyMetadataFamily({localityConflict:true}),'LOCALITY_CONFLICT');
  assert.equal(classifyMetadataFamily({postcodeConflict:true}),'POSTCODE_CONFLICT');
  assert.equal(classifyMetadataFamily({regionConflict:true,postcodeConflict:true}),'MULTI_FIELD_CONFLICT');
+});
+
+test('D.5G metadata recovery SQL explicitly aliases every derived output',()=>{
+ const query=metadataRecoveryQuery({conflictFile:'/tmp/metadata-conflicts.parquet',richFile:'/tmp/rich.parquet',governedLocality:'locality'});
+ for(const alias of ['id','displayName','governedLocality','richerMatched','regionConflict','localityConflict','postcodeConflict','sourceRegion','sourceLocality','sourcePostcode']){
+  assert.match(query,new RegExp(`\\bAS ${alias}\\b`),`${alias} must use explicit AS`);
+ }
+ assert.doesNotMatch(query,/CAST\([^)]*\)\s+(?!AS\b)[A-Za-z_][A-Za-z0-9_]*/i);
+ assert.doesNotMatch(query,/\)\s+(?:richerMatched|regionConflict|localityConflict|postcodeConflict)\b/);
 });
 
 test('D.5D recovery source is bounded to local ID joins and preserves legal and production boundaries',()=>{
@@ -182,7 +191,7 @@ test('D.5F SQL unnests rich LIST<STRUCT> sources before source-field dereference
  assert.match(source,/r\.addresses\.region/);
  assert.match(source,/r\.addresses\.locality/);
  assert.match(source,/r\.addresses\.postcode/);
- assert.match(source,/m\.governed_locality/);
+ assert.match(source,/m\.governedLocality/);
  assert.match(source,/EXPECTED_STANDALONE_IDS=391772/);
  assert.match(source,/EXPECTED_CONFLICT_IDS=149/);
 });
@@ -212,6 +221,12 @@ test('D.5F DuckDB recovery inventories rich source LIST<STRUCT> multiplicity wit
   assert.deepEqual(evidence.sourceInventory.licenses,['cdla','other']);
   assert.deepEqual(evidence.sourceInventory.sourcePropertyFrequencies,[{property:'shops',frequency:2},{property:'websites',frequency:1}]);
   assert.equal(evidence.metadata.joinConservation.conflictIdsInput,149);
+  assert.equal(evidence.metadata.joinConservation.uniqueConflictIds,149);
+  assert.equal(evidence.metadata.joinConservation.richerAuthorityMatches,149);
+  assert.equal(evidence.metadata.joinConservation.familyCountSum,149);
+  assert.equal(evidence.metadata.hitachi.displayName,'Hitachi Energy Jefferson City');
+  assert.deepEqual([evidence.metadata.hitachi.sourceRegion,evidence.metadata.hitachi.sourceLocality,evidence.metadata.hitachi.sourcePostcode],['MO','Elsewhere','65101']);
+  assert.equal(evidence.metadata.sourceFieldsRewritten,false);
   assert.match(evidence.artifactAudit.schemaAudit.relations.standalone.columns.find(x=>x.name==='sources').type,/VARCHAR/);
   assert.match(evidence.artifactAudit.schemaAudit.relations.rich.columns.find(x=>x.name==='sources').type,/STRUCT/);
 
