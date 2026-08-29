@@ -28,6 +28,8 @@
   "populatedBrandRows": 0,
   "aggregateArtifactRows": 0,
   "classification": "BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION",
+  "joinConservation": null,
+  "globalSummary": null,
   "rows": [
     {
       "brand": "Walmart",
