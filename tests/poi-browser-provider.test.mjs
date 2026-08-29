@@ -59,6 +59,29 @@ test('consumer surface is contextual while cohort selection remains API-only', (
   assert.match(source, /POI data sources and licenses/);
 });
 
+test('radius is a three-option accessible segment and not a visible native select', () => {
+  const surface = source.slice(source.indexOf('section.innerHTML = `<div class="gridly-poi-heading"'), source.indexOf('\n    host.append(section);'));
+  assert.doesNotMatch(surface, /<select id="gridlyPoiRadius"/);
+  assert.match(surface, /<fieldset id="gridlyPoiRadius"[^>]*>[\s\S]*?<legend>Radius<\/legend>/);
+  const radiusValues = [...surface.matchAll(/name="gridlyPoiRadiusMiles" value="(5|10|25)"/g)].map(match => Number(match[1]));
+  assert.deepEqual(radiusValues, [5, 10, 25]);
+  assert.equal((surface.match(/name="gridlyPoiRadiusMiles"[^>]* checked/g) || []).length, 1);
+  assert.match(source, /input\[name="gridlyPoiRadiusMiles"\]:checked/);
+});
+
+test('radius and category controls map through the unchanged current-context request contract', () => {
+  const context = { label: 'Dayton', latitude: 30.0466, longitude: -94.8852, countyContextId: 'liberty-tx', originType: 'CANONICAL_PLACE', communityIdentity: { stableGovernedIdentity: 'place-4819432', placeGeoid: '4819432' } };
+  const api = runtime({ gridlyGetCurrentGovernedLocationContext: () => context }).GridlyPoiBrowserProvider;
+  const five = api.requestForCurrentContext('5', 'PHARMACY');
+  const ten = api.requestForCurrentContext('10', 'PHARMACY');
+  assert.equal(five.radiusMiles, 5);
+  assert.equal(ten.radiusMiles, 10);
+  assert.equal(ten.category, five.category);
+  assert.equal(ten.name, five.name);
+  assert.equal(ten.countyContextId, five.countyContextId);
+  assert.match(source, /<select id="gridlyPoiCategory"><option value="">All categories<\/option>/);
+});
+
 test('Gridly location projection reads governed selection, presentation, and active county authorities', () => {
   const start = appSource.indexOf('function gridlyGetCurrentGovernedLocationContext()');
   const end = appSource.indexOf('\nfunction getGridlyCanonicalAwarenessPresentationContext', start);
