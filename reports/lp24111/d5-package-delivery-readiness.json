@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.package.v1",
+  "standaloneRows": 391772,
+  "statewideCompressedBytes": 24040589,
+  "largestShard": "tx-29-096",
+  "largestShardBytes": 4144301,
+  "shardsOver10MiB": 0,
+  "shardsOver25MiB": 0,
+  "fanout": [
+    {
+      "radiusMiles": 5,
+      "min": 1,
+      "median": 1,
+      "p90": 2,
+      "p95": 2,
+      "max": 4
+    },
+    {
+      "radiusMiles": 10,
+      "min": 1,
+      "median": 2,
+      "p90": 2,
+      "p95": 4,
+      "max": 4
+    },
+    {
+      "radiusMiles": 25,
+      "min": 1,
+      "median": 4,
+      "p90": 4,
+      "p95": 4,
+      "max": 4
+    }
+  ],
+  "assessment": "ONE_DEGREE_SHARDS_ACCEPTABLE_FOR_BOUNDED_INITIAL_ACTIVATION",
+  "phonePolicy": "BOUNDED_INTERSECTING_SHARDS_ONLY_NO_WHOLE_TEXAS_DOWNLOAD"
+}

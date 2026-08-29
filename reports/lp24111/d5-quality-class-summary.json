@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.quality.v1",
+  "evidenceState": "INSUFFICIENT_COMMITTED_D4_DETAIL",
+  "expectedIdentityCount": 1888,
+  "measuredIdentityCount": 0,
+  "classCounts": [
+    {
+      "qualityClass": "ROBUST_LOCAL_COVERAGE",
+      "count": null,
+      "placeCount": null,
+      "nonPlaceCount": null,
+      "representativeExamples": [],
+      "categoryGaps": [],
+      "launchBlocking": false
+    },
+    {
+      "qualityClass": "BASIC_LOCAL_COVERAGE",
+      "count": null,
+      "placeCount": null,
+      "nonPlaceCount": null,
+      "representativeExamples": [],
+      "categoryGaps": [],
+      "launchBlocking": false
+    },
+    {
+      "qualityClass": "REGIONAL_DEPENDENCY",
+      "count": null,
+      "placeCount": null,
+      "nonPlaceCount": null,
+      "representativeExamples": [],
+      "categoryGaps": [],
+      "launchBlocking": false
+    },
+    {
+      "qualityClass": "SPARSE_RURAL_EXPECTED",
+      "count": null,
+      "placeCount": null,
+      "nonPlaceCount": null,
+      "representativeExamples": [],
+      "categoryGaps": [],
+      "launchBlocking": false
+    },
+    {
+      "qualityClass": "CATEGORY_GAP",
+      "count": null,
+      "placeCount": null,
+      "nonPlaceCount": null,
+      "representativeExamples": [],
+      "categoryGaps": [],
+      "launchBlocking": false
+    },
+    {
+      "qualityClass": "METADATA_REVIEW_REQUIRED",
+      "count": null,
+      "placeCount": null,
+      "nonPlaceCount": null,
+      "representativeExamples": [],
+      "categoryGaps": [],
+      "launchBlocking": true
+    }
+  ],
+  "conservationPassed": false,
+  "omissionReason": "The certified D.4 quality report declares its classes but contains no per-identity rows or aggregate class counts; exact reconciliation cannot be inferred."
+}

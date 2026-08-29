@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.ledger.v1",
+  "ACTIVATION_BLOCKERS": [
+    {
+      "id": "D5_QUALITY_CLASS_DETAIL_MISSING",
+      "scope": "1,888 governed identities",
+      "reason": "Exact D.4 class conservation cannot be proved from empty quality rows.",
+      "evidence": "community-coverage-quality.json rows = 0",
+      "requiredAction": "Publish deterministic per-identity quality rows or aggregate PLACE/non-PLACE class counts from the already-measured D.4 outputs without rerunning coverage.",
+      "ownerAction": "Provide the missing committed D.4 quality-class detail.",
+      "blocking": true
+    },
+    {
+      "id": "D5_BRAND_DETAIL_MISSING",
+      "scope": "required traveler brands",
+      "reason": "Brand readiness cannot be measured from an empty D.4 brand report.",
+      "evidence": "brand-coverage.json rows = 0",
+      "requiredAction": "Publish the already-measured brand aggregates; do not refetch authority.",
+      "ownerAction": "Provide the missing committed D.4 brand aggregates.",
+      "blocking": true
+    },
+    {
+      "id": "LEGAL_CLEARANCE",
+      "scope": "public POI activation",
+      "reason": "Attribution/product obligations remain unresolved.",
+      "evidence": "LEGAL_REVIEW_REQUIRED; structured source metadata present on 0 records",
+      "requiredAction": "Obtain counsel review of Overture attribution, notices, provenance presentation, and any future ODbL supplement boundary.",
+      "ownerAction": "Route D.5 legal questions and source inventory to counsel.",
+      "blocking": true
+    }
+  ],
+  "POST_ACTIVATION_REFINEMENT_BACKLOG": [
+    {
+      "id": "CONVENIENCE_TAXONOMY_EVIDENCE",
+      "scope": "statewide CONVENIENCE",
+      "reason": "D.4 accessibility contains no CONVENIENCE rows.",
+      "evidence": "0 of 1,888 identities measured for this category",
+      "requiredAction": "Measure bounded candidate taxonomy families before proposing a rule.",
+      "ownerAction": "Schedule a non-runtime targeted taxonomy evidence milestone.",
+      "blocking": false
+    },
+    {
+      "id": "METADATA_PRESENTATION",
+      "scope": "149 conflicts and 278 incomplete records",
+      "reason": "Spatially useful records need safe textual presentation.",
+      "evidence": "D.4 metadata classifications",
+      "requiredAction": "Implement conflict quarantine/presentation policy in activation milestone.",
+      "ownerAction": "Approve presentation copy and diagnostics.",
+      "blocking": false
+    },
+    {
+      "id": "RURAL_SERVICE_EXPECTATIONS",
+      "scope": "15 rural-tail counties",
+      "reason": "Real sparse/regional patterns should be monitored, not metro-normalized.",
+      "evidence": "D.4 rural-tail category counts",
+      "requiredAction": "Monitor zero results and evaluate only targeted supplements after evidence/legal review.",
+      "ownerAction": "Accept rural sparsity policy.",
+      "blocking": false
+    }
+  ]
+}

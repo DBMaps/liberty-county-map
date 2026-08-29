@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.brands.v1",
+  "authorityRole": "DESCRIPTIVE_ONLY_NOT_LAUNCH_AUTHORITY",
+  "requestedBrands": [
+    "Walmart",
+    "H-E-B",
+    "Brookshire Brothers",
+    "Dollar General",
+    "Dollar Tree",
+    "Family Dollar",
+    "Shell",
+    "Chevron",
+    "Exxon",
+    "Valero",
+    "O'Reilly Auto Parts",
+    "AutoZone",
+    "Best Western",
+    "Holiday Inn Express",
+    "Hampton Inn",
+    "Motel 6",
+    "Starbucks",
+    "Subway",
+    "CVS",
+    "Walgreens"
+  ],
+  "recordsAudited": 391772,
+  "rows": [],
+  "complete": false,
+  "reason": "Committed D.4 report has zero brand rows; counts, county/community representation, and rural presence cannot be invented."
+}

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.gaps.v1",
+  "findings": [
+    {
+      "classification": "IDENTITY_GOVERNANCE_REVIEW",
+      "scope": "1,888 governed identities",
+      "countyCommunity": "STATEWIDE",
+      "evidenceFamily": "D5_QUALITY_CLASS_DETAIL_MISSING",
+      "measuredValue": "community-coverage-quality.json rows = 0",
+      "reason": "Exact D.4 class conservation cannot be proved from empty quality rows.",
+      "severity": "BLOCKER",
+      "launchImpact": "BLOCKS_D5_CERTIFICATION",
+      "recommendedAction": "Publish deterministic per-identity quality rows or aggregate PLACE/non-PLACE class counts from the already-measured D.4 outputs without rerunning coverage."
+    },
+    {
+      "classification": "BRAND_COVERAGE_GAP",
+      "scope": "required traveler brands",
+      "countyCommunity": "STATEWIDE",
+      "evidenceFamily": "D5_BRAND_DETAIL_MISSING",
+      "measuredValue": "brand-coverage.json rows = 0",
+      "reason": "Brand readiness cannot be measured from an empty D.4 brand report.",
+      "severity": "BLOCKER",
+      "launchImpact": "BLOCKS_D5_CERTIFICATION",
+      "recommendedAction": "Publish the already-measured brand aggregates; do not refetch authority."
+    },
+    {
+      "classification": "LEGAL_REVIEW_BLOCKER",
+      "scope": "public POI activation",
+      "countyCommunity": "STATEWIDE",
+      "evidenceFamily": "LEGAL_CLEARANCE",
+      "measuredValue": "LEGAL_REVIEW_REQUIRED; structured source metadata present on 0 records",
+      "reason": "Attribution/product obligations remain unresolved.",
+      "severity": "BLOCKER",
+      "launchImpact": "BLOCKS_D5_CERTIFICATION",
+      "recommendedAction": "Obtain counsel review of Overture attribution, notices, provenance presentation, and any future ODbL supplement boundary."
+    },
+    {
+      "classification": "TAXONOMY_REVIEW",
+      "scope": "statewide CONVENIENCE",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "CONVENIENCE_TAXONOMY_EVIDENCE",
+      "measuredValue": "0 of 1,888 identities measured for this category",
+      "reason": "D.4 accessibility contains no CONVENIENCE rows.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Measure bounded candidate taxonomy families before proposing a rule."
+    },
+    {
+      "classification": "METADATA_CONFLICT",
+      "scope": "149 conflicts and 278 incomplete records",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "METADATA_PRESENTATION",
+      "measuredValue": "D.4 metadata classifications",
+      "reason": "Spatially useful records need safe textual presentation.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Implement conflict quarantine/presentation policy in activation milestone."
+    },
+    {
+      "classification": "EXPECTED_SPARSE_RURAL",
+      "scope": "15 rural-tail counties",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "RURAL_SERVICE_EXPECTATIONS",
+      "measuredValue": "D.4 rural-tail category counts",
+      "reason": "Real sparse/regional patterns should be monitored, not metro-normalized.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Monitor zero results and evaluate only targeted supplements after evidence/legal review."
+    }
+  ]
+}

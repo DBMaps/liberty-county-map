@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.category.v1",
+  "source": "reports/lp24111/category-accessibility.json",
+  "communityCount": 1888,
+  "radiiMiles": [
+    5,
+    10,
+    25
+  ],
+  "rows": [
+    {
+      "category": "FUEL",
+      "measuredCommunityCount": 1888,
+      "zeroWithin5": 211,
+      "zeroWithin10": 74,
+      "zeroWithin25": 1,
+      "nearestDistanceExtremeMiles": 53.73396633279011,
+      "placeNonPlaceSplit": {
+        "within5": {
+          "PLACE": 211,
+          "nonPLACE": 0
+        },
+        "within10": {
+          "PLACE": 74,
+          "nonPLACE": 0
+        },
+        "within25": {
+          "PLACE": 1,
+          "nonPLACE": 0
+        }
+      },
+      "ruralMetroSplit": "NOT_AVAILABLE_IN_COMMITTED_D4_ACCESSIBILITY_ROWS",
+      "triage": "MEASURED_GAPS_REQUIRE_CONTEXTUAL_REVIEW"
+    },
+    {
+      "category": "GROCERY",
+      "measuredCommunityCount": 1888,
+      "zeroWithin5": 350,
+      "zeroWithin10": 122,
+      "zeroWithin25": 10,
+      "nearestDistanceExtremeMiles": 51.04353068795025,
+      "placeNonPlaceSplit": {
+        "within5": {
+          "PLACE": 350,
+          "nonPLACE": 0
+        },
+        "within10": {
+          "PLACE": 122,
+          "nonPLACE": 0
+        },
+        "within25": {
+          "PLACE": 10,
+          "nonPLACE": 0
+        }
+      },
+      "ruralMetroSplit": "NOT_AVAILABLE_IN_COMMITTED_D4_ACCESSIBILITY_ROWS",
+      "triage": "MEASURED_GAPS_REQUIRE_CONTEXTUAL_REVIEW"
+    },
+    {
+      "category": "LODGING",
+      "measuredCommunityCount": 1888,
+      "zeroWithin5": 366,
+      "zeroWithin10": 102,
+      "zeroWithin25": 3,
+      "nearestDistanceExtremeMiles": 36.445884699973845,
+      "placeNonPlaceSplit": {
+        "within5": {
+          "PLACE": 366,
+          "nonPLACE": 0
+        },
+        "within10": {
+          "PLACE": 102,
+          "nonPLACE": 0
+        },
+        "within25": {
+          "PLACE": 3,
+          "nonPLACE": 0
+        }
+      },
+      "ruralMetroSplit": "NOT_AVAILABLE_IN_COMMITTED_D4_ACCESSIBILITY_ROWS",
+      "triage": "MEASURED_GAPS_REQUIRE_CONTEXTUAL_REVIEW"
+    },
+    {
+      "category": "HOSPITAL",
+      "measuredCommunityCount": 1888,
+      "zeroWithin5": 743,
+      "zeroWithin10": 324,
+      "zeroWithin25": 24,
+      "nearestDistanceExtremeMiles": 57.17008454209985,
+      "placeNonPlaceSplit": {
+        "within5": {
+          "PLACE": 743,
+          "nonPLACE": 0
+        },
+        "within10": {
+          "PLACE": 324,
+          "nonPLACE": 0
+        },
+        "within25": {
+          "PLACE": 24,
+          "nonPLACE": 0
+        }
+      },
+      "ruralMetroSplit": "NOT_AVAILABLE_IN_COMMITTED_D4_ACCESSIBILITY_ROWS",
+      "triage": "MEASURED_GAPS_REQUIRE_CONTEXTUAL_REVIEW"
+    },
+    {
+      "category": "PHARMACY",
+      "measuredCommunityCount": 1887,
+      "zeroWithin5": 741,
+      "zeroWithin10": 332,
+      "zeroWithin25": 37,
+      "nearestDistanceExtremeMiles": 73.9381198266264,
+      "placeNonPlaceSplit": {
+        "within5": {
+          "PLACE": 741,
+          "nonPLACE": 0
+        },
+        "within10": {
+          "PLACE": 332,
+          "nonPLACE": 0
+        },
+        "within25": {
+          "PLACE": 37,
+          "nonPLACE": 0
+        }
+      },
+      "ruralMetroSplit": "NOT_AVAILABLE_IN_COMMITTED_D4_ACCESSIBILITY_ROWS",
+      "triage": "MEASURED_GAPS_REQUIRE_CONTEXTUAL_REVIEW"
+    },
+    {
+      "category": "RESTAURANT",
+      "measuredCommunityCount": 1888,
+      "zeroWithin5": 98,
+      "zeroWithin10": 25,
+      "zeroWithin25": 2,
+      "nearestDistanceExtremeMiles": 30.131139458220865,
+      "placeNonPlaceSplit": {
+        "within5": {
+          "PLACE": 98,
+          "nonPLACE": 0
+        },
+        "within10": {
+          "PLACE": 25,
+          "nonPLACE": 0
+        },
+        "within25": {
+          "PLACE": 2,
+          "nonPLACE": 0
+        }
+      },
+      "ruralMetroSplit": "NOT_AVAILABLE_IN_COMMITTED_D4_ACCESSIBILITY_ROWS",
+      "triage": "MEASURED_GAPS_REQUIRE_CONTEXTUAL_REVIEW"
+    },
+    {
+      "category": "CONVENIENCE",
+      "measuredCommunityCount": 0,
+      "zeroWithin5": 0,
+      "zeroWithin10": 0,
+      "zeroWithin25": 0,
+      "nearestDistanceExtremeMiles": null,
+      "placeNonPlaceSplit": {
+        "within5": {
+          "PLACE": 0,
+          "nonPLACE": 0
+        },
+        "within10": {
+          "PLACE": 0,
+          "nonPLACE": 0
+        },
+        "within25": {
+          "PLACE": 0,
+          "nonPLACE": 0
+        }
+      },
+      "ruralMetroSplit": "NOT_AVAILABLE_IN_COMMITTED_D4_ACCESSIBILITY_ROWS",
+      "triage": "POSSIBLE_TAXONOMY_MISS_REQUIRES_MEASUREMENT"
+    }
+  ],
+  "complete": false,
+  "caveat": "No taxonomy miss is declared without candidate-family measurement."
+}
