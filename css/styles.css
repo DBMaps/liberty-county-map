@@ -27523,7 +27523,7 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
 body[data-layout-mode="portrait"] .app-shell > :not(.main-column),
 body[data-layout-mode="portrait"] .app-shell > .main-column > :not(#mapSection),
 body[data-layout-mode="portrait"] #mapSection > :not(.map-card),
-body[data-layout-mode="portrait"] #mapSection > .map-card > :not(.map-frame),
+body[data-layout-mode="portrait"] #mapSection > .map-card > :not(.map-frame):not(.mobile-destination-command),
 body[data-layout-mode="portrait"] #mapSection > .map-card > .map-frame > :not(#map),
 body[data-layout-mode="portrait"] .mobile-floating-action-dock {
   display: none !important;

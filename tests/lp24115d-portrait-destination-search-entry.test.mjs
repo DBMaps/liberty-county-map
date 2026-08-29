@@ -21,6 +21,8 @@ test("active portrait ownership does not suppress the destination command", () =
     false,
     "the active portrait suppression group must not force the destination command to display:none"
   );
+  assert.doesNotMatch(css, /body\[data-layout-mode="portrait"\] #mapSection > \.map-card > :not\(\.map-frame\)\s*,/);
+  assert.match(css, /body\[data-layout-mode="portrait"\] #mapSection > \.map-card > :not\(\.map-frame\):not\(\.mobile-destination-command\)\s*,/);
   assert.match(css, /body\[data-layout-mode="portrait"\] \.mobile-destination-command\s*\{[^}]*display:\s*grid/);
   assert.match(app, /"#mapSection > \.map-card > :not\(\.map-frame\):not\(\.mobile-destination-command\)"/);
   assert.doesNotMatch(app, /"#mapSection > \.map-card > :not\(\.map-frame\)"/);
