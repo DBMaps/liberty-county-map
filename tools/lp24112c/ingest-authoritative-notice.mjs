@@ -42,11 +42,16 @@ export function extractFoursquareNotice(html){
 }
 
 export function crossCheckOverture(html){
- if(typeof html!=='string'||!/<html\b/i.test(html)||!/<\/html>/i.test(html))throw Error('OVERTURE_SNAPSHOT_MALFORMED');
+ const documentShape=typeof html==='string'&&/(?:<!doctype\s+html\b|<html\b)/i.test(html)&&/<body\b[^>]*>/i.test(html)&&/<\/body\s*>/i.test(html);
+ if(!documentShape)throw Error('OVERTURE_SNAPSHOT_MALFORMED');
+ const title=/<title\b[^>]*>\s*Attribution and Licensing\s*\|\s*Overture Documentation\s*<\/title>/i.test(html);
+ const canonical=/<link\b(?=[^>]*\brel\s*=\s*["']canonical["'])(?=[^>]*\bhref\s*=\s*["']https:\/\/docs\.overturemaps\.org\/attribution\/["'])[^>]*>/i.test(html);
+ const errorPage=/(?:cloudflare\s+(?:challenge|verification)|access\s+denied|\b403\s+(?:forbidden|error)|(?:generic|internal server)\s+error)/i.test(html);
+ if((!title&&!canonical)||errorPage)throw Error('OVERTURE_SNAPSHOT_WRONG_PAGE');
  const text=decodeEntities(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ');
- const facts={provider:/Foursquare/i.test(text),license:/Apache(?:-| )2\.0/i.test(text),transformation:/Foursquare data transformed to Overture schema/i.test(text),changed:/2026-03-18/.test(text),noticeReference:html.includes(FOURSQUARE_URL)||/places-notice-txt/i.test(html)};
+ const facts={provider:/\bFoursquare\b/i.test(text),license:/\bApache(?:-| )2\.0\b/i.test(text),transformation:/\bFoursquare data was transformed to the Overture schema\b/i.test(text),changed:/\b2026-03-18\b/.test(text),noticeReference:html.includes(FOURSQUARE_URL)};
  if(Object.values(facts).some(value=>!value))throw Error('OVERTURE_ATTRIBUTION_CROSS_CHECK_FAILED');
- return {status:'VERIFIED_FROM_OWNER_AUTHORITATIVE_SNAPSHOT',facts:{provider:'Foursquare',license:'Apache 2.0',transformation:'Foursquare data transformed to Overture schema',changed:'2026-03-18',noticeReference:FOURSQUARE_URL}};
+ return {status:'VERIFIED_FROM_OWNER_AUTHORITATIVE_SNAPSHOT',facts:{provider:'Foursquare',license:'Apache 2.0',transformation:'Foursquare data was transformed to the Overture schema',changed:'2026-03-18',noticeReference:FOURSQUARE_URL}};
 }
 
 function readSnapshot(file,label){
