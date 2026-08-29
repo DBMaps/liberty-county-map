@@ -14,6 +14,19 @@ test("portrait restores the original destination command Search entry", () => {
   assert.match(css, /\.gridly-v2-header-right\s*\{[\s\S]*?display:\s*none/);
 });
 
+test("active portrait ownership does not suppress the destination command", () => {
+  const portraitDisplayNoneRules = Array.from(css.matchAll(/([^{}]+)\{[^{}]*display:\s*none\s*!?important?\s*;?[^{}]*\}/g), (match) => match[1]);
+  assert.equal(
+    portraitDisplayNoneRules.some((selectors) => selectors.includes('body[data-layout-mode="portrait"] .mobile-destination-command,')),
+    false,
+    "the active portrait suppression group must not force the destination command to display:none"
+  );
+  assert.match(css, /body\[data-layout-mode="portrait"\] \.mobile-destination-command\s*\{[^}]*display:\s*grid/);
+  assert.match(app, /"#mapSection > \.map-card > :not\(\.map-frame\):not\(\.mobile-destination-command\)"/);
+  assert.doesNotMatch(app, /"#mapSection > \.map-card > :not\(\.map-frame\)"/);
+  assert.doesNotMatch(app, /mobile-destination-command[\s\S]{0,160}setAttribute\("inert", ""\)/);
+});
+
 test("destination command retains the existing Destination Search shell binding", () => {
   assert.match(app, /mobileDestinationCommandBtn\.addEventListener\("click"[\s\S]*?openGridlyDestinationSearchSurface\(\{ source: "destinationCommandButton" \}\)/);
   assert.match(app, /function showGridlySearchShell\(/);

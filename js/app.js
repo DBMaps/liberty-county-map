@@ -31097,7 +31097,7 @@ const GRIDLY_PORTRAIT_DUPLICATE_ROOTS = Object.freeze([
   ".app-shell > :not(.main-column)",
   ".app-shell > .main-column > :not(#mapSection)",
   "#mapSection > :not(.map-card)",
-  "#mapSection > .map-card > :not(.map-frame)",
+  "#mapSection > .map-card > :not(.map-frame):not(.mobile-destination-command)",
   "#mapSection > .map-card > .map-frame > :not(#map)",
   ".mobile-floating-action-dock"
 ]);

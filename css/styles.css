@@ -12945,7 +12945,6 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
     --gridly-portrait-dock-h: 78px;
   }
 
-  body[data-layout-mode="portrait"] .mobile-destination-command,
   body[data-layout-mode="portrait"] .mobile-bottom-nav,
   body[data-layout-mode="portrait"] .mobile-daily-panel,
   body[data-layout-mode="portrait"] .mobile-local-context-strip,
