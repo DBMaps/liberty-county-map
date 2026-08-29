@@ -1,0 +1,29 @@
+{
+  "milestone": "LP241.15C",
+  "result": "PHASE_LP24115C_RUNTIME_SCHEMA_V2_RECONCILIATION_CERTIFIED",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v2",
+  "sourceInventorySha256": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13",
+  "authorityInputSha256": "6c63fc555ea4a887162541cb1a4587f9d3edb52fb70cb3e81982598b9a82f85c",
+  "expectedGovernedPoiCount": 391772,
+  "frozenAuthorityChanged": false,
+  "communityIdentityPoiField": "REMOVED",
+  "communityIdentityRequestField": "OPTIONAL_GOVERNED_CONTEXT",
+  "countyContextIdPoiField": "MANDATORY",
+  "v1CacheReusable": false,
+  "v2ComplianceBinding": true,
+  "runtimeShardsMaterialized": false,
+  "readyForShardMaterialization": true,
+  "readyForLp24114Rehearsal": false,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "productionBehaviorChanged": false,
+  "historicalResultsPreserved": [
+    "REHEARSAL_BLOCKED_RUNTIME_SHARDS_NOT_MATERIALIZED",
+    "RUNTIME_SHARD_MATERIALIZATION_BLOCKED_FROZEN_AUTHORITY_NOT_AVAILABLE",
+    "RUNTIME_SHARD_MATERIALIZATION_BLOCKED_AUTHORITY_INTEGRITY_MISMATCH",
+    "COMMUNITY_IDENTITY_CONTRACT_DEFECT_REQUIRES_RUNTIME_SCHEMA_RECONCILIATION"
+  ]
+}

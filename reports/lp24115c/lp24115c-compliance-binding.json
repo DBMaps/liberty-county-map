@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "gridly.lp24115c.compliance-binding.v1",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v2",
+  "historicalLegalManifest": "reports/lp24113/lp24113-release-legal-manifest.json",
+  "foursquareNotice": "legal/third-party/foursquare/NOTICE.txt",
+  "foursquareNoticeSha256": "07cef40d0b0d1f5786b3e29983970aa0729ee6e508d1c4e3e18bbe0eef8878a3",
+  "licenseExposure": {
+    "CDLA-Permissive-2.0 only": 355925,
+    "Apache-2.0 + CDLA-Permissive-2.0": 23248,
+    "CC0-1.0 + CDLA-Permissive-2.0": 12599,
+    "total": 391772
+  },
+  "modificationStatement": "Gridly uses modified Overture Maps Places data. Gridly transforms, filters, normalizes, classifies, deduplicates and projects source POI records into its Texas-focused POI dataset.",
+  "nonAffiliationStatement": "Business names and trademarks are the property of their respective owners. Their appearance in Gridly does not imply affiliation with or endorsement of Gridly.",
+  "attribution": {"wording": "POI data sources and licenses", "target": "DATA_SOURCES_AND_LICENSES"},
+  "activeSearchAttributionPersistenceCertified": false,
+  "licenseExposureChanged": false,
+  "nonProductionOnly": true
+}
