@@ -24,8 +24,10 @@ function fixture(overrides = {}) {
 
 function manualFixture() {
   const context = fixture();
+  context.gridlyResolveCanonicalCountyIdForOperationalContext = area => area?.countyIds?.[0] || null;
   context.getGridlyManualAwarenessAreaOptions = () => Object.freeze(Object.entries(context.GRIDLY_COUNTY_REGISTRY).map(([countyId, county]) => Object.freeze({
     countyValue: countyId,
+    countyId,
     countyLabel: county.name,
     countyFips: county.countyFips,
     communities: Object.freeze((county.consumerAwarenessAreas || []).map(community => Object.freeze({ key: `${countyId}-${community.displayName.toLowerCase().replace(/ /g, '-')}`, value: `${countyId}-${community.displayName.toLowerCase().replace(/ /g, '-')}`, label: community.displayName, canonicalLabel: community.displayName, countyId, countyOccurrenceKey: `${countyId}-${community.placeGeoid}`, ...community, countyMemberships: Object.freeze([...community.countyMemberships].map(String).sort()) })))
@@ -115,7 +117,7 @@ test('cameras and protected precedence remain literal and unchanged', () => {
   assert.match(source, /identityType: "PLACE_GEOID"/);
 });
 
-test('manual home-area pipeline presents one explicit governed-membership row per canonical PLACE membership', () => {
+test('manual home-area pipeline presents one canonical row while retaining every governed PLACE membership', () => {
   for (const [name, geoid] of [['Dallas', '4819000'], ['Fort Worth', '4827000'], ['Austin', '4805000']]) {
     const context = manualFixture();
     const memberships = name === 'Dallas' ? ['48085', '48113', '48121'] : name === 'Fort Worth' ? ['48121', '48367', '48439'] : ['48021', '48055', '48209', '48453'];
@@ -126,14 +128,14 @@ test('manual home-area pipeline presents one explicit governed-membership row pe
     context.gridlyGetSelectableOperationalCountyIds = () => counties.map(([id]) => id);
     const result = context.manualSearch(name);
     assert.equal(result.exactMatch, true);
-    assert.equal(result.groups.length, memberships.length);
-    assert.ok(result.groups.every(group => group.communities.length === 1));
-    assert.ok(result.groups.every(group => group.communities[0].canonicalResolution.placeGeoid === geoid));
-    assert.deepEqual(result.groups.map(group => group.communities[0].requestedOperationalCountyId), counties.map(([countyId]) => countyId));
+    assert.equal(result.groups.length, 1);
+    assert.equal(result.groups[0].communities.length, 1);
+    assert.equal(result.groups[0].communities[0].canonicalResolution.placeGeoid, geoid);
+    assert.deepEqual([...result.groups[0].communities[0].canonicalResolution.countyMemberships], memberships);
   }
 });
 
-test('partial PLACE search preserves canonical identity and an explicit token for every governed membership', () => {
+test('partial PLACE search preserves canonical identity and governed memberships behind one result', () => {
   for (const [query, name, geoid, memberships] of [
     ['corp', 'Corpus Christi', '4817000', ['48007', '48273', '48355', '48409']],
     ['aus', 'Austin', '4805000', ['48021', '48055', '48209', '48453']],
@@ -148,14 +150,13 @@ test('partial PLACE search preserves canonical identity and an explicit token fo
     context.gridlyGetSelectableOperationalCountyIds = () => counties.map(([id]) => id);
     const partial = context.manualSearch(query);
     const exact = context.manualSearch(name);
-    assert.equal(partial.groups.length, memberships.length);
+    assert.equal(partial.groups.length, 1);
     assert.ok(partial.groups.every(group => group.communities.length === 1));
     assert.ok(partial.groups.every(group => group.communities[0].canonicalResolution.placeGeoid === geoid));
-    assert.equal(partial.groups.map(group => group.countyValue).join('|'), counties.map(([countyId]) => countyId).join('|'));
-    assert.equal(new Set(partial.groups.map(group => group.communities[0].value)).size, memberships.length);
-    assert.ok(partial.groups.every((group, index) => group.communities[0].value.startsWith(`${counties[index][0]}-`)));
+    assert.equal(new Set(partial.groups.map(group => group.communities[0].value)).size, 1);
+    assert.equal(partial.groups[0].communities[0].value, `place-${geoid}`);
     assert.deepEqual([...partial.groups[0].communities[0].countyMemberships], memberships);
-    assert.equal(exact.groups.length, memberships.length);
+    assert.equal(exact.groups.length, 1);
     assert.ok(exact.groups.every(group => group.communities[0].canonicalResolution.placeGeoid === geoid));
   }
 });
@@ -175,10 +176,61 @@ test('partial search never name-deduplicates distinct PLACE GEOIDs', () => {
   assert.equal(rows.map(row => row.placeGeoid).sort().join('|'), '4800001|4800002');
 });
 
+test('Port Arthur search projects PLACE 4858820 once and preserves Jefferson and Orange memberships', () => {
+  const context = manualFixture();
+  const memberships = ['48245', '48361'];
+  context.GRIDLY_COUNTY_REGISTRY = {
+    'jefferson-tx': { name: 'Jefferson County', countyFips: '48245', consumerAwarenessAreas: [{ placeGeoid: '4858820', displayName: 'Port Arthur', governedType: 'INCORPORATED_PLACE', canonicalIdentity: 'PLACE_GEOID', consumerEligible: true, countyMemberships: memberships }] },
+    'orange-tx': { name: 'Orange County', countyFips: '48361', consumerAwarenessAreas: [{ placeGeoid: '4858820', displayName: 'Port Arthur', governedType: 'INCORPORATED_PLACE', canonicalIdentity: 'PLACE_GEOID', consumerEligible: true, countyMemberships: memberships }] }
+  };
+  context.GRIDLY_AWARENESS_AREA_DEFINITIONS = [
+    { key: 'port-arthur', label: 'Port Arthur', storageValue: 'Port Arthur', countyId: 'jefferson-tx', placeGeoid: '4858820', lat: 29.8716577, lng: -93.9332302 },
+    { key: 'orange-tx-port-arthur', label: 'Port Arthur', storageValue: 'Port Arthur', countyId: 'orange-tx', placeGeoid: '4858820' }
+  ];
+  context.GRIDLY_AWARENESS_AREA_BY_KEY = Object.fromEntries(context.GRIDLY_AWARENESS_AREA_DEFINITIONS.map(area => [area.key, area]));
+  context.gridlyGetSelectableOperationalCountyIds = () => ['jefferson-tx', 'orange-tx'];
+  context.gridlyResolveCanonicalCountyIdForOperationalContext = () => 'jefferson-tx';
+
+  const search = context.manualSearch('port arthur');
+  const rows = search.groups.flatMap(group => group.communities);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].canonicalResolution.placeGeoid, '4858820');
+  assert.equal(rows[0].canonicalResolution.canonicalIdentity, 'PLACE_GEOID');
+  assert.deepEqual([...rows[0].canonicalResolution.countyMemberships], memberships);
+  assert.deepEqual(rows[0].canonicalResolution.candidates.map(candidate => candidate.countyId).sort(), ['jefferson-tx', 'orange-tx']);
+});
+
+test('single-county and governed non-PLACE stable keys remain distinct', () => {
+  const context = manualFixture();
+  context.GRIDLY_COUNTY_REGISTRY = {
+    one: { name: 'One County', countyFips: '48001', consumerAwarenessAreas: [
+      { placeGeoid: '4800001', displayName: 'Solo', governedType: 'INCORPORATED_PLACE', canonicalIdentity: 'PLACE_GEOID', consumerEligible: true, countyMemberships: ['48001'] },
+      { placeGeoid: null, displayName: 'Shared Region', governedType: 'GOVERNED_NON_PLACE', canonicalIdentity: 'STABLE_KEY', consumerEligible: true, countyMemberships: [] }
+    ] },
+    two: { name: 'Two County', countyFips: '48003', consumerAwarenessAreas: [
+      { placeGeoid: null, displayName: 'Shared Region', governedType: 'GOVERNED_NON_PLACE', canonicalIdentity: 'STABLE_KEY', consumerEligible: true, countyMemberships: [] }
+    ] }
+  };
+  context.GRIDLY_AWARENESS_AREA_DEFINITIONS = [
+    { key: 'one-solo', label: 'Solo', storageValue: 'Solo', countyId: 'one', placeGeoid: '4800001' },
+    { key: 'one-shared', label: 'Shared Region', storageValue: 'Shared Region', countyId: 'one' },
+    { key: 'two-shared', label: 'Shared Region', storageValue: 'Shared Region', countyId: 'two' }
+  ];
+  context.gridlyGetSelectableOperationalCountyIds = () => ['one', 'two'];
+
+  assert.deepEqual(context.manualSearch('solo').groups.flatMap(group => group.communities).map(row => row.key), ['one-solo']);
+  assert.deepEqual(Array.from(context.manualSearch('shared').groups.flatMap(group => group.communities), row => row.key).sort(), ['one-shared-region', 'two-shared-region']);
+});
+
+test('canonical search projection never consults stale active-county context', () => {
+  assert.doesNotMatch(manualSearchSource, /gridlyGetActiveCountyId/);
+  assert.match(manualSearchSource, /gridlyResolveCanonicalCountyIdForOperationalContext\(exact\.awarenessArea, null\)/);
+});
+
 test('Austin exact precedence does not expose Austin County or Bellville, while explicit searches remain available', () => {
   const context = manualFixture();
   const austin = context.manualSearch('Dallas');
-  assert.equal(austin.groups.length, 3);
+  assert.equal(austin.groups.length, 1);
   context.GRIDLY_AWARENESS_AREA_DEFINITIONS.push({ key: 'collin-tx-bellville', label: 'Bellville', storageValue: 'Bellville', countyId: 'collin-tx' });
   context.GRIDLY_AWARENESS_AREA_BY_KEY['collin-tx-bellville'] = context.GRIDLY_AWARENESS_AREA_DEFINITIONS.at(-1);
   context.GRIDLY_COUNTY_REGISTRY['collin-tx'].consumerAwarenessAreas.push({ placeGeoid: '4807488', displayName: 'Bellville', canonicalIdentity: 'PLACE_GEOID', consumerEligible: true, countyMemberships: ['48085'] });

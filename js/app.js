@@ -99013,7 +99013,12 @@ function resolveGridlyManualAwarenessAreaSearch(query = "") {
   }
   const exact = resolveGridlyAwarenessAreaQuery(normalizedQuery);
   if (exact.status === "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE") {
-    const candidate = exact.candidates.find((row) => row.countyId === gridlyGetActiveCountyId()) || exact.candidates[0];
+    // Search chooses the canonical PLACE, not one of its county-membership
+    // rows. Resolve the downstream operational member from the governed PLACE
+    // presentation point; the county active for the previous town is not
+    // authority for this new selection.
+    const authoritativeCountyId = gridlyResolveCanonicalCountyIdForOperationalContext(exact.awarenessArea, null);
+    const candidate = exact.candidates.find((row) => row.countyId === authoritativeCountyId) || null;
     const groups = candidate ? [Object.freeze({
       countyValue: candidate.countyId,
       countyId: candidate.countyId,
