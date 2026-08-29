@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "gridly.lp24117.rollback.v1",
+  "before": {
+    "providerIdentity": "PRODUCTION_PROVIDER_UNCHANGED",
+    "providerMode": "DISABLED",
+    "cacheReleaseState": "NO_PRODUCTION_CACHE_MUTATION",
+    "runtimeActive": false
+  },
+  "after": {
+    "productionProviderUnchanged": true,
+    "productionProviderGate": "OFF",
+    "runtimeActive": false,
+    "rehearsalProviderEnabled": false,
+    "temporaryRehearsalState": "CLEARED_PROCESS_EXIT",
+    "productionMutation": false
+  },
+  "rollbackPassed": true
+}

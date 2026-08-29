@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "gridly.lp24117.negative-cases.v1",
+  "cases": [
+    {
+      "name": "wrong authorityReleaseId",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "wrong runtimeSchemaVersion",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "v1 runtime schema",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "wrong sourceInventoryHash",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "wrong authorityInputHash",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "wrong runtime manifest hash",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "wrong Foursquare NOTICE hash",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "missing NOTICE",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "missing legal manifest",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "missing license-reference manifest",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "invalid shard ID",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "missing shard",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "corrupt shard",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "shard SHA mismatch",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "manifest/shard mismatch",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "production environment",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "wrong rehearsal mode",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "provider gate enabled",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "cache version mismatch",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "request community identity mismatch",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "multi-county stale context",
+      "result": "PASS_FAIL_CLOSED"
+    },
+    {
+      "name": "forbidden POI-level communityIdentity",
+      "result": "PASS_FAIL_CLOSED"
+    }
+  ],
+  "passed": 22,
+  "failed": 0,
+  "silentFallback": false
+}

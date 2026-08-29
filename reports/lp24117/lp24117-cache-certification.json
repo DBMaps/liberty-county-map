@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.lp24117.cache.v1",
+  "namespace": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/{shardId}.json.gz",
+  "exactReleaseReuse": true,
+  "duplicateShardLoadSuppression": true,
+  "v1CacheReuse": false,
+  "schemaMismatchInvalidation": true,
+  "authorityReleaseMismatchInvalidation": true,
+  "manifestHashMismatchInvalidation": true,
+  "requestContextKeyFields": [
+    "communityIdentity",
+    "countyContextId",
+    "originType"
+  ],
+  "staleMultiCountyContextInvalidation": true,
+  "physicalShardLoads": 30
+}
