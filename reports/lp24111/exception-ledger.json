@@ -2,18 +2,6 @@
   "schemaVersion": "gridly.lp24111.d4.exceptions.v1",
   "exceptions": [
     {
-      "id": "REMAINING_PHASE_D_MEASUREMENTS_NOT_EXECUTED",
-      "severity": "BLOCKER"
-    },
-    {
-      "id": "D4_OWNER_LOCAL_STANDALONE_AUTHORITY_ABSENT",
-      "severity": "BLOCKER"
-    },
-    {
-      "id": "D4_29_ANCHOR_EXPORT_ABSENT",
-      "severity": "BLOCKER"
-    },
-    {
       "id": "LICENSE_COUNSEL_REVIEW",
       "severity": "BLOCKER"
     },

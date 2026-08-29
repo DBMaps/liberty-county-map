@@ -1,6 +1,11 @@
 {
   "schemaVersion": "gridly.lp24111.d4.sources.v1",
-  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "executionState": "OWNER_LOCAL_MEASURED",
+  "recordsAudited": 391772,
+  "recordsWithSourceMetadata": 0,
+  "recordsWithMultipleSources": 0,
+  "providerFrequencies": [],
+  "projectionLimitation": "Identity-governed projection contains no structured sources column.",
   "reviewState": "LEGAL_REVIEW_REQUIRED",
   "legalConclusion": false
 }

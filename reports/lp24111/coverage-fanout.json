@@ -1,11 +1,32 @@
 {
   "schemaVersion": "gridly.lp24111.d4.fanout.v1",
-  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "communityCount": 1888,
-  "radiiMiles": [
-    5,
-    10,
-    25
-  ],
-  "architecture": "EXISTING_ONE_DEGREE_SHARDS_NOT_REGENERATED"
+  "architecture": "EXISTING_ONE_DEGREE_SHARDS_NOT_REGENERATED",
+  "distributions": [
+    {
+      "radiusMiles": 5,
+      "min": 1,
+      "median": 1,
+      "p90": 2,
+      "p95": 2,
+      "max": 4
+    },
+    {
+      "radiusMiles": 10,
+      "min": 1,
+      "median": 2,
+      "p90": 2,
+      "p95": 4,
+      "max": 4
+    },
+    {
+      "radiusMiles": 25,
+      "min": 1,
+      "median": 4,
+      "p90": 4,
+      "p95": 4,
+      "max": 4
+    }
+  ]
 }

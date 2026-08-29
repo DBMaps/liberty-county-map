@@ -1,34 +1,1510 @@
 {
   "schemaVersion": "gridly.lp24111.d4.non-place.v1",
-  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
-  "standaloneAuthorityRows": 391772,
-  "radiiMiles": [
-    5,
-    10,
-    25
-  ],
-  "coreCategories": [
-    "FUEL",
-    "GROCERY",
-    "LODGING",
-    "HOSPITAL",
-    "PHARMACY",
-    "RESTAURANT",
-    "CONVENIENCE"
-  ],
+  "executionState": "OWNER_LOCAL_MEASURED",
   "expectedCount": 29,
-  "measuredCount": 0,
-  "governedInventory": {
-    "total": 29,
-    "houstonRegions": 15,
-    "sanAntonioRegions": 9,
-    "ordinaryCommunities": 5
-  },
+  "measuredCount": 29,
+  "missingAnchors": 0,
   "noFabricatedPlaceGeoids": true,
   "tarkington": {
-    "identityType": "GOVERNED_NON_PLACE",
+    "stableGovernedIdentity": "liberty-tx:tarkington",
+    "communityKey": "tarkington",
+    "displayLabel": "Tarkington",
+    "identityClass": "GOVERNED_NON_PLACE",
     "placeGeoid": null,
-    "measurement": "NOT_EXECUTED"
+    "countyId": "liberty-tx",
+    "anchor": {
+      "latitude": 30.3205,
+      "longitude": -94.996
+    },
+    "radiiMiles": {
+      "5": {
+        "standalonePoiCount": 118,
+        "coreCategoryCounts": {
+          "FUEL": 14,
+          "GROCERY": 3,
+          "LODGING": 1,
+          "HOSPITAL": 0,
+          "PHARMACY": 0,
+          "RESTAURANT": 21,
+          "CONVENIENCE": 0
+        }
+      },
+      "10": {
+        "standalonePoiCount": 462,
+        "coreCategoryCounts": {
+          "FUEL": 50,
+          "GROCERY": 13,
+          "LODGING": 16,
+          "HOSPITAL": 9,
+          "PHARMACY": 8,
+          "RESTAURANT": 125,
+          "CONVENIENCE": 0
+        }
+      },
+      "25": {
+        "standalonePoiCount": 3891,
+        "coreCategoryCounts": {
+          "FUEL": 337,
+          "GROCERY": 123,
+          "LODGING": 133,
+          "HOSPITAL": 70,
+          "PHARMACY": 57,
+          "RESTAURANT": 1193,
+          "CONVENIENCE": 0
+        }
+      }
+    }
   },
-  "rows": []
+  "rows": [
+    {
+      "stableGovernedIdentity": "harris-tx:houston-downtown-midtown",
+      "communityKey": "houston-downtown-midtown",
+      "displayLabel": "Downtown / Midtown",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.7532,
+        "longitude": -95.367
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 9955,
+          "coreCategoryCounts": {
+            "FUEL": 331,
+            "GROCERY": 295,
+            "LODGING": 292,
+            "HOSPITAL": 437,
+            "PHARMACY": 218,
+            "RESTAURANT": 3769,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 22740,
+          "coreCategoryCounts": {
+            "FUEL": 1092,
+            "GROCERY": 856,
+            "LODGING": 743,
+            "HOSPITAL": 800,
+            "PHARMACY": 519,
+            "RESTAURANT": 8109,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 66184,
+          "coreCategoryCounts": {
+            "FUEL": 3642,
+            "GROCERY": 2407,
+            "LODGING": 1987,
+            "HOSPITAL": 1985,
+            "PHARMACY": 1590,
+            "RESTAURANT": 24050,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-east-end",
+      "communityKey": "houston-east-end",
+      "displayLabel": "East End",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.7355,
+        "longitude": -95.312
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 6636,
+          "coreCategoryCounts": {
+            "FUEL": 323,
+            "GROCERY": 226,
+            "LODGING": 215,
+            "HOSPITAL": 130,
+            "PHARMACY": 135,
+            "RESTAURANT": 2376,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 19862,
+          "coreCategoryCounts": {
+            "FUEL": 1053,
+            "GROCERY": 708,
+            "LODGING": 657,
+            "HOSPITAL": 738,
+            "PHARMACY": 451,
+            "RESTAURANT": 7040,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 62719,
+          "coreCategoryCounts": {
+            "FUEL": 3512,
+            "GROCERY": 2287,
+            "LODGING": 1962,
+            "HOSPITAL": 1929,
+            "PHARMACY": 1481,
+            "RESTAURANT": 22431,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-southwest",
+      "communityKey": "houston-southwest",
+      "displayLabel": "Southwest Houston",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.676,
+        "longitude": -95.517
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 7541,
+          "coreCategoryCounts": {
+            "FUEL": 302,
+            "GROCERY": 386,
+            "LODGING": 185,
+            "HOSPITAL": 228,
+            "PHARMACY": 213,
+            "RESTAURANT": 2904,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 23316,
+          "coreCategoryCounts": {
+            "FUEL": 885,
+            "GROCERY": 891,
+            "LODGING": 595,
+            "HOSPITAL": 908,
+            "PHARMACY": 656,
+            "RESTAURANT": 8785,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 60888,
+          "coreCategoryCounts": {
+            "FUEL": 3277,
+            "GROCERY": 2282,
+            "LODGING": 1747,
+            "HOSPITAL": 1786,
+            "PHARMACY": 1505,
+            "RESTAURANT": 22151,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "montgomery-tx:porter",
+      "communityKey": "porter",
+      "displayLabel": "Porter",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "montgomery-tx",
+      "anchor": {
+        "latitude": 30.1024,
+        "longitude": -95.2355
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 1255,
+          "coreCategoryCounts": {
+            "FUEL": 85,
+            "GROCERY": 44,
+            "LODGING": 40,
+            "HOSPITAL": 34,
+            "PHARMACY": 28,
+            "RESTAURANT": 463,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 3530,
+          "coreCategoryCounts": {
+            "FUEL": 242,
+            "GROCERY": 108,
+            "LODGING": 116,
+            "HOSPITAL": 75,
+            "PHARMACY": 59,
+            "RESTAURANT": 1289,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 29282,
+          "coreCategoryCounts": {
+            "FUEL": 1974,
+            "GROCERY": 1047,
+            "LODGING": 977,
+            "HOSPITAL": 728,
+            "PHARMACY": 573,
+            "RESTAURANT": 10199,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-montrose-museum",
+      "communityKey": "houston-montrose-museum",
+      "displayLabel": "Montrose / Museum District",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.7372,
+        "longitude": -95.397
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 11264,
+          "coreCategoryCounts": {
+            "FUEL": 322,
+            "GROCERY": 264,
+            "LODGING": 377,
+            "HOSPITAL": 519,
+            "PHARMACY": 255,
+            "RESTAURANT": 4264,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 24566,
+          "coreCategoryCounts": {
+            "FUEL": 1096,
+            "GROCERY": 937,
+            "LODGING": 755,
+            "HOSPITAL": 899,
+            "PHARMACY": 571,
+            "RESTAURANT": 8842,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 65793,
+          "coreCategoryCounts": {
+            "FUEL": 3609,
+            "GROCERY": 2399,
+            "LODGING": 1946,
+            "HOSPITAL": 1963,
+            "PHARMACY": 1603,
+            "RESTAURANT": 23863,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-med-center-rice",
+      "communityKey": "houston-med-center-rice",
+      "displayLabel": "Medical Center / Rice",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.7079,
+        "longitude": -95.401
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 10408,
+          "coreCategoryCounts": {
+            "FUEL": 319,
+            "GROCERY": 266,
+            "LODGING": 357,
+            "HOSPITAL": 502,
+            "PHARMACY": 256,
+            "RESTAURANT": 3892,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 23847,
+          "coreCategoryCounts": {
+            "FUEL": 1041,
+            "GROCERY": 900,
+            "LODGING": 734,
+            "HOSPITAL": 857,
+            "PHARMACY": 565,
+            "RESTAURANT": 8579,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 64776,
+          "coreCategoryCounts": {
+            "FUEL": 3547,
+            "GROCERY": 2373,
+            "LODGING": 1928,
+            "HOSPITAL": 1927,
+            "PHARMACY": 1571,
+            "RESTAURANT": 23455,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-north",
+      "communityKey": "houston-north",
+      "displayLabel": "North Houston / Greenspoint",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.9445,
+        "longitude": -95.408
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 2762,
+          "coreCategoryCounts": {
+            "FUEL": 222,
+            "GROCERY": 92,
+            "LODGING": 152,
+            "HOSPITAL": 47,
+            "PHARMACY": 46,
+            "RESTAURANT": 913,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 12602,
+          "coreCategoryCounts": {
+            "FUEL": 876,
+            "GROCERY": 489,
+            "LODGING": 514,
+            "HOSPITAL": 329,
+            "PHARMACY": 249,
+            "RESTAURANT": 4343,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 60352,
+          "coreCategoryCounts": {
+            "FUEL": 3397,
+            "GROCERY": 2246,
+            "LODGING": 1860,
+            "HOSPITAL": 1775,
+            "PHARMACY": 1395,
+            "RESTAURANT": 22013,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:northeast-san-antonio",
+      "communityKey": "northeast-san-antonio",
+      "displayLabel": "Northeast San Antonio",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.581475901424064,
+        "longitude": -98.40784840163508
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 2530,
+          "coreCategoryCounts": {
+            "FUEL": 114,
+            "GROCERY": 65,
+            "LODGING": 91,
+            "HOSPITAL": 80,
+            "PHARMACY": 50,
+            "RESTAURANT": 914,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 9374,
+          "coreCategoryCounts": {
+            "FUEL": 401,
+            "GROCERY": 285,
+            "LODGING": 321,
+            "HOSPITAL": 296,
+            "PHARMACY": 167,
+            "RESTAURANT": 3321,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 27845,
+          "coreCategoryCounts": {
+            "FUEL": 1240,
+            "GROCERY": 822,
+            "LODGING": 1101,
+            "HOSPITAL": 992,
+            "PHARMACY": 517,
+            "RESTAURANT": 9907,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:airport-fort-sam",
+      "communityKey": "airport-fort-sam",
+      "displayLabel": "Airport / Fort Sam",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.502531081732176,
+        "longitude": -98.44027413969336
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 4555,
+          "coreCategoryCounts": {
+            "FUEL": 182,
+            "GROCERY": 160,
+            "LODGING": 190,
+            "HOSPITAL": 138,
+            "PHARMACY": 67,
+            "RESTAURANT": 1620,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 16015,
+          "coreCategoryCounts": {
+            "FUEL": 646,
+            "GROCERY": 510,
+            "LODGING": 564,
+            "HOSPITAL": 706,
+            "PHARMACY": 295,
+            "RESTAURANT": 5757,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 26868,
+          "coreCategoryCounts": {
+            "FUEL": 1217,
+            "GROCERY": 789,
+            "LODGING": 954,
+            "HOSPITAL": 964,
+            "PHARMACY": 497,
+            "RESTAURANT": 9608,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:medical-region",
+      "communityKey": "medical-region",
+      "displayLabel": "Medical Region",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.495636300789577,
+        "longitude": -98.51516602675414
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 6995,
+          "coreCategoryCounts": {
+            "FUEL": 230,
+            "GROCERY": 208,
+            "LODGING": 202,
+            "HOSPITAL": 412,
+            "PHARMACY": 136,
+            "RESTAURANT": 2507,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 18300,
+          "coreCategoryCounts": {
+            "FUEL": 701,
+            "GROCERY": 581,
+            "LODGING": 663,
+            "HOSPITAL": 784,
+            "PHARMACY": 358,
+            "RESTAURANT": 6694,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 26373,
+          "coreCategoryCounts": {
+            "FUEL": 1199,
+            "GROCERY": 797,
+            "LODGING": 911,
+            "HOSPITAL": 960,
+            "PHARMACY": 490,
+            "RESTAURANT": 9431,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:utsa-northwest",
+      "communityKey": "utsa-northwest",
+      "displayLabel": "UTSA / Northwest",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.591886635851893,
+        "longitude": -98.61471921652927
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 2230,
+          "coreCategoryCounts": {
+            "FUEL": 74,
+            "GROCERY": 52,
+            "LODGING": 84,
+            "HOSPITAL": 84,
+            "PHARMACY": 59,
+            "RESTAURANT": 909,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 9472,
+          "coreCategoryCounts": {
+            "FUEL": 338,
+            "GROCERY": 290,
+            "LODGING": 289,
+            "HOSPITAL": 470,
+            "PHARMACY": 220,
+            "RESTAURANT": 3514,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 25881,
+          "coreCategoryCounts": {
+            "FUEL": 1147,
+            "GROCERY": 780,
+            "LODGING": 919,
+            "HOSPITAL": 952,
+            "PHARMACY": 481,
+            "RESTAURANT": 9275,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:southside-brooks",
+      "communityKey": "southside-brooks",
+      "displayLabel": "Southside / Brooks",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.295473924732278,
+        "longitude": -98.50839898231199
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 1150,
+          "coreCategoryCounts": {
+            "FUEL": 68,
+            "GROCERY": 34,
+            "LODGING": 23,
+            "HOSPITAL": 40,
+            "PHARMACY": 34,
+            "RESTAURANT": 405,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 6246,
+          "coreCategoryCounts": {
+            "FUEL": 289,
+            "GROCERY": 210,
+            "LODGING": 225,
+            "HOSPITAL": 237,
+            "PHARMACY": 107,
+            "RESTAURANT": 2140,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 25287,
+          "coreCategoryCounts": {
+            "FUEL": 1145,
+            "GROCERY": 758,
+            "LODGING": 876,
+            "HOSPITAL": 946,
+            "PHARMACY": 469,
+            "RESTAURANT": 9044,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-northeast",
+      "communityKey": "houston-northeast",
+      "displayLabel": "Northeast Houston",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.829,
+        "longitude": -95.272
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 1816,
+          "coreCategoryCounts": {
+            "FUEL": 195,
+            "GROCERY": 115,
+            "LODGING": 69,
+            "HOSPITAL": 22,
+            "PHARMACY": 34,
+            "RESTAURANT": 515,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 13611,
+          "coreCategoryCounts": {
+            "FUEL": 849,
+            "GROCERY": 535,
+            "LODGING": 443,
+            "HOSPITAL": 271,
+            "PHARMACY": 270,
+            "RESTAURANT": 5003,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 61106,
+          "coreCategoryCounts": {
+            "FUEL": 3501,
+            "GROCERY": 2236,
+            "LODGING": 1939,
+            "HOSPITAL": 1803,
+            "PHARMACY": 1414,
+            "RESTAURANT": 21805,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "montgomery-tx:new-caney",
+      "communityKey": "new-caney",
+      "displayLabel": "New Caney",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "montgomery-tx",
+      "anchor": {
+        "latitude": 30.1552,
+        "longitude": -95.2172
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 731,
+          "coreCategoryCounts": {
+            "FUEL": 66,
+            "GROCERY": 28,
+            "LODGING": 19,
+            "HOSPITAL": 4,
+            "PHARMACY": 12,
+            "RESTAURANT": 291,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 1846,
+          "coreCategoryCounts": {
+            "FUEL": 132,
+            "GROCERY": 61,
+            "LODGING": 47,
+            "HOSPITAL": 41,
+            "PHARMACY": 31,
+            "RESTAURANT": 662,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 21703,
+          "coreCategoryCounts": {
+            "FUEL": 1549,
+            "GROCERY": 741,
+            "LODGING": 729,
+            "HOSPITAL": 558,
+            "PHARMACY": 435,
+            "RESTAURANT": 7517,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-spring-branch",
+      "communityKey": "houston-spring-branch",
+      "displayLabel": "Spring Branch",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.8044,
+        "longitude": -95.52
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 5187,
+          "coreCategoryCounts": {
+            "FUEL": 222,
+            "GROCERY": 186,
+            "LODGING": 159,
+            "HOSPITAL": 144,
+            "PHARMACY": 101,
+            "RESTAURANT": 1737,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 25225,
+          "coreCategoryCounts": {
+            "FUEL": 1011,
+            "GROCERY": 954,
+            "LODGING": 680,
+            "HOSPITAL": 835,
+            "PHARMACY": 583,
+            "RESTAURANT": 9736,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 64879,
+          "coreCategoryCounts": {
+            "FUEL": 3503,
+            "GROCERY": 2419,
+            "LODGING": 1874,
+            "HOSPITAL": 1897,
+            "PHARMACY": 1583,
+            "RESTAURANT": 23724,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-heights-near-northside",
+      "communityKey": "houston-heights-near-northside",
+      "displayLabel": "Heights / Near Northside",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.7989,
+        "longitude": -95.398
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 8896,
+          "coreCategoryCounts": {
+            "FUEL": 330,
+            "GROCERY": 268,
+            "LODGING": 282,
+            "HOSPITAL": 200,
+            "PHARMACY": 170,
+            "RESTAURANT": 3454,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 24071,
+          "coreCategoryCounts": {
+            "FUEL": 1089,
+            "GROCERY": 907,
+            "LODGING": 756,
+            "HOSPITAL": 834,
+            "PHARMACY": 548,
+            "RESTAURANT": 8696,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 67017,
+          "coreCategoryCounts": {
+            "FUEL": 3698,
+            "GROCERY": 2456,
+            "LODGING": 1977,
+            "HOSPITAL": 1973,
+            "PHARMACY": 1616,
+            "RESTAURANT": 24487,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-memorial",
+      "communityKey": "houston-memorial",
+      "displayLabel": "Memorial",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.77,
+        "longitude": -95.545
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 7582,
+          "coreCategoryCounts": {
+            "FUEL": 264,
+            "GROCERY": 296,
+            "LODGING": 194,
+            "HOSPITAL": 221,
+            "PHARMACY": 168,
+            "RESTAURANT": 3063,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 23296,
+          "coreCategoryCounts": {
+            "FUEL": 943,
+            "GROCERY": 908,
+            "LODGING": 635,
+            "HOSPITAL": 816,
+            "PHARMACY": 570,
+            "RESTAURANT": 8808,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 62795,
+          "coreCategoryCounts": {
+            "FUEL": 3414,
+            "GROCERY": 2344,
+            "LODGING": 1799,
+            "HOSPITAL": 1828,
+            "PHARMACY": 1552,
+            "RESTAURANT": 22933,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "liberty-tx:raywood",
+      "communityKey": "raywood",
+      "displayLabel": "Raywood",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "liberty-tx",
+      "anchor": {
+        "latitude": 30.0366,
+        "longitude": -94.6716
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 36,
+          "coreCategoryCounts": {
+            "FUEL": 7,
+            "GROCERY": 5,
+            "LODGING": 1,
+            "HOSPITAL": 0,
+            "PHARMACY": 0,
+            "RESTAURANT": 7,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 355,
+          "coreCategoryCounts": {
+            "FUEL": 34,
+            "GROCERY": 13,
+            "LODGING": 11,
+            "HOSPITAL": 9,
+            "PHARMACY": 6,
+            "RESTAURANT": 77,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 1976,
+          "coreCategoryCounts": {
+            "FUEL": 210,
+            "GROCERY": 52,
+            "LODGING": 95,
+            "HOSPITAL": 23,
+            "PHARMACY": 22,
+            "RESTAURANT": 538,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:stone-oak-far-north",
+      "communityKey": "stone-oak-far-north",
+      "displayLabel": "Stone Oak / Far North",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.610029480200975,
+        "longitude": -98.49512037206648
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 2582,
+          "coreCategoryCounts": {
+            "FUEL": 57,
+            "GROCERY": 68,
+            "LODGING": 65,
+            "HOSPITAL": 115,
+            "PHARMACY": 69,
+            "RESTAURANT": 979,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 10224,
+          "coreCategoryCounts": {
+            "FUEL": 378,
+            "GROCERY": 296,
+            "LODGING": 347,
+            "HOSPITAL": 508,
+            "PHARMACY": 223,
+            "RESTAURANT": 3751,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 27032,
+          "coreCategoryCounts": {
+            "FUEL": 1190,
+            "GROCERY": 802,
+            "LODGING": 1039,
+            "HOSPITAL": 975,
+            "PHARMACY": 504,
+            "RESTAURANT": 9634,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:far-west-alamo-ranch",
+      "communityKey": "far-west-alamo-ranch",
+      "displayLabel": "Far West / Alamo Ranch",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.435772836272815,
+        "longitude": -98.65764791813613
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 2727,
+          "coreCategoryCounts": {
+            "FUEL": 134,
+            "GROCERY": 76,
+            "LODGING": 113,
+            "HOSPITAL": 77,
+            "PHARMACY": 50,
+            "RESTAURANT": 1019,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 10731,
+          "coreCategoryCounts": {
+            "FUEL": 483,
+            "GROCERY": 347,
+            "LODGING": 325,
+            "HOSPITAL": 523,
+            "PHARMACY": 223,
+            "RESTAURANT": 3852,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 25343,
+          "coreCategoryCounts": {
+            "FUEL": 1134,
+            "GROCERY": 775,
+            "LODGING": 889,
+            "HOSPITAL": 951,
+            "PHARMACY": 468,
+            "RESTAURANT": 9105,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-westchase-west-houston",
+      "communityKey": "houston-westchase-west-houston",
+      "displayLabel": "Westchase / West Houston",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.728,
+        "longitude": -95.556
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 8752,
+          "coreCategoryCounts": {
+            "FUEL": 301,
+            "GROCERY": 419,
+            "LODGING": 199,
+            "HOSPITAL": 259,
+            "PHARMACY": 230,
+            "RESTAURANT": 3553,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 22517,
+          "coreCategoryCounts": {
+            "FUEL": 871,
+            "GROCERY": 863,
+            "LODGING": 619,
+            "HOSPITAL": 875,
+            "PHARMACY": 603,
+            "RESTAURANT": 8383,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 60803,
+          "coreCategoryCounts": {
+            "FUEL": 3285,
+            "GROCERY": 2276,
+            "LODGING": 1738,
+            "HOSPITAL": 1790,
+            "PHARMACY": 1516,
+            "RESTAURANT": 22179,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "liberty-tx:moss-hill",
+      "communityKey": "moss-hill",
+      "displayLabel": "Moss Hill",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "liberty-tx",
+      "anchor": {
+        "latitude": 30.253,
+        "longitude": -94.748
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 15,
+          "coreCategoryCounts": {
+            "FUEL": 2,
+            "GROCERY": 1,
+            "LODGING": 3,
+            "HOSPITAL": 0,
+            "PHARMACY": 0,
+            "RESTAURANT": 5,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 88,
+          "coreCategoryCounts": {
+            "FUEL": 7,
+            "GROCERY": 4,
+            "LODGING": 5,
+            "HOSPITAL": 0,
+            "PHARMACY": 0,
+            "RESTAURANT": 17,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 1571,
+          "coreCategoryCounts": {
+            "FUEL": 158,
+            "GROCERY": 55,
+            "LODGING": 56,
+            "HOSPITAL": 23,
+            "PHARMACY": 20,
+            "RESTAURANT": 384,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:southwest-port-san-antonio",
+      "communityKey": "southwest-port-san-antonio",
+      "displayLabel": "Southwest / Port San Antonio",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.36192203964279,
+        "longitude": -98.57515605724419
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 2478,
+          "coreCategoryCounts": {
+            "FUEL": 134,
+            "GROCERY": 98,
+            "LODGING": 76,
+            "HOSPITAL": 85,
+            "PHARMACY": 47,
+            "RESTAURANT": 845,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 10779,
+          "coreCategoryCounts": {
+            "FUEL": 475,
+            "GROCERY": 348,
+            "LODGING": 389,
+            "HOSPITAL": 376,
+            "PHARMACY": 188,
+            "RESTAURANT": 3950,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 25376,
+          "coreCategoryCounts": {
+            "FUEL": 1152,
+            "GROCERY": 779,
+            "LODGING": 868,
+            "HOSPITAL": 942,
+            "PHARMACY": 472,
+            "RESTAURANT": 9128,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-energy-corridor",
+      "communityKey": "houston-energy-corridor",
+      "displayLabel": "Energy Corridor",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.7845,
+        "longitude": -95.6471
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 2954,
+          "coreCategoryCounts": {
+            "FUEL": 150,
+            "GROCERY": 101,
+            "LODGING": 86,
+            "HOSPITAL": 89,
+            "PHARMACY": 74,
+            "RESTAURANT": 1162,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 16326,
+          "coreCategoryCounts": {
+            "FUEL": 729,
+            "GROCERY": 712,
+            "LODGING": 370,
+            "HOSPITAL": 409,
+            "PHARMACY": 427,
+            "RESTAURANT": 6646,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 56604,
+          "coreCategoryCounts": {
+            "FUEL": 2927,
+            "GROCERY": 2122,
+            "LODGING": 1620,
+            "HOSPITAL": 1665,
+            "PHARMACY": 1409,
+            "RESTAURANT": 20775,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-uptown-galleria",
+      "communityKey": "houston-uptown-galleria",
+      "displayLabel": "Uptown / Galleria",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.739,
+        "longitude": -95.4636
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 10516,
+          "coreCategoryCounts": {
+            "FUEL": 273,
+            "GROCERY": 343,
+            "LODGING": 273,
+            "HOSPITAL": 519,
+            "PHARMACY": 250,
+            "RESTAURANT": 4011,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 27216,
+          "coreCategoryCounts": {
+            "FUEL": 1128,
+            "GROCERY": 1037,
+            "LODGING": 804,
+            "HOSPITAL": 962,
+            "PHARMACY": 664,
+            "RESTAURANT": 9989,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 64850,
+          "coreCategoryCounts": {
+            "FUEL": 3524,
+            "GROCERY": 2392,
+            "LODGING": 1865,
+            "HOSPITAL": 1932,
+            "PHARMACY": 1589,
+            "RESTAURANT": 23607,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-southeast-hobby",
+      "communityKey": "houston-southeast-hobby",
+      "displayLabel": "Southeast Houston / Hobby",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.6454,
+        "longitude": -95.2789
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 3069,
+          "coreCategoryCounts": {
+            "FUEL": 278,
+            "GROCERY": 146,
+            "LODGING": 112,
+            "HOSPITAL": 53,
+            "PHARMACY": 61,
+            "RESTAURANT": 1020,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 14883,
+          "coreCategoryCounts": {
+            "FUEL": 852,
+            "GROCERY": 490,
+            "LODGING": 492,
+            "HOSPITAL": 617,
+            "PHARMACY": 368,
+            "RESTAURANT": 5018,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 54858,
+          "coreCategoryCounts": {
+            "FUEL": 3094,
+            "GROCERY": 2025,
+            "LODGING": 1760,
+            "HOSPITAL": 1679,
+            "PHARMACY": 1292,
+            "RESTAURANT": 19345,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "liberty-tx:tarkington",
+      "communityKey": "tarkington",
+      "displayLabel": "Tarkington",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "liberty-tx",
+      "anchor": {
+        "latitude": 30.3205,
+        "longitude": -94.996
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 118,
+          "coreCategoryCounts": {
+            "FUEL": 14,
+            "GROCERY": 3,
+            "LODGING": 1,
+            "HOSPITAL": 0,
+            "PHARMACY": 0,
+            "RESTAURANT": 21,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 462,
+          "coreCategoryCounts": {
+            "FUEL": 50,
+            "GROCERY": 13,
+            "LODGING": 16,
+            "HOSPITAL": 9,
+            "PHARMACY": 8,
+            "RESTAURANT": 125,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 3891,
+          "coreCategoryCounts": {
+            "FUEL": 337,
+            "GROCERY": 123,
+            "LODGING": 133,
+            "HOSPITAL": 70,
+            "PHARMACY": 57,
+            "RESTAURANT": 1193,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "harris-tx:houston-northwest",
+      "communityKey": "houston-northwest",
+      "displayLabel": "Northwest Houston",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "harris-tx",
+      "anchor": {
+        "latitude": 29.873,
+        "longitude": -95.514
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 3009,
+          "coreCategoryCounts": {
+            "FUEL": 235,
+            "GROCERY": 136,
+            "LODGING": 120,
+            "HOSPITAL": 50,
+            "PHARMACY": 64,
+            "RESTAURANT": 922,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 17635,
+          "coreCategoryCounts": {
+            "FUEL": 925,
+            "GROCERY": 646,
+            "LODGING": 552,
+            "HOSPITAL": 452,
+            "PHARMACY": 367,
+            "RESTAURANT": 6573,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 64891,
+          "coreCategoryCounts": {
+            "FUEL": 3471,
+            "GROCERY": 2424,
+            "LODGING": 1891,
+            "HOSPITAL": 1935,
+            "PHARMACY": 1573,
+            "RESTAURANT": 23921,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    },
+    {
+      "stableGovernedIdentity": "bexar-tx:central-san-antonio",
+      "communityKey": "central-san-antonio",
+      "displayLabel": "Central San Antonio",
+      "identityClass": "GOVERNED_NON_PLACE",
+      "placeGeoid": null,
+      "countyId": "bexar-tx",
+      "anchor": {
+        "latitude": 29.43715940524094,
+        "longitude": -98.52110359096712
+      },
+      "radiiMiles": {
+        "5": {
+          "standalonePoiCount": 6480,
+          "coreCategoryCounts": {
+            "FUEL": 234,
+            "GROCERY": 226,
+            "LODGING": 222,
+            "HOSPITAL": 224,
+            "PHARMACY": 92,
+            "RESTAURANT": 2416,
+            "CONVENIENCE": 0
+          }
+        },
+        "10": {
+          "standalonePoiCount": 16833,
+          "coreCategoryCounts": {
+            "FUEL": 714,
+            "GROCERY": 544,
+            "LODGING": 624,
+            "HOSPITAL": 735,
+            "PHARMACY": 308,
+            "RESTAURANT": 5992,
+            "CONVENIENCE": 0
+          }
+        },
+        "25": {
+          "standalonePoiCount": 25776,
+          "coreCategoryCounts": {
+            "FUEL": 1171,
+            "GROCERY": 784,
+            "LODGING": 884,
+            "HOSPITAL": 948,
+            "PHARMACY": 478,
+            "RESTAURANT": 9242,
+            "CONVENIENCE": 0
+          }
+        }
+      }
+    }
+  ]
 }

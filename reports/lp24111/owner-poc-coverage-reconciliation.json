@@ -1,10 +1,98 @@
 {
   "schemaVersion": "gridly.lp24111.d4.owner-poc.v1",
-  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "required": [
-    "Dayton / Liberty",
-    "Tarkington",
-    "Pecos"
+    "DAYTON / LIBERTY",
+    "TARKINGTON",
+    "PECOS"
   ],
-  "rows": []
+  "rows": [
+    {
+      "area": "DAYTON / LIBERTY",
+      "classification": "PASS",
+      "coverageCount": 7899,
+      "coreCategoriesPresent": [
+        "FUEL",
+        "GROCERY",
+        "LODGING",
+        "HOSPITAL",
+        "PHARMACY",
+        "RESTAURANT"
+      ],
+      "radiusAvailability": [
+        {
+          "radiusMiles": 5,
+          "count": 231
+        },
+        {
+          "radiusMiles": 10,
+          "count": 539
+        },
+        {
+          "radiusMiles": 25,
+          "count": 7899
+        }
+      ],
+      "identityNotes": "Governed Dayton PLACE anchor represents the bounded Dayton / Liberty POC.",
+      "runtimeClaim": false
+    },
+    {
+      "area": "TARKINGTON",
+      "classification": "PASS",
+      "coverageCount": 3891,
+      "coreCategoriesPresent": [
+        "FUEL",
+        "GROCERY",
+        "LODGING",
+        "HOSPITAL",
+        "PHARMACY",
+        "RESTAURANT"
+      ],
+      "radiusAvailability": [
+        {
+          "radiusMiles": 5,
+          "count": 118
+        },
+        {
+          "radiusMiles": 10,
+          "count": 462
+        },
+        {
+          "radiusMiles": 25,
+          "count": 3891
+        }
+      ],
+      "identityNotes": "Governed non-PLACE with null PLACE GEOID.",
+      "runtimeClaim": false
+    },
+    {
+      "area": "PECOS",
+      "classification": "PASS",
+      "coverageCount": 340,
+      "coreCategoriesPresent": [
+        "FUEL",
+        "GROCERY",
+        "LODGING",
+        "HOSPITAL",
+        "PHARMACY",
+        "RESTAURANT"
+      ],
+      "radiusAvailability": [
+        {
+          "radiusMiles": 5,
+          "count": 302
+        },
+        {
+          "radiusMiles": 10,
+          "count": 318
+        },
+        {
+          "radiusMiles": 25,
+          "count": 340
+        }
+      ],
+      "identityNotes": "Governed Town of Pecos PLACE anchor.",
+      "runtimeClaim": false
+    }
+  ]
 }

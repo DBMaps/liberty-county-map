@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.d4.osm.v1",
-  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "decision": "INSUFFICIENT_EVIDENCE",
   "merged": false,
   "odblReview": "LEGAL_REVIEW_REQUIRED"

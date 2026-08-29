@@ -1,13 +1,12 @@
 {
   "schemaVersion": "gridly.lp24111.d4.metadata.v1",
-  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
-  "requiredClassifications": [
-    "SPATIAL_METADATA_CONSISTENT",
-    "SPATIAL_METADATA_CONFLICT",
-    "SPATIAL_METADATA_INCOMPLETE",
-    "SPATIAL_METADATA_REVIEW_REQUIRED"
-  ],
-  "recordsAudited": 0,
+  "executionState": "OWNER_LOCAL_MEASURED",
+  "recordsAudited": 391772,
+  "classifications": {
+    "SPATIAL_METADATA_CONFLICT": 149,
+    "SPATIAL_METADATA_CONSISTENT": 391345,
+    "SPATIAL_METADATA_INCOMPLETE": 278
+  },
   "sourceFieldsRewritten": false,
   "retainedSample": {
     "name": "Hitachi Energy Jefferson City",

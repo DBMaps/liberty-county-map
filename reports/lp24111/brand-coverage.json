@@ -1,5 +1,7 @@
 {
   "schemaVersion": "gridly.lp24111.d4.brands.v1",
-  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
-  "authorityRole": "DESCRIPTIVE_NOT_IDENTITY_AUTHORITY"
+  "executionState": "OWNER_LOCAL_MEASURED",
+  "recordsAudited": 391772,
+  "authorityRole": "DESCRIPTIVE_NOT_IDENTITY_AUTHORITY",
+  "rows": []
 }

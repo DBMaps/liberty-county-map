@@ -1,1294 +1,4075 @@
 {
   "schemaVersion": "gridly.lp24111.d4.counties.v1",
-  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "standaloneAuthorityRows": 391772,
-  "radiiMiles": [
-    5,
-    10,
-    25
-  ],
-  "coreCategories": [
-    "FUEL",
-    "GROCERY",
-    "LODGING",
-    "HOSPITAL",
-    "PHARMACY",
-    "RESTAURANT",
-    "CONVENIENCE"
-  ],
   "expectedCountyCount": 254,
   "accountedCountyCount": 254,
-  "withoutPois": 0,
+  "countyAssignmentTotal": 391772,
+  "unknownCountyAssignments": 0,
   "rows": [
     {
       "countyFips": "48001",
       "countyName": "Anderson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 797,
+      "coreCategoryCounts": {
+        "FUEL": 64,
+        "GROCERY": 31,
+        "LODGING": 50,
+        "HOSPITAL": 17,
+        "PHARMACY": 9,
+        "RESTAURANT": 185,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48003",
       "countyName": "Andrews",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 256,
+      "coreCategoryCounts": {
+        "FUEL": 17,
+        "GROCERY": 7,
+        "LODGING": 16,
+        "HOSPITAL": 1,
+        "PHARMACY": 6,
+        "RESTAURANT": 71,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48005",
       "countyName": "Angelina",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1261,
+      "coreCategoryCounts": {
+        "FUEL": 82,
+        "GROCERY": 39,
+        "LODGING": 47,
+        "HOSPITAL": 50,
+        "PHARMACY": 21,
+        "RESTAURANT": 320,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48007",
       "countyName": "Aransas",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 670,
+      "coreCategoryCounts": {
+        "FUEL": 31,
+        "GROCERY": 13,
+        "LODGING": 146,
+        "HOSPITAL": 9,
+        "PHARMACY": 3,
+        "RESTAURANT": 150,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48009",
       "countyName": "Archer",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 160,
+      "coreCategoryCounts": {
+        "FUEL": 15,
+        "GROCERY": 5,
+        "LODGING": 4,
+        "HOSPITAL": 2,
+        "PHARMACY": 1,
+        "RESTAURANT": 19,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48011",
       "countyName": "Armstrong",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 45,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 1,
+        "LODGING": 3,
+        "HOSPITAL": 0,
+        "PHARMACY": 1,
+        "RESTAURANT": 6,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48013",
       "countyName": "Atascosa",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 792,
+      "coreCategoryCounts": {
+        "FUEL": 54,
+        "GROCERY": 25,
+        "LODGING": 56,
+        "HOSPITAL": 23,
+        "PHARMACY": 17,
+        "RESTAURANT": 188,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48015",
       "countyName": "Austin",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 595,
+      "coreCategoryCounts": {
+        "FUEL": 48,
+        "GROCERY": 21,
+        "LODGING": 28,
+        "HOSPITAL": 11,
+        "PHARMACY": 7,
+        "RESTAURANT": 132,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48017",
       "countyName": "Bailey",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 132,
+      "coreCategoryCounts": {
+        "FUEL": 10,
+        "GROCERY": 8,
+        "LODGING": 5,
+        "HOSPITAL": 3,
+        "PHARMACY": 1,
+        "RESTAURANT": 24,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48019",
       "countyName": "Bandera",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 407,
+      "coreCategoryCounts": {
+        "FUEL": 17,
+        "GROCERY": 9,
+        "LODGING": 72,
+        "HOSPITAL": 1,
+        "PHARMACY": 4,
+        "RESTAURANT": 95,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48021",
       "countyName": "Bastrop",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1423,
+      "coreCategoryCounts": {
+        "FUEL": 93,
+        "GROCERY": 40,
+        "LODGING": 72,
+        "HOSPITAL": 24,
+        "PHARMACY": 18,
+        "RESTAURANT": 387,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48023",
       "countyName": "Baylor",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 99,
+      "coreCategoryCounts": {
+        "FUEL": 8,
+        "GROCERY": 3,
+        "LODGING": 7,
+        "HOSPITAL": 3,
+        "PHARMACY": 5,
+        "RESTAURANT": 19,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48025",
       "countyName": "Bee",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 451,
+      "coreCategoryCounts": {
+        "FUEL": 32,
+        "GROCERY": 7,
+        "LODGING": 28,
+        "HOSPITAL": 11,
+        "PHARMACY": 7,
+        "RESTAURANT": 107,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48027",
       "countyName": "Bell",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 4674,
+      "coreCategoryCounts": {
+        "FUEL": 256,
+        "GROCERY": 106,
+        "LODGING": 200,
+        "HOSPITAL": 119,
+        "PHARMACY": 59,
+        "RESTAURANT": 1422,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48029",
       "countyName": "Bexar",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 24298,
+      "coreCategoryCounts": {
+        "FUEL": 1080,
+        "GROCERY": 739,
+        "LODGING": 841,
+        "HOSPITAL": 935,
+        "PHARMACY": 455,
+        "RESTAURANT": 8806,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48031",
       "countyName": "Blanco",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 337,
+      "coreCategoryCounts": {
+        "FUEL": 29,
+        "GROCERY": 8,
+        "LODGING": 50,
+        "HOSPITAL": 2,
+        "PHARMACY": 4,
+        "RESTAURANT": 89,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48033",
       "countyName": "Borden",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 18,
+      "coreCategoryCounts": {
+        "FUEL": 0,
+        "GROCERY": 2,
+        "LODGING": 0,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 3,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48035",
       "countyName": "Bosque",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 416,
+      "coreCategoryCounts": {
+        "FUEL": 32,
+        "GROCERY": 10,
+        "LODGING": 28,
+        "HOSPITAL": 3,
+        "PHARMACY": 5,
+        "RESTAURANT": 86,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48037",
       "countyName": "Bowie",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1512,
+      "coreCategoryCounts": {
+        "FUEL": 92,
+        "GROCERY": 51,
+        "LODGING": 57,
+        "HOSPITAL": 38,
+        "PHARMACY": 25,
+        "RESTAURANT": 403,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48039",
       "countyName": "Brazoria",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 4515,
+      "coreCategoryCounts": {
+        "FUEL": 263,
+        "GROCERY": 129,
+        "LODGING": 199,
+        "HOSPITAL": 109,
+        "PHARMACY": 101,
+        "RESTAURANT": 1400,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48041",
       "countyName": "Brazos",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 3041,
+      "coreCategoryCounts": {
+        "FUEL": 179,
+        "GROCERY": 72,
+        "LODGING": 138,
+        "HOSPITAL": 76,
+        "PHARMACY": 40,
+        "RESTAURANT": 975,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48043",
       "countyName": "Brewster",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 421,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 7,
+        "LODGING": 108,
+        "HOSPITAL": 12,
+        "PHARMACY": 7,
+        "RESTAURANT": 85,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48045",
       "countyName": "Briscoe",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 49,
+      "coreCategoryCounts": {
+        "FUEL": 5,
+        "GROCERY": 1,
+        "LODGING": 1,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 10,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48047",
       "countyName": "Brooks",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 165,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 2,
+        "LODGING": 14,
+        "HOSPITAL": 3,
+        "PHARMACY": 3,
+        "RESTAURANT": 29,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48049",
       "countyName": "Brown",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 706,
+      "coreCategoryCounts": {
+        "FUEL": 40,
+        "GROCERY": 17,
+        "LODGING": 39,
+        "HOSPITAL": 18,
+        "PHARMACY": 11,
+        "RESTAURANT": 141,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48051",
       "countyName": "Burleson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 341,
+      "coreCategoryCounts": {
+        "FUEL": 37,
+        "GROCERY": 17,
+        "LODGING": 20,
+        "HOSPITAL": 5,
+        "PHARMACY": 2,
+        "RESTAURANT": 81,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48053",
       "countyName": "Burnet",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1063,
+      "coreCategoryCounts": {
+        "FUEL": 64,
+        "GROCERY": 20,
+        "LODGING": 85,
+        "HOSPITAL": 30,
+        "PHARMACY": 9,
+        "RESTAURANT": 251,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48055",
       "countyName": "Caldwell",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 653,
+      "coreCategoryCounts": {
+        "FUEL": 53,
+        "GROCERY": 16,
+        "LODGING": 26,
+        "HOSPITAL": 11,
+        "PHARMACY": 5,
+        "RESTAURANT": 176,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48057",
       "countyName": "Calhoun",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 488,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 18,
+        "LODGING": 72,
+        "HOSPITAL": 9,
+        "PHARMACY": 8,
+        "RESTAURANT": 99,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48059",
       "countyName": "Callahan",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 252,
+      "coreCategoryCounts": {
+        "FUEL": 21,
+        "GROCERY": 11,
+        "LODGING": 7,
+        "HOSPITAL": 3,
+        "PHARMACY": 4,
+        "RESTAURANT": 62,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48061",
       "countyName": "Cameron",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 5849,
+      "coreCategoryCounts": {
+        "FUEL": 218,
+        "GROCERY": 205,
+        "LODGING": 297,
+        "HOSPITAL": 182,
+        "PHARMACY": 108,
+        "RESTAURANT": 1975,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48063",
       "countyName": "Camp",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 198,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 11,
+        "LODGING": 10,
+        "HOSPITAL": 6,
+        "PHARMACY": 4,
+        "RESTAURANT": 41,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48065",
       "countyName": "Carson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 124,
+      "coreCategoryCounts": {
+        "FUEL": 14,
+        "GROCERY": 6,
+        "LODGING": 8,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 20,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48067",
       "countyName": "Cass",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 440,
+      "coreCategoryCounts": {
+        "FUEL": 40,
+        "GROCERY": 15,
+        "LODGING": 15,
+        "HOSPITAL": 7,
+        "PHARMACY": 7,
+        "RESTAURANT": 96,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48069",
       "countyName": "Castro",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 136,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 2,
+        "LODGING": 6,
+        "HOSPITAL": 1,
+        "PHARMACY": 3,
+        "RESTAURANT": 18,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48071",
       "countyName": "Chambers",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 716,
+      "coreCategoryCounts": {
+        "FUEL": 82,
+        "GROCERY": 17,
+        "LODGING": 39,
+        "HOSPITAL": 10,
+        "PHARMACY": 10,
+        "RESTAURANT": 239,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48073",
       "countyName": "Cherokee",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 760,
+      "coreCategoryCounts": {
+        "FUEL": 61,
+        "GROCERY": 24,
+        "LODGING": 23,
+        "HOSPITAL": 13,
+        "PHARMACY": 14,
+        "RESTAURANT": 176,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48075",
       "countyName": "Childress",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 175,
+      "coreCategoryCounts": {
+        "FUEL": 11,
+        "GROCERY": 5,
+        "LODGING": 23,
+        "HOSPITAL": 6,
+        "PHARMACY": 3,
+        "RESTAURANT": 40,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48077",
       "countyName": "Clay",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 153,
+      "coreCategoryCounts": {
+        "FUEL": 20,
+        "GROCERY": 7,
+        "LODGING": 5,
+        "HOSPITAL": 4,
+        "PHARMACY": 2,
+        "RESTAURANT": 23,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48079",
       "countyName": "Cochran",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 55,
+      "coreCategoryCounts": {
+        "FUEL": 5,
+        "GROCERY": 1,
+        "LODGING": 0,
+        "HOSPITAL": 2,
+        "PHARMACY": 0,
+        "RESTAURANT": 9,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48081",
       "countyName": "Coke",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 67,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 2,
+        "LODGING": 7,
+        "HOSPITAL": 1,
+        "PHARMACY": 0,
+        "RESTAURANT": 14,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48083",
       "countyName": "Coleman",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 236,
+      "coreCategoryCounts": {
+        "FUEL": 20,
+        "GROCERY": 14,
+        "LODGING": 17,
+        "HOSPITAL": 5,
+        "PHARMACY": 3,
+        "RESTAURANT": 41,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48085",
       "countyName": "Collin",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 12986,
+      "coreCategoryCounts": {
+        "FUEL": 404,
+        "GROCERY": 380,
+        "LODGING": 331,
+        "HOSPITAL": 366,
+        "PHARMACY": 323,
+        "RESTAURANT": 4961,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48087",
       "countyName": "Collingsworth",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 60,
+      "coreCategoryCounts": {
+        "FUEL": 6,
+        "GROCERY": 2,
+        "LODGING": 1,
+        "HOSPITAL": 2,
+        "PHARMACY": 2,
+        "RESTAURANT": 9,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48089",
       "countyName": "Colorado",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 482,
+      "coreCategoryCounts": {
+        "FUEL": 39,
+        "GROCERY": 26,
+        "LODGING": 29,
+        "HOSPITAL": 7,
+        "PHARMACY": 7,
+        "RESTAURANT": 106,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48091",
       "countyName": "Comal",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2461,
+      "coreCategoryCounts": {
+        "FUEL": 113,
+        "GROCERY": 55,
+        "LODGING": 231,
+        "HOSPITAL": 40,
+        "PHARMACY": 42,
+        "RESTAURANT": 779,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48093",
       "countyName": "Comanche",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 310,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 14,
+        "LODGING": 14,
+        "HOSPITAL": 5,
+        "PHARMACY": 4,
+        "RESTAURANT": 56,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48095",
       "countyName": "Concho",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 85,
+      "coreCategoryCounts": {
+        "FUEL": 11,
+        "GROCERY": 2,
+        "LODGING": 5,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 17,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48097",
       "countyName": "Cooke",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 789,
+      "coreCategoryCounts": {
+        "FUEL": 72,
+        "GROCERY": 22,
+        "LODGING": 49,
+        "HOSPITAL": 12,
+        "PHARMACY": 8,
+        "RESTAURANT": 196,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48099",
       "countyName": "Coryell",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 845,
+      "coreCategoryCounts": {
+        "FUEL": 42,
+        "GROCERY": 14,
+        "LODGING": 37,
+        "HOSPITAL": 16,
+        "PHARMACY": 9,
+        "RESTAURANT": 208,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48101",
       "countyName": "Cottle",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 51,
+      "coreCategoryCounts": {
+        "FUEL": 4,
+        "GROCERY": 1,
+        "LODGING": 1,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 11,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48103",
       "countyName": "Crane",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 87,
+      "coreCategoryCounts": {
+        "FUEL": 7,
+        "GROCERY": 3,
+        "LODGING": 3,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 25,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48105",
       "countyName": "Crockett",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 105,
+      "coreCategoryCounts": {
+        "FUEL": 12,
+        "GROCERY": 4,
+        "LODGING": 12,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 20,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48107",
       "countyName": "Crosby",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 104,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 1,
+        "LODGING": 2,
+        "HOSPITAL": 1,
+        "PHARMACY": 2,
+        "RESTAURANT": 14,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48109",
       "countyName": "Culberson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 119,
+      "coreCategoryCounts": {
+        "FUEL": 19,
+        "GROCERY": 2,
+        "LODGING": 26,
+        "HOSPITAL": 1,
+        "PHARMACY": 0,
+        "RESTAURANT": 21,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48111",
       "countyName": "Dallam",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 188,
+      "coreCategoryCounts": {
+        "FUEL": 20,
+        "GROCERY": 7,
+        "LODGING": 17,
+        "HOSPITAL": 2,
+        "PHARMACY": 0,
+        "RESTAURANT": 50,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48113",
       "countyName": "Dallas",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 33947,
+      "coreCategoryCounts": {
+        "FUEL": 1388,
+        "GROCERY": 1228,
+        "LODGING": 1124,
+        "HOSPITAL": 1026,
+        "PHARMACY": 695,
+        "RESTAURANT": 12457,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48115",
       "countyName": "Dawson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 198,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 7,
+        "LODGING": 8,
+        "HOSPITAL": 3,
+        "PHARMACY": 4,
+        "RESTAURANT": 49,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48117",
       "countyName": "Deaf Smith",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 291,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 12,
+        "LODGING": 11,
+        "HOSPITAL": 5,
+        "PHARMACY": 4,
+        "RESTAURANT": 71,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48119",
       "countyName": "Delta",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 108,
+      "coreCategoryCounts": {
+        "FUEL": 6,
+        "GROCERY": 3,
+        "LODGING": 2,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 22,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48121",
       "countyName": "Denton",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 9293,
+      "coreCategoryCounts": {
+        "FUEL": 374,
+        "GROCERY": 251,
+        "LODGING": 230,
+        "HOSPITAL": 184,
+        "PHARMACY": 181,
+        "RESTAURANT": 3386,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48123",
       "countyName": "DeWitt",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 401,
+      "coreCategoryCounts": {
+        "FUEL": 25,
+        "GROCERY": 12,
+        "LODGING": 24,
+        "HOSPITAL": 7,
+        "PHARMACY": 12,
+        "RESTAURANT": 101,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48125",
       "countyName": "Dickens",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 56,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 2,
+        "LODGING": 2,
+        "HOSPITAL": 0,
+        "PHARMACY": 1,
+        "RESTAURANT": 9,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48127",
       "countyName": "Dimmit",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 250,
+      "coreCategoryCounts": {
+        "FUEL": 22,
+        "GROCERY": 7,
+        "LODGING": 27,
+        "HOSPITAL": 6,
+        "PHARMACY": 2,
+        "RESTAURANT": 57,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48129",
       "countyName": "Donley",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 96,
+      "coreCategoryCounts": {
+        "FUEL": 9,
+        "GROCERY": 3,
+        "LODGING": 3,
+        "HOSPITAL": 0,
+        "PHARMACY": 2,
+        "RESTAURANT": 20,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48131",
       "countyName": "Duval",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 186,
+      "coreCategoryCounts": {
+        "FUEL": 11,
+        "GROCERY": 6,
+        "LODGING": 10,
+        "HOSPITAL": 2,
+        "PHARMACY": 3,
+        "RESTAURANT": 43,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48133",
       "countyName": "Eastland",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 464,
+      "coreCategoryCounts": {
+        "FUEL": 51,
+        "GROCERY": 13,
+        "LODGING": 33,
+        "HOSPITAL": 7,
+        "PHARMACY": 9,
+        "RESTAURANT": 98,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48135",
       "countyName": "Ector",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2241,
+      "coreCategoryCounts": {
+        "FUEL": 195,
+        "GROCERY": 64,
+        "LODGING": 109,
+        "HOSPITAL": 72,
+        "PHARMACY": 37,
+        "RESTAURANT": 695,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48137",
       "countyName": "Edwards",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 69,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 1,
+        "LODGING": 11,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 11,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48139",
       "countyName": "Ellis",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2312,
+      "coreCategoryCounts": {
+        "FUEL": 162,
+        "GROCERY": 63,
+        "LODGING": 77,
+        "HOSPITAL": 47,
+        "PHARMACY": 39,
+        "RESTAURANT": 729,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48141",
       "countyName": "El Paso",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 9644,
+      "coreCategoryCounts": {
+        "FUEL": 326,
+        "GROCERY": 350,
+        "LODGING": 228,
+        "HOSPITAL": 303,
+        "PHARMACY": 173,
+        "RESTAURANT": 3772,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48143",
       "countyName": "Erath",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 766,
+      "coreCategoryCounts": {
+        "FUEL": 45,
+        "GROCERY": 15,
+        "LODGING": 37,
+        "HOSPITAL": 16,
+        "PHARMACY": 7,
+        "RESTAURANT": 183,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48145",
       "countyName": "Falls",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 275,
+      "coreCategoryCounts": {
+        "FUEL": 16,
+        "GROCERY": 12,
+        "LODGING": 7,
+        "HOSPITAL": 3,
+        "PHARMACY": 4,
+        "RESTAURANT": 59,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48147",
       "countyName": "Fannin",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 591,
+      "coreCategoryCounts": {
+        "FUEL": 37,
+        "GROCERY": 18,
+        "LODGING": 24,
+        "HOSPITAL": 9,
+        "PHARMACY": 11,
+        "RESTAURANT": 111,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48149",
       "countyName": "Fayette",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 708,
+      "coreCategoryCounts": {
+        "FUEL": 57,
+        "GROCERY": 23,
+        "LODGING": 80,
+        "HOSPITAL": 14,
+        "PHARMACY": 6,
+        "RESTAURANT": 170,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48151",
       "countyName": "Fisher",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 83,
+      "coreCategoryCounts": {
+        "FUEL": 4,
+        "GROCERY": 3,
+        "LODGING": 2,
+        "HOSPITAL": 3,
+        "PHARMACY": 2,
+        "RESTAURANT": 17,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48153",
       "countyName": "Floyd",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 134,
+      "coreCategoryCounts": {
+        "FUEL": 8,
+        "GROCERY": 2,
+        "LODGING": 6,
+        "HOSPITAL": 4,
+        "PHARMACY": 4,
+        "RESTAURANT": 20,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48155",
       "countyName": "Foard",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 32,
+      "coreCategoryCounts": {
+        "FUEL": 2,
+        "GROCERY": 2,
+        "LODGING": 1,
+        "HOSPITAL": 0,
+        "PHARMACY": 1,
+        "RESTAURANT": 5,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48157",
       "countyName": "Fort Bend",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 7825,
+      "coreCategoryCounts": {
+        "FUEL": 376,
+        "GROCERY": 274,
+        "LODGING": 146,
+        "HOSPITAL": 211,
+        "PHARMACY": 249,
+        "RESTAURANT": 2778,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48159",
       "countyName": "Franklin",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 187,
+      "coreCategoryCounts": {
+        "FUEL": 14,
+        "GROCERY": 4,
+        "LODGING": 12,
+        "HOSPITAL": 4,
+        "PHARMACY": 4,
+        "RESTAURANT": 41,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48161",
       "countyName": "Freestone",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 397,
+      "coreCategoryCounts": {
+        "FUEL": 39,
+        "GROCERY": 10,
+        "LODGING": 18,
+        "HOSPITAL": 8,
+        "PHARMACY": 5,
+        "RESTAURANT": 73,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48163",
       "countyName": "Frio",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 389,
+      "coreCategoryCounts": {
+        "FUEL": 35,
+        "GROCERY": 6,
+        "LODGING": 47,
+        "HOSPITAL": 13,
+        "PHARMACY": 4,
+        "RESTAURANT": 93,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48165",
       "countyName": "Gaines",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 316,
+      "coreCategoryCounts": {
+        "FUEL": 32,
+        "GROCERY": 15,
+        "LODGING": 11,
+        "HOSPITAL": 3,
+        "PHARMACY": 2,
+        "RESTAURANT": 71,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48167",
       "countyName": "Galveston",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 5151,
+      "coreCategoryCounts": {
+        "FUEL": 278,
+        "GROCERY": 147,
+        "LODGING": 538,
+        "HOSPITAL": 144,
+        "PHARMACY": 73,
+        "RESTAURANT": 1574,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48169",
       "countyName": "Garza",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 128,
+      "coreCategoryCounts": {
+        "FUEL": 9,
+        "GROCERY": 3,
+        "LODGING": 9,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 29,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48171",
       "countyName": "Gillespie",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 938,
+      "coreCategoryCounts": {
+        "FUEL": 28,
+        "GROCERY": 32,
+        "LODGING": 256,
+        "HOSPITAL": 25,
+        "PHARMACY": 6,
+        "RESTAURANT": 251,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48173",
       "countyName": "Glasscock",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 26,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 1,
+        "LODGING": 1,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 0,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48175",
       "countyName": "Goliad",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 153,
+      "coreCategoryCounts": {
+        "FUEL": 5,
+        "GROCERY": 5,
+        "LODGING": 9,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 30,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48177",
       "countyName": "Gonzales",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 444,
+      "coreCategoryCounts": {
+        "FUEL": 20,
+        "GROCERY": 21,
+        "LODGING": 31,
+        "HOSPITAL": 6,
+        "PHARMACY": 6,
+        "RESTAURANT": 84,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48179",
       "countyName": "Gray",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 360,
+      "coreCategoryCounts": {
+        "FUEL": 33,
+        "GROCERY": 8,
+        "LODGING": 17,
+        "HOSPITAL": 10,
+        "PHARMACY": 6,
+        "RESTAURANT": 73,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48181",
       "countyName": "Grayson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2296,
+      "coreCategoryCounts": {
+        "FUEL": 135,
+        "GROCERY": 49,
+        "LODGING": 114,
+        "HOSPITAL": 67,
+        "PHARMACY": 45,
+        "RESTAURANT": 607,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48183",
       "countyName": "Gregg",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2357,
+      "coreCategoryCounts": {
+        "FUEL": 196,
+        "GROCERY": 67,
+        "LODGING": 108,
+        "HOSPITAL": 69,
+        "PHARMACY": 41,
+        "RESTAURANT": 661,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48185",
       "countyName": "Grimes",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 511,
+      "coreCategoryCounts": {
+        "FUEL": 43,
+        "GROCERY": 14,
+        "LODGING": 26,
+        "HOSPITAL": 5,
+        "PHARMACY": 2,
+        "RESTAURANT": 117,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48187",
       "countyName": "Guadalupe",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1701,
+      "coreCategoryCounts": {
+        "FUEL": 108,
+        "GROCERY": 49,
+        "LODGING": 64,
+        "HOSPITAL": 27,
+        "PHARMACY": 22,
+        "RESTAURANT": 463,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48189",
       "countyName": "Hale",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 507,
+      "coreCategoryCounts": {
+        "FUEL": 28,
+        "GROCERY": 18,
+        "LODGING": 14,
+        "HOSPITAL": 10,
+        "PHARMACY": 9,
+        "RESTAURANT": 121,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48191",
       "countyName": "Hall",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 102,
+      "coreCategoryCounts": {
+        "FUEL": 10,
+        "GROCERY": 3,
+        "LODGING": 10,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 18,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48193",
       "countyName": "Hamilton",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 247,
+      "coreCategoryCounts": {
+        "FUEL": 10,
+        "GROCERY": 12,
+        "LODGING": 11,
+        "HOSPITAL": 5,
+        "PHARMACY": 4,
+        "RESTAURANT": 57,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48195",
       "countyName": "Hansford",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 115,
+      "coreCategoryCounts": {
+        "FUEL": 10,
+        "GROCERY": 3,
+        "LODGING": 2,
+        "HOSPITAL": 2,
+        "PHARMACY": 4,
+        "RESTAURANT": 29,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48197",
       "countyName": "Hardeman",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 130,
+      "coreCategoryCounts": {
+        "FUEL": 11,
+        "GROCERY": 2,
+        "LODGING": 3,
+        "HOSPITAL": 1,
+        "PHARMACY": 3,
+        "RESTAURANT": 30,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48199",
       "countyName": "Hardin",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 733,
+      "coreCategoryCounts": {
+        "FUEL": 69,
+        "GROCERY": 26,
+        "LODGING": 33,
+        "HOSPITAL": 5,
+        "PHARMACY": 8,
+        "RESTAURANT": 178,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48201",
       "countyName": "Harris",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 59589,
+      "coreCategoryCounts": {
+        "FUEL": 3384,
+        "GROCERY": 2201,
+        "LODGING": 1889,
+        "HOSPITAL": 1757,
+        "PHARMACY": 1352,
+        "RESTAURANT": 21631,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48203",
       "countyName": "Harrison",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 934,
+      "coreCategoryCounts": {
+        "FUEL": 64,
+        "GROCERY": 30,
+        "LODGING": 52,
+        "HOSPITAL": 13,
+        "PHARMACY": 9,
+        "RESTAURANT": 209,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48205",
       "countyName": "Hartley",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 81,
+      "coreCategoryCounts": {
+        "FUEL": 2,
+        "GROCERY": 3,
+        "LODGING": 3,
+        "HOSPITAL": 2,
+        "PHARMACY": 2,
+        "RESTAURANT": 12,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48207",
       "countyName": "Haskell",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 164,
+      "coreCategoryCounts": {
+        "FUEL": 15,
+        "GROCERY": 7,
+        "LODGING": 8,
+        "HOSPITAL": 2,
+        "PHARMACY": 3,
+        "RESTAURANT": 27,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48209",
       "countyName": "Hays",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 3172,
+      "coreCategoryCounts": {
+        "FUEL": 157,
+        "GROCERY": 92,
+        "LODGING": 236,
+        "HOSPITAL": 70,
+        "PHARMACY": 46,
+        "RESTAURANT": 1039,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48211",
       "countyName": "Hemphill",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 109,
+      "coreCategoryCounts": {
+        "FUEL": 14,
+        "GROCERY": 1,
+        "LODGING": 11,
+        "HOSPITAL": 2,
+        "PHARMACY": 3,
+        "RESTAURANT": 18,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48213",
       "countyName": "Henderson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1367,
+      "coreCategoryCounts": {
+        "FUEL": 101,
+        "GROCERY": 43,
+        "LODGING": 78,
+        "HOSPITAL": 26,
+        "PHARMACY": 21,
+        "RESTAURANT": 368,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48215",
       "countyName": "Hidalgo",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 11331,
+      "coreCategoryCounts": {
+        "FUEL": 408,
+        "GROCERY": 549,
+        "LODGING": 269,
+        "HOSPITAL": 378,
+        "PHARMACY": 208,
+        "RESTAURANT": 4065,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48217",
       "countyName": "Hill",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 780,
+      "coreCategoryCounts": {
+        "FUEL": 67,
+        "GROCERY": 16,
+        "LODGING": 53,
+        "HOSPITAL": 9,
+        "PHARMACY": 14,
+        "RESTAURANT": 169,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48219",
       "countyName": "Hockley",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 321,
+      "coreCategoryCounts": {
+        "FUEL": 24,
+        "GROCERY": 10,
+        "LODGING": 8,
+        "HOSPITAL": 6,
+        "PHARMACY": 3,
+        "RESTAURANT": 63,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48221",
       "countyName": "Hood",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 982,
+      "coreCategoryCounts": {
+        "FUEL": 67,
+        "GROCERY": 24,
+        "LODGING": 50,
+        "HOSPITAL": 34,
+        "PHARMACY": 13,
+        "RESTAURANT": 240,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48223",
       "countyName": "Hopkins",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 640,
+      "coreCategoryCounts": {
+        "FUEL": 53,
+        "GROCERY": 23,
+        "LODGING": 20,
+        "HOSPITAL": 27,
+        "PHARMACY": 10,
+        "RESTAURANT": 155,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48225",
       "countyName": "Houston",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 396,
+      "coreCategoryCounts": {
+        "FUEL": 24,
+        "GROCERY": 13,
+        "LODGING": 18,
+        "HOSPITAL": 9,
+        "PHARMACY": 6,
+        "RESTAURANT": 92,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48227",
       "countyName": "Howard",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 549,
+      "coreCategoryCounts": {
+        "FUEL": 58,
+        "GROCERY": 10,
+        "LODGING": 40,
+        "HOSPITAL": 16,
+        "PHARMACY": 7,
+        "RESTAURANT": 142,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48229",
       "countyName": "Hudspeth",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 71,
+      "coreCategoryCounts": {
+        "FUEL": 6,
+        "GROCERY": 1,
+        "LODGING": 2,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 13,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48231",
       "countyName": "Hunt",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1469,
+      "coreCategoryCounts": {
+        "FUEL": 104,
+        "GROCERY": 34,
+        "LODGING": 62,
+        "HOSPITAL": 26,
+        "PHARMACY": 20,
+        "RESTAURANT": 336,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48233",
       "countyName": "Hutchinson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 370,
+      "coreCategoryCounts": {
+        "FUEL": 26,
+        "GROCERY": 9,
+        "LODGING": 16,
+        "HOSPITAL": 7,
+        "PHARMACY": 6,
+        "RESTAURANT": 82,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48235",
       "countyName": "Irion",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 40,
+      "coreCategoryCounts": {
+        "FUEL": 7,
+        "GROCERY": 2,
+        "LODGING": 3,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 7,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48237",
       "countyName": "Jack",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 179,
+      "coreCategoryCounts": {
+        "FUEL": 15,
+        "GROCERY": 4,
+        "LODGING": 15,
+        "HOSPITAL": 5,
+        "PHARMACY": 3,
+        "RESTAURANT": 32,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48239",
       "countyName": "Jackson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 257,
+      "coreCategoryCounts": {
+        "FUEL": 27,
+        "GROCERY": 7,
+        "LODGING": 7,
+        "HOSPITAL": 2,
+        "PHARMACY": 3,
+        "RESTAURANT": 49,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48241",
       "countyName": "Jasper",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 539,
+      "coreCategoryCounts": {
+        "FUEL": 43,
+        "GROCERY": 12,
+        "LODGING": 34,
+        "HOSPITAL": 14,
+        "PHARMACY": 13,
+        "RESTAURANT": 105,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48243",
       "countyName": "Jeff Davis",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 72,
+      "coreCategoryCounts": {
+        "FUEL": 1,
+        "GROCERY": 1,
+        "LODGING": 17,
+        "HOSPITAL": 0,
+        "PHARMACY": 1,
+        "RESTAURANT": 15,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48245",
       "countyName": "Jefferson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 3757,
+      "coreCategoryCounts": {
+        "FUEL": 309,
+        "GROCERY": 124,
+        "LODGING": 176,
+        "HOSPITAL": 142,
+        "PHARMACY": 66,
+        "RESTAURANT": 1008,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48247",
       "countyName": "Jim Hogg",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 110,
+      "coreCategoryCounts": {
+        "FUEL": 2,
+        "GROCERY": 4,
+        "LODGING": 4,
+        "HOSPITAL": 1,
+        "PHARMACY": 3,
+        "RESTAURANT": 37,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48249",
       "countyName": "Jim Wells",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 610,
+      "coreCategoryCounts": {
+        "FUEL": 38,
+        "GROCERY": 22,
+        "LODGING": 22,
+        "HOSPITAL": 13,
+        "PHARMACY": 10,
+        "RESTAURANT": 161,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48251",
       "countyName": "Johnson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2065,
+      "coreCategoryCounts": {
+        "FUEL": 132,
+        "GROCERY": 68,
+        "LODGING": 64,
+        "HOSPITAL": 39,
+        "PHARMACY": 34,
+        "RESTAURANT": 552,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48253",
       "countyName": "Jones",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 285,
+      "coreCategoryCounts": {
+        "FUEL": 22,
+        "GROCERY": 11,
+        "LODGING": 10,
+        "HOSPITAL": 9,
+        "PHARMACY": 3,
+        "RESTAURANT": 48,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48255",
       "countyName": "Karnes",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 319,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 5,
+        "LODGING": 41,
+        "HOSPITAL": 5,
+        "PHARMACY": 2,
+        "RESTAURANT": 60,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48257",
       "countyName": "Kaufman",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1687,
+      "coreCategoryCounts": {
+        "FUEL": 101,
+        "GROCERY": 53,
+        "LODGING": 53,
+        "HOSPITAL": 26,
+        "PHARMACY": 28,
+        "RESTAURANT": 499,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48259",
       "countyName": "Kendall",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 763,
+      "coreCategoryCounts": {
+        "FUEL": 33,
+        "GROCERY": 23,
+        "LODGING": 60,
+        "HOSPITAL": 19,
+        "PHARMACY": 10,
+        "RESTAURANT": 202,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48261",
       "countyName": "Kenedy",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 21,
+      "coreCategoryCounts": {
+        "FUEL": 0,
+        "GROCERY": 0,
+        "LODGING": 1,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 1,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48263",
       "countyName": "Kent",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 18,
+      "coreCategoryCounts": {
+        "FUEL": 0,
+        "GROCERY": 0,
+        "LODGING": 0,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 2,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48265",
       "countyName": "Kerr",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 980,
+      "coreCategoryCounts": {
+        "FUEL": 42,
+        "GROCERY": 25,
+        "LODGING": 75,
+        "HOSPITAL": 27,
+        "PHARMACY": 15,
+        "RESTAURANT": 229,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48267",
       "countyName": "Kimble",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 191,
+      "coreCategoryCounts": {
+        "FUEL": 34,
+        "GROCERY": 4,
+        "LODGING": 27,
+        "HOSPITAL": 2,
+        "PHARMACY": 1,
+        "RESTAURANT": 36,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48269",
       "countyName": "King",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 6,
+      "coreCategoryCounts": {
+        "FUEL": 1,
+        "GROCERY": 0,
+        "LODGING": 0,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 0,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48271",
       "countyName": "Kinney",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 65,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 1,
+        "LODGING": 2,
+        "HOSPITAL": 3,
+        "PHARMACY": 0,
+        "RESTAURANT": 11,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48273",
       "countyName": "Kleberg",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 570,
+      "coreCategoryCounts": {
+        "FUEL": 25,
+        "GROCERY": 12,
+        "LODGING": 55,
+        "HOSPITAL": 17,
+        "PHARMACY": 8,
+        "RESTAURANT": 136,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48275",
       "countyName": "Knox",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 109,
+      "coreCategoryCounts": {
+        "FUEL": 5,
+        "GROCERY": 5,
+        "LODGING": 5,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 20,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48277",
       "countyName": "Lamar",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 861,
+      "coreCategoryCounts": {
+        "FUEL": 66,
+        "GROCERY": 27,
+        "LODGING": 26,
+        "HOSPITAL": 27,
+        "PHARMACY": 14,
+        "RESTAURANT": 207,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48279",
       "countyName": "Lamb",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 233,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 7,
+        "LODGING": 12,
+        "HOSPITAL": 3,
+        "PHARMACY": 5,
+        "RESTAURANT": 46,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48281",
       "countyName": "Lampasas",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 330,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 4,
+        "LODGING": 19,
+        "HOSPITAL": 5,
+        "PHARMACY": 5,
+        "RESTAURANT": 74,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48283",
       "countyName": "La Salle",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 246,
+      "coreCategoryCounts": {
+        "FUEL": 22,
+        "GROCERY": 3,
+        "LODGING": 49,
+        "HOSPITAL": 0,
+        "PHARMACY": 1,
+        "RESTAURANT": 62,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48285",
       "countyName": "Lavaca",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 358,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 15,
+        "LODGING": 15,
+        "HOSPITAL": 8,
+        "PHARMACY": 7,
+        "RESTAURANT": 70,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48287",
       "countyName": "Lee",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 332,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 9,
+        "LODGING": 15,
+        "HOSPITAL": 4,
+        "PHARMACY": 3,
+        "RESTAURANT": 83,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48289",
       "countyName": "Leon",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 380,
+      "coreCategoryCounts": {
+        "FUEL": 34,
+        "GROCERY": 7,
+        "LODGING": 33,
+        "HOSPITAL": 5,
+        "PHARMACY": 3,
+        "RESTAURANT": 85,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48291",
       "countyName": "Liberty",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1156,
+      "coreCategoryCounts": {
+        "FUEL": 113,
+        "GROCERY": 37,
+        "LODGING": 44,
+        "HOSPITAL": 19,
+        "PHARMACY": 18,
+        "RESTAURANT": 298,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48293",
       "countyName": "Limestone",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 426,
+      "coreCategoryCounts": {
+        "FUEL": 31,
+        "GROCERY": 11,
+        "LODGING": 21,
+        "HOSPITAL": 9,
+        "PHARMACY": 7,
+        "RESTAURANT": 90,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48295",
       "countyName": "Lipscomb",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 66,
+      "coreCategoryCounts": {
+        "FUEL": 5,
+        "GROCERY": 3,
+        "LODGING": 3,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 12,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48297",
       "countyName": "Live Oak",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 251,
+      "coreCategoryCounts": {
+        "FUEL": 26,
+        "GROCERY": 6,
+        "LODGING": 25,
+        "HOSPITAL": 3,
+        "PHARMACY": 2,
+        "RESTAURANT": 50,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48299",
       "countyName": "Llano",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 463,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 13,
+        "LODGING": 86,
+        "HOSPITAL": 6,
+        "PHARMACY": 5,
+        "RESTAURANT": 98,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48301",
       "countyName": "Loving",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 13,
+      "coreCategoryCounts": {
+        "FUEL": 4,
+        "GROCERY": 0,
+        "LODGING": 2,
+        "HOSPITAL": 1,
+        "PHARMACY": 0,
+        "RESTAURANT": 3,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48303",
       "countyName": "Lubbock",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 4397,
+      "coreCategoryCounts": {
+        "FUEL": 246,
+        "GROCERY": 115,
+        "LODGING": 172,
+        "HOSPITAL": 149,
+        "PHARMACY": 80,
+        "RESTAURANT": 1280,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48305",
       "countyName": "Lynn",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 97,
+      "coreCategoryCounts": {
+        "FUEL": 11,
+        "GROCERY": 3,
+        "LODGING": 0,
+        "HOSPITAL": 4,
+        "PHARMACY": 1,
+        "RESTAURANT": 11,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48307",
       "countyName": "McCulloch",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 194,
+      "coreCategoryCounts": {
+        "FUEL": 9,
+        "GROCERY": 6,
+        "LODGING": 12,
+        "HOSPITAL": 4,
+        "PHARMACY": 1,
+        "RESTAURANT": 53,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48309",
       "countyName": "McLennan",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 3768,
+      "coreCategoryCounts": {
+        "FUEL": 222,
+        "GROCERY": 104,
+        "LODGING": 158,
+        "HOSPITAL": 101,
+        "PHARMACY": 57,
+        "RESTAURANT": 1093,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48311",
       "countyName": "McMullen",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 57,
+      "coreCategoryCounts": {
+        "FUEL": 9,
+        "GROCERY": 0,
+        "LODGING": 9,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 4,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48313",
       "countyName": "Madison",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 241,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 8,
+        "LODGING": 10,
+        "HOSPITAL": 4,
+        "PHARMACY": 1,
+        "RESTAURANT": 54,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48315",
       "countyName": "Marion",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 218,
+      "coreCategoryCounts": {
+        "FUEL": 11,
+        "GROCERY": 5,
+        "LODGING": 35,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 46,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48317",
       "countyName": "Martin",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 94,
+      "coreCategoryCounts": {
+        "FUEL": 11,
+        "GROCERY": 1,
+        "LODGING": 7,
+        "HOSPITAL": 4,
+        "PHARMACY": 2,
+        "RESTAURANT": 15,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48319",
       "countyName": "Mason",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 127,
+      "coreCategoryCounts": {
+        "FUEL": 7,
+        "GROCERY": 3,
+        "LODGING": 13,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 25,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48321",
       "countyName": "Matagorda",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 787,
+      "coreCategoryCounts": {
+        "FUEL": 54,
+        "GROCERY": 24,
+        "LODGING": 86,
+        "HOSPITAL": 14,
+        "PHARMACY": 7,
+        "RESTAURANT": 199,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48323",
       "countyName": "Maverick",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 820,
+      "coreCategoryCounts": {
+        "FUEL": 42,
+        "GROCERY": 27,
+        "LODGING": 38,
+        "HOSPITAL": 27,
+        "PHARMACY": 8,
+        "RESTAURANT": 261,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48325",
       "countyName": "Medina",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 723,
+      "coreCategoryCounts": {
+        "FUEL": 49,
+        "GROCERY": 23,
+        "LODGING": 30,
+        "HOSPITAL": 7,
+        "PHARMACY": 3,
+        "RESTAURANT": 188,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48327",
       "countyName": "Menard",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 76,
+      "coreCategoryCounts": {
+        "FUEL": 7,
+        "GROCERY": 2,
+        "LODGING": 3,
+        "HOSPITAL": 1,
+        "PHARMACY": 0,
+        "RESTAURANT": 13,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48329",
       "countyName": "Midland",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2489,
+      "coreCategoryCounts": {
+        "FUEL": 203,
+        "GROCERY": 65,
+        "LODGING": 120,
+        "HOSPITAL": 78,
+        "PHARMACY": 29,
+        "RESTAURANT": 739,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48331",
       "countyName": "Milam",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 456,
+      "coreCategoryCounts": {
+        "FUEL": 22,
+        "GROCERY": 16,
+        "LODGING": 20,
+        "HOSPITAL": 5,
+        "PHARMACY": 4,
+        "RESTAURANT": 103,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48333",
       "countyName": "Mills",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 118,
+      "coreCategoryCounts": {
+        "FUEL": 5,
+        "GROCERY": 3,
+        "LODGING": 6,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 19,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48335",
       "countyName": "Mitchell",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 169,
+      "coreCategoryCounts": {
+        "FUEL": 14,
+        "GROCERY": 4,
+        "LODGING": 17,
+        "HOSPITAL": 7,
+        "PHARMACY": 2,
+        "RESTAURANT": 34,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48337",
       "countyName": "Montague",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 405,
+      "coreCategoryCounts": {
+        "FUEL": 33,
+        "GROCERY": 10,
+        "LODGING": 20,
+        "HOSPITAL": 7,
+        "PHARMACY": 5,
+        "RESTAURANT": 85,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48339",
       "countyName": "Montgomery",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 7565,
+      "coreCategoryCounts": {
+        "FUEL": 504,
+        "GROCERY": 218,
+        "LODGING": 255,
+        "HOSPITAL": 229,
+        "PHARMACY": 147,
+        "RESTAURANT": 2575,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48341",
       "countyName": "Moore",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 328,
+      "coreCategoryCounts": {
+        "FUEL": 21,
+        "GROCERY": 10,
+        "LODGING": 21,
+        "HOSPITAL": 6,
+        "PHARMACY": 3,
+        "RESTAURANT": 82,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48343",
       "countyName": "Morris",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 214,
+      "coreCategoryCounts": {
+        "FUEL": 22,
+        "GROCERY": 11,
+        "LODGING": 8,
+        "HOSPITAL": 3,
+        "PHARMACY": 4,
+        "RESTAURANT": 44,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48345",
       "countyName": "Motley",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 37,
+      "coreCategoryCounts": {
+        "FUEL": 6,
+        "GROCERY": 1,
+        "LODGING": 2,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 4,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48347",
       "countyName": "Nacogdoches",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 995,
+      "coreCategoryCounts": {
+        "FUEL": 68,
+        "GROCERY": 34,
+        "LODGING": 50,
+        "HOSPITAL": 33,
+        "PHARMACY": 13,
+        "RESTAURANT": 239,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48349",
       "countyName": "Navarro",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 865,
+      "coreCategoryCounts": {
+        "FUEL": 67,
+        "GROCERY": 31,
+        "LODGING": 31,
+        "HOSPITAL": 25,
+        "PHARMACY": 11,
+        "RESTAURANT": 193,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48351",
       "countyName": "Newton",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 138,
+      "coreCategoryCounts": {
+        "FUEL": 12,
+        "GROCERY": 5,
+        "LODGING": 14,
+        "HOSPITAL": 2,
+        "PHARMACY": 1,
+        "RESTAURANT": 17,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48353",
       "countyName": "Nolan",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 345,
+      "coreCategoryCounts": {
+        "FUEL": 25,
+        "GROCERY": 6,
+        "LODGING": 25,
+        "HOSPITAL": 8,
+        "PHARMACY": 6,
+        "RESTAURANT": 80,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48355",
       "countyName": "Nueces",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 5360,
+      "coreCategoryCounts": {
+        "FUEL": 240,
+        "GROCERY": 142,
+        "LODGING": 416,
+        "HOSPITAL": 178,
+        "PHARMACY": 74,
+        "RESTAURANT": 1571,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48357",
       "countyName": "Ochiltree",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 179,
+      "coreCategoryCounts": {
+        "FUEL": 15,
+        "GROCERY": 6,
+        "LODGING": 10,
+        "HOSPITAL": 5,
+        "PHARMACY": 4,
+        "RESTAURANT": 47,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48359",
       "countyName": "Oldham",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 79,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 0,
+        "LODGING": 6,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 14,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48361",
       "countyName": "Orange",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1130,
+      "coreCategoryCounts": {
+        "FUEL": 114,
+        "GROCERY": 34,
+        "LODGING": 39,
+        "HOSPITAL": 13,
+        "PHARMACY": 16,
+        "RESTAURANT": 291,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48363",
       "countyName": "Palo Pinto",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 670,
+      "coreCategoryCounts": {
+        "FUEL": 55,
+        "GROCERY": 20,
+        "LODGING": 62,
+        "HOSPITAL": 17,
+        "PHARMACY": 8,
+        "RESTAURANT": 159,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48365",
       "countyName": "Panola",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 377,
+      "coreCategoryCounts": {
+        "FUEL": 42,
+        "GROCERY": 13,
+        "LODGING": 17,
+        "HOSPITAL": 8,
+        "PHARMACY": 5,
+        "RESTAURANT": 75,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48367",
       "countyName": "Parker",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2045,
+      "coreCategoryCounts": {
+        "FUEL": 126,
+        "GROCERY": 59,
+        "LODGING": 70,
+        "HOSPITAL": 39,
+        "PHARMACY": 38,
+        "RESTAURANT": 501,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48369",
       "countyName": "Parmer",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 168,
+      "coreCategoryCounts": {
+        "FUEL": 14,
+        "GROCERY": 8,
+        "LODGING": 3,
+        "HOSPITAL": 2,
+        "PHARMACY": 2,
+        "RESTAURANT": 38,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48371",
       "countyName": "Pecos",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 349,
+      "coreCategoryCounts": {
+        "FUEL": 36,
+        "GROCERY": 8,
+        "LODGING": 37,
+        "HOSPITAL": 8,
+        "PHARMACY": 5,
+        "RESTAURANT": 69,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48373",
       "countyName": "Polk",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 757,
+      "coreCategoryCounts": {
+        "FUEL": 74,
+        "GROCERY": 17,
+        "LODGING": 54,
+        "HOSPITAL": 8,
+        "PHARMACY": 5,
+        "RESTAURANT": 170,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48375",
       "countyName": "Potter",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2166,
+      "coreCategoryCounts": {
+        "FUEL": 121,
+        "GROCERY": 62,
+        "LODGING": 155,
+        "HOSPITAL": 95,
+        "PHARMACY": 46,
+        "RESTAURANT": 648,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48377",
       "countyName": "Presidio",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 186,
+      "coreCategoryCounts": {
+        "FUEL": 7,
+        "GROCERY": 6,
+        "LODGING": 26,
+        "HOSPITAL": 2,
+        "PHARMACY": 1,
+        "RESTAURANT": 53,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48379",
       "countyName": "Rains",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 211,
+      "coreCategoryCounts": {
+        "FUEL": 14,
+        "GROCERY": 4,
+        "LODGING": 14,
+        "HOSPITAL": 3,
+        "PHARMACY": 6,
+        "RESTAURANT": 53,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48381",
       "countyName": "Randall",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1416,
+      "coreCategoryCounts": {
+        "FUEL": 81,
+        "GROCERY": 46,
+        "LODGING": 35,
+        "HOSPITAL": 21,
+        "PHARMACY": 26,
+        "RESTAURANT": 397,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48383",
       "countyName": "Reagan",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 100,
+      "coreCategoryCounts": {
+        "FUEL": 10,
+        "GROCERY": 3,
+        "LODGING": 16,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 19,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48385",
       "countyName": "Real",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 140,
+      "coreCategoryCounts": {
+        "FUEL": 4,
+        "GROCERY": 4,
+        "LODGING": 35,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 33,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48387",
       "countyName": "Red River",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 201,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 6,
+        "LODGING": 5,
+        "HOSPITAL": 5,
+        "PHARMACY": 5,
+        "RESTAURANT": 40,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48389",
       "countyName": "Reeves",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 368,
+      "coreCategoryCounts": {
+        "FUEL": 36,
+        "GROCERY": 4,
+        "LODGING": 50,
+        "HOSPITAL": 9,
+        "PHARMACY": 6,
+        "RESTAURANT": 91,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48391",
       "countyName": "Refugio",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 176,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 7,
+        "LODGING": 11,
+        "HOSPITAL": 4,
+        "PHARMACY": 3,
+        "RESTAURANT": 38,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48393",
       "countyName": "Roberts",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 24,
+      "coreCategoryCounts": {
+        "FUEL": 0,
+        "GROCERY": 0,
+        "LODGING": 3,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 1,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48395",
       "countyName": "Robertson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 353,
+      "coreCategoryCounts": {
+        "FUEL": 27,
+        "GROCERY": 9,
+        "LODGING": 15,
+        "HOSPITAL": 4,
+        "PHARMACY": 5,
+        "RESTAURANT": 78,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48397",
       "countyName": "Rockwall",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1322,
+      "coreCategoryCounts": {
+        "FUEL": 55,
+        "GROCERY": 38,
+        "LODGING": 34,
+        "HOSPITAL": 33,
+        "PHARMACY": 30,
+        "RESTAURANT": 461,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48399",
       "countyName": "Runnels",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 215,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 8,
+        "LODGING": 11,
+        "HOSPITAL": 4,
+        "PHARMACY": 4,
+        "RESTAURANT": 46,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48401",
       "countyName": "Rusk",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 669,
+      "coreCategoryCounts": {
+        "FUEL": 59,
+        "GROCERY": 18,
+        "LODGING": 19,
+        "HOSPITAL": 12,
+        "PHARMACY": 11,
+        "RESTAURANT": 147,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48403",
       "countyName": "Sabine",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 223,
+      "coreCategoryCounts": {
+        "FUEL": 12,
+        "GROCERY": 5,
+        "LODGING": 22,
+        "HOSPITAL": 2,
+        "PHARMACY": 3,
+        "RESTAURANT": 40,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48405",
       "countyName": "San Augustine",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 155,
+      "coreCategoryCounts": {
+        "FUEL": 16,
+        "GROCERY": 3,
+        "LODGING": 10,
+        "HOSPITAL": 8,
+        "PHARMACY": 7,
+        "RESTAURANT": 26,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48407",
       "countyName": "San Jacinto",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 343,
+      "coreCategoryCounts": {
+        "FUEL": 28,
+        "GROCERY": 15,
+        "LODGING": 22,
+        "HOSPITAL": 4,
+        "PHARMACY": 2,
+        "RESTAURANT": 61,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48409",
       "countyName": "San Patricio",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1129,
+      "coreCategoryCounts": {
+        "FUEL": 70,
+        "GROCERY": 17,
+        "LODGING": 83,
+        "HOSPITAL": 16,
+        "PHARMACY": 14,
+        "RESTAURANT": 281,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48411",
       "countyName": "San Saba",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 166,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 6,
+        "LODGING": 17,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 38,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48413",
       "countyName": "Schleicher",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 51,
+      "coreCategoryCounts": {
+        "FUEL": 2,
+        "GROCERY": 2,
+        "LODGING": 5,
+        "HOSPITAL": 3,
+        "PHARMACY": 0,
+        "RESTAURANT": 7,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48415",
       "countyName": "Scurry",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 316,
+      "coreCategoryCounts": {
+        "FUEL": 25,
+        "GROCERY": 6,
+        "LODGING": 29,
+        "HOSPITAL": 3,
+        "PHARMACY": 4,
+        "RESTAURANT": 72,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48417",
       "countyName": "Shackelford",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 106,
+      "coreCategoryCounts": {
+        "FUEL": 8,
+        "GROCERY": 2,
+        "LODGING": 9,
+        "HOSPITAL": 3,
+        "PHARMACY": 2,
+        "RESTAURANT": 19,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48419",
       "countyName": "Shelby",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 408,
+      "coreCategoryCounts": {
+        "FUEL": 23,
+        "GROCERY": 19,
+        "LODGING": 22,
+        "HOSPITAL": 8,
+        "PHARMACY": 6,
+        "RESTAURANT": 97,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48421",
       "countyName": "Sherman",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 65,
+      "coreCategoryCounts": {
+        "FUEL": 7,
+        "GROCERY": 0,
+        "LODGING": 4,
+        "HOSPITAL": 2,
+        "PHARMACY": 2,
+        "RESTAURANT": 10,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48423",
       "countyName": "Smith",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 3615,
+      "coreCategoryCounts": {
+        "FUEL": 261,
+        "GROCERY": 108,
+        "LODGING": 141,
+        "HOSPITAL": 140,
+        "PHARMACY": 80,
+        "RESTAURANT": 974,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48425",
       "countyName": "Somervell",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 274,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 5,
+        "LODGING": 31,
+        "HOSPITAL": 5,
+        "PHARMACY": 3,
+        "RESTAURANT": 64,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48427",
       "countyName": "Starr",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 931,
+      "coreCategoryCounts": {
+        "FUEL": 52,
+        "GROCERY": 46,
+        "LODGING": 14,
+        "HOSPITAL": 20,
+        "PHARMACY": 15,
+        "RESTAURANT": 313,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48429",
       "countyName": "Stephens",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 178,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 3,
+        "LODGING": 12,
+        "HOSPITAL": 1,
+        "PHARMACY": 2,
+        "RESTAURANT": 46,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48431",
       "countyName": "Sterling",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 42,
+      "coreCategoryCounts": {
+        "FUEL": 6,
+        "GROCERY": 1,
+        "LODGING": 3,
+        "HOSPITAL": 1,
+        "PHARMACY": 1,
+        "RESTAURANT": 9,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48433",
       "countyName": "Stonewall",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 34,
+      "coreCategoryCounts": {
+        "FUEL": 3,
+        "GROCERY": 0,
+        "LODGING": 2,
+        "HOSPITAL": 1,
+        "PHARMACY": 0,
+        "RESTAURANT": 6,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48435",
       "countyName": "Sutton",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 125,
+      "coreCategoryCounts": {
+        "FUEL": 13,
+        "GROCERY": 3,
+        "LODGING": 15,
+        "HOSPITAL": 4,
+        "PHARMACY": 0,
+        "RESTAURANT": 24,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48437",
       "countyName": "Swisher",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 117,
+      "coreCategoryCounts": {
+        "FUEL": 10,
+        "GROCERY": 5,
+        "LODGING": 6,
+        "HOSPITAL": 1,
+        "PHARMACY": 2,
+        "RESTAURANT": 20,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48439",
       "countyName": "Tarrant",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 25304,
+      "coreCategoryCounts": {
+        "FUEL": 1205,
+        "GROCERY": 804,
+        "LODGING": 784,
+        "HOSPITAL": 717,
+        "PHARMACY": 491,
+        "RESTAURANT": 8812,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48441",
       "countyName": "Taylor",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 2198,
+      "coreCategoryCounts": {
+        "FUEL": 153,
+        "GROCERY": 49,
+        "LODGING": 105,
+        "HOSPITAL": 75,
+        "PHARMACY": 40,
+        "RESTAURANT": 534,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48443",
       "countyName": "Terrell",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 37,
+      "coreCategoryCounts": {
+        "FUEL": 4,
+        "GROCERY": 0,
+        "LODGING": 4,
+        "HOSPITAL": 0,
+        "PHARMACY": 0,
+        "RESTAURANT": 7,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48445",
       "countyName": "Terry",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 200,
+      "coreCategoryCounts": {
+        "FUEL": 18,
+        "GROCERY": 4,
+        "LODGING": 7,
+        "HOSPITAL": 2,
+        "PHARMACY": 4,
+        "RESTAURANT": 40,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48447",
       "countyName": "Throckmorton",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 53,
+      "coreCategoryCounts": {
+        "FUEL": 2,
+        "GROCERY": 2,
+        "LODGING": 2,
+        "HOSPITAL": 2,
+        "PHARMACY": 0,
+        "RESTAURANT": 8,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48449",
       "countyName": "Titus",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 564,
+      "coreCategoryCounts": {
+        "FUEL": 36,
+        "GROCERY": 24,
+        "LODGING": 28,
+        "HOSPITAL": 20,
+        "PHARMACY": 10,
+        "RESTAURANT": 154,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48451",
       "countyName": "Tom Green",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1713,
+      "coreCategoryCounts": {
+        "FUEL": 85,
+        "GROCERY": 45,
+        "LODGING": 83,
+        "HOSPITAL": 49,
+        "PHARMACY": 21,
+        "RESTAURANT": 522,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48453",
       "countyName": "Travis",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 18966,
+      "coreCategoryCounts": {
+        "FUEL": 748,
+        "GROCERY": 604,
+        "LODGING": 679,
+        "HOSPITAL": 482,
+        "PHARMACY": 276,
+        "RESTAURANT": 6949,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48455",
       "countyName": "Trinity",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 224,
+      "coreCategoryCounts": {
+        "FUEL": 12,
+        "GROCERY": 6,
+        "LODGING": 13,
+        "HOSPITAL": 2,
+        "PHARMACY": 3,
+        "RESTAURANT": 44,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48457",
       "countyName": "Tyler",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 298,
+      "coreCategoryCounts": {
+        "FUEL": 28,
+        "GROCERY": 7,
+        "LODGING": 8,
+        "HOSPITAL": 6,
+        "PHARMACY": 4,
+        "RESTAURANT": 51,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48459",
       "countyName": "Upshur",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 524,
+      "coreCategoryCounts": {
+        "FUEL": 43,
+        "GROCERY": 21,
+        "LODGING": 8,
+        "HOSPITAL": 3,
+        "PHARMACY": 6,
+        "RESTAURANT": 112,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48461",
       "countyName": "Upton",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 99,
+      "coreCategoryCounts": {
+        "FUEL": 8,
+        "GROCERY": 2,
+        "LODGING": 3,
+        "HOSPITAL": 4,
+        "PHARMACY": 2,
+        "RESTAURANT": 14,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48463",
       "countyName": "Uvalde",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 540,
+      "coreCategoryCounts": {
+        "FUEL": 27,
+        "GROCERY": 8,
+        "LODGING": 67,
+        "HOSPITAL": 7,
+        "PHARMACY": 5,
+        "RESTAURANT": 133,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48465",
       "countyName": "Val Verde",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 701,
+      "coreCategoryCounts": {
+        "FUEL": 35,
+        "GROCERY": 19,
+        "LODGING": 41,
+        "HOSPITAL": 10,
+        "PHARMACY": 1,
+        "RESTAURANT": 189,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48467",
       "countyName": "Van Zandt",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 990,
+      "coreCategoryCounts": {
+        "FUEL": 89,
+        "GROCERY": 34,
+        "LODGING": 71,
+        "HOSPITAL": 14,
+        "PHARMACY": 15,
+        "RESTAURANT": 234,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48469",
       "countyName": "Victoria",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1419,
+      "coreCategoryCounts": {
+        "FUEL": 92,
+        "GROCERY": 27,
+        "LODGING": 63,
+        "HOSPITAL": 46,
+        "PHARMACY": 24,
+        "RESTAURANT": 364,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48471",
       "countyName": "Walker",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1002,
+      "coreCategoryCounts": {
+        "FUEL": 71,
+        "GROCERY": 29,
+        "LODGING": 49,
+        "HOSPITAL": 24,
+        "PHARMACY": 12,
+        "RESTAURANT": 242,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48473",
       "countyName": "Waller",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 702,
+      "coreCategoryCounts": {
+        "FUEL": 65,
+        "GROCERY": 17,
+        "LODGING": 29,
+        "HOSPITAL": 6,
+        "PHARMACY": 11,
+        "RESTAURANT": 180,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48475",
       "countyName": "Ward",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 306,
+      "coreCategoryCounts": {
+        "FUEL": 29,
+        "GROCERY": 5,
+        "LODGING": 23,
+        "HOSPITAL": 8,
+        "PHARMACY": 2,
+        "RESTAURANT": 73,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48477",
       "countyName": "Washington",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 746,
+      "coreCategoryCounts": {
+        "FUEL": 41,
+        "GROCERY": 15,
+        "LODGING": 67,
+        "HOSPITAL": 5,
+        "PHARMACY": 12,
+        "RESTAURANT": 175,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48479",
       "countyName": "Webb",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 3476,
+      "coreCategoryCounts": {
+        "FUEL": 175,
+        "GROCERY": 130,
+        "LODGING": 87,
+        "HOSPITAL": 100,
+        "PHARMACY": 46,
+        "RESTAURANT": 1275,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48481",
       "countyName": "Wharton",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 774,
+      "coreCategoryCounts": {
+        "FUEL": 53,
+        "GROCERY": 30,
+        "LODGING": 35,
+        "HOSPITAL": 18,
+        "PHARMACY": 10,
+        "RESTAURANT": 182,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48483",
       "countyName": "Wheeler",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 181,
+      "coreCategoryCounts": {
+        "FUEL": 15,
+        "GROCERY": 8,
+        "LODGING": 27,
+        "HOSPITAL": 5,
+        "PHARMACY": 2,
+        "RESTAURANT": 29,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48485",
       "countyName": "Wichita",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1837,
+      "coreCategoryCounts": {
+        "FUEL": 115,
+        "GROCERY": 46,
+        "LODGING": 90,
+        "HOSPITAL": 48,
+        "PHARMACY": 34,
+        "RESTAURANT": 465,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48487",
       "countyName": "Wilbarger",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 273,
+      "coreCategoryCounts": {
+        "FUEL": 21,
+        "GROCERY": 9,
+        "LODGING": 13,
+        "HOSPITAL": 7,
+        "PHARMACY": 5,
+        "RESTAURANT": 62,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48489",
       "countyName": "Willacy",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 293,
+      "coreCategoryCounts": {
+        "FUEL": 9,
+        "GROCERY": 12,
+        "LODGING": 15,
+        "HOSPITAL": 4,
+        "PHARMACY": 9,
+        "RESTAURANT": 78,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48491",
       "countyName": "Williamson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 7051,
+      "coreCategoryCounts": {
+        "FUEL": 334,
+        "GROCERY": 186,
+        "LODGING": 198,
+        "HOSPITAL": 137,
+        "PHARMACY": 114,
+        "RESTAURANT": 2360,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48493",
       "countyName": "Wilson",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 616,
+      "coreCategoryCounts": {
+        "FUEL": 39,
+        "GROCERY": 13,
+        "LODGING": 24,
+        "HOSPITAL": 11,
+        "PHARMACY": 7,
+        "RESTAURANT": 157,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48495",
       "countyName": "Winkler",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 185,
+      "coreCategoryCounts": {
+        "FUEL": 18,
+        "GROCERY": 3,
+        "LODGING": 20,
+        "HOSPITAL": 4,
+        "PHARMACY": 1,
+        "RESTAURANT": 49,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48497",
       "countyName": "Wise",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 1155,
+      "coreCategoryCounts": {
+        "FUEL": 110,
+        "GROCERY": 28,
+        "LODGING": 65,
+        "HOSPITAL": 21,
+        "PHARMACY": 21,
+        "RESTAURANT": 261,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48499",
       "countyName": "Wood",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 854,
+      "coreCategoryCounts": {
+        "FUEL": 45,
+        "GROCERY": 26,
+        "LODGING": 76,
+        "HOSPITAL": 19,
+        "PHARMACY": 13,
+        "RESTAURANT": 191,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48501",
       "countyName": "Yoakum",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 154,
+      "coreCategoryCounts": {
+        "FUEL": 15,
+        "GROCERY": 4,
+        "LODGING": 3,
+        "HOSPITAL": 3,
+        "PHARMACY": 4,
+        "RESTAURANT": 37,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48503",
       "countyName": "Young",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 388,
+      "coreCategoryCounts": {
+        "FUEL": 16,
+        "GROCERY": 15,
+        "LODGING": 22,
+        "HOSPITAL": 15,
+        "PHARMACY": 9,
+        "RESTAURANT": 102,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48505",
       "countyName": "Zapata",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 244,
+      "coreCategoryCounts": {
+        "FUEL": 21,
+        "GROCERY": 8,
+        "LODGING": 24,
+        "HOSPITAL": 5,
+        "PHARMACY": 4,
+        "RESTAURANT": 70,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     },
     {
       "countyFips": "48507",
       "countyName": "Zavala",
-      "measurement": "NOT_EXECUTED"
+      "standalonePoiCount": 184,
+      "coreCategoryCounts": {
+        "FUEL": 12,
+        "GROCERY": 5,
+        "LODGING": 13,
+        "HOSPITAL": 6,
+        "PHARMACY": 3,
+        "RESTAURANT": 41,
+        "CONVENIENCE": 0
+      },
+      "brandBearingCount": 0,
+      "metadataConflictCount": 0
     }
   ]
 }
