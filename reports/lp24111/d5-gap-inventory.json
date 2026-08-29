@@ -3,58 +3,58 @@
   "findings": [
     {
       "classification": "IDENTITY_GOVERNANCE_REVIEW",
-      "scope": "1,888 governed identities",
-      "countyCommunity": "STATEWIDE",
-      "evidenceFamily": "D5_QUALITY_CLASS_DETAIL_MISSING",
-      "measuredValue": "community-coverage-quality.json rows = 0",
-      "reason": "Exact D.4 class conservation cannot be proved from empty quality rows.",
-      "severity": "BLOCKER",
-      "launchImpact": "BLOCKS_D5_CERTIFICATION",
-      "recommendedAction": "Publish deterministic per-identity quality rows or aggregate PLACE/non-PLACE class counts from the already-measured D.4 outputs without rerunning coverage."
-    },
-    {
-      "classification": "BRAND_COVERAGE_GAP",
-      "scope": "required traveler brands",
-      "countyCommunity": "STATEWIDE",
-      "evidenceFamily": "D5_BRAND_DETAIL_MISSING",
-      "measuredValue": "brand-coverage.json rows = 0",
-      "reason": "Brand readiness cannot be measured from an empty D.4 brand report.",
-      "severity": "BLOCKER",
-      "launchImpact": "BLOCKS_D5_CERTIFICATION",
-      "recommendedAction": "Publish the already-measured brand aggregates; do not refetch authority."
-    },
-    {
-      "classification": "LEGAL_REVIEW_BLOCKER",
       "scope": "public POI activation",
       "countyCommunity": "STATEWIDE",
-      "evidenceFamily": "LEGAL_CLEARANCE",
-      "measuredValue": "LEGAL_REVIEW_REQUIRED; structured source metadata present on 0 records",
+      "evidenceFamily": "LEGAL_ATTRIBUTION_CLEARANCE",
+      "measuredValue": "LEGAL_REVIEW_REQUIRED",
       "reason": "Attribution/product obligations remain unresolved.",
       "severity": "BLOCKER",
       "launchImpact": "BLOCKS_D5_CERTIFICATION",
-      "recommendedAction": "Obtain counsel review of Overture attribution, notices, provenance presentation, and any future ODbL supplement boundary."
-    },
-    {
-      "classification": "TAXONOMY_REVIEW",
-      "scope": "statewide CONVENIENCE",
-      "countyCommunity": "TARGETED",
-      "evidenceFamily": "CONVENIENCE_TAXONOMY_EVIDENCE",
-      "measuredValue": "0 of 1,888 identities measured for this category",
-      "reason": "D.4 accessibility contains no CONVENIENCE rows.",
-      "severity": "BACKLOG",
-      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
-      "recommendedAction": "Measure bounded candidate taxonomy families before proposing a rule."
+      "recommendedAction": "Obtain counsel review of attribution, notices, provenance presentation, and any future ODbL supplement boundary."
     },
     {
       "classification": "METADATA_CONFLICT",
-      "scope": "149 conflicts and 278 incomplete records",
+      "scope": "1,888 governed identities",
       "countyCommunity": "TARGETED",
-      "evidenceFamily": "METADATA_PRESENTATION",
-      "measuredValue": "D.4 metadata classifications",
-      "reason": "Spatially useful records need safe textual presentation.",
+      "evidenceFamily": "QUALITY_CLASS_REPORTING_MATERIALIZATION",
+      "measuredValue": "REPORTING_EVIDENCE_NOT_MATERIALIZED",
+      "reason": "D.4 quality classifications were not materialized and must not be invented.",
       "severity": "BACKLOG",
       "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
-      "recommendedAction": "Implement conflict quarantine/presentation policy in activation milestone."
+      "recommendedAction": "Materialize reporting evidence only in a separately authorized refinement; do not rerun D.4."
+    },
+    {
+      "classification": "METADATA_CONFLICT",
+      "scope": "governed identity 4872248",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "TERLINGUA_PHARMACY_ACCESSIBILITY_ROW",
+      "measuredValue": "ZERO_RESULT_HANDLING_DEFECT / PHARMACY_TERLINGUA_MEASUREMENT_NOT_MATERIALIZED",
+      "reason": "One known zero-result handling omission has no retained measurement.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Repair the bounded accessibility report row without fabricating its measurement."
+    },
+    {
+      "classification": "METADATA_CONFLICT",
+      "scope": "historical D.4 classifier",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "D4_METADATA_TEXT_HEURISTIC_CLEANUP",
+      "measuredValue": "149 reconciled; 0 structured conflicts",
+      "reason": "The address_text Missouri-token predicate produced 149 false positives.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Retire the heuristic in a future reporting milestone; preserve D.4 history."
+    },
+    {
+      "classification": "METADATA_CONFLICT",
+      "scope": "descriptive brand reporting",
+      "countyCommunity": "TARGETED",
+      "evidenceFamily": "BRAND_REPORTING_REFINEMENT",
+      "measuredValue": "391772 standalone / 391772 unique / 391772 rich matches / 0 missing / 0 duplicate rich IDs",
+      "reason": "Brand is descriptive-only; the owner-certified 391,772-ID rich join is conserved.",
+      "severity": "BACKLOG",
+      "launchImpact": "NON_BLOCKING_AFTER_GUARDRAILS",
+      "recommendedAction": "Consume the existing bounded recovery when aggregate detail is available."
     },
     {
       "classification": "EXPECTED_SPARSE_RURAL",

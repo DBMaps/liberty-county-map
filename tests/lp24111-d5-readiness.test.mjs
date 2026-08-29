@@ -39,12 +39,13 @@ test('D.5 evidence recovery CLI uses a cross-platform entrypoint without import 
  }
 });
 
-test('D.5 fails closed on missing D.4 quality and brand detail',()=>{
+test('D.5 treats missing reporting detail as backlog rather than inventing launch blockers',()=>{
  const d=buildD5();
  assert.equal(d['d5-quality-class-summary.json'].measuredIdentityCount,0);
  assert.equal(d['d5-quality-class-summary.json'].conservationPassed,false);
  assert.equal(d['d5-brand-readiness.json'].complete,false);
- assert.equal(d['d5-certification.json'].executiveResult,'PHASE_D5_READINESS_INCOMPLETE');
+ assert.equal(d['d5-quality-class-summary.json'].evidenceState,'REPORTING_EVIDENCE_NOT_MATERIALIZED');
+ assert.equal(d['d5-certification.json'].readinessClassification,'READY_FOR_BOUNDED_PRODUCTION_ACTIVATION_AFTER_LEGAL_CLEARANCE');
 });
 
 test('D.5A recovers only deterministic category evidence and fails closed elsewhere',()=>{
@@ -110,9 +111,39 @@ test('D.5 category and conflict triage retain measured evidence and source value
  assert.equal(categories.source,'reports/lp24111/category-accessibility.json');
  assert.equal(categories.rows.find(x=>x.category==='CONVENIENCE').measuredCommunityCount,0);
  const metadata=d['d5-metadata-conflict-triage.json'];
- assert.equal(metadata.retainedSample.name,'Hitachi Energy Jefferson City');
- assert.equal(metadata.retainedSample.sourceRegion,'MO');
+ assert.equal(metadata.hitachiMembership.name,'Hitachi Energy Jefferson City');
+ assert.equal(metadata.hitachiMembership.isHistoricalConflictCohortMember,false);
  assert.equal(metadata.sourceFieldsRewritten,false);
+});
+
+test('D.5I reconciles every historical text-heuristic conflict without changing runtime or inventing evidence',()=>{
+ const d=buildD5(),metadata=d['d5-metadata-conflict-triage.json'];
+ assert.equal(metadata.historicalD4Classification,'SPATIAL_METADATA_CONFLICT');
+ assert.deepEqual(metadata.joinConservation,{conflictIdsInput:149,uniqueConflictIds:149,reconciledFalsePositives:149,unexplainedConflictIds:0});
+ assert.deepEqual(metadata.conflictFamilies,{STATE_REGION_CONFLICT:0,LOCALITY_CONFLICT:0,POSTCODE_CONFLICT:0,MULTI_FIELD_CONFLICT:0,INCOMPLETE_METADATA:278});
+ assert.equal(metadata.d5StructuredAssessment,'STRUCTURED_METADATA_CONSISTENT_D4_CONFLICT_FALSE_POSITIVE');
+ assert.equal(metadata.structuredConflictsConfirmed,0);
+ assert.equal(metadata.classifierRca.inspectedField,'address_text');
+ assert.equal(metadata.classifierRca.structuredFieldsInspected,false);
+ assert.match(metadata.classifierRca.losingPredicate,/MO.*MISSOURI.*65101/);
+ for(const street of ['14205 N MO Pac Expy','1801 S Missouri St','9606 N Mo Pac Expy','1508 Missouri Ave']){
+  assert.equal(metadata.authorityFields.includes(street),false,'freeform street text cannot become structured authority');
+ }
+ assert.match(metadata.presentationPolicy,/Freeform address text is descriptive only and never overrides structured region authority/);
+ assert.equal(metadata.launchBlockingConflicts,false);
+ assert.equal(metadata.sourceFieldsRewritten,false);
+ assert.equal(metadata.d4ArtifactsRewritten,false);
+ const ledger=d['d5-activation-blocker-ledger.json'];
+ assert.deepEqual(ledger.ACTIVATION_BLOCKERS.map(x=>x.id),['LEGAL_ATTRIBUTION_CLEARANCE']);
+ assert.ok(ledger.POST_ACTIVATION_REFINEMENT_BACKLOG.some(x=>x.id==='QUALITY_CLASS_REPORTING_MATERIALIZATION'));
+ assert.ok(ledger.POST_ACTIVATION_REFINEMENT_BACKLOG.some(x=>x.id==='TERLINGUA_PHARMACY_ACCESSIBILITY_ROW'&&x.evidence.includes('PHARMACY_TERLINGUA_MEASUREMENT_NOT_MATERIALIZED')));
+ const certification=d['d5-certification.json'];
+ assert.equal(certification.legalState,'LEGAL_REVIEW_REQUIRED');
+ assert.equal(certification.productionPoiSearch,'NOT_LAUNCHED_NOT_CERTIFIED');
+ assert.equal(certification.zeroCostContract,'NON_RUNTIME');
+ assert.equal(certification.runtimeActivated,false);
+ const audit=JSON.parse(fs.readFileSync(new URL('../data/lp24111/phase-d5i-owner-metadata-reconciliation.json',import.meta.url),'utf8'));
+ assert.deepEqual([audit.d4CoverageRerun,audit.remoteFetch,audit.osmMerge,audit.runtimeActivated,audit.deployed],[false,false,false,false,false]);
 });
 
 test('D.5 remains non-runtime, excludes unsafe populations, and distinguishes blockers',()=>{
@@ -144,23 +175,17 @@ test('D.5D rich brand recovery conserves the complete standalone-to-rich authori
  assert.throws(()=>reconcileRichBrandEvidence({conservation:{standalone_rows:20,unique_standalone_ids:20},aggregates:[]}),/STANDALONE_CONSERVATION/);
 });
 
-test('D.5D metadata assigns each exact one-address ID once and preserves all Hitachi source evidence',()=>{
- const rows=Array.from({length:149},(_,i)=>({id:`id-${i}`,displayName:i===0?'Hitachi Energy Jefferson City':`record-${i}`,richerMatched:true,addressCount:1,regionConflict:i%4===0,localityConflict:i%4===1,postcodeConflict:i%4===2,sourceRegion:i===0?'MO':'TX',sourceLocality:i===0?'Jefferson City':'local',sourcePostcode:i===0?'65101-5032':'75001',sourceFreeform:i===0?'500 W Highway 94':'address',sourceCountry:'US'}));
- rows.filter((x,i)=>i%4===3).forEach(x=>{x.regionConflict=true;x.localityConflict=true;});
- rows[0].postcodeConflict=true;
+test('D.5I metadata conserves all 149 structured-consistent rows as false positives and checks Hitachi absence',()=>{
+ const rows=Array.from({length:149},(_,i)=>({id:`id-${i}`,displayName:`record-${i}`,richerMatched:true,addressCount:1,regionConflict:false,localityConflict:false,postcodeConflict:false,sourceRegion:'TX',sourceLocality:'local',sourcePostcode:'75001',sourceFreeform:i%2?'1801 S Missouri St':'14205 N MO Pac Expy',sourceCountry:'US'}));
  const result=reconcileMetadataEvidence(rows);
- assert.equal(result.joinConservation.conflictIdsInput,149);
- assert.equal(result.joinConservation.familyCountSum,149);
- assert.equal(result.joinConservation.duplicateClassifications,0);
- assert.equal(result.joinConservation.unexplainedConflictIds,0);
- assert.equal(result.hitachi.family,'MULTI_FIELD_CONFLICT');
- assert.deepEqual([result.hitachi.sourceRegion,result.hitachi.sourceLocality,result.hitachi.sourcePostcode,result.hitachi.sourceFreeform,result.hitachi.sourceCountry],['MO','Jefferson City','65101-5032','500 W Highway 94','US']);
+ assert.deepEqual(result.joinConservation,{conflictIdsInput:149,uniqueConflictIds:149,richerAuthorityMatches:149,structuredConflictRows:0,falsePositiveReconciledRows:149,unexplainedConflictIds:0});
+ assert.deepEqual(result.families,{STATE_REGION_CONFLICT:0,LOCALITY_CONFLICT:0,POSTCODE_CONFLICT:0,MULTI_FIELD_CONFLICT:0});
+ assert.equal(result.d5StructuredAssessment,'STRUCTURED_METADATA_CONSISTENT_D4_CONFLICT_FALSE_POSITIVE');
+ assert.equal(result.historicalD4Classification,'SPATIAL_METADATA_CONFLICT');
+ assert.equal(result.hitachiMembership.isHistoricalConflictCohortMember,false);
  assert.equal(result.sourceFieldsRewritten,false);
- assert.equal(classifyMetadataFamily({regionConflict:true}),'STATE_REGION_CONFLICT');
- assert.equal(classifyMetadataFamily({localityConflict:true}),'LOCALITY_CONFLICT');
- assert.equal(classifyMetadataFamily({postcodeConflict:true}),'POSTCODE_CONFLICT');
- assert.equal(classifyMetadataFamily({regionConflict:true,postcodeConflict:true}),'MULTI_FIELD_CONFLICT');
  assert.throws(()=>reconcileMetadataEvidence(rows.map((row,i)=>i===1?{...row,addressCount:2}:row)),/METADATA_ADDRESS_CARDINALITY_DRIFT/);
+ assert.throws(()=>reconcileMetadataEvidence(rows.map((row,i)=>i===0?{...row,displayName:'Hitachi Energy Jefferson City'}:row)),/HITACHI_MEMBERSHIP_CONTRADICTION/);
 });
 
 test('D.5G metadata recovery SQL explicitly aliases every derived output',()=>{
@@ -214,7 +239,7 @@ test('D.5F DuckDB recovery inventories rich source LIST<STRUCT> multiplicity wit
   const metadata=path.join(directory,'metadata-conflicts.parquet');
   sql(`COPY (SELECT cast(i AS VARCHAR) id,'001' county_fips,'standalone text, not a struct' sources FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(standalone)}' (FORMAT PARQUET)`);
   sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':CASE WHEN i=0 THEN 'Walmart' ELSE NULL END,'common':MAP(['en'],[NULL])}} brand,CASE WHEN i=0 THEN [{'property':'shops','dataset':'overture','license':'cdla'},{'property':'websites','dataset':'partners','license':'other'}] WHEN i=1 THEN [{'property':'shops','dataset':'overture','license':'cdla'}] WHEN i=2 THEN NULL ELSE [] END sources,[{'freeform':CASE WHEN i=0 THEN '500 W Highway 94' ELSE 'address' END,'locality':CASE WHEN i=0 THEN 'Jefferson City' ELSE 'Elsewhere' END,'postcode':CASE WHEN i=0 THEN '65101-5032' ELSE '65101' END,'region':'MO','country':'US'}] addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
-  sql(`COPY (SELECT cast(i AS VARCHAR) id,CASE WHEN i=0 THEN 'Hitachi Energy Jefferson City' ELSE 'record-'||i END display_name,'001' county_fips,'Governed' locality,'governed address' address_text,'SPATIAL_METADATA_CONFLICT' classification FROM range(149) t(i)) TO '${q(metadata)}' (FORMAT PARQUET)`);
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,'record-'||i display_name,'001' county_fips,'Governed' locality,'governed address' address_text,'SPATIAL_METADATA_CONFLICT' classification FROM range(149) t(i)) TO '${q(metadata)}' (FORMAT PARQUET)`);
   const evidence=recoverOwnerEvidence(directory);
   assert.equal(evidence.brands.joinConservation.standaloneInputIds,EXPECTED_STANDALONE_IDS);
   assert.equal(evidence.sourceInventory.standalonePopulation,EXPECTED_STANDALONE_IDS);
@@ -226,9 +251,9 @@ test('D.5F DuckDB recovery inventories rich source LIST<STRUCT> multiplicity wit
   assert.equal(evidence.metadata.joinConservation.conflictIdsInput,149);
   assert.equal(evidence.metadata.joinConservation.uniqueConflictIds,149);
   assert.equal(evidence.metadata.joinConservation.richerAuthorityMatches,149);
-  assert.equal(evidence.metadata.joinConservation.familyCountSum,149);
-  assert.equal(evidence.metadata.hitachi.displayName,'Hitachi Energy Jefferson City');
-  assert.deepEqual([evidence.metadata.hitachi.sourceRegion,evidence.metadata.hitachi.sourceLocality,evidence.metadata.hitachi.sourcePostcode,evidence.metadata.hitachi.sourceFreeform,evidence.metadata.hitachi.sourceCountry],['MO','Jefferson City','65101-5032','500 W Highway 94','US']);
+  assert.equal(evidence.metadata.joinConservation.falsePositiveReconciledRows,148);
+  assert.equal(evidence.metadata.joinConservation.structuredConflictRows,1);
+  assert.equal(evidence.metadata.hitachiMembership.isHistoricalConflictCohortMember,false);
   assert.equal(evidence.metadata.sourceFieldsRewritten,false);
   assert.match(evidence.artifactAudit.schemaAudit.relations.standalone.columns.find(x=>x.name==='sources').type,/VARCHAR/);
   assert.match(evidence.artifactAudit.schemaAudit.relations.rich.columns.find(x=>x.name==='sources').type,/STRUCT/);

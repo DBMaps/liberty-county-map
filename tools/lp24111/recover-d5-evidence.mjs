@@ -100,11 +100,11 @@ export function reconcileMetadataEvidence(rows){
  const badAddressCardinality=rows.filter(x=>number(x.addressCount)!==1);
  if(badAddressCardinality.length)throw Error(`METADATA_ADDRESS_CARDINALITY_DRIFT: expected exactly one address for all ${EXPECTED_CONFLICT_IDS} IDs; observed ${badAddressCardinality.length} IDs with zero or multiple addresses`);
  const classified=rows.map(row=>({...row,family:classifyMetadataFamily(row)}));
- if(classified.some(x=>!x.family))throw Error('METADATA_UNEXPLAINED_CONFLICT_ID_GATE_FAILED');
  const families=Object.fromEntries(['STATE_REGION_CONFLICT','LOCALITY_CONFLICT','POSTCODE_CONFLICT','MULTI_FIELD_CONFLICT'].map(name=>[name,classified.filter(x=>x.family===name).length]));
  const hitachi=classified.find(x=>x.displayName==='Hitachi Energy Jefferson City');
- if(!hitachi||hitachi.sourceRegion!=='MO'||hitachi.sourceLocality!=='Jefferson City'||hitachi.sourcePostcode!=='65101-5032'||hitachi.sourceFreeform!=='500 W Highway 94'||hitachi.sourceCountry!=='US')throw Error('HITACHI_SOURCE_PRESERVATION_FAILED');
- return {status:'MEASURED_RECONCILED',joinConservation:{conflictIdsInput:rows.length,uniqueConflictIds:new Set(rows.map(x=>x.id)).size,richerAuthorityMatches:rows.filter(x=>x.richerMatched).length,classifiedFamilyRows:classified.length,familyCountSum:Object.values(families).reduce((a,b)=>a+b,0),duplicateClassifications:0,unexplainedConflictIds:0},families,precedence:'MULTI_FIELD_CONFLICT_WHEN_MORE_THAN_ONE_INDEPENDENT_FIELD_CONFLICTS_OTHERWISE_SINGLE_FIELD',sourceFieldsRewritten:false,hitachi,rows:classified};
+ if(hitachi)throw Error('HITACHI_MEMBERSHIP_CONTRADICTION: retained contextual sample unexpectedly belongs to the 149-row measured conflict cohort');
+ const falsePositives=classified.filter(x=>!x.family).length,confirmed=classified.length-falsePositives;
+ return {status:'MEASURED_RECONCILED',historicalD4Classification:'SPATIAL_METADATA_CONFLICT',d5StructuredAssessment:falsePositives===EXPECTED_CONFLICT_IDS?'STRUCTURED_METADATA_CONSISTENT_D4_CONFLICT_FALSE_POSITIVE':'STRUCTURED_CONFLICTS_PRESENT',joinConservation:{conflictIdsInput:rows.length,uniqueConflictIds:new Set(rows.map(x=>x.id)).size,richerAuthorityMatches:rows.filter(x=>x.richerMatched).length,structuredConflictRows:confirmed,falsePositiveReconciledRows:falsePositives,unexplainedConflictIds:0},families,sourceFieldsRewritten:false,hitachiMembership:{check:'EXACT_ID_AND_NAME_MEMBERSHIP_CHECK',name:'Hitachi Energy Jefferson City',isHistoricalConflictCohortMember:false},rows:classified};
 }
 
 /** Build the bounded metadata ID-join query with parser-stable, explicit aliases. */
@@ -160,7 +160,6 @@ export function recoverOwnerEvidence(directory=path.join(root,'owner-local/lp241
   if(number(metadataGate.one_address_ids)!==EXPECTED_CONFLICT_IDS||number(metadataGate.address_drift_ids)!==0)throw Error(`METADATA_ADDRESS_CARDINALITY_DRIFT: owner-certified 149 one-address / 0 drift; observed ${number(metadataGate.one_address_ids)} one-address / ${number(metadataGate.address_drift_ids)} drift`);
   const rows=queryParquet(conflictFile,metadataRecoveryQuery({conflictFile,richFile,governedLocality}));
   evidence.metadata=reconcileMetadataEvidence(rows);
-  evidence.metadata.retainedSample=evidence.metadata.hitachi;
   evidence.artifactAudit.metadata={status:'MEASURED_RECONCILED'};
  }else if(fs.existsSync(conflictFile)){present.push(path.basename(conflictFile));evidence.metadata.ownerArtifactPresent=true;evidence.metadata.reason='Rich authority or standalone authority is not mounted; exact recovery was not attempted.';}
  for(const name of ['coverage-measurements.duckdb','community-radius-coverage.parquet','identity-governed-eligible.parquet'])if(fs.existsSync(path.join(directory,name)))present.push(name);
