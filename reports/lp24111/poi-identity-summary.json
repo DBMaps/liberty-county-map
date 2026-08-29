@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "gridly.lp24111.poi-identity-summary.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "nonRuntime": true,
+  "identityClasses": [
+    "PARENT_POI",
+    "CHILD_POI",
+    "LIKELY_DUPLICATE",
+    "DISTINCT_POI",
+    "AMBIGUOUS"
+  ],
+  "rawEligibleCount": 393038,
+  "parentDestinationCount": null,
+  "childPoiCount": null,
+  "likelyDuplicateCount": null,
+  "distinctPoiCount": null,
+  "ambiguousCount": null,
+  "identityGovernedStandaloneCount": null,
+  "sourceRecordsDeleted": 0
+}

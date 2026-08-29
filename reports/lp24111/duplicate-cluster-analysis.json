@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.lp24111.duplicate-clusters.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "nonRuntime": true,
+  "architecture": {
+    "blocking": "county + 0.01-degree spatial cell",
+    "maximumBlockMembers": 250,
+    "maximumPairDistanceMeters": 150,
+    "unrestrictedN2": false
+  },
+  "candidatePairs": null,
+  "candidateClusters": null,
+  "largestClusterSize": null,
+  "distanceDistribution": null,
+  "signalCombinations": null
+}

@@ -1,0 +1,4154 @@
+{
+  "schemaVersion": "gridly.lp24111.measured-taxonomy-package.v1",
+  "releaseId": "2026-08-19.0",
+  "reports": {
+    "review-taxonomy-census.json": {
+      "schemaVersion": "gridly.lp24111.review-taxonomy-census.v2",
+      "executionState": "OWNER_LOCAL_MEASURED",
+      "input": "owner-local/lp24111/overture-texas-normalized-poi.parquet",
+      "reviewRequiredBefore": 1001637,
+      "topPrimaryBasicFamilies": [
+        {
+          "family_name": "home_service",
+          "record_count": 69709,
+          "county_count": 248
+        },
+        {
+          "family_name": "(null)",
+          "record_count": 67804,
+          "county_count": 247
+        },
+        {
+          "family_name": "personal_or_beauty_service",
+          "record_count": 65321,
+          "county_count": 241
+        },
+        {
+          "family_name": "financial_service",
+          "record_count": 59945,
+          "county_count": 245
+        },
+        {
+          "family_name": "automotive_service",
+          "record_count": 49860,
+          "county_count": 245
+        },
+        {
+          "family_name": "real_estate_service",
+          "record_count": 44078,
+          "county_count": 237
+        },
+        {
+          "family_name": "fashion_and_apparel_store",
+          "record_count": 30526,
+          "county_count": 241
+        },
+        {
+          "family_name": "health_care",
+          "record_count": 30037,
+          "county_count": 215
+        },
+        {
+          "family_name": "professional_service",
+          "record_count": 25923,
+          "county_count": 233
+        },
+        {
+          "family_name": "wellness_service",
+          "record_count": 23817,
+          "county_count": 223
+        },
+        {
+          "family_name": "specialized_health_care",
+          "record_count": 22194,
+          "county_count": 173
+        },
+        {
+          "family_name": "hardware_home_and_garden_store",
+          "record_count": 21565,
+          "county_count": 237
+        },
+        {
+          "family_name": "dental_clinic",
+          "record_count": 16307,
+          "county_count": 199
+        },
+        {
+          "family_name": "auto_dealer",
+          "record_count": 15848,
+          "county_count": 217
+        },
+        {
+          "family_name": "diagnostics_imaging_or_lab_service",
+          "record_count": 13736,
+          "county_count": 185
+        },
+        {
+          "family_name": "casual_eatery",
+          "record_count": 13509,
+          "county_count": 233
+        },
+        {
+          "family_name": "electronics_store",
+          "record_count": 13309,
+          "county_count": 186
+        },
+        {
+          "family_name": "behavioral_or_mental_health_clinic",
+          "record_count": 13257,
+          "county_count": 177
+        },
+        {
+          "family_name": "attorney_or_law_firm",
+          "record_count": 13025,
+          "county_count": 184
+        },
+        {
+          "family_name": "manufacturer",
+          "record_count": 12067,
+          "county_count": 231
+        },
+        {
+          "family_name": "animal_or_pet_service",
+          "record_count": 11892,
+          "county_count": 233
+        },
+        {
+          "family_name": "specialty_store",
+          "record_count": 11094,
+          "county_count": 214
+        },
+        {
+          "family_name": "event_or_party_service",
+          "record_count": 10545,
+          "county_count": 223
+        },
+        {
+          "family_name": "storage_facility",
+          "record_count": 10416,
+          "county_count": 200
+        },
+        {
+          "family_name": "gym",
+          "record_count": 10275,
+          "county_count": 222
+        },
+        {
+          "family_name": "corporate_or_business_office",
+          "record_count": 9500,
+          "county_count": 208
+        },
+        {
+          "family_name": "sport_or_fitness_facility",
+          "record_count": 9169,
+          "county_count": 226
+        },
+        {
+          "family_name": "park",
+          "record_count": 9163,
+          "county_count": 236
+        },
+        {
+          "family_name": "complementary_and_alternative_medicine",
+          "record_count": 8874,
+          "county_count": 189
+        },
+        {
+          "family_name": "food_and_beverage_store",
+          "record_count": 8664,
+          "county_count": 230
+        },
+        {
+          "family_name": "technical_service",
+          "record_count": 8480,
+          "county_count": 207
+        },
+        {
+          "family_name": "rental_service",
+          "record_count": 8448,
+          "county_count": 239
+        },
+        {
+          "family_name": "medical_service",
+          "record_count": 8429,
+          "county_count": 191
+        },
+        {
+          "family_name": "religious_organization",
+          "record_count": 8170,
+          "county_count": 225
+        },
+        {
+          "family_name": "flowers_and_gifts_store",
+          "record_count": 8056,
+          "county_count": 234
+        },
+        {
+          "family_name": "supplier_or_distributor",
+          "record_count": 7970,
+          "county_count": 241
+        },
+        {
+          "family_name": "shopping",
+          "record_count": 7685,
+          "county_count": 231
+        },
+        {
+          "family_name": "second_hand_store",
+          "record_count": 7582,
+          "county_count": 219
+        },
+        {
+          "family_name": "primary_care_or_general_clinic",
+          "record_count": 7119,
+          "county_count": 202
+        },
+        {
+          "family_name": "vehicle_parts_store",
+          "record_count": 7015,
+          "county_count": 223
+        },
+        {
+          "family_name": "bar",
+          "record_count": 6941,
+          "county_count": 192
+        },
+        {
+          "family_name": "media_service",
+          "record_count": 6823,
+          "county_count": 231
+        },
+        {
+          "family_name": "surgery",
+          "record_count": 5600,
+          "county_count": 110
+        },
+        {
+          "family_name": "vision_or_eye_care_clinic",
+          "record_count": 5591,
+          "county_count": 156
+        },
+        {
+          "family_name": "physical_medicine_and_rehabilitation",
+          "record_count": 5552,
+          "county_count": 162
+        },
+        {
+          "family_name": "printing_service",
+          "record_count": 5448,
+          "county_count": 207
+        },
+        {
+          "family_name": "b2b_service",
+          "record_count": 5374,
+          "county_count": 240
+        },
+        {
+          "family_name": "sporting_goods_store",
+          "record_count": 5073,
+          "county_count": 208
+        },
+        {
+          "family_name": "outpatient_care_facility",
+          "record_count": 5046,
+          "county_count": 161
+        },
+        {
+          "family_name": "b2b_transportation_and_storage_service",
+          "record_count": 4832,
+          "county_count": 188
+        },
+        {
+          "family_name": "travel_service",
+          "record_count": 4609,
+          "county_count": 196
+        },
+        {
+          "family_name": "design_service",
+          "record_count": 4509,
+          "county_count": 153
+        },
+        {
+          "family_name": "vehicle_dealer",
+          "record_count": 4281,
+          "county_count": 191
+        },
+        {
+          "family_name": "laundry_service",
+          "record_count": 4194,
+          "county_count": 194
+        },
+        {
+          "family_name": "senior_living_facility",
+          "record_count": 4092,
+          "county_count": 222
+        },
+        {
+          "family_name": "pediatric_clinic",
+          "record_count": 4056,
+          "county_count": 114
+        },
+        {
+          "family_name": "reproductive_perinatal_and_womens_care",
+          "record_count": 4056,
+          "county_count": 130
+        },
+        {
+          "family_name": "personal_care_and_beauty_store",
+          "record_count": 3963,
+          "county_count": 141
+        },
+        {
+          "family_name": "sport_or_recreation_club",
+          "record_count": 3757,
+          "county_count": 160
+        },
+        {
+          "family_name": "books_music_and_video_store",
+          "record_count": 3746,
+          "county_count": 152
+        },
+        {
+          "family_name": "arts_crafts_and_hobby_store",
+          "record_count": 3742,
+          "county_count": 178
+        },
+        {
+          "family_name": "legal_service",
+          "record_count": 3516,
+          "county_count": 165
+        },
+        {
+          "family_name": "b2b_office_and_professional_service",
+          "record_count": 3191,
+          "county_count": 140
+        },
+        {
+          "family_name": "music_venue",
+          "record_count": 2883,
+          "county_count": 193
+        },
+        {
+          "family_name": "lodging",
+          "record_count": 2871,
+          "county_count": 192
+        },
+        {
+          "family_name": "rv_park",
+          "record_count": 2733,
+          "county_count": 231
+        },
+        {
+          "family_name": "travel_and_transportation",
+          "record_count": 2732,
+          "county_count": 158
+        },
+        {
+          "family_name": "shipping_or_delivery_service",
+          "record_count": 2726,
+          "county_count": 162
+        },
+        {
+          "family_name": "apartment",
+          "record_count": 2675,
+          "county_count": 109
+        },
+        {
+          "family_name": "sports_and_recreation",
+          "record_count": 2643,
+          "county_count": 210
+        },
+        {
+          "family_name": "fitness_studio",
+          "record_count": 2624,
+          "county_count": 114
+        },
+        {
+          "family_name": "family_service",
+          "record_count": 2425,
+          "county_count": 234
+        },
+        {
+          "family_name": "animal_and_pet_store",
+          "record_count": 2353,
+          "county_count": 183
+        },
+        {
+          "family_name": "art_gallery",
+          "record_count": 2234,
+          "county_count": 137
+        },
+        {
+          "family_name": "arts_and_entertainment",
+          "record_count": 2157,
+          "county_count": 186
+        },
+        {
+          "family_name": "fueling_station",
+          "record_count": 1911,
+          "county_count": 195
+        },
+        {
+          "family_name": "college_university",
+          "record_count": 1853,
+          "county_count": 125
+        },
+        {
+          "family_name": "vehicle_service",
+          "record_count": 1777,
+          "county_count": 159
+        },
+        {
+          "family_name": "lake",
+          "record_count": 1687,
+          "county_count": 203
+        },
+        {
+          "family_name": "b2b_energy_and_utility_service",
+          "record_count": 1621,
+          "county_count": 166
+        },
+        {
+          "family_name": "b2b_industrial_and_machine_service",
+          "record_count": 1619,
+          "county_count": 167
+        },
+        {
+          "family_name": "stadium_arena",
+          "record_count": 1608,
+          "county_count": 209
+        },
+        {
+          "family_name": "coffee_shop",
+          "record_count": 1555,
+          "county_count": 157
+        },
+        {
+          "family_name": "sport_field",
+          "record_count": 1551,
+          "county_count": 176
+        },
+        {
+          "family_name": "museum",
+          "record_count": 1514,
+          "county_count": 226
+        },
+        {
+          "family_name": "tutoring_service",
+          "record_count": 1478,
+          "county_count": 87
+        },
+        {
+          "family_name": "swimming_pool",
+          "record_count": 1423,
+          "county_count": 153
+        },
+        {
+          "family_name": "event_venue",
+          "record_count": 1375,
+          "county_count": 134
+        },
+        {
+          "family_name": "food_truck_stand",
+          "record_count": 1340,
+          "county_count": 134
+        },
+        {
+          "family_name": "office_supply_store",
+          "record_count": 1316,
+          "county_count": 97
+        },
+        {
+          "family_name": "warehouse_club_store",
+          "record_count": 1252,
+          "county_count": 112
+        },
+        {
+          "family_name": "sport_league",
+          "record_count": 1241,
+          "county_count": 125
+        },
+        {
+          "family_name": "education",
+          "record_count": 1231,
+          "county_count": 121
+        },
+        {
+          "family_name": "specialized_medical_facility",
+          "record_count": 1167,
+          "county_count": 124
+        },
+        {
+          "family_name": "campground",
+          "record_count": 1059,
+          "county_count": 185
+        },
+        {
+          "family_name": "private_lodging",
+          "record_count": 1054,
+          "county_count": 128
+        },
+        {
+          "family_name": "dance_club",
+          "record_count": 957,
+          "county_count": 92
+        },
+        {
+          "family_name": "smoothie_juice_bar",
+          "record_count": 950,
+          "county_count": 133
+        },
+        {
+          "family_name": "condominium",
+          "record_count": 936,
+          "county_count": 62
+        },
+        {
+          "family_name": "golf_course",
+          "record_count": 922,
+          "county_count": 172
+        }
+      ],
+      "topHierarchyValues": [
+        {
+          "hierarchy_value": "(null)",
+          "record_count": 81392
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"health_care\",\"hierarchy\":[\"health_care\"],\"alternates\":null}",
+          "record_count": 30037
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"real_estate_agent\",\"hierarchy\":[\"services_and_business\",\"real_estate_service\",\"real_estate_agent\"],\"alternates\":null}",
+          "record_count": 24233
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"automotive_repair\",\"hierarchy\":[\"travel_and_transportation\",\"vehicle_service\",\"automotive_service\",\"automotive_repair\"],\"alternates\":null}",
+          "record_count": 19466
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"beauty_salon\",\"hierarchy\":[\"lifestyle_services\",\"personal_or_beauty_service\",\"beauty_salon\"],\"alternates\":null}",
+          "record_count": 18570
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"hair_salon\",\"hierarchy\":[\"lifestyle_services\",\"personal_or_beauty_service\",\"hair_salon\"],\"alternates\":null}",
+          "record_count": 15752
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"insurance_agency\",\"hierarchy\":[\"services_and_business\",\"financial_service\",\"insurance_agency\"],\"alternates\":null}",
+          "record_count": 15607
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"professional_service\",\"hierarchy\":[\"services_and_business\",\"professional_service\"],\"alternates\":null}",
+          "record_count": 13749
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"real_estate_service\",\"hierarchy\":[\"services_and_business\",\"real_estate_service\"],\"alternates\":null}",
+          "record_count": 11446
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"contractor\",\"hierarchy\":[\"services_and_business\",\"home_service\",\"contractor\"],\"alternates\":null}",
+          "record_count": 11082
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"auto_dealer\",\"hierarchy\":[\"shopping\",\"vehicle_dealer\",\"auto_dealer\"],\"alternates\":null}",
+          "record_count": 10963
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"doctors_office\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"diagnostics_imaging_or_lab_service\",\"doctors_office\"],\"alternates\":null}",
+          "record_count": 10942
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"money_transfer_service\",\"hierarchy\":[\"services_and_business\",\"financial_service\",\"money_transfer_service\"],\"alternates\":null}",
+          "record_count": 10835
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"gym\",\"hierarchy\":[\"sports_and_recreation\",\"sport_or_fitness_facility\",\"gym\"],\"alternates\":null}",
+          "record_count": 10255
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"park\",\"hierarchy\":[\"sports_and_recreation\",\"park\"],\"alternates\":null}",
+          "record_count": 8955
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"spa\",\"hierarchy\":[\"lifestyle_services\",\"wellness_service\",\"spa\"],\"alternates\":null}",
+          "record_count": 8900
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"barber\",\"hierarchy\":[\"lifestyle_services\",\"personal_or_beauty_service\",\"barber\"],\"alternates\":null}",
+          "record_count": 8892
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"nail_salon\",\"hierarchy\":[\"lifestyle_services\",\"personal_or_beauty_service\",\"nail_salon\"],\"alternates\":null}",
+          "record_count": 8795
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"dental_clinic\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"dental_clinic\"],\"alternates\":null}",
+          "record_count": 8704
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"religious_organization\",\"hierarchy\":[\"cultural_and_historic\",\"religious_organization\"],\"alternates\":null}",
+          "record_count": 8149
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"party_and_event_planning\",\"hierarchy\":[\"services_and_business\",\"event_or_party_service\",\"party_and_event_planning\"],\"alternates\":null}",
+          "record_count": 8100
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"shopping\",\"hierarchy\":[\"shopping\"],\"alternates\":null}",
+          "record_count": 7683
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"financial_service\",\"hierarchy\":[\"services_and_business\",\"financial_service\"],\"alternates\":null}",
+          "record_count": 7558
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"mobile_phone_store\",\"hierarchy\":[\"shopping\",\"specialty_store\",\"electronics_store\",\"mobile_phone_store\"],\"alternates\":null}",
+          "record_count": 7453
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"clothing_store\",\"hierarchy\":[\"shopping\",\"fashion_and_apparel_store\",\"clothing_store\"],\"alternates\":null}",
+          "record_count": 6937
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"attorney_or_law_firm\",\"hierarchy\":[\"services_and_business\",\"legal_service\",\"attorney_or_law_firm\"],\"alternates\":null}",
+          "record_count": 6567
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"auto_parts_store\",\"hierarchy\":[\"shopping\",\"specialty_store\",\"vehicle_parts_store\",\"auto_parts_store\"],\"alternates\":null}",
+          "record_count": 6270
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"chiropractic\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"complementary_and_alternative_medicine\",\"chiropractic\"],\"alternates\":null}",
+          "record_count": 5880
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"roofing\",\"hierarchy\":[\"services_and_business\",\"home_service\",\"ceiling_and_roofing_repair_and_service\",\"roofing\"],\"alternates\":null}",
+          "record_count": 5719
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"massage_therapy\",\"hierarchy\":[\"lifestyle_services\",\"wellness_service\",\"massage_therapy\"],\"alternates\":null}",
+          "record_count": 5677
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"hvac_service\",\"hierarchy\":[\"services_and_business\",\"home_service\",\"hvac_service\"],\"alternates\":null}",
+          "record_count": 5651
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"self_storage_facility\",\"hierarchy\":[\"services_and_business\",\"storage_facility\",\"self_storage_facility\"],\"alternates\":null}",
+          "record_count": 5530
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"trusts\",\"hierarchy\":[\"services_and_business\",\"financial_service\",\"trusts\"],\"alternates\":null}",
+          "record_count": 5389
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"home_health_care\",\"hierarchy\":[\"health_care\",\"medical_service\",\"home_health_care\"],\"alternates\":null}",
+          "record_count": 5217
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"furniture_store\",\"hierarchy\":[\"shopping\",\"specialty_store\",\"hardware_home_and_garden_store\",\"furniture_store\"],\"alternates\":null}",
+          "record_count": 5174
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"outpatient_care_facility\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\"],\"alternates\":null}",
+          "record_count": 5046
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"flowers_and_gifts_store\",\"hierarchy\":[\"shopping\",\"specialty_store\",\"flowers_and_gifts_store\"],\"alternates\":null}",
+          "record_count": 4950
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"industrial_equipment_manufacturer\",\"hierarchy\":[\"services_and_business\",\"b2b_service\",\"manufacturer\",\"machinery_and_tool_manufacturer\",\"industrial_equipment_manufacturer\"],\"alternates\":null}",
+          "record_count": 4805
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"tire_dealer_and_repair\",\"hierarchy\":[\"travel_and_transportation\",\"vehicle_service\",\"automotive_service\",\"automotive_repair\",\"tire_dealer_and_repair\"],\"alternates\":null}",
+          "record_count": 4790
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"propane_supplier\",\"hierarchy\":[\"services_and_business\",\"b2b_service\",\"supplier_or_distributor\",\"propane_supplier\"],\"alternates\":null}",
+          "record_count": 4768
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"jewelry_store\",\"hierarchy\":[\"shopping\",\"fashion_and_apparel_store\",\"jewelry_store\"],\"alternates\":null}",
+          "record_count": 4660
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"used_auto_dealer\",\"hierarchy\":[\"shopping\",\"vehicle_dealer\",\"auto_dealer\",\"used_auto_dealer\"],\"alternates\":null}",
+          "record_count": 4624
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"auto_body_shop\",\"hierarchy\":[\"travel_and_transportation\",\"vehicle_service\",\"automotive_service\",\"auto_body_shop\"],\"alternates\":null}",
+          "record_count": 4343
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"plumbing\",\"hierarchy\":[\"services_and_business\",\"home_service\",\"plumbing\"],\"alternates\":null}",
+          "record_count": 4198
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"womens_clothing_store\",\"hierarchy\":[\"shopping\",\"fashion_and_apparel_store\",\"clothing_store\",\"womens_clothing_store\"],\"alternates\":null}",
+          "record_count": 4158
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"freight_and_cargo_service\",\"hierarchy\":[\"services_and_business\",\"b2b_service\",\"b2b_transportation_and_storage_service\",\"freight_and_cargo_service\"],\"alternates\":null}",
+          "record_count": 3922
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"optometry\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"vision_or_eye_care_clinic\",\"optometry\"],\"alternates\":null}",
+          "record_count": 3874
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"public_health_clinic\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"primary_care_or_general_clinic\",\"public_health_clinic\"],\"alternates\":null}",
+          "record_count": 3866
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"bakery\",\"hierarchy\":[\"food_and_drink\",\"casual_eatery\",\"bakery\"],\"alternates\":null}",
+          "record_count": 3858
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"medical_spa\",\"hierarchy\":[\"lifestyle_services\",\"wellness_service\",\"spa\",\"medical_spa\"],\"alternates\":null}",
+          "record_count": 3839
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"printing_service\",\"hierarchy\":[\"services_and_business\",\"printing_service\"],\"alternates\":null}",
+          "record_count": 3793
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"veterinarian\",\"hierarchy\":[\"lifestyle_services\",\"animal_or_pet_service\",\"veterinary_care\",\"veterinarian\"],\"alternates\":null}",
+          "record_count": 3775
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"car_wash\",\"hierarchy\":[\"travel_and_transportation\",\"vehicle_service\",\"automotive_service\",\"car_wash\"],\"alternates\":null}",
+          "record_count": 3733
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"corporate_or_business_office\",\"hierarchy\":[\"services_and_business\",\"corporate_or_business_office\"],\"alternates\":null}",
+          "record_count": 3708
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"bar\",\"hierarchy\":[\"food_and_drink\",\"alcoholic_beverage_venue\",\"bar\"],\"alternates\":null}",
+          "record_count": 3702
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"physical_therapy\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"physical_medicine_and_rehabilitation\",\"physical_therapy\"],\"alternates\":null}",
+          "record_count": 3645
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"general_dentistry\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"dental_clinic\",\"general_dentistry\"],\"alternates\":null}",
+          "record_count": 3644
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"manufacturer\",\"hierarchy\":[\"services_and_business\",\"b2b_service\",\"manufacturer\"],\"alternates\":null}",
+          "record_count": 3559
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"key_and_locksmith\",\"hierarchy\":[\"services_and_business\",\"home_service\",\"key_and_locksmith\"],\"alternates\":null}",
+          "record_count": 3476
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"pediatric_clinic\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"pediatric_clinic\"],\"alternates\":null}",
+          "record_count": 3431
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"retirement_home\",\"hierarchy\":[\"services_and_business\",\"housing_or_property_service\",\"senior_living_facility\",\"retirement_home\"],\"alternates\":null}",
+          "record_count": 3404
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"family_practice\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"primary_care_or_general_clinic\",\"family_practice\"],\"alternates\":null}",
+          "record_count": 3197
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"fashion_boutique\",\"hierarchy\":[\"shopping\",\"fashion_and_apparel_store\",\"fashion_boutique\"],\"alternates\":null}",
+          "record_count": 3157
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"auto_insurance\",\"hierarchy\":[\"services_and_business\",\"financial_service\",\"insurance_agency\",\"auto_insurance\"],\"alternates\":null}",
+          "record_count": 3133
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"storage_facility\",\"hierarchy\":[\"services_and_business\",\"storage_facility\"],\"alternates\":null}",
+          "record_count": 3052
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"landscaping\",\"hierarchy\":[\"services_and_business\",\"home_service\",\"landscaping\"],\"alternates\":null}",
+          "record_count": 3016
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"mortgage_broker\",\"hierarchy\":[\"services_and_business\",\"financial_service\",\"mortgage_broker\"],\"alternates\":null}",
+          "record_count": 3012
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"accountant\",\"hierarchy\":[\"services_and_business\",\"financial_service\",\"accountant\"],\"alternates\":null}",
+          "record_count": 3009
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"tattoo_and_piercing\",\"hierarchy\":[\"lifestyle_services\",\"personal_or_beauty_service\",\"body_modification\",\"tattoo_and_piercing\"],\"alternates\":null}",
+          "record_count": 2961
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"automotive_service\",\"hierarchy\":[\"travel_and_transportation\",\"vehicle_service\",\"automotive_service\"],\"alternates\":null}",
+          "record_count": 2949
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"employment_agency\",\"hierarchy\":[\"services_and_business\",\"professional_service\",\"employment_agency\"],\"alternates\":null}",
+          "record_count": 2943
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"electronics_store\",\"hierarchy\":[\"shopping\",\"specialty_store\",\"electronics_store\"],\"alternates\":null}",
+          "record_count": 2914
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"shoe_store\",\"hierarchy\":[\"shopping\",\"fashion_and_apparel_store\",\"shoe_store\"],\"alternates\":null}",
+          "record_count": 2874
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"obstetrics_and_gynecology\",\"hierarchy\":[\"health_care\",\"outpatient_care_facility\",\"reproductive_perinatal_and_womens_care\",\"obstetrics_and_gynecology\"],\"alternates\":null}",
+          "record_count": 2869
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"it_service_and_computer_repair\",\"hierarchy\":[\"services_and_business\",\"technical_service\",\"it_service_and_computer_repair\"],\"alternates\":null}",
+          "record_count": 2827
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"martial_arts_club\",\"hierarchy\":[\"sports_and_recreation\",\"sport_or_recreation_club\",\"martial_arts_club\"],\"alternates\":null}",
+          "record_count": 2816
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"rv_park\",\"hierarchy\":[\"lodging\",\"rv_park\"],\"alternates\":null}",
+          "record_count": 2733
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"travel_and_transportation\",\"hierarchy\":[\"travel_and_transportation\"],\"alternates\":null}",
+          "record_count": 2732
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"travel_service\",\"hierarchy\":[\"travel_and_transportation\",\"travel_service\"],\"alternates\":null}",
+          "record_count": 2699
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"apartment\",\"hierarchy\":[\"services_and_business\",\"housing_or_property_service\",\"apartment\"],\"alternates\":null}",
+          "record_count": 2675
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"home_cleaning\",\"hierarchy\":[\"services_and_business\",\"home_service\",\"home_cleaning\"],\"alternates\":null}",
+          "record_count": 2668
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"property_management\",\"hierarchy\":[\"services_and_business\",\"real_estate_service\",\"property_management\"],\"alternates\":null}",
+          "record_count": 2662
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"music_venue\",\"hierarchy\":[\"arts_and_entertainment\",\"performing_arts_venue\",\"music_venue\"],\"alternates\":null}",
+          "record_count": 2652
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"sports_and_recreation\",\"hierarchy\":[\"sports_and_recreation\"],\"alternates\":null}",
+          "record_count": 2643
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"rental_kiosk\",\"hierarchy\":[\"services_and_business\",\"rental_service\",\"rental_kiosk\"],\"alternates\":null}",
+          "record_count": 2584
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"metal_fabricator\",\"hierarchy\":[\"services_and_business\",\"b2b_service\",\"manufacturer\",\"metal_fabricator\"],\"alternates\":null}",
+          "record_count": 2573
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"electrician\",\"hierarchy\":[\"services_and_business\",\"home_service\",\"electrician\"],\"alternates\":null}",
+          "record_count": 2567
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"marketing_agency\",\"hierarchy\":[\"services_and_business\",\"professional_service\",\"marketing_agency\"],\"alternates\":null}",
+          "record_count": 2562
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"lodging\",\"hierarchy\":[\"lodging\"],\"alternates\":null}",
+          "record_count": 2559
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"auto_detailing\",\"hierarchy\":[\"travel_and_transportation\",\"vehicle_service\",\"automotive_service\",\"auto_detailing\"],\"alternates\":null}",
+          "record_count": 2542
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"rental_service\",\"hierarchy\":[\"services_and_business\",\"rental_service\"],\"alternates\":null}",
+          "record_count": 2514
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"advertising_agency\",\"hierarchy\":[\"services_and_business\",\"professional_service\",\"advertising_agency\"],\"alternates\":null}",
+          "record_count": 2511
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"antique_store\",\"hierarchy\":[\"shopping\",\"second_hand_store\",\"antique_store\"],\"alternates\":null}",
+          "record_count": 2435
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"pet_groomer\",\"hierarchy\":[\"lifestyle_services\",\"animal_or_pet_service\",\"pet_care_service\",\"pet_groomer\"],\"alternates\":null}",
+          "record_count": 2416
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"sporting_goods_store\",\"hierarchy\":[\"shopping\",\"specialty_store\",\"sporting_goods_store\"],\"alternates\":null}",
+          "record_count": 2335
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"second_hand_store\",\"hierarchy\":[\"shopping\",\"second_hand_store\"],\"alternates\":null}",
+          "record_count": 2323
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"liquor_store\",\"hierarchy\":[\"shopping\",\"food_and_beverage_store\",\"liquor_store\"],\"alternates\":null}",
+          "record_count": 2302
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"home_service\",\"hierarchy\":[\"services_and_business\",\"home_service\"],\"alternates\":null}",
+          "record_count": 2295
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"software_development\",\"hierarchy\":[\"services_and_business\",\"technical_service\",\"software_development\"],\"alternates\":null}",
+          "record_count": 2271
+        },
+        {
+          "hierarchy_value": "{\"primary\":\"art_gallery\",\"hierarchy\":[\"arts_and_entertainment\",\"arts_and_crafts_space\",\"art_gallery\"],\"alternates\":null}",
+          "record_count": 2234
+        }
+      ],
+      "topNameCategoryCombinations": [
+        {
+          "place_name": "Western Union",
+          "category_name": "financial_service",
+          "record_count": 7724
+        },
+        {
+          "place_name": "Blue Rhino Propane Exchange",
+          "category_name": "supplier_or_distributor",
+          "record_count": 4472
+        },
+        {
+          "place_name": "Redbox",
+          "category_name": "rental_service",
+          "record_count": 2469
+        },
+        {
+          "place_name": "Metro by T-Mobile",
+          "category_name": "electronics_store",
+          "record_count": 1275
+        },
+        {
+          "place_name": "Redbox",
+          "category_name": "books_music_and_video_store",
+          "record_count": 968
+        },
+        {
+          "place_name": "O'Reilly Auto Parts",
+          "category_name": "vehicle_parts_store",
+          "record_count": 923
+        },
+        {
+          "place_name": "H&R Block",
+          "category_name": "financial_service",
+          "record_count": 910
+        },
+        {
+          "place_name": "Jackson Hewitt Tax Service",
+          "category_name": "financial_service",
+          "record_count": 813
+        },
+        {
+          "place_name": "Cricket Wireless Authorized Retailer",
+          "category_name": "electronics_store",
+          "record_count": 768
+        },
+        {
+          "place_name": "AutoZone",
+          "category_name": "vehicle_parts_store",
+          "record_count": 741
+        },
+        {
+          "place_name": "Boost Mobile",
+          "category_name": "electronics_store",
+          "record_count": 738
+        },
+        {
+          "place_name": "Public Storage",
+          "category_name": "storage_facility",
+          "record_count": 726
+        },
+        {
+          "place_name": "T-Mobile",
+          "category_name": "electronics_store",
+          "record_count": 687
+        },
+        {
+          "place_name": "Minute Key",
+          "category_name": "home_service",
+          "record_count": 674
+        },
+        {
+          "place_name": "Extra Space Storage",
+          "category_name": "storage_facility",
+          "record_count": 601
+        },
+        {
+          "place_name": "KeyMe Locksmiths",
+          "category_name": "home_service",
+          "record_count": 584
+        },
+        {
+          "place_name": "Subway",
+          "category_name": "casual_eatery",
+          "record_count": 575
+        },
+        {
+          "place_name": "Vinted Go Parcel Shop",
+          "category_name": "shipping_or_delivery_service",
+          "record_count": 550
+        },
+        {
+          "place_name": "NAPA Auto Parts",
+          "category_name": "vehicle_parts_store",
+          "record_count": 515
+        },
+        {
+          "place_name": "Great Clips",
+          "category_name": "personal_or_beauty_service",
+          "record_count": 514
+        },
+        {
+          "place_name": "Shred Nations",
+          "category_name": "b2b_office_and_professional_service",
+          "record_count": 503
+        },
+        {
+          "place_name": "Total Wireless",
+          "category_name": "electronics_store",
+          "record_count": 494
+        },
+        {
+          "place_name": "Intoxalock Ignition Interlock",
+          "category_name": "specialty_store",
+          "record_count": 471
+        },
+        {
+          "place_name": "UPS Authorized Shipping Outlet",
+          "category_name": "shipping_or_delivery_service",
+          "record_count": 445
+        },
+        {
+          "place_name": "Blue Rhino",
+          "category_name": "rental_service",
+          "record_count": 422
+        },
+        {
+          "place_name": "Shell",
+          "category_name": "fueling_station",
+          "record_count": 408
+        },
+        {
+          "place_name": "Verizon",
+          "category_name": "electronics_store",
+          "record_count": 407
+        },
+        {
+          "place_name": "Fred Loya Insurance",
+          "category_name": "financial_service",
+          "record_count": 402
+        },
+        {
+          "place_name": "Cricket Wireless",
+          "category_name": "electronics_store",
+          "record_count": 388
+        },
+        {
+          "place_name": "Anytime Fitness",
+          "category_name": "gym",
+          "record_count": 379
+        },
+        {
+          "place_name": "Payless ShoeSource",
+          "category_name": "fashion_and_apparel_store",
+          "record_count": 367
+        },
+        {
+          "place_name": "Experts Garage Door Repair Installation Process",
+          "category_name": "home_service",
+          "record_count": 352
+        },
+        {
+          "place_name": "RadioShack",
+          "category_name": "electronics_store",
+          "record_count": 346
+        },
+        {
+          "place_name": "Enterprise Rent-A-Car",
+          "category_name": "rental_service",
+          "record_count": 340
+        },
+        {
+          "place_name": "Supercuts",
+          "category_name": "personal_or_beauty_service",
+          "record_count": 333
+        },
+        {
+          "place_name": "AT&T Store",
+          "category_name": "electronics_store",
+          "record_count": 328
+        },
+        {
+          "place_name": "Take 5 Oil Change",
+          "category_name": "automotive_service",
+          "record_count": 327
+        },
+        {
+          "place_name": "World Finance",
+          "category_name": "financial_service",
+          "record_count": 327
+        },
+        {
+          "place_name": "Liberty Tax",
+          "category_name": "financial_service",
+          "record_count": 324
+        },
+        {
+          "place_name": "Penske Truck Rental",
+          "category_name": "rental_service",
+          "record_count": 312
+        },
+        {
+          "place_name": "GameStop",
+          "category_name": "books_music_and_video_store",
+          "record_count": 304
+        },
+        {
+          "place_name": "Shipley Do-Nuts",
+          "category_name": "casual_eatery",
+          "record_count": 292
+        },
+        {
+          "place_name": "Advance Auto Parts",
+          "category_name": "vehicle_parts_store",
+          "record_count": 285
+        },
+        {
+          "place_name": "Discount Tire",
+          "category_name": "automotive_service",
+          "record_count": 273
+        },
+        {
+          "place_name": "Cash America Pawn",
+          "category_name": "second_hand_store",
+          "record_count": 265
+        },
+        {
+          "place_name": "TitleMax Title Loans",
+          "category_name": "legal_service",
+          "record_count": 264
+        },
+        {
+          "place_name": "Walmart Bakery",
+          "category_name": "casual_eatery",
+          "record_count": 260
+        },
+        {
+          "place_name": "Caliber Collision",
+          "category_name": "automotive_service",
+          "record_count": 258
+        },
+        {
+          "place_name": "CubeSmart Self Storage",
+          "category_name": "storage_facility",
+          "record_count": 255
+        },
+        {
+          "place_name": "ACE Cash Express",
+          "category_name": "financial_service",
+          "record_count": 254
+        },
+        {
+          "place_name": "Sally Beauty",
+          "category_name": "personal_care_and_beauty_store",
+          "record_count": 253
+        },
+        {
+          "place_name": "Mattress Firm",
+          "category_name": "hardware_home_and_garden_store",
+          "record_count": 247
+        },
+        {
+          "place_name": "Texas Farm Bureau Insurance Company",
+          "category_name": "financial_service",
+          "record_count": 245
+        },
+        {
+          "place_name": "Planet Fitness",
+          "category_name": "gym",
+          "record_count": 243
+        },
+        {
+          "place_name": "Security Finance",
+          "category_name": "financial_service",
+          "record_count": 237
+        },
+        {
+          "place_name": "Edward Jones",
+          "category_name": "financial_service",
+          "record_count": 233
+        },
+        {
+          "place_name": "Walmart Photo Center",
+          "category_name": "electronics_store",
+          "record_count": 232
+        },
+        {
+          "place_name": "Enterprise Rent-A-Car",
+          "category_name": "travel_service",
+          "record_count": 230
+        },
+        {
+          "place_name": "SmartStyle",
+          "category_name": "personal_or_beauty_service",
+          "record_count": 226
+        },
+        {
+          "place_name": "A-MAX Auto Insurance",
+          "category_name": "financial_service",
+          "record_count": 222
+        },
+        {
+          "place_name": "Freeway Insurance",
+          "category_name": "financial_service",
+          "record_count": 221
+        },
+        {
+          "place_name": "Quest Diagnostics",
+          "category_name": "diagnostics_imaging_or_lab_service",
+          "record_count": 221
+        },
+        {
+          "place_name": "Smart Start Ignition Interlock",
+          "category_name": "specialty_store",
+          "record_count": 215
+        },
+        {
+          "place_name": "Valero",
+          "category_name": "fueling_station",
+          "record_count": 215
+        },
+        {
+          "place_name": "Liberty Tax Service",
+          "category_name": "financial_service",
+          "record_count": 210
+        },
+        {
+          "place_name": "Baskin-Robbins",
+          "category_name": "casual_eatery",
+          "record_count": 203
+        },
+        {
+          "place_name": "Starbucks",
+          "category_name": "coffee_shop",
+          "record_count": 200
+        },
+        {
+          "place_name": "Rent-A-Center",
+          "category_name": "rental_service",
+          "record_count": 196
+        },
+        {
+          "place_name": "The Joint Chiropractic",
+          "category_name": "complementary_and_alternative_medicine",
+          "record_count": 192
+        },
+        {
+          "place_name": "Pronto Insurance",
+          "category_name": "financial_service",
+          "record_count": 188
+        },
+        {
+          "place_name": "Sprint Store",
+          "category_name": "electronics_store",
+          "record_count": 187
+        },
+        {
+          "place_name": "Advance America",
+          "category_name": "financial_service",
+          "record_count": 185
+        },
+        {
+          "place_name": "EZPAWN",
+          "category_name": "second_hand_store",
+          "record_count": 185
+        },
+        {
+          "place_name": "GNC",
+          "category_name": "food_and_beverage_store",
+          "record_count": 183
+        },
+        {
+          "place_name": "Chevron",
+          "category_name": "fueling_station",
+          "record_count": 182
+        },
+        {
+          "place_name": "minuteKEY",
+          "category_name": "home_service",
+          "record_count": 182
+        },
+        {
+          "place_name": "Cash Store",
+          "category_name": "financial_service",
+          "record_count": 181
+        },
+        {
+          "place_name": "AT&T",
+          "category_name": "electronics_store",
+          "record_count": 180
+        },
+        {
+          "place_name": "Mattress Firm",
+          "category_name": "shopping",
+          "record_count": 173
+        },
+        {
+          "place_name": "Goodwill",
+          "category_name": "second_hand_store",
+          "record_count": 172
+        },
+        {
+          "place_name": "Valvoline Instant Oil Change",
+          "category_name": "automotive_service",
+          "record_count": 172
+        },
+        {
+          "place_name": "SUBWAY",
+          "category_name": "casual_eatery",
+          "record_count": 170
+        },
+        {
+          "place_name": "RushMyPassport in FedEx Office",
+          "category_name": "travel_service",
+          "record_count": 168
+        },
+        {
+          "place_name": "James Avery Artisan Jewelry",
+          "category_name": "fashion_and_apparel_store",
+          "record_count": 167
+        },
+        {
+          "place_name": "Palm Beach Tan",
+          "category_name": "personal_or_beauty_service",
+          "record_count": 165
+        },
+        {
+          "place_name": "Spirit Halloween",
+          "category_name": "arts_crafts_and_hobby_store",
+          "record_count": 162
+        },
+        {
+          "place_name": "Sport Clips Haircuts",
+          "category_name": "personal_or_beauty_service",
+          "record_count": 162
+        },
+        {
+          "place_name": "Walmart Vision & Glasses",
+          "category_name": "fashion_and_apparel_store",
+          "record_count": 160
+        },
+        {
+          "place_name": "Verizon Wireless",
+          "category_name": "electronics_store",
+          "record_count": 158
+        },
+        {
+          "place_name": "Exxon",
+          "category_name": "fueling_station",
+          "record_count": 152
+        },
+        {
+          "place_name": "Marble Slab Creamery",
+          "category_name": "casual_eatery",
+          "record_count": 152
+        },
+        {
+          "place_name": "Petco",
+          "category_name": "animal_and_pet_store",
+          "record_count": 152
+        },
+        {
+          "place_name": "UPS Access Point location",
+          "category_name": "shipping_or_delivery_service",
+          "record_count": 152
+        },
+        {
+          "place_name": "Blue Rhino",
+          "category_name": "supplier_or_distributor",
+          "record_count": 151
+        },
+        {
+          "place_name": "Tractor Supply Co.",
+          "category_name": "hardware_home_and_garden_store",
+          "record_count": 150
+        },
+        {
+          "place_name": "Aaron's",
+          "category_name": "rental_service",
+          "record_count": 149
+        },
+        {
+          "place_name": "Action Behavior Centers - ABA Therapy for Autism",
+          "category_name": "health_care",
+          "record_count": 149
+        },
+        {
+          "place_name": "Bath & Body Works",
+          "category_name": "personal_care_and_beauty_store",
+          "record_count": 148
+        },
+        {
+          "place_name": "LifeSafer Ignition Interlock",
+          "category_name": "fashion_and_apparel_store",
+          "record_count": 145
+        },
+        {
+          "place_name": "Sun Loan Company",
+          "category_name": "financial_service",
+          "record_count": 145
+        }
+      ],
+      "evidencePresence": {
+        "record_count": 1001637,
+        "name_present_count": 1001637,
+        "brand_present_count": 596837,
+        "address_present_count": 1001637,
+        "contact_present_count": 954442
+      },
+      "byCounty": [
+        {
+          "county_fips_code": "48201",
+          "review_record_count": 193730,
+          "records_per_occupied_degree": 64576.666666666664
+        },
+        {
+          "county_fips_code": "48113",
+          "review_record_count": 100597,
+          "records_per_occupied_degree": 50298.5
+        },
+        {
+          "county_fips_code": "48439",
+          "review_record_count": 71678,
+          "records_per_occupied_degree": 71678
+        },
+        {
+          "county_fips_code": "48029",
+          "review_record_count": 62678,
+          "records_per_occupied_degree": 62678
+        },
+        {
+          "county_fips_code": "48453",
+          "review_record_count": 56636,
+          "records_per_occupied_degree": 28318
+        },
+        {
+          "county_fips_code": "48085",
+          "review_record_count": 42592,
+          "records_per_occupied_degree": 21296
+        },
+        {
+          "county_fips_code": "48121",
+          "review_record_count": 25689,
+          "records_per_occupied_degree": 6422.25
+        },
+        {
+          "county_fips_code": "48215",
+          "review_record_count": 23793,
+          "records_per_occupied_degree": 11896.5
+        },
+        {
+          "county_fips_code": "48141",
+          "review_record_count": 22799,
+          "records_per_occupied_degree": 11399.5
+        },
+        {
+          "county_fips_code": "48339",
+          "review_record_count": 22757,
+          "records_per_occupied_degree": 22757
+        },
+        {
+          "county_fips_code": "48157",
+          "review_record_count": 21626,
+          "records_per_occupied_degree": 10813
+        },
+        {
+          "county_fips_code": "48491",
+          "review_record_count": 21541,
+          "records_per_occupied_degree": 10770.5
+        },
+        {
+          "county_fips_code": "48355",
+          "review_record_count": 12327,
+          "records_per_occupied_degree": 12327
+        },
+        {
+          "county_fips_code": "48167",
+          "review_record_count": 11267,
+          "records_per_occupied_degree": 5633.5
+        },
+        {
+          "county_fips_code": "48303",
+          "review_record_count": 11167,
+          "records_per_occupied_degree": 5583.5
+        },
+        {
+          "county_fips_code": "48061",
+          "review_record_count": 10972,
+          "records_per_occupied_degree": 5486
+        },
+        {
+          "county_fips_code": "48027",
+          "review_record_count": 10723,
+          "records_per_occupied_degree": 5361.5
+        },
+        {
+          "county_fips_code": "48039",
+          "review_record_count": 10634,
+          "records_per_occupied_degree": 5317
+        },
+        {
+          "county_fips_code": "48423",
+          "review_record_count": 9681,
+          "records_per_occupied_degree": 4840.5
+        },
+        {
+          "county_fips_code": "48309",
+          "review_record_count": 8702,
+          "records_per_occupied_degree": 4351
+        },
+        {
+          "county_fips_code": "48245",
+          "review_record_count": 8151,
+          "records_per_occupied_degree": 2717
+        },
+        {
+          "county_fips_code": "48479",
+          "review_record_count": 8107,
+          "records_per_occupied_degree": 2026.75
+        },
+        {
+          "county_fips_code": "48209",
+          "review_record_count": 8016,
+          "records_per_occupied_degree": 2004
+        },
+        {
+          "county_fips_code": "48091",
+          "review_record_count": 7199,
+          "records_per_occupied_degree": 3599.5
+        },
+        {
+          "county_fips_code": "48041",
+          "review_record_count": 7063,
+          "records_per_occupied_degree": 7063
+        },
+        {
+          "county_fips_code": "48329",
+          "review_record_count": 6285,
+          "records_per_occupied_degree": 1571.25
+        },
+        {
+          "county_fips_code": "48183",
+          "review_record_count": 6082,
+          "records_per_occupied_degree": 6082
+        },
+        {
+          "county_fips_code": "48139",
+          "review_record_count": 5610,
+          "records_per_occupied_degree": 2805
+        },
+        {
+          "county_fips_code": "48441",
+          "review_record_count": 5524,
+          "records_per_occupied_degree": 2762
+        },
+        {
+          "county_fips_code": "48367",
+          "review_record_count": 5394,
+          "records_per_occupied_degree": 1798
+        },
+        {
+          "county_fips_code": "48251",
+          "review_record_count": 5356,
+          "records_per_occupied_degree": 5356
+        },
+        {
+          "county_fips_code": "48135",
+          "review_record_count": 5231,
+          "records_per_occupied_degree": 2615.5
+        },
+        {
+          "county_fips_code": "48181",
+          "review_record_count": 5136,
+          "records_per_occupied_degree": 5136
+        },
+        {
+          "county_fips_code": "48375",
+          "review_record_count": 5107,
+          "records_per_occupied_degree": 2553.5
+        },
+        {
+          "county_fips_code": "48397",
+          "review_record_count": 4378,
+          "records_per_occupied_degree": 4378
+        },
+        {
+          "county_fips_code": "48485",
+          "review_record_count": 4286,
+          "records_per_occupied_degree": 2143
+        },
+        {
+          "county_fips_code": "48381",
+          "review_record_count": 4018,
+          "records_per_occupied_degree": 1004.5
+        },
+        {
+          "county_fips_code": "48187",
+          "review_record_count": 4012,
+          "records_per_occupied_degree": 2006
+        },
+        {
+          "county_fips_code": "48451",
+          "review_record_count": 3945,
+          "records_per_occupied_degree": 3945
+        },
+        {
+          "county_fips_code": "48257",
+          "review_record_count": 3721,
+          "records_per_occupied_degree": 3721
+        },
+        {
+          "county_fips_code": "48037",
+          "review_record_count": 3606,
+          "records_per_occupied_degree": 3606
+        },
+        {
+          "county_fips_code": "48469",
+          "review_record_count": 3471,
+          "records_per_occupied_degree": 867.75
+        },
+        {
+          "county_fips_code": "48231",
+          "review_record_count": 3116,
+          "records_per_occupied_degree": 779
+        },
+        {
+          "county_fips_code": "48005",
+          "review_record_count": 2772,
+          "records_per_occupied_degree": 2772
+        },
+        {
+          "county_fips_code": "48213",
+          "review_record_count": 2655,
+          "records_per_occupied_degree": 1327.5
+        },
+        {
+          "county_fips_code": "48021",
+          "review_record_count": 2644,
+          "records_per_occupied_degree": 1322
+        },
+        {
+          "county_fips_code": "48221",
+          "review_record_count": 2529,
+          "records_per_occupied_degree": 1264.5
+        },
+        {
+          "county_fips_code": "48497",
+          "review_record_count": 2450,
+          "records_per_occupied_degree": 1225
+        },
+        {
+          "county_fips_code": "48053",
+          "review_record_count": 2394,
+          "records_per_occupied_degree": 598.5
+        },
+        {
+          "county_fips_code": "48259",
+          "review_record_count": 2299,
+          "records_per_occupied_degree": 1149.5
+        },
+        {
+          "county_fips_code": "48265",
+          "review_record_count": 2237,
+          "records_per_occupied_degree": 559.25
+        },
+        {
+          "county_fips_code": "48291",
+          "review_record_count": 2137,
+          "records_per_occupied_degree": 712.3333333333334
+        },
+        {
+          "county_fips_code": "48361",
+          "review_record_count": 2113,
+          "records_per_occupied_degree": 704.3333333333334
+        },
+        {
+          "county_fips_code": "48347",
+          "review_record_count": 2069,
+          "records_per_occupied_degree": 2069
+        },
+        {
+          "county_fips_code": "48277",
+          "review_record_count": 1869,
+          "records_per_occupied_degree": 1869
+        },
+        {
+          "county_fips_code": "48467",
+          "review_record_count": 1865,
+          "records_per_occupied_degree": 932.5
+        },
+        {
+          "county_fips_code": "48001",
+          "review_record_count": 1853,
+          "records_per_occupied_degree": 617.6666666666666
+        },
+        {
+          "county_fips_code": "48471",
+          "review_record_count": 1850,
+          "records_per_occupied_degree": 925
+        },
+        {
+          "county_fips_code": "48203",
+          "review_record_count": 1846,
+          "records_per_occupied_degree": 1846
+        },
+        {
+          "county_fips_code": "48171",
+          "review_record_count": 1738,
+          "records_per_occupied_degree": 869
+        },
+        {
+          "county_fips_code": "48143",
+          "review_record_count": 1678,
+          "records_per_occupied_degree": 559.3333333333334
+        },
+        {
+          "county_fips_code": "48409",
+          "review_record_count": 1676,
+          "records_per_occupied_degree": 838
+        },
+        {
+          "county_fips_code": "48477",
+          "review_record_count": 1546,
+          "records_per_occupied_degree": 1546
+        },
+        {
+          "county_fips_code": "48349",
+          "review_record_count": 1544,
+          "records_per_occupied_degree": 772
+        },
+        {
+          "county_fips_code": "48499",
+          "review_record_count": 1529,
+          "records_per_occupied_degree": 1529
+        },
+        {
+          "county_fips_code": "48097",
+          "review_record_count": 1489,
+          "records_per_occupied_degree": 744.5
+        },
+        {
+          "county_fips_code": "48049",
+          "review_record_count": 1453,
+          "records_per_occupied_degree": 363.25
+        },
+        {
+          "county_fips_code": "48199",
+          "review_record_count": 1436,
+          "records_per_occupied_degree": 1436
+        },
+        {
+          "county_fips_code": "48099",
+          "review_record_count": 1398,
+          "records_per_occupied_degree": 699
+        },
+        {
+          "county_fips_code": "48373",
+          "review_record_count": 1389,
+          "records_per_occupied_degree": 463
+        },
+        {
+          "county_fips_code": "48481",
+          "review_record_count": 1319,
+          "records_per_occupied_degree": 659.5
+        },
+        {
+          "county_fips_code": "48073",
+          "review_record_count": 1317,
+          "records_per_occupied_degree": 439
+        },
+        {
+          "county_fips_code": "48473",
+          "review_record_count": 1314,
+          "records_per_occupied_degree": 328.5
+        },
+        {
+          "county_fips_code": "48223",
+          "review_record_count": 1301,
+          "records_per_occupied_degree": 650.5
+        },
+        {
+          "county_fips_code": "48007",
+          "review_record_count": 1278,
+          "records_per_occupied_degree": 426
+        },
+        {
+          "county_fips_code": "48323",
+          "review_record_count": 1270,
+          "records_per_occupied_degree": 1270
+        },
+        {
+          "county_fips_code": "48013",
+          "review_record_count": 1262,
+          "records_per_occupied_degree": 631
+        },
+        {
+          "county_fips_code": "48071",
+          "review_record_count": 1238,
+          "records_per_occupied_degree": 619
+        },
+        {
+          "county_fips_code": "48493",
+          "review_record_count": 1221,
+          "records_per_occupied_degree": 610.5
+        },
+        {
+          "county_fips_code": "48325",
+          "review_record_count": 1211,
+          "records_per_occupied_degree": 605.5
+        },
+        {
+          "county_fips_code": "48055",
+          "review_record_count": 1147,
+          "records_per_occupied_degree": 573.5
+        },
+        {
+          "county_fips_code": "48465",
+          "review_record_count": 1142,
+          "records_per_occupied_degree": 285.5
+        },
+        {
+          "county_fips_code": "48427",
+          "review_record_count": 1140,
+          "records_per_occupied_degree": 570
+        },
+        {
+          "county_fips_code": "48249",
+          "review_record_count": 1114,
+          "records_per_occupied_degree": 278.5
+        },
+        {
+          "county_fips_code": "48149",
+          "review_record_count": 1100,
+          "records_per_occupied_degree": 275
+        },
+        {
+          "county_fips_code": "48401",
+          "review_record_count": 1097,
+          "records_per_occupied_degree": 548.5
+        },
+        {
+          "county_fips_code": "48321",
+          "review_record_count": 1096,
+          "records_per_occupied_degree": 274
+        },
+        {
+          "county_fips_code": "48449",
+          "review_record_count": 1088,
+          "records_per_occupied_degree": 544
+        },
+        {
+          "county_fips_code": "48217",
+          "review_record_count": 1084,
+          "records_per_occupied_degree": 271
+        },
+        {
+          "county_fips_code": "48363",
+          "review_record_count": 1044,
+          "records_per_occupied_degree": 1044
+        },
+        {
+          "county_fips_code": "48241",
+          "review_record_count": 1029,
+          "records_per_occupied_degree": 257.25
+        },
+        {
+          "county_fips_code": "48015",
+          "review_record_count": 987,
+          "records_per_occupied_degree": 493.5
+        },
+        {
+          "county_fips_code": "48463",
+          "review_record_count": 965,
+          "records_per_occupied_degree": 482.5
+        },
+        {
+          "county_fips_code": "48147",
+          "review_record_count": 914,
+          "records_per_occupied_degree": 457
+        },
+        {
+          "county_fips_code": "48459",
+          "review_record_count": 900,
+          "records_per_occupied_degree": 450
+        },
+        {
+          "county_fips_code": "48227",
+          "review_record_count": 865,
+          "records_per_occupied_degree": 865
+        },
+        {
+          "county_fips_code": "48299",
+          "review_record_count": 857,
+          "records_per_occupied_degree": 857
+        },
+        {
+          "county_fips_code": "48273",
+          "review_record_count": 852,
+          "records_per_occupied_degree": 426
+        },
+        {
+          "county_fips_code": "48189",
+          "review_record_count": 849,
+          "records_per_occupied_degree": 283
+        },
+        {
+          "county_fips_code": "48089",
+          "review_record_count": 767,
+          "records_per_occupied_degree": 767
+        },
+        {
+          "county_fips_code": "48185",
+          "review_record_count": 752,
+          "records_per_occupied_degree": 376
+        },
+        {
+          "county_fips_code": "48281",
+          "review_record_count": 722,
+          "records_per_occupied_degree": 361
+        },
+        {
+          "county_fips_code": "48179",
+          "review_record_count": 721,
+          "records_per_occupied_degree": 360.5
+        },
+        {
+          "county_fips_code": "48067",
+          "review_record_count": 714,
+          "records_per_occupied_degree": 357
+        },
+        {
+          "county_fips_code": "48337",
+          "review_record_count": 708,
+          "records_per_occupied_degree": 708
+        },
+        {
+          "county_fips_code": "48503",
+          "review_record_count": 692,
+          "records_per_occupied_degree": 346
+        },
+        {
+          "county_fips_code": "48019",
+          "review_record_count": 688,
+          "records_per_occupied_degree": 344
+        },
+        {
+          "county_fips_code": "48025",
+          "review_record_count": 686,
+          "records_per_occupied_degree": 343
+        },
+        {
+          "county_fips_code": "48133",
+          "review_record_count": 679,
+          "records_per_occupied_degree": 339.5
+        },
+        {
+          "county_fips_code": "48293",
+          "review_record_count": 669,
+          "records_per_occupied_degree": 669
+        },
+        {
+          "county_fips_code": "48057",
+          "review_record_count": 668,
+          "records_per_occupied_degree": 668
+        },
+        {
+          "county_fips_code": "48365",
+          "review_record_count": 656,
+          "records_per_occupied_degree": 328
+        },
+        {
+          "county_fips_code": "48419",
+          "review_record_count": 639,
+          "records_per_occupied_degree": 319.5
+        },
+        {
+          "county_fips_code": "48331",
+          "review_record_count": 621,
+          "records_per_occupied_degree": 310.5
+        },
+        {
+          "county_fips_code": "48225",
+          "review_record_count": 607,
+          "records_per_occupied_degree": 303.5
+        },
+        {
+          "county_fips_code": "48177",
+          "review_record_count": 602,
+          "records_per_occupied_degree": 602
+        },
+        {
+          "county_fips_code": "48123",
+          "review_record_count": 587,
+          "records_per_occupied_degree": 195.66666666666666
+        },
+        {
+          "county_fips_code": "48161",
+          "review_record_count": 584,
+          "records_per_occupied_degree": 292
+        },
+        {
+          "county_fips_code": "48285",
+          "review_record_count": 569,
+          "records_per_occupied_degree": 284.5
+        },
+        {
+          "county_fips_code": "48031",
+          "review_record_count": 558,
+          "records_per_occupied_degree": 279
+        },
+        {
+          "county_fips_code": "48035",
+          "review_record_count": 552,
+          "records_per_occupied_degree": 184
+        },
+        {
+          "county_fips_code": "48219",
+          "review_record_count": 552,
+          "records_per_occupied_degree": 552
+        },
+        {
+          "county_fips_code": "48233",
+          "review_record_count": 552,
+          "records_per_occupied_degree": 276
+        },
+        {
+          "county_fips_code": "48341",
+          "review_record_count": 526,
+          "records_per_occupied_degree": 131.5
+        },
+        {
+          "county_fips_code": "48165",
+          "review_record_count": 516,
+          "records_per_occupied_degree": 258
+        },
+        {
+          "county_fips_code": "48415",
+          "review_record_count": 506,
+          "records_per_occupied_degree": 253
+        },
+        {
+          "county_fips_code": "48287",
+          "review_record_count": 504,
+          "records_per_occupied_degree": 252
+        },
+        {
+          "county_fips_code": "48043",
+          "review_record_count": 500,
+          "records_per_occupied_degree": 166.66666666666666
+        },
+        {
+          "county_fips_code": "48051",
+          "review_record_count": 477,
+          "records_per_occupied_degree": 477
+        },
+        {
+          "county_fips_code": "48003",
+          "review_record_count": 467,
+          "records_per_occupied_degree": 233.5
+        },
+        {
+          "county_fips_code": "48353",
+          "review_record_count": 463,
+          "records_per_occupied_degree": 463
+        },
+        {
+          "county_fips_code": "48407",
+          "review_record_count": 457,
+          "records_per_occupied_degree": 228.5
+        },
+        {
+          "county_fips_code": "48117",
+          "review_record_count": 446,
+          "records_per_occupied_degree": 148.66666666666666
+        },
+        {
+          "county_fips_code": "48371",
+          "review_record_count": 442,
+          "records_per_occupied_degree": 88.4
+        },
+        {
+          "county_fips_code": "48395",
+          "review_record_count": 438,
+          "records_per_occupied_degree": 219
+        },
+        {
+          "county_fips_code": "48289",
+          "review_record_count": 436,
+          "records_per_occupied_degree": 145.33333333333334
+        },
+        {
+          "county_fips_code": "48163",
+          "review_record_count": 430,
+          "records_per_occupied_degree": 107.5
+        },
+        {
+          "county_fips_code": "48093",
+          "review_record_count": 411,
+          "records_per_occupied_degree": 205.5
+        },
+        {
+          "county_fips_code": "48457",
+          "review_record_count": 406,
+          "records_per_occupied_degree": 406
+        },
+        {
+          "county_fips_code": "48255",
+          "review_record_count": 398,
+          "records_per_occupied_degree": 132.66666666666666
+        },
+        {
+          "county_fips_code": "48425",
+          "review_record_count": 395,
+          "records_per_occupied_degree": 395
+        },
+        {
+          "county_fips_code": "48389",
+          "review_record_count": 392,
+          "records_per_occupied_degree": 130.66666666666666
+        },
+        {
+          "county_fips_code": "48253",
+          "review_record_count": 388,
+          "records_per_occupied_degree": 194
+        },
+        {
+          "county_fips_code": "48487",
+          "review_record_count": 388,
+          "records_per_occupied_degree": 129.33333333333334
+        },
+        {
+          "county_fips_code": "48313",
+          "review_record_count": 371,
+          "records_per_occupied_degree": 92.75
+        },
+        {
+          "county_fips_code": "48239",
+          "review_record_count": 363,
+          "records_per_occupied_degree": 181.5
+        },
+        {
+          "county_fips_code": "48429",
+          "review_record_count": 362,
+          "records_per_occupied_degree": 181
+        },
+        {
+          "county_fips_code": "48059",
+          "review_record_count": 359,
+          "records_per_occupied_degree": 359
+        },
+        {
+          "county_fips_code": "48379",
+          "review_record_count": 359,
+          "records_per_occupied_degree": 359
+        },
+        {
+          "county_fips_code": "48489",
+          "review_record_count": 356,
+          "records_per_occupied_degree": 356
+        },
+        {
+          "county_fips_code": "48475",
+          "review_record_count": 353,
+          "records_per_occupied_degree": 176.5
+        },
+        {
+          "county_fips_code": "48063",
+          "review_record_count": 341,
+          "records_per_occupied_degree": 85.25
+        },
+        {
+          "county_fips_code": "48193",
+          "review_record_count": 335,
+          "records_per_occupied_degree": 111.66666666666667
+        },
+        {
+          "county_fips_code": "48403",
+          "review_record_count": 335,
+          "records_per_occupied_degree": 167.5
+        },
+        {
+          "county_fips_code": "48297",
+          "review_record_count": 322,
+          "records_per_occupied_degree": 161
+        },
+        {
+          "county_fips_code": "48315",
+          "review_record_count": 322,
+          "records_per_occupied_degree": 322
+        },
+        {
+          "county_fips_code": "48307",
+          "review_record_count": 321,
+          "records_per_occupied_degree": 160.5
+        },
+        {
+          "county_fips_code": "48343",
+          "review_record_count": 317,
+          "records_per_occupied_degree": 158.5
+        },
+        {
+          "county_fips_code": "48357",
+          "review_record_count": 317,
+          "records_per_occupied_degree": 158.5
+        },
+        {
+          "county_fips_code": "48145",
+          "review_record_count": 313,
+          "records_per_occupied_degree": 156.5
+        },
+        {
+          "county_fips_code": "48159",
+          "review_record_count": 311,
+          "records_per_occupied_degree": 155.5
+        },
+        {
+          "county_fips_code": "48505",
+          "review_record_count": 308,
+          "records_per_occupied_degree": 154
+        },
+        {
+          "county_fips_code": "48455",
+          "review_record_count": 306,
+          "records_per_occupied_degree": 102
+        },
+        {
+          "county_fips_code": "48115",
+          "review_record_count": 291,
+          "records_per_occupied_degree": 145.5
+        },
+        {
+          "county_fips_code": "48399",
+          "review_record_count": 290,
+          "records_per_occupied_degree": 72.5
+        },
+        {
+          "county_fips_code": "48083",
+          "review_record_count": 286,
+          "records_per_occupied_degree": 143
+        },
+        {
+          "county_fips_code": "48127",
+          "review_record_count": 273,
+          "records_per_occupied_degree": 273
+        },
+        {
+          "county_fips_code": "48279",
+          "review_record_count": 270,
+          "records_per_occupied_degree": 135
+        },
+        {
+          "county_fips_code": "48237",
+          "review_record_count": 269,
+          "records_per_occupied_degree": 134.5
+        },
+        {
+          "county_fips_code": "48445",
+          "review_record_count": 269,
+          "records_per_occupied_degree": 134.5
+        },
+        {
+          "county_fips_code": "48111",
+          "review_record_count": 260,
+          "records_per_occupied_degree": 130
+        },
+        {
+          "county_fips_code": "48387",
+          "review_record_count": 249,
+          "records_per_occupied_degree": 124.5
+        },
+        {
+          "county_fips_code": "48077",
+          "review_record_count": 241,
+          "records_per_occupied_degree": 120.5
+        },
+        {
+          "county_fips_code": "48075",
+          "review_record_count": 231,
+          "records_per_occupied_degree": 231
+        },
+        {
+          "county_fips_code": "48411",
+          "review_record_count": 216,
+          "records_per_occupied_degree": 54
+        },
+        {
+          "county_fips_code": "48319",
+          "review_record_count": 202,
+          "records_per_occupied_degree": 101
+        },
+        {
+          "county_fips_code": "48335",
+          "review_record_count": 200,
+          "records_per_occupied_degree": 100
+        },
+        {
+          "county_fips_code": "48483",
+          "review_record_count": 200,
+          "records_per_occupied_degree": 200
+        },
+        {
+          "county_fips_code": "48009",
+          "review_record_count": 199,
+          "records_per_occupied_degree": 199
+        },
+        {
+          "county_fips_code": "48377",
+          "review_record_count": 195,
+          "records_per_occupied_degree": 48.75
+        },
+        {
+          "county_fips_code": "48267",
+          "review_record_count": 193,
+          "records_per_occupied_degree": 96.5
+        },
+        {
+          "county_fips_code": "48391",
+          "review_record_count": 191,
+          "records_per_occupied_degree": 95.5
+        },
+        {
+          "county_fips_code": "48501",
+          "review_record_count": 191,
+          "records_per_occupied_degree": 63.666666666666664
+        },
+        {
+          "county_fips_code": "48175",
+          "review_record_count": 190,
+          "records_per_occupied_degree": 190
+        },
+        {
+          "county_fips_code": "48207",
+          "review_record_count": 190,
+          "records_per_occupied_degree": 95
+        },
+        {
+          "county_fips_code": "48017",
+          "review_record_count": 188,
+          "records_per_occupied_degree": 62.666666666666664
+        },
+        {
+          "county_fips_code": "48283",
+          "review_record_count": 184,
+          "records_per_occupied_degree": 92
+        },
+        {
+          "county_fips_code": "48369",
+          "review_record_count": 184,
+          "records_per_occupied_degree": 92
+        },
+        {
+          "county_fips_code": "48405",
+          "review_record_count": 181,
+          "records_per_occupied_degree": 181
+        },
+        {
+          "county_fips_code": "48495",
+          "review_record_count": 178,
+          "records_per_occupied_degree": 44.5
+        },
+        {
+          "county_fips_code": "48437",
+          "review_record_count": 170,
+          "records_per_occupied_degree": 170
+        },
+        {
+          "county_fips_code": "48047",
+          "review_record_count": 168,
+          "records_per_occupied_degree": 84
+        },
+        {
+          "county_fips_code": "48211",
+          "review_record_count": 166,
+          "records_per_occupied_degree": 166
+        },
+        {
+          "county_fips_code": "48333",
+          "review_record_count": 162,
+          "records_per_occupied_degree": 162
+        },
+        {
+          "county_fips_code": "48131",
+          "review_record_count": 161,
+          "records_per_occupied_degree": 80.5
+        },
+        {
+          "county_fips_code": "48507",
+          "review_record_count": 159,
+          "records_per_occupied_degree": 53
+        },
+        {
+          "county_fips_code": "48351",
+          "review_record_count": 156,
+          "records_per_occupied_degree": 78
+        },
+        {
+          "county_fips_code": "48023",
+          "review_record_count": 141,
+          "records_per_occupied_degree": 70.5
+        },
+        {
+          "county_fips_code": "48195",
+          "review_record_count": 140,
+          "records_per_occupied_degree": 140
+        },
+        {
+          "county_fips_code": "48065",
+          "review_record_count": 137,
+          "records_per_occupied_degree": 137
+        },
+        {
+          "county_fips_code": "48169",
+          "review_record_count": 134,
+          "records_per_occupied_degree": 134
+        },
+        {
+          "county_fips_code": "48385",
+          "review_record_count": 134,
+          "records_per_occupied_degree": 44.666666666666664
+        },
+        {
+          "county_fips_code": "48069",
+          "review_record_count": 128,
+          "records_per_occupied_degree": 128
+        },
+        {
+          "county_fips_code": "48153",
+          "review_record_count": 128,
+          "records_per_occupied_degree": 64
+        },
+        {
+          "county_fips_code": "48417",
+          "review_record_count": 125,
+          "records_per_occupied_degree": 125
+        },
+        {
+          "county_fips_code": "48197",
+          "review_record_count": 122,
+          "records_per_occupied_degree": 122
+        },
+        {
+          "county_fips_code": "48435",
+          "review_record_count": 122,
+          "records_per_occupied_degree": 122
+        },
+        {
+          "county_fips_code": "48119",
+          "review_record_count": 117,
+          "records_per_occupied_degree": 117
+        },
+        {
+          "county_fips_code": "48107",
+          "review_record_count": 116,
+          "records_per_occupied_degree": 116
+        },
+        {
+          "county_fips_code": "48103",
+          "review_record_count": 112,
+          "records_per_occupied_degree": 112
+        },
+        {
+          "county_fips_code": "48383",
+          "review_record_count": 112,
+          "records_per_occupied_degree": 112
+        },
+        {
+          "county_fips_code": "48247",
+          "review_record_count": 111,
+          "records_per_occupied_degree": 55.5
+        },
+        {
+          "county_fips_code": "48129",
+          "review_record_count": 110,
+          "records_per_occupied_degree": 36.666666666666664
+        },
+        {
+          "county_fips_code": "48317",
+          "review_record_count": 106,
+          "records_per_occupied_degree": 53
+        },
+        {
+          "county_fips_code": "48105",
+          "review_record_count": 104,
+          "records_per_occupied_degree": 52
+        },
+        {
+          "county_fips_code": "48109",
+          "review_record_count": 98,
+          "records_per_occupied_degree": 49
+        },
+        {
+          "county_fips_code": "48205",
+          "review_record_count": 97,
+          "records_per_occupied_degree": 48.5
+        },
+        {
+          "county_fips_code": "48275",
+          "review_record_count": 97,
+          "records_per_occupied_degree": 97
+        },
+        {
+          "county_fips_code": "48305",
+          "review_record_count": 97,
+          "records_per_occupied_degree": 32.333333333333336
+        },
+        {
+          "county_fips_code": "48461",
+          "review_record_count": 91,
+          "records_per_occupied_degree": 45.5
+        },
+        {
+          "county_fips_code": "48191",
+          "review_record_count": 86,
+          "records_per_occupied_degree": 86
+        },
+        {
+          "county_fips_code": "48137",
+          "review_record_count": 79,
+          "records_per_occupied_degree": 26.333333333333332
+        },
+        {
+          "county_fips_code": "48081",
+          "review_record_count": 76,
+          "records_per_occupied_degree": 38
+        },
+        {
+          "county_fips_code": "48151",
+          "review_record_count": 76,
+          "records_per_occupied_degree": 76
+        },
+        {
+          "county_fips_code": "48327",
+          "review_record_count": 76,
+          "records_per_occupied_degree": 19
+        },
+        {
+          "county_fips_code": "48271",
+          "review_record_count": 72,
+          "records_per_occupied_degree": 72
+        },
+        {
+          "county_fips_code": "48011",
+          "review_record_count": 71,
+          "records_per_occupied_degree": 35.5
+        },
+        {
+          "county_fips_code": "48095",
+          "review_record_count": 71,
+          "records_per_occupied_degree": 35.5
+        },
+        {
+          "county_fips_code": "48087",
+          "review_record_count": 70,
+          "records_per_occupied_degree": 35
+        },
+        {
+          "county_fips_code": "48125",
+          "review_record_count": 69,
+          "records_per_occupied_degree": 69
+        },
+        {
+          "county_fips_code": "48421",
+          "review_record_count": 66,
+          "records_per_occupied_degree": 33
+        },
+        {
+          "county_fips_code": "48359",
+          "review_record_count": 65,
+          "records_per_occupied_degree": 32.5
+        },
+        {
+          "county_fips_code": "48243",
+          "review_record_count": 64,
+          "records_per_occupied_degree": 21.333333333333332
+        },
+        {
+          "county_fips_code": "48295",
+          "review_record_count": 60,
+          "records_per_occupied_degree": 60
+        },
+        {
+          "county_fips_code": "48413",
+          "review_record_count": 59,
+          "records_per_occupied_degree": 29.5
+        },
+        {
+          "county_fips_code": "48447",
+          "review_record_count": 54,
+          "records_per_occupied_degree": 27
+        },
+        {
+          "county_fips_code": "48045",
+          "review_record_count": 52,
+          "records_per_occupied_degree": 26
+        },
+        {
+          "county_fips_code": "48229",
+          "review_record_count": 49,
+          "records_per_occupied_degree": 16.333333333333332
+        },
+        {
+          "county_fips_code": "48311",
+          "review_record_count": 43,
+          "records_per_occupied_degree": 43
+        },
+        {
+          "county_fips_code": "48235",
+          "review_record_count": 39,
+          "records_per_occupied_degree": 19.5
+        },
+        {
+          "county_fips_code": "48431",
+          "review_record_count": 39,
+          "records_per_occupied_degree": 13
+        },
+        {
+          "county_fips_code": "48079",
+          "review_record_count": 38,
+          "records_per_occupied_degree": 38
+        },
+        {
+          "county_fips_code": "48345",
+          "review_record_count": 37,
+          "records_per_occupied_degree": 18.5
+        },
+        {
+          "county_fips_code": "48155",
+          "review_record_count": 35,
+          "records_per_occupied_degree": 17.5
+        },
+        {
+          "county_fips_code": "48433",
+          "review_record_count": 33,
+          "records_per_occupied_degree": 33
+        },
+        {
+          "county_fips_code": "48101",
+          "review_record_count": 32,
+          "records_per_occupied_degree": 16
+        },
+        {
+          "county_fips_code": "48443",
+          "review_record_count": 31,
+          "records_per_occupied_degree": 10.333333333333334
+        },
+        {
+          "county_fips_code": "48173",
+          "review_record_count": 20,
+          "records_per_occupied_degree": 10
+        },
+        {
+          "county_fips_code": "48033",
+          "review_record_count": 19,
+          "records_per_occupied_degree": 19
+        },
+        {
+          "county_fips_code": "48261",
+          "review_record_count": 18,
+          "records_per_occupied_degree": 9
+        },
+        {
+          "county_fips_code": "48263",
+          "review_record_count": 17,
+          "records_per_occupied_degree": 8.5
+        },
+        {
+          "county_fips_code": "48393",
+          "review_record_count": 15,
+          "records_per_occupied_degree": 7.5
+        },
+        {
+          "county_fips_code": "48301",
+          "review_record_count": 8,
+          "records_per_occupied_degree": 4
+        },
+        {
+          "county_fips_code": "48269",
+          "review_record_count": 2,
+          "records_per_occupied_degree": 2
+        }
+      ],
+      "byDensity": null,
+      "reviewRequiredAfter": 973558,
+      "topPrimaryCategories": [
+        {
+          "category_name": "(null)",
+          "record_count": 81392
+        },
+        {
+          "category_name": "health_and_medical",
+          "record_count": 30037
+        },
+        {
+          "category_name": "real_estate_agent",
+          "record_count": 24233
+        },
+        {
+          "category_name": "automotive_repair",
+          "record_count": 19466
+        },
+        {
+          "category_name": "beauty_salon",
+          "record_count": 18708
+        },
+        {
+          "category_name": "hair_salon",
+          "record_count": 15752
+        },
+        {
+          "category_name": "insurance_agency",
+          "record_count": 15607
+        },
+        {
+          "category_name": "professional_services",
+          "record_count": 13749
+        },
+        {
+          "category_name": "real_estate_service",
+          "record_count": 11446
+        },
+        {
+          "category_name": "contractor",
+          "record_count": 11082
+        },
+        {
+          "category_name": "car_dealer",
+          "record_count": 11065
+        },
+        {
+          "category_name": "diagnostic_services",
+          "record_count": 10942
+        },
+        {
+          "category_name": "money_transfer_services",
+          "record_count": 10835
+        },
+        {
+          "category_name": "gym",
+          "record_count": 10255
+        },
+        {
+          "category_name": "park",
+          "record_count": 8955
+        },
+        {
+          "category_name": "spas",
+          "record_count": 8900
+        },
+        {
+          "category_name": "barber",
+          "record_count": 8892
+        },
+        {
+          "category_name": "nail_salon",
+          "record_count": 8795
+        },
+        {
+          "category_name": "dentist",
+          "record_count": 8704
+        },
+        {
+          "category_name": "religious_organization",
+          "record_count": 8149
+        },
+        {
+          "category_name": "party_and_event_planning",
+          "record_count": 8100
+        },
+        {
+          "category_name": "shopping",
+          "record_count": 7683
+        },
+        {
+          "category_name": "mobile_phone_store",
+          "record_count": 7604
+        },
+        {
+          "category_name": "financial_service",
+          "record_count": 7558
+        },
+        {
+          "category_name": "clothing_store",
+          "record_count": 6937
+        },
+        {
+          "category_name": "auto_parts_and_supply_store",
+          "record_count": 6622
+        },
+        {
+          "category_name": "lawyer",
+          "record_count": 6567
+        },
+        {
+          "category_name": "chiropractor",
+          "record_count": 5880
+        },
+        {
+          "category_name": "roofing",
+          "record_count": 5719
+        },
+        {
+          "category_name": "massage_therapy",
+          "record_count": 5679
+        },
+        {
+          "category_name": "hvac_services",
+          "record_count": 5651
+        },
+        {
+          "category_name": "self_storage_facility",
+          "record_count": 5530
+        },
+        {
+          "category_name": "trusts",
+          "record_count": 5389
+        },
+        {
+          "category_name": "home_health_care",
+          "record_count": 5217
+        },
+        {
+          "category_name": "furniture_store",
+          "record_count": 5211
+        },
+        {
+          "category_name": "medical_center",
+          "record_count": 5046
+        },
+        {
+          "category_name": "flowers_and_gifts_shop",
+          "record_count": 4950
+        },
+        {
+          "category_name": "industrial_equipment",
+          "record_count": 4805
+        },
+        {
+          "category_name": "tire_dealer_and_repair",
+          "record_count": 4790
+        },
+        {
+          "category_name": "propane_supplier",
+          "record_count": 4768
+        },
+        {
+          "category_name": "jewelry_store",
+          "record_count": 4660
+        },
+        {
+          "category_name": "used_car_dealer",
+          "record_count": 4624
+        },
+        {
+          "category_name": "auto_body_shop",
+          "record_count": 4343
+        },
+        {
+          "category_name": "plumbing",
+          "record_count": 4198
+        },
+        {
+          "category_name": "womens_clothing_store",
+          "record_count": 4158
+        },
+        {
+          "category_name": "freight_and_cargo_service",
+          "record_count": 3922
+        },
+        {
+          "category_name": "optometrist",
+          "record_count": 3886
+        },
+        {
+          "category_name": "public_health_clinic",
+          "record_count": 3866
+        },
+        {
+          "category_name": "bakery",
+          "record_count": 3858
+        },
+        {
+          "category_name": "medical_spa",
+          "record_count": 3839
+        },
+        {
+          "category_name": "veterinarian",
+          "record_count": 3832
+        },
+        {
+          "category_name": "car_wash",
+          "record_count": 3813
+        },
+        {
+          "category_name": "printing_services",
+          "record_count": 3793
+        },
+        {
+          "category_name": "corporate_office",
+          "record_count": 3708
+        },
+        {
+          "category_name": "bar",
+          "record_count": 3702
+        },
+        {
+          "category_name": "physical_therapy",
+          "record_count": 3653
+        },
+        {
+          "category_name": "general_dentistry",
+          "record_count": 3644
+        },
+        {
+          "category_name": "business_manufacturing_and_supply",
+          "record_count": 3559
+        },
+        {
+          "category_name": "key_and_locksmith",
+          "record_count": 3476
+        },
+        {
+          "category_name": "pediatrician",
+          "record_count": 3431
+        },
+        {
+          "category_name": "retirement_home",
+          "record_count": 3404
+        },
+        {
+          "category_name": "family_practice",
+          "record_count": 3197
+        },
+        {
+          "category_name": "boutique",
+          "record_count": 3157
+        },
+        {
+          "category_name": "auto_insurance",
+          "record_count": 3133
+        },
+        {
+          "category_name": "storage_facility",
+          "record_count": 3052
+        },
+        {
+          "category_name": "landscaping",
+          "record_count": 3016
+        },
+        {
+          "category_name": "mortgage_broker",
+          "record_count": 3012
+        },
+        {
+          "category_name": "accountant",
+          "record_count": 3009
+        },
+        {
+          "category_name": "tattoo_and_piercing",
+          "record_count": 2961
+        },
+        {
+          "category_name": "automotive_services_and_repair",
+          "record_count": 2949
+        },
+        {
+          "category_name": "employment_agencies",
+          "record_count": 2943
+        },
+        {
+          "category_name": "electronics",
+          "record_count": 2923
+        },
+        {
+          "category_name": "shoe_store",
+          "record_count": 2874
+        },
+        {
+          "category_name": "obstetrician_and_gynecologist",
+          "record_count": 2869
+        },
+        {
+          "category_name": "it_service_and_computer_repair",
+          "record_count": 2827
+        },
+        {
+          "category_name": "martial_arts_club",
+          "record_count": 2816
+        },
+        {
+          "category_name": "rv_park",
+          "record_count": 2733
+        },
+        {
+          "category_name": "transportation",
+          "record_count": 2732
+        },
+        {
+          "category_name": "travel_services",
+          "record_count": 2699
+        },
+        {
+          "category_name": "apartments",
+          "record_count": 2675
+        },
+        {
+          "category_name": "home_cleaning",
+          "record_count": 2668
+        },
+        {
+          "category_name": "property_management",
+          "record_count": 2662
+        },
+        {
+          "category_name": "music_venue",
+          "record_count": 2652
+        },
+        {
+          "category_name": "active_life",
+          "record_count": 2643
+        },
+        {
+          "category_name": "rental_kiosks",
+          "record_count": 2584
+        },
+        {
+          "category_name": "metal_fabricator",
+          "record_count": 2573
+        },
+        {
+          "category_name": "electrician",
+          "record_count": 2567
+        },
+        {
+          "category_name": "marketing_agency",
+          "record_count": 2562
+        },
+        {
+          "category_name": "accommodation",
+          "record_count": 2559
+        },
+        {
+          "category_name": "auto_detailing",
+          "record_count": 2542
+        },
+        {
+          "category_name": "rental_service",
+          "record_count": 2514
+        },
+        {
+          "category_name": "advertising_agency",
+          "record_count": 2511
+        },
+        {
+          "category_name": "antique_store",
+          "record_count": 2435
+        },
+        {
+          "category_name": "pet_groomer",
+          "record_count": 2416
+        },
+        {
+          "category_name": "sporting_goods",
+          "record_count": 2362
+        },
+        {
+          "category_name": "thrift_store",
+          "record_count": 2323
+        },
+        {
+          "category_name": "liquor_store",
+          "record_count": 2307
+        },
+        {
+          "category_name": "home_service",
+          "record_count": 2295
+        },
+        {
+          "category_name": "software_development",
+          "record_count": 2271
+        },
+        {
+          "category_name": "art_gallery",
+          "record_count": 2234
+        }
+      ],
+      "confidenceAuthority": false
+    },
+    "taxonomy-resolution-ledger.json": {
+      "schemaVersion": "gridly.lp24111.taxonomy-resolution-ledger.v2",
+      "executionState": "OWNER_LOCAL_MEASURED",
+      "policy": "EXPLICIT_TAXONOMY_ONLY_CONFIDENCE_NEVER_CLASSIFIES",
+      "decisions": [
+        {
+          "gridlyCategory": "CAR_WASH",
+          "matchedTaxonomyTokens": [
+            "car_wash"
+          ],
+          "promotedRecordCount": 4533,
+          "counties": {},
+          "exampleNames": [
+            "Easy Clean Carwash",
+            "Champion Fast Lube & Car Wash",
+            "Extreme Mobile Car Wash & Detailing",
+            "Mr. Shine hand car wash LLC.",
+            "JB Wash Pros",
+            "Detail Garage-Auto Detailing Supplies",
+            "Alpha Pressure Washing Solutions",
+            "GO Car Wash",
+            "Element79detail",
+            "Rewards Auto Sales"
+          ],
+          "confidenceDistribution": {
+            "present": 4533,
+            "missing": 0,
+            "minimum": 0.04772818833589554,
+            "maximum": 1
+          },
+          "brandPresentCount": 3253,
+          "addressPresentCount": 4533,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 191,
+          "zeroMatch": false
+        },
+        {
+          "gridlyCategory": "HARDWARE",
+          "matchedTaxonomyTokens": [
+            "hardware_store"
+          ],
+          "promotedRecordCount": 3701,
+          "counties": {},
+          "exampleNames": [
+            "Hutto Feed and Landscape Supplies",
+            "Harvey hardware",
+            "Harbor Freight Tools",
+            "Techsys Innovations Inc",
+            "Soluna Supply",
+            "Airgas Store",
+            "Tractor Supply Co",
+            "Buy Buy Baby",
+            "Gulfeagle Supply",
+            "Air Tool Exchange and Rental Company"
+          ],
+          "confidenceDistribution": {
+            "present": 3701,
+            "missing": 0,
+            "minimum": 0.02049282193183899,
+            "maximum": 0.9999991138115525
+          },
+          "brandPresentCount": 2702,
+          "addressPresentCount": 3701,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 214,
+          "zeroMatch": false
+        },
+        {
+          "gridlyCategory": "LAUNDRY",
+          "matchedTaxonomyTokens": [
+            "laundromat",
+            "laundry_service"
+          ],
+          "promotedRecordCount": 4224,
+          "counties": {},
+          "exampleNames": [
+            "Laundry King",
+            "Texas Laundry and Alterations",
+            "Feather Laundry",
+            "In n Out Washateria",
+            "Comet Cleaners",
+            "Sain's Laundry Mat",
+            "Hammerly Washateria",
+            "Lavanderia Gigante",
+            "Reid's Cleaners and Laundry",
+            "Avon Cleaners"
+          ],
+          "confidenceDistribution": {
+            "present": 4224,
+            "missing": 0,
+            "minimum": 0.05998441204428673,
+            "maximum": 0.999846169859171
+          },
+          "brandPresentCount": 3465,
+          "addressPresentCount": 4224,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 195,
+          "zeroMatch": false
+        },
+        {
+          "gridlyCategory": "CAMPGROUND",
+          "matchedTaxonomyTokens": [
+            "campground",
+            "rv_park"
+          ],
+          "promotedRecordCount": 4537,
+          "counties": {},
+          "exampleNames": [
+            "Texas RV Park",
+            "Val's Kountry Corral RV Park",
+            "Quilly's Big Fish RV Park",
+            "Tiki Tom's RV Park",
+            "Bonham State Park",
+            "Avion Big Lot RV Park",
+            "Alaska's Place",
+            "Brazos Trail RV Park",
+            "COMFORT RV PARK & STORAGE LLC.",
+            "Hidden Paradise Long Term RV"
+          ],
+          "confidenceDistribution": {
+            "present": 4537,
+            "missing": 0,
+            "minimum": 0.03850596398115158,
+            "maximum": 0.9999924414366483
+          },
+          "brandPresentCount": 3916,
+          "addressPresentCount": 4537,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 244,
+          "zeroMatch": false
+        },
+        {
+          "gridlyCategory": "VISITOR_CENTER",
+          "matchedTaxonomyTokens": [
+            "visitor_center"
+          ],
+          "promotedRecordCount": 114,
+          "counties": {},
+          "exampleNames": [
+            "Beaumont Convention & Visitors Bureau",
+            "Salado Visitor's Center",
+            "Dallas Convention & Visitors",
+            "Discover Denton",
+            "Big Spring Visitors Center",
+            "Ta Services, Inc.",
+            "Tourism & Main Street Office",
+            "Mason Chamber of Commerce",
+            "City of Madisonville, Department of Marketing & Tourism",
+            "Bmt Pfingston Reception Center"
+          ],
+          "confidenceDistribution": {
+            "present": 114,
+            "missing": 0,
+            "minimum": 0.25,
+            "maximum": 0.9991513997614384
+          },
+          "brandPresentCount": 0,
+          "addressPresentCount": 114,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 43,
+          "zeroMatch": false
+        },
+        {
+          "gridlyCategory": "MARINA",
+          "matchedTaxonomyTokens": [
+            "marina"
+          ],
+          "promotedRecordCount": 426,
+          "counties": {},
+          "exampleNames": [
+            "Pier 121 Yacht Club",
+            "Marina Robinson",
+            "Docks and Decks",
+            "Marina Dental",
+            "UTMB Health Primary Care Marina Bay",
+            "Brentwood Marina",
+            "Duran's Yacht Services",
+            "Marina Sabirova",
+            "On The Docks LLC",
+            "Roys boat yard"
+          ],
+          "confidenceDistribution": {
+            "present": 426,
+            "missing": 0,
+            "minimum": 0.08943815529346466,
+            "maximum": 0.9999602635204792
+          },
+          "brandPresentCount": 351,
+          "addressPresentCount": 426,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 76,
+          "zeroMatch": false
+        },
+        {
+          "gridlyCategory": "GOLF",
+          "matchedTaxonomyTokens": [
+            "golf_course"
+          ],
+          "promotedRecordCount": 1339,
+          "counties": {},
+          "exampleNames": [
+            "Raveneaux Country Club",
+            "Barton Creek Coore Crenshaw Golf Course",
+            "H-Town Disc Golf",
+            "Preston West Golf Course",
+            "Kohl's Golf Center",
+            "NW Vista College Disc Golf Course",
+            "Archer City Country Club",
+            "Ebony Hills Golf Club",
+            "287 Golf",
+            "Ridgeview Ranch Golf Club"
+          ],
+          "confidenceDistribution": {
+            "present": 1339,
+            "missing": 0,
+            "minimum": 0.0763995423913002,
+            "maximum": 0.9999863767161965
+          },
+          "brandPresentCount": 1038,
+          "addressPresentCount": 1339,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 186,
+          "zeroMatch": false
+        },
+        {
+          "gridlyCategory": "TOURIST_ATTRACTION",
+          "matchedTaxonomyTokens": [],
+          "promotedRecordCount": 0,
+          "counties": {},
+          "exampleNames": [],
+          "confidenceDistribution": {
+            "present": 0,
+            "missing": 0,
+            "minimum": null,
+            "maximum": null
+          },
+          "brandPresentCount": 0,
+          "addressPresentCount": 0,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 0,
+          "zeroMatch": true
+        },
+        {
+          "gridlyCategory": "TOWING",
+          "matchedTaxonomyTokens": [
+            "towing_service"
+          ],
+          "promotedRecordCount": 2643,
+          "counties": {},
+          "exampleNames": [
+            "Hardtimez  Garage",
+            "A1 Wrecker Service",
+            "New Era Towing",
+            "Ttn Fleet Solutions",
+            "Wilson Wrecker Service",
+            "Austin Towing Pros",
+            "Gillman Wrecker Service",
+            "D&W Towing & Recovery",
+            "Just in Time Towing and Roadside Service",
+            "Big Lake Tire and Towing Services"
+          ],
+          "confidenceDistribution": {
+            "present": 2643,
+            "missing": 0,
+            "minimum": 0.03224194794893265,
+            "maximum": 0.9999813525140285
+          },
+          "brandPresentCount": 1428,
+          "addressPresentCount": 2643,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 192,
+          "zeroMatch": false
+        },
+        {
+          "gridlyCategory": "STORAGE",
+          "matchedTaxonomyTokens": [
+            "self_storage"
+          ],
+          "promotedRecordCount": 6562,
+          "counties": {},
+          "exampleNames": [
+            "TLC Self Storage",
+            "Longhorn State Storage- DFW",
+            "CubeSmart Self Storage",
+            "Move It Self Storage",
+            "Medina Lake Mini Storage",
+            "Extra Space Storage",
+            "All Storage - Mansfield",
+            "Storage Rentals of America",
+            "Triple C Storage",
+            "Noah's Ark Self Storage"
+          ],
+          "confidenceDistribution": {
+            "present": 6562,
+            "missing": 0,
+            "minimum": 0.055888254195451736,
+            "maximum": 1
+          },
+          "brandPresentCount": 3834,
+          "addressPresentCount": 6562,
+          "childRiskExamples": [],
+          "distinctCountiesRepresented": 189,
+          "zeroMatch": false
+        }
+      ],
+      "candidatePolicy": "tools/lp24111/taxonomy-policy.json",
+      "before": {
+        "normalizedUniquePois": 1462815,
+        "eligible": 364959,
+        "nonDestination": 83992,
+        "excluded": 12227,
+        "reviewRequired": 1001637
+      },
+      "after": {
+        "GRIDLY_ELIGIBLE_DESTINATION": 393038,
+        "GRIDLY_EXCLUDED": 12227,
+        "GRIDLY_NON_DESTINATION": 83992,
+        "GRIDLY_REVIEW_REQUIRED": 973558
+      },
+      "promotionAuthority": {
+        "semantics": "POLICY_ORDER_PRECEDENCE_OVER_LOWERCASE_SERIALIZED_SEARCHABLE",
+        "sourceFields": [
+          "categories",
+          "basic_category",
+          "taxonomy",
+          "names",
+          "brand"
+        ],
+        "matchType": "LITERAL_SUBSTRING_IN_SERIALIZED_TAXONOMY_SEARCH_DOCUMENT",
+        "precedence": [
+          "CAR_WASH",
+          "HARDWARE",
+          "LAUNDRY",
+          "CAMPGROUND",
+          "VISITOR_CENTER",
+          "MARINA",
+          "GOLF",
+          "TOURIST_ATTRACTION",
+          "TOWING",
+          "STORAGE"
+        ],
+        "changedIds": 28079,
+        "uniqueChangedIds": 28079,
+        "promotedRuleTotal": 28079,
+        "unexplainedPromotions": 0,
+        "multiplyAuthorizedPromotionsAfterPrecedence": 0,
+        "rawCrossRuleOverlapCount": 223,
+        "rawCrossRuleOverlapRules": [
+          "CAMPGROUND",
+          "MARINA",
+          "CAR_WASH",
+          "LAUNDRY",
+          "STORAGE",
+          "HARDWARE",
+          "GOLF",
+          "VISITOR_CENTER",
+          "TOWING"
+        ]
+      }
+    },
+    "compact-package-measurements.json": {
+      "schemaVersion": "gridly.lp24111.compact-packages.v1",
+      "executionState": "OWNER_LOCAL_MEASURED",
+      "eligibleOnly": true,
+      "compression": "gzip-9",
+      "compactFields": [
+        "id",
+        "displayName",
+        "normalizedName",
+        "brand",
+        "gridlyCategory",
+        "latitude",
+        "longitude",
+        "countyFips",
+        "locality",
+        "operatingStatus"
+      ],
+      "statistics": {
+        "shardCount": 86,
+        "totalEligibleRows": 393038,
+        "totalRawBytes": 111612300,
+        "totalCompressedBytes": 24693819,
+        "largestShard": {
+          "shardId": "tx-29-096",
+          "eligibleRows": 67798,
+          "rawBytes": 19143767,
+          "compressedBytes": 4262172
+        },
+        "smallestNonEmptyShard": {
+          "shardId": "tx-35-104",
+          "eligibleRows": 3,
+          "rawBytes": 869,
+          "compressedBytes": 428
+        },
+        "medianCompressedBytes": 62600,
+        "p90CompressedBytes": 607469,
+        "p95CompressedBytes": 1825315,
+        "p99CompressedBytes": 4262172,
+        "shardsOver25MiB": 0,
+        "shardsOver10MiB": 0,
+        "shardsUnder1MiB": 80
+      },
+      "denseShard": {
+        "shard_id": "tx-29-096",
+        "eligible_row_count": 67798,
+        "raw_byte_count": 19143767,
+        "compressed_byte_count": 4262172
+      },
+      "thresholdBytes": 26214400,
+      "searchFanout": [
+        {
+          "radius_miles": 5,
+          "minimum_shard_count": 1,
+          "median_shard_count": 1,
+          "maximum_shard_count": 4
+        },
+        {
+          "radius_miles": 10,
+          "minimum_shard_count": 1,
+          "median_shard_count": 1,
+          "maximum_shard_count": 4
+        },
+        {
+          "radius_miles": 25,
+          "minimum_shard_count": 1,
+          "median_shard_count": 4,
+          "maximum_shard_count": 4
+        },
+        {
+          "radius_miles": 50,
+          "minimum_shard_count": 4,
+          "median_shard_count": 6,
+          "maximum_shard_count": 9
+        }
+      ],
+      "shards": [
+        {
+          "shardId": "tx-25-098",
+          "eligibleRows": 2715,
+          "rawBytes": 778181,
+          "compressedBytes": 161620
+        },
+        {
+          "shardId": "tx-26-098",
+          "eligibleRows": 4794,
+          "rawBytes": 1370879,
+          "compressedBytes": 296822
+        },
+        {
+          "shardId": "tx-26-099",
+          "eligibleRows": 10837,
+          "rawBytes": 3059625,
+          "compressedBytes": 665026
+        },
+        {
+          "shardId": "tx-26-100",
+          "eligibleRows": 361,
+          "rawBytes": 101387,
+          "compressedBytes": 22084
+        },
+        {
+          "shardId": "tx-27-098",
+          "eligibleRows": 7007,
+          "rawBytes": 2030612,
+          "compressedBytes": 437959
+        },
+        {
+          "shardId": "tx-27-099",
+          "eligibleRows": 999,
+          "rawBytes": 282139,
+          "compressedBytes": 60720
+        },
+        {
+          "shardId": "tx-27-100",
+          "eligibleRows": 3479,
+          "rawBytes": 976048,
+          "compressedBytes": 207774
+        },
+        {
+          "shardId": "tx-28-096",
+          "eligibleRows": 868,
+          "rawBytes": 247082,
+          "compressedBytes": 53123
+        },
+        {
+          "shardId": "tx-28-097",
+          "eligibleRows": 1866,
+          "rawBytes": 531195,
+          "compressedBytes": 115121
+        },
+        {
+          "shardId": "tx-28-098",
+          "eligibleRows": 2439,
+          "rawBytes": 694481,
+          "compressedBytes": 152528
+        },
+        {
+          "shardId": "tx-28-099",
+          "eligibleRows": 840,
+          "rawBytes": 240398,
+          "compressedBytes": 51434
+        },
+        {
+          "shardId": "tx-28-100",
+          "eligibleRows": 1025,
+          "rawBytes": 292032,
+          "compressedBytes": 62600
+        },
+        {
+          "shardId": "tx-28-101",
+          "eligibleRows": 827,
+          "rawBytes": 235749,
+          "compressedBytes": 49102
+        },
+        {
+          "shardId": "tx-29-094",
+          "eligibleRows": 1200,
+          "rawBytes": 342968,
+          "compressedBytes": 73761
+        },
+        {
+          "shardId": "tx-29-095",
+          "eligibleRows": 4780,
+          "rawBytes": 1357707,
+          "compressedBytes": 300282
+        },
+        {
+          "shardId": "tx-29-096",
+          "eligibleRows": 67798,
+          "rawBytes": 19143767,
+          "compressedBytes": 4262172
+        },
+        {
+          "shardId": "tx-29-097",
+          "eligibleRows": 2533,
+          "rawBytes": 720970,
+          "compressedBytes": 158971
+        },
+        {
+          "shardId": "tx-29-098",
+          "eligibleRows": 4129,
+          "rawBytes": 1171164,
+          "compressedBytes": 258956
+        },
+        {
+          "shardId": "tx-29-099",
+          "eligibleRows": 30115,
+          "rawBytes": 8663245,
+          "compressedBytes": 1911435
+        },
+        {
+          "shardId": "tx-29-100",
+          "eligibleRows": 1323,
+          "rawBytes": 372155,
+          "compressedBytes": 81885
+        },
+        {
+          "shardId": "tx-29-101",
+          "eligibleRows": 781,
+          "rawBytes": 221747,
+          "compressedBytes": 47122
+        },
+        {
+          "shardId": "tx-29-102",
+          "eligibleRows": 34,
+          "rawBytes": 9759,
+          "compressedBytes": 2600
+        },
+        {
+          "shardId": "tx-29-103",
+          "eligibleRows": 5,
+          "rawBytes": 1460,
+          "compressedBytes": 603
+        },
+        {
+          "shardId": "tx-29-104",
+          "eligibleRows": 151,
+          "rawBytes": 43764,
+          "compressedBytes": 9525
+        },
+        {
+          "shardId": "tx-29-105",
+          "eligibleRows": 74,
+          "rawBytes": 20964,
+          "compressedBytes": 4676
+        },
+        {
+          "shardId": "tx-30-094",
+          "eligibleRows": 1363,
+          "rawBytes": 385665,
+          "compressedBytes": 83487
+        },
+        {
+          "shardId": "tx-30-095",
+          "eligibleRows": 4918,
+          "rawBytes": 1397570,
+          "compressedBytes": 307312
+        },
+        {
+          "shardId": "tx-30-096",
+          "eligibleRows": 16071,
+          "rawBytes": 4555869,
+          "compressedBytes": 1018553
+        },
+        {
+          "shardId": "tx-30-097",
+          "eligibleRows": 5592,
+          "rawBytes": 1606417,
+          "compressedBytes": 356558
+        },
+        {
+          "shardId": "tx-30-098",
+          "eligibleRows": 28929,
+          "rawBytes": 8175762,
+          "compressedBytes": 1825315
+        },
+        {
+          "shardId": "tx-30-099",
+          "eligibleRows": 3525,
+          "rawBytes": 1016947,
+          "compressedBytes": 224838
+        },
+        {
+          "shardId": "tx-30-100",
+          "eligibleRows": 1332,
+          "rawBytes": 377972,
+          "compressedBytes": 82530
+        },
+        {
+          "shardId": "tx-30-101",
+          "eligibleRows": 233,
+          "rawBytes": 66289,
+          "compressedBytes": 14124
+        },
+        {
+          "shardId": "tx-30-102",
+          "eligibleRows": 152,
+          "rawBytes": 42232,
+          "compressedBytes": 9194
+        },
+        {
+          "shardId": "tx-30-103",
+          "eligibleRows": 318,
+          "rawBytes": 92140,
+          "compressedBytes": 19534
+        },
+        {
+          "shardId": "tx-30-104",
+          "eligibleRows": 366,
+          "rawBytes": 103867,
+          "compressedBytes": 22738
+        },
+        {
+          "shardId": "tx-30-105",
+          "eligibleRows": 117,
+          "rawBytes": 32491,
+          "compressedBytes": 7250
+        },
+        {
+          "shardId": "tx-31-094",
+          "eligibleRows": 267,
+          "rawBytes": 76888,
+          "compressedBytes": 16815
+        },
+        {
+          "shardId": "tx-31-095",
+          "eligibleRows": 2997,
+          "rawBytes": 853513,
+          "compressedBytes": 186676
+        },
+        {
+          "shardId": "tx-31-096",
+          "eligibleRows": 2030,
+          "rawBytes": 580872,
+          "compressedBytes": 126186
+        },
+        {
+          "shardId": "tx-31-097",
+          "eligibleRows": 1721,
+          "rawBytes": 488308,
+          "compressedBytes": 107382
+        },
+        {
+          "shardId": "tx-31-098",
+          "eligibleRows": 9544,
+          "rawBytes": 2709581,
+          "compressedBytes": 607469
+        },
+        {
+          "shardId": "tx-31-099",
+          "eligibleRows": 1593,
+          "rawBytes": 452711,
+          "compressedBytes": 98687
+        },
+        {
+          "shardId": "tx-31-100",
+          "eligibleRows": 825,
+          "rawBytes": 231883,
+          "compressedBytes": 49746
+        },
+        {
+          "shardId": "tx-31-101",
+          "eligibleRows": 1901,
+          "rawBytes": 545968,
+          "compressedBytes": 115355
+        },
+        {
+          "shardId": "tx-31-102",
+          "eligibleRows": 205,
+          "rawBytes": 58158,
+          "compressedBytes": 12795
+        },
+        {
+          "shardId": "tx-31-103",
+          "eligibleRows": 3918,
+          "rawBytes": 1102520,
+          "compressedBytes": 236620
+        },
+        {
+          "shardId": "tx-31-104",
+          "eligibleRows": 586,
+          "rawBytes": 165595,
+          "compressedBytes": 35448
+        },
+        {
+          "shardId": "tx-31-105",
+          "eligibleRows": 124,
+          "rawBytes": 35175,
+          "compressedBytes": 7917
+        },
+        {
+          "shardId": "tx-31-106",
+          "eligibleRows": 71,
+          "rawBytes": 20826,
+          "compressedBytes": 4891
+        },
+        {
+          "shardId": "tx-31-107",
+          "eligibleRows": 9667,
+          "rawBytes": 2740979,
+          "compressedBytes": 591358
+        },
+        {
+          "shardId": "tx-32-095",
+          "eligibleRows": 5175,
+          "rawBytes": 1472908,
+          "compressedBytes": 325823
+        },
+        {
+          "shardId": "tx-32-096",
+          "eligibleRows": 6633,
+          "rawBytes": 1873583,
+          "compressedBytes": 418829
+        },
+        {
+          "shardId": "tx-32-097",
+          "eligibleRows": 40830,
+          "rawBytes": 11532112,
+          "compressedBytes": 2588891
+        },
+        {
+          "shardId": "tx-32-098",
+          "eligibleRows": 32819,
+          "rawBytes": 9372413,
+          "compressedBytes": 2102863
+        },
+        {
+          "shardId": "tx-32-099",
+          "eligibleRows": 2231,
+          "rawBytes": 637621,
+          "compressedBytes": 138255
+        },
+        {
+          "shardId": "tx-32-100",
+          "eligibleRows": 2792,
+          "rawBytes": 789813,
+          "compressedBytes": 171359
+        },
+        {
+          "shardId": "tx-32-101",
+          "eligibleRows": 1024,
+          "rawBytes": 291246,
+          "compressedBytes": 62420
+        },
+        {
+          "shardId": "tx-32-102",
+          "eligibleRows": 983,
+          "rawBytes": 279003,
+          "compressedBytes": 60086
+        },
+        {
+          "shardId": "tx-32-103",
+          "eligibleRows": 1794,
+          "rawBytes": 508400,
+          "compressedBytes": 108691
+        },
+        {
+          "shardId": "tx-32-104",
+          "eligibleRows": 10,
+          "rawBytes": 2778,
+          "compressedBytes": 857
+        },
+        {
+          "shardId": "tx-32-107",
+          "eligibleRows": 8,
+          "rawBytes": 2323,
+          "compressedBytes": 773
+        },
+        {
+          "shardId": "tx-33-095",
+          "eligibleRows": 2615,
+          "rawBytes": 744804,
+          "compressedBytes": 162483
+        },
+        {
+          "shardId": "tx-33-096",
+          "eligibleRows": 2399,
+          "rawBytes": 683441,
+          "compressedBytes": 149943
+        },
+        {
+          "shardId": "tx-33-097",
+          "eligibleRows": 19729,
+          "rawBytes": 5576714,
+          "compressedBytes": 1254494
+        },
+        {
+          "shardId": "tx-33-098",
+          "eligibleRows": 7434,
+          "rawBytes": 2110565,
+          "compressedBytes": 472133
+        },
+        {
+          "shardId": "tx-33-099",
+          "eligibleRows": 2507,
+          "rawBytes": 721199,
+          "compressedBytes": 155351
+        },
+        {
+          "shardId": "tx-33-100",
+          "eligibleRows": 435,
+          "rawBytes": 123723,
+          "compressedBytes": 26379
+        },
+        {
+          "shardId": "tx-33-101",
+          "eligibleRows": 119,
+          "rawBytes": 34303,
+          "compressedBytes": 7787
+        },
+        {
+          "shardId": "tx-33-102",
+          "eligibleRows": 4773,
+          "rawBytes": 1357263,
+          "compressedBytes": 293198
+        },
+        {
+          "shardId": "tx-33-103",
+          "eligibleRows": 883,
+          "rawBytes": 253712,
+          "compressedBytes": 54415
+        },
+        {
+          "shardId": "tx-33-104",
+          "eligibleRows": 9,
+          "rawBytes": 2569,
+          "compressedBytes": 895
+        },
+        {
+          "shardId": "tx-34-099",
+          "eligibleRows": 210,
+          "rawBytes": 60156,
+          "compressedBytes": 12818
+        },
+        {
+          "shardId": "tx-34-100",
+          "eligibleRows": 405,
+          "rawBytes": 114793,
+          "compressedBytes": 25295
+        },
+        {
+          "shardId": "tx-34-101",
+          "eligibleRows": 495,
+          "rawBytes": 141047,
+          "compressedBytes": 29487
+        },
+        {
+          "shardId": "tx-34-102",
+          "eligibleRows": 897,
+          "rawBytes": 255508,
+          "compressedBytes": 54173
+        },
+        {
+          "shardId": "tx-34-103",
+          "eligibleRows": 784,
+          "rawBytes": 221579,
+          "compressedBytes": 47184
+        },
+        {
+          "shardId": "tx-34-104",
+          "eligibleRows": 33,
+          "rawBytes": 9375,
+          "compressedBytes": 2379
+        },
+        {
+          "shardId": "tx-35-101",
+          "eligibleRows": 679,
+          "rawBytes": 192778,
+          "compressedBytes": 41755
+        },
+        {
+          "shardId": "tx-35-102",
+          "eligibleRows": 4095,
+          "rawBytes": 1167191,
+          "compressedBytes": 252112
+        },
+        {
+          "shardId": "tx-35-103",
+          "eligibleRows": 165,
+          "rawBytes": 47010,
+          "compressedBytes": 10675
+        },
+        {
+          "shardId": "tx-35-104",
+          "eligibleRows": 3,
+          "rawBytes": 869,
+          "compressedBytes": 428
+        },
+        {
+          "shardId": "tx-36-101",
+          "eligibleRows": 247,
+          "rawBytes": 70476,
+          "compressedBytes": 15239
+        },
+        {
+          "shardId": "tx-36-102",
+          "eligibleRows": 168,
+          "rawBytes": 47621,
+          "compressedBytes": 10513
+        },
+        {
+          "shardId": "tx-36-103",
+          "eligibleRows": 293,
+          "rawBytes": 82963,
+          "compressedBytes": 17859
+        },
+        {
+          "shardId": "tx-36-104",
+          "eligibleRows": 17,
+          "rawBytes": 4765,
+          "compressedBytes": 1298
+        }
+      ],
+      "sqlStatistics": {
+        "shard_count": 86,
+        "eligible_row_count": 393038,
+        "raw_byte_count": 111612300,
+        "compressed_byte_count": 24693819,
+        "minimum_compressed_bytes": 428,
+        "median_compressed_bytes": 68180.5,
+        "p90_compressed_bytes": 607469,
+        "p95_compressed_bytes": 1825315,
+        "p99_compressed_bytes": 4262172,
+        "maximum_compressed_bytes": 4262172
+      },
+      "thresholdStatistics": {
+        "over_25_mib_count": 0,
+        "over_10_mib_count": 0,
+        "under_1_mib_count": 80
+      }
+    },
+    "package-size-model.json": {
+      "schemaVersion": "gridly.lp24111.shards.v2",
+      "executionState": "OWNER_LOCAL_MEASURED",
+      "architecture": [
+        "literal/precomputed shard bounds",
+        "remote bounded rich projection",
+        "local authoritative-ID match",
+        "normalize",
+        "category map",
+        "identity audit",
+        "quality audit",
+        "package",
+        "verify",
+        "immutable manifest"
+      ],
+      "manifest": "reports/lp24111/rich-shard-manifest.json",
+      "literalPushdownEvidence": {
+        "kingRows": 14,
+        "seconds": 6.46
+      },
+      "measurements": {
+        "compressedBytes": 24693819,
+        "largestShard": {
+          "shardId": "tx-29-096",
+          "eligibleRows": 67798,
+          "rawBytes": 19143767,
+          "compressedBytes": 4262172
+        },
+        "smallestShard": {
+          "shardId": "tx-35-104",
+          "eligibleRows": 3,
+          "rawBytes": 869,
+          "compressedBytes": 428
+        },
+        "expectedSearchFanout": [
+          {
+            "radius_miles": 5,
+            "minimum_shard_count": 1,
+            "median_shard_count": 1,
+            "maximum_shard_count": 4
+          },
+          {
+            "radius_miles": 10,
+            "minimum_shard_count": 1,
+            "median_shard_count": 1,
+            "maximum_shard_count": 4
+          },
+          {
+            "radius_miles": 25,
+            "minimum_shard_count": 1,
+            "median_shard_count": 4,
+            "maximum_shard_count": 4
+          },
+          {
+            "radius_miles": 50,
+            "minimum_shard_count": 4,
+            "median_shard_count": 6,
+            "maximum_shard_count": 9
+          }
+        ]
+      },
+      "constraints": {
+        "singleAssetBytes": 26214400
+      },
+      "productionChoice": "NO_DENSE_SUBDIVISION_FROM_CURRENT_COMPACT_SIZE_EVIDENCE"
+    },
+    "certification.json": {
+      "schemaVersion": "gridly.lp24111.certification.v4",
+      "executiveResult": "PHASE_D2_MEASURED_TAXONOMY_AND_PACKAGE_CERTIFIED",
+      "richAuthorityConservation": "OWNER_LOCAL_MEASURED",
+      "productViability": "OVERTURE_TEXAS_POI_AUTHORITY_NOT_YET_PRODUCT_VIABLE",
+      "classifications": [
+        "TAXONOMY_PROMOTIONS_RECONCILED",
+        "COMPACT_PACKAGE_IDENTITIES_CANONICAL",
+        "RUNTIME_NOT_ACTIVATED"
+      ],
+      "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+      "zeroCostContract": "NON_RUNTIME",
+      "mergeRecommendation": "MERGE_D2_MEASURED_EVIDENCE",
+      "nextAction": "Review measured normalization and execute the remaining community, identity, metadata, package compression, attribution, and reconciliation audits."
+    }
+  }
+}

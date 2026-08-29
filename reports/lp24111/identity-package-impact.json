@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "gridly.lp24111.identity-package-impact.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "nonRuntime": true,
+  "baseline": {
+    "eligibleRows": 393038,
+    "statewideCompressedBytes": 24693819,
+    "largestShardBytes": 4262172
+  },
+  "measurement": null,
+  "separateFromD2": true
+}

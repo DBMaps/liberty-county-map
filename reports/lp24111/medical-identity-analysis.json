@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "gridly.lp24111.medical-identity.v1",
+  "executionState": "NOT_EXECUTED",
+  "reason": "Owner-local normalized Parquet and D.3 measured envelope are absent; no counts are inferred.",
+  "nonRuntime": true,
+  "parentFacilities": null,
+  "childDepartments": null,
+  "separateFacilities": null,
+  "ambiguousCampusRelationships": null,
+  "veterinaryHumanMedicalMerges": 0
+}
