@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "gridly.lp24112.brand.v1",
+  "authorityRole": "DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY",
+  "display": "MAY_DISPLAY_WHEN_NON_EMPTY",
+  "absenceSuppressesPoi": false,
+  "determines": {
+    "identity": false,
+    "deduplication": false,
+    "category": false,
+    "launchEligibility": false
+  },
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

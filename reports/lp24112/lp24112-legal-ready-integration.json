@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "gridly.lp24112.legal.v1",
+  "legalState": "LEGAL_REVIEW_REQUIRED",
+  "legalConclusion": false,
+  "activationAllowed": false,
+  "hooks": [
+    {
+      "id": "MAP_ATTRIBUTION",
+      "surface": "POI results/map footer"
+    },
+    {
+      "id": "SOURCE_DISCLOSURE",
+      "surface": "About / Legal"
+    },
+    {
+      "id": "LEGAL_LINK",
+      "surface": "POI results to About / Legal"
+    },
+    {
+      "id": "DATA_VERSION",
+      "value": "lp24111-d5-standalone-2026-08-28"
+    },
+    {
+      "id": "SOURCE_INVENTORY",
+      "surface": "counsel-approved immutable source inventory reference"
+    }
+  ],
+  "approvalArtifactRequired": "COUNSEL_APPROVED_RELEASE_MANIFEST",
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

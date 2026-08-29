@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp24112.gate.v1",
+  "default": {
+    "provider": "PREVIOUS_RUNTIME",
+    "environmentEnabled": false,
+    "manifestApproved": false,
+    "legalClearance": false,
+    "runtimeActivated": false,
+    "state": "OFF"
+  },
+  "activationRequires": [
+    "provider=GRIDLY_GOVERNED_POI",
+    "environmentEnabled=true",
+    "manifestApproved=true",
+    "legalClearance=true",
+    "authorityReleaseId=lp24111-d5-standalone-2026-08-28",
+    "schemaVersion=gridly.poi.runtime.v1"
+  ],
+  "combination": "ALL_REQUIRED_FAIL_CLOSED",
+  "mismatch": "OFF_WITH_DIAGNOSTIC",
+  "singleRollback": "provider=PREVIOUS_RUNTIME",
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "gridly.lp24112.zero.v1",
+  "state": "SUCCESS_WITH_ZERO_RESULTS",
+  "reasons": [
+    "NO_NEARBY_POIS",
+    "NO_CATEGORY_MATCH",
+    "NO_TEXT_MATCH",
+    "EXPECTED_SPARSE_AREA",
+    "REGIONAL_DEPENDENCY_UNAVAILABLE"
+  ],
+  "copy": {
+    "NO_NEARBY_POIS": "No nearby places found within this area.",
+    "NO_CATEGORY_MATCH": "No places in this category were found nearby.",
+    "EXPECTED_SPARSE_AREA": "This area may have limited nearby place data."
+  },
+  "missingOptionalFields": "omit field without suppressing result or producing error",
+  "shardFailureIsNotZeroResult": true,
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

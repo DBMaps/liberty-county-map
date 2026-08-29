@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "gridly.lp24112.certification.v1",
+  "phaseState": "PHASE_LP24112_RUNTIME_ACTIVATION_DESIGN_CERTIFIED",
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "runtimeActivated": false,
+  "legalState": "LEGAL_REVIEW_REQUIRED",
+  "productionBehaviorChanged": false,
+  "technicalActivationBlockers": 0,
+  "deployed": false,
+  "providerSwitched": false,
+  "productionSupabaseMutation": false,
+  "phoneTesting": false,
+  "nextOwnerAction": "Obtain external counsel approval of attribution, licensing, source inventory, and the exact authority release manifest; do not enable the gate.",
+  "milestone": "LP241.12",
+  "designOnly": true
+}

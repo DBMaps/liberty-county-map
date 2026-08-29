@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp24112.rollback.v1",
+  "trigger": "SET_SINGLE_PROVIDER_GATE_TO_PREVIOUS_RUNTIME",
+  "steps": [
+    "gate OFF before new queries",
+    "cancel/ignore pending Gridly POI responses",
+    "restore previous provider behavior",
+    "ignore versioned POI cache namespace",
+    "emit rollback diagnostic"
+  ],
+  "dataMigration": false,
+  "userStateMutation": false,
+  "cacheDeletionRequired": false,
+  "confirmation": "activePoiProvider=PREVIOUS_RUNTIME AND runtimeActivated=false",
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

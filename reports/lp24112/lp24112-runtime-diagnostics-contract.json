@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp24112.diagnostics.v1",
+  "helper": "gridlyPoiAudit()",
+  "bounded": true,
+  "maxResultIds": 50,
+  "fields": [
+    "activePoiProvider",
+    "authorityReleaseId",
+    "schemaVersion",
+    "loadedShardIds",
+    "loadedRowCount",
+    "dedupedResultCount",
+    "radiusMiles",
+    "communityIdentity",
+    "countyContext",
+    "resultIds",
+    "fallbackReason",
+    "zeroResultReason",
+    "featureGateState"
+  ],
+  "redaction": "NO_RAW_SOURCE_METADATA_OR_USER_TEXT",
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}
