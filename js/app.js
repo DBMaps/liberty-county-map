@@ -52450,8 +52450,6 @@ function getGridlyBottomPanelAwarenessCrossingCount(summary = {}) {
   const projectedArea = summary.selectedAwarenessArea || {};
   const rejoin = gridlyRejoinCrossingAwarenessSelector(projectedArea, gridlyGetActiveCountyId());
   const selectedArea = rejoin.selector;
-  const canonicalMembership = window.gridlyCanonicalCrossingRuntime?.lookup(selectedArea);
-  if (canonicalMembership) return canonicalMembership.resolvedRuntimeCrossingCount;
   const routeWatchActive = Boolean(savedRouteCrossingIds instanceof Set && savedRouteCrossingIds.size > 0);
   const summaryCount = Array.isArray(summary.crossingsInArea) ? summary.crossingsInArea.length : Number(summary.crossingsInArea || 0);
   const activeCountyInventory = gridlyGetActiveCountyCrossingInventory();
@@ -52545,9 +52543,13 @@ function summarizeGridlyAwarenessIntelligenceForDisplay(summary = {}) {
   const status = safeDisplayText(summary.awarenessStatus, quietSupportCopy.status);
   recordGridlyCrossingFallbackAudit("bottomPanelDisplayedCrossingCount", {
     bottomPanelDisplayedCrossingCount: crossingsCount,
-    firstBottomPanelZeroReason: crossingsCount === 0 && !gridlyCrossingFallbackAuditState.firstBottomPanelZeroReason
-      ? (gridlyGetActiveCountyCrossingInventory().length > 0 ? "summary_crossing_count_zero_despite_active_county_inventory" : "active_county_inventory_empty")
-      : gridlyCrossingFallbackAuditState.firstBottomPanelZeroReason
+    // A pre-hydration zero is useful only while it describes the current
+    // publication.  Clear it when the governed watched-area selector becomes
+    // positive so acceptance diagnostics cannot retain an early empty snapshot.
+    firstBottomPanelZeroReason: crossingsCount > 0
+      ? null
+      : (gridlyCrossingFallbackAuditState.firstBottomPanelZeroReason
+        || (gridlyGetActiveCountyCrossingInventory().length > 0 ? "summary_crossing_count_zero_despite_active_county_inventory" : "active_county_inventory_empty"))
   });
   const hazardCount = Array.isArray(summary.activeHazardsInArea) ? summary.activeHazardsInArea.length : Number(summary.activeHazardsInArea || 0);
   const reportCount = Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea.length : Number(summary.activeReportsInArea || 0);

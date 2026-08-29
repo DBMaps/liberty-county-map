@@ -57,7 +57,10 @@ test('browser lookup rejects display-name-only and missing identities fail close
 
 test('watched authority is separate from rendering and preserves governance', () => {
   const app = read('js/app.js').toString();
-  assert.match(app, /canonicalMembership\.resolvedRuntimeCrossingCount/);
+  const watchedConsumer = app.slice(app.indexOf('function getGridlyBottomPanelAwarenessCrossingCount'), app.indexOf('let gridlyCrossingSelectorRejoinAuditState'));
+  assert.match(watchedConsumer, /gridlySelectConsumerVisibleCrossings\(selectedArea\)\.length/);
+  assert.doesNotMatch(watchedConsumer, /canonicalMembership|resolvedRuntimeCrossingCount/);
+  assert.match(app, /gridlyCanonicalCrossingRuntime\?\.lookup/);
   assert.match(app, /renderingSeparatedFromWatchedMembership/);
   assert.match(app, /selectedMembership === activeCounty/);
   assert.doesNotMatch(read('js/gridlyCanonicalCrossingRuntime.js').toString(), /setActiveCounty|setInterval|setTimeout|pointInPolygon|radiusMiles/);
