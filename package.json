@@ -685,6 +685,9 @@
     "test:lp24115c": "node --test tests/lp24115c-runtime-v2-reconciliation.test.mjs",
     "build:lp24116": "node tools/lp24116/runtime-shard-materializer.mjs",
     "verify:lp24116": "node tools/lp24116/runtime-shard-materializer.mjs --verify",
-    "test:lp24116": "node --test tests/lp24116-runtime-shard-materialization.test.mjs"
+    "test:lp24116": "node --test tests/lp24116-runtime-shard-materialization.test.mjs",
+    "rehearse:lp24117": "node tools/lp24117/non-production-provider-rehearsal.mjs --write",
+    "verify:lp24117": "node tools/lp24117/non-production-provider-rehearsal.mjs --verify",
+    "test:lp24117": "node --test tests/lp24117-non-production-provider-rehearsal.test.mjs"
   }
 }

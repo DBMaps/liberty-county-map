@@ -1,0 +1,1132 @@
+{
+  "schemaVersion": "gridly.lp24117.cohorts.v1",
+  "cohorts": [
+    {
+      "cohort": "Dayton",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4819432",
+        "placeGeoid": "4819432"
+      },
+      "selectedCountyContext": "liberty-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-095",
+        "tx-30-095"
+      ],
+      "loadedShardIds": [
+        "tx-29-095",
+        "tx-30-095"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 2,
+      "rawEligibleCount": 232,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "liberty-tx"
+      ],
+      "maxDistanceMiles": 0.277006
+    },
+    {
+      "cohort": "Dayton",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4819432",
+        "placeGeoid": "4819432"
+      },
+      "selectedCountyContext": "liberty-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-095",
+        "tx-29-096",
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "loadedShardIds": [
+        "tx-29-095",
+        "tx-29-096",
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 2,
+      "rawEligibleCount": 538,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "liberty-tx"
+      ],
+      "maxDistanceMiles": 0.277006
+    },
+    {
+      "cohort": "Dayton",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4819432",
+        "placeGeoid": "4819432"
+      },
+      "selectedCountyContext": "liberty-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-095",
+        "tx-29-096",
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "loadedShardIds": [
+        "tx-29-095",
+        "tx-29-096",
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 7869,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "liberty-tx"
+      ],
+      "maxDistanceMiles": 0.277006
+    },
+    {
+      "cohort": "Tarkington",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "liberty-tx:tarkington",
+        "placeGeoid": null
+      },
+      "selectedCountyContext": "liberty-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "loadedShardIds": [
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 118,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "liberty-tx"
+      ],
+      "maxDistanceMiles": 3.351152
+    },
+    {
+      "cohort": "Tarkington",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "liberty-tx:tarkington",
+        "placeGeoid": null
+      },
+      "selectedCountyContext": "liberty-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "loadedShardIds": [
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 462,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "liberty-tx"
+      ],
+      "maxDistanceMiles": 3.351152
+    },
+    {
+      "cohort": "Tarkington",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "liberty-tx:tarkington",
+        "placeGeoid": null
+      },
+      "selectedCountyContext": "liberty-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-095",
+        "tx-29-096",
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "loadedShardIds": [
+        "tx-29-095",
+        "tx-29-096",
+        "tx-30-095",
+        "tx-30-096"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 3891,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "liberty-tx"
+      ],
+      "maxDistanceMiles": 3.351152
+    },
+    {
+      "cohort": "Pecos",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4856520",
+        "placeGeoid": "4856520"
+      },
+      "selectedCountyContext": "reeves-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-31-104"
+      ],
+      "loadedShardIds": [
+        "tx-31-104"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 302,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "reeves-tx"
+      ],
+      "maxDistanceMiles": 0.256477
+    },
+    {
+      "cohort": "Pecos",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4856520",
+        "placeGeoid": "4856520"
+      },
+      "selectedCountyContext": "reeves-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-31-104"
+      ],
+      "loadedShardIds": [
+        "tx-31-104"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 317,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "reeves-tx"
+      ],
+      "maxDistanceMiles": 0.256477
+    },
+    {
+      "cohort": "Pecos",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4856520",
+        "placeGeoid": "4856520"
+      },
+      "selectedCountyContext": "reeves-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-31-104"
+      ],
+      "loadedShardIds": [
+        "tx-31-104"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 355,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "reeves-tx"
+      ],
+      "maxDistanceMiles": 0.256477
+    },
+    {
+      "cohort": "Dallas",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4819000",
+        "placeGeoid": "4819000"
+      },
+      "selectedCountyContext": "dallas-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-097"
+      ],
+      "loadedShardIds": [
+        "tx-32-097"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 7757,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "dallas-tx"
+      ],
+      "maxDistanceMiles": 0.074797
+    },
+    {
+      "cohort": "Dallas",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4819000",
+        "placeGeoid": "4819000"
+      },
+      "selectedCountyContext": "dallas-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-097"
+      ],
+      "loadedShardIds": [
+        "tx-32-097"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 16606,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "dallas-tx"
+      ],
+      "maxDistanceMiles": 0.074797
+    },
+    {
+      "cohort": "Dallas",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4819000",
+        "placeGeoid": "4819000"
+      },
+      "selectedCountyContext": "dallas-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-097",
+        "tx-32-098",
+        "tx-33-097",
+        "tx-33-098"
+      ],
+      "loadedShardIds": [
+        "tx-32-097",
+        "tx-32-098",
+        "tx-33-097",
+        "tx-33-098"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 3,
+      "rawEligibleCount": 59924,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "dallas-tx"
+      ],
+      "maxDistanceMiles": 0.074797
+    },
+    {
+      "cohort": "Austin",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4805000",
+        "placeGeoid": "4805000"
+      },
+      "selectedCountyContext": "travis-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-098"
+      ],
+      "loadedShardIds": [
+        "tx-30-098"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 8778,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "travis-tx"
+      ],
+      "maxDistanceMiles": 0.056303
+    },
+    {
+      "cohort": "Austin",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4805000",
+        "placeGeoid": "4805000"
+      },
+      "selectedCountyContext": "travis-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-098"
+      ],
+      "loadedShardIds": [
+        "tx-30-098"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 14705,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "travis-tx"
+      ],
+      "maxDistanceMiles": 0.056303
+    },
+    {
+      "cohort": "Austin",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4805000",
+        "placeGeoid": "4805000"
+      },
+      "selectedCountyContext": "travis-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-098",
+        "tx-29-099",
+        "tx-30-098",
+        "tx-30-099"
+      ],
+      "loadedShardIds": [
+        "tx-29-098",
+        "tx-29-099",
+        "tx-30-098",
+        "tx-30-099"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 3,
+      "rawEligibleCount": 26140,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "travis-tx"
+      ],
+      "maxDistanceMiles": 0.056303
+    },
+    {
+      "cohort": "San Antonio",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4865000",
+        "placeGeoid": "4865000"
+      },
+      "selectedCountyContext": "bexar-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-099"
+      ],
+      "loadedShardIds": [
+        "tx-29-099"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 6387,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "bexar-tx"
+      ],
+      "maxDistanceMiles": 0.069242
+    },
+    {
+      "cohort": "San Antonio",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4865000",
+        "placeGeoid": "4865000"
+      },
+      "selectedCountyContext": "bexar-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-099"
+      ],
+      "loadedShardIds": [
+        "tx-29-099"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 15925,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "bexar-tx"
+      ],
+      "maxDistanceMiles": 0.069242
+    },
+    {
+      "cohort": "San Antonio",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4865000",
+        "placeGeoid": "4865000"
+      },
+      "selectedCountyContext": "bexar-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-099"
+      ],
+      "loadedShardIds": [
+        "tx-29-099"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 25800,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "bexar-tx"
+      ],
+      "maxDistanceMiles": 0.069242
+    },
+    {
+      "cohort": "Abilene",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4801000",
+        "placeGeoid": "4801000"
+      },
+      "selectedCountyContext": "taylor-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-100"
+      ],
+      "loadedShardIds": [
+        "tx-32-100"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 1750,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "taylor-tx"
+      ],
+      "maxDistanceMiles": 0.18797
+    },
+    {
+      "cohort": "Abilene",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4801000",
+        "placeGeoid": "4801000"
+      },
+      "selectedCountyContext": "taylor-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-100"
+      ],
+      "loadedShardIds": [
+        "tx-32-100"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 2023,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "taylor-tx"
+      ],
+      "maxDistanceMiles": 0.18797
+    },
+    {
+      "cohort": "Abilene",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4801000",
+        "placeGeoid": "4801000"
+      },
+      "selectedCountyContext": "taylor-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-100",
+        "tx-32-101"
+      ],
+      "loadedShardIds": [
+        "tx-32-100",
+        "tx-32-101"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 2540,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "taylor-tx"
+      ],
+      "maxDistanceMiles": 0.18797
+    },
+    {
+      "cohort": "Midland",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4848072",
+        "placeGeoid": "4848072"
+      },
+      "selectedCountyContext": "midland-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-31-102",
+        "tx-31-103",
+        "tx-32-102",
+        "tx-32-103"
+      ],
+      "loadedShardIds": [
+        "tx-31-102",
+        "tx-31-103",
+        "tx-32-102",
+        "tx-32-103"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 4,
+      "rawEligibleCount": 2018,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "midland-tx"
+      ],
+      "maxDistanceMiles": 0.119549
+    },
+    {
+      "cohort": "Midland",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4848072",
+        "placeGeoid": "4848072"
+      },
+      "selectedCountyContext": "midland-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-31-102",
+        "tx-31-103",
+        "tx-32-102",
+        "tx-32-103"
+      ],
+      "loadedShardIds": [
+        "tx-31-102",
+        "tx-31-103",
+        "tx-32-102",
+        "tx-32-103"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 2322,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "midland-tx"
+      ],
+      "maxDistanceMiles": 0.119549
+    },
+    {
+      "cohort": "Midland",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4848072",
+        "placeGeoid": "4848072"
+      },
+      "selectedCountyContext": "midland-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-31-102",
+        "tx-31-103",
+        "tx-32-102",
+        "tx-32-103"
+      ],
+      "loadedShardIds": [
+        "tx-31-102",
+        "tx-31-103",
+        "tx-32-102",
+        "tx-32-103"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 4603,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "midland-tx"
+      ],
+      "maxDistanceMiles": 0.119549
+    },
+    {
+      "cohort": "Fredericksburg",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4827348",
+        "placeGeoid": "4827348"
+      },
+      "selectedCountyContext": "gillespie-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-099"
+      ],
+      "loadedShardIds": [
+        "tx-30-099"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 679,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "gillespie-tx"
+      ],
+      "maxDistanceMiles": 0.160756
+    },
+    {
+      "cohort": "Fredericksburg",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4827348",
+        "placeGeoid": "4827348"
+      },
+      "selectedCountyContext": "gillespie-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-099",
+        "tx-30-100"
+      ],
+      "loadedShardIds": [
+        "tx-30-099",
+        "tx-30-100"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 787,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "gillespie-tx"
+      ],
+      "maxDistanceMiles": 0.160756
+    },
+    {
+      "cohort": "Fredericksburg",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4827348",
+        "placeGeoid": "4827348"
+      },
+      "selectedCountyContext": "gillespie-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-099",
+        "tx-29-100",
+        "tx-30-099",
+        "tx-30-100"
+      ],
+      "loadedShardIds": [
+        "tx-29-099",
+        "tx-29-100",
+        "tx-30-099",
+        "tx-30-100"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 1883,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "gillespie-tx"
+      ],
+      "maxDistanceMiles": 0.160756
+    },
+    {
+      "cohort": "Port Arthur",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4858820",
+        "placeGeoid": "4858820"
+      },
+      "selectedCountyContext": "jefferson-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-094",
+        "tx-29-095"
+      ],
+      "loadedShardIds": [
+        "tx-29-094",
+        "tx-29-095"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 728,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "jefferson-tx"
+      ],
+      "maxDistanceMiles": 0.928278
+    },
+    {
+      "cohort": "Port Arthur",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4858820",
+        "placeGeoid": "4858820"
+      },
+      "selectedCountyContext": "jefferson-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-094",
+        "tx-29-095",
+        "tx-30-094",
+        "tx-30-095"
+      ],
+      "loadedShardIds": [
+        "tx-29-094",
+        "tx-29-095",
+        "tx-30-094",
+        "tx-30-095"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 1429,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "jefferson-tx"
+      ],
+      "maxDistanceMiles": 0.928278
+    },
+    {
+      "cohort": "Port Arthur",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4858820",
+        "placeGeoid": "4858820"
+      },
+      "selectedCountyContext": "jefferson-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-094",
+        "tx-29-095",
+        "tx-30-094",
+        "tx-30-095"
+      ],
+      "loadedShardIds": [
+        "tx-29-094",
+        "tx-29-095",
+        "tx-30-094",
+        "tx-30-095"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 4835,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "jefferson-tx"
+      ],
+      "maxDistanceMiles": 0.928278
+    },
+    {
+      "cohort": "Sulphur Springs",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4870904",
+        "placeGeoid": "4870904"
+      },
+      "selectedCountyContext": "hopkins-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-33-096"
+      ],
+      "loadedShardIds": [
+        "tx-33-096"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 454,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "hopkins-tx"
+      ],
+      "maxDistanceMiles": 0.135708
+    },
+    {
+      "cohort": "Sulphur Springs",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4870904",
+        "placeGeoid": "4870904"
+      },
+      "selectedCountyContext": "hopkins-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-096",
+        "tx-33-096"
+      ],
+      "loadedShardIds": [
+        "tx-32-096",
+        "tx-33-096"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 527,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "hopkins-tx"
+      ],
+      "maxDistanceMiles": 0.135708
+    },
+    {
+      "cohort": "Sulphur Springs",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4870904",
+        "placeGeoid": "4870904"
+      },
+      "selectedCountyContext": "hopkins-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-096",
+        "tx-32-097",
+        "tx-33-096",
+        "tx-33-097"
+      ],
+      "loadedShardIds": [
+        "tx-32-096",
+        "tx-32-097",
+        "tx-33-096",
+        "tx-33-097"
+      ],
+      "candidateShardCount": 4,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 1759,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "hopkins-tx"
+      ],
+      "maxDistanceMiles": 0.135708
+    },
+    {
+      "cohort": "Huntsville",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4835528",
+        "placeGeoid": "4835528"
+      },
+      "selectedCountyContext": "walker-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-096"
+      ],
+      "loadedShardIds": [
+        "tx-30-096"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 767,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "walker-tx"
+      ],
+      "maxDistanceMiles": 0.148685
+    },
+    {
+      "cohort": "Huntsville",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4835528",
+        "placeGeoid": "4835528"
+      },
+      "selectedCountyContext": "walker-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-096"
+      ],
+      "loadedShardIds": [
+        "tx-30-096"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 848,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "walker-tx"
+      ],
+      "maxDistanceMiles": 0.148685
+    },
+    {
+      "cohort": "Huntsville",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4835528",
+        "placeGeoid": "4835528"
+      },
+      "selectedCountyContext": "walker-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-30-096",
+        "tx-31-096"
+      ],
+      "loadedShardIds": [
+        "tx-30-096",
+        "tx-31-096"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 2211,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "walker-tx"
+      ],
+      "maxDistanceMiles": 0.148685
+    },
+    {
+      "cohort": "Eastland",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4822624",
+        "placeGeoid": "4822624"
+      },
+      "selectedCountyContext": "eastland-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-099"
+      ],
+      "loadedShardIds": [
+        "tx-32-099"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 1,
+      "rawEligibleCount": 171,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "eastland-tx"
+      ],
+      "maxDistanceMiles": 0.244947
+    },
+    {
+      "cohort": "Eastland",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4822624",
+        "placeGeoid": "4822624"
+      },
+      "selectedCountyContext": "eastland-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-099"
+      ],
+      "loadedShardIds": [
+        "tx-32-099"
+      ],
+      "candidateShardCount": 1,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 344,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "eastland-tx"
+      ],
+      "maxDistanceMiles": 0.244947
+    },
+    {
+      "cohort": "Eastland",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4822624",
+        "placeGeoid": "4822624"
+      },
+      "selectedCountyContext": "eastland-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-32-099",
+        "tx-32-100"
+      ],
+      "loadedShardIds": [
+        "tx-32-099",
+        "tx-32-100"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 609,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "eastland-tx"
+      ],
+      "maxDistanceMiles": 0.244947
+    },
+    {
+      "cohort": "Cienegas Terrace",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4814927",
+        "placeGeoid": "4814927"
+      },
+      "selectedCountyContext": "val-verde-tx",
+      "requestedRadiusMiles": 5,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-101",
+        "tx-29-102"
+      ],
+      "loadedShardIds": [
+        "tx-29-101",
+        "tx-29-102"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 2,
+      "rawEligibleCount": 585,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "val-verde-tx"
+      ],
+      "maxDistanceMiles": 2.239146
+    },
+    {
+      "cohort": "Cienegas Terrace",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4814927",
+        "placeGeoid": "4814927"
+      },
+      "selectedCountyContext": "val-verde-tx",
+      "requestedRadiusMiles": 10,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-101",
+        "tx-29-102"
+      ],
+      "loadedShardIds": [
+        "tx-29-101",
+        "tx-29-102"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 668,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "val-verde-tx"
+      ],
+      "maxDistanceMiles": 2.239146
+    },
+    {
+      "cohort": "Cienegas Terrace",
+      "requestCommunityIdentity": {
+        "stableGovernedIdentity": "place-4814927",
+        "placeGeoid": "4814927"
+      },
+      "selectedCountyContext": "val-verde-tx",
+      "requestedRadiusMiles": 25,
+      "status": "RESULTS",
+      "candidateShardIds": [
+        "tx-29-101",
+        "tx-29-102"
+      ],
+      "loadedShardIds": [
+        "tx-29-101",
+        "tx-29-102"
+      ],
+      "candidateShardCount": 2,
+      "loadedShardCount": 0,
+      "rawEligibleCount": 686,
+      "returnedCount": 50,
+      "returnedPoiCountyContextIds": [
+        "val-verde-tx"
+      ],
+      "maxDistanceMiles": 2.239146
+    }
+  ],
+  "governedOnlyResults": true,
+  "poiCommunityIdentityAbsent": true,
+  "deterministicDistanceAndOrdering": true,
+  "zeroResult": {
+    "cohort": "Terlingua PHARMACY",
+    "selectedCountyContext": "brewster-tx",
+    "requestedRadiusMiles": 5,
+    "status": "ZERO_RESULT",
+    "candidateShardIds": [
+      "tx-29-104"
+    ],
+    "loadedShardIds": [
+      "tx-29-104"
+    ],
+    "candidateShardCount": 1,
+    "loadedShardCount": 1,
+    "rawEligibleCount": 0,
+    "returnedCount": 0,
+    "returnedPoiCountyContextIds": [],
+    "maxDistanceMiles": null,
+    "category": "PHARMACY",
+    "historicalTargetUsed": true
+  }
+}

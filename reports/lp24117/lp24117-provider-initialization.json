@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.lp24117.provider-initialization.v1",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v2",
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "deployed": false,
+  "productionSupabaseMutation": false,
+  "productionBehaviorChanged": false,
+  "providerInitialized": true,
+  "searchExecuted": true,
+  "providerPath": "tools/lp24117/non-production-provider-rehearsal.mjs RuntimeV2Provider -> certified local runtime-v2 gzip shards",
+  "browserRuntimeWiring": "INTENTIONALLY_INACTIVE_NODE_LEVEL_NON_PRODUCTION_REHEARSAL"
+}
