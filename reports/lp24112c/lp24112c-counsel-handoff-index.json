@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp24112c.counsel-handoff-index.v1",
-  "handoffStatus": "BLOCKED_PENDING_AUTHORITATIVE_NOTICE_ACQUISITION",
+  "handoffStatus": "FINAL_COUNSEL_HANDOFF_PREPARED",
   "documents": [
     "LP241.12C-FINAL-POI-COUNSEL-HANDOFF.md",
     "LP241.12C-COUNSEL-DECISION-RETURN-TEMPLATE.md"
@@ -12,5 +12,5 @@
     "lp24112c-approval-manifest-template.json",
     "lp24112c-certification.json"
   ],
-  "noticeArtifact": null
+  "noticeArtifact": "legal/third-party/foursquare/NOTICE.txt"
 }

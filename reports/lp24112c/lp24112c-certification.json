@@ -1,8 +1,8 @@
 {
   "schemaVersion": "gridly.lp24112c.certification.v1",
-  "phaseState": "PHASE_LP24112C_BLOCKED_PENDING_AUTHORITATIVE_NOTICE_ACQUISITION",
+  "phaseState": "PHASE_LP24112C_FINAL_COUNSEL_HANDOFF_PREPARED",
   "targetPhaseState": "PHASE_LP24112C_FINAL_COUNSEL_HANDOFF_PREPARED",
-  "targetAchieved": false,
+  "targetAchieved": true,
   "legalClearanceGranted": false,
   "legalState": "LEGAL_REVIEW_REQUIRED",
   "legalClearanceStatus": "NOT_APPROVED",
@@ -20,5 +20,5 @@
   "normalization": false,
   "shardRegeneration": false,
   "phoneTesting": false,
-  "nextOwnerAction": "Place both owner-authoritative HTML snapshots at the documented owner-local paths and run npm run ingest:lp24112c-authoritative-notice."
+  "nextOwnerAction": "Submit the hash-bound LP241.12C final counsel handoff package to external counsel; do not activate the provider or runtime."
 }

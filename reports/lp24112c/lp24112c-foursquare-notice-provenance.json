@@ -1,16 +1,33 @@
 {
   "schemaVersion": "gridly.lp24112c.foursquare-notice-provenance.v2",
   "sourceUrl": "https://opensource.foursquare.com/places-notice-txt/",
-  "retrievedAt": null,
-  "sourceSnapshotSha256": null,
-  "sourceSnapshotBytes": null,
-  "noticeSha256": null,
-  "noticeBytes": null,
   "sourceAuthority": "FOURSQUARE_OFFICIAL",
   "documentRole": "FOURSQUARE_OS_PLACES_NOTICE",
   "licenseContext": "APACHE_2_0",
-  "overtureRecordedChangeDate": "2026-03-18",
-  "provenanceStatus": "NOT_ACQUIRED",
-  "authoritativeArtifactPresent": false,
-  "legalApprovalImplied": false
+  "retrievedEvidenceState": "OWNER_AUTHORITATIVE_SNAPSHOT",
+  "retrievedAt": "OWNER_RECORDED_OR_FILE_ACQUISITION_TIMESTAMP",
+  "sourceSnapshotBytes": 91201,
+  "sourceSnapshotSha256": "9ea389b0eb8cd530d1f5c90cee9084b57e5fa837b13798935de88f148c33f39a",
+  "noticeBytes": 1805,
+  "noticeSha256": "07cef40d0b0d1f5786b3e29983970aa0729ee6e508d1c4e3e18bbe0eef8878a3",
+  "provenanceStatus": "ACQUIRED_FROM_AUTHORITATIVE_SOURCE",
+  "extractionMethod": "DETERMINISTIC_OFFICIAL_HTML_NOTICE_EXTRACTION",
+  "overtureAttribution": {
+    "sourceUrl": "https://docs.overturemaps.org/attribution/",
+    "retrievedEvidenceState": "OWNER_AUTHORITATIVE_SNAPSHOT",
+    "sourceSnapshotBytes": 123620,
+    "sourceSnapshotSha256": "add8120c71e70efc1d13b93556ba9872c1b377ad5a09e1c31d3dd668c09038ac",
+    "crossCheck": {
+      "status": "VERIFIED_FROM_OWNER_AUTHORITATIVE_SNAPSHOT",
+      "facts": {
+        "provider": "Foursquare",
+        "license": "Apache 2.0",
+        "transformation": "Foursquare data was transformed to the Overture schema",
+        "changed": "2026-03-18",
+        "noticeReference": "https://opensource.foursquare.com/places-notice-txt/"
+      }
+    }
+  },
+  "legalApprovalImplied": false,
+  "authoritativeArtifactPresent": true
 }

@@ -37,3 +37,4 @@ evidence/lp193/*.geojson text eol=lf
 reports/lp193/san-antonio-consumer-region-implementation-readiness.md text eol=lf
 data/runtime/san-antonio-consumer-regions.geojson text eol=lf
 js/app.js text eol=lf
+legal/third-party/foursquare/NOTICE.txt text eol=lf
