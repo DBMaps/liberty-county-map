@@ -63,5 +63,102 @@
       ]
     }
   ],
-  "observationLimitation": "The measured identity-governed projection contains no structured sources column; no distinct license strings were observed. No license value is inferred or invented."
+  "richSourceInventory": [
+    {
+      "dataset": "Overture",
+      "provider": "overture",
+      "license": "CDLA-Permissive-2.0",
+      "sourceEntryCount": 1462815,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "meta",
+      "provider": "meta",
+      "license": "CDLA-Permissive-2.0",
+      "sourceEntryCount": 903696,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "Overture-signals",
+      "provider": "overture",
+      "license": "CDLA-Permissive-2.0",
+      "sourceEntryCount": 861912,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "Microsoft",
+      "provider": "microsoft",
+      "license": "CDLA-Permissive-2.0",
+      "sourceEntryCount": 235223,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "BrightQuery",
+      "provider": "brightquery",
+      "license": "CDLA-Permissive-2.0",
+      "sourceEntryCount": 189064,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "Foursquare",
+      "provider": "foursquare",
+      "license": "Apache-2.0",
+      "sourceEntryCount": 101480,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "AllThePlaces",
+      "provider": "alltheplaces",
+      "license": "CC0-1.0",
+      "sourceEntryCount": 23971,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "DAC",
+      "provider": "dac",
+      "license": "CDLA-Permissive-2.0",
+      "sourceEntryCount": 8250,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "PinMeTo",
+      "provider": "pinmeto",
+      "license": "CDLA-Permissive-2.0",
+      "sourceEntryCount": 979,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "dataset": "RenderSEO",
+      "provider": "renderseo",
+      "license": "CDLA-Permissive-2.0",
+      "sourceEntryCount": 152,
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "runtimeRetained": false,
+      "legalInterpretation": "COUNSEL_DECISION_REQUIRED"
+    }
+  ],
+  "countingUnit": "SOURCE_ENTRIES_NOT_UNIQUE_POIS",
+  "evidenceScopeDistinction": {
+    "runtimeProjection": "Structured source metadata is absent from the compact identity-governed runtime projection.",
+    "richOwnerLocalAuthority": "Structured source metadata is present in owner-local/lp24111/overture-texas-rich-authority-dedup.parquet and was measured by the owner."
+  },
+  "observationLimitation": "The compact identity-governed runtime projection contains no structured sources column. This runtime limitation does not negate the separately measured rich owner-local authority observations; rich source metadata is not retained in runtime packages."
 }

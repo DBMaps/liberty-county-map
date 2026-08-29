@@ -3,55 +3,43 @@
   "decisions": [
     {
       "id": 1,
-      "question": "Is Gridly’s proposed use of the certified source authority permitted?",
+      "question": "What obligations attach to source entries identified as CDLA-Permissive-2.0?",
       "status": "COUNSEL_DECISION_REQUIRED",
       "owner": "EXTERNAL_COUNSEL",
       "technicalEvidence": [
         {
-          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
-          "claim": "legal integration design"
-        },
-        {
-          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
-          "claim": "open legal questions"
+          "artifact": "owner-local/lp24111/overture-texas-rich-authority-dedup.parquet",
+          "claim": "owner-measured rich source/license/provider contexts"
         }
       ]
     },
     {
       "id": 2,
-      "question": "What attribution is required?",
+      "question": "What obligations attach to Foursquare entries identified as Apache-2.0?",
       "status": "COUNSEL_DECISION_REQUIRED",
       "owner": "EXTERNAL_COUNSEL",
       "technicalEvidence": [
         {
-          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
-          "claim": "legal integration design"
-        },
-        {
-          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
-          "claim": "open legal questions"
+          "artifact": "owner-local/lp24111/overture-texas-rich-authority-dedup.parquet",
+          "claim": "owner-measured rich source/license/provider contexts"
         }
       ]
     },
     {
       "id": 3,
-      "question": "Where must attribution appear?",
+      "question": "What obligations attach to AllThePlaces entries identified as CC0-1.0?",
       "status": "COUNSEL_DECISION_REQUIRED",
       "owner": "EXTERNAL_COUNSEL",
       "technicalEvidence": [
         {
-          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
-          "claim": "legal integration design"
-        },
-        {
-          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
-          "claim": "open legal questions"
+          "artifact": "owner-local/lp24111/overture-texas-rich-authority-dedup.parquet",
+          "claim": "owner-measured rich source/license/provider contexts"
         }
       ]
     },
     {
       "id": 4,
-      "question": "Is a link sufficient, or must notice appear directly with results/map?",
+      "question": "Does transformation into Gridly’s compact authority alter any attribution, notice, or redistribution requirements?",
       "status": "COUNSEL_DECISION_REQUIRED",
       "owner": "EXTERNAL_COUNSEL",
       "technicalEvidence": [
@@ -67,23 +55,23 @@
     },
     {
       "id": 5,
-      "question": "Are there redistribution requirements for the proposed compressed shard delivery?",
+      "question": "Must attribution distinguish underlying contributing providers?",
       "status": "COUNSEL_DECISION_REQUIRED",
       "owner": "EXTERNAL_COUNSEL",
       "technicalEvidence": [
         {
-          "artifact": "reports/lp24112/lp24112-cache-delivery-contract.json",
-          "claim": "delivery/cache contract"
+          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+          "claim": "legal integration design"
         },
         {
-          "artifact": "reports/lp24111/d5-package-delivery-readiness.json",
-          "claim": "package measurements"
+          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
+          "claim": "open legal questions"
         }
       ]
     },
     {
       "id": 6,
-      "question": "Are there derivative/transformed-data obligations?",
+      "question": "Is attribution required per record, per results surface, per dataset, or product-wide?",
       "status": "COUNSEL_DECISION_REQUIRED",
       "owner": "EXTERNAL_COUNSEL",
       "technicalEvidence": [
@@ -99,23 +87,7 @@
     },
     {
       "id": 7,
-      "question": "Must license/source information accompany each record, each shard, or the product generally?",
-      "status": "COUNSEL_DECISION_REQUIRED",
-      "owner": "EXTERNAL_COUNSEL",
-      "technicalEvidence": [
-        {
-          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
-          "claim": "legal integration design"
-        },
-        {
-          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
-          "claim": "open legal questions"
-        }
-      ]
-    },
-    {
-      "id": 8,
-      "question": "Are there restrictions on caching?",
+      "question": "Does the proposed immutable JSON/GZIP shard delivery count as redistribution for any contributing source?",
       "status": "COUNSEL_DECISION_REQUIRED",
       "owner": "EXTERNAL_COUNSEL",
       "technicalEvidence": [
@@ -130,62 +102,18 @@
       ]
     },
     {
-      "id": 9,
-      "question": "Are there requirements for displaying source-derived brand names?",
+      "id": 8,
+      "question": "Are caching and long-lived immutable assets acceptable under the applicable obligations?",
       "status": "COUNSEL_DECISION_REQUIRED",
       "owner": "EXTERNAL_COUNSEL",
       "technicalEvidence": [
         {
-          "artifact": "reports/lp24112/lp24112-brand-presentation.json",
-          "claim": "brand role"
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "question": "Are there requirements around retaining/removing source metadata?",
-      "status": "COUNSEL_DECISION_REQUIRED",
-      "owner": "EXTERNAL_COUNSEL",
-      "technicalEvidence": [
-        {
-          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
-          "claim": "legal integration design"
+          "artifact": "reports/lp24112/lp24112-cache-delivery-contract.json",
+          "claim": "delivery/cache contract"
         },
         {
-          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
-          "claim": "open legal questions"
-        }
-      ]
-    },
-    {
-      "id": 11,
-      "question": "Is the proposed immutable release/version model acceptable?",
-      "status": "COUNSEL_DECISION_REQUIRED",
-      "owner": "EXTERNAL_COUNSEL",
-      "technicalEvidence": [
-        {
-          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
-          "claim": "legal integration design"
-        },
-        {
-          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
-          "claim": "open legal questions"
-        }
-      ]
-    },
-    {
-      "id": 12,
-      "question": "Are there additional obligations before public production activation?",
-      "status": "COUNSEL_DECISION_REQUIRED",
-      "owner": "EXTERNAL_COUNSEL",
-      "technicalEvidence": [
-        {
-          "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
-          "claim": "legal integration design"
-        },
-        {
-          "artifact": "reports/lp24111/d5-legal-attribution-readiness.json",
-          "claim": "open legal questions"
+          "artifact": "reports/lp24111/d5-package-delivery-readiness.json",
+          "claim": "package measurements"
         }
       ]
     }

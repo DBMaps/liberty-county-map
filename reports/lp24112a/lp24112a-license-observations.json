@@ -1,23 +1,107 @@
 {
   "schemaVersion": "gridly.lp24112a.license-observations.v1",
   "legalConclusion": false,
-  "distinctObservedLicenseStrings": [],
+  "distinctObservedLicenseStrings": [
+    "CDLA-Permissive-2.0",
+    "Apache-2.0",
+    "CC0-1.0"
+  ],
+  "countingUnit": "SOURCE_ENTRIES_NOT_UNIQUE_POIS",
+  "licenses": [
+    {
+      "license": "CDLA-Permissive-2.0",
+      "contexts": [
+        {
+          "dataset": "Overture",
+          "provider": "overture",
+          "sourceEntryCount": 1462815
+        },
+        {
+          "dataset": "meta",
+          "provider": "meta",
+          "sourceEntryCount": 903696
+        },
+        {
+          "dataset": "Overture-signals",
+          "provider": "overture",
+          "sourceEntryCount": 861912
+        },
+        {
+          "dataset": "Microsoft",
+          "provider": "microsoft",
+          "sourceEntryCount": 235223
+        },
+        {
+          "dataset": "BrightQuery",
+          "provider": "brightquery",
+          "sourceEntryCount": 189064
+        },
+        {
+          "dataset": "DAC",
+          "provider": "dac",
+          "sourceEntryCount": 8250
+        },
+        {
+          "dataset": "PinMeTo",
+          "provider": "pinmeto",
+          "sourceEntryCount": 979
+        },
+        {
+          "dataset": "RenderSEO",
+          "provider": "renderseo",
+          "sourceEntryCount": 152
+        }
+      ],
+      "sourceEntryTotal": 3662091,
+      "applicableLegalObligations": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "license": "Apache-2.0",
+      "contexts": [
+        {
+          "dataset": "Foursquare",
+          "provider": "foursquare",
+          "sourceEntryCount": 101480
+        }
+      ],
+      "sourceEntryTotal": 101480,
+      "applicableLegalObligations": "COUNSEL_DECISION_REQUIRED"
+    },
+    {
+      "license": "CC0-1.0",
+      "contexts": [
+        {
+          "dataset": "AllThePlaces",
+          "provider": "alltheplaces",
+          "sourceEntryCount": 23971
+        }
+      ],
+      "sourceEntryTotal": 23971,
+      "applicableLegalObligations": "COUNSEL_DECISION_REQUIRED"
+    }
+  ],
   "observation": {
-    "recordsAudited": 391772,
-    "recordsWithSourceMetadata": 0,
-    "providerFrequencies": [],
-    "provenanceField": "sources",
-    "limitation": "Identity-governed projection contains no structured sources column."
+    "runtimeProjection": {
+      "recordsAudited": 391772,
+      "recordsWithSourceMetadata": 0,
+      "provenanceField": "sources",
+      "limitation": "Identity-governed projection contains no structured sources column."
+    },
+    "richOwnerLocalAuthority": {
+      "evidenceScope": "RICH_OWNER_LOCAL_AUTHORITY",
+      "structuredSourceMetadataPresent": true,
+      "ownerMeasured": true
+    }
   },
   "counselQuestionForAnyUnderlyingLicenseIdentifier": "What attribution, notice, redistribution, derivative-data, or downstream-use obligations apply to Gridly's proposed use of records carrying this license identifier?",
   "technicalEvidence": [
     {
       "artifact": "reports/lp24111/attribution-source-inventory.json",
-      "claim": "owner-local measured inventory"
+      "claim": "compact projection limitation"
     },
     {
-      "artifact": "reports/lp24111/attribution-licensing.json",
-      "claim": "observed provenance field and legal-review state"
+      "artifact": "owner-local/lp24111/overture-texas-rich-authority-dedup.parquet",
+      "claim": "owner-measured structured source/license/provider evidence; source-entry counts, not unique POI counts"
     }
   ]
 }

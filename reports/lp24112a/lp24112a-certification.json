@@ -2,6 +2,8 @@
   "schemaVersion": "gridly.lp24112a.certification.v1",
   "phaseState": "PHASE_LP24112A_LEGAL_REVIEW_PACKET_PREPARED",
   "meaning": "TECHNICAL_LEGAL_REVIEW_EVIDENCE_PACKET_PREPARED_ONLY",
+  "reviewedSourceInventoryHash": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13",
+  "evidenceCorrectionEffect": "EVIDENCE_COMPLETENESS_ONLY_NO_LEGAL_STATE_ADVANCEMENT",
   "legalClearanceGranted": false,
   "legalState": "LEGAL_REVIEW_REQUIRED",
   "legalClearanceStatus": "NOT_APPROVED",
@@ -16,5 +18,5 @@
   "remoteFetch": false,
   "phoneTesting": false,
   "osmMerged": false,
-  "nextOwnerAction": "Send this packet and its reviewed source-inventory hash to external counsel; obtain completed written decisions and a release/schema-matched approval manifest before proposing any separately authorized activation."
+  "nextOwnerAction": "Send this corrected packet and its reviewed source-inventory hash to external counsel; obtain completed written decisions and a release/schema-matched approval manifest before proposing any separately authorized activation."
 }
