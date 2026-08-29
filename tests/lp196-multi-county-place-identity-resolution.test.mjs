@@ -8,6 +8,8 @@ const source = fs.readFileSync('js/app.js', 'utf8');
 const resolverSource = source.match(/function resolveGridlyAwarenessAreaQuery\([\s\S]*?\n\}/)?.[0];
 const manualSearchSource = source.match(/function resolveGridlyManualAwarenessAreaSearch\([\s\S]*?\n\}/)?.[0];
 const canonicalSaveSource = source.match(/function gridlySaveCanonicalMultiCountyPlaceHome\([\s\S]*?\n\}/)?.[0];
+const visiblePickerSearchSource = source.match(/function searchGridlySettingsAwarenessArea\([\s\S]*?\n\}/)?.[0];
+const visiblePickerRendererSource = source.match(/function renderGridlySettingsAwarenessSearchResult\([\s\S]*?\n\}/)?.[0];
 
 function fixture(overrides = {}) {
   const definitions = [
@@ -225,6 +227,22 @@ test('single-county and governed non-PLACE stable keys remain distinct', () => {
 test('canonical search projection never consults stale active-county context', () => {
   assert.doesNotMatch(manualSearchSource, /gridlyGetActiveCountyId/);
   assert.match(manualSearchSource, /gridlyResolveCanonicalCountyIdForOperationalContext\(exact\.awarenessArea, null\)/);
+});
+
+test('visible Home Area search consumes the established canonical manual-picker projection', () => {
+  const context = manualFixture();
+  let rendered = null;
+  context.resolveGridlyManualAwarenessAreaSearch = context.manualSearch;
+  context.renderGridlySettingsAwarenessSearchResult = result => { rendered = result; };
+  vm.runInNewContext(`${visiblePickerSearchSource};this.visibleSearch=searchGridlySettingsAwarenessArea`, context);
+  const result = context.visibleSearch('dal');
+  assert.equal(result.status, 'RESULTS');
+  assert.equal(result.groups.flatMap(group => group.communities).length, 1);
+  assert.equal(result.groups[0].communities[0].canonicalResolution.placeGeoid, '4819000');
+  assert.equal(rendered, result);
+  assert.match(visiblePickerRendererSource, /result\.status === "RESULTS"/);
+  assert.match(visiblePickerRendererSource, /gridlySaveCanonicalMultiCountyPlaceHome\(community\.canonicalResolution/);
+  assert.match(visiblePickerRendererSource, /gridlyManualAwarenessMembershipCountyId\(community, group\)/);
 });
 
 test('Austin exact precedence does not expose Austin County or Bellville, while explicit searches remain available', () => {
