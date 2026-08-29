@@ -13,7 +13,7 @@ const ENTRY = ['index.html', 'beta-closed.html', 'beta-closure.html', 'manifest.
 // Runtime families are staged generically.  `audits/` contains browser-loaded
 // audit authorities (not test fixtures), and therefore has the same artifact
 // status as js/ rather than being selected one filename at a time.
-const FAMILIES = ['js/', 'css/', 'assets/', 'data/', 'audits/', 'Community-Packages/', 'Crossing-Packages/'];
+const FAMILIES = ['js/', 'css/', 'assets/', 'data/', 'audits/', 'Community-Packages/', 'Crossing-Packages/', 'poi/'];
 const addressManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/generated/lp104/txgio-addresses/runtime-manifest.json'), 'utf8'));
 const roadwayManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/roadway-runtime-manifest.json'), 'utf8'));
 const runtimeAddressPaths = new Set(['data/generated/lp104/txgio-addresses/runtime-manifest.json', ...addressManifest.packages.flatMap(entry => [entry.path, entry.certificate].filter(Boolean))]);

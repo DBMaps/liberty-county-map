@@ -4,6 +4,8 @@
   // Protected artifact composition replaces this file. The tracked browser
   // runtime always retains the governed same-origin geometry transport.
   window.GRIDLY_RUNTIME_CONFIG = Object.freeze({
+    // Fail closed: only the exact string "ENABLED" activates production POI.
+    poiBrowserProvider: Object.freeze({ enabled: "DISABLED" }),
     authoritativeCountyGeometry: Object.freeze({
       mode: "LOCAL_CANONICAL",
       url: "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
