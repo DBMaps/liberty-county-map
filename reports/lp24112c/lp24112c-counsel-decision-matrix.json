@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "gridly.lp24112c.counsel-decision-matrix.v1",
+  "decisions": [
+    {
+      "id": 1,
+      "question": "Is the proposed Gridly use of this POI authority permitted?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 2,
+      "question": "Is the proposed immutable JSON/GZIP shard delivery acceptable?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 3,
+      "question": "What CDLA notice/license availability is required?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 4,
+      "question": "What Apache 2.0 obligations apply to the 23248 POIs carrying Apache evidence?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 5,
+      "question": "Is preserving the authoritative Foursquare NOTICE in the Data Sources & Licenses surface sufficient?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 6,
+      "question": "Must the Foursquare NOTICE appear elsewhere?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 7,
+      "question": "What Gridly modification statement is required?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 8,
+      "question": "What attribution wording must appear with POI results?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 9,
+      "question": "What attribution wording must appear on the full Data Sources & Licenses page?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 10,
+      "question": "Are provider-specific attributions required beyond Foursquare?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 11,
+      "question": "What, if anything, is required for CC0/AllThePlaces provenance?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 12,
+      "question": "What Census acknowledgement wording is appropriate?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 13,
+      "question": "Are long-lived immutable cached shards acceptable?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 14,
+      "question": "Must notices accompany individual records, shards, result surfaces, or the product generally?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 15,
+      "question": "Are brand-display disclaimers or trademark notices required?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    },
+    {
+      "id": 16,
+      "question": "Is the exact release/schema/hash approved for non-production rehearsal after technical validation?",
+      "status": "COUNSEL_DECISION_REQUIRED",
+      "owner": "EXTERNAL_COUNSEL"
+    }
+  ]
+}
