@@ -161,7 +161,11 @@ export function verify(options={}){
  const r=a['rich-authority-conservation.json'];
  if(r.inputShardRows!==1462893 || r.uniqueIds!==1462815 || r.crossShardDuplicateIds!==52 || r.extraDuplicateRows!==78 || r.maximumShardOccurrencesPerId!==4 || r.missingAuthorityIds!==0 || r.outsideAuthorityIds!==0) throw Error('rich conservation evidence failed');
  if(a['community-coverage.json'].canonicalPlaceAccounted!==1859) throw Error('PLACE inventory failed');
- if(a['governed-non-place-coverage.json'].governedInventory.total!==29) throw Error('non-PLACE governance failed');
+ const nonPlace=a['governed-non-place-coverage.json'];
+ if(nonPlace.executionState==='OWNER_LOCAL_MEASURED'){
+  const tarkingtonRows=nonPlace.rows?.filter(row=>row.communityKey==='tarkington')??[];
+  if(nonPlace.expectedCount!==29||nonPlace.measuredCount!==29||nonPlace.missingAnchors!==0||nonPlace.rows?.length!==29||!nonPlace.rows.every(row=>row.identityClass==='GOVERNED_NON_PLACE'&&row.placeGeoid===null)||tarkingtonRows.length!==1||tarkingtonRows[0].stableGovernedIdentity!=='liberty-tx:tarkington'||tarkingtonRows[0].identityClass!=='GOVERNED_NON_PLACE'||tarkingtonRows[0].placeGeoid!==null)throw Error('non-PLACE governance failed');
+ }else if(nonPlace.governedInventory?.total!==29)throw Error('non-PLACE governance failed');
  if(!a['category-coverage.json'].mapping.nonDestinationExclusions.includes('mountain') || !a['category-coverage.json'].mapping.humanMedicalExclusions.includes('animal_hospital')) throw Error('category exclusions failed');
  if(!a['confidence-analysis.json'].policy.startsWith('NO_CUTOFF_RECOMMENDED')) throw Error('confidence policy failed');
  if(a['certification.json'].productionPoiSearch!=='NOT_LAUNCHED_NOT_CERTIFIED') throw Error('runtime boundary failed');
