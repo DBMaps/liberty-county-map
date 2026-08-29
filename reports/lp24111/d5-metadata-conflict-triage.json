@@ -1,29 +1,45 @@
 {
-  "schemaVersion": "gridly.lp24111.d5.metadata.v1",
+  "schemaVersion": "gridly.lp24111.d5.metadata.v2",
   "recordsAudited": 391772,
-  "consistent": 391345,
-  "conflict": 149,
-  "incomplete": 278,
-  "reviewRequired": 0,
+  "historicalD4Classification": "SPATIAL_METADATA_CONFLICT",
+  "historicalD4ConflictRows": 149,
+  "d5StructuredAssessment": "STRUCTURED_METADATA_CONSISTENT_D4_CONFLICT_FALSE_POSITIVE",
+  "structuredConflictsConfirmed": 0,
+  "structuredConsistentFalsePositive": 149,
+  "unexplained": 0,
   "conflictFamilies": {
-    "STATE_REGION_CONFLICT": null,
-    "LOCALITY_CONFLICT": null,
-    "POSTCODE_CONFLICT": null,
-    "MULTI_FIELD_CONFLICT": null,
+    "STATE_REGION_CONFLICT": 0,
+    "LOCALITY_CONFLICT": 0,
+    "POSTCODE_CONFLICT": 0,
+    "MULTI_FIELD_CONFLICT": 0,
     "INCOMPLETE_METADATA": 278
   },
-  "familyBreakdownComplete": false,
-  "joinConservation": null,
-  "presentationPolicy": "Keep spatially valid records searchable; quarantine source textual locality from trusted presentation. Never rewrite source values.",
-  "launchBlockingConflicts": "NONE_IDENTIFIED_BY_D4_AGGREGATE",
-  "retainedSample": {
-    "name": "Hitachi Energy Jefferson City",
-    "spatialCounty": "King County, Texas",
-    "sourceRegion": "MO",
-    "sourceLocality": "Jefferson City",
-    "sourcePostcode": "65101-5032",
-    "confidence": 0.886,
-    "classification": "SPATIAL_METADATA_CONFLICT"
+  "familyBreakdownComplete": true,
+  "joinConservation": {
+    "conflictIdsInput": 149,
+    "uniqueConflictIds": 149,
+    "reconciledFalsePositives": 149,
+    "unexplainedConflictIds": 0
   },
-  "sourceFieldsRewritten": false
+  "classifierRca": {
+    "losingPredicate": "regexp_matches(upper(address_text),'(,| )MO( |,|$)|MISSOURI|65101')",
+    "inspectedField": "address_text",
+    "structuredFieldsInspected": false,
+    "reason": "D.4 searched flattened freeform address text, so Missouri street/place-name tokens were mistaken for region authority."
+  },
+  "authorityFields": [
+    "addresses.region",
+    "addresses.locality",
+    "addresses.postcode"
+  ],
+  "hitachiMembership": {
+    "check": "EXACT_ID_AND_NAME_MEMBERSHIP_CHECK",
+    "name": "Hitachi Energy Jefferson City",
+    "isHistoricalConflictCohortMember": false,
+    "disposition": "CONTEXTUAL_RETAINED_SAMPLE_NOT_IN_149_ROW_MEASURED_CONFLICT_POPULATION"
+  },
+  "presentationPolicy": "Governed spatial identity and structured address metadata are runtime context authority. Freeform address text is descriptive only and never overrides structured region authority.",
+  "launchBlockingConflicts": false,
+  "sourceFieldsRewritten": false,
+  "d4ArtifactsRewritten": false
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.d5.quality.v1",
-  "evidenceState": "QUALITY_CLASS_EVIDENCE_NOT_MATERIALIZED",
+  "evidenceState": "REPORTING_EVIDENCE_NOT_MATERIALIZED",
   "expectedIdentityCount": 1888,
   "measuredIdentityCount": 0,
   "classCounts": [
@@ -60,5 +60,6 @@
     }
   ],
   "conservationPassed": false,
-  "omissionReason": "The certified D.4 quality report declares its classes but contains no per-identity rows or aggregate class counts; exact reconciliation cannot be inferred."
+  "launchSafetyImpact": "NONE_DEMONSTRATED",
+  "omissionReason": "The D.4 report contains no per-identity rows or aggregate counts; missing reporting evidence is not invented."
 }

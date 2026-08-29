@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "gridly.lp24111.d5i.owner-metadata-reconciliation.v1",
+  "evidenceState": "OWNER_CERTIFIED_FULL_COHORT_STRUCTURED_METADATA_AUDIT",
+  "historicalD4Classification": "SPATIAL_METADATA_CONFLICT",
+  "historicalD4ConflictRows": 149,
+  "uniqueHistoricalD4ConflictIds": 149,
+  "structuredAssessment": "STRUCTURED_METADATA_CONSISTENT_D4_CONFLICT_FALSE_POSITIVE",
+  "structuredRegionConflicts": 0,
+  "structuredLocalityConflicts": 0,
+  "structuredPostcodeConflicts": 0,
+  "structuredMultiFieldConflicts": 0,
+  "structuredConsistentFalsePositives": 149,
+  "unexplained": 0,
+  "authorityFields": ["addresses.region", "addresses.locality", "addresses.postcode"],
+  "hitachiMembership": {
+    "check": "EXACT_ID_AND_NAME_MEMBERSHIP_CHECK",
+    "name": "Hitachi Energy Jefferson City",
+    "isHistoricalConflictCohortMember": false,
+    "disposition": "CONTEXTUAL_RETAINED_SAMPLE_NOT_IN_149_ROW_MEASURED_CONFLICT_POPULATION"
+  },
+  "sourceFieldsRewritten": false,
+  "d4ArtifactsRewritten": false,
+  "d4CoverageRerun": false,
+  "remoteFetch": false,
+  "osmMerge": false,
+  "runtimeActivated": false,
+  "deployed": false
+}
