@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {certificationGate} from './identity-governance.mjs';
 import {pendingReports,validateEnvelope} from './coverage-certification.mjs';
+import {buildD5} from './d5-readiness.mjs';
 
 const root=path.resolve(import.meta.dirname,'../..');
 const out=path.join(root,'reports/lp24111');
@@ -131,6 +132,9 @@ export function artifacts(options={}){
   const gate=validateEnvelope(d4);
   files['certification.json']={...files['certification.json'],evidenceCompletenessGate:gate.gates,executiveResult:gate.passed?'PHASE_D4_MEASURED_STATEWIDE_COVERAGE_AND_QUALITY_CERTIFIED':'PHASE_D4_MEASUREMENT_INCOMPLETE'};
  }
+ // D.5 is a derivation of the repository's committed D.4 authority. Alternate
+ // envelopes are test/audit fixtures and must not be mistaken for that authority.
+ if(!options.d4MeasurementsPath) Object.assign(files,buildD5(files));
  return files;
 }
 

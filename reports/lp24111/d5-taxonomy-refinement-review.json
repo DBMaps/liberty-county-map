@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.taxonomy.v1",
+  "result": "REFINEMENT_RECOMMENDATION_ONLY",
+  "modificationsMade": false,
+  "reviews": [
+    {
+      "category": "CONVENIENCE",
+      "measuredGapCohort": "ACCESSIBILITY_ROWS_ABSENT",
+      "candidateBasicTaxonomyFamily": null,
+      "recordCount": null,
+      "countyCommunityRepresentation": null,
+      "humanReadableExamples": [],
+      "falsePositiveRisk": "UNKNOWN_HIGH_WITHOUT_CANDIDATE_CENSUS",
+      "identityInteraction": "Must preserve D.3 standalone disposition.",
+      "expectedCoverageGain": null,
+      "recommendation": "Measure existing-authority candidate families before any bounded rule."
+    }
+  ]
+}

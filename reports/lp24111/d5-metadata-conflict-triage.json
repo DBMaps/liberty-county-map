@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "gridly.lp24111.d5.metadata.v1",
+  "recordsAudited": 391772,
+  "consistent": 391345,
+  "conflict": 149,
+  "incomplete": 278,
+  "reviewRequired": 0,
+  "conflictFamilies": {
+    "STATE_REGION_CONFLICT": null,
+    "LOCALITY_CONFLICT": null,
+    "POSTCODE_CONFLICT": null,
+    "MULTI_FIELD_CONFLICT": null,
+    "INCOMPLETE_METADATA": 278
+  },
+  "familyBreakdownComplete": false,
+  "presentationPolicy": "Keep spatially valid records searchable; quarantine source textual locality from trusted presentation. Never rewrite source values.",
+  "launchBlockingConflicts": "NONE_IDENTIFIED_BY_D4_AGGREGATE",
+  "retainedSample": {
+    "name": "Hitachi Energy Jefferson City",
+    "spatialCounty": "King County, Texas",
+    "sourceRegion": "MO",
+    "sourceLocality": "Jefferson City",
+    "sourcePostcode": "65101-5032",
+    "confidence": 0.886,
+    "classification": "SPATIAL_METADATA_CONFLICT"
+  },
+  "sourceFieldsRewritten": false
+}
