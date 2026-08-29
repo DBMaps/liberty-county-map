@@ -1,0 +1,893 @@
+{
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v2",
+  "sourceInventorySha256": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13",
+  "authorityInputSha256": "6c63fc555ea4a887162541cb1a4587f9d3edb52fb70cb3e81982598b9a82f85c",
+  "authorityInputBytes": 35740238,
+  "authorityInputRecordCount": 391772,
+  "expectedGovernedPoiCount": 391772,
+  "materializedGovernedPoiCount": 391772,
+  "shardIndexStrategy": "tx-{floor(latitude), two digits}-{abs(floor(longitude)), three digits}",
+  "shardCount": 86,
+  "generationTool": "tools/lp24116/runtime-shard-materializer.mjs",
+  "generationToolVersion": "1.0.0",
+  "deterministicBuildPass": true,
+  "licenseSummary": {
+    "CDLA-Permissive-2.0": 355925,
+    "Apache-2.0 + CDLA-Permissive-2.0": 23248,
+    "CC0-1.0 + CDLA-Permissive-2.0": 12599
+  },
+  "legalBinding": {
+    "foursquareNoticeSha256": "07cef40d0b0d1f5786b3e29983970aa0729ee6e508d1c4e3e18bbe0eef8878a3",
+    "attributionText": "POI data sources and licenses",
+    "target": "DATA_SOURCES_AND_LICENSES",
+    "modificationStatement": "Gridly uses modified Overture Maps Places data. Gridly transforms, filters, normalizes, classifies, deduplicates and projects source POI records into its Texas-focused POI dataset.",
+    "nonAffiliationStatement": "Business names and trademarks are the property of their respective owners. Their appearance in Gridly does not imply affiliation with or endorsement of Gridly."
+  },
+  "certificationState": "PHASE_LP24116_FROZEN_AUTHORITY_RUNTIME_V2_SHARDS_CERTIFIED",
+  "maxCandidateShards5Mi": 4,
+  "maxCandidateShards10Mi": 4,
+  "maxCandidateShards25Mi": 4,
+  "shards": [
+    {
+      "shardId": "tx-25-098",
+      "file": "tx-25-098.json.gz",
+      "recordCount": 2707,
+      "byteCount": 131124,
+      "sha256": "c749f4a41e3dbea546d8a2446d549c66c1d398add818dab545924ac72a762756",
+      "cellLatitude": 25,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-25-098.json.gz"
+    },
+    {
+      "shardId": "tx-26-098",
+      "file": "tx-26-098.json.gz",
+      "recordCount": 4780,
+      "byteCount": 237328,
+      "sha256": "25c5e7ae63984ab6085179af08b45f577823b4dcd27d8ca844e08f601849f418",
+      "cellLatitude": 26,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-26-098.json.gz"
+    },
+    {
+      "shardId": "tx-26-099",
+      "file": "tx-26-099.json.gz",
+      "recordCount": 10798,
+      "byteCount": 530066,
+      "sha256": "89ff6d0a321bcc281cef7e649b7e457534fa2de6aedc46ecb8679fb73c087137",
+      "cellLatitude": 26,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-26-099.json.gz"
+    },
+    {
+      "shardId": "tx-26-100",
+      "file": "tx-26-100.json.gz",
+      "recordCount": 361,
+      "byteCount": 18081,
+      "sha256": "4287da72f6389df8476c765302ad1389c7071aa19127709b1e062c49195db7cb",
+      "cellLatitude": 26,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-26-100.json.gz"
+    },
+    {
+      "shardId": "tx-27-098",
+      "file": "tx-27-098.json.gz",
+      "recordCount": 6985,
+      "byteCount": 350485,
+      "sha256": "3799226d0a90c28beef59000510c99d251b9b5fa52bddeaa052518cfcb8ddd25",
+      "cellLatitude": 27,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-27-098.json.gz"
+    },
+    {
+      "shardId": "tx-27-099",
+      "file": "tx-27-099.json.gz",
+      "recordCount": 993,
+      "byteCount": 49191,
+      "sha256": "d2c81f634b26064d0bece5e08fc1c3cc35119f760cb233630595ad15a46bd5fc",
+      "cellLatitude": 27,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-27-099.json.gz"
+    },
+    {
+      "shardId": "tx-27-100",
+      "file": "tx-27-100.json.gz",
+      "recordCount": 3473,
+      "byteCount": 168378,
+      "sha256": "293e55ac8387a64cc44bfcdf8a9ca0540e7ccf3c6c96658d26f092874ae26d04",
+      "cellLatitude": 27,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-27-100.json.gz"
+    },
+    {
+      "shardId": "tx-28-096",
+      "file": "tx-28-096.json.gz",
+      "recordCount": 865,
+      "byteCount": 43058,
+      "sha256": "d86b640b07ff5a613ec2be23c3f8f8fb3acd804f425e6700b97ee3ea9401ebf8",
+      "cellLatitude": 28,
+      "cellLongitude": -96,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-28-096.json.gz"
+    },
+    {
+      "shardId": "tx-28-097",
+      "file": "tx-28-097.json.gz",
+      "recordCount": 1865,
+      "byteCount": 92854,
+      "sha256": "6fdf617d3a12713262c710efb973e467a69911ef01059c81f02513a8e5645f05",
+      "cellLatitude": 28,
+      "cellLongitude": -97,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-28-097.json.gz"
+    },
+    {
+      "shardId": "tx-28-098",
+      "file": "tx-28-098.json.gz",
+      "recordCount": 2430,
+      "byteCount": 123139,
+      "sha256": "95bc6c4f08113c51a1a59c7228da446210ab0ae588c19e6dfcc7363b9dca4e71",
+      "cellLatitude": 28,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-28-098.json.gz"
+    },
+    {
+      "shardId": "tx-28-099",
+      "file": "tx-28-099.json.gz",
+      "recordCount": 837,
+      "byteCount": 41692,
+      "sha256": "720d6f7b987d68c6231b15954521ca8b87cacd506c147840d924361918172deb",
+      "cellLatitude": 28,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-28-099.json.gz"
+    },
+    {
+      "shardId": "tx-28-100",
+      "file": "tx-28-100.json.gz",
+      "recordCount": 1022,
+      "byteCount": 50562,
+      "sha256": "a0dc41fb02472439f484323e131c50310c693a3d45a3182d5b5a217c4a53e2b3",
+      "cellLatitude": 28,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-28-100.json.gz"
+    },
+    {
+      "shardId": "tx-28-101",
+      "file": "tx-28-101.json.gz",
+      "recordCount": 826,
+      "byteCount": 40103,
+      "sha256": "97e293380971fa96600d8bec407ada9d597d3af91694a69d776fe903e7262ded",
+      "cellLatitude": 28,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-28-101.json.gz"
+    },
+    {
+      "shardId": "tx-29-094",
+      "file": "tx-29-094.json.gz",
+      "recordCount": 1198,
+      "byteCount": 59191,
+      "sha256": "76f18ad9faa5f2c4a9e9993f8bac0be098322f4d3eb18e231682c2c50f8641d4",
+      "cellLatitude": 29,
+      "cellLongitude": -94,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-094.json.gz"
+    },
+    {
+      "shardId": "tx-29-095",
+      "file": "tx-29-095.json.gz",
+      "recordCount": 4767,
+      "byteCount": 240749,
+      "sha256": "085cf23cf974860b28e99bcf6b60f7a47bf0f8db141f59d449d71ced7ffb2ada",
+      "cellLatitude": 29,
+      "cellLongitude": -95,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-095.json.gz"
+    },
+    {
+      "shardId": "tx-29-096",
+      "file": "tx-29-096.json.gz",
+      "recordCount": 67575,
+      "byteCount": 3376575,
+      "sha256": "39b58d705eba3b7ba1a90b8d5f62b680c9a11dfb3438c11e7352e4521078e167",
+      "cellLatitude": 29,
+      "cellLongitude": -96,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-096.json.gz"
+    },
+    {
+      "shardId": "tx-29-097",
+      "file": "tx-29-097.json.gz",
+      "recordCount": 2526,
+      "byteCount": 128163,
+      "sha256": "3899dd346890dbaa692b3bc6d996e16467671dd47d559439331ce747a2612441",
+      "cellLatitude": 29,
+      "cellLongitude": -97,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-097.json.gz"
+    },
+    {
+      "shardId": "tx-29-098",
+      "file": "tx-29-098.json.gz",
+      "recordCount": 4116,
+      "byteCount": 207992,
+      "sha256": "ac8ebf2a2a7254457e5606923c57c886ccc79412a6505dd0005fd164991c7c27",
+      "cellLatitude": 29,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-098.json.gz"
+    },
+    {
+      "shardId": "tx-29-099",
+      "file": "tx-29-099.json.gz",
+      "recordCount": 29998,
+      "byteCount": 1514011,
+      "sha256": "6ba3703797c8b6fbcbe5604372eb5eda883b8054f2013b99e4844b11964b8e79",
+      "cellLatitude": 29,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-099.json.gz"
+    },
+    {
+      "shardId": "tx-29-100",
+      "file": "tx-29-100.json.gz",
+      "recordCount": 1322,
+      "byteCount": 66737,
+      "sha256": "636b0327828299416d8ad5d9f6983ffb323b0a93a4ff694075b91e6691191625",
+      "cellLatitude": 29,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-100.json.gz"
+    },
+    {
+      "shardId": "tx-29-101",
+      "file": "tx-29-101.json.gz",
+      "recordCount": 779,
+      "byteCount": 38462,
+      "sha256": "8b6bfaf907fafa02a5b12ec7f6f7ef45854e4a401d3fa2af5c84f687d7cf541e",
+      "cellLatitude": 29,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-101.json.gz"
+    },
+    {
+      "shardId": "tx-29-102",
+      "file": "tx-29-102.json.gz",
+      "recordCount": 34,
+      "byteCount": 2188,
+      "sha256": "46ff8b1abd7db6819686af6dcd60bdc242c7067e33f969210542e2a63e641154",
+      "cellLatitude": 29,
+      "cellLongitude": -102,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-102.json.gz"
+    },
+    {
+      "shardId": "tx-29-103",
+      "file": "tx-29-103.json.gz",
+      "recordCount": 5,
+      "byteCount": 529,
+      "sha256": "973403f28b82e9cdc74f3cb4b5eae1f59b9b09f66c1aff4b23d83ea199a7b61e",
+      "cellLatitude": 29,
+      "cellLongitude": -103,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-103.json.gz"
+    },
+    {
+      "shardId": "tx-29-104",
+      "file": "tx-29-104.json.gz",
+      "recordCount": 151,
+      "byteCount": 7919,
+      "sha256": "3e83eb37cc91d11ab65d29a4ca4df6cc39de9788fef094502e0b01ad1ae4697b",
+      "cellLatitude": 29,
+      "cellLongitude": -104,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-104.json.gz"
+    },
+    {
+      "shardId": "tx-29-105",
+      "file": "tx-29-105.json.gz",
+      "recordCount": 74,
+      "byteCount": 3936,
+      "sha256": "aa6afb49fc1931db1393adfbba08eff3b08312f9878ba67239f38e9a481f0ae5",
+      "cellLatitude": 29,
+      "cellLongitude": -105,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-29-105.json.gz"
+    },
+    {
+      "shardId": "tx-30-094",
+      "file": "tx-30-094.json.gz",
+      "recordCount": 1361,
+      "byteCount": 67367,
+      "sha256": "a2419bcaced0e7824970f5dc4583ac736eb33a5eff4b777efa574b0da8d53cba",
+      "cellLatitude": 30,
+      "cellLongitude": -94,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-094.json.gz"
+    },
+    {
+      "shardId": "tx-30-095",
+      "file": "tx-30-095.json.gz",
+      "recordCount": 4903,
+      "byteCount": 246964,
+      "sha256": "4679887a7130d22cb3c4a823ffbdd815b3ec89c9772a0c6c6e18653c46414466",
+      "cellLatitude": 30,
+      "cellLongitude": -95,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-095.json.gz"
+    },
+    {
+      "shardId": "tx-30-096",
+      "file": "tx-30-096.json.gz",
+      "recordCount": 16007,
+      "byteCount": 804929,
+      "sha256": "452d3d73819be895d97c45db6e0d88d4886785a534b89cfcd0b50882cb6a97e3",
+      "cellLatitude": 30,
+      "cellLongitude": -96,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-096.json.gz"
+    },
+    {
+      "shardId": "tx-30-097",
+      "file": "tx-30-097.json.gz",
+      "recordCount": 5573,
+      "byteCount": 284541,
+      "sha256": "f3decb0cb6ba6eaa58705ffd05e4487ba4fddb11e30b8a215a7f6ac6f70417c8",
+      "cellLatitude": 30,
+      "cellLongitude": -97,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-097.json.gz"
+    },
+    {
+      "shardId": "tx-30-098",
+      "file": "tx-30-098.json.gz",
+      "recordCount": 28826,
+      "byteCount": 1452009,
+      "sha256": "e2b0eeae2d43dff0f7e435833c59d454d974c6ac4b3a26c65d803344f38784c8",
+      "cellLatitude": 30,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-098.json.gz"
+    },
+    {
+      "shardId": "tx-30-099",
+      "file": "tx-30-099.json.gz",
+      "recordCount": 3514,
+      "byteCount": 180050,
+      "sha256": "5e9c59b95c47541f1d3d49ce262a545ab81bfacc8264b164698a6a1b555bb2f6",
+      "cellLatitude": 30,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-099.json.gz"
+    },
+    {
+      "shardId": "tx-30-100",
+      "file": "tx-30-100.json.gz",
+      "recordCount": 1325,
+      "byteCount": 66568,
+      "sha256": "f8c6df4935c6be2a91c4959e5276eb9eae8824742bd2bee4767bf2cdce5042a1",
+      "cellLatitude": 30,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-100.json.gz"
+    },
+    {
+      "shardId": "tx-30-101",
+      "file": "tx-30-101.json.gz",
+      "recordCount": 233,
+      "byteCount": 11745,
+      "sha256": "fa76f27da01544ed210dc6d1da30d3eb2b0a9a4c6380113f81dba16cdaf52152",
+      "cellLatitude": 30,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-101.json.gz"
+    },
+    {
+      "shardId": "tx-30-102",
+      "file": "tx-30-102.json.gz",
+      "recordCount": 152,
+      "byteCount": 7661,
+      "sha256": "d07fd8b6aa97804b2a1c6fac88e379ff1193d86b83a87f43bf36a35a54f38892",
+      "cellLatitude": 30,
+      "cellLongitude": -102,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-102.json.gz"
+    },
+    {
+      "shardId": "tx-30-103",
+      "file": "tx-30-103.json.gz",
+      "recordCount": 318,
+      "byteCount": 15812,
+      "sha256": "6151cf2ca441528afef1db93b9089b1c69e8beee227bfad6d2ead9ec0497e7a2",
+      "cellLatitude": 30,
+      "cellLongitude": -103,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-103.json.gz"
+    },
+    {
+      "shardId": "tx-30-104",
+      "file": "tx-30-104.json.gz",
+      "recordCount": 366,
+      "byteCount": 18779,
+      "sha256": "1bb9b3b62ca5f3a1fc7b32653f9395364aa526c61dbd2b6d255b2a0d2a40d5e9",
+      "cellLatitude": 30,
+      "cellLongitude": -104,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-104.json.gz"
+    },
+    {
+      "shardId": "tx-30-105",
+      "file": "tx-30-105.json.gz",
+      "recordCount": 117,
+      "byteCount": 6141,
+      "sha256": "e8790c88df20f5d26d140650accda603a9066b738d48e06e867ea63a2fd5f927",
+      "cellLatitude": 30,
+      "cellLongitude": -105,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-30-105.json.gz"
+    },
+    {
+      "shardId": "tx-31-094",
+      "file": "tx-31-094.json.gz",
+      "recordCount": 267,
+      "byteCount": 13873,
+      "sha256": "7c4d100efdf424f1292390d2ca76e3f31d02058c26c71e32eb1ee12e5865b9fd",
+      "cellLatitude": 31,
+      "cellLongitude": -94,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-094.json.gz"
+    },
+    {
+      "shardId": "tx-31-095",
+      "file": "tx-31-095.json.gz",
+      "recordCount": 2988,
+      "byteCount": 150315,
+      "sha256": "c172b66c9a9f18b292a9adac4d1860408472d08469392f29319ee945f755b43c",
+      "cellLatitude": 31,
+      "cellLongitude": -95,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-095.json.gz"
+    },
+    {
+      "shardId": "tx-31-096",
+      "file": "tx-31-096.json.gz",
+      "recordCount": 2029,
+      "byteCount": 102472,
+      "sha256": "45f213033fdcf8470ea979d137cc4139b2a6fd1f1d44c7c35101bcd38df96526",
+      "cellLatitude": 31,
+      "cellLongitude": -96,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-096.json.gz"
+    },
+    {
+      "shardId": "tx-31-097",
+      "file": "tx-31-097.json.gz",
+      "recordCount": 1713,
+      "byteCount": 86593,
+      "sha256": "5aef546cb85b00165a7ad416817daa479ed415106ab333002867d870946aa2c2",
+      "cellLatitude": 31,
+      "cellLongitude": -97,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-097.json.gz"
+    },
+    {
+      "shardId": "tx-31-098",
+      "file": "tx-31-098.json.gz",
+      "recordCount": 9512,
+      "byteCount": 481514,
+      "sha256": "dbd5d72cef8112c35e78eb20629eaa8f954ae300e4b042bb7a17c58ae53ff453",
+      "cellLatitude": 31,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-098.json.gz"
+    },
+    {
+      "shardId": "tx-31-099",
+      "file": "tx-31-099.json.gz",
+      "recordCount": 1591,
+      "byteCount": 80039,
+      "sha256": "d826e385ebd096dfb38986c53cef03b985358be8b6a131da8fe0b8b7fea8acf0",
+      "cellLatitude": 31,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-099.json.gz"
+    },
+    {
+      "shardId": "tx-31-100",
+      "file": "tx-31-100.json.gz",
+      "recordCount": 825,
+      "byteCount": 40910,
+      "sha256": "386b6b14283c816fcb6c98c16e79cf0f4e9a545baa8a6111254f2bb2522e7239",
+      "cellLatitude": 31,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-100.json.gz"
+    },
+    {
+      "shardId": "tx-31-101",
+      "file": "tx-31-101.json.gz",
+      "recordCount": 1894,
+      "byteCount": 93143,
+      "sha256": "6f814df952f3db7767b5bbe58c565cbdc360ba9228cd52c06c6e0521bef56059",
+      "cellLatitude": 31,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-101.json.gz"
+    },
+    {
+      "shardId": "tx-31-102",
+      "file": "tx-31-102.json.gz",
+      "recordCount": 204,
+      "byteCount": 10518,
+      "sha256": "854dd274233d688c1fdbf3e8fac0781e269e32caacb0b2aa80ae81d0ac4514dd",
+      "cellLatitude": 31,
+      "cellLongitude": -102,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-102.json.gz"
+    },
+    {
+      "shardId": "tx-31-103",
+      "file": "tx-31-103.json.gz",
+      "recordCount": 3911,
+      "byteCount": 192712,
+      "sha256": "cc9cc543d5edfb7306e12999a9c754b9ade48f2b79c15b1a3800780e62b9cdd3",
+      "cellLatitude": 31,
+      "cellLongitude": -103,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-103.json.gz"
+    },
+    {
+      "shardId": "tx-31-104",
+      "file": "tx-31-104.json.gz",
+      "recordCount": 585,
+      "byteCount": 29149,
+      "sha256": "cb15731463f1c5791be1209e53115ac6d9799e044341958849dc540bbfeb769a",
+      "cellLatitude": 31,
+      "cellLongitude": -104,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-104.json.gz"
+    },
+    {
+      "shardId": "tx-31-105",
+      "file": "tx-31-105.json.gz",
+      "recordCount": 123,
+      "byteCount": 6469,
+      "sha256": "b95d8c40eda054e8ae93713236ad4d53e980b34d78cdc01293576316e1b76838",
+      "cellLatitude": 31,
+      "cellLongitude": -105,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-105.json.gz"
+    },
+    {
+      "shardId": "tx-31-106",
+      "file": "tx-31-106.json.gz",
+      "recordCount": 71,
+      "byteCount": 4046,
+      "sha256": "e858c178a9aa95d64dbaf017b4d493e6dc7aeb76587adde672d69641f06a0303",
+      "cellLatitude": 31,
+      "cellLongitude": -106,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-106.json.gz"
+    },
+    {
+      "shardId": "tx-31-107",
+      "file": "tx-31-107.json.gz",
+      "recordCount": 9636,
+      "byteCount": 475298,
+      "sha256": "850765fa9bfc4a9bfbf56c76723335fc46be2029430e9f1518a61e54ff2ab657",
+      "cellLatitude": 31,
+      "cellLongitude": -107,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-31-107.json.gz"
+    },
+    {
+      "shardId": "tx-32-095",
+      "file": "tx-32-095.json.gz",
+      "recordCount": 5156,
+      "byteCount": 260358,
+      "sha256": "e8d73d737b60b998736f09a7287c15eca75e801a993e35c854affe0cace48e08",
+      "cellLatitude": 32,
+      "cellLongitude": -95,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-095.json.gz"
+    },
+    {
+      "shardId": "tx-32-096",
+      "file": "tx-32-096.json.gz",
+      "recordCount": 6610,
+      "byteCount": 333702,
+      "sha256": "8b74ebf4718d1e0b5c0d91f4a5a003fcc2b04f9d7b3591b770cde58a18bc8b3c",
+      "cellLatitude": 32,
+      "cellLongitude": -96,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-096.json.gz"
+    },
+    {
+      "shardId": "tx-32-097",
+      "file": "tx-32-097.json.gz",
+      "recordCount": 40697,
+      "byteCount": 2042012,
+      "sha256": "c661d39bb6e0cf7df7f8bd50ad494117a0700e09891cea47e499d66f0de0fbba",
+      "cellLatitude": 32,
+      "cellLongitude": -97,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-097.json.gz"
+    },
+    {
+      "shardId": "tx-32-098",
+      "file": "tx-32-098.json.gz",
+      "recordCount": 32710,
+      "byteCount": 1645389,
+      "sha256": "f7238d476576427bf43333c97bf28c652be59b80b406eaf6183602f9243f4ad6",
+      "cellLatitude": 32,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-098.json.gz"
+    },
+    {
+      "shardId": "tx-32-099",
+      "file": "tx-32-099.json.gz",
+      "recordCount": 2225,
+      "byteCount": 111505,
+      "sha256": "316f9228604463101207569eebea4818f62f95d47ab1d5628f9eef8bd666d36e",
+      "cellLatitude": 32,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-099.json.gz"
+    },
+    {
+      "shardId": "tx-32-100",
+      "file": "tx-32-100.json.gz",
+      "recordCount": 2786,
+      "byteCount": 138271,
+      "sha256": "9d56a2e6d0a65b208469295c3c5dc31be9ceb59909c4aad60003c21528e51d62",
+      "cellLatitude": 32,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-100.json.gz"
+    },
+    {
+      "shardId": "tx-32-101",
+      "file": "tx-32-101.json.gz",
+      "recordCount": 1021,
+      "byteCount": 50600,
+      "sha256": "76710a8edd17258aa3faa660d055c0c6db0e9cd9ce91eba52d6e7c7edce7c77e",
+      "cellLatitude": 32,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-101.json.gz"
+    },
+    {
+      "shardId": "tx-32-102",
+      "file": "tx-32-102.json.gz",
+      "recordCount": 981,
+      "byteCount": 48738,
+      "sha256": "e62f0f80e12965c657556ca3a856328840c4ca5f0857c4653186a70c9cede985",
+      "cellLatitude": 32,
+      "cellLongitude": -102,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-102.json.gz"
+    },
+    {
+      "shardId": "tx-32-103",
+      "file": "tx-32-103.json.gz",
+      "recordCount": 1789,
+      "byteCount": 88394,
+      "sha256": "36833b4ead9e6613a9602dd8994a44fa93480f93491670c78dd34f9e1d4051b8",
+      "cellLatitude": 32,
+      "cellLongitude": -103,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-103.json.gz"
+    },
+    {
+      "shardId": "tx-32-104",
+      "file": "tx-32-104.json.gz",
+      "recordCount": 10,
+      "byteCount": 758,
+      "sha256": "18906931bdce19b51e569752343c15c7e815580a0404a88bb47118ba5fcbe771",
+      "cellLatitude": 32,
+      "cellLongitude": -104,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-104.json.gz"
+    },
+    {
+      "shardId": "tx-32-107",
+      "file": "tx-32-107.json.gz",
+      "recordCount": 8,
+      "byteCount": 686,
+      "sha256": "19eeea8adce38658716618a4d84d0aeb1d6c9165a2761717fd1ac5fcf889ec3a",
+      "cellLatitude": 32,
+      "cellLongitude": -107,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-32-107.json.gz"
+    },
+    {
+      "shardId": "tx-33-095",
+      "file": "tx-33-095.json.gz",
+      "recordCount": 2607,
+      "byteCount": 130031,
+      "sha256": "f2892ef65bb705e1d794fd3fe76a8f34f11d74ae7e86a5efc8a7854d32dc1322",
+      "cellLatitude": 33,
+      "cellLongitude": -95,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-095.json.gz"
+    },
+    {
+      "shardId": "tx-33-096",
+      "file": "tx-33-096.json.gz",
+      "recordCount": 2391,
+      "byteCount": 120041,
+      "sha256": "890bc73ed2e59d8ca4e93af96c4dda9230e47677d23667fcfc18235e8b9699e6",
+      "cellLatitude": 33,
+      "cellLongitude": -96,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-096.json.gz"
+    },
+    {
+      "shardId": "tx-33-097",
+      "file": "tx-33-097.json.gz",
+      "recordCount": 19659,
+      "byteCount": 986517,
+      "sha256": "4249a5ef6f5dc3ea88d615fb0836ee4a8f430d979dcb19e21155850897a39dcb",
+      "cellLatitude": 33,
+      "cellLongitude": -97,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-097.json.gz"
+    },
+    {
+      "shardId": "tx-33-098",
+      "file": "tx-33-098.json.gz",
+      "recordCount": 7410,
+      "byteCount": 372070,
+      "sha256": "0a2b3a6896d88560cd9dd60a9031c5abcf0e4da842a64d2265778043c1b16d25",
+      "cellLatitude": 33,
+      "cellLongitude": -98,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-098.json.gz"
+    },
+    {
+      "shardId": "tx-33-099",
+      "file": "tx-33-099.json.gz",
+      "recordCount": 2498,
+      "byteCount": 124663,
+      "sha256": "a22f0adeb9115e971f92e3afa92149269f0ee55457ad905c1d8ad9e8ce29b0cf",
+      "cellLatitude": 33,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-099.json.gz"
+    },
+    {
+      "shardId": "tx-33-100",
+      "file": "tx-33-100.json.gz",
+      "recordCount": 435,
+      "byteCount": 21747,
+      "sha256": "ef1a54f657539ad21a3afda45894508771c20c48cff9727708ee5d6f8e964413",
+      "cellLatitude": 33,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-100.json.gz"
+    },
+    {
+      "shardId": "tx-33-101",
+      "file": "tx-33-101.json.gz",
+      "recordCount": 119,
+      "byteCount": 6467,
+      "sha256": "9cd817420008a63658c4a256a43a2726be38fa1992c76a2c3cb98283579ff1f9",
+      "cellLatitude": 33,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-101.json.gz"
+    },
+    {
+      "shardId": "tx-33-102",
+      "file": "tx-33-102.json.gz",
+      "recordCount": 4759,
+      "byteCount": 235394,
+      "sha256": "a7a34c7721251b706d0f5019bf72fdc81fef2976353a0c291e6150e1b33982ee",
+      "cellLatitude": 33,
+      "cellLongitude": -102,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-102.json.gz"
+    },
+    {
+      "shardId": "tx-33-103",
+      "file": "tx-33-103.json.gz",
+      "recordCount": 883,
+      "byteCount": 44316,
+      "sha256": "780f3fbaae7a5799be4dee85957f9fe6382cdacaa20b10a5dc3d8abdfb959583",
+      "cellLatitude": 33,
+      "cellLongitude": -103,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-103.json.gz"
+    },
+    {
+      "shardId": "tx-33-104",
+      "file": "tx-33-104.json.gz",
+      "recordCount": 9,
+      "byteCount": 788,
+      "sha256": "0ca8108ee969e9093757eb5e98f7e38b5fd978915b7a3f06fdfc47adf1175f03",
+      "cellLatitude": 33,
+      "cellLongitude": -104,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-33-104.json.gz"
+    },
+    {
+      "shardId": "tx-34-099",
+      "file": "tx-34-099.json.gz",
+      "recordCount": 210,
+      "byteCount": 10581,
+      "sha256": "c48b2cf9c1695fc34691f95e05aa63c5559abcd76975f57c66ff66df4a300266",
+      "cellLatitude": 34,
+      "cellLongitude": -99,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-34-099.json.gz"
+    },
+    {
+      "shardId": "tx-34-100",
+      "file": "tx-34-100.json.gz",
+      "recordCount": 405,
+      "byteCount": 20657,
+      "sha256": "ad9053a85941b7f52188003df1873d371c68763aa2bbc56ece85228f7ec94314",
+      "cellLatitude": 34,
+      "cellLongitude": -100,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-34-100.json.gz"
+    },
+    {
+      "shardId": "tx-34-101",
+      "file": "tx-34-101.json.gz",
+      "recordCount": 495,
+      "byteCount": 24370,
+      "sha256": "01bc2585b124c7eff25542ec8a9a91bd5484b2ef5e98f327f68d2cd7d1f66544",
+      "cellLatitude": 34,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-34-101.json.gz"
+    },
+    {
+      "shardId": "tx-34-102",
+      "file": "tx-34-102.json.gz",
+      "recordCount": 893,
+      "byteCount": 44031,
+      "sha256": "173abeb1b2bf266d20733818cba533278b9aa104047a7bc4798f718495f5f256",
+      "cellLatitude": 34,
+      "cellLongitude": -102,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-34-102.json.gz"
+    },
+    {
+      "shardId": "tx-34-103",
+      "file": "tx-34-103.json.gz",
+      "recordCount": 784,
+      "byteCount": 38803,
+      "sha256": "45a50ca5b7509125e05d64707ac2cd72e5d3ee1f19103661eeef4e0d5e6a7e56",
+      "cellLatitude": 34,
+      "cellLongitude": -103,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-34-103.json.gz"
+    },
+    {
+      "shardId": "tx-34-104",
+      "file": "tx-34-104.json.gz",
+      "recordCount": 33,
+      "byteCount": 2032,
+      "sha256": "4f13e4beeb782039b9d083b5f2d012b3b05e19745aa83a202a285514b1a13e27",
+      "cellLatitude": 34,
+      "cellLongitude": -104,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-34-104.json.gz"
+    },
+    {
+      "shardId": "tx-35-101",
+      "file": "tx-35-101.json.gz",
+      "recordCount": 677,
+      "byteCount": 34019,
+      "sha256": "2c2f1b4403d96ec43c34dc31fa458b2e4e3ea27f7cdb648ab2604edccb77f54b",
+      "cellLatitude": 35,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-35-101.json.gz"
+    },
+    {
+      "shardId": "tx-35-102",
+      "file": "tx-35-102.json.gz",
+      "recordCount": 4089,
+      "byteCount": 204261,
+      "sha256": "01fca3cf16cbd499333e4d1a2254bd2203e9a8e1692385a7923de155b113fca9",
+      "cellLatitude": 35,
+      "cellLongitude": -102,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-35-102.json.gz"
+    },
+    {
+      "shardId": "tx-35-103",
+      "file": "tx-35-103.json.gz",
+      "recordCount": 165,
+      "byteCount": 8786,
+      "sha256": "63d050e565567bbeafe1ae3adbc74501ee38bbf59350faccd8b9069924857692",
+      "cellLatitude": 35,
+      "cellLongitude": -103,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-35-103.json.gz"
+    },
+    {
+      "shardId": "tx-35-104",
+      "file": "tx-35-104.json.gz",
+      "recordCount": 3,
+      "byteCount": 407,
+      "sha256": "9636e20ea6b5095b721b9a4777a3186272fcf016028231ca8604d30e00bf4fa1",
+      "cellLatitude": 35,
+      "cellLongitude": -104,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-35-104.json.gz"
+    },
+    {
+      "shardId": "tx-36-101",
+      "file": "tx-36-101.json.gz",
+      "recordCount": 247,
+      "byteCount": 12591,
+      "sha256": "2c814c828b6c3287d18ab1ee8aa7d06cb37342741cc54f89c2884d39e3a06377",
+      "cellLatitude": 36,
+      "cellLongitude": -101,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-36-101.json.gz"
+    },
+    {
+      "shardId": "tx-36-102",
+      "file": "tx-36-102.json.gz",
+      "recordCount": 168,
+      "byteCount": 8762,
+      "sha256": "771812d2c5f2d106962498a89467be5b1320dc6f219c1b5cc2e9b56ce80cfa02",
+      "cellLatitude": 36,
+      "cellLongitude": -102,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-36-102.json.gz"
+    },
+    {
+      "shardId": "tx-36-103",
+      "file": "tx-36-103.json.gz",
+      "recordCount": 292,
+      "byteCount": 14676,
+      "sha256": "49cd03fb99d1a7e42f97082451a2082ed3a05396c955431b005e37e66ba38465",
+      "cellLatitude": 36,
+      "cellLongitude": -103,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-36-103.json.gz"
+    },
+    {
+      "shardId": "tx-36-104",
+      "file": "tx-36-104.json.gz",
+      "recordCount": 17,
+      "byteCount": 1146,
+      "sha256": "6e19e94a9e4ad5e569e0c3de669b102ef77d3c682d12ddf0bbb7694321158a31",
+      "cellLatitude": 36,
+      "cellLongitude": -104,
+      "cachePath": "gridly-poi/lp24111-d5-standalone-2026-08-28/gridly.poi.runtime.v2/tx-36-104.json.gz"
+    }
+  ]
+}

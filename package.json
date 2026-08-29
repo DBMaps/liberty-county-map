@@ -12,8 +12,10 @@
     "@capacitor/cli": "8.3.4",
     "@playwright/test": "1.54.2",
     "fflate": "0.8.3",
+    "fzstd": "0.1.1",
     "hyparquet": "1.17.0",
-    "hyparquet-compressors": "1.0.0"
+    "hyparquet-compressors": "1.0.0",
+    "hysnappy": "1.0.0"
   },
   "scripts": {
     "build:lp24111": "node tools/lp24111/manufacture.mjs --write",
