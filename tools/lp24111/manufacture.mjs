@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {certificationGate} from './identity-governance.mjs';
 
 const root=path.resolve(import.meta.dirname,'../..');
 const out=path.join(root,'reports/lp24111');
@@ -110,7 +111,9 @@ export function artifacts(options={}){
  if(fs.existsSync(d3Path)){
   const d3=JSON.parse(fs.readFileSync(d3Path,'utf8'));
   if(d3.schemaVersion!=='gridly.lp24111.measured-identity.v1'||d3.releaseId!==release||!d3.reports)throw Error('Invalid owner-local D.3 identity measurements');
-  for(const [name,value] of Object.entries(d3.reports)){if(!(name in files))throw Error(`Unknown D.3 measured report ${name}`);files[name]={...files[name],...value};delete files[name].reason;}
+ for(const [name,value] of Object.entries(d3.reports)){if(!(name in files))throw Error(`Unknown D.3 measured report ${name}`);files[name]={...files[name],...value};delete files[name].reason;}
+  const gate=certificationGate(files);
+  files['certification.json']={...files['certification.json'],evidenceCompletenessGate:gate.gates,executiveResult:gate.passed?'PHASE_D3_MEASURED_POI_IDENTITY_CERTIFIED':'PHASE_D3_MEASURED_IDENTITY_COUNTS_EVIDENCE_RECONCILIATION_PENDING',productionPoiSearch:'NOT_LAUNCHED_NOT_CERTIFIED',mergeRecommendation:gate.passed?'IDENTITY_EVIDENCE_COMPLETE_MERGE_ELIGIBLE':'DO_NOT_CERTIFY_IDENTITY_EVIDENCE_RECONCILIATION_REQUIRED'};
  } else {
   files['certification.json']={...files['certification.json'],schemaVersion:'gridly.lp24111.certification.v5',executiveResult:'PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING',classifications:[...files['certification.json'].classifications,'D3_IDENTITY_POLICY_AND_BOUNDED_EXECUTION_READY','D3_OWNER_LOCAL_MEASUREMENT_NOT_EXECUTED'],mergeRecommendation:'MERGE_D3_GOVERNANCE_TOOLING_MEASURE_BEFORE_IDENTITY_CERTIFICATION',nextAction:'Restore the certified normalized Parquet in owner-local/lp24111 and run npm run execute:lp24111-identity; then run build, verify, and test.'};
  }
