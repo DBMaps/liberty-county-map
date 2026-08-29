@@ -1,0 +1,236 @@
+{
+  "schemaVersion": "gridly.lp24112.acceptance.v1",
+  "executionState": "PLANNED_NOT_EXECUTED",
+  "phoneTesting": false,
+  "cohorts": [
+    {
+      "name": "Dayton",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Tarkington",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Pecos",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Dallas",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Austin",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "San Antonio",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Abilene",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Midland",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Fredericksburg",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Port Arthur",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Sulphur Springs",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Huntsville",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Eastland",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    },
+    {
+      "name": "Cienegas Terrace",
+      "requiredRadiiMiles": [
+        5,
+        10,
+        25
+      ],
+      "assertions": [
+        "identity preserved",
+        "fanout bounded",
+        "governed-only result IDs",
+        "distance/order deterministic",
+        "zero result explicit when applicable"
+      ]
+    }
+  ],
+  "requiredScenarios": [
+    "CANONICAL_PLACE",
+    "GOVERNED_NON_PLACE",
+    "MULTI_COUNTY_COMMUNITY",
+    "RURAL_SPARSE",
+    "DENSE_METRO",
+    "ZERO_RESULT_CATEGORY"
+  ],
+  "launchPrerequisites": [
+    "legal clearance artifact",
+    "approved immutable release manifest",
+    "all gate mismatch tests",
+    "desktop deterministic suite",
+    "subsequent separately authorized phone testing"
+  ],
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

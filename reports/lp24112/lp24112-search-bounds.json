@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp24112.search.v1",
+  "defaultRadiusMiles": 10,
+  "allowedRadiiMiles": [
+    5,
+    10,
+    25
+  ],
+  "maximumRadiusMiles": 25,
+  "maximumResultCount": 50,
+  "categoryFilter": "optional governed exact enum; AND with text",
+  "textFilter": "optional trimmed case-folded displayName/brand substring; maximum 80 code points",
+  "sorting": [
+    "distanceMiles ascending",
+    "displayName ascending",
+    "id ascending"
+  ],
+  "distance": "haversine after shard load",
+  "invalidCoordinates": "INVALID_REQUEST; NO_SHARD_LOAD",
+  "wholeTexasSearch": "PROHIBITED",
+  "zeroResult": "explicit reason; not an error",
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

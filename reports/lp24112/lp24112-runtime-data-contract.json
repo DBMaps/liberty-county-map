@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "gridly.poi.runtime.v1",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "authority": {
+    "classification": "IDENTITY_GOVERNED_STANDALONE_POIS_ONLY",
+    "rowCount": 391772,
+    "excluded": [
+      "RAW_OVERTURE_AUTHORITY",
+      "D2_REVIEW_REQUIRED",
+      "CHILD_POI",
+      "SUPPRESSED_DUPLICATE_MEMBER",
+      "UNRESOLVED_UPSTREAM_AUTHORITY"
+    ]
+  },
+  "record": {
+    "required": {
+      "id": "non-empty string; unique within release",
+      "displayName": "non-empty string",
+      "gridlyCategory": "governed enum string",
+      "latitude": "finite number [-90,90]",
+      "longitude": "finite number [-180,180]",
+      "countyContextId": "governed county identifier",
+      "communityIdentity": "CANONICAL_PLACE or GOVERNED_NON_PLACE object"
+    },
+    "optional": {
+      "brand": "non-empty display string",
+      "provenanceSummary": "counsel-approved display token"
+    }
+  },
+  "validation": "REJECT_RECORD_AND_COUNT_DIAGNOSTIC; REJECT_SHARD_ON_DUPLICATE_ID_OR_MANIFEST_CONSERVATION_FAILURE",
+  "fieldsForbidden": [
+    "freeformAddress",
+    "rawSourceMetadata",
+    "conflationEvidence",
+    "suppressedMembers"
+  ],
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

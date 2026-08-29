@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "gridly.lp24112.shards.v1",
+  "architecture": "ONE_DEGREE",
+  "formula": "tx-{floor(latitude),2 digits}-{abs(floor(longitude)),3 digits}",
+  "allowedRadiiMiles": [
+    5,
+    10,
+    25
+  ],
+  "inputs": [
+    "CANONICAL_PLACE_ANCHOR",
+    "GOVERNED_NON_PLACE_ANCHOR",
+    "USER_INITIATED_MAP_CENTER"
+  ],
+  "algorithm": [
+    "validate coordinates and radius",
+    "compute radius bounding box using 69 miles per latitude degree and latitude-adjusted longitude",
+    "enumerate intersecting Texas one-degree cells",
+    "deduplicate",
+    "lexically sort",
+    "fail closed above fanout"
+  ],
+  "boundaryHandling": "INCLUDE_EVERY_CELL_INTERSECTED_BY_RADIUS_BOUNDING_BOX; CLIP_TO_TEXAS_ENVELOPE",
+  "maximumFanout": 4,
+  "wholeTexas": false,
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

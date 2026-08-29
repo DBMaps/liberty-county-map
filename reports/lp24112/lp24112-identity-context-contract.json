@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "gridly.lp24112.identity.v1",
+  "canonicalPlaceCount": 1859,
+  "governedNonPlaceCount": 29,
+  "precedence": [
+    "governed community identity",
+    "structured county context",
+    "descriptive source locality"
+  ],
+  "resultCountyBehavior": "countyContextId describes result location and never replaces the search community identity",
+  "tarkington": {
+    "identityDisposition": "GOVERNED_NON_PLACE",
+    "communityId": "liberty-tx:tarkington",
+    "placeGeoid": null
+  },
+  "fabricatePlaceIdentity": false,
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "gridly.lp24112.metadata.v1",
+  "historicalD4Conflicts": 149,
+  "structuredReconciliation": "149_FALSE_POSITIVES_0_UNEXPLAINED",
+  "authority": [
+    "structured region metadata",
+    "governed spatial community and county identity"
+  ],
+  "freeformAddressRole": "DESCRIPTIVE_ONLY",
+  "stateTokenInferenceCanOverride": false,
+  "rewriteOriginalSourceMetadata": false,
+  "onConflict": "retain original descriptive value; render governed context; emit bounded diagnostic; never promote freeform text to authority",
+  "milestone": "LP241.12",
+  "designOnly": true,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED"
+}
