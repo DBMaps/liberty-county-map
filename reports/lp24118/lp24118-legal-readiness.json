@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "gridly.lp24118.legal.v1",
+  "milestone": "LP241.18",
+  "assessmentOnly": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "deployed": false,
+  "productionBehaviorChanged": false,
+  "ready": false,
+  "artifactBindings": {
+    "attributionText": "POI data sources and licenses",
+    "target": "DATA_SOURCES_AND_LICENSES",
+    "foursquareNoticeSha256": "07cef40d0b0d1f5786b3e29983970aa0729ee6e508d1c4e3e18bbe0eef8878a3",
+    "modificationStatementPresent": true,
+    "nonAffiliationStatementPresent": true,
+    "licenseExposureCounts": {
+      "CDLA-Permissive-2.0": 355925,
+      "Apache-2.0 + CDLA-Permissive-2.0": 23248,
+      "CC0-1.0 + CDLA-Permissive-2.0": 12599
+    }
+  },
+  "finding": "Certified legal artifacts are tracked, but runtime search results have no browser wiring and no proven persistent attribution entry point to a deployed DATA_SOURCES_AND_LICENSES surface. Activation is not legally surface-ready."
+}

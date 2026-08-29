@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "gridly.lp24118.integration-map.v1",
+  "milestone": "LP241.18",
+  "assessmentOnly": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "deployed": false,
+  "productionBehaviorChanged": false,
+  "classification": "PRODUCTION_ACTIVATION_BLOCKED_BROWSER_RUNTIME_INTEGRATION",
+  "stages": [
+    {
+      "stage": "user action",
+      "state": "IMPLEMENTED",
+      "finding": "Existing consumer search action exists; it is not connected to runtime-v2."
+    },
+    {
+      "stage": "governed request context",
+      "state": "NON_PRODUCTION_ONLY",
+      "finding": "LP241.17 validates governed community/county/origin identity in Node."
+    },
+    {
+      "stage": "provider selection",
+      "state": "MISSING",
+      "finding": "Production browser runtime has no explicit fail-closed POI provider gate or selector."
+    },
+    {
+      "stage": "shard candidate selection",
+      "state": "NON_PRODUCTION_ONLY",
+      "finding": "Certified in the Node rehearsal with fanout <=4."
+    },
+    {
+      "stage": "shard fetch",
+      "state": "BLOCKED",
+      "finding": "Node reads local files; no browser fetch path exists and current deployment staging excludes poi/."
+    },
+    {
+      "stage": "decompression",
+      "state": "BLOCKED",
+      "finding": "Implementation uses node:zlib gunzipSync; no browser decompressor is wired."
+    },
+    {
+      "stage": "v2 record validation",
+      "state": "NON_PRODUCTION_ONLY",
+      "finding": "Validation exists inside the Node rehearsal and is not browser reusable as packaged."
+    },
+    {
+      "stage": "radius filtering",
+      "state": "NON_PRODUCTION_ONLY",
+      "finding": "5/10/25 mile filtering is certified only in Node."
+    },
+    {
+      "stage": "sorting",
+      "state": "NON_PRODUCTION_ONLY",
+      "finding": "Deterministic distance/identity ordering is certified only in Node."
+    },
+    {
+      "stage": "result bounding",
+      "state": "NON_PRODUCTION_ONLY",
+      "finding": "Node returns top 50; production UI does not consume it."
+    },
+    {
+      "stage": "display/consumer surface",
+      "state": "MISSING",
+      "finding": "No live js/app.js runtime-v2 wiring exists."
+    },
+    {
+      "stage": "attribution",
+      "state": "BLOCKED",
+      "finding": "Legal artifacts/contracts exist, but the active-search browser result surface and DATA_SOURCES_AND_LICENSES destination are not wired."
+    },
+    {
+      "stage": "cache",
+      "state": "NON_PRODUCTION_ONLY",
+      "finding": "Release/schema cache namespace is certified as a Node contract; service worker does not manage POI assets."
+    },
+    {
+      "stage": "rollback",
+      "state": "BLOCKED",
+      "finding": "Preferred gate-OFF rollback cannot be exercised because production gate infrastructure does not exist."
+    }
+  ]
+}

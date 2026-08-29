@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "gridly.lp24118.browser-runtime.v1",
+  "milestone": "LP241.18",
+  "assessmentOnly": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "deployed": false,
+  "productionBehaviorChanged": false,
+  "ready": false,
+  "findings": {
+    "browserCanFetchFromCurrentProductionArtifact": false,
+    "automaticDecompressionProven": false,
+    "requiredDecompressionPath": "Fetch ArrayBuffer, verify compressed-byte SHA-256 with Web Crypto, then use a supported browser gzip path such as DecompressionStream with a tested compatibility alternative; parse and validate only after verification.",
+    "nodeProviderBrowserReusable": false,
+    "nodeOnlyApis": [
+      "node:fs",
+      "node:path",
+      "node:zlib",
+      "node:crypto",
+      "process.env"
+    ],
+    "v2ValidationBrowserReady": false,
+    "candidateSelectionBrowserReady": false,
+    "sortingAndDedupingBrowserReady": false,
+    "releaseSchemaCacheIsolationBrowserReady": false,
+    "denseMetroBoundsBrowserAccepted": false
+  },
+  "note": "Candidate selection, validation, sorting, and deduping algorithms are portable in principle but are not exposed as browser-safe modules."
+}

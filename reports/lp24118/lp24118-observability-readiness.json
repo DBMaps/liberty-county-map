@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp24118.observability.v1",
+  "milestone": "LP241.18",
+  "assessmentOnly": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "deployed": false,
+  "productionBehaviorChanged": false,
+  "ready": false,
+  "minimumBoundedDiagnostics": [
+    "provider initialized",
+    "manifest verified",
+    "shard fetch failure",
+    "shard hash failure",
+    "cache hit/miss",
+    "result count",
+    "zero-result state",
+    "provider failure state",
+    "fallback attempted (always false)",
+    "active release/schema",
+    "attribution availability"
+  ],
+  "currentFinding": "LP241.17 reports Node rehearsal outcomes, but no browser provider exists to emit bounded production diagnostics. Do not add tracking, query text, coordinates, or persistent location logs."
+}
