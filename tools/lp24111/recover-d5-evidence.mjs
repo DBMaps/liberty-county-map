@@ -30,11 +30,12 @@ export function recoverCommittedEvidence(reports){
   schemaVersion:'gridly.lp24111.d5.recovered-evidence.v1',
   evidenceBasis:'EXISTING_D4_DERIVED_ARTIFACTS_ONLY',
   prohibitedWorkPerformed:[],runtimeActivated:false,productionBehaviorChanged:false,legalState:'LEGAL_REVIEW_REQUIRED',
-  artifactAudit:{ownerLocalArtifactsPresent:[],quality:{status:'NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE',reason:'D.4 names six classes but records neither per-identity classifications nor deterministic classification thresholds.'},categories:{status:'PARTIALLY_RECOVERED'},metadata:{status:'NOT_RECOVERABLE_FROM_COMMITTED_SUMMARY'},brands:{status:'NOT_RECOVERABLE_FROM_COMMITTED_SUMMARY'}},
-  quality:{expectedRows:1888,placeRows:1859,nonPlaceRows:29,status:'NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE',rows:[],reason:'Fail closed: EXISTING_DETERMINISTIC_D4_DESCRIPTIVE_POLICY contains no executable or stated row-classification rules.'},
-  categories:{expectedPerCategory:1888,rows:categoryRows,pharmacyRca:{classification:'ZERO_RESULT_HANDLING_DEFECT',exactMissingIdentity:pharmacy.missingGovernedIdentities[0]??null,recovered:false,reason:'The statewide PHARMACY authority is nonzero, so its missing distance row cannot be reconstructed without an existing measured row.'},convenienceRca:{classification:'ACTUAL_NO_AUTHORITY_CATEGORY',taxonomyLabelMeasured:'CONVENIENCE',statewideAuthorityCount:convenience.statewideAuthorityCount,recovered:convenience.accountedCount===1888,reason:'All 254 committed county aggregates conserve to zero CONVENIENCE records; explicit zero-result rows are therefore deterministic and require no spatial rerun.'}},
-  metadata:{status:'NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE',audited:reports.metadata.recordsAudited,conflict:reports.metadata.classifications.SPATIAL_METADATA_CONFLICT,incomplete:reports.metadata.classifications.SPATIAL_METADATA_INCOMPLETE,families:null,retainedSample:reports.metadata.retainedSample,reason:'The committed aggregate contains no 149-row field inventory.'},
-  brands:{status:'NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE',authorityRole:'DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY',rows:BRANDS.map(brand=>({brand,status:'NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE',recordCount:null,countyCount:null,communityRadiusRepresentation:null,ruralTailPresence:null}))}
+  artifactAudit:{ownerLocalArtifactsPresent:[],quality:{status:'QUALITY_CLASS_EVIDENCE_NOT_MATERIALIZED',reason:'D.4 names six classes but records neither per-identity classifications nor deterministic classification thresholds.'},categories:{status:'PARTIALLY_RECOVERED'},metadata:{status:'NOT_RECOVERABLE_FROM_COMMITTED_SUMMARY'},brands:{status:'BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION'}},
+  quality:{expectedRows:1888,placeRows:1859,nonPlaceRows:29,status:'QUALITY_CLASS_EVIDENCE_NOT_MATERIALIZED',rows:[],reason:'Fail closed: EXISTING_DETERMINISTIC_D4_DESCRIPTIVE_POLICY contains no executable or stated row-classification rules.'},
+  categories:{expectedPerCategory:1888,rows:categoryRows,pharmacyRca:{classification:'ZERO_RESULT_HANDLING_DEFECT',measurementStatus:'PHARMACY_TERLINGUA_MEASUREMENT_NOT_MATERIALIZED',exactMissingIdentity:pharmacy.missingGovernedIdentities[0]??null,recovered:false,reason:'The statewide PHARMACY authority is nonzero, so its missing distance row cannot be reconstructed without an existing measured row.'},convenienceRca:{classification:'ACTUAL_NO_AUTHORITY_CATEGORY',taxonomyLabelMeasured:'CONVENIENCE',statewideAuthorityCount:convenience.statewideAuthorityCount,recovered:convenience.accountedCount===1888,reason:'All 254 committed county aggregates conserve to zero CONVENIENCE records; explicit zero-result rows are therefore deterministic and require no spatial rerun.'}},
+  metadata:{status:'NOT_RECOVERABLE_FROM_EXISTING_AUTHORITY',audited:reports.metadata.recordsAudited,conflict:reports.metadata.classifications.SPATIAL_METADATA_CONFLICT,incomplete:reports.metadata.classifications.SPATIAL_METADATA_INCOMPLETE,families:null,retainedSample:reports.metadata.retainedSample,reason:'The committed aggregate contains no 149-row field inventory.'},
+  recoveryPlan:{brand:{status:'BOUNDED_ID_JOIN_FEASIBILITY_REQUIRES_OWNER_ARTIFACTS',population:'EXACT_D4_STANDALONE_IDS_391772'},metadata:{status:'BOUNDED_ID_JOIN_FEASIBILITY_REQUIRES_OWNER_ARTIFACTS',population:'EXACT_149_D4_CONFLICT_IDS'}},
+  brands:{status:'BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION',brandFieldPresent:true,populatedBrandRows:0,aggregateArtifactRows:0,classification:'BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION',authorityRole:'DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY',rows:BRANDS.map(brand=>({brand,status:'BRAND_SIGNAL_UNAVAILABLE_IN_D4_PROJECTION',recordCount:null,countyCount:null,communityRadiusRepresentation:null,ruralTailPresence:null,authorityRole:'DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY'}))}
  };
 }
 
@@ -46,17 +47,24 @@ function queryParquet(file,sql){
  return result.stdout.trim()?JSON.parse(result.stdout):[];
 }
 
+export function reconcileBrandAggregate(measured){
+ if(measured.length===0)return null;
+ const lookup=new Map(measured.map(row=>[String(row.brand).toLocaleLowerCase('en-US'),row]));
+ return {status:'MEASURED_RECONCILED',brandFieldPresent:true,populatedBrandRows:null,aggregateArtifactRows:measured.length,classification:'MEASURED_BRAND_AGGREGATE',authorityRole:'DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY',rows:BRANDS.map(brand=>{const row=lookup.get(brand.toLocaleLowerCase('en-US'));return {brand,status:row?'MEASURED_PRESENT':'DATA_IS_MEASURED_ZERO',recordCount:Number(row?.standalone_record_count??0),countyCount:Number(row?.counties_represented??0),communityRadiusRepresentation:null,ruralTailPresence:null,authorityRole:'DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY'};})};
+}
+
 export function recoverOwnerEvidence(directory=path.join(root,'owner-local/lp24111')){
  const evidence=recoverCommittedEvidence(committedReports()),present=[];
  const brandFile=path.join(directory,'brand-coverage.parquet');
  if(fs.existsSync(brandFile)){
   present.push(path.basename(brandFile));const measured=queryParquet(brandFile,'SELECT brand, standalone_record_count, counties_represented FROM read_parquet($FILE)');
-  const lookup=new Map(measured.map(row=>[String(row.brand).toLocaleLowerCase('en-US'),row]));
-  evidence.brands={status:'MEASURED_RECONCILED',authorityRole:'DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY',rows:BRANDS.map(brand=>{const row=lookup.get(brand.toLocaleLowerCase('en-US'));return {brand,status:row?'MEASURED_PRESENT':'MEASURED_ZERO',recordCount:Number(row?.standalone_record_count??0),countyCount:Number(row?.counties_represented??0),communityRadiusRepresentation:null,ruralTailPresence:null};})};
+  evidence.brands=reconcileBrandAggregate(measured)??evidence.brands;
  }
  const metadataFile=path.join(directory,'metadata-conflicts.parquet');
- if(fs.existsSync(metadataFile)){present.push(path.basename(metadataFile));evidence.metadata.ownerArtifactPresent=true;evidence.metadata.status='NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE';evidence.metadata.reason='The D.4 metadata Parquet projection lacks separate source region/postcode and governed spatial locality fields needed for the required four-family decomposition.';}
+ if(fs.existsSync(metadataFile)){present.push(path.basename(metadataFile));evidence.metadata.ownerArtifactPresent=true;evidence.metadata.status='NOT_RECOVERABLE_FROM_EXISTING_AUTHORITY';evidence.metadata.reason='The D.4 metadata Parquet projection lacks separate source region/postcode and governed spatial locality fields needed for the required four-family decomposition.';}
  for(const name of ['coverage-measurements.duckdb','community-radius-coverage.parquet','identity-governed-eligible.parquet'])if(fs.existsSync(path.join(directory,name)))present.push(name);
+ evidence.categories.pharmacyRca.measurementStatus='PHARMACY_TERLINGUA_MEASUREMENT_NOT_MATERIALIZED';
+ evidence.recoveryPlan={brand:{status:'BOUNDED_ID_JOIN_FEASIBILITY_REQUIRES_OWNER_ARTIFACTS',population:'EXACT_D4_STANDALONE_IDS_391772',operation:'Join the exact D.4 poi.id population read-only to an existing richer authority id, then aggregate only the 20 requested brands; no spatial operation.'},metadata:{status:'BOUNDED_ID_JOIN_FEASIBILITY_REQUIRES_OWNER_ARTIFACTS',population:'EXACT_149_D4_CONFLICT_IDS',requiredFields:['source_region','source_postcode','governed_spatial_locality'],families:['STATE_REGION_CONFLICT','LOCALITY_CONFLICT','POSTCODE_CONFLICT','MULTI_FIELD_CONFLICT']},pharmacy:{status:'PHARMACY_TERLINGUA_MEASUREMENT_NOT_MATERIALIZED',futureMeasurement:'One bounded nearest/radius measurement for governed identity 4872248 and PHARMACY only.'},quality:{status:'QUALITY_CLASS_EVIDENCE_NOT_MATERIALIZED',futureMeasurement:'None authorized; locate the original executable D.4 policy and classify only already-measured D.4 rows.'}};
  evidence.artifactAudit.ownerLocalArtifactsPresent=[...new Set(present)].sort();return evidence;
 }
 

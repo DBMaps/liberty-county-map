@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.d5.quality.v1",
-  "evidenceState": "INSUFFICIENT_COMMITTED_D4_DETAIL",
+  "evidenceState": "QUALITY_CLASS_EVIDENCE_NOT_MATERIALIZED",
   "expectedIdentityCount": 1888,
   "measuredIdentityCount": 0,
   "classCounts": [
