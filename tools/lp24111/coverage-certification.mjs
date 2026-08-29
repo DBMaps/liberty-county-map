@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { validateGovernedNonPlaceAnchors } from './export-governed-non-place-anchors.mjs';
 
 export const RADII_MILES=Object.freeze([5,10,25]);
 export const CORE_CATEGORIES=Object.freeze(['FUEL','GROCERY','LODGING','HOSPITAL','PHARMACY','RESTAURANT','CONVENIENCE']);
@@ -64,5 +65,8 @@ if(args.has('--execute')){
  const required=['identity-governed-eligible.parquet','governed-non-place-anchors.json'];
  const missing=required.filter(f=>!fs.existsSync(path.join(root,'owner-local/lp24111',f)));
  if(missing.length)throw Error(`D.4 fail-closed: missing owner-local inputs: ${missing.join(', ')}`);
+ const anchorEnvelope=JSON.parse(fs.readFileSync(path.join(root,'owner-local/lp24111/governed-non-place-anchors.json'),'utf8'));
+ if(anchorEnvelope.schemaVersion!=='gridly.lp24111.governed-non-place-anchors.v1'||anchorEnvelope.count!==anchorEnvelope.rows?.length)throw Error('D.4 fail-closed: governed non-PLACE anchor envelope is invalid');
+ validateGovernedNonPlaceAnchors(anchorEnvelope.rows);
  throw Error('D.4 execution requires the owner DuckDB measurement adapter; no upstream data was fetched or regenerated.');
 }
