@@ -109,10 +109,12 @@ export function verifyBuild(directory){
   for(const shard of manifest.shards){const file=path.join(directory,shard.file);if(!fs.existsSync(file))throw Error('MISSING_GENERATED_SHARD');const bytes=fs.readFileSync(file);if(bytes.length!==shard.byteCount||sha256(bytes)!==shard.sha256)throw Error('SHARD_HASH_MISMATCH');let payload;try{payload=JSON.parse(zlib.gunzipSync(bytes));}catch{throw Error('CORRUPT_SHARD');}if(payload.schemaVersion!==RELEASE_BINDING.runtimeSchemaVersion||payload.records.length!==shard.recordCount)throw Error('SHARD_CONTENT_MISMATCH');for(const row of payload.records)validatePoi(row);}
   return {manifest,manifestBytes};
 }
-export async function readParquet(file){
+export async function readParquet(file,{parquetCompressors}={}){
   const {parquetReadObjects}=await import('hyparquet');
+  const supportedCompressors=parquetCompressors??(await import('hyparquet-compressors')).compressors;
+  if(!supportedCompressors?.ZSTD)throw Error('PARQUET_ZSTD_COMPRESSOR_NOT_AVAILABLE');
   const handle=await fs.promises.open(file,'r');
-  try{return await parquetReadObjects({file:{byteLength:(await handle.stat()).size,slice:async(start,end)=>{const value=Buffer.alloc(end-start);await handle.read(value,0,value.length,start);return value.buffer.slice(value.byteOffset,value.byteOffset+value.byteLength);}},columns:REQUIRED_COLUMNS});}finally{await handle.close();}
+  try{return await parquetReadObjects({file:{byteLength:(await handle.stat()).size,slice:async(start,end)=>{const value=Buffer.alloc(end-start);await handle.read(value,0,value.length,start);return value.buffer.slice(value.byteOffset,value.byteOffset+value.byteLength);}},columns:REQUIRED_COLUMNS,compressors:supportedCompressors});}finally{await handle.close();}
 }
 export async function materialize({authorityInput=DEFAULT_AUTHORITY,repoRoot=process.cwd(),readRows=readParquet,expected}={}){
   if(process.env.GRIDLY_POI_PROVIDER_GATE&&process.env.GRIDLY_POI_PROVIDER_GATE!=='OFF')throw Error('PRODUCTION_PROVIDER_GATE_ENABLED');

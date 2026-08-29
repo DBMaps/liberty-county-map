@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
-import {authorityGuard,projectRows,shardId,candidateShardIds,certifyFanout,writeBuild,verifyBuild,sha256} from '../tools/lp24116/runtime-shard-materializer.mjs';
+import {authorityGuard,projectRows,shardId,candidateShardIds,certifyFanout,writeBuild,verifyBuild,sha256,readParquet} from '../tools/lp24116/runtime-shard-materializer.mjs';
+import {compressors} from 'hyparquet-compressors';
 import {validatePoi} from '../tools/lp24115c/runtime-v2-contract.mjs';
 const registry=JSON.parse(fs.readFileSync('data/lp149/runtime-county-registry.json')).identities;
 const source=(id='a')=>({id,display_name:'Cafe',brand_text:'',gridly_category:'RESTAURANT',latitude:30.1,longitude:-94.8,county_fips:'48001',sources:[{license:'CDLA-Permissive-2.0'}]});
@@ -19,3 +20,11 @@ test('shard verification catches missing, corrupt, hash and count failures',()=>
 test('independent fixture builds are byte-identical',()=>{const root=fs.mkdtempSync(path.join(os.tmpdir(),'lp16-det-')),a=path.join(root,'a'),b=path.join(root,'b'),p=projection([source('b'),source('a')]),authority={bytes:1,sha256:'x'};writeBuild(a,p,authority);writeBuild(b,p,authority);for(const file of fs.readdirSync(a).sort())assert.deepEqual(fs.readFileSync(path.join(a,file)),fs.readFileSync(path.join(b,file)));});
 test('release, inventory and v1 contamination fail closed',()=>{const d=fs.mkdtempSync(path.join(os.tmpdir(),'lp16-bind-')),m=writeBuild(d,projection([source()]),{bytes:1,sha256:'x'});for(const [key,value,pattern] of [['authorityReleaseId','wrong',/RELEASE/],['sourceInventorySha256','wrong',/INVENTORY/],['runtimeSchemaVersion','gridly.poi.runtime.v1',/V1/]]){const copy={...m,[key]:value};fs.writeFileSync(path.join(d,'manifest.json'),JSON.stringify(copy));assert.throws(()=>verifyBuild(d),pattern);}});
 test('wrong license, NOTICE, provider and production modes have explicit fail-closed codes',()=>{assert.throws(()=>projectRows([source()],registry,{expectedCount:1,expectedLicenses:{wrong:1}}),/LICENSE/);const sourceText=fs.readFileSync('tools/lp24116/runtime-shard-materializer.mjs','utf8');for(const token of ['FOURSQUARE_NOTICE_HASH_MISMATCH','PRODUCTION_PROVIDER_GATE_ENABLED','PRODUCTION_MATERIALIZATION_MODE_FORBIDDEN','NONDETERMINISTIC_BUILD'])assert.match(sourceText,new RegExp(token));});
+test('companion compressor performs actual bounded ZSTD decompression',async()=>{
+  // ZSTD single-segment frame containing one raw, final five-byte block: "hello".
+  const frame=Uint8Array.from([0x28,0xb5,0x2f,0xfd,0x20,0x05,0x29,0x00,0x00,0x68,0x65,0x6c,0x6c,0x6f]);
+  assert.equal(Buffer.from(await compressors.ZSTD(frame,5)).toString(),'hello');
+});
+test('Parquet read path fails explicitly when ZSTD support is disabled',async()=>{
+  await assert.rejects(readParquet(import.meta.filename,{parquetCompressors:{}}),/PARQUET_ZSTD_COMPRESSOR_NOT_AVAILABLE/);
+});
