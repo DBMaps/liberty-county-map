@@ -130,21 +130,22 @@ test('D.5 remains non-runtime, excludes unsafe populations, and distinguishes bl
 });
 
 
-test('D.5D rich brand recovery conserves the standalone authority and distinguishes unavailable from measured zero',()=>{
- const result=reconcileRichBrandEvidence({conservation:{standalone_rows:EXPECTED_STANDALONE_IDS,unique_standalone_ids:EXPECTED_STANDALONE_IDS,joined_richer_ids:EXPECTED_STANDALONE_IDS-2,duplicate_richer_ids:0,rows_with_brand:25,distinct_brands:4},aggregates:[{brand:'Walmart',record_count:20,county_count:8},{brand:'H-E-B',record_count:5,county_count:3}]});
- assert.equal(result.joinConservation.missingRicherIds,2);
+test('D.5D rich brand recovery conserves the complete standalone-to-rich authority join and distinguishes measured zero',()=>{
+ const result=reconcileRichBrandEvidence({conservation:{standalone_rows:EXPECTED_STANDALONE_IDS,unique_standalone_ids:EXPECTED_STANDALONE_IDS,joined_richer_ids:EXPECTED_STANDALONE_IDS,duplicate_richer_ids:0,rows_with_brand:25,distinct_brands:4},aggregates:[{brand:'Walmart',record_count:20,county_count:8},{brand:'H-E-B',record_count:5,county_count:3}]});
+ assert.equal(result.joinConservation.missingRicherIds,0);
  assert.equal(result.rows.find(x=>x.brand==='Walmart').status,'MEASURED_PRESENT');
  assert.equal(result.rows.find(x=>x.brand==='Shell').status,'MEASURED_ZERO');
  assert.equal(result.globalSummary.requestedBrandsPresent,2);
  assert.equal(result.globalSummary.requestedBrandsZero,18);
  assert.equal(result.authorityRole,BRAND_AUTHORITY_ROLE);
  assert.deepEqual(result.precedence,['brand.names.primary',"brand.names.common['en']"]);
+ assert.throws(()=>reconcileRichBrandEvidence({conservation:{standalone_rows:EXPECTED_STANDALONE_IDS,unique_standalone_ids:EXPECTED_STANDALONE_IDS,joined_richer_ids:EXPECTED_STANDALONE_IDS-2,duplicate_richer_ids:0},aggregates:[]}),/RICHER_JOIN_CONSERVATION/);
  assert.throws(()=>reconcileRichBrandEvidence({conservation:{standalone_rows:EXPECTED_STANDALONE_IDS,unique_standalone_ids:EXPECTED_STANDALONE_IDS,joined_richer_ids:EXPECTED_STANDALONE_IDS,duplicate_richer_ids:1},aggregates:[]}),/DUPLICATE_ID_GATE/);
  assert.throws(()=>reconcileRichBrandEvidence({conservation:{standalone_rows:20,unique_standalone_ids:20},aggregates:[]}),/STANDALONE_CONSERVATION/);
 });
 
-test('D.5D metadata assigns each of the exact 149 IDs once and preserves Hitachi source evidence',()=>{
- const rows=Array.from({length:149},(_,i)=>({id:`id-${i}`,displayName:i===0?'Hitachi Energy Jefferson City':`record-${i}`,richerMatched:true,regionConflict:i%4===0,localityConflict:i%4===1,postcodeConflict:i%4===2,sourceRegion:i===0?'MO':'TX',sourceLocality:i===0?'Jefferson City':'local',sourcePostcode:i===0?'65101-5032':'75001'}));
+test('D.5D metadata assigns each exact one-address ID once and preserves all Hitachi source evidence',()=>{
+ const rows=Array.from({length:149},(_,i)=>({id:`id-${i}`,displayName:i===0?'Hitachi Energy Jefferson City':`record-${i}`,richerMatched:true,addressCount:1,regionConflict:i%4===0,localityConflict:i%4===1,postcodeConflict:i%4===2,sourceRegion:i===0?'MO':'TX',sourceLocality:i===0?'Jefferson City':'local',sourcePostcode:i===0?'65101-5032':'75001',sourceFreeform:i===0?'500 W Highway 94':'address',sourceCountry:'US'}));
  rows.filter((x,i)=>i%4===3).forEach(x=>{x.regionConflict=true;x.localityConflict=true;});
  rows[0].postcodeConflict=true;
  const result=reconcileMetadataEvidence(rows);
@@ -153,17 +154,18 @@ test('D.5D metadata assigns each of the exact 149 IDs once and preserves Hitachi
  assert.equal(result.joinConservation.duplicateClassifications,0);
  assert.equal(result.joinConservation.unexplainedConflictIds,0);
  assert.equal(result.hitachi.family,'MULTI_FIELD_CONFLICT');
- assert.deepEqual([result.hitachi.sourceRegion,result.hitachi.sourceLocality,result.hitachi.sourcePostcode],['MO','Jefferson City','65101-5032']);
+ assert.deepEqual([result.hitachi.sourceRegion,result.hitachi.sourceLocality,result.hitachi.sourcePostcode,result.hitachi.sourceFreeform,result.hitachi.sourceCountry],['MO','Jefferson City','65101-5032','500 W Highway 94','US']);
  assert.equal(result.sourceFieldsRewritten,false);
  assert.equal(classifyMetadataFamily({regionConflict:true}),'STATE_REGION_CONFLICT');
  assert.equal(classifyMetadataFamily({localityConflict:true}),'LOCALITY_CONFLICT');
  assert.equal(classifyMetadataFamily({postcodeConflict:true}),'POSTCODE_CONFLICT');
  assert.equal(classifyMetadataFamily({regionConflict:true,postcodeConflict:true}),'MULTI_FIELD_CONFLICT');
+ assert.throws(()=>reconcileMetadataEvidence(rows.map((row,i)=>i===1?{...row,addressCount:2}:row)),/METADATA_ADDRESS_CARDINALITY_DRIFT/);
 });
 
 test('D.5G metadata recovery SQL explicitly aliases every derived output',()=>{
  const query=metadataRecoveryQuery({conflictFile:'/tmp/metadata-conflicts.parquet',richFile:'/tmp/rich.parquet',governedLocality:'locality'});
- for(const alias of ['id','displayName','governedLocality','richerMatched','regionConflict','localityConflict','postcodeConflict','sourceRegion','sourceLocality','sourcePostcode']){
+ for(const alias of ['id','displayName','governedLocality','richerMatched','addressCount','regionConflict','localityConflict','postcodeConflict','sourceRegion','sourceLocality','sourcePostcode','sourceCountry','sourceFreeform']){
   assert.match(query,new RegExp(`\\bAS ${alias}\\b`),`${alias} must use explicit AS`);
  }
  assert.doesNotMatch(query,/CAST\([^)]*\)\s+(?!AS\b)[A-Za-z_][A-Za-z0-9_]*/i);
@@ -188,9 +190,10 @@ test('D.5F SQL unnests rich LIST<STRUCT> sources before source-field dereference
  assert.match(source,/src\.dataset/);
  assert.match(source,/src\.license/);
  assert.match(source,/src\.property/);
- assert.match(source,/r\.addresses\.region/);
- assert.match(source,/r\.addresses\.locality/);
- assert.match(source,/r\.addresses\.postcode/);
+ assert.match(source,/CROSS JOIN UNNEST\(joined\.addresses\) AS u\(addr\)/);
+ assert.match(source,/addr\.region/);
+ assert.match(source,/addr\.locality/);
+ assert.match(source,/addr\.postcode/);
  assert.match(source,/m\.governedLocality/);
  assert.match(source,/EXPECTED_STANDALONE_IDS=391772/);
  assert.match(source,/EXPECTED_CONFLICT_IDS=149/);
@@ -210,8 +213,8 @@ test('D.5F DuckDB recovery inventories rich source LIST<STRUCT> multiplicity wit
   const rich=path.join(directory,'overture-texas-rich-authority-dedup.parquet');
   const metadata=path.join(directory,'metadata-conflicts.parquet');
   sql(`COPY (SELECT cast(i AS VARCHAR) id,'001' county_fips,'standalone text, not a struct' sources FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(standalone)}' (FORMAT PARQUET)`);
-  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':CASE WHEN i=0 THEN 'Walmart' ELSE NULL END,'common':MAP(['en'],[NULL])}} brand,CASE WHEN i=0 THEN [{'property':'shops','dataset':'overture','license':'cdla'},{'property':'websites','dataset':'partners','license':'other'}] WHEN i=1 THEN [{'property':'shops','dataset':'overture','license':'cdla'}] WHEN i=2 THEN NULL ELSE [] END sources,{'freeform':NULL,'locality':'Elsewhere','postcode':'65101','region':'MO','country':'US'} addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
-  sql(`COPY (SELECT cast(i AS VARCHAR) id,CASE WHEN i=0 THEN 'Hitachi Energy Jefferson City' ELSE 'record-'||i END display_name,'SPATIAL_METADATA_CONFLICT' classification,'Governed' locality FROM range(149) t(i)) TO '${q(metadata)}' (FORMAT PARQUET)`);
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':CASE WHEN i=0 THEN 'Walmart' ELSE NULL END,'common':MAP(['en'],[NULL])}} brand,CASE WHEN i=0 THEN [{'property':'shops','dataset':'overture','license':'cdla'},{'property':'websites','dataset':'partners','license':'other'}] WHEN i=1 THEN [{'property':'shops','dataset':'overture','license':'cdla'}] WHEN i=2 THEN NULL ELSE [] END sources,[{'freeform':CASE WHEN i=0 THEN '500 W Highway 94' ELSE 'address' END,'locality':CASE WHEN i=0 THEN 'Jefferson City' ELSE 'Elsewhere' END,'postcode':CASE WHEN i=0 THEN '65101-5032' ELSE '65101' END,'region':'MO','country':'US'}] addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,CASE WHEN i=0 THEN 'Hitachi Energy Jefferson City' ELSE 'record-'||i END display_name,'001' county_fips,'Governed' locality,'governed address' address_text,'SPATIAL_METADATA_CONFLICT' classification FROM range(149) t(i)) TO '${q(metadata)}' (FORMAT PARQUET)`);
   const evidence=recoverOwnerEvidence(directory);
   assert.equal(evidence.brands.joinConservation.standaloneInputIds,EXPECTED_STANDALONE_IDS);
   assert.equal(evidence.sourceInventory.standalonePopulation,EXPECTED_STANDALONE_IDS);
@@ -225,12 +228,15 @@ test('D.5F DuckDB recovery inventories rich source LIST<STRUCT> multiplicity wit
   assert.equal(evidence.metadata.joinConservation.richerAuthorityMatches,149);
   assert.equal(evidence.metadata.joinConservation.familyCountSum,149);
   assert.equal(evidence.metadata.hitachi.displayName,'Hitachi Energy Jefferson City');
-  assert.deepEqual([evidence.metadata.hitachi.sourceRegion,evidence.metadata.hitachi.sourceLocality,evidence.metadata.hitachi.sourcePostcode],['MO','Elsewhere','65101']);
+  assert.deepEqual([evidence.metadata.hitachi.sourceRegion,evidence.metadata.hitachi.sourceLocality,evidence.metadata.hitachi.sourcePostcode,evidence.metadata.hitachi.sourceFreeform,evidence.metadata.hitachi.sourceCountry],['MO','Jefferson City','65101-5032','500 W Highway 94','US']);
   assert.equal(evidence.metadata.sourceFieldsRewritten,false);
   assert.match(evidence.artifactAudit.schemaAudit.relations.standalone.columns.find(x=>x.name==='sources').type,/VARCHAR/);
   assert.match(evidence.artifactAudit.schemaAudit.relations.rich.columns.find(x=>x.name==='sources').type,/STRUCT/);
 
-  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':'Walmart','common':MAP(['en'],['Walmart'])}} brand,'not structured' sources,{'locality':'x','postcode':'75001','region':'TX'} addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':NULL,'common':MAP(['en'],[NULL])}} brand,[]::STRUCT(property VARCHAR,dataset VARCHAR,license VARCHAR)[] sources,CASE WHEN i=1 THEN [{'freeform':'one','locality':'x','postcode':'75001','region':'TX','country':'US'},{'freeform':'two','locality':'x','postcode':'75001','region':'TX','country':'US'}] ELSE [{'freeform':CASE WHEN i=0 THEN '500 W Highway 94' ELSE 'address' END,'locality':CASE WHEN i=0 THEN 'Jefferson City' ELSE 'x' END,'postcode':CASE WHEN i=0 THEN '65101-5032' ELSE '75001' END,'region':CASE WHEN i=0 THEN 'MO' ELSE 'TX' END,'country':'US'}] END addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
+  assert.throws(()=>recoverOwnerEvidence(directory),/METADATA_ADDRESS_CARDINALITY_DRIFT/);
+
+  sql(`COPY (SELECT cast(i AS VARCHAR) id,{'names':{'primary':'Walmart','common':MAP(['en'],['Walmart'])}} brand,'not structured' sources,[{'freeform':'x','locality':'x','postcode':'75001','region':'TX','country':'US'}] addresses FROM range(${EXPECTED_STANDALONE_IDS}) t(i)) TO '${q(rich)}' (FORMAT PARQUET)`);
   assert.throws(()=>recoverOwnerEvidence(directory),/OWNER_ARTIFACT_SCHEMA_FAILED.*sources/);
  }finally{fs.rmSync(directory,{recursive:true,force:true});}
 });

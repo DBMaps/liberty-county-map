@@ -78,6 +78,7 @@ export function reconcileRichBrandEvidence({conservation,aggregates,sourceInvent
  const duplicateJoinIds=number(conservation.duplicate_richer_ids),joinMissingIds=input-joined;
  if(input!==EXPECTED_STANDALONE_IDS||unique!==EXPECTED_STANDALONE_IDS)throw Error(`STANDALONE_CONSERVATION_FAILED: expected ${EXPECTED_STANDALONE_IDS} unique IDs; got ${input} rows / ${unique} unique`);
  if(duplicateJoinIds!==0)throw Error(`RICHER_DUPLICATE_ID_GATE_FAILED: ${duplicateJoinIds} duplicate IDs`);
+ if(joined!==EXPECTED_STANDALONE_IDS||joinMissingIds!==0)throw Error(`RICHER_JOIN_CONSERVATION_FAILED: expected ${EXPECTED_STANDALONE_IDS} matches / 0 missing; got ${joined} matches / ${joinMissingIds} missing`);
  const lookup=new Map(aggregates.map(row=>[normalized(row.brand),row]));
  const rows=BRANDS.map(brand=>{const row=lookup.get(normalized(brand));return {brand,status:row?'MEASURED_PRESENT':'MEASURED_ZERO',recordCount:number(row?.record_count),countyCount:number(row?.county_count),communityRadiusRepresentation:null,ruralTailPresence:null,authorityRole:BRAND_AUTHORITY_ROLE};});
  return {status:'MEASURED_RECONCILED',classification:'RICH_STRUCTURED_BRAND_MEASURED',authorityRole:BRAND_AUTHORITY_ROLE,precedence:['brand.names.primary',"brand.names.common['en']"],joinConservation:{standaloneInputIds:input,uniqueStandaloneIds:unique,joinedRicherIds:joined,missingRicherIds:joinMissingIds,duplicateRicherMatches:duplicateJoinIds},globalSummary:{standaloneRowsAudited:input,rowsWithStructuredBrand:number(conservation.rows_with_brand),rowsWithoutStructuredBrand:input-number(conservation.rows_with_brand),distinctNormalizedBrands:number(conservation.distinct_brands),requestedBrandsPresent:rows.filter(x=>x.status==='MEASURED_PRESENT').length,requestedBrandsZero:rows.filter(x=>x.status==='MEASURED_ZERO').length,joinMissingIds,duplicateJoinIds},rows,sourceInventory:sourceInventory[0]??null};
@@ -94,10 +95,15 @@ export function classifyMetadataFamily({regionConflict=false,localityConflict=fa
 
 export function reconcileMetadataEvidence(rows){
  if(rows.length!==EXPECTED_CONFLICT_IDS||new Set(rows.map(x=>x.id)).size!==EXPECTED_CONFLICT_IDS)throw Error(`METADATA_CONFLICT_CONSERVATION_FAILED: expected ${EXPECTED_CONFLICT_IDS} unique IDs`);
+ const missing=rows.filter(x=>!x.richerMatched).length;
+ if(missing!==0)throw Error(`METADATA_RICHER_JOIN_FAILED: ${missing} missing IDs`);
+ const badAddressCardinality=rows.filter(x=>number(x.addressCount)!==1);
+ if(badAddressCardinality.length)throw Error(`METADATA_ADDRESS_CARDINALITY_DRIFT: expected exactly one address for all ${EXPECTED_CONFLICT_IDS} IDs; observed ${badAddressCardinality.length} IDs with zero or multiple addresses`);
  const classified=rows.map(row=>({...row,family:classifyMetadataFamily(row)}));
  if(classified.some(x=>!x.family))throw Error('METADATA_UNEXPLAINED_CONFLICT_ID_GATE_FAILED');
  const families=Object.fromEntries(['STATE_REGION_CONFLICT','LOCALITY_CONFLICT','POSTCODE_CONFLICT','MULTI_FIELD_CONFLICT'].map(name=>[name,classified.filter(x=>x.family===name).length]));
  const hitachi=classified.find(x=>x.displayName==='Hitachi Energy Jefferson City');
+ if(!hitachi||hitachi.sourceRegion!=='MO'||hitachi.sourceLocality!=='Jefferson City'||hitachi.sourcePostcode!=='65101-5032'||hitachi.sourceFreeform!=='500 W Highway 94'||hitachi.sourceCountry!=='US')throw Error('HITACHI_SOURCE_PRESERVATION_FAILED');
  return {status:'MEASURED_RECONCILED',joinConservation:{conflictIdsInput:rows.length,uniqueConflictIds:new Set(rows.map(x=>x.id)).size,richerAuthorityMatches:rows.filter(x=>x.richerMatched).length,classifiedFamilyRows:classified.length,familyCountSum:Object.values(families).reduce((a,b)=>a+b,0),duplicateClassifications:0,unexplainedConflictIds:0},families,precedence:'MULTI_FIELD_CONFLICT_WHEN_MORE_THAN_ONE_INDEPENDENT_FIELD_CONFLICTS_OTHERWISE_SINGLE_FIELD',sourceFieldsRewritten:false,hitachi,rows:classified};
 }
 
@@ -105,7 +111,7 @@ export function reconcileMetadataEvidence(rows){
 export function metadataRecoveryQuery({conflictFile,richFile,governedLocality}){
  const q=value=>`'${value.replaceAll("'","''")}'`;
  const conflicts=`read_parquet(${q(conflictFile)})`,rich=`read_parquet(${q(richFile)})`;
- return `WITH m AS (SELECT CAST(id AS VARCHAR) AS id,CAST(display_name AS VARCHAR) AS displayName,CAST(${governedLocality} AS VARCHAR) AS governedLocality FROM ${conflicts} WHERE classification='SPATIAL_METADATA_CONFLICT'), r AS (SELECT CAST(id AS VARCHAR) AS id,addresses FROM ${rich}) SELECT m.id AS id,m.displayName AS displayName,(r.id IS NOT NULL) AS richerMatched,(upper(trim(r.addresses.region)) NOT IN ('TX','TEXAS','')) AS regionConflict,(coalesce(trim(m.governedLocality),'')<>'' AND coalesce(trim(r.addresses.locality),'')<>'' AND lower(trim(m.governedLocality))<>lower(trim(r.addresses.locality))) AS localityConflict,(coalesce(trim(r.addresses.postcode),'')<>'' AND NOT regexp_matches(trim(r.addresses.postcode),'^(733|7[5-9]|885)')) AS postcodeConflict,r.addresses.region AS sourceRegion,r.addresses.locality AS sourceLocality,r.addresses.postcode AS sourcePostcode,m.governedLocality AS governedLocality FROM m LEFT JOIN r ON m.id=r.id ORDER BY m.id`;
+ return `WITH m AS (SELECT CAST(id AS VARCHAR) AS id,CAST(display_name AS VARCHAR) AS displayName,CAST(${governedLocality} AS VARCHAR) AS governedLocality FROM ${conflicts} WHERE classification='SPATIAL_METADATA_CONFLICT'), r AS (SELECT CAST(id AS VARCHAR) AS id,addresses FROM ${rich}), joined AS (SELECT m.id,m.displayName,m.governedLocality,r.id AS richerId,r.addresses FROM m LEFT JOIN r ON m.id=r.id) SELECT joined.id AS id,joined.displayName AS displayName,(joined.richerId IS NOT NULL) AS richerMatched,len(joined.addresses) AS addressCount,(upper(trim(addr.region)) NOT IN ('TX','TEXAS','')) AS regionConflict,(coalesce(trim(joined.governedLocality),'')<>'' AND coalesce(trim(addr.locality),'')<>'' AND lower(trim(joined.governedLocality))<>lower(trim(addr.locality))) AS localityConflict,(coalesce(trim(addr.postcode),'')<>'' AND NOT regexp_matches(trim(addr.postcode),'^(733|7[5-9]|885)')) AS postcodeConflict,addr.region AS sourceRegion,addr.locality AS sourceLocality,addr.postcode AS sourcePostcode,addr.country AS sourceCountry,addr.freeform AS sourceFreeform,joined.governedLocality AS governedLocality FROM joined CROSS JOIN UNNEST(joined.addresses) AS u(addr) ORDER BY joined.id`;
 }
 
 export function reconcileBrandAggregate(measured){
@@ -143,12 +149,16 @@ export function recoverOwnerEvidence(directory=path.join(root,'owner-local/lp241
   evidence.brands=reconcileBrandAggregate(measured)??evidence.brands;
  }
  if(fs.existsSync(conflictFile)&&fs.existsSync(richFile)){
-  requireSchema(path.basename(conflictFile),schemas.metadata,{id:/./,display_name:/./,classification:/./});
-  requireSchema(path.basename(richFile),schemas.rich,{id:/./,addresses:/^STRUCT\((?=.*region)(?=.*locality)(?=.*postcode)/is});
+  requireSchema(path.basename(conflictFile),schemas.metadata,{id:/./,display_name:/./,county_fips:/./,locality:/./,address_text:/./,classification:/./});
+  requireSchema(path.basename(richFile),schemas.rich,{id:/./,addresses:/^STRUCT\((?=.*freeform)(?=.*locality)(?=.*postcode)(?=.*region)(?=.*country)[\s\S]*\)\[\]$/is});
   const governedLocality=governedLocalityColumn(schemas.metadata);
   present.push(path.basename(conflictFile));
+  const conflictRelation=`read_parquet('${conflictFile.replaceAll("'","''")}')`,richRelation=`read_parquet('${richFile.replaceAll("'","''")}')`;
+  const metadataGate=queryParquet(conflictFile,`WITH m AS (SELECT cast(id AS varchar) id FROM ${conflictRelation} WHERE classification='SPATIAL_METADATA_CONFLICT'),r AS (SELECT cast(id AS varchar) id,addresses FROM ${richRelation}),j AS (SELECT m.id,r.id richer_id,len(r.addresses) address_count FROM m LEFT JOIN r ON m.id=r.id) SELECT count(*) input_rows,count(DISTINCT id) unique_ids,count(*) FILTER(WHERE richer_id IS NOT NULL) rich_matches,count(*) FILTER(WHERE richer_id IS NULL) missing_rich_ids,count(*) FILTER(WHERE address_count=1) one_address_ids,count(*) FILTER(WHERE coalesce(address_count,0)<>1) address_drift_ids FROM j`)[0];
+  if(number(metadataGate.input_rows)!==EXPECTED_CONFLICT_IDS||number(metadataGate.unique_ids)!==EXPECTED_CONFLICT_IDS)throw Error(`METADATA_CONFLICT_CONSERVATION_FAILED: expected ${EXPECTED_CONFLICT_IDS} unique IDs`);
+  if(number(metadataGate.rich_matches)!==EXPECTED_CONFLICT_IDS||number(metadataGate.missing_rich_ids)!==0)throw Error(`METADATA_RICHER_JOIN_FAILED: ${number(metadataGate.missing_rich_ids)} missing IDs`);
+  if(number(metadataGate.one_address_ids)!==EXPECTED_CONFLICT_IDS||number(metadataGate.address_drift_ids)!==0)throw Error(`METADATA_ADDRESS_CARDINALITY_DRIFT: owner-certified 149 one-address / 0 drift; observed ${number(metadataGate.one_address_ids)} one-address / ${number(metadataGate.address_drift_ids)} drift`);
   const rows=queryParquet(conflictFile,metadataRecoveryQuery({conflictFile,richFile,governedLocality}));
-  if(rows.some(x=>!x.richerMatched))throw Error(`METADATA_RICHER_JOIN_FAILED: ${rows.filter(x=>!x.richerMatched).length} missing IDs`);
   evidence.metadata=reconcileMetadataEvidence(rows);
   evidence.metadata.retainedSample=evidence.metadata.hitachi;
   evidence.artifactAudit.metadata={status:'MEASURED_RECONCILED'};
