@@ -670,6 +670,10 @@
     "test:lp24112c": "node --test tests/lp24112c-final-counsel-handoff.test.mjs",
     "build:lp24113": "node tools/lp24113/compliance-implementation.mjs --write",
     "verify:lp24113": "node tools/lp24113/compliance-implementation.mjs --verify",
-    "test:lp24113": "node --test tests/lp24113-compliance-implementation.test.mjs"
+    "test:lp24113": "node --test tests/lp24113-compliance-implementation.test.mjs",
+    "build:lp24114": "node tools/lp24114/non-production-rehearsal.mjs --write",
+    "verify:lp24114": "node tools/lp24114/non-production-rehearsal.mjs --verify",
+    "test:lp24114": "node --test tests/lp24114-non-production-rehearsal.test.mjs",
+    "rehearse:lp24114": "node tools/lp24114/non-production-rehearsal.mjs --rehearse"
   }
 }

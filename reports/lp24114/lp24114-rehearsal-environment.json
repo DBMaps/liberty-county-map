@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "gridly.lp24114.environment.v1",
+  "rehearsalId": "LP241.14",
+  "environment": "NON_PRODUCTION",
+  "rehearsalMode": "NON_PRODUCTION",
+  "productionProviderGate": "OFF",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+  "lp24113ComplianceEligible": true,
+  "productionProviderEligible": false,
+  "runtimeActive": false,
+  "deployed": false,
+  "productionSupabaseMutation": false
+}
