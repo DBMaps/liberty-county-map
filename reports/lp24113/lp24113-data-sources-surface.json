@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "gridly.lp24113.data-sources-surface.v1",
+  "id": "DATA_SOURCES_AND_LICENSES",
+  "navigation": [
+    "Settings",
+    "About & Support",
+    "About Gridly",
+    "Data Sources & Licenses"
+  ],
+  "activation": "DORMANT_BEHIND_POI_FEATURE_GATE",
+  "productionVisible": false,
+  "poiSection": {
+    "authority": "Gridly POI authority",
+    "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+    "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+    "overtureMapsPlacesProvenance": true,
+    "observedLicenseFamilies": [
+      "CDLA-Permissive-2.0",
+      "Apache-2.0",
+      "CC0-1.0"
+    ],
+    "foursquareAttribution": true,
+    "completeFoursquareNoticePath": "poi/lp24111-d5-standalone-2026-08-28/legal/foursquare/NOTICE.txt",
+    "licenseReferences": {
+      "cdla": {
+        "url": "https://cdla.dev/permissive-2-0/",
+        "available": true
+      },
+      "apache": {
+        "url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "available": true
+      },
+      "cc0": {
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+        "available": true
+      }
+    },
+    "allThePlacesCc0Provenance": true,
+    "modificationStatement": "Gridly uses modified Overture Maps Places data. Gridly transforms, filters, normalizes, classifies, deduplicates and projects source POI records into its Texas-focused POI dataset.",
+    "censusAcknowledgement": "U.S. Census Bureau geography supports Texas, county, and community governance context; the Census Bureau does not supply POI records in this authority.",
+    "osmStatement": "OpenStreetMap is not merged into this POI authority and no OSM supplement is part of this release.",
+    "nonAffiliationStatement": "Business names and trademarks are the property of their respective owners. Their appearance in Gridly does not imply affiliation with or endorsement of Gridly.",
+    "releaseInformation": true,
+    "independentMapLayerAttributionSeparate": true
+  }
+}

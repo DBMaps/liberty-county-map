@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "gridly.poi.license-reference-manifest.v1",
+  "references": {
+    "cdla": {
+      "url": "https://cdla.dev/permissive-2-0/",
+      "available": true
+    },
+    "apache": {
+      "url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "available": true
+    },
+    "cc0": {
+      "url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+      "available": true
+    }
+  },
+  "allThePlacesProvenancePreserved": true,
+  "foursquareNotice": "foursquare/NOTICE.txt"
+}

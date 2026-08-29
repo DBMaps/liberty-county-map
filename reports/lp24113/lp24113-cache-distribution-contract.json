@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "gridly.lp24113.cache-distribution.v1",
+  "releaseVersionedLongLivedCachePermitted": true,
+  "cacheDoesNotRemoveLicenseOrNoticeRequirements": true,
+  "legalManifestRemainsAssociated": true,
+  "newAuthorityReleaseRequiresNewComplianceBinding": true,
+  "unrestrictedWholeTexasClientSearch": false,
+  "shardRegeneration": false
+}

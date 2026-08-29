@@ -1,0 +1,4 @@
+Gridly POI third-party legal materials
+
+Foursquare: foursquare/NOTICE.txt
+License references: license-reference-manifest.json

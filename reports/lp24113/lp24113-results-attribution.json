@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "gridly.lp24113.results-attribution.v1",
+  "version": "GRIDLY_POI_RESULTS_ATTRIBUTION_V1",
+  "wording": "POI data sources and licenses",
+  "target": "DATA_SOURCES_AND_LICENSES",
+  "persistentAndReadilyReachableWhenProviderActive": true,
+  "perRecordLegalParagraphs": false,
+  "productionActive": false
+}

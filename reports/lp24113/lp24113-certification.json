@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "gridly.lp24113.certification.v1",
+  "phaseState": "PHASE_LP24113_COMPLIANCE_IMPLEMENTATION_CERTIFIED",
+  "nonProductionRehearsalEligible": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "externalCounselReviewed": false,
+  "ownerAuthorizedProceed": true,
+  "productionBehaviorChanged": false,
+  "deployed": false,
+  "productionSupabaseMutation": false,
+  "overtureRefetch": false,
+  "osmMerged": false,
+  "upstreamDataRerun": false,
+  "normalization": false,
+  "shardRegeneration": false,
+  "phoneTesting": false,
+  "nextOwnerAction": "Merge LP241.13, then authorize LP241.14 to execute the documented rehearsal only in a non-production environment."
+}
