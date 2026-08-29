@@ -1,8 +1,7 @@
 {
-  "schemaVersion": "gridly.lp24111.osm.v2",
-  "classification": "INSUFFICIENT_EVIDENCE",
-  "incrementalUniqueCoverage": null,
-  "duplicateOverlap": null,
-  "odbl": "LEGAL_REVIEW_REQUIRED",
-  "merged": false
+  "schemaVersion": "gridly.lp24111.d4.osm.v1",
+  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "decision": "INSUFFICIENT_EVIDENCE",
+  "merged": false,
+  "odblReview": "LEGAL_REVIEW_REQUIRED"
 }

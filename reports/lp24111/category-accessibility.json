@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "gridly.lp24111.d4.accessibility.v1",
+  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "standaloneAuthorityRows": 391772,
+  "radiiMiles": [
+    5,
+    10,
+    25
+  ],
+  "coreCategories": [
+    "FUEL",
+    "GROCERY",
+    "LODGING",
+    "HOSPITAL",
+    "PHARMACY",
+    "RESTAURANT",
+    "CONVENIENCE"
+  ],
+  "communityCount": 1888
+}

@@ -1,88 +1,34 @@
 {
-  "schemaVersion": "gridly.lp24111.non-place.v1",
-  "executionState": "NOT_EXECUTED",
+  "schemaVersion": "gridly.lp24111.d4.non-place.v1",
+  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "standaloneAuthorityRows": 391772,
+  "radiiMiles": [
+    5,
+    10,
+    25
+  ],
+  "coreCategories": [
+    "FUEL",
+    "GROCERY",
+    "LODGING",
+    "HOSPITAL",
+    "PHARMACY",
+    "RESTAURANT",
+    "CONVENIENCE"
+  ],
+  "expectedCount": 29,
+  "measuredCount": 0,
   "governedInventory": {
     "total": 29,
     "houstonRegions": 15,
     "sanAntonioRegions": 9,
     "ordinaryCommunities": 5
   },
-  "note": "All 29 remain governed; five ordinary identities are enumerated here. Region anchors require build-authority export before measurement.",
-  "rows": [
-    {
-      "governedId": "moss-hill",
-      "name": "Moss Hill",
-      "countyId": "liberty-tx",
-      "placeGeoid": null,
-      "anchor": {
-        "latitude": 30.253,
-        "longitude": -94.748
-      },
-      "radiiMiles": {
-        "5": null,
-        "10": null,
-        "25": null
-      },
-      "coverage": "NOT_EXECUTED"
-    },
-    {
-      "governedId": "raywood",
-      "name": "Raywood",
-      "countyId": "liberty-tx",
-      "placeGeoid": null,
-      "anchor": {
-        "latitude": 30.0366,
-        "longitude": -94.6716
-      },
-      "radiiMiles": {
-        "5": null,
-        "10": null,
-        "25": null
-      },
-      "coverage": "NOT_EXECUTED"
-    },
-    {
-      "governedId": "tarkington",
-      "name": "Tarkington",
-      "countyId": "liberty-tx",
-      "placeGeoid": null,
-      "anchor": {
-        "latitude": 30.3205,
-        "longitude": -94.996
-      },
-      "radiiMiles": {
-        "5": null,
-        "10": null,
-        "25": null
-      },
-      "coverage": "NOT_EXECUTED"
-    },
-    {
-      "governedId": "new-caney",
-      "name": "New Caney",
-      "countyId": "montgomery-tx",
-      "placeGeoid": null,
-      "anchor": null,
-      "radiiMiles": {
-        "5": null,
-        "10": null,
-        "25": null
-      },
-      "coverage": "NOT_EXECUTED"
-    },
-    {
-      "governedId": "porter",
-      "name": "Porter",
-      "countyId": "montgomery-tx",
-      "placeGeoid": null,
-      "anchor": null,
-      "radiiMiles": {
-        "5": null,
-        "10": null,
-        "25": null
-      },
-      "coverage": "NOT_EXECUTED"
-    }
-  ],
-  "noFabricatedPlaceGeoids": true
+  "noFabricatedPlaceGeoids": true,
+  "tarkington": {
+    "identityType": "GOVERNED_NON_PLACE",
+    "placeGeoid": null,
+    "measurement": "NOT_EXECUTED"
+  },
+  "rows": []
 }
