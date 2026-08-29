@@ -29,7 +29,10 @@ test('D.4 governed inventories and fail-closed boundaries are preserved',()=>{
  assert.equal(a['attribution-source-inventory.json'].reviewState,'LEGAL_REVIEW_REQUIRED');
  assert.equal(a['osm-supplement-evaluation.json'].merged,false);
  assert.equal(a['certification.json'].productionPoiSearch,'NOT_LAUNCHED_NOT_CERTIFIED');
- assert.equal(a['certification.json'].executiveResult,'PHASE_D4_MEASUREMENT_INCOMPLETE');
+ const d4Measured=a['county-coverage.json'].executionState==='OWNER_LOCAL_MEASURED'
+  &&Object.values(a['certification.json'].evidenceCompletenessGate??{}).length>0
+  &&Object.values(a['certification.json'].evidenceCompletenessGate).every(Boolean);
+ assert.equal(a['certification.json'].executiveResult,d4Measured?'PHASE_D4_MEASURED_STATEWIDE_COVERAGE_AND_QUALITY_CERTIFIED':'PHASE_D4_MEASUREMENT_INCOMPLETE');
 });
 
 test('radius, nearest category, metadata, and fanout calculations are deterministic',()=>{
