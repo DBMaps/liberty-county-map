@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp24118.rollback.v1",
+  "milestone": "LP241.18",
+  "assessmentOnly": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "deployed": false,
+  "productionBehaviorChanged": false,
+  "ready": false,
+  "preferredBehavior": [
+    "provider gate OFF",
+    "browser POI provider disabled",
+    "previous production behavior restored"
+  ],
+  "currentFinding": "Production behavior is presently unchanged, so there is nothing to roll back. Future activation rollback is blocked until an explicit default-OFF browser gate exists and is tested independently of authority, shards, user state, Supabase schema, and unrelated deployment changes.",
+  "requiresAuthorityRebuild": false,
+  "requiresShardRegeneration": false,
+  "requiresUserStateDeletion": false,
+  "requiresSupabaseSchemaChange": false,
+  "fallbackAllowed": false
+}

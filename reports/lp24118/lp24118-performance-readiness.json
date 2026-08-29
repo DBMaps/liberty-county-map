@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "gridly.lp24118.performance.v1",
+  "milestone": "LP241.18",
+  "assessmentOnly": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "deployed": false,
+  "productionBehaviorChanged": false,
+  "ready": false,
+  "evidence": {
+    "totalCompressedBytes": 19639699,
+    "shardCount": 86,
+    "maxCandidateShardFanout": 4,
+    "resultLimit": 50,
+    "denseMetroExample": "Dallas 25 mi: 4 candidates, 59,924 eligible records, 50 returned in Node rehearsal",
+    "cacheReuse": "Node rehearsal suppresses duplicate physical loads"
+  },
+  "finding": "Total-release and fanout bounds are known, but realistic browser compressed bytes, decompressed heap, decode latency, cache reuse, UI responsiveness, and mobile portrait behavior have not been measured. Whole-state loading is prohibited.",
+  "requiredAcceptance": [
+    "localhost or protected non-production static delivery using real assets",
+    "mobile portrait real-device measurement",
+    "dense-metro 4-shard network/decode/heap/UI measurement",
+    "repeat-query cache isolation/reuse measurement",
+    "network failure and unsupported decompression fail-closed proof"
+  ]
+}

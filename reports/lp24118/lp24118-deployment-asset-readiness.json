@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "gridly.lp24118.deployment-assets.v1",
+  "milestone": "LP241.18",
+  "assessmentOnly": true,
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "deployed": false,
+  "productionBehaviorChanged": false,
+  "ready": false,
+  "repository": {
+    "manifestTracked": true,
+    "trackedShardCount": 86,
+    "immutableReleasePath": true,
+    "caseSensitivePathsConsistent": true,
+    "legalArtifactsTracked": true
+  },
+  "deployment": {
+    "currentCloudflarePagesStagingIncludesPoiFamily": false,
+    "capacitorWorkflowIncludesPoiFamily": false,
+    "githubPagesWorkflowFound": false,
+    "manifestServedProven": false,
+    "allShardsServedProven": false,
+    "legalSurfaceServedProven": false,
+    "mimeTypeProven": false,
+    "contentEncodingProven": false,
+    "cacheHeadersControlled": false,
+    "relativeUrlResolutionProven": false
+  },
+  "gzipFinding": "The files are gzip containers named .json.gz. Static hosts may serve them as application/gzip without Content-Encoding: gzip, so fetch does not guarantee transparent decompression; headers and browser behavior require non-production deployment proof."
+}
