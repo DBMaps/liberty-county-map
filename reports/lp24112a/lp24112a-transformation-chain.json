@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "gridly.lp24112a.transformation-chain.v1",
+  "legalCharacterization": false,
+  "stages": [
+    {
+      "stage": "source extraction",
+      "operation": "extract pinned Overture place IDs/geometry and rich fields",
+      "effect": "preserves selected source values; discards unprojected source fields"
+    },
+    {
+      "stage": "Texas scoping",
+      "operation": "intersect with 2025 Census Texas county geometry",
+      "effect": "suppresses out-of-scope records; derives county assignment"
+    },
+    {
+      "stage": "normalization",
+      "operation": "normalize source records to the governed build schema",
+      "effect": "preserves original source metadata upstream; derives normalized fields"
+    },
+    {
+      "stage": "deduplication",
+      "operation": "select governed standalone identity from duplicate clusters",
+      "effect": "suppresses duplicate members"
+    },
+    {
+      "stage": "taxonomy classification",
+      "operation": "map source categories into Gridly taxonomy",
+      "effect": "changes classification; derives gridlyCategory"
+    },
+    {
+      "stage": "destination eligibility",
+      "operation": "apply governed destination eligibility",
+      "effect": "suppresses ineligible/review-required records"
+    },
+    {
+      "stage": "identity governance",
+      "operation": "assign county and canonical/non-place community context",
+      "effect": "derives countyContextId and communityIdentity"
+    },
+    {
+      "stage": "child/duplicate suppression",
+      "operation": "exclude children and non-selected duplicate members",
+      "effect": "suppresses records and retains evidence upstream only"
+    },
+    {
+      "stage": "coverage certification",
+      "operation": "measure governed authority and bounded coverage",
+      "effect": "does not add client fields"
+    },
+    {
+      "stage": "compact runtime projection",
+      "operation": "project only runtime contract fields into immutable shards",
+      "effect": "preserves selected display/coordinate values; derives Gridly fields; discards raw metadata, addresses, conflation and suppressed-member detail from runtime"
+    }
+  ],
+  "technicalEvidence": [
+    {
+      "artifact": "reports/lp24111/refresh-pipeline.json",
+      "claim": "manufacturing stages"
+    },
+    {
+      "artifact": "reports/lp24111/d5-runtime-authority-contract.json",
+      "claim": "included/excluded populations"
+    },
+    {
+      "artifact": "reports/lp24112/lp24112-runtime-data-contract.json",
+      "claim": "runtime fields"
+    }
+  ]
+}

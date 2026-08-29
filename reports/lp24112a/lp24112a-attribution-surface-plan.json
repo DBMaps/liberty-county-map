@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "gridly.lp24112a.attribution-surfaces.v1",
+  "approvalState": "UNAPPROVED_PLACEHOLDERS_ONLY",
+  "surfaces": [
+    {
+      "location": "POI map/results surface",
+      "content": "[COUNSEL-APPROVED ATTRIBUTION TEXT]"
+    },
+    {
+      "location": "About / Legal page",
+      "content": "[COUNSEL-APPROVED SOURCE NOTICE]"
+    },
+    {
+      "location": "results-to-legal link",
+      "content": "[COUNSEL-APPROVED LICENSE LINK]"
+    },
+    {
+      "location": "data source/version disclosure",
+      "content": "authority release lp24111-d5-standalone-2026-08-28"
+    },
+    {
+      "location": "source inventory reference",
+      "content": "[COUNSEL-APPROVED SOURCE INVENTORY REFERENCE]"
+    }
+  ],
+  "provenanceSummary": "OPTIONAL_ONLY_AFTER_COUNSEL_APPROVAL",
+  "technicalEvidence": [
+    {
+      "artifact": "reports/lp24112/lp24112-legal-ready-integration.json",
+      "claim": "legal-ready hooks"
+    }
+  ]
+}

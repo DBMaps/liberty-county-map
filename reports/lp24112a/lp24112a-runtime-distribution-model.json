@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "gridly.lp24112a.runtime-distribution.v1",
+  "runtimeFields": {
+    "required": [
+      "id",
+      "displayName",
+      "gridlyCategory",
+      "latitude",
+      "longitude",
+      "countyContextId",
+      "communityIdentity"
+    ],
+    "optional": [
+      "brand",
+      "provenanceSummary"
+    ],
+    "excluded": [
+      "freeformAddress",
+      "rawSourceMetadata",
+      "conflationEvidence",
+      "suppressedMembers"
+    ]
+  },
+  "delivery": {
+    "format": "ONE_DEGREE_JSON_GZIP_SHARDS",
+    "namespace": "IMMUTABLE_AUTHORITY_RELEASE_AND_RUNTIME_SCHEMA",
+    "selection": "LOCAL_BOUNDED_INTERSECTING_SHARDS",
+    "allowedRadiiMiles": [
+      5,
+      10,
+      25
+    ],
+    "wholeTexasClientQueryOrDownload": false,
+    "maximumShardFanout": 4,
+    "cache": "immutable versioned assets; 31536000 seconds; release/schema change selects a new namespace"
+  },
+  "measurements": {
+    "standaloneRows": 391772,
+    "statewideCompressedBytes": 24040589,
+    "largestShard": "tx-29-096",
+    "largestShardCompressedBytes": 4144301,
+    "shardsOver10MiB": 0,
+    "shardsOver25MiB": 0
+  },
+  "redistributionLegalConclusion": false,
+  "counselQuestion": "Does the proposed compressed-shard delivery constitute redistribution, and what obligations apply?",
+  "technicalEvidence": [
+    {
+      "artifact": "reports/lp24111/d5-package-delivery-readiness.json",
+      "claim": "measured package and fanout"
+    },
+    {
+      "artifact": "reports/lp24112/lp24112-cache-delivery-contract.json",
+      "claim": "cache model"
+    },
+    {
+      "artifact": "reports/lp24112/lp24112-shard-resolution-contract.json",
+      "claim": "bounded resolution"
+    }
+  ]
+}

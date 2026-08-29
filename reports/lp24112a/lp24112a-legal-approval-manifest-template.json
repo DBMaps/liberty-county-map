@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "gridly.lp24112a.legal-approval-manifest.v1",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+  "reviewedSourceInventoryHash": "d5335e992ddfbb6787f2a14fa353ec74c205213c81104625a283ad9c292b4704",
+  "approvedAt": null,
+  "approvedBy": null,
+  "attributionText": "[COUNSEL-APPROVED ATTRIBUTION TEXT]",
+  "sourceNotice": "[COUNSEL-APPROVED SOURCE NOTICE]",
+  "licenseLinks": [
+    "[COUNSEL-APPROVED LICENSE LINK]"
+  ],
+  "runtimeAttributionSurfaceApproved": false,
+  "redistributionApproved": false,
+  "cacheModelApproved": false,
+  "brandPresentationApproved": false,
+  "additionalConditions": [],
+  "legalClearanceStatus": "NOT_APPROVED",
+  "templateOnly": true
+}
