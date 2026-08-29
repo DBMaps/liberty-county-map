@@ -152,7 +152,12 @@ export function verify(options={}){
  if(a['overture-release.json'].releaseId!==release || uri.includes('latest')) throw Error('release pin failed');
  if(a['texas-extraction-summary.json'].spatialAuthority.rows!==1462815) throw Error('owner authority count failed');
  if(a['county-assignment-certification.json'].uniqueIds!==1462815 || a['county-assignment-certification.json'].uniqueCountyAssignments!==1462815 || a['county-assignment-certification.json'].unassigned!==0 || a['county-assignment-certification.json'].boundaryMulti!==0 || !a['county-assignment-certification.json'].zeroCountLoss) throw Error('exact assignment conservation failed');
- if(a['county-coverage.json'].accountedCountyCount!==254 || a['county-coverage.json'].withoutPois!==0) throw Error('county evidence failed');
+ const county=a['county-coverage.json'];
+ if(county.executionState==='OWNER_LOCAL_MEASURED'){
+  const rowTotal=county.rows?.reduce((sum,row)=>sum+(Number(row.standalonePoiCount)||0),0);
+  const authorityTotal=county.countyAssignmentTotal??county.standaloneAuthorityRows;
+  if(county.expectedCountyCount!==254||county.accountedCountyCount!==254||county.unknownCountyAssignments!==0||county.rows?.length!==254||(authorityTotal!==undefined&&rowTotal!==authorityTotal))throw Error('county evidence failed');
+ }else if(county.accountedCountyCount!==254||county.withoutPois!==0)throw Error('county evidence failed');
  const r=a['rich-authority-conservation.json'];
  if(r.inputShardRows!==1462893 || r.uniqueIds!==1462815 || r.crossShardDuplicateIds!==52 || r.extraDuplicateRows!==78 || r.maximumShardOccurrencesPerId!==4 || r.missingAuthorityIds!==0 || r.outsideAuthorityIds!==0) throw Error('rich conservation evidence failed');
  if(a['community-coverage.json'].canonicalPlaceAccounted!==1859) throw Error('PLACE inventory failed');

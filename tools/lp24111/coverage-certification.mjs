@@ -92,11 +92,11 @@ export const coverageSql=Object.freeze({
 });
 
 /** Execute a DuckDB statement and retain the first failing stage and stderr. */
-export function duckdbRunner({directory,executable=process.env.DUCKDB||'duckdb'}){
+export function duckdbRunner({directory,executable=process.env.DUCKDB||'duckdb',executableArgs=[]}){
  const database=path.join(directory,'coverage-measurements.duckdb');
  return (stage,sql,{json=true}={})=>{
   const command=[database,'-batch','-noheader',...(json?['-json']:[]),'-c',sql];
-  const result=spawnSync(executable,command,{encoding:'utf8',maxBuffer:1024*1024*256});
+  const result=spawnSync(executable,[...executableArgs,...command],{encoding:'utf8',maxBuffer:1024*1024*256});
   if(result.error||result.status!==0)throw Error(`Stage ${stage} failed: ${String(result.stderr||result.error?.message||'DuckDB exited unsuccessfully').trim()}`);
   if(!json)return result.stdout;
   try{return result.stdout.trim()?JSON.parse(result.stdout):[];}catch(error){throw Error(`Stage ${stage} failed: invalid DuckDB JSON output: ${error.message}`);}

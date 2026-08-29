@@ -44,11 +44,12 @@ function measuredEnvelope(){
  const names=['county-coverage.json','community-radius-coverage.json','governed-non-place-coverage.json','category-accessibility.json','metadata-conflicts.json','brand-coverage.json','rural-tail-coverage.json','lp24110-cohort-reconciliation.json','owner-poc-coverage-reconciliation.json','community-coverage-quality.json','coverage-fanout.json','attribution-source-inventory.json','osm-supplement-evaluation.json','certification.json','exception-ledger.json'];
  const reports=Object.fromEntries(names.map(name=>[name,structuredClone(absent[name])]));
  const radiiMiles={5:{standalonePoiCount:1},10:{standalonePoiCount:1},25:{standalonePoiCount:1}};
- Object.assign(reports['county-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',countyAssignmentTotal:391772,withoutPois:0});
- reports['county-coverage.json'].rows=reports['county-coverage.json'].rows.map(row=>({...row,measurement:'OWNER_LOCAL_MEASURED',standalonePoiCount:1}));
+ Object.assign(reports['county-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',expectedCountyCount:254,accountedCountyCount:254,countyAssignmentTotal:391772,unknownCountyAssignments:0});
+ delete reports['county-coverage.json'].withoutPois;
+ reports['county-coverage.json'].rows=reports['county-coverage.json'].rows.map((row,index)=>({...row,measurement:'OWNER_LOCAL_MEASURED',standalonePoiCount:index===0?391519:1}));
  Object.assign(reports['community-radius-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',measuredPlaceCount:1859});
  reports['community-radius-coverage.json'].rows=reports['community-radius-coverage.json'].rows.map(row=>({...row,measurement:'OWNER_LOCAL_MEASURED',radiiMiles}));
- const nonPlaceRows=Array.from({length:29},(_,i)=>({stableGovernedIdentity:i===0?'liberty-tx:tarkington':`fixture-${i}`,identityType:'GOVERNED_NON_PLACE',placeGeoid:null,radiiMiles}));
+ const nonPlaceRows=Array.from({length:29},(_,i)=>({stableGovernedIdentity:i===0?'liberty-tx:tarkington':`fixture-${i}`,communityKey:i===0?'tarkington':`fixture-${i}`,displayLabel:i===0?'Tarkington':`Fixture ${i}`,identityClass:'GOVERNED_NON_PLACE',placeGeoid:null,radiiMiles}));
  Object.assign(reports['governed-non-place-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',measuredCount:29,missingAnchors:0,rows:nonPlaceRows,tarkington:nonPlaceRows[0]});
  Object.assign(reports['metadata-conflicts.json'],{executionState:'OWNER_LOCAL_MEASURED',recordsAudited:391772});
  Object.assign(reports['brand-coverage.json'],{executionState:'OWNER_LOCAL_MEASURED',recordsAudited:391772});
@@ -56,6 +57,7 @@ function measuredEnvelope(){
  reports['owner-poc-coverage-reconciliation.json'].rows=[{area:'Dayton / Liberty'},{area:'Tarkington'},{area:'Pecos'}];
  reports['coverage-fanout.json'].executionState='OWNER_LOCAL_MEASURED';
  reports['attribution-source-inventory.json'].executionState='OWNER_LOCAL_MEASURED';
+ reports['exception-ledger.json'].exceptions=[{id:'LICENSE_COUNSEL_REVIEW',severity:'BLOCKER'},{id:'LEGAL_REVIEW_REQUIRED',severity:'BLOCKER'}];
  Object.assign(reports['certification.json'],{executiveResult:'PHASE_D4_MEASURED_STATEWIDE_COVERAGE_AND_QUALITY_CERTIFIED',productViability:'OVERTURE_TEXAS_POI_AUTHORITY_VIABLE_WITH_TARGETED_COVERAGE_REFINEMENT',productionPoiSearch:'NOT_LAUNCHED_NOT_CERTIFIED',legalState:'LEGAL_REVIEW_REQUIRED'});
  return {schemaVersion:'gridly.lp24111.measured-coverage.v1',releaseId:'2026-08-19.0',reports};
 }
@@ -72,8 +74,15 @@ test('D.4 fallback remains truthful and a valid measured envelope reconciles eve
  assert.equal(measured['county-coverage.json'].accountedCountyCount,254);
  assert.equal(measured['community-radius-coverage.json'].rows.length,1859);
  assert.equal(measured['governed-non-place-coverage.json'].rows.length,29);
- assert.deepEqual([measured['governed-non-place-coverage.json'].tarkington.identityType,measured['governed-non-place-coverage.json'].tarkington.placeGeoid],['GOVERNED_NON_PLACE',null]);
+ const tarkington=measured['governed-non-place-coverage.json'].rows.find(row=>row.communityKey==='tarkington');
+ assert.deepEqual([tarkington.identityClass,tarkington.placeGeoid],['GOVERNED_NON_PLACE',null]);
  assert.equal(measured['certification.json'].executiveResult,'PHASE_D4_MEASURED_STATEWIDE_COVERAGE_AND_QUALITY_CERTIFIED');
+ assert.equal(measured['exception-ledger.json'].exceptions.some(x=>x.id==='REMAINING_PHASE_D_MEASUREMENTS_NOT_EXECUTED'),false);
+ assert.ok(measured['exception-ledger.json'].exceptions.some(x=>x.id==='LICENSE_COUNSEL_REVIEW'&&x.severity==='BLOCKER'));
+ assert.ok(measured['exception-ledger.json'].exceptions.some(x=>x.id==='LEGAL_REVIEW_REQUIRED'&&x.severity==='BLOCKER'));
+ assert.equal(measured['certification.json'].productViability,'OVERTURE_TEXAS_POI_AUTHORITY_VIABLE_WITH_TARGETED_COVERAGE_REFINEMENT');
+ assert.equal(measured['certification.json'].zeroCostContract,'NON_RUNTIME');
+ assert.equal(measured['certification.json'].legalState,'LEGAL_REVIEW_REQUIRED');
  assert.equal('reason' in measured['county-coverage.json'],false);
  assert.doesNotMatch(JSON.stringify(measured['county-coverage.json']),/NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT|inputs are absent/i);
 });
@@ -139,9 +148,9 @@ test('production D.4 SQL parses and measures PLACE and non-PLACE fixtures',{skip
 
 test('DuckDB runner reports the first SQL stage and does not continue',()=>{
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'lp24111-fail-fast-'));
- const executable=path.join(directory,'fail-duckdb.sh');
- fs.writeFileSync(executable,"#!/bin/sh\necho 'Binder Error: fixture failure' >&2\nexit 1\n",{mode:0o755});
- const run=duckdbRunner({directory,executable});
+ const fixture=path.join(directory,'fail-duckdb.mjs');
+ fs.writeFileSync(fixture,"console.error('Binder Error: fixture failure');\nprocess.exit(1);\n");
+ const run=duckdbRunner({directory,executable:process.execPath,executableArgs:[fixture]});
  assert.throws(()=>run('MEASURE_PLACES','SELECT invalid'),/Stage MEASURE_PLACES failed: Binder Error: fixture failure/);
  assert.equal(fs.existsSync(path.join(directory,'phase-d4-certified-measurements.json')),false);
 });
