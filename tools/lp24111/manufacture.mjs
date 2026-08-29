@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {certificationGate} from './identity-governance.mjs';
+import {pendingReports,validateEnvelope} from './coverage-certification.mjs';
 
 const root=path.resolve(import.meta.dirname,'../..');
 const out=path.join(root,'reports/lp24111');
@@ -107,7 +108,8 @@ export function artifacts(options={}){
   if(d2.schemaVersion!=='gridly.lp24111.measured-taxonomy-package.v1'||!d2.reports)throw Error('Invalid owner-local D.2 measurements');
   for(const [name,value] of Object.entries(d2.reports)){if(!(name in files))throw Error(`Unknown D.2 measured report ${name}`);files[name]={...files[name],...value};delete files[name].reason;}
  }
- const d3Path=options.d3MeasurementsPath??path.join(root,'owner-local/lp24111/phase-d3-identity-measurements.json');
+ const ownerD3=path.join(root,'owner-local/lp24111/phase-d3-identity-measurements.json');
+ const d3Path=options.d3MeasurementsPath??(fs.existsSync(ownerD3)?ownerD3:path.join(root,'data/lp24111/phase-d3-identity-measurements.json'));
  if(fs.existsSync(d3Path)){
   const d3=JSON.parse(fs.readFileSync(d3Path,'utf8'));
   if(d3.schemaVersion!=='gridly.lp24111.measured-identity.v1'||d3.releaseId!==release||!d3.reports)throw Error('Invalid owner-local D.3 identity measurements');
@@ -116,6 +118,16 @@ export function artifacts(options={}){
   files['certification.json']={...files['certification.json'],evidenceCompletenessGate:gate.gates,executiveResult:gate.passed?'PHASE_D3_MEASURED_POI_IDENTITY_CERTIFIED':'PHASE_D3_MEASURED_IDENTITY_COUNTS_EVIDENCE_RECONCILIATION_PENDING',productionPoiSearch:'NOT_LAUNCHED_NOT_CERTIFIED',mergeRecommendation:gate.passed?'IDENTITY_EVIDENCE_COMPLETE_MERGE_ELIGIBLE':'DO_NOT_CERTIFY_IDENTITY_EVIDENCE_RECONCILIATION_REQUIRED'};
  } else {
   files['certification.json']={...files['certification.json'],schemaVersion:'gridly.lp24111.certification.v5',executiveResult:'PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING',classifications:[...files['certification.json'].classifications,'D3_IDENTITY_POLICY_AND_BOUNDED_EXECUTION_READY','D3_OWNER_LOCAL_MEASUREMENT_NOT_EXECUTED'],mergeRecommendation:'MERGE_D3_GOVERNANCE_TOOLING_MEASURE_BEFORE_IDENTITY_CERTIFICATION',nextAction:'Restore the certified normalized Parquet in owner-local/lp24111 and run npm run execute:lp24111-identity; then run build, verify, and test.'};
+ }
+ const d4Defaults=pendingReports({counties,places,cohort});
+ for(const [name,value] of Object.entries(d4Defaults))files[name]=value;
+ const d4Path=options.d4MeasurementsPath??path.join(root,'owner-local/lp24111/phase-d4-certified-measurements.json');
+ if(fs.existsSync(d4Path)){
+  const d4=JSON.parse(fs.readFileSync(d4Path,'utf8'));
+  if(d4.schemaVersion!=='gridly.lp24111.measured-coverage.v1'||!d4.reports)throw Error('Invalid owner-local D.4 measurements');
+  for(const [name,value] of Object.entries(d4.reports)){if(!(name in d4Defaults))throw Error(`Unknown D.4 measured report ${name}`);files[name]=value;}
+  const gate=validateEnvelope(d4);
+  files['certification.json']={...files['certification.json'],evidenceCompletenessGate:gate.gates,executiveResult:gate.passed?'PHASE_D4_MEASURED_STATEWIDE_COVERAGE_AND_QUALITY_CERTIFIED':'PHASE_D4_MEASUREMENT_INCOMPLETE'};
  }
  return files;
 }
@@ -134,6 +146,8 @@ export function verify(options={}){
  if(!a['confidence-analysis.json'].policy.startsWith('NO_CUTOFF_RECOMMENDED')) throw Error('confidence policy failed');
  if(a['certification.json'].productionPoiSearch!=='NOT_LAUNCHED_NOT_CERTIFIED') throw Error('runtime boundary failed');
  if(a['poi-identity-summary.json'].rawEligibleCount!==393038||a['poi-identity-summary.json'].sourceRecordsDeleted!==0)throw Error('D.3 baseline/source conservation failed');
+ if(a['community-radius-coverage.json'].canonicalPlaceCount!==1859||a['governed-non-place-coverage.json'].expectedCount!==29)throw Error('D.4 governed inventory failed');
+ if(a['certification.json'].productionPoiSearch!=='NOT_LAUNCHED_NOT_CERTIFIED'||a['osm-supplement-evaluation.json'].merged!==false)throw Error('D.4 non-runtime/no-merge boundary failed');
  return a;
 }
 const args=new Set(process.argv.slice(2)); const a=verify();

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "gridly.lp24111.d4.fanout.v1",
+  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "communityCount": 1888,
+  "radiiMiles": [
+    5,
+    10,
+    25
+  ],
+  "architecture": "EXISTING_ONE_DEGREE_SHARDS_NOT_REGENERATED"
+}

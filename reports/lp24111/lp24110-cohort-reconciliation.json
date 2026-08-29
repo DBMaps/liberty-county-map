@@ -1,8 +1,11 @@
 {
-  "schemaVersion": "gridly.lp24111.cohort.v2",
-  "executionState": "NOT_EXECUTED",
+  "schemaVersion": "gridly.lp24111.d4.cohorts.v1",
+  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "expectedCount": 22,
+  "accountedCount": 22,
   "communityCount": 22,
-  "communities": [
+  "runtimeClaim": false,
+  "rows": [
     {
       "community": "Dayton",
       "contextType": "SMALL_CITY",
@@ -23,7 +26,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Liberty",
@@ -45,7 +48,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Tarkington",
@@ -67,7 +70,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Houston",
@@ -89,7 +92,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Dallas",
@@ -111,7 +114,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Austin",
@@ -133,7 +136,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "San Antonio",
@@ -155,7 +158,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Abilene",
@@ -177,7 +180,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Midland",
@@ -199,7 +202,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Port Arthur",
@@ -221,7 +224,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Fredericksburg",
@@ -243,7 +246,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Pecos",
@@ -265,7 +268,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Sulphur Springs",
@@ -287,7 +290,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Huntsville",
@@ -309,7 +312,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Eastland",
@@ -331,7 +334,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Cienegas Terrace",
@@ -353,7 +356,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Palestine",
@@ -375,7 +378,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Waskom",
@@ -397,7 +400,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "New Braunfels",
@@ -419,7 +422,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Cleveland",
@@ -441,7 +444,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "New Caney",
@@ -463,7 +466,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     },
     {
       "community": "Porter",
@@ -485,8 +488,7 @@
         "urgent care"
       ],
       "observations": [],
-      "normalizedCapability": "NOT_EXECUTED"
+      "authorityCapability": "NOT_EXECUTED"
     }
-  ],
-  "runtimeClaim": false
+  ]
 }

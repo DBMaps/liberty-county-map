@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "gridly.lp24111.d4.quality.v1",
+  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "classes": [
+    "ROBUST_LOCAL_COVERAGE",
+    "BASIC_LOCAL_COVERAGE",
+    "REGIONAL_DEPENDENCY",
+    "SPARSE_RURAL_EXPECTED",
+    "CATEGORY_GAP",
+    "METADATA_REVIEW_REQUIRED"
+  ],
+  "logic": "Classification requires radius/category evidence and rural context; no single statewide count threshold is used."
+}

@@ -1,1537 +1,1294 @@
 {
-  "schemaVersion": "gridly.lp24111.counties.v2",
-  "executionState": "OWNER_EXECUTED_AGGREGATE_AND_RURAL_TAIL",
-  "measured": 254,
-  "withPois": 254,
-  "withoutPois": 0,
-  "assignmentTotal": 1462815,
-  "maximumPois": 264066,
+  "schemaVersion": "gridly.lp24111.d4.counties.v1",
+  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "standaloneAuthorityRows": 391772,
+  "radiiMiles": [
+    5,
+    10,
+    25
+  ],
+  "coreCategories": [
+    "FUEL",
+    "GROCERY",
+    "LODGING",
+    "HOSPITAL",
+    "PHARMACY",
+    "RESTAURANT",
+    "CONVENIENCE"
+  ],
   "expectedCountyCount": 254,
   "accountedCountyCount": 254,
+  "withoutPois": 0,
   "rows": [
     {
       "countyFips": "48001",
       "countyName": "Anderson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48003",
       "countyName": "Andrews",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48005",
       "countyName": "Angelina",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48007",
       "countyName": "Aransas",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48009",
       "countyName": "Archer",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48011",
       "countyName": "Armstrong",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48013",
       "countyName": "Atascosa",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48015",
       "countyName": "Austin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48017",
       "countyName": "Bailey",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48019",
       "countyName": "Bandera",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48021",
       "countyName": "Bastrop",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48023",
       "countyName": "Baylor",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48025",
       "countyName": "Bee",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48027",
       "countyName": "Bell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48029",
       "countyName": "Bexar",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48031",
       "countyName": "Blanco",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48033",
       "countyName": "Borden",
-      "rawPoiCount": 38,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48035",
       "countyName": "Bosque",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48037",
       "countyName": "Bowie",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48039",
       "countyName": "Brazoria",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48041",
       "countyName": "Brazos",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48043",
       "countyName": "Brewster",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48045",
       "countyName": "Briscoe",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48047",
       "countyName": "Brooks",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48049",
       "countyName": "Brown",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48051",
       "countyName": "Burleson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48053",
       "countyName": "Burnet",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48055",
       "countyName": "Caldwell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48057",
       "countyName": "Calhoun",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48059",
       "countyName": "Callahan",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48061",
       "countyName": "Cameron",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48063",
       "countyName": "Camp",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48065",
       "countyName": "Carson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48067",
       "countyName": "Cass",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48069",
       "countyName": "Castro",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48071",
       "countyName": "Chambers",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48073",
       "countyName": "Cherokee",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48075",
       "countyName": "Childress",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48077",
       "countyName": "Clay",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48079",
       "countyName": "Cochran",
-      "rawPoiCount": 102,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48081",
       "countyName": "Coke",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48083",
       "countyName": "Coleman",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48085",
       "countyName": "Collin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48087",
       "countyName": "Collingsworth",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48089",
       "countyName": "Colorado",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48091",
       "countyName": "Comal",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48093",
       "countyName": "Comanche",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48095",
       "countyName": "Concho",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48097",
       "countyName": "Cooke",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48099",
       "countyName": "Coryell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48101",
       "countyName": "Cottle",
-      "rawPoiCount": 92,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48103",
       "countyName": "Crane",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48105",
       "countyName": "Crockett",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48107",
       "countyName": "Crosby",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48109",
       "countyName": "Culberson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48111",
       "countyName": "Dallam",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48113",
       "countyName": "Dallas",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48115",
       "countyName": "Dawson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48117",
       "countyName": "Deaf Smith",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48119",
       "countyName": "Delta",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48121",
       "countyName": "Denton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48123",
       "countyName": "DeWitt",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48125",
       "countyName": "Dickens",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48127",
       "countyName": "Dimmit",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48129",
       "countyName": "Donley",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48131",
       "countyName": "Duval",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48133",
       "countyName": "Eastland",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48135",
       "countyName": "Ector",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48137",
       "countyName": "Edwards",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48139",
       "countyName": "Ellis",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48141",
       "countyName": "El Paso",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48143",
       "countyName": "Erath",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48145",
       "countyName": "Falls",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48147",
       "countyName": "Fannin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48149",
       "countyName": "Fayette",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48151",
       "countyName": "Fisher",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48153",
       "countyName": "Floyd",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48155",
       "countyName": "Foard",
-      "rawPoiCount": 75,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48157",
       "countyName": "Fort Bend",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48159",
       "countyName": "Franklin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48161",
       "countyName": "Freestone",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48163",
       "countyName": "Frio",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48165",
       "countyName": "Gaines",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48167",
       "countyName": "Galveston",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48169",
       "countyName": "Garza",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48171",
       "countyName": "Gillespie",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48173",
       "countyName": "Glasscock",
-      "rawPoiCount": 47,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48175",
       "countyName": "Goliad",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48177",
       "countyName": "Gonzales",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48179",
       "countyName": "Gray",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48181",
       "countyName": "Grayson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48183",
       "countyName": "Gregg",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48185",
       "countyName": "Grimes",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48187",
       "countyName": "Guadalupe",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48189",
       "countyName": "Hale",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48191",
       "countyName": "Hall",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48193",
       "countyName": "Hamilton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48195",
       "countyName": "Hansford",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48197",
       "countyName": "Hardeman",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48199",
       "countyName": "Hardin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48201",
       "countyName": "Harris",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48203",
       "countyName": "Harrison",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48205",
       "countyName": "Hartley",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48207",
       "countyName": "Haskell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48209",
       "countyName": "Hays",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48211",
       "countyName": "Hemphill",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48213",
       "countyName": "Henderson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48215",
       "countyName": "Hidalgo",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48217",
       "countyName": "Hill",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48219",
       "countyName": "Hockley",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48221",
       "countyName": "Hood",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48223",
       "countyName": "Hopkins",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48225",
       "countyName": "Houston",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48227",
       "countyName": "Howard",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48229",
       "countyName": "Hudspeth",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48231",
       "countyName": "Hunt",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48233",
       "countyName": "Hutchinson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48235",
       "countyName": "Irion",
-      "rawPoiCount": 86,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48237",
       "countyName": "Jack",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48239",
       "countyName": "Jackson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48241",
       "countyName": "Jasper",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48243",
       "countyName": "Jeff Davis",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48245",
       "countyName": "Jefferson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48247",
       "countyName": "Jim Hogg",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48249",
       "countyName": "Jim Wells",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48251",
       "countyName": "Johnson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48253",
       "countyName": "Jones",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48255",
       "countyName": "Karnes",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48257",
       "countyName": "Kaufman",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48259",
       "countyName": "Kendall",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48261",
       "countyName": "Kenedy",
-      "rawPoiCount": 55,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48263",
       "countyName": "Kent",
-      "rawPoiCount": 42,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48265",
       "countyName": "Kerr",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48267",
       "countyName": "Kimble",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48269",
       "countyName": "King",
-      "rawPoiCount": 14,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48271",
       "countyName": "Kinney",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48273",
       "countyName": "Kleberg",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48275",
       "countyName": "Knox",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48277",
       "countyName": "Lamar",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48279",
       "countyName": "Lamb",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48281",
       "countyName": "Lampasas",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48283",
       "countyName": "La Salle",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48285",
       "countyName": "Lavaca",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48287",
       "countyName": "Lee",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48289",
       "countyName": "Leon",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48291",
       "countyName": "Liberty",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48293",
       "countyName": "Limestone",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48295",
       "countyName": "Lipscomb",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48297",
       "countyName": "Live Oak",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48299",
       "countyName": "Llano",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48301",
       "countyName": "Loving",
-      "rawPoiCount": 21,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48303",
       "countyName": "Lubbock",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48305",
       "countyName": "Lynn",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48307",
       "countyName": "McCulloch",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48309",
       "countyName": "McLennan",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48311",
       "countyName": "McMullen",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48313",
       "countyName": "Madison",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48315",
       "countyName": "Marion",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48317",
       "countyName": "Martin",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48319",
       "countyName": "Mason",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48321",
       "countyName": "Matagorda",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48323",
       "countyName": "Maverick",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48325",
       "countyName": "Medina",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48327",
       "countyName": "Menard",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48329",
       "countyName": "Midland",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48331",
       "countyName": "Milam",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48333",
       "countyName": "Mills",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48335",
       "countyName": "Mitchell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48337",
       "countyName": "Montague",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48339",
       "countyName": "Montgomery",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48341",
       "countyName": "Moore",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48343",
       "countyName": "Morris",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48345",
       "countyName": "Motley",
-      "rawPoiCount": 81,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48347",
       "countyName": "Nacogdoches",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48349",
       "countyName": "Navarro",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48351",
       "countyName": "Newton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48353",
       "countyName": "Nolan",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48355",
       "countyName": "Nueces",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48357",
       "countyName": "Ochiltree",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48359",
       "countyName": "Oldham",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48361",
       "countyName": "Orange",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48363",
       "countyName": "Palo Pinto",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48365",
       "countyName": "Panola",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48367",
       "countyName": "Parker",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48369",
       "countyName": "Parmer",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48371",
       "countyName": "Pecos",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48373",
       "countyName": "Polk",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48375",
       "countyName": "Potter",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48377",
       "countyName": "Presidio",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48379",
       "countyName": "Rains",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48381",
       "countyName": "Randall",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48383",
       "countyName": "Reagan",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48385",
       "countyName": "Real",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48387",
       "countyName": "Red River",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48389",
       "countyName": "Reeves",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48391",
       "countyName": "Refugio",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48393",
       "countyName": "Roberts",
-      "rawPoiCount": 41,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48395",
       "countyName": "Robertson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48397",
       "countyName": "Rockwall",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48399",
       "countyName": "Runnels",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48401",
       "countyName": "Rusk",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48403",
       "countyName": "Sabine",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48405",
       "countyName": "San Augustine",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48407",
       "countyName": "San Jacinto",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48409",
       "countyName": "San Patricio",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48411",
       "countyName": "San Saba",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48413",
       "countyName": "Schleicher",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48415",
       "countyName": "Scurry",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48417",
       "countyName": "Shackelford",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48419",
       "countyName": "Shelby",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48421",
       "countyName": "Sherman",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48423",
       "countyName": "Smith",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48425",
       "countyName": "Somervell",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48427",
       "countyName": "Starr",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48429",
       "countyName": "Stephens",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48431",
       "countyName": "Sterling",
-      "rawPoiCount": 84,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48433",
       "countyName": "Stonewall",
-      "rawPoiCount": 85,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48435",
       "countyName": "Sutton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48437",
       "countyName": "Swisher",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48439",
       "countyName": "Tarrant",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48441",
       "countyName": "Taylor",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48443",
       "countyName": "Terrell",
-      "rawPoiCount": 74,
-      "evidence": "OWNER_MEASURED_EXACT"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48445",
       "countyName": "Terry",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48447",
       "countyName": "Throckmorton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48449",
       "countyName": "Titus",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48451",
       "countyName": "Tom Green",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48453",
       "countyName": "Travis",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48455",
       "countyName": "Trinity",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48457",
       "countyName": "Tyler",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48459",
       "countyName": "Upshur",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48461",
       "countyName": "Upton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48463",
       "countyName": "Uvalde",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48465",
       "countyName": "Val Verde",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48467",
       "countyName": "Van Zandt",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48469",
       "countyName": "Victoria",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48471",
       "countyName": "Walker",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48473",
       "countyName": "Waller",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48475",
       "countyName": "Ward",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48477",
       "countyName": "Washington",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48479",
       "countyName": "Webb",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48481",
       "countyName": "Wharton",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48483",
       "countyName": "Wheeler",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48485",
       "countyName": "Wichita",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48487",
       "countyName": "Wilbarger",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48489",
       "countyName": "Willacy",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48491",
       "countyName": "Williamson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48493",
       "countyName": "Wilson",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48495",
       "countyName": "Winkler",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48497",
       "countyName": "Wise",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48499",
       "countyName": "Wood",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48501",
       "countyName": "Yoakum",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48503",
       "countyName": "Young",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48505",
       "countyName": "Zapata",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     },
     {
       "countyFips": "48507",
       "countyName": "Zavala",
-      "rawPoiCount": null,
-      "evidence": "OWNER_AGGREGATE_ONLY"
+      "measurement": "NOT_EXECUTED"
     }
   ]
 }

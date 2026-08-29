@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "gridly.lp24111.d4.rural.v1",
+  "executionState": "NOT_EXECUTED_OWNER_LOCAL_INPUTS_ABSENT",
+  "requiredCount": 15,
+  "kingRawAuthorityContext": 14,
+  "rows": [
+    {
+      "countyName": "King",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Loving",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Borden",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Roberts",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Kent",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Glasscock",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Kenedy",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Terrell",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Foard",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Motley",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Sterling",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Stonewall",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Irion",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Cottle",
+      "measurement": "NOT_EXECUTED"
+    },
+    {
+      "countyName": "Cochran",
+      "measurement": "NOT_EXECUTED"
+    }
+  ]
+}
