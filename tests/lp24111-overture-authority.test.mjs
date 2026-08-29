@@ -24,10 +24,10 @@ test('governed PLACE and non-PLACE coverage remain represented',()=>{const a=ver
 test('runtime and deployment remain untouched',()=>{const a=verify(); assert.equal(a['certification.json'].productionPoiSearch,'NOT_LAUNCHED_NOT_CERTIFIED'); assert.equal(a['refresh-pipeline.json'].deployIncluded,false); assert.doesNotMatch(fs.readFileSync('js/app.js','utf8'),/lp24111|overture-texas-places/i);});
 test('rich shard plan is literal, bounded, projected, and locally authority-matched',async()=>{const a=verify(),m=a['rich-shard-manifest.json']; const {shardSql,validatePlan}=await import('../tools/lp24111/rich-manufacture.mjs'); assert.equal(m.shardCount,168); assert.equal(m.countyHardWalls,false); assert.equal(validatePlan(m),true); const query=shardSql(m.rows[0]); assert.match(query,/bbox\.xmin <= -106/); assert.match(query,/INNER JOIN read_parquet/); assert.doesNotMatch(query,/SELECT\s+\*/i); assert.doesNotMatch(query,/app\.js|deploy|supabase/i);});
 test('Phase D measured and unmeasured result shapes remain explicit',()=>{
- const a=verify(),normalization=a['normalization-summary.json'],packages=a['package-size-model.json'],certification=a['certification.json'],ledger=a['taxonomy-resolution-ledger.json'],d2Reports=[a['review-taxonomy-census.json'],ledger,a['compact-package-measurements.json']],d2Measured=d2Reports.every(report=>report.executionState==='OWNER_LOCAL_MEASURED');
+ const a=verify(),normalization=a['normalization-summary.json'],packages=a['package-size-model.json'],certification=a['certification.json'],ledger=a['taxonomy-resolution-ledger.json'],d2Reports=[a['review-taxonomy-census.json'],ledger,a['compact-package-measurements.json']],d2Measured=d2Reports.every(report=>report.executionState==='OWNER_LOCAL_MEASURED'),d3Measured=[a['poi-identity-summary.json'],a['identity-package-impact.json']].every(report=>report.executionState==='OWNER_LOCAL_MEASURED'),d3Complete=d3Measured&&Object.values(certification.evidenceCompletenessGate??{}).length>0&&Object.values(certification.evidenceCompletenessGate).every(Boolean),expectedD3=d3Complete?'PHASE_D3_MEASURED_POI_IDENTITY_CERTIFIED':d3Measured?'PHASE_D3_MEASURED_IDENTITY_COUNTS_EVIDENCE_RECONCILIATION_PENDING':'PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING';
  if(normalization.executionState==='OWNER_LOCAL_MEASURED'){
   assert.equal(packages.executionState,'OWNER_LOCAL_MEASURED');
-  assert.equal(certification.executiveResult,d2Measured?'PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING':'PHASE_D_OWNER_LOCAL_NORMALIZATION_EXECUTED');
+  assert.equal(certification.executiveResult,d2Measured?expectedD3:'PHASE_D_OWNER_LOCAL_NORMALIZATION_EXECUTED');
   assert.equal(normalization.normalizedUniquePois,1462815);
   if(d2Measured){
    assert.equal(ledger.before.normalizedUniquePois,1462815);
@@ -56,6 +56,7 @@ test('Phase D measured and unmeasured result shapes remain explicit',()=>{
  }
  assert.equal(a['community-coverage.json'].executionState,'NOT_EXECUTED');
 });
+test('D.3 evidence progression retains all three governed certification states',()=>{const state=({measured=false,gates}={})=>gates&&Object.values(gates).length&&Object.values(gates).every(Boolean)?'PHASE_D3_MEASURED_POI_IDENTITY_CERTIFIED':measured?'PHASE_D3_MEASURED_IDENTITY_COUNTS_EVIDENCE_RECONCILIATION_PENDING':'PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING';assert.equal(state(),'PHASE_D3_IDENTITY_GOVERNANCE_READY_MEASUREMENT_PENDING');assert.equal(state({measured:true,gates:{authority:true,walmart:false}}),'PHASE_D3_MEASURED_IDENTITY_COUNTS_EVIDENCE_RECONCILIATION_PENDING');assert.equal(state({measured:true,gates:{authority:true,walmart:true}}),'PHASE_D3_MEASURED_POI_IDENTITY_CERTIFIED');});
 
 const fixture=async()=>{
  const m=await import('../tools/lp24111/rich-manufacture.mjs'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'lp24111-rich-')),authority=path.join(dir,'authority.parquet');fs.writeFileSync(authority,'authority');
