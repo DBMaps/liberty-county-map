@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "gridly.lp24114.rollback.v1",
+  "providerIdentity": "PRE_REHEARSAL_PROVIDER",
+  "providerMode": "DISABLED",
+  "cacheState": "TEMPORARY_REHEARSAL_STATE_CLEARED",
+  "productionProviderGate": "OFF",
+  "runtimeActive": false,
+  "rehearsalProviderEnabled": false,
+  "productionStateMutation": false,
+  "diagnostic": "ROLLBACK_CONFIRMED_PRE_REHEARSAL_STATE"
+}

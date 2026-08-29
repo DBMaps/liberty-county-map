@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp24114.certification.v1",
+  "phaseState": "REHEARSAL_BLOCKED_RUNTIME_SHARDS_NOT_MATERIALIZED",
+  "automatedState": "AUTOMATED_BLOCKED",
+  "nonProductionProviderRehearsalPassed": false,
+  "providerInitialized": false,
+  "searchExecuted": false,
+  "ownerBrowserAcceptance": "NOT_APPLICABLE_REHEARSAL_DID_NOT_INITIALIZE",
+  "productionProviderEligible": false,
+  "providerGate": "OFF",
+  "runtimeActive": false,
+  "runtimeActivated": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "deployed": false,
+  "productionSupabaseMutation": false,
+  "productionBehaviorChanged": false,
+  "remoteOvertureFetch": false,
+  "osmMerged": false,
+  "shardManufacturing": false,
+  "phoneTesting": false,
+  "rollback": "ROLLBACK_CONFIRMED_PRE_REHEARSAL_STATE",
+  "nextOwnerAction": "Materialize and certify the frozen release runtime shards in a separately authorized milestone, then rerun LP241.14; do not activate production POI search."
+}

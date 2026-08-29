@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "gridly.lp24114.runtime-availability.v1",
+  "releaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeShardsMaterialized": false,
+  "compactAuthorityOwnerLocalOnly": true,
+  "fixtureAdapterCreated": false,
+  "shardManufacturingPerformed": false,
+  "searchExecuted": false,
+  "requestedShardIds": [],
+  "loadedShardIds": [],
+  "fanoutCount": 0,
+  "blockedState": "REHEARSAL_BLOCKED_RUNTIME_SHARDS_NOT_MATERIALIZED",
+  "blockedDetail": "certified release contains no local/static runtime JSON or GZIP shards"
+}
