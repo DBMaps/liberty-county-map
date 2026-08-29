@@ -50,11 +50,14 @@ jobs:
           mkdir -p www android/app/src/main/assets/public
 
           cp index.html manifest.json service-worker.js www/
-          cp -R css js assets data www/
+          cp -R css js assets data poi www/
 
           cp -R www/. android/app/src/main/assets/public/
 
           test -f www/index.html
+          test -f www/poi/lp24111-d5-standalone-2026-08-28/runtime-v2/manifest.json
+          test "$(find www/poi/lp24111-d5-standalone-2026-08-28/runtime-v2 -name '*.json.gz' | wc -l)" -eq 86
+          test -f www/poi/lp24111-d5-standalone-2026-08-28/legal/foursquare/NOTICE.txt
           test -f android/app/src/main/assets/public/index.html
 
       - name: Run Capacitor doctor
