@@ -19,369 +19,48 @@
     "seconds": 6.46
   },
   "measurements": {
-    "rawRowsPerShard": [
-      {
-        "shardId": "tx-25-098",
-        "rawRows": 8368
-      },
-      {
-        "shardId": "tx-26-098",
-        "rawRows": 14090
-      },
-      {
-        "shardId": "tx-26-099",
-        "rawRows": 34442
-      },
-      {
-        "shardId": "tx-26-100",
-        "rawRows": 813
-      },
-      {
-        "shardId": "tx-27-097",
-        "rawRows": 1
-      },
-      {
-        "shardId": "tx-27-098",
-        "rawRows": 22987
-      },
-      {
-        "shardId": "tx-27-099",
-        "rawRows": 2538
-      },
-      {
-        "shardId": "tx-27-100",
-        "rawRows": 11969
-      },
-      {
-        "shardId": "tx-28-096",
-        "rawRows": 2416
-      },
-      {
-        "shardId": "tx-28-097",
-        "rawRows": 5539
-      },
-      {
-        "shardId": "tx-28-098",
-        "rawRows": 7057
-      },
-      {
-        "shardId": "tx-28-099",
-        "rawRows": 2191
-      },
-      {
-        "shardId": "tx-28-100",
-        "rawRows": 2082
-      },
-      {
-        "shardId": "tx-28-101",
-        "rawRows": 2192
-      },
-      {
-        "shardId": "tx-29-094",
-        "rawRows": 3854
-      },
-      {
-        "shardId": "tx-29-095",
-        "rawRows": 14952
-      },
-      {
-        "shardId": "tx-29-096",
-        "rawRows": 292623
-      },
-      {
-        "shardId": "tx-29-097",
-        "rawRows": 7146
-      },
-      {
-        "shardId": "tx-29-098",
-        "rawRows": 12760
-      },
-      {
-        "shardId": "tx-29-099",
-        "rawRows": 112817
-      },
-      {
-        "shardId": "tx-29-100",
-        "rawRows": 3734
-      },
-      {
-        "shardId": "tx-29-101",
-        "rawRows": 2153
-      },
-      {
-        "shardId": "tx-29-102",
-        "rawRows": 76
-      },
-      {
-        "shardId": "tx-29-103",
-        "rawRows": 21
-      },
-      {
-        "shardId": "tx-29-104",
-        "rawRows": 357
-      },
-      {
-        "shardId": "tx-29-105",
-        "rawRows": 162
-      },
-      {
-        "shardId": "tx-30-094",
-        "rawRows": 4032
-      },
-      {
-        "shardId": "tx-30-095",
-        "rawRows": 16061
-      },
-      {
-        "shardId": "tx-30-096",
-        "rawRows": 62934
-      },
-      {
-        "shardId": "tx-30-097",
-        "rawRows": 17915
-      },
-      {
-        "shardId": "tx-30-098",
-        "rawRows": 117816
-      },
-      {
-        "shardId": "tx-30-099",
-        "rawRows": 11682
-      },
-      {
-        "shardId": "tx-30-100",
-        "rawRows": 4251
-      },
-      {
-        "shardId": "tx-30-101",
-        "rawRows": 514
-      },
-      {
-        "shardId": "tx-30-102",
-        "rawRows": 324
-      },
-      {
-        "shardId": "tx-30-103",
-        "rawRows": 750
-      },
-      {
-        "shardId": "tx-30-104",
-        "rawRows": 928
-      },
-      {
-        "shardId": "tx-30-105",
-        "rawRows": 293
-      },
-      {
-        "shardId": "tx-30-106",
-        "rawRows": 4
-      },
-      {
-        "shardId": "tx-31-094",
-        "rawRows": 722
-      },
-      {
-        "shardId": "tx-31-095",
-        "rawRows": 9679
-      },
-      {
-        "shardId": "tx-31-096",
-        "rawRows": 6278
-      },
-      {
-        "shardId": "tx-31-097",
-        "rawRows": 4404
-      },
-      {
-        "shardId": "tx-31-098",
-        "rawRows": 32327
-      },
-      {
-        "shardId": "tx-31-099",
-        "rawRows": 4763
-      },
-      {
-        "shardId": "tx-31-100",
-        "rawRows": 2081
-      },
-      {
-        "shardId": "tx-31-101",
-        "rawRows": 6390
-      },
-      {
-        "shardId": "tx-31-102",
-        "rawRows": 432
-      },
-      {
-        "shardId": "tx-31-103",
-        "rawRows": 13382
-      },
-      {
-        "shardId": "tx-31-104",
-        "rawRows": 1194
-      },
-      {
-        "shardId": "tx-31-105",
-        "rawRows": 269
-      },
-      {
-        "shardId": "tx-31-106",
-        "rawRows": 139
-      },
-      {
-        "shardId": "tx-31-107",
-        "rawRows": 33804
-      },
-      {
-        "shardId": "tx-32-095",
-        "rawRows": 17557
-      },
-      {
-        "shardId": "tx-32-096",
-        "rawRows": 23158
-      },
-      {
-        "shardId": "tx-32-097",
-        "rawRows": 166123
-      },
-      {
-        "shardId": "tx-32-098",
-        "rawRows": 128689
-      },
-      {
-        "shardId": "tx-32-099",
-        "rawRows": 6610
-      },
-      {
-        "shardId": "tx-32-100",
-        "rawRows": 9584
-      },
-      {
-        "shardId": "tx-32-101",
-        "rawRows": 2556
-      },
-      {
-        "shardId": "tx-32-102",
-        "rawRows": 2567
-      },
-      {
-        "shardId": "tx-32-103",
-        "rawRows": 5927
-      },
-      {
-        "shardId": "tx-32-104",
-        "rawRows": 22
-      },
-      {
-        "shardId": "tx-32-106",
-        "rawRows": 1
-      },
-      {
-        "shardId": "tx-32-107",
-        "rawRows": 16
-      },
-      {
-        "shardId": "tx-33-095",
-        "rawRows": 8831
-      },
-      {
-        "shardId": "tx-33-096",
-        "rawRows": 7369
-      },
-      {
-        "shardId": "tx-33-097",
-        "rawRows": 80878
-      },
-      {
-        "shardId": "tx-33-098",
-        "rawRows": 27330
-      },
-      {
-        "shardId": "tx-33-099",
-        "rawRows": 8368
-      },
-      {
-        "shardId": "tx-33-100",
-        "rawRows": 992
-      },
-      {
-        "shardId": "tx-33-101",
-        "rawRows": 290
-      },
-      {
-        "shardId": "tx-33-102",
-        "rawRows": 16952
-      },
-      {
-        "shardId": "tx-33-103",
-        "rawRows": 2427
-      },
-      {
-        "shardId": "tx-33-104",
-        "rawRows": 12
-      },
-      {
-        "shardId": "tx-34-099",
-        "rawRows": 617
-      },
-      {
-        "shardId": "tx-34-100",
-        "rawRows": 970
-      },
-      {
-        "shardId": "tx-34-101",
-        "rawRows": 1128
-      },
-      {
-        "shardId": "tx-34-102",
-        "rawRows": 2634
-      },
-      {
-        "shardId": "tx-34-103",
-        "rawRows": 1896
-      },
-      {
-        "shardId": "tx-34-104",
-        "rawRows": 85
-      },
-      {
-        "shardId": "tx-35-101",
-        "rawRows": 1871
-      },
-      {
-        "shardId": "tx-35-102",
-        "rawRows": 14512
-      },
-      {
-        "shardId": "tx-35-103",
-        "rawRows": 356
-      },
-      {
-        "shardId": "tx-35-104",
-        "rawRows": 9
-      },
-      {
-        "shardId": "tx-36-101",
-        "rawRows": 674
-      },
-      {
-        "shardId": "tx-36-102",
-        "rawRows": 408
-      },
-      {
-        "shardId": "tx-36-103",
-        "rawRows": 733
-      },
-      {
-        "shardId": "tx-36-104",
-        "rawRows": 33
+    "compressedBytes": 24693819,
+    "largestShard": {
+      "shardId": "tx-29-096",
+      "eligibleRows": 67798,
+      "rawBytes": 19143767,
+      "compressedBytes": 4262172
+    },
+    "smallestShard": {
+      "shardId": "tx-35-104",
+      "eligibleRows": 3,
+      "rawBytes": 869,
+      "compressedBytes": 428
+    },
+    "expectedSearchFanout": [
+      {
+        "radius_miles": 5,
+        "minimum_shard_count": 1,
+        "median_shard_count": 1,
+        "maximum_shard_count": 4
+      },
+      {
+        "radius_miles": 10,
+        "minimum_shard_count": 1,
+        "median_shard_count": 1,
+        "maximum_shard_count": 4
+      },
+      {
+        "radius_miles": 25,
+        "minimum_shard_count": 1,
+        "median_shard_count": 4,
+        "maximum_shard_count": 4
+      },
+      {
+        "radius_miles": 50,
+        "minimum_shard_count": 4,
+        "median_shard_count": 6,
+        "maximum_shard_count": 9
       }
-    ],
-    "normalizedRows": 1462815,
-    "eligibleRows": 364959
+    ]
   },
   "constraints": {
     "singleAssetBytes": 26214400
   },
-  "productionChoice": "NOT_SELECTED_PENDING_COMPACT_PACKAGE_MEASUREMENTS"
+  "productionChoice": "NO_DENSE_SUBDIVISION_FROM_CURRENT_COMPACT_SIZE_EVIDENCE"
 }

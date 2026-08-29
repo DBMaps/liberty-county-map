@@ -1,16 +1,15 @@
 {
   "schemaVersion": "gridly.lp24111.certification.v4",
-  "executiveResult": "PHASE_D_OWNER_LOCAL_NORMALIZATION_EXECUTED",
+  "executiveResult": "PHASE_D2_MEASURED_TAXONOMY_AND_PACKAGE_CERTIFIED",
   "richAuthorityConservation": "OWNER_LOCAL_MEASURED",
   "productViability": "OVERTURE_TEXAS_POI_AUTHORITY_NOT_YET_PRODUCT_VIABLE",
   "classifications": [
-    "OVERTURE_TEXAS_SPATIAL_AUTHORITY_CERTIFIED_EXACT",
-    "RICH_AUTHORITY_CONSERVATION_MEASURED",
-    "NORMALIZATION_EXECUTED",
-    "PACKAGE_REFINEMENT_AND_LEGAL_REVIEW_REQUIRED"
+    "TAXONOMY_PROMOTIONS_RECONCILED",
+    "COMPACT_PACKAGE_IDENTITIES_CANONICAL",
+    "RUNTIME_NOT_ACTIVATED"
   ],
   "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
   "zeroCostContract": "NON_RUNTIME",
-  "mergeRecommendation": "MEASURE_REMAINING_PHASE_D_DIMENSIONS_BEFORE_PRODUCT_CERTIFICATION",
+  "mergeRecommendation": "MERGE_D2_MEASURED_EVIDENCE",
   "nextAction": "Review measured normalization and execute the remaining community, identity, metadata, package compression, attribution, and reconciliation audits."
 }

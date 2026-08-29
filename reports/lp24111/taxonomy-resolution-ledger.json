@@ -1,20 +1,360 @@
 {
-  "schemaVersion": "gridly.lp24111.taxonomy-resolution-ledger.v1",
-  "executionState": "NOT_EXECUTED",
+  "schemaVersion": "gridly.lp24111.taxonomy-resolution-ledger.v2",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "policy": "EXPLICIT_TAXONOMY_ONLY_CONFIDENCE_NEVER_CLASSIFIES",
-  "decisions": [],
+  "decisions": [
+    {
+      "gridlyCategory": "CAR_WASH",
+      "matchedTaxonomyTokens": [
+        "car_wash"
+      ],
+      "promotedRecordCount": 4533,
+      "counties": {},
+      "exampleNames": [
+        "Easy Clean Carwash",
+        "Champion Fast Lube & Car Wash",
+        "Extreme Mobile Car Wash & Detailing",
+        "Mr. Shine hand car wash LLC.",
+        "JB Wash Pros",
+        "Detail Garage-Auto Detailing Supplies",
+        "Alpha Pressure Washing Solutions",
+        "GO Car Wash",
+        "Element79detail",
+        "Rewards Auto Sales"
+      ],
+      "confidenceDistribution": {
+        "present": 4533,
+        "missing": 0,
+        "minimum": 0.04772818833589554,
+        "maximum": 1
+      },
+      "brandPresentCount": 3253,
+      "addressPresentCount": 4533,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 191,
+      "zeroMatch": false
+    },
+    {
+      "gridlyCategory": "HARDWARE",
+      "matchedTaxonomyTokens": [
+        "hardware_store"
+      ],
+      "promotedRecordCount": 3701,
+      "counties": {},
+      "exampleNames": [
+        "Hutto Feed and Landscape Supplies",
+        "Harvey hardware",
+        "Harbor Freight Tools",
+        "Techsys Innovations Inc",
+        "Soluna Supply",
+        "Airgas Store",
+        "Tractor Supply Co",
+        "Buy Buy Baby",
+        "Gulfeagle Supply",
+        "Air Tool Exchange and Rental Company"
+      ],
+      "confidenceDistribution": {
+        "present": 3701,
+        "missing": 0,
+        "minimum": 0.02049282193183899,
+        "maximum": 0.9999991138115525
+      },
+      "brandPresentCount": 2702,
+      "addressPresentCount": 3701,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 214,
+      "zeroMatch": false
+    },
+    {
+      "gridlyCategory": "LAUNDRY",
+      "matchedTaxonomyTokens": [
+        "laundromat",
+        "laundry_service"
+      ],
+      "promotedRecordCount": 4224,
+      "counties": {},
+      "exampleNames": [
+        "Laundry King",
+        "Texas Laundry and Alterations",
+        "Feather Laundry",
+        "In n Out Washateria",
+        "Comet Cleaners",
+        "Sain's Laundry Mat",
+        "Hammerly Washateria",
+        "Lavanderia Gigante",
+        "Reid's Cleaners and Laundry",
+        "Avon Cleaners"
+      ],
+      "confidenceDistribution": {
+        "present": 4224,
+        "missing": 0,
+        "minimum": 0.05998441204428673,
+        "maximum": 0.999846169859171
+      },
+      "brandPresentCount": 3465,
+      "addressPresentCount": 4224,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 195,
+      "zeroMatch": false
+    },
+    {
+      "gridlyCategory": "CAMPGROUND",
+      "matchedTaxonomyTokens": [
+        "campground",
+        "rv_park"
+      ],
+      "promotedRecordCount": 4537,
+      "counties": {},
+      "exampleNames": [
+        "Texas RV Park",
+        "Val's Kountry Corral RV Park",
+        "Quilly's Big Fish RV Park",
+        "Tiki Tom's RV Park",
+        "Bonham State Park",
+        "Avion Big Lot RV Park",
+        "Alaska's Place",
+        "Brazos Trail RV Park",
+        "COMFORT RV PARK & STORAGE LLC.",
+        "Hidden Paradise Long Term RV"
+      ],
+      "confidenceDistribution": {
+        "present": 4537,
+        "missing": 0,
+        "minimum": 0.03850596398115158,
+        "maximum": 0.9999924414366483
+      },
+      "brandPresentCount": 3916,
+      "addressPresentCount": 4537,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 244,
+      "zeroMatch": false
+    },
+    {
+      "gridlyCategory": "VISITOR_CENTER",
+      "matchedTaxonomyTokens": [
+        "visitor_center"
+      ],
+      "promotedRecordCount": 114,
+      "counties": {},
+      "exampleNames": [
+        "Beaumont Convention & Visitors Bureau",
+        "Salado Visitor's Center",
+        "Dallas Convention & Visitors",
+        "Discover Denton",
+        "Big Spring Visitors Center",
+        "Ta Services, Inc.",
+        "Tourism & Main Street Office",
+        "Mason Chamber of Commerce",
+        "City of Madisonville, Department of Marketing & Tourism",
+        "Bmt Pfingston Reception Center"
+      ],
+      "confidenceDistribution": {
+        "present": 114,
+        "missing": 0,
+        "minimum": 0.25,
+        "maximum": 0.9991513997614384
+      },
+      "brandPresentCount": 0,
+      "addressPresentCount": 114,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 43,
+      "zeroMatch": false
+    },
+    {
+      "gridlyCategory": "MARINA",
+      "matchedTaxonomyTokens": [
+        "marina"
+      ],
+      "promotedRecordCount": 426,
+      "counties": {},
+      "exampleNames": [
+        "Pier 121 Yacht Club",
+        "Marina Robinson",
+        "Docks and Decks",
+        "Marina Dental",
+        "UTMB Health Primary Care Marina Bay",
+        "Brentwood Marina",
+        "Duran's Yacht Services",
+        "Marina Sabirova",
+        "On The Docks LLC",
+        "Roys boat yard"
+      ],
+      "confidenceDistribution": {
+        "present": 426,
+        "missing": 0,
+        "minimum": 0.08943815529346466,
+        "maximum": 0.9999602635204792
+      },
+      "brandPresentCount": 351,
+      "addressPresentCount": 426,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 76,
+      "zeroMatch": false
+    },
+    {
+      "gridlyCategory": "GOLF",
+      "matchedTaxonomyTokens": [
+        "golf_course"
+      ],
+      "promotedRecordCount": 1339,
+      "counties": {},
+      "exampleNames": [
+        "Raveneaux Country Club",
+        "Barton Creek Coore Crenshaw Golf Course",
+        "H-Town Disc Golf",
+        "Preston West Golf Course",
+        "Kohl's Golf Center",
+        "NW Vista College Disc Golf Course",
+        "Archer City Country Club",
+        "Ebony Hills Golf Club",
+        "287 Golf",
+        "Ridgeview Ranch Golf Club"
+      ],
+      "confidenceDistribution": {
+        "present": 1339,
+        "missing": 0,
+        "minimum": 0.0763995423913002,
+        "maximum": 0.9999863767161965
+      },
+      "brandPresentCount": 1038,
+      "addressPresentCount": 1339,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 186,
+      "zeroMatch": false
+    },
+    {
+      "gridlyCategory": "TOURIST_ATTRACTION",
+      "matchedTaxonomyTokens": [],
+      "promotedRecordCount": 0,
+      "counties": {},
+      "exampleNames": [],
+      "confidenceDistribution": {
+        "present": 0,
+        "missing": 0,
+        "minimum": null,
+        "maximum": null
+      },
+      "brandPresentCount": 0,
+      "addressPresentCount": 0,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 0,
+      "zeroMatch": true
+    },
+    {
+      "gridlyCategory": "TOWING",
+      "matchedTaxonomyTokens": [
+        "towing_service"
+      ],
+      "promotedRecordCount": 2643,
+      "counties": {},
+      "exampleNames": [
+        "Hardtimez  Garage",
+        "A1 Wrecker Service",
+        "New Era Towing",
+        "Ttn Fleet Solutions",
+        "Wilson Wrecker Service",
+        "Austin Towing Pros",
+        "Gillman Wrecker Service",
+        "D&W Towing & Recovery",
+        "Just in Time Towing and Roadside Service",
+        "Big Lake Tire and Towing Services"
+      ],
+      "confidenceDistribution": {
+        "present": 2643,
+        "missing": 0,
+        "minimum": 0.03224194794893265,
+        "maximum": 0.9999813525140285
+      },
+      "brandPresentCount": 1428,
+      "addressPresentCount": 2643,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 192,
+      "zeroMatch": false
+    },
+    {
+      "gridlyCategory": "STORAGE",
+      "matchedTaxonomyTokens": [
+        "self_storage"
+      ],
+      "promotedRecordCount": 6562,
+      "counties": {},
+      "exampleNames": [
+        "TLC Self Storage",
+        "Longhorn State Storage- DFW",
+        "CubeSmart Self Storage",
+        "Move It Self Storage",
+        "Medina Lake Mini Storage",
+        "Extra Space Storage",
+        "All Storage - Mansfield",
+        "Storage Rentals of America",
+        "Triple C Storage",
+        "Noah's Ark Self Storage"
+      ],
+      "confidenceDistribution": {
+        "present": 6562,
+        "missing": 0,
+        "minimum": 0.055888254195451736,
+        "maximum": 1
+      },
+      "brandPresentCount": 3834,
+      "addressPresentCount": 6562,
+      "childRiskExamples": [],
+      "distinctCountiesRepresented": 189,
+      "zeroMatch": false
+    }
+  ],
   "candidatePolicy": "tools/lp24111/taxonomy-policy.json",
   "before": {
+    "normalizedUniquePois": 1462815,
     "eligible": 364959,
     "nonDestination": 83992,
     "excluded": 12227,
     "reviewRequired": 1001637
   },
   "after": {
-    "eligible": null,
-    "nonDestination": null,
-    "excluded": null,
-    "reviewRequired": null
+    "GRIDLY_ELIGIBLE_DESTINATION": 393038,
+    "GRIDLY_EXCLUDED": 12227,
+    "GRIDLY_NON_DESTINATION": 83992,
+    "GRIDLY_REVIEW_REQUIRED": 973558
   },
-  "reason": "Governed candidate rules require owner-local census measurement before their counts can be accepted as a D.2 resolution ledger."
+  "promotionAuthority": {
+    "semantics": "POLICY_ORDER_PRECEDENCE_OVER_LOWERCASE_SERIALIZED_SEARCHABLE",
+    "sourceFields": [
+      "categories",
+      "basic_category",
+      "taxonomy",
+      "names",
+      "brand"
+    ],
+    "matchType": "LITERAL_SUBSTRING_IN_SERIALIZED_TAXONOMY_SEARCH_DOCUMENT",
+    "precedence": [
+      "CAR_WASH",
+      "HARDWARE",
+      "LAUNDRY",
+      "CAMPGROUND",
+      "VISITOR_CENTER",
+      "MARINA",
+      "GOLF",
+      "TOURIST_ATTRACTION",
+      "TOWING",
+      "STORAGE"
+    ],
+    "changedIds": 28079,
+    "uniqueChangedIds": 28079,
+    "promotedRuleTotal": 28079,
+    "unexplainedPromotions": 0,
+    "multiplyAuthorizedPromotionsAfterPrecedence": 0,
+    "rawCrossRuleOverlapCount": 223,
+    "rawCrossRuleOverlapRules": [
+      "CAMPGROUND",
+      "MARINA",
+      "CAR_WASH",
+      "LAUNDRY",
+      "STORAGE",
+      "HARDWARE",
+      "GOLF",
+      "VISITOR_CENTER",
+      "TOWING"
+    ]
+  }
 }

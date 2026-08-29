@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp24111.compact-packages.v1",
-  "executionState": "NOT_EXECUTED",
+  "executionState": "OWNER_LOCAL_MEASURED",
   "eligibleOnly": true,
   "compression": "gzip-9",
   "compactFields": [
@@ -15,9 +15,597 @@
     "locality",
     "operatingStatus"
   ],
-  "statistics": null,
-  "denseShard": null,
+  "statistics": {
+    "shardCount": 86,
+    "totalEligibleRows": 393038,
+    "totalRawBytes": 111612300,
+    "totalCompressedBytes": 24693819,
+    "largestShard": {
+      "shardId": "tx-29-096",
+      "eligibleRows": 67798,
+      "rawBytes": 19143767,
+      "compressedBytes": 4262172
+    },
+    "smallestNonEmptyShard": {
+      "shardId": "tx-35-104",
+      "eligibleRows": 3,
+      "rawBytes": 869,
+      "compressedBytes": 428
+    },
+    "medianCompressedBytes": 62600,
+    "p90CompressedBytes": 607469,
+    "p95CompressedBytes": 1825315,
+    "p99CompressedBytes": 4262172,
+    "shardsOver25MiB": 0,
+    "shardsOver10MiB": 0,
+    "shardsUnder1MiB": 80
+  },
+  "denseShard": {
+    "shard_id": "tx-29-096",
+    "eligible_row_count": 67798,
+    "raw_byte_count": 19143767,
+    "compressed_byte_count": 4262172
+  },
   "thresholdBytes": 26214400,
-  "searchFanout": null,
-  "reason": "Compact artifacts must be measured from the absent owner-local normalized Parquet; estimates are prohibited."
+  "searchFanout": [
+    {
+      "radius_miles": 5,
+      "minimum_shard_count": 1,
+      "median_shard_count": 1,
+      "maximum_shard_count": 4
+    },
+    {
+      "radius_miles": 10,
+      "minimum_shard_count": 1,
+      "median_shard_count": 1,
+      "maximum_shard_count": 4
+    },
+    {
+      "radius_miles": 25,
+      "minimum_shard_count": 1,
+      "median_shard_count": 4,
+      "maximum_shard_count": 4
+    },
+    {
+      "radius_miles": 50,
+      "minimum_shard_count": 4,
+      "median_shard_count": 6,
+      "maximum_shard_count": 9
+    }
+  ],
+  "shards": [
+    {
+      "shardId": "tx-25-098",
+      "eligibleRows": 2715,
+      "rawBytes": 778181,
+      "compressedBytes": 161620
+    },
+    {
+      "shardId": "tx-26-098",
+      "eligibleRows": 4794,
+      "rawBytes": 1370879,
+      "compressedBytes": 296822
+    },
+    {
+      "shardId": "tx-26-099",
+      "eligibleRows": 10837,
+      "rawBytes": 3059625,
+      "compressedBytes": 665026
+    },
+    {
+      "shardId": "tx-26-100",
+      "eligibleRows": 361,
+      "rawBytes": 101387,
+      "compressedBytes": 22084
+    },
+    {
+      "shardId": "tx-27-098",
+      "eligibleRows": 7007,
+      "rawBytes": 2030612,
+      "compressedBytes": 437959
+    },
+    {
+      "shardId": "tx-27-099",
+      "eligibleRows": 999,
+      "rawBytes": 282139,
+      "compressedBytes": 60720
+    },
+    {
+      "shardId": "tx-27-100",
+      "eligibleRows": 3479,
+      "rawBytes": 976048,
+      "compressedBytes": 207774
+    },
+    {
+      "shardId": "tx-28-096",
+      "eligibleRows": 868,
+      "rawBytes": 247082,
+      "compressedBytes": 53123
+    },
+    {
+      "shardId": "tx-28-097",
+      "eligibleRows": 1866,
+      "rawBytes": 531195,
+      "compressedBytes": 115121
+    },
+    {
+      "shardId": "tx-28-098",
+      "eligibleRows": 2439,
+      "rawBytes": 694481,
+      "compressedBytes": 152528
+    },
+    {
+      "shardId": "tx-28-099",
+      "eligibleRows": 840,
+      "rawBytes": 240398,
+      "compressedBytes": 51434
+    },
+    {
+      "shardId": "tx-28-100",
+      "eligibleRows": 1025,
+      "rawBytes": 292032,
+      "compressedBytes": 62600
+    },
+    {
+      "shardId": "tx-28-101",
+      "eligibleRows": 827,
+      "rawBytes": 235749,
+      "compressedBytes": 49102
+    },
+    {
+      "shardId": "tx-29-094",
+      "eligibleRows": 1200,
+      "rawBytes": 342968,
+      "compressedBytes": 73761
+    },
+    {
+      "shardId": "tx-29-095",
+      "eligibleRows": 4780,
+      "rawBytes": 1357707,
+      "compressedBytes": 300282
+    },
+    {
+      "shardId": "tx-29-096",
+      "eligibleRows": 67798,
+      "rawBytes": 19143767,
+      "compressedBytes": 4262172
+    },
+    {
+      "shardId": "tx-29-097",
+      "eligibleRows": 2533,
+      "rawBytes": 720970,
+      "compressedBytes": 158971
+    },
+    {
+      "shardId": "tx-29-098",
+      "eligibleRows": 4129,
+      "rawBytes": 1171164,
+      "compressedBytes": 258956
+    },
+    {
+      "shardId": "tx-29-099",
+      "eligibleRows": 30115,
+      "rawBytes": 8663245,
+      "compressedBytes": 1911435
+    },
+    {
+      "shardId": "tx-29-100",
+      "eligibleRows": 1323,
+      "rawBytes": 372155,
+      "compressedBytes": 81885
+    },
+    {
+      "shardId": "tx-29-101",
+      "eligibleRows": 781,
+      "rawBytes": 221747,
+      "compressedBytes": 47122
+    },
+    {
+      "shardId": "tx-29-102",
+      "eligibleRows": 34,
+      "rawBytes": 9759,
+      "compressedBytes": 2600
+    },
+    {
+      "shardId": "tx-29-103",
+      "eligibleRows": 5,
+      "rawBytes": 1460,
+      "compressedBytes": 603
+    },
+    {
+      "shardId": "tx-29-104",
+      "eligibleRows": 151,
+      "rawBytes": 43764,
+      "compressedBytes": 9525
+    },
+    {
+      "shardId": "tx-29-105",
+      "eligibleRows": 74,
+      "rawBytes": 20964,
+      "compressedBytes": 4676
+    },
+    {
+      "shardId": "tx-30-094",
+      "eligibleRows": 1363,
+      "rawBytes": 385665,
+      "compressedBytes": 83487
+    },
+    {
+      "shardId": "tx-30-095",
+      "eligibleRows": 4918,
+      "rawBytes": 1397570,
+      "compressedBytes": 307312
+    },
+    {
+      "shardId": "tx-30-096",
+      "eligibleRows": 16071,
+      "rawBytes": 4555869,
+      "compressedBytes": 1018553
+    },
+    {
+      "shardId": "tx-30-097",
+      "eligibleRows": 5592,
+      "rawBytes": 1606417,
+      "compressedBytes": 356558
+    },
+    {
+      "shardId": "tx-30-098",
+      "eligibleRows": 28929,
+      "rawBytes": 8175762,
+      "compressedBytes": 1825315
+    },
+    {
+      "shardId": "tx-30-099",
+      "eligibleRows": 3525,
+      "rawBytes": 1016947,
+      "compressedBytes": 224838
+    },
+    {
+      "shardId": "tx-30-100",
+      "eligibleRows": 1332,
+      "rawBytes": 377972,
+      "compressedBytes": 82530
+    },
+    {
+      "shardId": "tx-30-101",
+      "eligibleRows": 233,
+      "rawBytes": 66289,
+      "compressedBytes": 14124
+    },
+    {
+      "shardId": "tx-30-102",
+      "eligibleRows": 152,
+      "rawBytes": 42232,
+      "compressedBytes": 9194
+    },
+    {
+      "shardId": "tx-30-103",
+      "eligibleRows": 318,
+      "rawBytes": 92140,
+      "compressedBytes": 19534
+    },
+    {
+      "shardId": "tx-30-104",
+      "eligibleRows": 366,
+      "rawBytes": 103867,
+      "compressedBytes": 22738
+    },
+    {
+      "shardId": "tx-30-105",
+      "eligibleRows": 117,
+      "rawBytes": 32491,
+      "compressedBytes": 7250
+    },
+    {
+      "shardId": "tx-31-094",
+      "eligibleRows": 267,
+      "rawBytes": 76888,
+      "compressedBytes": 16815
+    },
+    {
+      "shardId": "tx-31-095",
+      "eligibleRows": 2997,
+      "rawBytes": 853513,
+      "compressedBytes": 186676
+    },
+    {
+      "shardId": "tx-31-096",
+      "eligibleRows": 2030,
+      "rawBytes": 580872,
+      "compressedBytes": 126186
+    },
+    {
+      "shardId": "tx-31-097",
+      "eligibleRows": 1721,
+      "rawBytes": 488308,
+      "compressedBytes": 107382
+    },
+    {
+      "shardId": "tx-31-098",
+      "eligibleRows": 9544,
+      "rawBytes": 2709581,
+      "compressedBytes": 607469
+    },
+    {
+      "shardId": "tx-31-099",
+      "eligibleRows": 1593,
+      "rawBytes": 452711,
+      "compressedBytes": 98687
+    },
+    {
+      "shardId": "tx-31-100",
+      "eligibleRows": 825,
+      "rawBytes": 231883,
+      "compressedBytes": 49746
+    },
+    {
+      "shardId": "tx-31-101",
+      "eligibleRows": 1901,
+      "rawBytes": 545968,
+      "compressedBytes": 115355
+    },
+    {
+      "shardId": "tx-31-102",
+      "eligibleRows": 205,
+      "rawBytes": 58158,
+      "compressedBytes": 12795
+    },
+    {
+      "shardId": "tx-31-103",
+      "eligibleRows": 3918,
+      "rawBytes": 1102520,
+      "compressedBytes": 236620
+    },
+    {
+      "shardId": "tx-31-104",
+      "eligibleRows": 586,
+      "rawBytes": 165595,
+      "compressedBytes": 35448
+    },
+    {
+      "shardId": "tx-31-105",
+      "eligibleRows": 124,
+      "rawBytes": 35175,
+      "compressedBytes": 7917
+    },
+    {
+      "shardId": "tx-31-106",
+      "eligibleRows": 71,
+      "rawBytes": 20826,
+      "compressedBytes": 4891
+    },
+    {
+      "shardId": "tx-31-107",
+      "eligibleRows": 9667,
+      "rawBytes": 2740979,
+      "compressedBytes": 591358
+    },
+    {
+      "shardId": "tx-32-095",
+      "eligibleRows": 5175,
+      "rawBytes": 1472908,
+      "compressedBytes": 325823
+    },
+    {
+      "shardId": "tx-32-096",
+      "eligibleRows": 6633,
+      "rawBytes": 1873583,
+      "compressedBytes": 418829
+    },
+    {
+      "shardId": "tx-32-097",
+      "eligibleRows": 40830,
+      "rawBytes": 11532112,
+      "compressedBytes": 2588891
+    },
+    {
+      "shardId": "tx-32-098",
+      "eligibleRows": 32819,
+      "rawBytes": 9372413,
+      "compressedBytes": 2102863
+    },
+    {
+      "shardId": "tx-32-099",
+      "eligibleRows": 2231,
+      "rawBytes": 637621,
+      "compressedBytes": 138255
+    },
+    {
+      "shardId": "tx-32-100",
+      "eligibleRows": 2792,
+      "rawBytes": 789813,
+      "compressedBytes": 171359
+    },
+    {
+      "shardId": "tx-32-101",
+      "eligibleRows": 1024,
+      "rawBytes": 291246,
+      "compressedBytes": 62420
+    },
+    {
+      "shardId": "tx-32-102",
+      "eligibleRows": 983,
+      "rawBytes": 279003,
+      "compressedBytes": 60086
+    },
+    {
+      "shardId": "tx-32-103",
+      "eligibleRows": 1794,
+      "rawBytes": 508400,
+      "compressedBytes": 108691
+    },
+    {
+      "shardId": "tx-32-104",
+      "eligibleRows": 10,
+      "rawBytes": 2778,
+      "compressedBytes": 857
+    },
+    {
+      "shardId": "tx-32-107",
+      "eligibleRows": 8,
+      "rawBytes": 2323,
+      "compressedBytes": 773
+    },
+    {
+      "shardId": "tx-33-095",
+      "eligibleRows": 2615,
+      "rawBytes": 744804,
+      "compressedBytes": 162483
+    },
+    {
+      "shardId": "tx-33-096",
+      "eligibleRows": 2399,
+      "rawBytes": 683441,
+      "compressedBytes": 149943
+    },
+    {
+      "shardId": "tx-33-097",
+      "eligibleRows": 19729,
+      "rawBytes": 5576714,
+      "compressedBytes": 1254494
+    },
+    {
+      "shardId": "tx-33-098",
+      "eligibleRows": 7434,
+      "rawBytes": 2110565,
+      "compressedBytes": 472133
+    },
+    {
+      "shardId": "tx-33-099",
+      "eligibleRows": 2507,
+      "rawBytes": 721199,
+      "compressedBytes": 155351
+    },
+    {
+      "shardId": "tx-33-100",
+      "eligibleRows": 435,
+      "rawBytes": 123723,
+      "compressedBytes": 26379
+    },
+    {
+      "shardId": "tx-33-101",
+      "eligibleRows": 119,
+      "rawBytes": 34303,
+      "compressedBytes": 7787
+    },
+    {
+      "shardId": "tx-33-102",
+      "eligibleRows": 4773,
+      "rawBytes": 1357263,
+      "compressedBytes": 293198
+    },
+    {
+      "shardId": "tx-33-103",
+      "eligibleRows": 883,
+      "rawBytes": 253712,
+      "compressedBytes": 54415
+    },
+    {
+      "shardId": "tx-33-104",
+      "eligibleRows": 9,
+      "rawBytes": 2569,
+      "compressedBytes": 895
+    },
+    {
+      "shardId": "tx-34-099",
+      "eligibleRows": 210,
+      "rawBytes": 60156,
+      "compressedBytes": 12818
+    },
+    {
+      "shardId": "tx-34-100",
+      "eligibleRows": 405,
+      "rawBytes": 114793,
+      "compressedBytes": 25295
+    },
+    {
+      "shardId": "tx-34-101",
+      "eligibleRows": 495,
+      "rawBytes": 141047,
+      "compressedBytes": 29487
+    },
+    {
+      "shardId": "tx-34-102",
+      "eligibleRows": 897,
+      "rawBytes": 255508,
+      "compressedBytes": 54173
+    },
+    {
+      "shardId": "tx-34-103",
+      "eligibleRows": 784,
+      "rawBytes": 221579,
+      "compressedBytes": 47184
+    },
+    {
+      "shardId": "tx-34-104",
+      "eligibleRows": 33,
+      "rawBytes": 9375,
+      "compressedBytes": 2379
+    },
+    {
+      "shardId": "tx-35-101",
+      "eligibleRows": 679,
+      "rawBytes": 192778,
+      "compressedBytes": 41755
+    },
+    {
+      "shardId": "tx-35-102",
+      "eligibleRows": 4095,
+      "rawBytes": 1167191,
+      "compressedBytes": 252112
+    },
+    {
+      "shardId": "tx-35-103",
+      "eligibleRows": 165,
+      "rawBytes": 47010,
+      "compressedBytes": 10675
+    },
+    {
+      "shardId": "tx-35-104",
+      "eligibleRows": 3,
+      "rawBytes": 869,
+      "compressedBytes": 428
+    },
+    {
+      "shardId": "tx-36-101",
+      "eligibleRows": 247,
+      "rawBytes": 70476,
+      "compressedBytes": 15239
+    },
+    {
+      "shardId": "tx-36-102",
+      "eligibleRows": 168,
+      "rawBytes": 47621,
+      "compressedBytes": 10513
+    },
+    {
+      "shardId": "tx-36-103",
+      "eligibleRows": 293,
+      "rawBytes": 82963,
+      "compressedBytes": 17859
+    },
+    {
+      "shardId": "tx-36-104",
+      "eligibleRows": 17,
+      "rawBytes": 4765,
+      "compressedBytes": 1298
+    }
+  ],
+  "sqlStatistics": {
+    "shard_count": 86,
+    "eligible_row_count": 393038,
+    "raw_byte_count": 111612300,
+    "compressed_byte_count": 24693819,
+    "minimum_compressed_bytes": 428,
+    "median_compressed_bytes": 68180.5,
+    "p90_compressed_bytes": 607469,
+    "p95_compressed_bytes": 1825315,
+    "p99_compressed_bytes": 4262172,
+    "maximum_compressed_bytes": 4262172
+  },
+  "thresholdStatistics": {
+    "over_25_mib_count": 0,
+    "over_10_mib_count": 0,
+    "under_1_mib_count": 80
+  }
 }
