@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "gridly.lp24115.authority-input-audit.v1",
+  "milestone": "LP241.15",
+  "auditScope": "LOCAL_CHECKOUT_ONLY_NO_REMOTE_FETCH",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+  "expectedGovernedRecordCount": 391772,
+  "sourceInventorySha256": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13",
+  "exactFrozenAuthorityArtifacts": [
+    {
+      "path": "owner-local/lp24111/identity-governed-eligible.parquet",
+      "available": false
+    }
+  ],
+  "otherOwnerLocalIntermediateArtifacts": [
+    {
+      "path": "owner-local/lp24111/overture-texas-rich-authority-dedup.parquet",
+      "available": false
+    },
+    {
+      "path": "owner-local/lp24111/overture-texas-normalized-poi.parquet",
+      "available": false
+    }
+  ],
+  "availableCertifiedEvidence": [
+    {
+      "path": "poi/lp24111-d5-standalone-2026-08-28/manifest.json",
+      "format": "JSON release/legal manifest",
+      "bytes": 1769,
+      "sha256": "d62f9bffdbdbe0ec89f2d3a30be725e3a37966aec33adedde1ee2f0a4c8306f7",
+      "recordCount": 391772,
+      "role": "METADATA_ONLY_NOT_POI_ROWS"
+    },
+    {
+      "path": "data/lp24111/phase-d4-certified-measurements.json",
+      "format": "JSON bounded aggregate measurements",
+      "bytes": 5273242,
+      "sha256": "068a9a6562eb302fd3d02d680993aafe3c6139a27686cb589a5dea70b8e0ef73",
+      "recordCount": 391772,
+      "role": "AGGREGATE_EVIDENCE_ONLY_NOT_POI_ROWS"
+    },
+    {
+      "path": "reports/lp24111/compact-package-measurements.json",
+      "format": "JSON shard aggregate measurements",
+      "bytes": 13249,
+      "sha256": "0c99abf89ddd5f22d67d9fce7f9bd51367a4d64380d58dcab7eaa626f9c63d50",
+      "recordCount": 393038,
+      "role": "AGGREGATE_EVIDENCE_ONLY_NOT_POI_ROWS"
+    }
+  ],
+  "authorityBindingsObserved": {
+    "releaseManifestAuthorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+    "releaseManifestRuntimeSchemaVersion": "gridly.poi.runtime.v1",
+    "releaseManifestSourceInventorySha256": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13",
+    "d4OwnerLocalInputPath": "C:\\GitHub\\liberty-county-map\\owner-local\\lp24111\\identity-governed-eligible.parquet",
+    "d4OwnerLocalInputRows": 391772,
+    "d4OwnerLocalInputSha256": "6c63fc555ea4a887162541cb1a4587f9d3edb52fb70cb3e81982598b9a82f85c"
+  },
+  "reconstructionAssessment": {
+    "exactFrozenAuthorityAvailable": false,
+    "allGovernedRuntimePoisAvailable": false,
+    "reconstructableWithoutUpstreamFetch": false,
+    "reconstructableWithoutRenormalization": false,
+    "reason": "Certified manifests and aggregate measurements are present, but no row-bearing frozen 391772-record authority artifact is present."
+  },
+  "existingRuntimeDesign": {
+    "source": "reports/lp24112/lp24112-shard-resolution-contract.json",
+    "architecture": "ONE_DEGREE",
+    "formula": "tx-{floor(latitude),2 digits}-{abs(floor(longitude)),3 digits}",
+    "allowedRadiiMiles": [
+      5,
+      10,
+      25
+    ],
+    "maximumFanout": 4,
+    "wholeTexas": false,
+    "measuredHistoricalShardCount": 86,
+    "note": "The 86-shard measurement describes a 393038-row pre-D.4 eligible population and is not a materialized manifest for the frozen 391772-row authority."
+  },
+  "materialization": {
+    "executed": false,
+    "runtimeDirectoryCreated": false,
+    "shardCount": 0,
+    "materializedGovernedRecordCount": 0,
+    "determinismCertificationExecuted": false,
+    "negativeCaseSuiteExecuted": false
+  },
+  "historicalLp24114EvidencePreserved": true,
+  "blockedState": "RUNTIME_SHARD_MATERIALIZATION_BLOCKED_FROZEN_AUTHORITY_NOT_AVAILABLE",
+  "certificationState": "FAIL_CLOSED",
+  "readyForLp24114Rehearsal": false,
+  "productionSafety": {
+    "deployed": false,
+    "productionSupabaseMutation": false,
+    "productionProviderEligible": false,
+    "providerGate": "OFF",
+    "runtimeActive": false,
+    "runtimeActivated": false,
+    "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+    "productionBehaviorChanged": false,
+    "remoteUpstreamPoiFetch": false,
+    "osmPoiMerge": false,
+    "authorityNormalizationRerun": false,
+    "d4Rerun": false,
+    "d3Rerun": false,
+    "d2Rerun": false
+  },
+  "ownerNextAction": "Restore the exact owner-local identity-governed-eligible.parquet whose certified SHA-256 is 6c63fc555ea4a887162541cb1a4587f9d3edb52fb70cb3e81982598b9a82f85c and row count is 391772 at owner-local/lp24111/identity-governed-eligible.parquet, then rerun npm run audit:lp24115. Do not refetch or rebuild authority data."
+}

@@ -674,6 +674,9 @@
     "build:lp24114": "node tools/lp24114/non-production-rehearsal.mjs --write",
     "verify:lp24114": "node tools/lp24114/non-production-rehearsal.mjs --verify",
     "test:lp24114": "node --test tests/lp24114-non-production-rehearsal.test.mjs",
-    "rehearse:lp24114": "node tools/lp24114/non-production-rehearsal.mjs --rehearse"
+    "rehearse:lp24114": "node tools/lp24114/non-production-rehearsal.mjs --rehearse",
+    "audit:lp24115": "node tools/lp24115/authority-input-audit.mjs --write",
+    "verify:lp24115": "node tools/lp24115/authority-input-audit.mjs --verify",
+    "test:lp24115": "node --test tests/lp24115-authority-input-audit.test.mjs"
   }
 }
