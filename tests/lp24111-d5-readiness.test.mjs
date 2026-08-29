@@ -2,6 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {buildD5} from '../tools/lp24111/d5-readiness.mjs';
+import {recoverCommittedEvidence,BRANDS,CATEGORIES} from '../tools/lp24111/recover-d5-evidence.mjs';
+
+const report=name=>JSON.parse(fs.readFileSync(new URL(`../reports/lp24111/${name}`,import.meta.url),'utf8'));
+const recovered=()=>recoverCommittedEvidence({radius:report('community-radius-coverage.json'),nonPlace:report('governed-non-place-coverage.json'),access:report('category-accessibility.json'),counties:report('county-coverage.json'),metadata:report('metadata-conflicts.json')});
 
 test('D.5 fails closed on missing D.4 quality and brand detail',()=>{
  const d=buildD5();
@@ -9,6 +13,31 @@ test('D.5 fails closed on missing D.4 quality and brand detail',()=>{
  assert.equal(d['d5-quality-class-summary.json'].conservationPassed,false);
  assert.equal(d['d5-brand-readiness.json'].complete,false);
  assert.equal(d['d5-certification.json'].executiveResult,'PHASE_D5_READINESS_INCOMPLETE');
+});
+
+test('D.5A recovers only deterministic category evidence and fails closed elsewhere',()=>{
+ const e=recovered();
+ assert.deepEqual([e.quality.expectedRows,e.quality.placeRows,e.quality.nonPlaceRows],[1888,1859,29]);
+ assert.equal(e.quality.status,'NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE');
+ assert.equal(e.quality.rows.length,0);
+ assert.equal(e.categories.rows.length,CATEGORIES.length);
+ assert.equal(e.categories.rows.find(x=>x.category==='CONVENIENCE').accountedCount,1888);
+ assert.equal(e.categories.rows.find(x=>x.category==='CONVENIENCE').recoveredZeroRows,1888);
+ assert.equal(e.categories.rows.find(x=>x.category==='PHARMACY').accountedCount,1887);
+ assert.deepEqual(e.categories.pharmacyRca.exactMissingIdentity,{governedIdentity:'4872248',identityClass:'CANONICAL_PLACE',placeGeoid:'4872248',displayLabel:null});
+ assert.equal(e.categories.convenienceRca.classification,'ACTUAL_NO_AUTHORITY_CATEGORY');
+ assert.equal(e.metadata.conflict,149);
+ assert.equal(e.metadata.retainedSample.name,'Hitachi Energy Jefferson City');
+ assert.equal(e.metadata.retainedSample.sourceRegion,'MO');
+ assert.equal(e.brands.rows.length,BRANDS.length);
+ assert.ok(e.brands.rows.every(x=>x.status==='NOT_RECOVERABLE_FROM_EXISTING_EVIDENCE'));
+ assert.equal(e.brands.authorityRole,'DESCRIPTIVE_ONLY_NOT_IDENTITY_OR_LAUNCH_AUTHORITY');
+ assert.equal(e.legalState,'LEGAL_REVIEW_REQUIRED');
+});
+
+test('D.5A recovery has no upstream, network, merge, coverage execution, or activation path',()=>{
+ const source=fs.readFileSync(new URL('../tools/lp24111/recover-d5-evidence.mjs',import.meta.url),'utf8');
+ assert.doesNotMatch(source,/fetch\(|https?:\/\/|executeCoverage|execute:lp24111|normalize|taxonomy-review|identity-governance|rich-manufacture|OSM merge|runtimeActivated:true/);
 });
 
 test('D.5 preserves measured populations, cohorts, rural sparsity, and package measurements',()=>{
