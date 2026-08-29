@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp24112c.certification.v1",
+  "phaseState": "PHASE_LP24112C_BLOCKED_PENDING_AUTHORITATIVE_NOTICE_ACQUISITION",
+  "targetPhaseState": "PHASE_LP24112C_FINAL_COUNSEL_HANDOFF_PREPARED",
+  "targetAchieved": false,
+  "legalClearanceGranted": false,
+  "legalState": "LEGAL_REVIEW_REQUIRED",
+  "legalClearanceStatus": "NOT_APPROVED",
+  "providerGate": "OFF",
+  "providerGateEligible": false,
+  "runtimeActive": false,
+  "productionPoiSearch": "NOT_LAUNCHED_NOT_CERTIFIED",
+  "productionBehaviorChanged": false,
+  "deployed": false,
+  "productionSupabaseMutation": false,
+  "overtureRefetch": false,
+  "osmMerged": false,
+  "upstreamDataRerun": false,
+  "normalization": false,
+  "shardRegeneration": false,
+  "phoneTesting": false,
+  "nextOwnerAction": "Acquire the exact authoritative NOTICE from the recorded Foursquare URL in a network environment that permits the request, then rerun LP241.12C and submit the hash-bound package to external counsel."
+}

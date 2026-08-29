@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "gridly.lp24112c.final-license-evidence.v1",
+  "authorityReleaseId": "lp24111-d5-standalone-2026-08-28",
+  "runtimeSchemaVersion": "gridly.poi.runtime.v1",
+  "reviewedSourceInventoryHash": "a9d7a77b964af35fcb21ad3cd061ceb1e1a33ae4dc5091a25a119bada92cec13",
+  "runtimePoiCount": 391772,
+  "combinations": [
+    {
+      "licenses": [
+        "CDLA-Permissive-2.0"
+      ],
+      "count": 355925
+    },
+    {
+      "licenses": [
+        "Apache-2.0",
+        "CDLA-Permissive-2.0"
+      ],
+      "count": 23248
+    },
+    {
+      "licenses": [
+        "CC0-1.0",
+        "CDLA-Permissive-2.0"
+      ],
+      "count": 12599
+    }
+  ],
+  "total": 391772,
+  "apacheCdlaPoiCount": 23248,
+  "richInventoryArtifact": "reports/lp24112a/lp24112a-source-inventory.json",
+  "observedLicenseStrings": [
+    "CDLA-Permissive-2.0",
+    "Apache-2.0",
+    "CC0-1.0"
+  ],
+  "references": {
+    "apache": "https://www.apache.org/licenses/LICENSE-2.0",
+    "cdla": "https://cdla.dev/permissive-2-0/",
+    "cc0": "https://creativecommons.org/publicdomain/zero/1.0/legalcode"
+  },
+  "overtureCrossCheck": {
+    "status": "NOT_COMPLETED_ENVIRONMENT_HTTP_403",
+    "reference": "https://docs.overturemaps.org/attribution/",
+    "recordExpected": {
+      "provider": "Foursquare",
+      "license": "Apache 2.0",
+      "transformation": "Foursquare data transformed to Overture schema",
+      "changed": "2026-03-18",
+      "noticeReference": "https://opensource.foursquare.com/places-notice-txt/"
+    },
+    "substitutesForFoursquareNotice": false
+  }
+}

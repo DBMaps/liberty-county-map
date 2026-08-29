@@ -663,6 +663,9 @@
     "test:lp24112": "node --test tests/lp24112-runtime-activation-design.test.mjs",
     "build:lp24112b": "node tools/lp24112b/attribution-compliance.mjs --write",
     "verify:lp24112b": "node tools/lp24112b/attribution-compliance.mjs --verify",
-    "test:lp24112b": "node --test tests/lp24112b-attribution-compliance.test.mjs"
+    "test:lp24112b": "node --test tests/lp24112b-attribution-compliance.test.mjs",
+    "build:lp24112c": "node tools/lp24112c/final-counsel-handoff.mjs --write",
+    "verify:lp24112c": "node tools/lp24112c/final-counsel-handoff.mjs --verify",
+    "test:lp24112c": "node --test tests/lp24112c-final-counsel-handoff.test.mjs"
   }
 }
