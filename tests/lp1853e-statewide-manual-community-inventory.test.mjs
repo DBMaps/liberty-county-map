@@ -53,6 +53,6 @@ test("manual result choice remains pending until the validated apply action", ()
   const renderer = source.slice(rendererStart, rendererEnd);
   assert.match(renderer, /gridlySettingsManualAwarenessPending = button\.dataset\.gridlyManualAwarenessValue/);
   assert.match(renderer, /data-gridly-manual-awareness-apply/);
-  assert.match(renderer, /options\.apply\(gridlySettingsManualAwarenessPending, canonicalResolution\)/);
+  assert.match(renderer, /options\.apply\(gridlySettingsManualAwarenessPending, canonicalResolution, requestedOperationalCountyId\)/);
   assert.doesNotMatch(renderer.slice(0, renderer.indexOf("data-gridly-manual-awareness-apply")), /gridlyApplyConfirmedHomePersonalization|saveGridlyHomeTownPreference|gridlySetActiveCountyContext/);
 });
