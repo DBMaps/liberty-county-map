@@ -474,6 +474,7 @@
       const coordLat = rawCoords ? Number(rawCoords.latitude ?? rawCoords.lat) : NaN;
       const coordLng = rawCoords ? Number(rawCoords.longitude ?? rawCoords.lng ?? rawCoords.lon) : NaN;
       const coords = Number.isFinite(coordLat) && Number.isFinite(coordLng) && coordLat !== 0 && coordLng !== 0 ? { latitude: coordLat, longitude: coordLng } : null;
+      const sourceGeometry = cloneTrustedAuthorityGeometry(record.sourceGeometry || record.geometry);
       return freeze({
         consumerSituationId: `drivetexas:${key}`,
         providerId: proof.authorityIdentity || record.authorityIdentity || record.sourceId || record.providerId || record.id || null,
@@ -497,6 +498,8 @@
         distanceFromAwarenessMiles: proof.distanceFromSelectedAwarenessMiles ?? null,
         selectedAwarenessRadiusMiles: proof.configuredAwarenessRadiusMiles ?? authority.selectedAwarenessRadiusMiles ?? null,
         sourceCoordinates: coords ? freeze(coords) : null,
+        sourceGeometry: sourceGeometry ? freeze(sourceGeometry) : null,
+        sourceGeometryProvenance: sourceGeometry ? (record.sourceGeometryProvenance || "trusted_drivetexas_provider_geometry") : null,
         roadwayEvidence: freeze({ routeName: record.routeName || null, roadway: record.roadway || null, canonicalRoad: record.canonicalRoad || null }),
         locationEvidence: freeze({ locationPhrase: situationLocation(record, proof), sourceCoordinatesPresent: Boolean(coords) }),
         recordProof: proof,

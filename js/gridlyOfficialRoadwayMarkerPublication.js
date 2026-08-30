@@ -14,12 +14,39 @@
     const raw = text(record.consumerSituationId || record.authorityIdentity || record.sourceProviderRecordId || record.providerId || record.id || `record-${index}`);
     return raw.startsWith("drivetexas:") ? raw : `drivetexas:${raw}`;
   }
+  function validPair(pair) {
+    const lng = Number(pair?.[0]);
+    const lat = Number(pair?.[1]);
+    return Array.isArray(pair) && pair.length >= 2 && Number.isFinite(lat) && Number.isFinite(lng)
+      && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 && lat !== 0 && lng !== 0;
+  }
+  function validatedGeometryPairs(geometry) {
+    if (geometry?.type === "Point") return validPair(geometry.coordinates) ? [geometry.coordinates] : [];
+    if (geometry?.type === "LineString") {
+      return Array.isArray(geometry.coordinates) && geometry.coordinates.length >= 2 && geometry.coordinates.every(validPair)
+        ? geometry.coordinates : [];
+    }
+    if (geometry?.type === "MultiLineString") {
+      if (!Array.isArray(geometry.coordinates) || !geometry.coordinates.length
+        || !geometry.coordinates.every(line => Array.isArray(line) && line.length >= 2 && line.every(validPair))) return [];
+      return geometry.coordinates.flat();
+    }
+    return [];
+  }
   function coordinate(record = {}) {
     const source = record.sourceCoordinates || {};
     const lat = Number(source.latitude ?? source.lat ?? record.latitude ?? record.lat);
     const lng = Number(source.longitude ?? source.lng ?? source.lon ?? record.longitude ?? record.lng ?? record.lon);
-    return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 && lat !== 0 && lng !== 0
-      ? Object.freeze({ lat, lng }) : null;
+    if (Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 && lat !== 0 && lng !== 0) {
+      return Object.freeze({ lat, lng });
+    }
+    const geometry = record.sourceGeometry || record.geometry;
+    const pairs = validatedGeometryPairs(geometry);
+    const pair = pairs?.[Math.floor((pairs?.length || 0) / 2)];
+    const geometryLat = Number(pair?.[1]);
+    const geometryLng = Number(pair?.[0]);
+    return Number.isFinite(geometryLat) && Number.isFinite(geometryLng)
+      ? Object.freeze({ lat: geometryLat, lng: geometryLng }) : null;
   }
   function build(records = [], options = {}) {
     const canonicalKey = text(options.canonicalKey);
