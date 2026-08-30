@@ -11,9 +11,10 @@ test('Location Context broad active-issue count includes shared active hazards',
   assert.match(reconcile, /safeLength\(safeSummary\.activeReportsInArea\)/);
 });
 
-test('Alerts narrower grouped count cannot mask a larger shared awareness count', () => {
+test('Alerts presentation cardinality cannot override shared awareness count authority', () => {
   const normalize = app.slice(app.indexOf('function normalizeGridlyMobileAwarenessPanelSummary'), app.indexOf('function getGridlyAwarenessSummaryAreaIdentity'));
-  assert.match(normalize, /Math\.max\(0, alertsGroupedIssueCount, reconciledActiveIssueCount\)/);
+  assert.match(normalize, /resolveLocationContextActiveIssueCount/);
+  assert.doesNotMatch(normalize, /Math\.max\(0, alertsGroupedIssueCount, reconciledActiveIssueCount\)/);
   assert.match(normalize, /const rawActiveIssueCount = hazardCount \+ reportCount \+ crossingReportCount/);
 });
 
