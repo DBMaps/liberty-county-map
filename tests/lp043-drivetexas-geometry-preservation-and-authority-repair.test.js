@@ -107,6 +107,8 @@ assert.strictEqual(alphaConsumer.consumerVisibleSituations[0].providerId, 'provi
 assert.strictEqual(alphaConsumer.consumerVisibleSituations[0].consumerSituationId, 'drivetexas:provider:multi-community', 'consumer situation id uses canonical authority identity without double-prefixing');
 const noRepresentative = alphaConsumer.consumerVisibleSituations[0];
 assert.strictEqual(noRepresentative.sourceCoordinates, null, 'geometry-qualified consumer visibility does not require representative coordinates');
+assert.strictEqual(noRepresentative.sourceGeometry.type, 'LineString', 'LP039.3 preserves trusted geometry when governed coordinates are intentionally null');
+assert.match(noRepresentative.sourceGeometryProvenance, /^trusted_drivetexas_provider_(?:geojson_)?geometry$/, 'LP039.3 identifies the authoritative geometry source without inventing a point');
 const completeCacheRecord = rec('provider:complete-cache-line', { latitude: 31.0, longitude: -96.0, sourceGeometry: { type: 'LineString', coordinates: [[-94.8852, 30.0466], [-94.70, 30.0466]] } });
 sandbox.gridlyDriveTexasConnector = {
   getAllNormalizedRecords: () => [completeCacheRecord],
