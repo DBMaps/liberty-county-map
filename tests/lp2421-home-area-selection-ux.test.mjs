@@ -46,6 +46,36 @@ test("visible Settings search selects first and persists only from its attached 
   assert.match(search, /gridlySettingsAwarenessSearchPending = null/);
 });
 
+test("attached manual confirmation carries and captures commit identity before persistence", () => {
+  const builder = functionSource("buildGridlySettingsAwarenessOptionsHtml");
+  const renderer = functionSource("renderGridlyManualAwarenessAreaPicker");
+  assert.match(builder, /data-gridly-manual-awareness-apply data-gridly-manual-awareness-commit-value=/);
+  assert.match(builder, /data-gridly-manual-awareness-commit-county-id=/);
+  assert.match(renderer, /event\.preventDefault\(\)/);
+  assert.match(renderer, /event\.stopPropagation\(\)/);
+  assert.match(renderer, /const pendingValue = applyButton\?\.dataset\?\.gridlyManualAwarenessCommitValue/);
+  assert.match(renderer, /const pendingCountyId = applyButton\?\.dataset\?\.gridlyManualAwarenessCommitCountyId/);
+  assert.ok(renderer.indexOf("const pendingValue") < renderer.indexOf("resolveGridlyManualAwarenessAreaSearch"), "identity is captured before candidate resolution");
+  assert.ok(renderer.indexOf("if (!pendingEntry) return") < renderer.indexOf("options.apply"), "a missing candidate fails closed");
+  assert.ok(renderer.indexOf("options.apply(pendingValue") < renderer.lastIndexOf('gridlySettingsManualAwarenessPending = ""'), "save consumes the captured candidate before pending state clears");
+  assert.equal((builder.match(/data-gridly-manual-awareness-apply/g) || []).length, 1);
+});
+
+test("Dayton and Tarkington retain the identity needed by the shared commit", () => {
+  const dayton = areas.find((area) => area.key === "dayton");
+  const tarkington = areas.find((area) => area.key === "tarkington");
+  assert.deepEqual({ storageValue: dayton?.storageValue, countyId: dayton?.countyId, placeGeoid: dayton?.placeGeoid }, {
+    storageValue: "Dayton",
+    countyId: "liberty-tx",
+    placeGeoid: "4819432"
+  });
+  assert.deepEqual({ storageValue: tarkington?.storageValue, countyId: tarkington?.countyId, placeGeoid: tarkington?.placeGeoid }, {
+    storageValue: "Tarkington",
+    countyId: "liberty-tx",
+    placeGeoid: null
+  });
+});
+
 test("canonical multi-county controls remain unique with governed memberships intact", () => {
   const expected = {
     Austin: ["bastrop-tx", "hays-tx", "travis-tx", "williamson-tx"],
