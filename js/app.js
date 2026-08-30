@@ -99083,11 +99083,10 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
       const isPending = gridlyManualAwarenessSelectionMatches(community, group, pendingValue, gridlySettingsManualAwarenessPendingCountyId)
         || (!membershipCountyId && community.key === pendingArea?.key);
       const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
-      return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" data-gridly-manual-awareness-county-id="${escapeGridlySettingsAttribute(membershipCountyId)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
+      const result = `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" data-gridly-manual-awareness-county-id="${escapeGridlySettingsAttribute(membershipCountyId)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
+      const confirmation = isPending ? '<button type="button" class="primary-btn settings-manual-result-confirm" data-gridly-manual-awareness-apply>Use this Home Area</button>' : "";
+      return `<div class="settings-manual-result-presentation${isPending ? " is-pending" : ""}">${result}${confirmation}</div>`;
     })).join("");
-  const pendingSelection = pendingArea || pendingOption;
-  const pendingContext = pendingOption?.canonicalResolution ? "Multi-county community" : (GRIDLY_COUNTY_REGISTRY[pendingArea?.countyId]?.name || "");
-  const pendingHtml = pendingSelection ? `<div class="settings-manual-pending"><span>Selected area</span><strong>${escapeGridlySettingsAttribute(pendingSelection.label || pendingSelection.storageValue)}</strong><small>${escapeGridlySettingsAttribute(pendingContext)}</small><button type="button" class="primary-btn" data-gridly-manual-awareness-apply>Use this Home Area</button></div>` : "";
   const emptyResult = search.status === "INVALID_ZIP"
     ? "Enter a valid 5-digit ZIP code."
     : search.status === "RESOLVED_NOT_OPERATIONAL" || (search.status === "NOT_FOUND" && /^\d{5}$/.test(normalizedQuery))
@@ -99098,7 +99097,7 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
   const results = normalizedQuery
     ? `<div class="settings-manual-results"><span class="settings-manual-results-label">Results</span><div class="settings-manual-county-list" aria-live="polite">${resultHtml || `<p class="settings-manual-no-results" role="status">${emptyResult}</p>`}</div></div>`
     : '<p class="settings-manual-search-instruction">Start typing to find an available Gridly area.</p>';
-  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h2>Choose your home area</h2><label>Search your Texas community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="postal-code" placeholder="Dayton or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${results}${pendingHtml}</div>`;
+  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h2>Choose your home area</h2><label>Search your Texas community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="postal-code" placeholder="Dayton or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${results}</div>`;
 }
 
 function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
@@ -99211,6 +99210,7 @@ function renderGridlySettingsAwarenessControl() {
 
 let gridlySettingsAwarenessSearchResult = null;
 let gridlySettingsAwarenessSearchApplied = false;
+let gridlySettingsAwarenessSearchPending = null;
 
 function renderGridlySettingsAwarenessSearchResult(result, surface = {}) {
   gridlySettingsAwarenessSearchResult = result;
@@ -99233,24 +99233,48 @@ function renderGridlySettingsAwarenessSearchResult(result, surface = {}) {
     list.className = "settings-awareness-candidates";
     rows.forEach(({ group, community }) => {
       const membershipCountyId = gridlyManualAwarenessMembershipCountyId(community, group);
+      const candidateKey = `${community.value || community.key}:${membershipCountyId}`;
+      const isPending = gridlySettingsAwarenessSearchPending === candidateKey;
+      const presentation = document.createElement("div");
+      presentation.className = `settings-manual-result-presentation${isPending ? " is-pending" : ""}`;
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "settings-manual-area-result";
+      button.className = `settings-manual-area-result${isPending ? " is-pending" : ""}`;
+      button.setAttribute("aria-pressed", String(isPending));
       const title = document.createElement("span");
       title.textContent = community.label;
       const context = document.createElement("small");
       context.textContent = community.canonicalResolution ? "Multi-county community" : group.countyLabel;
       button.append(title, context);
+      if (isPending) {
+        const state = document.createElement("em");
+        state.className = "settings-manual-area-state";
+        state.textContent = "Selected";
+        button.append(state);
+      }
       button.addEventListener("click", () => {
-        const applied = community.canonicalResolution
-          ? gridlySaveCanonicalMultiCountyPlaceHome(community.canonicalResolution, "settings_awareness_area_search", membershipCountyId)
-          : selectGridlySettingsAwarenessArea(community.value, "settings_awareness_area_search", root);
-        if (!applied) return;
-        gridlySettingsAwarenessSearchApplied = true;
-        status.textContent = `Gridly is now watching ${community.canonicalLabel || community.label}.`;
-        button.disabled = true;
+        gridlySettingsAwarenessSearchPending = candidateKey;
+        renderGridlySettingsAwarenessSearchResult(result, surface);
       });
-      list.append(button);
+      presentation.append(button);
+      if (isPending) {
+        const apply = document.createElement("button");
+        apply.type = "button";
+        apply.className = "primary-btn settings-manual-result-confirm";
+        apply.textContent = "Use this Home Area";
+        apply.addEventListener("click", () => {
+          const applied = community.canonicalResolution
+            ? gridlySaveCanonicalMultiCountyPlaceHome(community.canonicalResolution, "settings_awareness_area_search", membershipCountyId)
+            : selectGridlySettingsAwarenessArea(community.value, "settings_awareness_area_search", root);
+          if (!applied) return;
+          gridlySettingsAwarenessSearchApplied = true;
+          gridlySettingsAwarenessSearchPending = null;
+          status.textContent = `Gridly is now watching ${community.canonicalLabel || community.label}.`;
+          apply.disabled = true;
+        });
+        presentation.append(apply);
+      }
+      list.append(presentation);
     });
     container.append(list);
     container.hidden = false;
@@ -99346,6 +99370,7 @@ function searchGridlySettingsAwarenessArea(query = "", surface = {}) {
     // canonical community projection as the manual picker. Membership rows
     // remain downstream candidates; they are not independently rendered
     // search identities.
+    gridlySettingsAwarenessSearchPending = null;
     const result = resolveGridlyManualAwarenessAreaSearch(query);
     renderGridlySettingsAwarenessSearchResult(result, surface);
     return result;

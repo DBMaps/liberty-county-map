@@ -25130,6 +25130,14 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 .settings-manual-area-state { justify-self: start; border: 1px solid rgba(67, 230, 160, 0.28); border-radius: 999px; color: rgba(112, 241, 181, 0.96); font-size: 0.72rem; font-style: normal; font-weight: 850; padding: 3px 8px; }
 .settings-manual-area-result.is-current { border-color: rgba(67, 230, 160, 0.28); }
 .settings-manual-area-result.is-pending { border-color: rgba(67, 230, 160, 0.54); background: linear-gradient(145deg, rgba(25, 91, 99, 0.68), rgba(8, 33, 44, 0.9)); box-shadow: inset 3px 0 rgba(67, 230, 160, 0.9); }
+.settings-manual-result-presentation { display: grid; gap: 8px; min-width: 0; }
+.settings-manual-result-presentation.is-pending {
+  border: 1px solid rgba(67, 230, 160, 0.32);
+  border-radius: 15px;
+  background: rgba(19, 62, 69, 0.32);
+  padding: 4px;
+}
+.settings-manual-result-confirm { width: 100%; min-height: 48px; white-space: normal; }
 .settings-manual-pending {
   border: 1px solid rgba(67, 230, 160, 0.32);
   border-radius: 15px;
