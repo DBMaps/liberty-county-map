@@ -99084,7 +99084,7 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
         || (!membershipCountyId && community.key === pendingArea?.key);
       const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
       const result = `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" data-gridly-manual-awareness-county-id="${escapeGridlySettingsAttribute(membershipCountyId)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
-      const confirmation = isPending ? '<button type="button" class="primary-btn settings-manual-result-confirm" data-gridly-manual-awareness-apply>Use this Home Area</button>' : "";
+      const confirmation = isPending ? `<button type="button" class="primary-btn settings-manual-result-confirm" data-gridly-manual-awareness-apply data-gridly-manual-awareness-commit-value="${escapeGridlySettingsAttribute(community.value)}" data-gridly-manual-awareness-commit-county-id="${escapeGridlySettingsAttribute(membershipCountyId)}">Use this Home Area</button>` : "";
       return `<div class="settings-manual-result-presentation${isPending ? " is-pending" : ""}">${result}${confirmation}</div>`;
     })).join("");
   const emptyResult = search.status === "INVALID_ZIP"
@@ -99116,19 +99116,30 @@ function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
     gridlySettingsManualAwarenessPendingCountyId = button.dataset.gridlyManualAwarenessCountyId || "";
     renderGridlyManualAwarenessAreaPicker(container, options);
   }));
-  container.querySelector("[data-gridly-manual-awareness-apply]")?.addEventListener("click", () => {
-    if (!gridlySettingsManualAwarenessPending) return;
+  container.querySelector("[data-gridly-manual-awareness-apply]")?.addEventListener("click", (event) => {
+    // The confirmation lives beside a selectable result.  Capture its identity
+    // before allowing any other click owner to observe the event or rerender the
+    // picker; the pending globals are presentation state, not commit authority.
+    event.preventDefault();
+    event.stopPropagation();
+    const applyButton = event.currentTarget;
+    const pendingValue = applyButton?.dataset?.gridlyManualAwarenessCommitValue || gridlySettingsManualAwarenessPending;
+    const pendingCountyId = applyButton?.dataset?.gridlyManualAwarenessCommitCountyId || gridlySettingsManualAwarenessPendingCountyId;
+    if (!pendingValue) return;
     const pendingSearch = resolveGridlyManualAwarenessAreaSearch(gridlySettingsManualAwarenessQuery);
     const pendingEntry = pendingSearch.groups.flatMap((group) => group.communities.map((community) => ({ group, community })))
-      .find(({ group, community }) => gridlyManualAwarenessSelectionMatches(community, group, gridlySettingsManualAwarenessPending, gridlySettingsManualAwarenessPendingCountyId)) || null;
+      .find(({ group, community }) => gridlyManualAwarenessSelectionMatches(community, group, pendingValue, pendingCountyId)) || null;
+    // Fail closed without consuming the pending selection.  This preserves the
+    // candidate so the owner can retry rather than presenting a false commit.
+    if (!pendingEntry) return;
     const pendingOption = pendingEntry?.community || null;
     const canonicalResolution = pendingOption?.canonicalResolution || null;
     const requestedOperationalCountyId = gridlyManualAwarenessMembershipCountyId(pendingOption, pendingEntry?.group) || pendingEntry?.group?.countyId || null;
     const applied = options.apply
-      ? options.apply(gridlySettingsManualAwarenessPending, canonicalResolution, requestedOperationalCountyId)
+      ? options.apply(pendingValue, canonicalResolution, requestedOperationalCountyId)
       : canonicalResolution
         ? gridlySaveCanonicalMultiCountyPlaceHome(canonicalResolution, "settings_manual_awareness_area", requestedOperationalCountyId)
-        : selectGridlySettingsAwarenessArea(gridlySettingsManualAwarenessPending, "settings_manual_awareness_area", container);
+        : selectGridlySettingsAwarenessArea(pendingValue, "settings_manual_awareness_area", container);
     if (applied) {
       gridlySettingsManualAwarenessPending = "";
       gridlySettingsManualAwarenessPendingCountyId = "";
