@@ -42,9 +42,9 @@
   function sourceKindOf(record = {}) {
     const explicit = slug(record.sourceKind || record.evidenceKind);
     if (explicit) return explicit;
-    const source = slug(record.provider || record.source || record.sourceId);
+    const source = slug(record.provider || record.providerId || record.source || record.sourceId || record.raw?.providerId);
     const type = subtypeOf(record);
-    if (/drivetexas|txdot|official/.test(source) || record.official === true) return "official_roadway";
+    if (/drivetexas|txdot|official/.test(source) || record.official === true || /^official-situation-official-roadways-/i.test(text(record.consumerSituationId || record.id))) return "official_roadway";
     if (/weather|nws|noaa/.test(source) || /weather/.test(explicit)) return "weather_provider";
     if (/generated/.test(source) || /^road[-_]/.test(text(record.incidentId || record.id))) return "generated_road_incident";
     if (/hazard/.test(source) || record.reportKind === "hazard") return "active_hazard";
@@ -55,7 +55,13 @@
     const governedId = sourceKind === "community_report"
       ? text(record.evidenceId || record.persistedReportId || record.persisted_report_id || record.reportId || record.report_id || record.id || record.incidentId || record.crossingReportId || record.sourceId)
       : text(record.evidenceId || record.providerRecordId || record.reportId || record.report_id || record.incidentId || record.crossingReportId || record.id || record.sourceId);
-    if (governedId) return `${sourceKind}:${governedId}`;
+    if (governedId) {
+      // Audits frequently receive the already-qualified evidenceId emitted by
+      // buildSnapshot.  Qualifying it a second time made every otherwise exact
+      // official UUID look unmatched (official_roadway:official_roadway:UUID).
+      if (governedId.startsWith(`${sourceKind}:`)) return governedId;
+      return `${sourceKind}:${governedId}`;
+    }
     const lat = Number(record.lat ?? record.latitude ?? record.coordinates?.lat);
     const lng = Number(record.lng ?? record.lon ?? record.longitude ?? record.coordinates?.lng);
     const observed = text(record.observedAt || record.updatedAt || record.updated_at || record.createdAt || record.created_at || record.timestamp);
@@ -451,6 +457,18 @@
       locationContextSourceBreakdown: Object.freeze(sourceBreakdown)
     });
   }
+
+  // Location Context counts governed active evidence. Alerts groups are a
+  // presentation projection and remain observable, but their card cardinality
+  // is never a count-authority operand. This applies equally to official,
+  // generated, hazard, and community-report populations.
+  function resolveLocationContextActiveIssueCount(input = {}) {
+    const reconciled = Number(input.reconciledActiveIssueCount);
+    const shared = Number(input.sharedActiveIssueCount);
+    const governed = Number(input.governedEligibleEvidenceCount);
+    const firstFinite = [reconciled, shared, governed].find((value) => Number.isFinite(value));
+    return Math.max(0, firstFinite ?? 0);
+  }
   function buildCurrentCountyVisibleIncidentAudit(input = {}) {
     const source = Array.isArray(input.sourceCollection) ? input.sourceCollection : [];
     const included = Array.isArray(input.includedItems) ? input.includedItems : source;
@@ -629,5 +647,5 @@
         || hazardCountyAuthority.find((row) => row.lifecycleFirstLosingStage)?.lifecycleFirstLosingStage || null
     });
   }
-  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, buildCommunityHazardAcceptanceAudit, isGovernedActiveLifecycle, identity, communityHazardAliasCandidates, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases, governedLocationEvidence });
+  return Object.freeze({ VERSION, SURFACES, COMMUNITY_POLICY, OFFICIAL_POLICY, BLOCKED_CROSSING_OWNERS, buildSnapshot, buildConsumerProjection, buildLocationContextProductionAudit, resolveLocationContextActiveIssueCount, buildCurrentCountyVisibleIncidentAudit, captureActiveIssueReconciliationInvocation, buildCommunityHazardAcceptanceAudit, isGovernedActiveLifecycle, identity, communityHazardAliasCandidates, sourceKindOf, subtypeOf, persistedReportId, crossingProviderId, reconcileCommunityReportAliases, governedLocationEvidence });
 });

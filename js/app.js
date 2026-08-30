@@ -42199,8 +42199,14 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const alertsGroupedIssueCount = Number(alertsSnapshot?.groupedAlertCount ?? alertsSnapshot?.activeIncidentCount);
   const alertsCommunityReportCount = Number(alertsSnapshot?.communityReportCount ?? alertsSnapshot?.rawAlertRecordCount);
   const reconciledActiveIssueCount = getGridlyReconciledAwarenessActiveIssueCount(safeSummary, { activeIssueCount: rawActiveIssueCount, hazardCount, reportCount: reportCount + crossingReportCount });
-  const activeIssueCount = Number.isFinite(alertsGroupedIssueCount) && alertsGroupedIssueCount > 0
-    ? Math.max(0, alertsGroupedIssueCount, reconciledActiveIssueCount)
+  // Alerts grouping is presentation cardinality, not governed active-evidence
+  // cardinality. Keep it as a diagnostic operand without allowing a derived
+  // card (or any other presentation-only row) to manufacture an active issue.
+  const activeIssueCount = window.GridlyGovernedAwareness?.resolveLocationContextActiveIssueCount
+    ? window.GridlyGovernedAwareness.resolveLocationContextActiveIssueCount({
+      reconciledActiveIssueCount,
+      sharedActiveIssueCount: safeSummary.sharedActiveIssueContract?.activeIssueCount
+    })
     : reconciledActiveIssueCount;
   const productionCandidates = [
     ...activeReportRows.map((record) => ({ record, countedReason: "activeReportsInArea retained collection member" })),
