@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
+import vm from "node:vm";
 import { areas } from "../tools/lp240x/supported-area-identity-audit.mjs";
 
 const source = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
@@ -46,19 +47,67 @@ test("visible Settings search selects first and persists only from its attached 
   assert.match(search, /gridlySettingsAwarenessSearchPending = null/);
 });
 
-test("attached manual confirmation carries and captures commit identity before persistence", () => {
-  const builder = functionSource("buildGridlySettingsAwarenessOptionsHtml");
-  const renderer = functionSource("renderGridlyManualAwarenessAreaPicker");
-  assert.match(builder, /data-gridly-manual-awareness-apply data-gridly-manual-awareness-commit-value=/);
-  assert.match(builder, /data-gridly-manual-awareness-commit-county-id=/);
-  assert.match(renderer, /event\.preventDefault\(\)/);
-  assert.match(renderer, /event\.stopPropagation\(\)/);
-  assert.match(renderer, /const pendingValue = applyButton\?\.dataset\?\.gridlyManualAwarenessCommitValue/);
-  assert.match(renderer, /const pendingCountyId = applyButton\?\.dataset\?\.gridlyManualAwarenessCommitCountyId/);
-  assert.ok(renderer.indexOf("const pendingValue") < renderer.indexOf("resolveGridlyManualAwarenessAreaSearch"), "identity is captured before candidate resolution");
-  assert.ok(renderer.indexOf("if (!pendingEntry) return") < renderer.indexOf("options.apply"), "a missing candidate fails closed");
-  assert.ok(renderer.indexOf("options.apply(pendingValue") < renderer.lastIndexOf('gridlySettingsManualAwarenessPending = ""'), "save consumes the captured candidate before pending state clears");
-  assert.equal((builder.match(/data-gridly-manual-awareness-apply/g) || []).length, 1);
+test("visible attached CTA executes the recovered transaction and replaces persisted Dallas", () => {
+  const rendererSource = functionSource("renderGridlyManualAwarenessAreaPicker");
+  const persisted = {
+    canonical: { awarenessAreaKey: "dallas", consumerLabel: "Dallas", countyId: "dallas-tx", communityKey: "4819000" },
+    settings: { homeTown: "Dallas", awarenessArea: "Dallas", awarenessAreaKey: "dallas", countyId: "dallas-tx" },
+    profile: { homeTown: "Dallas", homeTownLabel: "Dallas", awarenessArea: "Dallas", awarenessAreaKey: "dallas" },
+    localHomeTown: "Dallas"
+  };
+  const listeners = {};
+  const resultButton = { dataset: { gridlyManualAwarenessValue: "Dayton", gridlyManualAwarenessCountyId: "liberty-tx" }, addEventListener(type, listener) { listeners.result = listener; } };
+  const applyButton = { addEventListener(type, listener) { listeners.apply = listener; } };
+  const container = {
+    set innerHTML(value) { this.markup = value; },
+    querySelector(selector) {
+      if (selector === "[data-gridly-manual-awareness-search]") return null;
+      if (selector === "[data-gridly-manual-awareness-apply]") return context.gridlySettingsManualAwarenessPending ? applyButton : null;
+      return null;
+    },
+    querySelectorAll(selector) { return selector === "[data-gridly-manual-awareness-value]" ? [resultButton] : []; }
+  };
+  const context = {
+    gridlySettingsManualAwarenessQuery: "Dayton",
+    gridlySettingsManualAwarenessPending: "",
+    gridlySettingsManualAwarenessPendingCountyId: "",
+    getGridlySettingsAwarenessAreaDisplay: () => ({ storageValue: persisted.settings.homeTown }),
+    buildGridlySettingsAwarenessOptionsHtml: () => "picker",
+    resolveGridlyManualAwarenessAreaSearch: () => ({ groups: [{ countyId: "liberty-tx", countyLabel: "Liberty County", communities: [{ key: "dayton", value: "Dayton", label: "Dayton", placeGeoid: "4819432" }] }] }),
+    gridlyManualAwarenessSelectionMatches: (community, group, value, countyId) => community.value === value && group.countyId === countyId,
+    gridlyManualAwarenessMembershipCountyId: (_community, group) => group.countyId,
+    gridlySaveCanonicalMultiCountyPlaceHome: () => false,
+    selectGridlySettingsAwarenessArea(value) {
+      assert.equal(value, "Dayton");
+      persisted.canonical = null;
+      persisted.settings = { homeTown: "Dayton", awarenessArea: "Dayton", awarenessAreaKey: "dayton", countyId: "liberty-tx" };
+      persisted.profile = { homeTown: "Dayton", homeTownLabel: "Dayton", awarenessArea: "Dayton", awarenessAreaKey: "dayton" };
+      persisted.localHomeTown = "Dayton";
+      return true;
+    }
+  };
+  vm.createContext(context);
+  vm.runInContext(`${rendererSource};this.renderGridlyManualAwarenessAreaPicker=renderGridlyManualAwarenessAreaPicker`, context);
+
+  context.renderGridlyManualAwarenessAreaPicker(container);
+  assert.equal(persisted.settings.homeTown, "Dallas", "Dallas is persisted before candidate click");
+  listeners.result();
+  assert.equal(persisted.settings.homeTown, "Dallas", "candidate selection remains pending only");
+  listeners.apply();
+  assert.deepEqual(persisted.settings, { homeTown: "Dayton", awarenessArea: "Dayton", awarenessAreaKey: "dayton", countyId: "liberty-tx" });
+  assert.equal(context.getGridlySettingsAwarenessAreaDisplay().storageValue, "Dayton", "rerender reads persisted Dayton");
+  assert.equal(JSON.parse(JSON.stringify(persisted)).settings.homeTown, "Dayton", "rehydration retains Dayton");
+  assert.equal(context.gridlySettingsManualAwarenessPending, "", "pending state clears after the successful save");
+});
+
+test("ordinary saves retire a conflicting canonical Home Area owner before writing Settings and profile", () => {
+  const saver = functionSource("saveGridlyHomeTownPreference");
+  assert.match(saver, /persistedCanonicalAreaKey && persistedCanonicalAreaKey !== area\.key/);
+  assert.match(saver, /removeItem\(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY\)/);
+  assert.ok(saver.indexOf("removeItem(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY)") < saver.indexOf("saveGridlySettingsPreferences"));
+  assert.match(saver, /homeTown, awarenessArea: homeTown, awarenessAreaKey: area\.key, countyId: resolvedCountyId/);
+  assert.match(saver, /saveGridlyUserProfile\(\{[\s\S]*homeTownLabel: area\.label[\s\S]*awarenessAreaCountyId: resolvedCountyId/);
+  assert.match(saver, /gridlySafeLocalStorageSet\("gridlyHomeTown", homeTown\)/);
 });
 
 test("Dayton and Tarkington retain the identity needed by the shared commit", () => {
