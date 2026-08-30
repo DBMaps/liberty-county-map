@@ -24,7 +24,7 @@ function occurrenceCount(lines, text) {
   return Object.values(lines).reduce((count, line) => count + (line.split(text).length - 1), 0);
 }
 
-test('quiet Location Context assigns nonzero crossing copy only to its dedicated line', () => {
+test('quiet Location Context retains nonzero crossing copy in its internal model', () => {
   for (const awarenessCount of [70, 30]) {
     const input = { complete: true, awarenessCount, activeIssues: 0 };
     const lines = locationContextLines(input);
@@ -37,7 +37,7 @@ test('quiet Location Context assigns nonzero crossing copy only to its dedicated
   assert.match(app, /const quietMapContextMeta = getGridlyLocationContextMapMeta\(\);/);
 });
 
-test('active Location Context retains its combined issue and crossing presentation', () => {
+test('active Location Context retains its combined issue and crossing diagnostic model', () => {
   const lines = locationContextLines({ complete: true, awarenessCount: 417, activeIssues: 24 });
   assert.equal(lines.crossingsLine, '24 active issues nearby · 417 crossings watched');
   assert.equal(occurrenceCount(lines, '417 crossings watched'), 1);
@@ -77,4 +77,11 @@ test('safe owner audit reads actual Location Context DOM and reports revision pa
   assert.match(app, /countParity: complete && visibleDom\.state === "numeric"/);
   assert.match(app, /canonicalAreaIdentity/);
   assert.match(app, /operationalCountyId/);
+});
+
+test('collapsed consumer renderer does not publish crossing inventory copy', () => {
+  const sync = app.slice(app.indexOf('function syncMobileDestinationCommandCard'), app.indexOf('function clearGridlyDestinationRoutePreview'));
+  assert.match(sync, /safeText\("mobileAwarenessPanelCrossings", ""\)/);
+  assert.match(sync, /mobileAwarenessPanelCrossings"\)\?\.toggleAttribute\("hidden", true\)/);
+  assert.doesNotMatch(sync, /safeText\("mobileAwarenessPanelCrossings", awarenessSummary\.secondaryMetricsLine\)/);
 });

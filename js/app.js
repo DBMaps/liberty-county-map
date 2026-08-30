@@ -42180,15 +42180,9 @@ if (typeof window !== "undefined") window.gridlyCrossingWatchCountAudit = () => 
 
 function buildGridlyLocationContextMetricLines({ activeIssueCount = 0, reportCount = 0, crossingsWatchedCount = 0, crossingInventoryAvailable = true } = {}) {
   const active = Math.max(0, Number(activeIssueCount) || 0);
-  const reports = Math.max(0, Number(reportCount) || 0);
-  const crossings = Math.max(0, Number(crossingsWatchedCount) || 0);
-  const secondaryMetrics = [
-    reports > active ? `${reports} community reports` : "",
-    !crossingInventoryAvailable ? "Crossing inventory unavailable" : (crossings > 0 ? `${crossings} crossing${crossings === 1 ? "" : "s"} watched` : "")
-  ].filter(Boolean);
   return Object.freeze({
-    activeIssuesLine: `${active} active issue${active === 1 ? "" : "s"} nearby`,
-    secondaryMetricsLine: secondaryMetrics.join(" · ")
+    activeIssuesLine: active === 0 ? "No active issues nearby" : `${active} active issue${active === 1 ? "" : "s"} nearby`,
+    secondaryMetricsLine: ""
   });
 }
 
@@ -42610,18 +42604,25 @@ function syncMobileDestinationCommandCard(options = {}) {
     safeText("mobileDestinationCommandImpact", "");
   } else if (awarenessPanelMode) {
     safeText("mobileAwarenessPanelKicker", getGridlyLocationAwarenessCardKicker(awarenessSummary.areaName || awarenessSummary.awarenessAreaName));
-    safeText("mobileDestinationCommandTitle", awarenessSummary.panelTitle);
-    safeText("mobileDestinationCommandMeta", awarenessSummary.status);
+    // The kicker owns community identity on this compact consumer surface.
+    // Keep title/status values in the summary model for their legitimate
+    // consumers, but do not duplicate them in the collapsed card or a11y tree.
+    safeText("mobileDestinationCommandTitle", "");
+    safeText("mobileDestinationCommandMeta", "");
+    document.getElementById("mobileDestinationCommandTitle")?.toggleAttribute("hidden", true);
+    document.getElementById("mobileDestinationCommandMeta")?.toggleAttribute("hidden", true);
     safeText("mobileAwarenessPanelIssues", awarenessSummary.activeIssuesLine);
-    safeText("mobileAwarenessPanelCrossings", awarenessSummary.secondaryMetricsLine);
+    safeText("mobileAwarenessPanelCrossings", "");
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", !String(awarenessSummary.activeIssuesLine || "").trim());
-    document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", !String(awarenessSummary.secondaryMetricsLine || "").trim());
+    document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", true);
     safeText("mobileDestinationCommandImpact", "");
     safeText("mobileDestinationCommandBtn", "Search");
   } else {
     const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
     safeText("mobileAwarenessPanelKicker", "Route");
     safeText("mobileDestinationCommandTitle", selectedLabel ? getGridlyRouteContextTitle(selectedLabel) : (routeIsMonitoring ? getGridlyRouteContextTitle("") : "Destination"));
+    document.getElementById("mobileDestinationCommandTitle")?.toggleAttribute("hidden", false);
+    document.getElementById("mobileDestinationCommandMeta")?.toggleAttribute("hidden", false);
     safeText(
       "mobileDestinationCommandMeta",
       selectedLabel
