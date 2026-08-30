@@ -42178,6 +42178,20 @@ function buildGridlyCrossingWatchPresentationModel(summary = {}, reason = "locat
 }
 if (typeof window !== "undefined") window.gridlyCrossingWatchCountAudit = () => ({ ...gridlyCrossingWatchCountAuditState });
 
+function buildGridlyLocationContextMetricLines({ activeIssueCount = 0, reportCount = 0, crossingsWatchedCount = 0, crossingInventoryAvailable = true } = {}) {
+  const active = Math.max(0, Number(activeIssueCount) || 0);
+  const reports = Math.max(0, Number(reportCount) || 0);
+  const crossings = Math.max(0, Number(crossingsWatchedCount) || 0);
+  const secondaryMetrics = [
+    reports > active ? `${reports} community reports` : "",
+    !crossingInventoryAvailable ? "Crossing inventory unavailable" : (crossings > 0 ? `${crossings} crossing${crossings === 1 ? "" : "s"} watched` : "")
+  ].filter(Boolean);
+  return Object.freeze({
+    activeIssuesLine: `${active} active issue${active === 1 ? "" : "s"} nearby`,
+    secondaryMetricsLine: secondaryMetrics.join(" · ")
+  });
+}
+
 function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const safeSummary = summary || {};
   const canonicalContext = getGridlyCanonicalAwarenessPresentationContext(safeSummary.selectedAwarenessArea ? { awarenessArea: safeSummary.selectedAwarenessArea } : {});
@@ -42251,6 +42265,12 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
     ? ` · ${evidenceReportCount} community reports`
     : "";
   const activeCrossingsLine = `${activeIssueCount} active issue${activeIssueCount === 1 ? "" : "s"} nearby${reportEvidenceSuffix} · ${crossingWatchModel.displayText}`;
+  const metricLines = buildGridlyLocationContextMetricLines({
+    activeIssueCount,
+    reportCount: evidenceReportCount,
+    crossingsWatchedCount: crossingsCount,
+    crossingInventoryAvailable: crossingWatchModel.crossingInventoryStatus === "VALID_COMPLETE_INVENTORY"
+  });
   return {
     ...safeSummary,
     areaName,
@@ -42261,7 +42281,10 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
     // here into the actual Location Context DOM model.
     crossingsLine: quietState ? quietCrossingsLine : activeCrossingsLine,
     activeIssueCount,
-    activeIssuesLine: safeDisplayText(safeSummary.activeIssuesLine, ""),
+    // Keep the governed values intact while giving the shared renderer a
+    // primary line and a compact, separator-safe secondary line.
+    activeIssuesLine: metricLines.activeIssuesLine,
+    secondaryMetricsLine: metricLines.secondaryMetricsLine,
     bottomHazardCountSource: bottomHazardCountModel.bottomHazardCountSource,
     homeLocationContextIssueCount: activeIssueCount,
     homeLocationContextReportCount: evidenceReportCount,
@@ -42589,10 +42612,10 @@ function syncMobileDestinationCommandCard(options = {}) {
     safeText("mobileAwarenessPanelKicker", getGridlyLocationAwarenessCardKicker(awarenessSummary.areaName || awarenessSummary.awarenessAreaName));
     safeText("mobileDestinationCommandTitle", awarenessSummary.panelTitle);
     safeText("mobileDestinationCommandMeta", awarenessSummary.status);
-    safeText("mobileAwarenessPanelCrossings", awarenessSummary.crossingsLine);
-    safeText("mobileAwarenessPanelIssues", "");
-    document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", !String(awarenessSummary.crossingsLine || "").trim());
-    document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
+    safeText("mobileAwarenessPanelIssues", awarenessSummary.activeIssuesLine);
+    safeText("mobileAwarenessPanelCrossings", awarenessSummary.secondaryMetricsLine);
+    document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", !String(awarenessSummary.activeIssuesLine || "").trim());
+    document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", !String(awarenessSummary.secondaryMetricsLine || "").trim());
     safeText("mobileDestinationCommandImpact", "");
     safeText("mobileDestinationCommandBtn", "Search");
   } else {
