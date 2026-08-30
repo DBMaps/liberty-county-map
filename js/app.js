@@ -17530,7 +17530,7 @@ const GRIDLY_AWARENESS_AREA_DEFINITIONS = [
   { key: "cove", label: "Cove", storageValue: "Cove", countyId: "chambers-tx", lat: 29.8227, lng: -94.8285, radiusMiles: 6, startupZoom: 13, source: "Chambers V788 controlled promotion anchor" },
   { key: "jefferson-county", label: "Jefferson County", storageValue: "Jefferson County", countyId: "jefferson-tx", lat: 29.86, lng: -94.12, radiusMiles: null, startupZoom: 10, countyWide: true, source: "Jefferson V798 county anchor" },
   { key: "beaumont", label: "Beaumont", storageValue: "Beaumont", countyId: "jefferson-tx", lat: 30.0802, lng: -94.1266, radiusMiles: 8, startupZoom: 13, source: "Jefferson V798 seeded community anchor" },
-  { key: "port-arthur", label: "Port Arthur", storageValue: "Port Arthur", countyId: "jefferson-tx", lat: 29.8849, lng: -93.9399, radiusMiles: 8, startupZoom: 13, source: "Jefferson V798 seeded community anchor" },
+  { key: "port-arthur", label: "Port Arthur", storageValue: "Port Arthur", countyId: "jefferson-tx", placeGeoid: "4858820", canonicalCommunityIdentity: "PLACE_GEOID", lat: 29.8849, lng: -93.9399, radiusMiles: 8, startupZoom: 13, source: "Jefferson V798 seeded community anchor" },
   { key: "nederland", label: "Nederland", storageValue: "Nederland", countyId: "jefferson-tx", lat: 29.9744, lng: -93.9924, radiusMiles: 5, startupZoom: 13, source: "Jefferson V798 seeded community anchor" },
   { key: "port-neches", label: "Port Neches", storageValue: "Port Neches", countyId: "jefferson-tx", lat: 29.9913, lng: -93.9585, radiusMiles: 5, startupZoom: 13, source: "Jefferson V798 seeded community anchor" },
 ];

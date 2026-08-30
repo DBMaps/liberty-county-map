@@ -10,6 +10,7 @@ const manualSearchSource = source.match(/function resolveGridlyManualAwarenessAr
 const canonicalSaveSource = source.match(/function gridlySaveCanonicalMultiCountyPlaceHome\([\s\S]*?\n\}/)?.[0];
 const visiblePickerSearchSource = source.match(/function searchGridlySettingsAwarenessArea\([\s\S]*?\n\}/)?.[0];
 const visiblePickerRendererSource = source.match(/function renderGridlySettingsAwarenessSearchResult\([\s\S]*?\n\}/)?.[0];
+const groupedOptionsSource = source.match(/function gridlyGetCountyGroupedAwarenessOptions\([\s\S]*?\n\}/)?.[0];
 
 function fixture(overrides = {}) {
   const definitions = [
@@ -200,6 +201,52 @@ test('Port Arthur search projects PLACE 4858820 once and preserves Jefferson and
   assert.equal(rows[0].canonicalResolution.canonicalIdentity, 'PLACE_GEOID');
   assert.deepEqual([...rows[0].canonicalResolution.countyMemberships], memberships);
   assert.deepEqual(rows[0].canonicalResolution.candidates.map(candidate => candidate.countyId).sort(), ['jefferson-tx', 'orange-tx']);
+});
+
+test('real Home Area picker source gives Port Arthur the same PLACE-owned renderer model as Austin', () => {
+  const range = countyRegistryRange(source); const registryContext = {}; vm.createContext(registryContext);
+  vm.runInContext(`${source.slice(0, range.end)};this.registry=GRIDLY_COUNTY_REGISTRY`, registryContext);
+  const projection = JSON.parse(fs.readFileSync('data/generated/gridly-statewide-consumer-community-projection-v1.json', 'utf8'));
+  const portArthurSeed = vm.runInNewContext(`(${source.match(/\{ key: "port-arthur", label: "Port Arthur"[^\n]+\}/)?.[0]})`);
+  assert.equal(portArthurSeed.placeGeoid, '4858820');
+  assert.equal(portArthurSeed.canonicalCommunityIdentity, 'PLACE_GEOID');
+
+  const controls = [
+    ['Austin', '4805000', [['bastrop-tx', '48021'], ['hays-tx', '48209'], ['travis-tx', '48453'], ['williamson-tx', '48491']]],
+    ['Port Arthur', '4858820', [['jefferson-tx', '48245'], ['orange-tx', '48361']]]
+  ];
+  for (const [label, placeGeoid, counties] of controls) {
+    const countyIds = counties.map(([countyId]) => countyId);
+    const registry = Object.fromEntries(counties.map(([countyId, countyFips]) => {
+      const projectedCounty = projection.counties.find(county => county.countyFips === countyFips);
+      return [countyId, { name: `${projectedCounty.displayName} County`, countyFips, consumerAwarenessAreas: projectedCounty.communities.map(row => ({ ...row, canonicalIdentity: 'PLACE_GEOID' })) }];
+    }));
+    const definitions = countyIds.map((countyId) => {
+      if (countyId === 'jefferson-tx') return portArthurSeed;
+      const governed = registry[countyId].consumerAwarenessAreas.find(row => row.placeGeoid === placeGeoid);
+      return { key: `${countyId}-${label.toLowerCase().replace(/ /g, '-')}`, label, storageValue: label, countyId, placeGeoid: governed.placeGeoid, canonicalCommunityIdentity: governed.canonicalIdentity };
+    });
+    const context = {
+      GRIDLY_COUNTY_REGISTRY: registry,
+      GRIDLY_AWARENESS_AREA_DEFINITIONS: definitions,
+      GRIDLY_AWARENESS_AREA_BY_KEY: Object.fromEntries(definitions.map(area => [area.key, area])),
+      GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID: {},
+      GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx',
+      gridlyGetSelectableOperationalCountyIds: () => countyIds,
+      gridlyNormalizeCountyId: value => value,
+      normalizeGridlyAwarenessAreaLookupText: value => String(value || '').toLowerCase().trim(),
+      gridlyBuildCountywideAwarenessFallbackOption: (countyId, config) => ({ label: config.name, value: config.name, key: `${countyId}-county`, countyWide: true, fallback: true }),
+      gridlyResolveCanonicalCountyIdForOperationalContext: () => countyIds[0],
+      resolveGridlyAwarenessAreaQuery: () => ({ status: 'NOT_FOUND' })
+    };
+    vm.runInNewContext(`${groupedOptionsSource};this.getGridlyManualAwarenessAreaOptions=()=>gridlyGetCountyGroupedAwarenessOptions().map(group=>Object.freeze({...group,communities:Object.freeze(group.communities.filter(row=>row.fallback!==true))})).filter(group=>group.communities.length);${source.match(/function filterGridlyManualAwarenessAreas\([\s\S]*?\n\}/)?.[0]};this.search=filterGridlyManualAwarenessAreas`, context);
+    const rendererInput = context.search(label === 'Port Arthur' ? 'port a' : 'aus').flatMap(group => group.communities);
+    assert.equal(rendererInput.length, 1, `${label} renderer input count`);
+    assert.equal(rendererInput[0].placeGeoid, placeGeoid);
+    assert.equal(rendererInput[0].canonicalResolution.canonicalIdentity, 'PLACE_GEOID');
+    assert.deepEqual([...rendererInput[0].canonicalResolution.candidates].map(row => row.countyId).sort(), [...countyIds].sort());
+    assert.deepEqual([...rendererInput[0].canonicalResolution.countyMemberships], [...registry[countyIds[0]].consumerAwarenessAreas.find(row => row.placeGeoid === placeGeoid).countyMemberships]);
+  }
 });
 
 test('single-county and governed non-PLACE stable keys remain distinct', () => {
