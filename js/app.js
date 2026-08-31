@@ -45899,7 +45899,9 @@ function buildGridlyLiveSearchAuditReport(query, results = [], metadata = {}) {
       subtitle: first.subtitle || "",
       provider: first.provider || ""
     },
-    seedResultsRenderImmediately: localSeedCount > 0,
+    seedResultsRenderImmediately: Boolean(metadata.seedRenderedImmediately),
+    intermediateConsumerResultPublicationCount: Number(metadata.intermediateConsumerResultPublicationCount) || 0,
+    finalConsumerResultPublicationCount: Number(metadata.finalConsumerResultPublicationCount) || 0,
     emptyStateWouldRender: finalResultCount === 0 && localSeedCount === 0,
     emptyStateReconciled: (finalResultCount === 0 && localSeedCount === 0) === Boolean(providerDiagnostics.emptyStateWouldRender),
     auditRenderMode: "read_only_no_render",
@@ -45931,6 +45933,8 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
   let staleRequestBlocked = false;
   let rendered = false;
   let seedRenderedImmediately = false;
+  let intermediateConsumerResultPublicationCount = 0;
+  let finalConsumerResultPublicationCount = 0;
   let results = [];
   const interactiveStartedAt = Date.now();
 
@@ -45938,13 +45942,21 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
 
   try {
     const intent = classifyGridlyDestinationSearchIntent(normalizedQuery);
+    const governedBusinessPipelinePending = normalizedQuery.length >= 3
+      && intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE
+      && gridlyQueryAllowsRuntimePoiAcquisition(normalizedQuery, intent);
     const immediateSeedResults = normalizedQuery.length >= 3
       ? dedupeGridlySearchResults(prioritizeGridlySearchResults(mergeGridlySavedPlaceDestinationResults(searchGridlyLocalPoiSeeds(normalizedQuery, { intent }), normalizedQuery), { query: normalizedQuery, intent })).slice(0, GRIDLY_SEARCH_RENDER_LIMIT)
       : getGridlySavedPlaceDestinationSearchResults("", { includeAll: true }).slice(0, GRIDLY_SEARCH_RENDER_LIMIT);
     const seedRenderCurrent = requestId === gridlySearchUiState.activeSearchRequestId
       && normalizeGridlySearchDisplayLabel(normalizedQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
-    if (shouldRender && !auditOnly && seedRenderCurrent && immediateSeedResults.length) {
+    // LP243.F8: an eligible, unqualified business search owns the existing
+    // loading state until runtime-v2 and the general provider have settled.
+    // Seeds remain in gridlySearchAddress's final merge and are still available
+    // as fallback; they are only prohibited from becoming a consumer preview.
+    if (!governedBusinessPipelinePending && shouldRender && !auditOnly && seedRenderCurrent && immediateSeedResults.length) {
       seedRenderedImmediately = renderGridlySearchResults(immediateSeedResults, { state: "done", allowEmptyMessage: false, query: normalizedQuery, requestId, renderPhase: "immediate_seed" });
+      if (seedRenderedImmediately) intermediateConsumerResultPublicationCount += 1;
     }
 
     results = await gridlySearchAddress(normalizedQuery, getGridlyLiveDestinationSearchOptions());
@@ -45954,6 +45966,7 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
     if (shouldRender && !auditOnly && isCurrent) {
       gridlySearchUiState.isSearching = false;
       rendered = renderGridlySearchResults(results, { state: "done", allowEmptyMessage: true, query: normalizedQuery, requestId, providerDiagnostics: results?.gridlyProviderDiagnostics, renderPhase: "final" });
+      if (rendered) finalConsumerResultPublicationCount += 1;
     }
   } catch (_error) {
     const isCurrent = requestId === gridlySearchUiState.activeSearchRequestId
@@ -45970,6 +45983,8 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
     requestId,
     rendered,
     seedRenderedImmediately,
+    intermediateConsumerResultPublicationCount,
+    finalConsumerResultPublicationCount,
     providerDiagnostics: results?.gridlyProviderDiagnostics,
     staleRequestBlocked,
     laterAsyncResponseOverwroteResults: false
@@ -46027,6 +46042,7 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
         id: entry.candidateId, source: entry.sourceFamily, distance: entry.distanceMiles, finalRank: entry.finalRank
       }))),
       searchStartedAt: interactiveStartedAt, finalMergeCompletedAt: Date.now(), publicationCompletedAt: Date.now(),
+      intermediateConsumerResultPublicationCount, finalConsumerResultPublicationCount,
       anotherRenderAfterPublication: false, staleRequestBlocked,
       finalPublishedCandidateCount: Array.isArray(results) ? results.length : 0,
       finalPublishedCandidates: Object.freeze((Array.isArray(results) ? results : []).map((result) => Object.freeze({
