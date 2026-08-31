@@ -11,7 +11,7 @@ const label = authority.gridlyConditionDisplayLabel;
 
 test("A-H actual Community keys use the exact Report vocabulary", () => {
   assert.deepEqual(authority.COMMUNITY_LABELS, {
-    flooding: "Flooding", crash: "Crash / Wreck", disabled_vehicle: "Disabled Vehicle",
+    blocked: "Blocked", flooding: "Flooding", crash: "Crash / Wreck", disabled_vehicle: "Disabled Vehicle",
     debris: "Debris In Road", road_closed: "Road Closed", construction: "Construction",
     traffic_backup: "Traffic Backup / Heavy Delay", other_hazard: "Other Hazard"
   });
