@@ -6,7 +6,7 @@ const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const marker = "/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY";
-const h10b = css.slice(css.indexOf(marker));
+const h10b = css.slice(css.indexOf(marker), css.indexOf("/* LP243.H10C — presentation-only refinement"));
 const lifecycle = app.slice(app.indexOf("// LP243.H8 is presentation-local"), app.indexOf("const MOBILE_REPORT_ENTRY_SELECTORS"));
 const matches = (width, height) => width > height && height <= 500;
 
@@ -72,6 +72,6 @@ test("ownership, legacy suppression, protected authority, and rotation locality 
 test("H5-H9 rejected geometry is documented as superseded, not final", () => {
   assert.match(css, /LP243\.H5-H9 — short-landscape geometry superseded/);
   assert.doesNotMatch(h10b, /--lp243h[56789]-(?:map-top-reserve|map-bottom-reserve|panel-height)|min\(720px/);
-  assert.match(html, /styles\.css\?v=243h10b-final-short-landscape-authority/);
+  assert.match(html, /styles\.css\?v=243h10c-final-landscape-refinement/);
   assert.match(html, /app\.js\?v=243h10b-final-short-landscape-authority/);
 });
