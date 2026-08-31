@@ -39720,6 +39720,8 @@ const gridlySearchUiState = {
   lastLiveSearchAudit: null
 };
 
+let gridlyLastInteractiveDestinationSearchTrace = null;
+
 const GRIDLY_SEARCH_RENDER_LIMIT = 5;
 const GRIDLY_SEARCH_NOISY_META_TOKENS = new Set(["administrative", "unknown", "boundary", "place", "node", "hamlet", "village", "city", "town"]);
 
@@ -45850,6 +45852,7 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
   let rendered = false;
   let seedRenderedImmediately = false;
   let results = [];
+  const interactiveStartedAt = Date.now();
 
   state.activeQuery = normalizedQuery;
 
@@ -45892,6 +45895,65 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
     laterAsyncResponseOverwroteResults: false
   });
   gridlySearchUiState.lastLiveSearchAudit = audit;
+  if (!auditOnly) {
+    const diagnostics = results?.gridlyProviderDiagnostics || {};
+    const runtime = diagnostics.runtimeTrace || {};
+    const governed = typeof window.gridlyGetCurrentGovernedLocationContext === "function"
+      ? window.gridlyGetCurrentGovernedLocationContext() : null;
+    const intent = classifyGridlyDestinationSearchIntent(normalizedQuery);
+    const runtimeRawCandidates = (runtime.rawCandidates || []).map((poi) => Object.freeze({
+      id: poi.id, displayName: poi.displayName, category: poi.gridlyCategory,
+      latitude: poi.latitude, longitude: poi.longitude, countyContextId: poi.countyContextId
+    }));
+    const localLineage = diagnostics.localPoiCandidateDiagnostics || [];
+    gridlyLastInteractiveDestinationSearchTrace = Object.freeze({
+      authority: "most_recent_real_interactive_destination_search",
+      syntheticAudit: false,
+      requestId, rawQuery: String(query || ""), normalizedQuery: normalizeGridlyBrandSearchText(normalizedQuery),
+      intent: intent.type, intentReason: intent.reason,
+      explicitGeographyDetected: gridlySearchQueryHasDestinationIndicator(normalizedQuery),
+      explicitAddressDetected: gridlySearchQueryHasAddressIndicator(normalizedQuery),
+      canonicalCommunity: governed?.label || null,
+      canonicalKey: governed?.communityIdentity?.stableGovernedIdentity || null,
+      placeGeoid: governed?.communityIdentity?.placeGeoid ?? null,
+      countyId: governed?.countyContextId || null,
+      governedCoordinates: governed ? Object.freeze({ latitude: governed.latitude, longitude: governed.longitude }) : null,
+      searchAnchorCoordinates: governed ? Object.freeze({ latitude: governed.latitude, longitude: governed.longitude }) : null,
+      runtimeBridgeEligible: gridlyQueryAllowsRuntimePoiAcquisition(normalizedQuery, intent),
+      runtimeBridgeAttempted: Boolean(runtime.attempted), runtimeProviderAvailable: Boolean(runtime.providerAvailable),
+      runtimeRequestStartedAt: runtime.requestStartedAt || null, runtimeRequestCompletedAt: runtime.requestCompletedAt || null,
+      runtimeRequestContext: runtime.requestContext || null, runtimeRequestRadius: runtime.requestRadius || null,
+      runtimeRawCandidateCount: runtimeRawCandidates.length, runtimeRawCandidates: Object.freeze(runtimeRawCandidates),
+      runtimeTextRelevantCount: localLineage.length,
+      runtimeTextRejectedCount: Math.max(0, runtimeRawCandidates.length - localLineage.length),
+      runtimeCandidateLineage: Object.freeze(localLineage.map((entry) => Object.freeze({ ...entry, tokenMatch: entry.queryRelevant }))),
+      generalProviderCandidateCount: Number(diagnostics.generalProviderCandidateCount) || 0,
+      generalProviderRequestStartedAt: diagnostics.generalProviderRequestStartedAt || null,
+      generalProviderRequestCompletedAt: diagnostics.generalProviderRequestCompletedAt || null,
+      generalProviderCandidates: Object.freeze((diagnostics.candidateLineage || []).map((entry) => Object.freeze({
+        id: entry.candidateId, title: entry.title, provider: entry.provider
+      }))),
+      mergedCandidateCount: Number(diagnostics.mergedCandidateCount) || 0,
+      mergedCandidates: Object.freeze([
+        ...localLineage.map((entry) => ({ id: entry.candidateId, sourceFamily: entry.sourceFamily })),
+        ...(diagnostics.candidateLineage || []).map((entry) => ({ id: entry.candidateId, sourceFamily: entry.provider }))
+      ]),
+      deduplicatedCandidateCount: Number(diagnostics.deduplicatedCandidateCount) || 0,
+      dedupSuppressedCandidates: Object.freeze(localLineage.filter((entry) => !entry.dedupSurvived).map((entry) => ({ id: entry.candidateId, reason: "dedup" }))),
+      postBusinessRelevanceCount: localLineage.filter((entry) => entry.businessRelevanceSurvived).length,
+      businessRelevanceRejectedCandidates: Object.freeze(localLineage.filter((entry) => !entry.businessRelevanceSurvived).map((entry) => ({ id: entry.candidateId, reason: entry.rejectionReason }))),
+      finalRankedCandidateCount: localLineage.filter((entry) => entry.ranked).length,
+      rankedCandidates: Object.freeze(localLineage.filter((entry) => entry.ranked).map((entry) => ({
+        id: entry.candidateId, source: entry.sourceFamily, distance: entry.distanceMiles, finalRank: entry.finalRank
+      }))),
+      searchStartedAt: interactiveStartedAt, finalMergeCompletedAt: Date.now(), publicationCompletedAt: Date.now(),
+      anotherRenderAfterPublication: false, staleRequestBlocked,
+      finalPublishedCandidateCount: Array.isArray(results) ? results.length : 0,
+      finalPublishedCandidates: Object.freeze((Array.isArray(results) ? results : []).map((result) => Object.freeze({
+        id: result.providerId || result.id, title: result.title, provider: result.provider, latitude: result.lat, longitude: result.lng
+      })))
+    });
+  }
   return auditOnly ? audit : results;
 }
 
@@ -92893,11 +92955,20 @@ async function searchGridlyRuntimePoiCandidates(rawQuery = "", options = {}) {
   try {
     const request = provider.requestForCurrentContext(25);
     if (!request) return [];
+    request.nameTokens = (window.GRIDLY_LP099_BUSINESS_SEARCH?.canonicalize?.(rawQuery)
+      || normalizeGridlyBrandSearchText(rawQuery)).split(" ").filter(Boolean);
     const response = await provider.search(request);
-    return (Array.isArray(response?.results) ? response.results : [])
+    const rawCandidates = Array.isArray(response?.results) ? response.results : [];
+    const results = rawCandidates
       .filter((poi) => gridlyRuntimePoiMatchesQuery(poi, rawQuery))
       .map(gridlyRuntimePoiToDestinationSearchResult)
       .filter(Boolean);
+    Object.defineProperty(results, "gridlyRuntimeTrace", { value: Object.freeze({
+      attempted: true, providerAvailable: true, requestStartedAt: options.requestStartedAt || null,
+      requestCompletedAt: Date.now(), requestContext: response?.requestContext || null,
+      requestRadius: request.radiusMiles, rawCandidates
+    }), enumerable: false });
+    return results;
   } catch (_error) {
     // General destination discovery remains available if the certified local
     // authority is gated off or temporarily unavailable.
@@ -93250,12 +93321,18 @@ async function gridlySearchAddress(query, options = {}) {
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
   const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, seedResults.length);
   const providerResults = [...seedResults];
+  const runtimeRequestStartedAt = Date.now();
   const runtimePoiResults = gridlyQueryAllowsRuntimePoiAcquisition(rawQuery, intent)
     && typeof window.GridlyPoiBrowserProvider?.search === "function"
-    ? await searchGridlyRuntimePoiCandidates(rawQuery, { intent }) : [];
+    ? await searchGridlyRuntimePoiCandidates(rawQuery, { intent, requestStartedAt: runtimeRequestStartedAt }) : [];
   providerResults.push(...runtimePoiResults);
   diagnostics.generalProviderCandidateCount = 0;
   diagnostics.localPoiCandidateCount = runtimePoiResults.length;
+  diagnostics.runtimeTrace = runtimePoiResults.gridlyRuntimeTrace || Object.freeze({
+    attempted: false, providerAvailable: typeof window.GridlyPoiBrowserProvider?.search === "function",
+    requestStartedAt: null, requestCompletedAt: null, requestContext: null, requestRadius: null, rawCandidates: []
+  });
+  diagnostics.generalProviderRequestStartedAt = Date.now();
   diagnostics.mergedCandidateCount = providerResults.length;
   const lp101CaseName = getGridlyLp101CaseName(rawQuery);
   setGridlyLp101PipelineStage(lp101CaseName, "localCandidates", seedResults, rawQuery);
@@ -93307,6 +93384,7 @@ async function gridlySearchAddress(query, options = {}) {
   }
 
   diagnostics.aggregate = aggregateGridlyAddressVariantOutcomes(diagnostics.variants);
+  diagnostics.generalProviderRequestCompletedAt = Date.now();
   diagnostics.mergedCandidateCount = providerResults.length;
   if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
     diagnostics.providerStatus = diagnostics.aggregate.finalConsumerClassification === "confirmed_no_result"
@@ -93339,14 +93417,25 @@ async function gridlySearchAddress(query, options = {}) {
   diagnostics.finalDisplayedCandidateCount = finalResults.length;
   diagnostics.localPoiCandidateDiagnostics = runtimePoiResults.map((candidate) => {
     const ranked = prioritizedResults.find((result) => result.providerId === candidate.providerId) || candidate;
+    const has = (results) => results.some((result) => result.providerId === candidate.providerId);
     return Object.freeze({
       candidateId: candidate.providerId,
       title: candidate.title,
+      canonicalName: window.GRIDLY_LP099_BUSINESS_SEARCH?.canonicalize?.(candidate.title) || normalizeGridlyBrandSearchText(candidate.title),
+      canonicalQuery: window.GRIDLY_LP099_BUSINESS_SEARCH?.canonicalize?.(rawQuery) || normalizeGridlyBrandSearchText(rawQuery),
       queryRelevant: true,
+      acquired: true,
+      merged: providerResults.some((result) => normalizeGridlySearchResult(result)?.providerId === candidate.providerId),
+      dedupSurvived: has(dedupedResults),
+      businessRelevanceSurvived: has(qualityFilteredResults),
+      ranked: has(prioritizedResults),
       distanceMiles: Number(candidate.raw?.distanceMiles),
       sourceFamily: "gridly.poi.runtime.v2",
       finalRank: Number(ranked.searchRank?.rank) || null,
-      finalDisplayed: finalResults.some((result) => result.providerId === candidate.providerId)
+      finalDisplayed: has(finalResults),
+      rejectionReason: has(finalResults) ? null : !has(containmentFilteredResults) ? "containment"
+        : !has(dedupedResults) ? "dedup" : !has(explicitRelevantResults) ? "intent_relevance"
+          : !has(qualityFilteredResults) ? "business_relevance" : !has(truthfulResults) ? "publication_eligibility" : "render_limit"
     });
   });
   const lineageStages = {
@@ -94393,6 +94482,9 @@ window.gridlyRecordLp100InfrastructureCertification = function gridlyRecordLp100
 window.gridlySearchAddress = gridlySearchAddress;
 window.gridlyDestinationSearchContainmentAudit = gridlyDestinationSearchContainmentAudit;
 window.gridlyDestinationLiveSearchAudit = gridlyDestinationLiveSearchAudit;
+window.gridlyDestinationInteractiveSearchTrace = function gridlyDestinationInteractiveSearchTrace() {
+  return gridlyLastInteractiveDestinationSearchTrace;
+};
 window.gridlyDestinationProviderAudit = async function gridlyDestinationProviderAudit(query = "") {
   const audit = await gridlyDestinationLiveSearchAudit(query);
   return {
