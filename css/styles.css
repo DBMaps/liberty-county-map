@@ -27858,3 +27858,100 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* LP243.H6 — fluid short-landscape viewport-fit authority.
+   H2 remains the bounded-shell owner everywhere else. In the H5 short-height
+   landscape family, one safe-gutter width and one 100dvh flex column replace
+   the inherited 760px width cap and fixed map height assumptions. */
+@media (orientation: landscape) and (max-height: 500px) {
+  body[data-layout-mode="portrait"] {
+    --lp243h6-safe-inline: max(8px, env(safe-area-inset-left, 0px));
+    --lp243h6-safe-inline-end: max(8px, env(safe-area-inset-right, 0px));
+    --lp243h6-shell-width: calc(100vw - var(--lp243h6-safe-inline) - var(--lp243h6-safe-inline-end));
+    --lp243h6-map-top-reserve: 126px;
+    --lp243h6-map-bottom-reserve: calc(128px + env(safe-area-inset-bottom, 0px));
+    width: 100%;
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    width: 100%;
+    min-height: 100dvh;
+    height: 100dvh;
+  }
+
+  body[data-layout-mode="portrait"] :is(.app-shell.premium-layout, .main-column, #mapSection.command-center, .map-card) {
+    width: var(--lp243h6-shell-width);
+    max-width: none;
+    min-height: 0;
+    margin-inline: auto;
+  }
+
+  body[data-layout-mode="portrait"] .app-shell.premium-layout {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding: var(--lp243h6-map-top-reserve) var(--lp243h6-safe-inline-end)
+      var(--lp243h6-map-bottom-reserve) var(--lp243h6-safe-inline);
+  }
+
+  body[data-layout-mode="portrait"] :is(.main-column, #mapSection.command-center, .map-card, .map-frame, #map) {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  body[data-layout-mode="portrait"] :is(.main-column, #mapSection.command-center, .map-card, .map-frame) {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  body[data-layout-mode="portrait"] #map {
+    flex: 1 1 0;
+    width: 100% !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2
+    :is(.gridly-v2-topbar, .gridly-v2-brief-stack, .gridly-v2-bottom-region, .gridly-v2-bottom-dock, .gridly-v2-location-awareness-panel, .gridly-v2-sheet),
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    width: var(--lp243h6-shell-width);
+    max-width: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
+    left: var(--lp243h6-safe-inline) !important;
+    right: var(--lp243h6-safe-inline-end) !important;
+    width: auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]),
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]):is(
+    [data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"]
+  ) {
+    inset: max(8px, env(safe-area-inset-top, 0px)) var(--lp243h6-safe-inline-end)
+      max(8px, env(safe-area-inset-bottom, 0px)) var(--lp243h6-safe-inline) !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    box-sizing: border-box;
+    overflow: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]) #gridlyPortraitV2SheetBody {
+    min-height: 0;
+    max-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
+}

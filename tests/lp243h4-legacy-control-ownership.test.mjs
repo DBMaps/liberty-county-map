@@ -6,7 +6,7 @@ const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const marker = "/* LP243.H4 — current consumer-presentation ownership.";
-const h4 = css.slice(css.indexOf(marker));
+const h4 = css.slice(css.indexOf(marker), css.indexOf("/* LP243.H6"));
 const reconciliation = app.slice(
   app.indexOf("const GRIDLY_V2_PRESENTATION_OWNER_CLASS"),
   app.indexOf("\nfunction activateGridlyPortraitV2StartupOwner")
@@ -50,7 +50,7 @@ test("H1 ownership, H2 containment, H3 Location Context, and portrait geometry r
   assert.match(css, /--lp243h2-shell-width: min\(760px, calc\(100vw - 24px\)\)/);
   assert.match(css, /--lp243h3-location-bottom-inset: calc\(/);
   assert.doesNotMatch(h4, /mobile-destination-command|#map|app-shell|main-column|gridly-v2-topbar|gridly-v2-bottom-dock/);
-  assert.match(html, /css\/styles\.css\?v=243h5-short-landscape-composition/);
+  assert.match(html, /css\/styles\.css\?v=243h6-fluid-short-landscape-fit/);
   assert.match(html, /js\/app\.js\?v=243h4-legacy-control-ownership/);
 });
 
