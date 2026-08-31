@@ -27607,3 +27607,43 @@ body[data-layout-mode="portrait"] .mobile-floating-action-dock {
     content: " · ";
   }
 }
+
+/* LP243.H2 — one landscape containment authority for the portrait-owned app.
+   Deliberately follows every Portrait rule so later Portrait declarations cannot
+   restore independent viewport/portrait anchors. Never matches phone portrait. */
+@media (orientation: landscape), (min-width: 761px) {
+  body[data-layout-mode="portrait"] {
+    --lp243h2-shell-width: min(760px, calc(100vw - 24px));
+    overflow-x: clip;
+  }
+
+  body[data-layout-mode="portrait"] :is(.app-shell.premium-layout, .main-column, #mapSection.command-center, .map-card) {
+    box-sizing: border-box;
+    width: var(--lp243h2-shell-width);
+    max-width: var(--lp243h2-shell-width);
+    margin-inline: auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2
+    :is(.gridly-v2-topbar, .gridly-v2-brief-stack, .gridly-v2-bottom-region, .gridly-v2-bottom-dock, .gridly-v2-location-awareness-panel, .gridly-v2-sheet),
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    box-sizing: border-box;
+    width: var(--lp243h2-shell-width);
+    max-width: var(--lp243h2-shell-width);
+    margin-inline: 0;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet {
+    max-height: calc(100dvh - 104px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  body[data-layout-mode="portrait"] :is(.map-frame, #map) {
+    max-width: 100%;
+  }
+}
