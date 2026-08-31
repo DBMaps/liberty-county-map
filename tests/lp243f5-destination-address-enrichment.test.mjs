@@ -70,6 +70,6 @@ test('failure remains a normal row and async enhancement does not rerender or re
   assert.match(display, /presentationAddress\?\.consumerLine/);
 });
 
-test('LP243.F5 enrichment remains published through the LP243.F6 browser asset identity', () => {
-  assert.match(html, /js\/app\.js\?v=243f6-canonical-business-intent/);
+test('LP243.F5 enrichment remains published through the LP243.F7 browser asset identity', () => {
+  assert.match(html, /js\/app\.js\?v=243f7-canonical-runtime-handoff/);
 });

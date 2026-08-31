@@ -92993,10 +92993,10 @@ function gridlyQueryAllowsRuntimePoiAcquisition(rawQuery = "", intent = null) {
     && !gridlySearchQueryHasDestinationIndicator(rawQuery);
 }
 
-function gridlyRuntimePoiMatchesQuery(poi, rawQuery = "") {
+function gridlyRuntimePoiMatchesQuery(poi, canonicalSemanticQuery = "") {
   const canonicalize = window.GRIDLY_LP099_BUSINESS_SEARCH?.canonicalize
     || ((value) => normalizeGridlyBrandSearchText(value));
-  const queryTerms = canonicalize(rawQuery).split(" ").filter(Boolean);
+  const queryTerms = canonicalize(canonicalSemanticQuery).split(" ").filter(Boolean);
   const candidateTerms = new Set(canonicalize(`${poi?.displayName || ""} ${String(poi?.gridlyCategory || "").replaceAll("_", " ")}`).split(" ").filter(Boolean));
   return queryTerms.length > 0 && queryTerms.every((term) => candidateTerms.has(term));
 }
@@ -93028,6 +93028,7 @@ function gridlyRuntimePoiToDestinationSearchResult(poi) {
 
 async function searchGridlyRuntimePoiCandidates(rawQuery = "", options = {}) {
   const intent = options.intent || classifyGridlyDestinationSearchIntent(rawQuery);
+  const canonicalSemanticQuery = options.canonicalSemanticQuery || normalizeGridlyBrandSearchText(rawQuery);
   const provider = window.GridlyPoiBrowserProvider;
   if (!gridlyQueryAllowsRuntimePoiAcquisition(rawQuery, intent)
     || typeof provider?.requestForCurrentContext !== "function"
@@ -93035,12 +93036,13 @@ async function searchGridlyRuntimePoiCandidates(rawQuery = "", options = {}) {
   try {
     const request = provider.requestForCurrentContext(25);
     if (!request) return [];
-    request.nameTokens = (window.GRIDLY_LP099_BUSINESS_SEARCH?.canonicalize?.(rawQuery)
-      || normalizeGridlyBrandSearchText(rawQuery)).split(" ").filter(Boolean);
+    // Runtime-v2 name filtering must use the same shared semantic authority as
+    // business classification. Raw text remains authoritative for eligibility.
+    request.nameTokens = canonicalSemanticQuery.split(" ").filter(Boolean);
     const response = await provider.search(request);
     const rawCandidates = Array.isArray(response?.results) ? response.results : [];
     const results = rawCandidates
-      .filter((poi) => gridlyRuntimePoiMatchesQuery(poi, rawQuery))
+      .filter((poi) => gridlyRuntimePoiMatchesQuery(poi, canonicalSemanticQuery))
       .map(gridlyRuntimePoiToDestinationSearchResult)
       .filter(Boolean);
     Object.defineProperty(results, "gridlyRuntimeTrace", { value: Object.freeze({
@@ -93396,6 +93398,7 @@ async function gridlySearchAddress(query, options = {}) {
   const countryCodes = String(options.countryCodes || "us").trim() || "us";
   const searchContext = getGridlyDestinationSearchContainmentContext(getGridlySearchMapContext());
   const intent = classifyGridlyDestinationSearchIntent(rawQuery);
+  const canonicalSemanticQuery = normalizeGridlyBrandSearchText(rawQuery);
   const addressModel = buildGridlyLp097AddressModel(rawQuery);
   const queryVariants = buildGridlySearchQueryVariants(rawQuery, { intent });
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
@@ -93404,7 +93407,7 @@ async function gridlySearchAddress(query, options = {}) {
   const runtimeRequestStartedAt = Date.now();
   const runtimePoiResults = gridlyQueryAllowsRuntimePoiAcquisition(rawQuery, intent)
     && typeof window.GridlyPoiBrowserProvider?.search === "function"
-    ? await searchGridlyRuntimePoiCandidates(rawQuery, { intent, requestStartedAt: runtimeRequestStartedAt }) : [];
+    ? await searchGridlyRuntimePoiCandidates(rawQuery, { intent, canonicalSemanticQuery, requestStartedAt: runtimeRequestStartedAt }) : [];
   providerResults.push(...runtimePoiResults);
   diagnostics.generalProviderCandidateCount = 0;
   diagnostics.localPoiCandidateCount = runtimePoiResults.length;
