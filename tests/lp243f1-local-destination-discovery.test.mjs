@@ -3,6 +3,16 @@ import fs from 'node:fs';
 import test from 'node:test';
 
 const app = fs.readFileSync('js/app.js', 'utf8');
+const index = fs.readFileSync('index.html', 'utf8');
+const worker = fs.readFileSync('service-worker.js', 'utf8');
+
+test('LP243.F1 has a unique production app asset identity in the expected script position', () => {
+  const appAsset = '<script src="js/app.js?v=243f1"></script>';
+  assert.deepEqual(index.match(/<script src="js\/app\.js\?v=[^"]+"><\/script>/g), [appAsset]);
+  assert.ok(index.indexOf('js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3') < index.indexOf(appAsset));
+  assert.ok(index.indexOf(appAsset) < index.indexOf('js/gridlyDriveTexasGeometryAuthority.js?v=044'));
+  assert.doesNotMatch(worker, /["']\.\/js\/app\.js/);
+});
 
 test('LP243.F1 acquires only textually relevant runtime-v2 POIs for unqualified business searches', () => {
   assert.match(app, /gridlyQueryAllowsRuntimePoiAcquisition[\s\S]*BUSINESS_PLACE[\s\S]*!gridlySearchQueryHasDestinationIndicator/);

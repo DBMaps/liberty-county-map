@@ -42,9 +42,9 @@ test('manual fallback is independent of geolocation and remains in first-run set
 });
 
 test('service worker cannot serve cached app.js and navigation is online network-first', () => {
-  assert.match(index, /js\/app\.js\?v=2403a/);
+  assert.match(index, /js\/app\.js\?v=243f1/);
   assert.match(worker, /GRIDLY_SW_VERSION = "lp101\.1-runtime-recovery"/);
-  assert.match(worker, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp235-v1"/);
+  assert.match(worker, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2419a-v1"/);
   assert.doesNotMatch(worker, /["']\.\/js\/app\.js/);
   assert.match(worker, /request\.mode === "navigate"/);
   assert.match(worker, /fetch\(request, \{ cache: "no-store" \}\)/);
