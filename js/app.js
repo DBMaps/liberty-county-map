@@ -117121,6 +117121,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP240AlertsStackAudit", gridlyLP240AlertsStackAudit);
 
   function gridlyLP236RenderAlertsPresentation(snapshot, suppliedAlerts = null) {
+    // A passive refresh builds replacement markup before the single Alerts DOM
+    // writer mounts it.  Snapshot the still-mounted disclosures at the start of
+    // that build; capturing in the writer is too late because `html` has already
+    // resolved its open attributes by then.
+    gridlyLP236CaptureDisclosureState(document);
     const snapshotAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
     const alerts = Array.isArray(suppliedAlerts) ? suppliedAlerts : (typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
       ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "buildAlertsSurfaceHtml")
