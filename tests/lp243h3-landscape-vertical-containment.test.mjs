@@ -6,7 +6,7 @@ const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const marker = "/* LP243.H3 — landscape primary-control vertical containment.";
-const h3 = css.slice(css.indexOf(marker), css.indexOf("/* LP243.H4"));
+const h3 = css.slice(css.indexOf(marker), css.indexOf("/* LP243.H5"));
 const commandMarkup = html.slice(
   html.indexOf('<article class="mobile-destination-command"'),
   html.indexOf('<article class="mobile-live-command"')
@@ -61,7 +61,7 @@ test("H1 runtime ownership and H2 horizontal shell remain unchanged under H4 ide
   const h2 = css.slice(css.indexOf("/* LP243.H2 — one landscape containment authority"), css.indexOf(marker));
   assert.match(h2, /--lp243h2-shell-width: min\(760px, calc\(100vw - 24px\)\)/);
   assert.match(h2, /left: 50%;\s*transform: translateX\(-50%\)/);
-  assert.match(html, /css\/styles\.css\?v=243h4-legacy-control-ownership/);
+  assert.match(html, /css\/styles\.css\?v=243h5-short-landscape-composition/);
 });
 
 test("orientation return restores untouched Portrait geometry and no Search runtime changed", () => {
