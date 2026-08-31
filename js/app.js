@@ -31001,10 +31001,13 @@ function resolveLayoutMode({ viewportWidth, viewportHeight, coarsePointer, fineP
     mobileByWidth && !orientationLandscape && coarsePointer && !finePointer && hoverNone
   );
   return {
-    nextMode: validatedMobileAuthority ? "portrait" : "desktop",
+    // LP243.H: the real, portrait-derived application is the responsive owner.
+    // Capability and geometry remain diagnostic only; they must not reinstate
+    // the historical promotional takeover on resize or orientation change.
+    nextMode: "portrait",
     validatedMobileAuthority,
-    forcedPortrait: validatedMobileAuthority,
-    forcedDesktop: !validatedMobileAuthority,
+    forcedPortrait: true,
+    forcedDesktop: false,
     tacticalLandscapeByHeight: false,
     desktopStyleLandscape: Boolean(orientationLandscape && finePointer && !coarsePointer)
   };
