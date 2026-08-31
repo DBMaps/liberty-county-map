@@ -40368,7 +40368,32 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       ? haversineDistance(anchor.lat, anchor.lng, result.lat, result.lng)
       : distanceMiles;
     const stableInputOrderScore = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
-    let score = stableInputOrderScore;
+    const scoreBreakdown = {
+      stableInputOrder: stableInputOrderScore,
+      exactAddress: 0,
+      addressPrecision: 0,
+      inexactAddress: 0,
+      businessRelevance: 0,
+      quality: 0,
+      addressGeographyConflict: 0,
+      savedPlace: 0,
+      seedUsefulness: 0,
+      seedContext: 0,
+      governedDistance: 0,
+      inBounds: 0,
+      libertyCountyString: 0,
+      localityString: 0,
+      texasString: 0,
+      extremeDistance: 0,
+      explicitSeedLocality: 0,
+      explicitInBounds: 0,
+      explicitTexasString: 0,
+      explicitLocalityString: 0,
+      explicitDistance: 0,
+      titleMatch: 0,
+      nearbyMatchAvailability: 0,
+      explicitMatchAvailability: 0
+    };
     const lp097Classification = classifyGridlyLp097Result(result, options.addressModel || (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? buildGridlyLp097AddressModel(options.query || "") : null));
     const lp099Classification = intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE
       ? window.GRIDLY_LP099_BUSINESS_SEARCH?.evaluate?.(options.query || "", result)
@@ -40381,41 +40406,45 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
         gridlyLp097RuntimeEvidence.exactAddressConflictReasonCounts[reason] = (gridlyLp097RuntimeEvidence.exactAddressConflictReasonCounts[reason] || 0) + 1;
       });
     }
-    if (lp097Classification.exactAddress) score += 2000;
-    else if (lp097Classification.precision === "address") score += 700;
-    else if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && ["road", "approximate"].includes(lp097Classification.precision)) score -= 300;
-    if (lp099Classification) score += lp099Classification.boost;
-    if (lp101Classification) score += lp101Classification.boost;
-    if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.conflictReasons.some((reason) => ["state_mismatch", "city_conflict", "county_conflict", "postal_code_conflict", "enriched_locality_conflict", "outside_expected_geography"].includes(reason))) score -= 1800;
+    // LP097 precision is address-query authority. Previously a provider business
+    // carrying a house number received +700 even for an unqualified business
+    // query, while an equivalent runtime POI without an address did not.
+    if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.exactAddress) scoreBreakdown.exactAddress = 2000;
+    else if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.precision === "address") scoreBreakdown.addressPrecision = 700;
+    else if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && ["road", "approximate"].includes(lp097Classification.precision)) scoreBreakdown.inexactAddress = -300;
+    if (lp099Classification) scoreBreakdown.businessRelevance = Number(lp099Classification.boost) || 0;
+    if (lp101Classification) scoreBreakdown.quality = Number(lp101Classification.boost) || 0;
+    if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.conflictReasons.some((reason) => ["state_mismatch", "city_conflict", "county_conflict", "postal_code_conflict", "enriched_locality_conflict", "outside_expected_geography"].includes(reason))) scoreBreakdown.addressGeographyConflict = -1800;
     const titleMatchScore = getGridlySearchResultTitleMatchScore(result, options.query || ensureGridlySearchState().activeQuery || "");
     const exactName = titleMatchScore === 28 || lp099Classification?.exactName === true;
     // Seeds remain deterministic recovery candidates, not a reservation tier.
     // LP099 already rewards exact business relevance for every source family;
     // the former seed-only +900 duplicated that authority ahead of locality.
-    if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) score += 1000;
-    if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += getGridlyLocalDiscoveryUsefulnessBoost(result);
+    if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) scoreBreakdown.savedPlace = 1000;
+    if (result?.provider === "local_poi_seed" || result?.localPoiSeed) scoreBreakdown.seedUsefulness = getGridlyLocalDiscoveryUsefulnessBoost(result);
     if (isContextualLocalSearch) {
-      if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += 18;
+      if (result?.provider === "local_poi_seed" || result?.localPoiSeed) scoreBreakdown.seedContext = 18;
       if (Number.isFinite(anchorDistanceMiles)) {
-        if (anchorDistanceMiles <= 10) score += 135;
-        else if (anchorDistanceMiles <= 25) score += 115;
-        else if (anchorDistanceMiles <= 50) score += 95;
-        else if (anchorDistanceMiles <= 75) score += 40;
-        else if (anchorDistanceMiles <= 150) score += 12;
+        if (anchorDistanceMiles <= 10) scoreBreakdown.governedDistance = 135;
+        else if (anchorDistanceMiles <= 25) scoreBreakdown.governedDistance = 115;
+        else if (anchorDistanceMiles <= 50) scoreBreakdown.governedDistance = 95;
+        else if (anchorDistanceMiles <= 75) scoreBreakdown.governedDistance = 40;
+        else if (anchorDistanceMiles <= 150) scoreBreakdown.governedDistance = 12;
       }
-      if (inBounds) score += 70;
-      if (isLibertyCounty) score += 55;
-      if (isLocality) score += 40;
-      if (isTexas) score += 25;
-      if (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles > 250) score -= 40;
+      if (inBounds) scoreBreakdown.inBounds = 70;
+      if (isLibertyCounty) scoreBreakdown.libertyCountyString = 55;
+      if (isLocality) scoreBreakdown.localityString = 40;
+      if (isTexas) scoreBreakdown.texasString = 25;
+      if (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles > 250) scoreBreakdown.extremeDistance = -40;
     } else {
-      if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && isLocality) score += 8;
-      if (inBounds) score += 25;
-      if (isTexas) score += 12;
-      if (isLocality) score += 8;
-      if (Number.isFinite(distanceMiles) && distanceMiles <= 75) score += 6;
+      if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && isLocality) scoreBreakdown.explicitSeedLocality = 8;
+      if (inBounds) scoreBreakdown.explicitInBounds = 25;
+      if (isTexas) scoreBreakdown.explicitTexasString = 12;
+      if (isLocality) scoreBreakdown.explicitLocalityString = 8;
+      if (Number.isFinite(distanceMiles) && distanceMiles <= 75) scoreBreakdown.explicitDistance = 6;
     }
-    score += titleMatchScore;
+    scoreBreakdown.titleMatch = titleMatchScore;
+    let score = Object.values(scoreBreakdown).reduce((total, contribution) => total + contribution, 0);
     const resultBucket = isContextualLocalSearch && Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 50
       ? "nearby_your_town"
       : isTexas
@@ -40444,7 +40473,11 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
           seedPriorityScore: 0,
           localityMode: isContextualLocalSearch ? "governed_context" : "explicit_intent",
           reservation: "none"
-        }
+        },
+        scoreBreakdown,
+        scoreBreakdownTotal: score,
+        scoreResidual: 0,
+        rankScope: "pre_projection_comparator"
       }
     };
     return { result: rankedResult, score, index, inBounds, isTexas, isLibertyCounty, isLocality, distanceMiles, anchorDistanceMiles };
@@ -40453,14 +40486,20 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
     const hasNearbyMatch = scored.some((entry) => Number.isFinite(entry.anchorDistanceMiles) && entry.anchorDistanceMiles <= 50);
     if (hasNearbyMatch) {
       scored.forEach((entry) => {
-        if (!Number.isFinite(entry.anchorDistanceMiles) || entry.anchorDistanceMiles > 50) entry.score -= 60;
+        if (!Number.isFinite(entry.anchorDistanceMiles) || entry.anchorDistanceMiles > 50) {
+          entry.result.searchRank.scoreBreakdown.nearbyMatchAvailability = -60;
+          entry.score -= 60;
+        }
       });
     }
   } else {
     const hasLocalOrTexasMatch = scored.some((entry) => entry.inBounds || entry.isLocality || entry.isTexas);
     if (hasLocalOrTexasMatch) {
       scored.forEach((entry) => {
-        if (!entry.inBounds && !entry.isLocality && !entry.isTexas) entry.score -= 20;
+        if (!entry.inBounds && !entry.isLocality && !entry.isTexas) {
+          entry.result.searchRank.scoreBreakdown.explicitMatchAvailability = -20;
+          entry.score -= 20;
+        }
       });
     }
   }
@@ -40469,6 +40508,9 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
     if (entry.result?.searchRank) {
       entry.result.searchRank.score = entry.score;
       entry.result.searchRank.rank = sortedIndex + 1;
+      entry.result.searchRank.comparatorRank = sortedIndex + 1;
+      entry.result.searchRank.scoreBreakdownTotal = Object.values(entry.result.searchRank.scoreBreakdown).reduce((total, contribution) => total + contribution, 0);
+      entry.result.searchRank.scoreResidual = entry.score - entry.result.searchRank.scoreBreakdownTotal;
     }
   });
   gridlySearchUiState.prioritizedLocalResultsCount = prioritized.filter((entry) => entry.inBounds || entry.isLocality || entry.isTexas || (Number.isFinite(entry.anchorDistanceMiles) && entry.anchorDistanceMiles <= 50)).length;
@@ -93433,7 +93475,10 @@ async function gridlySearchAddress(query, options = {}) {
   const truthfulResults = boundaryFailed && explicitRemoteIntent
     ? localityReservedResults.filter((result) => result?.provider === "saved_place" || result?.raw?.savedPlace === true || result?.raw?.seedSource === "lp097_governed_curated")
     : localityReservedResults;
-  const finalResults = truthfulResults.slice(0, limit);
+  const finalResults = truthfulResults.slice(0, limit).map((result, index) => ({
+    ...result,
+    searchRank: result.searchRank ? { ...result.searchRank, publishedRank: index + 1 } : result.searchRank
+  }));
   diagnostics.finalDisplayedCandidateCount = finalResults.length;
   diagnostics.localPoiCandidateDiagnostics = runtimePoiResults.map((candidate) => {
     const ranked = prioritizedResults.find((result) => result.providerId === candidate.providerId) || candidate;
