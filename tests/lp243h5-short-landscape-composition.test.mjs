@@ -11,7 +11,7 @@ const h5 = css.slice(css.indexOf(marker));
 test("H5 is explicitly short-landscape scoped and cannot match portrait", () => {
   assert.match(h5, /^\/\* LP243\.H5[\s\S]*?@media \(orientation: landscape\) and \(max-height: 500px\)/);
   assert.doesNotMatch(h5, /orientation: portrait/);
-  assert.match(html, /css\/styles\.css\?v=243h7-fluid-geometry-reconciliation/);
+  assert.match(html, /css\/styles\.css\?v=243h8-map-first-landscape-composition/);
 });
 
 test("compact base retains identity, KBYG disclosure, tabs, map controls, Location Context and dock", () => {

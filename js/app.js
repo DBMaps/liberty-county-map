@@ -30643,6 +30643,48 @@ let mobileUiMode = "live";
 // they are not an alternate presentation authority.
 let activeLayoutMode = "portrait";
 let lastLayoutSignal = null;
+// LP243.H8 is presentation-local: it never persists or replaces feature state.
+const gridlyShortLandscapeQuery = window.matchMedia("(orientation: landscape) and (max-height: 500px)");
+let gridlyLandscapeCommandExpanded = false;
+
+function syncGridlyLandscapeCommandPanel(options = {}) {
+  const handle = document.getElementById("gridlyLandscapeCommandHandle");
+  const locationContext = document.querySelector(".mobile-destination-command");
+  const actionPanel = document.getElementById("gridlyLandscapeCommandPanel");
+  if (!handle || !locationContext || !actionPanel) return;
+  const shortLandscape = gridlyShortLandscapeQuery.matches;
+  if (!shortLandscape || options.entering === true) gridlyLandscapeCommandExpanded = false;
+  const expanded = shortLandscape && gridlyLandscapeCommandExpanded;
+  document.body?.classList.toggle("gridly-h8-command-expanded", expanded);
+  handle.setAttribute("aria-expanded", String(expanded));
+  handle.setAttribute("aria-label", expanded ? "Hide Location Context and actions" : "Show Location Context and actions");
+  const icon = handle.querySelector("[aria-hidden='true']");
+  if (icon) icon.textContent = expanded ? "⌄" : "⌃";
+  for (const owner of [locationContext, actionPanel]) {
+    if (shortLandscape && !expanded) owner.setAttribute("inert", "");
+    else owner.removeAttribute("inert");
+    if (shortLandscape && !expanded) owner.setAttribute("aria-hidden", "true");
+    else owner.removeAttribute("aria-hidden");
+  }
+}
+
+function initializeGridlyLandscapeCommandPanel() {
+  const handle = document.getElementById("gridlyLandscapeCommandHandle");
+  if (!handle || handle.dataset.lp243h8Bound === "true") return;
+  handle.dataset.lp243h8Bound = "true";
+  handle.addEventListener("click", () => {
+    if (!gridlyShortLandscapeQuery.matches) return;
+    gridlyLandscapeCommandExpanded = !gridlyLandscapeCommandExpanded;
+    syncGridlyLandscapeCommandPanel();
+  });
+  gridlyShortLandscapeQuery.addEventListener?.("change", event => {
+    syncGridlyLandscapeCommandPanel({ entering: event.matches });
+  });
+  syncGridlyLandscapeCommandPanel({ entering: gridlyShortLandscapeQuery.matches });
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initializeGridlyLandscapeCommandPanel, { once: true });
+else initializeGridlyLandscapeCommandPanel();
 const MOBILE_REPORT_ENTRY_SELECTORS = [
   "#mobileDockReportBtn",
   ".mobile-dock-btn.report",
