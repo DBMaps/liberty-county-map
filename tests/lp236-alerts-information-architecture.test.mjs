@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { test } from 'node:test';
+import conditionAuthority from '../js/gridlyConditionDisplayLabel.js';
 
 const app = fs.readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
 const css = fs.readFileSync(new URL('../css/styles.css', import.meta.url), 'utf8');
@@ -19,6 +20,7 @@ const sandbox = {
   normalizeGridlyUserFacingRoadText: value => value,
   exposeGridlyAuditHelper: () => {}
 };
+sandbox.gridlyConditionDisplayLabel = conditionAuthority.gridlyConditionDisplayLabel;
 vm.runInNewContext(`${source}\nthis.buildLP236 = gridlyLP236BuildModel; this.renderLP236 = gridlyLP236RenderAlertsPresentation; this.auditLP236 = gridlyLP236AlertsInformationArchitectureAudit; this.bindLP236 = gridlyLP236BindDisclosureState; this.captureLP236 = gridlyLP236CaptureDisclosureState; this.locationClueLP236 = gridlyLP236LocationClue;`, sandbox);
 const build = rows => sandbox.buildLP236(rows, { authoritativeMembership: { community: 'Dallas' } });
 
@@ -39,6 +41,23 @@ test('source grouping precedes deterministic condition grouping and preserves se
   assert.equal(model.sections[0].groups[0].conditionType, 'lane_closures');
   assert.equal(model.sections[1].groups[0].rows[0].canonicalId, 'c');
   assert.equal(model.sections[2].groups[0].rows[0].canonicalId, 'w');
+});
+
+test('LP243.A row and grouped official-roadway labels share semantic casing authority', () => {
+  const rows = [
+    { id: 'construction-lower', sourceClass: 'official_roadway', category: 'construction', routeName: 'I-30' },
+    { id: 'construction-upper', sourceClass: 'official_roadway', category: 'CONSTRUCTION', routeName: 'I-20' },
+    { id: 'flood-lower', sourceClass: 'official_roadway', category: 'flooding', routeName: 'US 59' },
+    { id: 'flood-upper', sourceClass: 'official_roadway', category: 'FLOODING', routeName: 'SH 105' }
+  ];
+  const model = build(rows);
+  assert.equal(model.total, rows.length);
+  assert.equal(model.sections[0].groups.find(group => group.conditionType === 'construction').label, 'Construction');
+  assert.equal(model.sections[0].groups.find(group => group.conditionType === 'flooding_high_water').label, 'Flooding / High Water');
+  const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, rows);
+  assert.equal((rendered.match(/gridly-lp236-condition-title">Construction</g) || []).length, 2);
+  assert.equal((rendered.match(/gridly-lp236-condition-title">Flooding</g) || []).length, 2);
+  assert.doesNotMatch(rendered, /gridly-lp236-condition-title">(?:construction|flooding|CONSTRUCTION|FLOODING)</);
 });
 
 test('large inventories remain compact by default while retaining every lineage row', () => {

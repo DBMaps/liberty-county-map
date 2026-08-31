@@ -116654,7 +116654,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function gridlyLP236TypeLabel(type, alert) {
     if (gridlyLP236SourceClass(alert) === "weather") return gridlyWeatherDisplayLabel(alert);
     const labels = { lane_closures: "Lane Closures", road_closures: "Road Closures", bridge_restrictions: "Bridge Restrictions", construction: "Construction", flooding_high_water: "Flooding / High Water", crash_incident: "Crash / Incident", other: "Other" };
-    return labels[type] || String(alert?.situationType || alert?.category || alert?.event || alert?.hazardTypeLabel || alert?.typeLabel || alert?.reportType || alert?.type || "Other").trim();
+    const trustedLabel = labels[type] || String(alert?.situationType || alert?.category || alert?.event || alert?.hazardTypeLabel || alert?.typeLabel || alert?.reportType || alert?.type || "Other").trim();
+    return typeof gridlyConditionDisplayLabel === "function"
+      ? gridlyConditionDisplayLabel({ sourceFamily: gridlyLP236SourceClass(alert) === "community_report" ? "COMMUNITY_REPORTS" : "OFFICIAL_ROADWAYS", canonicalKey: type, trustedLabel, displayRole: "condition_group" })
+      : trustedLabel;
   }
 
   function gridlyLP236Roadway(alert) {
