@@ -26,7 +26,7 @@ test("one existing owner remains authoritative for every command", () => {
 });
 
 test("collapsed-by-default handle exposes complete accessible disclosure state", () => {
-  assert.match(html, /id="gridlyLandscapeCommandHandle"[^>]*aria-expanded="false"[^>]*aria-controls="mobileDestinationCommandPanel gridlyLandscapeCommandPanel"[^>]*aria-label="Show Location Context and actions"/);
+  assert.match(html, /id="gridlyLandscapeCommandToggle"[^>]*aria-expanded="false"[^>]*aria-controls="mobileDestinationCommandPanel gridlyLandscapeCommandPanel"[^>]*aria-label="Show Location Context and actions"/);
   assert.match(app, /let gridlyLandscapeCommandExpanded = false/);
   assert.match(app, /setAttribute\("inert", ""\)/);
   assert.match(app, /setAttribute\("aria-hidden", "true"\)/);

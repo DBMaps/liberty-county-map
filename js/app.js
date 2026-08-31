@@ -5375,6 +5375,13 @@ function gridlyBriefInteractionSetExpanded(expanded, options) {
   const handle = document.querySelector("[data-gridly-brief-foundation-handle]");
   const panel = document.querySelector("[data-gridly-brief-panel]");
   if (!root || !handle || !panel) return false;
+  const shortLandscapeBrief = Boolean(gridlyShortLandscapeQuery?.matches);
+  if (shortLandscapeBrief && expanded) {
+    gridlyLandscapeCommandExpandedBeforeBrief = gridlyLandscapeCommandExpanded;
+    gridlyLandscapeCommandExpanded = false;
+    syncGridlyLandscapeCommandPanel();
+  }
+  document.body?.classList.toggle("gridly-h9-brief-foreground", shortLandscapeBrief && Boolean(expanded));
   const shouldRemember = !options || options.remember !== false;
   root.dataset.gridlyBriefState = expanded ? "expanded" : "collapsed";
   document.body?.classList.toggle("gridly-brief-expanded", Boolean(expanded));
@@ -5386,6 +5393,11 @@ function gridlyBriefInteractionSetExpanded(expanded, options) {
   if (!expanded) window.setTimeout(function () {
     if (panel.dataset.gridlyBriefExpanded !== "true") panel.hidden = true;
   }, 310);
+  if (shortLandscapeBrief && !expanded && gridlyLandscapeCommandExpandedBeforeBrief) {
+    gridlyLandscapeCommandExpanded = true;
+    gridlyLandscapeCommandExpandedBeforeBrief = false;
+    syncGridlyLandscapeCommandPanel();
+  }
   if (shouldRemember) {
     try { window.localStorage?.setItem(GRIDLY_BRIEF_INTERACTION_STORAGE_KEY, expanded ? "true" : "false"); } catch (error) {}
   }
@@ -30646,32 +30658,65 @@ let lastLayoutSignal = null;
 // LP243.H8 is presentation-local: it never persists or replaces feature state.
 const gridlyShortLandscapeQuery = window.matchMedia("(orientation: landscape) and (max-height: 500px)");
 let gridlyLandscapeCommandExpanded = false;
+let gridlyLandscapeCommandExpandedBeforeBrief = false;
+
+function gridlyLandscapeCommandDisclosureAudit() {
+  const selector = "#gridlyLandscapeCommandToggle";
+  const control = document.querySelector(selector);
+  const styles = control ? window.getComputedStyle(control) : null;
+  const rect = control?.getBoundingClientRect?.();
+  const centerTarget = rect && rect.width > 0 && rect.height > 0
+    ? document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+    : null;
+  const insideViewport = Boolean(rect && rect.width > 0 && rect.height > 0
+    && rect.left >= 0 && rect.top >= 0 && rect.right <= window.innerWidth && rect.bottom <= window.innerHeight);
+  const hitTestPass = Boolean(control && centerTarget && (centerTarget === control || control.contains(centerTarget)));
+  const valid = Boolean(control && control.isConnected && control.tagName === "BUTTON" && !control.disabled
+    && styles?.display !== "none" && styles?.visibility !== "hidden" && styles?.pointerEvents !== "none"
+    && insideViewport && hitTestPass && control.dataset.lp243h9Bound === "true");
+  return { selector, control, exists: Boolean(control), insideViewport, hitTestPass, valid };
+}
+
+window.gridlyLandscapeCommandDisclosureAudit = gridlyLandscapeCommandDisclosureAudit;
 
 function syncGridlyLandscapeCommandPanel(options = {}) {
-  const handle = document.getElementById("gridlyLandscapeCommandHandle");
-  const locationContext = document.querySelector(".mobile-destination-command");
+  const handle = document.getElementById("gridlyLandscapeCommandToggle");
+  const locationContext = document.getElementById("mobileDestinationCommandPanel");
   const actionPanel = document.getElementById("gridlyLandscapeCommandPanel");
-  if (!handle || !locationContext || !actionPanel) return;
   const shortLandscape = gridlyShortLandscapeQuery.matches;
   if (!shortLandscape || options.entering === true) gridlyLandscapeCommandExpanded = false;
-  const expanded = shortLandscape && gridlyLandscapeCommandExpanded;
+  const disclosureReady = Boolean(handle && locationContext && actionPanel && (!shortLandscape || gridlyLandscapeCommandDisclosureAudit().valid));
+  const expanded = shortLandscape && (gridlyLandscapeCommandExpanded || !disclosureReady);
   document.body?.classList.toggle("gridly-h8-command-expanded", expanded);
+  document.body?.classList.toggle("gridly-h9-command-fail-open", shortLandscape && !disclosureReady);
+  if (!handle || !locationContext || !actionPanel) {
+    for (const owner of [locationContext, actionPanel].filter(Boolean)) {
+      owner.removeAttribute("inert");
+      owner.removeAttribute("aria-hidden");
+    }
+    return false;
+  }
   handle.setAttribute("aria-expanded", String(expanded));
   handle.setAttribute("aria-label", expanded ? "Hide Location Context and actions" : "Show Location Context and actions");
   const icon = handle.querySelector("[aria-hidden='true']");
   if (icon) icon.textContent = expanded ? "⌄" : "⌃";
   for (const owner of [locationContext, actionPanel]) {
-    if (shortLandscape && !expanded) owner.setAttribute("inert", "");
+    if (shortLandscape && disclosureReady && !expanded) owner.setAttribute("inert", "");
     else owner.removeAttribute("inert");
-    if (shortLandscape && !expanded) owner.setAttribute("aria-hidden", "true");
+    if (shortLandscape && disclosureReady && !expanded) owner.setAttribute("aria-hidden", "true");
     else owner.removeAttribute("aria-hidden");
   }
+  return disclosureReady;
 }
 
 function initializeGridlyLandscapeCommandPanel() {
-  const handle = document.getElementById("gridlyLandscapeCommandHandle");
-  if (!handle || handle.dataset.lp243h8Bound === "true") return;
-  handle.dataset.lp243h8Bound = "true";
+  const handle = document.getElementById("gridlyLandscapeCommandToggle");
+  if (!handle) {
+    syncGridlyLandscapeCommandPanel();
+    return;
+  }
+  if (handle.dataset.lp243h9Bound === "true") return;
+  handle.dataset.lp243h9Bound = "true";
   handle.addEventListener("click", () => {
     if (!gridlyShortLandscapeQuery.matches) return;
     gridlyLandscapeCommandExpanded = !gridlyLandscapeCommandExpanded;
@@ -30680,7 +30725,7 @@ function initializeGridlyLandscapeCommandPanel() {
   gridlyShortLandscapeQuery.addEventListener?.("change", event => {
     syncGridlyLandscapeCommandPanel({ entering: event.matches });
   });
-  syncGridlyLandscapeCommandPanel({ entering: gridlyShortLandscapeQuery.matches });
+  window.requestAnimationFrame(() => syncGridlyLandscapeCommandPanel({ entering: gridlyShortLandscapeQuery.matches }));
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initializeGridlyLandscapeCommandPanel, { once: true });
