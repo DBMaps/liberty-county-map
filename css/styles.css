@@ -27678,6 +27678,167 @@ body[data-layout-mode="portrait"] .mobile-floating-action-dock {
   }
 }
 
+/* LP243.H5 — bounded short-landscape composition authority.
+   Portrait V2 remains the product owner, but its tall-phone chrome is composed
+   into a compact map-first stack only when landscape height is genuinely
+   scarce. The existing KBYG handle remains the disclosure authority. */
+@media (orientation: landscape) and (max-height: 500px) {
+  body[data-layout-mode="portrait"] {
+    --lp243h5-foreground-z: 10000;
+    --lp243h5-top: max(6px, env(safe-area-inset-top, 0px));
+    --lp243h5-dock-bottom-inset: calc(6px + env(safe-area-inset-bottom, 0px));
+    --lp243h5-dock-height: 56px;
+    --lp243h5-location-gap: 6px;
+    --lp243h3-dock-bottom-inset: var(--lp243h5-dock-bottom-inset);
+    --lp243h3-dock-height: var(--lp243h5-dock-height);
+    --lp243h3-location-dock-gap: var(--lp243h5-location-gap);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
+    top: var(--lp243h5-top) !important;
+    min-height: 34px !important;
+    padding-block: 3px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
+    max-height: 22px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    top: calc(var(--lp243h5-top) + 40px) !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 6px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill {
+    min-height: 40px !important;
+    max-height: 40px !important;
+    padding: 5px 10px !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill :is(span, small) {
+    display: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    min-height: 40px !important;
+    width: auto !important;
+    padding: 5px 12px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    position: static !important;
+    grid-column: 1 / -1;
+    min-height: 32px !important;
+    padding: 2px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+    min-height: 28px !important;
+    padding-block: 2px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+    top: 132px !important;
+    gap: 2px !important;
+    padding: 3px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button {
+    min-height: 34px !important;
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
+    padding-block: 3px var(--lp243h5-dock-bottom-inset) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    min-height: var(--lp243h5-dock-height) !important;
+    padding: 3px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-height: 48px !important;
+  }
+
+  /* The already-existing disclosure can expand over the mounted map on demand;
+     collapsing it restores the compact base without a parallel H5 state. */
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-brief-stack {
+    max-height: calc(100dvh - 68px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Search is the one major workspace outside V2. Give it the shared semantic
+     foreground tier, not a component-specific z-index escalation. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) {
+    inset: 12px !important;
+    z-index: var(--lp243h5-foreground-z) !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    box-sizing: border-box;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
+
+  /* Alerts, Settings and Report all use the lifecycle-owned V2 sheet. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]):is(
+    [data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"]
+  ) {
+    inset: 12px !important;
+    z-index: var(--lp243h5-foreground-z) !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    transform: none !important;
+    overflow: hidden !important;
+    pointer-events: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]):is(
+    [data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"]
+  ) #gridlyPortraitV2SheetBody {
+    min-height: 0;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
+
+  /* A major workspace subordinates every persistent map control as one group.
+     The map stays mounted and untouched; close simply reveals the compact base. */
+  body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden]))
+    #gridlyPortraitV2 > :not(#gridlyPortraitV2Sheet):not(#gridlyPortraitV2SheetBackdrop),
+  body[data-layout-mode="portrait"] #gridlyPortraitV2:has(
+    #gridlyPortraitV2Sheet:not([hidden]):is([data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"])
+  ) > :not(#gridlyPortraitV2Sheet):not(#gridlyPortraitV2SheetBackdrop),
+  body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden])) .map-card > .mobile-destination-command {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
 /* LP243.H4 — current consumer-presentation ownership.
    This is deliberately orientation-independent: once the live V2 application
    owns the canonical portrait layout mode, retired navigation/report entry
