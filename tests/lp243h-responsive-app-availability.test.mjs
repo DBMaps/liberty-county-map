@@ -36,7 +36,7 @@ test("resize remains layout-only and preserves application state authority", () 
   assert.doesNotMatch(resolver, /localStorage|sessionStorage|selectedHome|activeArea|renderAlerts|searchState/);
 });
 
-test("LP243.H CSS identity advances for H2 while JS remains H1", () => {
-  assert.match(html, /css\/styles\.css\?v=243h2-landscape-containment/);
-  assert.match(html, /js\/app\.js\?v=243h1-runtime-ownership/);
+test("LP243.H asset identities advance through H4", () => {
+  assert.match(html, /css\/styles\.css\?v=243h4-legacy-control-ownership/);
+  assert.match(html, /js\/app\.js\?v=243h4-legacy-control-ownership/);
 });
