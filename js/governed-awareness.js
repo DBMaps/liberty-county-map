@@ -466,7 +466,12 @@
     const reconciled = Number(input.reconciledActiveIssueCount);
     const shared = Number(input.sharedActiveIssueCount);
     const governed = Number(input.governedEligibleEvidenceCount);
-    const firstFinite = [reconciled, shared, governed].find((value) => Number.isFinite(value));
+    // The governed projection is the only operand that has already applied
+    // lifecycle, geography and cross-family identity reconciliation.  A
+    // shared summary (or its county-visible fallback) can be a partial,
+    // differently timed source-family snapshot, so it is fallback evidence,
+    // never precedence over a currently available governed cardinality.
+    const firstFinite = [governed, shared, reconciled].find((value) => Number.isFinite(value));
     return Math.max(0, firstFinite ?? 0);
   }
   function buildCurrentCountyVisibleIncidentAudit(input = {}) {
