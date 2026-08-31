@@ -27955,3 +27955,37 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     overscroll-behavior: contain;
   }
 }
+
+/* LP243.H7 — single-axis fluid geometry reconciliation.
+   H2's centered 760px fixed-surface contract remains authoritative outside
+   short landscape. Here H6's safe inline gutters are the sole x-position
+   authority, and the fixed application shell is bounded by its inset edges
+   rather than combining its inherited block margin with an unreduced 100dvh. */
+@media (orientation: landscape) and (max-height: 500px) {
+  body[data-layout-mode="portrait"] .app-shell.premium-layout {
+    inset: 0;
+    height: auto;
+    max-height: none;
+    margin: 0 auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2
+    :is(.gridly-v2-topbar, .gridly-v2-brief-stack, .gridly-v2-bottom-region, .gridly-v2-bottom-dock, .gridly-v2-location-awareness-panel),
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    left: var(--lp243h6-safe-inline) !important;
+    right: var(--lp243h6-safe-inline-end) !important;
+    width: auto !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+    transform: none !important;
+  }
+
+  /* H5 continues to own foreground lifecycle and stacking. H7 only removes
+     the obsolete H2 centering transform from its already-inset workspaces. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]),
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]):is(
+    [data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"]
+  ) {
+    transform: none !important;
+  }
+}
