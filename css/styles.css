@@ -27677,3 +27677,23 @@ body[data-layout-mode="portrait"] .mobile-floating-action-dock {
     margin-block: 0 !important;
   }
 }
+
+/* LP243.H4 — current consumer-presentation ownership.
+   This is deliberately orientation-independent: once the live V2 application
+   owns the canonical portrait layout mode, retired navigation/report entry
+   points cannot compete with it. Shared native-surface infrastructure remains
+   available to current callers, but its logically closed host cannot paint. */
+body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
+  :is(.mobile-bottom-nav, #gridlyHazardLauncher) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
+  #mobileNativeSurfaceLayer:is([hidden], [aria-hidden="true"]):not(.is-open) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

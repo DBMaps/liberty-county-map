@@ -72288,6 +72288,36 @@ function getGridlyPortraitCleanupGateState(layoutMode = getCanonicalGridlyPortra
   };
 }
 
+const GRIDLY_V2_PRESENTATION_OWNER_CLASS = "gridly-v2-presentation-owner-active";
+const GRIDLY_V2_RETIRED_CONSUMER_SURFACE_SELECTOR = ".mobile-bottom-nav, #gridlyHazardLauncher";
+
+function reconcileGridlyV2ConsumerPresentationOwnership() {
+  const body = document.body;
+  const shell = document.getElementById("gridlyPortraitV2");
+  const ownsPresentation = Boolean(
+    body?.dataset?.layoutMode === "portrait" &&
+    shell &&
+    !shell.hidden &&
+    shell.getAttribute("aria-hidden") !== "true"
+  );
+  body?.classList.toggle(GRIDLY_V2_PRESENTATION_OWNER_CLASS, ownsPresentation);
+
+  document.querySelectorAll(GRIDLY_V2_RETIRED_CONSUMER_SURFACE_SELECTOR).forEach((surface) => {
+    surface.toggleAttribute("inert", ownsPresentation);
+    surface.setAttribute("aria-hidden", ownsPresentation ? "true" : "false");
+  });
+
+  // This host remains shared fallback infrastructure for Area/Layers/Alerts.
+  // Its closed markup must nevertheless stay geometrically absent. Do not
+  // deactivate it when a current caller has explicitly opened it.
+  const nativeSurface = document.getElementById("mobileNativeSurfaceLayer");
+  if (ownsPresentation && nativeSurface && !nativeSurface.classList.contains("is-open")) {
+    nativeSurface.hidden = true;
+    nativeSurface.setAttribute("aria-hidden", "true");
+  }
+  return ownsPresentation;
+}
+
 function activateGridlyPortraitV2StartupOwner(source = "portrait_startup_activation") {
   const body = document.body;
   const layoutMode = getCanonicalGridlyPortraitLayoutMode();
@@ -72332,6 +72362,7 @@ function activateGridlyPortraitV2StartupOwner(source = "portrait_startup_activat
     applyPortraitV2SurfaceContainment();
     gridlyPortraitV2StartupActivationState.containmentRequested = true;
   }
+  reconcileGridlyV2ConsumerPresentationOwnership();
   return true;
 }
 const GRIDLY_PORTRAIT_RETIRED_SURFACES = {
@@ -84908,6 +84939,7 @@ counter.textContent = "Road conditions appear calm";
 
   document.body.appendChild(counter);
   document.body.appendChild(launcher);
+  reconcileGridlyV2ConsumerPresentationOwnership();
   document.body.appendChild(panel);
   injectHazardStyles();
 }
