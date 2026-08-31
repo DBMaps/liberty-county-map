@@ -27989,3 +27989,152 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     transform: none !important;
   }
 }
+/* LP243.H8 — final map-first short-landscape composition authority.
+   H1 ownership, H4 legacy suppression, and H5 foreground precedence remain.
+   This block supersedes H2/H3/H5/H6/H7 short-landscape geometry without
+   changing their tall-wide contracts or moving any feature-owned DOM. */
+.gridly-landscape-command-handle {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  body[data-layout-mode="portrait"] {
+    --lp243h8-inline-start: max(8px, env(safe-area-inset-left, 0px));
+    --lp243h8-inline-end: max(8px, env(safe-area-inset-right, 0px));
+    --lp243h8-top-reserve: 112px;
+    --lp243h8-handle-height: 24px;
+    --lp243h8-panel-height: 116px;
+  }
+
+  body[data-layout-mode="portrait"] .app-shell.premium-layout {
+    inset: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: var(--lp243h8-top-reserve) var(--lp243h8-inline-end)
+      calc(var(--lp243h8-handle-height) + env(safe-area-inset-bottom, 0px)) var(--lp243h8-inline-start) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
+    top: max(4px, env(safe-area-inset-top, 0px)) !important;
+    left: var(--lp243h8-inline-start) !important;
+    right: var(--lp243h8-inline-end) !important;
+    min-height: 34px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    top: calc(max(4px, env(safe-area-inset-top, 0px)) + 38px) !important;
+    left: var(--lp243h8-inline-start) !important;
+    right: var(--lp243h8-inline-end) !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 3px 6px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 :is(.gridly-v2-status-pill, .gridly-brief-foundation-handle) {
+    min-height: 34px !important;
+    max-height: 34px !important;
+    padding-block: 3px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    grid-column: 1 / -1;
+    min-height: 30px !important;
+    padding: 1px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+    min-height: 27px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+    top: 118px !important;
+    bottom: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
+    left: var(--lp243h8-inline-start) !important;
+    right: var(--lp243h8-inline-end) !important;
+    bottom: 0 !important;
+    width: auto !important;
+    min-height: var(--lp243h8-handle-height) !important;
+    height: var(--lp243h8-handle-height) !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    transition: height 160ms ease;
+  }
+
+  body[data-layout-mode="portrait"] .gridly-landscape-command-handle {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    left: 50%;
+    top: 0;
+    width: 58px;
+    height: var(--lp243h8-handle-height);
+    min-height: var(--lp243h8-handle-height);
+    padding: 0;
+    transform: translateX(-50%);
+    border: 1px solid var(--gridly-border-neutral);
+    border-radius: 12px 12px 0 0;
+    background: var(--gridly-elevated);
+    color: var(--gridly-text-primary);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock,
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    position: absolute !important;
+    inset: var(--lp243h8-handle-height) 0 0 !important;
+    width: auto !important;
+    min-height: 54px !important;
+    transform: none !important;
+  }
+
+  body[data-layout-mode="portrait"].gridly-h8-command-expanded .app-shell.premium-layout {
+    padding-bottom: calc(var(--lp243h8-panel-height) + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  body[data-layout-mode="portrait"].gridly-h8-command-expanded #gridlyPortraitV2 .gridly-v2-bottom-region {
+    height: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+    background: var(--gridly-elevated) !important;
+  }
+
+  body[data-layout-mode="portrait"].gridly-h8-command-expanded #gridlyPortraitV2 .gridly-v2-bottom-dock,
+  body[data-layout-mode="portrait"].gridly-h8-command-expanded .map-card > .mobile-destination-command {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  body[data-layout-mode="portrait"].gridly-h8-command-expanded .map-card > .mobile-destination-command {
+    position: fixed !important;
+    left: var(--lp243h8-inline-start) !important;
+    right: var(--lp243h8-inline-end) !important;
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    min-height: 56px !important;
+    margin: 0 !important;
+    padding-block: 5px !important;
+    transform: none !important;
+  }
+
+  body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden])) .gridly-v2-bottom-region,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2:has(#gridlyPortraitV2Sheet:not([hidden])) .gridly-v2-bottom-region {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridly-v2-bottom-region { transition: none !important; }
+}

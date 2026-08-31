@@ -184,7 +184,7 @@
     })();
   </script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/styles.css?v=243h7-fluid-geometry-reconciliation" />
+  <link rel="stylesheet" href="css/styles.css?v=243h8-map-first-landscape-composition" />
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/store/icons/gridly-icon-master-1024.png">
   <link rel="apple-touch-icon" sizes="167x167" href="assets/icons/incoming/gridly-icon-master-167.png">
@@ -530,7 +530,7 @@
 
     <section class="command-center" id="mapSection">
       <section class="map-card">
-        <article class="mobile-destination-command" aria-label="Destination route command">
+        <article id="mobileDestinationCommandPanel" class="mobile-destination-command" aria-label="Destination route command">
           <div class="mobile-destination-command-copy">
             <span class="mobile-awareness-panel-kicker" id="mobileAwarenessPanelKicker">Location Context • Selected County</span>
             <strong id="mobileDestinationCommandTitle">Destination</strong>
@@ -846,7 +846,8 @@
       <button type="button" data-v2-control="zoom-out" aria-label="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
     </div>
     <div id="gridlyPortraitBottomRegion" class="gridly-v2-bottom-region" aria-label="Portrait bottom actions">
-      <div class="gridly-v2-bottom-dock" aria-label="Primary actions">
+      <button id="gridlyLandscapeCommandHandle" class="gridly-landscape-command-handle" type="button" aria-expanded="false" aria-controls="mobileDestinationCommandPanel gridlyLandscapeCommandPanel" aria-label="Show Location Context and actions"><span aria-hidden="true">⌃</span></button>
+      <div id="gridlyLandscapeCommandPanel" class="gridly-v2-bottom-dock" aria-label="Primary actions">
         <button type="button" data-v2-sheet="report" aria-label="Open Report flow"><span class="dock-icon"><img src="assets/UI/icons/dock/report-map-pin.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><em>Report</em></button>
         <button type="button" id="gridlyAlertsDockButton" data-v2-sheet="alerts" aria-label="Open Alerts" aria-haspopup="dialog" aria-controls="gridlyPortraitV2Sheet"><span class="dock-icon"><img src="assets/UI/icons/dock/alerts-bell.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><em>Alerts</em></button>
         <button type="button" id="gridlyHistoryDockButton" data-v2-sheet="history" aria-label="Open historical intelligence" aria-haspopup="dialog"><span class="dock-icon"><img src="assets/UI/icons/dock/history-clock-arrow.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><em>History</em></button>
@@ -1535,7 +1536,7 @@
   <script src="js/gridlyRuntimeCountyIdentity.js?v=2393"></script>
   <script src="js/gridlyLP240WeatherAuthorityAudit.js?v=2401h4"></script>
   <script src="js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3"></script>
-  <script src="js/app.js?v=243h4-legacy-control-ownership"></script>
+  <script src="js/app.js?v=243h8-collapsible-landscape-command-panel"></script>
   <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
   <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=03921"></script>
   <script src="js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044"></script>

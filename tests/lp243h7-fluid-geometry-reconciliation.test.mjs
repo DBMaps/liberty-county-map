@@ -9,7 +9,7 @@ const h6Marker = "/* LP243.H6 — fluid short-landscape viewport-fit authority."
 const h7Marker = "/* LP243.H7 — single-axis fluid geometry reconciliation.";
 const h2 = css.slice(css.indexOf(h2Marker), css.indexOf("/* LP243.H3"));
 const h6 = css.slice(css.indexOf(h6Marker), css.indexOf(h7Marker));
-const h7 = css.slice(css.indexOf(h7Marker));
+const h7 = css.slice(css.indexOf(h7Marker), css.indexOf("/* LP243.H8"));
 
 test("H7 is exclusively short-landscape scoped and cannot match portrait or H2 desktop", () => {
   assert.match(h7, /^\/\* LP243\.H7[\s\S]*?@media \(orientation: landscape\) and \(max-height: 500px\)/);
@@ -63,5 +63,5 @@ test("foregrounds retain H5 ownership while H1-H6 protections and H7 identity re
   assert.match(html, /LP243\.H restores the production application/);
   for (const milestone of ["H2", "H3", "H4", "H5", "H6"]) assert.match(css, new RegExp(`LP243\\.${milestone}`));
   assert.match(h7, /#gridlySearchShell:not\(\[hidden\]\)[\s\S]*?data-active-sheet="alerts"[\s\S]*?data-active-sheet="settings"[\s\S]*?data-active-sheet="report"[\s\S]*?transform: none !important/);
-  assert.match(html, /css\/styles\.css\?v=243h7-fluid-geometry-reconciliation/);
+  assert.match(html, /css\/styles\.css\?v=243h8-map-first-landscape-composition/);
 });
