@@ -4394,12 +4394,20 @@ function gridlyTravelBriefCommunityJoinedConditionLines(groups) {
 
 function gridlyTravelBriefRoadwayConditionLabel(line = "") {
   const text = String(line || "");
-  if (/construction|work zone|road work|roadwork/i.test(text)) return "Construction";
-  if (/lane|restriction/i.test(text)) return "lane closure";
-  if (/closure|closed/i.test(text)) return "road closure";
-  if (/crash|wreck|collision|accident/i.test(text)) return "crash";
-  if (/flood|high water/i.test(text)) return "flooding";
-  return "roadway condition";
+  const canonicalKey = /construction|work zone|road work|roadwork/i.test(text) ? "construction"
+    : /lane|restriction/i.test(text) ? "lane_closure"
+      : /closure|closed/i.test(text) ? "road_closure"
+        : /crash|wreck|collision|accident/i.test(text) ? "crash"
+          : /flood|high water/i.test(text) ? "flooding"
+            : "";
+  if (typeof gridlyConditionDisplayLabel === "function") {
+    return gridlyConditionDisplayLabel({
+      sourceFamily: "official_roadway",
+      canonicalKey,
+      trustedLabel: canonicalKey ? "" : "Roadway Condition"
+    });
+  }
+  return canonicalKey ? canonicalKey.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase()) : "Roadway Condition";
 }
 
 function gridlyTravelBriefRoadwayLineRoute(record = {}, line = "") {
@@ -42207,13 +42215,17 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const alertsGroupedIssueCount = Number(alertsSnapshot?.groupedAlertCount ?? alertsSnapshot?.activeIncidentCount);
   const alertsCommunityReportCount = Number(alertsSnapshot?.communityReportCount ?? alertsSnapshot?.rawAlertRecordCount);
   const reconciledActiveIssueCount = getGridlyReconciledAwarenessActiveIssueCount(safeSummary, { activeIssueCount: rawActiveIssueCount, hazardCount, reportCount: reportCount + crossingReportCount });
+  const governedEligibleEvidenceCount = typeof gridlyGetGovernedActiveAwarenessRows === "function"
+    ? gridlyGetGovernedActiveAwarenessRows().length
+    : null;
   // Alerts grouping is presentation cardinality, not governed active-evidence
   // cardinality. Keep it as a diagnostic operand without allowing a derived
   // card (or any other presentation-only row) to manufacture an active issue.
   const activeIssueCount = window.GridlyGovernedAwareness?.resolveLocationContextActiveIssueCount
     ? window.GridlyGovernedAwareness.resolveLocationContextActiveIssueCount({
       reconciledActiveIssueCount,
-      sharedActiveIssueCount: safeSummary.sharedActiveIssueContract?.activeIssueCount
+      sharedActiveIssueCount: safeSummary.sharedActiveIssueContract?.activeIssueCount,
+      governedEligibleEvidenceCount
     })
     : reconciledActiveIssueCount;
   const productionCandidates = [
@@ -42243,7 +42255,7 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
       activeHazardsInAreaLength: Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea.length : 0,
       preDedupCollectionCardinality: productionCandidates.length, postDedupCollectionCardinality: productionItems.length,
       alertsGroupedIssueCount: Number.isFinite(alertsGroupedIssueCount) ? alertsGroupedIssueCount : null,
-      reconciledActiveIssueCount, finalActiveIssueCount: activeIssueCount
+      governedEligibleEvidenceCount, reconciledActiveIssueCount, finalActiveIssueCount: activeIssueCount
     }, invocation: gridlyActiveIssueReconciliationInvocation, reason: "normalize-mobile-awareness-panel-summary"
   });
   const evidenceReportCount = Number.isFinite(alertsCommunityReportCount) && alertsCommunityReportCount > 0
