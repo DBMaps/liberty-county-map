@@ -39888,21 +39888,26 @@ function gridlySearchQueryHasDestinationIndicator(query = "") {
 }
 
 function classifyGridlyDestinationSearchIntent(query = "") {
-  const normalized = normalizeGridlySearchDisplayLabel(query);
-  if (!normalized) return { type: GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL, reason: "empty" };
-  if (gridlySearchQueryHasAddressIndicator(normalized)) {
+  const rawNormalized = normalizeGridlySearchDisplayLabel(query);
+  if (!rawNormalized) return { type: GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL, reason: "empty" };
+  // Raw text retains authority for address and explicit-geography detection.
+  // Only after those signals are preserved may the shared LP101 semantic
+  // normalizer feed the existing LP099 business-intent authority.
+  if (gridlySearchQueryHasAddressIndicator(rawNormalized)) {
     return { type: GRIDLY_DESTINATION_INTENTS.ADDRESS, reason: "address_indicator" };
   }
-  const businessIntent = window.GRIDLY_LP099_BUSINESS_SEARCH?.classifyIntent?.(query);
-  if (businessIntent && gridlySearchQueryHasDestinationIndicator(normalized)) {
+  const explicitDestination = gridlySearchQueryHasDestinationIndicator(rawNormalized);
+  const canonicalSemanticQuery = normalizeGridlyBrandSearchText(query);
+  const businessIntent = window.GRIDLY_LP099_BUSINESS_SEARCH?.classifyIntent?.(canonicalSemanticQuery);
+  if (businessIntent && explicitDestination) {
     return { type: GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION, reason: "business_with_destination_indicator" };
   }
-  if (businessIntent) return businessIntent;
-  const lp101Intent = window.GRIDLY_LP101_SEARCH_QUALITY?.understand?.(query);
-  if (lp101Intent?.category) return { type: GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE, reason: "category_intent", category: lp101Intent.category };
-  if (gridlySearchQueryHasDestinationIndicator(normalized)) {
+  if (explicitDestination) {
     return { type: GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION, reason: "destination_indicator" };
   }
+  if (businessIntent) return businessIntent;
+  const lp101Intent = window.GRIDLY_LP101_SEARCH_QUALITY?.understand?.(canonicalSemanticQuery);
+  if (lp101Intent?.category) return { type: GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE, reason: "category_intent", category: lp101Intent.category };
   return { type: GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL, reason: "no_destination_indicator" };
 }
 
