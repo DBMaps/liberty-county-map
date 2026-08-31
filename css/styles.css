@@ -27678,167 +27678,7 @@ body[data-layout-mode="portrait"] .mobile-floating-action-dock {
   }
 }
 
-/* LP243.H5 — bounded short-landscape composition authority.
-   Portrait V2 remains the product owner, but its tall-phone chrome is composed
-   into a compact map-first stack only when landscape height is genuinely
-   scarce. The existing KBYG handle remains the disclosure authority. */
-@media (orientation: landscape) and (max-height: 500px) {
-  body[data-layout-mode="portrait"] {
-    --lp243h5-foreground-z: 10000;
-    --lp243h5-top: max(6px, env(safe-area-inset-top, 0px));
-    --lp243h5-dock-bottom-inset: calc(6px + env(safe-area-inset-bottom, 0px));
-    --lp243h5-dock-height: 56px;
-    --lp243h5-location-gap: 6px;
-    --lp243h3-dock-bottom-inset: var(--lp243h5-dock-bottom-inset);
-    --lp243h3-dock-height: var(--lp243h5-dock-height);
-    --lp243h3-location-dock-gap: var(--lp243h5-location-gap);
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
-    top: var(--lp243h5-top) !important;
-    min-height: 34px !important;
-    padding-block: 3px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
-    max-height: 22px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
-    top: calc(var(--lp243h5-top) + 40px) !important;
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 4px 6px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill {
-    min-height: 40px !important;
-    max-height: 40px !important;
-    padding: 5px 10px !important;
-    gap: 0 !important;
-    overflow: hidden !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill :is(span, small) {
-    display: none !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle {
-    min-height: 40px !important;
-    width: auto !important;
-    padding: 5px 12px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
-    position: static !important;
-    grid-column: 1 / -1;
-    min-height: 32px !important;
-    padding: 2px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
-    min-height: 28px !important;
-    padding-block: 2px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
-    top: 132px !important;
-    gap: 2px !important;
-    padding: 3px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button {
-    min-height: 34px !important;
-    width: 34px !important;
-    height: 34px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
-    padding-block: 3px var(--lp243h5-dock-bottom-inset) !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
-    min-height: var(--lp243h5-dock-height) !important;
-    padding: 3px !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
-    min-height: 48px !important;
-  }
-
-  /* The already-existing disclosure can expand over the mounted map on demand;
-     collapsing it restores the compact base without a parallel H5 state. */
-  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-brief-stack {
-    max-height: calc(100dvh - 68px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-
-  /* Search is the one major workspace outside V2. Give it the shared semantic
-     foreground tier, not a component-specific z-index escalation. */
-  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) {
-    inset: 12px !important;
-    z-index: var(--lp243h5-foreground-z) !important;
-    width: auto !important;
-    max-width: none !important;
-    height: auto !important;
-    max-height: none !important;
-    overflow: hidden !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    box-sizing: border-box;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    overscroll-behavior: contain;
-  }
-
-  /* Alerts, Settings and Report all use the lifecycle-owned V2 sheet. */
-  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]):is(
-    [data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"]
-  ) {
-    inset: 12px !important;
-    z-index: var(--lp243h5-foreground-z) !important;
-    width: auto !important;
-    max-width: none !important;
-    height: auto !important;
-    max-height: none !important;
-    transform: none !important;
-    overflow: hidden !important;
-    pointer-events: auto !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]):is(
-    [data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"]
-  ) #gridlyPortraitV2SheetBody {
-    min-height: 0;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    overscroll-behavior: contain;
-  }
-
-  /* A major workspace subordinates every persistent map control as one group.
-     The map stays mounted and untouched; close simply reveals the compact base. */
-  body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden]))
-    #gridlyPortraitV2 > :not(#gridlyPortraitV2Sheet):not(#gridlyPortraitV2SheetBackdrop),
-  body[data-layout-mode="portrait"] #gridlyPortraitV2:has(
-    #gridlyPortraitV2Sheet:not([hidden]):is([data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"])
-  ) > :not(#gridlyPortraitV2Sheet):not(#gridlyPortraitV2SheetBackdrop),
-  body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden])) .map-card > .mobile-destination-command {
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
-}
-
+/* LP243.H5-H9 — short-landscape geometry superseded by H10B below. */
 /* LP243.H4 — current consumer-presentation ownership.
    This is deliberately orientation-independent: once the live V2 application
    owns the canonical portrait layout mode, retired navigation/report entry
@@ -27859,52 +27699,60 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   pointer-events: none !important;
 }
 
-/* LP243.H6 — fluid short-landscape viewport-fit authority.
-   H2 remains the bounded-shell owner everywhere else. In the H5 short-height
-   landscape family, one safe-gutter width and one 100dvh flex column replace
-   the inherited 760px width cap and fixed map height assumptions. */
+
+/* LP243.H6-H9 — short-landscape geometry superseded; no active declarations. */
+/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY
+   H10A RCA: H5-H9 successively compensated fixed reserves and surfaces, so
+   collapsed controls still consumed map height. This single block replaces
+   that geometry. H1/H4 ownership and H2/H3 tall-wide rules remain invariant. */
+.gridly-landscape-command-handle { display: none; }
+
 @media (orientation: landscape) and (max-height: 500px) {
   body[data-layout-mode="portrait"] {
-    --lp243h6-safe-inline: max(8px, env(safe-area-inset-left, 0px));
-    --lp243h6-safe-inline-end: max(8px, env(safe-area-inset-right, 0px));
-    --lp243h6-shell-width: calc(100vw - var(--lp243h6-safe-inline) - var(--lp243h6-safe-inline-end));
-    --lp243h6-map-top-reserve: 126px;
-    --lp243h6-map-bottom-reserve: calc(128px + env(safe-area-inset-bottom, 0px));
+    --lp243h10b-inline-start: max(8px, env(safe-area-inset-left, 0px));
+    --lp243h10b-inline-end: max(8px, env(safe-area-inset-right, 0px));
+    --lp243h10b-top-height: 104px;
+    --lp243h10b-command-height: 106px;
+    --lp243h10b-foreground-z: 10000;
     width: 100%;
-    min-height: 100dvh;
     height: 100dvh;
+    min-height: 100dvh;
     overflow: hidden;
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 {
     width: 100%;
-    min-height: 100dvh;
     height: 100dvh;
-  }
-
-  body[data-layout-mode="portrait"] :is(.app-shell.premium-layout, .main-column, #mapSection.command-center, .map-card) {
-    width: var(--lp243h6-shell-width);
-    max-width: none;
-    min-height: 0;
-    margin-inline: auto;
+    min-height: 100dvh;
   }
 
   body[data-layout-mode="portrait"] .app-shell.premium-layout {
     position: fixed;
     inset: 0;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: var(--lp243h10b-top-height) minmax(0, 1fr);
     box-sizing: border-box;
+    width: 100% !important;
+    max-width: none !important;
     height: 100dvh;
     max-height: 100dvh;
-    padding: var(--lp243h6-map-top-reserve) var(--lp243h6-safe-inline-end)
-      var(--lp243h6-map-bottom-reserve) var(--lp243h6-safe-inline);
+    margin: 0 !important;
+    padding: 0 var(--lp243h10b-inline-end) 0 var(--lp243h10b-inline-start) !important;
+    overflow: hidden;
+  }
+
+  body[data-layout-mode="portrait"] .main-column {
+    grid-row: 2;
   }
 
   body[data-layout-mode="portrait"] :is(.main-column, #mapSection.command-center, .map-card, .map-frame, #map) {
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: none !important;
     min-height: 0 !important;
     height: auto !important;
     max-height: none !important;
+    margin-inline: 0 !important;
   }
 
   body[data-layout-mode="portrait"] :is(.main-column, #mapSection.command-center, .map-card, .map-frame) {
@@ -27914,156 +27762,85 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     overflow: hidden;
   }
 
-  body[data-layout-mode="portrait"] #map {
-    flex: 1 1 0;
-    width: 100% !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2
-    :is(.gridly-v2-topbar, .gridly-v2-brief-stack, .gridly-v2-bottom-region, .gridly-v2-bottom-dock, .gridly-v2-location-awareness-panel, .gridly-v2-sheet),
-  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
-    width: var(--lp243h6-shell-width);
-    max-width: none;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
-    left: var(--lp243h6-safe-inline) !important;
-    right: var(--lp243h6-safe-inline-end) !important;
-    width: auto;
-  }
-
-  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]),
-  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]):is(
-    [data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"]
-  ) {
-    inset: max(8px, env(safe-area-inset-top, 0px)) var(--lp243h6-safe-inline-end)
-      max(8px, env(safe-area-inset-bottom, 0px)) var(--lp243h6-safe-inline) !important;
-    width: auto !important;
-    max-width: none !important;
-    height: auto !important;
-    max-height: none !important;
-    box-sizing: border-box;
-    overflow: hidden !important;
-  }
-
-  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card,
-  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]) #gridlyPortraitV2SheetBody {
-    min-height: 0;
-    max-height: 100% !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    overscroll-behavior: contain;
-  }
-}
-
-/* LP243.H7 — single-axis fluid geometry reconciliation.
-   H2's centered 760px fixed-surface contract remains authoritative outside
-   short landscape. Here H6's safe inline gutters are the sole x-position
-   authority, and the fixed application shell is bounded by its inset edges
-   rather than combining its inherited block margin with an unreduced 100dvh. */
-@media (orientation: landscape) and (max-height: 500px) {
-  body[data-layout-mode="portrait"] .app-shell.premium-layout {
-    inset: 0;
-    height: auto;
-    max-height: none;
-    margin: 0 auto;
-  }
-
-  body[data-layout-mode="portrait"] #gridlyPortraitV2
-    :is(.gridly-v2-topbar, .gridly-v2-brief-stack, .gridly-v2-bottom-region, .gridly-v2-bottom-dock, .gridly-v2-location-awareness-panel),
-  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
-    left: var(--lp243h6-safe-inline) !important;
-    right: var(--lp243h6-safe-inline-end) !important;
-    width: auto !important;
-    max-width: none !important;
-    margin-inline: 0 !important;
-    transform: none !important;
-  }
-
-  /* H5 continues to own foreground lifecycle and stacking. H7 only removes
-     the obsolete H2 centering transform from its already-inset workspaces. */
-  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]),
-  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]):is(
-    [data-active-sheet="alerts"], [data-active-sheet="settings"], [data-active-sheet="report"]
-  ) {
-    transform: none !important;
-  }
-}
-/* LP243.H8 — final map-first short-landscape composition authority.
-   H1 ownership, H4 legacy suppression, and H5 foreground precedence remain.
-   This block supersedes H2/H3/H5/H6/H7 short-landscape geometry without
-   changing their tall-wide contracts or moving any feature-owned DOM. */
-.gridly-landscape-command-handle {
-  display: none;
-}
-
-@media (orientation: landscape) and (max-height: 500px) {
-  body[data-layout-mode="portrait"] {
-    --lp243h8-inline-start: max(8px, env(safe-area-inset-left, 0px));
-    --lp243h8-inline-end: max(8px, env(safe-area-inset-right, 0px));
-    --lp243h8-top-reserve: 112px;
-    --lp243h8-handle-height: 24px;
-    --lp243h8-panel-height: 116px;
-  }
-
-  body[data-layout-mode="portrait"] .app-shell.premium-layout {
-    inset: 0 !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: var(--lp243h8-top-reserve) var(--lp243h8-inline-end)
-      calc(var(--lp243h8-handle-height) + env(safe-area-inset-bottom, 0px)) var(--lp243h8-inline-start) !important;
-  }
+  body[data-layout-mode="portrait"] #map { flex: 1 1 0; }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
-    top: max(4px, env(safe-area-inset-top, 0px)) !important;
-    left: var(--lp243h8-inline-start) !important;
-    right: var(--lp243h8-inline-end) !important;
-    min-height: 34px !important;
+    top: max(3px, env(safe-area-inset-top, 0px)) !important;
+    left: var(--lp243h10b-inline-start) !important;
+    right: var(--lp243h10b-inline-end) !important;
+    width: auto !important;
+    min-height: 32px !important;
+    padding-block: 2px !important;
+    transform: none !important;
   }
 
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img { max-height: 21px !important; }
+
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
-    top: calc(max(4px, env(safe-area-inset-top, 0px)) + 38px) !important;
-    left: var(--lp243h8-inline-start) !important;
-    right: var(--lp243h8-inline-end) !important;
+    top: calc(max(3px, env(safe-area-inset-top, 0px)) + 35px) !important;
+    left: var(--lp243h10b-inline-start) !important;
+    right: var(--lp243h10b-inline-end) !important;
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) auto !important;
-    gap: 3px 6px !important;
+    gap: 2px 6px !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 :is(.gridly-v2-status-pill, .gridly-brief-foundation-handle) {
-    min-height: 34px !important;
-    max-height: 34px !important;
-    padding-block: 3px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding-block: 2px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill :is(span, small) { display: none !important; }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    position: static !important;
     grid-column: 1 / -1;
     min-height: 30px !important;
     padding: 1px !important;
   }
-
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
     min-height: 27px !important;
+    padding-block: 1px !important;
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
-    top: 118px !important;
+    top: calc(var(--lp243h10b-top-height) + 8px) !important;
     bottom: auto !important;
+    gap: 2px !important;
+    padding: 3px !important;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button {
+    width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
   }
 
+  /* Fixed overlays never participate in the structural grid or shell padding. */
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
-    left: var(--lp243h8-inline-start) !important;
-    right: var(--lp243h8-inline-end) !important;
+    position: fixed !important;
+    z-index: 1200;
+    left: var(--lp243h10b-inline-start) !important;
+    right: var(--lp243h10b-inline-end) !important;
     bottom: 0 !important;
     width: auto !important;
-    min-height: var(--lp243h8-handle-height) !important;
-    height: var(--lp243h8-handle-height) !important;
-    padding: 0 !important;
+    height: var(--lp243h10b-command-height) !important;
+    min-height: 0 !important;
+    padding: 0 0 env(safe-area-inset-bottom, 0px) !important;
+    margin: 0 !important;
+    background: var(--gridly-elevated) !important;
+    transform: translateY(100%) !important;
+    transition: transform 160ms ease;
     overflow: visible !important;
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    transition: height 160ms ease;
+    pointer-events: none !important;
   }
 
   body[data-layout-mode="portrait"] .gridly-landscape-command-handle {
@@ -28072,16 +27849,24 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     display: grid;
     place-items: center;
     left: 50%;
-    top: 0;
+    bottom: 100%;
     width: 58px;
-    height: var(--lp243h8-handle-height);
-    min-height: var(--lp243h8-handle-height);
+    min-width: 58px;
+    height: 44px;
+    min-height: 44px;
     padding: 0;
     transform: translateX(-50%);
     border: 1px solid var(--gridly-border-neutral);
-    border-radius: 12px 12px 0 0;
+    border-radius: 14px 14px 0 0;
     background: var(--gridly-elevated);
     color: var(--gridly-text-primary);
+    cursor: pointer;
+    touch-action: manipulation;
+    pointer-events: auto;
+  }
+  body[data-layout-mode="portrait"] .gridly-landscape-command-handle:focus-visible {
+    outline: 3px solid var(--gridly-accent, #2f80ed);
+    outline-offset: -3px;
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock,
@@ -28090,46 +27875,104 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     opacity: 0 !important;
     pointer-events: none !important;
   }
-
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
     position: absolute !important;
-    inset: var(--lp243h8-handle-height) 0 0 !important;
+    inset: 48px 0 0 !important;
     width: auto !important;
     min-height: 54px !important;
     transform: none !important;
   }
 
-  body[data-layout-mode="portrait"].gridly-h8-command-expanded .app-shell.premium-layout {
-    padding-bottom: calc(var(--lp243h8-panel-height) + env(safe-area-inset-bottom, 0px)) !important;
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 .gridly-v2-bottom-region {
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
   }
-
-  body[data-layout-mode="portrait"].gridly-h8-command-expanded #gridlyPortraitV2 .gridly-v2-bottom-region {
-    height: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
-    background: var(--gridly-elevated) !important;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h8-command-expanded #gridlyPortraitV2 .gridly-v2-bottom-dock,
-  body[data-layout-mode="portrait"].gridly-h8-command-expanded .map-card > .mobile-destination-command {
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 .gridly-v2-bottom-dock,
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > .mobile-destination-command {
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
   }
-
-  body[data-layout-mode="portrait"].gridly-h8-command-expanded .map-card > .mobile-destination-command {
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > .mobile-destination-command {
     position: fixed !important;
-    left: var(--lp243h8-inline-start) !important;
-    right: var(--lp243h8-inline-end) !important;
-    bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 1201;
+    left: var(--lp243h10b-inline-start) !important;
+    right: var(--lp243h10b-inline-end) !important;
+    bottom: calc(58px + env(safe-area-inset-bottom, 0px)) !important;
     width: auto !important;
     max-width: none !important;
-    min-height: 56px !important;
+    min-height: 48px !important;
     margin: 0 !important;
-    padding-block: 5px !important;
+    padding-block: 3px !important;
     transform: none !important;
   }
 
+  /* Search and the lifecycle-owned V2 sheet are the foreground owner. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]),
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]) {
+    position: fixed !important;
+    z-index: var(--lp243h10b-foreground-z) !important;
+    inset: max(8px, env(safe-area-inset-top, 0px)) var(--lp243h10b-inline-end)
+      max(8px, env(safe-area-inset-bottom, 0px)) var(--lp243h10b-inline-start) !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    transform: none !important;
+    overflow: hidden !important;
+    pointer-events: auto !important;
+  }
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]) #gridlyPortraitV2SheetBody {
+    min-height: 0;
+    max-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
   body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden])) .gridly-v2-bottom-region,
   body[data-layout-mode="portrait"] #gridlyPortraitV2:has(#gridlyPortraitV2Sheet:not([hidden])) .gridly-v2-bottom-region {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* KBYG is the screen in short landscape, never a floating card. */
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    position: fixed !important;
+    z-index: 1301 !important;
+    inset: 0 !important;
+    box-sizing: border-box;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: calc(52px + env(safe-area-inset-top, 0px)) var(--lp243h10b-inline-end)
+      max(8px, env(safe-area-inset-bottom, 0px)) var(--lp243h10b-inline-start) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    transform: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    position: fixed !important;
+    z-index: 1302 !important;
+    top: max(6px, env(safe-area-inset-top, 0px)) !important;
+    right: var(--lp243h10b-inline-end) !important;
+    left: auto !important;
+    width: min(240px, calc(100vw - 32px)) !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    :is(.gridly-v2-topbar, .gridly-v2-awareness-brief-card, .gridly-v2-segments, .gridly-v2-control-rail, .gridly-v2-bottom-region),
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground .map-card > .mobile-destination-command {
     visibility: hidden !important;
     pointer-events: none !important;
   }
@@ -28137,90 +27980,4 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 
 @media (prefers-reduced-motion: reduce) {
   .gridly-v2-bottom-region { transition: none !important; }
-}
-
-/* LP243.H9 — runtime-certified command disclosure and bounded KBYG foreground.
-   Geometry is deliberately isolated to short landscape; feature owners and
-   portrait presentation remain unchanged. */
-@media (orientation: landscape) and (max-height: 500px) {
-  body[data-layout-mode="portrait"] {
-    --lp243h8-handle-height: 44px;
-    --lp243h8-panel-height: 154px;
-  }
-
-  body[data-layout-mode="portrait"] .gridly-landscape-command-handle {
-    min-width: 58px;
-    min-height: 44px;
-    height: 44px;
-    top: 0;
-    border-radius: 14px 14px 0 0;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
-
-  body[data-layout-mode="portrait"] .gridly-landscape-command-handle:focus-visible {
-    outline: 3px solid var(--gridly-accent, #2f80ed);
-    outline-offset: -3px;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h8-command-expanded #gridlyPortraitV2 .gridly-v2-bottom-region,
-  body[data-layout-mode="portrait"].gridly-h9-command-fail-open #gridlyPortraitV2 .gridly-v2-bottom-region {
-    height: calc(98px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h8-command-expanded .map-card > .mobile-destination-command,
-  body[data-layout-mode="portrait"].gridly-h9-command-fail-open .map-card > .mobile-destination-command {
-    bottom: calc(98px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h9-command-fail-open #gridlyPortraitV2 .gridly-v2-bottom-region {
-    background: var(--gridly-elevated) !important;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h9-command-fail-open #gridlyPortraitV2 .gridly-v2-bottom-dock,
-  body[data-layout-mode="portrait"].gridly-h9-command-fail-open .map-card > .mobile-destination-command {
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-v2-brief-stack {
-    z-index: 1300 !important;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-foundation-handle {
-    position: fixed !important;
-    z-index: 1302 !important;
-    top: max(6px, env(safe-area-inset-top, 0px)) !important;
-    right: max(16px, env(safe-area-inset-right, 0px)) !important;
-    left: auto !important;
-    width: min(240px, calc(100vw - 32px)) !important;
-    min-height: 40px !important;
-    max-height: 40px !important;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
-    position: fixed !important;
-    z-index: 1301 !important;
-    top: max(52px, calc(env(safe-area-inset-top, 0px) + 48px)) !important;
-    right: auto !important;
-    bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
-    left: 50% !important;
-    width: min(720px, calc(100vw - 32px)) !important;
-    height: auto !important;
-    max-height: calc(100dvh - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-    margin: 0 !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    overscroll-behavior: contain;
-    transform: translateX(-50%) !important;
-    box-shadow: 0 18px 52px rgb(0 0 0 / 42%) !important;
-  }
-
-  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
-    :is(.gridly-v2-awareness-brief-card, .gridly-v2-segments, .gridly-v2-control-rail, .gridly-v2-bottom-region),
-  body[data-layout-mode="portrait"].gridly-h9-brief-foreground .map-card > .mobile-destination-command {
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
 }

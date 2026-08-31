@@ -5377,7 +5377,6 @@ function gridlyBriefInteractionSetExpanded(expanded, options) {
   if (!root || !handle || !panel) return false;
   const shortLandscapeBrief = Boolean(gridlyShortLandscapeQuery?.matches);
   if (shortLandscapeBrief && expanded) {
-    gridlyLandscapeCommandExpandedBeforeBrief = gridlyLandscapeCommandExpanded;
     gridlyLandscapeCommandExpanded = false;
     syncGridlyLandscapeCommandPanel();
   }
@@ -5393,9 +5392,9 @@ function gridlyBriefInteractionSetExpanded(expanded, options) {
   if (!expanded) window.setTimeout(function () {
     if (panel.dataset.gridlyBriefExpanded !== "true") panel.hidden = true;
   }, 310);
-  if (shortLandscapeBrief && !expanded && gridlyLandscapeCommandExpandedBeforeBrief) {
-    gridlyLandscapeCommandExpanded = true;
-    gridlyLandscapeCommandExpandedBeforeBrief = false;
+  if (shortLandscapeBrief && !expanded) {
+    // H10B always returns from the foreground to the map-first collapsed base.
+    gridlyLandscapeCommandExpanded = false;
     syncGridlyLandscapeCommandPanel();
   }
   if (shouldRemember) {
@@ -30658,7 +30657,6 @@ let lastLayoutSignal = null;
 // LP243.H8 is presentation-local: it never persists or replaces feature state.
 const gridlyShortLandscapeQuery = window.matchMedia("(orientation: landscape) and (max-height: 500px)");
 let gridlyLandscapeCommandExpanded = false;
-let gridlyLandscapeCommandExpandedBeforeBrief = false;
 
 function gridlyLandscapeCommandDisclosureAudit() {
   const selector = "#gridlyLandscapeCommandToggle";
@@ -30673,7 +30671,7 @@ function gridlyLandscapeCommandDisclosureAudit() {
   const hitTestPass = Boolean(control && centerTarget && (centerTarget === control || control.contains(centerTarget)));
   const valid = Boolean(control && control.isConnected && control.tagName === "BUTTON" && !control.disabled
     && styles?.display !== "none" && styles?.visibility !== "hidden" && styles?.pointerEvents !== "none"
-    && insideViewport && hitTestPass && control.dataset.lp243h9Bound === "true");
+    && insideViewport && hitTestPass && control.dataset.lp243h10bBound === "true");
   return { selector, control, exists: Boolean(control), insideViewport, hitTestPass, valid };
 }
 
@@ -30715,8 +30713,8 @@ function initializeGridlyLandscapeCommandPanel() {
     syncGridlyLandscapeCommandPanel();
     return;
   }
-  if (handle.dataset.lp243h9Bound === "true") return;
-  handle.dataset.lp243h9Bound = "true";
+  if (handle.dataset.lp243h10bBound === "true") return;
+  handle.dataset.lp243h10bBound = "true";
   handle.addEventListener("click", () => {
     if (!gridlyShortLandscapeQuery.matches) return;
     gridlyLandscapeCommandExpanded = !gridlyLandscapeCommandExpanded;
