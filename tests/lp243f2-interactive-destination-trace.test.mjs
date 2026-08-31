@@ -50,7 +50,8 @@ test('Port Arthur runtime acquisition returns both certified local records befor
 test('interactive bridge passes canonical query tokens into runtime acquisition', () => {
   const bridge = app.slice(app.indexOf('async function searchGridlyRuntimePoiCandidates'), app.indexOf('function buildGridlySearchQueryVariants'));
   assert.match(bridge, /request\.nameTokens/);
-  assert.match(bridge, /GRIDLY_LP099_BUSINESS_SEARCH\?\.canonicalize/);
+  assert.match(bridge, /canonicalSemanticQuery/);
+  assert.doesNotMatch(bridge, /canonicalize\?\.\(rawQuery\)/);
 });
 
 test('real-request trace is read-only and retains publication lineage', () => {
