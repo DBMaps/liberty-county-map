@@ -35,9 +35,9 @@ const signals = (viewportWidth, viewportHeight, overrides = {}) => ({
   ...overrides
 });
 
-test("fine-pointer desktop landscape owns every reproduced window size", () => {
+test("portrait-derived application owns every reproduced fine-pointer landscape size", () => {
   for (const [width, height] of [[832, 571], [900, 650], [980, 700], [1100, 700]]) {
-    assert.equal(resolve(signals(width, height)), "desktop", `${width}x${height}`);
+    assert.equal(resolve(signals(width, height)), "portrait", `${width}x${height}`);
   }
 });
 
@@ -47,16 +47,16 @@ test("accepted Mobile Portrait widths remain portrait", () => {
   }
 });
 
-test("existing tactical short-landscape rule retains priority", () => {
-  assert.equal(resolve(signals(900, 500, { finePointer: false, coarsePointer: true })), "tactical-landscape");
-  assert.equal(resolve(signals(900, 500)), "tactical-landscape", "fine pointer does not change the established short-height band");
+test("short landscape retains portrait-derived application ownership", () => {
+  assert.equal(resolve(signals(900, 500, { finePointer: false, coarsePointer: true })), "portrait");
+  assert.equal(resolve(signals(900, 500)), "portrait", "pointer diagnostics do not change presentation ownership");
 });
 
-test("1100 desktop ownership is independent of resize history", () => {
+test("1100 application ownership is independent of resize history", () => {
   const final = signals(1100, 700);
-  assert.equal(resolve(final, resolve(signals(1400, 700), "portrait")), "desktop");
-  assert.equal(resolve(final, resolve(signals(900, 650), "portrait")), "desktop");
-  assert.equal(resolve(final, "portrait"), "desktop");
+  assert.equal(resolve(final, resolve(signals(1400, 700), "portrait")), "portrait");
+  assert.equal(resolve(final, resolve(signals(900, 650), "portrait")), "portrait");
+  assert.equal(resolve(final, "portrait"), "portrait");
 });
 
 function node() {
@@ -96,6 +96,6 @@ test("sheet opening is authorization-gated before any V2 root unhide or product 
 });
 
 test("valid Mobile Portrait authorization can unhide the V2 owner again", () => {
-  assert.match(source, /if \(activeLayoutMode === "portrait"[\s\S]{0,180}activateGridlyPortraitV2StartupOwner\("applyLayoutMode"\)/);
-  assert.match(source, /if \(!cleanupGate\.portraitCleanupGateActive\)[\s\S]{0,600}shell\.removeAttribute\("hidden"\)/);
+  assert.match(source, /typeof activateGridlyPortraitV2StartupOwner === "function"[\s\S]{0,100}activateGridlyPortraitV2StartupOwner\("applyLayoutMode"\)/);
+  assert.match(source, /if \(layoutMode !== "portrait"\)[\s\S]{0,600}shell\.removeAttribute\("hidden"\)/);
 });

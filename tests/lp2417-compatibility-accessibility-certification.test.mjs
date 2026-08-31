@@ -19,7 +19,7 @@ test('LP243.H presentation authority retains the application across capabilities
   assert.equal(classify({hoverNone:false}),'portrait');
   assert.match(app,/window\.gridlyLP2417PresentationSafetyAudit/);
   assert.match(app,/legacyDashboardFocusable[\s\S]*legacyDashboardAccessibilityExposed[\s\S]*acceptableSurfaceCount/);
-  assert.match(app,/toggleAttribute\("inert", supported\)/);
+  assert.match(app,/setAttribute\("inert", ""\)/);
   assert.match(html,/id="gridlyDesktopGate"[^>]+aria-hidden="true" inert/);
 });
 test('OA-4 interactive PWA acceptance is deferred while foundation remains certified',()=>{

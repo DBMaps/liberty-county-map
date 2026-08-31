@@ -17,7 +17,7 @@ test("startup and runtime keep the real application as responsive authority", ()
 test("the retained promo is unreachable but not deleted", () => {
   assert.match(html, /id="gridlyDesktopGate" class="gridly-desktop-gate"/);
   assert.match(css, /\.gridly-desktop-gate \{\s*display: none;/);
-  assert.match(app, /developmentGate\?\.toggleAttribute\("inert", supported\)/);
+  assert.match(app, /developmentGate\?\.setAttribute\("inert", ""\)/);
 });
 
 test("wide containment is additive and excludes protected phone portrait", () => {
@@ -36,7 +36,7 @@ test("resize remains layout-only and preserves application state authority", () 
   assert.doesNotMatch(resolver, /localStorage|sessionStorage|selectedHome|activeArea|renderAlerts|searchState/);
 });
 
-test("only LP243.H browser asset identities advance", () => {
+test("LP243.H CSS identity stays fixed while changed JS advances to H1", () => {
   assert.match(html, /css\/styles\.css\?v=243h-responsive-availability/);
-  assert.match(html, /js\/app\.js\?v=243h-responsive-availability/);
+  assert.match(html, /js\/app\.js\?v=243h1-runtime-ownership/);
 });
