@@ -52,6 +52,6 @@ test("H1-H5 runtime, containment, Location Context and ownership contracts remai
   assert.match(css, /--lp243h3-location-bottom-inset: calc\(/);
   assert.match(css, /LP243\.H4 — current consumer-presentation ownership/);
   assert.match(css, /LP243\.H5 — bounded short-landscape composition authority/);
-  assert.match(html, /css\/styles\.css\?v=243h8-map-first-landscape-composition/);
+  assert.match(html, /css\/styles\.css\?v=243h9-bounded-landscape-foreground/);
   assert.doesNotMatch(h6, /fetch\(|setView|localStorage|classList/);
 });

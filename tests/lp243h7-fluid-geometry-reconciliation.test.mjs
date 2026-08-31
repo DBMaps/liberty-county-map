@@ -63,5 +63,5 @@ test("foregrounds retain H5 ownership while H1-H6 protections and H7 identity re
   assert.match(html, /LP243\.H restores the production application/);
   for (const milestone of ["H2", "H3", "H4", "H5", "H6"]) assert.match(css, new RegExp(`LP243\\.${milestone}`));
   assert.match(h7, /#gridlySearchShell:not\(\[hidden\]\)[\s\S]*?data-active-sheet="alerts"[\s\S]*?data-active-sheet="settings"[\s\S]*?data-active-sheet="report"[\s\S]*?transform: none !important/);
-  assert.match(html, /css\/styles\.css\?v=243h8-map-first-landscape-composition/);
+  assert.match(html, /css\/styles\.css\?v=243h9-bounded-landscape-foreground/);
 });
