@@ -28,7 +28,7 @@ test("sheets scroll internally and document cannot overflow horizontally", () =>
 });
 
 test("H1 ownership identities and promo authority remain untouched", () => {
-  assert.match(html, /css\/styles\.css\?v=243h2-landscape-containment/);
+  assert.match(html, /css\/styles\.css\?v=243h3-landscape-vertical-containment/);
   assert.match(html, /js\/app\.js\?v=243h1-runtime-ownership/);
   assert.match(css, /gridly-desktop-gate[^}]*display:\s*none/);
 });

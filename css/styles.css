@@ -27647,3 +27647,33 @@ body[data-layout-mode="portrait"] .mobile-floating-action-dock {
     max-width: 100%;
   }
 }
+
+/* LP243.H3 — landscape primary-control vertical containment.
+   The compatibility Location Context remains the sole Search owner. Remove the
+   startup animation's containing-block hint, then anchor that owner to the
+   viewport by the same dock footprint + Gridly gap contract at every supported
+   landscape/wider viewport. Portrait declarations remain frozen above. */
+@media (orientation: landscape), (min-width: 761px) {
+  body[data-layout-mode="portrait"] {
+    --lp243h3-dock-bottom-inset: calc(9px + env(safe-area-inset-bottom, 0px));
+    --lp243h3-dock-height: 69px;
+    --lp243h3-location-dock-gap: 8px;
+    --lp243h3-location-bottom-inset: calc(
+      var(--lp243h3-dock-bottom-inset) +
+      var(--lp243h3-dock-height) +
+      var(--lp243h3-location-dock-gap)
+    );
+  }
+
+  body[data-layout-mode="portrait"] #mapSection.command-center {
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    position: fixed !important;
+    top: auto !important;
+    bottom: var(--lp243h3-location-bottom-inset) !important;
+    margin-block: 0 !important;
+  }
+}
