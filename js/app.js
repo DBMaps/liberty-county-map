@@ -30638,7 +30638,10 @@ function resolveRoadHazardReportTypeForAction(hazardType, options = {}) {
 }
 
 let mobileUiMode = "live";
-let activeLayoutMode = "desktop";
+// LP243.H1: presentation ownership starts from the same contract as prepaint.
+// Geometry/capability diagnostics may describe a desktop-style viewport, but
+// they are not an alternate presentation authority.
+let activeLayoutMode = "portrait";
 let lastLayoutSignal = null;
 const MOBILE_REPORT_ENTRY_SELECTORS = [
   "#mobileDockReportBtn",
@@ -31061,34 +31064,23 @@ function deactivateGridlyPortraitV2Owner() {
 
 function applyLayoutMode(nextMode) {
   const previousLayoutMode = activeLayoutMode;
-  const validModes = ["desktop", "portrait", "tactical-landscape"];
-  const viewportWidth = window.visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0;
-  const fallbackMode = "desktop";
-  const safePreviousMode = validModes.includes(previousLayoutMode) ? previousLayoutMode : fallbackMode;
-  activeLayoutMode = validModes.includes(nextMode) ? nextMode : safePreviousMode;
+  // LP243.H1: all currently supported viewports have one presentation owner.
+  // `nextMode` is retained as an input for caller compatibility and diagnostics,
+  // but it cannot reactivate the retired desktop promotional presentation.
+  activeLayoutMode = "portrait";
   if (!document?.body) return;
-  document.body.setAttribute("data-layout-mode", activeLayoutMode);
-  document.body.setAttribute("data-layout-mode-legacy", activeLayoutMode === "desktop" ? "desktop" : "mobile");
-  if (activeLayoutMode === "portrait" || activeLayoutMode === "tactical-landscape") {
-    document.body.setAttribute("data-mobile-mode", mobileUiMode || "live");
-  } else {
-    document.body.removeAttribute("data-mobile-mode");
-  }
+  document.body.setAttribute("data-layout-mode", "portrait");
+  // This compatibility label describes the active application family, not
+  // pointer/width diagnostics, and never controls promotional ownership.
+  document.body.setAttribute("data-layout-mode-legacy", "mobile");
+  document.body.setAttribute("data-mobile-mode", mobileUiMode || "live");
   if (previousLayoutMode !== activeLayoutMode && typeof window.resetMobileSurfaceState === "function") {
     window.resetMobileSurfaceState("layout_transition", { previousLayoutMode, nextLayoutMode: activeLayoutMode });
   }
-  if (activeLayoutMode === "portrait" && typeof activateGridlyPortraitV2StartupOwner === "function") {
-    if (!activateGridlyPortraitV2StartupOwner("applyLayoutMode")) activeLayoutMode = "desktop";
-  } else if (activeLayoutMode !== "portrait") {
-    deactivateGridlyPortraitV2Owner();
+  if (typeof activateGridlyPortraitV2StartupOwner === "function") {
+    activateGridlyPortraitV2StartupOwner("applyLayoutMode");
   }
-  const supported = activeLayoutMode === "portrait";
-  if (!supported) {
-    document.body.removeAttribute("data-mobile-mode");
-    deactivateGridlyPortraitV2Owner();
-  }
-  document.body.setAttribute("data-layout-mode", activeLayoutMode);
-  document.body.setAttribute("data-layout-mode-legacy", supported ? "mobile" : "desktop");
+  const supported = true;
   const legacyDashboard = document.getElementById("dashboardSection");
   // The retired dashboard is not a presentation owner in any launch layout.
   legacyDashboard?.setAttribute("inert", "");
@@ -31098,8 +31090,8 @@ function applyLayoutMode(nextMode) {
     syncGridlyPortraitMapSubstrateAfterLayout();
   }
   const developmentGate = document.getElementById("gridlyDesktopGate");
-  developmentGate?.toggleAttribute("inert", supported);
-  if (developmentGate) developmentGate.setAttribute("aria-hidden", supported ? "true" : "false");
+  developmentGate?.setAttribute("inert", "");
+  if (developmentGate) developmentGate.setAttribute("aria-hidden", "true");
   syncTacticalMapSurfaceVisibility();
   document.documentElement?.classList.remove("gridly-desktop-startup-containment");
 }
@@ -72317,8 +72309,11 @@ function activateGridlyPortraitV2StartupOwner(source = "portrait_startup_activat
     gridlyPortraitV2StartupActivationState.reason = "body_missing";
     return false;
   }
-  if (!cleanupGate.portraitCleanupGateActive) {
-    gridlyPortraitV2StartupActivationState.reason = cleanupGate.portraitCleanupGateReason;
+  // LP243.H1: the strict portrait cleanup gate protects portrait-only cleanup;
+  // it is not a presentation-ownership gate. The Portrait V2-derived shell is
+  // the supported owner in landscape and wider viewports as well.
+  if (layoutMode !== "portrait") {
+    gridlyPortraitV2StartupActivationState.reason = `layout_mode_${layoutMode || "missing"}_not_portrait`;
     return false;
   }
   if (!shell) {
