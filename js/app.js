@@ -39908,6 +39908,19 @@ function getGridlySelectedHomeTownAnchor() {
 }
 
 function getGridlySearchAnchorContext(searchContext = null) {
+  // Destination discovery follows the same current governed-location anchor as
+  // Nearby Places.  This is a ranking signal only; explicit remote searches
+  // continue through the general destination provider.
+  const governedContext = window.gridlyGetCurrentGovernedLocationContext?.();
+  if (governedContext && Number.isFinite(Number(governedContext.latitude)) && Number.isFinite(Number(governedContext.longitude))) {
+    return {
+      label: governedContext.label || "Current area",
+      lat: Number(governedContext.latitude),
+      lng: Number(governedContext.longitude),
+      source: "governed_location_context",
+      countyId: governedContext.countyContextId ? gridlyNormalizeCountyId(governedContext.countyContextId) : null
+    };
+  }
   const homeTownAnchor = getGridlySelectedHomeTownAnchor();
   if (homeTownAnchor) {
     const selectedAwarenessArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
@@ -45722,6 +45735,34 @@ function selectGridlySearchResult(result, options = {}) {
   return normalized;
 }
 
+// Runtime-v2 Nearby Places hands selection to the already-governed destination
+// action.  The adapter preserves POI identity/context on the normalized result;
+// it does not change Home Area, Awareness Area, POI authority, or route policy.
+window.gridlySelectNearbyPlace = function gridlySelectNearbyPlace(poi) {
+  if (!poi || !Number.isFinite(Number(poi.latitude)) || !Number.isFinite(Number(poi.longitude))) return false;
+  const normalized = normalizeGridlySearchResult({
+    id: `poi:${poi.id}`,
+    provider: "gridly.poi.runtime.v2",
+    providerId: poi.id,
+    source: "nearby_places",
+    type: "point_of_interest",
+    title: poi.displayName,
+    label: poi.displayName,
+    lat: Number(poi.latitude),
+    lng: Number(poi.longitude),
+    subtitle: String(poi.gridlyCategory || "").replaceAll("_", " "),
+    raw: {
+      poiId: poi.id,
+      gridlyCategory: poi.gridlyCategory,
+      countyContextId: poi.countyContextId,
+      runtimeSchemaVersion: "gridly.poi.runtime.v2"
+    }
+  });
+  if (!normalized) return false;
+  selectGridlySearchResult(normalized, { reason: "nearby-place-selected" });
+  return true;
+};
+
 function getGridlyLiveDestinationSearchOptions() {
   return { limit: GRIDLY_SEARCH_RENDER_LIMIT };
 }
@@ -45940,7 +45981,7 @@ function initGridlySearchUI() {
       gridlySearchUiState.activeSearchRequestId += 1;
       const savedResults = getGridlySavedPlaceDestinationSearchResults("", { includeAll: true });
       if (savedResults.length) renderGridlySearchResults(savedResults, { state: "done", allowEmptyMessage: false, query: "" });
-      else renderGridlySearchResults([], { state: "done", allowEmptyMessage: true, query: "" });
+      else clearGridlySearchResults();
     });
     clearBtn.dataset.gridlySearchClearBound = "true";
   }
@@ -46044,7 +46085,7 @@ function showGridlySearchShell(options = {}) {
   if (!query) {
     const savedResults = getGridlySavedPlaceDestinationSearchResults("", { includeAll: true });
     if (savedResults.length) renderGridlySearchResults(savedResults, { state: "done", allowEmptyMessage: false, query: "" });
-    else renderGridlySearchResults([], { state: "done", allowEmptyMessage: true, query: "" });
+    else clearGridlySearchResults();
   }
   if (options?.focusInput === true) {
     if (input && typeof input.focus === "function") input.focus({ preventScroll: true });

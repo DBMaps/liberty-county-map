@@ -129,7 +129,31 @@
     return assertContextRequestAgreement(context, request);
   }
   function audit() { if (!gateEnabled() && (manifest || shardCache.size || state.providerInitialized)) rollback(); return Object.freeze({ available: true, gateEnabled: gateEnabled(), providerInitialized: state.providerInitialized, authorityReleaseId: EXPECTED.authorityReleaseId, runtimeSchemaVersion: EXPECTED.runtimeSchemaVersion, manifestVerified: state.manifestVerified, manifestSha256: EXPECTED.manifestSha256, candidateShardIds: [...state.candidateShardIds], loadedShardIds: [...state.loadedShardIds], loadedShardCount: state.loadedShardIds.length, cacheHitCount: state.cacheHitCount, cacheMissCount: state.cacheMissCount, requestedRadiusMiles: state.requestedRadiusMiles, rawEligibleCount: state.rawEligibleCount, returnedCount: state.returnedCount, zeroResult: state.zeroResult, lastSearchOriginType: state.lastSearchOriginType, requestCommunityIdentity: state.requestCommunityIdentity, requestCountyContextId: state.requestCountyContextId, attributionAvailable: state.attributionAvailable, fallbackAttempted: false, providerFailure: state.providerFailure, productionGate: productionGateEnabled() ? "ON" : "OFF", productionProviderEligible: true }); }
-  function renderResults(result) { const target = root.document?.getElementById("gridlyPoiNonProductionResults"); if (!target) return; target.replaceChildren(); const status = root.document.createElement("p"); status.className = "gridly-poi-status"; status.textContent = result.status === "ZERO_RESULT" ? `No matching places within ${result.requestedRadiusMiles} miles. Radius was not widened.` : `${result.returnedCount} nearby places (${result.rawEligibleCount} eligible)`; target.append(status); for (const poi of result.results) { const item = root.document.createElement("article"); item.className = "gridly-poi-result"; const title = root.document.createElement("strong"); title.textContent = poi.displayName; const detail = root.document.createElement("span"); detail.textContent = `${poi.gridlyCategory.replaceAll("_", " ")} · ${poi.distanceMiles.toFixed(1)} mi · ${poi.countyContextId.replace("-tx", " County")}`; item.append(title, detail); target.append(item); } }
+  function selectResult(poi) {
+    if (!poi || typeof root.gridlySelectNearbyPlace !== "function") return false;
+    return root.gridlySelectNearbyPlace({ id: poi.id, displayName: poi.displayName, gridlyCategory: poi.gridlyCategory, latitude: poi.latitude, longitude: poi.longitude, countyContextId: poi.countyContextId });
+  }
+  function renderResults(result) {
+    const target = root.document?.getElementById("gridlyPoiNonProductionResults");
+    if (!target) return;
+    target.replaceChildren();
+    const status = root.document.createElement("p");
+    status.className = "gridly-poi-status";
+    status.textContent = result.status === "ZERO_RESULT" ? `No matching places within ${result.requestedRadiusMiles} miles.` : `${result.returnedCount} nearby places`;
+    target.append(status);
+    for (const poi of result.results) {
+      const item = root.document.createElement("button");
+      item.type = "button";
+      item.className = "gridly-poi-result";
+      item.dataset.poiId = poi.id;
+      item.setAttribute("aria-label", `Use ${poi.displayName} as destination`);
+      const title = root.document.createElement("strong"); title.textContent = poi.displayName;
+      const detail = root.document.createElement("span"); detail.textContent = `${poi.gridlyCategory.replaceAll("_", " ")} · ${poi.distanceMiles.toFixed(1)} mi · ${poi.countyContextId.replace("-tx", " County")}`;
+      item.append(title, detail);
+      item.addEventListener("click", () => selectResult(poi));
+      target.append(item);
+    }
+  }
   function refreshSurfaceContext(section = root.document?.getElementById("gridlyPoiNonProductionSurface")) { if (!section) return null; const context = root.gridlyGetCurrentGovernedLocationContext?.() || null; section.querySelector("#gridlyPoiContextLabel").textContent = context ? `Nearby places around ${context.label}` : "Choose a location first to see nearby places."; section.querySelector("#gridlyPoiSearch").disabled = !context; return context; }
   function renderSurface() {
     if (!gateEnabled() || !state.manifestVerified || !root.document || root.document.getElementById("gridlyPoiNonProductionSurface")) return;
@@ -140,9 +164,23 @@
     section.className = "gridly-poi-nonproduction";
     section.setAttribute("aria-label", "Nearby places");
     const qaBadge = qaOverrideEnabled() && !productionGateEnabled() ? "<span>Non-production</span>" : "";
-    const categories = CATEGORY_OPTIONS.map(category => `<option value="${category}">${category.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, letter => letter.toUpperCase())}</option>`).join("");
-    section.innerHTML = `<div class="gridly-poi-heading"><strong>Nearby places</strong>${qaBadge}</div><p id="gridlyPoiContextLabel" class="gridly-poi-context"></p><div class="gridly-poi-controls"><fieldset id="gridlyPoiRadius" class="gridly-poi-radius"><legend>Radius</legend><div class="gridly-poi-radius-segments"><label><input type="radio" name="gridlyPoiRadiusMiles" value="5" checked><span>5 mi</span></label><label><input type="radio" name="gridlyPoiRadiusMiles" value="10"><span>10 mi</span></label><label><input type="radio" name="gridlyPoiRadiusMiles" value="25"><span>25 mi</span></label></div></fieldset><label class="gridly-poi-category">Category<span class="gridly-poi-select-wrap"><select id="gridlyPoiCategory"><option value="">All categories</option>${categories}</select></span></label><button id="gridlyPoiSearch" type="button">Find places</button></div><div id="gridlyPoiNonProductionResults" class="gridly-poi-results" aria-live="polite"></div><a class="gridly-poi-attribution" href="#dataSourcesAndLicenses">POI data sources and licenses</a>`;
+    const categories = [{ value: "", label: "All categories" }, ...CATEGORY_OPTIONS.map(value => ({ value, label: value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, letter => letter.toUpperCase()) }))];
+    section.innerHTML = `<div class="gridly-poi-heading"><strong>Nearby places</strong>${qaBadge}</div><p id="gridlyPoiContextLabel" class="gridly-poi-context"></p><div class="gridly-poi-controls"><fieldset id="gridlyPoiRadius" class="gridly-poi-radius"><legend>Radius</legend><div class="gridly-poi-radius-segments"><label><input type="radio" name="gridlyPoiRadiusMiles" value="5" checked><span>5 mi</span></label><label><input type="radio" name="gridlyPoiRadiusMiles" value="10"><span>10 mi</span></label><label><input type="radio" name="gridlyPoiRadiusMiles" value="25"><span>25 mi</span></label></div></fieldset><div class="gridly-poi-category"><span>Category</span><button id="gridlyPoiCategoryButton" class="gridly-poi-category-button" type="button" aria-haspopup="dialog" aria-expanded="false">All categories</button><input id="gridlyPoiCategory" type="hidden" value=""></div><button id="gridlyPoiSearch" type="button">Find places</button></div><div id="gridlyPoiCategoryPicker" class="gridly-poi-category-picker" role="dialog" aria-modal="false" aria-label="Choose a place category" hidden><div class="gridly-poi-category-picker-header"><strong>Choose a category</strong><button id="gridlyPoiCategoryClose" type="button" aria-label="Close category picker">Cancel</button></div><div class="gridly-poi-category-options" role="listbox"></div></div><div id="gridlyPoiNonProductionResults" class="gridly-poi-results" aria-live="polite"></div><a class="gridly-poi-attribution" href="#dataSourcesAndLicenses">POI data sources and licenses</a>`;
     host.append(section);
+    const picker = section.querySelector("#gridlyPoiCategoryPicker");
+    const categoryButton = section.querySelector("#gridlyPoiCategoryButton");
+    const categoryInput = section.querySelector("#gridlyPoiCategory");
+    const closePicker = () => { picker.hidden = true; categoryButton.setAttribute("aria-expanded", "false"); categoryButton.focus(); };
+    categories.forEach(category => {
+      const option = root.document.createElement("button");
+      option.type = "button"; option.className = "gridly-poi-category-option"; option.setAttribute("role", "option"); option.dataset.value = category.value; option.textContent = category.label;
+      option.addEventListener("click", () => { categoryInput.value = category.value; categoryButton.textContent = category.label; section.querySelectorAll(".gridly-poi-category-option").forEach(row => row.setAttribute("aria-selected", row === option ? "true" : "false")); closePicker(); });
+      section.querySelector(".gridly-poi-category-options").append(option);
+    });
+    section.querySelector(".gridly-poi-category-option").setAttribute("aria-selected", "true");
+    categoryButton.addEventListener("click", () => { picker.hidden = !picker.hidden; categoryButton.setAttribute("aria-expanded", picker.hidden ? "false" : "true"); if (!picker.hidden) picker.querySelector('[aria-selected="true"]')?.focus(); });
+    section.querySelector("#gridlyPoiCategoryClose").addEventListener("click", closePicker);
+    picker.addEventListener("keydown", event => { if (event.key === "Escape") { event.preventDefault(); closePicker(); } });
     refreshSurfaceContext(section);
     root.document.addEventListener("click", event => { if (section.isConnected && !section.contains(event.target)) refreshSurfaceContext(section); });
     section.addEventListener("focusin", () => refreshSurfaceContext(section));
@@ -154,10 +192,10 @@
       if (!request) { section.querySelector("#gridlyPoiNonProductionResults").textContent = ""; return; }
       section.querySelector("#gridlyPoiContextLabel").textContent = `Nearby places around ${request.name}`;
       button.disabled = true;
-      try { await search(request); } catch (error) { state.providerFailure = `${error.stage || "PROVIDER"}: ${error.message}`; section.querySelector("#gridlyPoiNonProductionResults").textContent = "Nearby places could not be loaded. No alternate source was used."; } finally { button.disabled = false; }
+      try { await search(request); } catch (error) { state.providerFailure = `${error.stage || "PROVIDER"}: ${error.message}`; section.querySelector("#gridlyPoiNonProductionResults").textContent = "Nearby places could not be loaded. Please try again."; } finally { button.disabled = false; }
     });
   }
-  const api = Object.freeze({ initialize, search, rollback, requestForCohort, requestForCurrentContext, audit, EXPECTED, _test: Object.freeze({ validateManifest, validateRecord, validateRequest, assertContextRequestAgreement, candidateShardIds, distanceMiles }) });
+  const api = Object.freeze({ initialize, search, rollback, requestForCohort, requestForCurrentContext, audit, EXPECTED, _test: Object.freeze({ validateManifest, validateRecord, validateRequest, assertContextRequestAgreement, candidateShardIds, distanceMiles, selectResult }) });
   root.GridlyPoiBrowserProvider = api; root.gridlyPoiBrowserRehearsalAudit = audit;
   if (root.document) { const automaticallyInitialize = () => { if (gateEnabled()) initialize().catch(() => {}); else rollback(); }; if (root.document.readyState === "loading") root.document.addEventListener("DOMContentLoaded", automaticallyInitialize, { once: true }); else automaticallyInitialize(); root.addEventListener?.("pageshow", automaticallyInitialize); }
 })(typeof window !== "undefined" ? window : globalThis);

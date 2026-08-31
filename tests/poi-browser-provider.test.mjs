@@ -79,7 +79,16 @@ test('radius and category controls map through the unchanged current-context req
   assert.equal(ten.category, five.category);
   assert.equal(ten.name, five.name);
   assert.equal(ten.countyContextId, five.countyContextId);
-  assert.match(source, /<select id="gridlyPoiCategory"><option value="">All categories<\/option>/);
+  assert.doesNotMatch(source, /<select id="gridlyPoiCategory"/);
+  assert.match(source, /id="gridlyPoiCategoryPicker"[^>]+role="dialog"/);
+});
+
+test('shared result selection preserves runtime-v2 identity and context', () => {
+  let selected = null;
+  const api = runtime({ gridlySelectNearbyPlace: poi => { selected = poi; return true; } }).GridlyPoiBrowserProvider;
+  const poi = { id: 'poi-1', displayName: 'Shell', gridlyCategory: 'FUEL', latitude: 29.9, longitude: -93.9, countyContextId: 'jefferson-tx', distanceMiles: 1.2 };
+  assert.equal(api._test.selectResult(poi), true);
+  assert.deepEqual(JSON.parse(JSON.stringify(selected)), { id: 'poi-1', displayName: 'Shell', gridlyCategory: 'FUEL', latitude: 29.9, longitude: -93.9, countyContextId: 'jefferson-tx' });
 });
 
 test('Gridly location projection reads governed selection, presentation, and active county authorities', () => {
