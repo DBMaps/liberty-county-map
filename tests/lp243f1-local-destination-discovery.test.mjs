@@ -6,8 +6,8 @@ const app = fs.readFileSync('js/app.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 
-test('LP243.F5 has a unique production app asset identity in the expected script position', () => {
-  const appAsset = '<script src="js/app.js?v=243f5-destination-address-enrichment"></script>';
+test('LP243.F6 has a unique production app asset identity in the expected script position', () => {
+  const appAsset = '<script src="js/app.js?v=243f6-canonical-business-intent"></script>';
   assert.deepEqual(index.match(/<script src="js\/app\.js\?v=[^"]+"><\/script>/g), [appAsset]);
   assert.ok(index.indexOf('js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3') < index.indexOf(appAsset));
   assert.ok(index.indexOf(appAsset) < index.indexOf('js/gridlyDriveTexasGeometryAuthority.js?v=044'));
@@ -24,7 +24,7 @@ test('LP243.F1 acquires only textually relevant runtime-v2 POIs for unqualified 
 
 test('LP243.F1 preserves explicit remote intent and blends before governed ranking and dedupe', () => {
   const classifier = app.slice(app.indexOf('function classifyGridlyDestinationSearchIntent'), app.indexOf('function getGridlySelectedHomeTownAnchor'));
-  assert.match(classifier, /businessIntent && gridlySearchQueryHasDestinationIndicator[\s\S]*business_with_destination_indicator/, 'explicit geography overrides an otherwise-business query');
+  assert.match(classifier, /businessIntent && explicitDestination[\s\S]*business_with_destination_indicator/, 'explicit geography overrides an otherwise-business query');
   const pipeline = app.slice(app.indexOf('async function gridlySearchAddress'), app.indexOf('window.gridlyAggregateAddressVariantOutcomes'));
   assert.ok(pipeline.indexOf('searchGridlyRuntimePoiCandidates') < pipeline.indexOf('prioritizeGridlySearchResults'), 'candidate acquisition precedes ranking');
   assert.ok(pipeline.indexOf('prioritizeGridlySearchResults') < pipeline.indexOf('dedupeGridlySearchResults'), 'existing ranking and governed dedupe remain authoritative');
