@@ -10,6 +10,7 @@
   "use strict";
 
   const COMMUNITY_LABELS = Object.freeze({
+    blocked: "Blocked",
     flooding: "Flooding",
     crash: "Crash / Wreck",
     disabled_vehicle: "Disabled Vehicle",

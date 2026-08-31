@@ -117014,7 +117014,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const inset = Math.min(8, Math.max(2, rect.width / 10));
       return {
         heightPass: rect.height >= 44,
-        layoutSpacePass: Boolean(actionRect && actionRect.height >= 44 && (!bodyRect || bodyRect.bottom <= actionRect.top)),
+        layoutSpacePass: Boolean(actionRect && actionRect.height >= 44 && (!bodyRect || bodyRect.right <= actionRect.left)),
         hitPass: ownsPoint(rect.left + inset) && ownsPoint(rect.left + (rect.width / 2)) && ownsPoint(rect.right - inset)
       };
     });
