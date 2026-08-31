@@ -99489,7 +99489,7 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
       const isPending = gridlyManualAwarenessSelectionMatches(community, group, pendingValue, gridlySettingsManualAwarenessPendingCountyId)
         || (!membershipCountyId && community.key === pendingArea?.key);
       const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
-      const result = `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" data-gridly-manual-awareness-county-id="${escapeGridlySettingsAttribute(membershipCountyId)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
+      const result = `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" data-gridly-manual-awareness-county-id="${escapeGridlySettingsAttribute(membershipCountyId)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}<small>${escapeGridlySettingsAttribute(group.countyLabel)}</small></button>`;
       const confirmation = isPending ? '<button type="button" class="primary-btn settings-manual-result-confirm" data-gridly-manual-awareness-apply>Use this Home Area</button>' : "";
       return `<div class="settings-manual-result-presentation${isPending ? " is-pending" : ""}">${result}${confirmation}</div>`;
     })).join("");
@@ -117678,7 +117678,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         <details class="settings-modal-section settings-list-section settings-section-notifications">
           <summary class="settings-list-summary"><span class="settings-list-title">Notifications</span><span class="settings-list-meta">Alert preferences</span></summary>
           <div class="settings-list-detail">
-            <p class="settings-placeholder-note settings-notification-notice">Choose the updates that matter to you. Preferences are saved on this device.</p>
+            <p class="settings-placeholder-note settings-notification-notice">Notification delivery is coming soon. Save the updates you want to receive when it becomes available.</p>
             <div class="settings-toggle-grid">
               <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.routeAlerts"${checked(settings.notifications.routeAlerts)}><span>Route Watch updates</span></label>
               <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.railAlerts"${checked(settings.notifications.railAlerts)}><span>Rail crossing updates</span></label>
@@ -118087,7 +118087,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       routePreviewReason,
       routeManageReason: "",
       alertsReason: "Set alert preferences to personalize what triggers your alerts.",
-      settingsReason: "Set Home Town and preferences to unlock route and alerts intelligence."
+      settingsReason: "Set Home Area and preferences to unlock route and alerts intelligence."
     };
   }
   function refreshRouteButtonStates(source = "unknown") {
@@ -118106,6 +118106,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (disablePlacementActions) button.setAttribute("aria-disabled", "true");
       else button.removeAttribute("aria-disabled");
     });
+    const helper = body.querySelector("[data-v2-precondition-helper]");
+    if (helper && activeSheet === "report") {
+      helper.textContent = preconditions.reportReason;
+      helper.hidden = !preconditions.reportReason;
+    }
   }
   function markV2BlockedInteraction(action, reason) {
     v1369PreconditionsDebug.disabledInteractionCount += 1;
