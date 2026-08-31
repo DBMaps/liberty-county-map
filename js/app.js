@@ -39892,6 +39892,9 @@ function classifyGridlyDestinationSearchIntent(query = "") {
     return { type: GRIDLY_DESTINATION_INTENTS.ADDRESS, reason: "address_indicator" };
   }
   const businessIntent = window.GRIDLY_LP099_BUSINESS_SEARCH?.classifyIntent?.(query);
+  if (businessIntent && gridlySearchQueryHasDestinationIndicator(normalized)) {
+    return { type: GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION, reason: "business_with_destination_indicator" };
+  }
   if (businessIntent) return businessIntent;
   const lp101Intent = window.GRIDLY_LP101_SEARCH_QUALITY?.understand?.(query);
   if (lp101Intent?.category) return { type: GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE, reason: "category_intent", category: lp101Intent.category };
@@ -92841,6 +92844,67 @@ function searchGridlyLocalPoiSeeds(rawQuery = "", options = {}) {
     .map((result) => ({ ...result, searchIntent: intent.type, localPoiSeed: true }));
 }
 
+function gridlyQueryAllowsRuntimePoiAcquisition(rawQuery = "", intent = null) {
+  const resolvedIntent = intent || classifyGridlyDestinationSearchIntent(rawQuery);
+  return resolvedIntent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE
+    && !gridlySearchQueryHasAddressIndicator(rawQuery)
+    && !gridlySearchQueryHasDestinationIndicator(rawQuery);
+}
+
+function gridlyRuntimePoiMatchesQuery(poi, rawQuery = "") {
+  const canonicalize = window.GRIDLY_LP099_BUSINESS_SEARCH?.canonicalize
+    || ((value) => normalizeGridlyBrandSearchText(value));
+  const queryTerms = canonicalize(rawQuery).split(" ").filter(Boolean);
+  const candidateTerms = new Set(canonicalize(`${poi?.displayName || ""} ${String(poi?.gridlyCategory || "").replaceAll("_", " ")}`).split(" ").filter(Boolean));
+  return queryTerms.length > 0 && queryTerms.every((term) => candidateTerms.has(term));
+}
+
+function gridlyRuntimePoiToDestinationSearchResult(poi) {
+  if (!poi || !Number.isFinite(Number(poi.latitude)) || !Number.isFinite(Number(poi.longitude))) return null;
+  return normalizeGridlySearchResult({
+    id: `poi:${poi.id}`,
+    provider: "gridly.poi.runtime.v2",
+    providerId: poi.id,
+    source: "gridly.poi.runtime.v2",
+    type: poi.gridlyCategory || "point_of_interest",
+    title: poi.displayName,
+    label: poi.displayName,
+    lat: Number(poi.latitude),
+    lng: Number(poi.longitude),
+    subtitle: `${String(poi.gridlyCategory || "place").replaceAll("_", " ")} · ${Number(poi.distanceMiles).toFixed(1)} mi`,
+    raw: {
+      poiId: poi.id,
+      display_name: poi.displayName,
+      categories: [poi.gridlyCategory].filter(Boolean),
+      countyContextId: poi.countyContextId,
+      runtimeSchemaVersion: "gridly.poi.runtime.v2",
+      distanceMiles: Number(poi.distanceMiles),
+      localRuntimePoi: true
+    }
+  });
+}
+
+async function searchGridlyRuntimePoiCandidates(rawQuery = "", options = {}) {
+  const intent = options.intent || classifyGridlyDestinationSearchIntent(rawQuery);
+  const provider = window.GridlyPoiBrowserProvider;
+  if (!gridlyQueryAllowsRuntimePoiAcquisition(rawQuery, intent)
+    || typeof provider?.requestForCurrentContext !== "function"
+    || typeof provider?.search !== "function") return [];
+  try {
+    const request = provider.requestForCurrentContext(25);
+    if (!request) return [];
+    const response = await provider.search(request);
+    return (Array.isArray(response?.results) ? response.results : [])
+      .filter((poi) => gridlyRuntimePoiMatchesQuery(poi, rawQuery))
+      .map(gridlyRuntimePoiToDestinationSearchResult)
+      .filter(Boolean);
+  } catch (_error) {
+    // General destination discovery remains available if the certified local
+    // authority is gated off or temporarily unavailable.
+    return [];
+  }
+}
+
 function buildGridlySearchQueryVariants(rawQuery = "", options = {}) {
   const originalQuery = String(rawQuery || "").trim();
   const query = window.GRIDLY_LP101_SEARCH_QUALITY?.normalize?.(originalQuery) || originalQuery;
@@ -93186,6 +93250,13 @@ async function gridlySearchAddress(query, options = {}) {
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
   const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, seedResults.length);
   const providerResults = [...seedResults];
+  const runtimePoiResults = gridlyQueryAllowsRuntimePoiAcquisition(rawQuery, intent)
+    && typeof window.GridlyPoiBrowserProvider?.search === "function"
+    ? await searchGridlyRuntimePoiCandidates(rawQuery, { intent }) : [];
+  providerResults.push(...runtimePoiResults);
+  diagnostics.generalProviderCandidateCount = 0;
+  diagnostics.localPoiCandidateCount = runtimePoiResults.length;
+  diagnostics.mergedCandidateCount = providerResults.length;
   const lp101CaseName = getGridlyLp101CaseName(rawQuery);
   setGridlyLp101PipelineStage(lp101CaseName, "localCandidates", seedResults, rawQuery);
   let remoteProviderResultCount = 0;
@@ -93202,6 +93273,7 @@ async function gridlySearchAddress(query, options = {}) {
       structured: intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && variantIndex === 0 ? addressModel.structured : null
     });
     remoteProviderResultCount += variantResults.length;
+    diagnostics.generalProviderCandidateCount += variantResults.length;
     remoteProviderCandidates.push(...variantResults);
     providerResults.push(...variantResults);
     setGridlyLp101PipelineStage(lp101CaseName, "providerCandidates", providerResults.slice(seedResults.length), rawQuery);
@@ -93235,6 +93307,7 @@ async function gridlySearchAddress(query, options = {}) {
   }
 
   diagnostics.aggregate = aggregateGridlyAddressVariantOutcomes(diagnostics.variants);
+  diagnostics.mergedCandidateCount = providerResults.length;
   if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
     diagnostics.providerStatus = diagnostics.aggregate.finalConsumerClassification === "confirmed_no_result"
       ? "no_results" : diagnostics.aggregate.finalConsumerClassification === "temporarily_paused" ? "rate_limited"
@@ -93252,6 +93325,7 @@ async function gridlySearchAddress(query, options = {}) {
   setGridlyLp101PipelineStage(lp101CaseName, "rankedCandidates", prioritizedResults, rawQuery);
   const containmentFilteredResults = filterGridlyDestinationSearchContainmentResults(prioritizedResults, { query: rawQuery, intent, searchContext });
   const dedupedResults = dedupeGridlySearchResults(containmentFilteredResults, { limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT });
+  diagnostics.deduplicatedCandidateCount = dedupedResults.length;
   const explicitRelevantResults = filterGridlyExplicitIntentRelevance(dedupedResults, { query: rawQuery, intent, addressModel });
   setGridlyLp101PipelineStage(lp101CaseName, "relevanceGateOutput", explicitRelevantResults, rawQuery);
   const qualityFilteredResults = filterGridlyGenericLocalQualityResults(explicitRelevantResults, { query: rawQuery, intent, diagnostics });
@@ -93262,6 +93336,19 @@ async function gridlySearchAddress(query, options = {}) {
     ? localityReservedResults.filter((result) => result?.provider === "saved_place" || result?.raw?.savedPlace === true || result?.raw?.seedSource === "lp097_governed_curated")
     : localityReservedResults;
   const finalResults = truthfulResults.slice(0, limit);
+  diagnostics.finalDisplayedCandidateCount = finalResults.length;
+  diagnostics.localPoiCandidateDiagnostics = runtimePoiResults.map((candidate) => {
+    const ranked = prioritizedResults.find((result) => result.providerId === candidate.providerId) || candidate;
+    return Object.freeze({
+      candidateId: candidate.providerId,
+      title: candidate.title,
+      queryRelevant: true,
+      distanceMiles: Number(candidate.raw?.distanceMiles),
+      sourceFamily: "gridly.poi.runtime.v2",
+      finalRank: Number(ranked.searchRank?.rank) || null,
+      finalDisplayed: finalResults.some((result) => result.providerId === candidate.providerId)
+    });
+  });
   const lineageStages = {
     normalized: prioritizedResults,
     contained: containmentFilteredResults,
