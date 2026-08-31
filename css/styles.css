@@ -19457,6 +19457,34 @@ body[data-layout-mode="desktop"] .gridly-desktop-gate-board-image {
   box-shadow: none;
 }
 
+/* LP243.H — additive non-portrait containment for the portrait-derived app.
+   These rules cannot match protected phone portrait viewports. */
+@media (orientation: landscape), (min-width: 761px) {
+  body[data-layout-mode="portrait"] {
+    overflow-x: hidden;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2
+    :is(.gridly-v2-topbar, .gridly-v2-brief-stack, .gridly-v2-bottom-region, .gridly-v2-bottom-dock, .gridly-v2-location-awareness-panel, .gridly-v2-sheet) {
+    width: min(760px, calc(100vw - 24px));
+    right: auto;
+    left: 50%;
+    box-sizing: border-box;
+    transform: translateX(-50%);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+    right: max(12px, calc((100vw - 760px) / 2 + 12px)) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet {
+    max-height: calc(100dvh - 104px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 
 /* GRIDLY V272.2 — consumer readability pass.
    Controlled +1 typography step for visible Gridly copy only; markers, gates, filters,

@@ -140,19 +140,10 @@
         var existingMode = body && body.getAttribute("data-layout-mode");
         var width = window.visualViewport && window.visualViewport.width || window.innerWidth || document.documentElement.clientWidth || 0;
         var height = window.visualViewport && window.visualViewport.height || window.innerHeight || document.documentElement.clientHeight || 0;
-        var landscape = width > height;
-        var finePointer = false;
-        var coarsePointer = false;
-        try {
-          finePointer = Boolean(window.matchMedia && window.matchMedia("(pointer: fine)").matches);
-          coarsePointer = Boolean(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
-        } catch (error) {}
-        var noHover = false;
-        try { noHover = Boolean(window.matchMedia && window.matchMedia("(hover: none)").matches); } catch (error) {}
-        /* LP241.7 launch authority is capability-based. Geometry alone must never
-           promote a resized desktop/PWA window into the validated mobile owner. */
-        var validatedMobile = width <= 980 && !landscape && coarsePointer && !finePointer && noHover;
-        var mode = existingMode || (validatedMobile ? "portrait" : "desktop");
+        /* LP243.H restores the production application at every viewport. The
+           portrait-derived owner is intentionally reused rather than replaced
+           or rewritten; width/orientation only affect additive CSS containment. */
+        var mode = existingMode || "portrait";
         document.documentElement.classList.toggle("gridly-desktop-startup-containment", mode === "desktop");
         if (body && !existingMode) {
           body.setAttribute("data-layout-mode", mode);
@@ -193,7 +184,7 @@
     })();
   </script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/styles.css?v=243g-home-area-badge" />
+  <link rel="stylesheet" href="css/styles.css?v=243h-responsive-availability" />
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/store/icons/gridly-icon-master-1024.png">
   <link rel="apple-touch-icon" sizes="167x167" href="assets/icons/incoming/gridly-icon-master-167.png">
@@ -1544,7 +1535,7 @@
   <script src="js/gridlyRuntimeCountyIdentity.js?v=2393"></script>
   <script src="js/gridlyLP240WeatherAuthorityAudit.js?v=2401h4"></script>
   <script src="js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3"></script>
-  <script src="js/app.js?v=243g-consumer-trust-polish"></script>
+  <script src="js/app.js?v=243h-responsive-availability"></script>
   <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
   <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=03921"></script>
   <script src="js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044"></script>

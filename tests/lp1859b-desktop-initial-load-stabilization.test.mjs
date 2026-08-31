@@ -40,11 +40,11 @@ function runOwnership({ width, height, finePointer, coarsePointer, existingMode 
   return { attributes, rootClasses };
 }
 
-test("watchdog establishes 832x571 desktop ownership before visible release", () => {
+test("watchdog establishes 832x571 application ownership before visible release", () => {
   const { attributes: attrs, rootClasses } = runOwnership({ width: 832, height: 571, finePointer: true, coarsePointer: false });
-  assert.equal(attrs.get("data-layout-mode"), "desktop");
-  assert.equal(attrs.get("data-layout-mode-legacy"), "desktop");
-  assert.equal(rootClasses.has("gridly-desktop-startup-containment"), true);
+  assert.equal(attrs.get("data-layout-mode"), "portrait");
+  assert.equal(attrs.get("data-layout-mode-legacy"), "mobile");
+  assert.equal(rootClasses.has("gridly-desktop-startup-containment"), false);
   assert.ok(html.indexOf("ensureStartupLayoutOwnership();", html.indexOf("function release()")) < html.indexOf("classList.remove(\"gridly-prepaint-lock\")"));
 });
 
@@ -55,10 +55,10 @@ test("inline containment, not delayed application CSS, owns the desktop watchdog
   assert.ok(html.indexOf('classList.toggle("gridly-desktop-startup-containment"') < html.indexOf('classList.remove("gridly-prepaint-lock")'));
 });
 
-test("watchdog remains fail-closed when it fires before body parsing", () => {
+test("watchdog keeps responsive app authority when it fires before body parsing", () => {
   const { attributes, rootClasses } = runOwnership({ width: 832, height: 571, finePointer: true, coarsePointer: false, bodyAvailable: false });
   assert.equal(attributes.has("data-layout-mode"), false);
-  assert.equal(rootClasses.has("gridly-desktop-startup-containment"), true);
+  assert.equal(rootClasses.has("gridly-desktop-startup-containment"), false);
   assert.match(html, /gridly-desktop-startup-containment body > :not\(\.gridly-desktop-gate\)/);
 });
 
@@ -81,7 +81,7 @@ test("watchdog release remains independent of application initialization", () =>
   assert.match(html, /window\.setTimeout\(release, 1400\);/);
   assert.doesNotMatch(ownershipSource, /Supabase|geolocation|fetch|map|hydration/i);
   const { attributes: attrs } = runOwnership({ width: 1366, height: 768, finePointer: true, coarsePointer: false });
-  assert.equal(attrs.get("data-layout-mode"), "desktop");
+  assert.equal(attrs.get("data-layout-mode"), "portrait");
 });
 
 test("authoritative application ownership is not overwritten", () => {

@@ -8,18 +8,18 @@ test('OA-2 Android compatibility is bounded to deterministic and emulated browse
   for(const token of ['DETERMINISTIC_EMULATION_CONTRACT','390,height:844','844,height:390','hasTouch:true','pointer:\'coarse\'','textZoomPercent:200','Physical Android hardware for launch','Android font rasterization','real Chrome browser-chrome occlusion','device rotation/compositor repaint']) assert.match(source,new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));
   assert.doesNotMatch(source,/One reduced Android Chrome touch, increased-text, and rotation smoke/);
 });
-test('LP241.7 presentation authority is capability based and fail closed',()=>{
+test('LP243.H presentation authority retains the application across capabilities and geometry',()=>{
   const start=app.indexOf('function resolveLayoutMode('), end=app.indexOf('\n}\n\nfunction evaluateLayoutMode',start)+2;
   const resolve=Function(`${app.slice(start,end)}; return resolveLayoutMode;`)();
   const classify=(overrides={})=>resolve({viewportWidth:390,viewportHeight:844,coarsePointer:true,finePointer:false,hoverNone:true,orientationLandscape:false,...overrides}).nextMode;
   assert.equal(classify(),'portrait');
-  assert.equal(classify({finePointer:true,coarsePointer:false}),'desktop');
-  assert.equal(classify({viewportWidth:800,viewportHeight:900,finePointer:true,coarsePointer:false}),'desktop');
-  assert.equal(classify({orientationLandscape:true,viewportWidth:844,viewportHeight:390}),'desktop');
-  assert.equal(classify({hoverNone:false}),'desktop');
+  assert.equal(classify({finePointer:true,coarsePointer:false}),'portrait');
+  assert.equal(classify({viewportWidth:800,viewportHeight:900,finePointer:true,coarsePointer:false}),'portrait');
+  assert.equal(classify({orientationLandscape:true,viewportWidth:844,viewportHeight:390}),'portrait');
+  assert.equal(classify({hoverNone:false}),'portrait');
   assert.match(app,/window\.gridlyLP2417PresentationSafetyAudit/);
   assert.match(app,/legacyDashboardFocusable[\s\S]*legacyDashboardAccessibilityExposed[\s\S]*acceptableSurfaceCount/);
-  assert.match(app,/toggleAttribute\("inert", !supported\)/);
+  assert.match(app,/toggleAttribute\("inert", supported\)/);
   assert.match(html,/id="gridlyDesktopGate"[^>]+aria-hidden="true" inert/);
 });
 test('OA-4 interactive PWA acceptance is deferred while foundation remains certified',()=>{
