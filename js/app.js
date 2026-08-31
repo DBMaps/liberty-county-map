@@ -39959,7 +39959,7 @@ function buildGridlySearchDisplayLines(result) {
     .filter(Boolean)
     .filter((entry) => !GRIDLY_SEARCH_NOISY_META_TOKENS.has(entry.toLowerCase()));
   const meta = metaParts.find((entry) => normalizeGridlySearchDisplayLabel(entry) !== titleNorm) || "";
-  return { title, meta };
+  return { title, location: String(result?.presentationAddress?.consumerLine || "").trim(), meta };
 }
 
 
@@ -40859,6 +40859,12 @@ function renderGridlySearchResults(results = [], options = {}) {
     label.textContent = display.title;
     itemBtn.appendChild(label);
 
+    const location = document.createElement("span");
+    location.className = "gridly-search-result-meta gridly-search-result-location";
+    location.textContent = display.location;
+    location.hidden = !display.location;
+    itemBtn.appendChild(location);
+
     const secondaryLine = [locationContext, display.meta]
       .map((entry) => String(entry || "").trim())
       .find((entry) => isGridlyUsefulMetaValue(entry));
@@ -40907,6 +40913,13 @@ function renderGridlySearchResults(results = [], options = {}) {
 
   resultsContainer.appendChild(list);
   setGridlyLp101PipelineStage(lp101CaseName, "renderedCandidates", renderedResults, renderQuery);
+  if (options?.renderPhase === "final") {
+    void enrichGridlyPublishedDestinationResults(renderedResults, {
+      requestId: options.requestId,
+      query: renderQuery,
+      resultsContainer
+    });
+  }
   return true;
 }
 
@@ -94392,14 +94405,48 @@ window.gridlyDestinationAddressSearchAudit = function gridlyDestinationAddressSe
   };
 };
 
+const GRIDLY_DESTINATION_ADDRESS_ENRICHMENT_LIMIT = GRIDLY_SEARCH_RENDER_LIMIT;
+const gridlyReverseGeocodeCache = new Map();
+const gridlyReverseGeocodeInflight = new Map();
+let gridlyReverseGeocodeQueue = Promise.resolve();
+let gridlyReverseGeocodeNextAllowedAt = 0;
+
+function gridlyReverseGeocodeCoordinateKey(lat, lng) {
+  const coordinates = normalizeCoordinatePair(lat, lng);
+  return coordinates ? `${coordinates.lat.toFixed(5)},${coordinates.lng.toFixed(5)}` : "";
+}
+
+function gridlyBuildPresentationAddress(reverseResult) {
+  const address = reverseResult?.raw?.address && typeof reverseResult.raw.address === "object"
+    ? reverseResult.raw.address : {};
+  const houseNumber = String(address.house_number || "").trim();
+  const road = String(address.road || "").trim();
+  const locality = String(address.city || address.town || address.village || address.hamlet || address.municipality || "").trim();
+  const county = String(address.county || "").trim();
+  const street = [houseNumber, road].filter(Boolean).join(" ");
+  const consumerLine = [street, locality].filter(Boolean).join(" · ")
+    || locality || county;
+  if (!consumerLine) return null;
+  return Object.freeze({ houseNumber, road, locality, localityType: address.city ? "city" : address.town ? "town" : address.village ? "village" : address.hamlet ? "hamlet" : address.municipality ? "municipality" : "", county, consumerLine });
+}
+
 async function gridlyReverseGeocode(lat, lng, options = {}) {
   const coordinates = normalizeCoordinatePair(lat, lng);
   if (!coordinates) return null;
 
+  const coordinateKey = gridlyReverseGeocodeCoordinateKey(coordinates.lat, coordinates.lng);
+  if (gridlyReverseGeocodeCache.has(coordinateKey)) return gridlyReverseGeocodeCache.get(coordinateKey);
+  if (gridlyReverseGeocodeInflight.has(coordinateKey)) return gridlyReverseGeocodeInflight.get(coordinateKey);
+
   const zoom = Number.isFinite(Number(options.zoom)) ? Math.min(Math.max(Math.floor(Number(options.zoom)), 3), 18) : 16;
   const countryCodes = String(options.countryCodes || "us").trim() || "us";
-
-  try {
+  const lookup = async () => {
+    const wait = Math.max(0, gridlyReverseGeocodeNextAllowedAt - Date.now());
+    if (wait) await new Promise((resolve) => window.setTimeout(resolve, wait));
+    gridlyReverseGeocodeNextAllowedAt = Date.now() + 1100;
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 3500);
+    try {
     const params = new URLSearchParams({
       lat: String(coordinates.lat),
       lon: String(coordinates.lng),
@@ -94409,15 +94456,50 @@ async function gridlyReverseGeocode(lat, lng, options = {}) {
       countrycodes: countryCodes
     });
     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?${params.toString()}`, {
-      headers: { Accept: "application/json" }
+      headers: { Accept: "application/json" },
+      signal: controller.signal
     });
     if (!response.ok) return null;
     const providerResult = await response.json();
     return normalizeGridlySearchResult(providerResult);
-  } catch (error) {
-    console.warn("Reverse geocode failed:", error);
-    return null;
+    } catch (_error) {
+      return null;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  };
+  const queued = gridlyReverseGeocodeQueue.then(lookup, lookup);
+  gridlyReverseGeocodeQueue = queued.then(() => undefined, () => undefined);
+  gridlyReverseGeocodeInflight.set(coordinateKey, queued);
+  try {
+    const result = await queued;
+    gridlyReverseGeocodeCache.set(coordinateKey, result);
+    return result;
+  } finally {
+    gridlyReverseGeocodeInflight.delete(coordinateKey);
   }
+}
+
+async function enrichGridlyPublishedDestinationResults(results = [], options = {}) {
+  const visible = (Array.isArray(results) ? results : [])
+    .slice(0, GRIDLY_DESTINATION_ADDRESS_ENRICHMENT_LIMIT)
+    .filter((result) => result?.raw?.runtimeSchemaVersion === "gridly.poi.runtime.v2" && Number.isFinite(result?.lat) && Number.isFinite(result?.lng));
+  const identityBefore = visible.map((result) => `${result.providerId || result.id}|${result.lat}|${result.lng}|${result.raw?.countyContextId || ""}`);
+  await Promise.all(visible.map(async (result) => {
+    const reverseResult = await gridlyReverseGeocode(result.lat, result.lng);
+    const presentationAddress = gridlyBuildPresentationAddress(reverseResult);
+    if (!presentationAddress || !isGridlyLiveSearchRenderCurrent(options)) return;
+    result.presentationAddress = presentationAddress;
+    const index = results.indexOf(result);
+    const row = options.resultsContainer?.querySelector?.(`.gridly-search-result-item[data-result-index="${index}"]`);
+    const location = row?.querySelector?.(".gridly-search-result-location");
+    if (location) {
+      location.textContent = presentationAddress.consumerLine;
+      location.hidden = false;
+    }
+  }));
+  const identityAfter = visible.map((result) => `${result.providerId || result.id}|${result.lat}|${result.lng}|${result.raw?.countyContextId || ""}`);
+  return Object.freeze({ attemptedCount: visible.length, limit: GRIDLY_DESTINATION_ADDRESS_ENRICHMENT_LIMIT, identityUnchanged: identityBefore.every((value, index) => value === identityAfter[index]) });
 }
 
 
@@ -94579,6 +94661,12 @@ window.gridlyDestinationProviderAudit = async function gridlyDestinationProvider
 };
 window.gridlyRunLiveDestinationSearch = runGridlyLiveDestinationSearch;
 window.gridlyReverseGeocode = gridlyReverseGeocode;
+window.gridlyDestinationAddressEnrichment = Object.freeze({
+  enrich: enrichGridlyPublishedDestinationResults,
+  buildPresentationAddress: gridlyBuildPresentationAddress,
+  coordinateKey: gridlyReverseGeocodeCoordinateKey,
+  limit: GRIDLY_DESTINATION_ADDRESS_ENRICHMENT_LIMIT
+});
 window.normalizeGridlySearchResult = normalizeGridlySearchResult;
 window.setGridlyDestinationMarker = setGridlyDestinationMarker;
 window.clearGridlyDestinationMarker = clearGridlyDestinationMarker;
