@@ -25112,6 +25112,7 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 .settings-manual-area-results { display: grid; gap: 1px; border-top: 1px solid rgba(142, 239, 255, 0.12); }
 .settings-manual-area-result {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 3px;
   width: 100%;
   min-height: 68px;
@@ -25124,10 +25125,10 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   padding: 12px 14px;
   text-align: left;
 }
-.settings-manual-area-result span { font-weight: 850; }
-.settings-manual-area-result small { color: rgba(220, 234, 249, 0.76); font-size: 0.84rem; }
+.settings-manual-area-result span { grid-column: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 850; }
+.settings-manual-area-result small { grid-column: 1; color: rgba(220, 234, 249, 0.76); font-size: 0.84rem; }
 .settings-manual-area-result:disabled { cursor: default; opacity: 1; }
-.settings-manual-area-state { justify-self: start; border: 1px solid rgba(67, 230, 160, 0.28); border-radius: 999px; color: rgba(112, 241, 181, 0.96); font-size: 0.72rem; font-style: normal; font-weight: 850; padding: 3px 8px; }
+.settings-manual-area-state { grid-column: 2; grid-row: 1; align-self: start; justify-self: end; border: 1px solid rgba(67, 230, 160, 0.28); border-radius: 999px; color: rgba(112, 241, 181, 0.96); font-size: 0.72rem; font-style: normal; font-weight: 850; padding: 3px 8px; white-space: nowrap; }
 .settings-manual-area-result.is-current { border-color: rgba(67, 230, 160, 0.28); }
 .settings-manual-area-result.is-pending { border-color: rgba(67, 230, 160, 0.54); background: linear-gradient(145deg, rgba(25, 91, 99, 0.68), rgba(8, 33, 44, 0.9)); box-shadow: inset 3px 0 rgba(67, 230, 160, 0.9); }
 .settings-manual-result-presentation { display: grid; gap: 8px; min-width: 0; }
