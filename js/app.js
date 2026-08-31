@@ -40342,7 +40342,11 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
   if (!Array.isArray(results) || !results.length) return [];
   const searchContext = getGridlyDestinationSearchContainmentContext(getGridlySearchMapContext());
   const intent = options.intent || classifyGridlyDestinationSearchIntent(options.query || ensureGridlySearchState().activeQuery || "");
-  const isGenericLocalSearch = intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL;
+  // An unqualified named-business query is contextual in exactly the same way
+  // as a generic local query.  LP099 owns semantic relevance; once candidates
+  // are equivalently relevant, the governed anchor owns their local ordering.
+  const isContextualLocalSearch = intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL
+    || intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE;
   const anchor = getGridlySearchAnchorContext(searchContext);
   if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
     gridlyLp097RuntimeEvidence.geographicConflictCandidateCount = 0;
@@ -40363,7 +40367,8 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
     const anchorDistanceMiles = hasCoordinates && anchor
       ? haversineDistance(anchor.lat, anchor.lng, result.lat, result.lng)
       : distanceMiles;
-    let score = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
+    const stableInputOrderScore = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
+    let score = stableInputOrderScore;
     const lp097Classification = classifyGridlyLp097Result(result, options.addressModel || (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? buildGridlyLp097AddressModel(options.query || "") : null));
     const lp099Classification = intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE
       ? window.GRIDLY_LP099_BUSINESS_SEARCH?.evaluate?.(options.query || "", result)
@@ -40382,10 +40387,14 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
     if (lp099Classification) score += lp099Classification.boost;
     if (lp101Classification) score += lp101Classification.boost;
     if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.conflictReasons.some((reason) => ["state_mismatch", "city_conflict", "county_conflict", "postal_code_conflict", "enriched_locality_conflict", "outside_expected_geography"].includes(reason))) score -= 1800;
-    if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && getGridlySearchResultTitleMatchScore(result, options.query || "") >= 20) score += 900;
+    const titleMatchScore = getGridlySearchResultTitleMatchScore(result, options.query || ensureGridlySearchState().activeQuery || "");
+    const exactName = titleMatchScore === 28 || lp099Classification?.exactName === true;
+    // Seeds remain deterministic recovery candidates, not a reservation tier.
+    // LP099 already rewards exact business relevance for every source family;
+    // the former seed-only +900 duplicated that authority ahead of locality.
     if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) score += 1000;
     if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += getGridlyLocalDiscoveryUsefulnessBoost(result);
-    if (isGenericLocalSearch) {
+    if (isContextualLocalSearch) {
       if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += 18;
       if (Number.isFinite(anchorDistanceMiles)) {
         if (anchorDistanceMiles <= 10) score += 135;
@@ -40406,8 +40415,8 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       if (isLocality) score += 8;
       if (Number.isFinite(distanceMiles) && distanceMiles <= 75) score += 6;
     }
-    score += getGridlySearchResultTitleMatchScore(result, options.query || ensureGridlySearchState().activeQuery || "");
-    const resultBucket = isGenericLocalSearch && Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 50
+    score += titleMatchScore;
+    const resultBucket = isContextualLocalSearch && Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 50
       ? "nearby_your_town"
       : isTexas
         ? "other_texas_results"
@@ -40424,12 +40433,23 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
         isLocality,
         distanceMiles,
         anchorDistanceMiles,
-        anchor: anchor ? { label: anchor.label, source: anchor.source } : null
+        anchor: anchor ? { label: anchor.label, source: anchor.source } : null,
+        comparatorInputs: {
+          stableInputOrderScore,
+          queryMatchClass: exactName ? "exact_name" : titleMatchScore >= 20 ? "title_prefix" : titleMatchScore > 0 ? "title_contains" : "non_title_match",
+          businessRelevanceScore: Number(lp099Classification?.boost) || 0,
+          exactName,
+          qualityScore: Number(lp101Classification?.boost) || 0,
+          sourcePriorityScore: 0,
+          seedPriorityScore: 0,
+          localityMode: isContextualLocalSearch ? "governed_context" : "explicit_intent",
+          reservation: "none"
+        }
       }
     };
     return { result: rankedResult, score, index, inBounds, isTexas, isLibertyCounty, isLocality, distanceMiles, anchorDistanceMiles };
   });
-  if (isGenericLocalSearch) {
+  if (isContextualLocalSearch) {
     const hasNearbyMatch = scored.some((entry) => Number.isFinite(entry.anchorDistanceMiles) && entry.anchorDistanceMiles <= 50);
     if (hasNearbyMatch) {
       scored.forEach((entry) => {
