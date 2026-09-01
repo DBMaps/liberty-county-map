@@ -28740,6 +28740,42 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     border-top: 1px solid var(--lp243h10e-divider) !important;
   }
 
+  /* LP243.H10J — foreground ownership closure. Search remains the existing
+     workspace owner while every command-tray painter is subordinated. */
+  body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden]))
+    :is(#gridlyPortraitBottomRegion, #mobileDestinationCommandPanel,
+      #gridlyLandscapeCommandPanel, #gridlyLandscapeCommandToggle,
+      .gridly-v2-bottom-dock) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Reuse the accepted sheet header; increase foreground contrast only. */
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    #gridlyBriefFoundationHandle {
+    color: #f7fbff !important;
+    font-weight: 760;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    #gridlyBriefFoundationHandle .gridly-brief-foundation-handle-label {
+    color: #f7fbff !important;
+    opacity: 1 !important;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    #gridlyBriefFoundationHandle .gridly-brief-foundation-handle-icon {
+    color: var(--gridly-accent, #28c7c2) !important;
+    opacity: 1 !important;
+  }
+
+  /* Legacy footer stays mounted for other layouts but owns no short-
+     landscape presentation or interaction space. */
+  body[data-layout-mode="portrait"] .app-footer {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {

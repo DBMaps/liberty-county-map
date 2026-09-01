@@ -8,10 +8,11 @@ const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const h10bStart = css.indexOf("/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY");
 const h10hStart = css.indexOf("/* LP243.H10H — measured landscape closure", h10bStart);
 const h10iStart = css.indexOf("/* LP243.H10I — expanded command owners are tray-local", h10hStart);
+const h10jStart = css.indexOf("/* LP243.H10J — foreground ownership closure", h10iStart);
 const mediaEnd = css.indexOf("\n}\n\n@media (prefers-reduced-motion", h10iStart);
 const h10b = css.slice(h10bStart, h10hStart);
 const h10h = css.slice(h10hStart, h10iStart);
-const h10i = css.slice(h10iStart, mediaEnd);
+const h10i = css.slice(h10iStart, h10jStart);
 
 function shortLandscape(width, height) { return width > height && height <= 500; }
 
@@ -63,7 +64,7 @@ test("disclosure, fail-open recovery, and rail clearance contracts remain", () =
 });
 
 test("asset identity advances without feature or data authority changes", () => {
-  assert.match(html, /styles\.css\?v=243h10i-search-tray-containment/);
+  assert.match(html, /styles\.css\?v=243h10j-foreground-ownership-closure/);
   assert.match(html, /app\.js\?v=243h10i-search-tray-containment/);
   assert.doesNotMatch(h10i, /Supabase|DriveTexas|Leaflet|setView\(|zoomIn\(|zoomOut\(|provider|ranking/i);
   assert.doesNotMatch(app.slice(app.indexOf("// LP243.H10I"), app.indexOf("function gridlyLandscapeCommandDisclosureAudit")), /Supabase|DriveTexas|Leaflet|search|sheet/i);
