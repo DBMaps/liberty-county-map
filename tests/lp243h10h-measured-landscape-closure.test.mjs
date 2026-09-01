@@ -84,7 +84,7 @@ test("KBYG outer geometry is frozen while header, rhythm, and duplicate Weather 
 
 test("asset identity advances and protected feature authorities are untouched", () => {
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21r1-location-context-roadway-wording)/);
+  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i22-layers-accessibility-lifecycle)/);
   assert.doesNotMatch(h10h, /fetch\(|Supabase|DriveTexas|Leaflet|setView\(|zoomIn\(|zoomOut\(|addEventListener/i);
   assert.doesNotMatch(h10h, /gridlySearchShell|gridlyPortraitV2Sheet/);
 });

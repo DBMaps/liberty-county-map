@@ -118020,7 +118020,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     alerts: { title: "Current Alerts", html: buildAlertsSurfaceHtml },
     settings: { title: "Settings", html: buildSettingsSurfaceHtml },
     history: { title: "Historical Intelligence", html: buildGridlyHistoricalIntelligenceSheetHtml },
-    layers: { title: "Map Layers", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Choose map style:</p><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Standard" type="button">Standard</button><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Satellite" type="button">Satellite</button></div>` }
+    layers: { title: "Map Layers", html: `<div class="gridly-v2-list" role="radiogroup" aria-label="Map style"><p class="gridly-v2-sheet-copy">Choose map style:</p><button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="layers-select" data-layer-name="Standard" type="button" role="radio" aria-checked="false">Standard</button><button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="layers-select" data-layer-name="Satellite" type="button" role="radio" aria-checked="false">Satellite</button></div>` }
   };
   const v2DockAdapterState = { lastDockActionTriggered: "", lastDockAdapterTarget: "", adapterBridgeFailures: [], adapterFallbackCount: 0, lastV2Action: "", lastV2ActionResult: "", lastV2ActionError: "", lastReportAction: "", lastReportActionResult: "", lastReportActionError: "" };
   const v1363RouteActionDebug = { routeDockClickHandled:false, routeWatchActionHandled:false, routePreviewActionHandled:false, routeManagePlacesActionHandled:false, lastRouteActionFailureReason:"" };
@@ -118028,6 +118028,21 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   const v1372AlertsActionDebug = { manageAlertsActionHandled:false, alertPreferencesActionHandled:false, lastAlertsActionFailureReason:"" };
   const v1415RouteReadinessDebug = { lastRefreshAt: 0, lastRefreshSource: "", stateRefreshDetected: false };
   let activeSheet = "";
+  let gridlyLayersLastActivationOpener = null;
+
+  function syncGridlyLayersAccessibilityState(sheetName = "") {
+    const trigger = document.querySelector("#gridlyPortraitV2 [data-v2-control='layers']");
+    const sheet = document.getElementById("gridlyPortraitV2Sheet");
+    const layersOpen = sheetName === "layers" && Boolean(sheet && !sheet.hidden && sheet.dataset.activeSheet === "layers");
+    trigger?.setAttribute("aria-expanded", String(layersOpen));
+    if (!layersOpen) return;
+    const selectedStyle = normalizeGridlyMapStyleName(activeBaseLayerName || currentMapStyle);
+    sheet.querySelectorAll('[data-v2-action="layers-select"][role="radio"]').forEach((button) => {
+      const selected = button.dataset.layerName === selectedStyle;
+      button.setAttribute("aria-checked", String(selected));
+      button.classList.toggle("is-selected", selected);
+    });
+  }
   const portraitV2BatchingState = { active: false };
   const portraitV2MeasurementCache = { active: false, frameId: 0, reads: new WeakMap(), hits: 0, misses: 0 };
 
@@ -118178,6 +118193,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function openGridlyPortraitV2Sheet(sheetName, templateOverride = null) {
+    if (sheetName === "layers") {
+      const candidate = document.activeElement;
+      if (candidate?.matches?.("#gridlyPortraitV2 [data-v2-control='layers']")) gridlyLayersLastActivationOpener = candidate;
+    }
     if (sheetName === "alerts") {
       const candidate = document.activeElement;
       if (candidate?.matches?.("#gridlyAlertsDockButton, [data-v2-sheet='alerts'], #mobileDockAlertsBtn")) {
@@ -118273,6 +118292,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     };
     if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "style/class writes", applyShellStyles);
     else applyShellStyles();
+    syncGridlyLayersAccessibilityState(sheetName);
     if (sheetName === "alerts") {
       gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "last-mile canonical enforcement", () => gridlyEnforceCanonicalPresentationOnVisibleAlertCards("openGridlyPortraitV2Sheet"));
       gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "final visible alert-card DOM write enforcement", () => {
@@ -118307,6 +118327,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         || body.querySelector("button, input, select, textarea, [tabindex]:not([tabindex='-1'])");
       settingsFocusTarget?.focus?.();
     }
+    if (sheetName === "layers") document.getElementById("gridlyPortraitV2SheetClose")?.focus?.();
     return true;
   }
 
@@ -118470,6 +118491,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }
 
     document.body.classList.remove("modal-open", "report-pulse");
+    syncGridlyLayersAccessibilityState("");
+    if (closingSheetName === "layers") {
+      if (gridlyLayersLastActivationOpener?.isConnected) gridlyLayersLastActivationOpener.focus();
+      gridlyLayersLastActivationOpener = null;
+    }
     if (closingSheetName === "alerts") {
       gridlySetAlertsModalFocusOwnership(sheet, false);
       if (gridlyAlertsLastActivationOpener?.isConnected) gridlyAlertsLastActivationOpener.focus();
@@ -119142,6 +119168,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "layers-select": () => {
         const requestedLayer = payload.layerName || "Standard";
         if (typeof applyMapStyle === "function") applyMapStyle(requestedLayer);
+        syncGridlyLayersAccessibilityState("layers");
       }
     };
     const bridge = bridges[canonicalAction];
@@ -119440,7 +119467,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     document.addEventListener("keydown", (event) => {
       if (event.key !== "Escape") return;
       const sheet = document.getElementById("gridlyPortraitV2Sheet");
-      if (sheet?.dataset?.activeSheet !== "alerts" || sheet.hidden) return;
+      if (!(["alerts", "layers"].includes(sheet?.dataset?.activeSheet)) || sheet.hidden) return;
       event.preventDefault();
       closePortraitV2Sheet();
     });

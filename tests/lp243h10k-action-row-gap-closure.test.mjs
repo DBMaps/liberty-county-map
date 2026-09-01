@@ -44,7 +44,7 @@ test("Search and all four action owners and sizing remain unchanged", () => {
   }
   assert.match(h10i, /#mobileDestinationCommandPanel \.compact-btn \{[\s\S]*min-height: 44px/);
   assert.doesNotMatch(h10k, /gridlySearchShell|compact-btn|DockButton|addEventListener|onclick|handler/);
-  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21r1-location-context-roadway-wording)/);
+  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i22-layers-accessibility-lifecycle)/);
 });
 
 test("rail, disclosure, fail-open, KBYG, foreground, and footer authorities are untouched", () => {
@@ -61,5 +61,5 @@ test("H10K changes no JavaScript, feature, data, or tall-wide authority", () => 
   assert.doesNotMatch(h10k, /script|JavaScript|Supabase|DriveTexas|Leaflet|provider|ranking|dataset|feature|1440/i);
   assert.doesNotMatch(h10k, /gridlyLandscapeCommandToggle|#map\s*\{|gridly-v2-topbar|gridly-v2-segments/);
   assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21r1-location-context-roadway-wording)/);
+  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i22-layers-accessibility-lifecycle)/);
 });
