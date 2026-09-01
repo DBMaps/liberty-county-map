@@ -265,6 +265,8 @@
     "test:lp1832": "node --test tests/lp1832/*.test.mjs",
     "build:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs build",
     "stage:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs stage",
+    "stage:lp1831:production": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs stage-production",
+    "verify:lp1831:production": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs verify-production",
     "verify:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs verify",
     "test:lp1831": "node --test tests/lp1831/*.test.mjs",
     "build:lp1841d": "node tools/lp1841d/close-owner-legal-decisions.mjs build",

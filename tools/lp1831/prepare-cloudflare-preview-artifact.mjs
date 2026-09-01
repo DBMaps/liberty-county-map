@@ -2,6 +2,8 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import vm from 'node:vm';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { canonicalBlobs, trackedPaths } from '../lp18321/git-asset-identity.mjs';
 
@@ -9,6 +11,10 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const REPORT_DIR = 'reports/lp1831';
 export const STAGE_DIR = '.artifacts/lp1831/cloudflare-pages';
 export const GENERATED_AT = '1970-01-01T00:00:00.000Z';
+export const CANDIDATE_COMMIT = '65be671a899c749426f54be92e8ae000a24ef389';
+export const PRODUCTION_ORIGIN = 'https://gridlygo.com';
+export const PREVIEW_ORIGIN = 'https://preview.gridlygo.com';
+export const RUNTIME_CONFIG_PATH = 'js/gridlyRuntimeEnvironmentConfig.js';
 const ENTRY = ['index.html', 'beta-closed.html', 'beta-closure.html', 'manifest.json', 'service-worker.js'];
 // Runtime families are staged generically.  `audits/` contains browser-loaded
 // audit authorities (not test fixtures), and therefore has the same artifact
@@ -26,11 +32,19 @@ const EXCLUDE = [
 ];
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const json = value => `${JSON.stringify(value, null, 2)}\n`;
+const git = (root, ...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 export const REMOTE_GEOMETRY = Object.freeze({
   canonicalPath: 'assets/location-resolution/gridly-authoritative-county-geometry-v1.json',
   bytes: 47911048,
   sha256: '891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316',
   countyCount: 254
+});
+export const PRODUCTION_GEOMETRY_DESCRIPTOR = Object.freeze({
+  mode: 'REMOTE_PUBLIC_IMMUTABLE_OBJECT',
+  url: `https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-runtime-geometry/geometry/${REMOTE_GEOMETRY.sha256}.json`,
+  expectedBytes: REMOTE_GEOMETRY.bytes,
+  expectedSha256: REMOTE_GEOMETRY.sha256,
+  expectedCountyCount: REMOTE_GEOMETRY.countyCount
 });
 export const isIncluded = file => (ENTRY.includes(file) || FAMILIES.some(x => file.startsWith(x))) && !EXCLUDE.some(x => x.test(file)) && (!file.startsWith('data/generated/lp104/txgio-addresses/') || runtimeAddressPaths.has(file)) && !supersededCompressedSources.has(file);
 
@@ -74,6 +88,125 @@ export function inventory(root = ROOT, options = {}) {
   const oversized = files.filter(x => x.bytes > 25 * 1024 * 1024).map(x => ({ path: x.path, bytes: x.bytes, limitBytes: 25 * 1024 * 1024 }));
   const identityInput = files.map(({ path: p, bytes, sha256 }) => `${p}\0${bytes}\0${sha256}\n`).join('');
   return { files, missingRequired, oversized, artifactIdentity: `sha256:${sha(Buffer.from(identityInput, 'utf8'))}` };
+}
+
+function runtimeObject(bytes) {
+  const sandbox = { window: {} };
+  try { vm.runInNewContext(bytes.toString('utf8'), sandbox, { timeout: 1000 }); } catch { throw Error('CANONICAL_RUNTIME_CONFIG_INVALID'); }
+  const value = sandbox.window.GRIDLY_RUNTIME_CONFIG;
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('CANONICAL_RUNTIME_CONFIG_INVALID');
+  return JSON.parse(JSON.stringify(value));
+}
+
+function nonblank(value) { return typeof value === 'string' && value.trim().length > 0 && !/^<.*>$/.test(value.trim()) && !/PLACEHOLDER/i.test(value); }
+function validateGeometry(value) {
+  const transportValid = (value?.mode === 'LOCAL_CANONICAL' && value.url === REMOTE_GEOMETRY.canonicalPath) || (value?.mode === PRODUCTION_GEOMETRY_DESCRIPTOR.mode && value.url === PRODUCTION_GEOMETRY_DESCRIPTOR.url);
+  return value && transportValid && value.expectedBytes === REMOTE_GEOMETRY.bytes && value.expectedSha256 === REMOTE_GEOMETRY.sha256 && value.expectedCountyCount === REMOTE_GEOMETRY.countyCount;
+}
+
+export function composeProductionRuntimeConfig(canonicalBytes, overlayBytes, geometryDescriptor) {
+  let overlay;
+  try { overlay = JSON.parse(overlayBytes.toString('utf8')); } catch { throw Error('RUNTIME_CONFIG_OVERLAY_MALFORMED'); }
+  if (!overlay || typeof overlay !== 'object' || Array.isArray(overlay)) throw Error('RUNTIME_CONFIG_OVERLAY_MALFORMED');
+  const keys = Object.keys(overlay).sort();
+  if (keys.join(',') !== 'arcgisStaticBasemapApiKey,driveTexas') throw Error('RUNTIME_CONFIG_OVERLAY_PROPERTIES_DISALLOWED');
+  if (!nonblank(overlay.arcgisStaticBasemapApiKey)) throw Error('ARCGIS_STATIC_BASEMAP_API_KEY_REQUIRED');
+  if (!overlay.driveTexas || typeof overlay.driveTexas !== 'object' || Array.isArray(overlay.driveTexas) || Object.keys(overlay.driveTexas).join(',') !== 'apiKey' || !nonblank(overlay.driveTexas.apiKey)) throw Error('DRIVETEXAS_API_KEY_REQUIRED');
+  const canonical = runtimeObject(canonicalBytes);
+  if (canonical.poiBrowserProvider?.enabled !== 'ENABLED') throw Error('POI_BROWSER_PROVIDER_CONTRACT_INVALID');
+  if (!validateGeometry(canonical.authoritativeCountyGeometry)) throw Error('COUNTY_GEOMETRY_CONTRACT_INVALID');
+  canonical.arcgisStaticBasemapApiKey = overlay.arcgisStaticBasemapApiKey;
+  if (geometryDescriptor) canonical.authoritativeCountyGeometry = { ...geometryDescriptor };
+  const composed = `(function () {\n  "use strict";\n  window.GRIDLY_CONFIG = window.GRIDLY_CONFIG || {};\n  window.GRIDLY_CONFIG.driveTexas = Object.freeze({ apiKey: ${JSON.stringify(overlay.driveTexas.apiKey)} });\n  window.GRIDLY_RUNTIME_CONFIG = Object.freeze(${JSON.stringify(canonical, null, 2)});\n})();\n`;
+  return Buffer.from(composed, 'utf8');
+}
+
+export function inventoryDirectory(directory) {
+  const files = [];
+  const visit = (current, relative = '') => {
+    for (const entry of fs.readdirSync(current, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+      const rel = relative ? `${relative}/${entry.name}` : entry.name;
+      const absolute = path.join(current, entry.name);
+      if (entry.isDirectory()) visit(absolute, rel);
+      else if (entry.isFile()) { const bytes = fs.readFileSync(absolute); files.push({ path: rel, bytes: bytes.length, sha256: sha(bytes) }); }
+      else throw Error(`UNSUPPORTED_STAGED_ENTRY:${rel}`);
+    }
+  };
+  visit(directory);
+  files.sort((a, b) => a.path.localeCompare(b.path));
+  const identityInput = files.map(({ path: p, bytes, sha256 }) => `${p}\0${bytes}\0${sha256}\n`).join('');
+  return { files, missingRequired: ENTRY.filter(x => !files.some(f => f.path === x)), oversized: files.filter(x => x.bytes > 25 * 1024 * 1024), artifactIdentity: `sha256:${sha(Buffer.from(identityInput))}` };
+}
+
+function assertCandidate(root) {
+  try { git(root, 'cat-file', '-e', `${CANDIDATE_COMMIT}^{commit}`); git(root, 'merge-base', '--is-ancestor', CANDIDATE_COMMIT, 'HEAD'); } catch { throw Error(`FROZEN_CANDIDATE_NOT_AVAILABLE:${CANDIDATE_COMMIT}`); }
+  const changedRuntime = git(root, 'diff', '--name-only', CANDIDATE_COMMIT, '--', ...ENTRY, ...FAMILIES).split(/\r?\n/).filter(Boolean);
+  if (changedRuntime.length) throw Error(`FROZEN_CANDIDATE_RUNTIME_DRIFT:${changedRuntime.join(',')}`);
+}
+
+function assertExternalIgnoredInput(root, input, output) {
+  const absolute = path.resolve(input);
+  if (!fs.statSync(absolute).isFile()) throw Error('RUNTIME_CONFIG_FILE_NOT_REGULAR');
+  if (absolute === path.resolve(root, RUNTIME_CONFIG_PATH) || absolute.startsWith(`${path.resolve(output)}${path.sep}`)) throw Error('RUNTIME_CONFIG_FILE_NOT_EXTERNAL');
+  if (absolute.startsWith(`${path.resolve(root)}${path.sep}`)) {
+    try { execFileSync('git', ['check-ignore', '-q', '--', absolute], { cwd: root }); } catch { throw Error('RUNTIME_CONFIG_FILE_MUST_BE_UNTRACKED_AND_IGNORED'); }
+  }
+  return absolute;
+}
+
+function verifyProductionContracts(directory) {
+  const runtimeBytes = fs.readFileSync(path.join(directory, RUNTIME_CONFIG_PATH));
+  const sandbox = { window: {} };
+  try { vm.runInNewContext(runtimeBytes.toString('utf8'), sandbox, { timeout: 1000 }); } catch { throw Error('COMPOSED_RUNTIME_CONFIG_INVALID'); }
+  const runtime = sandbox.window.GRIDLY_RUNTIME_CONFIG;
+  if (!nonblank(runtime?.arcgisStaticBasemapApiKey)) throw Error('ARCGIS_STATIC_BASEMAP_API_KEY_REQUIRED');
+  if (runtime?.poiBrowserProvider?.enabled !== 'ENABLED') throw Error('POI_BROWSER_PROVIDER_CONTRACT_INVALID');
+  if (!validateGeometry(runtime?.authoritativeCountyGeometry)) throw Error('COUNTY_GEOMETRY_CONTRACT_INVALID');
+  if (!nonblank(sandbox.window.GRIDLY_CONFIG?.driveTexas?.apiKey)) throw Error('DRIVETEXAS_API_KEY_REQUIRED');
+  const app = fs.readFileSync(path.join(directory, 'js/app.js'), 'utf8');
+  if (!/SUPABASE_PUBLIC_KEY\s*=\s*["'][^"']+["']/.test(app) || /service[_-]?role/i.test(app)) throw Error('SUPABASE_PUBLIC_CLIENT_CONTRACT_INVALID');
+  const drive = fs.readFileSync(path.join(directory, 'js/gridlyDriveTexasProvider.js'), 'utf8');
+  for (const contract of ['GRIDLY_CONFIG.driveTexas', 'GRIDLY_CONFIG.txdot', 'GRIDLY_TXDOT_API_KEY']) if (!drive.includes(contract)) throw Error('DRIVETEXAS_FALLBACK_CONTRACT_INVALID');
+  return { arcgisStaticBasemapApiKey: 'CONFIGURED_NONBLANK', poiBrowserProvider: 'ENABLED', authoritativeCountyGeometry: 'CANONICAL_COMPLETE', driveTexas: 'GRIDLY_CONFIG.driveTexas.apiKey_CONFIGURED_FALLBACK_CONTRACT_PRESERVED', supabase: 'PUBLIC_CLIENT_CONFIG_PRESENT_NO_SERVICE_ROLE' };
+}
+
+function assertExclusions(directory, ownerInput) {
+  const inv = inventoryDirectory(directory);
+  const forbidden = /(^|\/)(?:node_modules|tests|tools|reports|evidence|android|ios)(\/|$)|(?:^|\/).*\.local\.js$|(?:^|\/)(?:\.env(?:\..*)?|wrangler\.toml|.*(?:private[-_]?key|service[-_]?role|cloudflare.*(?:token|auth)).*)$/i;
+  const bad = inv.files.filter(file => forbidden.test(file.path));
+  if (bad.length) throw Error(`FORBIDDEN_STAGED_PATH:${bad[0].path}`);
+  if (inv.files.some(file => path.resolve(directory, file.path) === path.resolve(ownerInput))) throw Error('OWNER_RUNTIME_CONFIG_INPUT_WAS_STAGED');
+  return inv;
+}
+
+export function stageProduction({ output = path.join(ROOT, STAGE_DIR), root = ROOT, runtimeConfigFile, reportFile } = {}) {
+  if (!runtimeConfigFile) throw Error('PRODUCTION_RUNTIME_CONFIG_FILE_REQUIRED');
+  assertCandidate(root);
+  const ownerInput = assertExternalIgnoredInput(root, runtimeConfigFile, output);
+  const canonical = canonicalBlobs(root, [RUNTIME_CONFIG_PATH]).get(RUNTIME_CONFIG_PATH);
+  const runtimeConfigBytes = composeProductionRuntimeConfig(canonical, fs.readFileSync(ownerInput), PRODUCTION_GEOMETRY_DESCRIPTOR);
+  stage(output, root, { runtimeConfigBytes, geometryDescriptor: PRODUCTION_GEOMETRY_DESCRIPTOR });
+  const configStatus = verifyProductionContracts(output);
+  const inv = assertExclusions(output, ownerInput);
+  if (inv.missingRequired.length || inv.oversized.length) throw Error('FINAL_ARTIFACT_CONTRACT_FAILED');
+  const runtimeRecord = inv.files.find(file => file.path === RUNTIME_CONFIG_PATH);
+  const roadwayBytes = canonicalBlobs(root, ['data/roadway-runtime-manifest.json']).get('data/roadway-runtime-manifest.json');
+  const report = { schemaVersion: 'gridly.lp1831.productionRelease.v1', generatedAt: GENERATED_AT, candidateGitSha: CANDIDATE_COMMIT, productionOrigin: PRODUCTION_ORIGIN, previewOrigin: PREVIEW_ORIGIN, artifactDigest: inv.artifactIdentity, fileCount: inv.files.length, totalBytes: inv.files.reduce((n, x) => n + x.bytes, 0), identityMethod: 'SHA-256 over UTF-8 records sorted by path: path NUL byte-length NUL file-SHA-256 LF', runtimeConfig: { path: RUNTIME_CONFIG_PATH, bytes: runtimeRecord.bytes, sha256: runtimeRecord.sha256, classification: 'OWNER_OVERLAY_COMPOSED_BROWSER_PUBLIC_CONFIG', properties: configStatus }, packageAuthorities: { roadwayRuntimeManifestSha256: sha(roadwayBytes), authoritativeCountyGeometry: REMOTE_GEOMETRY }, files: inv.files };
+  const destination = reportFile ? path.resolve(reportFile) : path.join(path.dirname(output), 'production-release-report.json');
+  if (destination.startsWith(`${path.resolve(output)}${path.sep}`)) throw Error('RELEASE_REPORT_MUST_BE_OUTSIDE_UPLOAD_DIRECTORY');
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  fs.writeFileSync(destination, json(report));
+  return { ...inv, report, reportFile: destination };
+}
+
+export function verifyProduction({ output = path.join(ROOT, STAGE_DIR), reportFile } = {}) {
+  const destination = reportFile ? path.resolve(reportFile) : path.join(path.dirname(output), 'production-release-report.json');
+  const report = JSON.parse(fs.readFileSync(destination, 'utf8'));
+  const inv = inventoryDirectory(output);
+  if (report.candidateGitSha !== CANDIDATE_COMMIT || report.artifactDigest !== inv.artifactIdentity || report.fileCount !== inv.files.length || report.totalBytes !== inv.files.reduce((n, x) => n + x.bytes, 0) || JSON.stringify(report.files) !== JSON.stringify(inv.files)) throw Error('FINAL_ARTIFACT_MANIFEST_MISMATCH');
+  const status = verifyProductionContracts(output);
+  if (JSON.stringify(status) !== JSON.stringify(report.runtimeConfig.properties)) throw Error('REDACTED_CONFIG_STATUS_MISMATCH');
+  return report;
 }
 
 export function build(root = ROOT) {
@@ -122,4 +255,17 @@ export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT, options 
   }
 }
 export function verify(root = ROOT) { const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1831-')); try { const a = path.join(temp, 'a'); const b = path.join(temp, 'b'); writeReports(a, root); writeReports(b, root); for (const name of Object.keys(REPORTS)) { const x = fs.readFileSync(path.join(a, name)); if (!x.equals(fs.readFileSync(path.join(b, name))) || !x.equals(fs.readFileSync(path.join(root, REPORT_DIR, name)))) throw Error(`deterministic report drift: ${name}`); if (x.includes(13) || (x[0] === 0xef && x[1] === 0xbb && x[2] === 0xbf)) throw Error(`non-canonical encoding: ${name}`); } return true; } finally { fs.rmSync(temp, { recursive: true, force: true }); } }
-if (process.argv[1] === fileURLToPath(import.meta.url)) { const mode = process.argv[2] || 'build'; const outputFlag = process.argv.indexOf('--output'); const output = outputFlag < 0 ? undefined : path.resolve(process.argv[outputFlag + 1]); if (outputFlag >= 0 && !process.argv[outputFlag + 1]) throw Error('--output requires a directory'); if (mode === 'build') writeReports(output); else if (mode === 'stage') stage(output); else if (mode === 'verify') verify(); else throw Error(`unknown mode: ${mode}`); console.log(`LP183.1 ${mode} PASS; no Cloudflare command executed.`); }
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const mode = process.argv[2] || 'build';
+  const flag = name => { const at = process.argv.indexOf(name); if (at < 0) return undefined; if (!process.argv[at + 1] || process.argv[at + 1].startsWith('--')) throw Error(`${name} requires a value`); return path.resolve(process.argv[at + 1]); };
+  const output = flag('--output'), runtimeConfigFile = flag('--runtime-config-file'), reportFile = flag('--report-file');
+  let result;
+  if (mode === 'build') result = writeReports(output);
+  else if (mode === 'stage') result = stage(output);
+  else if (mode === 'stage-production') result = stageProduction({ output, runtimeConfigFile, reportFile });
+  else if (mode === 'verify-production') result = verifyProduction({ output, reportFile });
+  else if (mode === 'verify') result = verify();
+  else throw Error(`unknown mode: ${mode}`);
+  const safe = mode.includes('production') ? ` candidate=${result.candidateGitSha || result.report.candidateGitSha} files=${result.fileCount || result.report.fileCount} bytes=${result.totalBytes || result.report.totalBytes} digest=${result.artifactDigest || result.report.artifactDigest}` : '';
+  console.log(`LP183.1 ${mode} PASS; no Cloudflare command executed.${safe}`);
+}

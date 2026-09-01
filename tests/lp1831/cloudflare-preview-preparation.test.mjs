@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { ROOT, build, inventory, isIncluded, stage, verify } from '../../tools/lp1831/prepare-cloudflare-preview-artifact.mjs';
+import crypto from 'node:crypto';
+import { ROOT, RUNTIME_CONFIG_PATH, build, composeProductionRuntimeConfig, inventory, inventoryDirectory, isIncluded, stage, stageProduction, verify, verifyProduction } from '../../tools/lp1831/prepare-cloudflare-preview-artifact.mjs';
 import { canonicalBlob, crlfMaterialization } from '../../tools/lp18321/git-asset-identity.mjs';
 
 test('includes the required browser shell and excludes repository-only paths', () => {
@@ -67,4 +68,57 @@ test('reports are fail-closed, secret-safe, and only plan Cloudflare commands', 
   assert.ok(made.commands.sequence.every(x => x.executeNow === false && x.command.startsWith('npx --yes wrangler')));
   const emitted = JSON.stringify(made);
   assert.doesNotMatch(emitted, /BEGIN [A-Z ]*PRIVATE KEY|bearer\s+[A-Za-z0-9._-]{16,}|(?:api|private|secret)[_-]?(?:key|token)\s*[:=]\s*["'][^<]/i);
+});
+
+const canonicalRuntime = () => canonicalBlob(ROOT, RUNTIME_CONFIG_PATH);
+const overlay = (arcgis = 'test-arcgis-public-key', driveTexas = 'test-drivetexas-public-key') => Buffer.from(JSON.stringify({ arcgisStaticBasemapApiKey: arcgis, driveTexas: { apiKey: driveTexas } }));
+const evaluate = bytes => { const window = {}; Function('window', bytes.toString('utf8'))(window); return window; };
+
+test('production composition fails closed for missing, malformed, incomplete, and unknown overlays', () => {
+  assert.throws(() => stageProduction(), /PRODUCTION_RUNTIME_CONFIG_FILE_REQUIRED/);
+  assert.throws(() => composeProductionRuntimeConfig(canonicalRuntime(), Buffer.from('{')), /MALFORMED/);
+  assert.throws(() => composeProductionRuntimeConfig(canonicalRuntime(), Buffer.from('{}')), /PROPERTIES_DISALLOWED/);
+  assert.throws(() => composeProductionRuntimeConfig(canonicalRuntime(), Buffer.from(JSON.stringify({ arcgisStaticBasemapApiKey: 'x', driveTexas: { apiKey: 'y' }, surprise: true }))), /PROPERTIES_DISALLOWED/);
+});
+
+test('production overlay is additive and preserves governed runtime and DriveTexas contracts', () => {
+  const before = evaluate(canonicalRuntime()).GRIDLY_RUNTIME_CONFIG;
+  const afterWindow = evaluate(composeProductionRuntimeConfig(canonicalRuntime(), overlay()));
+  const after = afterWindow.GRIDLY_RUNTIME_CONFIG;
+  assert.equal(after.arcgisStaticBasemapApiKey, 'test-arcgis-public-key');
+  assert.equal(after.poiBrowserProvider.enabled, 'ENABLED');
+  assert.deepEqual(after.authoritativeCountyGeometry, before.authoritativeCountyGeometry);
+  for (const key of Object.keys(before)) if (key !== 'arcgisStaticBasemapApiKey') assert.deepEqual(after[key], before[key]);
+  assert.equal(afterWindow.GRIDLY_CONFIG.driveTexas.apiKey, 'test-drivetexas-public-key');
+  const provider = fs.readFileSync(path.join(ROOT, 'js/gridlyDriveTexasProvider.js'), 'utf8');
+  assert.match(provider, /GRIDLY_CONFIG\.driveTexas/);
+  assert.match(provider, /GRIDLY_CONFIG\.txdot/);
+  assert.match(provider, /GRIDLY_TXDOT_API_KEY/);
+});
+
+test('production staging attests final composed bytes, excludes local/input files, is deterministic, and redacts values', () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1831-production-'));
+  try {
+    const inputA = path.join(temp, 'owner-a.json'), inputB = path.join(temp, 'owner-b.json');
+    fs.writeFileSync(inputA, overlay('arcgis-alpha', 'drive-alpha'));
+    fs.writeFileSync(inputB, overlay('arcgis-beta', 'drive-beta'));
+    const aOutput = path.join(temp, 'a'), repeatOutput = path.join(temp, 'repeat'), bOutput = path.join(temp, 'b');
+    const a = stageProduction({ output: aOutput, runtimeConfigFile: inputA, reportFile: path.join(temp, 'a-report.json') });
+    const repeat = stageProduction({ output: repeatOutput, runtimeConfigFile: inputA, reportFile: path.join(temp, 'repeat-report.json') });
+    const b = stageProduction({ output: bOutput, runtimeConfigFile: inputB, reportFile: path.join(temp, 'b-report.json') });
+    const actualRuntime = fs.readFileSync(path.join(aOutput, RUNTIME_CONFIG_PATH));
+    assert.equal(a.report.runtimeConfig.sha256, crypto.createHash('sha256').update(actualRuntime).digest('hex'));
+    assert.equal(a.artifactIdentity, repeat.artifactIdentity);
+    assert.deepEqual(a.files, repeat.files);
+    assert.notEqual(a.report.runtimeConfig.sha256, b.report.runtimeConfig.sha256);
+    assert.notEqual(a.artifactIdentity, b.artifactIdentity);
+    for (const output of [aOutput, repeatOutput, bOutput]) {
+      assert.equal(fs.existsSync(path.join(output, 'js/gridly.local.js')), false);
+      assert.equal(fs.existsSync(path.join(output, path.basename(inputA))), false);
+      assert.ok(inventoryDirectory(output).files.every(file => !/(^|\/)tests\//.test(file.path)));
+    }
+    const reportText = fs.readFileSync(path.join(temp, 'a-report.json'), 'utf8');
+    assert.doesNotMatch(reportText, /arcgis-alpha|drive-alpha/);
+    assert.equal(verifyProduction({ output: aOutput, reportFile: path.join(temp, 'a-report.json') }).artifactDigest, a.artifactIdentity);
+  } finally { fs.rmSync(temp, { recursive: true, force: true }); }
 });
