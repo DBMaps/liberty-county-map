@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, readFileSync, mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -8,6 +8,14 @@ import { createHash } from 'node:crypto';
 
 const text = (path) => readFileSync(path, 'utf8');
 const config = JSON.parse(text('capacitor.config.json'));
+
+const sourceFilesNamed = (root, names) => readdirSync(root, { withFileTypes: true })
+  .flatMap((entry) => {
+    const entryPath = join(root, entry.name);
+    return entry.isDirectory()
+      ? sourceFilesNamed(entryPath, names)
+      : names.has(entry.name) ? [entryPath.replaceAll('\\', '/')] : [];
+  });
 
 test('Android launcher MainActivity is compiled from the production package', () => {
   const activityPath = 'android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt';
@@ -18,12 +26,12 @@ test('Android launcher MainActivity is compiled from the production package', ()
   assert.match(activity, /^class MainActivity\s*:\s*BridgeActivity\(\)$/m);
   assert.match(activity, /^import com\.getcapacitor\.BridgeActivity$/m);
 
-  const staleActivities = execFileSync(
-    'find',
-    ['android/app/src', '-type', 'f', '(', '-name', 'MainActivity.kt', '-o', '-name', 'MainActivity.java', ')'],
-    { encoding: 'utf8' }
-  ).trim().split('\n').filter(Boolean).filter((path) => path !== activityPath);
-  assert.deepEqual(staleActivities, []);
+  const activitySources = sourceFilesNamed(
+    'android/app/src',
+    new Set(['MainActivity.kt', 'MainActivity.java'])
+  );
+  assert.deepEqual(activitySources, [activityPath]);
+  assert.equal(activitySources.some((path) => path.includes('/com/gridly/app/')), false);
 
   const manifest = text('android/app/src/main/AndroidManifest.xml');
   assert.match(manifest, /<activity\s+[\s\S]*?android:name="\.MainActivity"[\s\S]*?<action android:name="android\.intent\.action\.MAIN" \/>[\s\S]*?<category android:name="android\.intent\.category\.LAUNCHER" \/>[\s\S]*?<\/activity>/);
@@ -34,6 +42,15 @@ test('Android launcher MainActivity is compiled from the production package', ()
   assert.match(rootGradle, /^\s*id ['"]org\.jetbrains\.kotlin\.android['"] version ['"]2\.2\.0['"] apply false$/m);
   assert.match(appGradle, /^\s*namespace ['"]com\.gridlygo\.gridly['"]$/m);
   assert.match(appGradle, /^\s*applicationId ['"]com\.gridlygo\.gridly['"]$/m);
+});
+
+test('Android Java and Kotlin compilation deterministically target JVM 1.8', () => {
+  const gradle = text('android/app/build.gradle');
+  assert.match(gradle, /^import org\.jetbrains\.kotlin\.gradle\.dsl\.JvmTarget$/m);
+  assert.match(gradle, /^\s*sourceCompatibility JavaVersion\.VERSION_1_8$/m);
+  assert.match(gradle, /^\s*targetCompatibility JavaVersion\.VERSION_1_8$/m);
+  assert.match(gradle, /^\s*jvmTarget = JvmTarget\.JVM_1_8$/m);
+  assert.doesNotMatch(gradle, /JvmTarget\.JVM_(?:24|25)|JavaVersion\.VERSION_(?:24|25)/);
 });
 
 test('Android project explicitly enables AndroidX without unnecessary Jetifier', () => {
