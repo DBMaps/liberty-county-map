@@ -12,7 +12,7 @@ test("LP243.I1H1 exposes one temporary owner and one last-result owner", () => {
   assert.ok(start > 0 && end > start);
   assert.equal((app.match(/window\.gridlyLP243I1H1HistoryPerformanceAudit =/g) || []).length, 1);
   assert.equal((app.match(/window\.gridlyLP243I1H1HistoryPerformanceAuditLastResult = null/g) || []).length, 1);
-  assert.match(html, /js\/app\.js\?v=243i1h1-owner-state-history-performance-diagnostic&amp;lp243j1=startup-readiness-handshake/);
+  assert.match(html, /js\/app\.js\?v=243i1h2-buildfinding-hotspot-attribution&amp;lp243j1=startup-readiness-handshake/);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition&amp;lp243j=presentation-ownership-containment/);
 });
 

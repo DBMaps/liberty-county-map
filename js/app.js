@@ -68898,45 +68898,72 @@ function gridlyHistoricalIntelligenceFindingFamily(finding = {}) {
   return "road_hazard";
 }
 
+// LP243.I1H2 TEMPORARY DIAGNOSTIC SESSION. Null during ordinary History use.
+// Each timed section below is exclusive; helper internals are described
+// separately by the focused owner so nested work is never double-counted.
+let gridlyLP243I1H2BuildFindingDiagnosticSession = null;
+
+function gridlyLP243I1H2Category(category = "") {
+  return ({
+    most_blocked_crossing: "crossing",
+    recurring_flooding_location: "flood",
+    repeat_construction_zone: "construction",
+    recurring_hazard: "hazard",
+    high_delay_corridor: "duration",
+    community_confirmed_hotspot: "confirmed"
+  })[String(category || "")] || "unknown/internal";
+}
+
 function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationLabel = "", hazardLabel = "", baseScore = 0 } = {}) {
+  const diagnosticSession = gridlyLP243I1H2BuildFindingDiagnosticSession;
+  const callTiming = diagnosticSession?.beginCall(gridlyLP243I1H2Category(category), Array.isArray(records) ? records.length : 0) || null;
+  const timed = (stage, operation, recordsProcessed = 0) => diagnosticSession
+    ? diagnosticSession.measure(callTiming, stage, recordsProcessed, operation)
+    : operation();
   const usableRecords = Array.isArray(records) ? records : [];
   const count = usableRecords.length;
-  const averageDurationMinutes = gridlyHistoricalIntelligenceAverageDuration(usableRecords);
-  const confirmationCount = usableRecords.reduce((sum, record) => sum + gridlyHistoricalIntelligenceConfirmationCount(record), 0);
-  const durationScore = averageDurationMinutes ? Math.min(35, Math.round(averageDurationMinutes / 3)) : 0;
-  const confirmationScore = Math.min(40, confirmationCount * 4);
-  const significanceScore = Math.round(baseScore + count * 25 + durationScore + confirmationScore + gridlyHistoricalIntelligenceRecencyBoost(usableRecords));
-  const normalizedRoadName = gridlyHistoricalIntelligenceNormalizeLocationToken(gridlyHistoricalAuditRoad(usableRecords[0] || {}) || locationLabel);
-  const referenceRoad = usableRecords.map((record) => gridlyHistoricalIntelligenceReferenceRoad(record)).find(Boolean) || "";
-  const normalizedReferenceRoad = gridlyHistoricalIntelligenceNormalizeLocationToken(referenceRoad);
-  const normalizedLocationLabel = gridlyHistoricalIntelligenceNormalizeLocationToken(locationLabel);
-  const sourceRecordIds = usableRecords.map((record, index) => gridlyHistoricalIntelligenceRecordId(record, index)).filter(Boolean);
-  const peakWindowLabel = gridlyHistoricalIntelligencePeakWindowLabel(usableRecords);
-  const communityMemberEstimate = gridlyHistoricalIntelligenceCommunityMemberEstimate(usableRecords);
-  const displayHazardLabel = safeDisplayText(hazardLabel, "")
+  const averageDurationMinutes = timed("duration_derivation", () => gridlyHistoricalIntelligenceAverageDuration(usableRecords), count);
+  const confirmationCount = timed("confirmation_count_scan", () => usableRecords.reduce((sum, record) => sum + gridlyHistoricalIntelligenceConfirmationCount(record), 0), count);
+  const scores = timed("confidence_support_and_recency", () => {
+    const durationScore = averageDurationMinutes ? Math.min(35, Math.round(averageDurationMinutes / 3)) : 0;
+    const confirmationScore = Math.min(40, confirmationCount * 4);
+    return { significanceScore: Math.round(baseScore + count * 25 + durationScore + confirmationScore + gridlyHistoricalIntelligenceRecencyBoost(usableRecords)) };
+  }, count);
+  const normalizedRoadName = timed("road_extraction_and_normalization", () => gridlyHistoricalIntelligenceNormalizeLocationToken(gridlyHistoricalAuditRoad(usableRecords[0] || {}) || locationLabel), Math.min(1, count));
+  const referenceRoad = timed("reference_road_scan", () => usableRecords.map((record) => gridlyHistoricalIntelligenceReferenceRoad(record)).find(Boolean) || "", count);
+  const normalizedReferenceRoad = timed("reference_road_normalization", () => gridlyHistoricalIntelligenceNormalizeLocationToken(referenceRoad));
+  const normalizedLocationLabel = timed("location_label_normalization", () => gridlyHistoricalIntelligenceNormalizeLocationToken(locationLabel));
+  const sourceRecordIds = timed("record_id_mapping_and_filter", () => usableRecords.map((record, index) => gridlyHistoricalIntelligenceRecordId(record, index)).filter(Boolean), count);
+  const peakWindowLabel = timed("peak_window_timestamp_derivation", () => gridlyHistoricalIntelligencePeakWindowLabel(usableRecords), count);
+  const communityMemberEstimate = timed("community_context_resolution", () => gridlyHistoricalIntelligenceCommunityMemberEstimate(usableRecords), count);
+  const displayHazardLabel = timed("hazard_label_scan", () => safeDisplayText(hazardLabel, "")
     || usableRecords.map((record) => gridlyHistoricalIntelligenceHazardLabel(record)).find(Boolean)
-    || "";
-  const genericClearedHazard = category === "recurring_hazard" && !displayHazardLabel && gridlyHistoricalIntelligenceRecordsContainClearedGenericHazard(usableRecords);
-  const genericRoadIssue = category === "recurring_hazard" && !displayHazardLabel;
-  const presentationTitle = category === "recurring_hazard"
+    || "", count);
+  const genericClearedHazard = timed("cleared_generic_hazard_scan", () => category === "recurring_hazard" && !displayHazardLabel && gridlyHistoricalIntelligenceRecordsContainClearedGenericHazard(usableRecords), count);
+  const presentation = timed("presentation_metadata_resolution", () => {
+    const genericRoadIssue = category === "recurring_hazard" && !displayHazardLabel;
+    const presentationTitle = category === "recurring_hazard"
     ? (displayHazardLabel ? gridlyHistoricalIntelligenceHazardPatternTitle(displayHazardLabel) : (genericClearedHazard ? "Recurring road issue previously cleared" : "Recurring Road Issue"))
     : getGridlyIntelligencePreviewLanguage(category).title;
-  const presentationCategoryLabel = category === "recurring_hazard" ? "Road pattern" : getGridlyIntelligencePreviewLanguage(category).category;
-  const explicitLocationContext = gridlyHistoricalIntelligenceBestLocationContext({
+    const presentationCategoryLabel = category === "recurring_hazard" ? "Road pattern" : getGridlyIntelligencePreviewLanguage(category).category;
+    return { genericRoadIssue, presentationTitle, presentationCategoryLabel };
+  });
+  const explicitLocationContext = timed("location_specificity_and_authority_resolution", () => gridlyHistoricalIntelligenceBestLocationContext({
     presentationLocationLabel: safeDisplayText(locationLabel, ""),
     locationLabel: safeDisplayText(locationLabel, ""),
     referenceRoad,
     sourceRecords: usableRecords
-  });
-  const presentationLocationLabel = gridlyHistoricalIntelligenceFormatLocationLine(
+  }), count);
+  const presentationLocationLabel = timed("location_line_formatting", () => gridlyHistoricalIntelligenceFormatLocationLine(
     explicitLocationContext,
     category === "recurring_hazard" ? displayHazardLabel : ""
-  );
+  ));
   const lacksSpecificLocationContext = !explicitLocationContext || explicitLocationContext.specificity !== "specific";
-  return {
+  const latestAt = timed("latest_timestamp_repeated_resolution", () => gridlyHistoricalIntelligenceLatestTimestamp(usableRecords) ? new Date(gridlyHistoricalIntelligenceLatestTimestamp(usableRecords)).toISOString() : null, count * 2);
+  const finding = timed("finding_assembly_and_source_family", () => ({
     category,
-    title: presentationTitle,
-    categoryLabel: presentationCategoryLabel,
+    title: presentation.presentationTitle,
+    categoryLabel: presentation.presentationCategoryLabel,
     locationLabel: safeDisplayText(locationLabel, ""),
     nearbyLocationLabel: safeDisplayText(locationLabel, ""),
     presentationLocationLabel,
@@ -68945,15 +68972,15 @@ function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationL
     lacksSpecificLocationContext,
     sourceRecords: usableRecords,
     hazardLabel: displayHazardLabel,
-    genericRoadIssue,
+    genericRoadIssue: presentation.genericRoadIssue,
     genericClearedHazard,
     count,
     averageDurationMinutes,
     confirmationCount,
     communityMemberEstimate,
     peakWindowLabel,
-    latestAt: gridlyHistoricalIntelligenceLatestTimestamp(usableRecords) ? new Date(gridlyHistoricalIntelligenceLatestTimestamp(usableRecords)).toISOString() : null,
-    significanceScore,
+    latestAt,
+    significanceScore: scores.significanceScore,
     sourceRecordIds,
     normalizedRoadName,
     referenceRoad,
@@ -68961,7 +68988,9 @@ function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationL
     normalizedLocationLabel,
     groupingKey: [normalizedRoadName, normalizedReferenceRoad, normalizedLocationLabel, gridlyHistoricalIntelligenceFindingFamily({ category })].filter(Boolean).join("|"),
     source: "real_historical_records"
-  };
+  }));
+  diagnosticSession?.completeCall(callTiming);
+  return finding;
 }
 
 function gridlyHistoricalIntelligenceSharedRecordCount(a = {}, b = {}) {
@@ -70900,6 +70929,147 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   const primarySubject = sanitizeText(gridlyHistoricalIntelligenceRowLocationTitle(primaryFinding) || primaryFinding.locationLabel || 'Selected area');
   return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-gridly-history-primary-takeaway="true" data-gridly-history-quiet-state-used="true" data-gridly-history-all-takeaway-fields-share-finding="true" data-gridly-history-irrelevant-supporting-detail-detected="false"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${primarySubject}</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">What to know now</strong><p data-gridly-history-primary-takeaway-line="true">No strong historical pattern matches the current time for ${primarySubject}. Check current alerts for live conditions.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
 }
+
+// LP243.I1H2 TEMPORARY DIAGNOSTIC: one real builder invocation with focused,
+// privacy-bounded BuildFinding attribution. Remove with I1H1 before closure.
+async function gridlyLP243I1H2BuildFindingPerformanceAudit() {
+  const authority = "LP243.I1H2_BUILDFINDING_HOTSPOT_ATTRIBUTION";
+  const warning = "Gridly BuildFinding performance audit starting. The browser may block for approximately 25 seconds. Run this command exactly once.";
+  console.warn(warning);
+  const now = () => performance.now();
+  const round = (value) => Math.round(Number(value || 0) * 1000) / 1000;
+  const calls = [];
+  const stageTotals = new Map();
+  let builderCalls = 0;
+  let builderTotalMs = 0;
+  let outputLength = 0;
+  let builderError = null;
+  const previousSession = gridlyLP243I1H2BuildFindingDiagnosticSession;
+
+  const session = {
+    beginCall(category, groupSize) {
+      return { category, groupSize, started: now(), stages: [] };
+    },
+    measure(call, stage, recordsProcessed, operation) {
+      const started = now();
+      try { return operation(); }
+      finally {
+        const elapsed = now() - started;
+        call.stages.push({ stage, elapsed, recordsProcessed: Number(recordsProcessed || 0) });
+        const row = stageTotals.get(stage) || { stage, calls: 0, totalMs: 0, maxMs: 0, recordsProcessed: 0, groupSizes: [] };
+        row.calls += 1;
+        row.totalMs += elapsed;
+        row.maxMs = Math.max(row.maxMs, elapsed);
+        row.recordsProcessed += Number(recordsProcessed || 0);
+        row.groupSizes.push(call.groupSize);
+        stageTotals.set(stage, row);
+      }
+    },
+    completeCall(call) {
+      call.totalMs = now() - call.started;
+      calls.push(call);
+    }
+  };
+
+  try {
+    gridlyLP243I1H2BuildFindingDiagnosticSession = session;
+    const started = now();
+    builderCalls += 1;
+    try {
+      const html = Reflect.apply(buildGridlyHistoricalIntelligenceSheetHtml, window, []);
+      outputLength = typeof html === "string" ? html.length : 0;
+    } finally {
+      builderTotalMs = now() - started;
+    }
+  } catch (error) {
+    builderError = { name: String(error?.name || "Error"), message: String(error?.message || "BuildFinding audit failed") };
+  } finally {
+    // Restores the exact prior diagnostic state even when the real builder throws.
+    gridlyLP243I1H2BuildFindingDiagnosticSession = previousSession;
+  }
+
+  const internalExclusiveStages = Array.from(stageTotals.values()).map((row) => ({
+    stage: row.stage,
+    calls: row.calls,
+    totalMs: round(row.totalMs),
+    maxMs: round(row.maxMs),
+    averageMs: round(row.calls ? row.totalMs / row.calls : 0),
+    recordsProcessed: row.recordsProcessed,
+    minGroupSize: row.groupSizes.length ? Math.min(...row.groupSizes) : 0,
+    maxGroupSize: row.groupSizes.length ? Math.max(...row.groupSizes) : 0,
+    averageGroupSize: round(row.groupSizes.length ? row.groupSizes.reduce((sum, size) => sum + size, 0) / row.groupSizes.length : 0)
+  })).sort((a, b) => b.totalMs - a.totalMs);
+  const buildFindingAggregateMs = calls.reduce((sum, call) => sum + call.totalMs, 0);
+  const exclusiveInternalStageTotalMs = internalExclusiveStages.reduce((sum, row) => sum + row.totalMs, 0);
+  const residualMs = Math.max(0, buildFindingAggregateMs - exclusiveInternalStageTotalMs);
+  const categories = new Map();
+  calls.forEach((call) => {
+    const row = categories.get(call.category) || { category: call.category, calls: 0, totalBuildFindingMs: 0, maxBuildFindingMs: 0, recordsProcessedTotal: 0, maxGroupSize: 0 };
+    row.calls += 1;
+    row.totalBuildFindingMs += call.totalMs;
+    row.maxBuildFindingMs = Math.max(row.maxBuildFindingMs, call.totalMs);
+    row.recordsProcessedTotal += call.groupSize;
+    row.maxGroupSize = Math.max(row.maxGroupSize, call.groupSize);
+    categories.set(call.category, row);
+  });
+  const categoryCorrelation = Array.from(categories.values()).map((row) => ({
+    ...row,
+    totalBuildFindingMs: round(row.totalBuildFindingMs),
+    maxBuildFindingMs: round(row.maxBuildFindingMs),
+    averageBuildFindingMs: round(row.calls ? row.totalBuildFindingMs / row.calls : 0)
+  })).sort((a, b) => b.totalBuildFindingMs - a.totalBuildFindingMs);
+  const slowestCalls = calls.map((call) => {
+    const dominant = call.stages.reduce((best, stage) => !best || stage.elapsed > best.elapsed ? stage : best, null);
+    return { category: call.category, groupSize: call.groupSize, totalMs: round(call.totalMs), dominantStage: dominant?.stage || "uninstrumented_residual", dominantStageMs: round(dominant?.elapsed || 0) };
+  }).sort((a, b) => b.totalMs - a.totalMs).slice(0, 10);
+  const result = {
+    authority,
+    warning,
+    total: { builderCalls, builderTotalMs: round(builderTotalMs), outputLength, error: builderError },
+    buildFinding: {
+      calls: calls.length,
+      buildFindingAggregateMs: round(buildFindingAggregateMs),
+      exclusiveInternalStageTotalMs: round(exclusiveInternalStageTotalMs),
+      residualMs: round(residualMs),
+      accountedPercent: round(buildFindingAggregateMs ? exclusiveInternalStageTotalMs / buildFindingAggregateMs * 100 : 0)
+    },
+    internalExclusiveStages,
+    nestedHelpers: [
+      { stage: "duration_derivation", helper: "gridlyHistoricalIntelligenceAverageDuration", fullGroupScan: true, effectiveComplexity: "O(F × G)" },
+      { stage: "confidence_support_and_recency", helper: "gridlyHistoricalIntelligenceRecencyBoost → gridlyHistoricalIntelligenceLatestTimestamp", fullGroupScan: true, effectiveComplexity: "O(F × G)" },
+      { stage: "record_id_mapping_and_filter", helper: "gridlyHistoricalIntelligenceRecordId (fallback invokes timestamp, hazard, road, crossing, reference resolvers)", fullGroupScan: true, effectiveComplexity: "O(F × G)" },
+      { stage: "peak_window_timestamp_derivation", helper: "gridlyHistoricalIntelligencePeakWindowLabel", fullGroupScan: true, effectiveComplexity: "O(F × G)" },
+      { stage: "community_context_resolution", helper: "gridlyHistoricalIntelligenceCommunityMemberEstimate", fullGroupScan: true, effectiveComplexity: "O(F × G)" },
+      { stage: "location_specificity_and_authority_resolution", helper: "gridlyHistoricalIntelligenceBestLocationContext → most-common source candidates/path lookup/identity normalization", fullGroupScan: true, mayRescanGroupOnMiss: true, effectiveComplexity: "O(F × G) with fixed path catalogs; candidate sort is O(C log C)" },
+      { stage: "latest_timestamp_repeated_resolution", helper: "gridlyHistoricalIntelligenceLatestTimestamp", callsPerFinding: 2, unchangedInputs: true, fullGroupScan: true, effectiveComplexity: "O(2 × F × G)" }
+    ],
+    repeatedWorkAudit: {
+      sameRecordsArrayScannedByStages: ["duration_derivation", "confirmation_count_scan", "confidence_support_and_recency", "reference_road_scan", "record_id_mapping_and_filter", "peak_window_timestamp_derivation", "community_context_resolution", "hazard_label_scan", "cleared_generic_hazard_scan", "location_specificity_and_authority_resolution", "latest_timestamp_repeated_resolution"],
+      latestTimestampCallsPerFinding: 3,
+      finalLatestTimestampCallsWithUnchangedInputsPerFinding: 2,
+      earliestStartTimestampCalculationPresent: false,
+      sourceFamilyDerivationsPerFinding: 1,
+      locationResolverMayScanGroupTwiceOnMiss: true,
+      externalRuntimeCollectionScanDetected: false
+    },
+    categoryCorrelation,
+    slowestCalls,
+    privacy: { timingsCountsCategoriesAndGroupSizesOnly: true, recordContentReturned: false, recordIdsReturned: false, locationsReturned: false, rawHistoryReturned: false },
+    accounting: { exclusiveStagesNonOverlapping: true, nestedHelpersExcludedFromAccountedPercent: true },
+    wrappersRestored: gridlyLP243I1H2BuildFindingDiagnosticSession === previousSession,
+    optimizationPerformed: false
+  };
+  window.gridlyLP243I1H2BuildFindingPerformanceAuditLastResult = result;
+  console.log("=== LP243.I1H2 BUILDFINDING HOTSPOT ATTRIBUTION ===");
+  console.table(internalExclusiveStages);
+  console.table(categoryCorrelation);
+  console.table(slowestCalls);
+  console.log(result);
+  return result;
+}
+
+window.gridlyLP243I1H2BuildFindingPerformanceAudit = gridlyLP243I1H2BuildFindingPerformanceAudit;
+window.gridlyLP243I1H2BuildFindingPerformanceAuditLastResult = null;
 
 // LP243.I1H1 TEMPORARY DIAGNOSTIC: owner-state timing only. Remove or
 // explicitly retire this owner before launch closure; it changes no History
