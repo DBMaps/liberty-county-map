@@ -59,6 +59,6 @@ test("Gridly overlays, controls, geometry, and protected surfaces remain governe
 
 test("closure retains CSS and geometry while the authorized Esri provider identity advances", () => {
   assert.doesNotMatch(initMap, /MapLibre|OpenFreeMap|mapbox|google/i);
-  assert.match(html, /css\/styles\.css\?v=243i23-compact-map-attribution/);
+  assert.match(html, /css\/styles\.css\?v=243i23r1-portrait-attribution-clearance/);
   assert.match(html, /js\/app\.js\?v=243i23-compact-map-attribution/);
 });
