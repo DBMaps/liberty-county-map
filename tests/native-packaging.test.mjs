@@ -9,6 +9,12 @@ import { createHash } from 'node:crypto';
 const text = (path) => readFileSync(path, 'utf8');
 const config = JSON.parse(text('capacitor.config.json'));
 
+test('Android project explicitly enables AndroidX without unnecessary Jetifier', () => {
+  const properties = text('android/gradle.properties');
+  assert.match(properties, /^android\.useAndroidX=true$/m);
+  assert.doesNotMatch(properties, /^android\.enableJetifier\s*=/m);
+});
+
 test('permanent native identity and bundled web contract are aligned', () => {
   assert.equal(config.appId, 'com.gridlygo.gridly');
   assert.equal(config.appName, 'Gridly');
