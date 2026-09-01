@@ -42,7 +42,7 @@ test("shared action selects only the existing V2 or tactical presentation", () =
 test("mounted tactical owner uses the same action and retains its picker behavior", () => {
   assert.match(tacticalBinding, /openGridlyLayersSurface\(\{/);
   assert.match(tacticalBinding, /isTacticalLandscapeDockMode\(\) \? "tactical" : "v2"/);
-  assert.match(sharedAction, /\["Standard", "Dark", "Satellite"\]/);
+  assert.match(sharedAction, /\["Standard", "Satellite"\]/);
   assert.match(sharedAction, /applyMapStyle\(btn\.dataset\.layerName \|\| "Satellite"\)/);
   assert.match(sharedAction, /closeTacticalDockSheet\(\)/);
 });
@@ -56,12 +56,12 @@ test("existing V2 selection router and basemap authority remain in place", () =>
   assert.match(app, /currentMapStyle/);
   assert.match(app, /gridlyMapStyleV1/);
   assert.match(app, /baselayerchange/);
-  assert.match(app, /data-v2-action="layers-select" data-layer-name="Standard"[\s\S]*?data-layer-name="Dark"[\s\S]*?data-layer-name="Satellite"/);
+  assert.match(app, /data-v2-action="layers-select" data-layer-name="Standard"[\s\S]*?data-layer-name="Satellite"/);
 });
 
 test("I2.1 changes no styles, geometry, or unrelated presentation contracts", () => {
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243i21-presentation-neutral-layers-opening-authority/);
+  assert.match(html, /js\/app\.js\?v=243i21d2-remove-dark-basemap/);
   assert.doesNotMatch(sharedAction + bindV2 + tacticalBinding, /featureLayer|KBYG|fetch\(|localStorage|sessionStorage/);
   assert.match(css, /LP243\.H/);
   assert.match(app, /acceptedShortLandscapeApplicationOwner/);
