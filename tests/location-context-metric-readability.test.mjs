@@ -11,15 +11,15 @@ const line = (activeIssueCount, reportCount = 0, crossingsWatchedCount = 0) =>
 
 test('collapsed Dallas card presents actionable state without inventory metrics', () => {
   assert.deepEqual(line(16, 17, 209), {
-    activeIssuesLine: '16 active issues nearby',
+    activeIssuesLine: '16 roadway issues nearby',
     secondaryMetricsLine: ''
   });
 });
 
 test('quiet, singular, and plural active-condition grammar is truthful', () => {
   assert.equal(line(0).activeIssuesLine, 'No active issues nearby');
-  assert.equal(line(1).activeIssuesLine, '1 active issue nearby');
-  assert.equal(line(2).activeIssuesLine, '2 active issues nearby');
+  assert.equal(line(1).activeIssuesLine, '1 roadway issue nearby');
+  assert.equal(line(2).activeIssuesLine, '2 roadway issues nearby');
 });
 
 test('shared collapsed renderer suppresses duplicate title, status, and inventory row', () => {
