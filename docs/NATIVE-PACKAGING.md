@@ -15,6 +15,11 @@ Run `npm run build:native-web`, `npm run verify:native-web`, and `npm run build:
 
 ## Android (Windows or other Android development host)
 
+The packaged Android app has a minimum SDK of API 24, as declared by the app
+module. This is the minimum supported by Capacitor Android 8.3.4. API 23
+devices are therefore no longer installable; the compile SDK and target SDK
+remain API 36.
+
 ```powershell
 npm ci
 npm run build:native-web
