@@ -2,6 +2,5 @@
 	"appId": "com.gridlygo.gridly",
 	"appName": "Gridly",
 	"webDir": "www",
-	"bundledWebRuntime": false,
-	"packageClassList": []
+	"bundledWebRuntime": false
 }

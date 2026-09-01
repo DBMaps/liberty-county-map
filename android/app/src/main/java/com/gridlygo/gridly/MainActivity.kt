@@ -1,4 +1,4 @@
-package com.gridly.app
+package com.gridlygo.gridly
 
 import com.getcapacitor.BridgeActivity
 

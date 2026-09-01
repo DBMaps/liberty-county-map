@@ -44,21 +44,11 @@ jobs:
           mkdir -p android/gradle/wrapper
           cp "$tmpdir/gradle/wrapper/gradle-wrapper.jar" android/gradle/wrapper/gradle-wrapper.jar
 
-      - name: Create CI webDir and mirror Android public assets
-        run: |
-          rm -rf www android/app/src/main/assets/public
-          mkdir -p www android/app/src/main/assets/public
+      - name: Build and verify deterministic native web bundle
+        run: npm run build:native-web && npm run verify:native-web
 
-          cp index.html manifest.json service-worker.js www/
-          cp -R css js assets data poi www/
-
-          cp -R www/. android/app/src/main/assets/public/
-
-          test -f www/index.html
-          test -f www/poi/lp24111-d5-standalone-2026-08-28/runtime-v2/manifest.json
-          test "$(find www/poi/lp24111-d5-standalone-2026-08-28/runtime-v2 -name '*.json.gz' | wc -l)" -eq 86
-          test -f www/poi/lp24111-d5-standalone-2026-08-28/legal/foursquare/NOTICE.txt
-          test -f android/app/src/main/assets/public/index.html
+      - name: Generate deterministic native raster assets
+        run: npm run build:native-assets
 
       - name: Run Capacitor doctor
         run: |
@@ -88,6 +78,9 @@ jobs:
 
       - name: Sync Android Capacitor project
         run: npx cap sync android
+
+      - name: Test native packaging contracts
+        run: npm run test:native-packaging
 
       - name: Check app JavaScript syntax
         run: node --check js/app.js
@@ -132,14 +125,20 @@ jobs:
               throw new Error(`${file} must use Gridly's dedicated Capacitor webDir: www`);
             }
 
+            if (config.appId !== 'com.gridlygo.gridly' || config.appName !== 'Gridly') {
+              throw new Error(`${file} does not use Gridly's permanent native identity.`);
+            }
+
             if (!fs.existsSync(path.join(config.webDir, 'index.html'))) {
               throw new Error(`${config.webDir}/index.html must exist before Capacitor validation.`);
             }
           }
 
-          const rootConfig = JSON.stringify(configs[0].config);
+          const identity = ({ appId, appName, webDir, bundledWebRuntime }) =>
+            JSON.stringify({ appId, appName, webDir, bundledWebRuntime });
+          const rootConfig = identity(configs[0].config);
           for (const { file, config } of configs.slice(1)) {
-            if (JSON.stringify(config) !== rootConfig) {
+            if (identity(config) !== rootConfig) {
               throw new Error(`${file} does not match capacitor.config.json`);
             }
           }
