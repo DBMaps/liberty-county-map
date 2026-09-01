@@ -70901,6 +70901,218 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-gridly-history-primary-takeaway="true" data-gridly-history-quiet-state-used="true" data-gridly-history-all-takeaway-fields-share-finding="true" data-gridly-history-irrelevant-supporting-detail-detected="false"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${primarySubject}</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">What to know now</strong><p data-gridly-history-primary-takeaway-line="true">No strong historical pattern matches the current time for ${primarySubject}. Check current alerts for live conditions.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
 }
 
+// LP243.I1H1 TEMPORARY DIAGNOSTIC: owner-state timing only. Remove or
+// explicitly retire this owner before launch closure; it changes no History
+// decisions, data, presentation, or scheduling.
+async function gridlyLP243I1H1HistoryPerformanceAudit() {
+  const authority = "LP243.I1H1_OWNER_STATE_HISTORY_PERFORMANCE";
+  const warning = "Gridly History performance audit starting. The browser may be unresponsive for approximately 30 seconds. Do not click History again while it runs.";
+  console.warn(warning);
+
+  const now = () => performance.now();
+  const round = (value) => Math.round(Number(value || 0) * 1000) / 1000;
+  const startedAt = new Date().toISOString();
+  const nested = new Map();
+  const originals = [];
+  const breakdownSections = {};
+  const breakdownCounts = {};
+  const volumes = {
+    retainedCrossingCount: 0,
+    retainedHazardCount: 0,
+    retainedTotalCount: 0,
+    matchedCrossingCount: 0,
+    matchedHazardCount: 0,
+    rawFindingCount: 0,
+    deduplicatedFindingCount: 0,
+    consumerPatternCandidateCount: 0,
+    independentIncidentCount: 0,
+    localTimeFormatterCallCount: 0,
+    crossingCatalogCount: 0,
+    crossingCatalogInspectedCount: null
+  };
+  const storage = { key: GRIDLY_EVENT_HISTORY_STORAGE_KEY, payloadLengthChars: 0, getItemMs: 0, parseMs: 0, parseCalls: 0 };
+  const longTaskDurations = [];
+  let longTaskObserver = null;
+  let storageReadActive = false;
+  let builderTotalMs = 0;
+  let outputLength = 0;
+  let builderError = null;
+
+  const record = (name, elapsed, inputCount = null, outputCount = null) => {
+    const row = nested.get(name) || { function: name, calls: 0, totalMs: 0, maxMs: 0, inputCount: null, outputCount: null };
+    row.calls += 1;
+    row.totalMs += elapsed;
+    row.maxMs = Math.max(row.maxMs, elapsed);
+    if (Number.isFinite(inputCount)) row.inputCount = (Number(row.inputCount) || 0) + inputCount;
+    if (Number.isFinite(outputCount)) row.outputCount = (Number(row.outputCount) || 0) + outputCount;
+    nested.set(name, row);
+  };
+  const countOf = (value) => Array.isArray(value) ? value.length : null;
+  const wrap = (name, inspect = null) => {
+    const original = window[name];
+    if (typeof original !== "function") return;
+    const wrapped = function(...args) {
+      const start = now();
+      let result;
+      let thrown = true;
+      try {
+        result = Reflect.apply(original, this, args);
+        thrown = false;
+        return result;
+      } finally {
+        const elapsed = now() - start;
+        record(name, elapsed, countOf(args[0]), countOf(result));
+        if (!thrown && inspect) inspect(result, args);
+      }
+    };
+    originals.push(() => { window[name] = original; });
+    window[name] = wrapped;
+  };
+
+  try {
+    if (typeof PerformanceObserver === "function" && (PerformanceObserver.supportedEntryTypes || []).includes("longtask")) {
+      longTaskObserver = new PerformanceObserver((list) => list.getEntries().forEach((entry) => longTaskDurations.push(Number(entry.duration) || 0)));
+      longTaskObserver.observe({ type: "longtask", buffered: false });
+    }
+
+    wrap("gridlyLp0546ResolveSelectionContext");
+    wrap("gridlyLp0546ResolveCrossingRecord", (result) => {
+      volumes.crossingCatalogCount = Number(result?.crossingLookupRecordCount || 0);
+    });
+    wrap("gridlyHistoricalProtectedState");
+    wrap("gridlyLp0543BuildVisibleHistoricalPatternModel");
+    wrap("gridlyBuildHistoricalIntelligenceFindings", (result) => {
+      volumes.matchedCrossingCount = Number(result?.crossingEventCount || 0);
+      volumes.matchedHazardCount = Number(result?.hazardEventCount || 0);
+      volumes.rawFindingCount = Number(result?.rawFindingCount || 0);
+      volumes.deduplicatedFindingCount = Number(result?.dedupedFindingCount || 0);
+    });
+    wrap("gridlyReadHistoricalIntelligenceStorageSnapshot", (result) => {
+      const crossingCount = Array.isArray(result?.state?.crossingEvents) ? result.state.crossingEvents.length : 0;
+      const hazardCount = Array.isArray(result?.state?.hazardEvents) ? result.state.hazardEvents.length : 0;
+      volumes.retainedCrossingCount = crossingCount;
+      volumes.retainedHazardCount = hazardCount;
+      volumes.retainedTotalCount = crossingCount + hazardCount;
+    });
+    wrap("gridlyLp0545FilterHistoricalRecordsForContext", (result) => {
+      if (!Number.isFinite(result?.matched?.length)) return;
+      if (!nested.get("gridlyLp0545FilterHistoricalRecordsForContext") || nested.get("gridlyLp0545FilterHistoricalRecordsForContext").calls <= 1) volumes.matchedCrossingCount = result.matched.length;
+      else volumes.matchedHazardCount = result.matched.length;
+    });
+    wrap("gridlyLp0545RecordMatchesContext");
+    wrap("gridlyHistoricalIntelligenceBuildFinding");
+    wrap("gridlyDeduplicateHistoricalIntelligenceFindings");
+    wrap("gridlyLp0543BuildConsumerPatternFromFinding", () => { volumes.consumerPatternCandidateCount += 1; });
+    wrap("gridlyLp0543GroupIndependentIncidents", (result) => { volumes.independentIncidentCount += Array.isArray(result) ? result.length : 0; });
+    wrap("gridlyLp0543ConsumerLocalParts", () => { volumes.localTimeFormatterCallCount += 1; });
+
+    const storagePrototype = typeof Storage === "function" ? Storage.prototype : null;
+    if (storagePrototype && typeof storagePrototype.getItem === "function") {
+      const originalGetItem = storagePrototype.getItem;
+      originals.push(() => { storagePrototype.getItem = originalGetItem; });
+      storagePrototype.getItem = function(key) {
+        const start = now();
+        const value = Reflect.apply(originalGetItem, this, [key]);
+        if (storageReadActive && key === GRIDLY_EVENT_HISTORY_STORAGE_KEY) {
+          storage.getItemMs += now() - start;
+          storage.payloadLengthChars = String(value || "").length;
+        }
+        return value;
+      };
+    }
+    const originalParse = JSON.parse;
+    originals.push(() => { JSON.parse = originalParse; });
+    JSON.parse = function(...args) {
+      const start = now();
+      try { return Reflect.apply(originalParse, this, args); }
+      finally {
+        if (storageReadActive) {
+          storage.parseMs += now() - start;
+          storage.parseCalls += 1;
+        }
+      }
+    };
+
+    const originalStorageReader = window.gridlyReadHistoricalIntelligenceStorageSnapshot;
+    window.gridlyReadHistoricalIntelligenceStorageSnapshot = function(...args) {
+      storageReadActive = true;
+      try { return Reflect.apply(originalStorageReader, this, args); }
+      finally { storageReadActive = false; }
+    };
+
+    const builderStarted = now();
+    try {
+      const html = buildGridlyHistoricalIntelligenceSheetHtml({ breakdownSections, breakdownCounts });
+      outputLength = typeof html === "string" ? html.length : 0;
+    } finally {
+      builderTotalMs = now() - builderStarted;
+    }
+  } catch (error) {
+    builderError = { name: String(error?.name || "Error"), message: String(error?.message || "History performance audit failed") };
+  } finally {
+    while (originals.length) {
+      try { originals.pop()(); } catch (error) { console.error("LP243.I1H1 wrapper restoration failed", error); }
+    }
+  }
+
+  // Yield only after all wrappers are restored so the observer can deliver the
+  // supplemental long-task entry generated by the single synchronous builder.
+  if (longTaskObserver) {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    longTaskObserver.takeRecords().forEach((entry) => longTaskDurations.push(Number(entry.duration) || 0));
+    longTaskObserver.disconnect();
+  }
+
+  const nestedHotspots = Array.from(nested.values()).map((row) => ({
+    ...row,
+    totalMs: round(row.totalMs),
+    maxMs: round(row.maxMs),
+    averageMs: round(row.calls ? row.totalMs / row.calls : 0)
+  })).sort((a, b) => b.totalMs - a.totalMs);
+  const nestedByName = Object.fromEntries(nestedHotspots.map((row) => [row.function, row]));
+  const exclusiveNames = ["gridlyLp0546ResolveSelectionContext", "gridlyHistoricalProtectedState", "gridlyLp0543BuildVisibleHistoricalPatternModel"];
+  const exclusiveStages = exclusiveNames.map((stage) => ({
+    stage,
+    calls: Number(nestedByName[stage]?.calls || 0),
+    totalMs: Number(nestedByName[stage]?.totalMs || 0),
+    maxMs: Number(nestedByName[stage]?.maxMs || 0),
+    inputCount: nestedByName[stage]?.inputCount ?? null,
+    outputCount: nestedByName[stage]?.outputCount ?? null
+  }));
+  const directStageMs = exclusiveStages.reduce((sum, stage) => sum + stage.totalMs, 0);
+  const presentationResidualMs = Math.max(0, builderTotalMs - directStageMs);
+  exclusiveStages.push({ stage: "final_presentation_and_uninstrumented_builder_residual", calls: 1, totalMs: round(presentationResidualMs), maxMs: round(presentationResidualMs), inputCount: volumes.deduplicatedFindingCount, outputCount: outputLength });
+  const measuredStageTotalMs = exclusiveStages.reduce((sum, stage) => sum + Number(stage.totalMs || 0), 0);
+  const residualMs = Math.max(0, builderTotalMs - measuredStageTotalMs);
+  const result = {
+    authority,
+    startedAt,
+    completedAt: new Date().toISOString(),
+    warning,
+    total: { builderTotalMs: round(builderTotalMs), outputLength, builderCalls: 1, error: builderError },
+    exclusiveStages,
+    nestedHotspots,
+    findingPipelines: Object.entries(breakdownSections).map(([stage, totalMs]) => ({ stage, totalMs: round(totalMs) })),
+    breakdownCounts: { ...breakdownCounts },
+    volumes,
+    storage: { ...storage, getItemMs: round(storage.getItemMs), parseMs: round(storage.parseMs) },
+    longTasks: { supported: Boolean(longTaskObserver), count: longTaskDurations.length, totalMs: round(longTaskDurations.reduce((sum, value) => sum + value, 0)), maxMs: round(Math.max(0, ...longTaskDurations)) },
+    accounting: { measuredStageTotalMs: round(measuredStageTotalMs), residualMs: round(residualMs), accountedPercent: round(builderTotalMs ? measuredStageTotalMs / builderTotalMs * 100 : 0), nestedTimingsOverlapParents: true },
+    privacy: { timingsAndCountsOnly: true, retainedRecordBodiesReturned: false, rawStorageReturned: false },
+    wrappersRestored: true,
+    optimizationPerformed: false
+  };
+  window.gridlyLP243I1H1HistoryPerformanceAuditLastResult = result;
+  console.log("=== LP243.I1H1 OWNER-STATE HISTORY PERFORMANCE ===");
+  console.table(exclusiveStages);
+  console.table(nestedHotspots);
+  console.log(result);
+  return result;
+}
+
+window.gridlyLP243I1H1HistoryPerformanceAudit = gridlyLP243I1H1HistoryPerformanceAudit;
+window.gridlyLP243I1H1HistoryPerformanceAuditLastResult = null;
+
 function gridlyLp0552VisibleConsumerTextForLeakAudit(sheet = null, fallbackHtml = "") {
   if (sheet?.textContent != null) return safeDisplayText(sheet.textContent || "", "");
   return safeDisplayText(String(fallbackHtml || "").replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]*>/g, " "), "");
