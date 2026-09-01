@@ -65,7 +65,7 @@ test("disclosure, fail-open recovery, and rail clearance contracts remain", () =
 
 test("asset identity advances without feature or data authority changes", () => {
   assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21s2-esri-imagery-labels)/);
+  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21r1-location-context-roadway-wording)/);
   assert.doesNotMatch(h10i, /Supabase|DriveTexas|Leaflet|setView\(|zoomIn\(|zoomOut\(|provider|ranking/i);
   assert.doesNotMatch(app.slice(app.indexOf("// LP243.H10I"), app.indexOf("function gridlyLandscapeCommandDisclosureAudit")), /Supabase|DriveTexas|Leaflet|search|sheet/i);
 });

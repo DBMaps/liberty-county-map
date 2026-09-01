@@ -60,5 +60,5 @@ test("Gridly overlays, controls, geometry, and protected surfaces remain governe
 test("closure retains CSS and geometry while the authorized Esri provider identity advances", () => {
   assert.doesNotMatch(initMap, /MapLibre|OpenFreeMap|mapbox|google/i);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243i21s2-esri-imagery-labels/);
+  assert.match(html, /js\/app\.js\?v=243i21r1-location-context-roadway-wording/);
 });

@@ -80,6 +80,6 @@ test("close retains the mounted application and only clears sheet foreground sta
 });
 
 test("I1 changes no frozen presentation, Search, KBYG, disclosure, Layers, Leaflet, or data authority", () => {
-  assert.match(html, /js\/app\.js\?v=243i21s2-esri-imagery-labels/);
+  assert.match(html, /js\/app\.js\?v=243i21r1-location-context-roadway-wording/);
   assert.doesNotMatch(interactionGate + sheetOpen, /mobileDestinationCommandBtn|gridlySearchShell|gridlyBriefFoundationHandle|gridlyBriefInteractionPanel|gridlyLandscapeCommandToggle|layers|Leaflet|setView\(|fetch\(|localStorage|sessionStorage/);
 });

@@ -42395,7 +42395,7 @@ if (typeof window !== "undefined") window.gridlyCrossingWatchCountAudit = () => 
 function buildGridlyLocationContextMetricLines({ activeIssueCount = 0, reportCount = 0, crossingsWatchedCount = 0, crossingInventoryAvailable = true } = {}) {
   const active = Math.max(0, Number(activeIssueCount) || 0);
   return Object.freeze({
-    activeIssuesLine: active === 0 ? "No active issues nearby" : `${active} active issue${active === 1 ? "" : "s"} nearby`,
+    activeIssuesLine: active === 0 ? "No active issues nearby" : `${active} roadway issue${active === 1 ? "" : "s"} nearby`,
     secondaryMetricsLine: ""
   });
 }
@@ -42476,13 +42476,13 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const reportEvidenceSuffix = evidenceReportCount > activeIssueCount
     ? ` · ${evidenceReportCount} community reports`
     : "";
-  const activeCrossingsLine = `${activeIssueCount} active issue${activeIssueCount === 1 ? "" : "s"} nearby${reportEvidenceSuffix} · ${crossingWatchModel.displayText}`;
   const metricLines = buildGridlyLocationContextMetricLines({
     activeIssueCount,
     reportCount: evidenceReportCount,
     crossingsWatchedCount: crossingsCount,
     crossingInventoryAvailable: crossingWatchModel.crossingInventoryStatus === "VALID_COMPLETE_INVENTORY"
   });
+  const activeCrossingsLine = `${metricLines.activeIssuesLine}${reportEvidenceSuffix} · ${crossingWatchModel.displayText}`;
   return {
     ...safeSummary,
     areaName,
@@ -112442,7 +112442,7 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
   const effectiveQuiet = quiet && activeCount <= 0;
   const crossingsWatchedLine = crossingContextCount !== null ? `${crossingContextCount} crossings monitored.` : "Crossings monitored.";
   const activeStatus = "Watching your surrounding area.";
-  const activeMeta = `${crossingsWatchedLine} ${activeCount} active issue${activeCount === 1 ? "" : "s"} nearby.`;
+  const activeMeta = `${crossingsWatchedLine} ${buildGridlyLocationContextMetricLines({ activeIssueCount: activeCount }).activeIssuesLine}.`;
   const hasAuthoritativeSharedCount = Number.isFinite(authoritativeSharedCount);
   const meta = safeDisplayText(
     hasAuthoritativeSharedCount ? "" : mobileOwnership?.meta,

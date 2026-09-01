@@ -38,5 +38,5 @@ test("resize remains layout-only and preserves application state authority", () 
 
 test("LP243.H asset identities advance through H4", () => {
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243i21s2-esri-imagery-labels/);
+  assert.match(html, /js\/app\.js\?v=243i21r1-location-context-roadway-wording/);
 });
