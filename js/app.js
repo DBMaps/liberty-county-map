@@ -72498,7 +72498,15 @@ function activateGridlyPortraitV2StartupOwner(source = "portrait_startup_activat
     applyPortraitV2SurfaceContainment();
     gridlyPortraitV2StartupActivationState.containmentRequested = true;
   }
-  reconcileGridlyV2ConsumerPresentationOwnership();
+  const ownsPresentation = reconcileGridlyV2ConsumerPresentationOwnership();
+  // LP243.J1: promote the existing singular command owner before the inline
+  // startup guard makes the accepted V2 presentation publicly paintable.
+  if (ownsPresentation && typeof syncMobileDestinationCommandCard === "function") {
+    syncMobileDestinationCommandCard();
+  }
+  if (ownsPresentation) {
+    window.gridlyReleaseFirstPaintWhenPresentationReady?.();
+  }
   return true;
 }
 const GRIDLY_PORTRAIT_RETIRED_SURFACES = {
