@@ -15,13 +15,13 @@ const standardUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 test("Satellite is the unchanged Esri World Imagery layer and Standard is unchanged", () => {
   assert.match(initMap, new RegExp(esriUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-  assert.match(initMap, /const satelliteLayer = L\.tileLayer\([\s\S]*?maxZoom: 20,[\s\S]*?attribution: "Tiles &copy; Esri"/);
+  assert.match(initMap, /const satelliteImageryLayer = L\.tileLayer\([\s\S]*?maxZoom: 20,[\s\S]*?attribution: "Tiles &copy; Esri"/);
   assert.match(initMap, new RegExp(standardUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.match(initMap, /const standardLayer = L\.tileLayer[\s\S]*?subdomains: "abc",[\s\S]*?maxZoom: 20,[\s\S]*?attribution: "&copy; OpenStreetMap contributors"/);
   assert.match(initMap, /const baseLayers = \{\s*Standard: standardLayer,\s*Satellite: satelliteLayer\s*\}/);
 });
 
-test("the selectable basemap contract is exactly Standard and imagery-only Satellite", () => {
+test("the selectable basemap contract is exactly Standard and logical Satellite", () => {
   const registry = initMap.match(/const baseLayers = \{([\s\S]*?)\n  \};/)?.[1] || "";
   assert.deepEqual([...registry.matchAll(/^\s*(\w+):/gm)].map((match) => match[1]), ["Standard", "Satellite"]);
   assert.match(v2Templates, /data-layer-name="Standard"[\s\S]*data-layer-name="Satellite"/);
@@ -29,10 +29,9 @@ test("the selectable basemap contract is exactly Standard and imagery-only Satel
   assert.doesNotMatch(initMap + v2Templates + layersSurface, /\bDark\s*:|data-layer-name="Dark"/);
 });
 
-test("CARTO labels, tile requests, panes, lifecycle operations, and attribution are absent", () => {
-  assert.doesNotMatch(initMap, /light_only_labels|satelliteLabelsLayer|satLabelsPane|cartocdn|carto\.com|CARTO/);
-  assert.doesNotMatch(initMap, /Satellite:\s*L\.layerGroup|Satellite:\s*satelliteHybrid/);
-  assert.doesNotMatch(layerAuthority, /light_only_labels|satelliteLabelsLayer|satLabelsPane|cartocdn|carto\.com|CARTO/);
+test("CARTO labels, tile requests, panes, lifecycle operations, and attribution remain absent", () => {
+  assert.doesNotMatch(initMap, /light_only_labels|satLabelsPane|cartocdn|carto\.com|CARTO/);
+  assert.doesNotMatch(layerAuthority, /light_only_labels|satLabelsPane|cartocdn|carto\.com|CARTO/);
   assert.doesNotMatch(app, /light_only_labels|cartocdn|carto\.com|CARTO/);
 });
 
@@ -58,8 +57,8 @@ test("Gridly overlays, controls, geometry, and protected surfaces remain governe
   assert.match(app, /startupReadiness/);
 });
 
-test("closure introduces no provider, credential, CSS identity, or geometry change", () => {
-  assert.doesNotMatch(initMap, /api[_-]?key|access[_-]?token|MapLibre|OpenFreeMap|mapbox|google/i);
+test("closure retains CSS and geometry while the authorized Esri provider identity advances", () => {
+  assert.doesNotMatch(initMap, /MapLibre|OpenFreeMap|mapbox|google/i);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243i21s1-imagery-only-satellite/);
+  assert.match(html, /js\/app\.js\?v=243i21s2-esri-imagery-labels/);
 });

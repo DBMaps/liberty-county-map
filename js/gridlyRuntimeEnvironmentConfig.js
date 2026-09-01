@@ -4,6 +4,10 @@
   // Protected artifact composition replaces this file. The tracked browser
   // runtime always retains the governed same-origin geometry transport.
   window.GRIDLY_RUNTIME_CONFIG = Object.freeze({
+    // LP243.I2.1S2 public-client contract. Protected production composition or
+    // the opted-in, gitignored js/gridly.local.js may replace this blank value.
+    // Grant only premium:user:staticbasemaptiles and enforce ArcGIS referrers.
+    arcgisStaticBasemapApiKey: "",
     // Fail closed: only the exact string "ENABLED" activates production POI.
     poiBrowserProvider: Object.freeze({ enabled: "ENABLED" }),
     authoritativeCountyGeometry: Object.freeze({
