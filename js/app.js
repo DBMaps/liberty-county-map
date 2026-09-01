@@ -30657,6 +30657,27 @@ let lastLayoutSignal = null;
 // LP243.H8 is presentation-local: it never persists or replaces feature state.
 const gridlyShortLandscapeQuery = window.matchMedia("(orientation: landscape) and (max-height: 500px)");
 let gridlyLandscapeCommandExpanded = false;
+let gridlyLandscapeLocationContextHome = null;
+
+// LP243.H10I: the expanded short-landscape command surface has one positioned
+// owner. Move the existing Location Context owner into that tray while it is
+// open, then restore its original DOM location for every other presentation.
+function syncGridlyLandscapeTrayLocalOwner(locationContext, actionPanel, expanded) {
+  const tray = document.getElementById("gridlyPortraitBottomRegion");
+  if (!locationContext || !actionPanel || !tray) return;
+  if (!gridlyLandscapeLocationContextHome) {
+    gridlyLandscapeLocationContextHome = {
+      parent: locationContext.parentNode,
+      nextSibling: locationContext.nextSibling
+    };
+  }
+  if (expanded) {
+    if (locationContext.parentNode !== tray) tray.insertBefore(locationContext, actionPanel);
+    return;
+  }
+  const { parent, nextSibling } = gridlyLandscapeLocationContextHome;
+  if (parent && locationContext.parentNode !== parent) parent.insertBefore(locationContext, nextSibling);
+}
 
 function gridlyLandscapeCommandDisclosureAudit() {
   const selector = "#gridlyLandscapeCommandToggle";
@@ -30690,6 +30711,7 @@ function syncGridlyLandscapeCommandPanel(options = {}) {
   if (!shortLandscape || options.entering === true) gridlyLandscapeCommandExpanded = false;
   const disclosureReady = Boolean(handle && locationContext && actionPanel && (!shortLandscape || gridlyLandscapeCommandDisclosureAudit().valid));
   const expanded = shortLandscape && (gridlyLandscapeCommandExpanded || !disclosureReady);
+  syncGridlyLandscapeTrayLocalOwner(locationContext, actionPanel, expanded);
   document.body?.classList.toggle("gridly-h8-command-expanded", expanded);
   document.body?.classList.toggle("gridly-h9-command-fail-open", shortLandscape && !disclosureReady);
   if (!handle || !locationContext || !actionPanel) {

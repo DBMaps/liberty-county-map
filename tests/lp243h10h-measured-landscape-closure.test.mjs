@@ -7,9 +7,10 @@ const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const h10bStart = css.indexOf("/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY");
 const h10hStart = css.indexOf("/* LP243.H10H — measured landscape closure", h10bStart);
+const h10iStart = css.indexOf("/* LP243.H10I — expanded command owners are tray-local", h10hStart);
 const mediaEnd = css.indexOf("\n}\n\n@media (prefers-reduced-motion", h10hStart);
 const h10b = css.slice(h10bStart, h10hStart);
-const h10h = css.slice(h10hStart, mediaEnd);
+const h10h = css.slice(h10hStart, h10iStart);
 
 test("H10H is bounded to H10B short landscape without structural redesign", () => {
   assert.ok(h10bStart >= 0 && h10hStart > h10bStart && mediaEnd > h10hStart);
@@ -82,8 +83,8 @@ test("KBYG outer geometry is frozen while header, rhythm, and duplicate Weather 
 });
 
 test("asset identity advances and protected feature authorities are untouched", () => {
-  assert.match(html, /css\/styles\.css\?v=243h10h-measured-landscape-closure/);
-  assert.match(html, /js\/app\.js\?v=243h10h-measured-landscape-closure/);
+  assert.match(html, /css\/styles\.css\?v=243h10i-search-tray-containment/);
+  assert.match(html, /js\/app\.js\?v=243h10i-search-tray-containment/);
   assert.doesNotMatch(h10h, /fetch\(|Supabase|DriveTexas|Leaflet|setView\(|zoomIn\(|zoomOut\(|addEventListener/i);
   assert.doesNotMatch(h10h, /gridlySearchShell|gridlyPortraitV2Sheet/);
 });

@@ -8,8 +8,9 @@ const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const h10bStart = css.indexOf("/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY");
 const h10cStart = css.indexOf("/* LP243.H10C", h10bStart);
 const h10fStart = css.indexOf("/* LP243.H10F — final optical balance and discoverability", h10cStart);
+const h10gStart = css.indexOf("/* LP243.H10G — final premium composition correction", h10fStart);
 const h10b = css.slice(h10bStart, h10cStart);
-const h10f = css.slice(h10fStart, css.indexOf("\n}", h10fStart) + 2);
+const h10f = css.slice(h10fStart, h10gStart);
 const matches = (width, height) => width > height && height <= 500;
 
 test("H10F is contained by the frozen short-landscape authority", () => {
@@ -66,8 +67,8 @@ test("KBYG stays a full foreground with Travel Brief first and readable editoria
 
 test("Search, V2, Leaflet, feature, and data authorities remain untouched", () => {
   assert.equal((html.match(/id="map"/g) || []).length, 1);
-  assert.match(html, /styles\.css\?v=243h10h-measured-landscape-closure/);
-  assert.match(html, /app\.js\?v=243h10h-measured-landscape-closure/);
+  assert.match(html, /styles\.css\?v=243h10i-search-tray-containment/);
+  assert.match(html, /app\.js\?v=243h10i-search-tray-containment/);
   assert.match(app, /H10B always returns[\s\S]*gridlyLandscapeCommandExpanded = false[\s\S]*syncGridlyLandscapeCommandPanel/);
   assert.doesNotMatch(h10f, /fetch\(|Supabase|DriveTexas|Home Area|Awareness Area|addEventListener|setView\(|zoomIn\(|zoomOut\(|leaflet/i);
 });

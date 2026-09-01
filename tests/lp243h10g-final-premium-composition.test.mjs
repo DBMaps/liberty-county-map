@@ -7,8 +7,9 @@ const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const h10bStart = css.indexOf("/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY");
 const h10gStart = css.indexOf("/* LP243.H10G — final premium composition correction", h10bStart);
+const h10hStart = css.indexOf("/* LP243.H10H — measured landscape closure", h10gStart);
 const h10b = css.slice(h10bStart, css.indexOf("/* LP243.H10C", h10bStart));
-const h10g = css.slice(h10gStart, css.indexOf("\n}", h10gStart));
+const h10g = css.slice(h10gStart, h10hStart);
 const matches = (width, height) => width > height && height <= 500;
 
 test("H10G is short-landscape only and preserves H10B structure", () => {

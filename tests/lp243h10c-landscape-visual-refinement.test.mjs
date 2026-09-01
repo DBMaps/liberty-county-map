@@ -60,6 +60,6 @@ test("Search, V2 sheets, Leaflet identity, and feature authority remain untouche
   assert.match(authority, /#gridlySearchShell:not\(\[hidden\]\),[\s\S]*#gridlyPortraitV2Sheet:not\(\[hidden\]\)/);
   assert.equal((html.match(/id="map"/g) || []).length, 1);
   assert.doesNotMatch(h10c, /fetch\(|Supabase|setView\(|appendChild|replaceChildren|Home Area|Awareness Area|DriveTexas/);
-  assert.match(html, /styles\.css\?v=243h10h-measured-landscape-closure/);
-  assert.match(html, /app\.js\?v=243h10h-measured-landscape-closure/);
+  assert.match(html, /styles\.css\?v=243h10i-search-tray-containment/);
+  assert.match(html, /app\.js\?v=243h10i-search-tray-containment/);
 });

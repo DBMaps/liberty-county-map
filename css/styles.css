@@ -28689,6 +28689,57 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 #gridlyBriefWeather {
     display: none !important;
   }
+  /* LP243.H10I — expanded command owners are tray-local. The runtime restores
+     Location Context to its original map-card home when this state does not
+     match, freezing collapsed landscape, portrait, and tall-wide layouts. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 #gridlyPortraitBottomRegion {
+    display: grid !important;
+    grid-template-rows: var(--lp243h10h-location-row-height) var(--lp243h10h-action-row-height);
+    padding: 0 !important;
+    overflow: visible;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitBottomRegion > #mobileDestinationCommandPanel {
+    position: relative !important;
+    z-index: auto !important;
+    grid-row: 1;
+    inset: auto !important;
+    transform: none !important;
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: none !important;
+    height: var(--lp243h10h-location-row-height) !important;
+    min-height: var(--lp243h10h-location-row-height) !important;
+    padding: 7px 12px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    pointer-events: auto;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitBottomRegion > #mobileDestinationCommandPanel .compact-btn {
+    position: relative;
+    z-index: 1;
+    min-height: 44px;
+    pointer-events: auto;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitBottomRegion > #gridlyLandscapeCommandPanel {
+    position: relative !important;
+    grid-row: 2;
+    inset: auto !important;
+    transform: none !important;
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: none !important;
+    height: var(--lp243h10h-action-row-height) !important;
+    min-height: var(--lp243h10h-action-row-height) !important;
+    padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    border: 0 !important;
+    border-top: 1px solid var(--lp243h10e-divider) !important;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
