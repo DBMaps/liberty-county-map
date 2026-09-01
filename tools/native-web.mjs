@@ -1,15 +1,25 @@
 #!/usr/bin/env node
-import { cp, mkdir, readdir, readFile, rm, stat } from 'node:fs/promises';
+import { cp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join, relative, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
+import { execFileSync } from 'node:child_process';
+import { composeProductionRuntimeConfig } from './lp1831/prepare-cloudflare-preview-artifact.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(root, process.argv.includes('--output') ? process.argv[process.argv.indexOf('--output') + 1] : 'www');
 const entries = ['index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi', 'Community-Packages', 'Crossing-Packages'];
 const prohibited = [/(^|\/)node_modules\//, /(^|\/)(tests|tools|reports|evidence|owner-local)\//, /(^|\/)android\//, /(^|\/)ios\//, /(^|\/)[^/]*\.local\.js$/];
+const runtimeConfigPath = 'js/gridlyRuntimeEnvironmentConfig.js';
 
-export async function stage(destination) {
+function option(name) {
+  const index = process.argv.indexOf(name);
+  if (index < 0) return undefined;
+  if (!process.argv[index + 1] || process.argv[index + 1].startsWith('--')) throw new Error(`${name} requires a value.`);
+  return resolve(process.argv[index + 1]);
+}
+
+export async function stage(destination, { runtimeConfigFile } = {}) {
   await rm(destination, { recursive: true, force: true });
   await mkdir(destination, { recursive: true });
   for (const entry of entries) await cp(join(root, entry), join(destination, entry), {
@@ -20,6 +30,12 @@ export async function stage(destination) {
       return !prohibited.some((pattern) => pattern.test(path));
     }
   });
+  if (runtimeConfigFile) {
+    const ownerInput = resolve(runtimeConfigFile);
+    if (ownerInput.startsWith(`${destination}/`) || ownerInput === resolve(root, runtimeConfigPath)) throw new Error('Native runtime config input must be external to the output and canonical config.');
+    const composed = composeProductionRuntimeConfig(await readFile(join(root, runtimeConfigPath)), await readFile(ownerInput));
+    await writeFile(join(destination, runtimeConfigPath), composed);
+  }
 }
 
 async function files(directory) {
@@ -37,13 +53,17 @@ async function files(directory) {
 
 async function identity(directory) {
   const hash = createHash('sha256');
+  const records = [];
   for (const file of await files(directory)) {
-    hash.update(file); hash.update('\0'); hash.update(await readFile(join(directory, file))); hash.update('\0');
+    const bytes = await readFile(join(directory, file));
+    const sha256 = createHash('sha256').update(bytes).digest('hex');
+    records.push({ path: file, bytes: bytes.length, sha256 });
+    hash.update(`${file}\0${bytes.length}\0${sha256}\n`);
   }
-  return hash.digest('hex');
+  return { digest: `sha256:${hash.digest('hex')}`, files: records };
 }
 
-async function verify(directory) {
+async function verify(directory, { reportFile } = {}) {
   const required = [
     'index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi',
     'Community-Packages', 'Crossing-Packages',
@@ -60,14 +80,36 @@ async function verify(directory) {
 
   const temporary = join(tmpdir(), `gridly-native-web-${process.pid}`);
   try {
-    await stage(temporary);
-    const [actual, repeated] = await Promise.all([identity(directory), identity(temporary)]);
-    if (actual !== repeated) throw new Error(`Staged web identity differs from a clean repeat (${actual} != ${repeated}).`);
-    console.log(`Native web stage verified: ${paths.length} files, 86 POI shards, sha256 ${actual}`);
+    const actual = await identity(directory);
+    if (reportFile) {
+      const report = JSON.parse(await readFile(reportFile, 'utf8'));
+      if (report.bundleDigest !== actual.digest || JSON.stringify(report.files) !== JSON.stringify(actual.files)) throw new Error('Native configured bundle identity report mismatch.');
+    } else {
+      await stage(temporary);
+      const repeated = await identity(temporary);
+      if (actual.digest !== repeated.digest) throw new Error(`Staged web identity differs from a clean repeat (${actual.digest} != ${repeated.digest}).`);
+    }
+    console.log(`Native web stage verified: ${paths.length} files, 86 POI shards, digest ${actual.digest}`);
   } finally { await rm(temporary, { recursive: true, force: true }); }
 }
 
-if (process.argv.includes('--verify')) await verify(output); else {
-  await stage(output);
+const runtimeConfigFile = option('--runtime-config-file');
+const reportFile = option('--report-file');
+if (process.argv.includes('--verify')) await verify(output, { reportFile }); else {
+  await stage(output, { runtimeConfigFile });
+  if (runtimeConfigFile) {
+    if (!reportFile) throw new Error('--report-file is required with --runtime-config-file.');
+    const attestation = await identity(output);
+    const runtimeBytes = await readFile(join(output, runtimeConfigPath));
+    const report = {
+      schemaVersion: 'gridly.nativeConfiguredWebBundle.v1',
+      candidateGitSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+      bundleDigest: attestation.digest,
+      runtimeConfig: { path: runtimeConfigPath, bytes: runtimeBytes.length, sha256: createHash('sha256').update(runtimeBytes).digest('hex'), classification: 'OWNER_COMPOSED_BROWSER_PUBLIC_CONFIG' },
+      files: attestation.files
+    };
+    await mkdir(dirname(reportFile), { recursive: true });
+    await writeFile(reportFile, `${JSON.stringify(report, null, 2)}\n`);
+  }
   console.log(`Staged Gridly native web bundle at ${relative(root, output) || '.'}.`);
 }

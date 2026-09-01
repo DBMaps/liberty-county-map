@@ -59,3 +59,21 @@ test('native stage declares every governed runtime family', () => {
   const stage = text('tools/native-web.mjs');
   for (const family of ['css', 'js', 'assets', 'data', 'poi', 'Community-Packages', 'Crossing-Packages']) assert.match(stage, new RegExp(`['"]${family}['"]`));
 });
+
+test('native provider origin helper is bounded and never exposes credential values', () => {
+  const helper = text('js/gridlyNativeProviderOriginAudit.js');
+  assert.match(helper, /gridlyNativeProviderOriginAudit/);
+  for (const field of ['capacitorPlatform', 'documentLocationOrigin', 'driveTexasConfigFamily', 'supabaseClientInitialized', 'nwsEndpointReachability', 'poiManifestPresence', 'crossingPackagePresence']) assert.match(helper, new RegExp(field));
+  assert.doesNotMatch(helper, /authorization|apiKeyValue|supabaseKey/i);
+  assert.match(text('index.html'), /gridlyNativeProviderOriginAudit\.js/);
+});
+
+test('configured native staging reuses governed additive production composition and attests final bytes', () => {
+  const tool = text('tools/native-web.mjs');
+  assert.match(tool, /composeProductionRuntimeConfig/);
+  assert.match(tool, /runtimeConfig.*bytes.*sha256/s);
+  assert.match(tool, /candidateGitSha/);
+  assert.match(tool, /files: attestation\.files/);
+  assert.match(tool, /--runtime-config-file/);
+  assert.match(tool, /--report-file/);
+});
