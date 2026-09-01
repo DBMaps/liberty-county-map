@@ -51,7 +51,7 @@ test("shared Leaflet authority and baselayerchange persistence remain intact", (
 test("no replacement renderer/provider or presentation change is introduced", () => {
   assert.doesNotMatch(app + html, /MapLibre|maplibre|OpenFreeMap|openfreemap/);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243i21s1-imagery-only-satellite/);
+  assert.match(html, /js\/app\.js\?v=243i21s2-esri-imagery-labels/);
   assert.match(app, /GRIDLY_V2_PRESENTATION_OWNER_CLASS/);
   assert.match(app, /startupReadiness/);
   assert.match(app, /acceptedShortLandscapeApplicationOwner/);

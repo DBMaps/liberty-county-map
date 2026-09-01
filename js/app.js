@@ -52145,6 +52145,11 @@ function initMap() {
   map.createPane("awarenessLabelPane");
   map.getPane("awarenessLabelPane").style.zIndex = 635;
   map.getPane("awarenessLabelPane").style.pointerEvents = "none";
+  // Provider-rendered reference labels belong above raster imagery (tilePane
+  // z-index 200) and below Gridly feature panes (425+). They never own input.
+  map.createPane("arcgisImageryLabelsPane");
+  map.getPane("arcgisImageryLabelsPane").style.zIndex = 250;
+  map.getPane("arcgisImageryLabelsPane").style.pointerEvents = "none";
 
   const standardLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     subdomains: "abc",
@@ -52152,13 +52157,45 @@ function initMap() {
     attribution: "&copy; OpenStreetMap contributors"
   });
 
-  const satelliteLayer = L.tileLayer(
+  const satelliteImageryLayer = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
       maxZoom: 20,
       attribution: "Tiles &copy; Esri"
     }
   );
+
+  // ArcGIS Static Basemap Tiles / ArcGIS Imagery Labels contract:
+  // premium:user:staticbasemaptiles; PNG 512x512; level/row/column; public
+  // application API key, runtime-injected and referrer-restricted. Leaflet's
+  // 512 tileSize plus zoomOffset -1 maps a 256px display zoom to Esri's level,
+  // which is one lower at the equivalent scale. {z}/{y}/{x} preserves the
+  // service's level/row/column ordering (not the usual z/x/y URL ordering).
+  const arcgisStaticBasemapApiKey = typeof window.GRIDLY_RUNTIME_CONFIG?.arcgisStaticBasemapApiKey === "string"
+    ? window.GRIDLY_RUNTIME_CONFIG.arcgisStaticBasemapApiKey.trim()
+    : "";
+  const satelliteLayer = L.layerGroup([satelliteImageryLayer]);
+  if (arcgisStaticBasemapApiKey) {
+    const satelliteLabelsLayer = L.tileLayer(
+      "https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/imagery/labels/static/tile/{z}/{y}/{x}?token={arcgisStaticBasemapApiKey}",
+      {
+        arcgisStaticBasemapApiKey,
+        tileSize: 512,
+        zoomOffset: -1,
+        maxZoom: 20,
+        pane: "arcgisImageryLabelsPane",
+        className: "gridly-arcgis-imagery-labels",
+        attribution: "Sources: Esri, TomTom, Garmin, FAO, NOAA, USGS, &copy; OpenStreetMap contributors, and the GIS User Community"
+      }
+    );
+    let labelFailureClosed = false;
+    satelliteLabelsLayer.once("tileerror", () => {
+      if (labelFailureClosed) return;
+      labelFailureClosed = true;
+      satelliteLayer.removeLayer(satelliteLabelsLayer);
+    });
+    satelliteLayer.addLayer(satelliteLabelsLayer);
+  }
 
   const baseLayers = {
     Standard: standardLayer,

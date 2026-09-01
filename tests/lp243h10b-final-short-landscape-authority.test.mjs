@@ -73,5 +73,5 @@ test("H5-H9 rejected geometry is documented as superseded, not final", () => {
   assert.match(css, /LP243\.H5-H9 — short-landscape geometry superseded/);
   assert.doesNotMatch(h10b, /--lp243h[56789]-(?:map-top-reserve|map-bottom-reserve|panel-height)|min\(720px/);
   assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21s1-imagery-only-satellite)/);
+  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21s2-esri-imagery-labels)/);
 });
