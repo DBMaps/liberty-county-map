@@ -28500,6 +28500,96 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     font-size: 0.75rem;
     line-height: 1.4;
   }
+
+  /* LP243.H10G — final premium composition correction. This bounded layer
+     reconciles H10F presentation only; H10B remains the grid, map-flex,
+     zero-reserve, disclosure, and lifecycle authority. */
+  body[data-layout-mode="portrait"] {
+    --lp243h10g-sheet-width: 90vw;
+    --lp243h10g-sheet-height: 83dvh;
+    --lp243h10g-sheet-inline: 5vw;
+    --lp243h10g-sheet-block: 8.5dvh;
+  }
+
+  /* The transformed bottom region is the disclosure's positioned ancestor.
+     Resolve its local coordinate from both frame insets, rather than from the
+     former Search/action split, so the visual centre is the frame centre. */
+  body[data-layout-mode="portrait"] #gridlyLandscapeCommandToggle {
+    left: calc((100vw - var(--lp243h10b-inline-start) - var(--lp243h10b-inline-end)) / 2) !important;
+  }
+
+  /* The bottom region is the one painted frame. Its two existing lifecycle
+     owners remain transparent, edge-aligned children and never reserve map
+     space. H10F's 44% division is retained only as an internal column. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
+    width: auto !important;
+    overflow: visible !important;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    right: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel {
+    right: auto !important;
+    box-shadow: none !important;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 .gridly-v2-control-rail {
+    top: auto !important;
+    bottom: calc(var(--lp243h10b-command-height) + 12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* KBYG remains over the mounted map, but H10B/H10C's full-viewport panel
+     and bright full-width handle are explicitly replaced by one centred,
+     safe-area-aware 90% × 83% intelligence sheet. */
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground::before {
+    content: "";
+    position: fixed;
+    z-index: 1300;
+    inset: 0;
+    background: rgba(2, 8, 18, 0.64);
+    pointer-events: auto;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    inset: var(--lp243h10g-sheet-block) var(--lp243h10g-sheet-inline) !important;
+    width: var(--lp243h10g-sheet-width) !important;
+    max-width: var(--lp243h10g-sheet-width) !important;
+    height: var(--lp243h10g-sheet-height) !important;
+    max-height: var(--lp243h10g-sheet-height) !important;
+    padding: calc(62px + env(safe-area-inset-top, 0px))
+      max(28px, env(safe-area-inset-right, 0px))
+      max(18px, env(safe-area-inset-bottom, 0px))
+      max(28px, env(safe-area-inset-left, 0px)) !important;
+    border: 1px solid color-mix(in srgb, var(--gridly-accent, #28c7c2) 24%, var(--gridly-border-neutral)) !important;
+    border-radius: var(--lp243h10e-radius) !important;
+    background: var(--gridly-surface) !important;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.48) !important;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-foundation-handle {
+    top: var(--lp243h10g-sheet-block) !important;
+    right: var(--lp243h10g-sheet-inline) !important;
+    left: var(--lp243h10g-sheet-inline) !important;
+    box-sizing: border-box;
+    width: var(--lp243h10g-sheet-width) !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    padding: 0 max(20px, env(safe-area-inset-right, 0px)) 0
+      max(20px, env(safe-area-inset-left, 0px)) !important;
+    border: 1px solid color-mix(in srgb, var(--gridly-accent, #28c7c2) 24%, var(--gridly-border-neutral)) !important;
+    border-width: 2px 1px 0 !important;
+    border-radius: var(--lp243h10e-radius) var(--lp243h10e-radius) 0 0 !important;
+    background: var(--gridly-elevated) !important;
+    color: var(--gridly-text-primary) !important;
+    box-shadow: none !important;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-foundation-handle-icon {
+    color: var(--gridly-accent, #28c7c2);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
