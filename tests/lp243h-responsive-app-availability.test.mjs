@@ -38,5 +38,5 @@ test("resize remains layout-only and preserves application state authority", () 
 
 test("LP243.H asset identities advance through H4", () => {
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility)/);
+  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i1h3-history-location-resolution-performance-repair)/);
 });

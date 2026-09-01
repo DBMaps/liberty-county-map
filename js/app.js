@@ -68215,6 +68215,10 @@ function gridlyHistoricalIntelligenceIsWeakLocationTitle(value = "") {
 }
 
 function gridlyHistoricalIntelligenceCleanLocationCandidate(value = "") {
+  // Location catalogs are intentionally exhaustive and most aliases are absent on
+  // any one report. Avoid running the full display normalizer for an absent value;
+  // safeDisplayText(null/undefined/"") produces the same empty result.
+  if (value == null || value === "") return "";
   const text = safeDisplayText(value, "").replace(/\s+/g, " ").trim();
   if (!text) return "";
   if (gridlyHistoricalIntelligenceIsGenericOtherHazardLabel(text)) return "";
@@ -68246,6 +68250,15 @@ function gridlyHistoricalIntelligenceBuildNestedPaths(paths = []) {
   return output;
 }
 
+// Immutable catalogs are shared by every report. Building these arrays inside
+// every candidate derivation was pure allocation and did not affect authority.
+const GRIDLY_HISTORICAL_SOURCE_REPORT_DIRECT_PATHS = Object.freeze(
+  gridlyHistoricalIntelligenceBuildNestedPaths(GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_PATHS)
+);
+const GRIDLY_HISTORICAL_SOURCE_REPORT_FALLBACK_PATHS = Object.freeze(
+  gridlyHistoricalIntelligenceBuildNestedPaths(GRIDLY_HISTORICAL_TEXT_FALLBACK_LOCATION_PATHS)
+);
+
 function gridlyHistoricalIntelligenceExtractLocationFromText(value = "") {
   const text = safeDisplayText(value, "").replace(/\s+/g, " ").trim();
   if (!text) return "";
@@ -68263,22 +68276,22 @@ function gridlyHistoricalIntelligenceExtractLocationFromText(value = "") {
 }
 
 function gridlyHistoricalIntelligenceSourceReportLocationCandidates(record = {}) {
-  const directPaths = gridlyHistoricalIntelligenceBuildNestedPaths(GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_PATHS);
   const candidates = [];
-  directPaths.forEach((path) => {
+  GRIDLY_HISTORICAL_SOURCE_REPORT_DIRECT_PATHS.forEach((path) => {
     const label = gridlyHistoricalIntelligenceCleanLocationCandidate(gridlyHistoricalIntelligenceReadPath(record, path));
     if (label) candidates.push({ label, sourceField: path, specificity: "specific", sourceType: "source_report_field" });
   });
-  const fallbackPaths = gridlyHistoricalIntelligenceBuildNestedPaths(GRIDLY_HISTORICAL_TEXT_FALLBACK_LOCATION_PATHS);
-  fallbackPaths.forEach((path) => {
+  GRIDLY_HISTORICAL_SOURCE_REPORT_FALLBACK_PATHS.forEach((path) => {
     const label = gridlyHistoricalIntelligenceExtractLocationFromText(gridlyHistoricalIntelligenceReadPath(record, path));
     if (label) candidates.push({ label, sourceField: path, specificity: "specific", sourceType: "text_fallback_extraction" });
   });
   return candidates;
 }
 
-function gridlyHistoricalIntelligenceMostCommonSourceLocationContext(records = []) {
+function gridlyHistoricalIntelligenceResolveSourceRecordLocations(records = []) {
   const counts = new Map();
+  let firstSpecificRecordContext = null;
+  let firstRecordContext = null;
   (Array.isArray(records) ? records : []).forEach((record, recordIndex) => {
     gridlyHistoricalIntelligenceSourceReportLocationCandidates(record).forEach((candidate) => {
       const normalized = gridlyHistoricalIntelligenceNormalizeLocationToken(candidate.label);
@@ -68302,11 +68315,22 @@ function gridlyHistoricalIntelligenceMostCommonSourceLocationContext(records = [
         entry.sourceType = candidate.sourceType;
       }
     });
+    // Capture the legacy miss fallback during the same bounded traversal. The
+    // first specific context still outranks the first locality exactly as it did
+    // when BestLocationContext mapped and searched the group a second time.
+    const recordContext = gridlyHistoricalIntelligenceRecordLocationContext(record);
+    if (!firstRecordContext && recordContext) firstRecordContext = recordContext;
+    if (!firstSpecificRecordContext && recordContext?.specificity === "specific") firstSpecificRecordContext = recordContext;
   });
-  return Array.from(counts.values()).sort((a, b) => {
+  const sourceReportContext = Array.from(counts.values()).sort((a, b) => {
     const sourcePriority = Number(b.sourceType === "source_report_field") - Number(a.sourceType === "source_report_field");
     return Number(b.count) - Number(a.count) || sourcePriority || String(a.label).localeCompare(String(b.label));
   })[0] || null;
+  return { sourceReportContext, recordFallbackContext: firstSpecificRecordContext || firstRecordContext || null };
+}
+
+function gridlyHistoricalIntelligenceMostCommonSourceLocationContext(records = []) {
+  return gridlyHistoricalIntelligenceResolveSourceRecordLocations(records).sourceReportContext;
 }
 
 
@@ -68471,14 +68495,12 @@ function gridlyHistoricalIntelligenceRecordLocationContext(record = {}) {
 }
 
 function gridlyHistoricalIntelligenceBestLocationContext(finding = {}) {
-  const sourceReportContext = gridlyHistoricalIntelligenceMostCommonSourceLocationContext(finding.sourceRecords);
+  const sourceRecordResolution = gridlyHistoricalIntelligenceResolveSourceRecordLocations(finding.sourceRecords);
+  const sourceReportContext = sourceRecordResolution.sourceReportContext;
   if (sourceReportContext) return sourceReportContext;
   const findingContext = gridlyHistoricalIntelligenceRecordLocationContext(finding);
   if (findingContext) return findingContext;
-  const recordContexts = (Array.isArray(finding.sourceRecords) ? finding.sourceRecords : [])
-    .map((record) => gridlyHistoricalIntelligenceRecordLocationContext(record))
-    .filter(Boolean);
-  return recordContexts.find((context) => context.specificity === "specific") || recordContexts[0] || null;
+  return sourceRecordResolution.recordFallbackContext;
 }
 
 function gridlyHistoricalIntelligenceFormatLocationLine(locationContext = null, hazardLabel = "") {
