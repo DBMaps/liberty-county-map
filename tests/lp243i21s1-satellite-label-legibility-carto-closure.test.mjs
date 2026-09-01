@@ -15,9 +15,9 @@ const standardUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 test("Satellite is the unchanged Esri World Imagery layer and Standard is unchanged", () => {
   assert.match(initMap, new RegExp(esriUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-  assert.match(initMap, /const satelliteImageryLayer = L\.tileLayer\([\s\S]*?maxZoom: 20,[\s\S]*?attribution: "Tiles &copy; Esri"/);
+  assert.match(initMap, /const satelliteImageryLayer = L\.tileLayer\([\s\S]*?maxZoom: 20,[\s\S]*?attribution: GRIDLY_MAP_ATTRIBUTION.Satellite.compact/);
   assert.match(initMap, new RegExp(standardUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-  assert.match(initMap, /const standardLayer = L\.tileLayer[\s\S]*?subdomains: "abc",[\s\S]*?maxZoom: 20,[\s\S]*?attribution: "&copy; OpenStreetMap contributors"/);
+  assert.match(initMap, /const standardLayer = L\.tileLayer[\s\S]*?subdomains: "abc",[\s\S]*?maxZoom: 20,[\s\S]*?attribution: GRIDLY_MAP_ATTRIBUTION.Standard/);
   assert.match(initMap, /const baseLayers = \{\s*Standard: standardLayer,\s*Satellite: satelliteLayer\s*\}/);
 });
 
@@ -59,6 +59,6 @@ test("Gridly overlays, controls, geometry, and protected surfaces remain governe
 
 test("closure retains CSS and geometry while the authorized Esri provider identity advances", () => {
   assert.doesNotMatch(initMap, /MapLibre|OpenFreeMap|mapbox|google/i);
-  assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243i22-layers-accessibility-lifecycle/);
+  assert.match(html, /css\/styles\.css\?v=243i23-compact-map-attribution/);
+  assert.match(html, /js\/app\.js\?v=243i23-compact-map-attribution/);
 });

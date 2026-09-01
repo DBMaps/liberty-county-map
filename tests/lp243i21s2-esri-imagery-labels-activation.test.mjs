@@ -53,6 +53,6 @@ test("switch lifecycle, persistence, Dark migration, and direct V2 authority rem
   assert.match(app, /=== "Dark" \? "Standard"/);
   assert.match(authority, /window\.applyMapStyle = function applyMapStyle\(name\)/);
   assert.match(app, /"layers-select": \(\) => \{[\s\S]*?applyMapStyle\(requestedLayer\)/);
-  assert.match(html, /js\/app\.js\?v=243i22-layers-accessibility-lifecycle/);
+  assert.match(html, /js\/app\.js\?v=243i23-compact-map-attribution/);
   assert.match(html, /gridlyRuntimeEnvironmentConfig\.js\?v=243i21s2-arcgis-static-basemap-contract/);
 });

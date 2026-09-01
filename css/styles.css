@@ -28852,3 +28852,50 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 @media (prefers-reduced-motion: reduce) {
   .gridly-v2-bottom-region { transition: none !important; }
 }
+
+/* LP243.I2.3 — compact, single-owner Leaflet attribution disclosure. */
+#map .leaflet-control-attribution {
+  box-sizing: border-box;
+  max-width: calc(100% - 12px);
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+#map .gridly-map-attribution-data,
+#map .gridly-map-attribution-close {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  background: transparent;
+  cursor: pointer;
+}
+
+#map .gridly-map-attribution-data:focus-visible,
+#map .gridly-map-attribution-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+#map .gridly-map-attribution-disclosure {
+  position: absolute;
+  z-index: 1001;
+  right: 8px;
+  bottom: 30px;
+  box-sizing: border-box;
+  width: min(360px, calc(100% - 16px));
+  max-height: min(180px, calc(100% - 48px));
+  overflow: auto;
+  padding: 10px 12px;
+  border: 1px solid rgba(171, 211, 255, 0.35);
+  border-radius: 10px;
+  color: #eef7ff;
+  background: rgba(8, 15, 24, 0.96);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+#map .gridly-map-attribution-disclosure[hidden] { display: none; }
+#map .gridly-map-attribution-disclosure p { margin: 0 0 8px; }

@@ -52116,6 +52116,71 @@ function setGridlyAwarenessView(center, zoom, options = {}) {
   return true;
 }
 
+const GRIDLY_MAP_ATTRIBUTION = Object.freeze({
+  Standard: "&copy; OpenStreetMap contributors",
+  Satellite: Object.freeze({
+    compact: '&copy; Esri | <button type="button" class="gridly-map-attribution-data" aria-label="Show satellite map data attribution" aria-controls="gridlySatelliteAttributionDisclosure" aria-expanded="false">Data</button>',
+    full: "Tiles © Esri, Sources: Esri, TomTom, Garmin, FAO, NOAA, USGS, © OpenStreetMap contributors, and the GIS User Community"
+  })
+});
+
+function installGridlyCompactMapAttribution(mapInstance) {
+  const mapContainer = mapInstance?.getContainer?.();
+  const attributionContainer = mapContainer?.querySelector(".leaflet-control-attribution");
+  if (!mapContainer || !attributionContainer || mapContainer.querySelector("#gridlySatelliteAttributionDisclosure")) return;
+
+  const disclosure = document.createElement("section");
+  disclosure.id = "gridlySatelliteAttributionDisclosure";
+  disclosure.className = "gridly-map-attribution-disclosure";
+  disclosure.setAttribute("role", "region");
+  disclosure.setAttribute("aria-label", "Satellite map data attribution");
+  disclosure.hidden = true;
+  const attributionCopy = document.createElement("p");
+  attributionCopy.textContent = GRIDLY_MAP_ATTRIBUTION.Satellite.full;
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.className = "gridly-map-attribution-close";
+  closeButton.setAttribute("aria-label", "Close satellite map data attribution");
+  closeButton.textContent = "Close";
+  disclosure.append(attributionCopy, closeButton);
+  mapContainer.appendChild(disclosure);
+  L.DomEvent.disableClickPropagation(disclosure);
+  L.DomEvent.disableScrollPropagation(disclosure);
+
+  const dataControl = () => mapContainer.querySelector(".gridly-map-attribution-data");
+  const closeDisclosure = ({ restoreFocus = true } = {}) => {
+    const trigger = dataControl();
+    disclosure.hidden = true;
+    trigger?.setAttribute("aria-expanded", "false");
+    if (restoreFocus && trigger && activeBaseLayerName === "Satellite") trigger.focus();
+  };
+  const openDisclosure = () => {
+    if (activeBaseLayerName !== "Satellite") return;
+    disclosure.hidden = false;
+    dataControl()?.setAttribute("aria-expanded", "true");
+  };
+  const syncAttribution = (event) => {
+    if (event?.name !== "Satellite") closeDisclosure({ restoreFocus: false });
+  };
+
+  attributionContainer.addEventListener("click", (event) => {
+    if (event.target.closest(".gridly-map-attribution-data")) {
+      event.preventDefault();
+      disclosure.hidden ? openDisclosure() : closeDisclosure();
+    }
+  });
+  disclosure.addEventListener("click", (event) => {
+    if (event.target.closest(".gridly-map-attribution-close")) closeDisclosure();
+  });
+  mapContainer.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !disclosure.hidden) {
+      event.preventDefault();
+      closeDisclosure();
+    }
+  });
+  mapInstance.on("baselayerchange", syncAttribution);
+}
+
 function initMap() {
   const startupAnchor = gridlyStartupSemanticContext?.area || getGridlyHomeTownAwarenessAnchor();
   map = L.map("map", { zoomControl: false });
@@ -52154,14 +52219,14 @@ function initMap() {
   const standardLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     subdomains: "abc",
     maxZoom: 20,
-    attribution: "&copy; OpenStreetMap contributors"
+    attribution: GRIDLY_MAP_ATTRIBUTION.Standard
   });
 
   const satelliteImageryLayer = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
       maxZoom: 20,
-      attribution: "Tiles &copy; Esri"
+      attribution: GRIDLY_MAP_ATTRIBUTION.Satellite.compact
     }
   );
 
@@ -52185,7 +52250,7 @@ function initMap() {
         maxZoom: 20,
         pane: "arcgisImageryLabelsPane",
         className: "gridly-arcgis-imagery-labels",
-        attribution: "Sources: Esri, TomTom, Garmin, FAO, NOAA, USGS, &copy; OpenStreetMap contributors, and the GIS User Community"
+        attribution: ""
       }
     );
     let labelFailureClosed = false;
@@ -52216,6 +52281,7 @@ function initMap() {
   activeBaseLayerName = initialStyle;
   baseLayers[initialStyle].addTo(map);
   map.getContainer().classList.add(styleClassByName[initialStyle]);
+  installGridlyCompactMapAttribution(map);
 
   L.control.layers(baseLayers, null, { position: "bottomright", collapsed: true }).addTo(map);
   installLayerPickerDebugDiagnostics();
