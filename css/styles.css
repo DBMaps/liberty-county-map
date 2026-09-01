@@ -27688,7 +27688,37 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   :is(.mobile-bottom-nav, #gridlyHazardLauncher) {
   display: none !important;
   visibility: hidden !important;
+  opacity: 0 !important;
   pointer-events: none !important;
+}
+
+body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active .app-footer {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* LP243.J — a settled V2 presentation owns the viewport, not the historical
+   normal-flow document behind it. Scope the scroll lock to the explicit owner
+   class; sheets retain their established overflow-y authorities. */
+html:has(body.gridly-v2-presentation-owner-active) {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.gridly-v2-presentation-owner-active {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
