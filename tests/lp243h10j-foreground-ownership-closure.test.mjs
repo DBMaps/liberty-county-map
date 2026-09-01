@@ -59,6 +59,6 @@ test("protected runtime, data, and asset authorities remain unchanged", () => {
   assert.match(app, /insideViewport && hitTestPass/);
   assert.match(app, /classList\.toggle\("gridly-h9-command-fail-open", shortLandscape && !disclosureReady\)/);
   assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21r1-location-context-roadway-wording)/);
+  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i22-layers-accessibility-lifecycle)/);
   assert.doesNotMatch(h10j, /Leaflet|Supabase|DriveTexas|setView\(|zoomIn\(|zoomOut\(|feature|dataset/i);
 });

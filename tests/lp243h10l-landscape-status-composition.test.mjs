@@ -35,5 +35,5 @@ test("primary and secondary form a compact vertically centered group while trust
 test("frozen header, map, command, action-row, KBYG, Search, and feature authorities are untouched", () => {
   assert.doesNotMatch(h10l, /(?:^|\n)\s*(?:min-|max-)?height\s*:|grid-template|--lp243h10h-|#map\b|gridly-v2-topbar|gridly-v2-segments|gridlyPortraitBottomRegion|mobileDestinationCommand|DockButton|brief-foundation|SearchShell|Leaflet|provider|dataset|feature/i);
   assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21r1-location-context-roadway-wording|243i21r1-location-context-roadway-wording)/);
+  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i22-layers-accessibility-lifecycle|243i22-layers-accessibility-lifecycle)/);
 });

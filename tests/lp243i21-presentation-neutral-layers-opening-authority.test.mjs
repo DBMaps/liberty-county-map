@@ -61,7 +61,7 @@ test("existing V2 selection router and basemap authority remain in place", () =>
 
 test("I2.1 changes no styles, geometry, or unrelated presentation contracts", () => {
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243i21r1-location-context-roadway-wording/);
+  assert.match(html, /js\/app\.js\?v=243i22-layers-accessibility-lifecycle/);
   assert.doesNotMatch(sharedAction + bindV2 + tacticalBinding, /featureLayer|KBYG|fetch\(|localStorage|sessionStorage/);
   assert.match(css, /LP243\.H/);
   assert.match(app, /acceptedShortLandscapeApplicationOwner/);
