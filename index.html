@@ -98,6 +98,27 @@
       visibility: hidden !important;
     }
 
+    /* LP243.J: the supported application owner is known before app.js binds.
+       Keep only superseded presentation owners non-painting across the handoff;
+       the V2 shell and map may progressively become ready underneath. */
+    html.gridly-v2-startup-containment :is(
+      .app-header,
+      .mobile-live-brand,
+      .driver-hero,
+      .destination-hero-card,
+      .mobile-premium-header,
+      .mobile-home-cards,
+      .mobile-bottom-nav,
+      .app-footer,
+      .gridly-desktop-gate,
+      .tactical-landscape-gate
+    ) {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
     html.gridly-desktop-startup-containment body > :not(.gridly-desktop-gate):not(script):not(style) {
       display: none !important;
       visibility: hidden !important;
@@ -133,6 +154,7 @@
   </style>
   <script>
     document.documentElement.classList.add("gridly-prepaint-lock");
+    document.documentElement.classList.add("gridly-v2-startup-containment");
     (function gridlyReleasePrepaintLock() {
       var released = false;
       function ensureStartupLayoutOwnership() {
@@ -184,7 +206,7 @@
     })();
   </script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/styles.css?v=243h10l-landscape-status-composition" />
+  <link rel="stylesheet" href="css/styles.css?v=243h10l-landscape-status-composition&amp;lp243j=presentation-ownership-containment" />
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/store/icons/gridly-icon-master-1024.png">
   <link rel="apple-touch-icon" sizes="167x167" href="assets/icons/incoming/gridly-icon-master-167.png">
