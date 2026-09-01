@@ -30663,12 +30663,17 @@ function gridlyLandscapeCommandDisclosureAudit() {
   const control = document.querySelector(selector);
   const styles = control ? window.getComputedStyle(control) : null;
   const rect = control?.getBoundingClientRect?.();
-  const centerTarget = rect && rect.width > 0 && rect.height > 0
-    ? document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
-    : null;
+  // LP243.H10H: an expanded tray may legitimately meet the lower edge of the
+  // 68x44 hit owner during fixed-overlay settlement. A center-only probe made
+  // that transient occlusion a false fail-open even though the upper portion
+  // remained reachable. Sample the vertical hit corridor; recovery still wins
+  // unless at least one point on the real button is the pointer authority.
+  const hitTargets = rect && rect.width > 0 && rect.height > 0
+    ? [0.25, 0.5, 0.75].map((ratio) => document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height * ratio))
+    : [];
   const insideViewport = Boolean(rect && rect.width > 0 && rect.height > 0
     && rect.left >= 0 && rect.top >= 0 && rect.right <= window.innerWidth && rect.bottom <= window.innerHeight);
-  const hitTestPass = Boolean(control && centerTarget && (centerTarget === control || control.contains(centerTarget)));
+  const hitTestPass = Boolean(control && hitTargets.some((target) => target === control || control.contains(target)));
   const valid = Boolean(control && control.isConnected && control.tagName === "BUTTON" && !control.disabled
     && styles?.display !== "none" && styles?.visibility !== "hidden" && styles?.pointerEvents !== "none"
     && insideViewport && hitTestPass && control.dataset.lp243h10bBound === "true");
