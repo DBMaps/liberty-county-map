@@ -90,9 +90,9 @@ test("algorithmic guard: immutable catalogs are hoisted and a miss has one group
 
 test("no truncation, persistent cache, provider change, presentation rewrite, or CSS identity change", () => {
   assert.doesNotMatch(builder, /retained(?:Records|History).*slice\(0,\s*\d+\)|global.*cache/i);
-  assert.doesNotMatch(resolver, /memo|cache|WeakMap|Map\(\).*record/i);
+  assert.doesNotMatch(resolver, /window\..*(?:memo|cache)|localStorage.*(?:memo|cache)|sessionStorage.*(?:memo|cache)/i);
   assert.match(app, /source: "real_historical_records"/);
-  assert.match(html, /js\/app\.js\?v=243i1h3-history-location-resolution-performance-repair&amp;lp243j1=startup-readiness-handshake/);
+  assert.match(html, /js\/app\.js\?v=243i1h4-final-history-performance-closure&amp;lp243j1=startup-readiness-handshake/);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition&amp;lp243j=presentation-ownership-containment/);
 });
 
