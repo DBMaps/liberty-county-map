@@ -103,7 +103,7 @@ test("heavyweight H1/H2 browser diagnostics are retired", () => {
 });
 
 test("only JavaScript asset identity advances and remains unique", () => {
-  assert.equal((html.match(/js\/app\.js\?v=243i1h4-final-history-performance-closure&amp;lp243j1=startup-readiness-handshake/g) || []).length, 1);
+  assert.equal((html.match(/js\/app\.js\?v=243i1h5-final-history-click-latency-closure&amp;lp243j1=startup-readiness-handshake/g) || []).length, 1);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition&amp;lp243j=presentation-ownership-containment/);
   assert.ok(css.length > 0);
 });

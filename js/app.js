@@ -68228,7 +68228,8 @@ function gridlyHistoricalIntelligenceCleanLocationCandidate(value = "") {
 
 function gridlyHistoricalIntelligenceReadPath(source = {}, path = "") {
   if (!source || typeof source !== "object" || !path) return undefined;
-  return path.split(".").reduce((current, key) => {
+  const keys = Array.isArray(path?.keys) ? path.keys : String(path).split(".");
+  return keys.reduce((current, key) => {
     if (current == null || typeof current !== "object") return undefined;
     return current[key];
   }, source);
@@ -68237,9 +68238,13 @@ function gridlyHistoricalIntelligenceReadPath(source = {}, path = "") {
 function gridlyHistoricalIntelligenceLocationFromPaths(source = {}, paths = [], specificity = "specific") {
   for (const path of paths) {
     const cleaned = gridlyHistoricalIntelligenceCleanLocationCandidate(gridlyHistoricalIntelligenceReadPath(source, path));
-    if (cleaned) return { label: cleaned, sourceField: path, specificity };
+    if (cleaned) return { label: cleaned, sourceField: path?.path || path, specificity };
   }
   return null;
+}
+
+function gridlyHistoricalIntelligenceCompilePaths(paths = []) {
+  return Object.freeze(paths.map((path) => Object.freeze({ path, keys: Object.freeze(path.split(".")) })));
 }
 
 function gridlyHistoricalIntelligenceBuildNestedPaths(paths = []) {
@@ -68258,6 +68263,10 @@ const GRIDLY_HISTORICAL_SOURCE_REPORT_DIRECT_PATHS = Object.freeze(
 const GRIDLY_HISTORICAL_SOURCE_REPORT_FALLBACK_PATHS = Object.freeze(
   gridlyHistoricalIntelligenceBuildNestedPaths(GRIDLY_HISTORICAL_TEXT_FALLBACK_LOCATION_PATHS)
 );
+// LP243.I1H5: path parsing is immutable catalog work, not record work. Compile it
+// once while retaining every alias, its order, and the original source-path text.
+const GRIDLY_HISTORICAL_SOURCE_REPORT_DIRECT_COMPILED_PATHS = gridlyHistoricalIntelligenceCompilePaths(GRIDLY_HISTORICAL_SOURCE_REPORT_DIRECT_PATHS);
+const GRIDLY_HISTORICAL_SOURCE_REPORT_FALLBACK_COMPILED_PATHS = gridlyHistoricalIntelligenceCompilePaths(GRIDLY_HISTORICAL_SOURCE_REPORT_FALLBACK_PATHS);
 
 function gridlyHistoricalIntelligenceExtractLocationFromText(value = "") {
   const text = safeDisplayText(value, "").replace(/\s+/g, " ").trim();
@@ -68277,13 +68286,13 @@ function gridlyHistoricalIntelligenceExtractLocationFromText(value = "") {
 
 function gridlyHistoricalIntelligenceSourceReportLocationCandidates(record = {}) {
   const candidates = [];
-  GRIDLY_HISTORICAL_SOURCE_REPORT_DIRECT_PATHS.forEach((path) => {
+  GRIDLY_HISTORICAL_SOURCE_REPORT_DIRECT_COMPILED_PATHS.forEach((path) => {
     const label = gridlyHistoricalIntelligenceCleanLocationCandidate(gridlyHistoricalIntelligenceReadPath(record, path));
-    if (label) candidates.push({ label, sourceField: path, specificity: "specific", sourceType: "source_report_field" });
+    if (label) candidates.push({ label, sourceField: path.path, specificity: "specific", sourceType: "source_report_field" });
   });
-  GRIDLY_HISTORICAL_SOURCE_REPORT_FALLBACK_PATHS.forEach((path) => {
+  GRIDLY_HISTORICAL_SOURCE_REPORT_FALLBACK_COMPILED_PATHS.forEach((path) => {
     const label = gridlyHistoricalIntelligenceExtractLocationFromText(gridlyHistoricalIntelligenceReadPath(record, path));
-    if (label) candidates.push({ label, sourceField: path, specificity: "specific", sourceType: "text_fallback_extraction" });
+    if (label) candidates.push({ label, sourceField: path.path, specificity: "specific", sourceType: "text_fallback_extraction" });
   });
   return candidates;
 }
@@ -68487,28 +68496,29 @@ function gridlyHistoricalIntelligenceBuildDataCleanupRecommendations({ weakRows 
   };
 }
 
-function gridlyHistoricalIntelligenceRecordLocationContext(record = {}) {
-  const exactPaths = [
+const GRIDLY_HISTORICAL_RECORD_EXACT_PATHS = gridlyHistoricalIntelligenceCompilePaths([
     "presentationLocationLabel", "locationLabel", "displayLocation", "resolvedLocationLabel", "localizedLocation", "localizedSpot", "locationName", "locationPhrase", "knownLocation",
     "raw.presentationLocationLabel", "raw.locationLabel", "raw.displayLocation", "raw.resolvedLocationLabel", "raw.localizedLocation", "raw.localizedSpot", "raw.locationName", "raw.locationPhrase", "raw.knownLocation",
     "source.presentationLocationLabel", "source.locationLabel", "source.displayLocation", "source.resolvedLocationLabel", "source.localizedLocation", "source.localizedSpot", "source.locationName", "source.locationPhrase", "source.knownLocation",
     "original.presentationLocationLabel", "original.locationLabel", "original.displayLocation", "original.resolvedLocationLabel", "original.localizedLocation", "original.localizedSpot", "original.locationName", "original.locationPhrase", "original.knownLocation"
-  ];
-  const roadPaths = [
+]);
+const GRIDLY_HISTORICAL_RECORD_ROAD_PATHS = gridlyHistoricalIntelligenceCompilePaths([
     "referenceRoad", "reference_road", "roadName", "road", "resolvedRoadName", "primaryRoad", "routeName", "crossingName", "crossingLabel", "crossing", "intersection", "crossStreet", "cross_street", "nearestRoad", "nearestRoadName", "nearest_road", "street", "address",
     "raw.referenceRoad", "raw.reference_road", "raw.roadName", "raw.road", "raw.resolvedRoadName", "raw.primaryRoad", "raw.routeName", "raw.crossingName", "raw.crossingLabel", "raw.crossing", "raw.intersection", "raw.crossStreet", "raw.cross_street", "raw.nearestRoad", "raw.nearestRoadName", "raw.nearest_road", "raw.street", "raw.address",
     "source.referenceRoad", "source.reference_road", "source.roadName", "source.road", "source.resolvedRoadName", "source.primaryRoad", "source.routeName", "source.crossingName", "source.crossingLabel", "source.crossing", "source.intersection", "source.crossStreet", "source.cross_street", "source.nearestRoad", "source.nearestRoadName", "source.nearest_road", "source.street", "source.address",
     "original.referenceRoad", "original.reference_road", "original.roadName", "original.road", "original.resolvedRoadName", "original.primaryRoad", "original.routeName", "original.crossingName", "original.crossingLabel", "original.crossing", "original.intersection", "original.crossStreet", "original.cross_street", "original.nearestRoad", "original.nearestRoadName", "original.nearest_road", "original.street", "original.address"
-  ];
-  const localityPaths = [
+]);
+const GRIDLY_HISTORICAL_RECORD_LOCALITY_PATHS = gridlyHistoricalIntelligenceCompilePaths([
     "locality", "town", "city", "place", "area",
     "raw.locality", "raw.town", "raw.city", "raw.place", "raw.area",
     "source.locality", "source.town", "source.city", "source.place", "source.area",
     "original.locality", "original.town", "original.city", "original.place", "original.area"
-  ];
-  return gridlyHistoricalIntelligenceLocationFromPaths(record, exactPaths, "specific")
-    || gridlyHistoricalIntelligenceLocationFromPaths(record, roadPaths, "specific")
-    || gridlyHistoricalIntelligenceLocationFromPaths(record, localityPaths, "locality")
+]);
+
+function gridlyHistoricalIntelligenceRecordLocationContext(record = {}) {
+  return gridlyHistoricalIntelligenceLocationFromPaths(record, GRIDLY_HISTORICAL_RECORD_EXACT_PATHS, "specific")
+    || gridlyHistoricalIntelligenceLocationFromPaths(record, GRIDLY_HISTORICAL_RECORD_ROAD_PATHS, "specific")
+    || gridlyHistoricalIntelligenceLocationFromPaths(record, GRIDLY_HISTORICAL_RECORD_LOCALITY_PATHS, "locality")
     || null;
 }
 

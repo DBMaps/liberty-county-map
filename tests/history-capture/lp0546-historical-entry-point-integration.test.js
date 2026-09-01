@@ -14,7 +14,7 @@ assert.match(source, /marker\.on\("click", \(\) => gridlyLp0546BindIncidentSelec
 assert.match(source, /marker\.on\("popupopen"[\s\S]*"community_popup"/, 'community popup open refreshes current incident context only');
 assert.match(source, /"official_marker"|"official_alert"|"official_popup"/, 'official source surfaces are represented separately');
 assert.match(source, /function gridlyLp0546SelectionValidity[\s\S]*awareness_area_changed[\s\S]*selected_crossing_unavailable[\s\S]*selected_incident_unavailable/, 'selection validity invalidates area changes and unavailable records');
-assert.match(source, /function buildGridlyHistoricalIntelligenceSheetHtml\(options = \{\}\)[\s\S]*gridlyLp0546ResolveSelectionContext/, 'historical sheet open resolves latest meaningful runtime selection');
+assert.match(source, /function gridlyBuildHistoricalIntelligenceSheetHtmlWithBuilderMemo\(options = \{\}\)[\s\S]*gridlyLp0546ResolveSelectionContext/, 'historical sheet open resolves latest meaningful runtime selection inside the builder-scoped memo wrapper');
 assert.match(source, /window\.gridlyHistoricalSelectionDebug = gridlyHistoricalSelectionDebug/, 'selection debug helper is exposed');
 assert.match(source, /window\.gridlyLp0546HistoricalEntryPointIntegrationAudit = gridlyLp0546HistoricalEntryPointIntegrationAudit/, 'LP054.6 browser audit helper is exposed');
 assert.match(source, /crossing_marker_selection[\s\S]*crossing_alert_selection[\s\S]*nearby_crossing_selection[\s\S]*community_marker_selection[\s\S]*community_alert_selection[\s\S]*official_marker_selection[\s\S]*selection_switch[\s\S]*awareness_area_change[\s\S]*no_selection[\s\S]*popup_close_preserves_selection/, 'all required deterministic LP054.6 audit cases are present');
