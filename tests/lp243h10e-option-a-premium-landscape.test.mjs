@@ -43,8 +43,8 @@ test("KBYG, Search, V2 sheets, Leaflet, and feature authorities stay protected",
   assert.equal((html.match(/id="gridlyBriefInteractionPanel"/g) || []).length, 1);
   assert.equal((html.match(/id="map"/g) || []).length, 1);
   assert.match(h10e, /gridly-h9-brief-foreground[\s\S]*gridly-brief-interaction-panel/);
-  assert.match(html, /styles\.css\?v=243h10h-measured-landscape-closure/);
-  assert.match(html, /app\.js\?v=243h10h-measured-landscape-closure/);
+  assert.match(html, /styles\.css\?v=243h10i-search-tray-containment/);
+  assert.match(html, /app\.js\?v=243h10i-search-tray-containment/);
   assert.doesNotMatch(h10e, /fetch\(|Supabase|DriveTexas|Home Area|Awareness Area|addEventListener|setView\(|zoomIn\(|zoomOut\(/);
   assert.match(app, /H10B always returns[\s\S]*gridlyLandscapeCommandExpanded = false[\s\S]*syncGridlyLandscapeCommandPanel/);
 });

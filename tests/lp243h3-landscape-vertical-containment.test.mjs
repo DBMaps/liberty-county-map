@@ -57,11 +57,11 @@ test("representative short landscapes keep Location Context above the dock and r
 
 test("H1 runtime ownership and H2 horizontal shell remain unchanged under H4 identities", () => {
   assert.match(app, /let activeLayoutMode = "portrait"/);
-  assert.match(html, /js\/app\.js\?v=243h10h-measured-landscape-closure/);
+  assert.match(html, /js\/app\.js\?v=243h10i-search-tray-containment/);
   const h2 = css.slice(css.indexOf("/* LP243.H2 — one landscape containment authority"), css.indexOf(marker));
   assert.match(h2, /--lp243h2-shell-width: min\(760px, calc\(100vw - 24px\)\)/);
   assert.match(h2, /left: 50%;\s*transform: translateX\(-50%\)/);
-  assert.match(html, /css\/styles\.css\?v=243h10h-measured-landscape-closure/);
+  assert.match(html, /css\/styles\.css\?v=243h10i-search-tray-containment/);
 });
 
 test("orientation return restores untouched Portrait geometry and no Search runtime changed", () => {
