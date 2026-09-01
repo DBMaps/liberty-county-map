@@ -22,12 +22,22 @@ npm run verify:native-web
 npm run build:native-assets
 npx cap sync android
 cd android
-.\gradlew.bat clean assembleDebug
+# This repository intentionally omits the binary Gradle wrapper JAR. Use the
+# official local Gradle 8.14.4 distribution pinned by wrapper properties.
+gradle clean assembleDebug
 # Later, after supplying signing inputs outside source control:
-.\gradlew.bat bundleRelease
+gradle bundleRelease
 ```
 
 The debug APK is under `android/app/build/outputs/apk/debug/`. A release AAB is under `android/app/build/outputs/bundle/release/`. No keystore, alias, or password belongs in this repository.
+
+The tracked wrapper scripts and `gradle-wrapper.properties` do not make
+`.\gradlew.bat` executable by themselves because the binary
+`android/gradle/wrapper/gradle-wrapper.jar` is deliberately not committed. CI
+restores that JAR deterministically by running the pinned Gradle 8.14.4
+`wrapper` task in a temporary project. Owner builds should use the existing
+official local Gradle 8.14.4 binary distribution as shown above; they must not
+download or commit an ad hoc wrapper JAR.
 
 ## iOS (owner Mac required)
 
