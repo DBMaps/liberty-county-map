@@ -92,7 +92,7 @@ test("no truncation, persistent cache, provider change, presentation rewrite, or
   assert.doesNotMatch(builder, /retained(?:Records|History).*slice\(0,\s*\d+\)|global.*cache/i);
   assert.doesNotMatch(resolver, /window\..*(?:memo|cache)|localStorage.*(?:memo|cache)|sessionStorage.*(?:memo|cache)/i);
   assert.match(app, /source: "real_historical_records"/);
-  assert.match(html, /js\/app\.js\?v=243i1h4-final-history-performance-closure&amp;lp243j1=startup-readiness-handshake/);
+  assert.match(html, /js\/app\.js\?v=243i1h5-final-history-click-latency-closure&amp;lp243j1=startup-readiness-handshake/);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition&amp;lp243j=presentation-ownership-containment/);
 });
 
