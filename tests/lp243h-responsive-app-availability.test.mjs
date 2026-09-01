@@ -37,6 +37,6 @@ test("resize remains layout-only and preserves application state authority", () 
 });
 
 test("LP243.H asset identities advance through H4", () => {
-  assert.match(html, /css\/styles\.css\?v=243h10f-optical-balance-discoverability/);
-  assert.match(html, /js\/app\.js\?v=243h10b-final-short-landscape-authority/);
+  assert.match(html, /css\/styles\.css\?v=243h10h-measured-landscape-closure/);
+  assert.match(html, /js\/app\.js\?v=243h10h-measured-landscape-closure/);
 });

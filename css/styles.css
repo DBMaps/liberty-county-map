@@ -28590,6 +28590,105 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     .gridly-brief-foundation-handle-icon {
     color: var(--gridly-accent, #28c7c2);
   }
+
+  /* LP243.H10H — measured landscape closure. The safe-inset variables remain
+     the sole frame authority; this layer only reconciles the live outer edges
+     and composes the two command owners as non-overlapping tray rows. */
+  body[data-layout-mode="portrait"] {
+    --lp243h10h-command-height: 122px;
+    --lp243h10h-location-row-height: 58px;
+    --lp243h10h-action-row-height: 64px;
+    --lp243h10h-rail-gap: 10px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments,
+  body[data-layout-mode="portrait"] .map-card,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitBottomRegion {
+    box-sizing: border-box;
+    left: var(--lp243h10b-inline-start) !important;
+    right: var(--lp243h10b-inline-end) !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  /* The segmented owner used to inherit the brief stack's x=232 containing
+     block. Fixed positioning gives its outer strip the same safe frame while
+     preserving the five existing, evenly distributed controls. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    position: fixed !important;
+    z-index: 11;
+    top: 54px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitBottomRegion {
+    height: calc(var(--lp243h10h-command-height) + env(safe-area-inset-bottom, 0px)) !important;
+    border: 1px solid color-mix(in srgb, var(--gridly-accent, #28c7c2) 24%, var(--lp243h10e-divider));
+    border-bottom: 0;
+    border-radius: var(--lp243h10e-radius) var(--lp243h10e-radius) 0 0;
+    background: var(--lp243h10f-surface) !important;
+    box-shadow: 0 -8px 22px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Location Context occupies row one and Actions row two in the tray's fixed
+     coordinate space. The compatibility owner remains mounted once and is
+     deliberately transparent so the outer region is the only painted tray. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel {
+    top: auto !important;
+    left: calc(var(--lp243h10b-inline-start) + 1px) !important;
+    right: calc(var(--lp243h10b-inline-end) + 1px) !important;
+    bottom: calc(var(--lp243h10h-action-row-height) + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    height: var(--lp243h10h-location-row-height) !important;
+    min-height: var(--lp243h10h-location-row-height) !important;
+    padding: 7px 12px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel .compact-btn {
+    min-height: 44px;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyLandscapeCommandPanel {
+    inset: var(--lp243h10h-location-row-height) 8px 0 8px !important;
+    height: var(--lp243h10h-action-row-height) !important;
+    min-height: var(--lp243h10h-action-row-height) !important;
+    padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    border: 0 !important;
+    border-top: 1px solid var(--lp243h10e-divider) !important;
+  }
+
+  /* In the healthy expanded geometry no tray child covers the disclosure hit
+     owner, so the production elementFromPoint validation passes and H9 remains
+     recovery-only rather than becoming the normal expanded state. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 .gridly-v2-control-rail {
+    top: auto !important;
+    bottom: calc(var(--lp243h10h-command-height) + var(--lp243h10h-rail-gap) + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* H10G's 90vw × 83dvh sheet is frozen. Only presentation inside it changes:
+     remove the inherited 20px flow margin, strengthen the existing dark header,
+     and suppress the now-empty duplicate hero while retaining governed Travel
+     Brief and evidence Weather rows. */
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    color: var(--gridly-text-primary) !important;
+    font-weight: 760;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-foundation-handle-label {
+    opacity: 1;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-travel-brief {
+    margin-top: 0;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-hero,
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 #gridlyBriefWeather {
+    display: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
