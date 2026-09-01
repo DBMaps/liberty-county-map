@@ -4,7 +4,7 @@
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "performsCloudExecution": false,
   "classification": "PLATFORM_PREPARATION_BLOCKED_OWNER_ACTION_REQUIRED",
-  "artifactIdentity": "sha256:1338877a8eee9974f9f4de873dc226bfdfdc1c0893e88c91cc07aa31249e1841",
+  "artifactIdentity": "sha256:3107e15ee1f8749d2645cc1c6de5d48eea0b91f2fab588ab09de1a550d8087f1",
   "repositoryRootSafeForUpload": false,
   "stagingRequired": true,
   "runtimeModified": false,
