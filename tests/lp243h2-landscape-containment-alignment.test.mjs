@@ -28,7 +28,7 @@ test("sheets scroll internally and document cannot overflow horizontally", () =>
 });
 
 test("H1 ownership and promo authority remain untouched under H4 identities", () => {
-  assert.match(html, /css\/styles\.css\?v=243h10j-foreground-ownership-closure/);
+  assert.match(html, /css\/styles\.css\?v=243h10k-action-row-gap-closure/);
   assert.match(html, /js\/app\.js\?v=243h10i-search-tray-containment/);
   assert.match(css, /gridly-desktop-gate[^}]*display:\s*none/);
 });

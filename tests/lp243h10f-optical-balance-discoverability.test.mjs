@@ -67,7 +67,7 @@ test("KBYG stays a full foreground with Travel Brief first and readable editoria
 
 test("Search, V2, Leaflet, feature, and data authorities remain untouched", () => {
   assert.equal((html.match(/id="map"/g) || []).length, 1);
-  assert.match(html, /styles\.css\?v=243h10j-foreground-ownership-closure/);
+  assert.match(html, /styles\.css\?v=243h10k-action-row-gap-closure/);
   assert.match(html, /app\.js\?v=243h10i-search-tray-containment/);
   assert.match(app, /H10B always returns[\s\S]*gridlyLandscapeCommandExpanded = false[\s\S]*syncGridlyLandscapeCommandPanel/);
   assert.doesNotMatch(h10f, /fetch\(|Supabase|DriveTexas|Home Area|Awareness Area|addEventListener|setView\(|zoomIn\(|zoomOut\(|leaflet/i);
