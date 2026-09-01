@@ -15,7 +15,7 @@ test("production registry contains only the unchanged Standard and Satellite pro
   assert.doesNotMatch(app, /dark_all|const darkLayer|Dark: darkLayer/);
   assert.match(initMap, /https:\/\/\{s\}\.tile\.openstreetmap\.org\/\{z\}\/\{x\}\/\{y\}\.png[\s\S]*?subdomains: "abc",[\s\S]*?maxZoom: 20,[\s\S]*?attribution: "&copy; OpenStreetMap contributors"/);
   assert.match(initMap, /https:\/\/server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Imagery\/MapServer\/tile\/\{z\}\/\{y\}\/\{x\}[\s\S]*?maxZoom: 20,[\s\S]*?attribution: "Tiles &copy; Esri"/);
-  assert.match(initMap, /const baseLayers = \{\s*Standard: standardLayer,\s*Satellite: satelliteHybrid\s*\}/);
+  assert.match(initMap, /const baseLayers = \{\s*Standard: standardLayer,\s*Satellite: satelliteLayer\s*\}/);
   assert.doesNotMatch(initMap, /\bDark\s*:/);
   assert.match(app, /let currentMapStyle = "Satellite"/);
 });
@@ -51,7 +51,7 @@ test("shared Leaflet authority and baselayerchange persistence remain intact", (
 test("no replacement renderer/provider or presentation change is introduced", () => {
   assert.doesNotMatch(app + html, /MapLibre|maplibre|OpenFreeMap|openfreemap/);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243i21d2-remove-dark-basemap/);
+  assert.match(html, /js\/app\.js\?v=243i21s1-imagery-only-satellite/);
   assert.match(app, /GRIDLY_V2_PRESENTATION_OWNER_CLASS/);
   assert.match(app, /startupReadiness/);
   assert.match(app, /acceptedShortLandscapeApplicationOwner/);

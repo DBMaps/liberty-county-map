@@ -29,7 +29,7 @@ test("sheets scroll internally and document cannot overflow horizontally", () =>
 
 test("H1 ownership and promo authority remain untouched under H4 identities", () => {
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility)/);
+  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21s1-imagery-only-satellite)/);
   assert.match(css, /gridly-desktop-gate[^}]*display:\s*none/);
 });
 
