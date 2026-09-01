@@ -175,8 +175,13 @@
       function release() {
         if (released) return;
         ensureStartupLayoutOwnership();
+        var body = document.body;
+        var v2StartupSelected = document.documentElement.classList.contains("gridly-v2-startup-containment")
+          && body && body.getAttribute("data-layout-mode") === "portrait";
+        if (v2StartupSelected && !body.classList.contains("gridly-v2-presentation-owner-active")) return false;
         released = true;
         document.documentElement.classList.remove("gridly-prepaint-lock");
+        document.documentElement.classList.remove("gridly-v2-startup-containment");
         (window.gridlyStartupDiagnostics?.markPrepaintReleased || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "prepaintReleased", reason: reason }); })("inline prepaint release");
         window.requestAnimationFrame(function () {
           (window.gridlyStartupDiagnostics?.markFirstVisibleFrame || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "firstVisibleFrame", reason: reason }); })("first frame after prepaint release");
@@ -186,7 +191,12 @@
           document.body.classList.remove("gridly-startup-guard");
           document.body.classList.add("gridly-first-paint-ready");
         }
+        return true;
       }
+      /* LP243.J1: app.js calls this only after the accepted V2 shell and its
+         shared command presentation have been reconciled. Timers may request
+         release for legacy/non-V2 paths, but cannot bypass V2 ownership. */
+      window.gridlyReleaseFirstPaintWhenPresentationReady = release;
       function scheduleRelease() {
         window.requestAnimationFrame(function () {
           window.requestAnimationFrame(function () {
@@ -1558,7 +1568,7 @@
   <script src="js/gridlyRuntimeCountyIdentity.js?v=2393"></script>
   <script src="js/gridlyLP240WeatherAuthorityAudit.js?v=2401h4"></script>
   <script src="js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3"></script>
-  <script src="js/app.js?v=243i1-shared-v2-sheet-landscape-eligibility"></script>
+  <script src="js/app.js?v=243i1-shared-v2-sheet-landscape-eligibility&amp;lp243j1=startup-readiness-handshake"></script>
   <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
   <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=03921"></script>
   <script src="js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044"></script>
