@@ -17378,6 +17378,7 @@ const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
 const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
 const MAP_STYLE_STORAGE_KEY = "gridlyMapStyleV1";
 const GRIDLY_SETTINGS_STORAGE_KEY = "gridlySettingsV1";
+const normalizeGridlyMapStyleName = (name) => String(name || "").trim() === "Dark" ? "Standard" : String(name || "").trim();
 const GRIDLY_WELCOME_SEEN_STORAGE_KEY = "gridlyWelcomeSeenV1";
 const GRIDLY_BETA_FIRST_RUN_WALKTHROUGH_STORAGE_KEY = "gridlyBetaFirstRunWalkthroughCompleteV894C";
 const GRIDLY_COUNTY_WIDE_HOME_TOWN = "Entire Liberty County";
@@ -51593,7 +51594,7 @@ function getGridlyCountyBoundaryOverlayStyle(countyId = GRIDLY_DEFAULT_COUNTY_ID
   const normalized = gridlyNormalizeCountyId(countyId);
   const active = normalized === gridlyGetActiveCountyId();
   const standardMap = activeBaseLayerName === "Standard" || currentMapStyle === "Standard";
-  const darkOrSatellite = activeBaseLayerName === "Dark" || currentMapStyle === "Dark" || activeBaseLayerName === "Satellite" || currentMapStyle === "Satellite";
+  const darkOrSatellite = activeBaseLayerName === "Satellite" || currentMapStyle === "Satellite";
   const activeCountyFillEnabled = active;
   const activeCountyFillOpacity = active ? (standardMap ? 0.012 : 0.018) : 0;
   const passiveCountyOpacity = 0;
@@ -52153,12 +52154,6 @@ function initMap() {
     attribution: "&copy; OpenStreetMap contributors"
   });
 
-  const darkLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    subdomains: "abcd",
-    maxZoom: 20,
-    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
-  });
-
   const satelliteLayer = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
@@ -52181,19 +52176,18 @@ function initMap() {
   const satelliteHybrid = L.layerGroup([satelliteLayer, satelliteLabelsLayer]);
   const baseLayers = {
     Standard: standardLayer,
-    Dark: darkLayer,
     Satellite: satelliteHybrid
   };
 
   const styleClassByName = {
     Standard: "map-style-standard",
-    Dark: "map-style-dark",
     Satellite: "map-style-satellite"
   };
   mapBaseLayersByName = baseLayers;
   mapStyleClassByName = styleClassByName;
 
-  const savedStyle = localStorage.getItem(MAP_STYLE_STORAGE_KEY);
+  const savedStyle = normalizeGridlyMapStyleName(localStorage.getItem(MAP_STYLE_STORAGE_KEY));
+  if (localStorage.getItem(MAP_STYLE_STORAGE_KEY) === "Dark") localStorage.setItem(MAP_STYLE_STORAGE_KEY, savedStyle);
   const initialStyle = baseLayers[savedStyle] ? savedStyle : "Satellite";
   currentMapStyle = initialStyle;
   activeBaseLayerName = initialStyle;
@@ -52944,7 +52938,7 @@ function installLayerPickerDebugDiagnostics() {
   const baseLayerNames = () => Object.keys(mapBaseLayersByName || {});
   const normalizeLayerName = (name) => String(name || "").trim();
 
-  const fallbackLayerNameByIndex = ["Standard", "Dark", "Satellite"];
+  const fallbackLayerNameByIndex = ["Standard", "Satellite"];
 
   const resolveLayerNameFromLabel = (label, index) => {
     const input = label?.querySelector("input[type='radio']");
@@ -53005,7 +52999,7 @@ function installLayerPickerDebugDiagnostics() {
   };
 
   const applyBaseLayerByName = (layerName, source) => {
-    const normalizedName = normalizeLayerName(layerName);
+    const normalizedName = normalizeGridlyMapStyleName(layerName);
     if (!map || !mapBaseLayersByName[normalizedName]) {
       console.warn("[Gridly][LayerPicker] rejected layer change", { source, requestedLayer: layerName, normalizedName });
       return false;
@@ -53074,7 +53068,6 @@ function installLayerPickerDebugDiagnostics() {
         </button>
         <div class="gridly-mobile-layer-menu-list" hidden>
           <button type="button" data-layer-name="Standard">Standard</button>
-          <button type="button" data-layer-name="Dark">Dark</button>
           <button type="button" data-layer-name="Satellite">Satellite</button>
         </div>
       `;
@@ -53234,7 +53227,6 @@ function installLayerPickerDebugDiagnostics() {
       registeredBaseLayers: baseLayerNames(),
       currentTileLayersOnMap,
       standardLayerExists: Boolean(mapBaseLayersByName?.Standard),
-      darkLayerExists: Boolean(mapBaseLayersByName?.Dark),
       satelliteLayerExists: Boolean(mapBaseLayersByName?.Satellite),
       controlInputs: inputs.map((input, index) => ({
         index,
@@ -90152,7 +90144,6 @@ function bindEvents() {
         <strong>Choose Base Layer</strong>
         <div class="mobile-native-surface-actions mobile-native-surface-actions-grid">
           <button class="secondary-btn" type="button" data-portrait-layer-option="standard">Standard</button>
-          <button class="secondary-btn" type="button" data-portrait-layer-option="dark">Dark</button>
           <button class="secondary-btn" type="button" data-portrait-layer-option="satellite">Satellite</button>
         </div>
       </article>`;
@@ -90177,7 +90168,7 @@ function bindEvents() {
       openPortraitV2Sheet("layers");
       return;
     }
-    const options = ["Standard", "Dark", "Satellite"].map((name) => `<button type="button" data-layer-name="${name}">${name}</button>`).join("");
+    const options = ["Standard", "Satellite"].map((name) => `<button type="button" data-layer-name="${name}">${name}</button>`).join("");
     openTacticalDockSheet("layers", "Map Layers", `<div class="gridly-tactical-option-grid">${options}</div>`);
     document.querySelectorAll("#gridlyTacticalDockSheet [data-layer-name]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -90200,7 +90191,6 @@ function bindEvents() {
     };
     const layerNameByOption = {
       standard: "Standard",
-      dark: "Dark",
       satellite: "Satellite"
     };
     body.addEventListener("click", (event) => {
@@ -99279,7 +99269,6 @@ const GRIDLY_SETTINGS_DEFAULTS = Object.freeze({
 
 const GRIDLY_SETTINGS_MAP_STYLE_LABELS = {
   standard: "Standard",
-  dark: "Dark",
   satellite: "Satellite"
 };
 
@@ -99344,7 +99333,7 @@ function normalizeGridlySettings(raw = null) {
   Object.keys(base.notifications).forEach((key) => {
     if (typeof notifications[key] === "boolean") base.notifications[key] = notifications[key];
   });
-  const normalizedStyle = String(display.mapStyle || "").trim().toLowerCase();
+  const normalizedStyle = String(display.mapStyle || "").trim().toLowerCase() === "dark" ? "standard" : String(display.mapStyle || "").trim().toLowerCase();
   if (GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalizedStyle]) base.display.mapStyle = normalizedStyle;
   const normalizedTheme = String(display.theme || "").trim().toLowerCase();
   if (GRIDLY_SETTINGS_VALID_THEMES.has(normalizedTheme)) base.display.theme = normalizedTheme;
@@ -99381,9 +99370,7 @@ function saveGridlySettingsPreferences(nextSettings, { applyDisplay = true, rend
 function loadGridlySettingsPreferences({ render = false, applyDisplay = false } = {}) {
   const settings = getGridlySettingsPreferences();
   try {
-    if (!localStorage.getItem(GRIDLY_SETTINGS_STORAGE_KEY)) {
-      localStorage.setItem(GRIDLY_SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-    }
+    localStorage.setItem(GRIDLY_SETTINGS_STORAGE_KEY, JSON.stringify(settings));
   } catch (error) {
     // Settings remain usable in-memory if local storage is blocked.
   }
@@ -117965,7 +117952,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           <div class="settings-list-detail">
             <p class="settings-placeholder-note">Tune how Gridly looks on this device. Display changes apply immediately.</p>
             <div class="settings-select-grid">
-              <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
+              <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
               <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>Use device setting</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
               <label class="settings-text-size-label"><span>Text Size</span>${buildGridlySettingsTextSizeSegmentsHtml(settings.display.textSize)}</label>
             </div>
@@ -118010,7 +117997,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     alerts: { title: "Current Alerts", html: buildAlertsSurfaceHtml },
     settings: { title: "Settings", html: buildSettingsSurfaceHtml },
     history: { title: "Historical Intelligence", html: buildGridlyHistoricalIntelligenceSheetHtml },
-    layers: { title: "Map Layers", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Choose map style:</p><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Standard" type="button">Standard</button><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Dark" type="button">Dark</button><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Satellite" type="button">Satellite</button></div>` }
+    layers: { title: "Map Layers", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Choose map style:</p><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Standard" type="button">Standard</button><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Satellite" type="button">Satellite</button></div>` }
   };
   const v2DockAdapterState = { lastDockActionTriggered: "", lastDockAdapterTarget: "", adapterBridgeFailures: [], adapterFallbackCount: 0, lastV2Action: "", lastV2ActionResult: "", lastV2ActionError: "", lastReportAction: "", lastReportActionResult: "", lastReportActionError: "" };
   const v1363RouteActionDebug = { routeDockClickHandled:false, routeWatchActionHandled:false, routePreviewActionHandled:false, routeManagePlacesActionHandled:false, lastRouteActionFailureReason:"" };
