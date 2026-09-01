@@ -28180,6 +28180,164 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     grid-column: 2;
     min-width: 0;
   }
+
+  /* LP243.H10E — Option A premium landscape visual system. Presentation only:
+     H10B remains the structural and lifecycle authority. One gutter, one
+     radius family, and one restrained surface language unite the frame. */
+  body[data-layout-mode="portrait"] {
+    --lp243h10e-gutter: max(8px, env(safe-area-inset-left, 0px));
+    --lp243h10e-radius: 14px;
+    --lp243h10e-divider: color-mix(in srgb, var(--gridly-border-neutral) 68%, transparent);
+    --lp243h10e-frame: color-mix(in srgb, var(--gridly-elevated) 92%, transparent);
+  }
+
+  /* Existing identity, status, and KBYG owners form the only three header
+     regions. Optical side widths keep the concise status visually centered. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
+    top: 0 !important;
+    left: var(--lp243h10b-inline-start) !important;
+    right: var(--lp243h10b-inline-end) !important;
+    min-height: 54px !important;
+    padding: 8px 12px !important;
+    border: 0;
+    border-bottom: 1px solid var(--lp243h10e-divider);
+    border-radius: 0;
+    background: var(--lp243h10e-frame);
+    box-shadow: none;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-left { width: clamp(116px, 18vw, 164px); }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-center { display: none; }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img { max-width: 122px; max-height: 25px !important; }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    top: 0 !important;
+    left: calc(var(--lp243h10b-inline-start) + clamp(124px, 19vw, 174px)) !important;
+    right: calc(var(--lp243h10b-inline-end) + 10px) !important;
+    grid-template-columns: minmax(0, 1fr) clamp(184px, 25vw, 238px) !important;
+    grid-template-rows: 54px 50px;
+    gap: 0 12px !important;
+    align-items: center;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 :is(.gridly-v2-status-pill, .gridly-brief-foundation-handle) {
+    min-height: 40px !important;
+    max-height: 40px !important;
+    border: 0;
+    border-radius: var(--lp243h10e-radius);
+    box-shadow: none;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill {
+    justify-self: center;
+    width: min(100%, 430px);
+    padding-inline: 16px !important;
+    background: transparent;
+    text-align: center;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    width: 100%;
+    background: var(--gridly-accent, #28c7c2);
+    color: #03151b;
+    font-weight: 700;
+  }
+
+  /* One segmented strip: equal rhythm without five outlined pills. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-height: 42px !important;
+    padding: 4px !important;
+    gap: 4px !important;
+    border: 0;
+    border-top: 1px solid var(--lp243h10e-divider);
+    border-radius: 0;
+    background: var(--lp243h10e-frame);
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+    min-height: 34px !important;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--gridly-text-secondary);
+    font-size: 0.75rem;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button.is-active {
+    background: color-mix(in srgb, var(--gridly-accent, #28c7c2) 24%, transparent);
+    color: var(--gridly-accent, #28c7c2);
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+    right: calc(var(--lp243h10b-inline-end) + 8px) !important;
+    border: 1px solid var(--lp243h10e-divider);
+    border-radius: var(--lp243h10e-radius);
+    background: var(--lp243h10e-frame);
+  }
+
+  /* Expanded owners paint as one tray: the outer bottom region supplies the
+     only frame; Location Context/Search and actions remain lifecycle owners. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
+    border: 1px solid var(--lp243h10e-divider);
+    border-bottom: 0;
+    border-radius: var(--lp243h10e-radius) var(--lp243h10e-radius) 0 0;
+    background: var(--lp243h10e-frame) !important;
+    box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.2);
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    inset: 0 6px 0 45% !important;
+    align-items: stretch;
+    padding: 10px 0 8px 12px !important;
+    gap: 2px;
+    border: 0;
+    border-left: 1px solid var(--lp243h10e-divider);
+    background: transparent !important;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 6px 3px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon { width: 22px; height: 22px; }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button em { font-size: 0.7rem; }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button:is(:hover, :focus-visible) {
+    background: color-mix(in srgb, var(--gridly-accent, #28c7c2) 13%, transparent);
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel {
+    left: calc(var(--lp243h10b-inline-start) + 1px) !important;
+    right: auto !important;
+    bottom: env(safe-area-inset-bottom, 0px) !important;
+    box-sizing: border-box;
+    width: calc(45% - var(--lp243h10b-inline-start)) !important;
+    height: var(--lp243h10b-command-height) !important;
+    padding: 14px 12px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel .compact-btn {
+    min-width: 112px;
+    min-height: 44px;
+    border: 1px solid var(--lp243h10e-divider);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--gridly-surface) 82%, transparent);
+  }
+
+  /* KBYG shares the frame gutter and aligned label/value rhythm without cards. */
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    padding-inline: max(18px, env(safe-area-inset-left, 0px)) !important;
+    background: var(--lp243h10e-frame);
+    color: var(--gridly-text-primary);
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    padding-inline: max(24px, env(safe-area-inset-left, 0px)) max(24px, env(safe-area-inset-right, 0px)) !important;
+    background: var(--gridly-surface);
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    :is(.gridly-travel-brief-header, .gridly-travel-brief-item, .gridly-brief-weather:not([hidden])) {
+    grid-template-columns: minmax(132px, 20%) minmax(0, 1fr);
+    column-gap: 24px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

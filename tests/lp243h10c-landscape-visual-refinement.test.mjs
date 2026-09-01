@@ -7,8 +7,9 @@ const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const h10bMarker = "/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY";
 const h10cMarker = "/* LP243.H10C — presentation-only refinement";
+const h10eMarker = "/* LP243.H10E — Option A premium landscape visual system";
 const authority = css.slice(css.indexOf(h10bMarker));
-const h10c = css.slice(css.indexOf(h10cMarker));
+const h10c = css.slice(css.indexOf(h10cMarker), css.indexOf(h10eMarker));
 const matches = (width, height) => width > height && height <= 500;
 
 test("H10C is confined to the frozen short-landscape authority", () => {
@@ -59,6 +60,6 @@ test("Search, V2 sheets, Leaflet identity, and feature authority remain untouche
   assert.match(authority, /#gridlySearchShell:not\(\[hidden\]\),[\s\S]*#gridlyPortraitV2Sheet:not\(\[hidden\]\)/);
   assert.equal((html.match(/id="map"/g) || []).length, 1);
   assert.doesNotMatch(h10c, /fetch\(|Supabase|setView\(|appendChild|replaceChildren|Home Area|Awareness Area|DriveTexas/);
-  assert.match(html, /styles\.css\?v=243h10d-premium-landscape-cleanup/);
+  assert.match(html, /styles\.css\?v=243h10e-option-a-premium-landscape/);
   assert.match(html, /app\.js\?v=243h10b-final-short-landscape-authority/);
 });
