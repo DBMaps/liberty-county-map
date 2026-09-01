@@ -72400,6 +72400,30 @@ function getGridlyPortraitCleanupGateState(layoutMode = getCanonicalGridlyPortra
   };
 }
 
+// LP243.I1: opening the shared V2 sheet is an interaction decision, not a
+// Portrait cleanup decision. Keep strict Portrait cleanup bounded above while
+// also admitting the accepted short-landscape application presentation owner.
+function getGridlyV2SheetInteractionEligibility(
+  layoutMode = getCanonicalGridlyPortraitLayoutMode(),
+  cleanupState = getGridlyPortraitCleanupGateState(layoutMode)
+) {
+  const acceptedShortLandscapeApplicationOwner = Boolean(
+    layoutMode === "portrait" &&
+    window.matchMedia?.("(orientation: landscape) and (max-height: 500px)")?.matches
+  );
+  const eligible = Boolean(cleanupState.isStrictPortraitMobile || acceptedShortLandscapeApplicationOwner);
+  return {
+    eligible,
+    strictPortrait: Boolean(cleanupState.isStrictPortraitMobile),
+    acceptedShortLandscapeApplicationOwner,
+    reason: cleanupState.isStrictPortraitMobile
+      ? "strict_portrait"
+      : acceptedShortLandscapeApplicationOwner
+        ? "accepted_short_landscape_application_owner"
+        : "unsupported_presentation_owner"
+  };
+}
+
 const GRIDLY_V2_PRESENTATION_OWNER_CLASS = "gridly-v2-presentation-owner-active";
 const GRIDLY_V2_RETIRED_CONSUMER_SURFACE_SELECTOR = ".mobile-bottom-nav, #gridlyHazardLauncher";
 
@@ -118043,8 +118067,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         gridlyAlertsLastActivationOpener = candidate;
       }
     }
-    const portraitAuthorization = getGridlyPortraitCleanupGateState(getCanonicalGridlyPortraitLayoutMode());
-    if (!portraitAuthorization.isStrictPortraitMobile) {
+    const sheetInteractionEligibility = getGridlyV2SheetInteractionEligibility();
+    if (!sheetInteractionEligibility.eligible) {
       deactivateGridlyPortraitV2Owner();
       return false;
     }

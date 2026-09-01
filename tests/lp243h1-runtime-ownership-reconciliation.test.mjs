@@ -48,7 +48,7 @@ test("protected portrait CSS stays outside LP243.H containment under H4 identiti
   assert.match(scoped, /@media \(orientation: landscape\), \(min-width: 761px\)/);
   assert.doesNotMatch(scoped, /320px|390px|430px|max-width:\s*760px\) and \(orientation:\s*portrait\)/);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243h10i-search-tray-containment/);
+  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility)/);
 });
 
 test("representative landscape, tablet, wide, and portrait signals retain live owner", () => {
