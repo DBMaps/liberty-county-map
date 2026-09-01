@@ -72,6 +72,6 @@ test("Search, sheets, Leaflet, data authority, and asset identity remain protect
   assert.match(h10b, /#gridlySearchShell:not\(\[hidden\]\),[\s\S]*#gridlyPortraitV2Sheet:not\(\[hidden\]\)/);
   assert.equal((html.match(/id="map"/g) || []).length, 1);
   assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility)/);
+  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i21s1-imagery-only-satellite)/);
   assert.doesNotMatch(h10d, /fetch\(|Supabase|Home Area|Awareness Area|DriveTexas|appendChild|replaceChildren|transform:\s*scale\(/);
 });

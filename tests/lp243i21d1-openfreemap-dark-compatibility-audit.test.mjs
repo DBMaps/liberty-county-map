@@ -15,7 +15,7 @@ test("audit makes one bounded decision without activating the candidate", () => 
 });
 
 test("current basemap and persistence authorities remain unchanged", () => {
-  assert.match(app, /const baseLayers = \{\s*Standard: standardLayer,\s*Satellite: satelliteHybrid\s*\}/);
+  assert.match(app, /const baseLayers = \{\s*Standard: standardLayer,\s*Satellite: satelliteLayer\s*\}/);
   assert.doesNotMatch(app, /dark_all|Dark: darkLayer/);
   assert.match(app, /const MAP_STYLE_STORAGE_KEY = "gridlyMapStyleV1"/);
   assert.match(app, /https:\/\/\{s\}\.tile\.openstreetmap\.org/);

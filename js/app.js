@@ -52136,8 +52136,6 @@ function initMap() {
   map.createPane("routePane");
   map.getPane("routePane").style.zIndex = 620;
   map.getPane("routePane").style.pointerEvents = "none";
-  map.createPane("satLabelsPane");
-  map.getPane("satLabelsPane").style.zIndex = 640;
   map.createPane("countyBoundaryOverlayPane");
   map.getPane("countyBoundaryOverlayPane").style.zIndex = 425;
   map.getPane("countyBoundaryOverlayPane").style.pointerEvents = "none";
@@ -52162,21 +52160,9 @@ function initMap() {
     }
   );
 
-  const satelliteLabelsLayer = L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
-    {
-      subdomains: "abcd",
-      maxZoom: 20,
-      pane: "satLabelsPane",
-      opacity: 1,
-      attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
-    }
-  );
-
-  const satelliteHybrid = L.layerGroup([satelliteLayer, satelliteLabelsLayer]);
   const baseLayers = {
     Standard: standardLayer,
-    Satellite: satelliteHybrid
+    Satellite: satelliteLayer
   };
 
   const styleClassByName = {
@@ -122802,7 +122788,6 @@ window.gridlyCapacitorReadinessAudit = function gridlyCapacitorReadinessAudit() 
     { name: "Supabase JS", source: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", status: "risky", recommendation: "Vendor or bundle before production app-store packaging." },
     { name: "Supabase project API", source: SUPABASE_URL, status: "safe", recommendation: "Keep HTTPS/network availability handling." },
     { name: "OpenStreetMap tiles", source: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", status: "risky", recommendation: "Confirm tile policy and native fallback/caching strategy." },
-    { name: "CARTO tile layers", source: "https://{s}.basemaps.cartocdn.com", status: "risky", recommendation: "Confirm native usage terms and offline fallback." },
     { name: "Esri World Imagery tiles", source: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer", status: "risky", recommendation: "Confirm native usage terms and fallback behavior." },
     { name: "OSRM route and nearest APIs", source: "https://router.project-osrm.org", status: "risky", recommendation: "Use a production routing provider or own service before scale." },
     { name: "OpenStreetMap Nominatim", source: "https://nominatim.openstreetmap.org", status: "risky", recommendation: "Use a compliant production geocoder before scale." },
