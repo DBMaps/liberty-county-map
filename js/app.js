@@ -72598,6 +72598,68 @@ function getGridlyV2SheetInteractionEligibility(
 
 const GRIDLY_V2_PRESENTATION_OWNER_CLASS = "gridly-v2-presentation-owner-active";
 const GRIDLY_V2_RETIRED_CONSUMER_SURFACE_SELECTOR = ".mobile-bottom-nav, #gridlyHazardLauncher";
+const GRIDLY_PORTRAIT_ATTRIBUTION_CLEARANCE_PROPERTY = "--gridly-portrait-map-attribution-bottom-clearance";
+
+// LP243.I2.3R2: Leaflet positions its bottom corner from the map's DOM bottom,
+// which can extend below the visual viewport. Measure the actual foreground
+// boundary instead; this presentation-only value never changes map geometry or
+// state and is deliberately cleared when Portrait is not the active owner.
+function reconcileGridlyPortraitMapAttributionBoundary() {
+  const root = document.documentElement;
+  const body = document.body;
+  const portrait = Boolean(
+    body?.dataset?.layoutMode === "portrait" &&
+    window.matchMedia?.("(max-width: 760px) and (orientation: portrait)")?.matches
+  );
+  if (!portrait) {
+    root?.style?.removeProperty(GRIDLY_PORTRAIT_ATTRIBUTION_CLEARANCE_PROPERTY);
+    return false;
+  }
+  const mapElement = document.getElementById("map");
+  const foregroundPanel = document.getElementById("mobileDestinationCommandPanel");
+  if (!mapElement || !foregroundPanel || foregroundPanel.hidden) {
+    root?.style?.removeProperty(GRIDLY_PORTRAIT_ATTRIBUTION_CLEARANCE_PROPERTY);
+    return false;
+  }
+  const mapRect = mapElement.getBoundingClientRect();
+  const foregroundRect = foregroundPanel.getBoundingClientRect();
+  if (!Number.isFinite(mapRect.bottom) || !Number.isFinite(foregroundRect.top)) return false;
+  const breathingGap = 8;
+  const bottomClearance = Math.max(0, mapRect.bottom - foregroundRect.top + breathingGap);
+  root.style.setProperty(GRIDLY_PORTRAIT_ATTRIBUTION_CLEARANCE_PROPERTY, `${Math.ceil(bottomClearance)}px`);
+  return true;
+}
+
+function installGridlyPortraitMapAttributionBoundaryLifecycle() {
+  let frame = 0;
+  const schedule = () => {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      reconcileGridlyPortraitMapAttributionBoundary();
+    });
+  };
+  window.addEventListener("resize", schedule, { passive: true });
+  window.visualViewport?.addEventListener("resize", schedule, { passive: true });
+  window.visualViewport?.addEventListener("scroll", schedule, { passive: true });
+  if (typeof ResizeObserver === "function") {
+    const observer = new ResizeObserver(schedule);
+    [document.getElementById("map"), document.getElementById("mobileDestinationCommandPanel")]
+      .filter(Boolean)
+      .forEach((element) => observer.observe(element));
+  }
+  if (typeof MutationObserver === "function" && document.body) {
+    const observer = new MutationObserver(schedule);
+    observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["data-layout-mode", "hidden", "class"] });
+  }
+  schedule();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", installGridlyPortraitMapAttributionBoundaryLifecycle, { once: true });
+} else {
+  installGridlyPortraitMapAttributionBoundaryLifecycle();
+}
 
 function reconcileGridlyV2ConsumerPresentationOwnership() {
   const body = document.body;
@@ -72609,6 +72671,7 @@ function reconcileGridlyV2ConsumerPresentationOwnership() {
     shell.getAttribute("aria-hidden") !== "true"
   );
   body?.classList.toggle(GRIDLY_V2_PRESENTATION_OWNER_CLASS, ownsPresentation);
+  reconcileGridlyPortraitMapAttributionBoundary();
 
   document.querySelectorAll(GRIDLY_V2_RETIRED_CONSUMER_SURFACE_SELECTOR).forEach((surface) => {
     surface.toggleAttribute("inert", ownsPresentation);

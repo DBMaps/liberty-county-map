@@ -42,8 +42,8 @@ test("bounded CSS protects portrait and short-landscape without changing map geo
   assert.match(css, /#map \.leaflet-control-attribution[\s\S]*white-space: nowrap/);
   assert.match(css, /#map \.gridly-map-attribution-disclosure[\s\S]*width: min\(360px, calc\(100% - 16px\)\)[\s\S]*max-height: min\(180px, calc\(100% - 48px\)\)[\s\S]*overflow: auto/);
   assert.doesNotMatch(css.slice(css.lastIndexOf("LP243.I2.3")), /body\s*\{|#map\s*\{[^}]*height/);
-  assert.match(html, /styles\.css\?v=243i23r1-portrait-attribution-clearance/);
-  assert.match(html, /app\.js\?v=243i23-compact-map-attribution/);
+  assert.match(html, /styles\.css\?v=243i23r2-visible-map-attribution-boundary/);
+  assert.match(html, /app\.js\?v=243i23r2-visible-map-attribution-boundary/);
 });
 
 test("provider endpoints and protected accessibility and roadway wording remain intact", () => {

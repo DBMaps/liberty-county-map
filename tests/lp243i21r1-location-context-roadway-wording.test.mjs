@@ -39,7 +39,7 @@ test("Alerts and KBYG authorities and composition remain independent", () => {
 test("responsive presentations share markup and copy without viewport-specific wording", () => {
   assert.match(html, /id="mobileAwarenessPanelIssues"/);
   assert.doesNotMatch(formatterSource + normalization + portrait, /390|844|932/);
-  assert.match(html, /js\/app\.js\?v=243i23-compact-map-attribution/);
+  assert.match(html, /js\/app\.js\?v=243i23r2-visible-map-attribution-boundary/);
 });
 
 test("protected provider, weather, map, styling, and history implementations are outside this repair", () => {
