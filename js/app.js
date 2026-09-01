@@ -123303,7 +123303,7 @@ window.gridlyLp0522UpdateLifecycleAudit = function gridlyLp0522UpdateLifecycleAu
 
 window.gridlyCapacitorFoundationAudit = function gridlyCapacitorFoundationAudit() {
   const capacitorFoundation = {
-    appId: "com.gridly.app",
+    appId: "com.gridlygo.gridly",
     appName: "Gridly",
     webDir: ".",
     bundledWebRuntime: false,
@@ -123321,7 +123321,7 @@ window.gridlyCapacitorFoundationAudit = function gridlyCapacitorFoundationAudit(
     || gridlyPwaInstallReadinessState.serviceWorkerRegistered
     || (typeof navigator !== "undefined" && "serviceWorker" in navigator)
   );
-  const appIdConfigured = capacitorFoundation.appId === "com.gridly.app";
+  const appIdConfigured = capacitorFoundation.appId === "com.gridlygo.gridly";
   const appNameConfigured = capacitorFoundation.appName === "Gridly";
   const webDirConfigured = capacitorFoundation.webDir === ".";
   const capacitorConfigured = Boolean(
@@ -123390,13 +123390,13 @@ window.gridlyCapacitorFoundationAudit = function gridlyCapacitorFoundationAudit(
 window.gridlyNativeBuildReadinessAudit = function gridlyNativeBuildReadinessAudit() {
   const foundationAudit = typeof window.gridlyCapacitorFoundationAudit === "function" ? window.gridlyCapacitorFoundationAudit() : null;
   const capacitorConfig = {
-    appId: "com.gridly.app",
+    appId: "com.gridlygo.gridly",
     appName: "Gridly",
     webDir: ".",
     bundledWebRuntime: false
   };
   const configMatchesExpected = Boolean(
-    capacitorConfig.appId === "com.gridly.app"
+    capacitorConfig.appId === "com.gridlygo.gridly"
     && capacitorConfig.appName === "Gridly"
     && capacitorConfig.webDir === "."
     && capacitorConfig.bundledWebRuntime === false

@@ -691,6 +691,11 @@
     "rehearse:lp24117": "node tools/lp24117/non-production-provider-rehearsal.mjs --write",
     "verify:lp24117": "node tools/lp24117/non-production-provider-rehearsal.mjs --verify",
     "test:lp24117": "node --test tests/lp24117-non-production-provider-rehearsal.test.mjs",
-    "test:poi-browser": "node --test tests/poi-browser-provider.test.mjs tests/poi-production-packaging.test.mjs"
+    "test:poi-browser": "node --test tests/poi-browser-provider.test.mjs tests/poi-production-packaging.test.mjs",
+    "build:native-web": "node tools/native-web.mjs",
+    "verify:native-web": "node tools/native-web.mjs --verify",
+    "test:native-packaging": "node --test tests/native-packaging.test.mjs",
+    "build:native-assets": "node tools/native-assets.mjs",
+    "prepare:native": "npm run build:native-web && npm run verify:native-web && npm run build:native-assets"
   }
 }

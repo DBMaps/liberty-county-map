@@ -12,5 +12,8 @@ test('Cloudflare static inventory and Capacitor workflow include the certified P
   assert.equal([...paths].filter(file => file.startsWith(`${release}/runtime-v2/`) && file.endsWith('.json.gz')).length, 86);
   for (const legal of ['legal/THIRD-PARTY-NOTICES.txt', 'legal/foursquare/NOTICE.txt', 'legal/license-reference-manifest.json']) assert.ok(paths.has(`${release}/${legal}`));
   const workflow = fs.readFileSync(new URL('../.github/workflows/capacitor-validation.yml', import.meta.url), 'utf8');
-  assert.match(workflow, /cp -R css js assets data poi www\//);
+  const stage = fs.readFileSync(new URL('../tools/native-web.mjs', import.meta.url), 'utf8');
+  assert.match(workflow, /npm run build:native-web && npm run verify:native-web/);
+  assert.match(stage, /['"]poi['"]/);
+  assert.match(stage, /shards\.length !== 86/);
 });
