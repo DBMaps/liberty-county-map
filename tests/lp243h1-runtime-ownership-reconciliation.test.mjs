@@ -47,7 +47,7 @@ test("protected portrait CSS stays outside LP243.H containment under H4 identiti
   const scoped = css.slice(css.indexOf("/* LP243.H — additive non-portrait containment"), css.indexOf("/* GRIDLY V272.2"));
   assert.match(scoped, /@media \(orientation: landscape\), \(min-width: 761px\)/);
   assert.doesNotMatch(scoped, /320px|390px|430px|max-width:\s*760px\) and \(orientation:\s*portrait\)/);
-  assert.match(html, /css\/styles\.css\?v=243h10e-option-a-premium-landscape/);
+  assert.match(html, /css\/styles\.css\?v=243h10f-optical-balance-discoverability/);
   assert.match(html, /js\/app\.js\?v=243h10b-final-short-landscape-authority/);
 });
 

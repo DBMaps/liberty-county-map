@@ -28338,6 +28338,168 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     grid-template-columns: minmax(132px, 20%) minmax(0, 1fr);
     column-gap: 24px;
   }
+
+  /* LP243.H10F — final optical balance and discoverability. These rules are
+     deliberately presentation-only and remain inside H10B's short-landscape
+     media query; the frozen grid, map flex, and overlay lifecycles stay intact. */
+  body[data-layout-mode="portrait"] {
+    --lp243h10f-frame-inset: var(--lp243h10b-inline-start);
+    --lp243h10f-surface: color-mix(in srgb, var(--gridly-elevated) 88%, transparent);
+  }
+
+  /* Give the existing horizontal identity enough optical authority to balance
+     KBYG, while the status becomes the quiet, flexible middle region. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-left {
+    width: clamp(176px, 25vw, 214px);
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
+    width: auto;
+    max-width: 196px;
+    max-height: 40px !important;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    left: calc(var(--lp243h10b-inline-start) + clamp(184px, 26vw, 224px)) !important;
+    grid-template-columns: minmax(0, 1fr) clamp(184px, 24vw, 224px) !important;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong {
+    color: color-mix(in srgb, var(--gridly-text-primary) 78%, transparent);
+    font-size: 0.76rem;
+    font-weight: 520;
+  }
+
+  /* Header and filters share one uninterrupted frame; the map loses the
+     redundant inner card edge so it meets that navigation system directly. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 :is(.gridly-v2-topbar, .gridly-v2-segments) {
+    background: var(--lp243h10f-surface);
+  }
+  body[data-layout-mode="portrait"] :is(.map-card, .map-frame) {
+    border-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Preserve 44px controls while reducing the rail's painted weight. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+    gap: 1px !important;
+    padding: 2px !important;
+    border-color: color-mix(in srgb, var(--gridly-border-neutral) 48%, transparent);
+    background: color-mix(in srgb, var(--gridly-elevated) 76%, transparent);
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.14);
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button {
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+  }
+
+  /* The hit owner remains 68×44, but its attached visible tab advances from
+     H10E's 38×18 treatment to the owner-approved 54×24 treatment. */
+  body[data-layout-mode="portrait"] .gridly-landscape-command-handle {
+    width: 68px;
+    min-width: 68px;
+    height: 44px;
+    min-height: 44px;
+  }
+  body[data-layout-mode="portrait"] .gridly-landscape-command-handle::before {
+    width: 54px;
+    height: 24px;
+    border-color: color-mix(in srgb, var(--gridly-accent, #28c7c2) 58%, var(--gridly-border-neutral));
+    border-radius: 13px 13px 0 0;
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--gridly-elevated) 96%, var(--gridly-accent, #28c7c2) 4%),
+      var(--gridly-surface));
+  }
+  body[data-layout-mode="portrait"] .gridly-landscape-command-handle > span {
+    bottom: 3px;
+    width: 30px;
+    height: 20px;
+    font-size: 21px;
+    font-weight: 800;
+  }
+
+  /* One edge-aligned command surface. Both lifecycle-owned DOM regions are
+     transparent children of the same full-width outer tray. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
+    left: var(--lp243h10b-inline-start) !important;
+    right: var(--lp243h10b-inline-end) !important;
+    border-color: color-mix(in srgb, var(--gridly-accent, #28c7c2) 24%, var(--lp243h10e-divider));
+    background: var(--lp243h10f-surface) !important;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    inset: 0 8px 0 44% !important;
+    padding: 9px 0 8px 10px !important;
+    gap: 0;
+    border-left-color: var(--lp243h10e-divider);
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-height: 44px;
+    border-radius: 8px;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button + button {
+    border-left: 1px solid color-mix(in srgb, var(--lp243h10e-divider) 65%, transparent);
+    border-radius: 0;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon {
+    width: 24px;
+    height: 24px;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button em {
+    font-size: 0.72rem;
+    line-height: 1.15;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel {
+    left: calc(var(--lp243h10b-inline-start) + 1px) !important;
+    width: calc(44% - var(--lp243h10b-inline-start)) !important;
+    padding: 12px 14px !important;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel .compact-btn {
+    min-width: 120px;
+    background: color-mix(in srgb, var(--gridly-surface) 56%, transparent);
+  }
+
+  /* Editorial KBYG hierarchy: one scrolling foreground, broad label/value
+     rows, readable details, and deliberate family rhythm rather than cards. */
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    padding-top: calc(62px + env(safe-area-inset-top, 0px)) !important;
+    padding-inline: max(28px, env(safe-area-inset-left, 0px)) max(28px, env(safe-area-inset-right, 0px)) !important;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    :is(.gridly-travel-brief-header, .gridly-travel-brief-item, .gridly-brief-weather:not([hidden])) {
+    grid-template-columns: clamp(144px, 21vw, 184px) minmax(0, 1fr);
+    column-gap: clamp(24px, 4vw, 40px);
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-travel-brief-header {
+    padding-bottom: 12px;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-travel-brief-item {
+    padding-block: 13px;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-travel-brief-item + .gridly-travel-brief-item {
+    border-top: 1px solid color-mix(in srgb, var(--gridly-border-neutral) 54%, transparent);
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-section-label {
+    font-size: 0.78rem;
+    font-weight: 720;
+    letter-spacing: 0.105em;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    :is(.gridly-brief-context, .gridly-travel-brief-lines, .gridly-brief-weather-summary) {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-travel-brief-item h4,
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-weather-alert-title {
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    :is(.gridly-travel-brief-source, small, [data-gridly-decision-role="freshness"]) {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
