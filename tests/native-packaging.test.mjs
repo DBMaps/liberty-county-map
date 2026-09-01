@@ -15,6 +15,30 @@ test('Android project explicitly enables AndroidX without unnecessary Jetifier',
   assert.doesNotMatch(properties, /^android\.enableJetifier\s*=/m);
 });
 
+test('Android SDK levels retain the Capacitor 8 packaging contract', () => {
+  const gradle = text('android/app/build.gradle');
+  assert.match(gradle, /^\s*minSdk 24$/m);
+  assert.doesNotMatch(gradle, /^\s*minSdk(?:Version)? 23$/m);
+  assert.deepEqual(
+    [...gradle.matchAll(/^\s*minSdk(?:Version)?\s+(\d+)$/gm)].map((match) => Number(match[1])),
+    [24]
+  );
+  assert.match(gradle, /^\s*compileSdk 36$/m);
+  assert.match(gradle, /^\s*targetSdk 36$/m);
+  assert.match(gradle, /^\s*applicationId ['"]com\.gridlygo\.gridly['"]$/m);
+
+  const capacitorPackage = JSON.parse(text('node_modules/@capacitor/android/package.json'));
+  assert.equal(capacitorPackage.version, '8.3.4');
+  const capacitorGradle = text('node_modules/@capacitor/android/capacitor/build.gradle');
+  assert.match(capacitorGradle, /minSdkVersion project\.hasProperty\('minSdkVersion'\) \? rootProject\.ext\.minSdkVersion : 24/);
+
+  for (const path of [
+    'android/app/build.gradle',
+    'android/app/src/main/AndroidManifest.xml',
+    'android/capacitor-cordova-android-plugins/build.gradle'
+  ]) assert.doesNotMatch(text(path), /tools:overrideLibrary/);
+});
+
 test('permanent native identity and bundled web contract are aligned', () => {
   assert.equal(config.appId, 'com.gridlygo.gridly');
   assert.equal(config.appName, 'Gridly');
