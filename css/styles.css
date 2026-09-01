@@ -28776,6 +28776,19 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     pointer-events: none !important;
   }
 
+  /* LP243.H10K — close the measured 17px action-row displacement without
+     changing either tray row or its controls. This applies only while the
+     short-landscape command owners are expanded and tray-local. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 #gridlyPortraitBottomRegion {
+    gap: 0;
+    row-gap: 0;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitBottomRegion > #mobileDestinationCommandPanel {
+    margin-bottom: 0;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
