@@ -72,6 +72,6 @@ test("ownership, legacy suppression, protected authority, and rotation locality 
 test("H5-H9 rejected geometry is documented as superseded, not final", () => {
   assert.match(css, /LP243\.H5-H9 — short-landscape geometry superseded/);
   assert.doesNotMatch(h10b, /--lp243h[56789]-(?:map-top-reserve|map-bottom-reserve|panel-height)|min\(720px/);
-  assert.match(html, /styles\.css\?v=243h10e-option-a-premium-landscape/);
+  assert.match(html, /styles\.css\?v=243h10f-optical-balance-discoverability/);
   assert.match(html, /app\.js\?v=243h10b-final-short-landscape-authority/);
 });
