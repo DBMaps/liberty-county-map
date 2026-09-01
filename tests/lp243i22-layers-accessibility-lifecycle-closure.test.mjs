@@ -83,5 +83,5 @@ test("provider, roadway wording, shared surfaces, responsive, and startup contra
   assert.match(app, /acceptedShortLandscapeApplicationOwner/);
   assert.match(app, /startupReadiness/);
   assert.match(css, /LP243\.H/);
-  assert.match(html, /js\/app\.js\?v=243i22-layers-accessibility-lifecycle/);
+  assert.match(html, /js\/app\.js\?v=243i23-compact-map-attribution/);
 });
