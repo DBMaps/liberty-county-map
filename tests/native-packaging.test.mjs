@@ -40,10 +40,39 @@ test('tracked text describes launcher, AppIcon, and launch screen resources', ()
   for (const path of ['android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml', 'android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/Contents.json', 'ios/App/App/Assets.xcassets/Splash.imageset/Contents.json', 'ios/App/App/Base.lproj/LaunchScreen.storyboard']) assert.ok(existsSync(path), `${path} must exist`);
 });
 
+test('Android launcher resources separate legacy fallbacks from adaptive foreground artwork', () => {
+  const generated = [
+    'android/app/src/main/res/mipmap-anydpi/ic_launcher.png',
+    'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png',
+    'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png'
+  ];
+  const trackedXml = execFileSync('git', ['ls-files', 'android/app/src/main/res/**/*.xml'], { encoding: 'utf8' })
+    .trim().split('\n').filter((path) => path && existsSync(path));
+  const conflictingBasenames = generated.filter((png) => trackedXml.some((xml) => {
+    const pngName = png.slice(png.lastIndexOf('/') + 1, -4);
+    const xmlName = xml.slice(xml.lastIndexOf('/') + 1, -4);
+    const pngDirectory = png.slice(0, png.lastIndexOf('/'));
+    const xmlDirectory = xml.slice(0, xml.lastIndexOf('/'));
+    return pngName === xmlName && pngDirectory === xmlDirectory;
+  }));
+  assert.deepEqual(conflictingBasenames, []);
+
+  for (const launcher of ['ic_launcher', 'ic_launcher_round']) {
+    assert.equal(trackedXml.filter((path) => path.endsWith(`/mipmap-anydpi-v26/${launcher}.xml`)).length, 1);
+    assert.equal(generated.filter((path) => path.endsWith(`/mipmap-anydpi/${launcher}.png`)).length, 1);
+    assert.match(text(`android/app/src/main/res/mipmap-anydpi-v26/${launcher}.xml`), /@mipmap\/ic_launcher_foreground/);
+  }
+  assert.ok(generated.some((path) => path.endsWith('/mipmap-anydpi/ic_launcher_foreground.png')));
+
+  const manifest = text('android/app/src/main/AndroidManifest.xml');
+  assert.match(manifest, /android:icon="@mipmap\/ic_launcher"/);
+  assert.match(manifest, /android:roundIcon="@mipmap\/ic_launcher_round"/);
+});
+
 test('approved tracked artwork generates every native raster deterministically', () => {
   const first = mkdtempSync(join(tmpdir(), 'gridly-native-assets-a-'));
   const second = mkdtempSync(join(tmpdir(), 'gridly-native-assets-b-'));
-  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_logo.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
+  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
   try {
     for (const root of [first, second]) execFileSync(process.execPath, ['tools/native-assets.mjs', '--output-root', root]);
     for (const path of outputs) {
@@ -58,7 +87,9 @@ test('approved tracked artwork generates every native raster deterministically',
 
 test('generated native raster outputs are not tracked', () => {
   const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n');
-  assert.equal(tracked.some((path) => /^(android\/app\/src\/main\/res\/(?:drawable\/splash|mipmap-anydpi\/ic_launcher(?:_logo|_round)?)|ios\/App\/App\/Assets\.xcassets\/(?:AppIcon\.appiconset\/AppIcon-512@2x|Splash\.imageset\/splash))\.png$/.test(path)), false);
+  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
+  assert.equal(outputs.some((path) => tracked.includes(path)), false);
+  for (const path of outputs) execFileSync('git', ['check-ignore', '--quiet', path]);
 });
 
 test('native stage declares every governed runtime family', () => {
