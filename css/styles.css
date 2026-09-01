@@ -28102,6 +28102,84 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-travel-brief-list {
     overflow-x: hidden;
   }
+
+  /* LP243.H10D — premium foreground cleanup only. H10B continues to own the
+     structural grid and H10C continues to own the collapsed composition. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 .gridly-v2-bottom-region {
+    padding-inline: 6px !important;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel {
+    padding: 4px 10px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 .gridly-v2-control-rail {
+    top: auto !important;
+    bottom: calc(var(--lp243h10b-command-height) + 8px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground
+    :is(.gridly-v2-topbar, .gridly-v2-segments, .gridly-v2-control-rail,
+      #gridlyLandscapeCommandToggle, #gridlyLandscapeCommandPanel,
+      #mobileDestinationCommandPanel, #gridlyPortraitBottomRegion,
+      .gridly-v2-bottom-dock) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-travel-brief {
+    order: 1;
+    width: 100%;
+    min-width: 0;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-hero {
+    order: 2;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 10px 0 0;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-identity {
+    display: none !important;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-weather:not([hidden]) {
+    display: grid !important;
+    grid-template-columns: minmax(116px, 22%) minmax(0, 1fr);
+    gap: 4px 20px;
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0;
+    margin: 0;
+    padding: 12px 0 0;
+    border: 0;
+    border-top: 1px solid var(--gridly-border-neutral);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow-wrap: anywhere;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-weather:not([hidden]) .gridly-brief-weather-label {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+  }
+  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-weather:not([hidden]) :is(.gridly-brief-weather-temp,
+      .gridly-brief-weather-alert-title, .gridly-brief-weather-summary) {
+    grid-column: 2;
+    min-width: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
