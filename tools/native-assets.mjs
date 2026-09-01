@@ -11,7 +11,7 @@ export const sources = Object.freeze({
 export const outputs = Object.freeze({
   icon: [
     'android/app/src/main/res/mipmap-anydpi/ic_launcher.png',
-    'android/app/src/main/res/mipmap-anydpi/ic_launcher_logo.png',
+    'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png',
     'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png',
     'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png'
   ],
