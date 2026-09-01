@@ -71,7 +71,7 @@ test("Travel Brief is first, greeting hero is suppressed, and Weather uses a ful
 test("Search, sheets, Leaflet, data authority, and asset identity remain protected", () => {
   assert.match(h10b, /#gridlySearchShell:not\(\[hidden\]\),[\s\S]*#gridlyPortraitV2Sheet:not\(\[hidden\]\)/);
   assert.equal((html.match(/id="map"/g) || []).length, 1);
-  assert.match(html, /styles\.css\?v=243h10k-action-row-gap-closure/);
+  assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition/);
   assert.match(html, /app\.js\?v=243h10i-search-tray-containment/);
   assert.doesNotMatch(h10d, /fetch\(|Supabase|Home Area|Awareness Area|DriveTexas|appendChild|replaceChildren|transform:\s*scale\(/);
 });
