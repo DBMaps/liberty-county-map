@@ -28899,3 +28899,17 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 
 #map .gridly-map-attribution-disclosure[hidden] { display: none; }
 #map .gridly-map-attribution-disclosure p { margin: 0 0 8px; }
+
+/* LP243.I2.3R1 — portrait attribution occlusion closure.
+   The fixed portrait bottom region owns the final dock band. Keep Leaflet's
+   existing bottom-right corner inside the map, above that band, rather than
+   escalating the attribution above Gridly overlays. The accepted dock-height
+   authority also includes the dock-to-map breathing clearance. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right {
+    --gridly-portrait-attribution-clearance: calc(
+      var(--gridly-portrait-dock-h, 78px) + 24px + env(safe-area-inset-bottom, 0px)
+    );
+    bottom: var(--gridly-portrait-attribution-clearance) !important;
+  }
+}
