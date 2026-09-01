@@ -54,6 +54,6 @@ test("I1 sheet eligibility and frozen feature authorities are untouched by J1", 
   assert.match(app, /cleanupState\.isStrictPortraitMobile \|\| acceptedShortLandscapeApplicationOwner/);
   assert.match(html, /id="gridlyPortraitV2Sheet"/);
   assert.doesNotMatch(prepaint + activation, /Leaflet|setView\(|Search provider|ranking|History|Supabase|DriveTexas|fetch\(/i);
-  assert.match(html, /app\.js\?v=243i1h5-final-history-click-latency-closure&amp;lp243j1=startup-readiness-handshake/);
+  assert.match(html, /app\.js\?v=243i21-presentation-neutral-layers-opening-authority/);
   assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition&amp;lp243j=presentation-ownership-containment/);
 });

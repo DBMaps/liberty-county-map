@@ -90171,6 +90171,22 @@ function bindEvents() {
     });
     focusMobileSurfaceEntryTarget();
   };
+  const openGridlyLayersSurface = ({ presentation = "v2", source = "unknown" } = {}) => {
+    portraitSurfaceDebugLog("[Gridly][LayersSurface] opening presentation", { presentation, source });
+    if (presentation !== "tactical") {
+      openPortraitV2Sheet("layers");
+      return;
+    }
+    const options = ["Standard", "Dark", "Satellite"].map((name) => `<button type="button" data-layer-name="${name}">${name}</button>`).join("");
+    openTacticalDockSheet("layers", "Map Layers", `<div class="gridly-tactical-option-grid">${options}</div>`);
+    document.querySelectorAll("#gridlyTacticalDockSheet [data-layer-name]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyMapStyle(btn.dataset.layerName || "Satellite");
+        closeTacticalDockSheet();
+      }, { once: true });
+    });
+  };
+  window.openGridlyLayersSurface = openGridlyLayersSurface;
   const bindPortraitSurfaceOptionHandlers = () => {
     const body = document.getElementById("mobileNativeSurfaceBody");
     if (!body || body.dataset.gridlyPortraitSurfaceOptionsBound === "1") return;
@@ -90291,17 +90307,9 @@ function bindEvents() {
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
     closePortraitAlertsPanel();
     portraitSurfaceDebugLog("[Gridly][PortraitSurface] Layers button click handler fired");
-    if (!isTacticalLandscapeDockMode()) {
-      openPortraitLayersSurface();
-      return;
-    }
-    const options = ["Standard", "Dark", "Satellite"].map((name) => `<button type="button" data-layer-name="${name}">${name}</button>`).join("");
-    openTacticalDockSheet("layers", "Map Layers", `<div class="gridly-tactical-option-grid">${options}</div>`);
-    document.querySelectorAll("#gridlyTacticalDockSheet [data-layer-name]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        applyMapStyle(btn.dataset.layerName || "Satellite");
-        closeTacticalDockSheet();
-      }, { once: true });
+    openGridlyLayersSurface({
+      presentation: isTacticalLandscapeDockMode() ? "tactical" : "v2",
+      source: "tactical-dock"
     });
   });
   const bindDestinationCommandButton = () => {
@@ -119429,7 +119437,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     document.querySelectorAll(".gridly-v2-segments button").forEach((b)=>b.addEventListener("click",()=>{document.querySelectorAll(".gridly-v2-segments button").forEach(x=>x.classList.remove("is-active"));b.classList.add("is-active");const gf=b.dataset.geoFilter;document.querySelector(`.geo-filter-pill[data-geo-filter='${gf}']`)?.click();}));
     document.querySelector("[data-v2-control='zoom-in']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-in")?.click());
     document.querySelector("[data-v2-control='zoom-out']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-out")?.click());
-    document.querySelector("[data-v2-control='layers']")?.addEventListener("click",()=>document.querySelector("#mobileDockLayersBtn")?.click());
+    document.querySelector("#gridlyPortraitV2 [data-v2-control='layers']")?.addEventListener("click", () => {
+      window.openGridlyLayersSurface?.({ presentation: "v2", source: "v2-control" });
+    });
     document.querySelector("[data-v2-control='use-location']")?.addEventListener("click",()=>requestGridlyUserLocationFromControl("portrait_v2_location_control"));
   }
   window.openPortraitV2Sheet = openPortraitV2Sheet;
