@@ -61,7 +61,7 @@ test("H1 runtime ownership and H2 horizontal shell remain unchanged under H4 ide
   const h2 = css.slice(css.indexOf("/* LP243.H2 — one landscape containment authority"), css.indexOf(marker));
   assert.match(h2, /--lp243h2-shell-width: min\(760px, calc\(100vw - 24px\)\)/);
   assert.match(h2, /left: 50%;\s*transform: translateX\(-50%\)/);
-  assert.match(html, /css\/styles\.css\?v=243h10i-search-tray-containment/);
+  assert.match(html, /css\/styles\.css\?v=243h10j-foreground-ownership-closure/);
 });
 
 test("orientation return restores untouched Portrait geometry and no Search runtime changed", () => {
