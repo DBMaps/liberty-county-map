@@ -47,8 +47,8 @@ test("closure is portrait-only and freezes protected geometry and integrations",
   assert.doesNotMatch(closure, /orientation:\s*landscape|#map\s*\{[^}]*height|\.gridly-v2-bottom-(?:region|dock)\s*\{|location-awareness|Location Context|DriveTexas|weather|ArcGIS|tileLayer|setView|setZoom/);
   assert.match(initMap, /tile\.openstreetmap\.org/);
   assert.match(initMap, /World_Imagery\/MapServer\/tile/);
-  assert.match(html, /css\/styles\.css\?v=243i23r1-portrait-attribution-clearance/);
-  assert.match(html, /js\/app\.js\?v=243i23-compact-map-attribution/);
+  assert.match(html, /css\/styles\.css\?v=243i23r2-visible-map-attribution-boundary/);
+  assert.match(html, /js\/app\.js\?v=243i23r2-visible-map-attribution-boundary/);
 });
 
 test("LP243.I2.3, I2.2, I2.1R1, and J/J1 protections remain available", () => {

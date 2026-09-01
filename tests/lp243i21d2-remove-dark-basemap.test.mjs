@@ -50,8 +50,8 @@ test("shared Leaflet authority and baselayerchange persistence remain intact", (
 
 test("no replacement renderer/provider or presentation change is introduced", () => {
   assert.doesNotMatch(app + html, /MapLibre|maplibre|OpenFreeMap|openfreemap/);
-  assert.match(html, /css\/styles\.css\?v=243i23r1-portrait-attribution-clearance/);
-  assert.match(html, /js\/app\.js\?v=243i23-compact-map-attribution/);
+  assert.match(html, /css\/styles\.css\?v=243i23r2-visible-map-attribution-boundary/);
+  assert.match(html, /js\/app\.js\?v=243i23r2-visible-map-attribution-boundary/);
   assert.match(app, /GRIDLY_V2_PRESENTATION_OWNER_CLASS/);
   assert.match(app, /startupReadiness/);
   assert.match(app, /acceptedShortLandscapeApplicationOwner/);

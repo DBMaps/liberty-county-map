@@ -28913,3 +28913,20 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     bottom: var(--gridly-portrait-attribution-clearance) !important;
   }
 }
+
+/* LP243.I2.3R2 — visible-map boundary authority.
+   R1 documented the correct intent but its dock-only inset was measured from
+   the offscreen map bottom. The portrait reconciliation lifecycle now supplies
+   the measured map-bottom-to-foreground-top displacement plus breathing room. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right {
+    bottom: var(
+      --gridly-portrait-map-attribution-bottom-clearance,
+      var(--gridly-portrait-attribution-clearance)
+    ) !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .gridly-map-attribution-disclosure {
+    bottom: calc(var(--gridly-portrait-map-attribution-bottom-clearance, 0px) + 30px);
+  }
+}
