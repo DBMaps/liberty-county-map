@@ -57,7 +57,7 @@ test("representative short landscapes keep Location Context above the dock and r
 
 test("H1 runtime ownership and H2 horizontal shell remain unchanged under H4 identities", () => {
   assert.match(app, /let activeLayoutMode = "portrait"/);
-  assert.match(html, /js\/app\.js\?v=243h10i-search-tray-containment/);
+  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility)/);
   const h2 = css.slice(css.indexOf("/* LP243.H2 — one landscape containment authority"), css.indexOf(marker));
   assert.match(h2, /--lp243h2-shell-width: min\(760px, calc\(100vw - 24px\)\)/);
   assert.match(h2, /left: 50%;\s*transform: translateX\(-50%\)/);

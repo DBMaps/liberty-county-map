@@ -51,7 +51,7 @@ test("H1 ownership, H2 containment, H3 Location Context, and portrait geometry r
   assert.match(css, /--lp243h3-location-bottom-inset: calc\(/);
   assert.doesNotMatch(h4, /mobile-destination-command|#map|app-shell|main-column|gridly-v2-topbar|gridly-v2-bottom-dock/);
   assert.match(html, /css\/styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /js\/app\.js\?v=243h10i-search-tray-containment/);
+  assert.match(html, /js\/app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility)/);
 });
 
 test("no data, route, search, alert, report, map, or Supabase authority is changed", () => {

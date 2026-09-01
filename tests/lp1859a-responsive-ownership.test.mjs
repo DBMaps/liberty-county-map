@@ -89,10 +89,10 @@ test("Portrait V2 mode exit restores hidden ownership and clears visible sheet s
 
 test("sheet opening is authorization-gated before any V2 root unhide or product action", () => {
   const guard = sheetOpenSource.slice(0, sheetOpenSource.indexOf("gridlyLp017AuditRecordSheetOpen"));
-  assert.match(guard, /getGridlyPortraitCleanupGateState\(getCanonicalGridlyPortraitLayoutMode\(\)\)/);
-  assert.match(guard, /if \(!portraitAuthorization\.isStrictPortraitMobile\)/);
+  assert.match(guard, /getGridlyV2SheetInteractionEligibility\(\)/);
+  assert.match(guard, /if \(!sheetInteractionEligibility\.eligible\)/);
   assert.match(guard, /deactivateGridlyPortraitV2Owner\(\);\s*return false;/);
-  assert.ok(sheetOpenSource.indexOf("isStrictPortraitMobile") < sheetOpenSource.indexOf('shell?.removeAttribute("hidden")'));
+  assert.ok(sheetOpenSource.indexOf("sheetInteractionEligibility") < sheetOpenSource.indexOf('shell?.removeAttribute("hidden")'));
 });
 
 test("valid Mobile Portrait authorization can unhide the V2 owner again", () => {
