@@ -253,6 +253,10 @@ test('approved tracked artwork generates every native raster deterministically',
     const firstResourceSet = outputs.map((path) => [path, digest(first, path)]);
     execFileSync(process.execPath, ['tools/native-assets.mjs', '--output-root', first]);
     assert.deepEqual(outputs.map((path) => [path, digest(first, path)]), firstResourceSet, 'rerun must preserve the final resource set');
+    const crlfForeground = readFileSync(join(first, adaptiveForeground), 'utf8').replace(/\n/g, '\r\n');
+    writeFileSync(join(first, adaptiveForeground), crlfForeground);
+    execFileSync(process.execPath, ['tools/native-assets.mjs', '--output-root', first]);
+    assert.equal(readFileSync(join(first, adaptiveForeground), 'utf8'), crlfForeground, 'normalized-identical XML must not be rewritten solely for EOL differences');
     assert.equal(existsSync(join(first, obsoleteForeground)), false, 'rerun must not recreate the obsolete PNG');
     assert.deepEqual(readFileSync(join(first, outputs[1])), readFileSync('assets/icon-192.png'), 'legacy launcher must be copied byte-for-byte');
     assert.deepEqual(readFileSync(join(first, outputs[2])), readFileSync('assets/icon-192.png'), 'round fallback must use the explicit legacy authority');

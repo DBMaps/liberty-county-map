@@ -35,10 +35,17 @@ test("API 36 resolves both launcher roles through one drawable foreground and ge
   assert.match(read("tools/native-assets.mjs"), /drawable-nodpi\/ic_launcher_mark\.png/);
 });
 
-test("API 36 splash theme selects a bounded Gridly mark rather than portrait splash raster", () => {
+test("API 31+ splash resolves Android framework resources through AndroidX into AppTheme", () => {
+  assert.match(manifest, /android:theme="@style\/AppTheme\.NoActionBarLaunch"/);
+  assert.match(api31Theme, /parent="Theme\.SplashScreen"/);
   assert.match(api31Theme, /android:windowSplashScreenBackground/);
   assert.match(api31Theme, /android:windowSplashScreenAnimatedIcon">@drawable\/splash_icon/);
-  assert.match(api31Theme, /android:postSplashScreenTheme">@style\/AppTheme/);
+  assert.match(api31Theme, /<item name="postSplashScreenTheme">@style\/AppTheme<\/item>/);
+  assert.doesNotMatch(api31Theme, /android:postSplashScreenTheme/);
+  assert.match(read("android/app/build.gradle"), /androidx\.core:core-splashscreen:\$androidxCoreSplashScreenVersion/);
+  assert.match(read("android/build.gradle"), /androidxCoreSplashScreenVersion\s*=\s*'1\.0\.1'/);
+  assert.match(read("android/app/src/main/res/values/styles.xml"), /<style name="AppTheme"/);
+  assert.match(read("android/app/src/main/res/values/colors.xml"), /<color name="ic_launcher_background">/);
   assert.match(splashIcon, /@drawable\/ic_launcher_mark/);
   assert.doesNotMatch(api31Theme, /@drawable\/splash</);
 });
@@ -65,7 +72,10 @@ test("native preparation requires externally composed provider configuration", (
   assert.match(pkg.scripts["build:native-web:configured"], /--runtime-config-file owner-local\/native-provider-config\.json/);
   assert.doesNotMatch(read("tools/native-web.mjs"), /gridly\.local\.js['"]\s*\]/);
   assert.match(read(".gitignore"), /^\/owner-local\/$/m);
+  assert.match(read(".gitignore"), /^\/\.artifacts\/native-web-identity\.json$/m);
+  assert.match(read(".gitattributes"), /^android\/app\/src\/main\/res\/drawable\/ic_launcher_foreground\.xml text eol=lf$/m);
   assert.match(read("tools/Prepare-GridlyNative.ps1"), /node tools\/native-provider-config\.mjs compose[\s\S]*npm run prepare:native[\s\S]*verify-staged/);
+  assert.doesNotMatch(read("docs/LP2444-NATIVE-PROVIDER-CONFIGURATION.md"), /npm run verify:native-web(?:\r?\n|`)/);
 });
 
 test("native provider configuration fails clearly when the owner-local JSON is missing", async () => {

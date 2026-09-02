@@ -43,6 +43,7 @@ data/generated/lp104/txgio-addresses/*
 /ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
 /ios/App/App/Assets.xcassets/Splash.imageset/splash.png
 /.artifacts/lp108/
+/.artifacts/native-web-identity.json
 
 # Capacitor Android web asset mirror; keep only the placeholder directory marker.
 /android/app/src/main/assets/public/*
