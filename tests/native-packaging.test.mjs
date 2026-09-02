@@ -204,3 +204,50 @@ test('configured native staging reuses governed additive production composition 
   assert.match(tool, /--runtime-config-file/);
   assert.match(tool, /--report-file/);
 });
+
+test('native browser dependencies use exact npm authorities', () => {
+  const manifest = JSON.parse(text('package.json'));
+  const lock = JSON.parse(text('package-lock.json'));
+  assert.equal(manifest.dependencies.leaflet, '1.9.4');
+  assert.equal(lock.packages[''].dependencies.leaflet, '1.9.4');
+  assert.equal(lock.packages['node_modules/leaflet'].version, '1.9.4');
+  assert.equal(manifest.dependencies['@supabase/supabase-js'], '2.112.4');
+  assert.equal(lock.packages[''].dependencies['@supabase/supabase-js'], '2.112.4');
+  assert.equal(lock.packages['node_modules/@supabase/supabase-js'].version, '2.112.4');
+});
+
+test('native staging derives browser globals and Leaflet images from node_modules', () => {
+  const tool = text('tools/native-web.mjs');
+  for (const path of [
+    'node_modules/leaflet/dist/leaflet.js',
+    'node_modules/leaflet/dist/leaflet.css',
+    'node_modules/leaflet/dist/images/marker-icon.png',
+    'node_modules/leaflet/dist/images/marker-icon-2x.png',
+    'node_modules/leaflet/dist/images/marker-shadow.png',
+    'node_modules/@supabase/supabase-js/dist/umd/supabase.js'
+  ]) assert.match(tool, new RegExp(path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  for (const path of [
+    'vendor/leaflet/leaflet.js',
+    'vendor/leaflet/leaflet.css',
+    'vendor/leaflet/images/marker-icon.png',
+    'vendor/leaflet/images/marker-icon-2x.png',
+    'vendor/leaflet/images/marker-shadow.png',
+    'vendor/supabase/supabase.js'
+  ]) assert.match(tool, new RegExp(path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.match(tool, /\.\.\.vendorAssets\.map\(\(\[, target\]\) => target\)/);
+});
+
+test('native preparation replaces remote startup authorities without diverging web', () => {
+  const source = text('index.html');
+  const tool = text('tools/native-web.mjs');
+  assert.match(source, /unpkg\.com\/leaflet@1\.9\.4\/dist\/leaflet\.css/);
+  assert.match(source, /unpkg\.com\/leaflet@1\.9\.4\/dist\/leaflet\.js/);
+  assert.match(source, /cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2/);
+  assert.match(tool, /stagedIndex\.replace\(remote, local\)/);
+  const leaflet = tool.indexOf("'vendor/leaflet/leaflet.js'");
+  const supabase = tool.indexOf("'vendor/supabase/supabase.js'");
+  const app = source.indexOf('js/app.js');
+  assert.ok(leaflet >= 0 && supabase > leaflet && app >= 0);
+  assert.doesNotMatch(source, /audits\/lp2403-condition-label-audit\.js/);
+  assert.ok(existsSync('audits/lp2403-condition-label-audit.js'));
+});
