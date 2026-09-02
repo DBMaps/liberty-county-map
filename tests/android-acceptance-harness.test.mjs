@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import test from "node:test";
 import { bounded, exactlyOneDevice, parseDevices } from "../tools/android-acceptance/core.mjs";
-import { cleanupCreatedForward, connectReadyWebView, pollUntil, selectGridlyTarget, waitForCdpReadiness } from "../tools/android-acceptance/cdp.mjs";
+import { AndroidWebViewPage, cleanupCreatedForward, connectReadyWebView, pollUntil, selectGridlyTarget, waitForCdpReadiness } from "../tools/android-acceptance/cdp.mjs";
 
 const gridly = { type: "page", url: "https://localhost/", title: "Gridly | Know Before You Go", webSocketDebuggerUrl: "ws://page" };
 
@@ -53,29 +53,68 @@ test("readiness polling has a bounded timeout", async () => {
   await assert.rejects(pollUntil(() => false, { timeoutMs: 5, intervalMs: 1, stage: "socket missing" }), /socket missing: not ready within 5ms/);
 });
 
-test("browser-level rejection falls back to the ready page endpoint", async () => {
-  const page = { url: () => "https://localhost/" };
-  const fallbackBrowser = { contexts: () => [{ pages: () => [page] }] };
-  const endpoints = [];
-  const connected = await connectReadyWebView({}, "http://cdp", { version: { webSocketDebuggerUrl: "ws://browser" }, target: gridly }, async endpoint => {
-    endpoints.push(endpoint);
-    if (endpoint === "ws://browser") throw new Error("socket hang up");
-    return fallbackBrowser;
-  });
-  assert.deepEqual(endpoints, ["ws://browser", "ws://page"]);
-  assert.equal(connected.connection, "page-level fallback");
-  assert.match(connected.browserError.message, /socket hang up/);
+class OwnerFailureSocket extends EventTarget {
+  static instances = [];
+  readyState = 0;
+  sent = [];
+  constructor(url) {
+    super();
+    this.url = url;
+    OwnerFailureSocket.instances.push(this);
+    queueMicrotask(() => { this.readyState = 1; this.dispatchEvent(new Event("open")); });
+  }
+  send(payload) {
+    const request = JSON.parse(payload);
+    this.sent.push(request);
+    // This fixture represents both owner URLs accepting sockets while the Browser
+    // command fails. The repaired harness must select ws://page and never send it.
+    const response = request.method === "Browser.setDownloadBehavior"
+      ? { id: request.id, error: { message: "Browser context management is not supported." } }
+      : request.method === "Runtime.evaluate"
+        ? { id: request.id, result: request.params.expression.includes("throw")
+          ? { exceptionDetails: { text: "Uncaught", exception: { description: "Error: fixture evaluation" } } }
+          : { result: { value: 42 } } }
+        : { id: request.id, result: {} };
+    queueMicrotask(() => this.dispatchEvent(new MessageEvent("message", { data: JSON.stringify(response) })));
+  }
+  close() { this.readyState = 3; queueMicrotask(() => this.dispatchEvent(new Event("close"))); }
+}
+
+test("owner failure fixture connects directly to the selected Android WebView page", async () => {
+  OwnerFailureSocket.instances.length = 0;
+  const connected = await connectReadyWebView({ version: { webSocketDebuggerUrl: "ws://browser" }, target: gridly }, { WebSocketImpl: OwnerFailureSocket });
+  const socket = OwnerFailureSocket.instances[0];
+  assert.equal(socket.url, "ws://page");
+  assert.equal(connected.connection, "raw page-level CDP");
+  assert.deepEqual(socket.sent.map(item => item.method), ["Runtime.enable", "Page.enable"]);
+  assert.doesNotMatch(socket.sent.map(item => item.method).join(" "), /Browser\.setDownloadBehavior/);
+  await connected.page.close();
 });
 
-test("browser-level and page-level rejections remain separately identified", async () => {
-  await assert.rejects(
-    connectReadyWebView({}, "http://cdp", { version: { webSocketDebuggerUrl: "ws://browser" }, target: gridly }, async endpoint => {
-      throw new Error(endpoint === "ws://browser" ? "browser refused" : "page refused");
-    }),
-    error => error.stage === "page-level connection rejected"
-      && /page refused/.test(error.message)
-      && /browser-level connection rejected: browser refused/.test(error.message)
-  );
+test("raw page CDP Runtime.evaluate returns values and reports evaluation errors", async () => {
+  const connected = await connectReadyWebView({ target: gridly }, { WebSocketImpl: OwnerFailureSocket });
+  assert.equal(await connected.page.evaluate("21 + 21"), 42);
+  await assert.rejects(connected.page.evaluate("throw new Error('no')"), /fixture evaluation/);
+  await connected.page.close();
+});
+
+test("raw page CDP requests time out within their bound", async () => {
+  class SilentSocket extends EventTarget { readyState = 1; send() {} close() { this.readyState = 3; this.dispatchEvent(new Event("close")); } }
+  const page = new AndroidWebViewPage(new SilentSocket(), { timeoutMs: 5 });
+  await assert.rejects(page.send("Runtime.evaluate"), /did not respond within 5ms/);
+});
+
+test("raw page CDP closes its socket orderly", async () => {
+  const socket = new OwnerFailureSocket("ws://page");
+  await new Promise(resolve => socket.addEventListener("open", resolve, { once: true }));
+  const page = new AndroidWebViewPage(socket);
+  await page.close();
+  assert.equal(socket.readyState, 3);
+});
+
+test("executable Android harness has no browser-context CDP connection path", () => {
+  for (const file of ["tools/android-acceptance/cdp.mjs", "tools/android-acceptance/device.mjs"])
+    assert.doesNotMatch(fs.readFileSync(file, "utf8"), new RegExp(["connect", "Over", "CDP"].join("")));
 });
 
 test("connection failure cleanup removes only a forward created by this harness", () => {
