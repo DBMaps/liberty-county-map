@@ -92828,7 +92828,7 @@ function returnToManagePlacesPrimaryScreen() {
 
 function syncManagePlaceSlotsAndCta(targetType = "custom") {
   if (els.mobileSaveRouteBtn) {
-    els.mobileSaveRouteBtn.textContent = targetType === "home" ? "Save Home" : targetType === "work" ? "Save Work" : "Save Favorite";
+    els.mobileSaveRouteBtn.textContent = targetType === "home" ? "Set as Home" : targetType === "work" ? "Set as Work" : "Add Favorite";
   }
   [["managePlaceHomeBtn", "home"], ["managePlaceWorkBtn", "work"], ["managePlaceFavoriteBtn", "custom"]].forEach(([id, type]) => {
     const button = els[id];

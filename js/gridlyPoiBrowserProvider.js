@@ -10,7 +10,8 @@
     governedCount: 391772,
     shardCount: 86
   });
-  const BASE = "poi/lp24111-d5-standalone-2026-08-28/runtime-v2/";
+  const RUNTIME_PATH = "/poi/lp24111-d5-standalone-2026-08-28/runtime-v2/";
+  const runtimeUrl = file => new URL(`${RUNTIME_PATH}${file}`, root.location?.origin || "https://localhost").href;
   const RADII = new Set([5, 10, 25]);
   const CATEGORY_OPTIONS = Object.freeze(["AGRICULTURAL_SERVICE", "AIRPORT", "ATM", "AUTO_REPAIR", "BANK", "BUS_STATION", "CAMPGROUND", "CAR_WASH", "CONVENIENCE_STORE", "EMERGENCY_CARE", "EV_CHARGING", "FIRE", "FUEL", "GENERAL_RETAIL", "GOLF", "GOVERNMENT", "GROCERY", "HARDWARE", "HOSPITAL", "LAUNDRY", "LODGING", "MARINA", "PARKING", "PHARMACY", "POLICE", "POST_OFFICE", "RESTAURANT", "SCHOOL", "SHOPPING", "STORAGE", "TIRE_SERVICE", "TOWING", "TRAIN_STATION", "TRUCK_STOP", "URGENT_CARE", "VISITOR_CENTER"]);
   const ALLOWED_RECORD_FIELDS = new Set(["id", "displayName", "gridlyCategory", "latitude", "longitude", "countyContextId", "brand", "provenanceSummary"]);
@@ -62,7 +63,7 @@
     if (!gateEnabled()) { rollback(); fail("POI_PROVIDER_GATE_OFF", "provider is disabled"); }
     if (manifest) return manifest;
     if (!manifestPromise) manifestPromise = (async () => {
-      const bytes = await fetchBytes(`${BASE}manifest.json`, "MANIFEST_FETCH");
+      const bytes = await fetchBytes(runtimeUrl("manifest.json"), "MANIFEST_FETCH");
       if (!gateEnabled()) fail("POI_PROVIDER_GATE_OFF", "provider was disabled during initialization");
       if (await sha256(bytes) !== EXPECTED.manifestSha256) fail("MANIFEST_SHA256", "certified manifest hash mismatch");
       let parsed; try { parsed = JSON.parse(new TextDecoder().decode(bytes)); } catch { fail("MANIFEST_PARSE", "invalid JSON"); }
@@ -106,7 +107,7 @@
     if (shardCache.has(key)) { state.cacheHitCount++; return shardCache.get(key); }
     if (shardPromises.has(key)) { state.cacheHitCount++; return shardPromises.get(key); }
     state.cacheMissCount++;
-    const pending = (async () => { const compressed = await fetchBytes(`${BASE}${meta.file}`, "SHARD_FETCH"); if (compressed.byteLength !== meta.byteCount) fail("SHARD_BYTE_COUNT", id); if (await sha256(compressed) !== meta.sha256) fail("SHARD_SHA256", id); let payload; try { payload = JSON.parse(new TextDecoder().decode(await decompress(compressed))); } catch (error) { if (error instanceof ProviderFailure) throw error; fail("SHARD_PARSE", id); } if (payload.schemaVersion !== EXPECTED.runtimeSchemaVersion || !Array.isArray(payload.records) || payload.records.length !== meta.recordCount) fail("SHARD_CONTRACT", id); payload.records.forEach(validateRecord); shardCache.set(key, payload.records); state.loadedShardIds = [...new Set([...state.loadedShardIds, id])].sort(); return payload.records; })();
+    const pending = (async () => { const compressed = await fetchBytes(runtimeUrl(meta.file), "SHARD_FETCH"); if (compressed.byteLength !== meta.byteCount) fail("SHARD_BYTE_COUNT", id); if (await sha256(compressed) !== meta.sha256) fail("SHARD_SHA256", id); let payload; try { payload = JSON.parse(new TextDecoder().decode(await decompress(compressed))); } catch (error) { if (error instanceof ProviderFailure) throw error; fail("SHARD_PARSE", id); } if (payload.schemaVersion !== EXPECTED.runtimeSchemaVersion || !Array.isArray(payload.records) || payload.records.length !== meta.recordCount) fail("SHARD_CONTRACT", id); payload.records.forEach(validateRecord); shardCache.set(key, payload.records); state.loadedShardIds = [...new Set([...state.loadedShardIds, id])].sort(); return payload.records; })();
     shardPromises.set(key, pending); try { return await pending; } finally { shardPromises.delete(key); }
   }
   async function search(request) {
@@ -200,7 +201,7 @@
       try { await search(request); } catch (error) { state.providerFailure = `${error.stage || "PROVIDER"}: ${error.message}`; section.querySelector("#gridlyPoiNonProductionResults").textContent = "Nearby places could not be loaded. Please try again."; } finally { button.disabled = false; }
     });
   }
-  const api = Object.freeze({ initialize, search, rollback, requestForCohort, requestForCurrentContext, audit, EXPECTED, _test: Object.freeze({ validateManifest, validateRecord, validateRequest, assertContextRequestAgreement, candidateShardIds, distanceMiles, recordMatchesNameTokens, selectResult }) });
+  const api = Object.freeze({ initialize, search, rollback, requestForCohort, requestForCurrentContext, audit, EXPECTED, _test: Object.freeze({ validateManifest, validateRecord, validateRequest, assertContextRequestAgreement, candidateShardIds, distanceMiles, recordMatchesNameTokens, selectResult, runtimeUrl }) });
   root.GridlyPoiBrowserProvider = api; root.gridlyPoiBrowserRehearsalAudit = audit;
   if (root.document) { const automaticallyInitialize = () => { if (gateEnabled()) initialize().catch(() => {}); else rollback(); }; if (root.document.readyState === "loading") root.document.addEventListener("DOMContentLoaded", automaticallyInitialize, { once: true }); else automaticallyInitialize(); root.addEventListener?.("pageshow", automaticallyInitialize); }
 })(typeof window !== "undefined" ? window : globalThis);
