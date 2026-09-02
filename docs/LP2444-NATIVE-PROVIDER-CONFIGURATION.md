@@ -35,15 +35,13 @@ From the repository root in PowerShell:
 ```powershell
 npm ci
 powershell -ExecutionPolicy Bypass -File tools/Prepare-GridlyNative.ps1
-npm run verify:native-web
+npm run verify:native-web:configured
 npm run verify:native-poi:android
 npx cap sync android
 $env:JAVA_HOME = "C:\Program Files\Java\jdk-21"
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 if ((java -version 2>&1 | Out-String) -notmatch 'version "21\.') { throw "JDK 21 is required" }
-Push-Location android
-.\gradlew.bat clean assembleDebug
-Pop-Location
+.\android\gradlew.bat -p android clean :app:processDebugResources :app:assembleDebug
 ```
 
 The wrapper verifies `js/gridly.local.js`, composes and validates the JSON without printing
