@@ -105,3 +105,8 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 
 # Owner-only execution artifacts must never be committed.
 /owner-local/
+
+# Local Android acceptance output (reports, logcat excerpts, screenshots, APKs).
+/.artifacts/android-acceptance/
+*.apk
+*.log
