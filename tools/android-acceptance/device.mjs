@@ -1,5 +1,6 @@
 import { chromium } from "@playwright/test";
 import { adb, bounded, exactlyOneDevice, PACKAGE, writeReports } from "./core.mjs";
+import { AndroidHarnessError, cleanupCreatedForward, connectReadyWebView, pollUntil, waitForCdpReadiness } from "./cdp.mjs";
 
 const options = process.argv.slice(2);
 if (options.length) {
@@ -13,6 +14,7 @@ let serial;
 let metadata = {};
 let diagnostics = "";
 let browser;
+let forwardCreated = false;
 
 try {
   serial = exactlyOneDevice(adb(["devices"]));
@@ -37,21 +39,25 @@ try {
   adb(["shell", "am", "force-stop", PACKAGE], { serial });
   adb(["shell", "monkey", "-p", PACKAGE, "-c", "android.intent.category.LAUNCHER", "1"], { serial });
 
-  let pid = "";
-  const deadline = Date.now() + 15000;
-  while (!pid && Date.now() < deadline) {
-    pid = adb(["shell", "pidof", PACKAGE], { serial, allowFailure: true });
-    if (!pid) await new Promise(resolve => setTimeout(resolve, 250));
-  }
-  if (!pid) throw new Error("Gridly process did not start within 15 seconds.");
+  const pid = await pollUntil(() => adb(["shell", "pidof", PACKAGE], { serial, allowFailure: true }), { stage: "process missing" });
   add("PASS", "cold launch and process alive", `pid ${pid}`);
 
-  adb(["forward", "tcp:9222", `localabstract:webview_devtools_remote_${pid}`], { serial });
-  browser = await chromium.connectOverCDP("http://127.0.0.1:9222");
-  const page = browser.contexts().flatMap(context => context.pages())[0];
-  if (!page) throw new Error("Debug WebView exposed no inspectable page. Use a debug APK and current Android System WebView.");
+  const socket = `@webview_devtools_remote_${pid}`;
+  await pollUntil(() => adb(["shell", "cat", "/proc/net/unix"], { serial, allowFailure: true }).split(/\r?\n/).some(line => line.trim().endsWith(socket)), { stage: "socket missing" });
+  try {
+    const existing = adb(["forward", "--list"], { serial, allowFailure: true });
+    if (existing.split(/\r?\n/).some(line => line.split(/\s+/)[1] === "tcp:9222")) throw new Error("tcp:9222 is already owned by another forward");
+    adb(["forward", "tcp:9222", `localabstract:webview_devtools_remote_${pid}`], { serial });
+    forwardCreated = true;
+  } catch (error) {
+    throw new AndroidHarnessError("forward failure", error.message, error);
+  }
+  const readiness = await waitForCdpReadiness("http://127.0.0.1:9222");
+  const connected = await connectReadyWebView(chromium, "http://127.0.0.1:9222", readiness);
+  browser = connected.browser;
+  const page = connected.page;
   await page.waitForSelector("#gridlyAddressSearchInput", { state: "attached", timeout: 15000 });
-  add("PASS", "debug WebView/CDP inspection", page.url());
+  add("PASS", "debug WebView/CDP inspection", `${page.url()} via ${connected.connection}`);
 
   const jsErrors = [];
   page.on("pageerror", error => jsErrors.push(error.message));
@@ -89,7 +95,7 @@ try {
   add("FAIL", "device harness preflight/runtime", error.message);
 } finally {
   await browser?.close().catch(() => {});
-  if (serial) adb(["forward", "--remove", "tcp:9222"], { serial, allowFailure: true });
+  cleanupCreatedForward(serial && forwardCreated, () => adb(["forward", "--remove", "tcp:9222"], { serial, allowFailure: true }));
   writeReports(results, metadata, diagnostics);
   console.log(`\nReport: .artifacts/android-acceptance/latest.{json,md}`);
   const failures = results.filter(item => item.status === "FAIL").length;
