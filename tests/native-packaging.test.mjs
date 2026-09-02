@@ -269,6 +269,36 @@ test('native stage declares every governed runtime family', () => {
   for (const family of ['css', 'js', 'assets', 'data', 'poi', 'Community-Packages', 'Crossing-Packages']) assert.match(stage, new RegExp(`['"]${family}['"]`));
 });
 
+test('native stage is an allowlist with measured anti-bloat closure', () => {
+  const tool = text('tools/native-web.mjs');
+  assert.match(tool, /export const runtimePolicy/);
+  assert.doesNotMatch(tool, /const entries = \[[^\]]*['"]assets['"][^\]]*['"]data['"]/s);
+  assert.match(tool, /paths\.length > 1_200/);
+  assert.match(tool, /totalBytes > 300 \* 1024 \* 1024/);
+  for (const forbidden of ['county-sources', 'directional-intelligence', 'road-segments', 'styles\\.backup-', 'addresses\\.jsonl', 'shp|shx|dbf']) assert.ok(tool.includes(forbidden));
+  assert.match(tool, /crossingManifest\.records/);
+  assert.match(tool, /packageRegistry\.packages/);
+  assert.match(tool, /addressManifest\.packages/);
+});
+
+test('native address and POI computed-path authorities remain bounded and complete', () => {
+  const addresses = JSON.parse(text('data/generated/lp104/txgio-addresses/runtime-manifest.json'));
+  assert.equal(addresses.packages.length, 1);
+  assert.equal(addresses.packages[0].countyId, 'liberty-tx');
+  assert.match(addresses.packages[0].path, /\.addresses\.jsonl\.gz$/);
+  assert.ok(existsSync(addresses.packages[0].path));
+  assert.ok(existsSync(addresses.packages[0].certificate));
+
+  const poi = JSON.parse(text('poi/lp24111-d5-standalone-2026-08-28/runtime-v2/manifest.json'));
+  assert.equal(poi.shards.length, 86);
+  for (const id of ['tx-29-095', 'tx-29-096', 'tx-30-095', 'tx-30-096']) {
+    assert.ok(poi.shards.some((shard) => shard.shardId === id), `${id} must remain in the Dayton physical cohort`);
+  }
+  const tool = text('tools/native-web.mjs');
+  assert.match(tool, /Native-served POI alias differs from certified source/);
+  assert.match(tool, /Capacitor's Android local server can reject double-extension/);
+});
+
 test('native provider origin helper is bounded and never exposes credential values', () => {
   const helper = text('js/gridlyNativeProviderOriginAudit.js');
   assert.match(helper, /gridlyNativeProviderOriginAudit/);
