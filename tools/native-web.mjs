@@ -8,12 +8,46 @@ import { composeProductionRuntimeConfig } from './lp1831/prepare-cloudflare-prev
 
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(root, process.argv.includes('--output') ? process.argv[process.argv.indexOf('--output') + 1] : 'www');
-const entries = ['index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'Community-Packages', 'Crossing-Packages'];
+// This is intentionally an allowlist.  These are consumer artifacts, not a list
+// of things which happen not to be forbidden today.  Manufacturing trees remain
+// in the repository, but can enter a native bundle only through this contract.
+export const runtimePolicy = Object.freeze({
+  trees: ['js'],
+  files: [
+    'index.html', 'manifest.json', 'service-worker.js', 'css/styles.css',
+    'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',
+    'assets/favicon-32.png', 'assets/gridly-header-compact.png',
+    'assets/gridly-header-ultra-compact.png', 'assets/gridly-header-ultra-compact-fixed.png',
+    'assets/gridly-logo-horizontal-lite-mode.png', 'assets/gridly-logo-primary.png',
+    'assets/icon-180.png', 'assets/icon-192.png', 'assets/icon-512.png',
+    'assets/store/branding', 'assets/store/icons/gridly-icon-master-1024.png',
+    'assets/package-registry/runtime-package-registry.json',
+    'assets/location-resolution/gridly-authoritative-county-geometry-v1.json',
+    'assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json',
+    'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json',
+    'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.manifest.json',
+    'data/gridly-consumer-zip-overrides-v1.json', 'data/gridly-crossing-review-overrides.json',
+    'data/gridly-zip-awareness-index-v2.json', 'data/liberty-county-rail-crossings.geojson',
+    'data/liberty-county-road-segments.geojson', 'data/roadway-runtime-manifest.json',
+    'data/runtime', 'data/lp104/texas-county-coverage.json',
+    'data/lp149/runtime-county-registry.json',
+    'data/generated/gridly-statewide-consumer-zip-index-v1.json',
+    'data/generated/gridly-statewide-place-presentation-v1.json'
+  ]
+});
 const poiRelease = 'lp24111-d5-standalone-2026-08-28';
 const poiRuntimeRelative = `poi/${poiRelease}/runtime-v2`;
 const poiRuntimeSource = join(root, poiRuntimeRelative);
 const daytonPhysicalCohort = Object.freeze(['tx-29-095', 'tx-29-096', 'tx-30-095', 'tx-30-096']);
-const prohibited = [/(^|\/)node_modules\//, /(^|\/)(tests|tools|reports|evidence|owner-local)\//, /(^|\/)android\//, /(^|\/)ios\//, /(^|\/)[^/]*\.local\.js$/];
+export const prohibited = [
+  /(^|\/)node_modules\//, /(^|\/)(tests|tools|reports|evidence|audit|certification|owner-local)\//,
+  /(^|\/)(android|ios)\//, /(^|\/)[^/]*\.local\.js$/,
+  /(^|\/)css\/styles\.backup-[^/]+\.css$/,
+  /(?:^|\/)(?:county-sources|directional-intelligence|road-segments|source)(?:\/|$)/,
+  /\.(?:shp|shx|dbf|prj|cpg)(?:\.|$)/i, /\.addresses\.jsonl$/
+];
+const governedSourcePathException = 'assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson';
+const isProhibited = (path) => path !== governedSourcePathException && prohibited.some((pattern) => pattern.test(path));
 const runtimeConfigPath = 'js/gridlyRuntimeEnvironmentConfig.js';
 const vendorAssets = [
   ['node_modules/leaflet/dist/leaflet.js', 'vendor/leaflet/leaflet.js'],
@@ -39,14 +73,71 @@ function option(name) {
 export async function stage(destination, { runtimeConfigFile } = {}) {
   await rm(destination, { recursive: true, force: true });
   await mkdir(destination, { recursive: true });
-  for (const entry of entries) await cp(join(root, entry), join(destination, entry), {
-    recursive: true,
-    preserveTimestamps: false,
-    filter: (source) => {
-      const path = relative(root, source).replaceAll('\\', '/');
-      return !prohibited.some((pattern) => pattern.test(path));
+  const copyRuntime = async (entry) => {
+    const normalized = entry.replaceAll('\\', '/');
+    if (isProhibited(normalized)) throw new Error(`Runtime policy attempted to stage prohibited path: ${normalized}`);
+    await mkdir(dirname(join(destination, normalized)), { recursive: true });
+    await cp(join(root, normalized), join(destination, normalized), { recursive: true, preserveTimestamps: false });
+  };
+  for (const entry of [...runtimePolicy.trees, ...runtimePolicy.files]) await copyRuntime(entry);
+
+  // Computed/data-driven authorities are expanded from their production
+  // manifests, rather than approximated with broad directory copies.
+  const packageRegistry = JSON.parse(await readFile(join(root, 'assets/package-registry/runtime-package-registry.json')));
+  if (packageRegistry.packages?.length !== 508) throw new Error('Statewide runtime package registry must contain exactly 508 records.');
+  let packagedManifests = 0;
+  for (const record of packageRegistry.packages) {
+    try {
+      await stat(join(root, record.manifest));
+      await copyRuntime(record.manifest);
+      packagedManifests += 1;
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
     }
-  });
+  }
+  if (packagedManifests !== 282) throw new Error(`Expected 282 repository-backed package manifests; found ${packagedManifests}.`);
+  const crossingManifest = JSON.parse(await readFile(join(root, 'Crossing-Packages/production-crossing-manifest.json')));
+  if (crossingManifest.records?.length !== 254) throw new Error('Statewide crossing manifest must contain exactly 254 county records.');
+  await copyRuntime('Crossing-Packages/production-crossing-manifest.json');
+  for (const record of crossingManifest.records) await copyRuntime(record.packageFile);
+  for (const legacy of [
+    'Crossing-Packages/liberty/liberty-crossings.geojson', 'Crossing-Packages/liberty/liberty-crossings-curated.geojson'
+  ]) await copyRuntime(legacy);
+
+  // Current address search consumes only the package declared by this runtime
+  // manifest. Raw JSONL and undeclared statewide manufacturing outputs are not
+  // consumer inputs.
+  const addressManifestPath = 'data/generated/lp104/txgio-addresses/runtime-manifest.json';
+  const addressManifest = JSON.parse(await readFile(join(root, addressManifestPath)));
+  await copyRuntime(addressManifestPath);
+  for (const record of addressManifest.packages) {
+    await copyRuntime(record.path);
+    await copyRuntime(record.certificate);
+  }
+
+  // County-specific paths are runtime only where the consumer configuration
+  // directly names them. Source shapefiles and supporting evidence are excluded.
+  for (const entry of [
+    'assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson',
+    ...['austin','brazoria','brazos','calhoun','chambers','colorado','fayette','fort-bend','galveston','grimes','hardin','harris','jackson','jasper','jefferson','lavaca','matagorda','montgomery','newton','orange','polk','san-jacinto','tyler','walker','waller','washington','wharton'].map((county) => `assets/county-implementation/${county}/boundary/${county}-county-boundary.geojson`),
+    'assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json',
+    'assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json',
+    'assets/county-implementation/montgomery/containment/montgomery-containment-fixture-suite-v578.json',
+    'assets/county-implementation/montgomery/runtime-assets/montgomery-county-crossing-review-overrides.json',
+    'assets/county-implementation/san-jacinto/manifests/san-jacinto-runtime-onboarding-v639.json',
+    'assets/county-implementation/san-jacinto/registry/san-jacinto-county-runtime-registry-v639.json',
+    'assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-crossing-review-overrides.json',
+    'assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson',
+    'assets/county-implementation/chambers/runtime-assets/chambers-county-crossing-review-overrides.json',
+    'assets/county-implementation/jefferson/runtime-assets/jefferson-county-crossing-review-overrides.json'
+  ]) {
+    // The San Jacinto GeoJSON is a directly fetched generated runtime despite a
+    // legacy directory name; it is the sole governed exception to /source/.
+    if (entry === governedSourcePathException) {
+      await mkdir(dirname(join(destination, entry)), { recursive: true });
+      await cp(join(root, entry), join(destination, entry), { preserveTimestamps: false });
+    } else await copyRuntime(entry);
+  }
   // Stage runtime-v2 from its certified manifest so gzip assets cannot be
   // silently omitted by a broad directory copy.
   const poiManifestBytes = await readFile(join(poiRuntimeSource, 'manifest.json'));
@@ -120,6 +211,16 @@ async function verify(directory, { reportFile } = {}) {
   ];
   for (const item of required) await stat(join(directory, item));
   const paths = await files(directory);
+  const referenced = new Set();
+  const html = await readFile(join(directory, 'index.html'), 'utf8');
+  for (const match of html.matchAll(/\b(?:src|href)=["']([^"']+)["']/g)) referenced.add(match[1]);
+  const css = await readFile(join(directory, 'css/styles.css'), 'utf8');
+  for (const match of css.matchAll(/url\(["']?([^)'"?#]+)["']?\)/g)) referenced.add(join('css', match[1]));
+  for (const reference of referenced) {
+    if (/^(?:[a-z]+:|#|\/\/)/i.test(reference)) continue;
+    const local = decodeURIComponent(reference.split(/[?#]/, 1)[0]);
+    await stat(join(directory, local));
+  }
   const shards = paths.filter((path) => path.startsWith('poi/lp24111-d5-standalone-2026-08-28/runtime-v2/') && path.endsWith('.json.gz'));
   if (shards.length !== 86) throw new Error(`Expected exactly 86 POI runtime-v2 shards; found ${shards.length}.`);
   const nativeAliases = paths.filter((path) => path.startsWith(`${poiRuntimeRelative}/native/`) && path.endsWith('.bin'));
@@ -135,8 +236,11 @@ async function verify(directory, { reportFile } = {}) {
     if (!nativeBytes.equals(sourceBytes)) throw new Error(`Native-served POI alias differs from certified source: ${shard.shardId}.`);
   }
   for (const id of daytonPhysicalCohort) await stat(join(directory, poiRuntimeRelative, `${id}.json.gz`));
-  const forbidden = paths.filter((path) => prohibited.some((pattern) => pattern.test(path)));
+  const forbidden = paths.filter(isProhibited);
   if (forbidden.length) throw new Error(`Prohibited native web files: ${forbidden.join(', ')}`);
+
+  const totalBytes = (await identity(directory)).files.reduce((sum, file) => sum + file.bytes, 0);
+  if (paths.length > 1_200 || totalBytes > 300 * 1024 * 1024) throw new Error(`Native web budget exceeded: ${paths.length} files, ${totalBytes} bytes.`);
 
   const temporary = join(tmpdir(), `gridly-native-web-${process.pid}`);
   try {
@@ -149,7 +253,7 @@ async function verify(directory, { reportFile } = {}) {
       const repeated = await identity(temporary);
       if (actual.digest !== repeated.digest) throw new Error(`Staged web identity differs from a clean repeat (${actual.digest} != ${repeated.digest}).`);
     }
-    console.log(`Native web stage verified: ${paths.length} files, 86 POI shards, digest ${actual.digest}`);
+    console.log(`Native web stage verified: ${paths.length} files, ${totalBytes} bytes, 86 POI shards, digest ${actual.digest}`);
   } finally { await rm(temporary, { recursive: true, force: true }); }
 }
 
