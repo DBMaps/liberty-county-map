@@ -5,13 +5,20 @@ import { fileURLToPath } from 'node:url';
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const sources = Object.freeze({
-  icon: 'assets/store/icons/gridly-icon-master-1024.png',
+  androidLegacyIcon: 'assets/icon-192.png',
+  androidAdaptiveMark: 'assets/icons/incoming/gridly-icon-master-167.png',
+  iosIcon: 'assets/store/icons/gridly-icon-master-1024.png',
   splash: 'assets/store/branding/Splash/gridly-splash-portrait.png'
 });
 export const outputs = Object.freeze({
-  icon: [
+  androidLegacyIcon: [
     'android/app/src/main/res/mipmap-anydpi/ic_launcher.png',
-    'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png',
+    'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png'
+  ],
+  androidAdaptiveMark: [
+    'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png'
+  ],
+  iosIcon: [
     'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png'
   ],
   splash: [
@@ -40,15 +47,15 @@ export async function generateNativeAssets(outputRoot = repository) {
       await copyFile(source, destination);
     }
   }
-  // Adaptive launchers mask and animate their foreground. Referencing the
-  // complete legacy canvas at full bleed crops the pin; an Android-owned inset
-  // keeps the approved artwork within the adaptive safe zone deterministically.
+  // Adaptive launchers own the final mask. Keep the transparent, mark-only
+  // authority distinct from the complete legacy tile and inset it into the
+  // adaptive safe zone without rewriting its tracked binary bytes.
   const adaptiveForeground = resolve(outputRoot, 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.xml');
   await mkdir(dirname(adaptiveForeground), { recursive: true });
-  await writeFile(adaptiveForeground, `<?xml version="1.0" encoding="utf-8"?>\n<inset xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@mipmap/ic_launcher" android:inset="18%" />\n`);
+  await writeFile(adaptiveForeground, `<?xml version="1.0" encoding="utf-8"?>\n<inset xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@mipmap/ic_launcher_mark" android:inset="22%" />\n`);
 }
 
 const outputFlag = process.argv.indexOf('--output-root');
 const outputRoot = outputFlag === -1 ? repository : resolve(process.argv[outputFlag + 1]);
 await generateNativeAssets(outputRoot);
-console.log(`Generated ${Object.values(outputs).flat().length} native raster assets and one adaptive safe-zone derivative from approved tracked Gridly artwork.`);
+console.log(`Copied ${Object.values(outputs).flat().length} native raster assets and wrote one adaptive safe-zone XML resource from approved tracked Gridly artwork.`);

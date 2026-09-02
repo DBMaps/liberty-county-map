@@ -168,6 +168,7 @@ test('Android launcher resources separate legacy fallbacks from adaptive foregro
     'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png'
   ];
   const adaptiveForeground = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.xml';
+  const adaptiveMark = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png';
   const obsoleteForeground = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png';
   const trackedXml = execFileSync('git', ['ls-files', 'android/app/src/main/res/**/*.xml'], { encoding: 'utf8' })
     .trim().split('\n').filter((path) => path && existsSync(path));
@@ -187,7 +188,9 @@ test('Android launcher resources separate legacy fallbacks from adaptive foregro
   }
   assert.ok(existsSync(adaptiveForeground), `${adaptiveForeground} must be the adaptive authority`);
   assert.equal(existsSync(obsoleteForeground), false, `${obsoleteForeground} must not coexist with XML authority`);
-  assert.match(text(adaptiveForeground), /^<\?xml[\s\S]*<inset[^>]+android:drawable="@mipmap\/ic_launcher"[^>]+android:inset="18%"\s*\/>/);
+  assert.match(text(adaptiveForeground), /^<\?xml[\s\S]*<inset[^>]+android:drawable="@mipmap\/ic_launcher_mark"[^>]+android:inset="22%"\s*\/>/);
+  assert.notEqual(adaptiveMark, legacyRasters[0], 'adaptive foreground must not reuse the complete legacy tile');
+  assert.match(text('android/app/src/main/res/values/colors.xml'), /<color name="ic_launcher_background">#05071A<\/color>/);
 
   const manifest = text('android/app/src/main/AndroidManifest.xml');
   assert.match(manifest, /android:icon="@mipmap\/ic_launcher"/);
@@ -199,7 +202,8 @@ test('approved tracked artwork generates every native raster deterministically',
   const second = mkdtempSync(join(tmpdir(), 'gridly-native-assets-b-'));
   const obsoleteForeground = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png';
   const adaptiveForeground = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.xml';
-  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', adaptiveForeground, 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
+  const adaptiveMark = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png';
+  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', adaptiveMark, adaptiveForeground, 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
   const digest = (root, path) => createHash('sha256').update(readFileSync(join(root, path))).digest('hex');
   try {
     mkdirSync(dirname(join(first, obsoleteForeground)), { recursive: true });
@@ -214,16 +218,20 @@ test('approved tracked artwork generates every native raster deterministically',
     execFileSync(process.execPath, ['tools/native-assets.mjs', '--output-root', first]);
     assert.deepEqual(outputs.map((path) => [path, digest(first, path)]), firstResourceSet, 'rerun must preserve the final resource set');
     assert.equal(existsSync(join(first, obsoleteForeground)), false, 'rerun must not recreate the obsolete PNG');
-    assert.deepEqual(readFileSync(join(first, outputs[1])), readFileSync('assets/store/icons/gridly-icon-master-1024.png'));
-    assert.deepEqual(readFileSync(join(first, outputs[2])), readFileSync('assets/store/icons/gridly-icon-master-1024.png'));
+    assert.deepEqual(readFileSync(join(first, outputs[1])), readFileSync('assets/icon-192.png'), 'legacy launcher must be copied byte-for-byte');
+    assert.deepEqual(readFileSync(join(first, outputs[2])), readFileSync('assets/icon-192.png'), 'round fallback must use the explicit legacy authority');
+    assert.deepEqual(readFileSync(join(first, outputs[3])), readFileSync('assets/icons/incoming/gridly-icon-master-167.png'), 'adaptive mark must be copied byte-for-byte');
+    assert.notDeepEqual(readFileSync(join(first, outputs[3])), readFileSync(join(first, outputs[1])), 'adaptive mark must not be the complete legacy launcher tile');
     assert.deepEqual(readFileSync(join(first, outputs[0])), readFileSync('assets/store/branding/Splash/gridly-splash-portrait.png'));
-    assert.equal(execFileSync('git', ['ls-files', '--error-unmatch', 'assets/store/icons/gridly-icon-master-1024.png'], { encoding: 'utf8' }).trim(), 'assets/store/icons/gridly-icon-master-1024.png');
+    for (const source of ['assets/icon-192.png', 'assets/icons/incoming/gridly-icon-master-167.png', 'assets/store/icons/gridly-icon-master-1024.png', 'assets/store/branding/Splash/gridly-splash-portrait.png']) {
+      assert.equal(execFileSync('git', ['ls-files', '--error-unmatch', source], { encoding: 'utf8' }).trim(), source, `${source} must already be tracked`);
+    }
   } finally { rmSync(first, { recursive: true }); rmSync(second, { recursive: true }); }
 });
 
 test('generated native raster outputs are not tracked', () => {
   const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n');
-  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
+  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
   assert.equal(outputs.some((path) => tracked.includes(path)), false);
   for (const path of outputs) execFileSync('git', ['check-ignore', '--quiet', path]);
 });
