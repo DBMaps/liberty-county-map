@@ -30,6 +30,8 @@ data/generated/lp104/txgio-addresses/*
 /android/.gradle/
 /android/build/
 /android/app/build/
+# Android SDK discovery is machine-local and must never enter a checkout.
+/android/local.properties
 
 # Deterministic native raster outputs; recreate with npm run build:native-assets.
 /android/app/src/main/res/drawable/splash.png
