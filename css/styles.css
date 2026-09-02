@@ -28930,3 +28930,33 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     bottom: calc(var(--gridly-portrait-map-attribution-bottom-clearance, 0px) + 30px);
   }
 }
+
+/* Android physical-launch closure: the portrait awareness variant previously
+   inherited V250.8C's five reserved copy rows and a 104px minimum even when
+   optional crossing/route rows were hidden. Collapse only those absent rows;
+   destination mode, landscape trays, and every other card retain their
+   established geometry. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel:not([hidden]):not(.is-command-card-suppressed) {
+    min-height: 76px !important;
+    height: auto !important;
+    padding-block: 7px !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-destination-command-copy {
+    grid-template-rows: auto auto auto !important;
+    align-content: center !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel
+    :is(.mobile-awareness-panel-crossings, .mobile-awareness-panel-issues, .destination-route-impact-line)[hidden],
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .destination-route-impact-line:empty {
+    display: none !important;
+    min-height: 0 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .compact-btn {
+    min-height: 44px !important;
+    height: 44px !important;
+  }
+}

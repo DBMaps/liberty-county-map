@@ -695,7 +695,7 @@
     "test:lp24117": "node --test tests/lp24117-non-production-provider-rehearsal.test.mjs",
     "test:poi-browser": "node --test tests/poi-browser-provider.test.mjs tests/poi-production-packaging.test.mjs",
     "build:native-web": "node tools/native-web.mjs",
-    "build:native-web:configured": "node tools/native-web.mjs --runtime-config-file owner-local/native-provider-config.json --report-file .artifacts/native-web-identity.json",
+    "build:native-web:configured": "node tools/native-assets.mjs && node tools/native-web.mjs --runtime-config-file owner-local/native-provider-config.json --report-file .artifacts/native-web-identity.json",
     "verify:native-web": "node tools/native-web.mjs --verify",
     "verify:native-web:configured": "node tools/native-web.mjs --verify --report-file .artifacts/native-web-identity.json",
     "test:native-packaging": "node --test tests/native-packaging.test.mjs",
