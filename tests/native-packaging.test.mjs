@@ -126,6 +126,29 @@ test('foreground-only location declarations are present', () => {
   assert.doesNotMatch(plist, /NSLocationAlways|UIBackgroundModes/);
 });
 
+test('Android manifest declares only the approved network and foreground location permissions', () => {
+  const manifest = text('android/app/src/main/AndroidManifest.xml');
+  const permissions = [...manifest.matchAll(/<uses-permission\s+android:name="([^"]+)"\s*\/>/g)]
+    .map((match) => match[1]);
+
+  assert.deepEqual(permissions, [
+    'android.permission.INTERNET',
+    'android.permission.ACCESS_NETWORK_STATE',
+    'android.permission.ACCESS_COARSE_LOCATION',
+    'android.permission.ACCESS_FINE_LOCATION'
+  ]);
+  assert.equal(permissions.filter((permission) => permission === 'android.permission.INTERNET').length, 1);
+  assert.equal(permissions.filter((permission) => permission === 'android.permission.ACCESS_NETWORK_STATE').length, 1);
+  assert.equal(permissions.filter((permission) => permission === 'android.permission.ACCESS_COARSE_LOCATION').length, 1);
+  assert.equal(permissions.filter((permission) => permission === 'android.permission.ACCESS_FINE_LOCATION').length, 1);
+  assert.equal(permissions.some((permission) => permission === 'android.permission.ACCESS_BACKGROUND_LOCATION'), false);
+  assert.equal(permissions.some((permission) => /(?:POST_NOTIFICATIONS|READ_|WRITE_|MANAGE_|CAMERA|RECORD_AUDIO|QUERY_ALL_PACKAGES)$/.test(permission)), false);
+
+  const applicationStart = manifest.indexOf('<application');
+  assert.ok(applicationStart > 0, 'manifest must contain an application element');
+  assert.equal(manifest.slice(applicationStart).includes('<uses-permission'), false);
+});
+
 test('tracked text describes launcher, AppIcon, and launch screen resources', () => {
   for (const path of ['android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml', 'android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/Contents.json', 'ios/App/App/Assets.xcassets/Splash.imageset/Contents.json', 'ios/App/App/Base.lproj/LaunchScreen.storyboard']) assert.ok(existsSync(path), `${path} must exist`);
 });
