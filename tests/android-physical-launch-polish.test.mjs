@@ -7,9 +7,10 @@ const app = read("js/app.js");
 const css = read("css/styles.css");
 const pkg = JSON.parse(read("package.json"));
 
-test("configured owner staging deterministically manufactures approved launcher artwork", () => {
+test("configured owner staging deterministically copies approved launcher artwork", () => {
   assert.match(pkg.scripts["build:native-web:configured"], /^node tools\/native-assets\.mjs && node tools\/native-web\.mjs /);
-  assert.match(read("tools/native-assets.mjs"), /icon: 'assets\/store\/icons\/gridly-icon-master-1024\.png'/);
+  assert.match(read("tools/native-assets.mjs"), /androidLegacyIcon: 'assets\/icon-192\.png'/);
+  assert.match(read("tools/native-assets.mjs"), /androidAdaptiveMark: 'assets\/icons\/incoming\/gridly-icon-master-167\.png'/);
 });
 
 test("portrait Location Context collapses only absent optional rows and preserves Search target", () => {
