@@ -11,6 +11,19 @@ const output = resolve(root, process.argv.includes('--output') ? process.argv[pr
 const entries = ['index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi', 'Community-Packages', 'Crossing-Packages'];
 const prohibited = [/(^|\/)node_modules\//, /(^|\/)(tests|tools|reports|evidence|owner-local)\//, /(^|\/)android\//, /(^|\/)ios\//, /(^|\/)[^/]*\.local\.js$/];
 const runtimeConfigPath = 'js/gridlyRuntimeEnvironmentConfig.js';
+const vendorAssets = [
+  ['node_modules/leaflet/dist/leaflet.js', 'vendor/leaflet/leaflet.js'],
+  ['node_modules/leaflet/dist/leaflet.css', 'vendor/leaflet/leaflet.css'],
+  ['node_modules/leaflet/dist/images/marker-icon.png', 'vendor/leaflet/images/marker-icon.png'],
+  ['node_modules/leaflet/dist/images/marker-icon-2x.png', 'vendor/leaflet/images/marker-icon-2x.png'],
+  ['node_modules/leaflet/dist/images/marker-shadow.png', 'vendor/leaflet/images/marker-shadow.png'],
+  ['node_modules/@supabase/supabase-js/dist/umd/supabase.js', 'vendor/supabase/supabase.js']
+];
+const nativeStartupReplacements = [
+  ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', 'vendor/leaflet/leaflet.css'],
+  ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', 'vendor/leaflet/leaflet.js'],
+  ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', 'vendor/supabase/supabase.js']
+];
 
 function option(name) {
   const index = process.argv.indexOf(name);
@@ -30,6 +43,17 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
       return !prohibited.some((pattern) => pattern.test(path));
     }
   });
+  for (const [source, target] of vendorAssets) {
+    await mkdir(dirname(join(destination, target)), { recursive: true });
+    await cp(join(root, source), join(destination, target), { preserveTimestamps: false });
+  }
+  const stagedIndexPath = join(destination, 'index.html');
+  let stagedIndex = await readFile(stagedIndexPath, 'utf8');
+  for (const [remote, local] of nativeStartupReplacements) {
+    if (!stagedIndex.includes(remote)) throw new Error(`Native startup authority missing from source index: ${remote}`);
+    stagedIndex = stagedIndex.replace(remote, local);
+  }
+  await writeFile(stagedIndexPath, stagedIndex);
   if (runtimeConfigFile) {
     const ownerInput = resolve(runtimeConfigFile);
     if (ownerInput.startsWith(`${destination}/`) || ownerInput === resolve(root, runtimeConfigPath)) throw new Error('Native runtime config input must be external to the output and canonical config.');
@@ -67,6 +91,7 @@ async function verify(directory, { reportFile } = {}) {
   const required = [
     'index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi',
     'Community-Packages', 'Crossing-Packages',
+    ...vendorAssets.map(([, target]) => target),
     'poi/lp24111-d5-standalone-2026-08-28/runtime-v2/manifest.json',
     'poi/lp24111-d5-standalone-2026-08-28/legal/THIRD-PARTY-NOTICES.txt',
     'poi/lp24111-d5-standalone-2026-08-28/legal/foursquare/NOTICE.txt'
