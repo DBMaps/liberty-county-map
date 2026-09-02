@@ -19,7 +19,9 @@ const CONFIG = Object.freeze({
   ruralFallbackVintage: Deno.env.get("GRIDLY_RURAL_FALLBACK_VINTAGE") || "Current_Current",
   ruralFallbackTimeoutMs: Math.min(10000, Math.max(1000, Number(Deno.env.get("GRIDLY_RURAL_FALLBACK_TIMEOUT_MS")) || 6000))
 });
-const origins = new Set((Deno.env.get("GRIDLY_GEOCODE_ALLOWED_ORIGINS") || "https://gridly.app,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500").split(",").map((x) => x.trim()));
+// Capacitor Android's governed application origin is https://localhost. Keep
+// the allow-list exact: this is intentionally not a wildcard CORS policy.
+const origins = new Set((Deno.env.get("GRIDLY_GEOCODE_ALLOWED_ORIGINS") || "https://gridly.app,https://localhost,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500").split(",").map((x) => x.trim()));
 const inflight = new Map<string, Promise<Response>>();
 const allowedTop = new Set(["intent", "query", "structuredAddress", "context", "limit", "requestId", "requestMode"]);
 const allowedAddress = new Set(["street", "city", "county", "state", "postalCode", "country"]);
