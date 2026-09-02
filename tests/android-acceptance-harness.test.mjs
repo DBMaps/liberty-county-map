@@ -4,8 +4,56 @@ import fs from "node:fs";
 import test from "node:test";
 import { bounded, exactlyOneDevice, parseDevices } from "../tools/android-acceptance/core.mjs";
 import { AndroidWebViewPage, cleanupCreatedForward, connectReadyWebView, pollUntil, selectGridlyTarget, waitForCdpReadiness } from "../tools/android-acceptance/cdp.mjs";
+import { classifyDallasTerminal, waitForDallasTerminal } from "../tools/android-acceptance/dallas-terminal.mjs";
 
 const gridly = { type: "page", url: "https://localhost/", title: "Gridly | Know Before You Go", webSocketDebuggerUrl: "ws://page" };
+
+function textSequence(values) {
+  let index = 0;
+  return async () => values[Math.min(index++, values.length - 1)];
+}
+
+test("initial empty Dallas result surface is pending", () => {
+  assert.deepEqual(classifyDallasTerminal(""), {
+    kind: "pending", text: "", terminal: false, visibleDallas: false, noMatch: false, providerFailure: false
+  });
+});
+
+test("delayed visible Dallas result is observed", async () => {
+  const result = await waitForDallasTerminal(textSequence(["", "Checking nearby places…", " Dallas   County "]), { timeoutMs: 100, intervalMs: 1 });
+  assert.equal(result.kind, "dallas");
+  assert.equal(result.text, "Dallas County");
+  assert.equal(result.visibleDallas, true);
+});
+
+test("delayed no-match is terminal but fails Dallas visibility", async () => {
+  const result = await waitForDallasTerminal(textSequence(["", "No matching destination found. Try adding the city or ZIP code."]), { timeoutMs: 100, intervalMs: 1 });
+  assert.equal(result.kind, "no_match");
+  assert.equal(result.terminal, true);
+  assert.equal(result.noMatch, true);
+  assert.equal(result.visibleDallas, false);
+});
+
+test("explicit provider failure is classified separately", async () => {
+  const result = await waitForDallasTerminal(textSequence(["", "Address search is temporarily unavailable. Try again in a moment."]), { timeoutMs: 100, intervalMs: 1 });
+  assert.equal(result.kind, "provider_failure");
+  assert.equal(result.providerFailure, true);
+  assert.equal(result.noMatch, false);
+});
+
+test("permanently empty Dallas result surface times out", async () => {
+  const result = await waitForDallasTerminal(async () => "", { timeoutMs: 5, intervalMs: 1 });
+  assert.equal(result.kind, "timeout");
+  assert.equal(result.terminal, false);
+  assert.equal(result.text, "");
+});
+
+test("fast synchronous Dallas result is read before the first polling delay", async () => {
+  let reads = 0;
+  const result = await waitForDallasTerminal(async () => { reads++; return "Dallas, Texas"; }, { timeoutMs: 100, intervalMs: 50 });
+  assert.equal(result.kind, "dallas");
+  assert.equal(reads, 1);
+});
 
 function jsonResponse(body) {
   return { ok: true, json: async () => body };

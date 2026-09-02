@@ -1,5 +1,6 @@
 import { adb, bounded, exactlyOneDevice, PACKAGE, writeReports } from "./core.mjs";
 import { AndroidHarnessError, cleanupCreatedForward, connectReadyWebView, pollUntil, waitForCdpReadiness } from "./cdp.mjs";
+import { waitForDallasTerminal } from "./dallas-terminal.mjs";
 
 const options = process.argv.slice(2);
 if (options.length) {
@@ -61,11 +62,17 @@ try {
   await page.evaluate(() => document.getElementById("mobileDestinationCommandBtn")?.click());
   await page.evaluate(() => { const input = document.getElementById("gridlyAddressSearchInput"); input.value = "Dallas"; input.dispatchEvent(new Event("input", { bubbles: true })); });
   await page.evaluate(() => document.getElementById("gridlyRemoteSearchBtn")?.click());
-  await page.waitForFunction(() => !/searching/i.test(document.getElementById("gridlySearchResults")?.textContent || ""), null, { timeout: 15000 });
-  const search = await page.evaluate(() => document.getElementById("gridlySearchResults")?.innerText || "");
-  add("PASS", "Dallas search keeps app alive", `pid ${adb(["shell", "pidof", PACKAGE], { serial, allowFailure: true }) || "missing"}`);
-  add(/Dallas/i.test(search) ? "PASS" : "FAIL", "visible Dallas result", bounded(search, 500) || "empty result surface");
-  add(/No matching destination found/i.test(search) ? "SKIP" : "PASS", "Dallas provider/result state", /No matching destination found/i.test(search) ? "provider returned no governed match" : "governed result rendered");
+  const search = await waitForDallasTerminal(
+    () => page.evaluate(() => document.getElementById("gridlySearchResults")?.innerText || ""),
+    { timeoutMs: 15000, intervalMs: 100 }
+  );
+  const searchDetail = bounded(search.text, 500) || "empty result surface";
+  const searchPid = adb(["shell", "pidof", PACKAGE], { serial, allowFailure: true });
+  add(searchPid ? "PASS" : "FAIL", "Dallas search keeps app alive", `pid ${searchPid || "missing"}`);
+  add(search.terminal ? "PASS" : "FAIL", "terminal provider response observed", search.terminal ? searchDetail : "Dallas search timed out before a terminal result.");
+  add(search.visibleDallas ? "PASS" : "FAIL", "visible Dallas result", searchDetail);
+  add(search.noMatch ? "PASS" : "SKIP", "explicit no-governed-match response", search.noMatch ? searchDetail : "not observed");
+  add(search.providerFailure ? "PASS" : "SKIP", "explicit provider/search failure", search.providerFailure ? searchDetail : "not observed");
 
   const finePermissionGranted = /android\.permission\.ACCESS_FINE_LOCATION:\s+granted=true/.test(packageInfo);
   if (!finePermissionGranted) {
