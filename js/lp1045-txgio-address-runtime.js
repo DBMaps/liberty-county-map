@@ -91,7 +91,7 @@
     if (!response.ok) throw new Error(`certificate_http_${response.status}`);
     const certificate = await response.json();
     if (certificate.countyId !== entry.countyId || certificate.fips !== entry.fips || certificate.sizeBytes !== entry.sizeBytes
-      || certificate.sha256 !== entry.sha256 || certificate.artifact !== entry.path.split("/").pop()
+      || certificate.sha256 !== entry.sha256 || certificate.artifact !== (entry.sourcePath || entry.path).split("/").pop()
       || certificate.acceptance?.houseNumber !== "exact" || certificate.acceptance?.road !== "canonical_exact"
       || certificate.acceptance?.interpolation !== false || certificate.acceptance?.nearbyHouseSubstitution !== false) throw new Error("certificate_invalid");
     evidence.push(Object.freeze({ event: "certificate_validated", fips: county.fips }));
