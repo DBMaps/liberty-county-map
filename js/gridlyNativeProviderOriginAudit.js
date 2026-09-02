@@ -25,14 +25,28 @@
       const response = await fetch("https://api.weather.gov/alerts/active?area=TX", { headers: { Accept: "application/geo+json" } });
       nwsEndpointReachability = response.ok ? "reachable" : `http_${response.status}`;
     } catch {}
+    const capacitorPlatform = globalScope.Capacitor?.getPlatform?.() || "web-or-unavailable";
+    const computedRootFontSize = globalScope.getComputedStyle(document.documentElement).fontSize;
+    const computedRootFontSizePx = Number.parseFloat(computedRootFontSize);
+    const nativeTypographyAuthority = capacitorPlatform === "android"
+      ? "android_webview_text_zoom_100"
+      : "not_android_native";
     const result = Object.freeze({
-      capacitorPlatform: globalScope.Capacitor?.getPlatform?.() || "web-or-unavailable",
+      capacitorPlatform,
       documentLocationHref: document.location.href,
       documentLocationOrigin: document.location.origin,
       documentLocationProtocol: document.location.protocol,
       documentLocationHostname: document.location.hostname,
       navigatorUserAgent: navigator.userAgent,
       documentReferrer: document.referrer,
+      viewportWidth: globalScope.innerWidth,
+      computedRootFontSize,
+      nativeTypographyAuthority,
+      nativeTypographyStatus: capacitorPlatform !== "android"
+        ? "not_applicable"
+        : Math.abs(computedRootFontSizePx - 16) <= 0.1
+          ? "normalized_standard"
+          : "governed_gridly_preference_or_physical_review_required",
       arcgisConfigPresent: typeof runtime.arcgisStaticBasemapApiKey === "string" && Boolean(runtime.arcgisStaticBasemapApiKey.trim()),
       driveTexasConfigPresent: driveTexasFamily !== "none",
       driveTexasConfigFamily: driveTexasFamily,

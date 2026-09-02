@@ -47066,6 +47066,7 @@ function initSupabase() {
 
   try {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+    gridlyPublishSupabaseClientAuthority();
 
     setSync(`Live sync connected · Build ${APP_BUILD}`);
 
@@ -47090,6 +47091,15 @@ function initSupabase() {
     console.error("Supabase init failed:", error);
     setSync(`Live sync failed · Build ${APP_BUILD}`);
   }
+}
+
+function gridlyPublishSupabaseClientAuthority() {
+  if (typeof globalThis === "undefined" || !supabaseClient) return false;
+  Object.defineProperty(globalThis, Symbol.for("gridly.runtime.supabaseClient"), {
+    value: supabaseClient,
+    configurable: true
+  });
+  return true;
 }
 
 function initGreeting() {
@@ -86995,15 +87005,6 @@ let gridlyLastReportRetrievalDiagnostic = null;
 let gridlyLoadedReportSnapshot = Object.freeze([]);
 let gridlyLastAlertsRenderedReportIds = new Set();
 
-// A non-enumerable, shared authority for read-only recovery tooling. This does
-// not construct or configure a client; it only points at production's client.
-if (typeof globalThis !== "undefined" && supabaseClient) {
-  Object.defineProperty(globalThis, Symbol.for("gridly.runtime.supabaseClient"), {
-    value: supabaseClient,
-    configurable: true
-  });
-}
-
 function gridlyPersistenceErrorDiagnostic(error) {
   if (!error) return null;
   return Object.freeze({
@@ -101251,6 +101252,7 @@ function getGridlyDirectFeedbackClient() {
   const sdk = typeof window !== "undefined" ? window.supabase : null;
   if (sdk && typeof sdk.createClient === "function" && SUPABASE_URL && SUPABASE_PUBLIC_KEY) {
     supabaseClient = sdk.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+    gridlyPublishSupabaseClientAuthority();
     return supabaseClient;
   }
   return null;

@@ -23,8 +23,9 @@ test('Android launcher MainActivity is compiled from the production package', ()
 
   const activity = text(activityPath);
   assert.match(activity, /^package com\.gridlygo\.gridly$/m);
-  assert.match(activity, /^class MainActivity\s*:\s*BridgeActivity\(\)$/m);
+  assert.match(activity, /^class MainActivity\s*:\s*BridgeActivity\(\)\s*\{/m);
   assert.match(activity, /^import com\.getcapacitor\.BridgeActivity$/m);
+  assert.match(activity, /bridge\.webView\.settings\.textZoom\s*=\s*100/);
 
   const activitySources = sourceFilesNamed(
     'android/app/src',
@@ -213,9 +214,28 @@ test('native stage declares every governed runtime family', () => {
 test('native provider origin helper is bounded and never exposes credential values', () => {
   const helper = text('js/gridlyNativeProviderOriginAudit.js');
   assert.match(helper, /gridlyNativeProviderOriginAudit/);
-  for (const field of ['capacitorPlatform', 'documentLocationOrigin', 'driveTexasConfigFamily', 'supabaseClientInitialized', 'nwsEndpointReachability', 'poiManifestPresence', 'crossingPackagePresence']) assert.match(helper, new RegExp(field));
+  for (const field of ['capacitorPlatform', 'documentLocationOrigin', 'viewportWidth', 'computedRootFontSize', 'nativeTypographyAuthority', 'nativeTypographyStatus', 'driveTexasConfigFamily', 'supabaseClientInitialized', 'nwsEndpointReachability', 'poiManifestPresence', 'crossingPackagePresence']) assert.match(helper, new RegExp(field));
   assert.doesNotMatch(helper, /authorization|apiKeyValue|supabaseKey/i);
   assert.match(text('index.html'), /gridlyNativeProviderOriginAudit\.js/);
+});
+
+test('Android typography normalization is native-only and preserves Gridly density authority', () => {
+  const activity = text('android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt');
+  const styles = text('css/styles.css');
+  assert.match(activity, /bridge\.webView\.settings\.textZoom\s*=\s*100/);
+  assert.match(styles, /:root\s*\{[\s\S]*?font-size:\s*calc\(16px \* var\(--gridly-app-font-scale\)\)/);
+  assert.match(styles, /body\.gridly-text-compact\s*\{\s*--gridly-app-font-scale:\s*0\.92/);
+  assert.doesNotMatch(styles, /data-gridly-native|android_webview_text_zoom/);
+  assert.doesNotMatch(text('index.html'), /data-gridly-native|android_webview_text_zoom/);
+});
+
+test('Supabase initialization publishes its non-enumerable audit authority after UMD client creation', () => {
+  const app = text('js/app.js');
+  const creation = app.indexOf('supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);');
+  const publication = app.indexOf('gridlyPublishSupabaseClientAuthority();', creation);
+  assert.ok(creation >= 0 && publication > creation);
+  assert.match(app, /Object\.defineProperty\(globalThis, Symbol\.for\("gridly\.runtime\.supabaseClient"\)/);
+  assert.doesNotMatch(app.slice(creation, publication), /service[_-]?role/i);
 });
 
 test('configured native staging reuses governed additive production composition and attests final bytes', () => {
