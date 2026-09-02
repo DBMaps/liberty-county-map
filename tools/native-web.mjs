@@ -8,7 +8,11 @@ import { composeProductionRuntimeConfig } from './lp1831/prepare-cloudflare-prev
 
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(root, process.argv.includes('--output') ? process.argv[process.argv.indexOf('--output') + 1] : 'www');
-const entries = ['index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi', 'Community-Packages', 'Crossing-Packages'];
+const entries = ['index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'Community-Packages', 'Crossing-Packages'];
+const poiRelease = 'lp24111-d5-standalone-2026-08-28';
+const poiRuntimeRelative = `poi/${poiRelease}/runtime-v2`;
+const poiRuntimeSource = join(root, poiRuntimeRelative);
+const daytonPhysicalCohort = Object.freeze(['tx-29-095', 'tx-29-096', 'tx-30-095', 'tx-30-096']);
 const prohibited = [/(^|\/)node_modules\//, /(^|\/)(tests|tools|reports|evidence|owner-local)\//, /(^|\/)android\//, /(^|\/)ios\//, /(^|\/)[^/]*\.local\.js$/];
 const runtimeConfigPath = 'js/gridlyRuntimeEnvironmentConfig.js';
 const vendorAssets = [
@@ -43,6 +47,19 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
       return !prohibited.some((pattern) => pattern.test(path));
     }
   });
+  // Stage runtime-v2 from its certified manifest so gzip assets cannot be
+  // silently omitted by a broad directory copy.
+  const poiManifestBytes = await readFile(join(poiRuntimeSource, 'manifest.json'));
+  const poiManifest = JSON.parse(poiManifestBytes);
+  if (poiManifest.runtimeSchemaVersion !== 'gridly.poi.runtime.v2' || poiManifest.shards?.length !== 86) throw new Error('Certified POI runtime-v2 manifest must reference exactly 86 shards.');
+  const runtimeDestination = join(destination, poiRuntimeRelative);
+  await mkdir(runtimeDestination, { recursive: true });
+  await writeFile(join(runtimeDestination, 'manifest.json'), poiManifestBytes);
+  for (const shard of poiManifest.shards) {
+    if (shard.file !== `${shard.shardId}.json.gz`) throw new Error(`Invalid POI runtime-relative path for ${shard.shardId}.`);
+    await cp(join(poiRuntimeSource, shard.file), join(runtimeDestination, shard.file), { preserveTimestamps: false });
+  }
+  await cp(join(root, 'poi', poiRelease, 'legal'), join(destination, 'poi', poiRelease, 'legal'), { recursive: true, preserveTimestamps: false });
   for (const [source, target] of vendorAssets) {
     await mkdir(dirname(join(destination, target)), { recursive: true });
     await cp(join(root, source), join(destination, target), { preserveTimestamps: false });
@@ -100,6 +117,15 @@ async function verify(directory, { reportFile } = {}) {
   const paths = await files(directory);
   const shards = paths.filter((path) => path.startsWith('poi/lp24111-d5-standalone-2026-08-28/runtime-v2/') && path.endsWith('.json.gz'));
   if (shards.length !== 86) throw new Error(`Expected exactly 86 POI runtime-v2 shards; found ${shards.length}.`);
+  const manifestBytes = await readFile(join(directory, poiRuntimeRelative, 'manifest.json'));
+  if (createHash('sha256').update(manifestBytes).digest('hex') !== '53bdb47e180836eaede03e2cf7f2acb5ec730507a768c1bae06ba0eab0c7fa9a') throw new Error('Staged POI manifest is not the certified authority.');
+  const manifest = JSON.parse(manifestBytes);
+  for (const shard of manifest.shards) {
+    const runtimePath = join(poiRuntimeRelative, shard.file);
+    const [sourceBytes, stagedBytes] = await Promise.all([readFile(join(root, runtimePath)), readFile(join(directory, runtimePath))]);
+    if (!sourceBytes.equals(stagedBytes) || createHash('sha256').update(stagedBytes).digest('hex') !== shard.sha256) throw new Error(`Staged POI shard bytes differ from certified source: ${shard.shardId}.`);
+  }
+  for (const id of daytonPhysicalCohort) await stat(join(directory, poiRuntimeRelative, `${id}.json.gz`));
   const forbidden = paths.filter((path) => prohibited.some((pattern) => pattern.test(path)));
   if (forbidden.length) throw new Error(`Prohibited native web files: ${forbidden.join(', ')}`);
 

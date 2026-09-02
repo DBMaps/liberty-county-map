@@ -698,6 +698,7 @@
     "build:native-web:configured": "node tools/native-assets.mjs && node tools/native-web.mjs --runtime-config-file owner-local/native-provider-config.json --report-file .artifacts/native-web-identity.json",
     "verify:native-web": "node tools/native-web.mjs --verify",
     "verify:native-web:configured": "node tools/native-web.mjs --verify --report-file .artifacts/native-web-identity.json",
+    "verify:native-poi:android": "node tools/verify-native-poi-android.mjs",
     "test:native-packaging": "node --test tests/native-packaging.test.mjs",
     "build:native-assets": "node tools/native-assets.mjs",
     "prepare:native": "npm run build:native-web && npm run verify:native-web && npm run build:native-assets"
