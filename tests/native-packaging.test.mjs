@@ -203,8 +203,8 @@ test('Android launcher resources separate legacy fallbacks from adaptive foregro
     'android/app/src/main/res/mipmap-anydpi/ic_launcher.png',
     'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png'
   ];
-  const adaptiveForeground = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.xml';
-  const adaptiveMark = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png';
+  const adaptiveForeground = 'android/app/src/main/res/drawable/ic_launcher_foreground.xml';
+  const adaptiveMark = 'android/app/src/main/res/drawable-nodpi/ic_launcher_mark.png';
   const obsoleteForeground = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png';
   const trackedXml = execFileSync('git', ['ls-files', 'android/app/src/main/res/**/*.xml'], { encoding: 'utf8' })
     .trim().split('\n').filter((path) => path && existsSync(path));
@@ -220,11 +220,11 @@ test('Android launcher resources separate legacy fallbacks from adaptive foregro
   for (const launcher of ['ic_launcher', 'ic_launcher_round']) {
     assert.equal(trackedXml.filter((path) => path.endsWith(`/mipmap-anydpi-v26/${launcher}.xml`)).length, 1);
     assert.equal(legacyRasters.filter((path) => path.endsWith(`/mipmap-anydpi/${launcher}.png`)).length, 1);
-    assert.match(text(`android/app/src/main/res/mipmap-anydpi-v26/${launcher}.xml`), /@mipmap\/ic_launcher_foreground/);
+    assert.match(text(`android/app/src/main/res/mipmap-anydpi-v26/${launcher}.xml`), /@drawable\/ic_launcher_foreground/);
   }
   assert.ok(existsSync(adaptiveForeground), `${adaptiveForeground} must be the adaptive authority`);
   assert.equal(existsSync(obsoleteForeground), false, `${obsoleteForeground} must not coexist with XML authority`);
-  assert.match(text(adaptiveForeground), /^<\?xml[\s\S]*<inset[^>]+android:drawable="@mipmap\/ic_launcher_mark"[^>]+android:inset="22%"\s*\/>/);
+  assert.match(text(adaptiveForeground), /^<\?xml[\s\S]*<inset[^>]+android:drawable="@drawable\/ic_launcher_mark"[^>]+android:inset="18%"\s*\/>/);
   assert.notEqual(adaptiveMark, legacyRasters[0], 'adaptive foreground must not reuse the complete legacy tile');
   assert.match(text('android/app/src/main/res/values/colors.xml'), /<color name="ic_launcher_background">#05071A<\/color>/);
 
@@ -237,8 +237,8 @@ test('approved tracked artwork generates every native raster deterministically',
   const first = mkdtempSync(join(tmpdir(), 'gridly-native-assets-a-'));
   const second = mkdtempSync(join(tmpdir(), 'gridly-native-assets-b-'));
   const obsoleteForeground = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png';
-  const adaptiveForeground = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.xml';
-  const adaptiveMark = 'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png';
+  const adaptiveForeground = 'android/app/src/main/res/drawable/ic_launcher_foreground.xml';
+  const adaptiveMark = 'android/app/src/main/res/drawable-nodpi/ic_launcher_mark.png';
   const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', adaptiveMark, adaptiveForeground, 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
   const digest = (root, path) => createHash('sha256').update(readFileSync(join(root, path))).digest('hex');
   try {
@@ -267,7 +267,7 @@ test('approved tracked artwork generates every native raster deterministically',
 
 test('generated native raster outputs are not tracked', () => {
   const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n');
-  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
+  const outputs = ['android/app/src/main/res/drawable/splash.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png', 'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png', 'android/app/src/main/res/drawable-nodpi/ic_launcher_mark.png', 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 'ios/App/App/Assets.xcassets/Splash.imageset/splash.png'];
   assert.equal(outputs.some((path) => tracked.includes(path)), false);
   for (const path of outputs) execFileSync('git', ['check-ignore', '--quiet', path]);
 });

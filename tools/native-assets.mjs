@@ -16,7 +16,7 @@ export const outputs = Object.freeze({
     'android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png'
   ],
   androidAdaptiveMark: [
-    'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png'
+    'android/app/src/main/res/drawable-nodpi/ic_launcher_mark.png'
   ],
   iosIcon: [
     'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png'
@@ -28,7 +28,9 @@ export const outputs = Object.freeze({
 });
 
 export const obsoleteOutputs = Object.freeze([
-  'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png'
+  'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png',
+  'android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png',
+  'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.xml'
 ]);
 
 export async function generateNativeAssets(outputRoot = repository) {
@@ -50,9 +52,9 @@ export async function generateNativeAssets(outputRoot = repository) {
   // Adaptive launchers own the final mask. Keep the transparent, mark-only
   // authority distinct from the complete legacy tile and inset it into the
   // adaptive safe zone without rewriting its tracked binary bytes.
-  const adaptiveForeground = resolve(outputRoot, 'android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.xml');
+  const adaptiveForeground = resolve(outputRoot, 'android/app/src/main/res/drawable/ic_launcher_foreground.xml');
   await mkdir(dirname(adaptiveForeground), { recursive: true });
-  await writeFile(adaptiveForeground, `<?xml version="1.0" encoding="utf-8"?>\n<inset xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@mipmap/ic_launcher_mark" android:inset="22%" />\n`);
+  await writeFile(adaptiveForeground, `<?xml version="1.0" encoding="utf-8"?>\n<inset xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@drawable/ic_launcher_mark" android:inset="18%" />\n`);
 }
 
 const outputFlag = process.argv.indexOf('--output-root');

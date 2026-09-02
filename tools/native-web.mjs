@@ -109,6 +109,18 @@ export async function stageNativeAddressRuntime(sourceRoot, destination) {
 }
 
 export async function stage(destination, { runtimeConfigFile } = {}) {
+  let composedRuntimeConfig = null;
+  if (runtimeConfigFile) {
+    const ownerInput = resolve(runtimeConfigFile);
+    let ownerBytes;
+    try { ownerBytes = await readFile(ownerInput); }
+    catch (error) {
+      if (error.code === 'ENOENT') throw new Error(`NATIVE_PROVIDER_CONFIG_MISSING:${runtimeConfigFile}. On Windows run: powershell -ExecutionPolicy Bypass -File tools/Prepare-GridlyNative.ps1`);
+      throw error;
+    }
+    if (ownerInput.startsWith(`${destination}/`) || ownerInput === resolve(root, runtimeConfigPath)) throw new Error('Native runtime config input must be external to the output and canonical config.');
+    composedRuntimeConfig = composeProductionRuntimeConfig(await readFile(join(root, runtimeConfigPath)), ownerBytes);
+  }
   await rm(destination, { recursive: true, force: true });
   await mkdir(destination, { recursive: true });
   const copyRuntime = (entry) => copyGovernedRuntime(root, destination, entry);
@@ -195,10 +207,7 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
   }
   await writeFile(stagedIndexPath, stagedIndex);
   if (runtimeConfigFile) {
-    const ownerInput = resolve(runtimeConfigFile);
-    if (ownerInput.startsWith(`${destination}/`) || ownerInput === resolve(root, runtimeConfigPath)) throw new Error('Native runtime config input must be external to the output and canonical config.');
-    const composed = composeProductionRuntimeConfig(await readFile(join(root, runtimeConfigPath)), await readFile(ownerInput));
-    await writeFile(join(destination, runtimeConfigPath), composed);
+    await writeFile(join(destination, runtimeConfigPath), composedRuntimeConfig);
   }
 }
 

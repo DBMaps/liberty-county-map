@@ -39,6 +39,7 @@ data/generated/lp104/txgio-addresses/*
 /android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png
 /android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png
 /android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png
+/android/app/src/main/res/drawable-nodpi/ic_launcher_mark.png
 /ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
 /ios/App/App/Assets.xcassets/Splash.imageset/splash.png
 /.artifacts/lp108/
