@@ -53,6 +53,28 @@ test('Android Java and Kotlin compilation deterministically target JVM 1.8', () 
   assert.doesNotMatch(gradle, /JvmTarget\.JVM_(?:24|25)|JavaVersion\.VERSION_(?:24|25)/);
 });
 
+test('Android app compile classpath directly exposes Capacitor AppCompat authority', () => {
+  const appGradle = text('android/app/build.gradle');
+  const rootGradle = text('android/build.gradle');
+  const capacitorGradle = text('node_modules/@capacitor/android/capacitor/build.gradle');
+  const supportLibraryPattern = /com\.android\.support\s*:/;
+
+  const authority = rootGradle.match(/^\s*androidxAppCompatVersion\s*=\s*['"]([^'"]+)['"]$/m);
+  assert.ok(authority, 'root project must declare the shared AppCompat version authority');
+  assert.equal(authority[1], '1.7.1');
+  assert.match(appGradle, /^\s*implementation\s+['"]androidx\.appcompat:appcompat:\$androidxAppCompatVersion['"]$/m);
+  assert.match(capacitorGradle, /androidxAppCompatVersion[^\n]+rootProject\.ext\.androidxAppCompatVersion\s*:\s*['"]1\.7\.1['"]/);
+  assert.match(capacitorGradle, /implementation\s+['"]androidx\.appcompat:appcompat:\$androidxAppCompatVersion['"]/);
+
+  for (const path of [
+    'android/build.gradle',
+    'android/app/build.gradle',
+    'android/app/capacitor.build.gradle',
+    'android/capacitor-cordova-android-plugins/build.gradle',
+    'node_modules/@capacitor/android/capacitor/build.gradle'
+  ]) assert.doesNotMatch(text(path), supportLibraryPattern);
+});
+
 test('Android project explicitly enables AndroidX without unnecessary Jetifier', () => {
   const properties = text('android/gradle.properties');
   assert.match(properties, /^android\.useAndroidX=true$/m);
