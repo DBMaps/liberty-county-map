@@ -40,6 +40,8 @@ const poiRelease = 'lp24111-d5-standalone-2026-08-28';
 const poiRuntimeRelative = `poi/${poiRelease}/runtime-v2`;
 const poiRuntimeSource = join(root, poiRuntimeRelative);
 const daytonPhysicalCohort = Object.freeze(['tx-29-095', 'tx-29-096', 'tx-30-095', 'tx-30-096']);
+const addressManifestPath = 'data/generated/lp104/txgio-addresses/runtime-manifest.json';
+const nativeAddressDirectory = 'data/generated/lp104/txgio-addresses/native';
 export const prohibited = [
   /(^|\/)node_modules\//, /(^|\/)(tests|tools|reports|evidence|audit|certification|owner-local)\//,
   /(^|\/)(android|ios)\//, /(^|\/)[^/]*\.local\.js$/,
@@ -85,6 +87,27 @@ function option(name) {
   return resolve(process.argv[index + 1]);
 }
 
+export async function stageNativeAddressRuntime(sourceRoot, destination) {
+  const sourceAddressManifestBytes = await readFile(join(sourceRoot, addressManifestPath));
+  const addressManifest = JSON.parse(sourceAddressManifestBytes);
+  const nativeAddressManifest = structuredClone(addressManifest);
+  for (const record of nativeAddressManifest.packages) {
+    const sourceRecord = addressManifest.packages.find((candidate) => candidate.countyId === record.countyId && candidate.fips === record.fips);
+    if (!sourceRecord || !sourceRecord.path.endsWith('.addresses.jsonl.gz')) throw new Error(`Invalid certified address package path for ${record.countyId}.`);
+    const aliasName = sourceRecord.path.split('/').pop().replace(/\.jsonl\.gz$/, '.bin');
+    record.sourcePath = sourceRecord.path;
+    record.path = `${nativeAddressDirectory}/${aliasName}`;
+    await mkdir(join(destination, nativeAddressDirectory), { recursive: true });
+    // Match the established POI convention: publish certified gzip bytes under
+    // one Android-safe extension, rather than asking AssetManager to transform
+    // a double-extension asset.
+    await cp(join(sourceRoot, sourceRecord.path), join(destination, record.path), { preserveTimestamps: false });
+    await copyGovernedRuntime(sourceRoot, destination, record.certificate);
+  }
+  await mkdir(dirname(join(destination, addressManifestPath)), { recursive: true });
+  await writeFile(join(destination, addressManifestPath), `${JSON.stringify(nativeAddressManifest, null, 2)}\n`);
+}
+
 export async function stage(destination, { runtimeConfigFile } = {}) {
   await rm(destination, { recursive: true, force: true });
   await mkdir(destination, { recursive: true });
@@ -117,13 +140,7 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
   // Current address search consumes only the package declared by this runtime
   // manifest. Raw JSONL and undeclared statewide manufacturing outputs are not
   // consumer inputs.
-  const addressManifestPath = 'data/generated/lp104/txgio-addresses/runtime-manifest.json';
-  const addressManifest = JSON.parse(await readFile(join(root, addressManifestPath)));
-  await copyRuntime(addressManifestPath);
-  for (const record of addressManifest.packages) {
-    await copyRuntime(record.path);
-    await copyRuntime(record.certificate);
-  }
+  await stageNativeAddressRuntime(root, destination);
 
   // County-specific paths are runtime only where the consumer configuration
   // directly names them. Source shapefiles and supporting evidence are excluded.
@@ -246,6 +263,16 @@ async function verify(directory, { reportFile } = {}) {
     if (!nativeBytes.equals(sourceBytes)) throw new Error(`Native-served POI alias differs from certified source: ${shard.shardId}.`);
   }
   for (const id of daytonPhysicalCohort) await stat(join(directory, poiRuntimeRelative, `${id}.json.gz`));
+  const sourceAddressManifest = JSON.parse(await readFile(join(root, addressManifestPath)));
+  const stagedAddressManifest = JSON.parse(await readFile(join(directory, addressManifestPath)));
+  if (JSON.stringify(sourceAddressManifest) === JSON.stringify(stagedAddressManifest)) throw new Error('Native address manifest was not projected.');
+  for (const sourceEntry of sourceAddressManifest.packages) {
+    const stagedEntry = stagedAddressManifest.packages.find((entry) => entry.countyId === sourceEntry.countyId && entry.fips === sourceEntry.fips);
+    if (!stagedEntry || stagedEntry.sourcePath !== sourceEntry.path || !stagedEntry.path.startsWith(`${nativeAddressDirectory}/`) || !stagedEntry.path.endsWith('.addresses.bin')) throw new Error(`Invalid native address manifest projection for ${sourceEntry.countyId}.`);
+    const [sourceBytes, aliasBytes] = await Promise.all([readFile(join(root, sourceEntry.path)), readFile(join(directory, stagedEntry.path))]);
+    if (!aliasBytes.equals(sourceBytes) || aliasBytes.length !== sourceEntry.sizeBytes || createHash('sha256').update(aliasBytes).digest('hex') !== sourceEntry.sha256) throw new Error(`Native-served address alias differs from certified source: ${sourceEntry.countyId}.`);
+  }
+  if (paths.some((path) => path.endsWith('.addresses.jsonl') || path.endsWith('.addresses.jsonl.gz'))) throw new Error('Native stage contains a transformed or double-extension address package.');
   const forbidden = paths.filter(isProhibited);
   if (forbidden.length) throw new Error(`Prohibited native web files: ${forbidden.join(', ')}`);
 
