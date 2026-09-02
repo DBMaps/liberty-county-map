@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, extname, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { copyGovernedRuntime } from '../tools/native-web.mjs';
 
 const text = (path) => readFileSync(path, 'utf8');
 const config = JSON.parse(text('capacitor.config.json'));
@@ -24,6 +25,13 @@ const resourceFilesWithExtensions = (root, extensions) => readdirSync(root, { wi
       ? resourceFilesWithExtensions(entryPath, extensions)
       : extensions.has(extname(entry.name)) ? [entryPath.replaceAll('\\', '/')] : [];
   });
+
+const directoryFiles = (root, current = root) => readdirSync(current, { withFileTypes: true })
+  .flatMap((entry) => {
+    const entryPath = join(current, entry.name);
+    return entry.isDirectory() ? directoryFiles(root, entryPath) : [entryPath.slice(root.length + 1).replaceAll('\\', '/')];
+  })
+  .sort();
 
 test('Android launcher MainActivity is compiled from the production package', () => {
   const activityPath = 'android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt';
@@ -279,6 +287,33 @@ test('native stage is an allowlist with measured anti-bloat closure', () => {
   assert.match(tool, /crossingManifest\.records/);
   assert.match(tool, /packageRegistry\.packages/);
   assert.match(tool, /addressManifest\.packages/);
+});
+
+test('native tree staging filters prohibited descendants and repeats deterministically', async () => {
+  const first = mkdtempSync(join(tmpdir(), 'gridly-native-web-policy-a-'));
+  const second = mkdtempSync(join(tmpdir(), 'gridly-native-web-policy-b-'));
+  const localConfig = 'js/gridly.local.js';
+  const hadLocalConfig = existsSync(localConfig);
+  const originalLocalConfig = hadLocalConfig ? readFileSync(localConfig) : undefined;
+  try {
+    if (!hadLocalConfig) writeFileSync(localConfig, 'globalThis.GRIDLY_LOCAL_TEST_ONLY = true;\n');
+
+    await copyGovernedRuntime(process.cwd(), first, 'js');
+    await copyGovernedRuntime(process.cwd(), second, 'js');
+    assert.equal(existsSync(join(first, localConfig)), false, 'an *.local.js descendant of the allowed js tree must not be staged');
+    for (const required of ['js/app.js', 'js/gridlyRuntimeEnvironmentConfig.js', 'js/gridlyNativeProviderOriginAudit.js']) {
+      assert.ok(existsSync(join(first, required)), `${required} must remain in the production native stage`);
+    }
+    const stagedIdentity = (destination) => directoryFiles(destination).map((relativePath) => {
+      return [relativePath, createHash('sha256').update(readFileSync(join(destination, relativePath))).digest('hex')];
+    });
+    assert.deepEqual(stagedIdentity(first), stagedIdentity(second), 'clean repeated tree staging must be byte-for-byte deterministic');
+  } finally {
+    rmSync(first, { recursive: true, force: true });
+    rmSync(second, { recursive: true, force: true });
+    if (hadLocalConfig) writeFileSync(localConfig, originalLocalConfig);
+    else rmSync(localConfig, { force: true });
+  }
 });
 
 test('native address and POI computed-path authorities remain bounded and complete', () => {

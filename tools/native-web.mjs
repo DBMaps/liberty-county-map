@@ -2,6 +2,7 @@
 import { cp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { composeProductionRuntimeConfig } from './lp1831/prepare-cloudflare-preview-artifact.mjs';
@@ -63,6 +64,20 @@ const nativeStartupReplacements = [
   ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', 'vendor/supabase/supabase.js']
 ];
 
+export async function copyGovernedRuntime(sourceRoot, destination, entry) {
+  const normalized = entry.replaceAll('\\', '/');
+  if (isProhibited(normalized)) throw new Error(`Runtime policy attempted to stage prohibited path: ${normalized}`);
+  await mkdir(dirname(join(destination, normalized)), { recursive: true });
+  await cp(join(sourceRoot, normalized), join(destination, normalized), {
+    recursive: true,
+    preserveTimestamps: false,
+    // A tree allowlist governs its root and every path below it. Without a
+    // copy filter, a permitted directory can carry prohibited owner-local or
+    // manufacturing descendants across the native boundary.
+    filter: (source) => !isProhibited(relative(sourceRoot, source).replaceAll('\\', '/'))
+  });
+}
+
 function option(name) {
   const index = process.argv.indexOf(name);
   if (index < 0) return undefined;
@@ -73,12 +88,7 @@ function option(name) {
 export async function stage(destination, { runtimeConfigFile } = {}) {
   await rm(destination, { recursive: true, force: true });
   await mkdir(destination, { recursive: true });
-  const copyRuntime = async (entry) => {
-    const normalized = entry.replaceAll('\\', '/');
-    if (isProhibited(normalized)) throw new Error(`Runtime policy attempted to stage prohibited path: ${normalized}`);
-    await mkdir(dirname(join(destination, normalized)), { recursive: true });
-    await cp(join(root, normalized), join(destination, normalized), { recursive: true, preserveTimestamps: false });
-  };
+  const copyRuntime = (entry) => copyGovernedRuntime(root, destination, entry);
   for (const entry of [...runtimePolicy.trees, ...runtimePolicy.files]) await copyRuntime(entry);
 
   // Computed/data-driven authorities are expanded from their production
@@ -257,23 +267,25 @@ async function verify(directory, { reportFile } = {}) {
   } finally { await rm(temporary, { recursive: true, force: true }); }
 }
 
-const runtimeConfigFile = option('--runtime-config-file');
-const reportFile = option('--report-file');
-if (process.argv.includes('--verify')) await verify(output, { reportFile }); else {
-  await stage(output, { runtimeConfigFile });
-  if (runtimeConfigFile) {
-    if (!reportFile) throw new Error('--report-file is required with --runtime-config-file.');
-    const attestation = await identity(output);
-    const runtimeBytes = await readFile(join(output, runtimeConfigPath));
-    const report = {
-      schemaVersion: 'gridly.nativeConfiguredWebBundle.v1',
-      candidateGitSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
-      bundleDigest: attestation.digest,
-      runtimeConfig: { path: runtimeConfigPath, bytes: runtimeBytes.length, sha256: createHash('sha256').update(runtimeBytes).digest('hex'), classification: 'OWNER_COMPOSED_BROWSER_PUBLIC_CONFIG' },
-      files: attestation.files
-    };
-    await mkdir(dirname(reportFile), { recursive: true });
-    await writeFile(reportFile, `${JSON.stringify(report, null, 2)}\n`);
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const runtimeConfigFile = option('--runtime-config-file');
+  const reportFile = option('--report-file');
+  if (process.argv.includes('--verify')) await verify(output, { reportFile }); else {
+    await stage(output, { runtimeConfigFile });
+    if (runtimeConfigFile) {
+      if (!reportFile) throw new Error('--report-file is required with --runtime-config-file.');
+      const attestation = await identity(output);
+      const runtimeBytes = await readFile(join(output, runtimeConfigPath));
+      const report = {
+        schemaVersion: 'gridly.nativeConfiguredWebBundle.v1',
+        candidateGitSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+        bundleDigest: attestation.digest,
+        runtimeConfig: { path: runtimeConfigPath, bytes: runtimeBytes.length, sha256: createHash('sha256').update(runtimeBytes).digest('hex'), classification: 'OWNER_COMPOSED_BROWSER_PUBLIC_CONFIG' },
+        files: attestation.files
+      };
+      await mkdir(dirname(reportFile), { recursive: true });
+      await writeFile(reportFile, `${JSON.stringify(report, null, 2)}\n`);
+    }
+    console.log(`Staged Gridly native web bundle at ${relative(root, output) || '.'}.`);
   }
-  console.log(`Staged Gridly native web bundle at ${relative(root, output) || '.'}.`);
 }
