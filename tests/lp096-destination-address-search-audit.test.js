@@ -25,8 +25,9 @@ assert(helper.includes('queryLooksLikeAddress && Boolean(exactAddressResult)'), 
 
 assert(app.includes('setTimeout(() => {') && app.includes('}, 350);'), 'live input search must retain 350ms debounce');
 assert(app.includes('if (query.length < 3)'), 'minimum query length guard must remain explicit');
-assert(app.includes('https://nominatim.openstreetmap.org/search?'), 'Nominatim search integration must be inventoried');
-assert(app.includes('countrycodes: countryCodes'), 'US country constraint must remain evidenced');
+assert(app.includes('window.gridlyGeocodingClient.search(request)'), 'governed geocoding-client search integration must be inventoried');
+assert(app.includes('name: "OpenStreetMap Nominatim Search"'), 'Nominatim upstream must remain inventoried behind the governed boundary');
+assert(app.includes('const countryCodes = String(options.countryCodes || "us")'), 'US country constraint must remain evidenced');
 assert(app.includes('GRIDLY_DESTINATION_PROVIDER_MIN_REQUEST_INTERVAL_MS = 1250'), 'request throttle must remain evidenced');
 assert(app.includes('buildGridlyDestinationRoutePreview({ reason:'), 'selection must retain route-preview handoff');
 assert(!/id="gridlySearchSubmit|id="gridlySearchButton/.test(html), 'destination shell must not be documented as having a Search button');

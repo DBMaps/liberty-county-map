@@ -46084,7 +46084,9 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
       if (seedRenderedImmediately) intermediateConsumerResultPublicationCount += 1;
     }
 
-    results = await gridlySearchAddress(normalizedQuery, getGridlyLiveDestinationSearchOptions());
+    results = normalizeGridlyPublishableDestinationResults(
+      await gridlySearchAddress(normalizedQuery, getGridlyLiveDestinationSearchOptions())
+    );
     const isCurrent = requestId === gridlySearchUiState.activeSearchRequestId
       && normalizeGridlySearchDisplayLabel(normalizedQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
     staleRequestBlocked = !isCurrent;
@@ -46176,6 +46178,24 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
     });
   }
   return auditOnly ? audit : results;
+}
+
+// A packaged shard may contain an empty slot. Publication, diagnostics, and the
+// consumer must all observe the same collection rather than independently
+// counting or mapping the provider's raw array.
+function normalizeGridlyPublishableDestinationResults(rawResults) {
+  if (!Array.isArray(rawResults)) return [];
+  const publishableResults = rawResults.filter((result) => (
+    result !== null && typeof result === "object" && !Array.isArray(result)
+  ));
+  if (rawResults.gridlyProviderDiagnostics !== undefined) {
+    Object.defineProperty(publishableResults, "gridlyProviderDiagnostics", {
+      value: rawResults.gridlyProviderDiagnostics,
+      configurable: true,
+      enumerable: false
+    });
+  }
+  return publishableResults;
 }
 
 
@@ -85904,7 +85924,7 @@ window.submitHazardNearMe = function (hazardType) {
 
   if (reportingState.submissionInProgress || reportingState.locationLookupInProgress) return;
 
-  if (!navigator.geolocation) {
+  if (!getGridlyForegroundLocationProvider()) {
     const message = "Location is unavailable. Select a spot on the map to submit this hazard.";
     markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
     updateReportingState({ lastReportError: message, lastReportMessage: "" });
@@ -85955,7 +85975,7 @@ window.submitHazardNearMe = function (hazardType) {
   );
 
   recordGridlyGeolocationRequest("hazard_use_my_location");
-  navigator.geolocation.getCurrentPosition(
+  requestGridlyForegroundPosition(
     async (position) => {
       if (locationRequestSettled) return;
       locationRequestSettled = true;
@@ -85963,7 +85983,7 @@ window.submitHazardNearMe = function (hazardType) {
       try {
         const lat = Number(position?.coords?.latitude);
         const lng = Number(position?.coords?.longitude);
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
           throw new Error("invalid_geolocation_coordinates");
         }
         setGridlyUserLocation({ lat, lng }, { source: "hazard_use_my_location" });
@@ -86055,15 +86075,18 @@ window.submitHazardNearMe = function (hazardType) {
           setConfirmation(getParticipationAcknowledgementCopy("report"), "success");
         }
       } catch (error) {
-        const message = error?.message || "Hazard report was not submitted.";
+        const invalidCoordinate = error?.message === "invalid_geolocation_coordinates";
+        const message = invalidCoordinate
+          ? "The location service returned an invalid position. Try again or tap the map to place this hazard."
+          : (error?.message || "Hazard report was not submitted.");
         markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
         updateReportingState({ locationLookupInProgress: false, submissionInProgress: false, lastReportError: message, lastReportMessage: "" });
-        setConfirmation("Your report could not be submitted. Check your connection and try again.", "error");
+        setConfirmation(invalidCoordinate ? message : "Your report could not be submitted. Check your connection and try again or tap the map.", "error");
         document.body.classList.remove("report-pulse");
       }
     },
     (error) => {
-      const denied = Number(error?.code) === 1;
+      const denied = Number(error?.code) === 1 || String(error?.code || "").toLowerCase() === "permission_denied";
       finishLocationFailure(
         denied
           ? "Location permission was denied. Allow location access or tap the map to place this hazard."
@@ -86078,6 +86101,41 @@ window.submitHazardNearMe = function (hazardType) {
     }
   );
 };
+
+function getGridlyForegroundLocationProvider() {
+  const capacitor = typeof window !== "undefined" ? window.Capacitor : null;
+  const nativePlugin = capacitor?.Plugins?.GridlyGeolocation;
+  const isNative = typeof capacitor?.isNativePlatform === "function"
+    ? capacitor.isNativePlatform()
+    : capacitor?.getPlatform?.() === "android";
+  if (isNative && typeof nativePlugin?.getCurrentPosition === "function") {
+    return Object.freeze({ kind: "capacitor_native", plugin: nativePlugin });
+  }
+  if (typeof navigator !== "undefined" && typeof navigator.geolocation?.getCurrentPosition === "function") {
+    return Object.freeze({ kind: "browser", plugin: navigator.geolocation });
+  }
+  return null;
+}
+
+function requestGridlyForegroundPosition(onSuccess, onError, options = {}) {
+  const provider = getGridlyForegroundLocationProvider();
+  if (!provider) {
+    onError?.({ code: "location_unavailable", message: "Foreground location is unavailable." });
+    return "unavailable";
+  }
+  if (provider.kind === "capacitor_native") {
+    // Capacitor owns the Android permission continuation. The report owner
+    // retains its bounded watchdog and ignores every callback after settlement.
+    Promise.resolve(provider.plugin.getCurrentPosition({
+      enableHighAccuracy: options.enableHighAccuracy !== false,
+      timeout: Number(options.timeout) || 10000,
+      maximumAge: Number(options.maximumAge) || 0
+    })).then(onSuccess, onError);
+    return provider.kind;
+  }
+  provider.plugin.getCurrentPosition(onSuccess, onError, options);
+  return provider.kind;
+}
 
 function beginRoadHazardMapPlacement(hazardType, options = {}) {
   const source = options.source || "unknown";
