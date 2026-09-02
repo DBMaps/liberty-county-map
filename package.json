@@ -701,6 +701,6 @@
     "verify:native-poi:android": "node tools/verify-native-poi-android.mjs",
     "test:native-packaging": "node --test tests/native-packaging.test.mjs",
     "build:native-assets": "node tools/native-assets.mjs",
-    "prepare:native": "npm run build:native-web && npm run verify:native-web && npm run build:native-assets"
+    "prepare:native": "npm run build:native-web:configured && npm run verify:native-web:configured"
   }
 }

@@ -28902,6 +28902,23 @@ function recordGridlyCrossingRootCauseDomEvent(eventType, event) {
   const target = event?.target || null;
   const crossingEl = target?.closest?.(".gridly-crossing-marker-wrap[data-crossing-id]") || topElement?.closest?.(".gridly-crossing-marker-wrap[data-crossing-id]") || null;
   const rawCrossingId = crossingEl?.dataset?.crossingId || "";
+  // Report placement is the sole owner of the armed next map tap. A marker is
+  // still a valid roadway target, but its diagnostic capture must not open a
+  // popup (Leaflet then consumes the click before the map handler sees it).
+  if (rawCrossingId && reportingState?.placementModeActive
+      && (pendingHazardPlacement || reportingState.selectedHazardType)) {
+    recordGridlyCrossingPopupClickTrace("report_placement_owned", {
+      crossingId: String(rawCrossingId), domEventCaptured: true, eventType
+    });
+    if (eventType === "click" && !event?.__gridlyReportPlacementDispatched) {
+      event.__gridlyReportPlacementDispatched = true;
+      const captured = latestTapMapPointerCapture?.containerPointLatLng;
+      const converted = gridlyConvertClientPointToMapLatLng(getGridlyCrossingMarkerTouchPoint(event));
+      const latlng = gridlyCloneCoordinate(captured) || gridlyCloneCoordinate(converted);
+      if (latlng) void handleHazardPlacementMapClick({ latlng, originalEvent: event });
+    }
+    return;
+  }
   const now = Date.now();
   if ((eventType === "pointerdown" || eventType === "touchstart") && rawCrossingId) {
     gridlyCrossingPopupTapTargetLock = {
@@ -85892,6 +85909,8 @@ window.submitHazardNearMe = function (hazardType) {
     markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
     updateReportingState({ lastReportError: message, lastReportMessage: "" });
     setConfirmation(message, "error");
+    updateReportingState({ locationLookupInProgress: false, submissionInProgress: false });
+    document.body.classList.remove("report-pulse");
     return;
   }
 
@@ -85905,9 +85924,42 @@ window.submitHazardNearMe = function (hazardType) {
   });
   setConfirmation("Getting your location...", "info");
 
+  let locationRequestSettled = false;
+  const finishLocationFailure = (message, completionState = "unavailable") => {
+    if (locationRequestSettled) return false;
+    locationRequestSettled = true;
+    window.clearTimeout(locationWatchdog);
+    markReportActionCompletionAudit({
+      reportUseLocationError: message,
+      lastReportActionCompleted: false,
+      lastReportCompletionState: completionState
+    });
+    updateReportingState({
+      locationLookupInProgress: false,
+      submissionInProgress: false,
+      lastReportError: message,
+      lastReportMessage: ""
+    });
+    document.body.classList.remove("report-pulse");
+    setConfirmation(message, "error");
+    return true;
+  };
+  const locationWatchdog = window.setTimeout(() => {
+    finishLocationFailure("Location is taking too long. Try again or tap the map to place this hazard.", "timeout");
+  }, 12000);
+  // WebView geolocation cannot be aborted, so cancellation invalidates the
+  // callbacks and restores both placement choices immediately.
+  window.cancelHazardLocationLookup = () => finishLocationFailure(
+    "Location request canceled. Try again or tap the map to place this hazard.",
+    "canceled"
+  );
+
   recordGridlyGeolocationRequest("hazard_use_my_location");
   navigator.geolocation.getCurrentPosition(
     async (position) => {
+      if (locationRequestSettled) return;
+      locationRequestSettled = true;
+      window.clearTimeout(locationWatchdog);
       try {
         const lat = Number(position?.coords?.latitude);
         const lng = Number(position?.coords?.longitude);
@@ -85923,6 +85975,7 @@ window.submitHazardNearMe = function (hazardType) {
           markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
           setConfirmation("We couldn't place that hazard on a nearby road. Move closer to a roadway or tap a road on the map.", "error");
           updateReportingState({ locationLookupInProgress: false, lastReportError: message, lastReportMessage: "" });
+          document.body.classList.remove("report-pulse");
           return;
         }
         const finalPlacement = gridlyCoordinateFromRecord(snapped.finalPlacementCoordinate) || { lat: snapped.lat, lng: snapped.lng };
@@ -85952,6 +86005,8 @@ window.submitHazardNearMe = function (hazardType) {
             reportUseLocationError: reportingState.lastReportError || lastMobileReportSubmitDebug.lastSubmitError || "Hazard report was not submitted.",
             lastReportActionCompleted: false
           });
+          updateReportingState({ locationLookupInProgress: false, submissionInProgress: false });
+          document.body.classList.remove("report-pulse");
           return;
         }
         markReportActionCompletionAudit({
@@ -86004,17 +86059,17 @@ window.submitHazardNearMe = function (hazardType) {
         markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
         updateReportingState({ locationLookupInProgress: false, submissionInProgress: false, lastReportError: message, lastReportMessage: "" });
         setConfirmation("Your report could not be submitted. Check your connection and try again.", "error");
+        document.body.classList.remove("report-pulse");
       }
     },
-    () => {
-      const message = "We couldn't access your location. Allow GPS or tap the map to place this hazard.";
-      markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
-      updateReportingState({
-        locationLookupInProgress: false,
-        lastReportError: message,
-        lastReportMessage: ""
-      });
-      setConfirmation(message, "error");
+    (error) => {
+      const denied = Number(error?.code) === 1;
+      finishLocationFailure(
+        denied
+          ? "Location permission was denied. Allow location access or tap the map to place this hazard."
+          : "No location fix is available. Try again or tap the map to place this hazard.",
+        denied ? "permission_denied" : "unavailable"
+      );
     },
     {
       enableHighAccuracy: true,
@@ -93993,17 +94048,20 @@ async function gridlySearchAddress(query, options = {}) {
     searchRank: result.searchRank ? { ...result.searchRank, publishedRank: index + 1 } : result.searchRank
   }));
   diagnostics.finalDisplayedCandidateCount = finalResults.length;
-  diagnostics.localPoiCandidateDiagnostics = runtimePoiResults.map((candidate) => {
-    const ranked = prioritizedResults.find((result) => result.providerId === candidate.providerId) || candidate;
-    const has = (results) => results.some((result) => result.providerId === candidate.providerId);
+  diagnostics.localPoiCandidateDiagnostics = runtimePoiResults.filter(Boolean).map((candidate) => {
+    // Native packaged-shard acquisition may contain a governed null slot when
+    // a shard has no publishable candidate. Null is not a provider identity.
+    const candidateProviderId = candidate.providerId || candidate.id || null;
+    const ranked = prioritizedResults.find((result) => candidateProviderId && result.providerId === candidateProviderId) || candidate;
+    const has = (results) => results.some((result) => candidateProviderId && result.providerId === candidateProviderId);
     return Object.freeze({
-      candidateId: candidate.providerId,
+      candidateId: candidateProviderId,
       title: candidate.title,
       canonicalName: window.GRIDLY_LP099_BUSINESS_SEARCH?.canonicalize?.(candidate.title) || normalizeGridlyBrandSearchText(candidate.title),
       canonicalQuery: window.GRIDLY_LP099_BUSINESS_SEARCH?.canonicalize?.(rawQuery) || normalizeGridlyBrandSearchText(rawQuery),
       queryRelevant: true,
       acquired: true,
-      merged: providerResults.some((result) => normalizeGridlySearchResult(result)?.providerId === candidate.providerId),
+      merged: providerResults.some((result) => candidateProviderId && normalizeGridlySearchResult(result)?.providerId === candidateProviderId),
       dedupSurvived: has(dedupedResults),
       businessRelevanceSurvived: has(qualityFilteredResults),
       ranked: has(prioritizedResults),
@@ -114742,35 +114800,9 @@ function injectBetaLaunchUI() {
 }
 
 function maybeShowWelcomeModal() {
-  const profile = typeof getGridlyUserProfile === "function" ? getGridlyUserProfile() : {};
-  if (!profile?.setupComplete || isGridlyFirstRunWalkthroughComplete()) {
-    markGridlyWelcomeSeen();
-    document.getElementById("gridlyWelcomeModal")?.remove();
-    return;
-  }
-  if (isGridlyFirstRunWalkthroughComplete()) return;
-
-  markGridlyWelcomeSeen();
-
-  const modal = document.createElement("div");
-  modal.id = "gridlyWelcomeModal";
-  modal.className = "gridly-welcome-modal";
-
-  modal.innerHTML = `
-    <div class="gridly-welcome-card">
-      <h2>Welcome to Gridly Beta</h2>
-      <p>
-        Know before you go. See local crossing issues, road hazards,
-        and help your community move faster.
-      </p>
-
-      <div class="gridly-welcome-actions">
-        <button onclick="closeGridlyWelcome()">Get Started</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
+  // The seven-step walkthrough is the only first-run owner. This retired beta
+  // modal must neither render nor write completion for fresh or legacy users.
+  document.getElementById("gridlyWelcomeModal")?.remove();
 }
 
 window.closeGridlyWelcome = function () {

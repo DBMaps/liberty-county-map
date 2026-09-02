@@ -58,10 +58,10 @@ test('satellite labels remain active through individual errors with safe diagnos
 test('launcher roles use deterministic adaptive safe-zone geometry', () => {
   const assets = read('tools/native-assets.mjs');
   assert.match(assets, /ic_launcher_foreground\.xml/);
-  assert.match(assets, /android:drawable="@mipmap\/ic_launcher_mark" android:inset="22%"/);
+  assert.match(assets, /android:drawable="@drawable\/ic_launcher_mark" android:inset="18%"/);
   assert.match(assets, /obsoleteOutputs[\s\S]+ic_launcher_foreground\.png/);
   assert.match(assets, /ic_launcher_round\.png/);
-  assert.match(read('android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml'), /@mipmap\/ic_launcher_foreground/);
+  assert.match(read('android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml'), /@drawable\/ic_launcher_foreground/);
 });
 
 test('touch ownership adds no app preventDefault or global suppression', () => {
