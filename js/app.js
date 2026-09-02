@@ -52250,6 +52250,7 @@ function initMap() {
     ? window.GRIDLY_RUNTIME_CONFIG.arcgisStaticBasemapApiKey.trim()
     : "";
   const satelliteLayer = L.layerGroup([satelliteImageryLayer]);
+  let activeSatelliteLabelsLayer = null;
   if (arcgisStaticBasemapApiKey) {
     const satelliteLabelsLayer = L.tileLayer(
       "https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/imagery/labels/static/tile/{z}/{y}/{x}?token={arcgisStaticBasemapApiKey}",
@@ -52263,6 +52264,7 @@ function initMap() {
         attribution: ""
       }
     );
+    activeSatelliteLabelsLayer = satelliteLabelsLayer;
     let labelFailureClosed = false;
     satelliteLabelsLayer.once("tileerror", () => {
       if (labelFailureClosed) return;
@@ -52283,6 +52285,31 @@ function initMap() {
   };
   mapBaseLayersByName = baseLayers;
   mapStyleClassByName = styleClassByName;
+
+  // Owner-invoked, bounded acceptance evidence. This is deliberately a pull
+  // diagnostic rather than production logging, and reports identities/counts
+  // without exposing the configured ArcGIS credential.
+  const mapAcceptanceCounters = { move: 0, movestart: 0, moveend: 0 };
+  map.on("move", () => { mapAcceptanceCounters.move += 1; });
+  map.on("movestart", () => { mapAcceptanceCounters.movestart += 1; });
+  map.on("moveend", () => { mapAcceptanceCounters.moveend += 1; });
+  window.gridlyAndroidMapAcceptanceDiagnostic = () => {
+    const activeLogicalLayers = Object.entries(baseLayers)
+      .filter(([, layer]) => map.hasLayer(layer))
+      .map(([name]) => name);
+    const satelliteChildren = satelliteLayer.getLayers();
+    return Object.freeze({
+      activeBasemapStyle: activeBaseLayerName,
+      activeLogicalLayers,
+      activeTileLayers: satelliteChildren.filter((layer) => layer === satelliteImageryLayer && satelliteLayer.hasLayer(layer)).length,
+      activeReferenceLayers: satelliteChildren.filter((layer) => layer === activeSatelliteLabelsLayer && satelliteLayer.hasLayer(layer)).length,
+      duplicateLogicalLayers: activeLogicalLayers.length > 1,
+      satelliteLabelStatus: !arcgisStaticBasemapApiKey ? "UNCONFIGURED" : satelliteLayer.hasLayer(activeSatelliteLabelsLayer) ? "ACTIVE" : "FAILED_CLOSED",
+      moveRenderInvocations: { ...mapAcceptanceCounters },
+      customMapTouchHandlers: 0,
+      leafletGestureOwner: true
+    });
+  };
 
   const savedStyle = normalizeGridlyMapStyleName(localStorage.getItem(MAP_STYLE_STORAGE_KEY));
   if (localStorage.getItem(MAP_STYLE_STORAGE_KEY) === "Dark") localStorage.setItem(MAP_STYLE_STORAGE_KEY, savedStyle);
@@ -53195,7 +53222,7 @@ function installLayerPickerDebugDiagnostics() {
       const handleLayerToggleInteraction = (event) => {
         const preventedDefault = typeof event.preventDefault === "function";
         const stoppedPropagation = typeof event.stopPropagation === "function";
-        if (preventedDefault) event.preventDefault();
+        if (preventedDefault && event.cancelable !== false) event.preventDefault();
         if (stoppedPropagation) event.stopPropagation();
         if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
         lastLayerToggleEventMeta = {
