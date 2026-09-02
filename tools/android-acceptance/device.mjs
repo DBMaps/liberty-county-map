@@ -1,4 +1,3 @@
-import { chromium } from "@playwright/test";
 import { adb, bounded, exactlyOneDevice, PACKAGE, writeReports } from "./core.mjs";
 import { AndroidHarnessError, cleanupCreatedForward, connectReadyWebView, pollUntil, waitForCdpReadiness } from "./cdp.mjs";
 
@@ -13,7 +12,7 @@ const add = (status, name, detail = "") => { results.push({ status, name, detail
 let serial;
 let metadata = {};
 let diagnostics = "";
-let browser;
+let page;
 let forwardCreated = false;
 
 try {
@@ -53,19 +52,17 @@ try {
     throw new AndroidHarnessError("forward failure", error.message, error);
   }
   const readiness = await waitForCdpReadiness("http://127.0.0.1:9222");
-  const connected = await connectReadyWebView(chromium, "http://127.0.0.1:9222", readiness);
-  browser = connected.browser;
-  const page = connected.page;
+  const connected = await connectReadyWebView(readiness);
+  page = connected.page;
   await page.waitForSelector("#gridlyAddressSearchInput", { state: "attached", timeout: 15000 });
   add("PASS", "debug WebView/CDP inspection", `${page.url()} via ${connected.connection}`);
 
   const jsErrors = [];
-  page.on("pageerror", error => jsErrors.push(error.message));
   await page.evaluate(() => document.getElementById("mobileDestinationCommandBtn")?.click());
-  await page.locator("#gridlyAddressSearchInput").fill("Dallas");
-  await page.locator("#gridlyRemoteSearchBtn").click();
+  await page.evaluate(() => { const input = document.getElementById("gridlyAddressSearchInput"); input.value = "Dallas"; input.dispatchEvent(new Event("input", { bubbles: true })); });
+  await page.evaluate(() => document.getElementById("gridlyRemoteSearchBtn")?.click());
   await page.waitForFunction(() => !/searching/i.test(document.getElementById("gridlySearchResults")?.textContent || ""), null, { timeout: 15000 });
-  const search = await page.locator("#gridlySearchResults").innerText();
+  const search = await page.evaluate(() => document.getElementById("gridlySearchResults")?.innerText || "");
   add("PASS", "Dallas search keeps app alive", `pid ${adb(["shell", "pidof", PACKAGE], { serial, allowFailure: true }) || "missing"}`);
   add(/Dallas/i.test(search) ? "PASS" : "FAIL", "visible Dallas result", bounded(search, 500) || "empty result surface");
   add(/No matching destination found/i.test(search) ? "SKIP" : "PASS", "Dallas provider/result state", /No matching destination found/i.test(search) ? "provider returned no governed match" : "governed result rendered");
@@ -80,12 +77,13 @@ try {
     const dayton = Math.abs(lat - 30.0466) < 0.02 && Math.abs(lng + 94.8852) < 0.02;
     add(dayton ? "PASS" : "FAIL", "native plugin returns Dayton coordinates", `${lat}, ${lng}`);
     await page.evaluate(() => document.getElementById("useLocationBtn")?.click());
-    await page.waitForTimeout(500);
+    await new Promise(resolve => setTimeout(resolve, 500));
     const center = await page.evaluate(() => typeof map?.getCenter === "function" ? map.getCenter() : null);
     add(center && Math.abs(center.lat - lat) < 0.05 && Math.abs(center.lng - lng) < 0.05 ? "PASS" : "FAIL", "UI consumes native location", center ? `${center.lat}, ${center.lng}` : "map center unavailable");
   }
 
   const logs = adb(["logcat", "-d", `--pid=${pid}`, "-v", "brief"], { serial, allowFailure: true });
+  jsErrors.push(...page.exceptions);
   const fatal = /FATAL EXCEPTION|AndroidRuntime|SIG(?:SEGV|ABRT)|providerId[^\n]*(?:TypeError|undefined|null)|Uncaught (?:TypeError|ReferenceError)/i.test(`${logs}\n${jsErrors.join("\n")}`);
   add(fatal ? "FAIL" : "PASS", "no native crash, providerId error, or WebView exception", fatal ? "see bounded diagnostics" : "scoped process log clean");
   diagnostics = fatal ? `${logs}\n${jsErrors.join("\n")}` : "";
@@ -94,7 +92,7 @@ try {
   diagnostics = `${error.stack || error}\n${serial ? adb(["logcat", "-d", "-t", "250", "-v", "brief"], { serial, allowFailure: true }) : ""}`;
   add("FAIL", "device harness preflight/runtime", error.message);
 } finally {
-  await browser?.close().catch(() => {});
+  await page?.close().catch(() => {});
   cleanupCreatedForward(serial && forwardCreated, () => adb(["forward", "--remove", "tcp:9222"], { serial, allowFailure: true }));
   writeReports(results, metadata, diagnostics);
   console.log(`\nReport: .artifacts/android-acceptance/latest.{json,md}`);
