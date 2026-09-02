@@ -12685,6 +12685,44 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   }
 }
 
+/* Physical Android closure: Settings choices are Gridly-owned radiogroups,
+   never WebView's unthemeable expanded SELECT popup. */
+.gridly-governed-select-source {
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  overflow: hidden !important; clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+.gridly-choice-control {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 4px;
+  margin-top: 6px;
+  padding: 3px;
+  border: 1px solid rgba(148, 187, 216, .28);
+  border-radius: 12px;
+  background: #101c29;
+}
+.gridly-choice-control button {
+  min-height: 44px;
+  border: 0; border-radius: 9px;
+  color: #d8e8f4; background: transparent;
+  font: inherit; font-size: .8125rem; font-weight: 650;
+}
+.gridly-choice-control button.is-selected { color: #061517; background: #35d0c8; }
+.gridly-choice-control button:focus-visible { outline: 2px solid #f4fbff; outline-offset: 2px; }
+
+/* Component-only portrait density. Standard remains a 16px root and every
+   action remains at least 44px; larger accessibility modes still scale text. */
+@media (max-width: 400px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] :is(.settings-list-detail, .settings-preferences-block) { gap: 8px; padding-block: 8px; }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-row="true"] { padding-block: 8px !important; }
+  body[data-layout-mode="portrait"] #map .leaflet-popup-content { margin: 8px 10px; line-height: 1.3; }
+  body[data-layout-mode="portrait"] :is(button, [role="button"], [role="radio"]) { min-height: 44px; }
+  body[data-layout-mode="portrait"] :is(.gridly-popup, .gridly-official-roadway-popup) strong { font-size: .875rem; line-height: 1.25; }
+  body[data-layout-mode="portrait"] :is(.gridly-popup, .gridly-official-roadway-popup) span { font-size: .75rem; line-height: 1.3; }
+}
+
 /* V122.6c — portrait stabilization: header reservation, alerts flow support, dock/controls spacing */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .command-center {

@@ -55,9 +55,14 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
   const runtimeDestination = join(destination, poiRuntimeRelative);
   await mkdir(runtimeDestination, { recursive: true });
   await writeFile(join(runtimeDestination, 'manifest.json'), poiManifestBytes);
+  await mkdir(join(runtimeDestination, 'native'), { recursive: true });
   for (const shard of poiManifest.shards) {
     if (shard.file !== `${shard.shardId}.json.gz`) throw new Error(`Invalid POI runtime-relative path for ${shard.shardId}.`);
     await cp(join(poiRuntimeSource, shard.file), join(runtimeDestination, shard.file), { preserveTimestamps: false });
+    // Capacitor's Android local server can reject double-extension .json.gz
+    // paths even when AssetManager contains them. Publish an extension-safe
+    // alias without transforming the certified bytes.
+    await cp(join(poiRuntimeSource, shard.file), join(runtimeDestination, 'native', `${shard.shardId}.bin`), { preserveTimestamps: false });
   }
   await cp(join(root, 'poi', poiRelease, 'legal'), join(destination, 'poi', poiRelease, 'legal'), { recursive: true, preserveTimestamps: false });
   for (const [source, target] of vendorAssets) {
@@ -117,6 +122,8 @@ async function verify(directory, { reportFile } = {}) {
   const paths = await files(directory);
   const shards = paths.filter((path) => path.startsWith('poi/lp24111-d5-standalone-2026-08-28/runtime-v2/') && path.endsWith('.json.gz'));
   if (shards.length !== 86) throw new Error(`Expected exactly 86 POI runtime-v2 shards; found ${shards.length}.`);
+  const nativeAliases = paths.filter((path) => path.startsWith(`${poiRuntimeRelative}/native/`) && path.endsWith('.bin'));
+  if (nativeAliases.length !== 86) throw new Error(`Expected exactly 86 native-served POI aliases; found ${nativeAliases.length}.`);
   const manifestBytes = await readFile(join(directory, poiRuntimeRelative, 'manifest.json'));
   if (createHash('sha256').update(manifestBytes).digest('hex') !== '53bdb47e180836eaede03e2cf7f2acb5ec730507a768c1bae06ba0eab0c7fa9a') throw new Error('Staged POI manifest is not the certified authority.');
   const manifest = JSON.parse(manifestBytes);
@@ -124,6 +131,8 @@ async function verify(directory, { reportFile } = {}) {
     const runtimePath = join(poiRuntimeRelative, shard.file);
     const [sourceBytes, stagedBytes] = await Promise.all([readFile(join(root, runtimePath)), readFile(join(directory, runtimePath))]);
     if (!sourceBytes.equals(stagedBytes) || createHash('sha256').update(stagedBytes).digest('hex') !== shard.sha256) throw new Error(`Staged POI shard bytes differ from certified source: ${shard.shardId}.`);
+    const nativeBytes = await readFile(join(directory, poiRuntimeRelative, 'native', `${shard.shardId}.bin`));
+    if (!nativeBytes.equals(sourceBytes)) throw new Error(`Native-served POI alias differs from certified source: ${shard.shardId}.`);
   }
   for (const id of daytonPhysicalCohort) await stat(join(directory, poiRuntimeRelative, `${id}.json.gz`));
   const forbidden = paths.filter((path) => prohibited.some((pattern) => pattern.test(path)));

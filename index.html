@@ -1136,25 +1136,28 @@
             <div class="settings-preferences-block" id="settingsDisplayPreferencesSection">
               <div class="settings-select-grid">
                 <label>Map Style
-                  <select id="settingsMapStyleSelect">
+                  <select id="settingsMapStyleSelect" class="gridly-governed-select-source" aria-hidden="true" tabindex="-1">
                     <option value="standard">Standard</option>
                     <option value="satellite">Satellite</option>
                   </select>
+                  <span class="gridly-choice-control" role="radiogroup" aria-label="Map Style" data-gridly-select="settingsMapStyleSelect"><button type="button" role="radio" data-value="standard">Standard</button><button type="button" role="radio" data-value="satellite">Satellite</button></span>
                 </label>
                 <label><span>Theme <em class="settings-field-badge">Saved preference</em></span>
-                  <select id="settingsThemeSelect">
+                  <select id="settingsThemeSelect" class="gridly-governed-select-source" aria-hidden="true" tabindex="-1">
                     <option value="system">System</option>
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                   </select>
+                  <span class="gridly-choice-control" role="radiogroup" aria-label="Theme" data-gridly-select="settingsThemeSelect"><button type="button" role="radio" data-value="system">System</button><button type="button" role="radio" data-value="light">Light</button><button type="button" role="radio" data-value="dark">Dark</button></span>
                 </label>
                 <label><span>Text Size <em class="settings-field-badge">Saved preference</em></span>
-                  <select id="settingsTextSizeSelect">
+                  <select id="settingsTextSizeSelect" class="gridly-governed-select-source" aria-hidden="true" tabindex="-1">
                     <option value="compact">Small</option>
                     <option value="standard">Medium</option>
                     <option value="large" selected>Large</option>
                     <option value="extra-large">Extra Large</option>
                   </select>
+                  <span class="gridly-choice-control" role="radiogroup" aria-label="Text Size" data-gridly-select="settingsTextSizeSelect"><button type="button" role="radio" data-value="compact">Small</button><button type="button" role="radio" data-value="standard">Medium</button><button type="button" role="radio" data-value="large">Large</button><button type="button" role="radio" data-value="extra-large">Extra Large</button></span>
                 </label>
               </div>
               <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme applies a basic light, dark, or system visual treatment.</p>

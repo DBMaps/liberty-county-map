@@ -52265,12 +52265,17 @@ function initMap() {
       }
     );
     activeSatelliteLabelsLayer = satelliteLabelsLayer;
-    let labelFailureClosed = false;
-    satelliteLabelsLayer.once("tileerror", () => {
-      if (labelFailureClosed) return;
-      labelFailureClosed = true;
-      satelliteLayer.removeLayer(satelliteLabelsLayer);
+    const labelDiagnostic = { attempted: false, result: "PENDING", failureReason: null };
+    satelliteLabelsLayer.on("tileloadstart", () => { labelDiagnostic.attempted = true; });
+    satelliteLabelsLayer.on("tileload", () => { labelDiagnostic.result = "HTTP_TILE_LOADED"; labelDiagnostic.failureReason = null; });
+    // One failed tile (including an off-world/transition tile) must not remove
+    // the governed reference layer. Leaflet continues loading visible tiles.
+    satelliteLabelsLayer.on("tileerror", (event) => {
+      labelDiagnostic.attempted = true;
+      labelDiagnostic.result = "TILE_ERROR";
+      labelDiagnostic.failureReason = String(event?.error?.message || "tile request failed").slice(0, 120);
     });
+    satelliteLabelsLayer.gridlyLabelDiagnostic = labelDiagnostic;
     satelliteLayer.addLayer(satelliteLabelsLayer);
   }
 
@@ -52305,6 +52310,13 @@ function initMap() {
       activeReferenceLayers: satelliteChildren.filter((layer) => layer === activeSatelliteLabelsLayer && satelliteLayer.hasLayer(layer)).length,
       duplicateLogicalLayers: activeLogicalLayers.length > 1,
       satelliteLabelStatus: !arcgisStaticBasemapApiKey ? "UNCONFIGURED" : satelliteLayer.hasLayer(activeSatelliteLabelsLayer) ? "ACTIVE" : "FAILED_CLOSED",
+      labelConfigured: Boolean(arcgisStaticBasemapApiKey),
+      labelLayerCreated: Boolean(activeSatelliteLabelsLayer),
+      labelTileAttempted: activeSatelliteLabelsLayer?.gridlyLabelDiagnostic?.attempted === true,
+      labelTileResult: activeSatelliteLabelsLayer?.gridlyLabelDiagnostic?.result || "NOT_CREATED",
+      labelFailureReason: activeSatelliteLabelsLayer?.gridlyLabelDiagnostic?.failureReason || null,
+      labelHostPath: "static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/v1/arcgis/imagery/labels/static/tile/{z}/{y}/{x}",
+      labelLayerAdded: Boolean(activeSatelliteLabelsLayer && satelliteLayer.hasLayer(activeSatelliteLabelsLayer)),
       moveRenderInvocations: { ...mapAcceptanceCounters },
       customMapTouchHandlers: 0,
       leafletGestureOwner: true
@@ -93860,6 +93872,27 @@ async function gridlySearchAddress(query, options = {}) {
   const canonicalSemanticQuery = normalizeGridlyBrandSearchText(rawQuery);
   const addressModel = buildGridlyLp097AddressModel(rawQuery);
   const queryVariants = buildGridlySearchQueryVariants(rawQuery, { intent });
+  // A governed Texas PLACE is destination authority, not a POI/geocoder
+  // fallback. Resolve exact canonical community names before any acquisition.
+  // The resolver retains every county membership for multi-county places.
+  const governedCommunity = resolveGridlyAwarenessAreaQuery(rawQuery);
+  if (["RESOLVED_OPERATIONAL", "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE"].includes(governedCommunity.status)
+      && governedCommunity.matchType === "town") {
+    const area = governedCommunity.awarenessArea || governedCommunity.candidates?.[0]?.awarenessArea;
+    if (Number.isFinite(Number(area?.lat)) && Number.isFinite(Number(area?.lng))) {
+      const countyNames = (governedCommunity.candidates || []).map((candidate) => candidate.county).filter(Boolean);
+      return [normalizeGridlySearchResult({
+        id: `place-${governedCommunity.placeGeoid || area.placeGeoid || area.communityId}`,
+        name: governedCommunity.community || area.label,
+        display_name: `${governedCommunity.community || area.label}, Texas`,
+        subtitle: countyNames.length > 1 ? `Multi-county community · ${countyNames.join(" · ")}` : `${countyNames[0] || governedCommunity.county || "Texas"}`,
+        lat: Number(area.lat), lon: Number(area.lng), type: "city", provider: "gridly_canonical_place",
+        address: { city: governedCommunity.community || area.label, county: countyNames.join(", "), state: "Texas" },
+        placeGeoid: governedCommunity.placeGeoid || area.placeGeoid || null,
+        countyMemberships: governedCommunity.countyMemberships || governedCommunity.candidates?.[0]?.countyMemberships || []
+      })];
+    }
+  }
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
   const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, seedResults.length);
   const providerResults = [...seedResults];
@@ -99736,6 +99769,42 @@ function syncGridlySettingsTextSizeSegments(root, selectedValue = "standard") {
     button.classList.toggle("is-selected", isSelected);
     button.setAttribute("aria-checked", isSelected ? "true" : "false");
   });
+}
+
+function installGridlyGovernedChoiceControls(root = document) {
+  root.querySelectorAll?.("[data-gridly-select]").forEach((group) => {
+    if (group.dataset.gridlyChoiceBound === "true") return;
+    const select = root.getElementById(group.dataset.gridlySelect);
+    if (!select) return;
+    const sync = () => group.querySelectorAll('[role="radio"]').forEach((button) => {
+      const selected = button.dataset.value === select.value;
+      button.setAttribute("aria-checked", selected ? "true" : "false");
+      button.classList.toggle("is-selected", selected);
+      button.tabIndex = selected ? 0 : -1;
+    });
+    group.addEventListener("click", (event) => {
+      const button = event.target.closest('[role="radio"][data-value]');
+      if (!button) return;
+      select.value = button.dataset.value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+      sync(); button.focus();
+    });
+    group.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+      event.preventDefault();
+      const buttons = [...group.querySelectorAll('[role="radio"]')];
+      const current = Math.max(0, buttons.indexOf(document.activeElement));
+      buttons[(current + (["ArrowRight", "ArrowDown"].includes(event.key) ? 1 : -1) + buttons.length) % buttons.length].click();
+    });
+    select.addEventListener("change", sync);
+    group.dataset.gridlyChoiceBound = "true";
+    sync();
+  });
+}
+
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => installGridlyGovernedChoiceControls(), { once: true });
+  else installGridlyGovernedChoiceControls();
 }
 
 let gridlySettingsManualAwarenessQuery = "";

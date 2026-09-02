@@ -11,7 +11,16 @@
     shardCount: 86
   });
   const RUNTIME_PATH = "/poi/lp24111-d5-standalone-2026-08-28/runtime-v2/";
-  const runtimeUrl = file => new URL(`${RUNTIME_PATH}${file}`, root.location?.origin || "https://localhost").href;
+  // Android's Capacitor asset server does not reliably resolve a nested
+  // double extension. Native staging publishes the *same certified gzip
+  // bytes* under a single .bin extension; browser/PWA consumers retain the
+  // canonical .json.gz URL. Hash and byte-count verification below are shared.
+  const nativeRuntime = () => root.Capacitor?.isNativePlatform?.() === true;
+  const runtimeUrl = file => {
+    const servedFile = nativeRuntime() && file.endsWith(".json.gz")
+      ? `native/${file.replace(/\.json\.gz$/, ".bin")}` : file;
+    return new URL(`${RUNTIME_PATH}${servedFile}`, root.location?.origin || "https://localhost").href;
+  };
   const RADII = new Set([5, 10, 25]);
   const CATEGORY_OPTIONS = Object.freeze(["AGRICULTURAL_SERVICE", "AIRPORT", "ATM", "AUTO_REPAIR", "BANK", "BUS_STATION", "CAMPGROUND", "CAR_WASH", "CONVENIENCE_STORE", "EMERGENCY_CARE", "EV_CHARGING", "FIRE", "FUEL", "GENERAL_RETAIL", "GOLF", "GOVERNMENT", "GROCERY", "HARDWARE", "HOSPITAL", "LAUNDRY", "LODGING", "MARINA", "PARKING", "PHARMACY", "POLICE", "POST_OFFICE", "RESTAURANT", "SCHOOL", "SHOPPING", "STORAGE", "TIRE_SERVICE", "TOWING", "TRAIN_STATION", "TRUCK_STOP", "URGENT_CARE", "VISITOR_CENTER"]);
   const ALLOWED_RECORD_FIELDS = new Set(["id", "displayName", "gridlyCategory", "latitude", "longitude", "countyContextId", "brand", "provenanceSummary"]);
