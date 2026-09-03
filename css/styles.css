@@ -28901,6 +28901,109 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   .gridly-v2-bottom-region { transition: none !important; }
 }
 
+/* LP244.4 — Android short-landscape visual containment repair.
+   This is deliberately later than the LP243 landscape authorities: their
+   fixed foreground geometry established the correct owners, but the sheet
+   itself was not a flex column, so its header plus a 100%-high body could
+   exceed the visual viewport. Keep portrait and the accepted splash outside
+   this presentation-only contract. */
+@media (orientation: landscape) and (max-height: 500px) {
+  body {
+    --lp2444-visual-gap: max(8px, env(safe-area-inset-top, 0px));
+    --lp2444-bottom-clearance: max(10px, env(safe-area-inset-bottom, 0px));
+  }
+
+  body #gridlyPortraitV2Sheet:not([hidden]) {
+    display: flex !important;
+    flex-direction: column;
+    box-sizing: border-box;
+    inset: var(--lp2444-visual-gap) max(8px, env(safe-area-inset-right, 0px))
+      var(--lp2444-bottom-clearance) max(8px, env(safe-area-inset-left, 0px)) !important;
+    max-height: calc(100dvh - var(--lp2444-visual-gap) - var(--lp2444-bottom-clearance)) !important;
+  }
+
+  body #gridlyPortraitV2Sheet:not([hidden]) > header {
+    flex: 0 0 auto;
+    min-height: 44px;
+    margin-bottom: 4px;
+  }
+
+  body #gridlyPortraitV2Sheet:not([hidden]) #gridlyPortraitV2SheetBody {
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scroll-padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    :is(.gridly-v2-report-picker, .gridly-v2-report-review) {
+    min-height: min-content;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-ctas {
+    position: sticky;
+    bottom: calc(-16px - env(safe-area-inset-bottom, 0px));
+    z-index: 2;
+    padding: 10px 0 calc(16px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(180deg, transparent, var(--gridly-elevated) 18%);
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review > .gridly-v2-list {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review :is(.primary-btn, .secondary-btn) {
+    min-height: 44px;
+  }
+
+  body #gridlyPortraitV2Sheet:is(
+      [data-active-sheet="alerts"], [data-active-sheet="history"], [data-active-sheet="settings"]
+    ) #gridlyPortraitV2SheetBody {
+    contain: layout paint;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="history"]
+    :is(.gridly-historical-intelligence-subject, .gridly-historical-intelligence-row),
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    :is(.gridly-settings-sheet, .settings-list-summary) {
+    margin-block: 0 !important;
+  }
+
+  body.gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    max-height: 100dvh !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    scrollbar-gutter: stable;
+    scroll-padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body #map .leaflet-control-attribution {
+    right: 4px;
+    bottom: 4px;
+    max-width: calc(100% - 56px);
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  body #map .gridly-map-attribution-disclosure {
+    bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+    max-height: calc(100% - 40px);
+  }
+
+  body .gridly-landscape-command-handle {
+    bottom: calc(100% + 4px);
+  }
+}
+
 /* LP243.I2.3 — compact, single-owner Leaflet attribution disclosure. */
 #map .leaflet-control-attribution {
   box-sizing: border-box;
