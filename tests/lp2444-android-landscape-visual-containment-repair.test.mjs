@@ -26,8 +26,8 @@ test("temporary sheets are content-led floating surfaces with bounded per-panel 
   assert.doesNotMatch(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\)\s*\{[^}]*height:\s*100d?vh/);
   assert.match(repair, /data-active-sheet="report"\]\s*\{ max-height: var\(--lp2444-sheet-max-height\)/);
   assert.match(repair, /data-active-sheet="alerts"\]\s*\{ max-height: min\(82dvh/);
-  assert.match(repair, /data-active-sheet="history"\]\s*\{ max-height: min\(78dvh/);
-  assert.match(repair, /data-active-sheet="settings"\][\s\S]*inset: var\(--lp2444-visual-gap\) 0 calc\(62px[\s\S]*background: var\(--gridly-elevated/);
+  assert.match(repair, /data-active-sheet="history"\]:not\(\[hidden\]\)[\s\S]*max-height: min\(78dvh/);
+  assert.match(repair, /data-active-sheet="settings"\]:not\(\[hidden\]\)[\s\S]*inset: var\(--lp2444-visual-gap\) 0 var\(--lp2444-navigation-boundary\)[\s\S]*background: var\(--gridly-elevated/);
   assert.match(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\) > header[\s\S]*flex: 0 0 auto[\s\S]*min-height: 44px/);
   assert.match(repair, /#gridlyPortraitV2SheetBody[\s\S]*flex: 0 1 auto[\s\S]*min-height: 0 !important[\s\S]*overflow-y: auto !important/);
   assert.match(repair, /scroll-padding-bottom: calc\(16px \+ env\(safe-area-inset-bottom/);
@@ -63,16 +63,26 @@ test("Alerts, History, Settings, and floating KBYG retain bounded internal overf
 });
 
 test("History shrink-wraps short content and retains bounded scrolling for long content", () => {
+  const outerHistory = repair.match(/body\.gridly-v2-presentation-owner-active #gridlyPortraitV2Sheet\[data-active-sheet="history"\]:not\(\[hidden\]\)\s*\{([^}]*)\}/)?.[1] || "";
+  assert.match(outerHistory, /inset: auto var\(--lp2444-inline-gap\) var\(--lp2444-bottom-clearance\) !important/);
+  assert.match(outerHistory, /height: max-content !important/);
+  assert.match(outerHistory, /max-height: min\(78dvh, var\(--lp2444-sheet-max-height\)\) !important/);
+  assert.doesNotMatch(outerHistory, /(?:^|;)\s*top:|(?:^|;)\s*bottom:|height:\s*(?:100|\d+)d?vh|min-height:\s*(?:100|\d+)d?vh/);
   assert.match(repair, /data-active-sheet="history"\] #gridlyPortraitV2SheetBody[\s\S]*flex: 0 0 auto !important[\s\S]*height: fit-content !important[\s\S]*max-height: calc\(min\(78dvh[\s\S]*overflow-y: auto !important/);
   assert.doesNotMatch(repair, /data-active-sheet="history"[^}]*height:\s*(?:100|\d+)d?vh/);
   assert.doesNotMatch(repair, /data-active-sheet="history"[^}]*min-height:\s*(?:100|\d+)d?vh/);
 });
 
 test("Settings alone owns an opaque destination workspace above a separate visible dock", () => {
+  assert.match(repair, /--lp2444-navigation-boundary: calc\(var\(--lp243h3-dock-height\) \+ var\(--lp243h3-dock-bottom-inset\)\)/);
   assert.match(repair, /data-active-sheet="settings"\][\s\S]*width: 100vw !important[\s\S]*max-height: none !important[\s\S]*border-radius: 0 !important[\s\S]*background: var\(--gridly-elevated/);
-  assert.match(repair, /:has\(#gridlyPortraitV2Sheet\[data-active-sheet="settings"\]:not\(\[hidden\]\)\)[\s\S]*\.gridly-v2-bottom-region[\s\S]*z-index: calc\(var\(--lp243h10b-foreground-z\) \+ 1\)[\s\S]*transform: translateY\(0\)[\s\S]*pointer-events: auto/);
+  assert.match(repair, /\.gridly-v2-bottom-region[\s\S]*z-index: calc\(var\(--lp243h10b-foreground-z\) \+ 1\)[\s\S]*height: var\(--lp2444-navigation-boundary\)[\s\S]*transform: translateY\(0\)[\s\S]*pointer-events: auto/);
   assert.match(repair, /\.gridly-v2-bottom-dock[\s\S]*visibility: visible !important[\s\S]*pointer-events: auto !important/);
+  assert.match(repair, /:is\(#gridlyPortraitLocationAwarenessPanel, \.map-card > \.mobile-destination-command\)[\s\S]*display: none !important[\s\S]*visibility: hidden !important[\s\S]*pointer-events: none !important/);
   assert.match(repair, /#gridlyPortraitV2SheetBackdrop:has\(\+ #gridlyPortraitV2Sheet\[data-active-sheet="settings"\]:not\(\[hidden\]\)\)[\s\S]*background: var\(--gridly-app-bg[\s\S]*opacity: 1/);
+  assert.match(repair, /#gridlyPortraitV2SheetBackdrop[\s\S]*inset: 0 0 var\(--lp2444-navigation-boundary\)/);
+  assert.match(repair, /data-active-sheet="settings"\] #gridlyPortraitV2SheetBody[\s\S]*flex: 1 1 auto !important/);
+  assert.doesNotMatch(repair, /data-active-sheet="(?:report|alerts|history)"[^}]*navigation-boundary/);
   assert.doesNotMatch(repair, /data-active-sheet="(?:report|alerts|history)"[^}]*width:\s*100vw/);
 });
 
