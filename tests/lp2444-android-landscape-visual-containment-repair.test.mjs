@@ -20,14 +20,14 @@ test("LP244.4 is one final, landscape-and-short-height-only authority", () => {
   assert.doesNotMatch(repair, /@media[^\{]*orientation:\s*portrait|data-layout-mode=["']portrait|[.#][^\s,{]*splash/i);
 });
 
-test("sheets are content-led floating surfaces with bounded per-panel heights", () => {
+test("temporary sheets are content-led floating surfaces with bounded per-panel heights", () => {
   assert.match(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\)[\s\S]*inset: auto[\s\S]*height: auto !important[\s\S]*min-height: 0 !important[\s\S]*max-height: min\(84dvh/);
   assert.match(repair, /width: min\(760px, calc\(100vw[\s\S]*max-width: 760px[\s\S]*margin-inline: auto/);
   assert.doesNotMatch(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\)\s*\{[^}]*height:\s*100d?vh/);
   assert.match(repair, /data-active-sheet="report"\]\s*\{ max-height: var\(--lp2444-sheet-max-height\)/);
   assert.match(repair, /data-active-sheet="alerts"\]\s*\{ max-height: min\(82dvh/);
   assert.match(repair, /data-active-sheet="history"\]\s*\{ max-height: min\(78dvh/);
-  assert.match(repair, /data-active-sheet="settings"\][\s\S]*max-height: min\(80dvh/);
+  assert.match(repair, /data-active-sheet="settings"\][\s\S]*inset: var\(--lp2444-visual-gap\) 0 calc\(62px[\s\S]*background: var\(--gridly-elevated/);
   assert.match(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\) > header[\s\S]*flex: 0 0 auto[\s\S]*min-height: 44px/);
   assert.match(repair, /#gridlyPortraitV2SheetBody[\s\S]*flex: 0 1 auto[\s\S]*min-height: 0 !important[\s\S]*overflow-y: auto !important/);
   assert.match(repair, /scroll-padding-bottom: calc\(16px \+ env\(safe-area-inset-bottom/);
@@ -62,12 +62,32 @@ test("Alerts, History, Settings, and floating KBYG retain bounded internal overf
   assert.match(repair, /gridly-brief-interaction-panel\[data-gridly-brief-expanded="true"\][\s\S]*inset: var\(--lp2444-visual-gap\)[\s\S]*height: auto !important[\s\S]*max-height: var\(--lp2444-sheet-max-height\)[\s\S]*overflow-y: auto !important/);
 });
 
-test("legacy incident counter cannot cover sheets and map chrome stays compact", () => {
+test("History shrink-wraps short content and retains bounded scrolling for long content", () => {
+  assert.match(repair, /data-active-sheet="history"\] #gridlyPortraitV2SheetBody[\s\S]*flex: 0 0 auto !important[\s\S]*height: fit-content !important[\s\S]*max-height: calc\(min\(78dvh[\s\S]*overflow-y: auto !important/);
+  assert.doesNotMatch(repair, /data-active-sheet="history"[^}]*height:\s*(?:100|\d+)d?vh/);
+  assert.doesNotMatch(repair, /data-active-sheet="history"[^}]*min-height:\s*(?:100|\d+)d?vh/);
+});
+
+test("Settings alone owns an opaque destination workspace above a separate visible dock", () => {
+  assert.match(repair, /data-active-sheet="settings"\][\s\S]*width: 100vw !important[\s\S]*max-height: none !important[\s\S]*border-radius: 0 !important[\s\S]*background: var\(--gridly-elevated/);
+  assert.match(repair, /:has\(#gridlyPortraitV2Sheet\[data-active-sheet="settings"\]:not\(\[hidden\]\)\)[\s\S]*\.gridly-v2-bottom-region[\s\S]*z-index: calc\(var\(--lp243h10b-foreground-z\) \+ 1\)[\s\S]*transform: translateY\(0\)[\s\S]*pointer-events: auto/);
+  assert.match(repair, /\.gridly-v2-bottom-dock[\s\S]*visibility: visible !important[\s\S]*pointer-events: auto !important/);
+  assert.match(repair, /#gridlyPortraitV2SheetBackdrop:has\(\+ #gridlyPortraitV2Sheet\[data-active-sheet="settings"\]:not\(\[hidden\]\)\)[\s\S]*background: var\(--gridly-app-bg[\s\S]*opacity: 1/);
+  assert.doesNotMatch(repair, /data-active-sheet="(?:report|alerts|history)"[^}]*width:\s*100vw/);
+});
+
+test("legacy incident counter cannot cover sheets and map controls are contained compact targets", () => {
   assert.match(app, /counter\.id = "gridlyHazardCounter"[\s\S]*counter\.className = "gridly-hazard-counter"/);
   assert.match(app, /\.gridly-hazard-counter\s*\{[\s\S]*position: fixed;[\s\S]*z-index: 9998;/);
   assert.match(repair, /#gridlyHazardCounter\.gridly-hazard-counter[\s\S]*display: none !important[\s\S]*pointer-events: none !important[\s\S]*z-index: 0 !important/);
-  assert.match(repair, /\.gridly-v2-control-rail[\s\S]*grid-template-columns: repeat\(2, 44px\)[\s\S]*gap: 6px/);
-  assert.match(repair, /\.gridly-v2-control-rail button[\s\S]*width: 44px[\s\S]*height: 44px[\s\S]*min-height: 44px/);
+  assert.match(repair, /\.gridly-v2-control-rail[\s\S]*top: auto !important[\s\S]*bottom: calc\(30px \+ env\(safe-area-inset-bottom[\s\S]*grid-template-columns: repeat\(2, 44px\)[\s\S]*gap: 4px[\s\S]*transform: none/);
+  assert.match(repair, /\.gridly-v2-control-rail button[\s\S]*width: 44px[\s\S]*height: 44px[\s\S]*min-height: 44px[\s\S]*padding: 4px[\s\S]*border: 4px solid transparent[\s\S]*background-clip: padding-box/);
+  assert.match(repair, /\.gridly-v2-control-rail button svg[\s\S]*width: 19px[\s\S]*height: 19px/);
+  const controlRowsHeight = (2 * 44) + 4;
+  const attributionClearance = 30;
+  for (const mapHeight of [286, 326]) {
+    assert.ok(controlRowsHeight + attributionClearance < mapHeight, "rail fits below the 104px map top and above attribution");
+  }
   assert.match(repair, /#map \.leaflet-control-attribution[\s\S]*bottom: 6px[\s\S]*max-width: min\(56vw, 520px\)[\s\S]*font-size: 9px[\s\S]*white-space: nowrap/);
   assert.match(repair, /#map \.gridly-map-attribution-disclosure[\s\S]*max-height: calc\(100% - 40px\)/);
   assert.match(repair, /\.gridly-landscape-command-handle[\s\S]*bottom: calc\(100% \+ 10px\)/);
