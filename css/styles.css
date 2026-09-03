@@ -28936,9 +28936,14 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   body #gridlyPortraitV2Sheet[data-active-sheet="alerts"] { max-height: min(82dvh, var(--lp2444-sheet-max-height)) !important; }
   body #gridlyPortraitV2Sheet[data-active-sheet="history"] { max-height: min(78dvh, var(--lp2444-sheet-max-height)) !important; }
   body #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
-    width: min(820px, calc(100vw - (2 * var(--lp2444-inline-gap)))) !important;
-    max-width: 820px !important;
-    max-height: min(80dvh, var(--lp2444-sheet-max-height)) !important;
+    inset: var(--lp2444-visual-gap) 0 calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+    width: 100vw !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-width: 0 0 1px !important;
+    border-radius: 0 !important;
+    background: var(--gridly-elevated, #07101d) !important;
   }
 
   body #gridlyPortraitV2Sheet:not([hidden]) > header {
@@ -28958,6 +28963,45 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     scroll-padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* History's inherited V282.3 flex: 1 1 auto made its body consume the
+     available sheet block size even when the history grid was short. It is
+     content-sized here, while max-height and overflow retain the long-list
+     boundary above. */
+  body #gridlyPortraitV2Sheet[data-active-sheet="history"] #gridlyPortraitV2SheetBody {
+    flex: 0 0 auto !important;
+    height: fit-content !important;
+    max-height: calc(min(78dvh, var(--lp2444-sheet-max-height)) - 60px) !important;
+  }
+
+  /* Settings alone is a destination workspace. Its opaque host reaches the
+     navigation boundary; the content body scrolls without stretching cards. */
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] #gridlyPortraitV2SheetBody {
+    flex: 1 1 auto !important;
+  }
+
+  body #gridlyPortraitV2:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
+    .gridly-v2-bottom-region {
+    z-index: calc(var(--lp243h10b-foreground-z) + 1) !important;
+    height: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+    transform: translateY(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  body #gridlyPortraitV2:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
+    .gridly-v2-bottom-dock {
+    inset: 0 0 env(safe-area-inset-bottom, 0px) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  body #gridlyPortraitV2SheetBackdrop:has(+ #gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden])) {
+    inset: 0 0 calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+    background: var(--gridly-app-bg, #020812) !important;
+    opacity: 1 !important;
   }
 
   body #gridlyPortraitV2Sheet[data-active-sheet="report"]
@@ -29066,19 +29110,29 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 
   body #gridlyPortraitV2 .gridly-v2-control-rail {
     right: max(12px, env(safe-area-inset-right, 0px)) !important;
-    top: calc(var(--lp243h10b-top-height) + 10px) !important;
+    top: auto !important;
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px)) !important;
     grid-template-columns: repeat(2, 44px);
-    gap: 6px !important;
+    gap: 4px !important;
     padding: 0 !important;
     background: transparent !important;
+    transform: none !important;
   }
 
   body #gridlyPortraitV2 .gridly-v2-control-rail button {
     width: 44px !important;
     height: 44px !important;
     min-height: 44px !important;
-    padding: 0 !important;
-    border-radius: 11px !important;
+    box-sizing: border-box;
+    padding: 4px !important;
+    border: 4px solid transparent !important;
+    border-radius: 12px !important;
+    background-clip: padding-box !important;
+  }
+
+  body #gridlyPortraitV2 .gridly-v2-control-rail button svg {
+    width: 19px;
+    height: 19px;
   }
 
   body #map .leaflet-control-attribution {
