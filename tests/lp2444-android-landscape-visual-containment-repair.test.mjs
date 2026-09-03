@@ -4,6 +4,7 @@ import test from "node:test";
 
 const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+const markup = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const marker = "/* LP244.4 — Android short-landscape visual containment repair.";
 const repairStart = css.indexOf(marker);
 const repair = css.slice(repairStart, css.indexOf("/* LP243.I2.3 —", repairStart));
@@ -27,7 +28,7 @@ test("temporary sheets are content-led floating surfaces with bounded per-panel 
   assert.match(repair, /data-active-sheet="report"\]\s*\{ max-height: var\(--lp2444-sheet-max-height\)/);
   assert.match(repair, /data-active-sheet="alerts"\]\s*\{ max-height: min\(82dvh/);
   assert.match(repair, /data-active-sheet="history"\]:not\(\[hidden\]\)[\s\S]*max-height: min\(78dvh/);
-  assert.match(repair, /data-active-sheet="settings"\]:not\(\[hidden\]\)[\s\S]*inset: var\(--lp2444-visual-gap\) 0 var\(--lp2444-navigation-boundary\)[\s\S]*background: var\(--gridly-elevated/);
+  assert.match(repair, /data-active-sheet="settings"\]:not\(\[hidden\]\)[\s\S]*inset: var\(--lp2444-visual-gap\) var\(--lp2444-inline-gap\)[\s\S]*calc\(var\(--lp2444-navigation-boundary\) \+ var\(--lp2444-visual-gap\)\)[\s\S]*background: var\(--gridly-elevated/);
   assert.match(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\) > header[\s\S]*flex: 0 0 auto[\s\S]*min-height: 44px/);
   assert.match(repair, /#gridlyPortraitV2SheetBody[\s\S]*flex: 0 1 auto[\s\S]*min-height: 0 !important[\s\S]*overflow-y: auto !important/);
   assert.match(repair, /scroll-padding-bottom: calc\(16px \+ env\(safe-area-inset-bottom/);
@@ -75,15 +76,45 @@ test("History shrink-wraps short content and retains bounded scrolling for long 
 
 test("Settings alone owns an opaque destination workspace above a separate visible dock", () => {
   assert.match(repair, /--lp2444-navigation-boundary: calc\(var\(--lp243h3-dock-height\) \+ var\(--lp243h3-dock-bottom-inset\)\)/);
-  assert.match(repair, /data-active-sheet="settings"\][\s\S]*width: 100vw !important[\s\S]*max-height: none !important[\s\S]*border-radius: 0 !important[\s\S]*background: var\(--gridly-elevated/);
-  assert.match(repair, /\.gridly-v2-bottom-region[\s\S]*z-index: calc\(var\(--lp243h10b-foreground-z\) \+ 1\)[\s\S]*height: var\(--lp2444-navigation-boundary\)[\s\S]*transform: translateY\(0\)[\s\S]*pointer-events: auto/);
-  assert.match(repair, /\.gridly-v2-bottom-dock[\s\S]*visibility: visible !important[\s\S]*pointer-events: auto !important/);
-  assert.match(repair, /:is\(#gridlyPortraitLocationAwarenessPanel, \.map-card > \.mobile-destination-command\)[\s\S]*display: none !important[\s\S]*visibility: hidden !important[\s\S]*pointer-events: none !important/);
+  assert.match(repair, /data-active-sheet="settings"\][\s\S]*width: min\(960px, calc\(100vw[\s\S]*max-width: 960px[\s\S]*border-radius: 18px !important[\s\S]*background: var\(--gridly-elevated/);
+  assert.match(repair, /\.gridly-v2-bottom-region[\s\S]*display: block !important[\s\S]*inset: auto 0 0 !important[\s\S]*z-index: calc\(var\(--lp243h10b-foreground-z\) \+ 1\)[\s\S]*height: var\(--lp2444-navigation-boundary\)[\s\S]*transform: translateY\(0\)[\s\S]*pointer-events: auto/);
+  assert.match(repair, /\.gridly-v2-bottom-dock[\s\S]*display: grid !important[\s\S]*height: var\(--lp243h3-dock-height\)[\s\S]*visibility: visible !important[\s\S]*pointer-events: auto !important/);
+  assert.match(repair, /:is\(#gridlyPortraitLocationAwarenessPanel, #mobileDestinationCommandPanel,[\s\S]*#gridlyLandscapeCommandToggle, \.gridly-v2-control-rail\)[\s\S]*display: none !important[\s\S]*visibility: hidden !important[\s\S]*pointer-events: none !important/);
   assert.match(repair, /#gridlyPortraitV2SheetBackdrop:has\(\+ #gridlyPortraitV2Sheet\[data-active-sheet="settings"\]:not\(\[hidden\]\)\)[\s\S]*background: var\(--gridly-app-bg[\s\S]*opacity: 1/);
   assert.match(repair, /#gridlyPortraitV2SheetBackdrop[\s\S]*inset: 0 0 var\(--lp2444-navigation-boundary\)/);
   assert.match(repair, /data-active-sheet="settings"\] #gridlyPortraitV2SheetBody[\s\S]*flex: 1 1 auto !important/);
+  assert.match(repair, /data-active-sheet="settings"\] \.gridly-settings-sheet[\s\S]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)[\s\S]*align-content: start/);
+  assert.match(repair, /\.settings-section-support\)[\s\S]*grid-column: 1 \/ -1/);
+  assert.match(repair, /data-active-sheet="settings"\][\s\S]*:is\(\.settings-list-summary, \.gridly-v2-tile, button, input, select\)[\s\S]*min-height: 44px/);
   assert.doesNotMatch(repair, /data-active-sheet="(?:report|alerts|history)"[^}]*navigation-boundary/);
   assert.doesNotMatch(repair, /data-active-sheet="(?:report|alerts|history)"[^}]*width:\s*100vw/);
+});
+
+test("Settings-open state and every suppressed or preserved owner match production markup", () => {
+  assert.match(markup, /id="gridlyPortraitV2Sheet"[^>]*hidden/);
+  assert.match(app, /sheet\.setAttribute\("data-active-sheet", sheetName\)/);
+  assert.match(app, /sheet\.removeAttribute\("hidden"\)/);
+  assert.match(app, /settings:\s*\{ title: "Settings", html: buildSettingsSurfaceHtml \}/);
+  assert.match(markup, /id="mobileDestinationCommandPanel"[^>]*aria-label="Destination route command"/);
+  assert.match(app, /locationContext = document\.getElementById\("mobileDestinationCommandPanel"\)/);
+  assert.match(app, /tray\.insertBefore\(locationContext, actionPanel\)/);
+  assert.match(app, /panel\.id = "gridlyPortraitLocationAwarenessPanel"[\s\S]*panel\.setAttribute\("aria-label", "Location Context"\)/);
+  assert.match(markup, /id="gridlyLandscapeCommandToggle"[^>]*class="gridly-landscape-command-handle"/);
+  assert.match(markup, /id="gridlyPortraitBottomRegion" class="gridly-v2-bottom-region"[\s\S]*id="gridlyLandscapeCommandPanel" class="gridly-v2-bottom-dock"/);
+  assert.equal((markup.match(/data-v2-sheet="(?:report|alerts|history|settings)"/g) || []).length, 4);
+  assert.doesNotMatch(repair, /\.gridly-v2-bottom-region[^}]*display:\s*none/);
+});
+
+test("Settings destination rules do not leak to accepted landscape surfaces", () => {
+  const destinationRules = repair.slice(
+    repair.indexOf("/* Settings alone is a destination workspace."),
+    repair.indexOf('body #gridlyPortraitV2Sheet[data-active-sheet="report"]', repair.indexOf("/* Settings alone is a destination workspace."))
+  );
+  assert.match(destinationRules, /data-active-sheet="settings"/);
+  assert.doesNotMatch(destinationRules, /data-active-sheet="(?:report|alerts|history|layers)"/);
+  for (const frozen of ["gridly-v2-control-rail button", "gridlyHazardCounter", "leaflet-control-attribution", "gridly-brief-interaction-panel"]) {
+    assert.equal((repair.match(new RegExp(frozen.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) || []).length > 0, true);
+  }
 });
 
 test("legacy incident counter cannot cover sheets and map controls are contained compact targets", () => {

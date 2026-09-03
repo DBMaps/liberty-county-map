@@ -28941,14 +28941,16 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     max-height: min(78dvh, var(--lp2444-sheet-max-height)) !important;
   }
   body.gridly-v2-presentation-owner-active #gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]) {
-    inset: var(--lp2444-visual-gap) 0 var(--lp2444-navigation-boundary) !important;
-    width: 100vw !important;
-    max-width: none !important;
+    inset: var(--lp2444-visual-gap) var(--lp2444-inline-gap)
+      calc(var(--lp2444-navigation-boundary) + var(--lp2444-visual-gap)) !important;
+    width: min(960px, calc(100vw - (2 * var(--lp2444-inline-gap)))) !important;
+    max-width: 960px !important;
     max-height: none !important;
-    margin: 0 !important;
-    border-width: 0 0 1px !important;
-    border-radius: 0 !important;
+    margin-inline: auto !important;
+    border: 1px solid var(--gridly-border-neutral, rgba(178, 211, 255, 0.24)) !important;
+    border-radius: 18px !important;
     background: var(--gridly-elevated, #07101d) !important;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.42), inset 0 1px rgba(255, 255, 255, 0.08);
   }
 
   body #gridlyPortraitV2Sheet:not([hidden]) > header {
@@ -28984,27 +28986,59 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
      navigation boundary; the content body scrolls without stretching cards. */
   body #gridlyPortraitV2Sheet[data-active-sheet="settings"] #gridlyPortraitV2SheetBody {
     flex: 1 1 auto !important;
+    padding-inline: 2px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 10px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    .gridly-settings-sheet > :is(.gridly-v2-sheet-copy, .settings-section-support) {
+    grid-column: 1 / -1;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    :is(.settings-list-summary, .gridly-v2-tile, button, input, select) {
+    min-height: 44px;
   }
 
   body #gridlyPortraitV2:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
     .gridly-v2-bottom-region {
+    display: block !important;
+    position: fixed !important;
+    inset: auto 0 0 !important;
     z-index: calc(var(--lp243h10b-foreground-z) + 1) !important;
+    box-sizing: border-box;
+    width: 100% !important;
     height: var(--lp2444-navigation-boundary) !important;
+    padding: 0 0 var(--lp243h3-dock-bottom-inset) !important;
+    background: var(--gridly-app-bg, #020812) !important;
     transform: translateY(0) !important;
     visibility: visible !important;
     pointer-events: auto !important;
+    overflow: hidden !important;
   }
 
   body #gridlyPortraitV2:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
     .gridly-v2-bottom-dock {
-    inset: 0 0 env(safe-area-inset-bottom, 0px) !important;
+    display: grid !important;
+    position: absolute !important;
+    inset: auto var(--lp2444-inline-gap) var(--lp243h3-dock-bottom-inset) !important;
+    width: auto !important;
+    height: var(--lp243h3-dock-height) !important;
+    min-height: var(--lp243h3-dock-height) !important;
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
   }
 
   body:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
-    :is(#gridlyPortraitLocationAwarenessPanel, .map-card > .mobile-destination-command) {
+    :is(#gridlyPortraitLocationAwarenessPanel, #mobileDestinationCommandPanel,
+      #gridlyLandscapeCommandToggle, .gridly-v2-control-rail) {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
