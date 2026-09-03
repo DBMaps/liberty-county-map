@@ -28909,17 +28909,36 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
    this presentation-only contract. */
 @media (orientation: landscape) and (max-height: 500px) {
   body {
-    --lp2444-visual-gap: max(8px, env(safe-area-inset-top, 0px));
-    --lp2444-bottom-clearance: max(10px, env(safe-area-inset-bottom, 0px));
+    --lp2444-visual-gap: max(12px, env(safe-area-inset-top, 0px));
+    --lp2444-inline-gap: max(18px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+    --lp2444-bottom-clearance: max(14px, env(safe-area-inset-bottom, 0px));
+    --lp2444-sheet-max-height: calc(100dvh - var(--lp2444-visual-gap) - var(--lp2444-bottom-clearance));
   }
 
   body #gridlyPortraitV2Sheet:not([hidden]) {
     display: flex !important;
     flex-direction: column;
     box-sizing: border-box;
-    inset: var(--lp2444-visual-gap) max(8px, env(safe-area-inset-right, 0px))
-      var(--lp2444-bottom-clearance) max(8px, env(safe-area-inset-left, 0px)) !important;
-    max-height: calc(100dvh - var(--lp2444-visual-gap) - var(--lp2444-bottom-clearance)) !important;
+    inset: auto var(--lp2444-inline-gap) var(--lp2444-bottom-clearance) !important;
+    width: min(760px, calc(100vw - (2 * var(--lp2444-inline-gap)))) !important;
+    max-width: 760px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: min(84dvh, var(--lp2444-sheet-max-height)) !important;
+    margin-inline: auto !important;
+    padding: 12px 14px !important;
+    border-radius: 18px !important;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.38), inset 0 1px rgba(255, 255, 255, 0.08);
+    overflow: hidden !important;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] { max-height: var(--lp2444-sheet-max-height) !important; }
+  body #gridlyPortraitV2Sheet[data-active-sheet="alerts"] { max-height: min(82dvh, var(--lp2444-sheet-max-height)) !important; }
+  body #gridlyPortraitV2Sheet[data-active-sheet="history"] { max-height: min(78dvh, var(--lp2444-sheet-max-height)) !important; }
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
+    width: min(820px, calc(100vw - (2 * var(--lp2444-inline-gap)))) !important;
+    max-width: 820px !important;
+    max-height: min(80dvh, var(--lp2444-sheet-max-height)) !important;
   }
 
   body #gridlyPortraitV2Sheet:not([hidden]) > header {
@@ -28929,7 +28948,7 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   }
 
   body #gridlyPortraitV2Sheet:not([hidden]) #gridlyPortraitV2SheetBody {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-height: 0 !important;
     max-height: none !important;
     overflow-x: hidden !important;
@@ -28943,20 +28962,60 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 
   body #gridlyPortraitV2Sheet[data-active-sheet="report"]
     :is(.gridly-v2-report-picker, .gridly-v2-report-review) {
-    min-height: min-content;
+    min-height: 0;
   }
 
   body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-ctas {
-    position: sticky;
-    bottom: calc(-16px - env(safe-area-inset-bottom, 0px));
-    z-index: 2;
-    padding: 10px 0 calc(16px + env(safe-area-inset-bottom, 0px));
-    background: linear-gradient(180deg, transparent, var(--gridly-elevated) 18%);
+    position: static !important;
+    z-index: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 10px;
+    padding: 0;
+    background: none;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-ctas [data-v2-precondition-helper] {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-action {
+    min-height: 44px;
+    padding: 9px 10px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review {
+    display: grid;
+    gap: 10px;
   }
 
   body #gridlyPortraitV2Sheet[data-active-sheet="report"]
     .gridly-v2-report-review > .gridly-v2-list {
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: stretch;
+    padding-bottom: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review > .gridly-v2-list > .gridly-v2-sheet-copy {
+    grid-column: span 2;
+    margin: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review > .gridly-v2-list > .primary-btn {
+    grid-column: 1 / 4;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review > .gridly-v2-list > .secondary-btn {
+    grid-column: 4 / 7;
   }
 
   body #gridlyPortraitV2Sheet[data-active-sheet="report"]
@@ -28979,19 +29038,59 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 
   body.gridly-h9-brief-foreground #gridlyPortraitV2
     .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
-    max-height: 100dvh !important;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    inset: var(--lp2444-visual-gap) max(10vw, var(--lp2444-inline-gap)) var(--lp2444-bottom-clearance) !important;
+    box-sizing: border-box;
+    width: auto !important;
+    max-width: 860px !important;
+    height: auto !important;
+    max-height: var(--lp2444-sheet-max-height) !important;
+    margin-inline: auto !important;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    border: 1px solid rgba(178, 211, 255, 0.24);
+    border-radius: 18px !important;
+    overflow-y: auto !important;
     scrollbar-gutter: stable;
     scroll-padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     -webkit-overflow-scrolling: touch;
   }
 
+  /* The legacy runtime injects this fixed counter with z-index 9998 after the
+     authored stylesheet. It is redundant with V2 status and must not become a
+     second foreground owner in short landscape. */
+  body #gridlyHazardCounter.gridly-hazard-counter {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
+
+  body #gridlyPortraitV2 .gridly-v2-control-rail {
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    top: calc(var(--lp243h10b-top-height) + 10px) !important;
+    grid-template-columns: repeat(2, 44px);
+    gap: 6px !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  body #gridlyPortraitV2 .gridly-v2-control-rail button {
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    border-radius: 11px !important;
+  }
+
   body #map .leaflet-control-attribution {
-    right: 4px;
-    bottom: 4px;
-    max-width: calc(100% - 56px);
-    overflow-wrap: anywhere;
-    white-space: normal;
+    right: 8px;
+    bottom: 6px;
+    max-width: min(56vw, 520px);
+    padding: 2px 5px;
+    font-size: 9px;
+    line-height: 1.15;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   body #map .gridly-map-attribution-disclosure {
@@ -29000,7 +29099,7 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   }
 
   body .gridly-landscape-command-handle {
-    bottom: calc(100% + 4px);
+    bottom: calc(100% + 10px);
   }
 }
 
