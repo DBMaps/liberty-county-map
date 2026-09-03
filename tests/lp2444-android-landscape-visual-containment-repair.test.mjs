@@ -20,42 +20,57 @@ test("LP244.4 is one final, landscape-and-short-height-only authority", () => {
   assert.doesNotMatch(repair, /@media[^\{]*orientation:\s*portrait|data-layout-mode=["']portrait|[.#][^\s,{]*splash/i);
 });
 
-test("sheet owns bounded viewport space, a fixed close header, and internal scrolling", () => {
-  assert.match(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\)[\s\S]*display: flex !important[\s\S]*flex-direction: column[\s\S]*max-height: calc\(100dvh/);
+test("sheets are content-led floating surfaces with bounded per-panel heights", () => {
+  assert.match(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\)[\s\S]*inset: auto[\s\S]*height: auto !important[\s\S]*min-height: 0 !important[\s\S]*max-height: min\(84dvh/);
+  assert.match(repair, /width: min\(760px, calc\(100vw[\s\S]*max-width: 760px[\s\S]*margin-inline: auto/);
+  assert.doesNotMatch(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\)\s*\{[^}]*height:\s*100d?vh/);
+  assert.match(repair, /data-active-sheet="report"\]\s*\{ max-height: var\(--lp2444-sheet-max-height\)/);
+  assert.match(repair, /data-active-sheet="alerts"\]\s*\{ max-height: min\(82dvh/);
+  assert.match(repair, /data-active-sheet="history"\]\s*\{ max-height: min\(78dvh/);
+  assert.match(repair, /data-active-sheet="settings"\][\s\S]*max-height: min\(80dvh/);
   assert.match(repair, /#gridlyPortraitV2Sheet:not\(\[hidden\]\) > header[\s\S]*flex: 0 0 auto[\s\S]*min-height: 44px/);
-  assert.match(repair, /#gridlyPortraitV2SheetBody[\s\S]*flex: 1 1 auto[\s\S]*min-height: 0 !important[\s\S]*overflow-y: auto !important/);
+  assert.match(repair, /#gridlyPortraitV2SheetBody[\s\S]*flex: 0 1 auto[\s\S]*min-height: 0 !important[\s\S]*overflow-y: auto !important/);
   assert.match(repair, /scroll-padding-bottom: calc\(16px \+ env\(safe-area-inset-bottom/);
 });
 
 test("report picker scrolls and keeps both placement choices discoverable", () => {
   assert.match(repair, /data-active-sheet="report"[\s\S]*gridly-v2-report-picker/);
-  assert.match(repair, /gridly-v2-report-ctas[\s\S]*position: sticky[\s\S]*bottom:/);
+  assert.match(repair, /gridly-v2-report-ctas[\s\S]*position: static !important[\s\S]*grid-template-columns: repeat\(2/);
+  assert.doesNotMatch(repair, /gridly-v2-report-ctas\s*\{[^}]*position:\s*(?:fixed|absolute|sticky)/);
+  assert.match(repair, /gridly-v2-report-tiles[\s\S]*grid-template-columns: repeat\(4/);
   const template = app.slice(app.indexOf("function buildReportHazardSurfaceHtml()"), app.indexOf("const sheetTemplates ="));
   assert.match(template, /data-v2-action="report-use-location"[^>]*>Use my location<\/button>/);
   assert.match(template, /data-v2-action="report-tap-map"[^>]*>Tap the map<\/button>/);
 });
 
 test("report review and both non-accidental actions retain scroll clearance and touch size", () => {
-  assert.match(repair, /gridly-v2-report-review > \.gridly-v2-list[\s\S]*padding-bottom: calc\(12px \+ env\(safe-area-inset-bottom/);
+  assert.match(repair, /gridly-v2-report-review > \.gridly-v2-list[\s\S]*grid-template-columns: repeat\(6[\s\S]*padding-bottom: 0/);
+  assert.match(repair, /gridly-v2-report-review > \.gridly-v2-list > \.gridly-v2-sheet-copy[\s\S]*grid-column: span 2/);
+  assert.match(repair, /> \.primary-btn[\s\S]*grid-column: 1 \/ 4[\s\S]*> \.secondary-btn[\s\S]*grid-column: 4 \/ 7/);
   assert.match(repair, /gridly-v2-report-review :is\(\.primary-btn, \.secondary-btn\)[\s\S]*min-height: 44px/);
   assert.match(app, /data-v2-action="report-confirm-governed-draft"[^>]*>Submit Report<\/button>/);
   assert.match(app, /data-v2-action="report-cancel-governed-draft"[^>]*>Back<\/button>/);
 });
 
-test("Alerts, History, Settings, and KBYG have bounded short-height containment", () => {
+test("Alerts, History, Settings, and floating KBYG retain bounded internal overflow", () => {
   for (const sheet of ["alerts", "history", "settings"]) {
     assert.match(repair, new RegExp(`data-active-sheet="${sheet}"`));
   }
   assert.match(repair, /data-active-sheet="alerts"[\s\S]*#gridlyPortraitV2SheetBody[\s\S]*contain: layout paint/);
   assert.match(repair, /data-active-sheet="history"[\s\S]*margin-block: 0 !important/);
   assert.match(repair, /data-active-sheet="settings"[\s\S]*margin-block: 0 !important/);
-  assert.match(repair, /gridly-brief-interaction-panel\[data-gridly-brief-expanded="true"\][\s\S]*max-height: 100dvh !important[\s\S]*padding-bottom: calc\(16px \+ env\(safe-area-inset-bottom/);
+  assert.match(repair, /gridly-brief-interaction-panel\[data-gridly-brief-expanded="true"\][\s\S]*inset: var\(--lp2444-visual-gap\)[\s\S]*height: auto !important[\s\S]*max-height: var\(--lp2444-sheet-max-height\)[\s\S]*overflow-y: auto !important/);
 });
 
-test("map attribution and the center disclosure control stay inside useful map space", () => {
-  assert.match(repair, /#map \.leaflet-control-attribution[\s\S]*bottom: 4px[\s\S]*max-width: calc\(100% - 56px\)[\s\S]*white-space: normal/);
+test("legacy incident counter cannot cover sheets and map chrome stays compact", () => {
+  assert.match(app, /counter\.id = "gridlyHazardCounter"[\s\S]*counter\.className = "gridly-hazard-counter"/);
+  assert.match(app, /\.gridly-hazard-counter\s*\{[\s\S]*position: fixed;[\s\S]*z-index: 9998;/);
+  assert.match(repair, /#gridlyHazardCounter\.gridly-hazard-counter[\s\S]*display: none !important[\s\S]*pointer-events: none !important[\s\S]*z-index: 0 !important/);
+  assert.match(repair, /\.gridly-v2-control-rail[\s\S]*grid-template-columns: repeat\(2, 44px\)[\s\S]*gap: 6px/);
+  assert.match(repair, /\.gridly-v2-control-rail button[\s\S]*width: 44px[\s\S]*height: 44px[\s\S]*min-height: 44px/);
+  assert.match(repair, /#map \.leaflet-control-attribution[\s\S]*bottom: 6px[\s\S]*max-width: min\(56vw, 520px\)[\s\S]*font-size: 9px[\s\S]*white-space: nowrap/);
   assert.match(repair, /#map \.gridly-map-attribution-disclosure[\s\S]*max-height: calc\(100% - 40px\)/);
-  assert.match(repair, /\.gridly-landscape-command-handle[\s\S]*bottom: calc\(100% \+ 4px\)/);
+  assert.match(repair, /\.gridly-landscape-command-handle[\s\S]*bottom: calc\(100% \+ 10px\)/);
   assert.doesNotMatch(repair, /#map\s*\{[^}]*height:\s*\d+px/);
 });
 
