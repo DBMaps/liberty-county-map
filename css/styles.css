@@ -28913,6 +28913,7 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     --lp2444-inline-gap: max(18px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
     --lp2444-bottom-clearance: max(14px, env(safe-area-inset-bottom, 0px));
     --lp2444-sheet-max-height: calc(100dvh - var(--lp2444-visual-gap) - var(--lp2444-bottom-clearance));
+    --lp2444-navigation-boundary: calc(var(--lp243h3-dock-height) + var(--lp243h3-dock-bottom-inset));
   }
 
   body #gridlyPortraitV2Sheet:not([hidden]) {
@@ -28934,9 +28935,13 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 
   body #gridlyPortraitV2Sheet[data-active-sheet="report"] { max-height: var(--lp2444-sheet-max-height) !important; }
   body #gridlyPortraitV2Sheet[data-active-sheet="alerts"] { max-height: min(82dvh, var(--lp2444-sheet-max-height)) !important; }
-  body #gridlyPortraitV2Sheet[data-active-sheet="history"] { max-height: min(78dvh, var(--lp2444-sheet-max-height)) !important; }
-  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
-    inset: var(--lp2444-visual-gap) 0 calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+  body.gridly-v2-presentation-owner-active #gridlyPortraitV2Sheet[data-active-sheet="history"]:not([hidden]) {
+    inset: auto var(--lp2444-inline-gap) var(--lp2444-bottom-clearance) !important;
+    height: max-content !important;
+    max-height: min(78dvh, var(--lp2444-sheet-max-height)) !important;
+  }
+  body.gridly-v2-presentation-owner-active #gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]) {
+    inset: var(--lp2444-visual-gap) 0 var(--lp2444-navigation-boundary) !important;
     width: 100vw !important;
     max-width: none !important;
     max-height: none !important;
@@ -28965,10 +28970,10 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     -webkit-overflow-scrolling: touch;
   }
 
-  /* History's inherited V282.3 flex: 1 1 auto made its body consume the
-     available sheet block size even when the history grid was short. It is
-     content-sized here, while max-height and overflow retain the long-list
-     boundary above. */
+  /* H10B's higher-specificity fixed-sheet inset kept both block edges active,
+     so `height: fit-content` on the body could not shrink the outer sheet.
+     The History-specific outer rule releases the top edge; this body remains
+     the bounded long-content scroll owner. */
   body #gridlyPortraitV2Sheet[data-active-sheet="history"] #gridlyPortraitV2SheetBody {
     flex: 0 0 auto !important;
     height: fit-content !important;
@@ -28984,7 +28989,7 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   body #gridlyPortraitV2:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
     .gridly-v2-bottom-region {
     z-index: calc(var(--lp243h10b-foreground-z) + 1) !important;
-    height: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+    height: var(--lp2444-navigation-boundary) !important;
     transform: translateY(0) !important;
     visibility: visible !important;
     pointer-events: auto !important;
@@ -28998,8 +29003,15 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     pointer-events: auto !important;
   }
 
+  body:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
+    :is(#gridlyPortraitLocationAwarenessPanel, .map-card > .mobile-destination-command) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   body #gridlyPortraitV2SheetBackdrop:has(+ #gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden])) {
-    inset: 0 0 calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+    inset: 0 0 var(--lp2444-navigation-boundary) !important;
     background: var(--gridly-app-bg, #020812) !important;
     opacity: 1 !important;
   }
