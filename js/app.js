@@ -85905,6 +85905,81 @@ function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
   });
 }
 
+// The report composer owns a location until the person explicitly confirms the
+// report.  Location acquisition is only a placement step; it must never cross
+// the persistence boundary on its own (native and browser geolocation share
+// this continuation).
+let governedRoadHazardReportDraft = null;
+
+function buildGovernedRoadHazardReportDraft(hazardType, rawCoordinate, snapped) {
+  const raw = gridlyCoordinateFromRecord(rawCoordinate);
+  const finalCoordinate = gridlyCoordinateFromRecord(snapped?.finalPlacementCoordinate)
+    || gridlyCoordinateFromRecord(snapped)
+    || raw;
+  if (!raw || !finalCoordinate) throw new Error("invalid_geolocation_coordinates");
+  const countyResolution = gridlyResolveCountyIdForCoordinate(finalCoordinate.lat, finalCoordinate.lng);
+  const countyMetadata = gridlyGetReportSubmissionCountyScopedMetadata(finalCoordinate.lat, finalCoordinate.lng);
+  const communityMetadata = countyMetadata?.county_id
+    ? gridlyGetReportSubmissionCommunityMetadata(countyMetadata.county_id, finalCoordinate.lat, finalCoordinate.lng)
+    : {};
+  return Object.freeze({
+    hazardType,
+    rawCoordinate: Object.freeze({ ...raw }),
+    finalCoordinate: Object.freeze({ ...finalCoordinate }),
+    snappedRoadCoordinate: Object.freeze(gridlyCoordinateFromRecord(snapped?.snappedRoadCoordinate) || { ...finalCoordinate }),
+    selectedRoadName: snapped?.selectedRoadName || "",
+    countyResolution: Object.freeze({ ...(countyResolution || {}) }),
+    countyMetadata: Object.freeze({ ...(countyMetadata || {}) }),
+    communityMetadata: Object.freeze({ ...(communityMetadata || {}) }),
+    placementMode: snapped?.placementMode || "road_aware_use_my_location",
+    createdAt: new Date().toISOString(),
+    source: "hazard_use_my_location",
+    reviewState: "ready"
+  });
+}
+
+function continueGovernedRoadHazardDraftToReview(draft) {
+  governedRoadHazardReportDraft = draft;
+  window.gridlyGovernedRoadHazardReportDraft = draft;
+  updateReportingState({
+    reportModeActive: true,
+    placementModeActive: false,
+    selectedHazardType: draft.hazardType,
+    locationLookupInProgress: false,
+    submissionInProgress: false,
+    lastReportError: "",
+    lastReportMessage: ""
+  });
+  if (map) map.setView([draft.finalCoordinate.lat, draft.finalCoordinate.lng], 16);
+  // Reopen the already-governed report surface. Its normal confirmation owner
+  // may subsequently call submitGovernedRoadHazardDraft; this step never does.
+  window.openGridlyPortraitV2Sheet?.("report");
+  syncHazardPickerUiState();
+  return draft;
+}
+
+async function submitGovernedRoadHazardDraft() {
+  const draft = governedRoadHazardReportDraft;
+  if (!draft || draft.reviewState !== "ready") return false;
+  return createSharedHazardReport(
+    draft.hazardType,
+    draft.finalCoordinate.lat,
+    draft.finalCoordinate.lng,
+    "gps hazard report",
+    "",
+    draft.rawCoordinate,
+    {
+      selectedRoadName: draft.selectedRoadName,
+      primaryRoad: draft.selectedRoadName,
+      roadName: draft.selectedRoadName,
+      countyResolution: draft.countyResolution,
+      countyMetadata: draft.countyMetadata,
+      communityMetadata: draft.communityMetadata
+    }
+  );
+}
+window.submitGovernedRoadHazardDraft = submitGovernedRoadHazardDraft;
+
 window.submitHazardNearMe = function (hazardType) {
   lastMobileReportSubmitDebug.lastSubmitAttempt = "use_my_location_clicked";
   markReportActionCompletionAudit({
@@ -85933,8 +86008,6 @@ window.submitHazardNearMe = function (hazardType) {
     document.body.classList.remove("report-pulse");
     return;
   }
-
-  const hazardCopy = HAZARD_TYPES[selectedType] || HAZARD_TYPES.other_hazard;
 
   updateReportingState({
     activeReportEntryPoint: "hazard_use_my_location",
@@ -86015,65 +86088,21 @@ window.submitHazardNearMe = function (hazardType) {
         lastMobileReportSubmitDebug.roadCandidateCount = snapped.roadCandidateCount ?? null;
         lastMobileReportSubmitDebug.nearestCandidateDistanceMeters = snapped.nearestCandidateDistanceMeters ?? null;
         lastMobileReportSubmitDebug.placementCoordinateReason = snapped.representativeCoordinateReason || "Road-aware placement selected the final hazard marker coordinate from GPS and nearest road candidate.";
-        const submitted = await createSharedHazardReport(selectedType, finalPlacement.lat, finalPlacement.lng, "gps hazard report", "", snapped.originalTapCoords, {
-          selectedRoadName: snapped.selectedRoadName,
-          primaryRoad: snapped.selectedRoadName,
-          roadName: snapped.selectedRoadName
+        const draft = buildGovernedRoadHazardReportDraft(selectedType, { lat, lng }, {
+          ...snapped,
+          selectedRoadName: snapped.selectedRoadName
         });
-        if (!submitted) {
-          markReportActionCompletionAudit({
-            reportUseLocationError: reportingState.lastReportError || lastMobileReportSubmitDebug.lastSubmitError || "Hazard report was not submitted.",
-            lastReportActionCompleted: false
-          });
-          updateReportingState({ locationLookupInProgress: false, submissionInProgress: false });
-          document.body.classList.remove("report-pulse");
-          return;
-        }
+        continueGovernedRoadHazardDraftToReview(draft);
         markReportActionCompletionAudit({
-          reportUseLocationSubmitted: true,
+          reportUseLocationSubmitted: false,
           reportUseLocationCompleted: true,
           reportUseLocationError: "",
           lastReportAction: "report-use-location",
           lastReportActionCompleted: true,
-          lastReportCompletionState: "success"
+          lastReportCompletionState: "review_ready"
         });
-
-        try {
-          if (map) {
-            map.setView([finalPlacement.lat, finalPlacement.lng], 16);
-          }
-
-          resetQuickHazardReportState();
-          closeVisiblePortraitV2ReportSurfaceAfterSubmit();
-          closeHazardPanel({ preserveLastReportMessage: true });
-          setConfirmation(getParticipationAcknowledgementCopy("report"), "success");
-          updateReportingState({
-            locationLookupInProgress: false,
-            submissionInProgress: false,
-            lastReportError: "",
-            lastReportMessage: "Report shared"
-          });
-        } catch (cleanupError) {
-          console.warn("Gridly Use My Location post-submit cleanup warning", cleanupError);
-          lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = false;
-          lastMobileReportSubmitDebug.lastSubmitAttempt = "use_my_location_cleanup_warning";
-          lastMobileReportSubmitDebug.lastSubmitError = "";
-          markReportActionCompletionAudit({
-            reportUseLocationSubmitted: true,
-            reportUseLocationCompleted: true,
-            reportUseLocationError: "",
-            lastReportAction: "report-use-location",
-            lastReportActionCompleted: true,
-            lastReportCompletionState: "success"
-          });
-          updateReportingState({
-            locationLookupInProgress: false,
-            submissionInProgress: false,
-            lastReportError: "",
-            lastReportMessage: "Report shared"
-          });
-          setConfirmation(getParticipationAcknowledgementCopy("report"), "success");
-        }
+        lastMobileReportSubmitDebug.lastSubmitAttempt = "use_my_location_review_ready";
+        document.body.classList.remove("report-pulse");
       } catch (error) {
         const invalidCoordinate = error?.message === "invalid_geolocation_coordinates";
         const message = invalidCoordinate
@@ -118545,7 +118574,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (!sheet || !backdrop || !title || !body || !template) return false;
     if (sheetName !== "alerts" && (activeSheet === "alerts" || sheet.dataset?.activeSheet === "alerts")) gridlyMarkAlertsSheetClosed();
     if (sheetName === "alerts" && !gridlyAlertsSheetLifecycleState.activeGeneration) gridlyBeginAlertsSheetLifecycle();
-    if (sheetName === "report" && !templateOverride && !reportingState?.placementModeActive) {
+    const continuingGovernedReportReview = Boolean(
+      sheetName === "report"
+      && governedRoadHazardReportDraft?.reviewState === "ready"
+      && governedRoadHazardReportDraft?.hazardType === reportingState?.selectedHazardType
+    );
+    if (sheetName === "report" && !templateOverride && !reportingState?.placementModeActive && !continuingGovernedReportReview) {
       selectedV2HazardType = "";
       selectedQuickHazardType = null;
       pendingHazardPlacement = null;
