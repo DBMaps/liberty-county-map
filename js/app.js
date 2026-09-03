@@ -85911,6 +85911,7 @@ function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
 // this continuation).
 let governedRoadHazardReportDraft = null;
 let governedRoadHazardSubmissionPromise = null;
+const GOVERNED_ROAD_HAZARD_SUBMISSION_TIMEOUT_MS = 12000;
 const governedRoadHazardReviewAudit = [];
 
 function recordGovernedRoadHazardReviewStage(stage, detail = {}) {
@@ -85959,11 +85960,16 @@ function continueGovernedRoadHazardDraftToReview(draft) {
     lastReportError: "",
     lastReportMessage: ""
   });
-  if (map) map.setView([draft.finalCoordinate.lat, draft.finalCoordinate.lng], 16);
   recordGovernedRoadHazardReviewStage("governed_draft_ready", { hazardType: draft.hazardType });
   // Reopen the report surface; its draft-aware template presents the review.
   // This continuation never crosses the persistence boundary.
   window.openGridlyPortraitV2Sheet?.("report");
+  // Opening the portrait sheet changes the map's visible geometry. Reconcile
+  // Leaflet first, then place the governed final coordinate exactly once.
+  if (map) {
+    map.invalidateSize?.({ pan: false, animate: false });
+    map.setView([draft.finalCoordinate.lat, draft.finalCoordinate.lng], 16);
+  }
   syncHazardPickerUiState();
   return draft;
 }
@@ -85977,7 +85983,8 @@ async function submitGovernedRoadHazardDraft() {
   governedRoadHazardSubmissionPromise = (async () => {
     recordGovernedRoadHazardReviewStage("submission_invoked", { hazardType: draft.hazardType });
     try {
-      const invokeSharedSubmissionOwner = () => {
+      const governedSubmissionAbortController = typeof AbortController === "function" ? new AbortController() : null;
+      const createThroughSharedSubmissionOwner = () => {
         return createSharedHazardReport(
           draft.hazardType,
           draft.finalCoordinate.lat,
@@ -85991,9 +85998,23 @@ async function submitGovernedRoadHazardDraft() {
             roadName: draft.selectedRoadName,
             countyResolution: draft.countyResolution,
             countyMetadata: draft.countyMetadata,
-            communityMetadata: draft.communityMetadata
+            communityMetadata: draft.communityMetadata,
+            governedDraftConfirmation: true,
+            abortSignal: governedSubmissionAbortController?.signal
           }
         );
+      };
+      const invokeSharedSubmissionOwner = async () => {
+        let submissionWatchdog = null;
+        return Promise.race([
+          Promise.resolve().then(createThroughSharedSubmissionOwner),
+          new Promise((_, reject) => {
+            submissionWatchdog = window.setTimeout(() => {
+              governedSubmissionAbortController?.abort();
+              reject(new Error("Report submission timed out. Review the details and try again."));
+            }, GOVERNED_ROAD_HAZARD_SUBMISSION_TIMEOUT_MS);
+          })
+        ]).finally(() => window.clearTimeout(submissionWatchdog));
       };
       const submitted = await invokeSharedSubmissionOwner();
       recordGovernedRoadHazardReviewStage("submission_settled", { submitted: Boolean(submitted) });
@@ -86002,13 +86023,17 @@ async function submitGovernedRoadHazardDraft() {
         window.gridlyGovernedRoadHazardReportDraft = null;
         closeVisiblePortraitV2ReportSurfaceAfterSubmit();
       } else {
-        updateReportingState({ submissionInProgress: false, lastReportError: "Report was not submitted.", lastReportMessage: "" });
+        const message = "Report was not submitted. Review the details and try again.";
+        updateReportingState({ submissionInProgress: false, lastReportError: message, lastReportMessage: "" });
+        setConfirmation(message, "error");
       }
       return submitted;
     } catch (error) {
       recordGovernedRoadHazardReviewStage("submission_settled", { submitted: false, error: String(error?.message || error) });
-      updateReportingState({ submissionInProgress: false, lastReportError: String(error?.message || "Report was not submitted."), lastReportMessage: "" });
-      throw error;
+      const message = String(error?.message || "Report was not submitted. Review the details and try again.");
+      updateReportingState({ submissionInProgress: false, lastReportError: message, lastReportMessage: "" });
+      setConfirmation(message, "error");
+      return false;
     } finally {
       governedRoadHazardSubmissionPromise = null;
     }
@@ -87540,7 +87565,8 @@ function gridlyBuildRoadHazardDetailLocationMetadata(locationPayload = {}, optio
   };
 }
 
-async function gridlyInsertWithCountyMetadataFallback(client, tableName, row) {
+async function gridlyInsertWithCountyMetadataFallback(client, tableName, row, options = {}) {
+  const attachAbortSignal = (query) => options?.abortSignal && typeof query?.abortSignal === "function" ? query.abortSignal(options.abortSignal) : query;
   const insertRow = tableName === "reports" ? gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS) : row;
   const isHazardReport = tableName === "reports" && String(row?.crossing_id || "").startsWith("hazard-");
   if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({
@@ -87555,7 +87581,7 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row) {
   });
   let first;
   try {
-    first = await client.from(tableName).insert(insertRow);
+    first = await attachAbortSignal(client.from(tableName).insert(insertRow));
   } catch (error) {
     first = { error };
   }
@@ -87577,7 +87603,7 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row) {
   if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({ ...gridlyLastHazardPersistenceDiagnostic, fallbackAttempted: true, fallbackMode: "DEPLOYED_BASE_COLUMNS_RETRY" });
   let retry;
   try {
-    retry = await client.from(tableName).insert(fallbackRow);
+    retry = await attachAbortSignal(client.from(tableName).insert(fallbackRow));
   } catch (retryError) {
     retry = { error: retryError };
   }
@@ -88734,7 +88760,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   // its own device/type/cluster pending lock below, so the composer flag must
   // not prevent a valid second contributor from reaching duplicate resolution
   // and persistence.
-  if (reportingState.submissionInProgress && !lifecycleTargetReportId) {
+  if (reportingState.submissionInProgress && !lifecycleTargetReportId && !options?.governedDraftConfirmation) {
     gridlyFinalizeReportSubmissionRecovery(recoveryLifecycleId, "already_submitting");
     return false;
   }
@@ -88944,7 +88970,9 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     gridlyMarkReportSubmissionRecovery("writeStarted", { flow: "hazard", reportType: hazardType, lifecycleId: recoveryLifecycleId });
     gridlyRecordHazardPropagationStage("supabase_write_started", { reportId: row.crossing_id });
     lastMobileReportSubmitDebug.supabaseInsertStarted = true;
-    const insertResult = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
+    const insertResult = options?.abortSignal
+      ? await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row, { abortSignal: options.abortSignal })
+      : await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
     const { error } = insertResult;
     lastMobileReportSubmitDebug.submittedCrossingId = row.crossing_id;
     lastMobileReportSubmitDebug.fallbackRetryAttempted = Boolean(insertResult.metadataFallbackUsed);
@@ -118406,11 +118434,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const road = governedRoadHazardReviewText(readyDraft.selectedRoadName || "No roadway name available");
       recordGovernedRoadHazardReviewStage("review_presented", { hazardType: readyDraft.hazardType, location, selectedRoadName: readyDraft.selectedRoadName || "" });
       return `<div class="gridly-v2-report-review" data-v2-report-review>
-        <p class="gridly-v2-sheet-copy"><strong>Review your report</strong><span>Confirm these details before sharing with the community.</span></p>
+        <p class="gridly-v2-sheet-copy"><strong>Review your report</strong> <span>Confirm these details before sharing with the community.</span></p>
         <div class="gridly-v2-list">
-          <p class="gridly-v2-sheet-copy" data-v2-review-hazard><strong>Hazard</strong><span>${hazardLabel}</span></p>
-          <p class="gridly-v2-sheet-copy" data-v2-review-location><strong>Report location</strong><span>${location}</span></p>
-          <p class="gridly-v2-sheet-copy" data-v2-review-road><strong>Road</strong><span>${road}</span></p>
+          <p class="gridly-v2-sheet-copy" data-v2-review-hazard><strong>Hazard</strong> <span>${hazardLabel}</span></p>
+          <p class="gridly-v2-sheet-copy" data-v2-review-location><strong>Report location</strong> <span>${location}</span></p>
+          <p class="gridly-v2-sheet-copy" data-v2-review-road><strong>Road</strong> <span>${road}</span></p>
           <button class="primary-btn" data-v2-action="report-confirm-governed-draft" type="button">Submit Report</button>
           <button class="secondary-btn" data-v2-action="report-cancel-governed-draft" type="button">Back</button>
         </div>
