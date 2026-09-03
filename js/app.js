@@ -85910,6 +85910,15 @@ function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
 // the persistence boundary on its own (native and browser geolocation share
 // this continuation).
 let governedRoadHazardReportDraft = null;
+let governedRoadHazardSubmissionPromise = null;
+const governedRoadHazardReviewAudit = [];
+
+function recordGovernedRoadHazardReviewStage(stage, detail = {}) {
+  governedRoadHazardReviewAudit.push(Object.freeze({ at: new Date().toISOString(), stage, ...detail }));
+  if (governedRoadHazardReviewAudit.length > 40) governedRoadHazardReviewAudit.shift();
+}
+
+window.gridlyGovernedRoadHazardReviewAudit = () => governedRoadHazardReviewAudit.slice();
 
 function buildGovernedRoadHazardReportDraft(hazardType, rawCoordinate, snapped) {
   const raw = gridlyCoordinateFromRecord(rawCoordinate);
@@ -85951,8 +85960,9 @@ function continueGovernedRoadHazardDraftToReview(draft) {
     lastReportMessage: ""
   });
   if (map) map.setView([draft.finalCoordinate.lat, draft.finalCoordinate.lng], 16);
-  // Reopen the already-governed report surface. Its normal confirmation owner
-  // may subsequently call submitGovernedRoadHazardDraft; this step never does.
+  recordGovernedRoadHazardReviewStage("governed_draft_ready", { hazardType: draft.hazardType });
+  // Reopen the report surface; its draft-aware template presents the review.
+  // This continuation never crosses the persistence boundary.
   window.openGridlyPortraitV2Sheet?.("report");
   syncHazardPickerUiState();
   return draft;
@@ -85961,24 +85971,71 @@ function continueGovernedRoadHazardDraftToReview(draft) {
 async function submitGovernedRoadHazardDraft() {
   const draft = governedRoadHazardReportDraft;
   if (!draft || draft.reviewState !== "ready") return false;
-  return createSharedHazardReport(
-    draft.hazardType,
-    draft.finalCoordinate.lat,
-    draft.finalCoordinate.lng,
-    "gps hazard report",
-    "",
-    draft.rawCoordinate,
-    {
-      selectedRoadName: draft.selectedRoadName,
-      primaryRoad: draft.selectedRoadName,
-      roadName: draft.selectedRoadName,
-      countyResolution: draft.countyResolution,
-      countyMetadata: draft.countyMetadata,
-      communityMetadata: draft.communityMetadata
+  if (governedRoadHazardSubmissionPromise) return governedRoadHazardSubmissionPromise;
+  recordGovernedRoadHazardReviewStage("explicit_confirmation_invoked", { hazardType: draft.hazardType });
+  updateReportingState({ submissionInProgress: true, lastReportError: "", lastReportMessage: "Submitting report..." });
+  governedRoadHazardSubmissionPromise = (async () => {
+    recordGovernedRoadHazardReviewStage("submission_invoked", { hazardType: draft.hazardType });
+    try {
+      const invokeSharedSubmissionOwner = () => {
+        return createSharedHazardReport(
+          draft.hazardType,
+          draft.finalCoordinate.lat,
+          draft.finalCoordinate.lng,
+          "gps hazard report",
+          "",
+          draft.rawCoordinate,
+          {
+            selectedRoadName: draft.selectedRoadName,
+            primaryRoad: draft.selectedRoadName,
+            roadName: draft.selectedRoadName,
+            countyResolution: draft.countyResolution,
+            countyMetadata: draft.countyMetadata,
+            communityMetadata: draft.communityMetadata
+          }
+        );
+      };
+      const submitted = await invokeSharedSubmissionOwner();
+      recordGovernedRoadHazardReviewStage("submission_settled", { submitted: Boolean(submitted) });
+      if (submitted) {
+        governedRoadHazardReportDraft = null;
+        window.gridlyGovernedRoadHazardReportDraft = null;
+        closeVisiblePortraitV2ReportSurfaceAfterSubmit();
+      } else {
+        updateReportingState({ submissionInProgress: false, lastReportError: "Report was not submitted.", lastReportMessage: "" });
+      }
+      return submitted;
+    } catch (error) {
+      recordGovernedRoadHazardReviewStage("submission_settled", { submitted: false, error: String(error?.message || error) });
+      updateReportingState({ submissionInProgress: false, lastReportError: String(error?.message || "Report was not submitted."), lastReportMessage: "" });
+      throw error;
+    } finally {
+      governedRoadHazardSubmissionPromise = null;
     }
-  );
+  })();
+  return governedRoadHazardSubmissionPromise;
 }
 window.submitGovernedRoadHazardDraft = submitGovernedRoadHazardDraft;
+
+function cancelGovernedRoadHazardDraft() {
+  if (governedRoadHazardSubmissionPromise) return false;
+  recordGovernedRoadHazardReviewStage("cancellation_invoked", { hadReadyDraft: governedRoadHazardReportDraft?.reviewState === "ready" });
+  governedRoadHazardReportDraft = null;
+  window.gridlyGovernedRoadHazardReportDraft = null;
+  updateReportingState({ selectedHazardType: null, submissionInProgress: false, lastReportError: "", lastReportMessage: "" });
+  return true;
+}
+window.cancelGovernedRoadHazardDraft = cancelGovernedRoadHazardDraft;
+
+function governedRoadHazardReviewText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
 
 window.submitHazardNearMe = function (hazardType) {
   lastMobileReportSubmitDebug.lastSubmitAttempt = "use_my_location_clicked";
@@ -86060,8 +86117,10 @@ window.submitHazardNearMe = function (hazardType) {
           throw new Error("invalid_geolocation_coordinates");
         }
         setGridlyUserLocation({ lat, lng }, { source: "hazard_use_my_location" });
+        recordGovernedRoadHazardReviewStage("location_acquired", { lat, lng });
 
         const snapped = await snapHazardToRoad(lat, lng, { source: "use_my_location" });
+        recordGovernedRoadHazardReviewStage("road_snap_settled", { invalid: Boolean(snapped.invalid), selectedRoadName: snapped.selectedRoadName || "" });
         if (snapped.invalid) {
           const message = "No nearby roadway found. Move closer to a road or tap a road on the map.";
           lastRoadSnapDebug.rawHazardCoordinatesBlockedWhenInvalid = true;
@@ -118340,6 +118399,23 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function buildReportHazardSurfaceHtml() {
+    const readyDraft = governedRoadHazardReportDraft?.reviewState === "ready" ? governedRoadHazardReportDraft : null;
+    if (readyDraft) {
+      const hazardLabel = governedRoadHazardReviewText(HAZARD_TYPES[readyDraft.hazardType]?.label || readyDraft.hazardType);
+      const location = `${readyDraft.finalCoordinate.lat.toFixed(6)}, ${readyDraft.finalCoordinate.lng.toFixed(6)}`;
+      const road = governedRoadHazardReviewText(readyDraft.selectedRoadName || "No roadway name available");
+      recordGovernedRoadHazardReviewStage("review_presented", { hazardType: readyDraft.hazardType, location, selectedRoadName: readyDraft.selectedRoadName || "" });
+      return `<div class="gridly-v2-report-review" data-v2-report-review>
+        <p class="gridly-v2-sheet-copy"><strong>Review your report</strong><span>Confirm these details before sharing with the community.</span></p>
+        <div class="gridly-v2-list">
+          <p class="gridly-v2-sheet-copy" data-v2-review-hazard><strong>Hazard</strong><span>${hazardLabel}</span></p>
+          <p class="gridly-v2-sheet-copy" data-v2-review-location><strong>Report location</strong><span>${location}</span></p>
+          <p class="gridly-v2-sheet-copy" data-v2-review-road><strong>Road</strong><span>${road}</span></p>
+          <button class="primary-btn" data-v2-action="report-confirm-governed-draft" type="button">Submit Report</button>
+          <button class="secondary-btn" data-v2-action="report-cancel-governed-draft" type="button">Back</button>
+        </div>
+      </div>`;
+    }
     const primaryOptionsHtml = V2_REPORT_HAZARD_OPTIONS.map((option) =>
       `<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`
     ).join("");
@@ -119356,6 +119432,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           throw new Error("submit_hazard_near_me_unavailable");
         }
       },
+      "report-confirm-governed-draft": () => {
+        void submitGovernedRoadHazardDraft().catch((error) => {
+          setConfirmation(error?.message || "Report was not submitted. Review the details and try again.", "error");
+        });
+      },
+      "report-cancel-governed-draft": () => {
+        if (!cancelGovernedRoadHazardDraft()) return;
+        selectedV2HazardType = "";
+        selectedQuickHazardType = null;
+        openGridlyPortraitV2Sheet("report");
+      },
       "report-tap-map": () => {
         const resolvedHazardType = resolveSelectedReportHazardType({ allowDefault: true });
         markReportActionCompletionAudit({
@@ -119546,6 +119633,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (isReportV2Action) v2DockAdapterState.lastReportActionResult = "ok";
       const actionManagesOwnSurface = [
         "report-tap-map",
+        "report-confirm-governed-draft",
+        "report-cancel-governed-draft",
         "route-edit-home-open",
         "route-edit-work-open",
         "route-manage-places-open",
