@@ -59259,6 +59259,11 @@ async function loadSharedReports(reason = "manual") {
 
     const normalizeStage = reportStage("local filtering and normalization", { dependency: "normalizeReports" });
     const normalized = normalizeReports(rawRows);
+    normalized.filter(gridlyIsRoadClearedHazardRecord).forEach((clearRecord) => {
+      const targetId = String(clearRecord?.lifecycleIdentity || clearRecord?.explicitLifecycleTargetRaw || "").trim();
+      if (targetId) gridlyCacheClearedHazardAuthority(targetId, clearRecord);
+    });
+    gridlyRecordHazardClearLifecycle("authoritative_rehydration_observed", { reason, rowCount: normalized.length });
     const activeCountyId = gridlyGetActiveCountyId();
     gridlyDevCleanupSharedSuppressionState.lastSuppressedCount = 0;
     const sourceVisibleNormalized = normalized.filter((report) => !gridlyShouldSuppressSharedReportDuringDevCleanup(report, reason));
@@ -85302,6 +85307,10 @@ async function handleUnifiedIncidentAction(button) {
   }
 
   if (action === "cleared") {
+    if (typeof gridlyRecordHazardClearLifecycle === "function") {
+      gridlyRecordHazardClearLifecycle("clear_click_received", { incidentId, category });
+      gridlyRecordHazardClearLifecycle("dispatcher_matched", { incidentId, action });
+    }
     console.debug("Unified cleared action", { category, reportType, crossingId, incidentId });
     if (category === "rail") {
       const crossing = crossings.find((item) => String(item.id) === String(crossingId));
@@ -85318,12 +85327,18 @@ async function handleUnifiedIncidentAction(button) {
         setConfirmation("This community condition could not be matched to its original report.", "error");
         return;
       }
-      await window.clearHazard(
-        communityLifecycleTarget.hazardType,
-        communityLifecycleTarget.lat,
-        communityLifecycleTarget.lng,
-        communityLifecycleTarget.persistedReportId
-      );
+      const previousText = button?.textContent || "Mark Cleared";
+      if (button) { button.disabled = true; button.textContent = "Clearing…"; button.setAttribute?.("aria-busy", "true"); }
+      try {
+        await window.clearHazard(
+          communityLifecycleTarget.hazardType,
+          communityLifecycleTarget.lat,
+          communityLifecycleTarget.lng,
+          communityLifecycleTarget.persistedReportId
+        );
+      } finally {
+        if (button) { button.disabled = false; button.textContent = previousText; button.removeAttribute?.("aria-busy"); }
+      }
       return;
     }
 
@@ -87581,7 +87596,9 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row, op
   });
   let first;
   try {
-    first = await attachAbortSignal(client.from(tableName).insert(insertRow));
+    let firstQuery = client.from(tableName).insert(insertRow);
+    if (tableName === "reports" && row?.report_type === "hazard_cleared" && typeof firstQuery?.select === "function") firstQuery = firstQuery.select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS);
+    first = await attachAbortSignal(firstQuery);
   } catch (error) {
     first = { error };
   }
@@ -87660,6 +87677,29 @@ const gridlyReportSubmissionOwnershipState = {
 };
 
 const gridlyLocalAcceptedHazardRegistrations = new Map();
+const gridlyClearedHazardAuthorityByReportId = new Map();
+const GRIDLY_HAZARD_CLEAR_TIMEOUT_MS = 12000;
+const GRIDLY_HAZARD_CLEAR_DIAGNOSTIC_LIMIT = 80;
+const gridlyHazardClearLifecycleDiagnostics = [];
+function gridlyRecordHazardClearLifecycle(stage, details = {}) {
+  const entry = Object.freeze({ stage, at: new Date().toISOString(), ...details });
+  gridlyHazardClearLifecycleDiagnostics.push(entry);
+  if (gridlyHazardClearLifecycleDiagnostics.length > GRIDLY_HAZARD_CLEAR_DIAGNOSTIC_LIMIT) gridlyHazardClearLifecycleDiagnostics.shift();
+  console.debug("[Gridly clear lifecycle]", entry);
+  return entry;
+}
+function gridlyCacheClearedHazardAuthority(reportId, clearRecord = {}) {
+  const id = String(reportId || "").trim();
+  if (!id) return false;
+  gridlyClearedHazardAuthorityByReportId.set(id, Object.freeze({ reportId: id, clearRecord: { ...clearRecord }, cachedAt: new Date().toISOString() }));
+  gridlyLocalAcceptedHazardRegistrations.delete(id);
+  gridlyRecordHazardClearLifecycle("cleared_authority_cached", { reportId: id });
+  return true;
+}
+function gridlyHazardHasClearedAuthority(record = {}) {
+  const id = gridlyCanonicalReportIdForRecord(record, "");
+  return Boolean(id && gridlyClearedHazardAuthorityByReportId.has(id));
+}
 // LP238 observes only values already owned by the submission workflow. It is
 // intentionally a single bounded last-submission record, not a second store.
 // Window ownership deliberately survives non-navigation script generation changes.
@@ -87780,6 +87820,11 @@ function gridlyMergeAcceptedLocalHazardsIntoActiveInventory(reason = "unspecifie
   let restoredCount = 0;
   gridlyLocalAcceptedHazardRegistrations.forEach((registration, canonicalReportId) => {
     const report = registration?.report;
+    if (report && gridlyHazardHasClearedAuthority(report)) {
+      gridlyLocalAcceptedHazardRegistrations.delete(canonicalReportId);
+      gridlyRecordHazardClearLifecycle("active_projection_excluded", { reportId: canonicalReportId, source: "accepted_local_cache" });
+      return;
+    }
     if (!report || !gridlyRoadHazardRecordExpiresInFuture(report, nowMs)) {
       gridlyLocalAcceptedHazardRegistrations.delete(canonicalReportId);
       return;
@@ -89502,85 +89547,83 @@ function gridlyApplyClearedHazardAwarenessContainment(clearRow = {}) {
   if (typeof updateDailyHabitStatus === "function") updateDailyHabitStatus();
 }
 
-window.clearHazard = async function (hazardType, lat, lng, lifecycleTargetReportId = "") {
-  const lp0534bHazardClearKey = [hazardType, Number(lat).toFixed(4), Number(lng).toFixed(4)].join(":");
+async function gridlyPersistExactHazardClear(row, lifecycleTargetReportId, mutationResult = null) {
+  const insertRow = gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS);
+  gridlyRecordHazardClearLifecycle("mutation_invoked", { reportId: lifecycleTargetReportId });
+  const result = mutationResult || await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
+  if (result?.error) throw result.error;
+  const affectedRows = Array.isArray(result?.data) ? result.data : (result?.data ? [result.data] : []);
+  if (affectedRows.length !== 1) throw new Error("Clear persistence did not confirm one affected row.");
+  const persisted = affectedRows[0];
+  const normalized = normalizeReports([persisted])[0];
+  const returnedTarget = String(normalized?.lifecycleIdentity || normalized?.explicitLifecycleTargetRaw || "").trim();
+  if (returnedTarget !== String(lifecycleTargetReportId || "").trim()) throw new Error("Clear persistence identity mismatch.");
+  if (!gridlyIsRoadClearedHazardRecord(normalized)) throw new Error("Clear persistence returned a non-cleared row.");
+  gridlyRecordHazardClearLifecycle("affected_row_confirmed", { reportId: lifecycleTargetReportId, affectedRowId: persisted.id || null });
+  return normalized;
+}
+
+window.clearHazard = async function (hazardType, lat, lng, lifecycleTargetReportId = "", buttonEl = null) {
+  const targetId = String(lifecycleTargetReportId || "").trim();
+  const lp0534bHazardClearKey = targetId || [hazardType, Number(lat).toFixed(4), Number(lng).toFixed(4)].join(":");
   gridlyLp0534bClearDiagnostics.roadHazardClearClickCount += 1;
   if (gridlyLp0534bClearDiagnostics.roadHazardClearInFlightKeys.has(lp0534bHazardClearKey)) {
     gridlyLp0534bClearDiagnostics.suppressedDuplicateRoadHazardClearCount += 1;
-    return;
+    return false;
   }
   gridlyLp0534bClearDiagnostics.roadHazardClearInFlightKeys.add(lp0534bHazardClearKey);
-  gridlyMarkReportSubmissionRecovery("submitClick", { flow: "hazard_clear", reportType: hazardType });
-  gridlyMarkReportSubmissionRecovery("validationStarted", { flow: "hazard_clear", reportType: hazardType });
-  if (!supabaseClient) {
-    setConfirmation("Reports are not available right now. Please try again soon.", "error");
+  const originalButtonText = buttonEl?.textContent || "Mark Cleared";
+  if (buttonEl) { buttonEl.disabled = true; buttonEl.textContent = "Clearing…"; buttonEl.setAttribute("aria-busy", "true"); }
+  const finishPending = () => {
     gridlyLp0534bClearDiagnostics.roadHazardClearInFlightKeys.delete(lp0534bHazardClearKey);
-    return;
-  }
-
-  const copy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
-  const expiresAt = new Date(Date.now() + 30 * 60000).toISOString();
-
-  const row = {
-    crossing_id: `hazard-cleared-${deviceId}-${Date.now()}`,
-    crossing_name: `${copy.label} Cleared`,
-    railroad: "Road hazard",
-    lat,
-    lng,
-    report_type: "hazard_cleared",
-    severity: "low",
-    detail: `Shared report: ${copy.label} appears cleared.${String(lifecycleTargetReportId || "").trim() ? ` (lifecycle_report_id: ${String(lifecycleTargetReportId).trim()})` : ""}`,
-    source: "user",
-    confidence: "hazard cleared by user",
-    device_id: deviceId,
-    expires_at: expiresAt,
-    ...gridlyGetCountyScopedReportMetadata()
+    if (buttonEl) { buttonEl.disabled = false; buttonEl.textContent = originalButtonText; buttonEl.removeAttribute("aria-busy"); }
   };
-
-  gridlyMarkReportSubmissionRecovery("validationCompleted", { flow: "hazard_clear", reportType: hazardType });
-
+  gridlyMarkReportSubmissionRecovery("submitClick", { flow: "hazard_clear", reportType: hazardType });
+  gridlyRecordHazardClearLifecycle("authoritative_identity_resolved", { reportId: targetId, hazardType });
+  if (!supabaseClient || !targetId || !Number.isFinite(Number(lat)) || !Number.isFinite(Number(lng))) {
+    finishPending();
+    setConfirmation(targetId ? "Reports are not available right now. Please try again soon." : "This community condition could not be matched to its original report.", "error");
+    gridlyRecordHazardClearLifecycle("terminal_failure", { reportId: targetId, reason: "validation" });
+    return false;
+  }
+  const copy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
+  const coordinateCountyResolution = gridlyResolveCountyIdForCoordinate(Number(lat), Number(lng));
+  const countyMetadata = coordinateCountyResolution.countyId ? gridlyGetCountyScopedReportMetadata(coordinateCountyResolution.countyId) : null;
+  if (!countyMetadata) {
+    finishPending(); setConfirmation("Report location is outside Gridly's supported county coverage.", "error");
+    gridlyRecordHazardClearLifecycle("terminal_failure", { reportId: targetId, reason: "county_identity" }); return false;
+  }
+  const row = {
+    crossing_id: `hazard-cleared-${deviceId}-${Date.now()}`, crossing_name: `${copy.label} Cleared`, railroad: "Road hazard",
+    lat: Number(lat), lng: Number(lng), report_type: "hazard_cleared", severity: "low",
+    detail: `Shared report: ${copy.label} appears cleared. (lifecycle_report_id: ${targetId})`, source: "user",
+    confidence: "hazard cleared by user", device_id: deviceId, expires_at: new Date(Date.now() + 30 * 60000).toISOString(), ...countyMetadata
+  };
   try {
-    setSync("Submitting your update…");
-    setConfirmation("Submitting your update…", "success", { persist: true });
-
-    lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_started";
-    lastMobileReportSubmitDebug.supabaseInsertStarted = true;
-    gridlyLp0534bClearDiagnostics.roadHazardClearSubmitStartCount += 1;
-    gridlyMarkReportSubmissionRecovery("writeStarted", { flow: "hazard_clear", reportType: hazardType });
-    const { error } = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
-
-    if (error) throw error;
-    gridlyLp0534bClearDiagnostics.roadHazardClearInsertSuccessCount += 1;
-    gridlyMarkReportSubmissionRecovery("writeCompleted", { flow: "hazard_clear", reportType: hazardType });
-
-    const localClearRows = normalizeReports([{ ...row, created_at: new Date().toISOString() }]);
-    if (localClearRows[0]) {
-      gridlyCaptureHazardHistoryEvent(localClearRows[0], { hazardType, sourceHazards: Array.isArray(activeHazards) ? activeHazards : [] });
-      gridlyTryPassiveHistoryCapturePhase1A({
-        eventType: "report_cleared",
-        hook: "road_hazard.report_cleared",
-        observedAt: new Date().toISOString(),
-        report: localClearRows[0]
-      });
-    }
-
-    gridlyApplyImmediateClearLifecycleConvergence({ kind: "road_hazard", hazardType, normalizedClearRow: localClearRows[0] || row });
-
-    gridlyBetaInstantInteractionState.clearVisualUpdateImmediate = true;
-    setConfirmation(getParticipationAcknowledgementCopy("clear", copy.label), "success");
-    gridlyMarkReportSubmissionRecovery("acknowledgementRendered", { flow: "hazard_clear", reportType: hazardType });
-    gridlyRestoreReportSubmissionInteraction("hazard_clear_success");
-    setSync("Update shared");
-
+    setSync("Submitting your update…"); setConfirmation("Clearing this report…", "success", { persist: true });
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Clear request timed out.")), GRIDLY_HAZARD_CLEAR_TIMEOUT_MS));
+    const clearMutation = gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
+    gridlyRecordHazardClearLifecycle("mutation_invoked", { reportId: targetId });
+    const persistedClear = await Promise.race([clearMutation.then((result) => gridlyPersistExactHazardClear(row, targetId, result)), timeout]);
+    gridlyCacheClearedHazardAuthority(targetId, persistedClear);
+    gridlyCaptureHazardHistoryEvent(persistedClear, { hazardType, sourceHazards: Array.isArray(activeHazards) ? activeHazards : [] });
+    gridlyApplyImmediateClearLifecycleConvergence({ kind: "road_hazard", hazardType, normalizedClearRow: persistedClear });
+    gridlyRecordHazardClearLifecycle("active_projection_excluded", { reportId: targetId, consumers: ["map", "location_context", "alerts", "kbyg"] });
+    setConfirmation(getParticipationAcknowledgementCopy("clear", copy.label), "success"); setSync("Update shared");
+    finishPending();
+    gridlyRecordHazardClearLifecycle("terminal_success", { reportId: targetId });
     runPostSubmitRefreshInBackground({ stages: [] }, () => {}, "clearHazard_success_background_refresh");
-    gridlyLp0534bClearDiagnostics.roadHazardClearInFlightKeys.delete(lp0534bHazardClearKey);
+    return true;
   } catch (error) {
-    gridlyMarkReportSubmissionRecovery("failure", { flow: "hazard_clear", reportType: hazardType, message: error?.message || "unknown_error" });
-    gridlyRestoreReportSubmissionInteraction("hazard_clear_failure");
+    finishPending();
+    const reason = /timed out/i.test(String(error?.message)) ? "timeout" : (/one affected row/i.test(String(error?.message)) ? "zero_or_multiple_rows" : (/identity mismatch/i.test(String(error?.message)) ? "identity_mismatch" : "rejected"));
+    gridlyRecordHazardClearLifecycle("mutation_rejected_timeout_zero_row", { reportId: targetId, reason, message: error?.message || "unknown_error" });
+    gridlyRecordHazardClearLifecycle("terminal_failure", { reportId: targetId, reason });
     console.error("Gridly hazard clear failed:", error);
-    setConfirmation("Your update could not be submitted. Check your connection and try again.", "error");
+    setConfirmation(reason === "timeout" ? "Clearing timed out. The report is still active; please try again." : "This report was not cleared. Please try again.", "error");
     setSync("Update not submitted");
-    gridlyLp0534bClearDiagnostics.roadHazardClearInFlightKeys.delete(lp0534bHazardClearKey);
+    refreshReportHazardViews("hazard_clear_failure_restore");
+    return false;
   }
 };
 function injectHazardStyles() {
