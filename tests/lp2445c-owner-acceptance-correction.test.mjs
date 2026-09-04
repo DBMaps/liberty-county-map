@@ -63,5 +63,5 @@ test("live layout audit reports heading, cards, geometry, viewport and Nearby or
 
 test("corrected browser assets are cache-distinct", () => {
   assert.match(html, /css\/styles\.css\?v=2445c-owner-acceptance-correction/);
-  assert.match(html, /js\/app\.js\?v=2445d-bare-place-interactive-repair/);
+  assert.match(html, /js\/app\.js\?v=2445e-canonical-place-publication-repair/);
 });

@@ -34,10 +34,20 @@ test("Search button and Enter consume governed Dallas and preserve its publicati
   const trace = await page.evaluate(() => window.gridlyDestinationInteractiveSearchTrace());
   expect(trace).toMatchObject({
     governedBarePlaceStatus: "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE",
-    governedBarePlaceConsumed: true
+    governedBarePlaceConsumed: true,
+    runtimeBridgeEligible: false,
+    runtimeBridgeAttempted: false
   });
+  expect(trace.canonicalGovernedCandidateCount).toBeGreaterThan(0);
+  expect(trace.mergedCandidateCount).toBeGreaterThan(0);
+  expect(trace.deduplicatedCandidateCount).toBeGreaterThan(0);
   expect(trace.finalPublishedCandidateCount).toBeGreaterThan(0);
-  expect(trace.finalPublishedCandidates[0]).toMatchObject({ title: "Dallas", provider: "gridly_canonical_place" });
+  expect(trace.finalPublishedCandidates[0]).toMatchObject({
+    title: "Dallas",
+    provider: "gridly_canonical_place",
+    placeGeoid: "4819000",
+    countyMemberships: ["48085", "48113", "48121", "48257", "48397"]
+  });
 
   const input = page.locator("#gridlyAddressSearchInput");
   await input.focus();

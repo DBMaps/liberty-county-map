@@ -71,5 +71,5 @@ test('failure remains a normal row and async enhancement does not rerender or re
 });
 
 test('LP243.F5 enrichment remains published through the current browser asset identity', () => {
-  assert.match(html, /js\/app\.js\?v=2445d-bare-place-interactive-repair/);
+  assert.match(html, /js\/app\.js\?v=2445e-canonical-place-publication-repair/);
 });
