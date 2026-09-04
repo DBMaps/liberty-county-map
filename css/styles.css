@@ -29295,6 +29295,23 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   }
 }
 
+/* LP244.5 owner-approved walkthrough portrait contract. */
+@media (orientation: portrait) {
+  /* Portrait remains the complete, uncropped authority. The intrinsic image
+     ratio is preserved and no presentation transform alters approved art. */
+  .gridly-v950-feature-page .gridly-v896-shot-frame {
+    overflow: visible;
+  }
+
+  .gridly-v950-feature-page .gridly-v896-shot-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: 50% 50%;
+    transform: none;
+  }
+}
+
 /* LP244.5 Task B — physical Android landscape refinement.
    The orientation plus short visual-height gate is intentionally the same
    physical-phone boundary certified by LP244.4. Nothing in this block can
@@ -29422,6 +29439,48 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     gap: 16px;
   }
 
+  /* Owner-approved portrait artwork is intentionally presented through a
+     clipped focal viewport here. A full-image contain treatment made the
+     phone UI unreadably small at the 875x400 acceptance viewport. */
+  .gridly-v950-feature-page .gridly-v896-shot-frame {
+    min-height: 0;
+    height: clamp(190px, 58dvh, 232px);
+    max-height: clamp(190px, 58dvh, 232px);
+    overflow: hidden;
+    border-radius: 18px;
+  }
+
+  .gridly-v950-feature-page .gridly-v896-shot-frame img {
+    min-height: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: cover;
+    object-position: 50% var(--gridly-walkthrough-landscape-focus-y, 45%);
+    filter: none;
+  }
+
+  .gridly-v950-feature-page[data-gridly-approved-slide="kbyg"] { --gridly-walkthrough-landscape-focus-y: 42%; }
+  .gridly-v950-feature-page[data-gridly-approved-slide="nearby"] { --gridly-walkthrough-landscape-focus-y: 52%; }
+  .gridly-v950-feature-page[data-gridly-approved-slide="alerts"] { --gridly-walkthrough-landscape-focus-y: 42%; }
+  .gridly-v950-feature-page[data-gridly-approved-slide="report"] { --gridly-walkthrough-landscape-focus-y: 39%; }
+  .gridly-v950-feature-page[data-gridly-approved-slide="settings"] { --gridly-walkthrough-landscape-focus-y: 38%; }
+
+  .gridly-v950-feature-page .gridly-v950-page-copy {
+    align-self: center;
+    overflow: visible;
+  }
+
+  .gridly-v950-feature-page .gridly-v950-page-copy h3 {
+    font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  .gridly-v950-feature-page .gridly-v950-page-copy p {
+    font-size: 0.86rem !important;
+    line-height: 1.25 !important;
+  }
+
   .gridly-v950-feature-page .gridly-v950-page-copy {
     align-self: center;
     padding-inline: 8px;
@@ -29447,11 +29506,44 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 
   .gridly-v950-setup-page .gridly-v950-page-copy { align-self: center; text-align: left; }
   .gridly-v950-setup-page .gridly-v950-page-copy p { margin-inline: 0; }
+  .gridly-v950-setup-page .gridly-v950-page-copy h3 {
+    font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+    line-height: 1.08;
+  }
   .gridly-v950-setup-page .gridly-v858-location-panel {
     align-self: center;
     max-height: 100%;
-    overflow-y: auto;
-    padding-block: 10px;
+    overflow-y: visible;
+    gap: 5px;
+    padding: 7px 10px;
+  }
+
+  .gridly-v950-setup-page .gridly-v858-location-note {
+    margin: 0;
+    font-size: 0.74rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .gridly-v950-setup-page .gridly-v858-manual-location {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 5px 8px;
+  }
+
+  .gridly-v950-setup-page .gridly-v858-manual-location label {
+    grid-column: 1 / -1;
+    font-size: 0.75rem;
+  }
+
+  .gridly-v950-setup-page :is(.primary-btn, .secondary-btn, .gridly-v858-manual-location input) {
+    min-height: 38px;
+    border-radius: 12px;
+    font-size: 0.82rem;
+  }
+
+  .gridly-v950-setup-page .gridly-v858-manual-location .secondary-btn {
+    width: auto;
+    min-width: 88px;
+    padding-inline: 14px;
   }
 
   /* An open section is the active task. Let it consume both workspace

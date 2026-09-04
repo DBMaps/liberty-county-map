@@ -18,13 +18,21 @@ assert(appSource.includes('id="gridlyV858UseLocationBtn"'), 'Use My Location rem
 assert(appSource.includes('bindGridlyV872FirstRunActivation(useLocationButton, "use-location"'), 'Use My Location remains wired to existing handler');
 assert(appSource.includes('id="gridlyV858ManualLocationForm"'), 'manual setup form remains present');
 assert(appSource.includes('manualForm?.addEventListener("submit"'), 'manual setup remains wired to existing handler');
-for (const key of ['awareness', 'map', 'alerts', 'report', 'settings']) {
-  assert(appSource.includes(`assets/onboarding/${key}-hero.png`), `${key} asset remains referenced`);
+const approvedAssets = {
+  awareness: 'gridly-walkthrough-kbyg.png',
+  map: 'gridly-walkthrough-nearby.png',
+  alerts: 'gridly-walkthrough-alerts.png',
+  report: 'gridly-walkthrough-report.png',
+  settings: 'gridly-walkthrough-settings.png'
+};
+for (const [key, asset] of Object.entries(approvedAssets)) {
+  assert(appSource.includes(`assets/walkthrough/${asset}`), `${key} owner-approved asset remains referenced`);
   assert(styleSource.includes(`data-gridly-visual-tour-card="${key}"`), `${key} has feature-specific focal positioning`);
 }
 assert(/\.gridly-v950-tour-page[\s\S]*grid-template-rows:\s*auto minmax\(0, 1fr\)/.test(styleSource), 'feature pages reserve most space for the visual');
 assert(/\.gridly-v950-tour-page \.gridly-v896-shot-frame[\s\S]*min-height:\s*min\(6[68]vh/.test(styleSource), 'feature visuals receive substantially more presentation space');
-assert(/object-fit:\s*contain/.test(styleSource), 'feature images show the full phone without stretching');
+assert(/@media \(orientation: portrait\)[\s\S]*object-fit:\s*contain/.test(styleSource), 'portrait feature images show the complete artwork without stretching');
+assert(/@media \(orientation: landscape\) and \(max-height: 500px\)[\s\S]*object-fit:\s*cover/.test(styleSource), 'short landscape uses an intentional readable focal crop');
 const immersiveCss = styleSource.slice(styleSource.indexOf('/* LP050.2'));
 const finalArtDirectionCss = styleSource.slice(styleSource.indexOf('/* LP050.5'));
 assert(!/\.gridly-v950-feature-page[^{]*\{[^}]*overflow-y:\s*auto/.test(immersiveCss), 'feature pages do not revert to long vertical scrolling');
