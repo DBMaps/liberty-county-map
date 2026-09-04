@@ -52974,6 +52974,16 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
   // active coordinate-owned hazards are presentation evidence in their own right.
   const directActiveHazards = getGridlyAwarenessLifecycleActiveHazards(sourceHazards);
   const activeHazardItems = userFacingRoadHazardIncidents.length ? userFacingRoadHazardIncidents : directActiveHazards;
+  // LP244.5: the governed KBYG projection is selected-area authority, not a
+  // presentation cache.  Rejoin its community records before geographic
+  // summary assembly so a crossing projection cannot be present in
+  // Alerts/KBYG while disappearing from the authoritative summary merely
+  // because the mutable activeReports collection is between refreshes.
+  const governedCommunityReports = (typeof gridlyGetGovernedActiveAwarenessRows === "function"
+    ? gridlyGetGovernedActiveAwarenessRows()
+    : [])
+    .filter((row) => String(row?.evidenceId || "").startsWith("community_report:"))
+    .map((row) => ({ ...(row.record || {}), governedEvidenceId: row.evidenceId, evidenceId: row.evidenceId }));
   const activeReportItems = getGridlyAwarenessLifecycleActiveReports(sourceReports);
   const crossingsInArea = getGridlyHomeTownCrossings(selectedArea);
   const missingCoordinateRecords = { activeHazards: 0, activeReports: 0 };
@@ -52990,7 +53000,14 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
   };
 
   const activeHazardsInArea = activeHazardItems.filter((record) => filterAreaRecord(record, "activeHazards"));
-  const activeReportsInArea = activeReportItems.filter((record) => filterAreaRecord(record, "activeReports"));
+  const filteredActiveReports = activeReportItems.filter((record) => filterAreaRecord(record, "activeReports"));
+  const activeReportsInArea = [...new Map([
+    ...filteredActiveReports,
+    ...governedCommunityReports
+  ].map((record, index) => [
+    window.gridlyGovernedActiveConditionParity?.canonicalIdentity?.(record) || `report:${index}`,
+    record
+  ])).values()];
   const awarenessClassification = typeof gridlyBuildAwarenessClassificationAudit === "function"
     ? gridlyBuildAwarenessClassificationAudit({
         activeHazards: activeHazardsInArea,
@@ -63979,6 +63996,8 @@ function isGridlyTopAwarenessMeaningfulMobilityDetail(detail = {}) {
 
 function getGridlyTopAwarenessIncidentStableKey(detail = {}) {
   const item = detail?.item && typeof detail.item === "object" ? detail.item : (detail || {});
+  const governedConditionId = window.gridlyGovernedActiveConditionParity?.canonicalIdentity?.(item);
+  if (governedConditionId) return governedConditionId;
   const idFields = [
     item?.incidentId, item?.incident_id, item?.reportId, item?.report_id, item?.id, item?.uuid, item?.key,
     item?.raw?.incidentId, item?.raw?.incident_id, item?.raw?.reportId, item?.raw?.report_id, item?.raw?.id, item?.raw?.uuid
@@ -64262,12 +64281,13 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
       : alertsSurfaceActiveCommunityReportCount || activeHazardSourceCount);
   const activeReportCount = activeReportItems.length;
   const renderedMarkerCount = getGridlyLightweightRenderedMarkerCount();
-  const activeAwarenessCount = activeItems.length;
+  const canonicalActiveConditions = window.gridlyGovernedActiveConditionParity?.reconcile?.(topAwarenessEligibleDetails);
+  const activeAwarenessCount = canonicalActiveConditions?.canonicalConditionCount ?? activeItems.length;
   const topAwarenessAlertCount = Array.isArray(options?.alerts)
     ? options.alerts.length
     : (Array.isArray(typeof window !== "undefined" ? window.__gridlyLatestAlertsForRender : null) ? window.__gridlyLatestAlertsForRender.length : 0);
   const topAwarenessCountAudit = buildGridlyTopAwarenessDedupedMobilityCount(topAwarenessEligibleDetails, {
-    rawActiveAwarenessCount: activeAwarenessCount,
+    rawActiveAwarenessCount: activeItems.length,
     activeHazardCount: activeHazardSourceCount,
     activeReportCount,
     alertCount: topAwarenessAlertCount
@@ -64410,6 +64430,7 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     topAwarenessActiveReportCount: topAwarenessCountAudit.activeReportCount,
     topAwarenessAlertCount: topAwarenessCountAudit.alertCount,
     topAwarenessDedupedMobilityCount,
+    topAwarenessCanonicalIds: canonicalActiveConditions?.canonicalIds || topAwarenessCountAudit.breakdown.acceptedSamples.map((sample) => sample.key),
     topAwarenessCountBreakdown: topAwarenessCountAudit.breakdown,
     topAwarenessDuplicateSuppressionCount: topAwarenessCountAudit.duplicateSuppressionCount,
     topAwarenessCountFallbackReason: topAwarenessCountAudit.fallbackReason,
@@ -65846,6 +65867,29 @@ function buildGridlyCommunityPulseModel(options = {}) {
   };
 }
 
+
+// LP244.5 read-only owner shortcut. It consumes published authorities and does
+// not mutate lifecycle, geography, or presentation state.
+function gridlyGovernedActiveConditionParityAudit() {
+  const governed = gridlyGetGovernedActiveAwarenessRows();
+  const pulse = gridlyCommunityPulseAuditState || {};
+  const activeAwareness = pulse.activeAwareness || window.gridlyTopAwarenessMicrolineState?.activeAwareness || {};
+  const summary = pulse.communityAwarenessSummary || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary || {};
+  const brief = window.gridlyAwarenessBriefIntelligenceModel || {};
+  const locationContextCount = Number(document.querySelector?.('[data-v2-location-awareness="panel"]')?.dataset?.activeAwarenessCount || 0);
+  const topRepresentations = (activeAwareness.topAwarenessCanonicalIds || []).map((evidenceId) => ({ evidenceId }));
+  return window.gridlyGovernedActiveConditionParity.audit({
+    selectedArea: summary.selectedAwarenessArea || getGridlyAwarenessAreaDebugOption(getGridlySelectedAwarenessArea()),
+    governed,
+    alerts: getGridlyAlertsSurfaceActiveCommunityReportRows({ skipLocalizedFallback: true }),
+    kbyg: governed,
+    communitySummary: summary.activeReportsInArea || [],
+    topAwarenessRepresentations: topRepresentations,
+    awarenessBriefState: brief.state || (Number(activeAwareness.activeAwarenessCount || 0) > 0 ? "active" : "quiet"),
+    locationContextCount
+  });
+}
+window.gridlyGovernedActiveConditionParityAudit = gridlyGovernedActiveConditionParityAudit;
 
 function getGridlyAlertCardHistoricalContextLine(alert = {}) {
   const adapter = typeof window !== "undefined" ? window.gridlyHistoricalAwarenessAdapter : globalThis.gridlyHistoricalAwarenessAdapter;
@@ -112359,7 +112403,13 @@ function getGridlyAwarenessBriefActiveState({ intel = {}, pulseModel = {} } = {}
   const snapshot = typeof window !== "undefined" && typeof window.getAlertsSurfaceSnapshot === "function"
     ? window.getAlertsSurfaceSnapshot()
     : null;
-  const alertsSurfaceUserFacingClear = isGridlyAlertsSurfaceUserFacingClear(snapshot);
+  const governedActiveCount = Math.max(
+    0,
+    Number(pulseModel?.activeAwareness?.topAwarenessDedupedMobilityCount || 0),
+    Array.isArray(pulseModel?.activeAwareness?.governedKbygEvidenceIds) ? pulseModel.activeAwareness.governedKbygEvidenceIds.length : 0,
+    Array.isArray(pulseModel?.communityAwarenessSummary?.activeReportsInArea) ? pulseModel.communityAwarenessSummary.activeReportsInArea.length : 0
+  );
+  const alertsSurfaceUserFacingClear = isGridlyAlertsSurfaceUserFacingClear(snapshot) && governedActiveCount === 0;
   const latestAlerts = typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
     ? window.__gridlyLatestAlertsForRender
     : [];
@@ -112377,7 +112427,8 @@ function getGridlyAwarenessBriefActiveState({ intel = {}, pulseModel = {} } = {}
     ?? 0
   ) || 0);
   const activeAlertLength = alerts.length;
-  const activeCountsAreClear = activeIncidentCount === 0
+  const activeCountsAreClear = governedActiveCount === 0
+    && activeIncidentCount === 0
     && activeLocalizedAlertCount === 0
     && activeAlertLength === 0
     && activeHazardSourceCount === 0;
@@ -112387,6 +112438,7 @@ function getGridlyAwarenessBriefActiveState({ intel = {}, pulseModel = {} } = {}
     activeLocalizedAlertCount,
     activeAlertLength,
     activeHazardSourceCount,
+    governedActiveCount,
     alertVisibleActiveIncidentCount,
     alertsSurfaceUserFacingClear
   };
