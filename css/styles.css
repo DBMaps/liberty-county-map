@@ -12695,6 +12695,8 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   }
 }
 
+
+
 /* Physical Android closure: Settings choices are Gridly-owned radiogroups,
    never WebView's unthemeable expanded SELECT popup. */
 .gridly-governed-select-source {
@@ -29280,6 +29282,124 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     bottom: calc(var(--gridly-portrait-map-attribution-bottom-clearance, 0px) + 30px);
   }
 }
+
+/* LP244.5 Task B — physical Android landscape refinement.
+   The orientation plus short visual-height gate is intentionally the same
+   physical-phone boundary certified by LP244.4. Nothing in this block can
+   participate in the authoritative portrait composition. */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* First-run used a portrait-sized (66vh) artwork row beneath the brand.
+     Give the welcome brand and copy independent columns instead of making
+     both compete for the short block axis. */
+  .gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]) {
+    width: min(760px, calc(100vw - 24px));
+    height: calc(var(--gridly-visual-vh, 100dvh) - 12px);
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - 12px);
+    overflow: hidden;
+  }
+
+  .gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+    box-sizing: border-box;
+    height: 100%;
+    max-height: 100%;
+    padding: max(6px, env(safe-area-inset-top, 0px)) 12px max(6px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .gridly-v950-welcome-page {
+    grid-template-columns: minmax(132px, 0.72fr) minmax(0, 1.28fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: center;
+    align-content: center;
+    column-gap: 22px;
+    padding: 4px 24px;
+  }
+
+  .gridly-v950-welcome-logo {
+    grid-column: 1;
+    width: min(22vw, 174px);
+    margin: 0;
+  }
+
+  .gridly-v950-welcome-page .gridly-v950-page-copy {
+    grid-column: 2;
+    align-self: center;
+    text-align: left;
+  }
+
+  .gridly-v950-welcome-page .gridly-v950-page-copy :is(p, h2) {
+    margin-inline: 0;
+  }
+
+  .gridly-v950-tour-page .gridly-v896-shot-frame,
+  .gridly-v950-tour-page .gridly-v896-shot-frame img {
+    min-height: 0;
+    max-height: min(48dvh, 190px);
+  }
+
+  /* An open section is the active task. Let it consume both workspace
+     columns while closed siblings retain the accepted two-column scan. */
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet {
+    gap: 6px 10px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    .gridly-settings-sheet > .settings-list-section[open] {
+    grid-column: 1 / -1;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] > header {
+    min-height: 40px;
+    margin-bottom: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] #gridlyPortraitV2SheetBody {
+    scroll-padding-block: 6px 14px;
+    padding-bottom: 10px !important;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-detail {
+    padding-block: 8px;
+  }
+
+  /* visualViewport drives --gridly-visual-vh. While the destination input is
+     focused, bound the dialog to that native-keyboard-reduced viewport and
+     make results (not the Nearby/map chrome behind it) own remaining space. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within {
+    top: max(6px, env(safe-area-inset-top, 0px));
+    bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    display: flex;
+    width: min(720px, calc(100vw - 24px));
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - 12px);
+    margin-inline: auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-card {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    padding: 10px 12px;
+    border-radius: 18px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-header {
+    flex: 0 0 auto;
+    margin-bottom: 6px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-subtitle {
+    display: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-results {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    scroll-padding-block: 6px;
+  }
+}
+/* End LP244.5 Task B landscape refinement. */
 
 /* Android physical-launch closure: the portrait awareness variant previously
    inherited V250.8C's five reserved copy rows and a 104px minimum even when
