@@ -19,12 +19,10 @@ test("short landscape map removes only its redundant frame while preserving map 
   assert.match(app, /Location Context/);
 });
 
-test("feature art is larger and setup is composed only in short landscape", () => {
-  assert.match(landscape, /\.gridly-v950-feature-page\s*\{[\s\S]*grid-template-columns:[\s\S]*grid-template-rows: minmax\(0, 1fr\)/);
-  assert.match(landscape, /gridly-v950-feature-page \.gridly-v896-shot-frame[\s\S]*min-height: min\(58dvh, 220px\)[\s\S]*max-height: min\(66dvh, 250px\)/);
-  assert.match(landscape, /\.gridly-v950-setup-page\s*\{[\s\S]*grid-template-columns:[\s\S]*overflow-y: hidden/);
-  assert.match(landscape, /gridly-v950-setup-page \.gridly-v858-location-panel[\s\S]*max-height: 100%[\s\S]*overflow-y: auto/);
-  assert.match(landscape, /\.gridly-v950-welcome-page[\s\S]*grid-template-columns/);
+test("walkthrough composition no longer participates in short landscape", () => {
+  assert.doesNotMatch(landscape, /\.gridly-v950-(?:feature|setup|welcome)-page/);
+  assert.match(css, /data-gridly-walkthrough-orientation-gated="true"[\s\S]*\.gridly-v950-onboarding-pager[\s\S]*display: none !important/);
+  assert.match(app, /onboardingPager\.inert = shouldGate/);
   assert.doesNotMatch(landscape, /orientation:\s*portrait/);
 });
 
@@ -50,9 +48,9 @@ test("published destination outcomes take space before reflow and still recover 
   assert.match(landscape, /#gridlySearchShell:not\(\[hidden\]\):focus-within/);
 });
 
-test("asset identity invalidates the pre-Task-C browser shell", () => {
-  assert.match(html, /css\/styles\.css\?v=2445-final-control-polish/);
-  assert.match(html, /js\/app\.js\?v=2445e-canonical-place-publication-repair/);
+test("asset identity invalidates the pre-gate browser shell", () => {
+  assert.match(html, /css\/styles\.css\?v=2445-portrait-walkthrough-gate/);
+  assert.match(html, /js\/app\.js\?v=2445-portrait-walkthrough-gate/);
   assert.match(sw, /GRIDLY_SW_VERSION = "lp244\.5d-bare-place-interactive-repair"/);
   assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445d-v1"/);
   assert.match(sw, /cache: "no-store"/);

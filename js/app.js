@@ -50477,8 +50477,11 @@ function openGridlyWelcomeOnboarding(options = {}) {
   document.body.classList.add("modal-open", "gridly-welcome-open");
   syncModalScrollLock();
   document.body.classList.add("gridly-v858-first-run-open");
+  overlay.__gridlySyncWalkthroughOrientationGate?.();
   requestAnimationFrame(() => {
-    const firstButton = overlay.querySelector("#gridlyV858UseLocationBtn, button:not([hidden]):not(:disabled)");
+    const firstButton = overlay.dataset.gridlyWalkthroughOrientationGated === "true"
+      ? overlay.querySelector("[data-gridly-walkthrough-orientation-gate]")
+      : overlay.querySelector("#gridlyV858UseLocationBtn, button:not([hidden]):not(:disabled)");
     firstButton?.focus?.({ preventScroll: true });
   });
   return true;
@@ -50828,11 +50831,18 @@ function renderGridlyV858FirstRunExperience(overlay) {
     delete overlay.dataset.gridlyV858FirstRun;
   }
   if (overlay.dataset.gridlyV858FirstRun === "1") return;
+  overlay.__gridlyWalkthroughOrientationCleanup?.();
   overlay.dataset.gridlyV858FirstRun = "1";
   overlay.innerHTML = `
     <div class="gridly-welcome-backdrop" id="gridlyWelcomeBackdrop"></div>
     <section class="gridly-welcome-sheet gridly-v858-first-run-sheet" role="dialog" aria-modal="true" aria-labelledby="gridlyV858FirstRunTitle" aria-describedby="gridlyV858FirstRunCopy">
       <div class="gridly-v858-first-run-card">
+        <section class="gridly-v950-orientation-gate" data-gridly-walkthrough-orientation-gate role="status" aria-live="polite" aria-labelledby="gridlyV950OrientationTitle" aria-describedby="gridlyV950OrientationCopy" tabindex="-1" hidden>
+          <div class="gridly-v950-rotate-symbol" aria-hidden="true"><span></span></div>
+          <p class="gridly-v950-orientation-brand">Gridly Quick Tour</p>
+          <h2 id="gridlyV950OrientationTitle">Rotate your phone</h2>
+          <p id="gridlyV950OrientationCopy">Gridly’s quick tour is designed for portrait viewing.</p>
+        </section>
         <div class="gridly-v894c3-tour-scroll gridly-v950-onboarding-pager" data-gridly-quick-tour-scroll data-gridly-quick-tour-scroll-enabled="true" data-gridly-quick-tour-no-clipping="true" tabindex="0" role="region" aria-label="Quick Tour cards and setup">
           <div class="gridly-v894c2-tour-cards gridly-v950-page-track" id="gridlyV894C2TourCards" data-gridly-beta-first-run-walkthrough data-gridly-quick-tour data-gridly-visual-quick-tour data-gridly-onboarding-page-track>
             <article class="gridly-v894c2-tour-card gridly-v896-visual-tour-card gridly-v950-tour-page gridly-v950-welcome-page" data-gridly-tour-card="welcome" data-gridly-onboarding-page="welcome"><div class="gridly-v950-welcome-logo"><img src="assets/store/branding/Logos/gridly-logo-vertical.png" alt="Gridly logo" loading="eager" decoding="async" /></div><div class="gridly-v950-page-copy"><h2 id="gridlyV858FirstRunTitle">Welcome to Gridly</h2><p class="gridly-v858-first-run-tagline">Know Before You Go.</p><p id="gridlyV858FirstRunCopy">Local conditions, official signals, and community reports in one awareness-first view.</p></div></article>
@@ -50867,12 +50877,54 @@ function renderGridlyV858FirstRunExperience(overlay) {
     </section>`;
 
   const pageTrack = overlay.querySelector("[data-gridly-onboarding-page-track]");
+  const onboardingPager = overlay.querySelector("[data-gridly-quick-tour-scroll]");
+  const orientationGate = overlay.querySelector("[data-gridly-walkthrough-orientation-gate]");
+  const onboardingDialog = overlay.querySelector(".gridly-v858-first-run-sheet");
   const pages = Array.from(overlay.querySelectorAll("[data-gridly-onboarding-page]"));
   const indicators = overlay.querySelector("#gridlyV950PageIndicators");
   const backButton = overlay.querySelector("#gridlyV950BackBtn");
   const nextButton = overlay.querySelector("#gridlyV950NextBtn");
   const finishButton = overlay.querySelector("#gridlyV894C2FirstRunFinishBtn");
   let activePageIndex = 0;
+  let orientationGateActive = false;
+  let preGateFocus = null;
+  const isNativeApp = () => Boolean(
+    window.Capacitor?.isNativePlatform?.()
+    || ["android", "ios"].includes(String(window.Capacitor?.getPlatform?.() || "").toLowerCase())
+  );
+  const isMobileWalkthroughDevice = () => isNativeApp()
+    || window.matchMedia?.("(hover: none) and (pointer: coarse) and (max-width: 1100px)")?.matches === true;
+  const syncWalkthroughOrientationGate = () => {
+    const isLandscape = window.matchMedia?.("(orientation: landscape)")?.matches
+      ?? (window.innerWidth > window.innerHeight);
+    const shouldGate = !overlay.hidden && isLandscape && isMobileWalkthroughDevice();
+    if (shouldGate === orientationGateActive) return;
+    orientationGateActive = shouldGate;
+    overlay.dataset.gridlyWalkthroughOrientationGated = shouldGate ? "true" : "false";
+    orientationGate.hidden = !shouldGate;
+    orientationGate.setAttribute("aria-hidden", shouldGate ? "false" : "true");
+    onboardingPager.inert = shouldGate;
+    onboardingPager.setAttribute("aria-hidden", shouldGate ? "true" : "false");
+    onboardingDialog.setAttribute("aria-labelledby", shouldGate ? "gridlyV950OrientationTitle" : "gridlyV858FirstRunTitle");
+    onboardingDialog.setAttribute("aria-describedby", shouldGate ? "gridlyV950OrientationCopy" : "gridlyV858FirstRunCopy");
+    if (shouldGate) {
+      preGateFocus = overlay.contains(document.activeElement) ? document.activeElement : null;
+      orientationGate.focus({ preventScroll: true });
+    } else if (!overlay.hidden) {
+      (preGateFocus?.isConnected ? preGateFocus : pages[activePageIndex])?.focus?.({ preventScroll: true });
+      preGateFocus = null;
+    }
+  };
+  const orientationMedia = window.matchMedia?.("(orientation: landscape)");
+  const mobileMedia = window.matchMedia?.("(hover: none) and (pointer: coarse) and (max-width: 1100px)");
+  orientationMedia?.addEventListener?.("change", syncWalkthroughOrientationGate);
+  mobileMedia?.addEventListener?.("change", syncWalkthroughOrientationGate);
+  window.addEventListener("resize", syncWalkthroughOrientationGate, { passive: true });
+  overlay.__gridlyWalkthroughOrientationCleanup = () => {
+    orientationMedia?.removeEventListener?.("change", syncWalkthroughOrientationGate);
+    mobileMedia?.removeEventListener?.("change", syncWalkthroughOrientationGate);
+    window.removeEventListener("resize", syncWalkthroughOrientationGate);
+  };
   const setActiveOnboardingPage = (index, { scroll = true } = {}) => {
     if (!pages.length) return;
     activePageIndex = Math.max(0, Math.min(index, pages.length - 1));
@@ -50906,6 +50958,7 @@ function renderGridlyV858FirstRunExperience(overlay) {
     }, 80);
   }, { passive: true });
   setActiveOnboardingPage(0, { scroll: false });
+  overlay.__gridlySyncWalkthroughOrientationGate = syncWalkthroughOrientationGate;
   const status = overlay.querySelector("#gridlyV858FirstRunStatus");
   const input = overlay.querySelector("#gridlyV858LocationInput");
   const showFallback = (message = "No problem. Location is optional — enter a ZIP code or town name to get started.") => {

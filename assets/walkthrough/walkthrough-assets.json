@@ -2,7 +2,9 @@
   "contract": "LP244.5 owner-approved walkthrough artwork",
   "runtimeReferenceCompositeAllowed": false,
   "portraitAuthority": "Complete approved artwork; intrinsic aspect ratio preserved with object-fit: contain.",
-  "shortLandscapeAuthority": "Bounded overflow-hidden focal viewport using object-fit: cover; navigation remains outside artwork.",
+  "orientationAuthority": "portrait",
+  "landscapeBehavior": "rotate_to_portrait_gate",
+  "landscapeFeatureCropping": "superseded_by_portrait_only_walkthrough_decision",
   "slides": [
     {
       "id": "kbyg",
