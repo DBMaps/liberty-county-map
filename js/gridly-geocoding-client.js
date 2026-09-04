@@ -8,6 +8,7 @@
   let lastDiagnosticTrace = null;
   const endpointOrigin = "https://nhwhkbkludzkuyxmkkcj.supabase.co";
   const functionSlug = "gridly-geocode";
+  const requestContractVersion = "gridly-geocode-v1";
   const canonicalStatuses = new Set(["success", "no_results", "rate_limited", "provider_unavailable", "provider_timeout", "invalid_request", "configuration_error"]);
 
   function addEvidence(fields) {
@@ -158,8 +159,13 @@
     const failureCode = response.status === 404 ? "function_missing" : response.status === 401 ? "client_unauthorized"
       : response.status >= 500 ? "edge_server_error" : !canonical ? "malformed_response" : (canonicalFailure ? payload.status : "");
     addEvidence({ intentType: request.intent, httpStatus: response.status, requestSucceeded: response.ok, canonicalSuccess, canonicalFailure, failureCode, providerBoundaryUsed: canonical });
-    if (!canonical) return { ok: false, status: "provider_unavailable", providerBoundary: "gridly", retryAfterSeconds: null, requestId, results: [] };
+    const transport = Object.freeze({ requestAttempted: true, httpStatus: response.status,
+      requestContractVersion, providerResponseReceived: canonical && response.status !== 400,
+      providerCandidateCount: canonical && Array.isArray(payload.results) ? payload.results.length : 0,
+      failureCode });
+    if (!canonical) return { ok: false, status: "provider_unavailable", providerBoundary: "gridly", retryAfterSeconds: null, requestId, results: [], transport };
     const normalized = { ...payload };
+    Object.defineProperty(normalized, "transport", { value: transport, enumerable: false });
     const diagnostics = internalDiagnostics(payload, ["lp102_certification", "lp103_certification", "lp104_certification"].includes(request.requestMode));
     if (diagnostics) Object.defineProperty(normalized, "diagnostics", { value: diagnostics, enumerable: false });
     lastDiagnosticTrace = Object.freeze({ requestMode: request.requestMode || "explicit_search",
@@ -169,7 +175,7 @@
   }
 
   global.gridlyGeocodingClient = Object.freeze({
-    endpoint, functionSlug, search, canonicalToLegacy, failureMessages,
+    endpoint, functionSlug, requestContractVersion, search, canonicalToLegacy, failureMessages,
     evidence: () => runtimeEvidence.map((item) => ({ ...item })),
     directProviderRequestCount: () => directProviderRequestCount,
     diagnosticTrace: () => lastDiagnosticTrace ? { ...lastDiagnosticTrace } : null

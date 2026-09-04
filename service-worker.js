@@ -1,5 +1,5 @@
 const GRIDLY_SW_VERSION = "lp244.5d-bare-place-interactive-repair";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445d-v1";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445e-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",

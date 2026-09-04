@@ -25263,6 +25263,7 @@ let storageClearedDuringFailedSave = false;
 let failedSaveDidMutateStorage = false;
 let lastSaveFailureReason = null;
 let gridlyLastSavedAddressResolution = null;
+let gridlySavedPlaceMigrationStarted = false;
 let saveButtonHandlerAttached = false;
 let routePreviewRendered = false;
 let routePreviewLayerExists = false;
@@ -90782,6 +90783,7 @@ function setReportMode(mode) {
 
 function bindEvents() {
   migrateLegacyStorage();
+  void revalidateLegacySavedPlaces();
   // Control ownership helpers: mode-scoped visible controls, shared behavior helpers.
   const bindSharedCoreControls = () => {
     if (document.body.dataset.gridlySharedCoreBound === "1") return;
@@ -93692,6 +93694,7 @@ function getSavedPlacesState() {
 window.gridlySavedAddressIntegrityAudit = function gridlySavedAddressIntegrityAudit() {
   const state = getSavedPlacesState();
   const summarize = (place) => place ? {
+    persisted: true,
     address: place.address || "",
     coordinates: normalizeCoordinatePair(place.lat, place.lng),
     coordinateSource: place.coordinateSource || "unknown",
@@ -93700,17 +93703,25 @@ window.gridlySavedAddressIntegrityAudit = function gridlySavedAddressIntegrityAu
     localityEvidence: place.localityEvidence || "not_available",
     zipEvidence: place.zipEvidence || "not_available",
     stateEvidence: place.stateEvidence || "not_available",
-    routeEligible: isConfiguredPlace(place)
-  } : null;
+    verificationState: isConfiguredPlace(place) ? "verified" : "needs_verification",
+    routeEligible: isConfiguredPlace(place),
+    needsRevalidation: window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT?.needsLegacyRevalidation?.(place) === true,
+    migrationAttempted: place.migrationAttempted === true,
+    migrationResult: place.migrationResult || "not_attempted"
+  } : { persisted: false, verificationState: "not_saved", routeEligible: false,
+    needsRevalidation: false, migrationAttempted: false, migrationResult: "not_applicable" };
   const home = summarize(state.home);
   const work = summarize(state.work);
-  const present = [home, work].filter(Boolean);
+  const present = [home, work].filter((place) => place.persisted);
+  const lastResolution = gridlyLastSavedAddressResolution ? { ...gridlyLastSavedAddressResolution } : null;
+  const resolutionContractHealthy = !lastResolution || (!lastResolution.requestAttempted
+    ? lastResolution.rejectionReason === "locality_required"
+    : lastResolution.providerResponseReceived === true && Number(lastResolution.httpStatus) >= 200 && Number(lastResolution.httpStatus) < 300);
   return Object.freeze({
     contract: "GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT",
     home, work,
-    lastResolution: gridlyLastSavedAddressResolution ? { ...gridlyLastSavedAddressResolution } : null,
-    overallPass: present.every((place) => place.routeEligible && (place.coordinateSource !== "geocode"
-      || (place.resolutionStatus === "success" && place.validationStatus === "passed")))
+    lastResolution,
+    overallPass: resolutionContractHealthy && present.every((place) => place.routeEligible || place.migrationAttempted)
   });
 };
 function isLegacyPlace(place) {
@@ -93739,6 +93750,25 @@ function migrateLegacyStorage() {
     changed = true;
   }
   if (changed) saveSavedPlacesState(state);
+}
+
+async function revalidateLegacySavedPlaces() {
+  if (gridlySavedPlaceMigrationStarted) return;
+  gridlySavedPlaceMigrationStarted = true;
+  const contract = window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT;
+  if (typeof contract?.revalidateLegacyPlace !== "function" || typeof window.gridlyGeocodingClient?.search !== "function") return;
+  const state = getSavedPlacesState();
+  for (const slot of ["home", "work"]) {
+    const place = state[slot];
+    if (!contract.needsLegacyRevalidation(place) || place.migrationAttempted === true) continue;
+    const outcome = await contract.revalidateLegacyPlace({ place,
+      search: (request) => window.gridlyGeocodingClient.search(request) });
+    state[slot] = outcome.place;
+    gridlyLastSavedAddressResolution = outcome.resolution || gridlyLastSavedAddressResolution;
+    // Persist after each bounded attempt so Home and Work remain independent if a later request fails.
+    saveSavedPlacesState(state);
+  }
+  if (typeof refreshSavedPlaceSurfacesAfterSave === "function") refreshSavedPlaceSurfacesAfterSave("legacy-revalidation");
 }
 
 function saveSavedPlacesState(nextState) {
@@ -93777,7 +93807,7 @@ function normalizeSavedPlaces(input = null) {
     const address = String(place.address || fallback.address || "").trim();
     const lat = Number(place.lat);
     const lng = Number(place.lng);
-    return {
+    const normalized = {
       ...place,
       id: id || (type === "home" || type === "work" ? type : `custom-${Date.now()}`),
       type: type || "custom",
@@ -93787,6 +93817,12 @@ function normalizeSavedPlaces(input = null) {
       lng: Number.isFinite(lng) ? lng : null,
       coordinateSource: String(place.coordinateSource || fallback.coordinateSource || "unknown")
     };
+    if (window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT?.needsLegacyRevalidation?.(normalized)) {
+      normalized.resolutionStatus = "legacy_requires_revalidation";
+      normalized.validationStatus = "legacy_requires_revalidation";
+      normalized.routeEligible = false;
+    }
+    return normalized;
   };
 
   if (Array.isArray(raw)) {
@@ -100310,6 +100346,11 @@ function resolveGridlySettingsAddressObjectDisplay(addressObject = null) {
 }
 
 function resolveGridlySettingsPlaceDisplay(place, fallbackLabel = "Saved Place") {
+  const needsVerification = Boolean(place) && !isConfiguredPlace(place);
+  if (needsVerification) {
+    const value = String(place.address || place.resolvedAddress || place.label || fallbackLabel).trim();
+    return { value: `${value} — Needs verification`, source: "needs_verification", zipUsedAsPrimary: false, needsVerification: true };
+  }
   if (!isConfiguredPlace(place)) {
     return { value: "Not saved", source: "not_saved", zipUsedAsPrimary: false };
   }
@@ -100345,6 +100386,11 @@ function resolveGridlySettingsPlaceDisplay(place, fallbackLabel = "Saved Place")
 }
 
 function describeGridlySettingsPlace(place, fallbackLabel) {
+  if (place && !isConfiguredPlace(place)) {
+    const display = resolveGridlySettingsPlaceDisplay(place, fallbackLabel);
+    return { label: display.value, meta: "Verify this saved place before using Route Watch.",
+      source: "needs_verification", zipUsedAsPrimary: false, needsVerification: true };
+  }
   if (!isConfiguredPlace(place)) {
     return { label: "Not saved", meta: `Save ${fallbackLabel} to enable Route Watch context.`, source: "not_saved", zipUsedAsPrimary: false };
   }
