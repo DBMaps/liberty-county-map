@@ -29361,6 +29361,11 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     border: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
+    /* 122px command tray + 32px breathing room puts the 44px rail at
+       y=202..246 in the 875x400 reference viewport. */
+    right: max(16px, env(safe-area-inset-right, 0px)) !important;
+    top: auto !important;
+    bottom: calc(var(--lp243h10h-command-height) + 32px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   /* First-run used a portrait-sized (66vh) artwork row beneath the brand.
@@ -29577,21 +29582,33 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   /* The outer tray is the only glossy surface. Clip legacy decoration at the
      Location Context boundary and keep Search a quiet compliant target. */
   body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
-    .map-card > #mobileDestinationCommandPanel {
+    #mobileDestinationCommandPanel {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
     overflow: clip !important;
+    contain: paint;
   }
 
   body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
-    .map-card > #mobileDestinationCommandPanel::before {
+    #mobileDestinationCommandPanel::before {
+    content: none !important;
     display: none !important;
   }
 
   body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
-    .map-card > #mobileDestinationCommandPanel .compact-btn {
+    #mobileDestinationCommandPanel .mobile-destination-command-actions {
+    width: auto !important;
+  }
+
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #mobileDestinationCommandPanel .compact-btn {
+    width: 88px !important;
+    min-width: 88px !important;
+    max-width: 88px !important;
     min-height: 44px !important;
-    padding-inline: 12px !important;
+    padding-inline: 10px !important;
     font-size: 0.78rem !important;
-    font-weight: 650 !important;
+    font-weight: 600 !important;
   }
 
   body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-header {
