@@ -19,13 +19,19 @@ test("map navigation is contextual and never restores the permanent rail", () =>
   assert.match(landscape, /\.gridly-v2-control-rail,[\s\S]*leaflet-control-zoom,[\s\S]*leaflet-control-layers[\s\S]*display: none !important/);
   assert.match(landscape, /gridly-h8-command-expanded[\s\S]*\.gridly-v2-control-rail[\s\S]*display: grid !important[\s\S]*grid-template-columns: repeat\(4, 44px\)/);
   assert.match(landscape, /\.gridly-v2-control-rail[\s\S]*background: transparent !important[\s\S]*box-shadow: none !important/);
+  assert.match(landscape, /right: max\(16px, env\(safe-area-inset-right, 0px\)\) !important/);
+  assert.match(landscape, /bottom: calc\(var\(--lp243h10h-command-height\) \+ 32px \+ env\(safe-area-inset-bottom, 0px\)\) !important/);
+  assert.match(landscape, /grid-template-rows: 44px !important/);
   for (const label of ["Layers", "Use my location", "Zoom in", "Zoom out"]) assert.match(html, new RegExp(`aria-label="${label}"`));
+  const railMarkup = html.slice(html.indexOf('<div class="gridly-v2-control-rail"'), html.indexOf('<div id="gridlyPortraitBottomRegion"'));
+  assert.equal((railMarkup.match(/<button /g) || []).length, 4);
+  assert.ok(html.indexOf('<div class="gridly-v2-control-rail"') < html.indexOf('<div id="gridlyPortraitBottomRegion"'));
 });
 
 test("Location Context Search is bounded and its surface cannot bleed", () => {
-  assert.match(landscape, /#mobileDestinationCommandPanel\s*\{[\s\S]*overflow: clip !important/);
-  assert.match(landscape, /#mobileDestinationCommandPanel::before\s*\{[\s\S]*display: none !important/);
-  assert.match(landscape, /#mobileDestinationCommandPanel \.compact-btn[\s\S]*min-height: 44px !important[\s\S]*font-size: 0\.78rem !important[\s\S]*font-weight: 650 !important/);
+  assert.match(landscape, /#mobileDestinationCommandPanel\s*\{[\s\S]*box-sizing: border-box !important;[\s\S]*max-width: 100% !important;[\s\S]*overflow: clip !important;[\s\S]*contain: paint/);
+  assert.match(landscape, /#mobileDestinationCommandPanel::before\s*\{[\s\S]*content: none !important;[\s\S]*display: none !important/);
+  assert.match(landscape, /#mobileDestinationCommandPanel \.compact-btn[\s\S]*width: 88px !important;[\s\S]*min-height: 44px !important;[\s\S]*font-size: 0\.78rem !important;[\s\S]*font-weight: 600 !important/);
 });
 
 test("explicit results have compact typography and precede retained Nearby Places", () => {

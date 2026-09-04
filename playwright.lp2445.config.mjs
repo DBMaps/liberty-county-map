@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/browser",
-  testMatch: "lp2445-bare-place-interactive.spec.mjs",
+  testMatch: ["lp2445-bare-place-interactive.spec.mjs", "lp2445-landscape-control-polish.spec.mjs"],
   workers: 1,
   retries: 0,
   reporter: "line",
