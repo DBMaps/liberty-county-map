@@ -64954,6 +64954,15 @@ if (typeof window !== "undefined") window.gridlyCommunityPulseAuditState = gridl
 // input is the governed snapshot already enriched by the official publisher.
 function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {
   if (!summary || typeof summary !== "object") return null;
+  // LP244.5 live correction: this is the last production writer before Pulse,
+  // portrait, and Brief consumers. Provider refresh can hand it an older
+  // healthy-empty summary, so converge the currently governed selected-area
+  // community rows here rather than trusting that mutable presentation copy.
+  const authoritativeSummary = window.gridlyGovernedActiveConditionParity?.convergeAuthoritativeSummary?.(
+    summary,
+    typeof gridlyGetGovernedActiveAwarenessRows === "function" ? gridlyGetGovernedActiveAwarenessRows() : []
+  ) || summary;
+  summary = authoritativeSummary;
   gridlyLastAuthoritativeCommunityAwarenessSummary = summary;
   const pulseState = publishGridlyCommunityPulseAuditState({
     communityAwarenessSummary: summary,
@@ -112069,6 +112078,9 @@ function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = n
   const summaryHasAreaScopedLists = Array.isArray(communityAwarenessSummary?.activeReportsInArea) || Array.isArray(communityAwarenessSummary?.activeHazardsInArea);
   const summaryActiveReportCount = Array.isArray(communityAwarenessSummary?.activeReportsInArea) ? communityAwarenessSummary.activeReportsInArea.length : null;
   const summaryActiveHazardCount = Array.isArray(communityAwarenessSummary?.activeHazardsInArea) ? communityAwarenessSummary.activeHazardsInArea.length : null;
+  const governedActiveCount = Array.isArray(activeAwareness?.governedKbygEvidenceIds)
+    ? new Set(activeAwareness.governedKbygEvidenceIds.filter(Boolean)).size
+    : 0;
   const latestAlerts = !summaryHasAreaScopedLists && typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
     ? window.__gridlyLatestAlertsForRender
     : [];
@@ -112081,9 +112093,10 @@ function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = n
   const activeHazardCount = Math.max(0, Number(distinctHazardCountModel?.bottomAwarenessDisplayedHazardCount ?? summaryActiveHazardCount ?? activeAwareness.activeHazardCount ?? quietFastPathStatus?.activeHazardCount ?? (Array.isArray(activeHazards) ? getGridlyAwarenessLifecycleActiveHazards(activeHazards).length : 0)) || 0);
   const areaScopedActiveCount = summaryHasAreaScopedLists ? activeReportCount + activeHazardCount : null;
   const activeAwarenessCount = summaryHasAreaScopedLists
-    ? areaScopedActiveCount
+    ? Math.max(areaScopedActiveCount, governedActiveCount)
     : Math.max(
       0,
+      governedActiveCount,
       Number(activeAwareness.activeAwarenessCount || 0),
       Number(activeAwareness.topAwarenessDedupedMobilityCount || 0),
       Number(activeAwareness.topAwarenessDisplayedCount || 0),
