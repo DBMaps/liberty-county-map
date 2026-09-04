@@ -2,6 +2,7 @@
   "use strict";
 
   const CONTRACT_NAME = "GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT";
+  const REQUEST_CONTRACT_VERSION = "gridly-geocode-v1";
   const TEXAS_BOUNDS = Object.freeze({ south: 25.7, north: 36.6, west: -106.7, east: -93.4 });
   const clean = (value) => String(value || "").trim();
   const key = (value) => clean(value).toLowerCase().replace(/\bsaint\b/g, "st").replace(/[^a-z0-9]/g, "");
@@ -65,18 +66,28 @@
   async function resolveAddress({ address = "", search } = {}) {
     const qualifiers = parseAddressQualifiers(address);
     const base = { rawAddressInput: qualifiers.rawAddressInput, normalizedAddressQuery: qualifiers.normalizedAddressQuery,
-      geocoderQuery: qualifiers.normalizedAddressQuery, candidateCount: 0, selectedCandidate: null,
+      geocoderQuery: qualifiers.normalizedAddressQuery, candidateCount: 0, providerCandidateCount: 0,
+      candidateCountAfterNormalization: 0, selectedCandidate: null, requestAttempted: false,
+      httpStatus: null, requestContractVersion: REQUEST_CONTRACT_VERSION, providerResponseReceived: false,
       qualifierMatch: false, rejectionReason: "", resolutionStatus: "failed", validationStatus: "rejected" };
     if (!qualifiers.sufficientlyQualified) return { ...base, rejectionReason: "locality_required", qualifiers };
     if (typeof search !== "function") return { ...base, rejectionReason: "geocoder_unavailable", qualifiers };
-    const response = await search({ intent: "address", query: qualifiers.normalizedAddressQuery, limit: 5, requestMode: "saved_address_integrity" });
+    // The deployed Edge allow-list accepts explicit_search. saved_address_integrity is a
+    // client concern, not an Edge requestMode, and previously caused an HTTP 400.
+    const response = await search({ intent: "address", query: qualifiers.normalizedAddressQuery, limit: 5, requestMode: "explicit_search" });
     const candidates = response?.ok && Array.isArray(response.results) ? response.results : [];
     const evaluated = candidates.map((candidate) => ({ candidate, validation: validateCandidate(qualifiers, candidate) }));
     const selected = evaluated.find((entry) => entry.validation.accepted);
-    if (!selected) return { ...base, candidateCount: candidates.length,
+    const transport = response?.transport || {};
+    const responseEvidence = { requestAttempted: true, httpStatus: transport.httpStatus ?? null,
+      requestContractVersion: transport.requestContractVersion || REQUEST_CONTRACT_VERSION,
+      providerResponseReceived: transport.providerResponseReceived === true,
+      providerCandidateCount: Number(transport.providerCandidateCount ?? candidates.length),
+      candidateCountAfterNormalization: candidates.length };
+    if (!selected) return { ...base, ...responseEvidence, candidateCount: candidates.length,
       rejectionReason: evaluated[0]?.validation.rejectionReason || response?.status || "no_results", qualifiers,
       candidates: evaluated.map((entry) => entry.validation) };
-    return { ...base, candidateCount: candidates.length, selectedCandidate: selected.candidate,
+    return { ...base, ...responseEvidence, candidateCount: candidates.length, selectedCandidate: selected.candidate,
       qualifierMatch: true, rejectionReason: "", resolutionStatus: "success", validationStatus: "passed",
       coordinates: { lat: selected.validation.latitude, lng: selected.validation.longitude },
       localityEvidence: selected.validation.localityEvidence, zipEvidence: selected.validation.zipEvidence,
@@ -84,7 +95,35 @@
       qualifiers, candidates: evaluated.map((entry) => entry.validation) };
   }
 
+  function needsLegacyRevalidation(place = {}) {
+    const latitude = Number(place.lat ?? place.coordinates?.lat);
+    const longitude = Number(place.lng ?? place.coordinates?.lng);
+    const verified = place.resolutionStatus === "success" && place.validationStatus === "passed";
+    return place.coordinateSource === "geocode" && clean(place.address)
+      && Number.isFinite(latitude) && Number.isFinite(longitude) && !verified;
+  }
+
+  async function revalidateLegacyPlace({ place, search } = {}) {
+    if (!needsLegacyRevalidation(place)) return { place, attempted: false, result: "not_required" };
+    const resolution = await resolveAddress({ address: place.address, search });
+    if (resolution.resolutionStatus !== "success" || resolution.validationStatus !== "passed") {
+      return { place: { ...place, resolutionStatus: "legacy_requires_revalidation",
+        validationStatus: "legacy_requires_revalidation", routeEligible: false,
+        migrationAttempted: true, migrationResult: resolution.rejectionReason || "failed" },
+        attempted: true, result: resolution.rejectionReason || "failed", resolution };
+    }
+    return { place: { ...place, lat: resolution.coordinates.lat, lng: resolution.coordinates.lng,
+      coordinates: { ...resolution.coordinates }, resolutionStatus: "success", validationStatus: "passed",
+      localityEvidence: resolution.localityEvidence, zipEvidence: resolution.zipEvidence,
+      stateEvidence: resolution.stateEvidence, countyEvidence: resolution.countyEvidence,
+      resolvedAddress: resolution.selectedCandidate?.displayName || resolution.selectedCandidate?.formattedAddress || place.address,
+      routeEligible: true, migrationAttempted: true, migrationResult: "passed" },
+      attempted: true, result: "passed", resolution };
+  }
+
   global.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT = Object.freeze({
-    name: CONTRACT_NAME, version: "LP244.5", geography: "Texas", parseAddressQualifiers, validateCandidate, resolveAddress
+    name: CONTRACT_NAME, version: "LP244.5", requestContractVersion: REQUEST_CONTRACT_VERSION,
+    geography: "Texas", parseAddressQualifiers, validateCandidate, resolveAddress,
+    needsLegacyRevalidation, revalidateLegacyPlace
   });
 })(typeof window !== "undefined" ? window : globalThis);

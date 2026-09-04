@@ -4,6 +4,8 @@ import vm from "node:vm";
 import test from "node:test";
 
 const source = fs.readFileSync("js/gridly-saved-address-integrity.js", "utf8");
+const clientSource = fs.readFileSync("js/gridly-geocoding-client.js", "utf8");
+const edgeSource = fs.readFileSync("supabase/functions/gridly-geocode/index.ts", "utf8");
 const context = { globalThis: {} };
 vm.runInNewContext(source, context);
 const contract = context.globalThis.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT;
@@ -59,6 +61,48 @@ test("Home and Work names are isolated from the exact geocoder address query", a
   }
 });
 
+test("saved-address request uses the deployed Edge Function request contract", async () => {
+  let posted;
+  const canonicalPayload = { ok: true, status: "success", providerBoundary: "gridly", requestId: "test",
+    results: [candidate({ latitude: 30.0588518, longitude: -94.7978967 })] };
+  const browser = { crypto: { randomUUID: () => "lp2445-test" }, fetch: async (_url, init) => {
+    posted = JSON.parse(init.body);
+    return { ok: true, status: 200, json: async () => canonicalPayload };
+  } };
+  vm.runInNewContext(clientSource, { window: browser });
+  const result = await contract.resolveAddress({ address: "1710 Sam Houston Ave, Liberty, TX 77575",
+    search: browser.gridlyGeocodingClient.search });
+  assert.deepEqual(Object.keys(posted).sort(), ["intent", "limit", "query", "requestId", "requestMode"].sort());
+  assert.equal(posted.requestMode, "explicit_search");
+  assert.match(edgeSource, /\["explicit_search", "lp102_certification", "lp103_certification", "lp104_certification"\]/);
+  assert.equal(result.requestAttempted, true);
+  assert.equal(result.httpStatus, 200);
+  assert.equal(result.providerResponseReceived, true);
+  assert.equal(result.providerCandidateCount, 1);
+  assert.equal(result.candidateCountAfterNormalization, 1);
+});
+
+test("valid full-address legacy Work revalidates while bad bare Home remains preserved and blocked", async () => {
+  const work = { id: "work", label: "Work", address: "1829 Sam Houston St, Liberty, TX 77575",
+    lat: 30.0588518, lng: -94.7978967, coordinateSource: "geocode" };
+  const home = { id: "home", label: "Home", address: "1710 Sam Houston Avenue",
+    lat: 32.6879738, lng: -97.2385385, coordinateSource: "geocode" };
+  const workResult = await contract.revalidateLegacyPlace({ place: work,
+    search: searchWith(candidate({ latitude: 30.0588518, longitude: -94.7978967,
+      address: { city: "Liberty", state: "Texas", postalCode: "77575", county: "Liberty County", road: "Sam Houston Street", houseNumber: "1829" } })) });
+  let homeCalls = 0;
+  const homeResult = await contract.revalidateLegacyPlace({ place: home, search: async () => { homeCalls++; } });
+  assert.equal(workResult.place.resolutionStatus, "success");
+  assert.equal(workResult.place.validationStatus, "passed");
+  assert.equal(workResult.place.routeEligible, true);
+  assert.equal(homeCalls, 0);
+  assert.equal(homeResult.place.routeEligible, false);
+  assert.equal(homeResult.place.migrationResult, "locality_required");
+  assert.equal(homeResult.place.lat, 32.6879738);
+  assert.equal(homeResult.place.lng, -97.2385385);
+  assert.equal(work.address, "1829 Sam Houston St, Liberty, TX 77575");
+});
+
 test("application locks replacement, separation, persistence provenance, and route eligibility", () => {
   const app = fs.readFileSync("js/app.js", "utf8");
   assert.match(app, /restoreSavedPlacesStorageSnapshot\(\)/);
@@ -68,4 +112,8 @@ test("application locks replacement, separation, persistence provenance, and rou
   assert.match(app, /place\.resolutionStatus === "success" && place\.validationStatus === "passed"/);
   assert.match(app, /rawInput: String\(work \|\| ""\)\.trim\(\)/);
   assert.match(app, /gridlySavedAddressIntegrityAudit/);
+  assert.match(app, /legacy_requires_revalidation/);
+  assert.match(app, /Needs verification/);
+  assert.match(app, /Verify this saved place before using Route Watch/);
+  assert.match(app, /for \(const slot of \["home", "work"\]\)/);
 });
