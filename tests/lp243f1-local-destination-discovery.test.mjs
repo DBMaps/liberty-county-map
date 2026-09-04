@@ -7,7 +7,7 @@ const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 
 test('LP243.F8 has a unique production app asset identity in the expected script position', () => {
-  const appAsset = '<script src="js/app.js?v=2445c-consumer-visual-search-closure"></script>';
+  const appAsset = '<script src="js/app.js?v=2445c-owner-acceptance-correction"></script>';
   assert.deepEqual(index.match(/<script src="js\/app\.js\?v=[^"]+"><\/script>/g), [appAsset]);
   assert.ok(index.indexOf('js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3') < index.indexOf(appAsset));
   assert.ok(index.indexOf(appAsset) < index.indexOf('js/gridlyDriveTexasGeometryAuthority.js?v=044'));

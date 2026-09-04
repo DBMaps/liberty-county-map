@@ -13,7 +13,7 @@ test("short landscape map removes only its redundant frame while preserving map 
   assert.match(landscape, /@media \(orientation: landscape\) and \(max-height: 500px\)/);
   assert.match(landscape, /app-shell\.premium-layout[\s\S]*padding-inline: 0 !important/);
   assert.match(landscape, /#mapSection\.command-center,[\s\S]*\.map-card,[\s\S]*\.map-frame,[\s\S]*#map[\s\S]*width: 100vw !important[\s\S]*border-radius: 0 !important/);
-  assert.doesNotMatch(landscape, /leaflet-control[^\{]*\{[\s\S]*display:\s*none/);
+  assert.match(landscape, /leaflet-control-zoom,[\s\S]*leaflet-control-layers[\s\S]*display: none !important/);
   assert.match(css, /#map \.leaflet-control-attribution/);
   assert.match(app, /gridlyLandscapeCommandToggle/);
   assert.match(app, /Location Context/);
@@ -51,9 +51,9 @@ test("published destination outcomes take space before reflow and still recover 
 });
 
 test("asset identity invalidates the pre-Task-C browser shell", () => {
-  assert.equal((html.match(/2445c-consumer-visual-search-closure/g) || []).length, 2);
-  assert.match(sw, /GRIDLY_SW_VERSION = "lp244\.5c-consumer-visual-search-closure"/);
-  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445c-v1"/);
+  assert.equal((html.match(/2445c-owner-acceptance-correction/g) || []).length, 2);
+  assert.match(sw, /GRIDLY_SW_VERSION = "lp244\.5c-owner-acceptance-correction"/);
+  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445c-v2"/);
   assert.match(sw, /cache: "no-store"/);
   assert.match(sw, /caches\.delete\(cacheName\)/);
 });

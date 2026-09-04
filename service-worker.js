@@ -1,5 +1,5 @@
-const GRIDLY_SW_VERSION = "lp244.5c-consumer-visual-search-closure";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445c-v1";
+const GRIDLY_SW_VERSION = "lp244.5c-owner-acceptance-correction";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445c-v2";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
