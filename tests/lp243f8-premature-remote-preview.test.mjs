@@ -50,5 +50,5 @@ test('address enrichment remains an in-place presentation update without reranki
 });
 
 test('LP243.F8 uses a unique browser asset identity', () => {
-  assert.match(html, /js\/app\.js\?v=2445d-bare-place-interactive-repair/);
+  assert.match(html, /js\/app\.js\?v=2445e-canonical-place-publication-repair/);
 });

@@ -46201,6 +46201,7 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
       generalProviderCandidates: Object.freeze((diagnostics.candidateLineage || []).map((entry) => Object.freeze({
         id: entry.candidateId, title: entry.title, provider: entry.provider
       }))),
+      canonicalGovernedCandidateCount: Number(diagnostics.canonicalGovernedCandidateCount) || 0,
       mergedCandidateCount: Number(diagnostics.mergedCandidateCount) || 0,
       mergedCandidates: Object.freeze([
         ...localLineage.map((entry) => ({ id: entry.candidateId, sourceFamily: entry.sourceFamily })),
@@ -46219,7 +46220,9 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
       anotherRenderAfterPublication: false, staleRequestBlocked,
       finalPublishedCandidateCount: Array.isArray(results) ? results.length : 0,
       finalPublishedCandidates: Object.freeze((Array.isArray(results) ? results : []).map((result) => Object.freeze({
-        id: result.providerId || result.id, title: result.title, provider: result.provider, latitude: result.lat, longitude: result.lng
+        id: result.providerId || result.id, title: result.title, provider: result.provider,
+        latitude: result.lat, longitude: result.lng, placeGeoid: result.placeGeoid || null,
+        countyMemberships: Object.freeze([...(result.countyMemberships || [])])
       })))
     });
   }
@@ -93681,6 +93684,10 @@ function normalizeGridlySearchResult(result) {
     searchRank: result.searchRank || null,
     localPoiSeed: Boolean(result.localPoiSeed || rawPayload?.localSeed),
     display_name: displayName || "",
+    placeGeoid: result.placeGeoid || rawPayload?.placeGeoid || null,
+    countyMemberships: Array.isArray(result.countyMemberships)
+      ? [...result.countyMemberships]
+      : (Array.isArray(rawPayload?.countyMemberships) ? [...rawPayload.countyMemberships] : []),
     raw: rawPayload,
     consumerType: result.consumerType || "",
     precision: result.precision || "",
@@ -94236,11 +94243,12 @@ async function gridlySearchAddress(query, options = {}) {
   const governedCommunity = Object.prototype.hasOwnProperty.call(options, "governedBarePlace")
     ? options.governedBarePlace
     : resolveGridlyGovernedBareTexasPlaceQuery(rawQuery);
+  let canonicalPlaceResults = [];
   if (governedCommunity) {
     const area = governedCommunity.awarenessArea || governedCommunity.candidates?.[0]?.awarenessArea;
     if (Number.isFinite(Number(area?.lat)) && Number.isFinite(Number(area?.lng))) {
       const countyNames = (governedCommunity.candidates || []).map((candidate) => candidate.county).filter(Boolean);
-      const canonicalPlaceResults = [normalizeGridlySearchResult({
+      canonicalPlaceResults = [normalizeGridlySearchResult({
         id: `place-${governedCommunity.placeGeoid || area.placeGeoid || area.communityId}`,
         name: governedCommunity.community || area.label,
         display_name: `${governedCommunity.community || area.label}, Texas`,
@@ -94250,30 +94258,15 @@ async function gridlySearchAddress(query, options = {}) {
         placeGeoid: governedCommunity.placeGeoid || area.placeGeoid || null,
         countyMemberships: governedCommunity.countyMemberships || governedCommunity.candidates?.[0]?.countyMemberships || []
       })].filter(Boolean);
-      const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, 0);
-      diagnostics.governedBarePlaceConsumed = true;
-      diagnostics.governedBarePlaceStatus = governedCommunity.status;
-      diagnostics.mergedCandidateCount = canonicalPlaceResults.length;
-      diagnostics.deduplicatedCandidateCount = canonicalPlaceResults.length;
-      diagnostics.finalDisplayedCandidateCount = canonicalPlaceResults.length;
-      diagnostics.stageCounts = Object.freeze({
-        providerCanonicalCount: canonicalPlaceResults.length,
-        normalizedCount: canonicalPlaceResults.length,
-        containedCount: canonicalPlaceResults.length,
-        countyQualifiedCount: canonicalPlaceResults.length,
-        intentAcceptedCount: canonicalPlaceResults.length,
-        qualityAcceptedCount: canonicalPlaceResults.length,
-        dedupedCount: canonicalPlaceResults.length,
-        publicationEligibleCount: canonicalPlaceResults.length,
-        finalPublishedCount: canonicalPlaceResults.length
-      });
-      Object.defineProperty(canonicalPlaceResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
-      return canonicalPlaceResults;
     }
   }
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
   const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, seedResults.length);
+  if (canonicalPlaceResults.length) diagnostics.governedBarePlaceConsumed = true;
+  diagnostics.governedBarePlaceStatus = governedCommunity?.status || null;
+  diagnostics.canonicalGovernedCandidateCount = canonicalPlaceResults.length;
   const providerResults = [...seedResults];
+  providerResults.unshift(...canonicalPlaceResults);
   const runtimeRequestStartedAt = Date.now();
   const runtimePoiResults = gridlyQueryAllowsRuntimePoiAcquisition(rawQuery, intent)
     && typeof window.GridlyPoiBrowserProvider?.search === "function"
@@ -94292,7 +94285,11 @@ async function gridlySearchAddress(query, options = {}) {
   let remoteProviderResultCount = 0;
   const remoteProviderCandidates = [];
 
-  for (const [variantIndex, variant] of queryVariants.entries()) {
+  // A canonical governed PLACE is already the acquired geographic authority.
+  // It still traverses the normal merge, ranking, deduplication and publication
+  // stages below, but must not depend on either POI or geocoder acquisition.
+  const acquisitionQueryVariants = canonicalPlaceResults.length ? [] : queryVariants;
+  for (const [variantIndex, variant] of acquisitionQueryVariants.entries()) {
     const variantResults = await fetchGridlyNominatimSearch(variant, {
       limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT,
       countryCodes,
@@ -94371,6 +94368,17 @@ async function gridlySearchAddress(query, options = {}) {
     searchRank: result.searchRank ? { ...result.searchRank, publishedRank: index + 1 } : result.searchRank
   }));
   diagnostics.finalDisplayedCandidateCount = finalResults.length;
+  diagnostics.stageCounts = Object.freeze({
+    providerCanonicalCount: canonicalPlaceResults.length,
+    normalizedCount: prioritizedResults.length,
+    containedCount: containmentFilteredResults.length,
+    countyQualifiedCount: containmentFilteredResults.length,
+    intentAcceptedCount: explicitRelevantResults.length,
+    qualityAcceptedCount: qualityFilteredResults.length,
+    dedupedCount: dedupedResults.length,
+    publicationEligibleCount: truthfulResults.length,
+    finalPublishedCount: finalResults.length
+  });
   diagnostics.localPoiCandidateDiagnostics = runtimePoiResults.filter(Boolean).map((candidate) => {
     // Native packaged-shard acquisition may contain a governed null slot when
     // a shard has no publishable candidate. Null is not a provider identity.
