@@ -21,7 +21,7 @@
   },
   "scripts": {
     "test:lp2445:parity": "node --test tests/lp2445-governed-active-condition-parity.test.mjs tests/lp2445-live-writer-sequence.test.mjs",
-    "test:lp2445:acceptance": "npm run test:lp2445:parity && node --test tests/lp2445-bare-texas-place-destination.test.mjs tests/lp2445-final-short-landscape-density.test.mjs",
+    "test:lp2445:acceptance": "npm run test:lp2445:parity && npm run test:lp2445:saved-address && node --test tests/lp2445-bare-texas-place-destination.test.mjs tests/lp2445-final-short-landscape-density.test.mjs",
     "build:lp24111": "node tools/lp24111/manufacture.mjs --write",
     "execute:lp24111-normalization": "node tools/lp24111/normalize.mjs --execute",
     "execute:lp24111-taxonomy": "node tools/lp24111/taxonomy-review.mjs --execute",
@@ -706,6 +706,7 @@
     "prepare:native": "npm run build:native-web:configured && npm run verify:native-web:configured",
     "verify:android:fast": "node tools/android-acceptance/fast.mjs",
     "verify:android:device": "node tools/android-acceptance/device.mjs",
-    "test:android:acceptance": "node --test tests/android-acceptance-harness.test.mjs"
+    "test:android:acceptance": "node --test tests/android-acceptance-harness.test.mjs",
+    "test:lp2445:saved-address": "node --test tests/lp2445-saved-address-integrity.test.mjs"
   }
 }

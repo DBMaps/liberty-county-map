@@ -25262,6 +25262,7 @@ let storagePreservedOnFailure = null;
 let storageClearedDuringFailedSave = false;
 let failedSaveDidMutateStorage = false;
 let lastSaveFailureReason = null;
+let gridlyLastSavedAddressResolution = null;
 let saveButtonHandlerAttached = false;
 let routePreviewRendered = false;
 let routePreviewLayerExists = false;
@@ -93591,7 +93592,11 @@ async function saveRoute(source = "desktop", options = {}) {
     const fallbackState = isManageSave && (manageSourceMode === "address" || selectedSaveSourceAudit === "address_inferred_from_input")
       ? offerManagePlacesMapCenterFallback({ address: work, slot: normalizedType })
       : managePlacesGeocodeFallbackState;
-    return failSave("We couldn't find that location. Try a full address or use My Location.", "Location not found", "coordinates_not_found", {
+    const localityRequired = coordinateResolution?.rejectionReason === "locality_required";
+    const failureMessage = localityRequired
+      ? "Add a city or ZIP code so Gridly can identify the right place."
+      : "We couldn't verify that address. Add the city or ZIP code and try again.";
+    return failSave(failureMessage, localityRequired ? "Add city or ZIP" : "Address not verified", coordinateResolution?.rejectionReason || "coordinates_not_found", {
       coordinateSource: coordinateResolution?.source || "null",
       geocodeFailedFallbackAvailable: Boolean(fallbackState?.available),
       geocodeFailedFallbackUsed: Boolean(useMapCenterFallback && managePlacesGeocodeFallbackState.used),
@@ -93607,12 +93612,18 @@ async function saveRoute(source = "desktop", options = {}) {
     name: home,
     label: normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : home || "Favorite Place",
     address: work,
-    rawInput: `${home} ${work}`.trim(),
+    rawInput: String(work || "").trim(),
     createdAt,
     lat: coordinates?.lat ?? null,
     lng: coordinates?.lng ?? null,
     coordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null,
-    coordinateSource: coordinateResolution?.source || "null"
+    coordinateSource: coordinateResolution?.source || "null",
+    resolutionStatus: coordinateResolution?.resolutionStatus || "success",
+    validationStatus: coordinateResolution?.validationStatus || (coordinateResolution?.source === "geocode" ? "unknown" : "not_required"),
+    localityEvidence: coordinateResolution?.localityEvidence || "not_applicable",
+    zipEvidence: coordinateResolution?.zipEvidence || "not_applicable",
+    stateEvidence: coordinateResolution?.stateEvidence || "not_applicable",
+    resolvedAddress: coordinateResolution?.selectedCandidate?.displayName || coordinateResolution?.selectedCandidate?.formattedAddress || String(work || "").trim()
   };
   if (normalizedType === "home") {
     nextState.home = nextPlace;
@@ -93629,7 +93640,8 @@ async function saveRoute(source = "desktop", options = {}) {
   routeWatchActivated = false;
   refreshSavedPlaceSurfacesAfterSave("saveRoute");
   const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
-  const saveMessage = `${placeLabel} saved with resolved coordinates (${coordinateResolution.source}).`;
+  const resolvedLocality = nextPlace.resolvedAddress;
+  const saveMessage = `${placeLabel} saved: ${resolvedLocality}.`;
   setConfirmation(saveMessage, "success");
   setManagePlacesSaveStatus(saveMessage, "success");
   lastSavedPlaceResult = {
@@ -93676,6 +93688,31 @@ function getSavedPlacesState() {
   const state = normalizeSavedPlaces();
   return { home: state.home, work: state.work, custom: [...state.custom], favorites: [...state.favorites] };
 }
+
+window.gridlySavedAddressIntegrityAudit = function gridlySavedAddressIntegrityAudit() {
+  const state = getSavedPlacesState();
+  const summarize = (place) => place ? {
+    address: place.address || "",
+    coordinates: normalizeCoordinatePair(place.lat, place.lng),
+    coordinateSource: place.coordinateSource || "unknown",
+    resolutionStatus: place.resolutionStatus || "legacy_unverified",
+    validationStatus: place.validationStatus || "legacy_unverified",
+    localityEvidence: place.localityEvidence || "not_available",
+    zipEvidence: place.zipEvidence || "not_available",
+    stateEvidence: place.stateEvidence || "not_available",
+    routeEligible: isConfiguredPlace(place)
+  } : null;
+  const home = summarize(state.home);
+  const work = summarize(state.work);
+  const present = [home, work].filter(Boolean);
+  return Object.freeze({
+    contract: "GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT",
+    home, work,
+    lastResolution: gridlyLastSavedAddressResolution ? { ...gridlyLastSavedAddressResolution } : null,
+    overallPass: present.every((place) => place.routeEligible && (place.coordinateSource !== "geocode"
+      || (place.resolutionStatus === "success" && place.validationStatus === "passed")))
+  });
+};
 function isLegacyPlace(place) {
   if (!place || typeof place !== "object") return false;
   const joined = `${place.label || ""} ${place.address || ""}`.toLowerCase();
@@ -93684,7 +93721,9 @@ function isLegacyPlace(place) {
 
 function isConfiguredPlace(place) {
   if (!place || isLegacyPlace(place)) return false;
-  return Boolean(String(place.label || "").trim()) && hasValidPlaceCoordinates(place);
+  const geocodeValidated = place.coordinateSource !== "geocode"
+    || (place.resolutionStatus === "success" && place.validationStatus === "passed");
+  return Boolean(String(place.label || "").trim()) && hasValidPlaceCoordinates(place) && geocodeValidated;
 }
 function migrateLegacyStorage() {
   const state = getSavedPlacesState();
@@ -96260,6 +96299,17 @@ async function geocodeAddressToCoordinates(rawAddress = "") {
   return normalizeCoordinatePair(first?.latitude, first?.longitude);
 }
 
+async function resolveSavedAddressWithIntegrity(rawAddress = "") {
+  const contract = window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT;
+  if (!contract?.resolveAddress) return { coordinates: null, source: "geocode", rejectionReason: "integrity_contract_unavailable" };
+  const resolution = await contract.resolveAddress({
+    address: rawAddress,
+    search: (request) => window.gridlyGeocodingClient.search(request)
+  });
+  gridlyLastSavedAddressResolution = resolution;
+  return { ...resolution, source: "geocode" };
+}
+
 // Console-only production-path check for the LP105.2 address contract. This deliberately
 // goes through the same browser client and Gridly Edge Function as destination search.
 window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052RuntimeAddressCertification() {
@@ -96405,11 +96455,12 @@ async function resolvePlaceCoordinates({ label = "", address = "", preferGeoloca
     const gpsCoords = normalizeCoordinatePair(userLocation.lat, userLocation.lng);
     if (gpsCoords) return { coordinates: gpsCoords, source: "browser geolocation" };
   }
-  const localLookup = lookupLocalPlaceCoordinates(address, label, `${address}, ${label}`.trim(), `${label}, ${address}`.trim());
+  const localLookup = lookupLocalPlaceCoordinates(address);
   if (localLookup) return { coordinates: localLookup, source: "local lookup" };
   if (allowGeocode) {
-    const geocodedCoordinates = await geocodeAddressToCoordinates(address || label);
-    if (geocodedCoordinates) return { coordinates: geocodedCoordinates, source: "geocode" };
+    const resolution = await resolveSavedAddressWithIntegrity(address);
+    if (resolution.coordinates) return resolution;
+    return resolution;
   }
   return { coordinates: null, source: "null" };
 }
