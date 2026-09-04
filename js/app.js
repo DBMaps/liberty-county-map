@@ -40864,7 +40864,10 @@ function filterGridlyDestinationSearchContainmentResults(results = [], options =
 function clearGridlySearchResults(options = {}) {
   const state = ensureGridlySearchState();
   const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
-  if (resultsContainer) resultsContainer.textContent = "";
+  if (resultsContainer) {
+    resultsContainer.textContent = "";
+    delete resultsContainer.dataset.searchPublication;
+  }
   gridlySearchUiState.lastRenderedResults = [];
   gridlySearchUiState.lastResultShapePreview = [];
   if (options?.clearActiveResult === true) state.activeResult = null;
@@ -40894,6 +40897,7 @@ function renderGridlySearchResults(results = [], options = {}) {
   const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
   if (!resultsContainer) return false;
   resultsContainer.textContent = "";
+  resultsContainer.dataset.searchPublication = options?.state === "searching" ? "searching" : "active";
 
   if (options?.state === "searching") {
     const status = document.createElement("div");
@@ -100300,9 +100304,9 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
         ? "This ZIP matches more than one area. Try a town or county instead."
         : "No available areas match your search.";
   const results = normalizedQuery
-    ? `<div class="settings-manual-results"><span class="settings-manual-results-label">Results</span><div class="settings-manual-county-list" aria-live="polite">${resultHtml || `<p class="settings-manual-no-results" role="status">${emptyResult}</p>`}</div></div>`
+    ? `<div class="settings-manual-results"><span class="settings-manual-results-label gridly-visually-hidden">Search results</span><div class="settings-manual-county-list" aria-live="polite">${resultHtml || `<p class="settings-manual-no-results" role="status">${emptyResult}</p>`}</div></div>`
     : '<p class="settings-manual-search-instruction">Start typing to find an available Gridly area.</p>';
-  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h2>Choose your home area</h2><label>Search your Texas community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="postal-code" placeholder="Dayton or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${results}</div>`;
+  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h2>Choose your home area</h2><div class="settings-manual-autocomplete"><label>Search your Texas community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="postal-code" placeholder="Dayton or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${results}</div></div>`;
 }
 
 function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
