@@ -1,0 +1,49 @@
+{
+  "contract": "LP244.5 owner-approved walkthrough artwork",
+  "runtimeReferenceCompositeAllowed": false,
+  "portraitAuthority": "Complete approved artwork; intrinsic aspect ratio preserved with object-fit: contain.",
+  "shortLandscapeAuthority": "Bounded overflow-hidden focal viewport using object-fit: cover; navigation remains outside artwork.",
+  "slides": [
+    {
+      "id": "kbyg",
+      "productionAsset": "assets/walkthrough/gridly-walkthrough-kbyg.png",
+      "sha256": "99603a84bedf645b905c19c15c38cc73d57bd8e828c9207353cd987f0fb1debc",
+      "portraitFocus": "Complete Travel Brief artwork",
+      "landscapeFocus": "Know Before You Go, Travel Brief, travel-time guidance, and active Dayton community report"
+    },
+    {
+      "id": "nearby",
+      "productionAsset": "assets/walkthrough/gridly-walkthrough-nearby.png",
+      "sha256": "d04487b75aa72f5a814ced1daee7fa90af7112919713b78901f24cc03a7348f3",
+      "portraitFocus": "Complete Dayton map artwork",
+      "landscapeFocus": "Dayton map, blocked crossing marker, surrounding roadway geography, and immutable FM 1409 label"
+    },
+    {
+      "id": "alerts",
+      "productionAsset": "assets/walkthrough/gridly-walkthrough-alerts.png",
+      "sha256": "b7b6612d778245c4a1f34cda26969c684ce5ec016edb4917949b8f5550cd8b1f",
+      "portraitFocus": "Complete Alerts artwork",
+      "landscapeFocus": "Alerts, active condition, Community Reports, Blocked, Main Street, and Show me"
+    },
+    {
+      "id": "report",
+      "productionAsset": "assets/walkthrough/gridly-walkthrough-report.png",
+      "sha256": "3a67c7cc8ee1466279b7eca322772e37bb8023b074425f4154e18a4ee873bf9f",
+      "portraitFocus": "Complete Report artwork",
+      "landscapeFocus": "Report, What are you seeing, and hazard selection grid"
+    },
+    {
+      "id": "settings",
+      "productionAsset": "assets/walkthrough/gridly-walkthrough-settings.png",
+      "sha256": "d76f7bc1818efa016d807e5c20a181d6e824cbc3b4e03dbe66010ebea921a452",
+      "portraitFocus": "Complete Settings artwork",
+      "landscapeFocus": "Settings, Awareness, Home Area, Dayton, Liberty County, and Change Home Area"
+    }
+  ],
+  "referenceOnly": {
+    "path": "assets/walkthrough/reference/gridly-walkthrough-owner-approved-reference.png",
+    "sha256": "ff7ced6abf7bebe43da07ef78cc44777751bc7d270cdcb5665fa33a26217e272",
+    "runtime": false
+  },
+  "screenshotFreePages": ["welcome", "setup"]
+}
