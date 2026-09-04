@@ -91512,7 +91512,7 @@ function bindEvents() {
     managePlacesGeocodeFallbackState = {
       ...managePlacesGeocodeFallbackState,
       used: true,
-      coordinateSource: "map_center_fallback",
+      coordinateSource: "user_map_selection",
       coordinates: getCurrentMapCenterCoordinates(),
       at: new Date().toISOString()
     };
@@ -93221,21 +93221,37 @@ function resetManagePlacesGeocodeFallback(options = {}) {
   if (els.mobileUseMapCenterFallbackBtn) els.mobileUseMapCenterFallbackBtn.hidden = true;
 }
 
-function offerManagePlacesMapCenterFallback({ address = "", slot = "custom" } = {}) {
-  const coordinates = getCurrentMapCenterCoordinates();
+async function offerManagePlacesMapCenterFallback({ address = "", slot = "custom" } = {}) {
+  const acquisition = window.GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT;
+  const anchorQuery = acquisition?.mapAnchorQuery?.(address) || "";
+  let coordinates = null;
+  let anchorSource = "unavailable";
+  if (anchorQuery && typeof window.gridlyGeocodingClient?.search === "function") {
+    const response = await window.gridlyGeocodingClient.search({ intent: "place", query: anchorQuery, limit: 5, requestMode: "explicit_search" });
+    const qualifier = acquisition && window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT?.parseAddressQualifiers?.(address);
+    const anchor = (response?.results || []).find((candidate) => window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT?.validateCandidate?.(qualifier, candidate)?.accepted);
+    coordinates = anchor ? normalizeCoordinatePair(anchor.latitude, anchor.longitude) : null;
+    if (coordinates) {
+      anchorSource = qualifier?.zip ? "validated_zip_community" : "validated_community";
+      const mapInstance = typeof getGridlyMapInstance === "function" ? getGridlyMapInstance() : null;
+      if (typeof mapInstance?.setView === "function") mapInstance.setView([coordinates.lat, coordinates.lng], Math.max(Number(mapInstance.getZoom?.()) || 14, 14));
+    }
+  }
   const available = Boolean(coordinates);
   managePlacesGeocodeFallbackState = {
     available,
     used: false,
-    coordinateSource: available ? "map_center_fallback" : null,
+    coordinateSource: available ? "user_map_selection" : null,
     coordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null,
+    anchorSource,
+    anchorQuery,
     address: String(address || "").trim(),
     slot: slot || null,
     at: new Date().toISOString()
   };
   if (els.mobileUseMapCenterFallbackBtn) {
     els.mobileUseMapCenterFallbackBtn.hidden = !available;
-    els.mobileUseMapCenterFallbackBtn.textContent = "Use Current Map Center for This Place";
+    els.mobileUseMapCenterFallbackBtn.textContent = `Set ${slot === "home" ? "Home" : slot === "work" ? "Work" : "Location"} Here`;
   }
   return managePlacesGeocodeFallbackState;
 }
@@ -93312,10 +93328,16 @@ function renderManagePlacesPrimaryScreen() {
   const workConfigured = isConfiguredPlace(state.work);
   const homeLabel = homeConfigured ? gridlyFriendlyPlaceLabel(state.home, "Home") : "Not Set";
   const workLabel = workConfigured ? gridlyFriendlyPlaceLabel(state.work, "Work") : "Not Set";
+  const placeMeta = (place, configured, type) => {
+    if (!place) return `Save ${type} for Destination Search and Route Watch.`;
+    if (place.coordinateSource === "user_map_selection" && configured) return "Location confirmed on map.";
+    if (configured) return "Verified address. Ready in Destination Search and Route Watch.";
+    return "Needs verification. Verify this saved place before using Route Watch.";
+  };
   setText("managePlacesHomeValue", homeLabel);
-  setText("managePlacesHomeMeta", homeConfigured ? "Ready in Destination Search and Route Watch." : "Save Home for Destination Search and Route Watch.");
+  setText("managePlacesHomeMeta", placeMeta(state.home, homeConfigured, "Home"));
   setText("managePlacesWorkValue", workLabel);
-  setText("managePlacesWorkMeta", workConfigured ? "Ready in Destination Search and Route Watch." : "Save Work for Destination Search and Route Watch.");
+  setText("managePlacesWorkMeta", placeMeta(state.work, workConfigured, "Work"));
   setText("managePlacesHomeActionBtn", getManagePlacesActionVerb("home", state));
   setText("managePlacesWorkActionBtn", getManagePlacesActionVerb("work", state));
   setText("managePlacesFavoriteActionBtn", "Add Favorite");
@@ -93568,15 +93590,21 @@ async function saveRoute(source = "desktop", options = {}) {
   if (!coordinateResolution && useMapCenterFallback) {
     const fallbackCoordinates = getCurrentMapCenterCoordinates();
     if (fallbackCoordinates) {
-      coordinateResolution = { coordinates: fallbackCoordinates, source: "map_center_fallback" };
+      const confirmedAt = new Date().toISOString();
+      coordinateResolution = { coordinates: fallbackCoordinates, source: "user_map_selection",
+        resolutionStatus: "user_confirmed", validationStatus: "user_confirmed", confirmedAt,
+        mapConfirmationAnchor: { source: managePlacesGeocodeFallbackState.anchorSource,
+          query: managePlacesGeocodeFallbackState.anchorQuery, coordinates: managePlacesGeocodeFallbackState.coordinates } };
       managePlacesGeocodeFallbackState = {
         available: true,
         used: true,
-        coordinateSource: "map_center_fallback",
+        coordinateSource: "user_map_selection",
         coordinates: { lat: fallbackCoordinates.lat, lng: fallbackCoordinates.lng },
         address: String(work || "").trim(),
         slot: normalizedType,
-        at: new Date().toISOString()
+        confirmed: true,
+        confirmedCoordinates: { lat: fallbackCoordinates.lat, lng: fallbackCoordinates.lng },
+        at: confirmedAt
       };
     }
   }
@@ -93592,12 +93620,12 @@ async function saveRoute(source = "desktop", options = {}) {
   const coordinates = coordinateResolution?.coordinates || null;
   if (!coordinates) {
     const fallbackState = isManageSave && (manageSourceMode === "address" || selectedSaveSourceAudit === "address_inferred_from_input")
-      ? offerManagePlacesMapCenterFallback({ address: work, slot: normalizedType })
+      ? await offerManagePlacesMapCenterFallback({ address: work, slot: normalizedType })
       : managePlacesGeocodeFallbackState;
     const localityRequired = coordinateResolution?.rejectionReason === "locality_required";
     const failureMessage = localityRequired
       ? "Add a city or ZIP code so Gridly can identify the right place."
-      : "We couldn't verify that address. Add the city or ZIP code and try again.";
+      : "We couldn't verify this exact address. Choose its location on the map.";
     return failSave(failureMessage, localityRequired ? "Add city or ZIP" : "Address not verified", coordinateResolution?.rejectionReason || "coordinates_not_found", {
       coordinateSource: coordinateResolution?.source || "null",
       geocodeFailedFallbackAvailable: Boolean(fallbackState?.available),
@@ -93622,6 +93650,9 @@ async function saveRoute(source = "desktop", options = {}) {
     coordinateSource: coordinateResolution?.source || "null",
     resolutionStatus: coordinateResolution?.resolutionStatus || "success",
     validationStatus: coordinateResolution?.validationStatus || (coordinateResolution?.source === "geocode" ? "unknown" : "not_required"),
+    originalAddressInput: coordinateResolution?.source === "user_map_selection" ? String(work || "").trim() : undefined,
+    mapConfirmationAnchor: coordinateResolution?.mapConfirmationAnchor || undefined,
+    confirmedAt: coordinateResolution?.confirmedAt || undefined,
     localityEvidence: coordinateResolution?.localityEvidence || "not_applicable",
     zipEvidence: coordinateResolution?.zipEvidence || "not_applicable",
     stateEvidence: coordinateResolution?.stateEvidence || "not_applicable",
@@ -93654,11 +93685,11 @@ async function saveRoute(source = "desktop", options = {}) {
     savedPlaceId: id,
     coordinateSource: coordinateResolution?.source || "unknown",
     geocodeFailedFallbackAvailable: Boolean(managePlacesGeocodeFallbackState.available),
-    geocodeFailedFallbackUsed: coordinateResolution?.source === "map_center_fallback",
-    fallbackCoordinateSource: coordinateResolution?.source === "map_center_fallback" ? "map_center_fallback" : (managePlacesGeocodeFallbackState.coordinateSource || null),
-    fallbackCoordinates: coordinateResolution?.source === "map_center_fallback" ? { lat: coordinates.lat, lng: coordinates.lng } : (managePlacesGeocodeFallbackState.coordinates || null)
+    geocodeFailedFallbackUsed: coordinateResolution?.source === "user_map_selection",
+    fallbackCoordinateSource: coordinateResolution?.source === "user_map_selection" ? "user_map_selection" : (managePlacesGeocodeFallbackState.coordinateSource || null),
+    fallbackCoordinates: coordinateResolution?.source === "user_map_selection" ? { lat: coordinates.lat, lng: coordinates.lng } : (managePlacesGeocodeFallbackState.coordinates || null)
   };
-  if (coordinateResolution?.source === "map_center_fallback" && els.mobileUseMapCenterFallbackBtn) {
+  if (coordinateResolution?.source === "user_map_selection" && els.mobileUseMapCenterFallbackBtn) {
     els.mobileUseMapCenterFallbackBtn.hidden = true;
   }
   savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
@@ -93703,7 +93734,7 @@ window.gridlySavedAddressIntegrityAudit = function gridlySavedAddressIntegrityAu
     localityEvidence: place.localityEvidence || "not_available",
     zipEvidence: place.zipEvidence || "not_available",
     stateEvidence: place.stateEvidence || "not_available",
-    verificationState: isConfiguredPlace(place) ? "verified" : "needs_verification",
+    verificationState: place.coordinateSource === "user_map_selection" && isConfiguredPlace(place) ? "user_confirmed" : isConfiguredPlace(place) ? "verified" : "needs_verification",
     routeEligible: isConfiguredPlace(place),
     needsRevalidation: window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT?.needsLegacyRevalidation?.(place) === true,
     migrationAttempted: place.migrationAttempted === true,
@@ -93724,6 +93755,25 @@ window.gridlySavedAddressIntegrityAudit = function gridlySavedAddressIntegrityAu
     overallPass: resolutionContractHealthy && present.every((place) => place.routeEligible || place.migrationAttempted)
   });
 };
+window.gridlySavedAddressAcquisitionAudit = function gridlySavedAddressAcquisitionAudit() {
+  const integrity = window.gridlySavedAddressIntegrityAudit();
+  const resolution = integrity.lastResolution || {};
+  const fallback = managePlacesGeocodeFallbackState || {};
+  return Object.freeze({
+    contract: "GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT",
+    lastAddressInput: resolution.rawAddressInput || lastManagePlacesSaveAttempt?.address || "",
+    attempts: Array.isArray(resolution.attempts) ? resolution.attempts : [],
+    qualifiersPreserved: resolution.qualifiersPreserved !== false,
+    mapFallback: { offered: Boolean(fallback.available), anchorSource: fallback.anchorSource || null,
+      anchorCoordinates: fallback.coordinates || null, confirmationRequired: true,
+      confirmed: fallback.confirmed === true, confirmedCoordinates: fallback.confirmedCoordinates || null },
+    savedPlace: integrity.home.persisted ? { type: "home", verificationState: integrity.home.verificationState,
+      coordinateSource: integrity.home.coordinateSource, routeEligible: integrity.home.routeEligible } : integrity.work.persisted
+      ? { type: "work", verificationState: integrity.work.verificationState,
+        coordinateSource: integrity.work.coordinateSource, routeEligible: integrity.work.routeEligible } : null,
+    overallPass: integrity.overallPass && resolution.qualifiersPreserved !== false
+  });
+};
 function isLegacyPlace(place) {
   if (!place || typeof place !== "object") return false;
   const joined = `${place.label || ""} ${place.address || ""}`.toLowerCase();
@@ -93732,8 +93782,10 @@ function isLegacyPlace(place) {
 
 function isConfiguredPlace(place) {
   if (!place || isLegacyPlace(place)) return false;
-  const geocodeValidated = place.coordinateSource !== "geocode"
-    || (place.resolutionStatus === "success" && place.validationStatus === "passed");
+  const governed = window.GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT?.isRouteEligible;
+  const governedCoordinateSource = ["geocode", "user_map_selection"].includes(place.coordinateSource);
+  const geocodeValidated = governedCoordinateSource && typeof governed === "function" ? governed(place) : (place.coordinateSource !== "geocode"
+    || (place.resolutionStatus === "success" && place.validationStatus === "passed"));
   return Boolean(String(place.label || "").trim()) && hasValidPlaceCoordinates(place) && geocodeValidated;
 }
 function migrateLegacyStorage() {

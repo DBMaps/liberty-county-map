@@ -3,6 +3,7 @@
 
   const CONTRACT_NAME = "GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT";
   const REQUEST_CONTRACT_VERSION = "gridly-geocode-v1";
+  const ACQUISITION_CONTRACT_NAME = "GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT";
   const TEXAS_BOUNDS = Object.freeze({ south: 25.7, north: 36.6, west: -106.7, east: -93.4 });
   const clean = (value) => String(value || "").trim();
   const key = (value) => clean(value).toLowerCase().replace(/\bsaint\b/g, "st").replace(/[^a-z0-9]/g, "");
@@ -23,6 +24,40 @@
       city, state: stateMatch ? "TX" : "", zip,
       sufficientlyQualified: Boolean(city || zip)
     });
+  }
+
+  const STREET_FORMS = Object.freeze([
+    ["Street", "St"], ["Avenue", "Ave"], ["Road", "Rd"], ["Drive", "Dr"],
+    ["Lane", "Ln"], ["Boulevard", "Blvd"], ["Highway", "Hwy"],
+    ["Farm to Market", "FM"], ["County Road", "CR"],
+    ["North", "N"], ["South", "S"], ["East", "E"], ["West", "W"]
+  ]);
+
+  function replaceWholeWord(value, from, to) {
+    return value.replace(new RegExp(`\\b${from.replace(/ /g, "\\s+")}\\.?\\b`, "i"), to);
+  }
+
+  /** Bounded variants alter street spelling only; locality, state, and ZIP remain byte-visible. */
+  function normalizedAddressAttempts(rawAddressInput = "") {
+    const qualifiers = parseAddressQualifiers(rawAddressInput);
+    if (!qualifiers.sufficientlyQualified) return Object.freeze([]);
+    const canonical = qualifiers.normalizedAddressQuery
+      .replace(/\s*,\s*/g, ", ").replace(/\s+/g, " ")
+      .replace(/\b(\d{5})-\d{4}\b/, "$1").trim();
+    const attempts = [canonical];
+    for (const [long, short] of STREET_FORMS) {
+      const hasLong = new RegExp(`\\b${long.replace(/ /g, "\\s+")}\\.?\\b`, "i").test(canonical);
+      const hasShort = new RegExp(`\\b${short}\\.?\\b`, "i").test(canonical);
+      if (hasLong || hasShort) attempts.push(replaceWholeWord(canonical, hasLong ? long : short, hasLong ? short : long));
+    }
+    return Object.freeze([...new Set(attempts)].slice(0, 4));
+  }
+
+  function qualifiersPreserved(original, query) {
+    const source = parseAddressQualifiers(original);
+    const attempt = parseAddressQualifiers(query);
+    return source.sufficientlyQualified && (!source.city || key(source.city) === key(attempt.city))
+      && (!source.state || attempt.state === source.state) && (!source.zip || attempt.zip === source.zip);
   }
 
   function candidateAddress(candidate = {}) {
@@ -72,27 +107,57 @@
       qualifierMatch: false, rejectionReason: "", resolutionStatus: "failed", validationStatus: "rejected" };
     if (!qualifiers.sufficientlyQualified) return { ...base, rejectionReason: "locality_required", qualifiers };
     if (typeof search !== "function") return { ...base, rejectionReason: "geocoder_unavailable", qualifiers };
-    // The deployed Edge allow-list accepts explicit_search. saved_address_integrity is a
-    // client concern, not an Edge requestMode, and previously caused an HTTP 400.
-    const response = await search({ intent: "address", query: qualifiers.normalizedAddressQuery, limit: 5, requestMode: "explicit_search" });
-    const candidates = response?.ok && Array.isArray(response.results) ? response.results : [];
-    const evaluated = candidates.map((candidate) => ({ candidate, validation: validateCandidate(qualifiers, candidate) }));
-    const selected = evaluated.find((entry) => entry.validation.accepted);
+    const attempts = [];
+    let selected = null; let candidates = []; let evaluated = []; let response = null;
+    for (const normalizedQuery of normalizedAddressAttempts(address)) {
+      if (!qualifiersPreserved(address, normalizedQuery)) continue;
+      response = await search({ intent: "address", query: normalizedQuery, limit: 5, requestMode: "explicit_search" });
+      candidates = response?.ok && Array.isArray(response.results) ? response.results : [];
+      evaluated = candidates.map((candidate) => ({ candidate, validation: validateCandidate(qualifiers, candidate) }));
+      selected = evaluated.find((entry) => entry.validation.accepted) || null;
+      const transport = response?.transport || {};
+      attempts.push(Object.freeze({ normalizedQuery, requestAttempted: true, httpStatus: transport.httpStatus ?? null,
+        providerCandidateCount: Number(transport.providerCandidateCount ?? candidates.length), acceptedCandidate: Boolean(selected),
+        rejectionReason: selected ? "" : (evaluated[0]?.validation.rejectionReason || response?.status || "no_results") }));
+      if (selected) break;
+    }
     const transport = response?.transport || {};
-    const responseEvidence = { requestAttempted: true, httpStatus: transport.httpStatus ?? null,
+    const responseEvidence = { requestAttempted: attempts.length > 0, httpStatus: transport.httpStatus ?? null,
       requestContractVersion: transport.requestContractVersion || REQUEST_CONTRACT_VERSION,
       providerResponseReceived: transport.providerResponseReceived === true,
       providerCandidateCount: Number(transport.providerCandidateCount ?? candidates.length),
-      candidateCountAfterNormalization: candidates.length };
+      candidateCountAfterNormalization: candidates.length, attempts, qualifiersPreserved: attempts.every((x) => qualifiersPreserved(address, x.normalizedQuery)) };
     if (!selected) return { ...base, ...responseEvidence, candidateCount: candidates.length,
-      rejectionReason: evaluated[0]?.validation.rejectionReason || response?.status || "no_results", qualifiers,
-      candidates: evaluated.map((entry) => entry.validation) };
+      rejectionReason: attempts.at(-1)?.rejectionReason || "no_results", qualifiers,
+      mapFallback: { offered: true, confirmationRequired: true }, candidates: evaluated.map((entry) => entry.validation) };
     return { ...base, ...responseEvidence, candidateCount: candidates.length, selectedCandidate: selected.candidate,
       qualifierMatch: true, rejectionReason: "", resolutionStatus: "success", validationStatus: "passed",
       coordinates: { lat: selected.validation.latitude, lng: selected.validation.longitude },
       localityEvidence: selected.validation.localityEvidence, zipEvidence: selected.validation.zipEvidence,
       stateEvidence: selected.validation.stateEvidence, countyEvidence: selected.validation.countyEvidence,
       qualifiers, candidates: evaluated.map((entry) => entry.validation) };
+  }
+
+  function mapAnchorQuery(rawAddressInput = "") {
+    const q = parseAddressQualifiers(rawAddressInput);
+    if (!q.sufficientlyQualified) return "";
+    return [q.city, q.state || "TX", q.zip].filter(Boolean).join(q.city ? ", " : " ");
+  }
+
+  function confirmMapSelection({ address = "", slot = "favorite", coordinates, anchor = null, confirmedAt = new Date().toISOString() } = {}) {
+    const lat = Number(coordinates?.lat); const lng = Number(coordinates?.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < TEXAS_BOUNDS.south || lat > TEXAS_BOUNDS.north || lng < TEXAS_BOUNDS.west || lng > TEXAS_BOUNDS.east) return null;
+    return Object.freeze({ type: slot, address: clean(address), originalAddressInput: clean(address), lat, lng,
+      coordinates: { lat, lng }, coordinateSource: "user_map_selection", resolutionStatus: "user_confirmed",
+      validationStatus: "user_confirmed", verificationState: "user_confirmed", routeEligible: true,
+      mapConfirmationAnchor: anchor, confirmedAt });
+  }
+
+  function isRouteEligible(place = {}) {
+    const lat = Number(place.lat ?? place.coordinates?.lat); const lng = Number(place.lng ?? place.coordinates?.lng);
+    const finite = Number.isFinite(lat) && Number.isFinite(lng);
+    return finite && ((place.coordinateSource === "geocode" && place.resolutionStatus === "success" && place.validationStatus === "passed")
+      || (place.coordinateSource === "user_map_selection" && place.resolutionStatus === "user_confirmed" && place.validationStatus === "user_confirmed" && Boolean(place.confirmedAt)));
   }
 
   function needsLegacyRevalidation(place = {}) {
@@ -122,8 +187,12 @@
   }
 
   global.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT = Object.freeze({
-    name: CONTRACT_NAME, version: "LP244.5", requestContractVersion: REQUEST_CONTRACT_VERSION,
+    name: CONTRACT_NAME, version: "LP244.6", requestContractVersion: REQUEST_CONTRACT_VERSION,
     geography: "Texas", parseAddressQualifiers, validateCandidate, resolveAddress,
     needsLegacyRevalidation, revalidateLegacyPlace
+  });
+  global.GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT = Object.freeze({
+    name: ACQUISITION_CONTRACT_NAME, version: "LP244.6", geography: "Texas", maxAttempts: 4,
+    normalizedAddressAttempts, qualifiersPreserved, mapAnchorQuery, confirmMapSelection, isRouteEligible
   });
 })(typeof window !== "undefined" ? window : globalThis);
