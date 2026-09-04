@@ -103,3 +103,42 @@ test('Brief snapshot count cannot become quiet when a governed KBYG identity sur
   assert.match(app, /convergeAuthoritativeSummary/);
   assert.match(app, /locationContextCount/);
 });
+
+test('writer trace proves the legacy last writers fail before repair and the full sequential publication passes after repair', () => {
+  const app = fs.readFileSync('js/app.js', 'utf8');
+  const record = { id: REPORT_ID, status: 'active', countyId: 'liberty-tx', placeGeoid: '4819432' };
+  const governed = [{ evidenceId: EVIDENCE_ID, record }];
+  const staleHealthyEmpty = { awarenessAreaName: 'Dayton', activeReportsInArea: [] };
+
+  // Browser-observed pre-repair sequence: the official publisher converged,
+  // then the generic Pulse publisher preferred its older official snapshot;
+  // portrait subsequently published its cached quiet Brief.
+  let legacySummary = parity.convergeAuthoritativeSummary(staleHealthyEmpty, governed);
+  legacySummary = staleHealthyEmpty;
+  let legacyBrief = { state: legacySummary.activeReportsInArea.length ? 'active' : 'quiet' };
+  const legacyAudit = parity.audit({ governed, alerts: [record], kbyg: governed,
+    communitySummary: legacySummary.activeReportsInArea,
+    topAwarenessRepresentations: [{ evidenceId: EVIDENCE_ID }], awarenessBriefState: legacyBrief.state });
+  assert.equal(legacyAudit.overallPass, false, 'pre-repair last-writer sequence reproduces owner failure');
+
+  // Repaired sequence includes initialization, official publication, portrait
+  // refresh, stale provider refresh, and final post-portrait convergence.
+  let summary = parity.convergeAuthoritativeSummary(staleHealthyEmpty, governed);
+  summary = parity.convergeAuthoritativeSummary(staleHealthyEmpty, governed);
+  summary = parity.convergeAuthoritativeSummary(summary, governed);
+  const evidenceCount = governed.length + 1 + summary.activeReportsInArea.length + 1;
+  legacyBrief = { state: evidenceCount ? 'active' : 'quiet' };
+  const repairedAudit = parity.audit({ governed, alerts: [record], kbyg: governed,
+    communitySummary: summary.activeReportsInArea,
+    topAwarenessRepresentations: [{ evidenceId: EVIDENCE_ID }], awarenessBriefState: legacyBrief.state });
+  assert.deepEqual(repairedAudit.communitySummaryIds, [EVIDENCE_ID]);
+  assert.equal(repairedAudit.overallPass, true, 'full simulated writer sequence reaches governed parity');
+
+  assert.match(app, /function gridlyGovernedParityWriterTrace\(\)/);
+  assert.match(app, /writer: "invalidateGridlyPortraitAwarenessSnapshotsForAreaChange"/);
+  assert.match(app, /writer: "refreshPortraitV2LocalizedIntelligence:awareness-brief-publication"/);
+  assert.match(app, /governed-active-evidence-blocked-quiet/);
+  assert.match(app, /const proposedSummary = gridlyLastAuthoritativeCommunityAwarenessSummary \|\| normalizedPatch\.communityAwarenessSummary \|\| publisherAuthoritativeSummary/);
+  assert.match(app, /firstSummaryLoss/);
+  assert.match(app, /firstBriefQuietOverwrite/);
+});

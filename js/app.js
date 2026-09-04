@@ -42668,6 +42668,8 @@ function invalidateGridlyPortraitAwarenessSnapshotsForAreaChange(area = null, re
     };
   }
   if (gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object") {
+    const previousSummary = gridlyCommunityPulseAuditState.communityAwarenessSummary;
+    gridlyLastAuthoritativeCommunityAwarenessSummary = null;
     gridlyCommunityPulseAuditState = {
       ...gridlyCommunityPulseAuditState,
       renderedPulseHeadline: "",
@@ -42680,6 +42682,15 @@ function invalidateGridlyPortraitAwarenessSnapshotsForAreaChange(area = null, re
       invalidatedAwarenessAreaName: areaName,
       invalidatedReason: reason
     };
+    if (typeof gridlyRecordCommunitySummaryWrite === "function") gridlyRecordCommunitySummaryWrite({
+      writer: "invalidateGridlyPortraitAwarenessSnapshotsForAreaChange",
+      caller: reason,
+      previous: previousSummary,
+      next: null,
+      governedRows: typeof gridlyGetGovernedActiveAwarenessRows === "function" ? gridlyGetGovernedActiveAwarenessRows() : [],
+      convergenceRan: false
+    });
+    window.gridlyCommunityPulseAuditState = gridlyCommunityPulseAuditState;
   }
 }
 
@@ -64912,6 +64923,44 @@ let gridlyCommunityPulseAuditState = {
   repetitionAvoidanceApplied: false
 };
 let gridlyLastAuthoritativeCommunityAwarenessSummary = null;
+const gridlyGovernedParityWriterTraceState = {
+  summaryRevision: 0,
+  briefRevision: 0,
+  communitySummaryWrites: [],
+  awarenessBriefWrites: []
+};
+function gridlyParityTraceIds(rows = []) {
+  return [...new Set((Array.isArray(rows) ? rows : []).map((row) =>
+    window.gridlyGovernedActiveConditionParity?.canonicalIdentity?.(row?.record || row)
+  ).filter(Boolean))].sort();
+}
+function gridlyRecordCommunitySummaryWrite({ writer = "unknown", caller = "unknown", previous = null, next = null, governedRows = [], convergenceRan = false } = {}) {
+  const previousIds = gridlyParityTraceIds(previous?.activeReportsInArea);
+  const nextIds = gridlyParityTraceIds(next?.activeReportsInArea);
+  const governedKbygIds = gridlyParityTraceIds(governedRows);
+  const convergenceInjectedIds = nextIds.filter((id) => !previousIds.includes(id) && governedKbygIds.includes(id));
+  const removedIds = previousIds.filter((id) => !nextIds.includes(id));
+  const revision = ++gridlyGovernedParityWriterTraceState.summaryRevision;
+  gridlyGovernedParityWriterTraceState.communitySummaryWrites.push({
+    writer, caller, at: Date.now(), revision, selectedArea: next?.selectedAwarenessArea || next?.awarenessAreaName || null,
+    previousIds, nextIds, governedKbygIds,
+    alertsIds: typeof getGridlyAlertsSurfaceActiveCommunityReportRows === "function" ? gridlyParityTraceIds(getGridlyAlertsSurfaceActiveCommunityReportRows({ skipLocalizedFallback: true })) : [],
+    activeReportIds: gridlyParityTraceIds(typeof activeReports !== "undefined" ? activeReports : []),
+    convergenceRan: Boolean(convergenceRan), governedRowsAvailable: governedKbygIds.length > 0,
+    governedRowsInjected: convergenceInjectedIds.length > 0, convergenceInjectedIds, removedIds
+  });
+  if (gridlyGovernedParityWriterTraceState.communitySummaryWrites.length > 80) gridlyGovernedParityWriterTraceState.communitySummaryWrites.shift();
+}
+function gridlyRecordAwarenessBriefWrite({ writer = "unknown", caller = "unknown", previous = null, next = null, decisionReason = "presentation-model" } = {}) {
+  const governedKbygCount = typeof gridlyGetGovernedActiveAwarenessRows === "function" ? gridlyGetGovernedActiveAwarenessRows().length : 0;
+  const topAwarenessCount = gridlyParityTraceIds(window.gridlyTopAwarenessMicrolineState?.activeAwareness?.topAwarenessCanonicalIds?.map((evidenceId) => ({ evidenceId }))).length;
+  const communitySummaryCount = gridlyParityTraceIds(gridlyCommunityPulseAuditState?.communityAwarenessSummary?.activeReportsInArea).length;
+  const alertsCount = typeof getGridlyAlertsSurfaceActiveCommunityReportRows === "function" ? gridlyParityTraceIds(getGridlyAlertsSurfaceActiveCommunityReportRows({ skipLocalizedFallback: true })).length : 0;
+  const revision = ++gridlyGovernedParityWriterTraceState.briefRevision;
+  gridlyGovernedParityWriterTraceState.awarenessBriefWrites.push({ writer, caller, at: Date.now(), revision,
+    previousState: previous?.state || null, nextState: next?.state || null, governedKbygCount, topAwarenessCount, communitySummaryCount, alertsCount, decisionReason });
+  if (gridlyGovernedParityWriterTraceState.awarenessBriefWrites.length > 80) gridlyGovernedParityWriterTraceState.awarenessBriefWrites.shift();
+}
 const gridlyCommunityAwarenessReferenceIds = new WeakMap();
 let gridlyCommunityAwarenessNextReferenceId = 1;
 function gridlyCommunityAwarenessObjectId(value) {
@@ -64926,24 +64975,37 @@ let gridlyCommunityPulseTemplateMemory = {
   lastSublineTemplate: ""
 };
 
-function publishGridlyCommunityPulseAuditState(patch = {}) {
+function publishGridlyCommunityPulseAuditState(patch = {}, publication = {}) {
+  const previousSummary = gridlyCommunityPulseAuditState?.communityAwarenessSummary || null;
   const publisherAuthoritativeSummary = typeof window !== "undefined"
     && typeof window.gridlyGetAuthoritativeCommunityAwarenessSummary === "function"
     ? window.gridlyGetAuthoritativeCommunityAwarenessSummary()
     : null;
-  const authoritativeSummary = publisherAuthoritativeSummary || gridlyLastAuthoritativeCommunityAwarenessSummary;
   const normalizedPatch = patch && typeof patch === "object" ? { ...patch } : {};
+  // The in-transaction authority wins over both a reconstructed presentation
+  // model and the official publisher's lagging readback. Area invalidation
+  // clears this local authority before a new area's first publication.
+  const proposedSummary = gridlyLastAuthoritativeCommunityAwarenessSummary || normalizedPatch.communityAwarenessSummary || publisherAuthoritativeSummary;
+  const governedRows = typeof gridlyGetGovernedActiveAwarenessRows === "function" ? gridlyGetGovernedActiveAwarenessRows() : [];
+  const authoritativeSummary = proposedSummary && window.gridlyGovernedActiveConditionParity?.convergeAuthoritativeSummary?.(proposedSummary, governedRows) || proposedSummary;
   // Pulse presentation models are routinely reconstructed (and may contain a
   // cloned summary). Once the official publisher has an authority, a generic
   // state refresh may carry that reference forward but may not replace it.
   if (authoritativeSummary && Object.prototype.hasOwnProperty.call(normalizedPatch, "communityAwarenessSummary")) {
     normalizedPatch.communityAwarenessSummary = authoritativeSummary;
+    gridlyLastAuthoritativeCommunityAwarenessSummary = authoritativeSummary;
   }
   const nextState = {
     ...(gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object" ? gridlyCommunityPulseAuditState : {}),
     ...normalizedPatch
   };
   gridlyCommunityPulseAuditState = nextState;
+  if (Object.prototype.hasOwnProperty.call(normalizedPatch, "communityAwarenessSummary")) gridlyRecordCommunitySummaryWrite({
+    writer: publication.writer || normalizedPatch.communityAwarenessSummaryWriter || "publishGridlyCommunityPulseAuditState",
+    caller: publication.caller || normalizedPatch.communityAwarenessSummaryWriter || "unspecified-pulse-publication",
+    previous: previousSummary,
+    next: nextState.communityAwarenessSummary, governedRows, convergenceRan: true
+  });
   if (typeof window !== "undefined") window.gridlyCommunityPulseAuditState = gridlyCommunityPulseAuditState;
   return gridlyCommunityPulseAuditState;
 }
@@ -64969,7 +65031,7 @@ function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publicatio
     communityAwarenessSummaryWriter: "gridlyPublishAuthoritativeCommunityAwarenessSummary",
     communityAwarenessSummaryRevision: Number(publication.summaryRevision || 0),
     communityAwarenessPublicationRevision: Number(publication.publicationRevision || 0)
-  });
+  }, { writer: "gridlyPublishAuthoritativeCommunityAwarenessSummary", caller: publication.reason || "official-roadway-summary-publication" });
   const priorMicroline = window.gridlyTopAwarenessMicrolineState;
   window.gridlyTopAwarenessMicrolineState = {
     ...(priorMicroline && typeof priorMicroline === "object" ? priorMicroline : {}),
@@ -65003,7 +65065,7 @@ function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publicatio
   publishGridlyCommunityPulseAuditState({
     communityAwarenessSummary: summary,
     communityAwarenessSummaryWriter: "gridlyPublishAuthoritativeCommunityAwarenessSummary:post-portrait-convergence"
-  });
+  }, { writer: "gridlyPublishAuthoritativeCommunityAwarenessSummary:post-portrait-convergence", caller: publication.reason || "official-roadway-summary-publication" });
   window.gridlyTopAwarenessMicrolineState = {
     ...(window.gridlyTopAwarenessMicrolineState && typeof window.gridlyTopAwarenessMicrolineState === "object" ? window.gridlyTopAwarenessMicrolineState : {}),
     communityAwarenessSummary: summary,
@@ -65899,6 +65961,37 @@ function gridlyGovernedActiveConditionParityAudit() {
   });
 }
 window.gridlyGovernedActiveConditionParityAudit = gridlyGovernedActiveConditionParityAudit;
+
+// LP244.5 owner-facing, read-only publication trace. This reports writer
+// history only; it performs no convergence, refresh, storage, or DOM writes.
+function gridlyGovernedParityWriterTrace() {
+  const summaryWrites = gridlyGovernedParityWriterTraceState.communitySummaryWrites;
+  const briefWrites = gridlyGovernedParityWriterTraceState.awarenessBriefWrites;
+  const finalSummary = summaryWrites.at(-1) || null;
+  const finalBrief = briefWrites.at(-1) || null;
+  const firstSummaryLoss = summaryWrites.find((write) => write.removedIds.length > 0) || null;
+  const firstBriefQuietOverwrite = briefWrites.find((write) => write.previousState && write.previousState !== "quiet" && write.nextState === "quiet" && (write.governedKbygCount || write.topAwarenessCount || write.communitySummaryCount || write.alertsCount)) || null;
+  const currentSummary = gridlyCommunityPulseAuditState?.communityAwarenessSummary || {};
+  return {
+    selectedArea: currentSummary.selectedAwarenessArea || currentSummary.awarenessAreaName || getGridlyAwarenessAreaDebugOption(getGridlySelectedAwarenessArea()),
+    communitySummary: {
+      currentIds: gridlyParityTraceIds(currentSummary.activeReportsInArea),
+      finalWriter: finalSummary?.writer || null,
+      finalRevision: finalSummary?.revision || 0,
+      writes: summaryWrites.map(({ writer, caller, previousIds, nextIds, governedKbygIds, convergenceRan, convergenceInjectedIds }) => ({ writer, caller, previousIds, nextIds, governedKbygIds, convergenceRan, convergenceInjectedIds }))
+    },
+    awarenessBrief: {
+      currentState: window.gridlyAwarenessBriefIntelligenceModel?.state || null,
+      finalWriter: finalBrief?.writer || null,
+      finalRevision: finalBrief?.revision || 0,
+      writes: briefWrites.map(({ writer, caller, previousState, nextState, governedKbygCount, topAwarenessCount, communitySummaryCount, alertsCount, decisionReason }) => ({ writer, caller, previousState, nextState, governedKbygCount, topAwarenessCount, communitySummaryCount, alertsCount, decisionReason }))
+    },
+    firstSummaryLoss: firstSummaryLoss ? { writer: firstSummaryLoss.writer, revision: firstSummaryLoss.revision, removedIds: firstSummaryLoss.removedIds } : null,
+    firstBriefQuietOverwrite: firstBriefQuietOverwrite ? { writer: firstBriefQuietOverwrite.writer, revision: firstBriefQuietOverwrite.revision, previousState: firstBriefQuietOverwrite.previousState, nextState: firstBriefQuietOverwrite.nextState } : null,
+    overallTraceComplete: Boolean(summaryWrites.length && briefWrites.length)
+  };
+}
+window.gridlyGovernedParityWriterTrace = gridlyGovernedParityWriterTrace;
 
 function getGridlyAlertCardHistoricalContextLine(alert = {}) {
   const adapter = typeof window !== "undefined" ? window.gridlyHistoricalAwarenessAdapter : globalThis.gridlyHistoricalAwarenessAdapter;
@@ -113408,7 +113501,28 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
       activeStateEvidenceOwnership: textModel.activeStateEvidenceOwnership || textModel.pulseModel?.activeStateEvidenceOwnership || null,
       activeStateEvidenceOwnershipApplied: Boolean(textModel.activeStateEvidenceOwnershipApplied || textModel.pulseModel?.activeStateEvidenceOwnershipApplied)
     };
-    window.gridlyAwarenessBriefIntelligenceModel = textModel.awarenessBrief || null;
+    const previousBrief = window.gridlyAwarenessBriefIntelligenceModel || null;
+    const governedKbygCount = typeof gridlyGetGovernedActiveAwarenessRows === "function" ? gridlyGetGovernedActiveAwarenessRows().length : 0;
+    const topAwarenessCount = Array.isArray(activeAwareness.topAwarenessCanonicalIds) ? activeAwareness.topAwarenessCanonicalIds.length : 0;
+    const communitySummaryCount = Array.isArray(authoritativeCommunityAwarenessSummary?.activeReportsInArea) ? authoritativeCommunityAwarenessSummary.activeReportsInArea.length : 0;
+    const alertsCount = typeof getGridlyAlertsSurfaceActiveCommunityReportRows === "function"
+      ? getGridlyAlertsSurfaceActiveCommunityReportRows({ skipLocalizedFallback: true }).length
+      : 0;
+    const governedActiveEvidenceCount = governedKbygCount + topAwarenessCount + communitySummaryCount + alertsCount;
+    const proposedBrief = textModel.awarenessBrief || null;
+    const nextBrief = proposedBrief?.state === "quiet" && governedActiveEvidenceCount > 0
+      ? { ...proposedBrief, state: "active", microlineVisible: true, decisionReason: "governed-active-evidence-blocked-quiet" }
+      : proposedBrief;
+    window.gridlyAwarenessBriefIntelligenceModel = nextBrief;
+    gridlyRecordAwarenessBriefWrite({
+      writer: "refreshPortraitV2LocalizedIntelligence:awareness-brief-publication",
+      caller: options?.reason || "refreshPortraitV2LocalizedIntelligence",
+      previous: previousBrief,
+      next: nextBrief,
+      decisionReason: proposedBrief?.state === "quiet" && governedActiveEvidenceCount > 0
+        ? "governed-active-evidence-blocked-quiet"
+        : (proposedBrief?.decisionReason || "portrait-shared-model")
+    });
     if (typeof gridlyBriefInteractionRender === "function") gridlyBriefInteractionRender();
     gridlyV923PortraitRefreshOptimizationState.panelCopySignature = panelCopySignature;
     gridlyV923PortraitRefreshOptimizationState.batchedDomCommits += 1;
