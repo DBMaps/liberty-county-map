@@ -70,6 +70,22 @@
     });
   }
 
+  // The governed projection is already lifecycle- and geography-qualified by
+  // its owner. Rejoin those exact community records at the final summary
+  // writer boundary so a stale/empty presentation snapshot cannot erase them.
+  function convergeAuthoritativeSummary(summary = {}, governedRows = []) {
+    const current = Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea : [];
+    const governedCommunity = (Array.isArray(governedRows) ? governedRows : [])
+      .filter((row) => /^community_report:/i.test(String(row?.evidenceId || "")))
+      .map((row) => {
+        const record = row?.record && typeof row.record === "object" ? row.record : {};
+        return { ...record, governedEvidenceId: row.evidenceId, evidenceId: row.evidenceId };
+      });
+    const converged = reconcile([...current, ...governedCommunity]).accepted
+      .map((entry) => entry.representation?.item || entry.representation?.record || entry.representation);
+    return { ...summary, activeReportsInArea: converged };
+  }
+
   function audit(input = {}) {
     const ids = (rows) => [...new Set((rows || []).map((row) => canonicalIdentity(row?.record || row)).filter(Boolean))].sort();
     const governedConditionIds = ids(input.governed || []);
@@ -97,5 +113,5 @@
     });
   }
 
-  return Object.freeze({ CONTRACT, canonicalIdentity, isActive, reconcile, audit });
+  return Object.freeze({ CONTRACT, canonicalIdentity, isActive, reconcile, convergeAuthoritativeSummary, audit });
 });
