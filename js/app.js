@@ -40867,6 +40867,8 @@ function clearGridlySearchResults(options = {}) {
   if (resultsContainer) {
     resultsContainer.textContent = "";
     delete resultsContainer.dataset.searchPublication;
+    delete resultsContainer.dataset.explicitResultCount;
+    delete resultsContainer.dataset.publishedQuery;
   }
   gridlySearchUiState.lastRenderedResults = [];
   gridlySearchUiState.lastResultShapePreview = [];
@@ -40898,6 +40900,8 @@ function renderGridlySearchResults(results = [], options = {}) {
   if (!resultsContainer) return false;
   resultsContainer.textContent = "";
   resultsContainer.dataset.searchPublication = options?.state === "searching" ? "searching" : "active";
+  resultsContainer.dataset.explicitResultCount = "0";
+  resultsContainer.dataset.publishedQuery = String(options?.query || "").trim();
 
   if (options?.state === "searching") {
     const status = document.createElement("div");
@@ -40994,6 +40998,7 @@ function renderGridlySearchResults(results = [], options = {}) {
 
   const list = document.createElement("div");
   list.className = "gridly-search-results-list";
+  list.dataset.explicitDestinationResults = "true";
   const preview = [];
   renderedResults.forEach((result, index) => {
     const itemBtn = document.createElement("button");
@@ -41062,6 +41067,11 @@ function renderGridlySearchResults(results = [], options = {}) {
   gridlySearchUiState.lastResultShapePreview = renderedResults.slice(0, 3).map((result) => buildGridlyResultShapePreviewItem(result));
 
   resultsContainer.appendChild(list);
+  resultsContainer.dataset.explicitResultCount = String(list.children.length);
+  // Every publication starts at its own heading/card boundary. Preserve this
+  // position through keyboard dismissal and visualViewport recalculation so
+  // passive Nearby Places can never appear to own the heading's content.
+  resultsContainer.scrollTop = 0;
   setGridlyLp101PipelineStage(lp101CaseName, "renderedCandidates", renderedResults, renderQuery);
   if (options?.renderPhase === "final") {
     void enrichGridlyPublishedDestinationResults(renderedResults, {
@@ -41075,7 +41085,12 @@ function renderGridlySearchResults(results = [], options = {}) {
 
 function collapseGridlySearchResults() {
   const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
-  if (resultsContainer) resultsContainer.textContent = "";
+  if (resultsContainer) {
+    resultsContainer.textContent = "";
+    delete resultsContainer.dataset.searchPublication;
+    delete resultsContainer.dataset.explicitResultCount;
+    delete resultsContainer.dataset.publishedQuery;
+  }
   gridlySearchUiState.lastRenderedResults = [];
   gridlySearchUiState.lastRenderedResultsPreview = [];
   gridlySearchUiState.lastResultShapePreview = [];
@@ -46275,6 +46290,38 @@ function updateGridlySearchClearVisibility(queryValue) {
   return hasQuery;
 }
 
+// Live acceptance probe for the authored destination-search DOM. This reads
+// computed layout after real Search/Enter interactions; it does not synthesize
+// results or invoke a second resolver path.
+window.gridlyDestinationSearchLayoutAudit = function gridlyDestinationSearchLayoutAudit() {
+  const container = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
+  const heading = container?.querySelector?.(".gridly-search-section-title") || null;
+  const list = container?.querySelector?.("[data-explicit-destination-results='true']") || null;
+  const cards = Array.from(list?.querySelectorAll?.(".gridly-search-result-item") || []);
+  const style = container ? window.getComputedStyle(container) : null;
+  const bounds = container?.getBoundingClientRect?.() || null;
+  const firstBounds = cards[0]?.getBoundingClientRect?.() || null;
+  const nearbySurface = Array.from(document.querySelectorAll("body *")).find((node) => (
+    !container?.contains(node)
+    && /^Nearby Places$/i.test(String(node.textContent || "").trim())
+    && window.getComputedStyle(node).display !== "none"
+  )) || null;
+  const nearbyPrecedesCards = Boolean(nearbySurface && cards[0]
+    && (nearbySurface.compareDocumentPosition(cards[0]) & Node.DOCUMENT_POSITION_FOLLOWING));
+  return Object.freeze({
+    publication: container?.dataset.searchPublication || "none",
+    publishedQuery: container?.dataset.publishedQuery || "",
+    headingExists: Boolean(heading),
+    resultCardCount: cards.length,
+    resultRegionHeight: Number(bounds?.height || 0),
+    resultRegionVisible: Boolean(style && style.display !== "none" && style.visibility !== "hidden" && Number(bounds?.height || 0) > 0),
+    firstResultTop: Number(firstBounds?.top || 0),
+    firstResultInViewport: Boolean(firstBounds && firstBounds.bottom > 0 && firstBounds.top < window.innerHeight),
+    headingAndCardsShareRegion: Boolean(heading && list && heading.parentElement === container && list.parentElement === container),
+    nearbyPrecedesCards
+  });
+};
+
 function initGridlySearchUI() {
   const shell = document.getElementById("gridlySearchShell");
   const input = document.getElementById("gridlyAddressSearchInput");
@@ -46368,6 +46415,14 @@ function initGridlySearchUI() {
       const state = ensureGridlySearchState();
       const query = String(input.value || state.activeQuery || "").trim();
       state.activeQuery = query;
+      const hasPublishedExplicitResults = results?.dataset.searchPublication === "active"
+        && Number(results?.dataset.explicitResultCount || 0) > 0
+        && normalizeGridlySearchDisplayLabel(results?.dataset.publishedQuery || "")
+          === normalizeGridlySearchDisplayLabel(query);
+      // Focus and click do not constitute a new search. Previously this path
+      // replaced a completed Dallas publication with the typing-only local
+      // seed set (which is empty for governed PLACE results).
+      if (hasPublishedExplicitResults) return;
       if (query.length >= 3) {
         const localResults = [...getGridlySavedPlaceDestinationSearchResults(query, { includeAll: true }), ...searchGridlyLocalPoiSeeds(query, { intent: classifyGridlyDestinationSearchIntent(query) })];
         renderGridlySearchResults(localResults, { state: "done", allowEmptyMessage: false, query });
