@@ -27788,6 +27788,18 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 .gridly-landscape-command-handle { display: none; }
 
 @media (orientation: landscape) and (max-height: 500px) {
+  /* LP244.5 final density correction. The former 104px structural reserve,
+     card padding, and map margin stacked into a 130px first painted map row.
+     The header/filter system itself needs 100px at the reference viewport;
+     everything after that is functional map content. */
+  body[data-layout-mode="portrait"] #mapSection.command-center,
+  body[data-layout-mode="portrait"] #mapSection.command-center > .map-card,
+  body[data-layout-mode="portrait"] #mapSection.command-center .map-frame,
+  body[data-layout-mode="portrait"] #mapSection.command-center #map {
+    margin-block: 0 !important;
+    padding-block: 0 !important;
+  }
+
   body[data-layout-mode="portrait"] {
     --lp243h10b-inline-start: max(8px, env(safe-area-inset-left, 0px));
     --lp243h10b-inline-end: max(8px, env(safe-area-inset-right, 0px));
@@ -29288,6 +29300,10 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
    physical-phone boundary certified by LP244.4. Nothing in this block can
    participate in the authoritative portrait composition. */
 @media (orientation: landscape) and (max-height: 500px) {
+  body[data-layout-mode="portrait"] {
+    --lp243h10b-top-height: 100px;
+  }
+
   /* Task C: let the map paint to the physical workspace edges. Interactive
      chrome continues to use H10B's safe-inset variables. */
   body[data-layout-mode="portrait"] .app-shell.premium-layout {
@@ -29328,6 +29344,23 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
+  }
+
+  /* Navigation is contextual rather than a permanent map rail. Opening the
+     existing bottom disclosure reveals the existing Layers, locate, and zoom
+     actions as one unframed horizontal strip above the command tray. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 .gridly-v2-control-rail {
+    display: grid !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    grid-template-columns: repeat(4, 44px) !important;
+    grid-template-rows: 44px !important;
+    gap: 4px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
   /* First-run used a portrait-sized (66vh) artwork row beneath the brand.
@@ -29455,6 +29488,110 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     min-height: 0;
     padding: 10px 12px;
     border-radius: 18px;
+  }
+
+  /* Compact destination-search hierarchy for a 400px block axis. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card {
+    gap: 0;
+    padding: 8px 10px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-header {
+    min-height: 36px;
+    margin-bottom: 4px !important;
+    gap: 8px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-label {
+    font-size: clamp(1.05rem, 2.5vw, 1.22rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-subtitle {
+    display: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-input-row {
+    padding: 2px;
+    border-radius: 14px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) :is(.gridly-search-input, .gridly-search-clear-btn) {
+    min-height: 44px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-results {
+    margin-top: 5px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-section-title {
+    margin: 2px 2px 5px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-results-list {
+    gap: 5px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-result-item {
+    min-height: 58px;
+    padding: 8px 10px;
+    border-radius: 13px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-poi-nonproduction {
+    margin-top: 7px;
+    padding: 8px 10px;
+    border-radius: 13px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-poi-controls {
+    gap: 6px;
+    margin: 7px 0;
+  }
+
+  /* An explicit publication owns the first reading order. Nearby Places is
+     retained immediately after the result region and returns to its passive
+     position automatically when clear removes the publication attribute. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(
+      .gridly-search-results[data-explicit-result-count]:not([data-explicit-result-count="0"])
+    ) .gridly-search-card {
+    overflow-y: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(
+      .gridly-search-results[data-explicit-result-count]:not([data-explicit-result-count="0"])
+    ) .gridly-search-results {
+    flex: 0 0 auto;
+    min-height: 0;
+    overflow: visible;
+    order: 1;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(
+      .gridly-search-results[data-explicit-result-count]:not([data-explicit-result-count="0"])
+    ) .gridly-poi-nonproduction {
+    order: 2;
+  }
+
+  /* The outer tray is the only glossy surface. Clip legacy decoration at the
+     Location Context boundary and keep Search a quiet compliant target. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel {
+    overflow: clip !important;
+  }
+
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel::before {
+    display: none !important;
+  }
+
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    .map-card > #mobileDestinationCommandPanel .compact-btn {
+    min-height: 44px !important;
+    padding-inline: 12px !important;
+    font-size: 0.78rem !important;
+    font-weight: 650 !important;
   }
 
   body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-header {
