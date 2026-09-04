@@ -27,10 +27,21 @@ test("short-landscape controls float clear of the contained Location Context tra
       panelTop: panelRect.top,
       gap: panelRect.top - railRect.bottom,
       rightInset: innerWidth - railRect.right,
+      railWidth: railRect.width,
+      railHeight: railRect.height,
       railPosition: railStyle.position,
-      controls: [...railNode.querySelectorAll("button")].map((node) => node.getBoundingClientRect().height),
+      railColumns: railStyle.gridTemplateColumns,
+      controls: [...railNode.querySelectorAll("button")].map((node) => {
+        const rect = node.getBoundingClientRect();
+        return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+      }),
       panelRight: panelRect.right,
+      panelWidth: panelRect.width,
       panelOverflow: panelStyle.overflow,
+      panelContainment: panelStyle.contain,
+      panelBackground: panelStyle.backgroundColor,
+      panelBackdropFilter: panelStyle.backdropFilter,
+      panelWebkitBackdropFilter: panelStyle.webkitBackdropFilter,
       beforeContent: beforeStyle.content,
       beforeDisplay: beforeStyle.display,
       buttonHeight: buttonRect.height,
@@ -43,14 +54,24 @@ test("short-landscape controls float clear of the contained Location Context tra
   expect(geometry.railParent).toBe("gridlyPortraitV2");
   expect(geometry.panelParent).toBe("gridlyPortraitBottomRegion");
   expect(geometry.railPosition).toBe("fixed");
+  expect(geometry.railWidth).toBe(188);
+  expect(geometry.railHeight).toBe(44);
+  expect(geometry.railColumns).toBe("44px 44px 44px 44px");
   expect(geometry.railBottom).toBeCloseTo(246, 0);
   expect(geometry.panelTop).toBeCloseTo(278, 0);
   expect(geometry.gap).toBeGreaterThanOrEqual(28);
   expect(geometry.gap).toBeLessThanOrEqual(34);
   expect(geometry.rightInset).toBeGreaterThanOrEqual(16);
-  expect(geometry.controls.every((height) => height >= 44)).toBe(true);
+  expect(geometry.controls.every(({ width, height }) => width >= 44 && height >= 44)).toBe(true);
+  expect(new Set(geometry.controls.map(({ top }) => top)).size).toBe(1);
+  expect(geometry.controls.every((control, index, controls) => index === 0 || control.left > controls[index - 1].left)).toBe(true);
   expect(geometry.panelRight).toBeLessThanOrEqual(875);
+  expect(geometry.panelWidth).toBeLessThanOrEqual(875);
   expect(geometry.panelOverflow).toBe("clip");
+  expect(geometry.panelContainment).toBe("paint");
+  expect(geometry.panelBackground).not.toBe("rgba(0, 0, 0, 0)");
+  expect(geometry.panelBackdropFilter).toBe("none");
+  expect([undefined, "none"]).toContain(geometry.panelWebkitBackdropFilter);
   expect(["none", "normal"]).toContain(geometry.beforeContent);
   expect(geometry.beforeDisplay).toBe("none");
   expect(geometry.buttonHeight).toBeGreaterThanOrEqual(44);
