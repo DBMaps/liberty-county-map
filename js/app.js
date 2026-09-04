@@ -40002,9 +40002,25 @@ function gridlySearchQueryHasAddressIndicator(query = "") {
   return tokens.some((token) => GRIDLY_SEARCH_ADDRESS_WORDS.has(token));
 }
 
+/**
+ * Recognize only a complete, bare name from Gridly's governed statewide
+ * consumer PLACE/community registry.  This deliberately delegates identity,
+ * ambiguity, multi-county membership, and operational status to the shared
+ * awareness-area resolver instead of guessing from arbitrary text.
+ */
+function resolveGridlyGovernedBareTexasPlaceQuery(query = "") {
+  const raw = String(query || "").replace(/\s+/g, " ").trim();
+  if (!raw || raw.length > 96 || !/^[a-z][a-z .'-]*$/i.test(raw)) return null;
+  const resolution = resolveGridlyAwarenessAreaQuery(raw);
+  if (resolution.matchType !== "town"
+      || !["RESOLVED_OPERATIONAL", "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE"].includes(resolution.status)) return null;
+  return resolution;
+}
+
 function gridlySearchQueryHasDestinationIndicator(query = "") {
   const normalized = normalizeGridlySearchDisplayLabel(query);
   if (!normalized) return false;
+  if (resolveGridlyGovernedBareTexasPlaceQuery(query)) return true;
   if (/[,@]/.test(normalized)) return true;
   if (/\b(?:near|in)\s+[a-z0-9]/i.test(normalized)) return true;
   const tokens = getGridlySearchQueryTokens(normalized);
@@ -94147,9 +94163,8 @@ async function gridlySearchAddress(query, options = {}) {
   // A governed Texas PLACE is destination authority, not a POI/geocoder
   // fallback. Resolve exact canonical community names before any acquisition.
   // The resolver retains every county membership for multi-county places.
-  const governedCommunity = resolveGridlyAwarenessAreaQuery(rawQuery);
-  if (["RESOLVED_OPERATIONAL", "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE"].includes(governedCommunity.status)
-      && governedCommunity.matchType === "town") {
+  const governedCommunity = resolveGridlyGovernedBareTexasPlaceQuery(rawQuery);
+  if (governedCommunity) {
     const area = governedCommunity.awarenessArea || governedCommunity.candidates?.[0]?.awarenessArea;
     if (Number.isFinite(Number(area?.lat)) && Number.isFinite(Number(area?.lng))) {
       const countyNames = (governedCommunity.candidates || []).map((candidate) => candidate.county).filter(Boolean);

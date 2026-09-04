@@ -30,6 +30,8 @@ function intentRuntime() {
     ${functionSource('getGridlySearchQueryTokens')}
     ${functionSource('normalizeGridlyBrandSearchText')}
     ${functionSource('gridlySearchQueryHasAddressIndicator')}
+    function resolveGridlyAwarenessAreaQuery() { return { status: 'NOT_FOUND', matchType: 'town' }; }
+    ${functionSource('resolveGridlyGovernedBareTexasPlaceQuery')}
     ${functionSource('gridlySearchQueryHasDestinationIndicator')}
     ${functionSource('classifyGridlyDestinationSearchIntent')}
     ${functionSource('gridlyQueryAllowsRuntimePoiAcquisition')}
