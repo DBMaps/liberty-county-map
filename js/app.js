@@ -25250,6 +25250,12 @@ let managePlacesAddressValidationState = { ok: null, reason: "not_checked", mess
 let managePlacesGeocodeFallbackState = {
   available: false,
   used: false,
+  anchorAttempted: false,
+  anchorRequestMode: null,
+  anchorHttpStatus: null,
+  anchorResolvedFrom: null,
+  copyClaimsMapFallback: false,
+  confirmationStage: "unavailable",
   coordinateSource: null,
   coordinates: null,
   address: "",
@@ -91509,11 +91515,24 @@ function bindEvents() {
     });
   });
   els.mobileUseMapCenterFallbackBtn?.addEventListener("click", () => {
+    if (managePlacesGeocodeFallbackState.confirmationStage !== "positioning") {
+      const anchor = managePlacesGeocodeFallbackState.coordinates;
+      const mapInstance = typeof getGridlyMapInstance === "function" ? getGridlyMapInstance() : null;
+      if (anchor && typeof mapInstance?.setView === "function") {
+        mapInstance.setView([anchor.lat, anchor.lng], Math.max(Number(mapInstance.getZoom?.()) || 14, 14));
+      }
+      managePlacesGeocodeFallbackState = { ...managePlacesGeocodeFallbackState, confirmationStage: "positioning" };
+      const slot = managePlacesGeocodeFallbackState.slot;
+      els.mobileUseMapCenterFallbackBtn.textContent = `Set ${slot === "home" ? "Home" : slot === "work" ? "Work" : "Location"} Here`;
+      setManagePlacesSaveStatus("Position the map point, then confirm this location.", "warning");
+      return;
+    }
     managePlacesGeocodeFallbackState = {
       ...managePlacesGeocodeFallbackState,
       used: true,
       coordinateSource: "user_map_selection",
       coordinates: getCurrentMapCenterCoordinates(),
+      confirmationStage: "confirmed",
       at: new Date().toISOString()
     };
     saveRoute("mobile", { useMapCenterFallback: true });
@@ -93212,6 +93231,12 @@ function resetManagePlacesGeocodeFallback(options = {}) {
   managePlacesGeocodeFallbackState = {
     available: false,
     used: options?.preserveUsed ? Boolean(managePlacesGeocodeFallbackState.used) : false,
+    anchorAttempted: false,
+    anchorRequestMode: null,
+    anchorHttpStatus: null,
+    anchorResolvedFrom: null,
+    copyClaimsMapFallback: false,
+    confirmationStage: "unavailable",
     coordinateSource: null,
     coordinates: null,
     address: "",
@@ -93221,20 +93246,35 @@ function resetManagePlacesGeocodeFallback(options = {}) {
   if (els.mobileUseMapCenterFallbackBtn) els.mobileUseMapCenterFallbackBtn.hidden = true;
 }
 
+function resolveGovernedManagePlacesMapAnchor(address = "") {
+  return window.GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT?.resolveGovernedAnchor?.({
+    address, zipRecords: GRIDLY_LP051_ZIP_AWARENESS_RECORDS, areas: GRIDLY_AWARENESS_AREA_DEFINITIONS
+  }) || null;
+}
+
 async function offerManagePlacesMapCenterFallback({ address = "", slot = "custom" } = {}) {
   const acquisition = window.GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT;
   const anchorQuery = acquisition?.mapAnchorQuery?.(address) || "";
-  let coordinates = null;
+  const governedAnchor = resolveGovernedManagePlacesMapAnchor(address);
+  let coordinates = governedAnchor?.coordinates || null;
   let anchorSource = "unavailable";
-  if (anchorQuery && typeof window.gridlyGeocodingClient?.search === "function") {
-    const response = await window.gridlyGeocodingClient.search({ intent: "place", query: anchorQuery, limit: 5, requestMode: "explicit_search" });
+  let anchorAttempted = false;
+  let anchorRequestMode = null;
+  let anchorHttpStatus = null;
+  let anchorResolvedFrom = governedAnchor?.resolvedFrom || null;
+  if (coordinates) anchorSource = governedAnchor.source;
+  if (!coordinates && anchorQuery && typeof window.gridlyGeocodingClient?.search === "function") {
+    anchorAttempted = true;
+    anchorRequestMode = "explicit_search";
+    // gridly-geocode-v1 accepts locality text through business_place; "place" is not a valid intent.
+    const response = await window.gridlyGeocodingClient.search({ intent: "business_place", query: anchorQuery, limit: 5, requestMode: anchorRequestMode });
+    anchorHttpStatus = response?.transport?.httpStatus ?? null;
     const qualifier = acquisition && window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT?.parseAddressQualifiers?.(address);
     const anchor = (response?.results || []).find((candidate) => window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT?.validateCandidate?.(qualifier, candidate)?.accepted);
     coordinates = anchor ? normalizeCoordinatePair(anchor.latitude, anchor.longitude) : null;
     if (coordinates) {
       anchorSource = qualifier?.zip ? "validated_zip_community" : "validated_community";
-      const mapInstance = typeof getGridlyMapInstance === "function" ? getGridlyMapInstance() : null;
-      if (typeof mapInstance?.setView === "function") mapInstance.setView([coordinates.lat, coordinates.lng], Math.max(Number(mapInstance.getZoom?.()) || 14, 14));
+      anchorResolvedFrom = "geocoder_locality";
     }
   }
   const available = Boolean(coordinates);
@@ -93242,6 +93282,12 @@ async function offerManagePlacesMapCenterFallback({ address = "", slot = "custom
     available,
     used: false,
     coordinateSource: available ? "user_map_selection" : null,
+    anchorAttempted,
+    anchorRequestMode,
+    anchorHttpStatus,
+    anchorResolvedFrom,
+    copyClaimsMapFallback: false,
+    confirmationStage: available ? "offered" : "unavailable",
     coordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null,
     anchorSource,
     anchorQuery,
@@ -93251,7 +93297,7 @@ async function offerManagePlacesMapCenterFallback({ address = "", slot = "custom
   };
   if (els.mobileUseMapCenterFallbackBtn) {
     els.mobileUseMapCenterFallbackBtn.hidden = !available;
-    els.mobileUseMapCenterFallbackBtn.textContent = `Set ${slot === "home" ? "Home" : slot === "work" ? "Work" : "Location"} Here`;
+    els.mobileUseMapCenterFallbackBtn.textContent = "Choose Location on Map";
   }
   return managePlacesGeocodeFallbackState;
 }
@@ -93596,6 +93642,7 @@ async function saveRoute(source = "desktop", options = {}) {
         mapConfirmationAnchor: { source: managePlacesGeocodeFallbackState.anchorSource,
           query: managePlacesGeocodeFallbackState.anchorQuery, coordinates: managePlacesGeocodeFallbackState.coordinates } };
       managePlacesGeocodeFallbackState = {
+        ...managePlacesGeocodeFallbackState,
         available: true,
         used: true,
         coordinateSource: "user_map_selection",
@@ -93625,7 +93672,10 @@ async function saveRoute(source = "desktop", options = {}) {
     const localityRequired = coordinateResolution?.rejectionReason === "locality_required";
     const failureMessage = localityRequired
       ? "Add a city or ZIP code so Gridly can identify the right place."
-      : "We couldn't verify this exact address. Choose its location on the map.";
+      : fallbackState?.available
+        ? "We couldn't verify this exact address."
+        : "We couldn't verify this exact address or find a safe nearby map starting point. Check the city and ZIP, then try again.";
+    if (fallbackState) fallbackState.copyClaimsMapFallback = Boolean(!localityRequired && fallbackState.available);
     return failSave(failureMessage, localityRequired ? "Add city or ZIP" : "Address not verified", coordinateResolution?.rejectionReason || "coordinates_not_found", {
       coordinateSource: coordinateResolution?.source || "null",
       geocodeFailedFallbackAvailable: Boolean(fallbackState?.available),
@@ -93759,19 +93809,22 @@ window.gridlySavedAddressAcquisitionAudit = function gridlySavedAddressAcquisiti
   const integrity = window.gridlySavedAddressIntegrityAudit();
   const resolution = integrity.lastResolution || {};
   const fallback = managePlacesGeocodeFallbackState || {};
+  const fallbackAuditPass = window.GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT?.mapFallbackAuditPass?.(fallback) !== false;
   return Object.freeze({
     contract: "GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT",
     lastAddressInput: resolution.rawAddressInput || lastManagePlacesSaveAttempt?.address || "",
     attempts: Array.isArray(resolution.attempts) ? resolution.attempts : [],
     qualifiersPreserved: resolution.qualifiersPreserved !== false,
     mapFallback: { offered: Boolean(fallback.available), anchorSource: fallback.anchorSource || null,
-      anchorCoordinates: fallback.coordinates || null, confirmationRequired: true,
+      anchorAttempted: fallback.anchorAttempted === true, anchorRequestMode: fallback.anchorRequestMode || null,
+      anchorHttpStatus: fallback.anchorHttpStatus ?? null, anchorCoordinates: fallback.coordinates || null,
+      anchorResolvedFrom: fallback.anchorResolvedFrom || null, confirmationRequired: true,
       confirmed: fallback.confirmed === true, confirmedCoordinates: fallback.confirmedCoordinates || null },
     savedPlace: integrity.home.persisted ? { type: "home", verificationState: integrity.home.verificationState,
       coordinateSource: integrity.home.coordinateSource, routeEligible: integrity.home.routeEligible } : integrity.work.persisted
       ? { type: "work", verificationState: integrity.work.verificationState,
         coordinateSource: integrity.work.coordinateSource, routeEligible: integrity.work.routeEligible } : null,
-    overallPass: integrity.overallPass && resolution.qualifiersPreserved !== false
+    overallPass: integrity.overallPass && resolution.qualifiersPreserved !== false && fallbackAuditPass
   });
 };
 function isLegacyPlace(place) {

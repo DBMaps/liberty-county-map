@@ -144,6 +144,29 @@
     return [q.city, q.state || "TX", q.zip].filter(Boolean).join(q.city ? ", " : " ");
   }
 
+  function resolveGovernedAnchor({ address = "", zipRecords = [], areas = [] } = {}) {
+    const qualifiers = parseAddressQualifiers(address);
+    if (!qualifiers.sufficientlyQualified) return null;
+    let area = null; let resolvedFrom = null;
+    if (qualifiers.zip) {
+      const record = zipRecords.find((entry) => clean(entry?.zip) === qualifiers.zip && clean(entry?.state).toUpperCase() === "TX"
+        && ["resolved", "resolved_by_governance"].includes(entry?.resolutionStatus)
+        && (!qualifiers.city || key(entry?.communityName) === key(qualifiers.city)));
+      area = record && areas.find((entry) => entry?.key === record.awarenessAreaKey
+        || (entry?.countyId === record.countyId && key(entry?.label) === key(record.communityName)));
+      if (area) resolvedFrom = "zip";
+    }
+    if (!area && qualifiers.city) {
+      area = areas.find((entry) => key(entry?.label) === key(qualifiers.city));
+      if (area) resolvedFrom = "canonical_place";
+    }
+    const lat = Number(area?.lat); const lng = Number(area?.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < TEXAS_BOUNDS.south || lat > TEXAS_BOUNDS.north || lng < TEXAS_BOUNDS.west || lng > TEXAS_BOUNDS.east) return null;
+    return Object.freeze({ coordinates: Object.freeze({ lat, lng }), resolvedFrom,
+      source: resolvedFrom === "zip" ? "governed_zip_community" : "governed_canonical_place",
+      authority: clean(area.source) || "Gridly governed awareness area" });
+  }
+
   function confirmMapSelection({ address = "", slot = "favorite", coordinates, anchor = null, confirmedAt = new Date().toISOString() } = {}) {
     const lat = Number(coordinates?.lat); const lng = Number(coordinates?.lng);
     if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < TEXAS_BOUNDS.south || lat > TEXAS_BOUNDS.north || lng < TEXAS_BOUNDS.west || lng > TEXAS_BOUNDS.east) return null;
@@ -151,6 +174,11 @@
       coordinates: { lat, lng }, coordinateSource: "user_map_selection", resolutionStatus: "user_confirmed",
       validationStatus: "user_confirmed", verificationState: "user_confirmed", routeEligible: true,
       mapConfirmationAnchor: anchor, confirmedAt });
+  }
+
+  function mapFallbackAuditPass(fallback = {}) {
+    return !(fallback.anchorAttempted === true && fallback.available !== true)
+      && !(fallback.copyClaimsMapFallback === true && fallback.available !== true);
   }
 
   function isRouteEligible(place = {}) {
@@ -193,6 +221,7 @@
   });
   global.GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT = Object.freeze({
     name: ACQUISITION_CONTRACT_NAME, version: "LP244.6", geography: "Texas", maxAttempts: 4,
-    normalizedAddressAttempts, qualifiersPreserved, mapAnchorQuery, confirmMapSelection, isRouteEligible
+    normalizedAddressAttempts, qualifiersPreserved, mapAnchorQuery, resolveGovernedAnchor,
+    confirmMapSelection, mapFallbackAuditPass, isRouteEligible
   });
 })(typeof window !== "undefined" ? window : globalThis);

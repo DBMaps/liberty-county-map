@@ -59,6 +59,39 @@ test("map confirmation is honest, eligible, finite, and Texas governed", () => {
   assert.equal(acquisition.confirmMapSelection({ address: "x", coordinates: { lat: 40, lng: -74 } }), null);
 });
 
+test("zero address candidates use the governed Liberty ZIP anchor without touching old Home", async () => {
+  const oldHome = Object.freeze({ id: "home", address: "legacy bad Home", routeEligible: false });
+  const resolution = await integrity.resolveAddress({ address: "1710 Sam Houston Ave, Liberty, TX 77575",
+    search: async () => ({ ok: true, status: "success", results: [], transport: {
+      httpStatus: 200, providerResponseReceived: true, providerCandidateCount: 0
+    } }) });
+  const anchor = acquisition.resolveGovernedAnchor({ address: resolution.rawAddressInput,
+    zipRecords: [{ zip: "77575", state: "TX", countyId: "liberty-tx", communityName: "Liberty",
+      awarenessAreaKey: "liberty", resolutionStatus: "resolved" }],
+    areas: [{ key: "liberty", label: "Liberty", countyId: "liberty-tx", lat: 30.0572, lng: -94.795,
+      source: "existing local app anchor" }] });
+  assert.equal(resolution.resolutionStatus, "failed");
+  assert.ok(resolution.attempts.every((attempt) => attempt.providerCandidateCount === 0));
+  assert.equal(anchor.coordinates.lat, 30.0572);
+  assert.equal(anchor.coordinates.lng, -94.795);
+  assert.equal(anchor.resolvedFrom, "zip");
+  assert.equal(anchor.source, "governed_zip_community");
+  assert.deepEqual(oldHome, { id: "home", address: "legacy bad Home", routeEligible: false });
+  const confirmed = acquisition.confirmMapSelection({ address: resolution.rawAddressInput, slot: "home",
+    coordinates: { lat: 30.0555, lng: -94.7961 }, anchor, confirmedAt: "2026-09-04T00:00:00.000Z" });
+  assert.equal(confirmed.coordinateSource, "user_map_selection");
+  assert.equal(acquisition.isRouteEligible(confirmed), true);
+});
+
+test("anchor transport/schema failure fails audit and cannot authorize map copy", () => {
+  assert.equal(acquisition.mapFallbackAuditPass({ anchorAttempted: true, anchorRequestMode: "explicit_search",
+    anchorHttpStatus: 400, available: false, copyClaimsMapFallback: false }), false);
+  assert.equal(acquisition.mapFallbackAuditPass({ anchorAttempted: false, available: true,
+    copyClaimsMapFallback: true, anchorResolvedFrom: "zip" }), true);
+  assert.equal(acquisition.mapFallbackAuditPass({ anchorAttempted: false, available: false,
+    copyClaimsMapFallback: true }), false);
+});
+
 test("transactional UI, presentation, persistence and route consumers retain governed contract", () => {
   const app = fs.readFileSync("js/app.js", "utf8");
   assert.match(app, /restoreSavedPlacesStorageSnapshot\(\)/);
@@ -70,6 +103,11 @@ test("transactional UI, presentation, persistence and route consumers retain gov
   assert.match(app, /Needs verification\./);
   assert.match(app, /gridlySavedAddressAcquisitionAudit/);
   assert.match(app, /confirmedCoordinates/);
+  assert.match(app, /intent: "business_place", query: anchorQuery, limit: 5, requestMode: anchorRequestMode/);
+  assert.match(app, /mobileUseMapCenterFallbackBtn\.textContent = "Choose Location on Map"/);
+  assert.match(app, /confirmationStage !== "positioning"/);
+  assert.match(app, /mapFallbackAuditPass/);
+  assert.match(app, /find a safe nearby map starting point/);
   assert.match(app, /home: current\.home \?\? null[\s\S]*work: current\.work \?\? null/);
 });
 
@@ -79,4 +117,6 @@ test("Edge preserves provider structure and uses only existing no-paid-default a
   assert.match(edge, /addressdetails: "1"/);
   for (const field of ["houseNumber", "road", "community", "city", "county", "state", "postalCode", "boundingBox", "providerClass", "providerType"]) assert.match(edge, new RegExp(field));
   assert.match(edge, /authoritativeRuralProvider !== "google"/);
+  assert.match(edge, /\["address", "business_place"\]\.includes\(body\.intent\)/);
+  assert.doesNotMatch(edge, /\["address", "business_place", "place"\]/);
 });
