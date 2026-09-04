@@ -29288,6 +29288,20 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
    physical-phone boundary certified by LP244.4. Nothing in this block can
    participate in the authoritative portrait composition. */
 @media (orientation: landscape) and (max-height: 500px) {
+  /* Task C: let the map paint to the physical workspace edges. Interactive
+     chrome continues to use H10B's safe-inset variables. */
+  body[data-layout-mode="portrait"] .app-shell.premium-layout {
+    padding-inline: 0 !important;
+  }
+
+  body[data-layout-mode="portrait"] :is(#mapSection.command-center, .map-card, .map-frame, #map) {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
   /* First-run used a portrait-sized (66vh) artwork row beneath the brand.
      Give the welcome brand and copy independent columns instead of making
      both compete for the short block axis. */
@@ -29330,10 +29344,43 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     margin-inline: 0;
   }
 
-  .gridly-v950-tour-page .gridly-v896-shot-frame,
-  .gridly-v950-tour-page .gridly-v896-shot-frame img {
-    min-height: 0;
-    max-height: min(48dvh, 190px);
+  .gridly-v950-feature-page {
+    grid-template-columns: minmax(210px, 0.78fr) minmax(0, 1.22fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+  }
+
+  .gridly-v950-feature-page .gridly-v950-page-copy {
+    align-self: center;
+    padding-inline: 8px;
+    text-align: left;
+  }
+
+  .gridly-v950-feature-page .gridly-v950-page-copy p { margin-inline: 0; }
+
+  .gridly-v950-feature-page .gridly-v896-shot-frame,
+  .gridly-v950-feature-page .gridly-v896-shot-frame img {
+    width: 100%;
+    min-height: min(58dvh, 220px);
+    max-height: min(66dvh, 250px);
+  }
+
+  .gridly-v950-setup-page {
+    grid-template-columns: minmax(190px, 0.7fr) minmax(0, 1.3fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    overflow-y: hidden;
+  }
+
+  .gridly-v950-setup-page .gridly-v950-page-copy { align-self: center; text-align: left; }
+  .gridly-v950-setup-page .gridly-v950-page-copy p { margin-inline: 0; }
+  .gridly-v950-setup-page .gridly-v858-location-panel {
+    align-self: center;
+    max-height: 100%;
+    overflow-y: auto;
+    padding-block: 10px;
   }
 
   /* An open section is the active task. Let it consume both workspace
@@ -29398,8 +29445,68 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     overflow-y: auto;
     scroll-padding-block: 6px;
   }
+
+  /* Published explicit results/no-result copy receive the same remaining-space
+     ownership before focus or viewport state changes. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-search-results[data-search-publication="active"]) {
+    top: max(6px, env(safe-area-inset-top, 0px));
+    bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    display: flex;
+    width: min(720px, calc(100vw - 24px));
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - 12px);
+    margin-inline: auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-search-results[data-search-publication="active"]) .gridly-search-card {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-search-results[data-search-publication="active"]) .gridly-search-results {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+  }
 }
 /* End LP244.5 Task B landscape refinement. */
+
+/* LP244.5 Task C — the Settings Home Area field and its live publication are
+   one shared autocomplete surface in portrait and landscape. */
+.settings-manual-autocomplete { display: grid; min-width: 0; }
+.settings-manual-autocomplete > label {
+  display: grid;
+  gap: 8px;
+  color: rgba(241, 247, 255, 0.92);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+.settings-manual-autocomplete > label input[type="search"] {
+  border-radius: 16px;
+}
+.settings-manual-autocomplete > label:has(+ .settings-manual-results) input[type="search"] {
+  border-radius: 16px 16px 0 0;
+  border-bottom-color: rgba(142, 239, 255, 0.18);
+}
+.settings-manual-autocomplete > .settings-manual-results {
+  gap: 0;
+  margin-top: -1px;
+  border: 1px solid rgba(142, 239, 255, 0.3);
+  border-top-color: rgba(142, 239, 255, 0.18);
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+  background: rgba(5, 13, 28, 0.96);
+}
+.settings-manual-autocomplete .settings-manual-county-list {
+  gap: 1px;
+  padding: 0;
+}
+.settings-manual-autocomplete .settings-manual-area-result {
+  border-width: 1px 0 0;
+  border-radius: 0;
+}
 
 /* Android physical-launch closure: the portrait awareness variant previously
    inherited V250.8C's five reserved copy rows and a 104px minimum even when

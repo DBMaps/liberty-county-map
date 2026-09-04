@@ -1,0 +1,59 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+
+const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
+const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const sw = readFileSync(new URL("../service-worker.js", import.meta.url), "utf8");
+const start = css.indexOf("/* LP244.5 Task B — physical Android landscape refinement.");
+const landscape = css.slice(start, css.indexOf("/* End LP244.5 Task B landscape refinement. */", start));
+
+test("short landscape map removes only its redundant frame while preserving map contracts", () => {
+  assert.match(landscape, /@media \(orientation: landscape\) and \(max-height: 500px\)/);
+  assert.match(landscape, /app-shell\.premium-layout[\s\S]*padding-inline: 0 !important/);
+  assert.match(landscape, /#mapSection\.command-center,[\s\S]*\.map-card,[\s\S]*\.map-frame,[\s\S]*#map[\s\S]*width: 100vw !important[\s\S]*border-radius: 0 !important/);
+  assert.doesNotMatch(landscape, /leaflet-control[^\{]*\{[\s\S]*display:\s*none/);
+  assert.match(css, /#map \.leaflet-control-attribution/);
+  assert.match(app, /gridlyLandscapeCommandToggle/);
+  assert.match(app, /Location Context/);
+});
+
+test("feature art is larger and setup is composed only in short landscape", () => {
+  assert.match(landscape, /\.gridly-v950-feature-page\s*\{[\s\S]*grid-template-columns:[\s\S]*grid-template-rows: minmax\(0, 1fr\)/);
+  assert.match(landscape, /gridly-v950-feature-page \.gridly-v896-shot-frame[\s\S]*min-height: min\(58dvh, 220px\)[\s\S]*max-height: min\(66dvh, 250px\)/);
+  assert.match(landscape, /\.gridly-v950-setup-page\s*\{[\s\S]*grid-template-columns:[\s\S]*overflow-y: hidden/);
+  assert.match(landscape, /gridly-v950-setup-page \.gridly-v858-location-panel[\s\S]*max-height: 100%[\s\S]*overflow-y: auto/);
+  assert.match(landscape, /\.gridly-v950-welcome-page[\s\S]*grid-template-columns/);
+  assert.doesNotMatch(landscape, /orientation:\s*portrait/);
+});
+
+test("Home Area query and results share one accessible autocomplete surface", () => {
+  assert.match(app, /class="settings-manual-autocomplete"/);
+  assert.match(app, /data-gridly-manual-awareness-search/);
+  assert.match(app, /class="settings-manual-results"/);
+  assert.match(app, /settings-manual-results-label gridly-visually-hidden">Search results/);
+  assert.match(css, /settings-manual-autocomplete > label:has\(\+ \.settings-manual-results\)[\s\S]*border-radius: 16px 16px 0 0/);
+  assert.match(css, /settings-manual-autocomplete > \.settings-manual-results[\s\S]*margin-top: -1px[\s\S]*border-radius: 0 0 16px 16px/);
+  assert.match(app, /aria-live="polite"/);
+  assert.match(app, /data-gridly-manual-awareness-county-id/);
+  assert.match(app, /data-gridly-manual-awareness-apply/);
+});
+
+test("published destination outcomes take space before reflow and still recover on clear", () => {
+  assert.match(app, /resultsContainer\.dataset\.searchPublication = options\?\.state === "searching" \? "searching" : "active"/);
+  assert.match(app, /delete resultsContainer\.dataset\.searchPublication/);
+  assert.match(landscape, /:has\(\.gridly-search-results\[data-search-publication="active"\]\)[\s\S]*max-height: calc\(var\(--gridly-visual-vh/);
+  assert.match(landscape, /data-search-publication="active"[\s\S]*\.gridly-search-results[\s\S]*overflow-y: auto/);
+  assert.match(app, /Best matches/);
+  assert.match(app, /No matching destination found/);
+  assert.match(landscape, /#gridlySearchShell:not\(\[hidden\]\):focus-within/);
+});
+
+test("asset identity invalidates the pre-Task-C browser shell", () => {
+  assert.equal((html.match(/2445c-consumer-visual-search-closure/g) || []).length, 2);
+  assert.match(sw, /GRIDLY_SW_VERSION = "lp244\.5c-consumer-visual-search-closure"/);
+  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445c-v1"/);
+  assert.match(sw, /cache: "no-store"/);
+  assert.match(sw, /caches\.delete\(cacheName\)/);
+});
