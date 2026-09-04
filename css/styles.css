@@ -29302,6 +29302,20 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     box-shadow: none !important;
   }
 
+  /* The legacy card gutter must not travel with the full-viewport map. Its
+     8px inline offset plus 12px padding shifted every map descendant 20px and
+     made the 100vw canvas overflow by the same amount on the opposite edge. */
+  body[data-layout-mode="portrait"] #mapSection.command-center > .map-card {
+    inset-inline: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
+    box-sizing: border-box !important;
+    translate: none !important;
+    transform: none !important;
+  }
+
   /* Owner correction: H10F/H10H still painted Gridly's locate/layers/zoom
      utility buttons as one permanent right-side box. Leaflet also retained its
      bottom-right zoom/layers corner. In this short viewport the existing
