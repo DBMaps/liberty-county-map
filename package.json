@@ -707,6 +707,6 @@
     "verify:android:fast": "node tools/android-acceptance/fast.mjs",
     "verify:android:device": "node tools/android-acceptance/device.mjs",
     "test:android:acceptance": "node --test tests/android-acceptance-harness.test.mjs",
-    "test:lp2445:saved-address": "node --test tests/lp2445-saved-address-integrity.test.mjs"
+    "test:lp2445:saved-address": "node --test tests/lp2445-saved-address-integrity.test.mjs tests/lp2446-saved-address-acquisition.test.mjs"
   }
 }
