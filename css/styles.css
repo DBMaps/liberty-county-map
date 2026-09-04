@@ -29356,6 +29356,11 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     pointer-events: auto !important;
     grid-template-columns: repeat(4, 44px) !important;
     grid-template-rows: 44px !important;
+    grid-auto-flow: column !important;
+    width: 188px !important;
+    min-width: 188px !important;
+    max-width: 188px !important;
+    height: 44px !important;
     gap: 4px !important;
     padding: 0 !important;
     border: 0 !important;
@@ -29579,14 +29584,20 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     order: 2;
   }
 
-  /* The outer tray is the only glossy surface. Clip legacy decoration at the
-     Location Context boundary and keep Search a quiet compliant target. */
+  /* Location Context is an opaque Gridly surface, not glass over the map.
+     The explicit safe-inset width also neutralizes the legacy 100%-wide panel
+     which began at the bottom region's inset and finished one pixel outside
+     the 875px reference viewport. Keep Search a quiet compliant target. */
   body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
     #mobileDestinationCommandPanel {
     box-sizing: border-box !important;
-    max-width: 100% !important;
+    width: calc(100vw - (2 * var(--lp2444-inline-gap))) !important;
+    max-width: calc(100vw - (2 * var(--lp2444-inline-gap))) !important;
+    background: var(--gridly-elevated, #07111f) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     overflow: clip !important;
-    contain: paint;
+    contain: paint !important;
   }
 
   body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)

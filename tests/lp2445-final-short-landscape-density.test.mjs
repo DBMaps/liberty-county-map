@@ -18,6 +18,7 @@ test("map starts at the compact header boundary without legacy framing", () => {
 test("map navigation is contextual and never restores the permanent rail", () => {
   assert.match(landscape, /\.gridly-v2-control-rail,[\s\S]*leaflet-control-zoom,[\s\S]*leaflet-control-layers[\s\S]*display: none !important/);
   assert.match(landscape, /gridly-h8-command-expanded[\s\S]*\.gridly-v2-control-rail[\s\S]*display: grid !important[\s\S]*grid-template-columns: repeat\(4, 44px\)/);
+  assert.match(landscape, /\.gridly-v2-control-rail[\s\S]*grid-auto-flow: column !important;[\s\S]*width: 188px !important;[\s\S]*height: 44px !important/);
   assert.match(landscape, /\.gridly-v2-control-rail[\s\S]*background: transparent !important[\s\S]*box-shadow: none !important/);
   assert.match(landscape, /right: max\(16px, env\(safe-area-inset-right, 0px\)\) !important/);
   assert.match(landscape, /bottom: calc\(var\(--lp243h10h-command-height\) \+ 32px \+ env\(safe-area-inset-bottom, 0px\)\) !important/);
@@ -28,8 +29,8 @@ test("map navigation is contextual and never restores the permanent rail", () =>
   assert.ok(html.indexOf('<div class="gridly-v2-control-rail"') < html.indexOf('<div id="gridlyPortraitBottomRegion"'));
 });
 
-test("Location Context Search is bounded and its surface cannot bleed", () => {
-  assert.match(landscape, /#mobileDestinationCommandPanel\s*\{[\s\S]*box-sizing: border-box !important;[\s\S]*max-width: 100% !important;[\s\S]*overflow: clip !important;[\s\S]*contain: paint/);
+test("Location Context Search is opaque, unblurred, and bounded", () => {
+  assert.match(landscape, /#mobileDestinationCommandPanel\s*\{[\s\S]*box-sizing: border-box !important;[\s\S]*width: calc\(100vw - \(2 \* var\(--lp2444-inline-gap\)\)\) !important;[\s\S]*background: var\(--gridly-elevated, #07111f\) !important;[\s\S]*backdrop-filter: none !important;[\s\S]*-webkit-backdrop-filter: none !important;[\s\S]*overflow: clip !important;[\s\S]*contain: paint !important/);
   assert.match(landscape, /#mobileDestinationCommandPanel::before\s*\{[\s\S]*content: none !important;[\s\S]*display: none !important/);
   assert.match(landscape, /#mobileDestinationCommandPanel \.compact-btn[\s\S]*width: 88px !important;[\s\S]*min-height: 44px !important;[\s\S]*font-size: 0\.78rem !important;[\s\S]*font-weight: 600 !important/);
 });
