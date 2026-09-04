@@ -79,5 +79,17 @@ test('bare PLACE resolution precedes acquisition without changing qualified-quer
   assert.match(searchBody, /provider: "gridly_canonical_place"/);
   assert.match(searchBody, /countyMemberships/);
   assert.equal(runtime().recognize('Dallas, TX'), null, 'qualified Dallas keeps its established provider path');
-  assert.match(html, /js\/app\.js\?v=2445c-owner-acceptance-correction/, 'the repaired runtime has a deployable asset identity');
+  assert.match(html, /js\/app\.js\?v=2445d-bare-place-interactive-repair/, 'the repaired runtime has a deployable asset identity');
+});
+
+test('the real interactive coordinator carries governed authority into canonical publication', () => {
+  const liveSearch = functionSource('runGridlyLiveDestinationSearch');
+  const destinationSearch = app.slice(app.indexOf('async function gridlySearchAddress'), app.indexOf('\nwindow.gridlyAggregateAddressVariantOutcomes'));
+  assert.match(liveSearch, /const governedBarePlace = resolveGridlyGovernedBareTexasPlaceQuery\(normalizedQuery\)/);
+  assert.match(liveSearch, /gridlySearchAddress\(normalizedQuery, \{[\s\S]*governedBarePlace/);
+  assert.match(liveSearch, /governedBarePlaceConsumed: Boolean\(diagnostics\.governedBarePlaceConsumed\)/);
+  assert.match(destinationSearch, /hasOwnProperty\.call\(options, "governedBarePlace"\)/);
+  assert.match(destinationSearch, /diagnostics\.governedBarePlaceConsumed = true/);
+  assert.match(destinationSearch, /finalPublishedCount: canonicalPlaceResults\.length/);
+  assert.match(destinationSearch, /provider: "gridly_canonical_place"/);
 });

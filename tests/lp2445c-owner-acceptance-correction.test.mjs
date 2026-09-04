@@ -40,7 +40,7 @@ test("real Search and Enter handler owns governed publication", () => {
   assert.match(init, /remoteSearchBtn\.addEventListener\("click", submitRemoteSearch\)/);
   assert.match(init, /event\.key !== "Enter"[\s\S]*submitRemoteSearch\(\)/);
   assert.match(init, /beginGridlyLiveDestinationSearch\(query\)[\s\S]*runGridlyLiveDestinationSearch\(query/);
-  assert.match(app, /const governedCommunity = resolveGridlyGovernedBareTexasPlaceQuery\(rawQuery\)/);
+  assert.match(app, /const governedCommunity = Object\.prototype\.hasOwnProperty\.call\(options, "governedBarePlace"\)/);
   assert.match(app, /provider: "gridly_canonical_place"/);
 });
 
@@ -62,5 +62,6 @@ test("live layout audit reports heading, cards, geometry, viewport and Nearby or
 });
 
 test("corrected browser assets are cache-distinct", () => {
-  assert.equal((html.match(/2445c-owner-acceptance-correction/g) || []).length, 2);
+  assert.match(html, /css\/styles\.css\?v=2445c-owner-acceptance-correction/);
+  assert.match(html, /js\/app\.js\?v=2445d-bare-place-interactive-repair/);
 });

@@ -46086,6 +46086,12 @@ function buildGridlyLiveSearchAuditReport(query, results = [], metadata = {}) {
 
 async function runGridlyLiveDestinationSearch(query = "", options = {}) {
   const normalizedQuery = String(query || "").trim();
+  // This is the production Search/Enter boundary.  Resolve governed bare
+  // PLACE authority here, before LP101/business eligibility is consulted, and
+  // carry that exact resolution into the destination pipeline.  Previously
+  // the interactive boundary did not retain the successful resolution; only
+  // gridlySearchAddress performed a separate best-effort lookup later.
+  const governedBarePlace = resolveGridlyGovernedBareTexasPlaceQuery(normalizedQuery);
   const state = ensureGridlySearchState();
   const requestId = Number.isFinite(Number(options.requestId)) ? Number(options.requestId) : beginGridlyLiveDestinationSearch(normalizedQuery);
   const shouldRender = options.render !== false;
@@ -46120,7 +46126,10 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
     }
 
     results = normalizeGridlyPublishableDestinationResults(
-      await gridlySearchAddress(normalizedQuery, getGridlyLiveDestinationSearchOptions())
+      await gridlySearchAddress(normalizedQuery, {
+        ...getGridlyLiveDestinationSearchOptions(),
+        governedBarePlace
+      })
     );
     const isCurrent = requestId === gridlySearchUiState.activeSearchRequestId
       && normalizeGridlySearchDisplayLabel(normalizedQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
@@ -46168,6 +46177,8 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
       syntheticAudit: false,
       requestId, rawQuery: String(query || ""), normalizedQuery: normalizeGridlyBrandSearchText(normalizedQuery),
       intent: intent.type, intentReason: intent.reason,
+      governedBarePlaceStatus: governedBarePlace?.status || null,
+      governedBarePlaceConsumed: Boolean(diagnostics.governedBarePlaceConsumed),
       explicitGeographyDetected: gridlySearchQueryHasDestinationIndicator(normalizedQuery),
       explicitAddressDetected: gridlySearchQueryHasAddressIndicator(normalizedQuery),
       canonicalCommunity: governed?.label || null,
@@ -94222,12 +94233,14 @@ async function gridlySearchAddress(query, options = {}) {
   // A governed Texas PLACE is destination authority, not a POI/geocoder
   // fallback. Resolve exact canonical community names before any acquisition.
   // The resolver retains every county membership for multi-county places.
-  const governedCommunity = resolveGridlyGovernedBareTexasPlaceQuery(rawQuery);
+  const governedCommunity = Object.prototype.hasOwnProperty.call(options, "governedBarePlace")
+    ? options.governedBarePlace
+    : resolveGridlyGovernedBareTexasPlaceQuery(rawQuery);
   if (governedCommunity) {
     const area = governedCommunity.awarenessArea || governedCommunity.candidates?.[0]?.awarenessArea;
     if (Number.isFinite(Number(area?.lat)) && Number.isFinite(Number(area?.lng))) {
       const countyNames = (governedCommunity.candidates || []).map((candidate) => candidate.county).filter(Boolean);
-      return [normalizeGridlySearchResult({
+      const canonicalPlaceResults = [normalizeGridlySearchResult({
         id: `place-${governedCommunity.placeGeoid || area.placeGeoid || area.communityId}`,
         name: governedCommunity.community || area.label,
         display_name: `${governedCommunity.community || area.label}, Texas`,
@@ -94236,7 +94249,26 @@ async function gridlySearchAddress(query, options = {}) {
         address: { city: governedCommunity.community || area.label, county: countyNames.join(", "), state: "Texas" },
         placeGeoid: governedCommunity.placeGeoid || area.placeGeoid || null,
         countyMemberships: governedCommunity.countyMemberships || governedCommunity.candidates?.[0]?.countyMemberships || []
-      })];
+      })].filter(Boolean);
+      const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, 0);
+      diagnostics.governedBarePlaceConsumed = true;
+      diagnostics.governedBarePlaceStatus = governedCommunity.status;
+      diagnostics.mergedCandidateCount = canonicalPlaceResults.length;
+      diagnostics.deduplicatedCandidateCount = canonicalPlaceResults.length;
+      diagnostics.finalDisplayedCandidateCount = canonicalPlaceResults.length;
+      diagnostics.stageCounts = Object.freeze({
+        providerCanonicalCount: canonicalPlaceResults.length,
+        normalizedCount: canonicalPlaceResults.length,
+        containedCount: canonicalPlaceResults.length,
+        countyQualifiedCount: canonicalPlaceResults.length,
+        intentAcceptedCount: canonicalPlaceResults.length,
+        qualityAcceptedCount: canonicalPlaceResults.length,
+        dedupedCount: canonicalPlaceResults.length,
+        publicationEligibleCount: canonicalPlaceResults.length,
+        finalPublishedCount: canonicalPlaceResults.length
+      });
+      Object.defineProperty(canonicalPlaceResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
+      return canonicalPlaceResults;
     }
   }
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });

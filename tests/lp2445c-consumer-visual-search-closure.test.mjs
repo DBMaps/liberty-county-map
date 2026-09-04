@@ -51,9 +51,10 @@ test("published destination outcomes take space before reflow and still recover 
 });
 
 test("asset identity invalidates the pre-Task-C browser shell", () => {
-  assert.equal((html.match(/2445c-owner-acceptance-correction/g) || []).length, 2);
-  assert.match(sw, /GRIDLY_SW_VERSION = "lp244\.5c-owner-acceptance-correction"/);
-  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445c-v2"/);
+  assert.match(html, /css\/styles\.css\?v=2445c-owner-acceptance-correction/);
+  assert.match(html, /js\/app\.js\?v=2445d-bare-place-interactive-repair/);
+  assert.match(sw, /GRIDLY_SW_VERSION = "lp244\.5d-bare-place-interactive-repair"/);
+  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp2445d-v1"/);
   assert.match(sw, /cache: "no-store"/);
   assert.match(sw, /caches\.delete\(cacheName\)/);
 });
