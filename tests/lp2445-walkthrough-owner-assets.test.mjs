@@ -9,7 +9,9 @@ const manifest = JSON.parse(readFileSync(new URL("../assets/walkthrough/walkthro
 const featureMarkup = app.slice(app.indexOf('data-gridly-approved-slide="kbyg"'), app.indexOf('data-gridly-onboarding-page="setup"'));
 const portraitMarker = "/* LP244.5 owner-approved walkthrough portrait contract. */";
 const portraitCss = css.slice(css.indexOf(portraitMarker), css.indexOf("/* LP244.5 Task B", css.indexOf(portraitMarker)));
-const landscapeCss = css.slice(css.indexOf("@media (orientation: landscape) and (max-height: 500px)", css.indexOf("/* LP244.5 Task B")), css.indexOf("/* End LP244.5 Task B landscape refinement. */"));
+const gateMarker = "/* LP244.5 portrait-only walkthrough orientation gate.";
+const gateCss = css.slice(css.indexOf(gateMarker), css.indexOf("/* LP244.5 Task B", css.indexOf(gateMarker)));
+const landscapeCss = css.slice(css.indexOf("/* LP244.5 Task B"), css.indexOf("/* End LP244.5 Task B landscape refinement. */"));
 
 const expected = {
   kbyg: "assets/walkthrough/gridly-walkthrough-kbyg.png",
@@ -48,21 +50,35 @@ test("portrait is protected and preserves complete intrinsic artwork ratios", ()
   assert.doesNotMatch(portraitCss, /object-fit:\s*cover|overflow:\s*hidden/);
 });
 
-test("short landscape uses per-slide focal cropping with bounded artwork", () => {
-  assert.match(landscapeCss, /\.gridly-v950-feature-page \.gridly-v896-shot-frame[\s\S]*overflow:\s*hidden/);
-  assert.match(landscapeCss, /object-fit:\s*cover/);
-  assert.doesNotMatch(landscapeCss, /\.gridly-v950-feature-page \.gridly-v896-shot-frame img\s*\{[^}]*object-fit:\s*contain/);
-  for (const id of Object.keys(expected)) assert.match(landscapeCss, new RegExp(`data-gridly-approved-slide="${id}"`));
+test("mobile landscape uses a semantic portrait gate and desktop is excluded", () => {
+  assert.match(app, /data-gridly-walkthrough-orientation-gate role="status" aria-live="polite"[\s\S]*Rotate your phone[\s\S]*designed for portrait viewing/);
+  assert.match(app, /isNativeApp\(\)[\s\S]*\(hover: none\) and \(pointer: coarse\) and \(max-width: 1100px\)/);
+  assert.match(app, /\(orientation: landscape\)/);
+  assert.match(app, /!overlay\.hidden && isLandscape && isMobileWalkthroughDevice\(\)/);
+  assert.doesNotMatch(gateCss, /@media \(orientation: landscape\)/);
 });
 
-test("875x400 composition protects copy, progress, navigation, and live setup", () => {
-  assert.match(landscapeCss, /gridly-v950-feature-page \.gridly-v950-page-copy[\s\S]*overflow:\s*visible/);
-  assert.match(landscapeCss, /gridly-v950-feature-page \.gridly-v950-page-copy h3[\s\S]*line-height:\s*1\.08/);
-  assert.match(landscapeCss, /gridly-v950-setup-page[\s\S]*overflow-y:\s*hidden/);
-  assert.match(landscapeCss, /gridly-v950-setup-page \.gridly-v858-location-panel[\s\S]*overflow-y:\s*visible/);
-  assert.match(app, /gridly-v950-page-indicators[\s\S]*gridly-v950-page-actions/);
-  assert.match(app, />Skip<[\s\S]*>Back<[\s\S]*>Next<[\s\S]*>Finish</);
-  assert.match(css, /grid-template-rows:\s*minmax\(0, 1fr\) auto auto auto/);
+test("gate makes the underlying walkthrough inert without recreating page or setup state", () => {
+  assert.match(app, /onboardingPager\.inert = shouldGate/);
+  assert.match(app, /onboardingPager\.setAttribute\("aria-hidden", shouldGate \? "true" : "false"\)/);
+  assert.match(gateCss, /data-gridly-walkthrough-orientation-gated="true"[\s\S]*display: none !important[\s\S]*pointer-events: none !important/);
+  assert.match(app, /let activePageIndex = 0;[\s\S]*syncWalkthroughOrientationGate[\s\S]*setActiveOnboardingPage/);
+  assert.doesNotMatch(app.slice(app.indexOf("const syncWalkthroughOrientationGate"), app.indexOf("const orientationMedia")), /activePageIndex\s*=|\.value\s*=/);
+  assert.match(app, /preGateFocus[\s\S]*orientationGate\.focus[\s\S]*preGateFocus\?\.isConnected/);
+  assert.match(app, /gridly-v950-page-indicators[\s\S]*>Skip<[\s\S]*>Back<[\s\S]*>Next<[\s\S]*>Finish/);
+});
+
+test("superseded walkthrough landscape composition is retired without changing app landscape", () => {
+  assert.match(landscapeCss, /Walkthrough landscape composition retired by the portrait-only gate/);
+  assert.doesNotMatch(landscapeCss, /gridly-v950-(?:feature|welcome|setup)-page|walkthrough-landscape-focus|object-fit:\s*cover/);
+  assert.match(landscapeCss, /#mapSection\.command-center[\s\S]*width: 100vw !important/);
+  assert.match(landscapeCss, /gridly-h8-command-expanded[\s\S]*gridly-v2-control-rail/);
+});
+
+test("manifest declares portrait authority and supersedes landscape cropping", () => {
+  assert.equal(manifest.orientationAuthority, "portrait");
+  assert.equal(manifest.landscapeBehavior, "rotate_to_portrait_gate");
+  assert.equal(manifest.landscapeFeatureCropping, "superseded_by_portrait_only_walkthrough_decision");
 });
 
 test("FM 1409 is an explicit immutable owner-reference contract", () => {

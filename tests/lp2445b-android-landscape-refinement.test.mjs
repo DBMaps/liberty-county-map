@@ -15,11 +15,10 @@ test("refinement has one short-landscape boundary and explicitly excludes portra
   assert.doesNotMatch(repair, /@media[^\{]*orientation:\s*portrait/);
 });
 
-test("first-run welcome separates brand and title into bounded columns", () => {
-  assert.match(repair, /\.gridly-v950-welcome-page\s*\{[\s\S]*grid-template-columns: minmax\(132px,[\s\S]*grid-template-rows: minmax\(0, 1fr\)/);
-  assert.match(repair, /\.gridly-v950-welcome-logo\s*\{[\s\S]*grid-column: 1;[\s\S]*width: min\(22vw, 174px\)/);
-  assert.match(repair, /\.gridly-v950-welcome-page \.gridly-v950-page-copy\s*\{[\s\S]*grid-column: 2/);
-  assert.match(app, /Welcome to Gridly[\s\S]*Know Before You Go\./);
+test("first-run landscape composition is retired in favor of its gate", () => {
+  assert.doesNotMatch(repair, /\.gridly-v950-(?:welcome|feature|setup)-page/);
+  assert.match(css, /LP244\.5 portrait-only walkthrough orientation gate/);
+  assert.match(app, /Rotate your phone[\s\S]*designed for portrait viewing/);
 });
 
 test("portrait onboarding authority remains untouched", () => {

@@ -29312,6 +29312,44 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   }
 }
 
+/* LP244.5 portrait-only walkthrough orientation gate. Applicability is set by
+   JS for native shells or compact coarse-pointer browser devices; desktop and
+   the application behind the walkthrough remain orientation-independent. */
+.gridly-v950-orientation-gate[hidden] { display: none !important; }
+
+.gridly-v950-orientation-gate {
+  box-sizing: border-box;
+  width: min(100%, 520px);
+  min-height: min(100%, 390px);
+  margin: auto;
+  padding: max(24px, env(safe-area-inset-top, 0px)) max(28px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(28px, env(safe-area-inset-left, 0px));
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  color: #f7fbff;
+  text-align: center;
+  border: 1px solid rgba(133, 205, 255, 0.2);
+  border-radius: 28px;
+  background: radial-gradient(circle at 50% 18%, rgba(57, 157, 224, 0.22), transparent 48%), linear-gradient(155deg, #102943, #071321 72%);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44), inset 0 1px rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+
+.gridly-v950-orientation-gate h2 { margin: 4px 0 0; font-size: clamp(1.8rem, 6vw, 2.5rem); }
+.gridly-v950-orientation-gate p { max-width: 24rem; margin: 0; color: rgba(226, 239, 255, 0.82); line-height: 1.45; }
+.gridly-v950-orientation-gate .gridly-v950-orientation-brand { color: #78dfca; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+.gridly-v950-rotate-symbol { position: relative; width: 92px; height: 70px; margin-bottom: 4px; }
+.gridly-v950-rotate-symbol span { position: absolute; left: 31px; top: 5px; width: 31px; height: 54px; border: 3px solid #e8f7ff; border-radius: 8px; box-shadow: 0 0 24px rgba(105, 217, 255, 0.24); }
+.gridly-v950-rotate-symbol span::after { content: ""; position: absolute; left: 50%; bottom: 4px; width: 4px; height: 4px; translate: -50% 0; border-radius: 50%; background: #78dfca; }
+.gridly-v950-rotate-symbol::before { content: "↻"; position: absolute; inset: 9px auto auto 0; color: #78dfca; font-size: 3.2rem; line-height: 1; transform: rotate(-35deg); }
+
+.gridly-welcome-overlay[data-gridly-walkthrough-orientation-gated="true"] .gridly-v950-onboarding-pager {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 /* LP244.5 Task B — physical Android landscape refinement.
    The orientation plus short visual-height gate is intentionally the same
    physical-phone boundary certified by LP244.4. Nothing in this block can
@@ -29390,161 +29428,7 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     bottom: calc(var(--lp243h10h-command-height) + 32px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
-  /* First-run used a portrait-sized (66vh) artwork row beneath the brand.
-     Give the welcome brand and copy independent columns instead of making
-     both compete for the short block axis. */
-  .gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]) {
-    width: min(760px, calc(100vw - 24px));
-    height: calc(var(--gridly-visual-vh, 100dvh) - 12px);
-    max-height: calc(var(--gridly-visual-vh, 100dvh) - 12px);
-    overflow: hidden;
-  }
-
-  .gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
-    box-sizing: border-box;
-    height: 100%;
-    max-height: 100%;
-    padding: max(6px, env(safe-area-inset-top, 0px)) 12px max(6px, env(safe-area-inset-bottom, 0px));
-  }
-
-  .gridly-v950-welcome-page {
-    grid-template-columns: minmax(132px, 0.72fr) minmax(0, 1.28fr);
-    grid-template-rows: minmax(0, 1fr);
-    align-items: center;
-    align-content: center;
-    column-gap: 22px;
-    padding: 4px 24px;
-  }
-
-  .gridly-v950-welcome-logo {
-    grid-column: 1;
-    width: min(22vw, 174px);
-    margin: 0;
-  }
-
-  .gridly-v950-welcome-page .gridly-v950-page-copy {
-    grid-column: 2;
-    align-self: center;
-    text-align: left;
-  }
-
-  .gridly-v950-welcome-page .gridly-v950-page-copy :is(p, h2) {
-    margin-inline: 0;
-  }
-
-  .gridly-v950-feature-page {
-    grid-template-columns: minmax(210px, 0.78fr) minmax(0, 1.22fr);
-    grid-template-rows: minmax(0, 1fr);
-    align-items: center;
-    gap: 16px;
-  }
-
-  /* Owner-approved portrait artwork is intentionally presented through a
-     clipped focal viewport here. A full-image contain treatment made the
-     phone UI unreadably small at the 875x400 acceptance viewport. */
-  .gridly-v950-feature-page .gridly-v896-shot-frame {
-    min-height: 0;
-    height: clamp(190px, 58dvh, 232px);
-    max-height: clamp(190px, 58dvh, 232px);
-    overflow: hidden;
-    border-radius: 18px;
-  }
-
-  .gridly-v950-feature-page .gridly-v896-shot-frame img {
-    min-height: 100%;
-    height: 100%;
-    max-height: none;
-    object-fit: cover;
-    object-position: 50% var(--gridly-walkthrough-landscape-focus-y, 45%);
-    filter: none;
-  }
-
-  .gridly-v950-feature-page[data-gridly-approved-slide="kbyg"] { --gridly-walkthrough-landscape-focus-y: 42%; }
-  .gridly-v950-feature-page[data-gridly-approved-slide="nearby"] { --gridly-walkthrough-landscape-focus-y: 52%; }
-  .gridly-v950-feature-page[data-gridly-approved-slide="alerts"] { --gridly-walkthrough-landscape-focus-y: 42%; }
-  .gridly-v950-feature-page[data-gridly-approved-slide="report"] { --gridly-walkthrough-landscape-focus-y: 39%; }
-  .gridly-v950-feature-page[data-gridly-approved-slide="settings"] { --gridly-walkthrough-landscape-focus-y: 38%; }
-
-  .gridly-v950-feature-page .gridly-v950-page-copy {
-    align-self: center;
-    overflow: visible;
-  }
-
-  .gridly-v950-feature-page .gridly-v950-page-copy h3 {
-    font-size: clamp(1.35rem, 3.2vw, 1.85rem);
-    line-height: 1.08;
-    text-wrap: balance;
-  }
-
-  .gridly-v950-feature-page .gridly-v950-page-copy p {
-    font-size: 0.86rem !important;
-    line-height: 1.25 !important;
-  }
-
-  .gridly-v950-feature-page .gridly-v950-page-copy {
-    align-self: center;
-    padding-inline: 8px;
-    text-align: left;
-  }
-
-  .gridly-v950-feature-page .gridly-v950-page-copy p { margin-inline: 0; }
-
-  .gridly-v950-feature-page .gridly-v896-shot-frame,
-  .gridly-v950-feature-page .gridly-v896-shot-frame img {
-    width: 100%;
-    min-height: min(58dvh, 220px);
-    max-height: min(66dvh, 250px);
-  }
-
-  .gridly-v950-setup-page {
-    grid-template-columns: minmax(190px, 0.7fr) minmax(0, 1.3fr);
-    grid-template-rows: minmax(0, 1fr);
-    align-items: center;
-    gap: 16px;
-    overflow-y: hidden;
-  }
-
-  .gridly-v950-setup-page .gridly-v950-page-copy { align-self: center; text-align: left; }
-  .gridly-v950-setup-page .gridly-v950-page-copy p { margin-inline: 0; }
-  .gridly-v950-setup-page .gridly-v950-page-copy h3 {
-    font-size: clamp(1.35rem, 3.2vw, 1.85rem);
-    line-height: 1.08;
-  }
-  .gridly-v950-setup-page .gridly-v858-location-panel {
-    align-self: center;
-    max-height: 100%;
-    overflow-y: visible;
-    gap: 5px;
-    padding: 7px 10px;
-  }
-
-  .gridly-v950-setup-page .gridly-v858-location-note {
-    margin: 0;
-    font-size: 0.74rem !important;
-    line-height: 1.2 !important;
-  }
-
-  .gridly-v950-setup-page .gridly-v858-manual-location {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 5px 8px;
-  }
-
-  .gridly-v950-setup-page .gridly-v858-manual-location label {
-    grid-column: 1 / -1;
-    font-size: 0.75rem;
-  }
-
-  .gridly-v950-setup-page :is(.primary-btn, .secondary-btn, .gridly-v858-manual-location input) {
-    min-height: 38px;
-    border-radius: 12px;
-    font-size: 0.82rem;
-  }
-
-  .gridly-v950-setup-page .gridly-v858-manual-location .secondary-btn {
-    width: auto;
-    min-width: 88px;
-    padding-inline: 14px;
-  }
+  /* Walkthrough landscape composition retired by the portrait-only gate. */
 
   /* An open section is the active task. Let it consume both workspace
      columns while closed siblings retain the accepted two-column scan. */

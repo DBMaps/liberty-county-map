@@ -32,7 +32,8 @@ for (const [key, asset] of Object.entries(approvedAssets)) {
 assert(/\.gridly-v950-tour-page[\s\S]*grid-template-rows:\s*auto minmax\(0, 1fr\)/.test(styleSource), 'feature pages reserve most space for the visual');
 assert(/\.gridly-v950-tour-page \.gridly-v896-shot-frame[\s\S]*min-height:\s*min\(6[68]vh/.test(styleSource), 'feature visuals receive substantially more presentation space');
 assert(/@media \(orientation: portrait\)[\s\S]*object-fit:\s*contain/.test(styleSource), 'portrait feature images show the complete artwork without stretching');
-assert(/@media \(orientation: landscape\) and \(max-height: 500px\)[\s\S]*object-fit:\s*cover/.test(styleSource), 'short landscape uses an intentional readable focal crop');
+assert(/data-gridly-walkthrough-orientation-gated="true"[\s\S]*display:\s*none !important/.test(styleSource), 'mobile landscape hides the walkthrough composition behind the portrait gate');
+assert(!/walkthrough-landscape-focus-y/.test(styleSource), 'superseded per-slide landscape focal crops are retired');
 const immersiveCss = styleSource.slice(styleSource.indexOf('/* LP050.2'));
 const finalArtDirectionCss = styleSource.slice(styleSource.indexOf('/* LP050.5'));
 assert(!/\.gridly-v950-feature-page[^{]*\{[^}]*overflow-y:\s*auto/.test(immersiveCss), 'feature pages do not revert to long vertical scrolling');
