@@ -82657,6 +82657,125 @@ function gridlyLP012CurrentBuildId() { const ids = gridlyUnifiedIncidentRuntimeP
 function gridlyLP012ArrayId(value) { const state = gridlyUnifiedIncidentRuntimeProofState; if (!Array.isArray(value)) return null; if (!state.arrays) return "weakmap_unavailable"; let id = state.arrays.get(value); if (!id) { id = `array-${state.nextArrayId++}`; state.arrays.set(value, id); } return id; }
 function gridlyLP012StackSummary() { try { return String(new Error().stack || "").split("\n").slice(2, 7).map((line) => line.trim().replace(/^at\s+/, "")).filter(Boolean); } catch (_) { return []; } }
 function gridlyLP012ClassifyCaller(frames = []) { const text = frames.join(" | "); if (/getActiveUnifiedIncidents/.test(text)) return "getActiveUnifiedIncidents"; if (/buildCommuteConsequenceIntelligence/.test(text)) return "buildCommuteConsequenceIntelligence"; if (/renderAlerts|openAlertsSurface/i.test(text)) return "alerts_surface"; return frames[0] || "unknown"; }
+// LP244.14 UNIFIED INCIDENT ATTRIBUTION GATE START
+const GRIDLY_UNIFIED_INCIDENT_ATTRIBUTION_HISTORY_LIMIT = 180;
+const gridlyUnifiedIncidentAttributionState = {
+  detailedAttributionEnabled: false,
+  totalReadCount: 0,
+  cacheHitCount: 0,
+  cacheMissCount: 0,
+  snapshotBuildCount: 0,
+  stackCaptureCount: 0,
+  normalReadCount: 0,
+  detailedReadCount: 0,
+  normalCacheHitCount: 0,
+  detailedCacheHitCount: 0,
+  normalCacheHitStackCaptureCount: 0,
+  lastReadAt: null,
+  lastSnapshotRevision: ""
+};
+
+function gridlyEnableUnifiedIncidentAttributionAudit(enabled = true) {
+  gridlyUnifiedIncidentAttributionState.detailedAttributionEnabled = enabled === true;
+  return gridlyUnifiedIncidentAttributionAudit();
+}
+
+function gridlyBeginUnifiedIncidentAttributionRead() {
+  const state = gridlyUnifiedIncidentAttributionState;
+  state.totalReadCount += 1;
+  state.lastReadAt = Date.now();
+  if (!state.detailedAttributionEnabled) {
+    state.normalReadCount += 1;
+    return null;
+  }
+  state.detailedReadCount += 1;
+  const startedAt = gridlyLP012Now();
+  const frames = gridlyLP012StackSummary();
+  state.stackCaptureCount += 1;
+  return {
+    callId: gridlyUnifiedIncidentRuntimeProofState.nextUnifiedCallId++,
+    buildId: gridlyLP012CurrentBuildId(),
+    startedAt: gridlyLP012Round(startedAt),
+    endedAt: null,
+    durationMs: null,
+    returnedIncidentCount: 0,
+    returnedArrayIdentity: null,
+    returnedArrayIdentityMatchedEarlierCall: false,
+    callerClassification: gridlyLP012ClassifyCaller(frames),
+    stackSummary: frames,
+    fullReconstructionBodyExecuted: false,
+    stageTimings: {},
+    sourceCounts: {}
+  };
+}
+
+function gridlyUnifiedIncidentAttributionRevisionIdentity(value = "") {
+  const text = String(value || "");
+  let hash = 2166136261;
+  for (let index = 0; index < text.length; index += 1) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `${text.length}:${(hash >>> 0).toString(16)}`;
+}
+
+function gridlyRecordUnifiedIncidentCacheOutcome({ cacheHit = false, revision = "", detailedRecord = null } = {}) {
+  const state = gridlyUnifiedIncidentAttributionState;
+  state.lastSnapshotRevision = gridlyUnifiedIncidentAttributionRevisionIdentity(revision);
+  if (cacheHit) {
+    state.cacheHitCount += 1;
+    if (detailedRecord) state.detailedCacheHitCount += 1;
+    else state.normalCacheHitCount += 1;
+    if (!state.detailedAttributionEnabled && Array.isArray(detailedRecord?.stackSummary) && detailedRecord.stackSummary.length > 0) state.normalCacheHitStackCaptureCount += 1;
+  } else {
+    state.cacheMissCount += 1;
+  }
+}
+
+function gridlyCompleteUnifiedIncidentAttributionRead(record, returnedIncidents) {
+  if (!record) return;
+  const endedAt = gridlyLP012Now();
+  record.endedAt = gridlyLP012Round(endedAt);
+  record.durationMs = gridlyLP012Round(endedAt - record.startedAt);
+  record.stageTimings.total = record.durationMs;
+  record.returnedIncidentCount = Array.isArray(returnedIncidents) ? returnedIncidents.length : 0;
+  const arrayId = gridlyLP012ArrayId(returnedIncidents);
+  record.returnedArrayIdentity = arrayId;
+  record.returnedArrayIdentityMatchedEarlierCall = Boolean(arrayId && gridlyUnifiedIncidentRuntimeProofState.seenArrayIds.has(arrayId));
+  if (arrayId) gridlyUnifiedIncidentRuntimeProofState.seenArrayIds.add(arrayId);
+  gridlyLP012Bound(gridlyUnifiedIncidentRuntimeProofState.unifiedIncidentCalls, record, GRIDLY_UNIFIED_INCIDENT_ATTRIBUTION_HISTORY_LIMIT);
+}
+
+function gridlyUnifiedIncidentAttributionAudit() {
+  const state = gridlyUnifiedIncidentAttributionState;
+  const detailedRecordCount = gridlyUnifiedIncidentRuntimeProofState.unifiedIncidentCalls.length;
+  const normalRuntimeStackCapturePass = state.stackCaptureCount === state.detailedReadCount;
+  const cacheHitNoStackCapturePass = state.normalCacheHitStackCaptureCount === 0;
+  const detailedModeAvailablePass = typeof gridlyEnableUnifiedIncidentAttributionAudit === "function" && typeof gridlyLP012StackSummary === "function";
+  return Object.freeze({
+    available: true,
+    detailedAttributionEnabled: state.detailedAttributionEnabled,
+    totalReadCount: state.totalReadCount,
+    cacheHitCount: state.cacheHitCount,
+    cacheMissCount: state.cacheMissCount,
+    snapshotBuildCount: state.snapshotBuildCount,
+    stackCaptureCount: state.stackCaptureCount,
+    detailedRecordCount,
+    historyLimit: GRIDLY_UNIFIED_INCIDENT_ATTRIBUTION_HISTORY_LIMIT,
+    lastSnapshotRevision: state.lastSnapshotRevision,
+    normalRuntimeStackCapturePass,
+    cacheHitNoStackCapturePass,
+    detailedModeAvailablePass,
+    overallPass: normalRuntimeStackCapturePass && cacheHitNoStackCapturePass && detailedModeAvailablePass
+  });
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyEnableUnifiedIncidentAttributionAudit = gridlyEnableUnifiedIncidentAttributionAudit;
+  window.gridlyUnifiedIncidentAttributionAudit = gridlyUnifiedIncidentAttributionAudit;
+}
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyUnifiedIncidentAttributionAudit", gridlyUnifiedIncidentAttributionAudit);
+// LP244.14 UNIFIED INCIDENT ATTRIBUTION GATE END
 function gridlyLP012BeginCommuteBuild(options = {}) { const state = gridlyUnifiedIncidentRuntimeProofState; const startedAt = gridlyLP012Now(); const activeBefore = state.activeBuildIds.slice(); const build = gridlyLP012Bound(state.commuteBuilds, { buildId: state.nextBuildId++, startedAt: gridlyLP012Round(startedAt), endedAt: null, durationMs: null, inputOptions: { limit: Number(options?.limit ?? 6) }, completed: false, threw: false, errorMessage: "", overlappedAnotherActiveBuild: activeBefore.length > 0, activeBuildIdsAtStart: activeBefore }); state.activeBuildIds.push(build.buildId); state.maximumConcurrentBuilds = Math.max(state.maximumConcurrentBuilds, state.activeBuildIds.length); const click = state.alertsClicks.find((entry) => !entry.nextCommuteBuildStartedAfterClick && startedAt >= entry.timestamp); if (click) { click.nextCommuteBuildStartedAfterClick = build.buildId; click.delayToCommuteBuildStartMs = gridlyLP012Round(startedAt - click.timestamp); } return build; }
 function gridlyLP012EndCommuteBuild(build, error) { const state = gridlyUnifiedIncidentRuntimeProofState; const endedAt = gridlyLP012Now(); build.endedAt = gridlyLP012Round(endedAt); build.durationMs = gridlyLP012Round(endedAt - build.startedAt); build.completed = !error; build.threw = Boolean(error); build.errorMessage = error ? String(error?.message || error || "") : ""; state.activeBuildIds = state.activeBuildIds.filter((id) => id !== build.buildId); state.alertsClicks.forEach((click) => { if (click.nextCommuteBuildStartedAfterClick === build.buildId && click.delayToCommuteBuildCompletionMs == null) click.delayToCommuteBuildCompletionMs = gridlyLP012Round(endedAt - click.timestamp); }); }
 function gridlyLP012RecordAlertsClick(sourceIdentifier = "unknown") { const state = gridlyUnifiedIncidentRuntimeProofState; const timestamp = gridlyLP012Now(); gridlyLP012Bound(state.alertsClicks, { clickId: state.alertsClicks.length + 1, timestamp: gridlyLP012Round(timestamp), sourceIdentifier, activeBuildIdsAtClick: state.activeBuildIds.slice(), commuteBuildActiveAtClick: state.activeBuildIds.length > 0, nextCommuteBuildStartedAfterClick: null, delayToCommuteBuildStartMs: null, delayToCommuteBuildCompletionMs: null }, 40); }
@@ -82797,24 +82916,9 @@ function getAuthoritativeIncidentSnapshot() {
 
 
 function getUnifiedIncidents() {
-  const __lp012CallStartedAt = gridlyLP012Now();
-  const __lp012Frames = gridlyLP012StackSummary();
-  const __lp012Record = {
-    callId: gridlyUnifiedIncidentRuntimeProofState.nextUnifiedCallId++,
-    buildId: gridlyLP012CurrentBuildId(),
-    startedAt: gridlyLP012Round(__lp012CallStartedAt),
-    endedAt: null,
-    durationMs: null,
-    returnedIncidentCount: 0,
-    returnedArrayIdentity: null,
-    returnedArrayIdentityMatchedEarlierCall: false,
-    callerClassification: gridlyLP012ClassifyCaller(__lp012Frames),
-    stackSummary: __lp012Frames,
-    fullReconstructionBodyExecuted: false,
-    stageTimings: {},
-    sourceCounts: {}
-  };
+  const __lp012Record = gridlyBeginUnifiedIncidentAttributionRead();
   const __lp012Stage = (name, fn) => {
+    if (!__lp012Record) return fn();
     const startedAt = gridlyLP012Now();
     try { return fn(); }
     finally { __lp012Record.stageTimings[name] = gridlyLP012Round(Number(__lp012Record.stageTimings[name] || 0) + (gridlyLP012Now() - startedAt)); }
@@ -82832,10 +82936,12 @@ function getUnifiedIncidents() {
   const __gridlyCachedAuthoritativeSnapshot = gridlyAuthoritativeIncidentSnapshotState.snapshot;
   if (__gridlyCachedAuthoritativeSnapshot && __gridlyCachedAuthoritativeSnapshot.revisionKey === __gridlyAuthoritativeRevisionKey) {
     sortedUnifiedIncidents = __gridlyCachedAuthoritativeSnapshot.unifiedIncidents;
-    __lp012Record.sourceCounts = __gridlyCachedAuthoritativeSnapshot.sourceCounts || {};
+    if (__lp012Record) __lp012Record.sourceCounts = __gridlyCachedAuthoritativeSnapshot.sourceCounts || {};
+    gridlyRecordUnifiedIncidentCacheOutcome({ cacheHit: true, revision: __gridlyAuthoritativeRevisionKey, detailedRecord: __lp012Record });
     return sortedUnifiedIncidents;
   }
-  __lp012Record.fullReconstructionBodyExecuted = true;
+  gridlyRecordUnifiedIncidentCacheOutcome({ cacheHit: false, revision: __gridlyAuthoritativeRevisionKey, detailedRecord: __lp012Record });
+  if (__lp012Record) __lp012Record.fullReconstructionBodyExecuted = true;
   const canonicalCommunityState = typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState({ selectedArea: __gridlyAuthoritativeSelectedAwarenessArea, selectedCounty: __gridlyAuthoritativeRevisionContext.activeCountyId }) : null;
   const canonicalCrossingRecords = canonicalCommunityState?.activeCrossingRecords || [];
   const canonicalRoadHazardRecords = canonicalCommunityState?.activeRoadHazardRecords || [];
@@ -82955,7 +83061,7 @@ function getUnifiedIncidents() {
   const txdotIncidentSource = __lp012Stage("txdotIncidents", () => futureTxdotIncidents());
   const txdotConstructionSource = __lp012Stage("txdotConstruction", () => futureTxdotConstruction());
   const floodAlertSource = __lp012Stage("floodAlerts", () => futureFloodAlerts());
-  __lp012Record.sourceCounts = {
+  const __gridlyUnifiedIncidentSourceCounts = {
     consolidatedIncidents: Array.isArray(railIncidentSource) ? railIncidentSource.length : 0,
     filteredConsolidatedIncidents: Array.isArray(filteredRailIncidentSource) ? filteredRailIncidentSource.length : 0,
     liveHazardIncidents: Array.isArray(liveHazardIncidentSource) ? liveHazardIncidentSource.length : 0,
@@ -82964,27 +83070,20 @@ function getUnifiedIncidents() {
     txdotConstruction: Array.isArray(txdotConstructionSource) ? txdotConstructionSource.length : 0,
     floodAlerts: Array.isArray(floodAlertSource) ? floodAlertSource.length : 0
   };
+  if (__lp012Record) __lp012Record.sourceCounts = __gridlyUnifiedIncidentSourceCounts;
   const unifiedIncidents = __lp012Stage("merge", () => [...railIncidents, ...roadIncidents, ...recentlyClearedRoadIncidents, ...txdotIncidentSource, ...txdotConstructionSource, ...floodAlertSource]);
   sortedUnifiedIncidents = __lp012Stage("sort", () => unifiedIncidents.sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at)));
   gridlyStoreAuthoritativeIncidentSnapshot({
     revisionKey: __gridlyAuthoritativeRevisionKey,
     unifiedIncidents: sortedUnifiedIncidents,
-    sourceCounts: __lp012Record.sourceCounts,
+    sourceCounts: __gridlyUnifiedIncidentSourceCounts,
     context: __gridlyAuthoritativeRevisionContext
   });
+  gridlyUnifiedIncidentAttributionState.snapshotBuildCount += 1;
   return sortedUnifiedIncidents;
   } finally {
-    const __lp012EndedAt = gridlyLP012Now();
-    __lp012Record.endedAt = gridlyLP012Round(__lp012EndedAt);
-    __lp012Record.durationMs = gridlyLP012Round(__lp012EndedAt - __lp012CallStartedAt);
-    __lp012Record.stageTimings.total = __lp012Record.durationMs;
     const __lp012Returned = typeof sortedUnifiedIncidents !== "undefined" ? sortedUnifiedIncidents : undefined;
-    __lp012Record.returnedIncidentCount = Array.isArray(__lp012Returned) ? __lp012Returned.length : 0;
-    const __lp012ArrayId = gridlyLP012ArrayId(__lp012Returned);
-    __lp012Record.returnedArrayIdentity = __lp012ArrayId;
-    __lp012Record.returnedArrayIdentityMatchedEarlierCall = Boolean(__lp012ArrayId && gridlyUnifiedIncidentRuntimeProofState.seenArrayIds.has(__lp012ArrayId));
-    if (__lp012ArrayId) gridlyUnifiedIncidentRuntimeProofState.seenArrayIds.add(__lp012ArrayId);
-    gridlyLP012Bound(gridlyUnifiedIncidentRuntimeProofState.unifiedIncidentCalls, __lp012Record);
+    gridlyCompleteUnifiedIncidentAttributionRead(__lp012Record, __lp012Returned);
   }
 }
 
