@@ -30129,6 +30129,34 @@ window.gridlyReflowTraceAudit = function gridlyReflowTraceAudit() {
 };
 let lastDirectRouteClick = null;
 let routeRequestInFlight = false;
+const gridlyRoutePublicationOwnershipController = window.GRIDLY_ROUTE_PUBLICATION_OWNERSHIP_CONTRACT?.createController?.() || null;
+function beginGridlyRoutePublication(kind = "route_request") {
+  return gridlyRoutePublicationOwnershipController?.start(kind) || null;
+}
+function captureGridlyRoutePublication(kind = "route_refresh") {
+  return gridlyRoutePublicationOwnershipController?.capture(kind) || null;
+}
+function isGridlyRoutePublicationCurrent(action) {
+  return gridlyRoutePublicationOwnershipController ? gridlyRoutePublicationOwnershipController.isCurrent(action) : true;
+}
+function guardGridlyRoutePublication(action, reason = "superseded_by_newer_route_action") {
+  return gridlyRoutePublicationOwnershipController ? gridlyRoutePublicationOwnershipController.guard(action, reason) : true;
+}
+function suppressGridlyRouteCompletion(action, reason) {
+  return gridlyRoutePublicationOwnershipController?.suppress(action, reason) || false;
+}
+function publishGridlyRouteCompletion(action, publisher = null) {
+  if (gridlyRoutePublicationOwnershipController) return gridlyRoutePublicationOwnershipController.publish(action, publisher);
+  if (typeof publisher === "function") publisher();
+  return true;
+}
+function invalidateGridlyRoutePublication(reason = "route_action_invalidated") {
+  routeRequestInFlight = false;
+  return gridlyRoutePublicationOwnershipController?.invalidate(reason) ?? null;
+}
+window.gridlyRoutePublicationOwnershipAudit = function gridlyRoutePublicationOwnershipAudit() {
+  return gridlyRoutePublicationOwnershipController?.audit() || Object.freeze({ available: false, overallPass: false });
+};
 let lastRouteRequestKey = "";
 let lastRouteRequestAt = 0;
 let duplicateRouteRequestBlockedCount = 0;
@@ -43722,6 +43750,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   const priorPreview = getGridlyDestinationRoutePreviewState();
   const priorOrigin = priorPreview?.source ? { ...priorPreview.source } : null;
   clearGridlyDestinationRoutePreview({ silent: true, syncCard: false, preservePerformanceAudit: true });
+  const routePublicationAction = beginGridlyRoutePublication("destination_route_preview");
   const flowStartedAt = Number.isFinite(Number(gridlyDestinationPerformanceAuditState.destinationFlowStartedAt))
     ? Number(gridlyDestinationPerformanceAuditState.destinationFlowStartedAt)
     : getGridlyDestinationPerfNow();
@@ -43756,6 +43785,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
     addGridlyDestinationPerformanceNote(preview.error || "destination route preview did not start");
     syncMobileDestinationCommandCard();
+    publishGridlyRouteCompletion(routePublicationAction);
     return preview;
   }
 
@@ -43767,9 +43797,11 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     autoLocationResult = await requestGridlyDestinationAutoCurrentLocation({ timeoutMs: GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS, allowPromptRetry: false });
     const latestAfterLocationAttempt = getGridlyDestinationRoutePreviewState();
     if (latestAfterLocationAttempt.requestId !== requestId) {
+      suppressGridlyRouteCompletion(routePublicationAction, "destination_request_superseded_after_location");
       addGridlyDestinationPerformanceNote("stale destination route preview ignored after auto location attempt");
       return latestAfterLocationAttempt;
     }
+    if (!guardGridlyRoutePublication(routePublicationAction, "route_action_superseded_after_location")) return latestAfterLocationAttempt;
   }
 
   preview.autoLocationAttempted = Boolean(autoLocationResult.attempted);
@@ -43806,6 +43838,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
     addGridlyDestinationPerformanceNote(preview.error || "destination route origin unavailable");
     syncMobileDestinationCommandCard();
+    publishGridlyRouteCompletion(routePublicationAction);
     return preview;
   }
 
@@ -43834,6 +43867,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     addGridlyDestinationPerformanceNote(samePlaceGuard.reason);
     setConfirmation(samePlaceGuard.message, "error");
     syncMobileDestinationCommandCard();
+    publishGridlyRouteCompletion(routePublicationAction);
     return preview;
   }
 
@@ -43855,10 +43889,12 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   setGridlyDestinationPerformanceTiming("routeRequestMs", getGridlyDestinationPerfNow() - routeRequestStartedAt);
   const latestPreview = getGridlyDestinationRoutePreviewState();
   if (latestPreview.requestId !== requestId) {
+    suppressGridlyRouteCompletion(routePublicationAction, "destination_request_superseded_after_route_fetch");
     gridlyDestinationRouteLifecycleAuditState.routeSuperseded = true;
     addGridlyDestinationPerformanceNote("stale destination route preview request ignored");
     return latestPreview;
   }
+  if (!guardGridlyRoutePublication(routePublicationAction, "route_action_superseded_after_route_fetch")) return latestPreview;
 
   if (!routeData?.geometry?.length || routeData.geometry.length < 2) {
     destinationRoutePreviewLayer?.clearLayers?.();
@@ -43878,6 +43914,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
     addGridlyDestinationPerformanceNote(latestPreview.error || "route preview unavailable");
     syncMobileDestinationCommandCard();
+    publishGridlyRouteCompletion(routePublicationAction);
     return latestPreview;
   }
 
@@ -43908,6 +43945,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   syncMobileDestinationCommandCard();
   gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = getGridlyDestinationPerfNow();
   setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
+  publishGridlyRouteCompletion(routePublicationAction);
   return latestPreview;
 }
 
@@ -76005,7 +76043,9 @@ async function renderSavedRouteLine() {
   lastRenderedRouteKey = routeKey;
 
   savedRouteLayer.clearLayers();
+  const routePublicationAction = captureGridlyRoutePublication("saved_route_refresh");
   const osrmPath = await fetchRoadRouteCoordinates(from, to);
+  if (!guardGridlyRoutePublication(routePublicationAction, "saved_route_refresh_superseded")) return;
   const fallbackPath = routeCrossings.map((crossing) => [crossing.lat, crossing.lng]);
   drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : fallbackPath, getRouteStatusColor(), "renderSavedRouteLine");
   recordGridlyActiveLocationLifecycleEvent("renderSavedRouteLine:complete", {
@@ -76014,6 +76054,7 @@ async function renderSavedRouteLine() {
     pointCount: (osrmPath?.length > 1 ? osrmPath : fallbackPath).length,
     geometrySource: osrmPath?.length > 1 ? "osrm" : "fallback"
   });
+  publishGridlyRouteCompletion(routePublicationAction);
 }
 
 function getMarkerLabel(report, markerStateClass, lifecycleState) {
@@ -97979,7 +98020,8 @@ function setRoutePreviewState(rendered, reason, options = {}) {
   lastRoutePreviewError = routePreviewRendered ? null : routePreviewReason;
 }
 
-async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
+async function renderRoutePreviewLine(startCoordinates, destinationCoordinates, options = {}) {
+  let routePublicationAction = null;
   routeRequestTriggered = false;
   osrmRequestStarted = false;
   osrmResponseReceived = false;
@@ -98012,6 +98054,8 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     console.info("Gridly duplicate route request blocked", { requestKey, duplicateRouteRequestBlockedCount });
     return false;
   }
+  routePublicationAction = beginGridlyRoutePublication("inline_route_preview");
+  if (options?.routePublicationContext) options.routePublicationContext.action = routePublicationAction;
   routeRequestInFlight = true;
   lastRouteRequestKey = requestKey;
   lastRouteRequestAt = nowMs;
@@ -98071,12 +98115,14 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       method: "GET",
       signal: controller?.signal
     });
+    if (!guardGridlyRoutePublication(routePublicationAction, "route_fetch_superseded")) return false;
     lastOsrmResponseStatus = Number(response?.status || 0) || null;
     if (timeoutId) clearTimeout(timeoutId);
     if (!response.ok) {
       throw new Error(`OSRM response failed (${response.status})`);
     }
     const payload = await response.json();
+    if (!guardGridlyRoutePublication(routePublicationAction, "route_parse_superseded")) return false;
     osrmResponseReceived = true;
     console.info("Gridly OSRM response received", { hasRoutes: Array.isArray(payload?.routes), routeCount: Array.isArray(payload?.routes) ? payload.routes.length : 0 });
     const primaryRoute = payload?.routes?.[0] || null;
@@ -98113,6 +98159,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       monitoredRouteEtaMinutes = Math.max(1, Math.round(osrmDurationSeconds / 60));
     }
   } catch (error) {
+    if (!guardGridlyRoutePublication(routePublicationAction, "route_failure_superseded")) return false;
     // A straight line is not a route. Preserve the selected destination and
     // report provider failure instead of presenting interpolation as a route.
     routeGeometrySource = "unavailable";
@@ -98163,6 +98210,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
         [Number(destinationCoordinates?.lat), Number(destinationCoordinates?.lng)],
         previewPoints
       );
+      if (!guardGridlyRoutePublication(routePublicationAction, "alternate_route_superseded")) return false;
       if (Array.isArray(alternatePoints) && alternatePoints.length >= 2) {
         alternateRouteLayer = L.polyline(alternatePoints, {
           ...gridlyGetVisualSignatureRouteStyle("alternate"),
@@ -98176,6 +98224,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
         alternateRouteAvailable = true;
       }
     } catch (error) {
+      if (!guardGridlyRoutePublication(routePublicationAction, "alternate_route_failure_superseded")) return false;
       alternateRouteStatus = "unavailable";
       alternateRouteReason = "Alternate route check recommended.";
     }
@@ -98230,6 +98279,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   }
   try {
     const captureBaselineSample = () => {
+      if (!isGridlyRoutePublicationCurrent(routePublicationAction)) return;
       try {
         window.gridlyCaptureCommuteBaselineSample?.();
       } catch (error) {
@@ -98247,7 +98297,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
 
   return true;
   } finally {
-    routeRequestInFlight = false;
+    if (routePublicationAction && isGridlyRoutePublicationCurrent(routePublicationAction)) routeRequestInFlight = false;
   }
 }
 
@@ -99332,7 +99382,8 @@ function removeGridlyRoutePreviewLayers() {
   alternateRouteAvailable = false;
 }
 
-function stopGridlyRouteWatch(source = "stop_route_watch") {
+function stopGridlyRouteWatch(source = "stop_route_watch", options = {}) {
+  if (options?.preserveRoutePublicationOwnership !== true) invalidateGridlyRoutePublication("stop");
   routeWatchActivated = false;
   window.__gridlyRouteWatchActive = false;
   stopGridlyRouteWatchPositionUpdates();
@@ -99348,7 +99399,8 @@ function stopGridlyRouteWatch(source = "stop_route_watch") {
 }
 
 function clearGridlyRoute(source = "clear_route") {
-  stopGridlyRouteWatch(source);
+  invalidateGridlyRoutePublication("clear");
+  stopGridlyRouteWatch(source, { preserveRoutePublicationOwnership: true });
   activeDestinationPlace = null;
   activeRouteOriginLabel = "";
   activeRouteDestinationLabel = "";
@@ -99998,6 +100050,7 @@ window.gridlyMobileOverlayDebug = function gridlyMobileOverlayDebug() {
 
 async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
+  const routePublicationAction = beginGridlyRoutePublication("saved_place_route_watch");
   routeWatchActivated = true;
   window.__gridlyRouteWatchActive = true;
   window.__gridlySelectedRouteId = String(target.type || target.id || target.label || "saved-route").toLowerCase();
@@ -100019,11 +100072,13 @@ async function renderDestinationRoute(target) {
     window.__gridlyRouteWatchActive = false;
     window.__gridlySelectedRouteId = "";
     scheduleRenderCrossings("state-change");
+    publishGridlyRouteCompletion(routePublicationAction);
     return;
   }
   const from = [fromCoords.lat, fromCoords.lng];
   const to = [toCoords.lat, toCoords.lng];
   const osrmPath = await fetchRoadRouteCoordinates(from, to);
+  if (!guardGridlyRoutePublication(routePublicationAction, "saved_place_route_superseded")) return;
   if (osrmPath?.length > 1) {
     drawPremiumRouteLine(osrmPath, "#66e8ff", "renderDestinationRoute");
     setConfirmation(`Route Watch set: ${activeRouteDestinationLabel}.`, "success");
@@ -100036,6 +100091,7 @@ async function renderDestinationRoute(target) {
   scheduleRenderCrossings("state-change");
   updateRouteWatchBadge(activeRouteDestinationLabel);
   updateGridlyRouteOwnershipSurface();
+  publishGridlyRouteCompletion(routePublicationAction);
 }
 
 
@@ -100271,10 +100327,17 @@ async function startInlineRouteWatch(options = {}) {
   lastRoutePipelineStep = "osrm_payload_build_start";
   routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, startCoords, destinationCoords });
 
+  const routePublicationContext = {};
   const routePreviewShown = await renderRoutePreviewLine(startCoords, destinationCoords, {
     start: start.name,
-    destination: destination.name
+    destination: destination.name,
+    routePublicationContext
   });
+  const routePublicationAction = routePublicationContext.action || null;
+  if (!routePublicationAction) return { success: false, reason: "duplicate_route_request_suppressed" };
+  if (!guardGridlyRoutePublication(routePublicationAction, "inline_route_completion_superseded")) {
+    return { success: false, reason: "stale_route_completion_suppressed", suppressed: true };
+  }
   if (!routePreviewShown) {
     lastRouteEarlyReturnReason = "route_preview_renderer_returned_false";
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
@@ -100318,6 +100381,7 @@ async function startInlineRouteWatch(options = {}) {
   updateRouteWatchBadge(destination.name);
   updateRouteIntelligence();
   updateRouteWatchStartButtonLabel();
+  publishGridlyRouteCompletion(routePublicationAction);
   return {
     success: Boolean(routePreviewRendered),
     reason: routePreviewRendered ? "" : (lastRouteEarlyReturnReason || "route_preview_unavailable"),
