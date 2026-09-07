@@ -10,7 +10,7 @@ const selector = "[data-gridly-alert-focus='true'][data-gridly-alert-row='true']
 assert.match(index, /gridlyLp0952CrossingAlertInteractionAudit\.js/);
 assert.match(app, /function gridlyLp0952AlertCardInteractionAttributes[\s\S]*role="button" tabindex="0" data-gridly-alert-focus="true" data-gridly-alert-row="true" data-gridly-alert-crossing-id/);
 assert.match(app, /gridlyLp0952AlertCardInteractionAttributes\(crossingId, esc\)/, "current renderer uses the shared contract");
-assert.match(app, /gridlyLp0952AlertCardInteractionAttributes\(crossingAlertTarget\.crossingId, sanitizeText\)/, "legacy renderer uses the shared contract");
+assert.match(app, /gridlyLp0952AlertCardInteractionAttributes\(crossingTarget\.crossingId, sanitizeText\)/, "LP236 renderer uses the shared contract");
 assert.match(app, /function gridlyLp0952ResolveCrossingAlertTarget[\s\S]*crossingMarkers\.get\(crossingId\)/);
 assert.match(app, /const crossingAlertTarget = gridlyLp0952ResolveCrossingAlertTarget\(alert, null\);[\s\S]*crossingAlertTarget\.coords\?\.lat/);
 assert.match(app, /panel\.addEventListener\("keydown"[\s\S]*event\.repeat[\s\S]*event\.preventDefault\(\)[\s\S]*row\.click\(\)/);

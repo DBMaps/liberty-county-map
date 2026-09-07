@@ -33,7 +33,7 @@ assert.match(app, /buildGridlyLp097AddressModel/);
 assert.match(app, /County Road \$1/);
 assert.match(app, /structured: intent\.type === GRIDLY_DESTINATION_INTENTS\.ADDRESS/);
 assert.match(app, /if \(exactInAttempt\) break/);
-assert.match(app, /score \+= 2000/);
+assert.match(app, /scoreBreakdown\.exactAddress = 2000/);
 assert.match(app, /consumerType = "Exact address"/);
 assert.match(app, /consumerType = "Approximate location"/);
 assert.match(app, /Address search is temporarily unavailable\. Try again in a moment\./);

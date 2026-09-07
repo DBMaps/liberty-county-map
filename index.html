@@ -216,7 +216,7 @@
     })();
   </script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/styles.css?v=243i23r2-visible-map-attribution-boundary" />
+  <link rel="stylesheet" href="css/styles.css?v=2445-portrait-walkthrough-gate" />
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/store/icons/gridly-icon-master-1024.png">
   <link rel="apple-touch-icon" sizes="167x167" href="assets/icons/incoming/gridly-icon-master-167.png">
@@ -1020,7 +1020,7 @@
         </div>
         <p id="managePlacesSaveStatus" class="manage-places-save-status" role="status" aria-live="polite"></p>
         <button id="mobileUseLocationBtn" class="secondary-btn subtle-secondary-btn" type="button" hidden>Use Current Location</button>
-        <button id="mobileUseMapCenterFallbackBtn" class="secondary-btn subtle-secondary-btn manage-places-fallback-btn" type="button" hidden>Use Current Map Center for This Place</button>
+        <button id="mobileUseMapCenterFallbackBtn" class="secondary-btn subtle-secondary-btn manage-places-fallback-btn" type="button" hidden>Choose Location on Map</button>
       </section>
     </div>
   </div>
@@ -1136,25 +1136,28 @@
             <div class="settings-preferences-block" id="settingsDisplayPreferencesSection">
               <div class="settings-select-grid">
                 <label>Map Style
-                  <select id="settingsMapStyleSelect">
+                  <select id="settingsMapStyleSelect" class="gridly-governed-select-source" aria-hidden="true" tabindex="-1">
                     <option value="standard">Standard</option>
                     <option value="satellite">Satellite</option>
                   </select>
+                  <span class="gridly-choice-control" role="radiogroup" aria-label="Map Style" data-gridly-select="settingsMapStyleSelect"><button type="button" role="radio" data-value="standard">Standard</button><button type="button" role="radio" data-value="satellite">Satellite</button></span>
                 </label>
                 <label><span>Theme <em class="settings-field-badge">Saved preference</em></span>
-                  <select id="settingsThemeSelect">
+                  <select id="settingsThemeSelect" class="gridly-governed-select-source" aria-hidden="true" tabindex="-1">
                     <option value="system">System</option>
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                   </select>
+                  <span class="gridly-choice-control" role="radiogroup" aria-label="Theme" data-gridly-select="settingsThemeSelect"><button type="button" role="radio" data-value="system">System</button><button type="button" role="radio" data-value="light">Light</button><button type="button" role="radio" data-value="dark">Dark</button></span>
                 </label>
                 <label><span>Text Size <em class="settings-field-badge">Saved preference</em></span>
-                  <select id="settingsTextSizeSelect">
+                  <select id="settingsTextSizeSelect" class="gridly-governed-select-source" aria-hidden="true" tabindex="-1">
                     <option value="compact">Small</option>
                     <option value="standard">Medium</option>
                     <option value="large" selected>Large</option>
                     <option value="extra-large">Extra Large</option>
                   </select>
+                  <span class="gridly-choice-control" role="radiogroup" aria-label="Text Size" data-gridly-select="settingsTextSizeSelect"><button type="button" role="radio" data-value="compact">Small</button><button type="button" role="radio" data-value="standard">Medium</button><button type="button" role="radio" data-value="large">Large</button><button type="button" role="radio" data-value="extra-large">Extra Large</button></span>
                 </label>
               </div>
               <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme applies a basic light, dark, or system visual treatment.</p>
@@ -1553,21 +1556,23 @@
   <script src="js/lp101-search-quality.js?v=1012"></script>
   <script src="js/lp24110-poi-search-certification.js?v=24110"></script>
   <script src="js/gridlyPoiBrowserProvider.js?v=24119"></script>
-  <script src="js/gridly-geocoding-client.js?v=1022"></script>
+  <script src="js/gridly-geocoding-client.js?v=1023"></script>
+  <script src="js/gridly-saved-address-integrity.js?v=2445-legacy-revalidation"></script>
+  <script src="js/gridly-saved-address-ui-state.js?v=2446-live-map-confirmation"></script>
   <script src="js/lp102-rural-address-cases.js?v=1021"></script>
   <script src="js/lp104-regional-rural-address-audit.js?v=104"></script>
   <script src="js/gridlyIncidentLocationIdentity.js?v=1854000000"></script>
   <script src="js/gridly-statewide-zip-resolver.js?v=1"></script>
   <script src="js/gridlyAlertSemanticContract.js?v=214"></script>
   <script src="js/gridlyConditionDisplayLabel.js?v=2403a"></script>
-  <script src="audits/lp2403-condition-label-audit.js?v=2403a1"></script>
+  <script src="js/gridlyGovernedActiveConditionParity.js?v=2445-live-writer"></script>
   <script src="js/gridlyOfficialRoadwayMarkerPublication.js?v=2142"></script>
   <script src="js/governed-awareness.js?v=243d"></script>
   <script src="js/gridlyCanonicalCrossingRuntime.js?v=235"></script>
   <script src="js/gridlyRuntimeCountyIdentity.js?v=2393"></script>
   <script src="js/gridlyLP240WeatherAuthorityAudit.js?v=2401h4"></script>
   <script src="js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3"></script>
-  <script src="js/app.js?v=243i23r2-visible-map-attribution-boundary"></script>
+  <script src="js/app.js?v=2445-portrait-walkthrough-gate"></script>
   <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
   <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=03921"></script>
   <script src="js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044"></script>

@@ -38,6 +38,7 @@ reports/lp193/san-antonio-consumer-region-implementation-readiness.md text eol=l
 data/runtime/san-antonio-consumer-regions.geojson text eol=lf
 js/app.js text eol=lf
 legal/third-party/foursquare/NOTICE.txt text eol=lf
+android/app/src/main/res/drawable/ic_launcher_foreground.xml text eol=lf
 poi/lp24111-d5-standalone-2026-08-28/manifest.json text eol=lf
 poi/lp24111-d5-standalone-2026-08-28/legal/THIRD-PARTY-NOTICES.txt text eol=lf
 poi/lp24111-d5-standalone-2026-08-28/legal/foursquare/NOTICE.txt text eol=lf

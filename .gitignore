@@ -30,15 +30,20 @@ data/generated/lp104/txgio-addresses/*
 /android/.gradle/
 /android/build/
 /android/app/build/
+# Android SDK discovery is machine-local and must never enter a checkout.
+/android/local.properties
 
 # Deterministic native raster outputs; recreate with npm run build:native-assets.
 /android/app/src/main/res/drawable/splash.png
 /android/app/src/main/res/mipmap-anydpi/ic_launcher.png
 /android/app/src/main/res/mipmap-anydpi/ic_launcher_foreground.png
+/android/app/src/main/res/mipmap-anydpi/ic_launcher_mark.png
 /android/app/src/main/res/mipmap-anydpi/ic_launcher_round.png
+/android/app/src/main/res/drawable-nodpi/ic_launcher_mark.png
 /ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
 /ios/App/App/Assets.xcassets/Splash.imageset/splash.png
 /.artifacts/lp108/
+/.artifacts/native-web-identity.json
 
 # Capacitor Android web asset mirror; keep only the placeholder directory marker.
 /android/app/src/main/assets/public/*
@@ -100,3 +105,8 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 
 # Owner-only execution artifacts must never be committed.
 /owner-local/
+
+# Local Android acceptance output (reports, logcat excerpts, screenshots, APKs).
+/.artifacts/android-acceptance/
+*.apk
+*.log

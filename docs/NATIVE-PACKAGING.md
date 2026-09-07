@@ -22,9 +22,8 @@ remain API 36.
 
 ```powershell
 npm ci
-npm run build:native-web
-npm run verify:native-web
-npm run build:native-assets
+npm run prepare:native
+npm run verify:native-web:configured
 npx cap sync android
 cd android
 # This repository intentionally omits the binary Gradle wrapper JAR. Use the

@@ -19,7 +19,9 @@ const CONFIG = Object.freeze({
   ruralFallbackVintage: Deno.env.get("GRIDLY_RURAL_FALLBACK_VINTAGE") || "Current_Current",
   ruralFallbackTimeoutMs: Math.min(10000, Math.max(1000, Number(Deno.env.get("GRIDLY_RURAL_FALLBACK_TIMEOUT_MS")) || 6000))
 });
-const origins = new Set((Deno.env.get("GRIDLY_GEOCODE_ALLOWED_ORIGINS") || "https://gridly.app,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500").split(",").map((x) => x.trim()));
+// Capacitor Android's governed application origin is https://localhost. Keep
+// the allow-list exact: this is intentionally not a wildcard CORS policy.
+const origins = new Set((Deno.env.get("GRIDLY_GEOCODE_ALLOWED_ORIGINS") || "https://gridly.app,https://localhost,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500").split(",").map((x) => x.trim()));
 const inflight = new Map<string, Promise<Response>>();
 const allowedTop = new Set(["intent", "query", "structuredAddress", "context", "limit", "requestId", "requestMode"]);
 const allowedAddress = new Set(["street", "city", "county", "state", "postalCode", "country"]);
@@ -56,7 +58,7 @@ function normalize(body: any) {
     diagnosticContractVersion: body.requestMode === "lp102_certification" ? "lp102-rejection-v2" : "consumer",
     requestMode: body.requestMode || "", intent: body.intent, query: clean(body.query), structuredAddress: Object.fromEntries(Object.entries(body.structuredAddress || {}).map(([k, v]) => [k, clean(v)])), context: body.context || {}, limit: body.limit };
 }
-function canonicalize(row: any) { const a = row.address || {}; return { providerResultId: String(row.place_id || ""), name: row.name || String(row.display_name || "").split(",")[0], displayName: row.display_name || "", formattedAddress: row.display_name || "", latitude: Number(row.lat), longitude: Number(row.lon), category: row.category || "", type: a.house_number ? "house" : (row.type || ""), resultType: a.house_number ? "address" : "road", precision: a.house_number ? "address_point" : "road", confidenceBasis: a.house_number ? "provider_address_point" : "provider_road_geometry", sourceClassification: "primary_geocoder", routePreviewEligible: Boolean(a.house_number), address: { houseNumber: a.house_number || "", road: a.road || "", community: a.village || a.hamlet || "", city: a.city || a.town || "", mailingCity: "", county: a.county || "", state: a.state || "", postalCode: a.postcode || "", country: a.country || "" }, providerIdentity: { osmType: row.osm_type || "", osmId: String(row.osm_id || "") } }; }
+function canonicalize(row: any) { const a = row.address || {}; return { providerResultId: String(row.place_id || ""), name: row.name || String(row.display_name || "").split(",")[0], displayName: row.display_name || "", formattedAddress: row.display_name || "", latitude: Number(row.lat), longitude: Number(row.lon), boundingBox: Array.isArray(row.boundingbox) ? row.boundingbox.map(Number) : null, category: row.category || "", providerClass: row.class || row.category || "", providerType: row.type || "", type: a.house_number ? "house" : (row.type || ""), resultType: a.house_number ? "address" : "road", precision: a.house_number ? "address_point" : "road", confidenceBasis: a.house_number ? "provider_address_point" : "provider_road_geometry", sourceClassification: "primary_geocoder", routePreviewEligible: Boolean(a.house_number), address: { houseNumber: a.house_number || "", road: a.road || "", community: a.village || a.hamlet || "", city: a.city || a.town || "", mailingCity: "", county: a.county || "", state: a.state || "", postalCode: a.postcode || "", country: a.country || "" }, providerIdentity: { osmType: row.osm_type || "", osmId: String(row.osm_id || "") } }; }
 
 function ruralFallbackEligible(body: any) {
   if (!CONFIG.ruralFallbackEnabled) return false;

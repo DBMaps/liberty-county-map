@@ -29,7 +29,7 @@ test('runtime name filtering happens before the fixed 50-result publication limi
 test('Port Arthur runtime acquisition returns both certified local records before ranking', async () => {
   const base = 'poi/lp24111-d5-standalone-2026-08-28/runtime-v2/';
   const context = {
-    console, TextDecoder, Response, Blob, DecompressionStream, crypto: webcrypto,
+    console, URL, TextDecoder, Response, Blob, DecompressionStream, crypto: webcrypto,
     GRIDLY_RUNTIME_CONFIG: { poiBrowserProvider: { enabled: 'ENABLED' } },
     fetch: async (url) => new Response(fs.readFileSync(`${base}${String(url).split('/').at(-1)}`), { status: 200 })
   };

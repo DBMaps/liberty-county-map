@@ -249,8 +249,11 @@ test('LP238 map placement and GPS invoke one shared snap contract and forward it
   for (const source of [mapPlacement, gps]) {
     assert.match(source, /await snapHazardToRoad\(.*lat.*lng/s);
     assert.match(source, /selectedRoadName: snapped\.selectedRoadName/);
-    assert.match(source, /createSharedHazardReport/);
   }
+  assert.match(mapPlacement, /createSharedHazardReport/);
+  assert.doesNotMatch(gps, /createSharedHazardReport/);
+  assert.match(gps, /continueGovernedRoadHazardDraftToReview/);
+  assert.match(functionSource('submitGovernedRoadHazardDraft'), /createSharedHazardReport/);
 });
 
 test('LP238 deterministic authority selects and normalizes the nearest valid named road', () => {

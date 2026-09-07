@@ -14,7 +14,11 @@ function harness(initial) {
   const pending = [];
   const context = { console, Date, Promise, TypeError, Error, AbortController, setTimeout, clearTimeout,
     gridlyResolveGovernedWeatherPoint: () => selected,
-    fetch: (url) => new Promise((resolve, reject) => pending.push({ url, resolve, reject })) };
+    fetch: (url) => url.includes("/points/")
+      ? Promise.resolve({ok:true,json:async()=>({properties:{forecast:"https://api.weather.gov/gridpoints/HGX/1,1/forecast"}})})
+      : url.includes("/gridpoints/")
+        ? Promise.resolve({ok:true,json:async()=>({properties:{periods:[]}})})
+        : new Promise((resolve, reject) => pending.push({ url, resolve, reject })) };
   context.globalThis = context;
   vm.createContext(context);
   vm.runInContext(fs.readFileSync("js/gridlyWeatherProvider.js", "utf8"), context);

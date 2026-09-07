@@ -7,11 +7,12 @@
   // Retained for diagnostics/future discovery; selected-area authority never uses it.
   const DEFAULT_ENDPOINT = "https://api.weather.gov/alerts/active?area=TX";
   const POINT_ENDPOINT = "https://api.weather.gov/alerts/active?point={lat},{lng}";
+  const POINTS_LOOKUP_ENDPOINT = "https://api.weather.gov/points/{lat},{lng}";
   const TIMEOUT_MS = 8000;
   const MAX_ATTEMPTS = 2;
   const REFRESH_INTERVAL_MS = 120000;
   const CACHE_MAX = 8;
-  const state = { connected:false, networkingAvailable:typeof globalScope.fetch === "function", automaticPolling:false, providerActivated:false, authorityReady:false, authorityWaitReason:null, normalizedRecordCount:0, lastFetchSucceeded:false, lastError:null, lastRequestAt:null, lastSuccessAt:null, lastFailureAt:null, refreshIntervalMs:REFRESH_INTERVAL_MS, pointRequestIdentity:null, pointEndpoint:null, pointResponseValid:false, staleResponseSuppressedCount:0 };
+  const state = { connected:false, networkingAvailable:typeof globalScope.fetch === "function", automaticPolling:false, providerActivated:false, authorityReady:false, authorityWaitReason:null, normalizedRecordCount:0, lastFetchSucceeded:false, lastError:null, lastRequestAt:null, lastSuccessAt:null, lastFailureAt:null, refreshIntervalMs:REFRESH_INTERVAL_MS, pointRequestIdentity:null, pointEndpoint:null, pointResponseValid:false, pointsLookupEndpoint:null, pointsRequestAttempted:false, pointsRequestSucceeded:false, forecastEndpoint:null, forecastRequestAttempted:false, forecastRequestSucceeded:false, staleResponseSuppressedCount:0 };
   const cache = new Map();
   let normalizedRecords = [];
   let fetchInFlight = null;
@@ -35,8 +36,15 @@
   }
   function identity(point) { return point ? `${point.stableIdentity}|${point.awarenessKey}|${point.lat},${point.lng}` : null; }
   function endpoint(point) { return POINT_ENDPOINT.replace("{lat}", encodeURIComponent(String(point.lat))).replace("{lng}", encodeURIComponent(String(point.lng))); }
+  function pointsEndpoint(point) { return POINTS_LOOKUP_ENDPOINT.replace("{lat}", encodeURIComponent(String(point.lat))).replace("{lng}", encodeURIComponent(String(point.lng))); }
   function provider() { return globalScope.gridlyWeatherProvider || globalScope.gridlyIntelligenceProviders?.[PROVIDER_ID] || null; }
   function validPayload(payload) { return Boolean(payload && payload.type === "FeatureCollection" && Array.isArray(payload.features)); }
+  function governedForecastEndpoint(payload) {
+    const value = payload?.properties?.forecast;
+    if (typeof value !== "string") return null;
+    return /^https:\/\/api\.weather\.gov\//i.test(value) ? value : null;
+  }
+  function validForecastPayload(payload) { return Boolean(payload?.properties && Array.isArray(payload.properties.periods)); }
   function currentRecords(records) {
     const now = Date.now();
     return records.filter((record) => {
@@ -72,7 +80,7 @@
     if (requestGeneration !== generation || identity(live) !== entry.requestIdentity) { state.staleResponseSuppressedCount += 1; return false; }
     currentIdentity = entry.requestIdentity;
     normalizedRecords = entry.records.map(clone).filter(Boolean);
-    state.connected=entry.succeeded && entry.valid; state.authorityReady=true; state.authorityWaitReason=null; state.lastFetchSucceeded=entry.succeeded; state.lastError=entry.error; state.lastSuccessAt=entry.succeeded ? entry.fetchedAt : state.lastSuccessAt; state.lastFailureAt=entry.succeeded ? state.lastFailureAt : entry.fetchedAt; state.normalizedRecordCount=normalizedRecords.length; state.pointRequestIdentity=entry.requestIdentity; state.pointEndpoint=entry.endpoint; state.pointResponseValid=entry.valid;
+    state.connected=entry.succeeded && entry.valid; state.authorityReady=true; state.authorityWaitReason=null; state.lastFetchSucceeded=entry.succeeded; state.lastError=entry.error; state.lastSuccessAt=entry.succeeded ? entry.fetchedAt : state.lastSuccessAt; state.lastFailureAt=entry.succeeded ? state.lastFailureAt : entry.fetchedAt; state.normalizedRecordCount=normalizedRecords.length; state.pointRequestIdentity=entry.requestIdentity; state.pointEndpoint=entry.endpoint; state.pointResponseValid=entry.valid; state.pointsLookupEndpoint=entry.pointsLookupEndpoint; state.pointsRequestAttempted=entry.pointsRequestAttempted; state.pointsRequestSucceeded=entry.pointsRequestSucceeded; state.forecastEndpoint=entry.forecastEndpoint; state.forecastRequestAttempted=entry.forecastRequestAttempted; state.forecastRequestSucceeded=entry.forecastRequestSucceeded;
     notify(entry.succeeded ? "weather-point-fetch-success" : "weather-point-fetch-failure");
     return true;
   }
@@ -87,21 +95,38 @@
     state.pointRequestIdentity = nextIdentity;
     state.pointEndpoint = nextPoint ? endpoint(nextPoint) : null;
     state.pointResponseValid = false;
+    state.pointsLookupEndpoint = nextPoint ? pointsEndpoint(nextPoint) : null;
+    state.pointsRequestAttempted = false;
+    state.pointsRequestSucceeded = false;
+    state.forecastEndpoint = null;
+    state.forecastRequestAttempted = false;
+    state.forecastRequestSucceeded = false;
     notify("weather-point-identity-transition");
   }
   async function fetchPoint(point, requestGeneration) {
-    const requestIdentity=identity(point), url=endpoint(point); state.lastRequestAt=iso(); state.pointRequestIdentity=requestIdentity; state.pointEndpoint=url;
+    const requestIdentity=identity(point), url=endpoint(point), lookupUrl=pointsEndpoint(point); state.lastRequestAt=iso(); state.pointRequestIdentity=requestIdentity; state.pointEndpoint=url; state.pointsLookupEndpoint=lookupUrl;
+    const attempt={pointsLookupEndpoint:lookupUrl,pointsRequestAttempted:false,pointsRequestSucceeded:false,forecastEndpoint:null,forecastRequestAttempted:false,forecastRequestSucceeded:false};
     try {
+      attempt.pointsRequestAttempted=state.pointsRequestAttempted=true;
+      const pointsPayload=await requestPayload(lookupUrl);
+      attempt.pointsRequestSucceeded=state.pointsRequestSucceeded=true;
+      const forecastUrl=governedForecastEndpoint(pointsPayload);
+      if (!forecastUrl) throw new Error("NWS points response did not provide a governed forecast endpoint");
+      attempt.forecastEndpoint=state.forecastEndpoint=forecastUrl;
+      attempt.forecastRequestAttempted=state.forecastRequestAttempted=true;
+      const forecastPayload=await requestPayload(forecastUrl);
+      if (!validForecastPayload(forecastPayload)) throw new Error("NWS forecast schema validation failed");
+      attempt.forecastRequestSucceeded=state.forecastRequestSucceeded=true;
       const payload=await requestPayload(url);
       if (!validPayload(payload)) throw new Error("Weather connector schema validation failed");
       const normalizer=provider()?.normalizeRecords;
       if (typeof normalizer !== "function") throw new Error("Weather provider normalizer unavailable");
       const records=currentRecords(normalizer(payload).map(clone).filter(Boolean));
-      const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:true, valid:true, fetchedAt:iso(), records, error:null };
+      const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:true, valid:true, fetchedAt:iso(), records, error:null, ...attempt };
       cache.delete(requestIdentity); cache.set(requestIdentity,entry); while(cache.size>CACHE_MAX) cache.delete(cache.keys().next().value);
       publish(entry,requestGeneration); return freeze({ connected:true, normalizedRecordCount:records.length, requestIdentity });
     } catch(error) {
-      const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:false, valid:false, fetchedAt:iso(), records:[], error:error?.message||String(error) };
+      const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:false, valid:false, fetchedAt:iso(), records:[], error:error?.message||String(error), ...attempt };
       publish(entry,requestGeneration); return freeze({ connected:false, normalizedRecordCount:0, error:entry.error, requestIdentity });
     }
   }
@@ -133,7 +158,7 @@
   function startPolling() { state.automaticPolling=true; const tick=async()=>{await fetchNow(); if(state.automaticPolling) refreshTimer=globalScope.setTimeout(tick,REFRESH_INTERVAL_MS);}; tick(); return runtimeAudit(); }
   function stopPolling(){state.automaticPolling=false;if(refreshTimer!=null)globalScope.clearTimeout?.(refreshTimer);refreshTimer=null;return runtimeAudit();}
   function getNormalizedRecords(){return freeze(normalizedRecords.map(clone).filter(Boolean));}
-  function runtimeAudit(){const selectedPoint=resolvePoint();const selectedIdentity=identity(selectedPoint);const entry=currentIdentity&&currentIdentity===selectedIdentity?cache.get(currentIdentity):null;const age=entry?Date.now()-Date.parse(entry.fetchedAt):Infinity;if(state.providerActivated!==true)return freeze({connected:false,networkingAvailable:typeof globalScope.fetch === "function",automaticPolling:false,providerActivated:false,renderingPerformed:false,normalizedRecordCount:0,requestAttempted:false,requestSucceeded:false,lastRequestAt:null,lastSuccessAt:null,lastFailureAt:null,lastError:null,refreshIntervalMs:REFRESH_INTERVAL_MS});return freeze({ ...state, applicabilityMode:"NWS_POINT_QUERY", statewideDiagnosticEndpoint:DEFAULT_ENDPOINT, pointAlertEndpoint:state.pointEndpoint, requestAttempted:Boolean(entry?.attempted), requestSucceeded:Boolean(entry?.succeeded), responseValid:Boolean(entry?.valid), fetchedAt:entry?.fetchedAt||null, freshEnough:Boolean(entry?.succeeded&&entry?.valid&&age>=0&&age<=REFRESH_INTERVAL_MS), pointActiveAlertCount:entry?.records?.length||0, pointActiveAlertIds:freeze((entry?.records||[]).map(r=>r.id)), currentAwarenessIdentity:selectedIdentity, responseIdentity:entry?.requestIdentity||null, selectedPoint, cacheSize:cache.size });}
+  function runtimeAudit(){const selectedPoint=resolvePoint();const selectedIdentity=identity(selectedPoint);const entry=currentIdentity&&currentIdentity===selectedIdentity?cache.get(currentIdentity):null;const age=entry?Date.now()-Date.parse(entry.fetchedAt):Infinity;if(state.providerActivated!==true)return freeze({connected:false,networkingAvailable:typeof globalScope.fetch === "function",automaticPolling:false,providerActivated:false,renderingPerformed:false,normalizedRecordCount:0,requestAttempted:false,requestSucceeded:false,lastRequestAt:null,lastSuccessAt:null,lastFailureAt:null,lastError:null,refreshIntervalMs:REFRESH_INTERVAL_MS});const freshEnough=Boolean(entry?.succeeded&&entry?.valid&&age>=0&&age<=REFRESH_INTERVAL_MS);return freeze({ ...state, applicabilityMode:"NWS_POINT_QUERY", statewideDiagnosticEndpoint:DEFAULT_ENDPOINT, pointAlertEndpoint:state.pointEndpoint, requestAttempted:Boolean(entry?.attempted), requestSucceeded:Boolean(entry?.succeeded), responseValid:Boolean(entry?.valid), fetchedAt:entry?.fetchedAt||null, freshEnough, freshnessStatus:freshEnough?"FRESH":(state.lastSuccessAt?"STALE":"UNKNOWN"), pointActiveAlertCount:entry?.records?.length||0, pointActiveAlertIds:freeze((entry?.records||[]).map(r=>r.id)), currentAwarenessIdentity:selectedIdentity, responseIdentity:entry?.requestIdentity||null, selectedPoint, selectedIdentityClass:selectedPoint?.identityClass||null, selectedPlaceGeoid:selectedPoint?.placeGeoid||null, governedWeatherPointAvailable:validGovernedPoint(selectedPoint), governedWeatherLatitude:validGovernedPoint(selectedPoint)?selectedPoint.lat:null, governedWeatherLongitude:validGovernedPoint(selectedPoint)?selectedPoint.lng:null, latestProviderSuccessTimestamp:state.lastSuccessAt, finalWeatherHealth:entry?.succeeded&&freshEnough?"HEALTHY":"UNAVAILABLE", finalWeatherUnavailableReason:entry?.succeeded&&freshEnough?null:(state.authorityWaitReason||state.lastError||(state.lastSuccessAt?"STALE_PROVIDER_SUCCESS":"PROVIDER_SUCCESS_NOT_ESTABLISHED")), cacheSize:cache.size });}
   globalScope.gridlyWeatherConnector=freeze({providerId:PROVIDER_ID,providerName:PROVIDER_NAME,timeoutMs:TIMEOUT_MS,maxAttempts:MAX_ATTEMPTS,refreshIntervalMs:REFRESH_INTERVAL_MS,fetchNow,refreshAwarenessView,startPolling,stopPolling,getNormalizedRecords});
   globalScope.gridlyWeatherConnectorRuntimeAudit=runtimeAudit;
   if(typeof module!=="undefined"&&module.exports)module.exports=globalScope.gridlyWeatherConnector;

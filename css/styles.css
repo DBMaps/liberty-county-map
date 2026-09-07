@@ -29,6 +29,16 @@
   --shadow: 0 26px 60px rgba(0, 0, 0, 0.72);
 }
 
+/* LP244.2B: keep the governed report review's labels and values readable. */
+#gridlyPortraitV2SheetBody .gridly-v2-report-review .gridly-v2-sheet-copy > strong,
+#gridlyPortraitV2SheetBody .gridly-v2-report-review .gridly-v2-sheet-copy > span {
+  display: block;
+}
+
+#gridlyPortraitV2SheetBody .gridly-v2-report-review .gridly-v2-sheet-copy > span {
+  margin-top: 4px;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -12683,6 +12693,46 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
     margin: 0 0 calc(132px + env(safe-area-inset-bottom, 0px)) 0 !important;
     z-index: 10100 !important;
   }
+}
+
+
+
+/* Physical Android closure: Settings choices are Gridly-owned radiogroups,
+   never WebView's unthemeable expanded SELECT popup. */
+.gridly-governed-select-source {
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  overflow: hidden !important; clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+.gridly-choice-control {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 4px;
+  margin-top: 6px;
+  padding: 3px;
+  border: 1px solid rgba(148, 187, 216, .28);
+  border-radius: 12px;
+  background: #101c29;
+}
+.gridly-choice-control button {
+  min-height: 44px;
+  border: 0; border-radius: 9px;
+  color: #d8e8f4; background: transparent;
+  font: inherit; font-size: .8125rem; font-weight: 650;
+}
+.gridly-choice-control button.is-selected { color: #061517; background: #35d0c8; }
+.gridly-choice-control button:focus-visible { outline: 2px solid #f4fbff; outline-offset: 2px; }
+
+/* Component-only portrait density. Standard remains a 16px root and every
+   action remains at least 44px; larger accessibility modes still scale text. */
+@media (max-width: 400px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] :is(.settings-list-detail, .settings-preferences-block) { gap: 8px; padding-block: 8px; }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] [data-gridly-alert-row="true"] { padding-block: 8px !important; }
+  body[data-layout-mode="portrait"] #map .leaflet-popup-content { margin: 8px 10px; line-height: 1.3; }
+  body[data-layout-mode="portrait"] :is(button, [role="button"], [role="radio"]) { min-height: 44px; }
+  body[data-layout-mode="portrait"] :is(.gridly-popup, .gridly-official-roadway-popup) strong { font-size: .875rem; line-height: 1.25; }
+  body[data-layout-mode="portrait"] :is(.gridly-popup, .gridly-official-roadway-popup) span { font-size: .75rem; line-height: 1.3; }
 }
 
 /* V122.6c — portrait stabilization: header reservation, alerts flow support, dock/controls spacing */
@@ -27738,6 +27788,18 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 .gridly-landscape-command-handle { display: none; }
 
 @media (orientation: landscape) and (max-height: 500px) {
+  /* LP244.5 final density correction. The former 104px structural reserve,
+     card padding, and map margin stacked into a 130px first painted map row.
+     The header/filter system itself needs 100px at the reference viewport;
+     everything after that is functional map content. */
+  body[data-layout-mode="portrait"] #mapSection.command-center,
+  body[data-layout-mode="portrait"] #mapSection.command-center > .map-card,
+  body[data-layout-mode="portrait"] #mapSection.command-center .map-frame,
+  body[data-layout-mode="portrait"] #mapSection.command-center #map {
+    margin-block: 0 !important;
+    padding-block: 0 !important;
+  }
+
   body[data-layout-mode="portrait"] {
     --lp243h10b-inline-start: max(8px, env(safe-area-inset-left, 0px));
     --lp243h10b-inline-end: max(8px, env(safe-area-inset-right, 0px));
@@ -28853,6 +28915,308 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   .gridly-v2-bottom-region { transition: none !important; }
 }
 
+/* LP244.4 — Android short-landscape visual containment repair.
+   This is deliberately later than the LP243 landscape authorities: their
+   fixed foreground geometry established the correct owners, but the sheet
+   itself was not a flex column, so its header plus a 100%-high body could
+   exceed the visual viewport. Keep portrait and the accepted splash outside
+   this presentation-only contract. */
+@media (orientation: landscape) and (max-height: 500px) {
+  body {
+    --lp2444-visual-gap: max(12px, env(safe-area-inset-top, 0px));
+    --lp2444-inline-gap: max(18px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+    --lp2444-bottom-clearance: max(14px, env(safe-area-inset-bottom, 0px));
+    --lp2444-sheet-max-height: calc(100dvh - var(--lp2444-visual-gap) - var(--lp2444-bottom-clearance));
+    --lp2444-navigation-boundary: calc(var(--lp243h3-dock-height) + var(--lp243h3-dock-bottom-inset));
+  }
+
+  body #gridlyPortraitV2Sheet:not([hidden]) {
+    display: flex !important;
+    flex-direction: column;
+    box-sizing: border-box;
+    inset: auto var(--lp2444-inline-gap) var(--lp2444-bottom-clearance) !important;
+    width: min(760px, calc(100vw - (2 * var(--lp2444-inline-gap)))) !important;
+    max-width: 760px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: min(84dvh, var(--lp2444-sheet-max-height)) !important;
+    margin-inline: auto !important;
+    padding: 12px 14px !important;
+    border-radius: 18px !important;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.38), inset 0 1px rgba(255, 255, 255, 0.08);
+    overflow: hidden !important;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] { max-height: var(--lp2444-sheet-max-height) !important; }
+  body #gridlyPortraitV2Sheet[data-active-sheet="alerts"] { max-height: min(82dvh, var(--lp2444-sheet-max-height)) !important; }
+  body.gridly-v2-presentation-owner-active #gridlyPortraitV2Sheet[data-active-sheet="history"]:not([hidden]) {
+    inset: auto var(--lp2444-inline-gap) var(--lp2444-bottom-clearance) !important;
+    height: max-content !important;
+    max-height: min(78dvh, var(--lp2444-sheet-max-height)) !important;
+  }
+  body.gridly-v2-presentation-owner-active #gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]) {
+    inset: var(--lp2444-visual-gap) var(--lp2444-inline-gap)
+      calc(var(--lp2444-navigation-boundary) + var(--lp2444-visual-gap)) !important;
+    width: min(960px, calc(100vw - (2 * var(--lp2444-inline-gap)))) !important;
+    max-width: 960px !important;
+    max-height: none !important;
+    margin-inline: auto !important;
+    border: 1px solid var(--gridly-border-neutral, rgba(178, 211, 255, 0.24)) !important;
+    border-radius: 18px !important;
+    background: var(--gridly-elevated, #07101d) !important;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.42), inset 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  body #gridlyPortraitV2Sheet:not([hidden]) > header {
+    flex: 0 0 auto;
+    min-height: 44px;
+    margin-bottom: 4px;
+  }
+
+  body #gridlyPortraitV2Sheet:not([hidden]) #gridlyPortraitV2SheetBody {
+    flex: 0 1 auto;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scroll-padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* H10B's higher-specificity fixed-sheet inset kept both block edges active,
+     so `height: fit-content` on the body could not shrink the outer sheet.
+     The History-specific outer rule releases the top edge; this body remains
+     the bounded long-content scroll owner. */
+  body #gridlyPortraitV2Sheet[data-active-sheet="history"] #gridlyPortraitV2SheetBody {
+    flex: 0 0 auto !important;
+    height: fit-content !important;
+    max-height: calc(min(78dvh, var(--lp2444-sheet-max-height)) - 60px) !important;
+  }
+
+  /* Settings alone is a destination workspace. Its opaque host reaches the
+     navigation boundary; the content body scrolls without stretching cards. */
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] #gridlyPortraitV2SheetBody {
+    flex: 1 1 auto !important;
+    padding-inline: 2px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 10px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    .gridly-settings-sheet > :is(.gridly-v2-sheet-copy, .settings-section-support) {
+    grid-column: 1 / -1;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    :is(.settings-list-summary, .gridly-v2-tile, button, input, select) {
+    min-height: 44px;
+  }
+
+  body #gridlyPortraitV2:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
+    .gridly-v2-bottom-region {
+    display: block !important;
+    position: fixed !important;
+    inset: auto 0 0 !important;
+    z-index: calc(var(--lp243h10b-foreground-z) + 1) !important;
+    box-sizing: border-box;
+    width: 100% !important;
+    height: var(--lp2444-navigation-boundary) !important;
+    padding: 0 0 var(--lp243h3-dock-bottom-inset) !important;
+    background: var(--gridly-app-bg, #020812) !important;
+    transform: translateY(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    overflow: hidden !important;
+  }
+
+  body #gridlyPortraitV2:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
+    .gridly-v2-bottom-dock {
+    display: grid !important;
+    position: absolute !important;
+    inset: auto var(--lp2444-inline-gap) var(--lp243h3-dock-bottom-inset) !important;
+    width: auto !important;
+    height: var(--lp243h3-dock-height) !important;
+    min-height: var(--lp243h3-dock-height) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  body:has(#gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]))
+    :is(#gridlyPortraitLocationAwarenessPanel, #mobileDestinationCommandPanel,
+      #gridlyLandscapeCommandToggle, .gridly-v2-control-rail) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  body #gridlyPortraitV2SheetBackdrop:has(+ #gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden])) {
+    inset: 0 0 var(--lp2444-navigation-boundary) !important;
+    background: var(--gridly-app-bg, #020812) !important;
+    opacity: 1 !important;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    :is(.gridly-v2-report-picker, .gridly-v2-report-review) {
+    min-height: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-ctas {
+    position: static !important;
+    z-index: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 10px;
+    padding: 0;
+    background: none;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-ctas [data-v2-precondition-helper] {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-action {
+    min-height: 44px;
+    padding: 9px 10px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review {
+    display: grid;
+    gap: 10px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review > .gridly-v2-list {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: stretch;
+    padding-bottom: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review > .gridly-v2-list > .gridly-v2-sheet-copy {
+    grid-column: span 2;
+    margin: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review > .gridly-v2-list > .primary-btn {
+    grid-column: 1 / 4;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review > .gridly-v2-list > .secondary-btn {
+    grid-column: 4 / 7;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="report"]
+    .gridly-v2-report-review :is(.primary-btn, .secondary-btn) {
+    min-height: 44px;
+  }
+
+  body #gridlyPortraitV2Sheet:is(
+      [data-active-sheet="alerts"], [data-active-sheet="history"], [data-active-sheet="settings"]
+    ) #gridlyPortraitV2SheetBody {
+    contain: layout paint;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="history"]
+    :is(.gridly-historical-intelligence-subject, .gridly-historical-intelligence-row),
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    :is(.gridly-settings-sheet, .settings-list-summary) {
+    margin-block: 0 !important;
+  }
+
+  body.gridly-h9-brief-foreground #gridlyPortraitV2
+    .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    inset: var(--lp2444-visual-gap) max(10vw, var(--lp2444-inline-gap)) var(--lp2444-bottom-clearance) !important;
+    box-sizing: border-box;
+    width: auto !important;
+    max-width: 860px !important;
+    height: auto !important;
+    max-height: var(--lp2444-sheet-max-height) !important;
+    margin-inline: auto !important;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    border: 1px solid rgba(178, 211, 255, 0.24);
+    border-radius: 18px !important;
+    overflow-y: auto !important;
+    scrollbar-gutter: stable;
+    scroll-padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* The legacy runtime injects this fixed counter with z-index 9998 after the
+     authored stylesheet. It is redundant with V2 status and must not become a
+     second foreground owner in short landscape. */
+  body #gridlyHazardCounter.gridly-hazard-counter {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
+
+  body #gridlyPortraitV2 .gridly-v2-control-rail {
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    top: auto !important;
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px)) !important;
+    grid-template-columns: repeat(2, 44px);
+    gap: 4px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    transform: none !important;
+  }
+
+  body #gridlyPortraitV2 .gridly-v2-control-rail button {
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    box-sizing: border-box;
+    padding: 4px !important;
+    border: 4px solid transparent !important;
+    border-radius: 12px !important;
+    background-clip: padding-box !important;
+  }
+
+  body #gridlyPortraitV2 .gridly-v2-control-rail button svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  body #map .leaflet-control-attribution {
+    right: 8px;
+    bottom: 6px;
+    max-width: min(56vw, 520px);
+    padding: 2px 5px;
+    font-size: 9px;
+    line-height: 1.15;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body #map .gridly-map-attribution-disclosure {
+    bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+    max-height: calc(100% - 40px);
+  }
+
+  body .gridly-landscape-command-handle {
+    bottom: calc(100% + 10px);
+  }
+}
+
 /* LP243.I2.3 — compact, single-owner Leaflet attribution disclosure. */
 #map .leaflet-control-attribution {
   box-sizing: border-box;
@@ -28928,5 +29292,428 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 
   body[data-layout-mode="portrait"] #map .gridly-map-attribution-disclosure {
     bottom: calc(var(--gridly-portrait-map-attribution-bottom-clearance, 0px) + 30px);
+  }
+}
+
+/* LP244.5 owner-approved walkthrough portrait contract. */
+@media (orientation: portrait) {
+  /* Portrait remains the complete, uncropped authority. The intrinsic image
+     ratio is preserved and no presentation transform alters approved art. */
+  .gridly-v950-feature-page .gridly-v896-shot-frame {
+    overflow: visible;
+  }
+
+  .gridly-v950-feature-page .gridly-v896-shot-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: 50% 50%;
+    transform: none;
+  }
+}
+
+/* LP244.5 portrait-only walkthrough orientation gate. Applicability is set by
+   JS for native shells or compact coarse-pointer browser devices; desktop and
+   the application behind the walkthrough remain orientation-independent. */
+.gridly-v950-orientation-gate[hidden] { display: none !important; }
+
+.gridly-v950-orientation-gate {
+  box-sizing: border-box;
+  width: min(100%, 520px);
+  min-height: min(100%, 390px);
+  margin: auto;
+  padding: max(24px, env(safe-area-inset-top, 0px)) max(28px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(28px, env(safe-area-inset-left, 0px));
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  color: #f7fbff;
+  text-align: center;
+  border: 1px solid rgba(133, 205, 255, 0.2);
+  border-radius: 28px;
+  background: radial-gradient(circle at 50% 18%, rgba(57, 157, 224, 0.22), transparent 48%), linear-gradient(155deg, #102943, #071321 72%);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44), inset 0 1px rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+
+.gridly-v950-orientation-gate h2 { margin: 4px 0 0; font-size: clamp(1.8rem, 6vw, 2.5rem); }
+.gridly-v950-orientation-gate p { max-width: 24rem; margin: 0; color: rgba(226, 239, 255, 0.82); line-height: 1.45; }
+.gridly-v950-orientation-gate .gridly-v950-orientation-brand { color: #78dfca; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+.gridly-v950-rotate-symbol { position: relative; width: 92px; height: 70px; margin-bottom: 4px; }
+.gridly-v950-rotate-symbol span { position: absolute; left: 31px; top: 5px; width: 31px; height: 54px; border: 3px solid #e8f7ff; border-radius: 8px; box-shadow: 0 0 24px rgba(105, 217, 255, 0.24); }
+.gridly-v950-rotate-symbol span::after { content: ""; position: absolute; left: 50%; bottom: 4px; width: 4px; height: 4px; translate: -50% 0; border-radius: 50%; background: #78dfca; }
+.gridly-v950-rotate-symbol::before { content: "↻"; position: absolute; inset: 9px auto auto 0; color: #78dfca; font-size: 3.2rem; line-height: 1; transform: rotate(-35deg); }
+
+.gridly-welcome-overlay[data-gridly-walkthrough-orientation-gated="true"] .gridly-v950-onboarding-pager {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* LP244.5 Task B — physical Android landscape refinement.
+   The orientation plus short visual-height gate is intentionally the same
+   physical-phone boundary certified by LP244.4. Nothing in this block can
+   participate in the authoritative portrait composition. */
+@media (orientation: landscape) and (max-height: 500px) {
+  body[data-layout-mode="portrait"] {
+    --lp243h10b-top-height: 100px;
+  }
+
+  /* Task C: let the map paint to the physical workspace edges. Interactive
+     chrome continues to use H10B's safe-inset variables. */
+  body[data-layout-mode="portrait"] .app-shell.premium-layout {
+    padding-inline: 0 !important;
+  }
+
+  body[data-layout-mode="portrait"] :is(#mapSection.command-center, .map-card, .map-frame, #map) {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* The legacy card gutter must not travel with the full-viewport map. Its
+     8px inline offset plus 12px padding shifted every map descendant 20px and
+     made the 100vw canvas overflow by the same amount on the opposite edge. */
+  body[data-layout-mode="portrait"] #mapSection.command-center > .map-card {
+    inset-inline: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
+    box-sizing: border-box !important;
+    translate: none !important;
+    transform: none !important;
+  }
+
+  /* Owner correction: H10F/H10H still painted Gridly's locate/layers/zoom
+     utility buttons as one permanent right-side box. Leaflet also retained its
+     bottom-right zoom/layers corner. In this short viewport the existing
+     command tray/handle is the compact interaction owner, so neither vertical
+     rail may cover geographic canvas. Attribution remains independently
+     available at the bottom edge. */
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #map .leaflet-control-zoom,
+  body[data-layout-mode="portrait"] #map .leaflet-control-layers {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Navigation is contextual rather than a permanent map rail. Opening the
+     existing bottom disclosure reveals the existing Layers, locate, and zoom
+     actions as one unframed horizontal strip above the command tray. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #gridlyPortraitV2 .gridly-v2-control-rail {
+    display: grid !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    grid-template-columns: repeat(4, 44px) !important;
+    grid-template-rows: 44px !important;
+    grid-auto-flow: column !important;
+    width: 188px !important;
+    min-width: 188px !important;
+    max-width: 188px !important;
+    height: 44px !important;
+    gap: 4px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    /* 122px command tray + 32px breathing room puts the 44px rail at
+       y=202..246 in the 875x400 reference viewport. */
+    right: max(16px, env(safe-area-inset-right, 0px)) !important;
+    top: auto !important;
+    bottom: calc(var(--lp243h10h-command-height) + 32px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Walkthrough landscape composition retired by the portrait-only gate. */
+
+  /* An open section is the active task. Let it consume both workspace
+     columns while closed siblings retain the accepted two-column scan. */
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet {
+    gap: 6px 10px;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    .gridly-settings-sheet > .settings-list-section[open] {
+    grid-column: 1 / -1;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] > header {
+    min-height: 40px;
+    margin-bottom: 0;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] #gridlyPortraitV2SheetBody {
+    scroll-padding-block: 6px 14px;
+    padding-bottom: 10px !important;
+  }
+
+  body #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-detail {
+    padding-block: 8px;
+  }
+
+  /* visualViewport drives --gridly-visual-vh. While the destination input is
+     focused, bound the dialog to that native-keyboard-reduced viewport and
+     make results (not the Nearby/map chrome behind it) own remaining space. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within {
+    top: max(6px, env(safe-area-inset-top, 0px));
+    bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    display: flex;
+    width: min(720px, calc(100vw - 24px));
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - 12px);
+    margin-inline: auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-card {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    padding: 10px 12px;
+    border-radius: 18px;
+  }
+
+  /* Compact destination-search hierarchy for a 400px block axis. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card {
+    gap: 0;
+    padding: 8px 10px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-header {
+    min-height: 36px;
+    margin-bottom: 4px !important;
+    gap: 8px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-label {
+    font-size: clamp(1.05rem, 2.5vw, 1.22rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-subtitle {
+    display: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-input-row {
+    padding: 2px;
+    border-radius: 14px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) :is(.gridly-search-input, .gridly-search-clear-btn) {
+    min-height: 44px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-results {
+    margin-top: 5px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-section-title {
+    margin: 2px 2px 5px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-results-list {
+    gap: 5px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-result-item {
+    min-height: 58px;
+    padding: 8px 10px;
+    border-radius: 13px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-poi-nonproduction {
+    margin-top: 7px;
+    padding: 8px 10px;
+    border-radius: 13px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-poi-controls {
+    gap: 6px;
+    margin: 7px 0;
+  }
+
+  /* An explicit publication owns the first reading order. Nearby Places is
+     retained immediately after the result region and returns to its passive
+     position automatically when clear removes the publication attribute. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(
+      .gridly-search-results[data-explicit-result-count]:not([data-explicit-result-count="0"])
+    ) .gridly-search-card {
+    overflow-y: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(
+      .gridly-search-results[data-explicit-result-count]:not([data-explicit-result-count="0"])
+    ) .gridly-search-results {
+    flex: 0 0 auto;
+    min-height: 0;
+    overflow: visible;
+    order: 1;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(
+      .gridly-search-results[data-explicit-result-count]:not([data-explicit-result-count="0"])
+    ) .gridly-poi-nonproduction {
+    order: 2;
+  }
+
+  /* Location Context is an opaque Gridly surface, not glass over the map.
+     The explicit safe-inset width also neutralizes the legacy 100%-wide panel
+     which began at the bottom region's inset and finished one pixel outside
+     the 875px reference viewport. Keep Search a quiet compliant target. */
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #mobileDestinationCommandPanel {
+    box-sizing: border-box !important;
+    width: calc(100vw - (2 * var(--lp2444-inline-gap))) !important;
+    max-width: calc(100vw - (2 * var(--lp2444-inline-gap))) !important;
+    background: var(--gridly-elevated, #07111f) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    overflow: clip !important;
+    contain: paint !important;
+  }
+
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #mobileDestinationCommandPanel::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #mobileDestinationCommandPanel .mobile-destination-command-actions {
+    width: auto !important;
+  }
+
+  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)
+    #mobileDestinationCommandPanel .compact-btn {
+    width: 88px !important;
+    min-width: 88px !important;
+    max-width: 88px !important;
+    min-height: 44px !important;
+    padding-inline: 10px !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-header {
+    flex: 0 0 auto;
+    margin-bottom: 6px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-subtitle {
+    display: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):focus-within .gridly-search-results {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    scroll-padding-block: 6px;
+  }
+
+  /* Published explicit results/no-result copy receive the same remaining-space
+     ownership before focus or viewport state changes. */
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-search-results[data-search-publication="active"]) {
+    top: max(6px, env(safe-area-inset-top, 0px));
+    bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    display: flex;
+    width: min(720px, calc(100vw - 24px));
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - 12px);
+    margin-inline: auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-search-results[data-search-publication="active"]) .gridly-search-card {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden !important;
+    background-color: #07111f !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-search-results[data-search-publication="active"]) .gridly-search-results {
+    flex: 1 1 auto;
+    min-height: 68px;
+    max-height: none;
+    overflow-y: auto;
+    visibility: visible;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden])
+    .gridly-search-results[data-explicit-result-count]:not([data-explicit-result-count="0"])
+    > .gridly-search-results-list {
+    display: grid;
+    min-height: 68px;
+    visibility: visible;
+  }
+}
+/* End LP244.5 Task B landscape refinement. */
+
+/* LP244.5 Task C — the Settings Home Area field and its live publication are
+   one shared autocomplete surface in portrait and landscape. */
+.settings-manual-autocomplete { display: grid; min-width: 0; }
+.settings-manual-autocomplete > label {
+  display: grid;
+  gap: 8px;
+  color: rgba(241, 247, 255, 0.92);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+.settings-manual-autocomplete > label input[type="search"] {
+  border-radius: 16px;
+}
+.settings-manual-autocomplete > label:has(+ .settings-manual-results) input[type="search"] {
+  border-radius: 16px 16px 0 0;
+  border-bottom-color: rgba(142, 239, 255, 0.18);
+}
+.settings-manual-autocomplete > .settings-manual-results {
+  gap: 0;
+  margin-top: -1px;
+  border: 1px solid rgba(142, 239, 255, 0.3);
+  border-top-color: rgba(142, 239, 255, 0.18);
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+  background: rgba(5, 13, 28, 0.96);
+}
+.settings-manual-autocomplete .settings-manual-county-list {
+  gap: 1px;
+  padding: 0;
+}
+.settings-manual-autocomplete .settings-manual-area-result {
+  border-width: 1px 0 0;
+  border-radius: 0;
+}
+
+/* Android physical-launch closure: the portrait awareness variant previously
+   inherited V250.8C's five reserved copy rows and a 104px minimum even when
+   optional crossing/route rows were hidden. Collapse only those absent rows;
+   destination mode, landscape trays, and every other card retain their
+   established geometry. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel:not([hidden]):not(.is-command-card-suppressed) {
+    min-height: 76px !important;
+    height: auto !important;
+    padding-block: 7px !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-destination-command-copy {
+    grid-template-rows: auto auto auto !important;
+    align-content: center !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel
+    :is(.mobile-awareness-panel-crossings, .mobile-awareness-panel-issues, .destination-route-impact-line)[hidden],
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .destination-route-impact-line:empty {
+    display: none !important;
+    min-height: 0 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .compact-btn {
+    min-height: 44px !important;
+    height: 44px !important;
   }
 }

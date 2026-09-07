@@ -22,7 +22,7 @@ function functionSource(name) {
 
 function acquisitionRuntime(context) {
   const sandbox = {
-    console, TextDecoder, Response, Blob, DecompressionStream, crypto: webcrypto,
+    console, URL, TextDecoder, Response, Blob, DecompressionStream, crypto: webcrypto,
     GRIDLY_RUNTIME_CONFIG: { poiBrowserProvider: { enabled: 'ENABLED' } },
     fetch: async (url) => new Response(fs.readFileSync(`${runtimeBase}${String(url).split('/').at(-1)}`), { status: 200 })
   };

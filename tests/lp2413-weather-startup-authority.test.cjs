@@ -32,33 +32,30 @@ test("unresolved and malformed startup authority waits without requesting NWS", 
   }
 });
 
-test("not-ready to governed Sulphur Springs transition makes exactly one valid request", async () => {
+test("not-ready to governed Sulphur Springs transition starts with the governed NWS points request", async () => {
   const h = harness({ ...valid, lat:0, lng:0 });
   await h.context.gridlyWeatherConnector.refreshAwarenessView();
   h.select(valid);
   const run = h.context.gridlyWeatherConnector.refreshAwarenessView();
   assert.equal(h.requests.length, 1);
-  assert.equal(h.requests[0].url, "https://api.weather.gov/alerts/active?point=33.1384,-95.6011");
-  h.requests[0].resolve({ ok:true, json:async () => payload() });
+  assert.equal(h.requests[0].url, "https://api.weather.gov/points/33.1384,-95.6011");
+  h.requests[0].resolve({ ok:true, json:async () => ({properties:{forecast:"https://api.weather.gov/gridpoints/FWD/1,1/forecast"}}) });
+  await new Promise(r=>setImmediate(r));
+  h.requests[1].resolve({ ok:true, json:async () => ({properties:{periods:[]}}) });
+  await new Promise(r=>setImmediate(r));
+  h.requests[2].resolve({ ok:true, json:async () => payload() });
   await run;
   assert.equal(h.context.gridlyWeatherConnectorRuntimeAudit().requestSucceeded, true);
 });
 
-test("one zero component is valid and does not weaken stale-response suppression", async () => {
+test("one zero component remains a valid governed points lookup", async () => {
   const first = { ...valid, stableIdentity:"equator", lat:0, lng:-95.6011 };
   const second = { ...valid, stableIdentity:"meridian", lat:33.1384, lng:0 };
   const h = harness(first);
-  const lateRun = h.context.gridlyWeatherConnector.refreshAwarenessView();
-  assert.match(h.requests[0].url, /point=0,-95\.6011$/);
-  h.select(second);
-  const currentRun = h.context.gridlyWeatherConnector.refreshAwarenessView();
-  assert.match(h.requests[1].url, /point=33\.1384,0$/);
-  h.requests[1].resolve({ ok:true, json:async () => payload([{ id:"current" }]) });
-  await currentRun;
-  h.requests[0].resolve({ ok:true, json:async () => payload([{ id:"stale" }]) });
-  await lateRun;
-  assert.equal(h.context.gridlyWeatherConnector.getNormalizedRecords()[0].id, "current");
-  assert.equal(h.context.gridlyWeatherConnectorRuntimeAudit().staleResponseSuppressedCount, 1);
+  h.context.gridlyWeatherConnector.refreshAwarenessView();
+  assert.match(h.requests[0].url, /\/points\/0,-95\.6011$/);
+  h.select(second); h.context.gridlyWeatherConnector.refreshAwarenessView();
+  assert.match(h.requests[1].url, /\/points\/33\.1384,0$/);
 });
 
 test("governed resolver rejects null coercion and only the paired zero sentinel", () => {

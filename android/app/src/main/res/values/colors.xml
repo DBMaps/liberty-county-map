@@ -2,5 +2,6 @@
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#FFFFFF</color>
     <color name="colorAccent">#176B87</color>
-    <color name="ic_launcher_background">#FFFFFF</color>
+    <!-- Solid authority sampled from the dark navy field of assets/icon-192.png. -->
+    <color name="ic_launcher_background">#05071A</color>
 </resources>

@@ -17,14 +17,14 @@ test('V783 provider is installed before the application crossing bootstrap', () 
   assert.equal(html.indexOf('js/gridlyCrossingProvider.js', provider + 1), -1, 'provider is loaded exactly once');
 });
 
-test('existing 28-county Crossing registry remains discoverable without widening claims', () => {
+test('governed 254-county Crossing registry remains discoverable', () => {
   const registry = readJson('assets/package-registry/runtime-package-registry.json');
   const crossings = registry.packages.filter((pkg) => pkg.packageType === 'Crossing');
   const crossingType = registry.packageTypes.find((entry) => entry.packageType === 'Crossing');
 
-  assert.equal(crossings.length, 28);
-  assert.equal(crossingType.packageCount, 28);
-  assert.equal(registry.totalPackages, 271);
+  assert.equal(crossings.length, 254);
+  assert.equal(crossingType.packageCount, 254);
+  assert.equal(registry.totalPackages, 508);
   assert.deepEqual(crossings.find((pkg) => pkg.county === 'Liberty'), {
     packageType: 'Crossing',
     county: 'Liberty',
@@ -44,19 +44,20 @@ test('existing 28-county Crossing registry remains discoverable without widening
   assert.equal(libertyInventory.features.length, 115);
 });
 
-test('243-county activation and original crossing availability remain intact', () => {
+test('254-county activation and original crossing availability remain intact', () => {
   const source = fs.readFileSync('js/app.js', 'utf8');
   const range = countyRegistryRange(source);
   const context = {};
   vm.runInNewContext(`${source.slice(0, range.end)};this.registry=GRIDLY_COUNTY_REGISTRY`, context);
   const registry = context.registry;
 
-  assert.equal(Object.values(registry).filter((county) => county.operational === true).length, 243);
+  assert.equal(Object.values(registry).filter((county) => county.operational === true).length, 254);
   assert.equal(registry['liberty-tx'].runtimeSourceAvailability.crossings, 'available');
   assert.equal(registry['liberty-tx'].localCrossingsPath, 'Crossing-Packages/liberty/liberty-crossings.geojson');
   assert.deepEqual(
     [registry['anderson-tx'].operational, registry['anderson-tx'].selectable, registry['anderson-tx'].defaultAwarenessAreas.includes('Palestine')],
     [true, true, true]
   );
-  assert.equal(registry['dallas-tx'], undefined);
+  assert.equal(registry['dallas-tx'].operational, true);
+  assert.ok(registry['dallas-tx'].defaultAwarenessAreas.includes('Dallas'));
 });
