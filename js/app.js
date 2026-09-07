@@ -93937,24 +93937,45 @@ function migrateLegacyStorage() {
   if (changed) saveSavedPlacesState(state);
 }
 
+let gridlySavedPlaceRevalidationOwnershipController = null;
+
+function getGridlySavedPlaceRevalidationOwnershipController() {
+  if (gridlySavedPlaceRevalidationOwnershipController) return gridlySavedPlaceRevalidationOwnershipController;
+  const integrityContract = window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT;
+  const ownershipContract = window.GRIDLY_SAVED_PLACE_REVALIDATION_OWNERSHIP_CONTRACT;
+  if (typeof integrityContract?.revalidateLegacyPlace !== "function"
+      || typeof window.gridlyGeocodingClient?.search !== "function"
+      || typeof ownershipContract?.createController !== "function") return null;
+  gridlySavedPlaceRevalidationOwnershipController = ownershipContract.createController({
+    getState: getSavedPlacesState,
+    saveState: saveSavedPlacesState,
+    shouldRevalidate: (place) => integrityContract.needsLegacyRevalidation(place) && place.migrationAttempted !== true,
+    revalidatePlace: ({ place }) => integrityContract.revalidateLegacyPlace({ place,
+      search: (request) => window.gridlyGeocodingClient.search(request) }),
+    onResolution: (outcome) => {
+      gridlyLastSavedAddressResolution = outcome?.resolution || gridlyLastSavedAddressResolution;
+    }
+  });
+  return gridlySavedPlaceRevalidationOwnershipController;
+}
+
 async function revalidateLegacySavedPlaces() {
   if (gridlySavedPlaceMigrationStarted) return;
+  const controller = getGridlySavedPlaceRevalidationOwnershipController();
+  if (!controller) return;
   gridlySavedPlaceMigrationStarted = true;
-  const contract = window.GRIDLY_SAVED_ADDRESS_GEOCODE_INTEGRITY_CONTRACT;
-  if (typeof contract?.revalidateLegacyPlace !== "function" || typeof window.gridlyGeocodingClient?.search !== "function") return;
-  const state = getSavedPlacesState();
-  for (const slot of ["home", "work"]) {
-    const place = state[slot];
-    if (!contract.needsLegacyRevalidation(place) || place.migrationAttempted === true) continue;
-    const outcome = await contract.revalidateLegacyPlace({ place,
-      search: (request) => window.gridlyGeocodingClient.search(request) });
-    state[slot] = outcome.place;
-    gridlyLastSavedAddressResolution = outcome.resolution || gridlyLastSavedAddressResolution;
-    // Persist after each bounded attempt so Home and Work remain independent if a later request fails.
-    saveSavedPlacesState(state);
-  }
+  await controller.revalidateSlots();
   if (typeof refreshSavedPlaceSurfacesAfterSave === "function") refreshSavedPlaceSurfacesAfterSave("legacy-revalidation");
 }
+
+window.gridlySavedPlaceRevalidationOwnershipAudit = function gridlySavedPlaceRevalidationOwnershipAudit() {
+  const controller = getGridlySavedPlaceRevalidationOwnershipController();
+  if (controller) return controller.audit();
+  return Object.freeze({ available: false, revalidationRunCount: 0,
+    slotAttempts: Object.freeze({ home: Object.freeze([]), work: Object.freeze([]) }),
+    staleCompletionSuppressionCount: 0, crossSlotPreservationPass: false,
+    sameSlotReplacementProtectionPass: false, deletionProtectionPass: false, overallPass: false });
+};
 
 function saveSavedPlacesState(nextState) {
   const normalized = normalizeSavedPlaces(nextState);

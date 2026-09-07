@@ -4,6 +4,7 @@ import vm from "node:vm";
 import test from "node:test";
 
 const source = fs.readFileSync("js/gridly-saved-address-integrity.js", "utf8");
+const ownershipSource = fs.readFileSync("js/gridly-saved-place-revalidation-ownership.js", "utf8");
 const clientSource = fs.readFileSync("js/gridly-geocoding-client.js", "utf8");
 const edgeSource = fs.readFileSync("supabase/functions/gridly-geocode/index.ts", "utf8");
 const context = { globalThis: {} };
@@ -115,5 +116,6 @@ test("application locks replacement, separation, persistence provenance, and rou
   assert.match(app, /legacy_requires_revalidation/);
   assert.match(app, /Needs verification/);
   assert.match(app, /Verify this saved place before using Route Watch/);
-  assert.match(app, /for \(const slot of \["home", "work"\]\)/);
+  assert.match(app, /ownershipContract\.createController/);
+  assert.match(ownershipSource, /const SLOTS = Object\.freeze\(\["home", "work"\]\)/);
 });
