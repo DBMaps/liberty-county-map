@@ -59482,33 +59482,43 @@ async function loadSharedReports(reason = "manual") {
 
     const recentRoadClearedCutoffIso = new Date(Date.now() - HAZARD_REPORT_EXPIRATION_MINUTES * 60000).toISOString();
     const lp0534cLoaderGenerationAtStart = gridlyLp0534cClearConvergenceGeneration;
+    const retrievalGeneration = ++gridlyGovernedReportRetrievalGeneration;
+    const retrievalScopes = gridlyBuildGovernedReportRetrievalScopeAudit();
     const fetchStage = reportStage("Supabase report fetch", { network: true, dependency: "reports and recent hazard-cleared reads" });
-    gridlyLastReportRetrievalDiagnostic = Object.freeze({ queryMode: "DEPLOYED_BASE_COLUMNS", error: null, fallbackAttempted: false, finalStatus: "PENDING", rowCount: 0 });
-    const [{ data, error }, { data: recentRoadClearedRows, error: recentRoadClearedError }] = await Promise.all([
-      supabaseClient
+    gridlyLastReportRetrievalDiagnostic = Object.freeze({ queryMode: "COMPLETE_CLIENT_VISIBLE_KEYSET", error: null, fallbackAttempted: false, finalStatus: "PENDING", rowCount: 0 });
+    gridlyGovernedReportRetrievalAuditState = Object.freeze({ ...gridlyGovernedReportRetrievalAuditState, ...retrievalScopes, refreshGeneration: retrievalGeneration, activeQueryCount: 0, clearQueryCount: 0, pageCount: 0, rowsRetrieved: 0, activeRowsRetrieved: 0, clearRowsRetrieved: 0, rowsAfterDeduplication: 0, rowsAfterGovernedEligibility: 0, paginationUsed: false, paginationComplete: false, globalLimitRiskRemoved: false, lastFailure: null, overallPass: false });
+    const [activePageResult, clearPageResult] = await Promise.all([
+      gridlyFetchCompleteReportPages(() => supabaseClient
         .from("reports")
         .select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS)
-        .gt("expires_at", nowIso)
-        .order("created_at", { ascending: false })
-        .limit(300),
-      supabaseClient
+        .gt("expires_at", nowIso), { pageSize: GRIDLY_GOVERNED_REPORT_PAGE_SIZE, queryFamily: "active" }),
+      gridlyFetchCompleteReportPages(() => supabaseClient
         .from("reports")
         .select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS)
         .eq("report_type", "hazard_cleared")
-        .gte("created_at", recentRoadClearedCutoffIso)
-        .order("created_at", { ascending: false })
-        .limit(100)
+        .gte("created_at", recentRoadClearedCutoffIso), { pageSize: GRIDLY_GOVERNED_CLEAR_PAGE_SIZE, queryFamily: "clear" })
     ]);
-    endReportStage(fetchStage, "completed", { message: `live=${Array.isArray(data) ? data.length : "non-array"}; cleared=${Array.isArray(recentRoadClearedRows) ? recentRoadClearedRows.length : "non-array"}` });
+    const data = activePageResult.rows;
+    const recentRoadClearedRows = clearPageResult.rows;
+    const error = activePageResult.error;
+    const recentRoadClearedError = clearPageResult.error;
+    const paginationComplete = activePageResult.complete === true && clearPageResult.complete === true;
+    gridlyGovernedReportRetrievalAuditState = Object.freeze({ ...gridlyGovernedReportRetrievalAuditState, activeQueryCount: activePageResult.pageCount, clearQueryCount: clearPageResult.pageCount, pageCount: activePageResult.pageCount + clearPageResult.pageCount, rowsRetrieved: activePageResult.rowsRetrieved + clearPageResult.rowsRetrieved, activeRowsRetrieved: activePageResult.rowsRetrieved, clearRowsRetrieved: clearPageResult.rowsRetrieved, paginationUsed: activePageResult.pageCount > 1 || clearPageResult.pageCount > 1, paginationComplete, globalLimitRiskRemoved: paginationComplete, lastFailure: error || recentRoadClearedError ? gridlyPersistenceErrorDiagnostic(error || recentRoadClearedError) : null });
+    endReportStage(fetchStage, paginationComplete ? "completed" : "failed", { message: `live=${data.length}; cleared=${recentRoadClearedRows.length}; pages=${activePageResult.pageCount + clearPageResult.pageCount}; complete=${paginationComplete}` });
 
     if (error) {
       gridlyLastReportRetrievalDiagnostic = Object.freeze({ ...gridlyLastReportRetrievalDiagnostic, error: gridlyPersistenceErrorDiagnostic(error), finalStatus: "ERROR" });
       throw error;
     }
-    if (recentRoadClearedError) console.warn("Gridly recent road-cleared read failed; continuing with live reports only.", recentRoadClearedError);
+    if (recentRoadClearedError) {
+      gridlyLastReportRetrievalDiagnostic = Object.freeze({ ...gridlyLastReportRetrievalDiagnostic, error: gridlyPersistenceErrorDiagnostic(recentRoadClearedError), finalStatus: "ERROR" });
+      throw recentRoadClearedError;
+    }
 
     if (lp0534cLoaderGenerationAtStart < gridlyLp0534cClearConvergenceGeneration && !String(reason || "").includes("clearHazard_success_background_refresh")) {
       gridlyLp0534cImmediateClearDiagnostics.staleGenerationSuppressionCount += 1;
+      gridlyGovernedReportRetrievalStaleSuppressionCount += 1;
+      gridlyGovernedReportRetrievalAuditState = Object.freeze({ ...gridlyGovernedReportRetrievalAuditState, staleCompletionSuppressionCount: gridlyGovernedReportRetrievalStaleSuppressionCount, overallPass: true });
       return null;
     }
     const rawLiveRows = Array.isArray(data) ? data : [];
@@ -59551,6 +59561,7 @@ async function loadSharedReports(reason = "manual") {
     const sourceVisibleNormalized = normalized.filter((report) => !gridlyShouldSuppressSharedReportDuringDevCleanup(report, reason));
     const countyVisibleNormalized = sourceVisibleNormalized.filter((report) => gridlyReportMatchesActiveCounty(report, activeCountyId));
     const visibleNormalized = countyVisibleNormalized;
+    gridlyGovernedReportRetrievalAuditState = Object.freeze({ ...gridlyGovernedReportRetrievalAuditState, ...gridlyBuildGovernedReportRetrievalScopeAudit(), rowsAfterDeduplication: rawRows.length, rowsAfterGovernedEligibility: visibleNormalized.length, staleCompletionSuppressionCount: gridlyGovernedReportRetrievalStaleSuppressionCount, overallPass: gridlyGovernedReportRetrievalAuditState.paginationComplete === true && !gridlyGovernedReportRetrievalAuditState.lastFailure });
     endReportStage(normalizeStage, "completed", { message: `raw=${rawRows.length}; normalized=${normalized.length}; countyVisible=${countyVisibleNormalized.length}; visible=${visibleNormalized.length}` });
 
     const reconcileStage = reportStage("active cleared stale reconciliation", { dependency: "report lifecycle filters" });
@@ -59696,6 +59707,7 @@ async function loadSharedReports(reason = "manual") {
       audit.lastPostSubmitSuccessAt = successAt;
     }
   } catch (error) {
+    gridlyGovernedReportRetrievalAuditState = Object.freeze({ ...gridlyGovernedReportRetrievalAuditState, lastFailure: gridlyPersistenceErrorDiagnostic(error), overallPass: false });
     ["Supabase report fetch", "local filtering and normalization", "active cleared stale reconciliation", "report visibility processing", "unified incident render calls", "marker and model preparation", "report awareness route-watch render refresh"].forEach((name) => {
       const stage = startupParentStage ? startupDiag?.state?.stages?.find?.((candidate) => candidate.name === `initial reports: ${name}` && candidate.status === "running") : null;
       if (stage) endReportStage(stage, "failed", { error, startupContinued: true });
@@ -87683,6 +87695,63 @@ const GRIDLY_REPORTS_BASE_INSERT_KEYS = Object.freeze([
 ]);
 const GRIDLY_REPORTS_ALLOWED_INSERT_KEYS = GRIDLY_REPORTS_BASE_INSERT_KEYS;
 const GRIDLY_REPORTS_BASE_SELECT_COLUMNS = "id,created_at,crossing_id,crossing_name,railroad,lat,lng,report_type,severity,detail,source,confidence,device_id,expires_at";
+// LP244.12 GOVERNED REPORT RETRIEVAL START
+const GRIDLY_GOVERNED_REPORT_RETRIEVAL_VERSION = "LP244.12-v1";
+const GRIDLY_GOVERNED_REPORT_PAGE_SIZE = 300;
+const GRIDLY_GOVERNED_CLEAR_PAGE_SIZE = 100;
+
+async function gridlyFetchCompleteReportPages(queryFactory, options = {}) {
+  const pageSize = Math.max(1, Number(options.pageSize) || GRIDLY_GOVERNED_REPORT_PAGE_SIZE);
+  const queryFamily = String(options.queryFamily || "reports");
+  const rows = [];
+  const seenRowKeys = new Set();
+  const seenCursorKeys = new Set();
+  let cursor = null;
+  let pageCount = 0;
+  let rowsRetrieved = 0;
+  while (true) {
+    let query = queryFactory().order("created_at", { ascending: false }).order("id", { ascending: false });
+    if (cursor) query = query.or(`created_at.lt.${cursor.created_at},and(created_at.eq.${cursor.created_at},id.lt.${cursor.id})`);
+    const response = await query.limit(pageSize);
+    pageCount += 1;
+    if (response?.error) return { rows: [], error: response.error, complete: false, pageCount, rowsRetrieved, queryFamily };
+    if (!Array.isArray(response?.data)) return { rows: [], error: { code: "GRIDLY_REPORT_PAGE_NOT_ARRAY", message: `${queryFamily} report page was not an array` }, complete: false, pageCount, rowsRetrieved, queryFamily };
+    const page = response.data;
+    rowsRetrieved += page.length;
+    for (const row of page) {
+      const rowId = String(row?.id || "").trim();
+      const createdAt = String(row?.created_at || "").trim();
+      if (!rowId || !createdAt) return { rows: [], error: { code: "GRIDLY_REPORT_CURSOR_IDENTITY_MISSING", message: `${queryFamily} report row is missing id or created_at` }, complete: false, pageCount, rowsRetrieved, queryFamily };
+      const rowKey = `${createdAt}\u0000${rowId}`;
+      if (!seenRowKeys.has(rowKey)) { seenRowKeys.add(rowKey); rows.push(row); }
+    }
+    if (page.length < pageSize) return { rows, error: null, complete: true, pageCount, rowsRetrieved, queryFamily };
+    const tail = page[page.length - 1];
+    const nextCursor = { created_at: String(tail?.created_at || "").trim(), id: String(tail?.id || "").trim() };
+    const cursorKey = `${nextCursor.created_at}\u0000${nextCursor.id}`;
+    if (!nextCursor.created_at || !nextCursor.id || seenCursorKeys.has(cursorKey)) return { rows: [], error: { code: "GRIDLY_REPORT_CURSOR_DID_NOT_ADVANCE", message: `${queryFamily} report pagination cursor did not advance` }, complete: false, pageCount, rowsRetrieved, queryFamily };
+    seenCursorKeys.add(cursorKey);
+    cursor = nextCursor;
+  }
+}
+// LP244.12 GOVERNED REPORT RETRIEVAL END
+
+let gridlyGovernedReportRetrievalGeneration = 0;
+let gridlyGovernedReportRetrievalStaleSuppressionCount = 0;
+let gridlyGovernedReportRetrievalAuditState = Object.freeze({ available: true, retrievalVersion: GRIDLY_GOVERNED_REPORT_RETRIEVAL_VERSION, refreshGeneration: 0, awarenessScope: null, routeScope: null, queryMode: "COMPLETE_CLIENT_VISIBLE_KEYSET", activeQueryCount: 0, clearQueryCount: 0, pageCount: 0, rowsRetrieved: 0, activeRowsRetrieved: 0, clearRowsRetrieved: 0, rowsAfterDeduplication: 0, rowsAfterGovernedEligibility: 0, paginationUsed: false, paginationComplete: false, globalLimitRiskRemoved: false, tiedTimestampProtection: true, multiCountyPlaceProtection: true, routeScopeProtection: true, clearLifecycleProtection: true, staleCompletionSuppression: true, staleCompletionSuppressionCount: 0, lastFailure: null, overallPass: false });
+
+function gridlyBuildGovernedReportRetrievalScopeAudit() {
+  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const routeGeometry = typeof window !== "undefined" ? window.__gridlyMonitoredRouteGeometry : null;
+  return Object.freeze({
+    awarenessScope: Object.freeze({ countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId(area) : null, canonicalKey: area?.canonicalKey || area?.key || (area?.placeGeoid ? `place-${area.placeGeoid}` : null), placeGeoid: area?.placeGeoid || null, countyWide: area?.countyWide === true, governedType: area?.governedType || area?.type || null }),
+    routeScope: Object.freeze({ active: typeof routeWatchActivated !== "undefined" && routeWatchActivated === true, geometryAvailable: Array.isArray(routeGeometry) && routeGeometry.length > 1, geometryPointCount: Array.isArray(routeGeometry) ? routeGeometry.length : 0, source: typeof activeRouteSource !== "undefined" ? activeRouteSource || null : null })
+  });
+}
+
+function gridlyGovernedReportRetrievalAudit() { return Object.freeze({ ...gridlyGovernedReportRetrievalAuditState }); }
+if (typeof window !== "undefined") window.gridlyGovernedReportRetrievalAudit = gridlyGovernedReportRetrievalAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyGovernedReportRetrievalAudit", gridlyGovernedReportRetrievalAudit);
 let gridlyLastHazardPersistenceDiagnostic = null;
 let gridlyLastReportRetrievalDiagnostic = null;
 let gridlyLoadedReportSnapshot = Object.freeze([]);
