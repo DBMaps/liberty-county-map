@@ -94,9 +94,11 @@ test("anchor transport/schema failure fails audit and cannot authorize map copy"
 
 test("transactional UI, presentation, persistence and route consumers retain governed contract", () => {
   const app = fs.readFileSync("js/app.js", "utf8");
+  const uiState = fs.readFileSync("js/gridly-saved-address-ui-state.js", "utf8");
   assert.match(app, /restoreSavedPlacesStorageSnapshot\(\)/);
   assert.match(app, /validated_zip_community/);
-  assert.match(app, /Set \$\{slot === "home" \? "Home"/);
+  assert.match(app, /presentation\.actionLabel/);
+  assert.match(uiState, /confirming \? `Set \$\{slotLabel\} Here`/);
   assert.match(app, /coordinateSource: "user_map_selection"/);
   assert.match(app, /Location confirmed on map\./);
   assert.match(app, /Verified address\./);
@@ -104,8 +106,10 @@ test("transactional UI, presentation, persistence and route consumers retain gov
   assert.match(app, /gridlySavedAddressAcquisitionAudit/);
   assert.match(app, /confirmedCoordinates/);
   assert.match(app, /intent: "business_place", query: anchorQuery, limit: 5, requestMode: anchorRequestMode/);
-  assert.match(app, /mobileUseMapCenterFallbackBtn\.textContent = "Choose Location on Map"/);
-  assert.match(app, /confirmationStage !== "positioning"/);
+  assert.match(app, /mobileUseMapCenterFallbackBtn\.textContent = presentation\.actionLabel/);
+  assert.match(uiState, /selecting \? "Choose Location on Map"/);
+  assert.match(app, /AWAITING_MAP_SELECTION/);
+  assert.match(app, /AWAITING_MAP_CONFIRMATION/);
   assert.match(app, /mapFallbackAuditPass/);
   assert.match(app, /find a safe nearby map starting point/);
   assert.match(app, /home: current\.home \?\? null[\s\S]*work: current\.work \?\? null/);

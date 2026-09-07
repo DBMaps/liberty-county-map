@@ -25254,6 +25254,7 @@ let managePlacesGeocodeFallbackState = {
   anchorRequestMode: null,
   anchorHttpStatus: null,
   anchorResolvedFrom: null,
+  anchorCoordinates: null,
   copyClaimsMapFallback: false,
   confirmationStage: "unavailable",
   coordinateSource: null,
@@ -25262,6 +25263,8 @@ let managePlacesGeocodeFallbackState = {
   slot: null,
   at: null
 };
+const GRIDLY_MANAGE_PLACES_FALLBACK_UI_MODES = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.MODES;
+let managePlacesFallbackUiState = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.createState();
 let savedPlacesStorageBeforeSave = null;
 let savedPlacesStorageAfterSave = null;
 let storagePreservedOnFailure = null;
@@ -91458,6 +91461,7 @@ function bindEvents() {
   });
   els.mobileWorkInput?.addEventListener("input", () => {
     if (els.routeSetupModal?.dataset.mode !== "manage") return;
+    resetManagePlacesGeocodeFallback({ reason: "address_edited" });
     if (!String(els.mobileWorkInput.value || "").trim()) return;
     if (managePlacesSourceMode === "address") return;
     setManagePlacesSourceMode("address");
@@ -91490,13 +91494,17 @@ function bindEvents() {
   const managePlacesBackBtn = els.managePlacesBackBtn || document.getElementById("managePlacesBackBtn");
   if (managePlacesBackBtn) {
     managePlacesBackBtn.dataset.backToManagePlacesBound = "1";
-    managePlacesBackBtn.addEventListener("click", returnToManagePlacesPrimaryScreen);
+    managePlacesBackBtn.addEventListener("click", () => {
+      cancelManagePlacesFallbackUi("backed_out");
+      returnToManagePlacesPrimaryScreen();
+    });
   }
   [["manageSourceLocationBtn", "location"], ["manageSourceAddressBtn", "address"], ["manageSourceSavedBtn", "saved"]].forEach(([id, mode]) => {
     const button = els[id] || document.getElementById(id);
     if (!button) return;
     button.dataset.sourceButtonBound = "1";
     button.addEventListener("click", () => {
+      resetManagePlacesGeocodeFallback({ reason: `source_restarted:${mode}` });
       setManagePlacesSourceMode(mode);
       setManagePlacesSaveStatus("");
       setManagePlacesValidationState(null, "not_checked", "");
@@ -91514,28 +91522,34 @@ function bindEvents() {
       if (mode === "saved") els.mobileSavedDestinationSelect?.focus();
     });
   });
-  els.mobileUseMapCenterFallbackBtn?.addEventListener("click", () => {
-    if (managePlacesGeocodeFallbackState.confirmationStage !== "positioning") {
+  els.mobileUseMapCenterFallbackBtn?.addEventListener("click", async () => {
+    if (managePlacesFallbackUiState.mode === GRIDLY_MANAGE_PLACES_FALLBACK_UI_MODES.AWAITING_MAP_SELECTION) {
       const anchor = managePlacesGeocodeFallbackState.coordinates;
       const mapInstance = typeof getGridlyMapInstance === "function" ? getGridlyMapInstance() : null;
       if (anchor && typeof mapInstance?.setView === "function") {
         mapInstance.setView([anchor.lat, anchor.lng], Math.max(Number(mapInstance.getZoom?.()) || 14, 14));
       }
       managePlacesGeocodeFallbackState = { ...managePlacesGeocodeFallbackState, confirmationStage: "positioning" };
-      const slot = managePlacesGeocodeFallbackState.slot;
-      els.mobileUseMapCenterFallbackBtn.textContent = `Set ${slot === "home" ? "Home" : slot === "work" ? "Work" : "Location"} Here`;
+      managePlacesFallbackUiState = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.beginMapConfirmation(managePlacesFallbackUiState);
+      renderManagePlacesFallbackUiState();
       setManagePlacesSaveStatus("Position the map point, then confirm this location.", "warning");
       return;
     }
+    if (managePlacesFallbackUiState.mode !== GRIDLY_MANAGE_PLACES_FALLBACK_UI_MODES.AWAITING_MAP_CONFIRMATION) return;
+    const confirmedCoordinates = getCurrentMapCenterCoordinates();
+    if (!confirmedCoordinates) return;
     managePlacesGeocodeFallbackState = {
       ...managePlacesGeocodeFallbackState,
       used: true,
       coordinateSource: "user_map_selection",
-      coordinates: getCurrentMapCenterCoordinates(),
+      confirmedCoordinates,
       confirmationStage: "confirmed",
       at: new Date().toISOString()
     };
-    saveRoute("mobile", { useMapCenterFallback: true });
+    els.mobileUseMapCenterFallbackBtn.disabled = true;
+    await saveRoute("mobile", { useMapCenterFallback: true });
+    els.mobileUseMapCenterFallbackBtn.disabled = false;
+    renderManagePlacesFallbackUiState();
   });
   els.mobileResetPlacesBtn?.addEventListener("click", () => {
     if (!window.confirm("Reset saved Home, Work, and Favorite places on this device?")) return;
@@ -91990,6 +92004,7 @@ function openRouteSetupModal(triggerEl = null) {
 function closeRouteSetupModal(options = {}) {
   pushGridlyReflowTrace("route setup open/close", "start", { source: "close" });
   if (!els.routeSetupModal) return;
+  cancelManagePlacesFallbackUi("settings_closed");
   const { restoreFocus = true } = options;
   closeModal(els.routeSetupModal, { restoreFocus });
   els.routeSetupModal.classList.remove("open");
@@ -93179,6 +93194,7 @@ function setManagePlacesSourceMode(mode = "") {
     if (!btn) return;
     btn.classList.toggle("active", mode === value);
   });
+  renderManagePlacesFallbackUiState();
 }
 
 function updateRouteSetupManageState() {
@@ -93227,7 +93243,26 @@ function getCurrentMapCenterCoordinates() {
   return normalizeCoordinatePair(center?.lat, center?.lng);
 }
 
+function renderManagePlacesFallbackUiState() {
+  const presentation = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.presentation(managePlacesFallbackUiState);
+  const active = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.isFallbackActive(managePlacesFallbackUiState);
+  if (els.routeSetupModal) els.routeSetupModal.dataset.mapConfirmationMode = presentation.mode;
+  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.hidden = active;
+  if (els.mobileUseMapCenterFallbackBtn) {
+    els.mobileUseMapCenterFallbackBtn.hidden = !active;
+    els.mobileUseMapCenterFallbackBtn.textContent = presentation.actionLabel || "Choose Location on Map";
+  }
+  return presentation;
+}
+
+function cancelManagePlacesFallbackUi(reason = "canceled") {
+  managePlacesFallbackUiState = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.cancel(managePlacesFallbackUiState, reason);
+  managePlacesGeocodeFallbackState = { ...managePlacesGeocodeFallbackState, available: false, used: false, confirmationStage: "canceled" };
+  renderManagePlacesFallbackUiState();
+}
+
 function resetManagePlacesGeocodeFallback(options = {}) {
+  managePlacesFallbackUiState = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.restart(options.reason || "address_entry_reset");
   managePlacesGeocodeFallbackState = {
     available: false,
     used: options?.preserveUsed ? Boolean(managePlacesGeocodeFallbackState.used) : false,
@@ -93235,6 +93270,7 @@ function resetManagePlacesGeocodeFallback(options = {}) {
     anchorRequestMode: null,
     anchorHttpStatus: null,
     anchorResolvedFrom: null,
+    anchorCoordinates: null,
     copyClaimsMapFallback: false,
     confirmationStage: "unavailable",
     coordinateSource: null,
@@ -93243,7 +93279,7 @@ function resetManagePlacesGeocodeFallback(options = {}) {
     slot: null,
     at: null
   };
-  if (els.mobileUseMapCenterFallbackBtn) els.mobileUseMapCenterFallbackBtn.hidden = true;
+  renderManagePlacesFallbackUiState();
 }
 
 function resolveGovernedManagePlacesMapAnchor(address = "") {
@@ -93286,6 +93322,7 @@ async function offerManagePlacesMapCenterFallback({ address = "", slot = "custom
     anchorRequestMode,
     anchorHttpStatus,
     anchorResolvedFrom,
+    anchorCoordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null,
     copyClaimsMapFallback: false,
     confirmationStage: available ? "offered" : "unavailable",
     coordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null,
@@ -93295,10 +93332,16 @@ async function offerManagePlacesMapCenterFallback({ address = "", slot = "custom
     slot: slot || null,
     at: new Date().toISOString()
   };
-  if (els.mobileUseMapCenterFallbackBtn) {
-    els.mobileUseMapCenterFallbackBtn.hidden = !available;
-    els.mobileUseMapCenterFallbackBtn.textContent = "Choose Location on Map";
-  }
+  const savedState = getSavedPlacesState();
+  managePlacesFallbackUiState = available
+    ? window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.offer(managePlacesFallbackUiState, {
+      slot,
+      pendingAddress: address,
+      currentAnchor: coordinates,
+      oldSavedPlace: slot === "home" || slot === "work" ? savedState[slot] : null
+    })
+    : window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.restart("fallback_unavailable");
+  renderManagePlacesFallbackUiState();
   return managePlacesGeocodeFallbackState;
 }
 
@@ -93425,6 +93468,7 @@ function getManagePlacesTitleForType(type = "custom") {
 
 function beginManagePlaceSinglePurposeFlow(type = "custom") {
   if (!els.routeSetupModal) return;
+  resetManagePlacesGeocodeFallback({ reason: "single_purpose_flow_started" });
   const normalizedType = type === "favorite" ? "custom" : (type === "home" || type === "work" ? type : "custom");
   const state = getSavedPlacesState();
   const activePlace = normalizedType === "home" || normalizedType === "work" ? state[normalizedType] : null;
@@ -93482,6 +93526,7 @@ function syncManagePlaceSlotsAndCta(targetType = "custom") {
       button.classList.toggle("is-pending", !configured);
     }
   });
+  renderManagePlacesFallbackUiState();
 }
 
 async function saveRoute(source = "desktop", options = {}) {
@@ -93509,7 +93554,9 @@ async function saveRoute(source = "desktop", options = {}) {
   };
   lastManagePlacesSaveError = null;
   const useMapCenterFallback = Boolean(options?.useMapCenterFallback);
-  if (!useMapCenterFallback) resetManagePlacesGeocodeFallback();
+  if (!useMapCenterFallback && !window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.isFallbackActive(managePlacesFallbackUiState)) {
+    resetManagePlacesGeocodeFallback({ reason: "new_save_attempt" });
+  }
   savedPlacesStorageBeforeSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
   savedPlacesStorageAfterSave = savedPlacesStorageBeforeSave;
   storagePreservedOnFailure = null;
@@ -93550,9 +93597,10 @@ async function saveRoute(source = "desktop", options = {}) {
     lastValidationError = message;
     lastManagePlacesSaveError = message;
     setManagePlacesValidationState(false, reason, message);
-    flashButton(button, label);
+    if (!window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.isFallbackActive(managePlacesFallbackUiState)) flashButton(button, label);
     setConfirmation(message, "error");
     setManagePlacesSaveStatus(message, "error");
+    renderManagePlacesFallbackUiState();
     lastSavedPlaceResult = {
       ok: false,
       type: prefillType,
@@ -93640,7 +93688,8 @@ async function saveRoute(source = "desktop", options = {}) {
       coordinateResolution = { coordinates: fallbackCoordinates, source: "user_map_selection",
         resolutionStatus: "user_confirmed", validationStatus: "user_confirmed", confirmedAt,
         mapConfirmationAnchor: { source: managePlacesGeocodeFallbackState.anchorSource,
-          query: managePlacesGeocodeFallbackState.anchorQuery, coordinates: managePlacesGeocodeFallbackState.coordinates } };
+          query: managePlacesGeocodeFallbackState.anchorQuery,
+          coordinates: managePlacesGeocodeFallbackState.anchorCoordinates || managePlacesFallbackUiState.currentAnchor } };
       managePlacesGeocodeFallbackState = {
         ...managePlacesGeocodeFallbackState,
         available: true,
@@ -93718,6 +93767,9 @@ async function saveRoute(source = "desktop", options = {}) {
     else nextState.custom.push(nextPlace);
   }
   saveSavedPlacesState(nextState);
+  if (coordinateResolution?.source === "user_map_selection") {
+    managePlacesFallbackUiState = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.confirm(managePlacesFallbackUiState, coordinates);
+  }
   selectRouteWatchPlaceAfterSave(normalizedType, id);
 
   routeWatchActivated = false;
@@ -93810,6 +93862,25 @@ window.gridlySavedAddressAcquisitionAudit = function gridlySavedAddressAcquisiti
   const resolution = integrity.lastResolution || {};
   const fallback = managePlacesGeocodeFallbackState || {};
   const fallbackAuditPass = window.GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT?.mapFallbackAuditPass?.(fallback) !== false;
+  const uiPresentation = renderManagePlacesFallbackUiState();
+  const saveGroupVisible = !document.getElementById("managePlacesSaveGroup")?.hidden;
+  const fallbackControlVisible = Boolean(els.mobileUseMapCenterFallbackBtn && uiPresentation.fallbackControlVisible && saveGroupVisible && !els.mobileUseMapCenterFallbackBtn.hidden);
+  const confirmControlVisible = Boolean(els.mobileUseMapCenterFallbackBtn && uiPresentation.confirmControlVisible && saveGroupVisible && !els.mobileUseMapCenterFallbackBtn.hidden);
+  const defaultSaveControlVisible = Boolean(els.mobileSaveRouteBtn && uiPresentation.defaultSaveControlVisible && saveGroupVisible && !els.mobileSaveRouteBtn.hidden);
+  const currentState = getSavedPlacesState();
+  const oldSavedPlace = managePlacesFallbackUiState.oldSavedPlace ?? null;
+  const currentSlot = managePlacesFallbackUiState.slot === "home" || managePlacesFallbackUiState.slot === "work"
+    ? currentState[managePlacesFallbackUiState.slot] ?? null : null;
+  const fallbackActive = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.isFallbackActive(managePlacesFallbackUiState);
+  const oldSavedPlacePreserved = !fallbackActive || JSON.stringify(currentSlot) === JSON.stringify(oldSavedPlace);
+  const uiAudit = window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.auditUiState(managePlacesFallbackUiState, {
+    fallbackOffered: fallback.available,
+    confirmed: fallback.confirmed,
+    fallbackControlVisible,
+    confirmControlVisible,
+    defaultSaveControlVisible
+  });
+  const fallbackConsumerUsable = uiAudit.consumerUsable;
   return Object.freeze({
     contract: "GRIDLY_SAVED_ADDRESS_ACQUISITION_CONTRACT",
     lastAddressInput: resolution.rawAddressInput || lastManagePlacesSaveAttempt?.address || "",
@@ -93817,14 +93888,23 @@ window.gridlySavedAddressAcquisitionAudit = function gridlySavedAddressAcquisiti
     qualifiersPreserved: resolution.qualifiersPreserved !== false,
     mapFallback: { offered: Boolean(fallback.available), anchorSource: fallback.anchorSource || null,
       anchorAttempted: fallback.anchorAttempted === true, anchorRequestMode: fallback.anchorRequestMode || null,
-      anchorHttpStatus: fallback.anchorHttpStatus ?? null, anchorCoordinates: fallback.coordinates || null,
+      anchorHttpStatus: fallback.anchorHttpStatus ?? null, anchorCoordinates: fallback.anchorCoordinates || fallback.coordinates || null,
       anchorResolvedFrom: fallback.anchorResolvedFrom || null, confirmationRequired: true,
       confirmed: fallback.confirmed === true, confirmedCoordinates: fallback.confirmedCoordinates || null },
+    uiState: Object.freeze({
+      mode: uiPresentation.mode,
+      fallbackControlVisible,
+      confirmControlVisible,
+      defaultSaveControlVisible,
+      pendingAddress: uiPresentation.pendingAddress,
+      currentAnchor: uiPresentation.currentAnchor,
+      oldSavedPlacePreserved
+    }),
     savedPlace: integrity.home.persisted ? { type: "home", verificationState: integrity.home.verificationState,
       coordinateSource: integrity.home.coordinateSource, routeEligible: integrity.home.routeEligible } : integrity.work.persisted
       ? { type: "work", verificationState: integrity.work.verificationState,
         coordinateSource: integrity.work.coordinateSource, routeEligible: integrity.work.routeEligible } : null,
-    overallPass: integrity.overallPass && resolution.qualifiersPreserved !== false && fallbackAuditPass
+    overallPass: integrity.overallPass && resolution.qualifiersPreserved !== false && fallbackAuditPass && fallbackConsumerUsable
   });
 };
 function isLegacyPlace(place) {
@@ -96703,6 +96783,10 @@ function openRouteSetupModalForType(type) {
 
 function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {}) {
   if (!els.routeSetupModal) return;
+  if (mode === "manage" && window.GRIDLY_SAVED_ADDRESS_UI_STATE_CONTRACT.isFallbackActive(managePlacesFallbackUiState)) {
+    renderManagePlacesFallbackUiState();
+    return;
+  }
   const state = getSavedPlacesState();
   const normalizedType = prefillType === "favorite" ? "custom" : prefillType;
   els.routeSetupModal.dataset.mode = mode;
