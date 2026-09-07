@@ -5078,6 +5078,7 @@ function gridlyLp0534cInvalidateCurrentStateModels(reason = "immediate-clear-con
     gridlyV734RefreshReuseState.awarenessHazardCountSignature = "";
     gridlyV734RefreshReuseState.awarenessHazardCountModel = null;
     gridlyV734RefreshReuseState.renderUnifiedSignature = "";
+    gridlyV734RefreshReuseState.renderUnifiedReconciled = false;
     gridlyV734RefreshReuseState.renderUnifiedActiveCommunityRevision = "";
     gridlyV734RefreshReuseState.renderUnifiedActiveCommunityCount = null;
   }
@@ -26700,6 +26701,7 @@ const gridlyV734RefreshReuseState = {
   awarenessHazardCountReuseCount: 0,
   renderUnifiedSignature: "",
   renderUnifiedReuseCount: 0,
+  renderUnifiedReconciled: false,
   communityPulseLastReuseAudit: null
 };
 
@@ -55726,7 +55728,7 @@ function shouldShowCrossingInLaunchMode(crossing) {
 
   return false;
 }
-function refreshReportHazardViews(source = "unspecified") {
+function refreshReportHazardViews(source = "unspecified", options = {}) {
   const endRefreshHazardTrace = timeGridlyReflowTrace("refreshReportHazardViews", source);
   gridlyRefreshAuditState.totalRefreshCount += 1;
   gridlyRefreshAuditState.refreshSourceCounts[source] = (gridlyRefreshAuditState.refreshSourceCounts[source] || 0) + 1;
@@ -55746,8 +55748,10 @@ function refreshReportHazardViews(source = "unspecified") {
     // cached quiet/coverage model to become the final visible writer.
     timeRefreshChild("refreshGridlyCommunityPulseSharedModel", () => refreshGridlyCommunityPulseSharedModel({ reason: source, topAwarenessMicrolineReadOnly: true }));
     timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
-    gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
-    timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
+    if (options.skipIncidentRender !== true) {
+      gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
+      timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
+    }
     timeRefreshChild("renderDriveTexasOfficialMarkers", () => renderGridlyDriveTexasOfficialMarkers(source));
     gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
     timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
@@ -59586,6 +59590,7 @@ async function loadSharedReports(reason = "manual") {
     // though the newly loaded rows are eligible.
     gridlyAuthoritativeIncidentSnapshotState.snapshot = null;
     gridlyV734RefreshReuseState.renderUnifiedSignature = "";
+    gridlyV734RefreshReuseState.renderUnifiedReconciled = false;
     gridlyV734RefreshReuseState.communityPulseSignature = "";
     gridlyV734RefreshReuseState.communityPulseModel = null;
     gridlyAuthoritativeCommuteIntelligenceRuntime?.values?.clear?.();
@@ -59656,43 +59661,15 @@ async function loadSharedReports(reason = "manual") {
       localAcceptedCrossingsRestored
     });
     endReportStage(visibilityStage, "completed", { message: `localAcceptedHazardsRestored=${localAcceptedHazardsRestored}; localAcceptedCrossingsRestored=${localAcceptedCrossingsRestored}` });
-    const incidentRenderStage = reportStage("unified incident render calls", { dependency: "renderUnifiedIncidents" });
-    if (typeof renderUnifiedIncidents === "function") {
-      renderUnifiedIncidents("auto-active-hazards-populated");
-      if (evaluateLayoutMode() === "desktop") {
-        setTimeout(() => {
-          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-active-hazards-populated-250");
-        }, 250);
-        setTimeout(() => {
-          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-active-hazards-populated-1000");
-        }, 1000);
-      }
-    }
-    endReportStage(incidentRenderStage, "completed");
     const markerModelStage = reportStage("marker and model preparation", { dependency: "unified incident layer and crossing pipeline audit" });
     ensureUnifiedIncidentLayerOnMap();
     updateCrossingPipelineAudit(`loadSharedReports:${reason}`);
     endReportStage(markerModelStage, "completed");
 
-    const refreshStage = reportStage("report awareness route-watch render refresh", { dependency: "refreshReportHazardViews and scheduled marker renders" });
+    const refreshStage = reportStage("report awareness route-watch render refresh", { dependency: "refreshReportHazardViews and incident render reconciliation" });
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
-    refreshReportHazardViews(`loadSharedReports:${reason}`);
-    scheduleHazardMarkerAutoRender(`loadSharedReports:${reason}`);
-    if (typeof renderUnifiedIncidents === "function") {
-      renderUnifiedIncidents("auto-shared-reports-loaded");
-      renderUnifiedIncidents("auto-hazards-refreshed");
-      if (evaluateLayoutMode() === "desktop") {
-        setTimeout(() => {
-          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-250");
-        }, 250);
-        setTimeout(() => {
-          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-1000");
-        }, 1000);
-        setTimeout(() => {
-          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-2000");
-        }, 2000);
-      }
-    }
+    refreshReportHazardViews(`loadSharedReports:${reason}`, { skipIncidentRender: true });
+    gridlyPublishIncidentRenderRevision(`loadSharedReports:${reason}`);
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
     endReportStage(refreshStage, "completed");
 
@@ -76643,6 +76620,156 @@ function gridlyRecordUnifiedIncidentRenderAudit(audit) {
   return lastUnifiedIncidentRenderAudit;
 }
 
+// LP244.13 INCIDENT RENDER RECONCILIATION START
+const GRIDLY_INCIDENT_RENDER_RETRY_DELAY_MS = 500;
+let gridlyIncidentRenderRetryTimer = null;
+let gridlyIncidentRenderReconciliationState = {
+  available: true,
+  publicationRevision: 0,
+  renderRequestCount: 0,
+  renderExecutionCount: 0,
+  reusedRenderCount: 0,
+  emptyRenderCount: 0,
+  retryScheduledCount: 0,
+  retryExecutedCount: 0,
+  staleRetrySuppressedCount: 0,
+  lastReconciledRevision: 0,
+  currentSignature: "",
+  layerReady: false,
+  mapReady: false,
+  popupPreservationCount: 0,
+  clearRemovalCount: 0,
+  desktopRequestCount: 0,
+  portraitRequestCount: 0,
+  singleOwnerPass: true,
+  emptyStateConvergencePass: true,
+  staleRetryProtectionPass: true,
+  overallPass: true,
+  pendingRetryRevision: null,
+  lastFailure: null
+};
+
+function gridlyIncidentRenderReadiness() {
+  const mapReady = typeof map !== "undefined" && Boolean(map);
+  const layerFactoryReady = typeof L !== "undefined" && typeof L?.layerGroup === "function";
+  const layerReady = typeof unifiedIncidentLayer !== "undefined" && Boolean(unifiedIncidentLayer);
+  return { ready: mapReady && layerFactoryReady, mapReady, layerReady, layerFactoryReady };
+}
+
+function gridlyUpdateIncidentRenderReconciliationPasses() {
+  const currentReconciled = gridlyIncidentRenderReconciliationState.lastReconciledRevision === gridlyIncidentRenderReconciliationState.publicationRevision;
+  gridlyIncidentRenderReconciliationState.singleOwnerPass = gridlyIncidentRenderReconciliationState.pendingRetryRevision === null || Boolean(gridlyIncidentRenderRetryTimer);
+  gridlyIncidentRenderReconciliationState.emptyStateConvergencePass = gridlyIncidentRenderReconciliationState.emptyRenderCount === 0 || currentReconciled;
+  gridlyIncidentRenderReconciliationState.staleRetryProtectionPass = true;
+  gridlyIncidentRenderReconciliationState.overallPass = currentReconciled || gridlyIncidentRenderReconciliationState.pendingRetryRevision === gridlyIncidentRenderReconciliationState.publicationRevision;
+}
+
+function gridlyExecuteIncidentRenderReconciliation(revision, reason = "unspecified", isRetry = false) {
+  if (revision !== gridlyIncidentRenderReconciliationState.publicationRevision) {
+    gridlyIncidentRenderReconciliationState.staleRetrySuppressedCount += 1;
+    gridlyUpdateIncidentRenderReconciliationPasses();
+    return false;
+  }
+  const readiness = gridlyIncidentRenderReadiness();
+  gridlyIncidentRenderReconciliationState.mapReady = readiness.mapReady;
+  gridlyIncidentRenderReconciliationState.layerReady = readiness.layerReady;
+  if (!readiness.ready) {
+    gridlyIncidentRenderReconciliationState.lastFailure = readiness.mapReady ? "incident_layer_factory_not_ready" : "map_not_ready";
+    if (!isRetry && gridlyIncidentRenderReconciliationState.pendingRetryRevision !== revision) {
+      gridlyIncidentRenderReconciliationState.retryScheduledCount += 1;
+      gridlyIncidentRenderReconciliationState.pendingRetryRevision = revision;
+      gridlyIncidentRenderRetryTimer = setTimeout(() => {
+        gridlyIncidentRenderRetryTimer = null;
+        if (gridlyIncidentRenderReconciliationState.pendingRetryRevision === revision) {
+          gridlyIncidentRenderReconciliationState.pendingRetryRevision = null;
+        }
+        gridlyExecuteIncidentRenderRetry(revision, `${reason}:readiness-retry`);
+      }, GRIDLY_INCIDENT_RENDER_RETRY_DELAY_MS);
+    }
+    gridlyUpdateIncidentRenderReconciliationPasses();
+    return false;
+  }
+
+  const beforeCount = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0;
+  const popupBefore = typeof map !== "undefined" ? map?._popup || null : null;
+  try {
+    renderUnifiedIncidents(`reconcile:${revision}:${reason}`);
+  } catch (error) {
+    gridlyIncidentRenderReconciliationState.lastFailure = String(error?.message || error || "incident_render_failed");
+    gridlyUpdateIncidentRenderReconciliationPasses();
+    return false;
+  }
+  const afterCount = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0;
+  const popupAfter = typeof map !== "undefined" ? map?._popup || null : null;
+  gridlyIncidentRenderReconciliationState.renderExecutionCount += 1;
+  gridlyIncidentRenderReconciliationState.lastReconciledRevision = revision;
+  gridlyIncidentRenderReconciliationState.pendingRetryRevision = null;
+  gridlyIncidentRenderReconciliationState.layerReady = typeof unifiedIncidentLayer !== "undefined" && Boolean(unifiedIncidentLayer);
+  gridlyIncidentRenderReconciliationState.currentSignature = String(
+    typeof gridlyV734RefreshReuseState !== "undefined" && gridlyV734RefreshReuseState.renderUnifiedSignature
+      ? gridlyV734RefreshReuseState.renderUnifiedSignature
+      : `revision:${revision}:markers:${afterCount}`
+  );
+  if (afterCount === 0) gridlyIncidentRenderReconciliationState.emptyRenderCount += 1;
+  if (beforeCount > afterCount) gridlyIncidentRenderReconciliationState.clearRemovalCount += beforeCount - afterCount;
+  if (popupBefore && popupAfter === popupBefore) gridlyIncidentRenderReconciliationState.popupPreservationCount += 1;
+  gridlyIncidentRenderReconciliationState.lastFailure = null;
+  gridlyUpdateIncidentRenderReconciliationPasses();
+  return true;
+}
+
+function gridlyExecuteIncidentRenderRetry(revision, reason = "readiness-retry") {
+  gridlyIncidentRenderReconciliationState.retryExecutedCount += 1;
+  if (revision !== gridlyIncidentRenderReconciliationState.publicationRevision) {
+    gridlyIncidentRenderReconciliationState.staleRetrySuppressedCount += 1;
+    gridlyUpdateIncidentRenderReconciliationPasses();
+    return false;
+  }
+  return gridlyExecuteIncidentRenderReconciliation(revision, reason, true);
+}
+
+function gridlyRequestIncidentRenderReconciliation(options = {}) {
+  const revision = Number(options.revision ?? gridlyIncidentRenderReconciliationState.publicationRevision);
+  const reason = String(options.reason || "unspecified");
+  gridlyIncidentRenderReconciliationState.renderRequestCount += 1;
+  const layout = typeof evaluateLayoutMode === "function" ? evaluateLayoutMode() : "desktop";
+  if (layout === "portrait") gridlyIncidentRenderReconciliationState.portraitRequestCount += 1;
+  else gridlyIncidentRenderReconciliationState.desktopRequestCount += 1;
+  if (revision !== gridlyIncidentRenderReconciliationState.publicationRevision) {
+    gridlyIncidentRenderReconciliationState.staleRetrySuppressedCount += 1;
+    gridlyUpdateIncidentRenderReconciliationPasses();
+    return false;
+  }
+  if (gridlyIncidentRenderReconciliationState.lastReconciledRevision === revision) {
+    gridlyIncidentRenderReconciliationState.reusedRenderCount += 1;
+    gridlyUpdateIncidentRenderReconciliationPasses();
+    return true;
+  }
+  return gridlyExecuteIncidentRenderReconciliation(revision, reason, false);
+}
+
+function gridlyPublishIncidentRenderRevision(reason = "report-publication") {
+  if (gridlyIncidentRenderRetryTimer) {
+    clearTimeout(gridlyIncidentRenderRetryTimer);
+    gridlyIncidentRenderRetryTimer = null;
+    gridlyIncidentRenderReconciliationState.staleRetrySuppressedCount += 1;
+  }
+  gridlyIncidentRenderReconciliationState.pendingRetryRevision = null;
+  gridlyIncidentRenderReconciliationState.publicationRevision += 1;
+  const revision = gridlyIncidentRenderReconciliationState.publicationRevision;
+  gridlyRequestIncidentRenderReconciliation({ revision, reason });
+  return revision;
+}
+
+function gridlyIncidentRenderReconciliationAudit() {
+  gridlyUpdateIncidentRenderReconciliationPasses();
+  return Object.freeze({ ...gridlyIncidentRenderReconciliationState });
+}
+
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyIncidentRenderReconciliationAudit", gridlyIncidentRenderReconciliationAudit);
+if (typeof window !== "undefined") window.gridlyIncidentRenderReconciliationAudit = gridlyIncidentRenderReconciliationAudit;
+// LP244.13 INCIDENT RENDER RECONCILIATION END
+
 function renderUnifiedIncidents(reason = "auto") {
   const endRenderUnifiedTrace = timeGridlyReflowTrace("renderUnifiedIncidents");
   const renderAuditStart = gridlyNowMs();
@@ -76701,7 +76828,7 @@ function renderUnifiedIncidents(reason = "auto") {
   const existingLayerCount = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0;
   const previousRenderedActiveCount = Number(gridlyV734RefreshReuseState.renderUnifiedActiveCommunityCount ?? existingLayerCount);
   const activeCountDecreased = renderCanonicalState && Number(renderCanonicalState.activeCount) < previousRenderedActiveCount;
-  if (gridlyV734RefreshReuseState.renderUnifiedSignature === renderSignature && existingLayerCount > 0 && !activeCountDecreased) {
+  if (gridlyV734RefreshReuseState.renderUnifiedSignature === renderSignature && gridlyV734RefreshReuseState.renderUnifiedReconciled === true && !activeCountDecreased) {
     gridlyV734RefreshReuseState.renderUnifiedReuseCount += 1;
     finalizeRenderAudit({
       incidentCount: existingLayerCount,
@@ -77114,6 +77241,7 @@ function renderUnifiedIncidents(reason = "auto") {
     addPhaseDuration("awareness synchronization", phaseStart);
   }
 
+  gridlyV734RefreshReuseState.renderUnifiedReconciled = true;
   finalizeRenderAudit({
     incidentCount: Array.isArray(incidents) ? incidents.length : 0,
     roadHazardCount: liveHazardIncidentCount,
@@ -77239,17 +77367,7 @@ if (typeof window !== "undefined") {
 }
 
 function scheduleHazardMarkerAutoRender(source = "unspecified") {
-  const renderFn = typeof renderUnifiedIncidents === "function"
-    ? renderUnifiedIncidents
-    : (typeof renderUnifiedIncidentMarkers === "function" ? renderUnifiedIncidentMarkers : null);
-  if (typeof renderFn !== "function") return;
-  renderFn();
-  setTimeout(() => {
-    if (typeof renderFn === "function") renderFn();
-  }, 500);
-  setTimeout(() => {
-    if (typeof renderFn === "function") renderFn();
-  }, 1500);
+  return gridlyPublishIncidentRenderRevision(`scheduleHazardMarkerAutoRender:${source}`);
 }
 
 function getCategoryMarkerGlyph(category, incident) {
@@ -87967,8 +88085,7 @@ function applyGridlyCanonicalRoadHazardDisplayLocation(record = {}, options = {}
 function scheduleGridlyPostSubmitLocalSurfaceRefresh(source = "post_submit_local") {
   const runner = () => {
     gridlyReportSubmissionRecoveryState.renderWorkTriggered.push({ source, work: "refreshReportHazardViews", at: Date.now() });
-    refreshReportHazardViews(source);
-    if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents(`${source}:unified`);
+    refreshReportHazardViews(source, { skipIncidentRender: true });
     scheduleHazardMarkerAutoRender(`${source}:markers`);
   };
   if (typeof requestAnimationFrame === "function") {
