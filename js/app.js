@@ -3383,8 +3383,8 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
   }) }) : null;
 }
 
-function gridlyGetGovernedActiveAwarenessRows(options = {}) {
-  const projection = gridlyGetGovernedConsumerProjection(options);
+function gridlyGetGovernedActiveAwarenessRows(options = {}, projectionOverride) {
+  const projection = arguments.length > 1 ? projectionOverride : gridlyGetGovernedConsumerProjection(options);
   if (!projection?.surfaces) return [];
   const rows = [...(projection.surfaces.kbygCommunity || []), ...(projection.surfaces.kbygOfficialRoadways || [])];
   return [...new Map(rows.map((row) => [row.evidenceId, row])).values()];
@@ -3535,13 +3535,14 @@ function gridlyCommunityStreetLineage(record = {}) {
 
 if (typeof window !== "undefined") { window.gridlyResolveCanonicalLiveIncidentIdentity = gridlyResolveCanonicalLiveIncidentIdentity; window.gridlyBuildCanonicalLiveIncidentPresentation = gridlyBuildCanonicalLiveIncidentPresentation; }
 
-function gridlyStoryActiveRecords() {
+function gridlyStoryActiveRecords(governedProjection) {
   // LP053.4A compatibility note: previous implementation was `return gridlyGetLifecycleCorrectActiveCommunityRecords();`; LP053.4B promotes that source into the canonical selector.
   const canonicalRecords = gridlyGetCanonicalActiveCommunityState().activeRecords.slice();
   // LP219.4: the expanded portrait KBYG is the Travel Brief, not the compact
   // Community Pulse copy.  Carry its governed authority into the model that
   // actually renders that panel, while retaining the canonical lifecycle set.
-  const governedRows = (typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null)?.surfaces?.kbygCommunity || [];
+  const projection = arguments.length ? governedProjection : (typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null);
+  const governedRows = projection?.surfaces?.kbygCommunity || [];
   const seen = new Set(canonicalRecords.map((record) => String(record?.id || record?.reportId || record?.report_id || "")).filter(Boolean));
   governedRows.forEach((row) => {
     const record = row?.record;
@@ -4700,9 +4701,66 @@ function gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecor
   });
 }
 
+const gridlyTravelBriefProjectionAuditState = {
+  available: false,
+  buildCount: 0,
+  lastBuildProjectionConstructCount: 0,
+  storyConsumerRowCount: 0,
+  awarenessConsumerRowCount: 0,
+  countParityPass: false,
+  identityParityPass: false,
+  orderingParityPass: false,
+  singleProjectionPass: false,
+  overallPass: false,
+  duplicateProjectionAvoidedCount: 0
+};
+
+function gridlyTravelBriefProjectionRowIds(rows) {
+  return (Array.isArray(rows) ? rows : []).map((row) => String(row?.evidenceId || "")).filter(Boolean);
+}
+
+function gridlyBuildTravelBriefProjectionContext(options = {}) {
+  const buildProjection = options.buildProjection || (() => (typeof gridlyGetGovernedConsumerProjection === "function" ? gridlyGetGovernedConsumerProjection() : null));
+  const consumeStory = options.consumeStory || ((projection) => gridlyStoryActiveRecords(projection));
+  const consumeAwareness = options.consumeAwareness || ((projection) => gridlyGetGovernedActiveAwarenessRows({}, projection));
+  let projectionConstructCount = 0;
+  projectionConstructCount += 1;
+  const projection = buildProjection();
+  const storyRows = projection?.surfaces?.kbygCommunity || [];
+  const records = consumeStory(projection);
+  const awarenessRows = consumeAwareness(projection);
+  const storyIds = gridlyTravelBriefProjectionRowIds(storyRows);
+  const storyIdSet = new Set(storyIds);
+  const awarenessStoryIds = gridlyTravelBriefProjectionRowIds(awarenessRows).filter((id) => storyIdSet.has(id));
+  const countParityPass = storyIds.length === awarenessStoryIds.length;
+  const sortedStoryIds = [...storyIds].sort();
+  const sortedAwarenessStoryIds = [...awarenessStoryIds].sort();
+  const identityParityPass = countParityPass && sortedStoryIds.every((id, index) => id === sortedAwarenessStoryIds[index]);
+  const orderingParityPass = countParityPass && storyIds.every((id, index) => id === awarenessStoryIds[index]);
+  const singleProjectionPass = projectionConstructCount === 1;
+  const available = Boolean(projection?.surfaces);
+  gridlyTravelBriefProjectionAuditState.available = available;
+  gridlyTravelBriefProjectionAuditState.buildCount += 1;
+  gridlyTravelBriefProjectionAuditState.lastBuildProjectionConstructCount = projectionConstructCount;
+  gridlyTravelBriefProjectionAuditState.storyConsumerRowCount = storyRows.length;
+  gridlyTravelBriefProjectionAuditState.awarenessConsumerRowCount = awarenessRows.length;
+  gridlyTravelBriefProjectionAuditState.countParityPass = countParityPass;
+  gridlyTravelBriefProjectionAuditState.identityParityPass = identityParityPass;
+  gridlyTravelBriefProjectionAuditState.orderingParityPass = orderingParityPass;
+  gridlyTravelBriefProjectionAuditState.singleProjectionPass = singleProjectionPass;
+  gridlyTravelBriefProjectionAuditState.overallPass = available && countParityPass && identityParityPass && orderingParityPass && singleProjectionPass;
+  if (available && singleProjectionPass) gridlyTravelBriefProjectionAuditState.duplicateProjectionAvoidedCount += 1;
+  return Object.freeze({ projection, records, awarenessRows: Object.freeze(awarenessRows.slice()) });
+}
+
+function gridlyTravelBriefProjectionAudit() {
+  return Object.freeze({ ...gridlyTravelBriefProjectionAuditState, expectedProjectionConstructCount: 1 });
+}
+
 function gridlyBuildTravelBriefModel(storyInput) {
-  const records = gridlyStoryActiveRecords();
-  const governedKbygEvidenceIds = gridlyGetGovernedActiveAwarenessRows().map((row) => row.evidenceId);
+  const projectionContext = gridlyBuildTravelBriefProjectionContext();
+  const records = projectionContext.records;
+  const governedKbygEvidenceIds = projectionContext.awarenessRows.map((row) => row.evidenceId);
   const driveTexasSourceEnvelope = gridlyStoryTransportationSourceStatusEnvelope();
   const driveTexasRecords = gridlyStoryTransportationConnectorRecords();
   const weather = gridlyBriefInteractionWeatherModel();
@@ -4840,6 +4898,7 @@ function gridlyRenderTravelBrief(storyInput) {
 }
 
 window.gridlyBuildTravelBriefModel = gridlyBuildTravelBriefModel;
+window.gridlyTravelBriefProjectionAudit = gridlyTravelBriefProjectionAudit;
 window.gridlyAwarenessCardinalityLanguageAudit = gridlyAwarenessCardinalityLanguageAudit;
 window.gridlyKbygFamilyStateSnapshot = function gridlyKbygFamilyStateSnapshot() {
   const model = gridlyBuildTravelBriefModel();

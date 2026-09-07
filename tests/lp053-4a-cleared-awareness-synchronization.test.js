@@ -6,7 +6,8 @@ assert(app.includes('function gridlyGetLifecycleCorrectActiveCommunityRecords'),
 assert(app.includes('return gridlyGetLifecycleCorrectActiveCommunityRecords();'), 'awareness story uses lifecycle-correct source');
 assert(!app.includes('input.primary || gridlyBriefInteractionText?.("#gridlyV2TopStatusPrimary")'), 'awareness story does not re-ingest stale top primary DOM as evidence');
 assert(!app.includes('input.secondary || gridlyBriefInteractionText?.("#gridlyV2TopStatusSecondary")'), 'awareness story does not re-ingest stale top secondary DOM as evidence');
-assert(app.includes('const records = gridlyStoryActiveRecords();'), 'Travel Brief Community rows reuse the active story source');
+assert(app.includes('const records = projectionContext.records;'), 'Travel Brief Community rows reuse the build-scoped active story source');
+assert(app.includes('const consumeStory = options.consumeStory || ((projection) => gridlyStoryActiveRecords(projection));'), 'Travel Brief projection context preserves the active story consumer');
 assert(app.includes('gridlyBuildTravelBriefModel(story)'), 'LP053.4A audit inspects Travel Brief output');
 assert(app.includes('recentlyClearedNotClassifiedAsActive: true'), 'recently cleared evidence is certified non-active');
 assert(app.includes('officialRoadwayIndependencePreserved: true'), 'official roadway independence is certified');
