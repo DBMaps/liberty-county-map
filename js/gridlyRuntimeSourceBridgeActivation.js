@@ -10,6 +10,12 @@
         activeCounty: "Liberty",
         activationCounty: null,
         activationRevision: 0,
+        automaticWarmupEnabled: false,
+        automaticWarmupScheduled: false,
+        automaticWarmupExecuted: false,
+        automaticWarmupCount: 0,
+        explicitWarmupCount: 0,
+        warmupState: "not_requested",
         warmupStarted: false,
         warmupCompleted: false,
         warmupSucceeded: false,
@@ -20,6 +26,12 @@
         postWarmAuthority: null,
         changedFields: [],
         lastEffectiveGetterAuthority: null,
+        candidateReadCounts: {
+            registryReadCount: 0,
+            manifestReadCount: 0,
+            noStoreFetchCount: 0,
+            candidateBuildCount: 0
+        },
         operationCounts: {
             installWrapper: 0,
             warmPackageSources: 0,
@@ -92,20 +104,39 @@
         );
     }
 
-    function finishWarmup(result, succeeded) {
+    function bridgeTelemetrySnapshot() {
+        return typeof window.gridlyRuntimeSourceRegistryBridge?.telemetrySnapshot === "function"
+            ? window.gridlyRuntimeSourceRegistryBridge.telemetrySnapshot()
+            : {};
+    }
+
+    function recordCandidateReadDelta(before = {}) {
+        const after = bridgeTelemetrySnapshot();
+        state.candidateReadCounts.registryReadCount += Math.max(0, Number(after.runtimeRegistryFetchCount || 0) - Number(before.runtimeRegistryFetchCount || 0));
+        state.candidateReadCounts.manifestReadCount += Math.max(0, Number(after.packageManifestReadCount || 0) - Number(before.packageManifestReadCount || 0));
+        state.candidateReadCounts.noStoreFetchCount += Math.max(0, Number(after.noStoreFetchCount || 0) - Number(before.noStoreFetchCount || 0));
+        state.candidateReadCounts.candidateBuildCount += Math.max(0, Number(after.buildRuntimeSourcesFromPackagesCount || 0) - Number(before.buildRuntimeSourcesFromPackagesCount || 0));
+    }
+
+    function finishWarmup(result, succeeded, telemetryBefore = {}) {
+        recordCandidateReadDelta(telemetryBefore);
         state.lastWarmup = result;
         state.warmupCompleted = true;
         state.warmupSucceeded = succeeded === true;
+        state.warmupState = succeeded === true ? "succeeded" : "failed";
         return result;
     }
 
     async function warmPackageSources(county) {
         const requestedCounty = normalizeCountyName(county || state.activeCounty || "Liberty");
         const countyKey = normalizeCountyKey(requestedCounty);
+        const telemetryBefore = bridgeTelemetrySnapshot();
         state.operationCounts.warmPackageSources += 1;
+        state.explicitWarmupCount += 1;
         state.warmupStarted = true;
         state.warmupCompleted = false;
         state.warmupSucceeded = false;
+        state.warmupState = "in_progress";
 
         if (typeof window.gridlyRuntimeSourceRegistryBridgeAudit !== "function") {
             return finishWarmup({
@@ -113,10 +144,22 @@
                 reason: "bridge_audit_unavailable",
                 requestedCounty,
                 generatedAt: new Date().toISOString()
-            }, false);
+            }, false, telemetryBefore);
         }
 
-        const bridgeAudit = await window.gridlyRuntimeSourceRegistryBridgeAudit(requestedCounty);
+        let bridgeAudit;
+        try {
+            bridgeAudit = await window.gridlyRuntimeSourceRegistryBridgeAudit(requestedCounty);
+        } catch (error) {
+            finishWarmup({
+                warmed: false,
+                reason: "activation_error",
+                requestedCounty,
+                error: String(error && error.message ? error.message : error),
+                generatedAt: new Date().toISOString()
+            }, false, telemetryBefore);
+            throw error;
+        }
 
         if (
             !bridgeAudit ||
@@ -131,7 +174,7 @@
                 requestedCounty,
                 bridgeFinalDetermination: bridgeAudit && bridgeAudit.finalDetermination,
                 generatedAt: new Date().toISOString()
-            }, false);
+            }, false, telemetryBefore);
         }
 
         state.packageSourcesByCountyKey[countyKey] = {
@@ -153,7 +196,7 @@
             roadSource: bridgeAudit.runtimeSources.roadSource,
             crossingSourceObservedButNotActivated: bridgeAudit.runtimeSources.crossingSource || null,
             generatedAt: new Date().toISOString()
-        }, true);
+        }, true, telemetryBefore);
     }
 
     // The legacy function name is retained for instrumentation compatibility.
@@ -261,12 +304,19 @@
             warmupStarted: state.warmupStarted,
             warmupCompleted: state.warmupCompleted,
             warmupSucceeded: state.warmupSucceeded,
+            automaticWarmupEnabled: state.automaticWarmupEnabled,
+            automaticWarmupScheduled: state.automaticWarmupScheduled,
+            automaticWarmupExecuted: state.automaticWarmupExecuted,
+            automaticWarmupCount: state.automaticWarmupCount,
+            explicitWarmupCount: state.explicitWarmupCount,
+            warmupState: state.warmupState,
             activationRevision: state.activationRevision,
             preWarmAuthority: clone(state.preWarmAuthority),
             postWarmAuthority: clone(state.postWarmAuthority),
             changedFields: Object.freeze(state.changedFields.slice()),
             packageSourcesByCountyKey: clone(state.packageSourcesByCountyKey),
             lastEffectiveGetterAuthority: clone(state.lastEffectiveGetterAuthority),
+            candidateReadCounts: Object.freeze({ ...state.candidateReadCounts }),
             operationCounts: Object.freeze({ ...state.operationCounts })
         });
     }
@@ -323,7 +373,16 @@
         return Object.freeze({
             available: Boolean(registryAuthority),
             activeCountyId,
-            bridge: Object.freeze({ installed: state.installed, activated: state.activated, activationCounty: state.activationCounty, warmupStarted: state.warmupStarted, warmupCompleted: state.warmupCompleted, warmupSucceeded: state.warmupSucceeded, activationRevision: state.activationRevision }),
+            automaticWarmupEnabled: state.automaticWarmupEnabled,
+            automaticWarmupScheduled: state.automaticWarmupScheduled,
+            automaticWarmupExecuted: state.automaticWarmupExecuted,
+            automaticWarmupCount: state.automaticWarmupCount,
+            explicitWarmupCount: state.explicitWarmupCount,
+            warmupState: state.warmupState,
+            registryReadCount: state.candidateReadCounts.registryReadCount,
+            manifestReadCount: state.candidateReadCounts.manifestReadCount,
+            noStoreFetchCount: state.candidateReadCounts.noStoreFetchCount,
+            bridge: Object.freeze({ installed: state.installed, activated: state.activated, activationCounty: state.activationCounty, warmupStarted: state.warmupStarted, warmupCompleted: state.warmupCompleted, warmupSucceeded: state.warmupSucceeded, warmupState: state.warmupState, activationRevision: state.activationRevision }),
             registryAuthority,
             bridgeAuthority,
             effectiveGetterAuthority,
@@ -344,7 +403,7 @@
             ]),
             assetEquivalence: Object.freeze({ runtimeCheckPerformed: false, reason: "heavy local asset comparison is build-time test authority" }),
             overallAuthorityConsistent,
-            overallPass: Boolean(registryAuthority && state.installed && state.warmupCompleted && stableAuthorityPass && !packageAuthorityApplied)
+            overallPass: Boolean(registryAuthority && stableAuthorityPass && !packageAuthorityApplied)
         });
     }
 
@@ -463,14 +522,4 @@
         state.preWarmAuthority = sourceAuthority(window.gridlyGetActiveCountyRuntimeSources());
     }
 
-    setTimeout(function () {
-        activate("Liberty").catch(function (error) {
-            state.lastWarmup = {
-                warmed: false,
-                reason: "activation_error",
-                error: String(error && error.message ? error.message : error),
-                generatedAt: new Date().toISOString()
-            };
-        });
-    }, 0);
 })();

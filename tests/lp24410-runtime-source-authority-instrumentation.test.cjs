@@ -53,10 +53,10 @@ function makeRuntime() {
   return { window, scheduled, fetchCount: () => fetchCount, setCounty: (countyId) => { activeCountyId = countyId; } };
 }
 
-test('canonical and package Liberty baselines are explicit before activation', () => {
+test('canonical Liberty baseline is explicit while package warmup remains deferred', () => {
   const runtime = makeRuntime();
   const audit = runtime.window.gridlyRuntimeSourceAuthorityAudit();
-  assert.equal(runtime.scheduled.length, 1, 'default Liberty activation is scheduled once');
+  assert.equal(runtime.scheduled.length, 0, 'default Liberty activation is not scheduled');
   assert.deepEqual({ ...audit.registryAuthority }, {
     countyId: 'liberty-tx',
     boundaryPath: 'assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson',
@@ -66,6 +66,9 @@ test('canonical and package Liberty baselines are explicit before activation', (
     crossingOverridesPath: 'data/gridly-crossing-review-overrides.json'
   });
   assert.equal(audit.bridge.installed, false);
+  assert.equal(audit.warmupState, 'not_requested');
+  assert.equal(audit.automaticWarmupEnabled, false);
+  assert.equal(audit.overallPass, true);
   assert.equal(audit.startupTransition.preWarmAuthority.boundaryPath, audit.registryAuthority.boundaryPath);
   assert.equal(runtime.fetchCount(), 0, 'read-only audit does not start warmup or fetch');
 });
@@ -184,7 +187,8 @@ test('production wiring exposes bounded instrumentation with stable source-famil
   assert.match(activationSource, /packageCandidateAvailable/);
   assert.match(activationSource, /packageAuthorityApplied/);
   assert.match(activationSource, /stableAuthorityPass/);
-  assert.match(activationSource, /activate\("Liberty"\)/);
+  assert.match(activationSource, /automaticWarmupEnabled: false/);
+  assert.doesNotMatch(activationSource, /setTimeout\(function \(\) \{\s*activate\("Liberty"\)/);
   assert.match(index, /gridlyRuntimeSourceRegistryBridge\.js[\s\S]*js\/app\.js[\s\S]*gridlyRuntimeSourceBridgeActivation\.js/);
   assert.doesNotMatch(activationSource, /crypto|subtle\.digest|FileReader/);
 });
