@@ -4,6 +4,25 @@
     const BRIDGE_VERSION = "GRIDLY_RUNTIME_SOURCE_REGISTRY_BRIDGE_V2_0";
     const RUNTIME_REGISTRY_PATH = "assets/package-registry/runtime-package-registry.json";
     const PRODUCTION_CROSSING_MANIFEST_PATH = "Crossing-Packages/production-crossing-manifest.json";
+    const telemetry = {
+        registryReadCount: 0,
+        runtimeRegistryFetchCount: 0,
+        packageManifestReadCount: 0,
+        noStoreFetchCount: 0,
+        buildRuntimeSourcesFromPackagesCount: 0,
+        resolveGovernedCrossingSourceCount: 0,
+        lastRegistryReadCountyId: null,
+        lastFetchPath: null
+    };
+
+    function recordRegistryRead(details) {
+        telemetry.registryReadCount += 1;
+        telemetry.lastRegistryReadCountyId = details && details.countyId || null;
+    }
+
+    function telemetrySnapshot() {
+        return Object.freeze({ ...telemetry });
+    }
 
     function normalizeCountyName(county) {
         return String(county || "").trim();
@@ -62,6 +81,10 @@
     }
 
     async function fetchJson(path) {
+        telemetry.noStoreFetchCount += 1;
+        telemetry.lastFetchPath = path || null;
+        if (path === RUNTIME_REGISTRY_PATH) telemetry.runtimeRegistryFetchCount += 1;
+        else if (/package-manifest\.json(?:$|[?#])/i.test(String(path || ""))) telemetry.packageManifestReadCount += 1;
         const response = await fetch(path, { cache: "no-store" });
 
         if (!response.ok) {
@@ -81,6 +104,7 @@
     }
 
     async function resolveGovernedCrossingSource(identity) {
+        telemetry.resolveGovernedCrossingSourceCount += 1;
         const county = countyNameFromIdentity(identity);
         if (!county) throw new Error("Governed crossing county identity is required");
 
@@ -232,6 +256,7 @@
     }
 
     async function buildRuntimeSourcesFromPackages(county) {
+        telemetry.buildRuntimeSourcesFromPackagesCount += 1;
         const requestedCounty = normalizeCountyName(county || "Liberty");
         const countyKey = normalizeCountyKey(requestedCounty);
 
@@ -361,7 +386,9 @@
     window.gridlyRuntimeSourceRegistryBridge = {
         version: BRIDGE_VERSION,
         buildRuntimeSourcesFromPackages,
-        resolveGovernedCrossingSource
+        resolveGovernedCrossingSource,
+        recordRegistryRead,
+        telemetrySnapshot
     };
 
     window.gridlyRuntimeSourceRegistryBridgeAudit = auditRuntimeSourceRegistryBridge;

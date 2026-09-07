@@ -8632,7 +8632,11 @@ window.gridlyArchitectureProgramClosureAudit = function gridlyArchitectureProgra
 
 function gridlyGetCountyRuntimeSources(countyId = gridlyGetActiveCountyId()) {
   const normalizedCountyId = gridlyNormalizeCountyId(countyId);
-  return GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY[normalizedCountyId] || GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY[GRIDLY_DEFAULT_COUNTY_ID];
+  const sources = GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY[normalizedCountyId] || GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY[GRIDLY_DEFAULT_COUNTY_ID];
+  if (typeof window !== "undefined" && typeof window.gridlyRuntimeSourceRegistryBridge?.recordRegistryRead === "function") {
+    window.gridlyRuntimeSourceRegistryBridge.recordRegistryRead({ countyId: sources?.countyId || normalizedCountyId });
+  }
+  return sources;
 }
 
 function gridlyGetActiveCountyRuntimeSources() {
