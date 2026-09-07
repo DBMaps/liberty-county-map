@@ -70,24 +70,27 @@ test('canonical and package Liberty baselines are explicit before activation', (
   assert.equal(runtime.fetchCount(), 0, 'read-only audit does not start warmup or fetch');
 });
 
-test('post-warm authority records the exact boundary and roads transition with preserved crossings', async () => {
+test('post-warm instrumentation records package candidates while stable authority preserves crossings', async () => {
   const runtime = makeRuntime();
   await runtime.window.gridlyRuntimeSourceBridgeActivation.activate('Liberty');
   const effective = runtime.window.gridlyGetActiveCountyRuntimeSources();
   const audit = runtime.window.gridlyRuntimeSourceAuthorityAudit();
-  assert.equal(effective.boundarySource, 'Community-Packages/liberty/liberty-boundary.geojson');
-  assert.equal(effective.roadSource, 'Community-Packages/liberty/liberty-roads.geojson');
+  assert.equal(effective.boundarySource, canonical['liberty-tx'].boundarySource);
+  assert.equal(effective.roadSource, canonical['liberty-tx'].roadSource);
   assert.equal(effective.crossingSource, canonical['liberty-tx'].crossingSource);
   assert.equal(effective.crossingOverridesSource, canonical['liberty-tx'].crossingOverridesSource);
-  assert.deepEqual(Array.from(audit.startupTransition.changedFields), ['boundaryPath', 'roadsPath']);
-  assert.equal(audit.startupTransition.authorityChangedDuringStartup, true);
+  assert.deepEqual(Array.from(audit.startupTransition.changedFields), []);
+  assert.equal(audit.startupTransition.authorityChangedDuringStartup, false);
   assert.equal(audit.pathComparison.boundarySamePath, false);
   assert.equal(audit.pathComparison.roadsSamePath, false);
   assert.equal(audit.pathComparison.crossingsSamePath, true);
   assert.equal(audit.bridge.warmupSucceeded, true);
   assert.equal(audit.bridge.activationRevision, 1);
-  assert.equal(audit.overallAuthorityConsistent, false);
-  assert.equal(audit.overallPass, false);
+  assert.equal(audit.packageCandidateAvailable, true);
+  assert.equal(audit.packageAuthorityApplied, false);
+  assert.equal(audit.stableAuthorityPass, true);
+  assert.equal(audit.overallAuthorityConsistent, true);
+  assert.equal(audit.overallPass, true);
 });
 
 test('consumer and direct-registry paths remain separately observable', async () => {
@@ -97,16 +100,16 @@ test('consumer and direct-registry paths remain separately observable', async ()
   const audit = runtime.window.gridlyRuntimeSourceAuthorityAudit();
   const getterConsumer = audit.consumerObservations.find((row) => row.consumer === 'loadGridlyActiveCountyBoundaryIdentity');
   const directConsumer = audit.consumerObservations.find((row) => row.consumer === 'gridlyBuildRegionalRuntimeAssetOwnershipAudit');
-  assert.equal(getterConsumer.authoritySource, 'effective_getter');
-  assert.equal(getterConsumer.authorityPathUsed.boundaryPath, 'Community-Packages/liberty/liberty-boundary.geojson');
+  assert.equal(getterConsumer.authoritySource, 'canonical_source_family');
+  assert.equal(getterConsumer.authorityPathUsed.boundaryPath, canonical['liberty-tx'].boundarySource);
   assert.equal(directConsumer.authoritySource, 'registry');
   assert.equal(directConsumer.authorityPathUsed.boundaryPath, canonical['liberty-tx'].boundarySource);
 });
 
-test('Liberty to Dallas to a third county and back never leaks a package override', async () => {
+test('Liberty to Dallas to a third county and back retains stable source-family authority', async () => {
   const runtime = makeRuntime();
   await runtime.window.gridlyRuntimeSourceBridgeActivation.activate('Liberty');
-  assert.equal(runtime.window.gridlyGetActiveCountyRuntimeSources().packageBridgeApplied, true);
+  assert.equal(runtime.window.gridlyRuntimeSourceAuthorityAudit().packageAuthorityApplied, false);
   runtime.setCounty('dallas-tx');
   assert.deepEqual({ ...runtime.window.gridlyGetActiveCountyRuntimeSources() }, { ...canonical['dallas-tx'] });
   assert.equal(runtime.window.gridlyRuntimeSourceAuthorityAudit().bridgeAuthority, null);
@@ -114,8 +117,9 @@ test('Liberty to Dallas to a third county and back never leaks a package overrid
   assert.deepEqual({ ...runtime.window.gridlyGetActiveCountyRuntimeSources() }, { ...canonical['montgomery-tx'] });
   runtime.setCounty('liberty-tx');
   const restored = runtime.window.gridlyGetActiveCountyRuntimeSources();
-  assert.equal(restored.packageBridgeApplied, true);
-  assert.equal(restored.boundarySource, 'Community-Packages/liberty/liberty-boundary.geojson');
+  assert.equal(restored.packageBridgeApplied, undefined);
+  assert.equal(restored.boundarySource, canonical['liberty-tx'].boundarySource);
+  assert.equal(restored.roadSource, canonical['liberty-tx'].roadSource);
 });
 
 test('duplicate no-store reads and wrapper operations are counted without audit side effects', async () => {
@@ -172,11 +176,14 @@ test('local Liberty asset equivalence is deterministic and kept out of startup r
   assert.equal(roads.leftSha256, roads.rightSha256);
 });
 
-test('production wiring exposes bounded instrumentation without consolidation', () => {
+test('production wiring exposes bounded instrumentation with stable source-family authority', () => {
   const app = fs.readFileSync('js/app.js', 'utf8');
   const index = fs.readFileSync('index.html', 'utf8');
   assert.match(app, /recordRegistryRead\(\{ countyId:/);
   assert.match(activationSource, /window\.gridlyRuntimeSourceAuthorityAudit = runtimeSourceAuthorityAudit/);
+  assert.match(activationSource, /packageCandidateAvailable/);
+  assert.match(activationSource, /packageAuthorityApplied/);
+  assert.match(activationSource, /stableAuthorityPass/);
   assert.match(activationSource, /activate\("Liberty"\)/);
   assert.match(index, /gridlyRuntimeSourceRegistryBridge\.js[\s\S]*js\/app\.js[\s\S]*gridlyRuntimeSourceBridgeActivation\.js/);
   assert.doesNotMatch(activationSource, /crypto|subtle\.digest|FileReader/);

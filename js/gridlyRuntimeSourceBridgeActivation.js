@@ -80,6 +80,18 @@
             .filter(function (field) { return before[field] !== after[field]; });
     }
 
+    function isPackageAuthorityApplied(registryAuthority, packageAuthority, effectiveAuthority) {
+        return Boolean(
+            registryAuthority &&
+            packageAuthority &&
+            effectiveAuthority &&
+            (
+                (packageAuthority.boundaryPath !== registryAuthority.boundaryPath && effectiveAuthority.boundaryPath === packageAuthority.boundaryPath) ||
+                (packageAuthority.roadsPath !== registryAuthority.roadsPath && effectiveAuthority.roadsPath === packageAuthority.roadsPath)
+            )
+        );
+    }
+
     function finishWarmup(result, succeeded) {
         state.lastWarmup = result;
         state.warmupCompleted = true;
@@ -144,6 +156,8 @@
         }, true);
     }
 
+    // The legacy function name is retained for instrumentation compatibility.
+    // LP244.11 limits it to candidate observation and forbids source replacement.
     function applyBoundaryRoadOverrides(runtimeSources, options) {
         const recordRead = !options || options.recordRead !== false;
         if (recordRead) state.operationCounts.applyBoundaryRoadOverrides += 1;
@@ -160,19 +174,6 @@
         }
 
         if (recordRead) state.operationCounts.bridgeRead += 1;
-
-        if (packageSources.boundarySource) {
-            output.boundarySource = packageSources.boundarySource;
-        }
-        if (packageSources.roadSource && /\.geojson(?:$|[?#])/i.test(packageSources.roadSource)) {
-            output.roadSource = packageSources.roadSource;
-            output.roadSourceLoadable = true;
-        }
-
-        output.packageBridgeApplied = true;
-        output.packageBridgeActivationVersion = ACTIVATION_VERSION;
-        output.packageBridgeScope = "boundary_and_roads_only";
-        output.crossingSourcePreserved = true;
 
         if (recordRead) state.lastEffectiveGetterAuthority = sourceAuthority(output);
 
@@ -209,7 +210,7 @@
 
         return {
             installed: true,
-            reason: "boundary_and_road_source_wrapper_installed"
+            reason: "package_candidate_observation_wrapper_installed"
         };
     }
 
@@ -217,7 +218,7 @@
         const requestedCounty = normalizeCountyName(county || "Liberty");
         const installResult = installWrapper();
         state.activationCounty = requestedCounty;
-        if (!state.preWarmAuthority && typeof state.originalGetter === "function") state.preWarmAuthority = sourceAuthority(state.originalGetter());
+        if (typeof state.originalGetter === "function") state.preWarmAuthority = sourceAuthority(state.originalGetter());
         const warmupResult = await warmPackageSources(requestedCounty);
         const originalRuntimeSources = typeof state.originalGetter === "function" ? state.originalGetter() : null;
         state.postWarmAuthority = sourceAuthority(applyBoundaryRoadOverrides(originalRuntimeSources, { recordRead: false }));
@@ -231,8 +232,8 @@
             installResult,
             warmupResult,
             activationScope: {
-                boundarySource: true,
-                roadSource: true,
+                boundarySource: false,
+                roadSource: false,
                 crossingSource: false,
                 crossingOverridesSource: false
             },
@@ -247,8 +248,8 @@
             },
             finalDetermination:
                 installResult.installed && warmupResult.warmed
-                    ? "PASS_BOUNDARY_ROAD_PACKAGE_BRIDGE_ACTIVE"
-                    : "BLOCKED_BOUNDARY_ROAD_PACKAGE_BRIDGE_NOT_ACTIVE"
+                    ? "PASS_PACKAGE_CANDIDATES_WARMED_STABLE_AUTHORITY"
+                    : "BLOCKED_PACKAGE_CANDIDATE_WARMUP_NOT_READY_STABLE_AUTHORITY_PRESERVED"
         };
     }
 
@@ -280,6 +281,12 @@
         const packageSources = state.packageSourcesByCountyKey[countyKey] || state.packageSourcesByCountyKey[countyAliasKey] || null;
         const bridgeAuthority = sourceAuthority(packageSources);
         const effectiveGetterAuthority = sourceAuthority(applyBoundaryRoadOverrides(registrySources, { recordRead: false }));
+        const stableAuthorityPass = Boolean(
+            registryAuthority &&
+            effectiveGetterAuthority &&
+            changedAuthorityFields(registryAuthority, effectiveGetterAuthority).length === 0
+        );
+        const packageAuthorityApplied = isPackageAuthorityApplied(registryAuthority, bridgeAuthority, effectiveGetterAuthority);
         const pathComparison = Object.freeze({
             boundarySamePath: Boolean(registryAuthority && bridgeAuthority && registryAuthority.boundaryPath === bridgeAuthority.boundaryPath),
             roadsSamePath: Boolean(registryAuthority && bridgeAuthority && registryAuthority.roadsPath === bridgeAuthority.roadsPath),
@@ -304,11 +311,15 @@
         const currentPaths = effectiveGetterAuthority || registryAuthority;
         const consumerObservations = Object.freeze([
             Object.freeze({ consumer: "app startup source constants", apiUsed: "effective_getter_pre_bridge", authorityPathUsed: clone(state.preWarmAuthority), authoritySource: "registry", authorityChangedAcrossWarmup: transition.authorityChangedDuringStartup }),
-            Object.freeze({ consumer: "loadGridlyActiveCountyBoundaryIdentity", apiUsed: "gridlyGetActiveCountyRuntimeSources", authorityPathUsed: clone(currentPaths), authoritySource: packageSources ? "effective_getter" : "registry", authorityChangedAcrossWarmup: transition.authorityChangedDuringStartup }),
-            Object.freeze({ consumer: "gridlyCrossingProvider.resolveRuntimeCrossingSource", apiUsed: "window.gridlyGetActiveCountyRuntimeSources", authorityPathUsed: clone(currentPaths), authoritySource: packageSources ? "effective_getter" : "registry", authorityChangedAcrossWarmup: transition.authorityChangedDuringStartup }),
+            Object.freeze({ consumer: "loadGridlyActiveCountyBoundaryIdentity", apiUsed: "gridlyGetActiveCountyRuntimeSources", authorityPathUsed: clone(currentPaths), authoritySource: "canonical_source_family", authorityChangedAcrossWarmup: transition.authorityChangedDuringStartup }),
+            Object.freeze({ consumer: "gridlyCrossingProvider.resolveRuntimeCrossingSource", apiUsed: "window.gridlyGetActiveCountyRuntimeSources", authorityPathUsed: clone(currentPaths), authoritySource: "canonical_source_family", authorityChangedAcrossWarmup: transition.authorityChangedDuringStartup }),
             Object.freeze({ consumer: "gridlyBuildRegionalRuntimeAssetOwnershipAudit", apiUsed: "GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY", authorityPathUsed: clone(registryAuthority), authoritySource: "registry", authorityChangedAcrossWarmup: false })
         ]);
-        const overallAuthorityConsistent = Boolean(!packageSources || (pathComparison.boundarySamePath && pathComparison.roadsSamePath && pathComparison.crossingsSamePath));
+        const overallAuthorityConsistent = stableAuthorityPass;
+        const canonicalBoundaryMetadataSourceSelected = Boolean(
+            activeCountyId === "liberty-tx" &&
+            effectiveGetterAuthority?.boundaryPath === "assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson"
+        );
         return Object.freeze({
             available: Boolean(registryAuthority),
             activeCountyId,
@@ -316,19 +327,24 @@
             registryAuthority,
             bridgeAuthority,
             effectiveGetterAuthority,
+            packageCandidateAvailable: Boolean(packageSources),
+            packageAuthorityApplied,
+            stableAuthorityPass,
+            canonicalBoundaryMetadataSourceSelected,
+            canonicalBoundaryMetadataContract: Object.freeze({ countyId: "liberty-tx", requiredProperties: Object.freeze(["GEOID", "NAMELSAD", "boundaryCredibilityMode", "sourceLibraryPath"]), payloadInspectionPerformed: false }),
             pathComparison,
             consumerObservations,
             startupTransition: transition,
             runtimeReads,
             duplicateRuntimeWork: Object.freeze([
-                Object.freeze({ operation: "buildRuntimeSourcesFromPackages", count: Number(bridgeTelemetry.buildRuntimeSourcesFromPackagesCount || 0), reason: "package authority construction", duplicationAppearsNecessary: "UNKNOWN_PENDING_CONSOLIDATION_DECISION", confidence: "HIGH" }),
+                Object.freeze({ operation: "buildRuntimeSourcesFromPackages", count: Number(bridgeTelemetry.buildRuntimeSourcesFromPackagesCount || 0), reason: "package candidate discovery", duplicationAppearsNecessary: "UNKNOWN_PENDING_FOLLOW_UP", confidence: "HIGH" }),
                 Object.freeze({ operation: "runtime registry no-store fetch", count: runtimeReads.runtimeRegistryFetchCount, reason: "Community and Crossing manifest lookup each reload the registry", duplicationAppearsNecessary: false, confidence: "HIGH" }),
                 Object.freeze({ operation: "package manifest no-store fetch", count: runtimeReads.packageManifestReadCount, reason: "Community and Crossing authority require separate manifests", duplicationAppearsNecessary: true, confidence: "HIGH" }),
-                Object.freeze({ operation: "applyBoundaryRoadOverrides", count: state.operationCounts.applyBoundaryRoadOverrides, reason: "effective getter wrapper", duplicationAppearsNecessary: "UNKNOWN_PENDING_CONSOLIDATION_DECISION", confidence: "HIGH" })
+                Object.freeze({ operation: "applyBoundaryRoadOverrides", count: state.operationCounts.applyBoundaryRoadOverrides, reason: "compatibility wrapper observes candidates without changing source authority", duplicationAppearsNecessary: true, confidence: "HIGH" })
             ]),
             assetEquivalence: Object.freeze({ runtimeCheckPerformed: false, reason: "heavy local asset comparison is build-time test authority" }),
             overallAuthorityConsistent,
-            overallPass: Boolean(registryAuthority && state.installed && state.warmupCompleted && overallAuthorityConsistent)
+            overallPass: Boolean(registryAuthority && state.installed && state.warmupCompleted && stableAuthorityPass && !packageAuthorityApplied)
         });
     }
 
@@ -353,12 +369,30 @@
 
         const countyKey = normalizeCountyKey(requestedCounty);
         const packageSources = state.packageSourcesByCountyKey[countyKey] || null;
+        const originalAuthority = sourceAuthority(originalRuntimeSources);
+        const runtimeAuthority = sourceAuthority(runtimeSources);
+        const packageAuthority = sourceAuthority(packageSources);
 
-        const boundaryRoadActive =
-            !!runtimeSources &&
-            !!packageSources &&
-            runtimeSources.boundarySource === packageSources.boundarySource &&
-            runtimeSources.roadSource === packageSources.roadSource;
+        const stableAuthority = Boolean(
+            originalAuthority &&
+            runtimeAuthority &&
+            changedAuthorityFields(originalAuthority, runtimeAuthority).length === 0
+        );
+        const packageAuthorityApplied = isPackageAuthorityApplied(originalAuthority, packageAuthority, runtimeAuthority);
+        const boundarySourceFromPackage = Boolean(
+            originalAuthority &&
+            packageAuthority &&
+            runtimeAuthority &&
+            packageAuthority.boundaryPath !== originalAuthority.boundaryPath &&
+            runtimeAuthority.boundaryPath === packageAuthority.boundaryPath
+        );
+        const roadSourceFromPackage = Boolean(
+            originalAuthority &&
+            packageAuthority &&
+            runtimeAuthority &&
+            packageAuthority.roadsPath !== originalAuthority.roadsPath &&
+            runtimeAuthority.roadsPath === packageAuthority.roadsPath
+        );
 
         const crossingPreserved =
             !!runtimeSources &&
@@ -374,8 +408,8 @@
             lastWarmup: state.lastWarmup,
 
             activationScope: {
-                boundarySource: true,
-                roadSource: true,
+                boundarySource: false,
+                roadSource: false,
                 crossingSource: false,
                 crossingOverridesSource: false
             },
@@ -385,10 +419,15 @@
             originalRuntimeSources,
 
             validation: {
-                boundarySourceFromPackage: boundaryRoadActive && runtimeSources.boundarySource === packageSources.boundarySource,
-                roadSourceFromPackage: boundaryRoadActive && runtimeSources.roadSource === packageSources.roadSource,
+                packageCandidateAvailable: Boolean(packageSources),
+                packageAuthorityApplied,
+                boundarySourceFromPackage,
+                roadSourceFromPackage,
+                boundarySourceCanonical: Boolean(originalAuthority && runtimeAuthority && originalAuthority.boundaryPath === runtimeAuthority.boundaryPath),
+                roadSourceCanonical: Boolean(originalAuthority && runtimeAuthority && originalAuthority.roadsPath === runtimeAuthority.roadsPath),
                 crossingSourcePreserved: crossingPreserved,
-                boundaryRoadActive,
+                boundaryRoadActive: false,
+                stableAuthority,
                 crossingPreserved
             },
 
@@ -403,9 +442,9 @@
             },
 
             finalDetermination:
-                boundaryRoadActive && crossingPreserved
-                    ? "PASS_BOUNDARY_ROAD_PACKAGE_BRIDGE_ACTIVE_CROSSINGS_PRESERVED"
-                    : "BLOCKED_BOUNDARY_ROAD_PACKAGE_BRIDGE_VALIDATION_FAILED"
+                stableAuthority && !packageAuthorityApplied && crossingPreserved
+                    ? "PASS_PACKAGE_CANDIDATES_AVAILABLE_STABLE_AUTHORITY_CROSSINGS_PRESERVED"
+                    : "BLOCKED_STABLE_RUNTIME_SOURCE_AUTHORITY_VALIDATION_FAILED"
         };
     }
 
