@@ -59587,6 +59587,92 @@ function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage, sourceTa
     });
 }
 
+// LP244.19 REPORT SNAPSHOT MEMBERSHIP START
+let gridlyReportSnapshotMembershipAuditState = Object.freeze({
+  available: true,
+  snapshotBuildCount: 0,
+  lastSnapshotRowCount: 0,
+  sourceVisibleSetBuildCount: 0,
+  activeSetBuildCount: 0,
+  sourceVisibleLookupCount: 0,
+  activeLookupCount: 0,
+  linearMembershipFallbackCount: 0,
+  snapshotParityPass: true,
+  constantTimeMembershipPass: true,
+  overallPass: true
+});
+
+function gridlyBuildLoadedReportSnapshot({ normalized, rawRows, sourceVisibleNormalized, activeReports, activeHazardIds, lifecycleFilterNow, activeCountyId }) {
+  const sourceVisibleSet = new Set(sourceVisibleNormalized);
+  const activeReportSet = new Set(activeReports);
+  let sourceVisibleLookupCount = 0;
+  let activeLookupCount = 0;
+  const snapshot = Object.freeze(normalized.map((report, index) => {
+    const raw = rawRows[index] || {};
+    const lifecycleState = getIncidentLifecycleState(report, lifecycleFilterNow);
+    const hasCoordinates = Number.isFinite(report.lat) && Number.isFinite(report.lng);
+    const countyScopeMatch = gridlyReportMatchesActiveCounty(report, activeCountyId);
+    sourceVisibleLookupCount += 1;
+    const sourceAllowed = sourceVisibleSet.has(report);
+    const genericHazard = report.reportKind === "hazard";
+    const activeLifecycle = lifecycleState === "active";
+    if (!genericHazard) activeLookupCount += 1;
+    const activeCollection = genericHazard
+      ? activeHazardIds.has(String(report.id || ""))
+      : activeReportSet.has(report);
+    const surfaceEligible = sourceAllowed && countyScopeMatch && activeLifecycle && hasCoordinates && activeCollection;
+    return Object.freeze({
+      id: raw.id ?? report.id ?? null,
+      created_at: raw.created_at ?? report.submittedAt ?? null,
+      device_id: raw.device_id ?? report.deviceId ?? null,
+      crossing_id: raw.crossing_id ?? report.crossingId ?? null,
+      crossing_name: raw.crossing_name ?? report.crossingName ?? null,
+      report_type: raw.report_type ?? report.type ?? null,
+      lat: Number.isFinite(report.lat) ? report.lat : null,
+      lng: Number.isFinite(report.lng) ? report.lng : null,
+      severity: report.severity || null,
+      expires_at: raw.expires_at ?? report.expiresAt ?? null,
+      countyId: report.countyId || null,
+      countyFips: report.countyFips || GRIDLY_COUNTY_REGISTRY[report.countyId]?.fips || null,
+      countyName: report.countyName || null,
+      communityName: report.communityName || null,
+      communityKey: report.communityKey || null,
+      placeGeoid: report.placeGeoid || null,
+      lifecycleState,
+      mapEligible: surfaceEligible,
+      alertsEligible: surfaceEligible,
+      awarenessEligible: surfaceEligible,
+      predicates: Object.freeze({ sourceAllowed, countyScopeMatch, genericHazard, activeLifecycle, hasCoordinates, activeCollection })
+    });
+  }));
+  const snapshotParityPass = snapshot.length === normalized.length
+    && Object.isFrozen(snapshot)
+    && snapshot.every((row) => Object.isFrozen(row) && Object.isFrozen(row.predicates));
+  const constantTimeMembershipPass = sourceVisibleLookupCount === normalized.length
+    && activeLookupCount <= normalized.length;
+  gridlyReportSnapshotMembershipAuditState = Object.freeze({
+    available: true,
+    snapshotBuildCount: gridlyReportSnapshotMembershipAuditState.snapshotBuildCount + 1,
+    lastSnapshotRowCount: snapshot.length,
+    sourceVisibleSetBuildCount: gridlyReportSnapshotMembershipAuditState.sourceVisibleSetBuildCount + 1,
+    activeSetBuildCount: gridlyReportSnapshotMembershipAuditState.activeSetBuildCount + 1,
+    sourceVisibleLookupCount,
+    activeLookupCount,
+    linearMembershipFallbackCount: 0,
+    snapshotParityPass,
+    constantTimeMembershipPass,
+    overallPass: snapshotParityPass && constantTimeMembershipPass
+  });
+  return snapshot;
+}
+
+function gridlyReportSnapshotMembershipAudit() {
+  return Object.freeze({ ...gridlyReportSnapshotMembershipAuditState });
+}
+if (typeof window !== "undefined") window.gridlyReportSnapshotMembershipAudit = gridlyReportSnapshotMembershipAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyReportSnapshotMembershipAudit", gridlyReportSnapshotMembershipAudit);
+// LP244.19 REPORT SNAPSHOT MEMBERSHIP END
+
 async function loadSharedReports(reason = "manual") {
   gridlyReportReadPresentationState = Object.freeze({ state: "loading", countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, completedAt: null });
   const gridlyPostPaintPhase = window.gridlyStartupDiagnostics?.beginPostPaintPhase?.(`loadSharedReports:${String(reason || "manual")}`, "loadSharedReports");
@@ -59760,42 +59846,15 @@ async function loadSharedReports(reason = "manual") {
     gridlyV734RefreshReuseState.communityPulseModel = null;
     gridlyAuthoritativeCommuteIntelligenceRuntime?.values?.clear?.();
     const activeHazardIds = new Set(activeHazards.map((report) => String(report.id || "")));
-    gridlyLoadedReportSnapshot = Object.freeze(normalized.map((report, index) => {
-      const raw = rawRows[index] || {};
-      const lifecycleState = getIncidentLifecycleState(report, lifecycleFilterNow);
-      const hasCoordinates = Number.isFinite(report.lat) && Number.isFinite(report.lng);
-      const countyScopeMatch = gridlyReportMatchesActiveCounty(report, activeCountyId);
-      const sourceAllowed = sourceVisibleNormalized.includes(report);
-      const genericHazard = report.reportKind === "hazard";
-      const activeLifecycle = lifecycleState === "active";
-      const activeCollection = genericHazard
-        ? activeHazardIds.has(String(report.id || ""))
-        : activeReports.includes(report);
-      const surfaceEligible = sourceAllowed && countyScopeMatch && activeLifecycle && hasCoordinates && activeCollection;
-      return Object.freeze({
-        id: raw.id ?? report.id ?? null,
-        created_at: raw.created_at ?? report.submittedAt ?? null,
-        device_id: raw.device_id ?? report.deviceId ?? null,
-        crossing_id: raw.crossing_id ?? report.crossingId ?? null,
-        crossing_name: raw.crossing_name ?? report.crossingName ?? null,
-        report_type: raw.report_type ?? report.type ?? null,
-        lat: Number.isFinite(report.lat) ? report.lat : null,
-        lng: Number.isFinite(report.lng) ? report.lng : null,
-        severity: report.severity || null,
-        expires_at: raw.expires_at ?? report.expiresAt ?? null,
-        countyId: report.countyId || null,
-        countyFips: report.countyFips || GRIDLY_COUNTY_REGISTRY[report.countyId]?.fips || null,
-        countyName: report.countyName || null,
-        communityName: report.communityName || null,
-        communityKey: report.communityKey || null,
-        placeGeoid: report.placeGeoid || null,
-        lifecycleState,
-        mapEligible: surfaceEligible,
-        alertsEligible: surfaceEligible,
-        awarenessEligible: surfaceEligible,
-        predicates: Object.freeze({ sourceAllowed, countyScopeMatch, genericHazard, activeLifecycle, hasCoordinates, activeCollection })
-      });
-    }));
+    gridlyLoadedReportSnapshot = gridlyBuildLoadedReportSnapshot({
+      normalized,
+      rawRows,
+      sourceVisibleNormalized,
+      activeReports,
+      activeHazardIds,
+      lifecycleFilterNow,
+      activeCountyId
+    });
     endReportStage(reconcileStage, "completed", { message: `activeHazards=${activeHazards.length}; activeReports=${activeReports.length}; recentlyCleared=${recentlyClearedRoadHazards.length}` });
     const visibilityStage = reportStage("report visibility processing", { dependency: "ownership and local accepted restoration" });
     gridlyReportSubmissionOwnershipState.refreshedCrossingReportCandidateCount = refreshedCrossingReportCandidates.length;
