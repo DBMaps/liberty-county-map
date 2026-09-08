@@ -1,0 +1,207 @@
+# LP244.22A pre-launch community-data reset and migration repair readiness
+
+**Updated:** 2026-09-08 20:48 UTC  
+**Decision:** **NO-GO for production mutation; local design is an owner-review candidate**  
+**Production work performed:** one bounded SELECT-only schema/count verification batch. No production data was changed; no migration history was repaired; no extension, Cron job, function, asset, policy, build, commit, or deployment was created.
+
+This packet supersedes the earlier LP244.22 execution design. Do not use an earlier two-phase `db push` procedure.
+
+## 1. Owner decision and reset authority
+
+The owner confirms that Gridly has not publicly launched, no real user/community reports exist, and all 510 current reports plus all 355 historical records are disposable pre-launch test fixtures. A future production change may deliberately purge them only after final owner approval. The purge must be reported as deletion of test data, never as preservation or migration of user data. This exception is limited to this pre-launch dataset and creates no precedent for deleting post-launch user data.
+
+That factual decision is not authorization to mutate production. Current blockers are the owner backup checkpoint, migration-history repair approval, report-only maintenance, production-shaped rehearsal, compatible client release, Cron and independent-monitor provisioning, and final mutation approval.
+
+## 2. Exact pre-launch reset scope
+
+The named reset is the opening phase of `20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql`. It obtains a transaction advisory lock and `ACCESS EXCLUSIVE` locks in a fixed order, verifies an owner-created authorization record and complete approved fingerprint, then deletes only:
+
+| Relation | Approved count | Classification |
+| --- | ---: | --- |
+| `public.reports` | 510 | all pre-launch test reports; 510 device-linked, 321 synthetic/device-derived, 321 embedding a device value, 195 clears |
+| `history_capture.historical_events` | 355 | all pre-launch history; 138 clear events |
+| `history_capture.writer_monitoring_events` | 0 | related writer telemetry |
+| `history_capture.retention_runs` | 0 | related retention telemetry |
+
+No separate production confirmation, receipt, replay, device-link, moderation, or report-history relation exists. The migration aborts if the new retention schema is partially present. It creates the new retention/replay tables only after the reset, so they start empty. No sequence reset is needed: report IDs are UUIDs, history identities need not be reused, and new identities belong to new tables.
+
+The SQL has no target for roadway, weather, crossing inventory, POI, community authority, saved places, configuration, geocoding, rural/Texas addresses, Auth, Storage, or unrelated data. It emits only non-sensitive deletion counts through the durable authorization row and a count-only NOTICE.
+
+Exact owner-authorized fingerprint:
+
+```text
+reports=510; device_reports=510; synthetic_reports=321
+embedded_device_reports=321; cleared_reports=195
+historical_events=355; historical_clears=138
+writer_events=0; retention_runs=0
+project_ref=nhwhkbkludzkuyxmkkcj
+```
+
+Any changed count or classification aborts before deletion.
+
+## 3. Durable post-launch reuse guard
+
+No trustworthy existing production launch-state authority exists. The smallest owner-controlled guard is `supabase/retention/authorize-prelaunch-community-reset.sql`:
+
+- it is a psql-only owner bootstrap requiring an explicit project ref, UUID authorization reference, and every approved count;
+- it creates one private authorization row for migration `20260908200554`;
+- RLS is enabled and all access is revoked from PUBLIC, `anon`, `authenticated`, and `service_role`;
+- triggers prohibit DELETE, TRUNCATE, field changes, status reversal, authorization replacement, and reuse;
+- the atomic migration can consume only the exact `authorized` row for this project/migration;
+- `release-community-reporting.sql` performs the only allowed `consumed -> launched` transition while atomically enabling protocol v2;
+- after `consumed` or `launched`, a second reset is impossible through the guard even if row counts match.
+
+Both owner scripts are future procedures, not migration files and not authorization to run them.
+
+## 4. Transaction and locks
+
+The original LP244.21 files `202609080001` and `202609080002` are explicit no-op history checkpoints. The reset, retention schema, replay protocol, grants, and security repair are one PostgreSQL transaction in `20260908200554`.
+
+It uses `lock_timeout='5s'`, `statement_timeout='60s'`, advisory key `(24422,1)`, and `ACCESS EXCLUSIVE` locks in fixed order on `public.reports`, then the three `history_capture` tables. That blocks reads/writes until commit. ALTER TABLE, triggers, policies, grants, functions, and indexes also take normal catalog/relation locks, but the explicit locks dominate client impact. The observed data is small—about 600 KiB/510 reports and 1.2 MiB/355 history rows—so work should take seconds and plausibly less than a minute. This is an estimate; contention or provider load can still hit the fail-closed timeouts.
+
+All statements are transactional, including the already-present `pgcrypto` check. Cron is deliberately separate. Any error rolls back deletion, schema, privileges, admission state, security repair, and guard consumption. After commit reporting remains in protocol-v2 maintenance; safe recovery is forward completion of postflight, clients, Cron/monitoring, and owner release. Restore is disaster recovery, not routine rollback.
+
+## 5. Eleven-migration reconciliation
+
+Production was rechecked at 2026-09-08 20:48:23 UTC. History contains only `202607280100 lp100_geocoding_governance`. The machine-readable map is `supabase/migration-reconciliation/lp24422a-production-plan.json`.
+
+| Migration | Effect | Production | Classification | Mark? | Execute? | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| `202606070001` | feedback table/RLS/policy | exact present | exact-effect-present | yes | no | exact relation, RLS, policy, shape |
+| `202606110001` | county/state columns | absent | required-not-applied | **no** | **yes** | absent on both tables; no superseder |
+| `202606160001` | three draft history tables | absent | immediate rollback supersedes | yes | no | exact targets absent; adjacent rollback removes full set |
+| `202606160002` | remove draft tables | exact final absence | exact-final-effect-present | yes | no | exact tables/policies/indexes absent |
+| `202606170410` | history storage/indexes/RLS | exact present | exact-effect-present | yes | no | three exact tables, columns, indexes, RLS |
+| `202606170411` | drop history storage | superseded | rollback-do-not-execute | yes | no | live storage required by later transition |
+| `202606170425` | phase-1 anon writer | exact present | exact-effect-present | yes | no | exact grant/policy; authenticated revoked |
+| `202606170426` | revoke phase-1 writer | superseded | rollback-do-not-execute | yes | no | atomic transition replaces/closes writer |
+| `202607280100` | geocoding governance | recorded/exact present | already-applied | no command | no | history plus exact tables/RPCs/index |
+| `202607290100` | rural-address registry | absent | required-not-applied | **no** | **yes** | exact table/index absent; Edge Function references it |
+| `202607290200` | Texas address foundation | absent | required-not-applied | **no** | **yes** | exact tables/RPC/indexes absent; Edge Function references it |
+
+No classification relies on a similar name. Exact proposed repair, not authorized:
+
+```powershell
+npx supabase migration repair 202606070001 202606160001 202606160002 202606170410 202606170411 202606170425 202606170426 --status applied --linked
+```
+
+Do not repair the three required absent versions; their SQL must execute. Do not repair already-recorded `202607280100`. After repair, the dry run must show exactly those three required legacy migrations, two no-op checkpoints, and one atomic transition, in order. Anything else aborts.
+
+## 6. `public.rls_auto_enable()`
+
+The final production check found it owned by `postgres`, `SECURITY DEFINER`, fixed `search_path=pg_catalog`, executable by PUBLIC/anon/authenticated, with no routine callers. Its only dependency is enabled `ddl_command_end` event trigger `ensure_rls`.
+
+It is unnecessary to the report protocol. The atomic migration revokes execution, drops every event trigger whose function OID matches exactly, then drops the function. An unexpected dependency makes the drop fail and rolls back everything. Tests prove ordinary clients cannot invoke it afterward, directly insert reports, or read admission state, and receive only bounded `maintenance` from RPCs.
+
+## 7. Cleanup scheduling and monitoring
+
+Production supports `pg_cron` (available default 1.6.4) but it is not installed. Supabase Cron backed by `pg_cron` is the supported mechanism. The prepared activation uses `CREATE EXTENSION` plus `cron.schedule`, never direct `cron.job` mutation.
+
+Run every minute (`* * * * *`) for day-149 cleanup, leaving 31 days before day 180. `run_cleanup()` serializes with an advisory transaction lock, records count/status/SQLSTATE-only results, is idempotent, and returns `-1` after caught failure so evidence commits. Uncaught/interrupted runs appear in `cron.job_run_details` and as stale health.
+
+Cron calls only the schema-qualified owner function; clients have no access. A NOLOGIN monitor role reads only the health view. An external monitor must poll each minute and notify the owner through the approved operational channel on non-success, success older than five minutes, any overdue/breached count, or query failure. Alert content is timestamp, status, bounded counts and SQLSTATE only—never report/device/token/body/coordinate data. This is one short job, within Supabase's recommended maximum eight concurrent jobs and ten-minute duration.
+
+## 8. CLI authority
+
+`supabase` is not on PATH. A cached Windows binary is version 2.116.0; local `--version`/`--help` confirmed it and reported current stable 2.117.0, matching the official release. Help verified multiple-version `migration repair ... --status applied|reverted --linked`, linked migration listing, dry-run push, and that `db push` should use `--skip-vault` here.
+
+Official Windows/project installation is a pinned local dev dependency, not global npm:
+
+```powershell
+npm install --save-dev --save-exact supabase@2.117.0
+npx supabase --version
+```
+
+Not run. No login, link, token, or production CLI command was used. Future separately approved commands:
+
+```powershell
+npx supabase migration list --linked
+npx supabase db push --linked --dry-run --skip-vault
+npx supabase db push --linked --skip-vault
+```
+
+Actual push is prohibited until project identity, repair transcript, exact pending order/checksums, owner guard, maintenance, and backup checkpoint are approved.
+
+## 9. Client/server order
+
+Server-first breaks current clients: RPCs stay in maintenance and direct INSERT is revoked. Client-first cannot safely bypass the old server: new RPCs are absent while old clients retain direct writing. Coordinated order:
+
+1. Enter report-only maintenance; stop create/confirm/edit/clear/history/retry/background writers.
+2. Drain in-flight operations and run exact read-only preflight.
+3. Create the owner guard with approved fingerprint.
+4. Repair only seven approved history versions.
+5. Verify history and `db push --dry-run --skip-vault` show exactly six pending files.
+6. Push under maintenance. The three required legacy migrations run first; failure before the atomic migration leaves report data untouched. The report transition then wholly commits or rolls back.
+7. Run count-only postflight and advisors while RPC maintenance remains closed.
+8. Activate/verify Cron and independent monitoring.
+9. Deploy compatible web/PWA assets and rebuild/release native packages. Existing checked-in Android assets are deliberately rejected.
+10. Verify old direct writers fail and new clients preserve their operation token on `maintenance`.
+11. Run owner-only release, atomically marking `launched` and enabling protocol v2.
+12. Recheck new RPC behavior, old-client rejection, cleanup, Realtime privacy and alerts; end maintenance. Publish policy only after verification.
+
+Server grants are authoritative; cache/version messaging is only UX defense in depth.
+
+## 10. Owner backup/PITR checkpoint
+
+In the Supabase project Dashboard navigate to **Database -> Backups** and record, without report data:
+
+- latest successful backup time and displayed status;
+- PITR enabled/disabled;
+- if enabled, exact earliest/latest points in Point in Time settings and configured window;
+- scheduled physical-backup or PITR recovery method;
+- in-place versus **Restore to a New Project**;
+- observed/rehearsed restoration duration.
+
+Verified plan facts: Pro daily physical backups provide seven days' access; PITR is a separate add-on requiring at least Small compute and replaces daily backups; in-place physical restore makes the project inaccessible; Restore to a New Project is a database-only isolated copy requiring endpoint/key and non-database service reconfiguration. `archive_mode=on` does not prove PITR or backup health. The connector cannot read backup status, so this remains owner-blocking. Never reconnect a pre-cutover restore until quarantine/sanitization certification passes.
+
+## 11. Changed files
+
+- `docs/LEGAL/LP24422-PRODUCTION-REPORT-RETENTION-MIGRATION-READINESS.md`
+- `supabase/migration-reconciliation/lp24422a-production-plan.json`
+- `supabase/migrations/202609080001_community_report_retention.sql`
+- `supabase/migrations/202609080002_community_submission_protocol.sql`
+- `supabase/migrations/20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql`
+- `supabase/retention/authorize-prelaunch-community-reset.sql`
+- `supabase/retention/activate-community-report-retention.sql`
+- `supabase/retention/release-community-reporting.sql`
+- `js/gridly-report-protocol.js`
+- `tests/helpers/lp24422a-prelaunch.cjs`
+- `tests/lp24422a-prelaunch-reset.test.cjs`
+- `tests/fixtures/lp24421-baseline.sql`
+- `tests/lp24421-report-retention.test.cjs`
+- `tests/lp24421-submission-protocol.test.cjs`
+- `tests/lp24421-restoration.test.mjs`
+- `tools/retention/certify-restoration.mjs`
+
+No bundle, native package, policy, credential, dump, or production configuration changed.
+
+## 12. Verification and remaining gates
+
+Isolated PostgreSQL 17 tests cover exact success/mismatch, post-launch rejection, late-error rollback, partial checkpoints, reconciliation, RLS/function denial, cleanup schedule/monitor failure, maintenance behavior, LP244.21 retention, replay, restoration/recovery, and launch contracts. Final results are in the task handoff.
+
+Static verification includes Node syntax, JSON coverage, `git diff --check`, and credential/dump/identifier/temp scans. The only archive match is pre-existing governed Census source `data/source/zip/2025_Gaz_zcta_national.zip`; no new archive exists.
+
+Local changes are ready for owner review and owner-authorized commit, but production remains **NO-GO**. Remaining gates:
+
+1. Complete the backup/PITR checkpoint.
+2. Approve the seven-version repair and actual execution of three absent migrations.
+3. Pin CLI 2.117.0 and capture credential-free version/help.
+4. Rehearse the exact six-file pending sequence on production-shaped staging.
+5. Approve report-only maintenance and recovery operators.
+6. Run/approve a fresh single SELECT-only fingerprint preflight.
+7. Separately authorize guard bootstrap, history repair, push, Cron, client deployment, and release; never mix audit SELECTs with mutating SQL batches.
+8. Provision independent owner notification.
+9. Prepare/verify compatible web/native artifacts and retired-client rejection.
+10. Run postflight/advisors; publish policy only after technical verification.
+
+No production mutation is authorized by this document.
+
+## Official references
+
+- [CLI local development](https://supabase.com/docs/guides/local-development/cli/getting-started)
+- [CLI releases](https://github.com/supabase/cli/releases)
+- [Migration workflows](https://supabase.com/docs/guides/local-development/cli-workflows)
+- [Supabase Cron](https://supabase.com/docs/guides/cron)
+- [Database backups](https://supabase.com/docs/guides/platform/backups)
+- [Restore to a new project](https://supabase.com/docs/guides/platform/clone-project)
+- [Breaking-change changelog](https://supabase.com/changelog?types=breaking-change)

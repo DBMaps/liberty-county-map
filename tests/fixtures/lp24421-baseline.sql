@@ -17,7 +17,7 @@ create policy read_all on reports for select using (true);
 create policy insert_all on reports for insert with check (true);
 create publication supabase_realtime for table reports;
 create schema history_capture;
-create table history_capture.historical_events(id uuid default gen_random_uuid(), source_report_id text, envelope jsonb);
+create table history_capture.historical_events(id uuid default gen_random_uuid(), event_type text default 'report_created', source_report_id text, envelope jsonb);
 create table history_capture.writer_monitoring_events(id uuid default gen_random_uuid(), detail jsonb);
 create table history_capture.retention_runs(id uuid default gen_random_uuid(), detail jsonb);
 grant usage on schema history_capture to anon,authenticated,service_role;

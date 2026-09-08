@@ -4,8 +4,8 @@ import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
 const root = new URL('../../', import.meta.url);
-export const VERSION = 'LP244.21D-1';
-const migrations = ['202609080001_community_report_retention.sql','202609080002_community_submission_protocol.sql'];
+export const VERSION = 'LP244.22A-1';
+const migrations = ['202609080001_community_report_retention.sql','202609080002_community_submission_protocol.sql','20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql'];
 const sources = migrations.map(p=>readFileSync(new URL('supabase/migrations/'+p,root),'utf8').replace(/\r\n/g,'\n'));
 export const migrationHash = createHash('sha256').update(sources.join('\n')).digest('hex');
 const expectedFunctions = sources.flatMap(s=>Array.from(s.matchAll(/create function ([\w.]+)\([\s\S]*?as \$\$([\s\S]*?)\$\$/g), m=>({name:m[1],body:m[2].trim(),definer:/security definer/i.test(m[0].slice(0,m[0].indexOf('as $$')))})));
@@ -52,6 +52,7 @@ const columns = {
  'report_retention.device_links':'report_id,device_id',
  'report_retention.replay_evidence':'token_digest,first_accepted_at',
  'report_retention.observation_receipts':'report_id,token_digest,original_submitted_at',
+ 'report_retention.admission_state':'singleton,protocol_version,reporting_enabled,changed_at',
  'report_retention.condition_month_counts':'submission_month,condition_family,report_count',
  'report_retention.runs':'id,started_at,completed_at,status,deleted_reports,error_code'
 };

@@ -52,6 +52,9 @@
           const response=await client.rpc(rpc,args);
           if(response?.error) return {status:'retryable_failure'};
           const result=response?.data;
+          // Maintenance is fail-closed but retryable. Preserve the operation and
+          // its UUID so reopening cannot manufacture a second submission.
+          if(result?.status==='maintenance') return {status:'maintenance'};
           if(!TERMINAL.has(result?.status)) return {status:'retryable_failure'};
           // Never return raw transport errors/arguments, token, or device to diagnostics.
           storage.removeItem(KEY);
