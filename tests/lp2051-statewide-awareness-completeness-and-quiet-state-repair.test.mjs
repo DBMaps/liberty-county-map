@@ -49,7 +49,7 @@ test('production builders gate quiet absence copy while preserving active facts'
 });
 test('startup and report failure lifecycle cannot masquerade as succeeded',()=>{
  const loader=block('async function loadSharedReports','if (typeof window !== "undefined")');
- assert.match(loader,/state: "loading"/);assert.match(loader,/state: "succeeded"/);assert.match(loader,/state: "failed"/);
+ assert.match(loader,/state: "loading"/);assert.match(loader,/gridlyCommitReportReadCoverage\(reportReadRequest, "succeeded"\)/);assert.match(loader,/gridlyCommitReportReadCoverage\(reportReadRequest, "failed"\)/);
  const pulse=block('function getGridlyHomeCommunityPulseCopy','function gridlyCommunityPulseConsumerHeadlineAvailable');
  assert.match(pulse,/Monitoring nearby conditions/);assert.match(pulse,/No active local issues reported\./);
 });

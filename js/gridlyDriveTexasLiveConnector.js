@@ -21,6 +21,7 @@
     lastError: null,
     lastRequestAt: null,
     initialFetchAttempted: false,
+    requestInFlight: false,
     refreshIntervalMs: REFRESH_INTERVAL_MS
   };
 
@@ -488,7 +489,7 @@
 
   async function fetchNow() {
     if (fetchInFlight) return fetchInFlight;
-    fetchInFlight = fetchNowInternal().finally(() => { fetchInFlight = null; });
+    fetchInFlight = fetchNowInternal().finally(() => { state.requestInFlight = false; fetchInFlight = null; });
     return fetchInFlight;
   }
 
@@ -496,6 +497,8 @@
     state.initialFetchAttempted = true;
     state.networkingAvailable = typeof globalScope.fetch === "function";
     state.lastRequestAt = new Date().toISOString();
+    state.requestInFlight = true;
+    globalScope.gridlySynchronizeOpenAlertsPortrait?.("roadway-source-loading");
     let attempt = 0;
     let lastError = null;
 
@@ -521,6 +524,7 @@
           const recordSignature = buildRecordSignature(awarenessNormalizedRecords);
           const evidenceChanged = recordSignature !== lastRecordSignature;
           lastRecordSignature = recordSignature;
+          state.requestInFlight = false;
           state.connected = true;
           state.lastFetchSucceeded = true;
           state.normalizedRecordCount = awarenessNormalizedRecords.length;
@@ -538,6 +542,7 @@
       }
       throw lastError || new Error("DriveTexas connector request failed");
     } catch (error) {
+      state.requestInFlight = false;
       state.connected = false;
       state.lastFetchSucceeded = false;
       state.normalizedRecordCount = awarenessNormalizedRecords.length;
@@ -905,6 +910,7 @@
       apiKeyConfigured: Boolean(getConnectorConfig().apiKey),
       configurationSource: getConnectorConfig().configurationSource,
       initialFetchAttempted: state.initialFetchAttempted === true,
+      requestInFlight: state.requestInFlight === true,
       lastFetchSucceeded: state.lastFetchSucceeded === true,
       lastSuccessfulAt: lastSuccessfulFetchAt,
       retainedRecordCount: allNormalizedRecords.length,

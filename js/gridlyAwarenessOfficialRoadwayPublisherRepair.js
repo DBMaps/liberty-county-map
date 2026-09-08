@@ -248,7 +248,7 @@
     // The publisher may consume only a projection owned by the selected
     // canonical area. Never relabel an older area's records with the current
     // summary identity, even when source-health retention is in effect.
-    if (connectorRecords.length && !areaOwnershipMatches) {
+    if (!areaOwnershipMatches) {
       return {
         records: [], source: "gridlyDriveTexasConnector", connected: false,
         fetchFailed: false, healthyEmpty: false, retained: false,
