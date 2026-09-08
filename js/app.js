@@ -46696,6 +46696,77 @@ function gridlyEnsureWeatherAfterStartup() {
   window.gridlyWeatherConnector?.refreshAwarenessView?.("post-startup-governed-awareness-ready");
 }
 
+let gridlyStartupRoadwayReportOverlapState = null;
+let gridlyStartupRoadwayReportOverlapGeneration = 0;
+function gridlyBeginStartupRoadwayReportOverlap(startupGeneration, countyId) {
+  const state = { startupGeneration: Number(startupGeneration || ++gridlyStartupRoadwayReportOverlapGeneration), countyId: gridlyNormalizeCountyId(countyId || gridlyGetActiveCountyId()), roadwayStatus: "pending", roadwayActivationSequence: null, reportPublicationRevision: null, pendingEnrichment: null, enrichmentDeferredForRevision: null, consumerGateDepth: 0 };
+  gridlyStartupRoadwayReportOverlapState = state;
+  window.gridlyStartupDiagnostics?.recordRoadwayReportOverlapEvent?.("overlapEnabled", { startupGeneration: state.startupGeneration, countyId: state.countyId });
+  window.gridlyStartupDiagnostics?.recordRoadwayReportOverlapEvent?.("partialDependencyPreserved", { startupGeneration: state.startupGeneration, countyId: state.countyId });
+  return state;
+}
+function gridlyStartupRoadwayReportOverlapOwns(state) {
+  return Boolean(state && gridlyStartupRoadwayReportOverlapState === state && gridlyNormalizeCountyId(gridlyGetActiveCountyId()) === state.countyId);
+}
+function gridlyWithStartupRoadEnrichmentGate(work) {
+  const state = gridlyStartupRoadwayReportOverlapState;
+  if (!gridlyStartupRoadwayReportOverlapOwns(state) || state.roadwayStatus !== "pending") return work();
+  const dependencyPhase = window.gridlyStartupDiagnostics?.beginRoadwayReportDependencyPhase?.("immediateConsumers");
+  state.consumerGateDepth += 1;
+  try { return work(); } finally {
+    state.consumerGateDepth = Math.max(0, state.consumerGateDepth - 1);
+    window.gridlyStartupDiagnostics?.endRoadwayReportDependencyPhase?.(dependencyPhase);
+  }
+}
+function gridlyDeferStartupRoadEnrichment(owner) {
+  const state = gridlyStartupRoadwayReportOverlapState;
+  if (!gridlyStartupRoadwayReportOverlapOwns(state) || state.consumerGateDepth < 1 || state.roadwayStatus === "ready") return false;
+  const revision = Number(gridlyIncidentRenderReconciliationState?.publicationRevision || 0);
+  if (state.enrichmentDeferredForRevision !== revision) {
+    state.enrichmentDeferredForRevision = revision;
+    window.gridlyStartupDiagnostics?.recordRoadwayReportOverlapEvent?.("roadEnrichmentDeferred", { owner, startupGeneration: state.startupGeneration, countyId: state.countyId, reportRevision: revision });
+  }
+  window.gridlyStartupDiagnostics?.recordRoadwayDependencyRead?.({ owner, fallback: true });
+  return true;
+}
+function gridlyMarkStartupBaseReportPublished(revision) {
+  const state = gridlyStartupRoadwayReportOverlapState;
+  if (!gridlyStartupRoadwayReportOverlapOwns(state)) return;
+  const nextRevision = Number(revision);
+  if (state.pendingEnrichment && state.pendingEnrichment.reportRevision !== nextRevision) gridlySuppressStartupRoadEnrichment(state, "report_revision_replaced");
+  state.reportPublicationRevision = nextRevision;
+  if (state.roadwayStatus === "pending") state.pendingEnrichment = { startupGeneration: state.startupGeneration, countyId: state.countyId, reportRevision: state.reportPublicationRevision };
+  if (state.roadwayStatus === "failed") window.gridlyStartupDiagnostics?.recordRoadwayReportOverlapEvent?.("roadwayFailureBaseAwarenessPass", { reportRevision: state.reportPublicationRevision });
+}
+function gridlySuppressStartupRoadEnrichment(state, reason) {
+  if (state) state.pendingEnrichment = null;
+  window.gridlyStartupDiagnostics?.recordRoadwayReportOverlapEvent?.("staleRoadEnrichmentSuppressed", { reason, startupGeneration: state?.startupGeneration || null, countyId: state?.countyId || null });
+}
+function gridlyReconcileStartupRoadEnrichment(state) {
+  const pending = state?.pendingEnrichment;
+  if (!pending) return false;
+  if (!gridlyStartupRoadwayReportOverlapOwns(state)) { gridlySuppressStartupRoadEnrichment(state, "startup_or_county_changed"); return false; }
+  if (state.roadwayStatus !== "ready" || state.roadwayActivationSequence !== gridlyRoadwayPackageRuntimeState.activeActivationSequence) { gridlySuppressStartupRoadEnrichment(state, "roadway_generation_changed"); return false; }
+  if (pending.reportRevision !== gridlyIncidentRenderReconciliationState.publicationRevision) { gridlySuppressStartupRoadEnrichment(state, "report_revision_changed"); return false; }
+  state.pendingEnrichment = null;
+  refreshReportHazardViews("startup_road_enrichment_reconciliation", { skipIncidentRender: true });
+  gridlyPublishIncidentRenderRevision("startup_road_enrichment_reconciliation");
+  window.gridlyStartupDiagnostics?.recordRoadwayReportOverlapEvent?.("roadEnrichmentApplied", { startupGeneration: state.startupGeneration, countyId: state.countyId, reportRevision: pending.reportRevision, roadwayActivationSequence: state.roadwayActivationSequence });
+  return true;
+}
+function gridlyCompleteStartupRoadwayOverlap(state, error = null) {
+  if (!gridlyStartupRoadwayReportOverlapOwns(state)) { gridlySuppressStartupRoadEnrichment(state, "stale_roadway_completion"); return; }
+  const failed = Boolean(error || roadwayDatasetLoadError);
+  state.roadwayStatus = failed ? "failed" : "ready";
+  state.roadwayActivationSequence = Number(gridlyRoadwayPackageRuntimeState.activeActivationSequence || 0);
+  window.gridlyStartupDiagnostics?.markRoadwayReportDependencyEvent?.(failed ? "roadwayFailed" : "roadwayReady", { fallback: failed });
+  if (failed) {
+    state.pendingEnrichment = null;
+    if (state.reportPublicationRevision !== null) window.gridlyStartupDiagnostics?.recordRoadwayReportOverlapEvent?.("roadwayFailureBaseAwarenessPass", { reportRevision: state.reportPublicationRevision });
+    return;
+  }
+  gridlyReconcileStartupRoadEnrichment(state);
+}
 document.addEventListener("DOMContentLoaded", async () => {
   const startupDiagnostics = window.gridlyStartupDiagnostics;
   startupDiagnostics?.beginRoadwayReportDependencyGeneration?.({ countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null });
@@ -46758,15 +46829,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   await runStartupStage("crossing package loading and initial marker rendering", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("crossing package loading and initial marker rendering", "loadCrossings", () => loadCrossings()) : loadCrossings(), { blocking: true, network: true, dependency: "curated/FRA crossing package", timeoutMs: 20000, degradeOnFailure: true, cachedOrFallbackUsed: true });
   startupDiagnostics?.markRoadwayReportDependencyEvent?.("crossingsReady");
   startupDiagnostics?.markRoadwayReportDependencyEvent?.("roadwayStarted");
-  await runStartupStage("roadway dataset loading", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("roadway dataset loading", "gridlyActivateRoadwayDatasetForActiveCounty", () => gridlyActivateRoadwayDatasetForActiveCounty("startup")) : gridlyActivateRoadwayDatasetForActiveCounty("startup"), { blocking: false, network: true, dependency: "county roadway dataset", timeoutMs: 12000, degradeOnFailure: true });
-  startupDiagnostics?.markRoadwayReportDependencyEvent?.(roadwayDatasetLoadError ? "roadwayFailed" : "roadwayReady", { fallback: Boolean(roadwayDatasetLoadError) });
+  const startupOverlapState = gridlyBeginStartupRoadwayReportOverlap(startupDiagnostics?.roadwayReportDependencyAudit?.().startupGeneration, gridlyGetActiveCountyId());
+  const roadwayActivationPromise = startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("roadway dataset loading", "gridlyActivateRoadwayDatasetForActiveCounty", () => gridlyActivateRoadwayDatasetForActiveCounty("startup")) : gridlyActivateRoadwayDatasetForActiveCounty("startup");
+  const roadwayStartupPromise = runStartupStage("roadway dataset loading", () => roadwayActivationPromise, { blocking: false, network: true, dependency: "county roadway dataset", timeoutMs: 12000, degradeOnFailure: true });
+  roadwayActivationPromise.then(() => gridlyCompleteStartupRoadwayOverlap(startupOverlapState), (error) => gridlyCompleteStartupRoadwayOverlap(startupOverlapState, error));
+  roadwayStartupPromise.catch((error) => console.warn("Roadway activation continued after startup unlock and failed", error));
   const initialReportHydration = runStartupStage("initial report and incident loading", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("initial report and incident loading", "loadSharedReports(initial_bootstrap)", () => loadSharedReports("initial_bootstrap")) : loadSharedReports("initial_bootstrap"), { blocking: false, network: true, dependency: "Supabase reports", timeoutMs: 15000, degradeOnFailure: true });
   initialReportHydration.catch((error) => console.warn("Initial report hydration continued after startup unlock and failed", error));
   if (startupLayoutModeIsDesktop && evaluateLayoutMode() === "desktop") {
-    await runStartupStage("initial Community Pulse and awareness preview render", async () => {
+    await runStartupStage("initial Community Pulse and awareness preview render", async () => gridlyWithStartupRoadEnrichmentGate(() => {
       renderGridlyCommunityPulse({ reason: "initial_bootstrap" });
       renderGridlyIntelligencePreviewCard({ reason: "initial_bootstrap" });
-    }, { blocking: false, dependency: "desktop awareness UI" });
+    }), { blocking: false, dependency: "desktop awareness UI" });
   } else {
     const skipped = startupDiagnostics?.beginStage?.("initial Community Pulse and awareness preview render", { blocking: false, dependency: "desktop awareness UI" });
     startupDiagnostics?.endStage?.(skipped, "skipped", { message: "non-desktop startup layout" });
@@ -59767,9 +59841,13 @@ async function loadSharedReports(reason = "manual") {
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     endRoadwayDependencyPhase();
     beginRoadwayDependencyPhase("immediateConsumers");
-    refreshReportHazardViews(`loadSharedReports:${reason}`, { skipIncidentRender: true });
-    if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("firstGovernedAwarenessReady");
-    gridlyPublishIncidentRenderRevision(`loadSharedReports:${reason}`);
+    const publishBaseReportTruth = () => {
+      refreshReportHazardViews(`loadSharedReports:${reason}`, { skipIncidentRender: true });
+      if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("firstGovernedAwarenessReady");
+      return gridlyPublishIncidentRenderRevision(`loadSharedReports:${reason}`);
+    };
+    const reportPublicationRevision = gridlyWithStartupRoadEnrichmentGate(publishBaseReportTruth);
+    gridlyMarkStartupBaseReportPublished(reportPublicationRevision);
     if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("reportsPublished");
     endRoadwayDependencyPhase();
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
@@ -106173,6 +106251,7 @@ function buildNearbyPairResolutionIndexKey(lat, lng, primaryRoad = "", roadEvalu
 }
 
 function resolveNearbyRoadPair(lat, lng, primaryRoad = "", roadEvaluationContext = null) {
+  if (typeof gridlyDeferStartupRoadEnrichment === "function" && gridlyDeferStartupRoadEnrichment("resolveNearbyRoadPair")) return { roadA: "", roadB: "", used: false, distanceMiles: null, rejectedReason: "roadway_startup_pending", samples: [] };
   window.gridlyStartupDiagnostics?.recordRoadwayDependencyRead?.({ owner: "resolveNearbyRoadPair", fallback: !roadwayDatasetLoaded });
   const evaluationContext = roadEvaluationContext || buildGridlyRoadEvaluationContext();
   const primaryNormalized = evaluateRoadNameCandidate(primaryRoad, evaluationContext);
@@ -106333,6 +106412,7 @@ function buildResolveNearestRoadNameIndexKey(lat, lng, options = {}) {
 }
 
 function resolveNearestRoadName(lat, lng) {
+  if (typeof gridlyDeferStartupRoadEnrichment === "function" && gridlyDeferStartupRoadEnrichment("resolveNearestRoadName")) return null;
   window.gridlyStartupDiagnostics?.recordRoadwayDependencyRead?.({ owner: "resolveNearestRoadName", fallback: !roadwayDatasetLoaded });
   const __lp012StartedAt = gridlyLP012Now();
   try {

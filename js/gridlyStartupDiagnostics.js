@@ -108,7 +108,7 @@
 
   const dependencyTimingKeys = ["bootstrapStartedAt", "mapReadyAt", "crossingsStartedAt", "crossingsReadyAt", "roadwayStartedAt", "roadwayReadyAt", "roadwayFailedAt", "reportsStartedAt", "reportsRetrievedAt", "reportsPublishedAt", "reportsFailedAt", "firstGovernedAwarenessReadyAt", "firstIncidentRenderReadyAt", "usableCheckpointAt"];
   const dependencyPhases = ["retrieval", "normalization", "governance", "publication", "immediateConsumers"];
-  const roadwayReportDependencyState = { startupGeneration: 0, countyId: null, activePhase: null, timings: {}, dependencyReads: {}, preReadyDependencyReadCount: 0, preReadyDependencyFailureCount: 0, fallbackCount: 0, evidence: [], history: [] };
+  const roadwayReportDependencyState = { startupGeneration: 0, countyId: null, activePhase: null, timings: {}, dependencyReads: {}, preReadyDependencyReadCount: 0, preReadyDependencyFailureCount: 0, fallbackCount: 0, roadEnrichmentDeferredCount: 0, roadEnrichmentAppliedCount: 0, staleRoadEnrichmentSuppressedCount: 0, roadwayFailureBaseAwarenessPass: false, overlapEnabled: false, partialDependencyPreserved: false, evidence: [], history: [] };
   function resetRoadwayReportDependencyState(countyId) {
     roadwayReportDependencyState.countyId = countyId || null;
     roadwayReportDependencyState.activePhase = null;
@@ -117,6 +117,12 @@
     roadwayReportDependencyState.preReadyDependencyReadCount = 0;
     roadwayReportDependencyState.preReadyDependencyFailureCount = 0;
     roadwayReportDependencyState.fallbackCount = 0;
+    roadwayReportDependencyState.roadEnrichmentDeferredCount = 0;
+    roadwayReportDependencyState.roadEnrichmentAppliedCount = 0;
+    roadwayReportDependencyState.staleRoadEnrichmentSuppressedCount = 0;
+    roadwayReportDependencyState.roadwayFailureBaseAwarenessPass = false;
+    roadwayReportDependencyState.overlapEnabled = false;
+    roadwayReportDependencyState.partialDependencyPreserved = false;
     roadwayReportDependencyState.evidence = [];
   }
   resetRoadwayReportDependencyState(null);
@@ -154,6 +160,15 @@
     push(roadwayReportDependencyState.evidence, { phase, owner: details?.owner || "unspecified", beforeRoadwayReady: beforeReady, failure: Boolean(details?.failure), fallback: Boolean(details?.fallback), at: nowMs() }, 80);
     return true;
   }
+  function recordRoadwayReportOverlapEvent(name, details) {
+    if (name === "overlapEnabled") roadwayReportDependencyState.overlapEnabled = true;
+    if (name === "partialDependencyPreserved") roadwayReportDependencyState.partialDependencyPreserved = true;
+    if (name === "roadEnrichmentDeferred") roadwayReportDependencyState.roadEnrichmentDeferredCount += 1;
+    if (name === "roadEnrichmentApplied") roadwayReportDependencyState.roadEnrichmentAppliedCount += 1;
+    if (name === "staleRoadEnrichmentSuppressed") roadwayReportDependencyState.staleRoadEnrichmentSuppressedCount += 1;
+    if (name === "roadwayFailureBaseAwarenessPass") roadwayReportDependencyState.roadwayFailureBaseAwarenessPass = true;
+    push(roadwayReportDependencyState.evidence, { event: name, at: nowMs(), ...(details || {}) }, 80);
+  }
   function roadwayReportDependencyAudit() {
     const timings = clone(roadwayReportDependencyState.timings);
     const dependencyReads = clone(roadwayReportDependencyState.dependencyReads);
@@ -166,10 +181,11 @@
     const observedCountyIds = [...roadwayReportDependencyState.history.map((entry) => entry.countyId), roadwayReportDependencyState.countyId].filter((value, index, all) => value && all.indexOf(value) === index);
     return {
       available: true, startupGeneration: roadwayReportDependencyState.startupGeneration, countyId: roadwayReportDependencyState.countyId, observedCountyIds, currentClassification,
-      timings, ordering: { reportsStartedBeforeRoadwayReady: before(timings.reportsStartedAt, timings.roadwayReadyAt), reportsPublishedBeforeRoadwayReady: before(timings.reportsPublishedAt, timings.roadwayReadyAt), awarenessReadyBeforeRoadwayReady: before(timings.firstGovernedAwarenessReadyAt, timings.roadwayReadyAt), usableBeforeRoadwayReady: before(timings.usableCheckpointAt, timings.roadwayReadyAt) },
+      timings, ordering: { reportsStartedBeforeRoadwayReady: before(timings.reportsStartedAt, timings.roadwayReadyAt), reportsPublishedBeforeRoadwayReady: before(timings.reportsPublishedAt, timings.roadwayReadyAt), awarenessReadyBeforeRoadwayReady: before(timings.firstGovernedAwarenessReadyAt, timings.roadwayReadyAt), firstAwarenessBeforeRoadwayReady: before(timings.firstGovernedAwarenessReadyAt, timings.roadwayReadyAt), usableBeforeRoadwayReady: before(timings.usableCheckpointAt, timings.roadwayReadyAt) },
       roadwayReadyWhenReportsStarted: roadwayReadyWhen(timings.reportsStartedAt), roadwayReadyWhenReportsPublished: roadwayReadyWhen(timings.reportsPublishedAt), roadwayReadyWhenFirstAwarenessReady: roadwayReadyWhen(timings.firstGovernedAwarenessReadyAt), roadwayReadyWhenUsable: roadwayReadyWhen(timings.usableCheckpointAt),
       dependencyReads, preReadyDependencyReadCount: roadwayReportDependencyState.preReadyDependencyReadCount, preReadyDependencyFailureCount: roadwayReportDependencyState.preReadyDependencyFailureCount, fallbackCount: roadwayReportDependencyState.fallbackCount,
-      roadwayStageBlockingFlag: false, roadwayStageAwaitedByBootstrap: true, hardDependencyEvidence, partialDependencyEvidence, independenceEvidence, evidence: clone(roadwayReportDependencyState.evidence), overallPass: currentClassification !== "not_yet_classified" && roadwayReportDependencyState.preReadyDependencyFailureCount === 0
+      roadEnrichmentDeferredCount: roadwayReportDependencyState.roadEnrichmentDeferredCount, roadEnrichmentAppliedCount: roadwayReportDependencyState.roadEnrichmentAppliedCount, staleRoadEnrichmentSuppressedCount: roadwayReportDependencyState.staleRoadEnrichmentSuppressedCount, roadwayFailureBaseAwarenessPass: roadwayReportDependencyState.roadwayFailureBaseAwarenessPass, overlapEnabled: roadwayReportDependencyState.overlapEnabled, partialDependencyPreserved: roadwayReportDependencyState.partialDependencyPreserved,
+      roadwayStageBlockingFlag: false, roadwayStageAwaitedByBootstrap: false, hardDependencyEvidence, partialDependencyEvidence, independenceEvidence, evidence: clone(roadwayReportDependencyState.evidence), overallPass: roadwayReportDependencyState.overlapEnabled && roadwayReportDependencyState.partialDependencyPreserved && currentClassification !== "not_yet_classified" && roadwayReportDependencyState.preReadyDependencyFailureCount === 0
     };
   }
 
@@ -204,7 +220,7 @@
       evidenceConfidence: longest ? "browser-measured-longtask" : "architecture-only-pending-browser-validation", protectedSystemsChanged: false
     };
   }
-  window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe, beginRoadwayReportDependencyGeneration, markRoadwayReportDependencyEvent, beginRoadwayReportDependencyPhase, endRoadwayReportDependencyPhase, recordRoadwayDependencyRead, roadwayReportDependencyAudit };
+  window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe, beginRoadwayReportDependencyGeneration, markRoadwayReportDependencyEvent, beginRoadwayReportDependencyPhase, endRoadwayReportDependencyPhase, recordRoadwayDependencyRead, recordRoadwayReportOverlapEvent, roadwayReportDependencyAudit };
   window.gridlyRoadwayReportStartupDependencyAudit = roadwayReportDependencyAudit;
   window.gridlyPostPaintBlockingAudit = postPaintBlockingAudit;
   replayEarlyStartupEvents();

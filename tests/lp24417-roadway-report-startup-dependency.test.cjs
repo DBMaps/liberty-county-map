@@ -72,11 +72,11 @@ test('timing capture records all required launch boundaries', () => {
   assert.equal(audit.roadwayReadyWhenUsable, true);
 });
 
-test('current serialized baseline is reported from production source order', () => {
-  const roadwayAwait = appSource.indexOf('await runStartupStage("roadway dataset loading"');
+test('LP244.17 ordering instrumentation reports the LP244.18 overlap migration', () => {
+  const roadwayStart = appSource.indexOf('const roadwayStartupPromise = runStartupStage("roadway dataset loading"');
   const reportsStart = appSource.indexOf('const initialReportHydration = runStartupStage("initial report and incident loading"');
-  assert.ok(roadwayAwait > 0 && reportsStart > roadwayAwait);
-  assert.match(appSource.slice(roadwayAwait, reportsStart), /await runStartupStage/);
+  assert.ok(roadwayStart > 0 && reportsStart > roadwayStart);
+  assert.doesNotMatch(appSource.slice(roadwayStart, reportsStart), /await roadwayStartupPromise/);
 });
 
 test('controlled delayed roadway promise holds report start at the current await boundary', async () => {
@@ -218,8 +218,9 @@ test('normalization and governance source ranges contain no roadway resolver cal
   for (const source of [normalize, governed]) assert.doesNotMatch(source, /resolveNearestRoadName|resolveNearbyRoadPair|roadwaySegmentFeatures|roadwayDatasetLoaded/);
 });
 
-test('roadway stage remains nonblocking diagnostically but awaited by bootstrap', () => {
-  assert.match(appSource, /await runStartupStage\("roadway dataset loading"[\s\S]*?\{ blocking: false,/);
+test('roadway stage remains nonblocking diagnostically and independently observed by bootstrap', () => {
+  assert.match(appSource, /const roadwayStartupPromise = runStartupStage\("roadway dataset loading"[\s\S]*?\{ blocking: false,/);
+  assert.doesNotMatch(appSource, /await runStartupStage\("roadway dataset loading"/);
 });
 
 test('map readiness is independently captured before crossings and roadway stages', () => {
