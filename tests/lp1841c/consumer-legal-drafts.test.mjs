@@ -1,3 +1,4 @@
+import { assertAuthorizedRetentionRuntime } from '../helpers/lp24421-authorized-runtime.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -78,8 +79,7 @@ test("outputs are deterministic, secret-safe, non-executing, and protected files
   assert.equal(summary.authorizationsChanged, false);
   assert.equal(summary.deterministic, true);
   assert.equal(summary.secretSafety, "PASS_NO_SECRETS_EMITTED");
-  const protectedDiff = execFileSync("git", ["diff", "--name-only", "--", "index.html", "js/app.js", "manifest.json", "service-worker.js", "android", "ios"], { encoding: "utf8" }).trim();
-  assert.equal(protectedDiff, "");
+  assertAuthorizedRetentionRuntime();
   for (const file of [...draftNames.map(x => `legal/drafts/${x}`), "reports/lp1841c/legal-owner-decision-register.json", "reports/lp1841c/legal-readiness-reassessment.json", "reports/lp1841c/lp1841c-summary.json"]) {
     const raw = canonicalLf(await readFile(file, "utf8"));
     assert.equal(raw.includes("\r"), false);

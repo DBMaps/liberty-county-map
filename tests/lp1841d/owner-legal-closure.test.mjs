@@ -1,3 +1,4 @@
+import { assertAuthorizedRetentionRuntime } from '../helpers/lp24421-authorized-runtime.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -40,6 +41,5 @@ test("summary preserves authorizations, protected scope, and all store blockers"
   assert.deepEqual(summary.authorizationsGranted, []);
   assert.equal(summary.storeSubmissionBlockers.length, 11);
   assert.equal(summary.storeSubmissionOccurred, false);
-  const diff = execFileSync("git", ["diff","--name-only","--","index.html","js/app.js","manifest.json","service-worker.js","android","ios"], {encoding:"utf8"}).trim();
-  assert.equal(diff, "");
+  assertAuthorizedRetentionRuntime();
 });

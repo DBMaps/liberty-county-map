@@ -2,7 +2,7 @@
 # V425 exposes only the approved schemas required by the PostgREST API.
 
 [api]
-schemas = ["public", "graphql_public", "history_capture"]
+schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 
 [functions.gridly-geocode]

@@ -46,15 +46,15 @@ const fakeStorageClient = {
 
 api.capturePhase1AEvent({ eventType: 'report_created', report: { id: 'abc' }, storageClient: fakeStorageClient }).then((captureResult) => {
   assert.strictEqual(captureResult.ok, true);
-  assert.strictEqual(captureResult.noop, false);
-  assert.strictEqual(captureResult.writesEnabled, true);
-  assert.strictEqual(captureResult.reason, 'passive_history_capture_write_accepted');
+  assert.strictEqual(captureResult.noop, true);
+  assert.strictEqual(captureResult.writesEnabled, undefined, 'disabled coordinator returns no write authorization');
+  assert.strictEqual(captureResult.reason, 'passive_history_capture_sidecar_disabled');
 
   const audit = api.auditSidecar();
   assert.deepStrictEqual(audit, {
     sidecarAvailable: true,
-    captureEnabled: true,
-    writerEnabled: true,
+    captureEnabled: false,
+    writerEnabled: false,
     passiveEvidenceCollectionMode: true,
     hooksInstalled: true,
     installedHooks: [

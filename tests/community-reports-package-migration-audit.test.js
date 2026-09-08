@@ -47,3 +47,15 @@ assert.strictEqual(migrationAudit.safeForIntelligencePackageCertification, true)
 assert.strictEqual(migrationAudit.validationPassed, true);
 
 console.log(JSON.stringify({ migrationAudit }, null, 2));
+
+// Active regional membership follows validated package metadata, not a two-county list.
+const {validateRegionalCommunityFoundation}=require('../js/gridlyPackageRegistry.js');
+const foundation=context.gridlySoutheastTexasCommunityFoundation;
+const communities=context.gridlyPackageRegistry.discover({packageType:'community'});
+const check=rows=>validateRegionalCommunityFoundation(foundation,{discover:()=>rows});
+assert.equal(check(communities).valid,true);
+const active=communities.find(p=>p.regional?.activeImplementation && !['liberty-tx','chambers-tx'].includes(p.regional.countyId));
+assert.ok(active,'expanded governed regional membership is exercised');
+for(const patch of [{status:'reserved'},{validationState:'invalid'},{community:{...active.community,productionEnabled:false}},{operationalRegion:{id:'wrong-region'}}]) {
+ assert.equal(check(communities.map(p=>p.id===active.id?{...p,...patch}:p)).valid,false,'invalid activation must fail');
+}

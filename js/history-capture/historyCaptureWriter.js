@@ -113,11 +113,8 @@
   }
 
   function writerExplicitlyEnabled(options) {
-    try {
-      return options?.writerEnabled === true;
-    } catch (error) {
-      return false;
-    }
+    // LP244.21: no override may reopen a copy path without original-time lineage.
+    return false;
   }
 
   function getStorageClient(options) {

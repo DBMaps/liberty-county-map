@@ -358,9 +358,10 @@ test('Android typography normalization is native-only and preserves Gridly densi
 
 test('Supabase initialization publishes its non-enumerable audit authority after UMD client creation', () => {
   const app = text('js/app.js');
-  const creation = app.indexOf('supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);');
+  const creation = app.indexOf('supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, { global:');
   const publication = app.indexOf('gridlyPublishSupabaseClientAuthority();', creation);
   assert.ok(creation >= 0 && publication > creation);
+  assert.match(app.slice(creation, publication), /cache: "no-store"/, "retention client requests cannot enter browser cache");
   assert.match(app, /Object\.defineProperty\(globalThis, Symbol\.for\("gridly\.runtime\.supabaseClient"\)/);
   assert.doesNotMatch(app.slice(creation, publication), /service[_-]?role/i);
 });

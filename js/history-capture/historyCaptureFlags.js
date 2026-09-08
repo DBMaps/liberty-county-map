@@ -2,8 +2,8 @@
   'use strict';
 
   const DEFAULT_FLAGS = Object.freeze({
-    captureEnabled: true,
-    writesEnabled: true,
+    captureEnabled: false,
+    writesEnabled: false,
     productionHooksInstalled: true,
     historicalReadsExposed: false,
     uiExposed: false,
