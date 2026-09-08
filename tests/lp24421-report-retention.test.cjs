@@ -4,6 +4,7 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const {renderAuthorization,migrationSql,supersededMigrationSql} = require('./helpers/lp24422a-prelaunch.cjs');
 
 // Deliberately no connection URL, production credentials, or non-loopback host.
 // Run against a DISPOSABLE PostgreSQL 17 cluster on localhost:55441.
@@ -22,8 +23,11 @@ const fixture = fs.readFileSync(path.join(__dirname,'fixtures/lp24421-baseline.s
 before(() => {
   sql(`create database ${database}`,{db:'postgres'});
   sql(fixture);
-  sql(fs.readFileSync(path.join(__dirname,'../supabase/migrations/202609080001_community_report_retention.sql'),'utf8'));
+  sql(renderAuthorization());
+  for (const marker of supersededMigrationSql()) sql(marker);
+  sql(migrationSql());
   assert.equal(sql('select count(*) from reports'),'0','unverifiable legacy origins are all removed');
+  sql("update report_retention.admission_state set reporting_enabled=true,changed_at=clock_timestamp() where singleton");
   // Trusted original-time fixture, representing a post-control report aged 100 days.
   sql("insert into reports(crossing_id,crossing_name,lat,lng,report_type,severity,device_id,created_at) values ('DOT-100','Crossing',30,-95,'blocked','high','fixture-device',now()-interval '100 days')");
 });
@@ -47,11 +51,11 @@ test('post-control reports at and beyond the cleanup/deadline boundary lose the 
   assert.equal(sql("set role authenticated; select count(id) from reports where crossing_id='BOUNDARY'"),'0');
   // Remove this test's aggregate contribution so independent aggregate assertions
   // remain readable; only the isolated fixture database is affected.
-  sql("update report_retention.condition_month_counts set report_count=report_count-1 where submission_month=date_trunc('month',now()-interval '180 days')::date and condition_family='crossing'");
+  sql("delete from report_retention.condition_month_counts where submission_month=date_trunc('month',now()-interval '180 days')::date and condition_family='crossing' and report_count=1");
 });
 test('retained history has only month, broad condition family and count', () => {
   assert.equal(sql("select string_agg(column_name,',' order by ordinal_position) from information_schema.columns where table_schema='report_retention' and table_name='condition_month_counts'"),'submission_month,condition_family,report_count');
-  assert.equal(sql('select sum(report_count) from report_retention.condition_month_counts'),'5');
+  assert.equal(sql('select count(*) from report_retention.condition_month_counts'),'0');
   assert.doesNotMatch(sql('select row_to_json(c) from report_retention.condition_month_counts c'),/fixture-device|legacy-id|device_id|report_id/);
 });
 test('edits, confirmation changes and attempted origin/device reassignment cannot extend age', () => {
@@ -77,7 +81,7 @@ test('public/ordinary/service queries cannot recover the private association or 
     }
   }
   assert.equal(sql('set role anon; select count(id) from reports'),'2');
-  sql("set role anon; insert into reports(crossing_id,crossing_name,lat,lng,report_type,severity,device_id) values ('DOT-new','Crossing',30,-95,'blocked','high','new-device')");
+  sql("set role anon; insert into reports(crossing_id,crossing_name,lat,lng,report_type,severity,device_id) values ('DOT-new','Crossing',30,-95,'blocked','high','new-device')",{fail:true});
   sql("set role anon; insert into reports(crossing_id,crossing_name,lat,lng,report_type,severity,created_at) values ('bad','Crossing',30,-95,'blocked','high',now())",{fail:true});
   sql("insert into history_capture.historical_events(envelope) values ('{}')",{fail:true});
   sql("set role anon; select report_retention.run_cleanup()",{fail:true});
@@ -88,14 +92,14 @@ test('failed cleanup is visible, atomic and retryable; expiry reads fail closed'
     create function public.fail_delete_fixture() returns trigger language plpgsql as $$ begin raise exception 'fixture-device MUST NOT ENTER AUDIT'; end $$;
     create trigger fixture_failure before delete on reports for each row execute function public.fail_delete_fixture();`);
   assert.equal(sql('select report_retention.run_cleanup()'),'-1');
-  assert.equal(sql('select count(*) from reports'),'3');
+  assert.equal(sql('select count(*) from reports'),'2');
   assert.equal(sql('set role anon; select count(id) from reports'),'0');
   assert.equal(sql('select last_status from report_retention.health'),'failed');
-  assert.equal(sql('select breached_deadline_count from report_retention.health'),'3');
+  assert.equal(sql('select breached_deadline_count from report_retention.health'),'2');
   assert.equal(sql('select error_code from report_retention.runs order by id desc limit 1'),'P0001');
   assert.doesNotMatch(sql('select row_to_json(r) from report_retention.runs r'),/fixture-device|MUST NOT/);
   sql('drop trigger fixture_failure on reports');
-  assert.equal(sql('select report_retention.run_cleanup()'),'3');
+  assert.equal(sql('select report_retention.run_cleanup()'),'2');
   assert.equal(sql('select count(*) from reports'),'0');
   assert.equal(sql('select count(*) from report_retention.device_links'),'0');
   assert.equal(sql('select breached_deadline_count from report_retention.health'),'0');

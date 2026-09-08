@@ -5,6 +5,7 @@ const path=require('node:path');
 const {spawnSync,spawn}=require('node:child_process');
 const {randomUUID,webcrypto}=require('node:crypto');
 const protocol=require('../js/gridly-report-protocol.js');
+const {renderAuthorization,migrationSql,supersededMigrationSql}=require('./helpers/lp24422a-prelaunch.cjs');
 const db=`gridly_protocol_test_${process.pid}`;
 const psql=process.env.GRIDLY_TEST_PSQL||'C:/Program Files/PostgreSQL/17/bin/psql.exe';
 const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>!/^PG/i.test(k)));
@@ -22,7 +23,10 @@ const mutate=(op,id,action,changes={},device='test-device')=>JSON.parse(sql(`set
 before(()=>{
  sql(`create database ${db}`,{database:'postgres'});
  sql(fs.readFileSync(path.join(__dirname,'fixtures/lp24421-baseline.sql'),'utf8'));
- for(const name of ['202609080001_community_report_retention.sql','202609080002_community_submission_protocol.sql']) sql(fs.readFileSync(path.join(__dirname,'../supabase/migrations',name),'utf8'));
+ sql(renderAuthorization());
+ for(const marker of supersededMigrationSql())sql(marker);
+ sql(migrationSql());
+ sql("update report_retention.admission_state set reporting_enabled=true,changed_at=clock_timestamp() where singleton");
 });
 after(()=>sql(`drop database if exists ${db} with(force)`,{database:'postgres'}));
 
