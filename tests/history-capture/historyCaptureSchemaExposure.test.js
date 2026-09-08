@@ -5,7 +5,8 @@ const config = fs.readFileSync('supabase/config.toml', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/202606170425_history_capture_schema_exposure.sql', 'utf8');
 const rollback = fs.readFileSync('supabase/migrations/202606170426_rollback_history_capture_schema_exposure.sql', 'utf8');
 
-assert.match(config, /schemas\s*=\s*\[[^\]]*"public"[^\]]*"graphql_public"[^\]]*"history_capture"[^\]]*\]/s, 'history_capture is included in the tracked PostgREST schema exposure list');
+assert.doesNotMatch(config.match(/schemas\s*=\s*\[[^\]]*\]/s)?.[0] || '', /history_capture/, 'retention cutover removes history_capture API exposure');
+assert.match(config, /schemas\s*=\s*\[[^\]]*"public"[^\]]*"graphql_public"[^\]]*\]/s);
 
 assert.match(migration, /grant usage on schema history_capture to anon/i, 'anon receives only schema usage');
 assert.match(migration, /grant insert on table history_capture\.historical_events to anon/i, 'anon receives insert on historical_events');

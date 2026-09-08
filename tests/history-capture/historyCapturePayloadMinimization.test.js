@@ -73,7 +73,7 @@ assert.ok(!JSON.stringify(e1).includes('water over road'));
   const result = await globalThis.gridlyPassiveHistoryCapturePhase1A.capturePhase1AEvent({ eventType: 'report_created', report: hazard, storageClient: badStorage, writerEnabled: true });
   assert.strictEqual(result.ok, true);
   assert.strictEqual(result.noop, true);
-  assert.strictEqual(result.reason, 'passive_history_capture_sidecar_writer_fail_open');
+  assert.strictEqual(result.reason, 'passive_history_capture_sidecar_disabled');
   assert.ok(!JSON.stringify(result).includes(deviceId));
 
   const audit = globalThis.gridlyLp0532HistoricalPayloadMinimizationAudit?.();

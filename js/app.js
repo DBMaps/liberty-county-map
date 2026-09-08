@@ -17475,7 +17475,8 @@ const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "6D0";
+// Release identity follows service-worker.js; native verification rejects drift.
+const APP_BUILD = "lp244.21e-local-certification";
 const GRIDLY_APP_VERSION_LABEL = "Gridly V204.0B";
 const GRIDLY_APP_BUILD_LABEL = "Build 1710";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
@@ -20590,38 +20591,19 @@ function gridlyCreateEmptyEventHistoryState() {
 }
 
 function gridlyReadEventHistoryState() {
-  const fallback = gridlyCreateEmptyEventHistoryState();
-  const raw = gridlySafeLocalStorageGet(GRIDLY_EVENT_HISTORY_STORAGE_KEY);
-  if (!raw) return fallback;
-  try {
-    const parsed = JSON.parse(raw);
-    const restored = {
-      ...fallback,
-      ...(parsed && typeof parsed === "object" ? parsed : {}),
-      crossingEvents: Array.isArray(parsed?.crossingEvents) ? parsed.crossingEvents : [],
-      hazardEvents: Array.isArray(parsed?.hazardEvents) ? parsed.hazardEvents : [],
-      operationalTelemetry: {
-        ...fallback.operationalTelemetry,
-        ...(parsed?.operationalTelemetry && typeof parsed.operationalTelemetry === "object" ? parsed.operationalTelemetry : {})
-      }
-    };
-    const normalized = gridlyBuildStoredEventHistoryState(restored, { recordTelemetry: true });
-    if (normalized.cleanup.changed) {
-      gridlySafeLocalStorageSet(GRIDLY_EVENT_HISTORY_STORAGE_KEY, JSON.stringify(normalized.state));
-    }
-    return normalized.state;
-  } catch (error) {
-    return {
-      ...fallback,
-      storageReadError: error?.message || "invalid_event_history_storage"
-    };
+  // LP244.21: offline browsers cannot enforce expiry; never reload old report copies.
+  const keys = [GRIDLY_EVENT_HISTORY_STORAGE_KEY, "gridly_event_history_v1", "gridlyHistoricalIntelligence"];
+  const state = gridlyCreateEmptyEventHistoryState();
+  for (const key of keys) {
+    try { localStorage.removeItem(key); }
+    catch (_) { state.storageReadError = "legacy_history_removal_failed"; }
   }
+  return state;
 }
 
 function gridlyWriteEventHistoryState(state) {
   const normalized = gridlyBuildStoredEventHistoryState(state);
-  const written = gridlySafeLocalStorageSet(GRIDLY_EVENT_HISTORY_STORAGE_KEY, JSON.stringify(normalized.state));
-  return { written, state: normalized.state, cleanup: normalized.cleanup };
+  return { written: false, persistenceDisabled: true, state: normalized.state, cleanup: normalized.cleanup };
 }
 
 function gridlyMinutesBetween(startIso, endIso) {
@@ -47456,8 +47438,9 @@ function initSupabase() {
   }
 
   try {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, { global: { fetch: (url, options) => fetch(url, { ...options, cache: "no-store" }) } });
     gridlyPublishSupabaseClientAuthority();
+    gridlyRefreshPendingOperationButton();
 
     setSync(`Live sync connected · Build ${APP_BUILD}`);
 
@@ -47633,7 +47616,10 @@ function getMovementIntelligence() {
   try {
     const raw = localStorage.getItem(MOVEMENT_INTELLIGENCE_STORAGE_KEY);
     if (!raw) return normalizeMovementIntelligence();
-    return normalizeMovementIntelligence(JSON.parse(raw));
+    const parsed = JSON.parse(raw);
+    parsed.routeObservations = (Array.isArray(parsed.routeObservations) ? parsed.routeObservations : []).filter((row) => row?.source !== "report");
+    localStorage.setItem(MOVEMENT_INTELLIGENCE_STORAGE_KEY, JSON.stringify(parsed));
+    return normalizeMovementIntelligence(parsed);
   } catch {
     return normalizeMovementIntelligence();
   }
@@ -47641,7 +47627,7 @@ function getMovementIntelligence() {
 
 function saveMovementIntelligence(nextData = movementIntelligence) {
   movementIntelligence = normalizeMovementIntelligence(nextData);
-  localStorage.setItem(MOVEMENT_INTELLIGENCE_STORAGE_KEY, JSON.stringify(movementIntelligence));
+  localStorage.setItem(MOVEMENT_INTELLIGENCE_STORAGE_KEY, JSON.stringify({ ...movementIntelligence, routeObservations: movementIntelligence.routeObservations.filter((row) => row?.source !== "report") }));
   return movementIntelligence;
 }
 
@@ -57031,7 +57017,7 @@ async function gridlyReadClearedHazardPersistenceSupabaseInventory(hours = 72) {
     const cutoffIso = new Date(Date.now() - (Math.max(1, Number(hours) || 72) * 60 * 60 * 1000)).toISOString();
     const { data, error } = await supabaseClient
       .from("reports")
-      .select("*")
+      .select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS)
       .gte("created_at", cutoffIso)
       .in("report_type", [...new Set([...hazardTypes, "hazard_cleared"])])
       .order("created_at", { ascending: false })
@@ -58500,7 +58486,7 @@ window.gridlyDevPurgeFailureAudit = async function gridlyDevPurgeFailureAudit(op
 
   const { data, error } = await supabaseClient
     .from(deleteTargetTable)
-    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail,device_id")
+    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail")
     .gte("created_at", cutoffIso)
     .in("report_type", ROAD_HAZARD_TYPES)
     .order("created_at", { ascending: false })
@@ -58694,7 +58680,7 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
 
   const { data, error } = await supabaseClient
     .from("reports")
-    .select("id,report_type,source,created_at,expires_at,lat,lng,crossing_id,crossing_name,detail,device_id")
+    .select("id,report_type,source,created_at,expires_at,lat,lng,crossing_id,crossing_name,detail")
     .gte("created_at", cutoffIso)
     .in("report_type", ROAD_HAZARD_TYPES)
     .order("created_at", { ascending: false })
@@ -58708,7 +58694,7 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
   const nowIso = new Date().toISOString();
   const { data: activeInventoryData, error: activeInventoryError } = await supabaseClient
     .from("reports")
-    .select("id,report_type,source,created_at,expires_at,lat,lng,crossing_id,crossing_name,detail,device_id")
+    .select("id,report_type,source,created_at,expires_at,lat,lng,crossing_id,crossing_name,detail")
     .gt("expires_at", nowIso)
     .in("report_type", ROAD_HAZARD_TYPES)
     .order("created_at", { ascending: false })
@@ -58864,7 +58850,7 @@ const gridlyDevPurgeRecentCrossingReports = async function gridlyDevPurgeRecentC
 
   const { data, error } = await supabaseClient
     .from("reports")
-    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail,device_id")
+    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail")
     .gte("created_at", cutoffIso)
     .order("created_at", { ascending: false })
     .limit(1000);
@@ -77912,7 +77898,8 @@ function gridlyRoadHazardEvidenceContributorKey(record = {}) {
   const device = String(record?.deviceId || record?.device_id || "").trim().toLowerCase();
   if (device) return `device:${device}`;
   const id = String(record?.id || record?.report_id || record?.reportId || "").trim().toLowerCase();
-  return id ? `report:${id}` : "";
+  // Separate report IDs cannot establish independent contributors.
+  return id ? "unverified-contributor" : "";
 }
 
 function gridlyRoadHazardEvidenceIsRecentActive(record = {}, nowMs = Date.now()) {
@@ -88222,7 +88209,7 @@ const GRIDLY_REPORTS_BASE_INSERT_KEYS = Object.freeze([
   "expires_at"
 ]);
 const GRIDLY_REPORTS_ALLOWED_INSERT_KEYS = GRIDLY_REPORTS_BASE_INSERT_KEYS;
-const GRIDLY_REPORTS_BASE_SELECT_COLUMNS = "id,created_at,crossing_id,crossing_name,railroad,lat,lng,report_type,severity,detail,source,confidence,device_id,expires_at";
+const GRIDLY_REPORTS_BASE_SELECT_COLUMNS = "id,created_at,crossing_id,crossing_name,railroad,lat,lng,report_type,severity,detail,source,confidence,expires_at";
 // LP244.12 GOVERNED REPORT RETRIEVAL START
 const GRIDLY_GOVERNED_REPORT_RETRIEVAL_VERSION = "LP244.12-v1";
 const GRIDLY_GOVERNED_REPORT_PAGE_SIZE = 300;
@@ -88579,14 +88566,71 @@ function gridlyBuildRoadHazardDetailLocationMetadata(locationPayload = {}, optio
   };
 }
 
+let gridlyCommunityProtocolClient = null;
+function gridlyGetCommunityProtocolClient() {
+  if (!window.gridlyReportProtocol) throw new Error("Reporting requires the current Gridly build.");
+  return gridlyCommunityProtocolClient ||= window.gridlyReportProtocol.create();
+}
+function gridlyRefreshPendingOperationButton() {
+  let pending;
+  try { pending = gridlyGetCommunityProtocolClient().pending(); } catch (_) { return; }
+  let button = document.getElementById("gridlyRetryPendingReport");
+  if (!pending) { button?.remove(); return; }
+  if (!button) {
+    button = document.createElement("button"); button.id = "gridlyRetryPendingReport";
+    button.type = "button"; button.className = "primary-btn";
+    Object.assign(button.style, { position: "fixed", bottom: "16px", right: "16px", zIndex: "12000", maxWidth: "70vw" });
+    button.onclick = async () => {
+      button.disabled = true;
+      try {
+        const result = await gridlyGetCommunityProtocolClient().retry(supabaseClient, deviceId);
+        setConfirmation(result.status === "retryable_failure" ? "Report still pending. Retry when connected." : "Pending report resolved.", result.status === "retryable_failure" ? "error" : "success");
+        await loadSharedReports("pending_report_resolved");
+      } finally { button.disabled = false; gridlyRefreshPendingOperationButton(); }
+    };
+    document.body.appendChild(button);
+  }
+  button.textContent = pending.kind === "cancel" ? "Finish expired pending report" : "Retry pending report";
+}
+async function gridlySubmitCommunityMutation(action, observationId, changes = {}) {
+  if (!observationId) { setConfirmation("The original report is unavailable. Refresh before updating it.", "error"); return false; }
+  try {
+    const result = await gridlyGetCommunityProtocolClient().submit(action, { observation_id: observationId, changes }, supabaseClient, deviceId);
+    if (!["accepted", "already_processed"].includes(result.status)) {
+      setConfirmation(result.status === "retryable_failure" ? "Update pending. Use Retry pending report." : "This report can no longer be updated.", "error"); return false;
+    }
+    await loadSharedReports("community_mutation_resolved"); return true;
+  } catch (_) { setConfirmation("A report is pending. Use Retry pending report.", "error"); return false; }
+  finally { gridlyRefreshPendingOperationButton(); }
+}
+
 async function gridlyInsertWithCountyMetadataFallback(client, tableName, row, options = {}) {
+  if (tableName === "reports") {
+    try {
+      const payload = gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS);
+      delete payload.device_id;
+      const isClear = ["cleared", "hazard_cleared"].includes(row.report_type);
+      const target = String(row.detail || "").match(/lifecycle_report_id:\s*([^\s)]+)/)?.[1];
+      if (isClear && !target) return { error: { code: "ORIGINAL_REQUIRED", message: "Original report unavailable." } };
+      const result = await gridlyGetCommunityProtocolClient().submit(isClear ? "clear" : "create",
+        isClear ? { observation_id: target, changes: {} } : payload, client, deviceId);
+      if (!["accepted", "already_processed"].includes(result.status)) return { error: { code: result.status, message: result.status === "retryable_failure" ? "Report pending. Use Retry pending report." : "Report was not accepted." } };
+      let returned = result.report;
+      if (isClear && !returned) {
+        const read = await client.from("reports").select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS).eq("id", target);
+        returned = read.data?.[0] || null;
+      }
+      return { data: returned ? [returned] : [], error: null, insertedRow: returned || { ...row, device_id: null }, metadataPersisted: false, metadataFallbackUsed: false };
+    } catch (_) { return { error: { code: "PENDING_OPERATION", message: "A report is pending. Use Retry pending report." } }; }
+    finally { gridlyRefreshPendingOperationButton(); }
+  }
   const attachAbortSignal = (query) => options?.abortSignal && typeof query?.abortSignal === "function" ? query.abortSignal(options.abortSignal) : query;
   const insertRow = tableName === "reports" ? gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS) : row;
   const isHazardReport = tableName === "reports" && String(row?.crossing_id || "").startsWith("hazard-");
   if (isHazardReport) gridlyLastHazardPersistenceDiagnostic = Object.freeze({
     status: "ATTEMPTING", attemptedAt: new Date().toISOString(), reportType: row?.report_type || null,
     countyId: row?.county_id || gridlyExtractStructuredMetadata(row)?.county_id || gridlyExtractStructuredMetadata(row)?.countyId || null,
-    deviceId: insertRow?.device_id || null, crossingId: insertRow?.crossing_id || null,
+    crossingId: insertRow?.crossing_id || null,
     lat: Number.isFinite(Number(insertRow?.lat)) ? Number(insertRow.lat) : null,
     lng: Number.isFinite(Number(insertRow?.lng)) ? Number(insertRow.lng) : null,
     expiresAt: insertRow?.expires_at || null, insertedRowId: null,
@@ -89716,7 +89760,7 @@ function gridlyDiagnoseHazardReportPersistenceBoundary({ hazardType = "flooding"
     state: countyScopedMetadata.state
   } : null;
   const row = countyScopedMetadata ? {
-    crossing_id: `hazard-${deviceId}-<generated-at-submit>`,
+    crossing_id: "hazard-<random-at-submit>",
     crossing_name: locationName ? `${copy.label} · ${locationName}` : copy.label,
     railroad: "Road hazard",
     lat: numericLat,
@@ -89726,7 +89770,7 @@ function gridlyDiagnoseHazardReportPersistenceBoundary({ hazardType = "flooding"
     detail: appendGridlyStructuredMetadata(`${copy.detail} (future_source: ${sourceTag})`, detailLocationMetadata),
     source: "user",
     confidence,
-    device_id: deviceId,
+    device_id: null,
     expires_at: "<generated-at-submit>",
     ...countyScopedMetadata
   } : null;
@@ -89765,6 +89809,11 @@ window.gridlyDiagnoseHazardReportPersistenceBoundary = gridlyDiagnoseHazardRepor
 exposeGridlyAuditHelper("gridlyDiagnoseHazardReportPersistenceBoundary", gridlyDiagnoseHazardReportPersistenceBoundary);
 
 async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "", originalTapCoords = null, options = {}) {
+  if (options.lifecycleTargetReportId || /confirm/i.test(confidence || "")) {
+    const candidates = (Array.isArray(activeHazards) ? activeHazards : []).filter(r => String(r.type || r.report_type) === String(hazardType) && Number(r.lat) === Number(lat) && Number(r.lng) === Number(lng));
+    const target = options.lifecycleTargetReportId || (candidates.length === 1 ? gridlyCanonicalReportIdForRecord(candidates[0], "") : "");
+    return gridlySubmitCommunityMutation("confirm", target);
+  }
   gridlyResetHazardPropagationTiming({ type: hazardType, lat, lng, locationName });
   gridlyHazardPropagationTimingState.lastSubmitStartedAt = gridlyHazardPropagationNowIso();
   gridlyRecordHazardPropagationStage("submit_tapped", { hazardType, lat, lng, confidence });
@@ -89964,7 +90013,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   gridlyMarkReportSubmissionRecovery("validationCompleted", { flow: "hazard", reportType: hazardType, lifecycleId: recoveryLifecycleId });
   gridlyRecordHazardPropagationStage("validation_complete", { hazardType, lat, lng, countyId: countyScopedReportMetadata.county_id });
   const row = {
-    crossing_id: `hazard-${deviceId}-${Date.now()}`,
+    crossing_id: `hazard-${window.gridlyReportProtocol.uuid()}`,
     crossing_name: locationName
       ? `${subtypeLabel || copy.label} · ${locationName}`
       : (subtypeLabel || copy.label),
@@ -89976,7 +90025,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     detail: detailWithMetadata,
     source: "user",
     confidence,
-    device_id: deviceId,
+    device_id: null,
     expires_at: expiresAt,
     ...countyScopedReportMetadata
   };
@@ -90343,7 +90392,7 @@ window.gridlySupabaseSubmitHealthAudit = async function gridlySupabaseSubmitHeal
     try {
       const { data: exactRows, error: exactReadError } = await supabaseClient
         .from("reports")
-        .select("*")
+        .select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS)
         .eq("crossing_id", submittedCrossingId)
         .order("created_at", { ascending: false })
         .limit(5);
@@ -90370,13 +90419,13 @@ window.gridlySupabaseSubmitHealthAudit = async function gridlySupabaseSubmitHeal
       const [{ data: liveRows, error: liveReadError }, { data: recentRoadClearedRows, error: recentRoadClearedError }] = await Promise.all([
         supabaseClient
           .from("reports")
-          .select("*")
+          .select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS)
           .gt("expires_at", nowIso)
           .order("created_at", { ascending: false })
           .limit(300),
         supabaseClient
           .from("reports")
-          .select("*")
+          .select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS)
           .eq("report_type", "hazard_cleared")
           .gte("created_at", recentRoadClearedCutoffIso)
           .order("created_at", { ascending: false })
@@ -90556,7 +90605,7 @@ async function gridlyPersistExactHazardClear(row, lifecycleTargetReportId, mutat
   const persisted = affectedRows[0];
   const normalized = normalizeReports([persisted])[0];
   const returnedTarget = String(normalized?.lifecycleIdentity || normalized?.explicitLifecycleTargetRaw || "").trim();
-  if (returnedTarget !== String(lifecycleTargetReportId || "").trim()) throw new Error("Clear persistence identity mismatch.");
+  if (returnedTarget !== String(lifecycleTargetReportId || "").trim() && String(persisted.id) !== String(lifecycleTargetReportId || "").trim()) throw new Error("Clear persistence identity mismatch.");
   if (!gridlyIsRoadClearedHazardRecord(normalized)) throw new Error("Clear persistence returned a non-cleared row.");
   gridlyRecordHazardClearLifecycle("affected_row_confirmed", { reportId: lifecycleTargetReportId, affectedRowId: persisted.id || null });
   return normalized;
@@ -90593,10 +90642,10 @@ window.clearHazard = async function (hazardType, lat, lng, lifecycleTargetReport
     gridlyRecordHazardClearLifecycle("terminal_failure", { reportId: targetId, reason: "county_identity" }); return false;
   }
   const row = {
-    crossing_id: `hazard-cleared-${deviceId}-${Date.now()}`, crossing_name: `${copy.label} Cleared`, railroad: "Road hazard",
+    crossing_id: `hazard-cleared-${window.gridlyReportProtocol.uuid()}`, crossing_name: `${copy.label} Cleared`, railroad: "Road hazard",
     lat: Number(lat), lng: Number(lng), report_type: "hazard_cleared", severity: "low",
     detail: `Shared report: ${copy.label} appears cleared. (lifecycle_report_id: ${targetId})`, source: "user",
-    confidence: "hazard cleared by user", device_id: deviceId, expires_at: new Date(Date.now() + 30 * 60000).toISOString(), ...countyMetadata
+    confidence: "hazard cleared by user", device_id: null, expires_at: new Date(Date.now() + 30 * 60000).toISOString(), ...countyMetadata
   };
   try {
     setSync("Submitting your update…"); setConfirmation("Clearing this report…", "success", { persist: true });
@@ -93416,6 +93465,10 @@ function gridlyTryPassiveHistoryCapturePhase1A(eventInput) {
 }
 
 async function createSharedReport(crossing, reportType, confidence, buttonEl = null) {
+  if (/confirm/i.test(confidence || "")) {
+    const target = (Array.isArray(activeReports) ? activeReports : []).filter(r => String(r.crossingId || r.crossing_id) === String(crossing.id) && !["cleared", "hazard_cleared"].includes(r.type || r.report_type)).sort((a,b) => new Date(b.submittedAt || b.created_at) - new Date(a.submittedAt || a.created_at))[0];
+    return gridlySubmitCommunityMutation("confirm", target ? gridlyCanonicalReportIdForRecord(target, "") : "");
+  }
   const lp0534bCrossingClearKey = reportType === "cleared" ? String(crossing?.id || crossing?.crossingId || "unknown") : "";
   if (reportType === "cleared") {
     gridlyLp0534bClearDiagnostics.crossingClearClickCount += 1;
@@ -93474,7 +93527,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     detail: `${copy.detail} (future_source: ${sourceTag})${lifecycleDetail}`,
     source: "user",
     confidence,
-    device_id: deviceId,
+    device_id: null,
     expires_at: expiresAt,
     ...countyScopedReportMetadata
   };
@@ -102965,7 +103018,7 @@ function getGridlyDirectFeedbackClient() {
   if (supabaseClient) return supabaseClient;
   const sdk = typeof window !== "undefined" ? window.supabase : null;
   if (sdk && typeof sdk.createClient === "function" && SUPABASE_URL && SUPABASE_PUBLIC_KEY) {
-    supabaseClient = sdk.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+    supabaseClient = sdk.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, { global: { fetch: (url, options) => fetch(url, { ...options, cache: "no-store" }) } });
     gridlyPublishSupabaseClientAuthority();
     return supabaseClient;
   }

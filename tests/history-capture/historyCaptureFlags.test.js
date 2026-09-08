@@ -6,8 +6,8 @@ assert.ok(api, 'flags sidecar API is available');
 
 const defaults = api.getHistoryCaptureFlags();
 assert.deepStrictEqual(defaults, {
-  captureEnabled: true,
-  writesEnabled: true,
+  captureEnabled: false,
+  writesEnabled: false,
   productionHooksInstalled: true,
   historicalReadsExposed: false,
   uiExposed: false,
@@ -17,8 +17,8 @@ assert.deepStrictEqual(defaults, {
 assert.notStrictEqual(defaults, api.DEFAULT_FLAGS, 'flags are returned as a defensive clone');
 
 defaults.captureEnabled = true;
-assert.strictEqual(api.getHistoryCaptureFlags().captureEnabled, true, 'capture remains enabled for passive evidence collection');
-assert.strictEqual(api.getHistoryCaptureFlags().writesEnabled, true, 'writes remain enabled for passive evidence collection');
+assert.strictEqual(api.getHistoryCaptureFlags().captureEnabled, false, 'retention cutover keeps capture disabled');
+assert.strictEqual(api.getHistoryCaptureFlags().writesEnabled, false, 'retention cutover keeps writes disabled');
 assert.strictEqual(api.getHistoryCaptureFlags().canaryMode, false, 'canary remains inactive by default');
 
 console.log('historyCaptureFlags.test.js passed');

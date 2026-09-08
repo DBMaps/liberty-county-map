@@ -8,13 +8,23 @@ includes('function gridlyGetCanonicalActiveCommunityState', 'canonical active co
 includes('function gridlyBuildCanonicalActiveCommunityRevision', 'canonical revision builder exists');
 includes('activeCrossingRecords: Object.freeze(activeCrossingRecords)', 'canonical output separates active crossings');
 includes('activeRoadHazardRecords: Object.freeze(activeRoadHazardRecords)', 'canonical output separates active road hazards');
-includes('return gridlyGetCanonicalActiveCommunityState().activeRecords.slice();', 'story active records consume canonical state');
+// LP219.4 extends the canonical lifecycle set with governed KBYG evidence.
+const vm = require('vm');
+const start = app.indexOf('function gridlyStoryActiveRecords(');
+const end = app.indexOf('\nfunction gridlyStoryWeatherMeaningfulImpact', start);
+const canonical = [{id:'active-a',countyId:'harris-tx'}];
+const sandbox = {gridlyGetCanonicalActiveCommunityState:()=>({activeRecords:canonical})};
+vm.createContext(sandbox);vm.runInContext(app.slice(start,end),sandbox);
+const result=sandbox.gridlyStoryActiveRecords({surfaces:{kbygCommunity:[{record:{id:'active-a'}},{record:{id:'active-b',countyId:'fort-bend-tx'}}]}});
+assert.deepStrictEqual(Array.from(result,r=>r.id),['active-a','active-b']);
+assert.equal(result[0].countyId,'harris-tx');assert.equal(result[1].countyId,'fort-bend-tx');
+assert.equal(canonical.length,1,'projection must not mutate the canonical lifecycle set');
 includes('canonicalActiveCommunityRevision: renderCanonicalState?.revision', 'render signature includes canonical active revision');
 includes('activeCountDecreased', 'marker render reuse detects active count decreases');
 includes('unifiedIncidentLayer.clearLayers();', 'unified marker layer remains cleared before rebuild');
 includes('gridlyAuthoritativeIncidentSnapshotState.snapshot = null;', 'clear containment invalidates authoritative unified incident snapshot');
 includes('const nearestIssue = (typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState().activeRecords', 'Location Context uses canonical active state');
-includes('const liveHazardIncidentSource = __lp012Stage("liveHazardIncidents", () => gridlyBuildRoadHazardIncidentsFromReports(canonicalRoadHazardRecords));', 'unified road incidents derive from canonical active hazards');
+includes('const liveHazardIncidentSource = __lp012Stage("liveHazardIncidents", () => gridlyBuildRoadHazardIncidentsFromReports([...canonicalRoadHazardRecords, ...gridlyDiagnosticArray(recentlyClearedRoadHazards)]));', 'canonical hazards retain clearing evidence for lifecycle conflict suppression');
 includes('canonicalCrossingRecords.some((report) => String(report?.crossingId', 'unified rail incidents are filtered by canonical active crossings');
 includes('gridlyLp0534bClearDiagnostics.crossingClearInFlightKeys', 'crossing clear in-flight guard exists');
 includes('gridlyLp0534bClearDiagnostics.roadHazardClearInFlightKeys', 'road hazard clear in-flight guard exists');

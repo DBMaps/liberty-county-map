@@ -30,12 +30,13 @@ test("Dallas destination runtime publishes one governed non-null collection", as
     window: {}, GRIDLY_DESTINATION_INTENTS: { BUSINESS_PLACE: "business" }, GRIDLY_SEARCH_RENDER_LIMIT: 10,
     gridlySearchUiState: { activeSearchRequestId: 1 }, gridlyLastInteractiveDestinationSearchTrace: null,
     ensureGridlySearchState: () => ({}), beginGridlyLiveDestinationSearch: () => 1,
+    resolveGridlyGovernedBareTexasPlaceQuery: () => dallas,
     classifyGridlyDestinationSearchIntent: () => ({ type: "place", reason: "canonical" }),
     gridlyQueryAllowsRuntimePoiAcquisition: () => false, searchGridlyLocalPoiSeeds: () => [],
     mergeGridlySavedPlaceDestinationResults: value => value, prioritizeGridlySearchResults: value => value,
     dedupeGridlySearchResults: value => value, getGridlySavedPlaceDestinationSearchResults: () => [],
     normalizeGridlySearchDisplayLabel: value => String(value).toLowerCase(), getGridlySearchActiveInputQuery: () => "Dallas",
-    gridlySearchAddress: async () => raw, getGridlyLiveDestinationSearchOptions: () => ({}), renderGridlySearchResults: () => true,
+    gridlySearchAddress: async (_query, options) => { assert.equal(options.governedBarePlace, dallas); return raw; }, getGridlyLiveDestinationSearchOptions: () => ({}), renderGridlySearchResults: () => true,
     buildGridlyLiveSearchAuditReport: (_query, results) => ({ resultCount: results.length }),
     normalizeGridlyBrandSearchText: value => value.toLowerCase(), gridlySearchQueryHasDestinationIndicator: () => false,
     gridlySearchQueryHasAddressIndicator: () => false
@@ -105,7 +106,11 @@ test("production report owner has one watchdog, duplicate guard, governed submis
   assert.match(source, /submissionInProgress \|\| reportingState\.locationLookupInProgress/);
   assert.match(source, /window\.setTimeout[\s\S]*12000/);
   assert.match(source, /if \(locationRequestSettled\) return/);
-  assert.match(source, /createSharedHazardReport\(selectedType, finalPlacement\.lat, finalPlacement\.lng/);
+  assert.match(source, /continueGovernedRoadHazardDraftToReview\(draft\)/);
+  assert.doesNotMatch(source, /createSharedHazardReport\(/, 'GPS alone cannot submit before review');
+  const submission=functionSource('submitGovernedRoadHazardDraft');
+  assert.match(submission, /createSharedHazardReport\([\s\S]*draft\.hazardType[\s\S]*draft\.finalCoordinate\.lat/);
+  assert.match(submission, /governedRoadHazardSubmissionPromise/, 'review confirmation retains its duplicate guard');
   assert.match(source, /locationLookupInProgress: false/);
   assert.match(source, /Try again or tap the map/);
 });

@@ -209,6 +209,32 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
   if (runtimeConfigFile) {
     await writeFile(join(destination, runtimeConfigPath), composedRuntimeConfig);
   }
+  await writeFile(join(destination, 'community-submission-contract.json'), `${JSON.stringify(await communitySubmissionContract(destination), null, 2)}\n`);
+}
+
+// Generated from current source, never an independently maintained version list.
+export async function communitySubmissionContract(directory) {
+  const digest = async path => createHash('sha256').update(await readFile(path)).digest('hex');
+  const runtime = ['js/app.js','js/gridly-report-protocol.js','js/gridlyPackageRegistry.js','service-worker.js'];
+  for (const path of runtime) if (await digest(join(directory,path)) !== await digest(join(root,path))) throw new Error(`Retired or mismatched submission client: ${path}`);
+  const index = await readFile(join(directory,'index.html'),'utf8');
+  const sourceIndex = await readFile(join(root,'index.html'),'utf8');
+  const scripts = text => Array.from(text.matchAll(/<script[^>]+src="(js\/(?:app|gridly-report-protocol)\.js[^\"]*)"/g),m=>m[1]);
+  if (JSON.stringify(scripts(index)) !== JSON.stringify(scripts(sourceIndex)) || scripts(index).length !== 2 || !scripts(index)[0].startsWith('js/gridly-report-protocol.js')) throw new Error('Submission protocol must precede the current app bundle');
+  const sw = await readFile(join(directory,'service-worker.js'),'utf8');
+  const version = sw.match(/const GRIDLY_SW_VERSION = "([^"]+)"/)?.[1];
+  const cache = sw.match(/const GRIDLY_CLOSURE_CACHE_NAME = "([^"]+)"/)?.[1];
+  if (!version || !cache) throw new Error('Missing service-worker version authority');
+  const app = await readFile(join(directory,'js/app.js'),'utf8');
+  if (app.match(/const APP_BUILD = "([^"]+)"/)?.[1] !== version || scripts(index).some(path=>!path.endsWith(`?v=${version}`))) throw new Error('App/PWA version authority drift');
+  return {schemaVersion:'gridly.communitySubmissionBundle.v1',legacyCreationCompatible:false,version,cache,scripts:scripts(index),runtime:Object.fromEntries(await Promise.all(runtime.map(async path=>[path,await digest(join(directory,path))]))),schema:Object.fromEntries(await Promise.all(['202609080001_community_report_retention.sql','202609080002_community_submission_protocol.sql'].map(async name=>[name,await digest(join(root,'supabase/migrations',name))])))};
+}
+
+export async function verifyCommunitySubmissionBundle(directory) {
+  const actual = await communitySubmissionContract(directory);
+  const recorded = JSON.parse(await readFile(join(directory,'community-submission-contract.json'),'utf8'));
+  if (JSON.stringify(actual)!==JSON.stringify(recorded)) throw new Error('Submission bundle manifest is stale');
+  return actual;
 }
 
 async function files(directory) {
@@ -237,6 +263,7 @@ async function identity(directory) {
 }
 
 async function verify(directory, { reportFile } = {}) {
+  await verifyCommunitySubmissionBundle(directory);
   const required = [
     'index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi',
     'Community-Packages', 'Crossing-Packages',
