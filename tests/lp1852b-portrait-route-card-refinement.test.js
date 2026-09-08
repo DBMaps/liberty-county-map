@@ -13,7 +13,7 @@ test("persistent route card renders only the existing decision headline", () => 
 });
 
 test("portrait route action shares a compact card row and retains a 44px target", () => {
-  const passTwo = css.slice(css.indexOf("LP185.2B — compact persistent route state"));
+  const passTwo = css.slice(css.indexOf("LP185.2B — compact persistent route state"), css.indexOf("/* LP185.6F"));
   assert.match(passTwo, /grid-template-columns: minmax\(0, 1fr\) 82px !important/);
   assert.match(passTwo, /min-height: 88px !important/);
   assert.match(passTwo, /max-height: min\(112px,/);
@@ -21,7 +21,7 @@ test("portrait route action shares a compact card row and retains a 44px target"
 });
 
 test("Pass 2 leaves expanded intelligence and Travel Brief styling untouched", () => {
-  const passTwo = css.slice(css.indexOf("LP185.2B — compact persistent route state"));
+  const passTwo = css.slice(css.indexOf("LP185.2B — compact persistent route state"), css.indexOf("/* LP185.6F"));
   assert.doesNotMatch(passTwo, /gridly-destination-impact-(?:pane|card|actions)/);
   assert.doesNotMatch(passTwo, /gridly-brief-interaction-panel|gridly-brief-flow/);
   assert.doesNotMatch(passTwo, /gridly-v2-awareness-brief-card/);

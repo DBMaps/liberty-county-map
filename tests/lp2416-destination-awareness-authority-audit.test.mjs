@@ -8,8 +8,10 @@ const auditDoc = fs.readFileSync('LP241.6-DESTINATION-AWARENESS-AUTHORITY-AUDIT.
 
 test('destination selection remains independent of governed awareness selection', () => {
   const selection = app.slice(app.indexOf('function selectGridlySearchResult'), app.indexOf('function getGridlyLiveDestinationSearchOptions'));
+  const explicitPreview = app.slice(app.indexOf('async function previewGridlyPendingDestinationRoute'), app.indexOf('function getSelectedDestinationLabel'));
   assert.match(selection, /state\.selectedDestination = normalized/);
-  assert.match(selection, /buildGridlyDestinationRoutePreview/);
+  assert.doesNotMatch(selection, /buildGridlyDestinationRoutePreview/);
+  assert.match(explicitPreview, /buildGridlyDestinationRoutePreview\(\{ reason: "explicit-preview-route", explicitPreview: true \}\)/);
   assert.doesNotMatch(selection, /gridlyApplyConfirmedHomePersonalization|saveGridlyHomeTownPreference|syncGridlyAwarenessAreaSurfacesImmediately/);
 });
 

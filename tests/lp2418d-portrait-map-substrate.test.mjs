@@ -22,7 +22,7 @@ test('LP241.8D suppresses presentation siblings without suppressing the map host
   assert.match(app, /"\.app-shell > :not\(\.main-column\)"/);
   assert.match(app, /"\.app-shell > \.main-column > :not\(#mapSection\)"/);
   assert.match(app, /"#mapSection > :not\(\.map-card\)"/);
-  assert.match(app, /"#mapSection > \.map-card > :not\(\.map-frame\)"/);
+  assert.match(app, /"#mapSection > \.map-card > :not\(\.map-frame\):not\(\.mobile-destination-command\)"/);
   assert.match(app, /"#mapSection > \.map-card > \.map-frame > :not\(#map\)"/);
   assert.match(app, /legacyDashboard\?\.setAttribute\("inert", ""\)/);
   assert.match(app, /legacyDashboard\?\.setAttribute\("aria-hidden", "true"\)/);
