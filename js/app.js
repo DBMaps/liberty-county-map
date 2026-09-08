@@ -39974,7 +39974,13 @@ const gridlySearchUiRefs = {
   input: null,
   clearBtn: null,
   closeBtn: null,
-  results: null
+  results: null,
+  confirmation: null,
+  confirmationTitle: null,
+  confirmationContext: null,
+  confirmationStatus: null,
+  changeBtn: null,
+  previewBtn: null
 };
 
 const gridlySearchUiState = {
@@ -39987,7 +39993,12 @@ const gridlySearchUiState = {
   debugWarningsSeen: new Set(),
   lastContextDiagnostics: null,
   lastSearchShellOpenSource: "",
-  lastLiveSearchAudit: null
+  lastLiveSearchAudit: null,
+  selectionGeneration: 0,
+  routePreviewInFlight: false,
+  routePreviewTransitionStarted: false,
+  searchShellOpener: null,
+  lastSelectionResults: []
 };
 
 let gridlyLastInteractiveDestinationSearchTrace = null;
@@ -41240,6 +41251,131 @@ function collapseGridlySearchResults() {
   gridlySearchUiState.lastRenderedResultsPreview = [];
   gridlySearchUiState.lastResultShapePreview = [];
   gridlySearchUiState.isSearching = false;
+}
+
+function getGridlyPendingDestinationKey(destination) {
+  const normalized = normalizeGridlySearchResult(destination);
+  if (!normalized) return "";
+  return [normalized.provider || "", normalized.providerId || normalized.id || "", normalized.lat, normalized.lng].join(":");
+}
+
+function getGridlyDestinationConfirmationContext(destination) {
+  const display = buildGridlySearchDisplayLines(destination);
+  const locationContext = buildGridlyLocationContext(destination);
+  return [display.location, locationContext, display.meta]
+    .map((entry) => String(entry || "").trim())
+    .find((entry) => isGridlyUsefulMetaValue(entry)) || "";
+}
+
+function renderGridlyDestinationConfirmation(options = {}) {
+  const confirmation = gridlySearchUiRefs.confirmation || document.getElementById("gridlyDestinationConfirmation");
+  const destination = normalizeGridlySearchResult(ensureGridlySearchState().selectedDestination);
+  if (!confirmation) return false;
+  const visible = Boolean(destination);
+  confirmation.hidden = !visible;
+  confirmation.toggleAttribute("data-selected", visible);
+  if (!visible) return false;
+
+  const display = buildGridlySearchDisplayLines(destination);
+  const context = getGridlyDestinationConfirmationContext(destination);
+  const title = gridlySearchUiRefs.confirmationTitle || document.getElementById("gridlyDestinationConfirmationTitle");
+  const contextNode = gridlySearchUiRefs.confirmationContext || document.getElementById("gridlyDestinationConfirmationContext");
+  const status = gridlySearchUiRefs.confirmationStatus || document.getElementById("gridlyDestinationConfirmationStatus");
+  const previewBtn = gridlySearchUiRefs.previewBtn || document.getElementById("gridlyDestinationPreviewBtn");
+  const changeBtn = gridlySearchUiRefs.changeBtn || document.getElementById("gridlyDestinationChangeBtn");
+  if (title) title.textContent = display.title || "Selected destination";
+  if (contextNode) {
+    contextNode.textContent = context;
+    contextNode.hidden = !context;
+  }
+  if (status) status.textContent = String(options.status || "Ready to preview.");
+  if (previewBtn) {
+    previewBtn.disabled = options.loading === true;
+    previewBtn.textContent = options.retry === true ? "Retry route" : (options.loading === true ? "Preparing route…" : "Preview route");
+  }
+  if (changeBtn) changeBtn.disabled = false;
+  return true;
+}
+
+function clearGridlyPendingDestination(options = {}) {
+  const state = ensureGridlySearchState();
+  gridlySearchUiState.selectionGeneration += 1;
+  gridlySearchUiState.routePreviewInFlight = false;
+  gridlySearchUiState.routePreviewTransitionStarted = false;
+  state.activeResult = null;
+  state.selectedDestination = null;
+  activeDestinationPlace = null;
+  if (options.preserveResults !== true) gridlySearchUiState.lastSelectionResults = [];
+  invalidateGridlyRoutePublication(options.reason || "destination_selection_changed");
+  clearGridlyDestinationRoutePreview({ silent: true });
+  clearGridlyDestinationMarker({ silent: true });
+  renderGridlyDestinationConfirmation();
+}
+
+function changeGridlyPendingDestination() {
+  const priorResults = [...gridlySearchUiState.lastSelectionResults];
+  clearGridlyPendingDestination({ reason: "destination_change", preserveResults: true });
+  const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
+  if (!shell || shell.hidden) openGridlyDestinationSearchSurface({ source: "destination_change", focusInput: false });
+  const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+  const query = String(input?.value || "").trim();
+  const fallbackResults = [
+    ...getGridlySavedPlaceDestinationSearchResults(query, { includeAll: true }),
+    ...(query.length >= 3 ? searchGridlyLocalPoiSeeds(query, { intent: classifyGridlyDestinationSearchIntent(query) }) : [])
+  ];
+  renderGridlySearchResults(priorResults.length ? priorResults : fallbackResults, { state: "done", allowEmptyMessage: false, query });
+  input?.focus?.({ preventScroll: true });
+}
+
+async function previewGridlyPendingDestinationRoute() {
+  if (gridlySearchUiState.routePreviewInFlight) return false;
+  const destination = normalizeGridlySearchResult(ensureGridlySearchState().selectedDestination);
+  if (!destination) return false;
+  const selectionGeneration = gridlySearchUiState.selectionGeneration;
+  const destinationKey = getGridlyPendingDestinationKey(destination);
+  gridlySearchUiState.routePreviewInFlight = true;
+  gridlySearchUiState.routePreviewTransitionStarted = true;
+  renderGridlyDestinationConfirmation({ loading: true, status: "Preparing route preview…" });
+  hideGridlySearchShell({ clear: false, restoreFocus: false });
+  syncMobileDestinationCommandCard();
+  try {
+    const preview = await buildGridlyDestinationRoutePreview({ reason: "explicit-preview-route", explicitPreview: true });
+    const currentDestination = normalizeGridlySearchResult(ensureGridlySearchState().selectedDestination);
+    if (selectionGeneration !== gridlySearchUiState.selectionGeneration || getGridlyPendingDestinationKey(currentDestination) !== destinationKey) return false;
+    if (preview?.status === "ready") {
+      return true;
+    }
+    const providerFailure = String(gridlyDestinationLastRouteProviderFailureReason || "");
+    const providerUnavailable = /provider_(http|timeout|request_failed)/.test(providerFailure);
+    gridlySearchUiState.routePreviewTransitionStarted = false;
+    invalidateGridlyRoutePublication("destination_route_preview_failed");
+    clearGridlyDestinationRoutePreview({ silent: true, syncCard: false });
+    showGridlySearchShell({ focusInput: false, source: "destination_route_preview_failed" });
+    renderGridlyDestinationConfirmation({
+      retry: true,
+      status: providerUnavailable
+        ? "Route service is unavailable right now. Try again."
+        : "No route found for this destination. Change the destination or try again."
+    });
+    syncMobileDestinationCommandCard();
+    return false;
+  } catch (_error) {
+    if (selectionGeneration === gridlySearchUiState.selectionGeneration) {
+      gridlySearchUiState.routePreviewTransitionStarted = false;
+      invalidateGridlyRoutePublication("destination_route_preview_failed");
+      clearGridlyDestinationRoutePreview({ silent: true, syncCard: false });
+      showGridlySearchShell({ focusInput: false, source: "destination_route_preview_failed" });
+      renderGridlyDestinationConfirmation({ retry: true, status: "Route service is unavailable right now. Try again." });
+      syncMobileDestinationCommandCard();
+    }
+    return false;
+  } finally {
+    if (selectionGeneration === gridlySearchUiState.selectionGeneration) {
+      gridlySearchUiState.routePreviewInFlight = false;
+      const previewBtn = gridlySearchUiRefs.previewBtn || document.getElementById("gridlyDestinationPreviewBtn");
+      if (previewBtn) previewBtn.disabled = false;
+    }
+  }
 }
 
 
@@ -42770,6 +42906,11 @@ function getGridlyMobileCommandCardVisibilityState(summary = null) {
     || (typeof isGridlyCrossingPopupInteractionActive === "function" && isGridlyCrossingPopupInteractionActive())
   );
   const hasSelectedDestination = Boolean(selectedDestination || selectedLabel);
+  const pendingDestinationConfirmation = Boolean(
+    hasSelectedDestination
+    && !gridlySearchUiState.routePreviewTransitionStarted
+    && !routePreviewActive
+  );
   const routeOrDestinationOwnership = Boolean(hasSelectedDestination || routePreviewActive || routeIsMonitoring || explicitDestinationPanelOpen);
   const awarenessPanelMode = Boolean(!routeOrDestinationOwnership && shouldShowGridlyMobileAwarenessPanel(summary));
   const routeOrDestinationVisible = Boolean(routeOrDestinationOwnership && !popupInteractionActive);
@@ -42777,6 +42918,7 @@ function getGridlyMobileCommandCardVisibilityState(summary = null) {
     visible: Boolean(awarenessPanelMode || routeOrDestinationVisible),
     owner: awarenessPanelMode ? "awareness" : routeIsMonitoring ? "route" : hasSelectedDestination ? "destination" : routePreviewActive ? "route-preview" : explicitDestinationPanelOpen ? "destination-panel" : "none",
     hasSelectedDestination,
+    pendingDestinationConfirmation,
     selectedLabel,
     routePreviewActive,
     routePreviewStatus: preview?.status || null,
@@ -42983,12 +43125,13 @@ function syncMobileDestinationCommandCard(options = {}) {
   const preview = typeof getGridlyDestinationRoutePreviewState === "function" ? getGridlyDestinationRoutePreviewState() : (window.GridlyDestinationRoutePreview || {});
   const destinationPreviewActive = Boolean(selectedLabel || preview?.active || preview?.destination);
   const routeIsMonitoring = Boolean((routeWatchActivated || window.__gridlyRouteWatchActive) && !destinationPreviewActive);
-  const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
+  const routePresentationActive = Boolean(gridlySearchUiState.routePreviewTransitionStarted || preview?.active);
+  const previewMeta = selectedLabel && routePresentationActive ? getGridlyDestinationPreviewMetaText() : "";
   const ownership = typeof resolveGridlyRouteOwnershipSurface === "function" ? resolveGridlyRouteOwnershipSurface() : null;
-  const relationLine = selectedLabel
+  const relationLine = selectedLabel && routePresentationActive
     ? (preview?.routeRelationLineText || getGridlyRouteRelationLineText(ownership?.originLabel || "Map Center", selectedLabel))
     : "";
-  const destinationSupportText = selectedLabel
+  const destinationSupportText = selectedLabel && routePresentationActive
     ? (preview?.sameSavedPlaceRouteGuardActive
       ? (preview.sameSavedPlaceRouteGuardMessage || "Choose a different destination")
       : `${relationLine} · ${ownership?.monitoringLabel || (routeIsMonitoring ? "Monitoring Active" : "Preview Only")}${previewMeta ? ` · ${previewMeta}` : ""}`)
@@ -43005,7 +43148,7 @@ function syncMobileDestinationCommandCard(options = {}) {
   const visibilityState = getGridlyMobileCommandCardVisibilityState(awarenessSummary);
   const popupInteractionActive = visibilityState.popupInteractionActive;
   const awarenessPanelMode = Boolean(visibilityState.awarenessPanelMode);
-  const cardVisible = Boolean(visibilityState.visible);
+  const cardVisible = Boolean(visibilityState.visible && !visibilityState.pendingDestinationConfirmation);
   const card = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
   if (card) {
     card.hidden = !cardVisible;
@@ -43737,11 +43880,7 @@ function maybeTriggerGridlyDestinationLocationRecovery(reason = "current_locatio
 function scheduleGridlyDestinationRoutePreviewOriginRefresh(reason = "current_location_updated") {
   if (typeof buildGridlyDestinationRoutePreview !== "function") return false;
   const preview = typeof getGridlyDestinationRoutePreviewState === "function" ? getGridlyDestinationRoutePreviewState() : (window.GridlyDestinationRoutePreview || {});
-  const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;
-  const selectedDestination = typeof normalizeGridlySearchResult === "function"
-    ? normalizeGridlySearchResult(searchState?.selectedDestination)
-    : searchState?.selectedDestination;
-  if (!preview?.active && !selectedDestination) return false;
+  if (!preview?.active) return false;
   if (maybeTriggerGridlyDestinationLocationRecovery(reason)) return true;
   window.__gridlyDestinationRouteOriginRefreshReason = reason;
   window.setTimeout?.(() => buildGridlyDestinationRoutePreview({ reason, originRefresh: true }), 0);
@@ -43854,6 +43993,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   const state = ensureGridlySearchState();
   const destination = normalizeGridlySearchResult(state?.selectedDestination);
   const priorPreview = getGridlyDestinationRoutePreviewState();
+  if (options?.explicitPreview !== true && !(options?.originRefresh === true && priorPreview?.active)) return priorPreview;
   const priorOrigin = priorPreview?.source ? { ...priorPreview.source } : null;
   clearGridlyDestinationRoutePreview({ silent: true, syncCard: false, preservePerformanceAudit: true });
   const routePublicationAction = beginGridlyRoutePublication("destination_route_preview");
@@ -46105,6 +46245,17 @@ function selectGridlySearchResult(result, options = {}) {
     }
     return null;
   }
+  if (gridlySearchUiState.pendingSearchTimer) {
+    clearTimeout(gridlySearchUiState.pendingSearchTimer);
+    gridlySearchUiState.pendingSearchTimer = null;
+  }
+  gridlySearchUiState.activeSearchRequestId += 1;
+  gridlySearchUiState.lastSelectionResults = [...gridlySearchUiState.lastRenderedResults];
+  gridlySearchUiState.selectionGeneration += 1;
+  gridlySearchUiState.routePreviewInFlight = false;
+  gridlySearchUiState.routePreviewTransitionStarted = false;
+  invalidateGridlyRoutePublication("destination_selection_changed");
+  clearGridlyDestinationRoutePreview({ silent: true });
   const state = ensureGridlySearchState();
   state.activeResult = normalized;
   state.selectedDestination = normalized;
@@ -46138,11 +46289,12 @@ function selectGridlySearchResult(result, options = {}) {
     gridlySearchUiState.debugWarningsSeen.add("select-marker-failed");
   }
   collapseGridlySearchResults();
-  hideGridlySearchShell({ clear: false });
+  renderGridlyDestinationConfirmation({ status: "Ready to preview." });
+  const previewBtn = gridlySearchUiRefs.previewBtn || document.getElementById("gridlyDestinationPreviewBtn");
+  if (previewBtn && typeof previewBtn.focus === "function") requestAnimationFrame(() => previewBtn.focus({ preventScroll: true }));
   syncMobileDestinationCommandCard();
   if (marker && !isGridlyDestinationVisibilityCardPresent()) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
   setGridlyDestinationPerformanceTiming("destinationSelectMs", getGridlyDestinationPerfNow() - destinationSelectStartedAt);
-  buildGridlyDestinationRoutePreview({ reason: options?.reason || "destination-selected" });
   return normalized;
 }
 
@@ -46508,12 +46660,24 @@ function initGridlySearchUI() {
   const clearBtn = document.getElementById("gridlySearchClearBtn");
   const closeBtn = document.getElementById("gridlySearchCloseBtn");
   const results = document.getElementById("gridlySearchResults");
+  const confirmation = document.getElementById("gridlyDestinationConfirmation");
+  const confirmationTitle = document.getElementById("gridlyDestinationConfirmationTitle");
+  const confirmationContext = document.getElementById("gridlyDestinationConfirmationContext");
+  const confirmationStatus = document.getElementById("gridlyDestinationConfirmationStatus");
+  const changeBtn = document.getElementById("gridlyDestinationChangeBtn");
+  const previewBtn = document.getElementById("gridlyDestinationPreviewBtn");
 
   gridlySearchUiRefs.shell = shell || null;
   gridlySearchUiRefs.input = input || null;
   gridlySearchUiRefs.clearBtn = clearBtn || null;
   gridlySearchUiRefs.closeBtn = closeBtn || null;
   gridlySearchUiRefs.results = results || null;
+  gridlySearchUiRefs.confirmation = confirmation || null;
+  gridlySearchUiRefs.confirmationTitle = confirmationTitle || null;
+  gridlySearchUiRefs.confirmationContext = confirmationContext || null;
+  gridlySearchUiRefs.confirmationStatus = confirmationStatus || null;
+  gridlySearchUiRefs.changeBtn = changeBtn || null;
+  gridlySearchUiRefs.previewBtn = previewBtn || null;
 
   if (shell) {
     shell.hidden = true;
@@ -46530,6 +46694,7 @@ function initGridlySearchUI() {
       }
       if (gridlySearchUiRefs.input) gridlySearchUiRefs.input.value = "";
       state.activeQuery = "";
+      if (state.selectedDestination) clearGridlyPendingDestination({ reason: "destination_search_reset" });
       updateGridlySearchClearVisibility("");
       gridlySearchUiState.activeSearchRequestId += 1;
       const savedResults = getGridlySavedPlaceDestinationSearchResults("", { includeAll: true });
@@ -46548,10 +46713,20 @@ function initGridlySearchUI() {
     closeBtn.dataset.gridlySearchCloseBound = "true";
   }
 
+  if (changeBtn && !changeBtn.dataset.gridlyDestinationChangeBound) {
+    changeBtn.addEventListener("click", changeGridlyPendingDestination);
+    changeBtn.dataset.gridlyDestinationChangeBound = "true";
+  }
+  if (previewBtn && !previewBtn.dataset.gridlyDestinationPreviewBound) {
+    previewBtn.addEventListener("click", previewGridlyPendingDestinationRoute);
+    previewBtn.dataset.gridlyDestinationPreviewBound = "true";
+  }
+
   const remoteSearchBtn = document.getElementById("gridlyRemoteSearchBtn");
   const submitRemoteSearch = () => {
     const query = String(input?.value || "").trim();
     if (query.length < 3) return;
+    if (ensureGridlySearchState().selectedDestination) clearGridlyPendingDestination({ reason: "destination_search_submitted" });
     const requestId = beginGridlyLiveDestinationSearch(query);
     window.gridlyGeocodingClient?.evidence && gridlyLp100RuntimeEvidence.push({ event: "remote_search_explicit_action", requestId, queryRedacted: true });
     renderGridlySearchResults([], { state: "searching", query, requestId });
@@ -46564,8 +46739,12 @@ function initGridlySearchUI() {
 
   if (input && !input.dataset.gridlySearchInputBound) {
     input.addEventListener("input", () => {
-      const state = ensureGridlySearchState();
+      let state = ensureGridlySearchState();
       const query = String(input.value || "").trim();
+      if (state.selectedDestination) {
+        clearGridlyPendingDestination({ reason: "destination_search_edited" });
+        state = ensureGridlySearchState();
+      }
       state.activeQuery = query;
       updateGridlySearchClearVisibility(query);
 
@@ -46593,6 +46772,7 @@ function initGridlySearchUI() {
     });
     const reopenResults = () => {
       const state = ensureGridlySearchState();
+      if (state.selectedDestination) return;
       const query = String(input.value || state.activeQuery || "").trim();
       state.activeQuery = query;
       const hasPublishedExplicitResults = results?.dataset.searchPublication === "active"
@@ -46624,6 +46804,15 @@ function initGridlySearchUI() {
     input.dataset.gridlySearchInputBound = "true";
   }
 
+  if (shell && !shell.dataset.gridlySearchKeyboardBound) {
+    shell.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      closeGridlyDestinationSearchSurface({ source: "destination_search_escape" });
+    });
+    shell.dataset.gridlySearchKeyboardBound = "true";
+  }
+
   window.GridlySearchUI = {
     hasSearchShell: Boolean(shell),
     hasSearchInput: Boolean(input),
@@ -46637,6 +46826,7 @@ function showGridlySearchShell(options = {}) {
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
   if (options?.source) gridlySearchUiState.lastSearchShellOpenSource = String(options.source);
   if (!shell) return false;
+  if (shell.hidden) gridlySearchUiState.searchShellOpener = options?.opener || document.activeElement;
   shell.hidden = false;
   shell.removeAttribute("hidden");
   shell.dataset.searchUi = "active";
@@ -46648,6 +46838,7 @@ function showGridlySearchShell(options = {}) {
     if (savedResults.length) renderGridlySearchResults(savedResults, { state: "done", allowEmptyMessage: false, query: "" });
     else clearGridlySearchResults();
   }
+  if (ensureGridlySearchState().selectedDestination) renderGridlyDestinationConfirmation({ status: "Ready to preview." });
   if (options?.focusInput === true) {
     if (input && typeof input.focus === "function") input.focus({ preventScroll: true });
   }
@@ -46655,7 +46846,8 @@ function showGridlySearchShell(options = {}) {
 }
 
 function openGridlyDestinationSearchSurface(options = {}) {
-  const openSearch = () => showGridlySearchShell({ focusInput: true, ...options });
+  const opener = options?.opener || document.activeElement;
+  const openSearch = () => showGridlySearchShell({ focusInput: true, ...options, opener });
   if (typeof openGridlySurface === "function") {
     openGridlySurface("search", openSearch);
     return true;
@@ -46670,6 +46862,11 @@ function closeGridlyDestinationSearchSurface(options = {}) {
   }
   gridlySearchUiState.isSearching = false;
   gridlySearchUiState.activeSearchRequestId += 1;
+  if (ensureGridlySearchState().selectedDestination && !gridlySearchUiState.routePreviewTransitionStarted) {
+    invalidateGridlyRoutePublication(options?.source || "destination_search_dismissed");
+    clearGridlyDestinationRoutePreview({ silent: true, syncCard: false });
+    syncMobileDestinationCommandCard();
+  }
   if (typeof closeGridlySurface === "function") {
     closeGridlySurface("search", { source: options?.source || "destination_search_close" });
     return true;
@@ -46689,6 +46886,10 @@ function hideGridlySearchShell(options = {}) {
     if (input) input.value = "";
     updateGridlySearchClearVisibility("");
     if (results) results.textContent = "";
+  }
+  if (options?.restoreFocus !== false) {
+    const opener = gridlySearchUiState.searchShellOpener;
+    if (opener && typeof opener.focus === "function") requestAnimationFrame(() => opener.focus());
   }
   return true;
 }
@@ -50854,7 +51055,7 @@ const GRIDLY_PRIMARY_SURFACE_IDS = ["alerts", "settings", "route", "report", "se
 let gridlyActiveSurface = null;
 
 function closeGridlySurface(surface, options = {}) {
-  const { silent = false } = options;
+  const { silent = false, restoreFocus = !silent } = options;
   if (!surface) return;
   if (surface === "alerts") document.body.classList.remove("portrait-alerts-open");
   if (surface === "settings") {
@@ -50863,7 +51064,7 @@ function closeGridlySurface(surface, options = {}) {
   }
   if (surface === "route") closeRouteSetupModal({ restoreFocus: false });
   if (surface === "report" && typeof closeReportSurface === "function") closeReportSurface({ source: "gridly_surface_owner", nextMode: "live" });
-  if (surface === "search" && typeof hideGridlySearchShell === "function") hideGridlySearchShell({ source: "surface_ownership", restoreFocus: false });
+  if (surface === "search" && typeof hideGridlySearchShell === "function") hideGridlySearchShell({ source: "surface_ownership", restoreFocus });
   if (!silent) gridlyActiveSurface = null;
 }
 
@@ -91821,6 +92022,10 @@ function bindEvents() {
       routeLauncherSource = "choose-route-button";
       event?.preventDefault?.();
       event?.stopPropagation?.();
+      if (ensureGridlySearchState().selectedDestination) {
+        changeGridlyPendingDestination();
+        return;
+      }
       openGridlyDestinationSearchSurface({ source: "destinationCommandButton" });
     });
     els.mobileDestinationCommandBtn.dataset.searchBound = "true";

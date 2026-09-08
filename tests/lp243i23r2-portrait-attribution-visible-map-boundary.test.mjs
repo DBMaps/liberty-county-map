@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 const css = await readFile(new URL("../css/styles.css", import.meta.url), "utf8");
 const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const app = await readFile(new URL("../js/app.js", import.meta.url), "utf8");
-const r2Css = css.slice(css.indexOf("/* LP243.I2.3R2"));
+const r2Css = css.slice(css.indexOf("/* LP243.I2.3R2"), css.indexOf("/* LP244.5 owner-approved walkthrough"));
 const boundaryStart = app.indexOf("const GRIDLY_PORTRAIT_ATTRIBUTION_CLEARANCE_PROPERTY");
 const boundaryEnd = app.indexOf("function reconcileGridlyV2ConsumerPresentationOwnership", boundaryStart);
 const boundary = app.slice(boundaryStart, boundaryEnd);
@@ -54,6 +54,6 @@ test("Leaflet ownership, legal copy, providers, and disclosure behavior remain u
 
 test("protected LP243 milestones remain runnable and asset identities advance together", () => {
   protections.forEach((source, index) => assert.match(source, /test\(/, protectedTests[index]));
-  assert.match(html, /css\/styles\.css\?v=243i23r2-visible-map-attribution-boundary/);
-  assert.match(html, /js\/app\.js\?v=243i23r2-visible-map-attribution-boundary/);
+  assert.match(html, /css\/styles\.css\?v=lp244\.24b-owner-review/);
+  assert.match(html, /js\/app\.js\?v=lp244\.24b-owner-review/);
 });

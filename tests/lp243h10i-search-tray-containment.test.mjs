@@ -9,7 +9,6 @@ const h10bStart = css.indexOf("/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY");
 const h10hStart = css.indexOf("/* LP243.H10H — measured landscape closure", h10bStart);
 const h10iStart = css.indexOf("/* LP243.H10I — expanded command owners are tray-local", h10hStart);
 const h10jStart = css.indexOf("/* LP243.H10J — foreground ownership closure", h10iStart);
-const mediaEnd = css.indexOf("\n}\n\n@media (prefers-reduced-motion", h10iStart);
 const h10b = css.slice(h10bStart, h10hStart);
 const h10h = css.slice(h10hStart, h10iStart);
 const h10i = css.slice(h10iStart, h10jStart);
@@ -17,7 +16,7 @@ const h10i = css.slice(h10iStart, h10jStart);
 function shortLandscape(width, height) { return width > height && height <= 500; }
 
  test("H10I is short-landscape-only and preserves H10B structure and controls", () => {
-  assert.ok(h10bStart >= 0 && h10hStart > h10bStart && h10iStart > h10hStart && mediaEnd > h10iStart);
+  assert.ok(h10bStart >= 0 && h10hStart > h10bStart && h10iStart > h10hStart && h10jStart > h10iStart);
   assert.match(css.slice(h10bStart, h10hStart), /@media \(orientation: landscape\) and \(max-height: 500px\)/);
   assert.match(h10b, /grid-template-rows: var\(--lp243h10b-top-height\) minmax\(0, 1fr\)/);
   assert.match(h10b, /#map \{ flex: 1 1 0; \}/);
@@ -64,8 +63,8 @@ test("disclosure, fail-open recovery, and rail clearance contracts remain", () =
 });
 
 test("asset identity advances without feature or data authority changes", () => {
-  assert.match(html, /styles\.css\?v=243h10l-landscape-status-composition/);
-  assert.match(html, /app\.js\?v=(?:243h10i-search-tray-containment|243i1-shared-v2-sheet-landscape-eligibility|243i22-layers-accessibility-lifecycle)/);
+  assert.match(html, /styles\.css\?v=lp244\.24b-owner-review/);
+  assert.match(html, /app\.js\?v=lp244\.24b-owner-review/);
   assert.doesNotMatch(h10i, /Supabase|DriveTexas|Leaflet|setView\(|zoomIn\(|zoomOut\(|provider|ranking/i);
   assert.doesNotMatch(app.slice(app.indexOf("// LP243.H10I"), app.indexOf("function gridlyLandscapeCommandDisclosureAudit")), /Supabase|DriveTexas|Leaflet|search|sheet/i);
 });

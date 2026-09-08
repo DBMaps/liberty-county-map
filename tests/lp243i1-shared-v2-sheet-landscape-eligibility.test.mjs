@@ -80,6 +80,6 @@ test("close retains the mounted application and only clears sheet foreground sta
 });
 
 test("I1 changes no frozen presentation, Search, KBYG, disclosure, Layers, Leaflet, or data authority", () => {
-  assert.match(html, /js\/app\.js\?v=243i22-layers-accessibility-lifecycle/);
+  assert.match(html, /js\/app\.js\?v=lp244\.24b-owner-review/);
   assert.doesNotMatch(interactionGate + sheetOpen, /mobileDestinationCommandBtn|gridlySearchShell|gridlyBriefFoundationHandle|gridlyBriefInteractionPanel|gridlyLandscapeCommandToggle|Leaflet|setView\(|fetch\(|localStorage|sessionStorage/);
 });

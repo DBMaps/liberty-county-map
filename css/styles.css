@@ -21730,6 +21730,51 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awarenes
   font-weight: 650;
 }
 
+/* LP244.24 — explicit, consumer-visible destination decision boundary. */
+.gridly-destination-confirmation {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+  padding: 16px;
+  border: 1px solid rgba(142, 232, 255, 0.42);
+  border-radius: 20px;
+  background: rgba(25, 92, 124, 0.2);
+  box-shadow: inset 0 1px 0 rgba(247, 251, 255, 0.08);
+}
+
+.gridly-destination-confirmation[hidden] { display: none; }
+.gridly-destination-confirmation-copy { display: grid; gap: 4px; min-width: 0; }
+.gridly-destination-confirmation-kicker {
+  color: rgba(142, 232, 255, 0.82);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.gridly-destination-confirmation-title {
+  color: var(--gridly-text, #f7fbff);
+  font-size: 1.08rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.gridly-destination-confirmation-context,
+.gridly-destination-confirmation-status {
+  color: rgba(226, 241, 255, 0.7);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+.gridly-destination-confirmation-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 9px;
+}
+.gridly-destination-confirmation-actions > button { min-height: 48px; }
+.gridly-destination-preview-btn:disabled { cursor: progress; opacity: 0.72; }
+.gridly-destination-confirmation :is(button, [tabindex]):focus-visible {
+  outline: 3px solid rgba(142, 232, 255, 0.72);
+  outline-offset: 2px;
+}
+
 body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) {
   top: max(12px, calc(env(safe-area-inset-top, 0px) + 10px));
   left: 12px;
@@ -21751,6 +21796,29 @@ body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-searc
 
 body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-input-row {
   flex-wrap: nowrap;
+}
+
+body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-destination-confirmation {
+  flex: 0 0 auto;
+  padding: 12px;
+}
+
+body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-destination-confirmation:not([hidden])) .gridly-search-subtitle,
+body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-destination-confirmation:not([hidden])) .gridly-poi-nonproduction,
+body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-destination-confirmation:not([hidden])) .gridly-search-results:empty {
+  display: none !important;
+}
+
+body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-destination-confirmation:not([hidden])) .gridly-search-header {
+  margin-bottom: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridly-destination-confirmation,
+  .gridly-destination-confirmation * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 /* V857.2.2 — Search Baseline V1 lock certification route preview polish. */

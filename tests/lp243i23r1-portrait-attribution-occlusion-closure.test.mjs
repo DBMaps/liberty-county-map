@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 const css = await readFile(new URL("../css/styles.css", import.meta.url), "utf8");
 const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const app = await readFile(new URL("../js/app.js", import.meta.url), "utf8");
-const closure = css.slice(css.lastIndexOf("LP243.I2.3R1"));
+const closure = css.slice(css.lastIndexOf("LP243.I2.3R1"), css.indexOf("/* LP243.I2.3R2"));
 const attribution = app.slice(app.indexOf("const GRIDLY_MAP_ATTRIBUTION"), app.indexOf("function initMap()"));
 const initMap = app.slice(app.indexOf("function initMap()"), app.indexOf("function installLayerPickerDebugDiagnostics()"));
 
@@ -47,8 +47,8 @@ test("closure is portrait-only and freezes protected geometry and integrations",
   assert.doesNotMatch(closure, /orientation:\s*landscape|#map\s*\{[^}]*height|\.gridly-v2-bottom-(?:region|dock)\s*\{|location-awareness|Location Context|DriveTexas|weather|ArcGIS|tileLayer|setView|setZoom/);
   assert.match(initMap, /tile\.openstreetmap\.org/);
   assert.match(initMap, /World_Imagery\/MapServer\/tile/);
-  assert.match(html, /css\/styles\.css\?v=243i23r2-visible-map-attribution-boundary/);
-  assert.match(html, /js\/app\.js\?v=243i23r2-visible-map-attribution-boundary/);
+  assert.match(html, /css\/styles\.css\?v=lp244\.24b-owner-review/);
+  assert.match(html, /js\/app\.js\?v=lp244\.24b-owner-review/);
 });
 
 test("LP243.I2.3, I2.2, I2.1R1, and J/J1 protections remain available", () => {
