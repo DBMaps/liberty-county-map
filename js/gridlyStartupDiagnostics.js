@@ -106,6 +106,73 @@
   setTimeout(() => { if (!state.uiUsable && !state.watchdog.fired) { state.watchdog.fired = state.watchdogTriggered = true; state.watchdogTriggeredAt = isoNow(); state.watchdogStage = state.currentStage; state.stalled = state.previouslyStalled = state.slowStartup = state.degradedStartup = true; state.watchdog.stageAtThreshold = state.currentStage; warn(state.currentStage, `Startup still incomplete after ${WATCHDOG_MS} ms`, { watchdog: true }); showDelayMessage(); } }, WATCHDOG_MS);
   async function validate() { const liveSnapshot = clone(state); let after = null; let lockedUiResult = false; let dupBefore = 0; let duplicateStageCompletionIsolated = false; try { const timeoutStage = beginStage("validation simulated timeout", { blocking: false, network: true, timeoutMs: 15, dependency: "controlled simulation" }); endStage(timeoutStage, "timed-out", { message: "controlled simulation", startupContinued: true }); dupBefore = state.counters.duplicateCompletions; endStage(timeoutStage, "completed"); duplicateStageCompletionIsolated = state.counters.duplicateCompletions === dupBefore + 1; lockedUiResult = (() => { const prev = state.prepaintLockReleased; state.prepaintLockReleased = false; const result = markUiUsable("validation should not unlock while prepaint lock is active"); state.prepaintLockReleased = prev; return result; })(); after = audit(); } finally { restoreState(liveSnapshot); } const liveAfter = audit(); const validationDidNotMutateLiveAudit = !liveAfter.stages.some(s => s.name === "validation simulated timeout") && !liveAfter.timedOutStages.some(s => s.name === "validation simulated timeout") && liveAfter.degradedStartup === Boolean(liveSnapshot.degradedStartup); return { available: true, version: VERSION, auditAvailable: typeof window.gridlyStartupAudit === "function", traceCreated: liveAfter.stages.length > 0, requiredStageFields: liveAfter.stages.every(s => ["name","status","startedAt","blocking"].every(k => Object.prototype.hasOwnProperty.call(s,k))), completionStateTracking: "startupCompleted" in liveAfter && "completed" in liveAfter && liveAfter.completed === liveAfter.startupCompleted && "uiUsable" in liveAfter && (!liveAfter.uiUsable || Boolean(liveAfter.uiUsableAt)), timeoutCapture: after.timedOutStages.some(s => s.name === "validation simulated timeout"), timeoutStatusDurable: after.timedOutStages.some(s => s.name === "validation simulated timeout" && s.status === "timed-out"), lateResolutionPreserved: after.lateCompletedStages.some(s => s.name === "validation simulated timeout"), validationDidNotMutateLiveAudit, watchdogEvidencePersists: liveAfter.watchdogTriggered ? liveAfter.degradedStartup && liveAfter.slowStartup : true, slowStartupClassification: "slowStartup" in liveAfter && "slowStartupThresholdMs" in liveAfter, uiUsableBlockedWhilePrepaintActive: lockedUiResult === false, uiUsableAfterVisibleUnlock: liveAfter.prepaintLockReleased ? liveAfter.uiUsable : true, childStageTimingExistsForInitialReports: liveAfter.stages.some(s => s.parentStage === "initial report and incident loading"), noDuplicateStageCompletion: duplicateStageCompletionIsolated && state.counters.duplicateCompletions === liveSnapshot.counters.duplicateCompletions, noDuplicateStartupRequestsIntroduced: state.counters.requestsIntroduced === 0, protectedSystemsUnchanged: true, noProductionWrites: true, safeForBeta: liveAfter.safeForBeta, warnings: liveAfter.warnings, failures: liveAfter.failures }; }
 
+  const dependencyTimingKeys = ["bootstrapStartedAt", "mapReadyAt", "crossingsStartedAt", "crossingsReadyAt", "roadwayStartedAt", "roadwayReadyAt", "roadwayFailedAt", "reportsStartedAt", "reportsRetrievedAt", "reportsPublishedAt", "reportsFailedAt", "firstGovernedAwarenessReadyAt", "firstIncidentRenderReadyAt", "usableCheckpointAt"];
+  const dependencyPhases = ["retrieval", "normalization", "governance", "publication", "immediateConsumers"];
+  const roadwayReportDependencyState = { startupGeneration: 0, countyId: null, activePhase: null, timings: {}, dependencyReads: {}, preReadyDependencyReadCount: 0, preReadyDependencyFailureCount: 0, fallbackCount: 0, evidence: [], history: [] };
+  function resetRoadwayReportDependencyState(countyId) {
+    roadwayReportDependencyState.countyId = countyId || null;
+    roadwayReportDependencyState.activePhase = null;
+    roadwayReportDependencyState.timings = Object.fromEntries(dependencyTimingKeys.map((key) => [key, null]));
+    roadwayReportDependencyState.dependencyReads = Object.fromEntries(dependencyPhases.map((key) => [key, 0]));
+    roadwayReportDependencyState.preReadyDependencyReadCount = 0;
+    roadwayReportDependencyState.preReadyDependencyFailureCount = 0;
+    roadwayReportDependencyState.fallbackCount = 0;
+    roadwayReportDependencyState.evidence = [];
+  }
+  resetRoadwayReportDependencyState(null);
+  function beginRoadwayReportDependencyGeneration(options) {
+    if (roadwayReportDependencyState.startupGeneration > 0) {
+      roadwayReportDependencyState.history.push({ startupGeneration: roadwayReportDependencyState.startupGeneration, countyId: roadwayReportDependencyState.countyId });
+      if (roadwayReportDependencyState.history.length > 12) roadwayReportDependencyState.history.splice(0, roadwayReportDependencyState.history.length - 12);
+    }
+    roadwayReportDependencyState.startupGeneration += 1;
+    resetRoadwayReportDependencyState(options?.countyId);
+    roadwayReportDependencyState.timings.bootstrapStartedAt = nowMs();
+    return roadwayReportDependencyState.startupGeneration;
+  }
+  function markRoadwayReportDependencyEvent(name, details) {
+    const key = `${name}At`;
+    if (!Object.prototype.hasOwnProperty.call(roadwayReportDependencyState.timings, key)) return false;
+    if (roadwayReportDependencyState.timings[key] === null) roadwayReportDependencyState.timings[key] = nowMs();
+    if (details?.fallback) roadwayReportDependencyState.fallbackCount += 1;
+    return true;
+  }
+  function beginRoadwayReportDependencyPhase(phase) {
+    const token = { previousPhase: roadwayReportDependencyState.activePhase };
+    roadwayReportDependencyState.activePhase = dependencyPhases.includes(phase) ? phase : null;
+    return token;
+  }
+  function endRoadwayReportDependencyPhase(token) { roadwayReportDependencyState.activePhase = token?.previousPhase || null; }
+  function recordRoadwayDependencyRead(details) {
+    const phase = roadwayReportDependencyState.activePhase;
+    if (!phase || !Object.prototype.hasOwnProperty.call(roadwayReportDependencyState.dependencyReads, phase)) return false;
+    roadwayReportDependencyState.dependencyReads[phase] += 1;
+    const beforeReady = roadwayReportDependencyState.timings.roadwayReadyAt === null;
+    if (beforeReady) roadwayReportDependencyState.preReadyDependencyReadCount += 1;
+    if (beforeReady && details?.failure) roadwayReportDependencyState.preReadyDependencyFailureCount += 1;
+    if (details?.fallback) roadwayReportDependencyState.fallbackCount += 1;
+    push(roadwayReportDependencyState.evidence, { phase, owner: details?.owner || "unspecified", beforeRoadwayReady: beforeReady, failure: Boolean(details?.failure), fallback: Boolean(details?.fallback), at: nowMs() }, 80);
+    return true;
+  }
+  function roadwayReportDependencyAudit() {
+    const timings = clone(roadwayReportDependencyState.timings);
+    const dependencyReads = clone(roadwayReportDependencyState.dependencyReads);
+    const hardDependencyEvidence = dependencyReads.retrieval + dependencyReads.normalization + dependencyReads.governance > 0 || roadwayReportDependencyState.preReadyDependencyFailureCount > 0;
+    const partialDependencyEvidence = !hardDependencyEvidence && dependencyReads.publication + dependencyReads.immediateConsumers > 0;
+    const independenceEvidence = !hardDependencyEvidence && !partialDependencyEvidence && timings.reportsPublishedAt !== null && timings.firstGovernedAwarenessReadyAt !== null && timings.firstIncidentRenderReadyAt !== null;
+    const currentClassification = hardDependencyEvidence ? "A" : partialDependencyEvidence ? "C" : independenceEvidence ? "B" : "not_yet_classified";
+    const before = (left, right) => left !== null && (right === null || left < right);
+    const roadwayReadyWhen = (eventAt) => timings.roadwayReadyAt !== null && eventAt !== null && timings.roadwayReadyAt <= eventAt;
+    const observedCountyIds = [...roadwayReportDependencyState.history.map((entry) => entry.countyId), roadwayReportDependencyState.countyId].filter((value, index, all) => value && all.indexOf(value) === index);
+    return {
+      available: true, startupGeneration: roadwayReportDependencyState.startupGeneration, countyId: roadwayReportDependencyState.countyId, observedCountyIds, currentClassification,
+      timings, ordering: { reportsStartedBeforeRoadwayReady: before(timings.reportsStartedAt, timings.roadwayReadyAt), reportsPublishedBeforeRoadwayReady: before(timings.reportsPublishedAt, timings.roadwayReadyAt), awarenessReadyBeforeRoadwayReady: before(timings.firstGovernedAwarenessReadyAt, timings.roadwayReadyAt), usableBeforeRoadwayReady: before(timings.usableCheckpointAt, timings.roadwayReadyAt) },
+      roadwayReadyWhenReportsStarted: roadwayReadyWhen(timings.reportsStartedAt), roadwayReadyWhenReportsPublished: roadwayReadyWhen(timings.reportsPublishedAt), roadwayReadyWhenFirstAwarenessReady: roadwayReadyWhen(timings.firstGovernedAwarenessReadyAt), roadwayReadyWhenUsable: roadwayReadyWhen(timings.usableCheckpointAt),
+      dependencyReads, preReadyDependencyReadCount: roadwayReportDependencyState.preReadyDependencyReadCount, preReadyDependencyFailureCount: roadwayReportDependencyState.preReadyDependencyFailureCount, fallbackCount: roadwayReportDependencyState.fallbackCount,
+      roadwayStageBlockingFlag: false, roadwayStageAwaitedByBootstrap: true, hardDependencyEvidence, partialDependencyEvidence, independenceEvidence, evidence: clone(roadwayReportDependencyState.evidence), overallPass: currentClassification !== "not_yet_classified" && roadwayReportDependencyState.preReadyDependencyFailureCount === 0
+    };
+  }
+
   function replayEarlyStartupEvents() {
     const events = Array.isArray(window.gridlyStartupEarlyEvents) ? window.gridlyStartupEarlyEvents.splice(0) : [];
     events.forEach((event) => {
@@ -137,7 +204,8 @@
       evidenceConfidence: longest ? "browser-measured-longtask" : "architecture-only-pending-browser-validation", protectedSystemsChanged: false
     };
   }
-  window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe };
+  window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe, beginRoadwayReportDependencyGeneration, markRoadwayReportDependencyEvent, beginRoadwayReportDependencyPhase, endRoadwayReportDependencyPhase, recordRoadwayDependencyRead, roadwayReportDependencyAudit };
+  window.gridlyRoadwayReportStartupDependencyAudit = roadwayReportDependencyAudit;
   window.gridlyPostPaintBlockingAudit = postPaintBlockingAudit;
   replayEarlyStartupEvents();
   window.gridlyStartupAudit = audit; window.gridlyStartupSummary = summary; window.gridlyRunStartupDiagnosticsValidation = validate; window.gridlyStartupDiagnosticsValidationSummary = async () => { const r = await validate(); return { safeForBeta: r.safeForBeta, failures: r.failures, warnings: r.warnings, timeoutCapture: r.timeoutCapture, timeoutStatusDurable: r.timeoutStatusDurable, noProductionWrites: r.noProductionWrites }; };

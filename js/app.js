@@ -46698,6 +46698,7 @@ function gridlyEnsureWeatherAfterStartup() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const startupDiagnostics = window.gridlyStartupDiagnostics;
+  startupDiagnostics?.beginRoadwayReportDependencyGeneration?.({ countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null });
   startupDiagnostics?.markPostPaintLifecycle?.("domContentLoaded");
   const runStartupStage = startupDiagnostics?.runStage || (async (_name, work) => work());
   await runStartupStage("DOMContentLoaded application bootstrap", async () => {
@@ -46732,6 +46733,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
   await runStartupStage("map initialization", async () => { initMap(); }, { blocking: true, dependency: "Leaflet map shell" });
+  startupDiagnostics?.markRoadwayReportDependencyEvent?.("mapReady");
   {
     const mapReadyStage = startupDiagnostics?.beginStage?.("map initialized", { blocking: true, dependency: "Leaflet map shell" });
     startupDiagnostics?.endStage?.(mapReadyStage, "completed", { message: "map initialized; waiting for prepaint release before uiUsable" });
@@ -46752,8 +46754,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateProfileUI();
   maybeOpenFirstRunSetup();
 
+  startupDiagnostics?.markRoadwayReportDependencyEvent?.("crossingsStarted");
   await runStartupStage("crossing package loading and initial marker rendering", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("crossing package loading and initial marker rendering", "loadCrossings", () => loadCrossings()) : loadCrossings(), { blocking: true, network: true, dependency: "curated/FRA crossing package", timeoutMs: 20000, degradeOnFailure: true, cachedOrFallbackUsed: true });
+  startupDiagnostics?.markRoadwayReportDependencyEvent?.("crossingsReady");
+  startupDiagnostics?.markRoadwayReportDependencyEvent?.("roadwayStarted");
   await runStartupStage("roadway dataset loading", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("roadway dataset loading", "gridlyActivateRoadwayDatasetForActiveCounty", () => gridlyActivateRoadwayDatasetForActiveCounty("startup")) : gridlyActivateRoadwayDatasetForActiveCounty("startup"), { blocking: false, network: true, dependency: "county roadway dataset", timeoutMs: 12000, degradeOnFailure: true });
+  startupDiagnostics?.markRoadwayReportDependencyEvent?.(roadwayDatasetLoadError ? "roadwayFailed" : "roadwayReady", { fallback: Boolean(roadwayDatasetLoadError) });
   const initialReportHydration = runStartupStage("initial report and incident loading", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("initial report and incident loading", "loadSharedReports(initial_bootstrap)", () => loadSharedReports("initial_bootstrap")) : loadSharedReports("initial_bootstrap"), { blocking: false, network: true, dependency: "Supabase reports", timeoutMs: 15000, degradeOnFailure: true });
   initialReportHydration.catch((error) => console.warn("Initial report hydration continued after startup unlock and failed", error));
   if (startupLayoutModeIsDesktop && evaluateLayoutMode() === "desktop") {
@@ -46765,6 +46771,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const skipped = startupDiagnostics?.beginStage?.("initial Community Pulse and awareness preview render", { blocking: false, dependency: "desktop awareness UI" });
     startupDiagnostics?.endStage?.(skipped, "skipped", { message: "non-desktop startup layout" });
   }
+  startupDiagnostics?.markRoadwayReportDependencyEvent?.("usableCheckpoint");
   startupDiagnostics?.markUiUsable?.("DOMContentLoaded bootstrap reached visible unlock checkpoint");
   startupDiagnostics?.completeStartup?.();
   gridlyEnsureWeatherAfterStartup();
@@ -59511,6 +59518,17 @@ async function loadSharedReports(reason = "manual") {
   const gridlyPostPaintPhase = window.gridlyStartupDiagnostics?.beginPostPaintPhase?.(`loadSharedReports:${String(reason || "manual")}`, "loadSharedReports");
   const startupParentStage = reason === "initial_bootstrap" ? "initial report and incident loading" : null;
   const startupDiag = window.gridlyStartupDiagnostics;
+  let roadwayDependencyPhase = null;
+  const beginRoadwayDependencyPhase = (phase) => {
+    if (!startupParentStage) return;
+    if (roadwayDependencyPhase) startupDiag?.endRoadwayReportDependencyPhase?.(roadwayDependencyPhase);
+    roadwayDependencyPhase = startupDiag?.beginRoadwayReportDependencyPhase?.(phase) || null;
+  };
+  const endRoadwayDependencyPhase = () => {
+    if (roadwayDependencyPhase) startupDiag?.endRoadwayReportDependencyPhase?.(roadwayDependencyPhase);
+    roadwayDependencyPhase = null;
+  };
+  if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("reportsStarted");
   const reportStage = (name, options = {}) => startupParentStage && startupDiag?.beginStage?.(`initial reports: ${name}`, { ...options, parentStage: startupParentStage, blocking: false });
   const endReportStage = (stage, status = "completed", details = {}) => startupDiag?.endStage?.(stage, status, details);
   const audit = gridlyNetworkAuditState.loadSharedReports;
@@ -59558,6 +59576,7 @@ async function loadSharedReports(reason = "manual") {
     const fetchStage = reportStage("Supabase report fetch", { network: true, dependency: "reports and recent hazard-cleared reads" });
     gridlyLastReportRetrievalDiagnostic = Object.freeze({ queryMode: "COMPLETE_CLIENT_VISIBLE_KEYSET", error: null, fallbackAttempted: false, finalStatus: "PENDING", rowCount: 0 });
     gridlyGovernedReportRetrievalAuditState = Object.freeze({ ...gridlyGovernedReportRetrievalAuditState, ...retrievalScopes, refreshGeneration: retrievalGeneration, activeQueryCount: 0, clearQueryCount: 0, pageCount: 0, rowsRetrieved: 0, activeRowsRetrieved: 0, clearRowsRetrieved: 0, rowsAfterDeduplication: 0, rowsAfterGovernedEligibility: 0, paginationUsed: false, paginationComplete: false, globalLimitRiskRemoved: false, lastFailure: null, overallPass: false });
+    beginRoadwayDependencyPhase("retrieval");
     const [activePageResult, clearPageResult] = await Promise.all([
       gridlyFetchCompleteReportPages(() => supabaseClient
         .from("reports")
@@ -59569,6 +59588,8 @@ async function loadSharedReports(reason = "manual") {
         .eq("report_type", "hazard_cleared")
         .gte("created_at", recentRoadClearedCutoffIso), { pageSize: GRIDLY_GOVERNED_CLEAR_PAGE_SIZE, queryFamily: "clear" })
     ]);
+    endRoadwayDependencyPhase();
+    if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("reportsRetrieved");
     const data = activePageResult.rows;
     const recentRoadClearedRows = clearPageResult.rows;
     const error = activePageResult.error;
@@ -59621,7 +59642,10 @@ async function loadSharedReports(reason = "manual") {
     gridlyLastReportRetrievalDiagnostic = Object.freeze({ ...gridlyLastReportRetrievalDiagnostic, finalStatus: "SUCCEEDED", rowCount: rawRows.length });
 
     const normalizeStage = reportStage("local filtering and normalization", { dependency: "normalizeReports" });
+    beginRoadwayDependencyPhase("normalization");
     const normalized = normalizeReports(rawRows);
+    endRoadwayDependencyPhase();
+    beginRoadwayDependencyPhase("governance");
     normalized.filter(gridlyIsRoadClearedHazardRecord).forEach((clearRecord) => {
       const targetId = String(clearRecord?.lifecycleIdentity || clearRecord?.explicitLifecycleTargetRaw || "").trim();
       if (targetId) gridlyCacheClearedHazardAuthority(targetId, clearRecord);
@@ -59728,7 +59752,9 @@ async function loadSharedReports(reason = "manual") {
       localAcceptedCrossingsRestored
     });
     endReportStage(visibilityStage, "completed", { message: `localAcceptedHazardsRestored=${localAcceptedHazardsRestored}; localAcceptedCrossingsRestored=${localAcceptedCrossingsRestored}` });
+    endRoadwayDependencyPhase();
     const markerModelStage = reportStage("marker and model preparation", { dependency: "unified incident layer and lightweight crossing refresh evidence" });
+    beginRoadwayDependencyPhase("publication");
     ensureUnifiedIncidentLayerOnMap();
     recordCrossingPipelineRefresh({
       reason: `loadSharedReports:${reason}`,
@@ -59739,8 +59765,13 @@ async function loadSharedReports(reason = "manual") {
 
     const refreshStage = reportStage("report awareness route-watch render refresh", { dependency: "refreshReportHazardViews and incident render reconciliation" });
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
+    endRoadwayDependencyPhase();
+    beginRoadwayDependencyPhase("immediateConsumers");
     refreshReportHazardViews(`loadSharedReports:${reason}`, { skipIncidentRender: true });
+    if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("firstGovernedAwarenessReady");
     gridlyPublishIncidentRenderRevision(`loadSharedReports:${reason}`);
+    if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("reportsPublished");
+    endRoadwayDependencyPhase();
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
     endReportStage(refreshStage, "completed");
 
@@ -59755,6 +59786,8 @@ async function loadSharedReports(reason = "manual") {
       audit.lastPostSubmitSuccessAt = successAt;
     }
   } catch (error) {
+    endRoadwayDependencyPhase();
+    if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("reportsFailed");
     gridlyGovernedReportRetrievalAuditState = Object.freeze({ ...gridlyGovernedReportRetrievalAuditState, lastFailure: gridlyPersistenceErrorDiagnostic(error), overallPass: false });
     ["Supabase report fetch", "local filtering and normalization", "active cleared stale reconciliation", "report visibility processing", "unified incident render calls", "marker and model preparation", "report awareness route-watch render refresh"].forEach((name) => {
       const stage = startupParentStage ? startupDiag?.state?.stages?.find?.((candidate) => candidate.name === `initial reports: ${name}` && candidate.status === "running") : null;
@@ -76786,6 +76819,7 @@ function gridlyExecuteIncidentRenderReconciliation(revision, reason = "unspecifi
   if (popupBefore && popupAfter === popupBefore) gridlyIncidentRenderReconciliationState.popupPreservationCount += 1;
   gridlyIncidentRenderReconciliationState.lastFailure = null;
   gridlyUpdateIncidentRenderReconciliationPasses();
+  if (String(reason).includes("loadSharedReports:initial_bootstrap")) window.gridlyStartupDiagnostics?.markRoadwayReportDependencyEvent?.("firstIncidentRenderReady");
   return true;
 }
 
@@ -106139,6 +106173,7 @@ function buildNearbyPairResolutionIndexKey(lat, lng, primaryRoad = "", roadEvalu
 }
 
 function resolveNearbyRoadPair(lat, lng, primaryRoad = "", roadEvaluationContext = null) {
+  window.gridlyStartupDiagnostics?.recordRoadwayDependencyRead?.({ owner: "resolveNearbyRoadPair", fallback: !roadwayDatasetLoaded });
   const evaluationContext = roadEvaluationContext || buildGridlyRoadEvaluationContext();
   const primaryNormalized = evaluateRoadNameCandidate(primaryRoad, evaluationContext);
   const indexActive = Boolean(gridlyRoadNameLookupCache?.nearbyPairResolutionIndex instanceof Map);
@@ -106298,6 +106333,7 @@ function buildResolveNearestRoadNameIndexKey(lat, lng, options = {}) {
 }
 
 function resolveNearestRoadName(lat, lng) {
+  window.gridlyStartupDiagnostics?.recordRoadwayDependencyRead?.({ owner: "resolveNearestRoadName", fallback: !roadwayDatasetLoaded });
   const __lp012StartedAt = gridlyLP012Now();
   try {
   const resolverCache = gridlyEnsureRoadNameResolverRuntimeCache();
