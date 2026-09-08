@@ -5,6 +5,25 @@ const fs = require("node:fs");
 
 const feature = (id="nws-same") => ({ id, type:"Feature", geometry:null, properties:{ id, event:"Heat Advisory", headline:"Heat Advisory", status:"Actual", messageType:"Alert", severity:"Moderate", certainty:"Likely", urgency:"Expected", effective:"2026-08-26T00:00:00Z", expires:"2099-08-27T00:00:00Z", affectedZones:["TXZ291"] } });
 const payload = (features=[]) => ({ type:"FeatureCollection", features });
+
+test("LP244.20: pending request health survives an old response and settles before publication", async () => {
+  const h = harness(dayton); await settle();
+  const old = await take(h);
+  assert.equal(h.audit().requestInFlight, true);
+  h.set(tarkington);
+  const next = h.context.gridlyWeatherConnector.refreshAwarenessView(); await settle();
+  const current = await take(h);
+  old.resolve({ ok: true, json: async () => payload() }); await settle();
+  assert.equal(h.audit().requestInFlight, true, "old completion must not clear the current pending flag");
+  current.resolve({ ok: true, json: async () => payload() }); await next;
+  assert.equal(h.audit().requestInFlight, false);
+  assert.equal(h.audit().requestSucceeded, true);
+  const retry = h.context.gridlyWeatherConnector.fetchNow(); await settle();
+  assert.equal(h.audit().requestInFlight, true);
+  (await take(h)).resolve({ ok: false, status: 400, json: async () => ({}) }); await retry;
+  assert.equal(h.audit().requestInFlight, false);
+  assert.equal(h.audit().requestSucceeded, false);
+});
 function harness(initial, responders=[]) {
   let selected=initial; const pending=[];
   const context={ console, Date, Promise, TypeError, Error, AbortController, setTimeout, clearTimeout,

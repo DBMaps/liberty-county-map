@@ -209,7 +209,7 @@ test('sheet and content expose one primary count without repeating Alerts', () =
   const transaction = app.slice(app.indexOf('async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync'), app.indexOf('function invokeMobileAlertsEntry'));
   assert.match(transaction, /authorityAvailable \? "Alerts"/);
   const rendered = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [{ id: 'one', sourceClass: 'official_roadway' }]);
-  assert.match(rendered, /<header class="gridly-lp236-header"><strong aria-label="1 active condition">1 active condition<\/strong>/);
+  assert.match(rendered, /<header class="gridly-lp236-header"><strong aria-label="1 current condition · Coverage incomplete">1 current condition · Coverage incomplete<\/strong>/);
   assert.doesNotMatch(rendered, /<strong>Alerts<\/strong>/);
 });
 
@@ -505,7 +505,7 @@ test('LP236.13 quiet and unavailable families are restrained status rows, not em
 test('LP236.13 authority certification preserves governed community and weather geography', () => {
   const handoff = app.slice(app.indexOf('function gridlyGetGovernedConsumerProjection'), app.indexOf('function gridlyGetGovernedActiveAwarenessRows'));
   assert.match(handoff, /gridlySelectConsumerVisibleWeatherSituations\(\{ selectedAwarenessArea: selectedArea \}\)/);
-  assert.match(handoff, /governed active community report and hazard lifecycle evaluated for canonical community/);
+  assert.match(handoff, /alertsFamilyAuthority: gridlyReadAlertsFamilyAuthority\(\)/);
   assert.match(handoff, /point,[\s\S]*polygon,[\s\S]*zone,[\s\S]*forecast zone,[\s\S]*county warning/);
   assert.doesNotMatch(handoff, /countyUnion|county union|Dallas|Austin|Corpus Christi|San Antonio/);
 });

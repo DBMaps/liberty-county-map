@@ -12,7 +12,7 @@ test("production LP236 handoff consumes the LP240 runtime envelope", () => {
   assert.ok(index.indexOf("js/gridlyLP240WeatherAuthorityAudit.js") < index.indexOf("js/app.js"));
   assert.match(app, /gridlyGetWeatherRuntimeAuthorityEnvelope/);
   assert.match(app, /gridlyLP240ClassifyWeatherAuthority/);
-  assert.match(app, /state: weatherClassification\?\.weatherAuthorityState \|\| "UNAVAILABLE"/);
+  assert.match(app, /let weatherState = classification\?\.weatherAuthorityState \|\| "UNAVAILABLE"/);
 });
 
 test("runtime envelope keeps connector request truth separate from provider configuration", () => {

@@ -33,6 +33,18 @@ function harness({ records = [], allRecords = [], connected = true, error = null
   };
 }
 
+test("LP244.20 empty records cannot bypass current-area ownership", () => {
+  const value = harness({ records: [], connected: true });
+  value.window.gridlyDriveTexasConnector.areaLifecycleAudit = () => ({
+    currentAwarenessViewIdentity: "place-4819000", currentAwarenessViewMatchesSelectedArea: false
+  });
+  const envelope = value.envelope();
+  assert.equal(envelope.sourceStatus, "UNKNOWN");
+  assert.equal(envelope.areaOwnershipMatches, false);
+  assert.equal(envelope.quietEligible, false);
+  assert.equal(envelope.healthyEmpty, false);
+});
+
 test("healthy current-awareness records enter the governed consumer selector instead of the statewide cache", () => {
   const dallasRecords = Array.from({ length: 8 }, (_, index) => ({ id: `dallas-${index + 1}`, eligible: true }));
   const statewideRecords = Array.from({ length: 623 }, (_, index) => ({ id: `statewide-${index + 1}` }));

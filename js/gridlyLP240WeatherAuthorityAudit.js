@@ -121,6 +121,7 @@
     return freeze({
       configured: pointMode || providerRuntime.enabled === true,
       enabled: pointMode || providerRuntime.enabled === true,
+      requestInFlight: connectorRuntime.requestInFlight === true,
       requestAttempted: connectorRuntime.requestAttempted === true,
       requestSucceeded: connectorRuntime.requestSucceeded === true,
       lastAttemptAt: connectorRuntime.lastRequestAt || null,

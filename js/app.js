@@ -3314,6 +3314,89 @@ function gridlyGetCanonicalActiveCommunityState(options = {}) {
   });
 }
 
+// LP244.20: project existing source-health contracts, never array existence.
+function gridlySourceCoverageOwner() {
+  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  return JSON.stringify([
+    area?.canonicalKey || area?.placeGeoid || area?.key || area?.storageValue || area?.label || "",
+    typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : area?.countyId || "",
+    typeof gridlyActiveCountyTransitionGeneration === "number" ? gridlyActiveCountyTransitionGeneration : 0
+  ]);
+}
+
+// A completed check is current only within its existing refresh window.
+// This does not extend condition retention or change lifecycle eligibility.
+function gridlyCoverageCheckIsCurrent(timestamp, refreshMs) {
+  const at = typeof timestamp === "number" ? timestamp : Date.parse(timestamp || "");
+  const age = Date.now() - at;
+  return Number.isFinite(at) && Number(refreshMs) > 0 && age >= 0 && age <= Number(refreshMs);
+}
+
+function gridlySourceCoverageRevision() {
+  const road = window.gridlyDriveTexasConnectorRuntimeAudit?.() || {};
+  const weather = window.gridlyWeatherConnectorRuntimeAudit?.() || {};
+  return JSON.stringify([gridlySourceCoverageOwner(), gridlyReportReadPresentationState,
+    gridlyCurrentReportReadState(),
+    road.requestInFlight, road.lastFetchSucceeded, road.lastSuccessfulAt, road.lastError,
+    gridlyCoverageCheckIsCurrent(road.lastSuccessfulAt, road.refreshIntervalMs),
+    weather.requestInFlight, weather.currentAwarenessIdentity, weather.responseIdentity,
+    weather.requestSucceeded, weather.responseValid, weather.freshEnough, weather.lastSuccessAt, weather.lastError]);
+}
+
+function gridlyCommitReportReadCoverage(request, state) {
+  if (request.owner !== gridlySourceCoverageOwner() || request.revision !== gridlyReportReadPresentationState.revision) return false;
+  const completedAt = Date.now();
+  gridlyReportReadPresentationState = Object.freeze({ ...request, state, completedAt,
+    lastSuccessfulAt: state === "succeeded" ? completedAt : request.lastSuccessfulAt });
+  return true;
+}
+
+function gridlyCurrentReportReadState() {
+  const read = gridlyReportReadPresentationState;
+  if (read.owner !== gridlySourceCoverageOwner()) return "not_started";
+  if (read.state === "succeeded" && !gridlyCoverageCheckIsCurrent(read.completedAt, LIVE_REFRESH_MS)) return "stale";
+  return read.state;
+}
+
+function gridlyReadAlertsFamilyAuthority() {
+  const owner = gridlySourceCoverageOwner();
+  const result = (state, reason, extra = {}) => Object.freeze({
+    state, checked: state === "ACTIVE" || state === "QUIET",
+    available: state === "ACTIVE" || state === "QUIET", reason, owner, ...extra
+  });
+  const road = gridlyStoryTransportationSourceStatusEnvelope();
+  const roadRuntime = window.gridlyDriveTexasConnectorRuntimeAudit?.();
+  let roadState = "UNAVAILABLE";
+  if (roadRuntime?.requestInFlight === true) roadState = "LOADING";
+  else if (road?.areaOwnershipMatches !== false) {
+    if (road?.sourceStatus === "SOURCE_FAILED_WITH_RETAINED_DATA" || (roadRuntime?.lastSuccessfulAt && (roadRuntime.lastError || !gridlyCoverageCheckIsCurrent(roadRuntime.lastSuccessfulAt, roadRuntime.refreshIntervalMs)))) roadState = "STALE";
+    else if (road?.sourceStatus === "HEALTHY_WITH_DATA" && roadRuntime?.lastFetchSucceeded === true && gridlyCoverageCheckIsCurrent(roadRuntime.lastSuccessfulAt, roadRuntime.refreshIntervalMs)) roadState = "ACTIVE";
+    else if (road?.sourceStatus === "HEALTHY_EMPTY" && road.quietEligible === true && roadRuntime?.lastFetchSucceeded === true && gridlyCoverageCheckIsCurrent(roadRuntime.lastSuccessfulAt, roadRuntime.refreshIntervalMs)) roadState = "QUIET";
+  }
+  const reportState = gridlyCurrentReportReadState();
+  const communityState = reportState === "loading" ? "LOADING"
+    : reportState === "succeeded" ? "QUIET"
+      : reportState === "stale" || (reportState === "failed" && gridlyReportReadPresentationState.lastSuccessfulAt) ? "STALE" : "UNAVAILABLE";
+  const weather = window.gridlyGetWeatherRuntimeAuthorityEnvelope?.();
+  const classification = window.gridlyLP240ClassifyWeatherAuthority?.({
+    sourceConfigured: weather?.configured, sourceRequestAttempted: weather?.requestAttempted,
+    sourceRequestSucceeded: weather?.requestSucceeded, sourceHealthy: weather?.healthy,
+    sourceFreshEnough: weather?.freshEnoughForAuthority, sourceError: weather?.error,
+    canonicalGeographyResolved: weather?.canonicalGeographyResolved,
+    geographyAgreementPass: weather?.geographyAgreementPass,
+    currentApplicableCount: weather?.currentApplicableCount
+  });
+  let weatherState = classification?.weatherAuthorityState || "UNAVAILABLE";
+  if (weather?.requestInFlight === true) weatherState = "LOADING";
+  else if (weather?.geographyAgreementPass === true && weather?.freshness === "STALE") weatherState = "STALE";
+  return Object.freeze({
+    official_roadway: result(roadState, road?.sourceStatus || "SOURCE_UNAVAILABLE"),
+    // Report completion proves availability; the selected-area projection owns its count.
+    community_report: result(communityState, reportState, communityState === "QUIET" ? { state: null } : {}),
+    weather: result(weatherState, classification?.authorityReason || "weather unavailable", { runtimeAuthority: weather })
+  });
+}
+
 function gridlyGetGovernedConsumerProjection(options = {}) {
   const engine = typeof window !== "undefined" ? window.GridlyGovernedAwareness : null;
   if (!engine?.buildConsumerProjection) return null;
@@ -3352,35 +3435,7 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
     canonicalKey: selectedArea?.canonicalKey || selectedArea?.placeGeoid || "",
     countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : selectedArea?.countyId || ""
   });
-  // Certify each input authority at the point where it is actually evaluated.
-  // Empty governed arrays are meaningful only when their owning selector ran.
-  const communityChecked = Array.isArray(activeReports) && Array.isArray(activeHazards);
-  const weatherChecked = typeof window.gridlySelectConsumerVisibleWeatherSituations === "function";
-  const weatherEnvelope = typeof window.gridlyGetWeatherRuntimeAuthorityEnvelope === "function"
-    ? window.gridlyGetWeatherRuntimeAuthorityEnvelope({ selected: selectedArea }) : null;
-  const weatherClassification = typeof window.gridlyLP240ClassifyWeatherAuthority === "function"
-    ? window.gridlyLP240ClassifyWeatherAuthority({
-      sourceConfigured: weatherEnvelope?.configured,
-      sourceRequestAttempted: weatherEnvelope?.requestAttempted,
-      sourceRequestSucceeded: weatherEnvelope?.requestSucceeded,
-      sourceHealthy: weatherEnvelope?.healthy,
-      sourceFreshEnough: weatherEnvelope?.freshEnoughForAuthority,
-      sourceError: weatherEnvelope?.error,
-      canonicalGeographyResolved: weatherEnvelope?.canonicalGeographyResolved,
-      geographyAgreementPass: weatherEnvelope?.geographyAgreementPass,
-      currentApplicableCount: governedWeatherRecords.length
-    }) : null;
-  return projection ? Object.freeze({ ...projection, alertsFamilyAuthority: Object.freeze({
-    official_roadway: Object.freeze({ checked: Array.isArray(driveTexasRecords), available: Array.isArray(driveTexasRecords), reason: Array.isArray(driveTexasRecords) ? "governed DriveTexas projection evaluated" : "governed DriveTexas projection unavailable" }),
-    community_report: Object.freeze({ checked: communityChecked, available: communityChecked, reason: communityChecked ? "governed active community report and hazard lifecycle evaluated for canonical community" : "governed community report or hazard lifecycle unavailable" }),
-    weather: Object.freeze({
-      checked: weatherChecked,
-      available: weatherClassification?.weatherAuthorityState === "ACTIVE" || weatherClassification?.weatherAuthorityState === "QUIET",
-      state: weatherClassification?.weatherAuthorityState || "UNAVAILABLE",
-      reason: weatherClassification?.authorityReason || "governed weather runtime authority envelope unavailable",
-      runtimeAuthority: weatherEnvelope
-    })
-  }) }) : null;
+  return projection ? Object.freeze({ ...projection, alertsFamilyAuthority: gridlyReadAlertsFamilyAuthority() }) : null;
 }
 
 function gridlyGetGovernedActiveAwarenessRows(options = {}, projectionOverride) {
@@ -4469,12 +4524,15 @@ function gridlyKbygFamilyPresentation(key, state, activeLines = []) {
 function gridlyKbygRoadwayAuthorityState(records = [], sourceEnvelope = null) {
   const hasActive = (Array.isArray(records) ? records : []).some((record) => Boolean(gridlyStoryTransportationImpact(record)));
   if (hasActive) return "ACTIVE";
-  if (sourceEnvelope?.healthyEmpty === true || sourceEnvelope?.quietEligible === true) return "QUIET";
+  if (sourceEnvelope?.healthyEmpty === true || sourceEnvelope?.quietEligible === true) {
+    return typeof gridlyReadAlertsFamilyAuthority !== "function" || gridlyReadAlertsFamilyAuthority().official_roadway.state === "QUIET" ? "QUIET" : "UNAVAILABLE";
+  }
   return "UNAVAILABLE";
 }
 
 function gridlyKbygWeatherAuthorityState(weather, completeness = gridlyGetAwarenessEvidenceCompleteness()) {
   if (gridlyStoryWeatherMeaningfulImpact(weather)) return "ACTIVE";
+  if (typeof gridlyReadAlertsFamilyAuthority === "function") return gridlyReadAlertsFamilyAuthority().weather.state === "QUIET" ? "QUIET" : "UNAVAILABLE";
   try {
     const governed = typeof window.gridlyLP240WeatherAuthorityAudit === "function" ? window.gridlyLP240WeatherAuthorityAudit() : null;
     if (["QUIET", "UNAVAILABLE"].includes(governed?.weatherAuthorityState)) return governed.weatherAuthorityState;
@@ -35245,7 +35303,8 @@ function gridlyGetAlertsAuthoritativeContextKey() {
 }
 
 function gridlyGetAlertsAuthoritativeRevisionKey() {
-  return String(
+  const coverageRevision = typeof gridlySourceCoverageRevision === "function" ? gridlySourceCoverageRevision() : "";
+  return coverageRevision + "|" + String(
     window.gridlyAlertStateRevision ||
     window.gridlyAlertsStateRevision ||
     window.gridlySharedReportsRevision ||
@@ -59674,7 +59733,6 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 // LP244.19 REPORT SNAPSHOT MEMBERSHIP END
 
 async function loadSharedReports(reason = "manual") {
-  gridlyReportReadPresentationState = Object.freeze({ state: "loading", countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, completedAt: null });
   const gridlyPostPaintPhase = window.gridlyStartupDiagnostics?.beginPostPaintPhase?.(`loadSharedReports:${String(reason || "manual")}`, "loadSharedReports");
   const startupParentStage = reason === "initial_bootstrap" ? "initial report and incident loading" : null;
   const startupDiag = window.gridlyStartupDiagnostics;
@@ -59713,13 +59771,20 @@ async function loadSharedReports(reason = "manual") {
   audit.lastByReason[reason] = now;
   if (audit.inFlight && audit.inFlightPromise) return audit.inFlightPromise;
 
+  const reportReadOwner = gridlySourceCoverageOwner();
+  const reportReadRequest = Object.freeze({ state: "loading", owner: reportReadOwner,
+    revision: (gridlyReportReadPresentationState.revision || 0) + 1,
+    countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, completedAt: null,
+    lastSuccessfulAt: gridlyReportReadPresentationState.owner === reportReadOwner ? gridlyReportReadPresentationState.lastSuccessfulAt : null });
+  gridlyReportReadPresentationState = reportReadRequest;
+  gridlySynchronizeOpenAlertsPortrait("report-source-loading");
   audit.inFlight = true;
   audit.inFlightPromise = (async () => {
   const availabilityStage = reportStage("Supabase client availability", { dependency: "Supabase client" });
   if (!supabaseClient) {
     endReportStage(availabilityStage, "degraded", { message: "Supabase client unavailable; live sync skipped", startupContinued: true });
     setSync(`Live sync unavailable · Build ${APP_BUILD}`);
-    gridlyReportReadPresentationState = Object.freeze({ state: "failed", countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, completedAt: Date.now() });
+    gridlyCommitReportReadCoverage(reportReadRequest, "failed");
     return null;
   }
   endReportStage(availabilityStage);
@@ -59900,6 +59965,7 @@ async function loadSharedReports(reason = "manual") {
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     endRoadwayDependencyPhase();
     beginRoadwayDependencyPhase("immediateConsumers");
+    gridlyCommitReportReadCoverage(reportReadRequest, "succeeded");
     const publishBaseReportTruth = () => {
       refreshReportHazardViews(`loadSharedReports:${reason}`, { skipIncidentRender: true });
       if (startupParentStage) startupDiag?.markRoadwayReportDependencyEvent?.("firstGovernedAwarenessReady");
@@ -59918,7 +59984,7 @@ async function loadSharedReports(reason = "manual") {
 
     const successAt = Date.now();
     audit.lastSuccessAt = successAt;
-    gridlyReportReadPresentationState = Object.freeze({ state: "succeeded", countyId: activeCountyId, completedAt: successAt });
+
     if (reason === "post_submit_refresh") {
       audit.lastPostSubmitSuccessAt = successAt;
     }
@@ -59930,7 +59996,7 @@ async function loadSharedReports(reason = "manual") {
       const stage = startupParentStage ? startupDiag?.state?.stages?.find?.((candidate) => candidate.name === `initial reports: ${name}` && candidate.status === "running") : null;
       if (stage) endReportStage(stage, "failed", { error, startupContinued: true });
     });
-    gridlyReportReadPresentationState = Object.freeze({ state: "failed", countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null, completedAt: Date.now() });
+    gridlyCommitReportReadCoverage(reportReadRequest, "failed");
     console.error("Gridly report sync failed:", error);
     setSync("Live sync read failed");
   }
@@ -59941,6 +60007,9 @@ async function loadSharedReports(reason = "manual") {
   } finally {
     audit.inFlight = false;
     audit.inFlightPromise = null;
+    // A suppressed generation is not a completed source check.
+    if (gridlyReportReadPresentationState === reportReadRequest) gridlyCommitReportReadCoverage(reportReadRequest, "failed");
+    if (gridlyCurrentReportReadState() === "failed") gridlySynchronizeOpenAlertsPortrait("report-source-unavailable");
     window.gridlyStartupDiagnostics?.endPostPaintPhase?.(gridlyPostPaintPhase);
   }
 }
@@ -65762,7 +65831,7 @@ const GRIDLY_AWARENESS_SOURCE_STATE = Object.freeze({
 let gridlyReportReadPresentationState = Object.freeze({ state: "not_started", countyId: null, completedAt: null });
 
 function gridlyGetAwarenessEvidenceCompleteness(input = {}) {
-  const reportReadState = String(input.reportReadState || gridlyReportReadPresentationState.state || "not_started");
+  const reportReadState = String(input.reportReadState || gridlyCurrentReportReadState());
   const communityReportCount = Math.max(0, Number(input.communityReportCount ?? ((typeof activeReports !== "undefined" ? activeReports.length : 0) + (typeof activeHazards !== "undefined" ? activeHazards.length : 0))) || 0);
   const crossingsState = input.crossingsState || input.coverage?.semanticCoverageState || (typeof getGridlyAwarenessCoverageState === "function" ? getGridlyAwarenessCoverageState().semanticCoverageState : GRIDLY_AWARENESS_SOURCE_STATE.LOADING_OR_UNKNOWN);
   // Provider capability defaults describe current production without activating or pretending to query either provider.
@@ -118561,6 +118630,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     // projections so filtering/sorting a surface cannot edit authoritative truth.
     return {
       ...snapshot,
+      alertsFamilyAuthority: typeof gridlyReadAlertsFamilyAuthority === "function" ? gridlyReadAlertsFamilyAuthority() : snapshot.alertsFamilyAuthority,
       alerts: snapshot.alerts.map((record) => ({ ...record })),
       presentationAlerts: snapshot.presentationAlerts.map((record) => ({ ...record })),
       normalizedAlertItems: snapshot.normalizedAlertItems.map((record) => ({ ...record }))
@@ -119022,6 +119092,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       activeHazardSourceCount,
       normalizedAlertItems,
       alertsFamilyAuthority: governedConsumerProjection?.alertsFamilyAuthority || null,
+      sourceCoverageOwner: gridlySourceCoverageOwner(),
       routeState: route.routeState,
       topStatus: unifiedIntel.topStatus,
       commuteImpactHeadline: unifiedIntel.commuteImpactHeadline,
@@ -119295,12 +119366,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       { sourceClass: "community_report", label: "Community Reports", provenance: "Community-submitted conditions" },
       { sourceClass: "weather", label: "Weather", provenance: "Governed weather alerts" }
     ];
-    const familyAuthority = snapshot?.alertsFamilyAuthority || {};
+    const familyAuthority = snapshot?.activeConditionAuthorityAvailable === false ? {} : typeof gridlyReadAlertsFamilyAuthority === "function" ? gridlyReadAlertsFamilyAuthority() : snapshot?.alertsFamilyAuthority || {};
     // An empty Alerts snapshot may be reused while the point request moves
     // from pending to a proven result.  For the Weather empty-state only,
     // reconcile that compatibility envelope with the current governed
     // authority.  Never infer QUIET from the empty presentation array.
-    const currentWeatherEnvelope = typeof window.gridlyGetWeatherRuntimeAuthorityEnvelope === "function"
+    const currentWeatherEnvelope = snapshot?.activeConditionAuthorityAvailable !== false && typeof window.gridlyGetWeatherRuntimeAuthorityEnvelope === "function"
       ? window.gridlyGetWeatherRuntimeAuthorityEnvelope() : null;
     const currentWeatherClassification = alerts.every((alert) => gridlyLP236SourceClass(alert) !== "weather")
       && currentWeatherEnvelope && typeof window.gridlyLP240ClassifyWeatherAuthority === "function"
@@ -119315,7 +119386,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         geographyAgreementPass: currentWeatherEnvelope.geographyAgreementPass,
         currentApplicableCount: currentWeatherEnvelope.currentApplicableCount
       }) : null;
-    const weatherPresentationAuthority = currentWeatherClassification?.quietProven === true
+    const weatherPresentationAuthority = familyAuthority.weather?.owner ? familyAuthority.weather : currentWeatherClassification?.quietProven === true
       ? { checked: true, available: true, state: "QUIET", reason: currentWeatherClassification.authorityReason }
       : currentWeatherClassification?.weatherAuthorityState === "UNAVAILABLE"
         ? { checked: true, available: false, state: "UNAVAILABLE", reason: currentWeatherClassification.authorityReason }
@@ -119344,14 +119415,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       // A governed row is itself positive evidence that its family was checked;
       // unlike an empty array, it can safely certify ACTIVE for compatibility
       // with callers predating the explicit family-authority envelope.
-      const positiveAuthority = section.activeConditionCount > 0 && snapshot?.activeConditionAuthorityAvailable === true;
+      const positiveAuthority = !section.explicitAuthorityState && section.activeConditionCount > 0 && snapshot?.activeConditionAuthorityAvailable === true;
       return {
       ...section,
       authorityChecked: section.authorityChecked || positiveAuthority,
       authorityAvailable: section.authorityAvailable || positiveAuthority,
       authorityReason: positiveAuthority && !section.authorityChecked ? "governed active family conditions evaluated" : section.authorityReason,
-      authorityState: section.explicitAuthorityState === "ACTIVE" || section.explicitAuthorityState === "QUIET" || section.explicitAuthorityState === "UNAVAILABLE"
-        ? section.explicitAuthorityState
+      authorityState: snapshot?.sourceCoverageOwner && typeof gridlySourceCoverageOwner === "function" && snapshot.sourceCoverageOwner !== gridlySourceCoverageOwner() ? "LOADING"
+        : ["ACTIVE", "QUIET", "UNAVAILABLE", "LOADING", "STALE"].includes(section.explicitAuthorityState)
+        ? (section.explicitAuthorityState === "ACTIVE" && section.activeConditionCount === 0 ? "UNAVAILABLE"
+          : section.explicitAuthorityState === "QUIET" && section.activeConditionCount > 0 ? "ACTIVE" : section.explicitAuthorityState)
         : ((section.authorityChecked && section.authorityAvailable) || positiveAuthority ? (section.activeConditionCount > 0 ? "ACTIVE" : "QUIET") : "UNAVAILABLE"),
       groups: [...section.groups.values()].map((group) => {
         const rows = group.rows.sort((a, b) => a.canonicalId.localeCompare(b.canonicalId));
@@ -119369,7 +119442,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const authorityState = snapshot?.activeConditionAuthorityAvailable === true
       ? (total > 0 ? "AVAILABLE_NONEMPTY" : "AVAILABLE_EMPTY")
       : "UNAVAILABLE";
-    return { snapshot, alerts, total, sections, firstSource, critical, authorityState };
+    const currentTotal = sections.filter((section) => section.authorityState === "ACTIVE").reduce((sum, section) => sum + section.activeConditionCount, 0);
+    const coverageComplete = sections.every((section) => section.authorityState === "ACTIVE" || section.authorityState === "QUIET");
+    const headerLabel = coverageComplete ? (currentTotal + " active condition" + (currentTotal === 1 ? "" : "s"))
+      : currentTotal > 0 ? (currentTotal + " current condition" + (currentTotal === 1 ? "" : "s") + " · Coverage incomplete")
+        : sections.some((section) => section.authorityState === "LOADING") ? "Checking conditions · Coverage incomplete" : "Coverage incomplete";
+    return { snapshot, alerts, total, currentTotal, coverageComplete, headerLabel, sections, firstSource, critical, authorityState };
   }
 
   function gridlyLP236AlertsInformationArchitectureAudit() {
@@ -119661,7 +119739,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       }).join("");
       return `${roadwayHtml}${visible.directRows.map((row) => renderRow(row, source, false, "", row.typeLabel)).join("")}`;
     };
-    const criticalHtml = model.critical.map(({ alert }) => {
+    const criticalHtml = model.critical.filter(() => model.sections.find((section) => section.sourceClass === "weather")?.authorityState === "ACTIVE").map(({ alert }) => {
       const title = resolveAlertTitleText(alert);
       const timing = pickFirstNonEmptyText([alert?.timeframe, alert?.expires, alert?.endsAt, alert?.updatedAt]);
       return `<aside class="gridly-lp236-critical" role="status"><strong>⚠ ${sanitizeText(title)}</strong>${timing ? `<span>${sanitizeText(timing)}</span>` : ""}<span>High-priority weather information</span></aside>`;
@@ -119670,14 +119748,19 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const sourceKey = source.sourceClass;
       if (source.authorityState !== "ACTIVE") {
         const quiet = source.authorityState === "QUIET";
-        const status = quiet ? (source.sourceClass === "community_report" ? "No active community reports" : (source.sourceClass === "weather" ? "No active weather alerts" : "No active official roadway conditions")) : (source.sourceClass === "community_report" ? "Community report information unavailable" : (source.sourceClass === "weather" ? "Weather information unavailable" : "Official roadway information unavailable"));
-        return `<div class="gridly-lp236-source-status gridly-lp236-source-${source.authorityState.toLowerCase()}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="0" data-gridly-lp236-authority-state="${source.authorityState}" role="status"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(status)}</small></span><b aria-label="0 active conditions">0</b></div>`;
+        const family = source.sourceClass === "community_report" ? "community reports" : source.sourceClass === "weather" ? "weather alerts" : "official roadway conditions";
+        const quietStatus = source.sourceClass === "community_report" ? "No active community reports" : source.sourceClass === "weather" ? "No active weather alerts" : "No active official roadway conditions";
+        const unavailableStatus = source.sourceClass === "community_report" ? "Community report information unavailable" : source.sourceClass === "weather" ? "Weather information unavailable" : "Official roadway information unavailable";
+        const status = quiet ? quietStatus : source.authorityState === "LOADING" ? "Checking " + family
+          : source.authorityState === "STALE" ? "Information is stale; updates may be delayed" : unavailableStatus + "; check again later";
+        const accessible = quiet ? "0 active conditions" : source.authorityState === "LOADING" ? "Checking conditions" : source.authorityState === "STALE" ? "Information is stale; not a current condition count" : "Information unavailable; conditions have not been checked";
+        return `<div class="gridly-lp236-source-status gridly-lp236-source-${source.authorityState.toLowerCase()}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${quiet ? "0" : ""}" data-gridly-lp236-authority-state="${source.authorityState}" role="status" aria-label="${sanitizeText(source.label)}, ${sanitizeText(accessible)}"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(status)}</small></span>${quiet ? '<b aria-label="0 active conditions">0</b>' : '<b aria-hidden="true">—</b>'}</div>`;
       }
       const open = gridlyLP236AlertsState.disclosure.initialized ? gridlyLP236AlertsState.disclosure.sourceKeys.has(sourceKey) : model.total === 1 || source.sourceClass === model.firstSource;
       const groupsHtml = source.sourceClass === "official_roadway" ? renderOfficialRoadways(source) : source.groups.map((group, groupIndex) => renderGroup(group, source, groupIndex)).join("");
-      return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="ACTIVE"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active conditions"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active conditions">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${groupsHtml}</div></details>`;
+      return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="ACTIVE"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${groupsHtml}</div></details>`;
     }).join("");
-    return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong aria-label="${model.total} active condition${model.total === 1 ? "" : "s"}">${model.total} active condition${model.total === 1 ? "" : "s"}</strong></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
+    return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong aria-label="${sanitizeText(model.headerLabel)}">${sanitizeText(model.headerLabel)}</strong></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
   }
   window.gridlyLP236RenderAlertsPresentation = (snapshot, suppliedAlerts = null) => {
     try {
