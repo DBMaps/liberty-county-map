@@ -21,7 +21,7 @@
   },
   "scripts": {
     "test:lp2445:parity": "node --test tests/lp2445-governed-active-condition-parity.test.mjs tests/lp2445-live-writer-sequence.test.mjs",
-    "test:lp2445:acceptance": "npm run test:lp2445:parity && npm run test:lp2445:saved-address && npm run test:lp2448:route-publication && npm run test:lp2449:travel-brief-projection && npm run test:lp24410:runtime-source-authority && npm run test:lp24411:stable-runtime-source-authority && npm run test:lp24412:governed-report-retrieval && npm run test:lp24413:incident-render-reconciliation && npm run test:lp24414:incident-attribution-gating && npm run test:lp24415:deferred-package-warmup && node --test tests/lp2445-bare-texas-place-destination.test.mjs tests/lp2445-final-short-landscape-density.test.mjs",
+    "test:lp2445:acceptance": "npm run test:lp2445:parity && npm run test:lp2445:saved-address && npm run test:lp2448:route-publication && npm run test:lp2449:travel-brief-projection && npm run test:lp24410:runtime-source-authority && npm run test:lp24411:stable-runtime-source-authority && npm run test:lp24412:governed-report-retrieval && npm run test:lp24413:incident-render-reconciliation && npm run test:lp24414:incident-attribution-gating && npm run test:lp24415:deferred-package-warmup && npm run test:lp24416:crossing-diagnostic-gating && node --test tests/lp2445-bare-texas-place-destination.test.mjs tests/lp2445-final-short-landscape-density.test.mjs",
     "build:lp24111": "node tools/lp24111/manufacture.mjs --write",
     "execute:lp24111-normalization": "node tools/lp24111/normalize.mjs --execute",
     "execute:lp24111-taxonomy": "node tools/lp24111/taxonomy-review.mjs --execute",
@@ -716,6 +716,7 @@
     "test:lp24413:incident-render-reconciliation": "node --test tests/lp24413-incident-render-reconciliation.test.cjs",
     "test:lp24414:incident-attribution-gating": "node --test tests/lp24414-incident-attribution-gating.test.cjs",
     "test:lp24415:deferred-package-warmup": "node --test tests/lp24415-deferred-package-warmup.test.cjs",
+    "test:lp24416:crossing-diagnostic-gating": "node --test tests/lp24416-crossing-diagnostic-gating.test.cjs",
     "test:lp2445:saved-address": "npm run test:lp2447:saved-place-ownership && node --test tests/lp2445-saved-address-integrity.test.mjs tests/lp2446-saved-address-acquisition.test.mjs tests/lp2446-map-confirmation-ui-state.test.mjs"
   }
 }

@@ -58890,6 +58890,21 @@ const gridlyPostSubmitRefreshAudit = function gridlyPostSubmitRefreshAudit() {
 
 
 const gridlyCrossingPipelineAuditState = {
+  available: true,
+  reportRevision: 0,
+  automaticDetailedRebuildEnabled: false,
+  automaticDetailedRebuildCount: 0,
+  explicitDetailedRebuildCount: 0,
+  lastDetailedAuditRevision: null,
+  lastDetailedAuditCountyId: null,
+  crossingReportCount: 0,
+  consolidatedIncidentBuildCountForAudit: 0,
+  sourceCollectionReadCountForAudit: 0,
+  normalRefreshDetailedScanCount: 0,
+  lastSuccessfulReportRefreshAt: null,
+  lastSuccessfulReportRefreshReason: null,
+  lastSuccessfulReportRefreshCountyId: null,
+  lastDetailedAuditAt: null,
   lastRunAt: null,
   lastRunReason: "init",
   crossingReportsLoadedCount: 0,
@@ -58906,7 +58921,52 @@ const gridlyCrossingPipelineAuditState = {
   droppedCrossingReports: []
 };
 
-function updateCrossingPipelineAudit(reason = "unknown") {
+function gridlyCrossingPipelineAuditCurrentCountyId() {
+  return typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
+}
+
+function recordCrossingPipelineRefresh({ reason = "unknown", crossingReportCount = 0, countyId = null } = {}) {
+  gridlyCrossingPipelineAuditState.reportRevision += 1;
+  gridlyCrossingPipelineAuditState.crossingReportCount = Math.max(0, Number(crossingReportCount) || 0);
+  gridlyCrossingPipelineAuditState.lastSuccessfulReportRefreshAt = new Date().toISOString();
+  gridlyCrossingPipelineAuditState.lastSuccessfulReportRefreshReason = reason;
+  gridlyCrossingPipelineAuditState.lastSuccessfulReportRefreshCountyId = countyId || gridlyCrossingPipelineAuditCurrentCountyId();
+  return readCrossingPipelineRuntimeAudit();
+}
+
+function readCrossingPipelineRuntimeAudit() {
+  const currentCountyId = gridlyCrossingPipelineAuditCurrentCountyId();
+  const detailedAuditCurrent = gridlyCrossingPipelineAuditState.lastDetailedAuditRevision !== null
+    && gridlyCrossingPipelineAuditState.lastDetailedAuditRevision === gridlyCrossingPipelineAuditState.reportRevision
+    && gridlyCrossingPipelineAuditState.lastDetailedAuditCountyId === currentCountyId;
+  const overallPass = gridlyCrossingPipelineAuditState.automaticDetailedRebuildEnabled === false
+    && gridlyCrossingPipelineAuditState.automaticDetailedRebuildCount === 0
+    && gridlyCrossingPipelineAuditState.normalRefreshDetailedScanCount === 0;
+  return Object.freeze({
+    available: gridlyCrossingPipelineAuditState.available,
+    reportRevision: gridlyCrossingPipelineAuditState.reportRevision,
+    automaticDetailedRebuildEnabled: gridlyCrossingPipelineAuditState.automaticDetailedRebuildEnabled,
+    automaticDetailedRebuildCount: gridlyCrossingPipelineAuditState.automaticDetailedRebuildCount,
+    explicitDetailedRebuildCount: gridlyCrossingPipelineAuditState.explicitDetailedRebuildCount,
+    lastDetailedAuditRevision: gridlyCrossingPipelineAuditState.lastDetailedAuditRevision,
+    detailedAuditCurrent,
+    crossingReportCount: gridlyCrossingPipelineAuditState.crossingReportCount,
+    consolidatedIncidentBuildCountForAudit: gridlyCrossingPipelineAuditState.consolidatedIncidentBuildCountForAudit,
+    sourceCollectionReadCountForAudit: gridlyCrossingPipelineAuditState.sourceCollectionReadCountForAudit,
+    normalRefreshDetailedScanCount: gridlyCrossingPipelineAuditState.normalRefreshDetailedScanCount,
+    lastSuccessfulReportRefreshAt: gridlyCrossingPipelineAuditState.lastSuccessfulReportRefreshAt,
+    lastDetailedAuditAt: gridlyCrossingPipelineAuditState.lastDetailedAuditAt,
+    overallPass
+  });
+}
+
+function updateCrossingPipelineAudit(reason = "unknown", options = {}) {
+  if (options.automatic === true) {
+    gridlyCrossingPipelineAuditState.automaticDetailedRebuildCount += 1;
+    gridlyCrossingPipelineAuditState.normalRefreshDetailedScanCount += 1;
+  } else {
+    gridlyCrossingPipelineAuditState.explicitDetailedRebuildCount += 1;
+  }
   const crossingReports = (Array.isArray(activeReports) ? activeReports : []).filter((report) => String(report?.reportKind || "").toLowerCase() === "crossing");
   const dropped = [];
   let normalizedCount = 0;
@@ -58928,14 +58988,19 @@ function updateCrossingPipelineAudit(reason = "unknown") {
     normalizedCount += 1;
   });
 
+  gridlyCrossingPipelineAuditState.consolidatedIncidentBuildCountForAudit += 1;
   const consolidated = getConsolidatedIncidents();
   const railCount = Array.isArray(consolidated) ? consolidated.length : 0;
+  gridlyCrossingPipelineAuditState.sourceCollectionReadCountForAudit += 4;
   const txdotCount = futureTxdotIncidents().length;
   const constructionCount = futureTxdotConstruction().length;
   const floodCount = futureFloodAlerts().length;
   const roadCount = getLiveHazardIncidents().length;
 
   gridlyCrossingPipelineAuditState.lastRunAt = new Date().toISOString();
+  gridlyCrossingPipelineAuditState.lastDetailedAuditAt = gridlyCrossingPipelineAuditState.lastRunAt;
+  gridlyCrossingPipelineAuditState.lastDetailedAuditRevision = gridlyCrossingPipelineAuditState.reportRevision;
+  gridlyCrossingPipelineAuditState.lastDetailedAuditCountyId = gridlyCrossingPipelineAuditCurrentCountyId();
   gridlyCrossingPipelineAuditState.lastRunReason = reason;
   gridlyCrossingPipelineAuditState.crossingReportsLoadedCount = crossingReports.length;
   gridlyCrossingPipelineAuditState.crossingReportsNormalizedCount = normalizedCount;
@@ -59373,6 +59438,7 @@ window.gridlyCrossingPipelineAudit = function gridlyCrossingPipelineAudit() {
   updateCrossingPipelineAudit("manual_window_call");
   return {
     ...gridlyCrossingPipelineAuditState,
+    ...readCrossingPipelineRuntimeAudit(),
     ...gridlyCrossingFallbackAuditState,
     ...gridlyGetActiveCrossingSourceDiagnostics(),
     crossingsLoadedCount: Array.isArray(crossings) ? crossings.length : 0,
@@ -59396,6 +59462,7 @@ window.gridlyCrossingPipelineAudit = function gridlyCrossingPipelineAudit() {
     crossingLoadTraceFirstDropStage: gridlyCrossingFallbackAuditState.crossingLoadTraceFirstDropStage || null
   };
 };
+window.gridlyCrossingPipelineRuntimeAudit = readCrossingPipelineRuntimeAudit;
 
 async function runPostSubmitRefresh(sourceTag = "post_submit_refresh") {
   gridlyRecordHazardPropagationStage("local_refresh_requested", { source: sourceTag });
@@ -59661,9 +59728,13 @@ async function loadSharedReports(reason = "manual") {
       localAcceptedCrossingsRestored
     });
     endReportStage(visibilityStage, "completed", { message: `localAcceptedHazardsRestored=${localAcceptedHazardsRestored}; localAcceptedCrossingsRestored=${localAcceptedCrossingsRestored}` });
-    const markerModelStage = reportStage("marker and model preparation", { dependency: "unified incident layer and crossing pipeline audit" });
+    const markerModelStage = reportStage("marker and model preparation", { dependency: "unified incident layer and lightweight crossing refresh evidence" });
     ensureUnifiedIncidentLayerOnMap();
-    updateCrossingPipelineAudit(`loadSharedReports:${reason}`);
+    recordCrossingPipelineRefresh({
+      reason: `loadSharedReports:${reason}`,
+      crossingReportCount: gridlyReportSubmissionOwnershipState.refreshedCrossingReportCandidateCount,
+      countyId: activeCountyId
+    });
     endReportStage(markerModelStage, "completed");
 
     const refreshStage = reportStage("report awareness route-watch render refresh", { dependency: "refreshReportHazardViews and incident render reconciliation" });
