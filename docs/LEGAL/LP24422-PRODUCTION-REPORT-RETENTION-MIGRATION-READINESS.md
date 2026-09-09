@@ -1,5 +1,7 @@
 # LP244.22A pre-launch community-data reset and migration repair readiness
 
+**LP244.23B superseding decision:** See [managed-role repair and owner export](LP24423B-MANAGED-ROLE-OWNER-EXPORT-DECISION.md). Production attempt 2 rolled back and its authorization remains armed. Earlier push/authorization instructions below are historical: use the reviewed revocation sequence and exact atomic batch, never blind db push. Production remains NO-GO pending exact role evidence and separate owner approval.
+
 **Updated:** 2026-09-09 01:37 UTC
 **Decision:** **NO-GO for production mutation; LP244.23A is locally certified and ready for commit**
 **Production work performed:** one bounded SELECT-only schema/count verification batch. No production data was changed; no migration history was repaired; no extension, Cron job, function, asset, policy, build, commit, or deployment was created.

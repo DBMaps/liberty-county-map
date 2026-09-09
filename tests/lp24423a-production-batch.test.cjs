@@ -229,6 +229,11 @@ test('exact assembled payload transitions data, history, security and admission 
       post_transition_match: false,
       pre_transition_match: true
     });
+    // PG17 managed-owner membership: postgres administers the monitor but
+    // cannot inherit or SET it through this automatic membership edge.
+    psql(`create role gridly_retention_monitor nologin nosuperuser nocreatedb
+      nocreaterole noinherit noreplication nobypassrls connection limit 0;
+      grant gridly_retention_monitor to postgres with admin true, inherit false, set false`,database);
     const batch = assembleProductionBatch(authorization());
     const result = await simpleQuery(batch, database);
     assert.equal(result.ok, true, JSON.stringify(result.errors));

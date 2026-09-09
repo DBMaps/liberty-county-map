@@ -69,6 +69,29 @@ function migrationSql() {
   return fs.readFileSync(ATOMIC_MIGRATION_PATH, 'utf8');
 }
 
+// Prepared only: owner supplies the failed UUID privately as a session setting.
+// No UUID is printed or embedded in the repository-owned disarm payload.
+function renderRevocation(values = PRODUCTION_EXPECTED) {
+  const source = renderAuthorization(values);
+  const prefix = source.slice(0, source.indexOf('insert into gridly_control.prelaunch_reset_authorization ('));
+  return `${prefix}
+do $$ declare a gridly_control.prelaunch_reset_authorization%rowtype; begin
+  select * into strict a from gridly_control.prelaunch_reset_authorization where singleton for update;
+  if a.status<>'authorized' or a.consumed_at is not null or a.launched_at is not null
+    or a.owner_authorization_id::text is distinct from current_setting('gridly.failed_authorization_id',true)
+    or a.project_ref<>${quote(values.project_ref)} or a.migration_id<>'20260908200554'
+    or to_regnamespace('report_retention') is not null
+    or (select count(*) from public.reports)<>${Number(values.expected_reports)}
+    or (select count(*) from history_capture.historical_events)<>${Number(values.expected_historical_events)}
+    or a.expected_reports<>${Number(values.expected_reports)}
+    or a.expected_historical_events<>${Number(values.expected_historical_events)} then
+    raise exception using errcode='55000',message='Failed deployment identity or baseline mismatch';
+  end if;
+  update gridly_control.prelaunch_reset_authorization set status='revoked' where singleton;
+end $$;
+commit;`;
+}
+
 function supersededMigrationSql() {
   return SUPERSEDED_MIGRATIONS.map((file) => fs.readFileSync(file, 'utf8'));
 }
@@ -173,6 +196,7 @@ module.exports = {
   migrationSql,
   productionExecutionPlan,
   renderAuthorization,
+  renderRevocation,
   renderRelease,
   stripOuterTransaction,
   supersededMigrationSql

@@ -1,63 +1,8 @@
-\set ON_ERROR_STOP on
+-- PREPARED ONLY: separately approve; supply gridly.failed_authorization_id privately.
 
 -- LP244.22A owner-controlled authorization bootstrap.
 -- This file is intentionally psql-only and must be run in a separately approved
 -- production change window before the atomic migration. It never deletes data.
-\if :{?owner_authorization_id}
-\else
-  \echo 'owner_authorization_id is required'
-  select 1/0;
-\endif
-\if :{?project_ref}
-\else
-  \echo 'project_ref is required'
-  select 1/0;
-\endif
-\if :{?expected_reports}
-\else
-  \echo 'expected_reports is required'
-  select 1/0;
-\endif
-\if :{?expected_device_reports}
-\else
-  \echo 'expected_device_reports is required'
-  select 1/0;
-\endif
-\if :{?expected_synthetic_reports}
-\else
-  \echo 'expected_synthetic_reports is required'
-  select 1/0;
-\endif
-\if :{?expected_embedded_device_reports}
-\else
-  \echo 'expected_embedded_device_reports is required'
-  select 1/0;
-\endif
-\if :{?expected_cleared_reports}
-\else
-  \echo 'expected_cleared_reports is required'
-  select 1/0;
-\endif
-\if :{?expected_historical_events}
-\else
-  \echo 'expected_historical_events is required'
-  select 1/0;
-\endif
-\if :{?expected_historical_clears}
-\else
-  \echo 'expected_historical_clears is required'
-  select 1/0;
-\endif
-\if :{?expected_writer_events}
-\else
-  \echo 'expected_writer_events is required'
-  select 1/0;
-\endif
-\if :{?expected_retention_runs}
-\else
-  \echo 'expected_retention_runs is required'
-  select 1/0;
-\endif
 
 begin;
 set local lock_timeout = '5s';
@@ -211,30 +156,19 @@ create trigger prelaunch_reset_authorization_no_truncate
 before truncate on gridly_control.prelaunch_reset_authorization
 for each statement execute function gridly_control.guard_prelaunch_reset_authorization();
 
-insert into gridly_control.prelaunch_reset_authorization (
-  singleton, migration_id, project_ref, owner_authorization_id, status,
-  expected_reports, expected_device_reports, expected_synthetic_reports,
-  expected_embedded_device_reports, expected_cleared_reports,
-  expected_historical_events, expected_historical_clears,
-  expected_writer_events, expected_retention_runs
-) values (
-  true, '20260908200554', :'project_ref', :'owner_authorization_id'::uuid, 'authorized',
-  :'expected_reports'::bigint, :'expected_device_reports'::bigint,
-  :'expected_synthetic_reports'::bigint, :'expected_embedded_device_reports'::bigint,
-  :'expected_cleared_reports'::bigint, :'expected_historical_events'::bigint,
-  :'expected_historical_clears'::bigint, :'expected_writer_events'::bigint,
-  :'expected_retention_runs'::bigint
-)
-on conflict (singleton) do update set
-  owner_authorization_id=excluded.owner_authorization_id,
-  authorized_at=excluded.authorized_at,status=excluded.status,
-  migration_id=excluded.migration_id,project_ref=excluded.project_ref,
-  expected_reports=excluded.expected_reports,expected_device_reports=excluded.expected_device_reports,
-  expected_synthetic_reports=excluded.expected_synthetic_reports,
-  expected_embedded_device_reports=excluded.expected_embedded_device_reports,
-  expected_cleared_reports=excluded.expected_cleared_reports,
-  expected_historical_events=excluded.expected_historical_events,
-  expected_historical_clears=excluded.expected_historical_clears,
-  expected_writer_events=excluded.expected_writer_events,expected_retention_runs=excluded.expected_retention_runs;
 
+do $$ declare a gridly_control.prelaunch_reset_authorization%rowtype; begin
+  select * into strict a from gridly_control.prelaunch_reset_authorization where singleton for update;
+  if a.status<>'authorized' or a.consumed_at is not null or a.launched_at is not null
+    or a.owner_authorization_id::text is distinct from current_setting('gridly.failed_authorization_id',true)
+    or a.project_ref<>'nhwhkbkludzkuyxmkkcj' or a.migration_id<>'20260908200554'
+    or to_regnamespace('report_retention') is not null
+    or (select count(*) from public.reports)<>510
+    or (select count(*) from history_capture.historical_events)<>355
+    or a.expected_reports<>510
+    or a.expected_historical_events<>355 then
+    raise exception using errcode='55000',message='Failed deployment identity or baseline mismatch';
+  end if;
+  update gridly_control.prelaunch_reset_authorization set status='revoked' where singleton;
+end $$;
 commit;
