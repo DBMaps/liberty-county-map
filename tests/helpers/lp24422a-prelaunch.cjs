@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const {createHash} = require('node:crypto');
 
 const ROOT = path.resolve(__dirname, '../..');
 const AUTHORIZATION_PATH = path.join(ROOT, 'supabase/retention/authorize-prelaunch-community-reset.sql');
@@ -123,6 +124,18 @@ function assembleProductionBatch(values = {}) {
   if (!values.owner_authorization_id) {
     throw new Error('A fresh owner_authorization_id is required for production batch assembly');
   }
+  if (!['bootstrap-and-transition', 'already-armed-transition'].includes(values.mode)) {
+    throw new Error('Select exactly one explicit production batch mode');
+  }
+  if (typeof values.owner_authorization_id !== 'string'
+      || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(values.owner_authorization_id)) {
+    throw new Error('A valid private owner authorization UUID is required');
+  }
+  const alreadyArmed = values.mode === 'already-armed-transition';
+  if (alreadyArmed && Object.entries(PRODUCTION_EXPECTED).some(([key, value]) =>
+    values[key] !== undefined && values[key] !== value)) {
+    throw new Error('Already-armed mode requires the certified production fingerprint');
+  }
   const authorizationValues = {...PRODUCTION_EXPECTED, ...values};
   const plan = productionExecutionPlan();
   const markApplied = plan.proposedRepair.markApplied;
@@ -138,7 +151,7 @@ function assembleProductionBatch(values = {}) {
   const planFiles = new Map(plan.migrations.map((migration) => [migration.id, migration.file]));
   for (const file of FINAL_MIGRATIONS) planFiles.set(file.split('_', 1)[0], file);
   const chunks = [
-    renderAuthorization(authorizationValues),
+    ...(!alreadyArmed ? [renderAuthorization(authorizationValues)] : []),
     'begin;',
     `do $$
 begin
@@ -152,6 +165,41 @@ begin
   end if;
 end $$;`
   ];
+  if (alreadyArmed) {
+    // Bind in memory using PostgreSQL uuid_send's 16-byte representation.
+    // Never put the full UUID in the returned SQL, logs, files, or errors.
+    const digest = createHash('sha256').update(Buffer.from(
+      values.owner_authorization_id.replaceAll('-', ''), 'hex')).digest('hex');
+    chunks.splice(1, 0, `set local lock_timeout = '5s';
+set local statement_timeout = '60s';
+set local search_path = pg_catalog;
+select pg_advisory_xact_lock(24422, 1);
+lock table public.reports, history_capture.historical_events,
+  history_capture.writer_monitoring_events, history_capture.retention_runs
+  in access exclusive mode;
+lock table public.gridly_feedback, public.gridly_geocode_cache,
+  public.gridly_geocode_provider_state in share mode;
+do $$ declare a gridly_control.prelaunch_reset_authorization%rowtype; begin
+  if session_user <> 'postgres' then
+    raise exception using errcode='42501',message='Already-armed transition requires the postgres owner session';
+  end if;
+  select * into strict a from gridly_control.prelaunch_reset_authorization for update;
+  if not a.singleton or a.status <> 'authorized'
+    or a.consumed_at is not null or a.launched_at is not null
+    or a.authorized_at is null
+    or a.migration_id <> '20260908200554' or a.project_ref <> 'nhwhkbkludzkuyxmkkcj'
+    or sha256(uuid_send(a.owner_authorization_id)) <> decode('${digest}','hex')
+    or row(a.expected_reports,a.expected_device_reports,a.expected_synthetic_reports,
+      a.expected_embedded_device_reports,a.expected_cleared_reports,
+      a.expected_historical_events,a.expected_historical_clears,
+      a.expected_writer_events,a.expected_retention_runs)
+      is distinct from row(510::bigint,510::bigint,321::bigint,321::bigint,195::bigint,
+        355::bigint,138::bigint,0::bigint,0::bigint) then
+    raise exception using errcode='55000',message='Already-armed authorization identity, state or fingerprint mismatch';
+  end if;
+end $$;
+${protectedCountsGuard()}`);
+  }
   for (const version of markApplied) {
     const file = planFiles.get(version);
     if (!file) throw new Error(`Missing reconciliation file for ${version}`);
@@ -164,8 +212,20 @@ end $$;`
     chunks.push(stripOuterTransaction(source, file));
     chunks.push(migrationRecordSql(version, file));
   }
+  if (alreadyArmed) chunks.push(protectedCountsGuard());
   chunks.push('commit;');
   return chunks.join('\n\n');
+}
+
+function protectedCountsGuard() {
+  return `do $$ begin
+  if row((select count(*) from public.gridly_feedback),
+    (select count(*) from public.gridly_geocode_cache),
+    (select count(*) from public.gridly_geocode_provider_state))
+    is distinct from row(7::bigint,480::bigint,2::bigint) then
+    raise exception using errcode='55000',message='Protected production counts changed';
+  end if;
+end $$;`;
 }
 
 function renderRelease(values = {}) {
