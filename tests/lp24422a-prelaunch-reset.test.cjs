@@ -11,6 +11,7 @@ const reconciliationPlan=JSON.parse(fs.readFileSync(path.join(__dirname,'../supa
 const psql=process.env.GRIDLY_TEST_PSQL||'C:/Program Files/PostgreSQL/17/bin/psql.exe';
 const baseEnv=Object.fromEntries(Object.entries(process.env).filter(([key])=>!/^PG/i.test(key)));
 const fixture=fs.readFileSync(path.join(__dirname,'fixtures/lp24421-baseline.sql'),'utf8');
+const writerEvaluator=fs.readFileSync(path.join(__dirname,'../supabase/retention/evaluate-community-writer-transition.sql'),'utf8');
 let database;
 
 function run(query,{db=database,fail=false,args=[]}={}){
@@ -48,6 +49,22 @@ test('migration-history reconciliation covers all eleven legacy migrations and f
       assert.equal(item.mustExecute,true,`${item.id} absent required effect must execute`);
     }
   }
+});
+
+test('writer evaluator distinguishes the authorized legacy phase from the closed RPC phase',()=>{
+  assert.deepEqual(JSON.parse(run(writerEvaluator)),{
+    anon_history_insert_authorized:true,
+    anon_report_insert_authorized:true,
+    post_transition_match:false,
+    pre_transition_match:true
+  });
+  authorize();migrate();
+  assert.deepEqual(JSON.parse(run(writerEvaluator)),{
+    anon_history_insert_authorized:false,
+    anon_report_insert_authorized:false,
+    post_transition_match:true,
+    pre_transition_match:false
+  });
 });
 
 test('exact owner-authorized fingerprint resets only community fixtures and records non-sensitive counts',()=>{

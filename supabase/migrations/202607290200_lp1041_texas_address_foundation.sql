@@ -19,9 +19,9 @@ alter table public.gridly_texas_address_points enable row level security;
 revoke all on public.gridly_texas_address_points from anon, authenticated;
 
 create or replace function public.gridly_lookup_texas_address(p_lookup_hash text, p_county_fips text)
-returns table(id text,house_number text,canonical_road_identity text,locality text,county_id text,county_fips text,state text,postal_code text,latitude double precision,longitude double precision,precision text,source_id text,source_authority text,source_version text,source_date date,source_license text,attribution_required boolean,build_version text)
+returns table(id text,house_number text,canonical_road_identity text,locality text,county_id text,county_fips text,state text,postal_code text,latitude double precision,longitude double precision,"precision" text,source_id text,source_authority text,source_version text,source_date date,source_license text,attribution_required boolean,build_version text)
 language sql stable security definer set search_path=public as $$
- select a.id,a.house_number,a.canonical_road_identity,a.locality,a.county_id,a.county_fips,a.state,a.postal_code,a.latitude,a.longitude,a.precision,a.source_id,a.source_authority,a.source_version,a.source_date,a.source_license,a.attribution_required,a.build_version
+ select a.id,a.house_number,a.canonical_road_identity,a.locality,a.county_id,a.county_fips,a.state,a.postal_code,a.latitude,a.longitude,a."precision",a.source_id,a.source_authority,a.source_version,a.source_date,a.source_license,a.attribution_required,a.build_version
  from public.gridly_texas_address_points a join public.gridly_texas_county_boundaries b on b.county_fips=a.county_fips where a.lookup_hash=p_lookup_hash and a.county_fips=p_county_fips and a.consumer_eligible=true and extensions.st_covers(b.geom,extensions.st_setsrid(extensions.st_point(a.longitude,a.latitude),4326)) order by
  case a.source_authority when 'county_911' then 0 when 'regional_911' then 1 when 'statewide_authoritative' then 2 when 'national_address_database' then 3 when 'open_address_point' then 4 when 'gridly_verified_exception' then 5 else 99 end,
  a.source_date desc nulls last,a.source_id,a.id limit 3;

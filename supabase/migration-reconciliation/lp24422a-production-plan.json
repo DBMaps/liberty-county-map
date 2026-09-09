@@ -14,11 +14,18 @@
     {"id":"202606170426","file":"202606170426_rollback_history_capture_schema_exposure.sql","effect":"Revoke the phase-1 anonymous history writer and remove its policy.","productionState":"superseded","classification":"superseded-rollback-do-not-execute","safeToMarkApplied":true,"mustExecute":false,"evidence":["The anonymous writer remains intentionally active in the pre-transition production state","The LP244.22A atomic transition replaces it with the RPC protocol","Executing this rollback first would break the current client writer"]},
     {"id":"202607280100","file":"202607280100_lp100_geocoding_governance.sql","effect":"Create geocode cache/provider state, service-role RPCs, privileges, and indexes.","productionState":"recorded-and-present","classification":"already-applied","safeToMarkApplied":false,"mustExecute":false,"evidence":["Migration history records 202607280100","Exact tables, RPCs, indexes, and restricted privileges exist"]},
     {"id":"202607290100","file":"202607290100_lp103_verified_rural_address_registry.sql","effect":"Create the verified rural-address registry, RLS, service-role privileges, and lookup index.","productionState":"absent","classification":"required-not-applied","safeToMarkApplied":false,"mustExecute":true,"evidence":["Exact table and index are absent","Repository edge-function code references the table","No later migration supersedes the registry"]},
-    {"id":"202607290200","file":"202607290200_lp1041_texas_address_foundation.sql","effect":"Create Texas county geometry/address-point storage, indexes, RLS, and the service-role lookup RPC.","productionState":"absent","classification":"required-not-applied","safeToMarkApplied":false,"mustExecute":true,"evidence":["Exact tables and lookup RPC are absent","Repository edge-function code references the RPC","No later migration supersedes the address foundation"]}
+    {"id":"202607290200","file":"202607290200_lp1041_texas_address_foundation.sql","sha256":"24a1655cdcf24fe21ee38ff0b22d9f4bf85f75cecaa612b53c2246ded818d163","effect":"Create Texas county geometry/address-point storage, indexes, RLS, and the service-role lookup RPC.","productionState":"absent","classification":"required-not-applied","safeToMarkApplied":false,"mustExecute":true,"evidence":["Exact tables and lookup RPC are absent","Repository edge-function code references the RPC","No later migration supersedes the address foundation"]}
   ],
   "proposedRepair": {
     "markApplied": ["202606070001","202606160001","202606160002","202606170410","202606170411","202606170425","202606170426"],
     "alreadyRecorded": ["202607280100"],
     "mustExecuteSeparatelyBeforeReportTransition": ["202606110001","202607290100","202607290200"]
+  },
+  "exactBatchAssembly": {
+    "source": "tests/helpers/lp24422a-prelaunch.cjs#assembleProductionBatch",
+    "regressionTest": "tests/lp24423a-production-batch.test.cjs",
+    "writerTransitionEvaluator": "supabase/retention/evaluate-community-writer-transition.sql",
+    "reconciliationEntryCount": 7,
+    "executionOrder": ["202606110001","202607290100","202607290200","202609080001","202609080002","20260908200554"]
   }
 }
