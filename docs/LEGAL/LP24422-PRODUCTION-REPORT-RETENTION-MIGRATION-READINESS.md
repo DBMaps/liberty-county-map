@@ -1,6 +1,92 @@
 # LP244.22A pre-launch community-data reset and migration repair readiness
 
-**LP244.23B superseding decision:** See [managed-role repair and owner export](LP24423B-MANAGED-ROLE-OWNER-EXPORT-DECISION.md). Production attempt 2 rolled back and its authorization remains armed. Earlier push/authorization instructions below are historical: use the reviewed revocation sequence and exact atomic batch, never blind db push. Production remains NO-GO pending exact role evidence and separate owner approval.
+**LP244.23C superseding execution contract:** Fresh authorization transaction → `already-armed-transition` payload. The current fresh authorization must not be bootstrapped again. The failed earlier authorization was separately revoked; the owner reports that the fresh authorization remains armed. This local repair does not access or revalidate production. Earlier status and execution instructions below are historical. See the LP244.23C section immediately below and the [managed-role repair and owner export](LP24423B-MANAGED-ROLE-OWNER-EXPORT-DECISION.md) decision. Gate 2A still requires separate owner approval of an exact committed payload.
+
+## LP244.23C explicit already-armed production path
+
+The certified assembler always prepended `renderAuthorization`. Reapplying that
+bootstrap to an armed singleton attempts `authorized → authorized`; the permanent
+authorization guard correctly rejects it. No production request was made during
+that failed preflight or during this repair.
+
+There is a second necessary safeguard: a disposable regression proved that simply
+removing the bootstrap from the old batch accepts a different caller UUID and
+consumes the stored authorization. The old migration checks stored authorization
+state and fingerprint, but does not compare its identity with a caller-supplied UUID.
+The new armed mode therefore binds identity inside the same atomic transaction.
+No authorization bootstrap, migration, role predicate, exporter or RLS policy was edited.
+
+`assembleProductionBatch` now requires one scalar `mode` with exactly one of:
+
+- `bootstrap-and-transition`: the certified output is byte-for-byte unchanged for
+  identical UUID/fingerprint inputs, including its separate bootstrap transaction.
+  Use only for a workflow that has not already armed its authorization.
+- `already-armed-transition`: requires a valid full UUID supplied privately in
+  memory; omits the bootstrap and returns one `BEGIN`/`COMMIT` transition transaction.
+  The assembler converts the UUID to a SHA-256 comparison over its 16 binary bytes;
+  the returned SQL contains no full UUID. The helper does not log or write payloads.
+
+Missing, unknown, combined/array modes and malformed identities fail locally.
+There is no database-state inference or automatic fallback. Armed mode rejects
+overrides of the certified production project or nine-field fingerprint.
+
+Required production sequence:
+
+1. Separately approve and execute the fresh authorization transaction.
+2. Retain its UUID privately. Do not print it, save it in a payload file, pass it
+   through echoed command arguments, or reapply the bootstrap.
+3. From reviewed clean committed sources, call `assembleProductionBatch` with that
+   UUID and `mode: 'already-armed-transition'`; privately transfer the returned SQL
+   as one raw `execute_sql` request only after separate owner authorization.
+4. Stop after that one attempt. Postflight requires separate read-only approval.
+
+Before the transition begins, the only difference is removal of the bootstrap
+transaction. Inside the transaction, the armed path adds a locked identity/state/
+nine-field-fingerprint guard and protected-count guards. It acquires the existing
+advisory and reset-table locks, locks protected tables against concurrent writes,
+checks protected counts 7/480/2 before reconciliation and again before commit, and
+holds the authorization row lock through commit. Generic errors do not contain
+the UUID. The original seven reconciliation statements and six ordered migration
+bodies remain one contiguous, byte-identical sequence; no migration text is rewritten.
+
+The original migration still checks current data against all nine stored fields,
+checks deletion counts, enforces the repaired managed-role predicate, and performs
+single-use consumption. An error anywhere rolls back reconciliation, schema changes,
+deletion and consumption. The immutable revocation ledger remains unchanged.
+Successful final state remains 14 unique migration versions, protocol 2, reporting
+disabled and no pg_cron installation or scheduling.
+
+Local verification on PostgreSQL 17.10 with PostGIS available:
+`node --test --test-concurrency=1 tests/lp24423a-production-batch.test.cjs`
+completed **19 passed, 0 failed, 0 skipped**. Both modes execute through the direct
+PostgreSQL simple-query protocol as one raw request. Coverage includes 510/355
+deletion, protected 7/480/2, exact migration versions, RPC/schema/admission state,
+ledger preservation, second-use rejection, wrong UUID/project, revoked/consumed/
+launched/missing authorization, stored/current fingerprint mismatch, protected-count
+drift, and forced mid/late errors restoring the armed row and prior catalog state.
+The original bootstrap-mode rollback regression also passes.
+
+Canonical LF SHA-256 identities (UTF-8, CRLF converted to LF, no other rewriting):
+
+| Artifact | SHA-256 |
+| --- | --- |
+| Synthetic bootstrap-and-transition payload | `dfc3badf6c48833d5408dc6b25878770193e17072488c457416b7b1508ae7413` |
+| Synthetic already-armed-transition payload | `0ea4a60c743eb483d9e804a8026540ac9c336294b40eaab93fb9d17e75e87be7` |
+| Assembler helper | `81490ab7c4323fb770309416b3f58dc32cb59702cba6d7046cf9bc1360a525c7` |
+| Focused regression file | `4c2a71e1fd3f43c950d460bb2aef83ccf956aecb8f4093dbda639af6d1d057c6` |
+
+Payload hashes use `PRODUCTION_EXPECTED` plus the existing disposable
+`BASELINE_EXPECTED.owner_authorization_id` and the indicated mode. No production UUID
+was used, and no assembled SQL file was retained. The regression compares legacy
+output against the assembler committed at `a1030be1e0541cd85de03cb0df07f57350d8ea66`.
+The managed-role migration retains hash
+`b2d0b75d0796033428160cae582db0c943459c3141e02a2566bf0978baff8dd8`;
+the address migration retains hash
+`24a1655cdcf24fe21ee38ff0b22d9f4bf85f75cecaa612b53c2246ded818d163`.
+
+This is local commit-readiness evidence only. The production authorization was
+untouched; no Gate 2A attempt, authorization change, export, Cron activation,
+reporting release, staging or commit occurred in this repair.
 
 **Updated:** 2026-09-09 01:37 UTC
 **Decision:** **NO-GO for production mutation; LP244.23A is locally certified and ready for commit**

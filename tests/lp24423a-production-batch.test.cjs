@@ -5,10 +5,12 @@ const {createHash, randomUUID} = require('node:crypto');
 const fs = require('node:fs');
 const net = require('node:net');
 const path = require('node:path');
+const Module = require('node:module');
 const {
   PRODUCTION_EXPECTED,
   assembleProductionBatch,
-  productionExecutionPlan
+  productionExecutionPlan,
+  renderAuthorization
 } = require('./helpers/lp24422a-prelaunch.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -156,17 +158,98 @@ function dropDatabase(database) {
 }
 
 function authorization() {
-  return {...PRODUCTION_EXPECTED, owner_authorization_id: randomUUID()};
+  return {...PRODUCTION_EXPECTED, owner_authorization_id: randomUUID(), mode: 'bootstrap-and-transition'};
 }
 
 function writerState(database) {
   return JSON.parse(psql(WRITER_EVALUATOR, database).stdout);
 }
 
+function armWithLedger(database, values) {
+  psql(renderAuthorization({...values, owner_authorization_id:randomUUID()}), database);
+  psql("update gridly_control.prelaunch_reset_authorization set status='revoked'", database);
+  psql(renderAuthorization(values), database);
+  assert.equal(psql('select count(*) from gridly_control.reset_revocations', database).stdout, '1');
+}
+
+function ledgerSnapshot(database, mode) {
+  return mode === 'already-armed-transition'
+    ? psql('select md5(json_agg(r order by revoked_at)::text) from gridly_control.reset_revocations r', database).stdout
+    : '';
+}
+
+function baselineSnapshot(database) {
+  return psql(`select json_build_object(
+    'counts', array[(select count(*) from reports),(select count(*) from history_capture.historical_events),
+      (select count(*) from history_capture.writer_monitoring_events),(select count(*) from history_capture.retention_runs),
+      (select count(*) from gridly_feedback),(select count(*) from gridly_geocode_cache),(select count(*) from gridly_geocode_provider_state)],
+    'authorization',(select md5(coalesce(json_agg(a)::text,'[]')) from gridly_control.prelaunch_reset_authorization a),
+    'ledger',(select md5(coalesce(json_agg(r order by revoked_at)::text,'[]')) from gridly_control.reset_revocations r),
+    'migrations',(select json_agg(m order by version) from supabase_migrations.schema_migrations m),
+    'schemas',(select json_agg(nspname order by nspname) from pg_namespace),
+    'relations',(select json_agg(row(relname,relnamespace,relkind,relrowsecurity,relacl) order by oid) from pg_class),
+    'functions',(select json_agg(row(proname,pronamespace,prosrc,proacl) order by oid) from pg_proc),
+    'triggers',(select json_agg(row(tgname,tgenabled) order by oid) from pg_trigger),
+    'cron_absent',not exists(select 1 from pg_extension where extname='pg_cron') and to_regclass('cron.job') is null,
+    'monitor_absent',not exists(select 1 from pg_roles where rolname='gridly_retention_monitor')
+  )`, database).stdout;
+}
+
+test('mode selection is explicit, exclusive and validates identity without disclosing it', () => {
+  const values = authorization();
+  for (const mode of [undefined, null, '', 'auto', true, ['bootstrap-and-transition','already-armed-transition']]) {
+    assert.throws(() => assembleProductionBatch({...values, mode}), /exactly one explicit/);
+  }
+  for (const id of ['', 'invalid', "' OR true --", {}, 1]) {
+    assert.throws(() => assembleProductionBatch({...values, owner_authorization_id: id}));
+  }
+  assert.throws(() => assembleProductionBatch({...values, mode:'already-armed-transition', expected_reports:1}), /certified production/);
+});
+
+test('armed payload omits bootstrap, binds only a digest, and preserves every original transition statement', () => {
+  const values = authorization();
+  const bootstrap = renderAuthorization(values);
+  const legacy = assembleProductionBatch(values);
+  const helperPath = path.join(ROOT, 'tests/helpers/lp24422a-prelaunch.cjs');
+  const committed = spawnSync('git', ['show', 'a1030be1e0541cd85de03cb0df07f57350d8ea66:tests/helpers/lp24422a-prelaunch.cjs'],
+    {encoding:'utf8', windowsHide:true});
+  assert.equal(committed.status, 0);
+  const original = new Module(helperPath, module);
+  original._compile(committed.stdout, helperPath);
+  assert.equal(legacy, original.exports.assembleProductionBatch(values), 'explicit bootstrap mode preserves certified payload byte for byte');
+  const armed = assembleProductionBatch({...values, mode:'already-armed-transition'});
+  assert.ok(legacy.startsWith(bootstrap + '\n\nbegin;'));
+  assert.ok(armed.startsWith('begin;'));
+  assert.ok(!armed.includes(values.owner_authorization_id));
+  assert.doesNotMatch(armed, /create schema if not exists gridly_control|insert into gridly_control.prelaunch_reset_authorization|create or replace function gridly_control.guard_prelaunch/);
+  assert.doesNotMatch(armed, /^\s*\\/m);
+  assert.doesNotMatch(armed, /create extension[^;]*pg_cron|cron\.schedule/i);
+  assert.equal([...armed.matchAll(/^begin;$/gm)].length, 1);
+  assert.equal([...armed.matchAll(/^commit;$/gm)].length, 1);
+  const start = 'do $$\nbegin\n  if session_user';
+  const originalCore = legacy.slice(bootstrap.length + 2).slice('begin;\n\n'.length, -'\n\ncommit;'.length);
+  assert.ok(armed.includes(originalCore), 'certified reconciliation and six migrations are contiguous and byte-identical');
+  assert.ok(armed.indexOf(start) > armed.indexOf('Already-armed authorization'));
+});
+
+test('already-armed transition binds the supplied UUID (omission alone failed this test)', async () => {
+  const database = databaseName('identity_evidence');
+  setupBaseline(database);
+  try {
+    const armed = authorization();
+    psql(renderAuthorization(armed), database);
+    const wrong = authorization();
+    const before = baselineSnapshot(database);
+    const result = await simpleQuery(assembleProductionBatch({...wrong, mode: 'already-armed-transition'}), database);
+    assert.equal(result.ok, false, 'wrong UUID must fail before consuming the armed authorization');
+    assert.deepEqual(baselineSnapshot(database), before);
+  } finally { dropDatabase(database); }
+});
+
 test('assembled production payload is sourced from the committed seven-plus-six execution plan', () => {
   const plan = productionExecutionPlan();
   const batch = assembleProductionBatch(authorization());
-  const productionBatch = assembleProductionBatch({owner_authorization_id: randomUUID()});
+  const productionBatch = assembleProductionBatch({owner_authorization_id: randomUUID(), mode: 'bootstrap-and-transition'});
   const texasMigrationPath = path.join(ROOT, 'supabase/migrations/202607290200_lp1041_texas_address_foundation.sql');
   const texasMigration = fs.readFileSync(texasMigrationPath);
   const texasPlan = plan.migrations.find((migration) => migration.id === '202607290200');
@@ -214,7 +297,8 @@ test('the whole payload parses as one PostgreSQL query before any statement exec
   }
 });
 
-test('exact assembled payload transitions data, history, security and admission atomically', async (t) => {
+for (const mode of ['bootstrap-and-transition', 'already-armed-transition']) {
+test(`${mode}: exact payload transitions data, history, security and admission atomically`, async (t) => {
   const database = databaseName('success');
   setupBaseline(database);
   try {
@@ -234,7 +318,10 @@ test('exact assembled payload transitions data, history, security and admission 
     psql(`create role gridly_retention_monitor nologin nosuperuser nocreatedb
       nocreaterole noinherit noreplication nobypassrls connection limit 0;
       grant gridly_retention_monitor to postgres with admin true, inherit false, set false`,database);
-    const batch = assembleProductionBatch(authorization());
+    const values = {...authorization(), mode};
+    if (mode === 'already-armed-transition') armWithLedger(database, values);
+    const ledgerBefore = ledgerSnapshot(database, mode);
+    const batch = assembleProductionBatch(values);
     const result = await simpleQuery(batch, database);
     assert.equal(result.ok, true, JSON.stringify(result.errors));
     assert.equal(psql(`select row(
@@ -247,6 +334,9 @@ test('exact assembled payload transitions data, history, security and admission 
       (select count(*) from public.gridly_geocode_provider_state)
     )::text`, database).stdout, '(0,0,0,0,7,480,2)');
     assert.equal(psql("select count(*) from supabase_migrations.schema_migrations", database).stdout, '14');
+    assert.deepEqual(JSON.parse(psql('select json_agg(version order by version) from supabase_migrations.schema_migrations', database).stdout),
+      ['202606070001','202606110001','202606160001','202606160002','202606170410','202606170411','202606170425','202606170426',
+        '202607280100','202607290100','202607290200','202609080001','202609080002','20260908200554']);
     assert.equal(psql("select count(*) from (select version from supabase_migrations.schema_migrations group by version having count(*)<>1) duplicates", database).stdout, '0');
     assert.equal(psql("select status||':'||(consumed_at is not null) from gridly_control.prelaunch_reset_authorization", database).stdout, 'consumed:true');
     assert.equal(psql("select to_regnamespace('report_retention') is not null", database).stdout, 't');
@@ -255,6 +345,8 @@ test('exact assembled payload transitions data, history, security and admission 
     assert.equal(psql("select (to_regprocedure('public.rls_auto_enable()') is null) and not exists(select 1 from pg_event_trigger where evtname='ensure_rls')", database).stdout, 't');
     assert.equal(psql("select protocol_version||':'||reporting_enabled from report_retention.admission_state", database).stdout, '2:false');
     assert.equal(psql("select exists(select 1 from pg_extension where extname='pg_cron')", database).stdout, 'f');
+    assert.equal(psql("select to_regclass('cron.job') is null", database).stdout, 't');
+    if (mode === 'already-armed-transition') assert.equal(ledgerSnapshot(database, mode), ledgerBefore);
     assert.deepEqual(writerState(database), {
       anon_history_insert_authorized: false,
       anon_report_insert_authorized: false,
@@ -268,6 +360,47 @@ test('exact assembled payload transitions data, history, security and admission 
     dropDatabase(database);
   }
 });
+}
+
+for (const scenario of ['revoked', 'consumed', 'launched', 'missing', 'wrong-project',
+  'stored-fingerprint', 'current-fingerprint', 'protected-before', 'protected-after', 'mid-error', 'late-error']) {
+test(`already-armed ${scenario} fails and rolls back all transition effects`, async () => {
+  const database = databaseName('armed_failure');
+  setupBaseline(database);
+  try {
+    const values = {...authorization(), mode:'already-armed-transition'};
+    if (scenario === 'missing') {
+      const bootstrap = renderAuthorization(values);
+      psql(bootstrap.slice(0, bootstrap.indexOf('insert into gridly_control.prelaunch_reset_authorization (')) + 'commit;', database);
+    } else {
+      armWithLedger(database, {...values,
+        ...(scenario === 'stored-fingerprint' ? {expected_reports:511} : {}),
+        ...(scenario === 'wrong-project' ? {project_ref:'syntheticfixtureonly'} : {})});
+      if (scenario === 'revoked') psql("update gridly_control.prelaunch_reset_authorization set status='revoked'", database);
+      if (['consumed','launched'].includes(scenario)) psql("update gridly_control.prelaunch_reset_authorization set status='consumed',consumed_at=clock_timestamp(),deleted_reports=510,deleted_historical_events=355,deleted_writer_events=0,deleted_retention_runs=0", database);
+      if (scenario === 'launched') psql("update gridly_control.prelaunch_reset_authorization set status='launched',launched_at=clock_timestamp()", database);
+    }
+    if (scenario === 'current-fingerprint') psql("update reports set device_id=null where id=(select id from reports limit 1)", database);
+    if (scenario === 'protected-before') psql("delete from gridly_feedback where id=(select id from gridly_feedback limit 1)", database);
+    const before = baselineSnapshot(database);
+    let batch = assembleProductionBatch(values);
+    if (['mid-error','late-error','protected-after'].includes(scenario)) {
+      const version = scenario === 'mid-error' ? '202607290100' : '20260908200554';
+      const marker = `insert into supabase_migrations.schema_migrations(version,name,statements) values ('${version}'`;
+      assert.ok(batch.includes(marker));
+      batch = batch.replace(marker, (scenario === 'protected-after'
+        ? 'delete from public.gridly_feedback where id=(select id from public.gridly_feedback limit 1);'
+        : 'select 1/0;') + '\n\n' + marker);
+    }
+    const result = await simpleQuery(batch, database);
+    assert.equal(result.ok, false, scenario);
+    assert.equal(result.errors[0]?.C,
+      scenario === 'missing' ? 'P0002' : scenario === 'current-fingerprint' ? '22023'
+        : ['mid-error','late-error'].includes(scenario) ? '22012' : '55000');
+    assert.deepEqual(baselineSnapshot(database), before, 'authorization, ledger, data counts, migrations and schema state must roll back');
+  } finally { dropDatabase(database); }
+});
+}
 
 test('a forced late error rolls back the guarded atomic transition', async (t) => {
   const database = databaseName('rollback');
