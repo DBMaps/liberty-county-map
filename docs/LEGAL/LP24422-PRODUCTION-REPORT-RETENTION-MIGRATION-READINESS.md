@@ -1,10 +1,54 @@
 # LP244.22A pre-launch community-data reset and migration repair readiness
 
-**Updated:** 2026-09-08 20:48 UTC  
-**Decision:** **NO-GO for production mutation; local design is an owner-review candidate**  
+**Updated:** 2026-09-09 01:37 UTC
+**Decision:** **NO-GO for production mutation; LP244.23A is locally certified and ready for commit**
 **Production work performed:** one bounded SELECT-only schema/count verification batch. No production data was changed; no migration history was repaired; no extension, Cron job, function, asset, policy, build, commit, or deployment was created.
 
 This packet supersedes the earlier LP244.22 execution design. Do not use an earlier two-phase `db push` procedure.
+
+## LP244.23A local syntax and evaluator correction
+
+The first owner-authorized Gate 2A batch was rejected by PostgreSQL with `42601`
+before any production change because `precision` was unquoted in the output-column
+list of `public.gridly_lookup_texas_address(text,text)`. `precision` is an established
+RPC result field consumed by `supabase/functions/gridly-geocode/index.ts`, so the
+contract is preserved as `"precision" text`; the source projection is explicitly
+qualified as `a."precision"`. No routing, geocoding, data, or output-value behavior
+changes.
+
+The canonical LF-normalized repository SHA-256 for
+`supabase/migrations/202607290200_lp1041_texas_address_foundation.sql` is
+`24a1655cdcf24fe21ee38ff0b22d9f4bf85f75cecaa612b53c2246ded818d163`.
+The superseded pre-correction hash was
+`7f347c4e981c3d44926de2f0bac6b215c8a2b86cc44f92edeb1dfbefe58067dc`.
+
+`supabase/retention/evaluate-community-writer-transition.sql` now records the
+actual two-phase authorization contract: both legacy anonymous writers are
+authorized before transition, while both direct writers must be unavailable after
+transition. `tests/helpers/lp24422a-prelaunch.cjs#assembleProductionBatch` generates
+the future approval payload directly from the committed reconciliation plan,
+authorization script, and six ordered migration files. The whole-batch regression
+is `tests/lp24423a-production-batch.test.cjs`; manually retyped production SQL is
+not an approved execution source. The assembler requires a fresh owner UUID, uses
+the certified 510/355 production fingerprint by default, and aborts reconciliation
+unless migration history is still exactly `202607280100`.
+
+The final owner-authorized local PostgreSQL 17.10 run detected PostGIS 3.6.2,
+completed cleanup of `.tmp-lp24423a-final`, and stopped its localhost-only server.
+It reported 56 passes and one failure across 57 tests. The unrelated launch-contract
+check still reports pre-existing `App/PWA version authority drift`.
+
+All LP244.23A, LP244.22A, and LP244.21 database assertions passed. The exact batch
+parsed and executed against production-sized fixtures, deleted 510 reports and 355
+historical events, preserved untouched counts at 7/480/2, recorded all 14 migration
+versions exactly once, consumed the authorization, installed the retention schema
+and protocol-v2 objects, closed legacy anonymous writers and protocol admission,
+rejected exact batch reuse, and left pg_cron inactive. The forced late-error case
+restored 510/355, the authorized guard, the sole original migration version, the
+absent retention schema, and the legacy RLS hook. The corrected `writer_state`
+evaluator passed both pre- and post-transition states. LP244.23A is locally
+certified and ready for commit; production mutation remains separately gated and
+unauthorized.
 
 ## 1. Owner decision and reset authority
 
