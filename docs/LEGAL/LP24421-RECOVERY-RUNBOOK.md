@@ -2,6 +2,8 @@
 
 **LOCAL PREPARATION ONLY. No restoration, production access change, reconnection, deployment, or policy publication is authorized by this document.**
 
+**LP244.23B:** [Owner export and managed-role decision](LP24423B-MANAGED-ROLE-OWNER-EXPORT-DECISION.md) defines a redacted analytics export, not a restore source or replay-ledger witness. Never import its files to reconstruct reports, receipts or erased device associations. The current 001/002 migrations are superseded no-op checkpoints; an older-schema restore needs a separately reviewed forward recovery change. Do not apply the destructive pre-launch 20260908200554 reset to a launched restore. The historical step 3 below does not authorize replaying those files as a recovery upgrade. Certification uses the current repository transition hash and still requires complete independent source continuity evidence.
+
 ## Authority and threat model
 
 DJ Burns Collective LLC, doing business as Gridly App, must explicitly authorize each restore and separately authorize reconnection. A designated database operator performs recovery; the owner reviews the evidence and unresolved exceptions. No automated check grants that authorization.

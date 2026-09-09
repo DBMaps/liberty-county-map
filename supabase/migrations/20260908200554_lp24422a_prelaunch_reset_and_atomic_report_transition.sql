@@ -297,7 +297,8 @@ do $$
 declare monitor pg_roles%rowtype;
 begin
   begin
-    create role gridly_retention_monitor nologin;
+    create role gridly_retention_monitor nologin nosuperuser nocreatedb
+      nocreaterole noinherit noreplication nobypassrls connection limit 0;
   exception
     when duplicate_object or unique_violation then null;
   end;
@@ -306,10 +307,19 @@ begin
     raise exception 'gridly_retention_monitor was not created';
   end if;
   if monitor.rolcanlogin or monitor.rolsuper or monitor.rolcreatedb
-     or monitor.rolcreaterole or monitor.rolreplication or monitor.rolbypassrls
+     or monitor.rolcreaterole or monitor.rolinherit or monitor.rolreplication or monitor.rolbypassrls
+     or monitor.rolconnlimit <> 0 or monitor.rolconfig is not null
+     or exists (select 1 from pg_db_role_setting where setrole=monitor.oid)
      or exists (
-       select 1 from pg_auth_members
-       where roleid=monitor.oid or member=monitor.oid
+       -- PostgreSQL 16+ grants a non-superuser creator ADMIN on its new role.
+       -- This is owner administration OF the monitor, never monitor membership
+       -- IN an operational role. Do not permit SET/INHERIT or API members.
+       select 1 from pg_auth_members m
+       where (m.roleid=monitor.oid or m.member=monitor.oid)
+         and not (m.roleid=monitor.oid
+           and m.member=(select oid from pg_roles where rolname='postgres')
+           and m.admin_option and not m.inherit_option and not m.set_option
+           and exists(select 1 from pg_roles g where g.oid=m.grantor and g.rolsuper))
      ) then
     raise exception using errcode='42501',
       message='gridly_retention_monitor has incompatible or elevated role attributes';
@@ -321,20 +331,26 @@ do $$
 declare monitor_oid oid;
 begin
   select oid into strict monitor_oid from pg_roles where rolname='gridly_retention_monitor';
-  if not has_schema_privilege(monitor_oid,'report_retention','USAGE')
+  if exists (select 1 from pg_shdepend where refclassid='pg_authid'::regclass
+       and refobjid=monitor_oid and deptype='o')
+     or not has_schema_privilege(monitor_oid,'report_retention','USAGE')
      or has_schema_privilege(monitor_oid,'report_retention','CREATE')
      or not has_table_privilege(monitor_oid,'report_retention.health','SELECT')
      or has_table_privilege(monitor_oid,'report_retention.health','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
      or exists (
        select 1 from pg_namespace n cross join lateral aclexplode(n.nspacl) a
        where a.grantee=monitor_oid
-         and not (n.nspname='report_retention' and a.privilege_type='USAGE')
+         and not (n.nspname='report_retention' and a.privilege_type='USAGE' and not a.is_grantable)
      )
      or exists (
        select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
        cross join lateral aclexplode(c.relacl) a
        where a.grantee=monitor_oid
-         and not (n.nspname='report_retention' and c.relname='health' and a.privilege_type='SELECT')
+         and not (n.nspname='report_retention' and c.relname='health' and a.privilege_type='SELECT' and not a.is_grantable)
+     )
+     or exists (
+       select 1 from pg_attribute c cross join lateral aclexplode(c.attacl) a
+       where a.grantee=monitor_oid
      )
      or exists (
        select 1 from pg_proc p cross join lateral aclexplode(p.proacl) a
