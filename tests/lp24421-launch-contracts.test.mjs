@@ -14,7 +14,8 @@ test('generated submission manifest binds current client, PWA authority and sche
   const first=await communitySubmissionContract(dir);
   assert.deepEqual(await communitySubmissionContract(dir),first);
   assert.equal(first.legacyCreationCompatible,false);
-  assert.equal(Object.keys(first.schema).length,2);
+  assert.equal(first.protocol_version,2);
+  assert.equal(Object.keys(first.schema).length,3);
   const sw=await readFile('service-worker.js','utf8');
   assert.ok(sw.includes(`const GRIDLY_SW_VERSION = "${first.version}"`));
   assert.ok(sw.includes(`const GRIDLY_CLOSURE_CACHE_NAME = "${first.cache}"`));

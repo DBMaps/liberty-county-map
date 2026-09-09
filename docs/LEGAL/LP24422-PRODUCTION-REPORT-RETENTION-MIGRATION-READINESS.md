@@ -1,5 +1,11 @@
 # LP244.22A pre-launch community-data reset and migration repair readiness
 
+**LP244.23D current state:** Gate 2A and its separately approved postflight passed.
+The authorization is consumed, report/history reset counts are zero, protocol 2 is
+installed, reporting remains disabled and Cron is absent. See [client readiness
+and recorded Gate 2A evidence](LP24423D-PROTOCOL-V2-CLIENT-READINESS.md). The
+already-armed execution instructions below are historical and must not be replayed.
+
 **LP244.23C superseding execution contract:** Fresh authorization transaction → `already-armed-transition` payload. The current fresh authorization must not be bootstrapped again. The failed earlier authorization was separately revoked; the owner reports that the fresh authorization remains armed. This local repair does not access or revalidate production. Earlier status and execution instructions below are historical. See the LP244.23C section immediately below and the [managed-role repair and owner export](LP24423B-MANAGED-ROLE-OWNER-EXPORT-DECISION.md) decision. Gate 2A still requires separate owner approval of an exact committed payload.
 
 ## LP244.23C explicit already-armed production path

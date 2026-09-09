@@ -153,7 +153,7 @@ test('report helper uses only the token protocol and never falls back to direct 
   const sent=[];
   const ctx=vm.createContext({deviceId:'fixture-private-device', GRIDLY_REPORTS_BASE_INSERT_KEYS:[],
     gridlyPickRowKeys:row=>({...row}), gridlyRefreshPendingOperationButton(){},
-    gridlyGetCommunityProtocolClient:()=>({submit:async(kind,payload,client,device)=>{sent.push({kind,payload,device});return {status:'accepted'};}})});
+    gridlyGetCommunityProtocolClient:()=>({submit:async(kind,payload,client,device)=>{sent.push({kind,payload,device});return {status:'accepted',report:{id:'fixture-report',crossing_id:'DOT-fixture'}};}})});
   vm.runInContext(source.slice(start,end),ctx);
   const result=await ctx.gridlyInsertWithCountyMetadataFallback({from(){throw Error('legacy write forbidden');}},'reports',{crossing_id:'DOT-fixture',device_id:null});
   assert.equal(result.error,null);assert.equal(sent.length,1);assert.equal(sent[0].device,'fixture-private-device');

@@ -17476,7 +17476,7 @@ const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
 // Release identity follows service-worker.js; native verification rejects drift.
-const APP_BUILD = "lp244.21e-local-certification";
+const APP_BUILD = "lp244.23d-protocol-v2-readiness";
 const GRIDLY_APP_VERSION_LABEL = "Gridly V204.0B";
 const GRIDLY_APP_BUILD_LABEL = "Build 1710";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
@@ -58619,7 +58619,7 @@ window.gridlyClearSupabaseTestHazards = async function gridlyClearSupabaseTestHa
     return { deleted: 0, failed: 0, ok: true, validation: trace };
   }
 
-  const { error } = await supabaseClient.from("reports").delete().in("id", idsToDelete);
+  const { error } = { error: { message: "Direct report deletion is disabled. Use the governed report lifecycle." } };
   if (error) {
     const failed = { deleted: 0, failed: idsToDelete.length, ok: false, error: error.message || "delete_failed" };
     console.error("gridlyClearSupabaseTestHazards delete failed", failed);
@@ -58991,7 +58991,7 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
     return summary;
   }
 
-  const { error: deleteError } = await supabaseClient.from("reports").delete().in("id", idsToDelete);
+  const { error: deleteError } = { error: { message: "Direct report deletion is disabled. Use the governed report lifecycle." } };
   if (deleteError) {
     console.error("gridlyDevPurgeRecentRoadHazards delete failed", deleteError);
     return { ...summary, ok: false, error: deleteError.message || "delete_failed" };
@@ -59114,7 +59114,7 @@ const gridlyDevPurgeRecentCrossingReports = async function gridlyDevPurgeRecentC
     return summary;
   }
 
-  const { error: deleteError } = await supabaseClient.from("reports").delete().in("id", idsToDelete);
+  const { error: deleteError } = { error: { message: "Direct report deletion is disabled. Use the governed report lifecycle." } };
   if (deleteError) {
     console.error("gridlyDevPurgeRecentCrossingReports delete failed", deleteError);
     return { ...summary, ok: false, error: deleteError.message || "delete_failed" };
@@ -88769,7 +88769,7 @@ function gridlyBuildRoadHazardDetailLocationMetadata(locationPayload = {}, optio
 
 let gridlyCommunityProtocolClient = null;
 function gridlyGetCommunityProtocolClient() {
-  if (!window.gridlyReportProtocol) throw new Error("Reporting requires the current Gridly build.");
+  if (window.gridlyReportProtocol?.protocol_version !== 2) throw new Error("Reporting requires the current Gridly build. Update or reload Gridly.");
   return gridlyCommunityProtocolClient ||= window.gridlyReportProtocol.create();
 }
 function gridlyRefreshPendingOperationButton() {
@@ -88785,8 +88785,9 @@ function gridlyRefreshPendingOperationButton() {
       button.disabled = true;
       try {
         const result = await gridlyGetCommunityProtocolClient().retry(supabaseClient, deviceId);
-        setConfirmation(result.status === "retryable_failure" ? "Report still pending. Retry when connected." : "Pending report resolved.", result.status === "retryable_failure" ? "error" : "success");
-        await loadSharedReports("pending_report_resolved");
+        const outcome = window.gridlyReportProtocol.outcome(result.status);
+        setConfirmation(outcome.message, outcome.success ? "success" : "error");
+        if (outcome.success) await loadSharedReports("pending_report_resolved");
       } finally { button.disabled = false; gridlyRefreshPendingOperationButton(); }
     };
     document.body.appendChild(button);
@@ -88797,8 +88798,12 @@ async function gridlySubmitCommunityMutation(action, observationId, changes = {}
   if (!observationId) { setConfirmation("The original report is unavailable. Refresh before updating it.", "error"); return false; }
   try {
     const result = await gridlyGetCommunityProtocolClient().submit(action, { observation_id: observationId, changes }, supabaseClient, deviceId);
-    if (!["accepted", "already_processed"].includes(result.status)) {
-      setConfirmation(result.status === "retryable_failure" ? "Update pending. Use Retry pending report." : "This report can no longer be updated.", "error"); return false;
+    if (result.status === "already_processed") {
+      await loadSharedReports("community_mutation_replay");
+      setConfirmation(window.gridlyReportProtocol.outcome(result.status).message, "error"); return false;
+    }
+    if (result.status !== "accepted") {
+      setConfirmation(window.gridlyReportProtocol.outcome(result.status).message, "error"); return false;
     }
     await loadSharedReports("community_mutation_resolved"); return true;
   } catch (_) { setConfirmation("A report is pending. Use Retry pending report.", "error"); return false; }
@@ -88815,16 +88820,21 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row, op
       if (isClear && !target) return { error: { code: "ORIGINAL_REQUIRED", message: "Original report unavailable." } };
       const result = await gridlyGetCommunityProtocolClient().submit(isClear ? "clear" : "create",
         isClear ? { observation_id: target, changes: {} } : payload, client, deviceId);
-      if (!["accepted", "already_processed"].includes(result.status)) return { error: { code: result.status, message: result.status === "retryable_failure" ? "Report pending. Use Retry pending report." : "Report was not accepted." } };
+      if (!["accepted", "already_processed"].includes(result.status)) return { error: { code: result.status, message: window.gridlyReportProtocol.outcome(result.status).message } };
       let returned = result.report;
       if (isClear && !returned) {
         const read = await client.from("reports").select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS).eq("id", target);
         returned = read.data?.[0] || null;
       }
-      return { data: returned ? [returned] : [], error: null, insertedRow: returned || { ...row, device_id: null }, metadataPersisted: false, metadataFallbackUsed: false };
+      if (!returned) {
+        await loadSharedReports("community_replay_refresh");
+        return { error: { code: result.status, message: window.gridlyReportProtocol.outcome(result.status).message } };
+      }
+      return { data: [returned], error: null, insertedRow: returned, metadataPersisted: false, metadataFallbackUsed: false };
     } catch (_) { return { error: { code: "PENDING_OPERATION", message: "A report is pending. Use Retry pending report." } }; }
     finally { gridlyRefreshPendingOperationButton(); }
   }
+  if (tableName !== GRIDLY_DIRECT_FEEDBACK_TABLE) return { error: { code: "PROTOCOL_REQUIRED", message: "Direct community writes are unavailable." } };
   const attachAbortSignal = (query) => options?.abortSignal && typeof query?.abortSignal === "function" ? query.abortSignal(options.abortSignal) : query;
   const insertRow = tableName === "reports" ? gridlyPickRowKeys(row, GRIDLY_REPORTS_BASE_INSERT_KEYS) : row;
   const isHazardReport = tableName === "reports" && String(row?.crossing_id || "").startsWith("hazard-");
@@ -90187,7 +90197,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     updateReportingState({ submissionInProgress: false, locationLookupInProgress: false, lastReportError: "", lastReportMessage: "Report already active" });
     setConfirmation("That hazard report is already active. Thanks for confirming it.", "success");
     setSync("Hazard report already active");
-    markSubmitStage("duplicate_active_hazard_suppressed", { duplicateGuardLockKey, existingId: existingActiveDuplicate.id || existingActiveDuplicate.crossingId || existingActiveDuplicate.crossing_id || null });
+    markSubmitStage("duplicate_active_hazard_suppressed", { duplicateGuardSuppressed: true, existingId: existingActiveDuplicate.id || existingActiveDuplicate.crossingId || existingActiveDuplicate.crossing_id || null });
     submitAudit.completedAt = Date.now();
     submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
     submitAudit.duplicateSuppressed = true;
@@ -90202,7 +90212,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     updateReportingState({ submissionInProgress: false, locationLookupInProgress: false, lastReportError: "", lastReportMessage: "Report already sending" });
     setConfirmation("Hazard report received. Thanks for confirming it.", "success");
     setSync("Hazard report already sending");
-    markSubmitStage("duplicate_pending_hazard_suppressed", { duplicateGuardLockKey });
+    markSubmitStage("duplicate_pending_hazard_suppressed", { duplicateGuardSuppressed: true });
     submitAudit.completedAt = Date.now();
     submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
     submitAudit.duplicateSuppressed = true;
@@ -90294,7 +90304,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     gridlyHazardPropagationTimingState.lastSupabaseWriteCompletedAt = gridlyHazardPropagationNowIso();
     gridlyRecordHazardPropagationStage("supabase_write_completed", { reportId: row.crossing_id });
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
-    const localHazardRows = normalizeReports([{ ...localRow, created_at: new Date().toISOString() }]);
+    const localHazardRows = normalizeReports([{ ...localRow, ...insertResult.insertedRow }]);
     const localHazardEntry = localHazardRows[0] || null;
     if (localHazardEntry && originalTapCoords) {
       const finalPlacementCoordinate = gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.finalPlacementCoordinate) || gridlyCoordinateFromRecord(localHazardEntry);
@@ -90869,7 +90879,7 @@ window.clearHazard = async function (hazardType, lat, lng, lifecycleTargetReport
     gridlyRecordHazardClearLifecycle("mutation_rejected_timeout_zero_row", { reportId: targetId, reason, message: error?.message || "unknown_error" });
     gridlyRecordHazardClearLifecycle("terminal_failure", { reportId: targetId, reason });
     console.error("Gridly hazard clear failed:", error);
-    setConfirmation(reason === "timeout" ? "Clearing timed out. The report is still active; please try again." : "This report was not cleared. Please try again.", "error");
+    setConfirmation(reason === "timeout" ? "Clearing is unconfirmed. Use Retry pending report when connected." : (error?.message || "This report was not cleared."), "error");
     setSync("Update not submitted");
     refreshReportHazardViews("hazard_clear_failure_restore");
     return false;
@@ -93752,13 +93762,14 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
 
     if (reportType === "cleared") gridlyLp0534bClearDiagnostics.crossingClearSubmitStartCount += 1;
     gridlyMarkReportSubmissionRecovery("writeStarted", { flow: "crossing", reportType });
-    const { error } = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
+    const insertResult = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
+    const { error } = insertResult;
 
     if (error) throw error;
     if (reportType === "cleared") gridlyLp0534bClearDiagnostics.crossingClearInsertSuccessCount += 1;
     gridlyMarkReportSubmissionRecovery("writeCompleted", { flow: "crossing", reportType });
 
-    const localCrossingRows = normalizeReports([{ ...row, created_at: new Date().toISOString() }]);
+    const localCrossingRows = normalizeReports([{ ...row, ...insertResult.insertedRow }]);
     if (localCrossingRows[0]) {
       activeReports = [localCrossingRows[0], ...activeReports.filter((report) => report.crossingId !== localCrossingRows[0].crossingId)];
       gridlyRegisterAcceptedLocalCrossingReport(localCrossingRows[0], row.crossing_id);

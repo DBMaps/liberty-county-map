@@ -1,0 +1,33 @@
+{
+  "browser": {
+    "schemaVersion": "gridly.communitySubmissionBundle.v2",
+    "protocol_version": 2,
+    "legacyCreationCompatible": false,
+    "version": "lp244.23d-protocol-v2-readiness",
+    "cache": "gridly-pwa-shell-lp24423d-v2",
+    "scripts": [
+      "js/gridly-report-protocol.js?v=lp244.23d-protocol-v2-readiness",
+      "js/app.js?v=lp244.23d-protocol-v2-readiness"
+    ],
+    "runtime": {
+      "js/app.js": "7db68575779159b316e28f2a61061b36ce9fe728d46dc2aa92a87cc6b88bddcf",
+      "js/gridly-report-protocol.js": "399c2bad57b48888d816c5528c76bac8936761565e4695134c96d704aa9c4366",
+      "js/gridlyPackageRegistry.js": "59c224746653c78a971c07eb67b834218d0e1fb8b69c95027caf2ec79345ab13",
+      "service-worker.js": "0a1a0a7ecf6b69aeb152f20e0cc557b9854353e8e9c6b8ccb8a2fd6578e9f30a"
+    },
+    "schema": {
+      "202609080001_community_report_retention.sql": "613873328827eec67f5dd394e8b7b5af788596e352a9d60b9ec6f4bdc8926954",
+      "202609080002_community_submission_protocol.sql": "613873328827eec67f5dd394e8b7b5af788596e352a9d60b9ec6f4bdc8926954",
+      "20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql": "3dfa6ed87fc5c581fabb146a2b0e012c6c84f2e54b87221c8ac5b74ec47dbb83"
+    }
+  },
+  "packagedAndroid": {
+    "js/app.js": "33c1cbe3d947b90cd83a562269284e80b3fa425dfcff71b6d01eb76a910f9d1c",
+    "js/gridly-report-protocol.js": null,
+    "index.html": "c5f54c4e5a9a188953bbd186d44cc763d831447d725fb5374a26ffb29a903c03",
+    "service-worker.js": "d2c9648b2db1a76a0683efb108992f09c8a5be45c79d7adf311ae96d7c5ee492"
+  },
+  "androidRejected": true,
+  "protectedCssCanonicalSha256": "deb0466ece8f2acb56f454cef437aa2044a8614b75b41dd305319119bc1e2ec0",
+  "layoutMarkupUnchanged": true
+}

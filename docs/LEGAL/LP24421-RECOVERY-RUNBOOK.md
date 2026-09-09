@@ -1,5 +1,12 @@
 # LP244.21D isolated restoration and certification
 
+**LP244.23D recorded production checkpoint:** Gate 2A postflight passed with the
+authorization consumed, zero legacy report/history rows, the prior private
+revocation ledger preserved, protocol 2 installed and reporting disabled. See
+[the non-sensitive evidence and client readiness record](LP24423D-PROTOCOL-V2-CLIENT-READINESS.md).
+This checkpoint is not a backup, restoration witness or permission to replay the
+destructive pre-launch reset. The isolated recovery controls below remain required.
+
 **LOCAL PREPARATION ONLY. No restoration, production access change, reconnection, deployment, or policy publication is authorized by this document.**
 
 **LP244.23B:** [Owner export and managed-role decision](LP24423B-MANAGED-ROLE-OWNER-EXPORT-DECISION.md) defines a redacted analytics export, not a restore source or replay-ledger witness. Never import its files to reconstruct reports, receipts or erased device associations. The current 001/002 migrations are superseded no-op checkpoints; an older-schema restore needs a separately reviewed forward recovery change. Do not apply the destructive pre-launch 20260908200554 reset to a launched restore. The historical step 3 below does not authorize replaying those files as a recovery upgrade. Certification uses the current repository transition hash and still requires complete independent source continuity evidence.

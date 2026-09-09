@@ -79,7 +79,7 @@ test('bare PLACE resolution precedes acquisition without changing qualified-quer
   assert.match(searchBody, /provider: "gridly_canonical_place"/);
   assert.match(searchBody, /countyMemberships/);
   assert.equal(runtime().recognize('Dallas, TX'), null, 'qualified Dallas keeps its established provider path');
-  assert.match(html, /js\/app\.js\?v=lp244\.24b-owner-review/, 'the repaired runtime has a deployable asset identity');
+  assert.ok(html.includes(`js/app.js?v=${app.match(/const APP_BUILD = "([^"\n]+)"/)?.[1]}`), "current application asset identity is bound");
 });
 
 test('the real interactive coordinator carries governed authority into canonical publication', () => {

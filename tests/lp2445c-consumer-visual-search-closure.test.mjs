@@ -50,9 +50,9 @@ test("published destination outcomes take space before reflow and still recover 
 
 test("asset identity invalidates the pre-gate browser shell", () => {
   assert.match(html, /css\/styles\.css\?v=lp244\.24b-owner-review/);
-  assert.match(html, /js\/app\.js\?v=lp244\.24b-owner-review/);
-  assert.match(sw, /GRIDLY_SW_VERSION = "lp244\.21e-local-certification"/);
-  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24421e-v1"/);
+  assert.ok(html.includes(`js/app.js?v=${app.match(/const APP_BUILD = "([^"\n]+)"/)?.[1]}`), "current application asset identity is bound");
+  assert.equal(sw.match(/const GRIDLY_SW_VERSION = "([^"\n]+)"/)?.[1], app.match(/const APP_BUILD = "([^"\n]+)"/)?.[1]);
+  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24423d-v2"/);
   assert.match(sw, /cache: "no-store"/);
   assert.match(sw, /caches\.delete\(cacheName\)/);
 });
