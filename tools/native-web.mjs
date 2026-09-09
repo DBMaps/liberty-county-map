@@ -227,7 +227,9 @@ export async function communitySubmissionContract(directory) {
   if (!version || !cache) throw new Error('Missing service-worker version authority');
   const app = await readFile(join(directory,'js/app.js'),'utf8');
   if (app.match(/const APP_BUILD = "([^"]+)"/)?.[1] !== version || scripts(index).some(path=>!path.endsWith(`?v=${version}`))) throw new Error('App/PWA version authority drift');
-  return {schemaVersion:'gridly.communitySubmissionBundle.v1',legacyCreationCompatible:false,version,cache,scripts:scripts(index),runtime:Object.fromEntries(await Promise.all(runtime.map(async path=>[path,await digest(join(directory,path))]))),schema:Object.fromEntries(await Promise.all(['202609080001_community_report_retention.sql','202609080002_community_submission_protocol.sql'].map(async name=>[name,await digest(join(root,'supabase/migrations',name))])))};
+  const protocol = await readFile(join(directory,'js/gridly-report-protocol.js'),'utf8');
+  if (!protocol.includes('const PROTOCOL_VERSION = 2;')) throw new Error('Retired reporting protocol');
+  return {schemaVersion:'gridly.communitySubmissionBundle.v2',protocol_version:2,legacyCreationCompatible:false,version,cache,scripts:scripts(index),runtime:Object.fromEntries(await Promise.all(runtime.map(async path=>[path,await digest(join(directory,path))]))),schema:Object.fromEntries(await Promise.all(['202609080001_community_report_retention.sql','202609080002_community_submission_protocol.sql','20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql'].map(async name=>[name,await digest(join(root,'supabase/migrations',name))])))};
 }
 
 export async function verifyCommunitySubmissionBundle(directory) {

@@ -63,5 +63,5 @@ test("live layout audit reports heading, cards, geometry, viewport and Nearby or
 
 test("corrected browser assets are cache-distinct", () => {
   assert.match(html, /css\/styles\.css\?v=lp244\.24b-owner-review/);
-  assert.match(html, /js\/app\.js\?v=lp244\.24b-owner-review/);
+  assert.ok(html.includes(`js/app.js?v=${app.match(/const APP_BUILD = "([^"\n]+)"/)?.[1]}`), "current application asset identity is bound");
 });
