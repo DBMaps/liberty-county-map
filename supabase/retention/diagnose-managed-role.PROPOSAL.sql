@@ -1,3 +1,5 @@
+-- PSQL-ONLY LEGACY PROPOSAL. NOT compatible with Supabase execute_sql.
+-- Raw connector proposal: diagnose-managed-role-raw.PROPOSAL.sql (separate approval).
 -- PROPOSAL ONLY. Separate owner approval required. Never included in a batch.
 -- Run ONLY in a dedicated psql -X -w -q -A -t -f process, never interactive \i.
 -- Owner connection supplied privately through libpq. No data reads.
