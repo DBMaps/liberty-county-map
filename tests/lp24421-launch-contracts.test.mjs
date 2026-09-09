@@ -28,6 +28,12 @@ test('generated submission manifest binds current client, PWA authority and sche
  } finally {await rm(dir,{recursive:true,force:true});}
 });
 
-test('checked-in previous Android client is rejected rather than certified for the new protocol',async()=>{
- await assert.rejects(verifyCommunitySubmissionBundle('android/app/src/main/assets/public'),/Retired or mismatched submission client/);
+test('regenerated Android client is certified against the current protocol bundle',async()=>{
+ const directory='android/app/src/main/assets/public';
+ const expected=await communitySubmissionContract(directory);
+ assert.deepEqual(await verifyCommunitySubmissionBundle(directory),expected);
+ assert.equal(expected.version,'lp244.23d-protocol-v2-readiness');
+ assert.equal(expected.cache,'gridly-pwa-shell-lp24423d-v2');
+ assert.equal(expected.protocol_version,2);
+ assert.equal(expected.legacyCreationCompatible,false);
 });

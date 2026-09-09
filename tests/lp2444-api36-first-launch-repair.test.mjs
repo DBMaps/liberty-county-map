@@ -59,11 +59,12 @@ test("fresh Android installs cannot restore completion and blank profiles never 
   assert.match(firstRun, /openGridlyWelcomeOnboarding\(\{ source: "first_run" \}\)/);
 });
 
-test("Dallas/native search diagnostics discard null shard slots without weakening PLACE authority", () => {
+test("Dallas/native search keeps governed bare-PLACE authority ahead of provider acquisition", () => {
   const search = section("async function gridlySearchAddress", "window.gridlyAggregateAddressVariantOutcomes");
-  assert.ok(search.indexOf("resolveGridlyAwarenessAreaQuery(rawQuery)") < search.indexOf("searchGridlyRuntimePoiCandidates"));
-  assert.match(search, /RESOLVED_CANONICAL_MULTI_COUNTY_PLACE/);
-  assert.match(search, /runtimePoiResults\.filter\(Boolean\)\.map/);
+  assert.ok(search.indexOf("resolveGridlyGovernedBareTexasPlaceQuery(rawQuery)") < search.indexOf("searchGridlyRuntimePoiCandidates"));
+  assert.match(search, /provider: "gridly_canonical_place"/);
+  assert.match(search, /countyMemberships: governedCommunity\.countyMemberships/);
+  assert.match(search, /providerResults\.map\(\(result\) => normalizeGridlySearchResult\(result\)\)\.filter\(Boolean\)/);
   assert.match(search, /candidate\.providerId \|\| candidate\.id \|\| null/);
 });
 
@@ -112,14 +113,18 @@ test("armed report placement owns a crossing tap before early popup capture", ()
   assert.match(capture.slice(early), /openCrossingPopupFromCapturedMarkerDomClick/);
 });
 
-test("use-location has bounded success, denial, unavailable, timeout and cancel cleanup", () => {
-  const useLocation = section("window.submitHazardNearMe = function", "function beginRoadHazardMapPlacement");
-  for (const state of ["permission_denied", "unavailable", "timeout", "canceled", "success"]) assert.match(useLocation, new RegExp(state));
+test("use-location has bounded review-ready, denial, unavailable, timeout and cancel cleanup", () => {
+  const useLocation = section("window.submitHazardNearMe = function", "function getGridlyForegroundLocationProvider");
+  for (const state of ["permission_denied", "unavailable", "timeout", "canceled", "review_ready"]) assert.match(useLocation, new RegExp(state));
   assert.match(useLocation, /window\.setTimeout[\s\S]*12000/);
   assert.match(useLocation, /window\.cancelHazardLocationLookup/);
   assert.match(useLocation, /locationLookupInProgress: false/);
   assert.match(useLocation, /document\.body\.classList\.remove\("report-pulse"\)/);
   assert.match(useLocation, /timeout: 10000/);
+  assert.match(useLocation, /continueGovernedRoadHazardDraftToReview\(draft\)/);
+  assert.doesNotMatch(useLocation, /createSharedHazardReport\(/, "foreground location prepares review but cannot submit");
+  const confirmation = section("async function submitGovernedRoadHazardDraft", "window.submitGovernedRoadHazardDraft");
+  assert.equal((confirmation.match(/createSharedHazardReport\(/g) || []).length, 1, "explicit confirmation is the sole persistence owner");
 });
 
 test("touch repair remains Android-safe and does not alter portrait/iPhone layout authority", () => {
