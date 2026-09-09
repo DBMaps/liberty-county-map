@@ -165,15 +165,9 @@ test('Level 1 and encrypted Level 2 export only this disposable post-transition 
     const l1=await exp.writeExport(sql(exp.exportSql(from,to)).split('\n'),path.join(tmp,'level1'),{from,to});
     assert.ok(l1.datasets);
     const key=randomBytes(32),dir=path.join(tmp,'level2');
-    // Existing Level 2 rejects UUID-looking free text, including independently
-    // generated hazard crossing identifiers. Preserve that safeguard and record
-    // this launch limitation rather than silently excluding first-party rows.
-    const refused=path.join(tmp,'level2-review-required');
-    await assert.rejects(archive.writeArchive(sql(archive.archiveSql(from,to)).split('\n'),refused,{from,to,key}),/secret review/);
-    assert.ok(fs.existsSync(path.join(refused,'INCOMPLETE')));
-    assert.ok(!fs.existsSync(path.join(refused,'manifest.json.enc')));
-    sql('delete from public.reports'); // disposable fixture only; never production
-    assert.equal((await client().submit('create',{...body(),crossing_id:'DOT-SYNTHETIC-CROSSING',report_type:'blocked'},transport,'synthetic-device')).status,'accepted');
+    // Level 2 accepts the UUID-bearing hazard identity only because it retains
+    // public.reports.crossing_id provenance. UUIDs in all other content remain
+    // subject to failure-closed secret review.
     const l2=await archive.writeArchive(sql(archive.archiveSql(from,to)).split('\n'),dir,{from,to,key});
     assert.equal(l2.level,2);assert.deepEqual(archive.readArchiveManifest(dir,key),l2);
     const plaintext=archive.decryptArchiveBytes(fs.readFileSync(path.join(dir,'reports.jsonl.enc')),key).toString();

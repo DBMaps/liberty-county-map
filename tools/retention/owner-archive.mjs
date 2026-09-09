@@ -48,14 +48,31 @@ export function archiveSql(from,to) {
 }
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_TEXT=/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i;
+const HAZARD_UUID=/^hazard-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// UUID permission is provenance-bound. Keys are archive dataset/column names,
+// and each value documents the authoritative database origin represented by
+// that exported field. No other source column receives a UUID exemption.
+export const UUID_BEARING_IDENTIFIER_COLUMNS=Object.freeze({
+  'reports.id':'public.reports.id — stable report entity identity',
+  'reports.archive_ref':'public.reports.id alias — export-scoped report relationship input',
+  'reports.crossing_id':'public.reports.crossing_id — Gridly hazard entity identity in hazard-UUID form',
+  'feedback.id':'public.gridly_feedback.id — stable feedback entity identity',
+  'receipts.report_ref':'public.reports.id alias — receipt-to-report relationship input'
+});
+const REQUIRED_UUID_COLUMNS=new Set(['reports.id','reports.archive_ref','feedback.id','receipts.report_ref']);
+function uuidSourceAllowsValue(dataset,key,value) {
+  const source=`${dataset}.${key}`;
+  if(!Object.hasOwn(UUID_BEARING_IDENTIFIER_COLUMNS,source)) return false;
+  return source==='reports.crossing_id' ? HAZARD_UUID.test(value) : UUID.test(value);
+}
 const SECRET_PATTERNS=[
   /-----BEGIN [\w ]*PRIVATE KEY-----/i,
-  /\b(?:access[_ -]?token|refresh[_ -]?token|password|passwd|secret|api[_ -]?key|authorization|submission[_ -]?token)\s*[:=]\s*\S+/i,
+  /\b(?:access[_ -]?token|refresh[_ -]?token|submission[_ -]?token|operation[_ -]?token|authorization(?:[_ -]?(?:uuid|code|digest))?|revocation[_ -]?(?:id|identifier|token)|replay[_ -]?digest|password|passwd|credentials?|private[_ -]?key|provider(?:[_ -]?api)?[_ -]?(?:key|secret|token)|service[_ -]?role(?:[_ -]?(?:key|secret))?|api[_ -]?key|cookies?|session[_ -]?(?:secret|token)|secret)\b["']?\s*[:=]\s*["']?\S+/i,
   /\bBearer\s+\S+/i,
   /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/,
   /\b(?:sk[-_]|sb_secret_|AKIA)[A-Za-z0-9_-]{12,}/,
   /\b(?:postgres(?:ql)?|https?):\/\/[^\s/]+:[^\s@]+@/i,
-  /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i,
   /\b[0-9a-f]{64,}\b/i,
   /\b(?:device|installation)[_ -]?id\s*[:=]\s*\S+/i
 ];
@@ -65,11 +82,14 @@ export function validateArchiveRow(dataset,row,secrets=[]) {
   if(!['reports','feedback','receipts'].includes(dataset)) {validateRow(dataset,row);return;}
   for(const [key,value] of Object.entries(row)) {
     if(value===null) continue;
-    if(['id','archive_ref','report_ref'].includes(key)) {if(typeof value!=='string'||!UUID.test(value)) throw Error('Invalid record identifier');}
+    const source=`${dataset}.${key}`;
+    if(REQUIRED_UUID_COLUMNS.has(source)) {if(typeof value!=='string'||!uuidSourceAllowsValue(dataset,key,value)) throw Error('Invalid record identifier');}
     else if(/(_at|cleanup_after|linkage_deadline)$/.test(key)) {
       if(typeof value!=='string'||!/^\d{4}-\d\d-\d\d[T ]\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|\+00(?::00)?)$/.test(value)) throw Error('Invalid archive timestamp');
     } else if(['lat','lng'].includes(key)) {if(typeof value!=='number'||!Number.isFinite(value)||Math.abs(value)>(key==='lat'?90:180)) throw Error('Invalid coordinate');}
-    else if(typeof value!=='string'||value.length>12000||/[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(value)||SECRET_PATTERNS.some(re=>re.test(value))||secrets.some(s=>s && value.includes(s))) throw Error('Archive content requires secret review');
+    else if(typeof value!=='string'||value.length>12000||/[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(value)
+      ||(UUID_TEXT.test(value)&&!uuidSourceAllowsValue(dataset,key,value))
+      ||SECRET_PATTERNS.some(re=>re.test(value))||secrets.some(s=>s && value.includes(s))) throw Error('Archive content requires secret review');
   }
   if(dataset==='reports' && row.source!=='user') throw Error('Provider source forbidden');
   if(row.provenance!==(dataset==='receipts'?'security_control':'user_supplied')) throw Error('Invalid provenance');
