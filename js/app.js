@@ -40158,19 +40158,100 @@ function gridlySearchQueryHasAddressIndicator(query = "") {
   return tokens.some((token) => GRIDLY_SEARCH_ADDRESS_WORDS.has(token));
 }
 
+function resolveGridlyStatewideCanonicalBarePlaceQuery(query = "") {
+  const normalizedQuery = normalizeGridlyAwarenessAreaLookupText(query);
+  if (!normalizedQuery) return null;
+  const consumerAlias = (value) => normalizeGridlyAwarenessAreaLookupText(value)
+    .replace(/^(?:city|town|village) of\s+/, "");
+  const matchesByGeoid = new Map();
+
+  Object.entries(GRIDLY_COUNTY_REGISTRY || {}).forEach(([countyId, county]) => {
+    (county?.consumerAwarenessAreas || []).forEach((place) => {
+      const placeGeoid = String(place?.placeGeoid || "").trim();
+      const displayName = String(place?.displayName || "").trim();
+      const canonicalName = normalizeGridlyAwarenessAreaLookupText(displayName);
+      if (!/^48\d{5}$/.test(placeGeoid)
+        || (normalizedQuery !== canonicalName && normalizedQuery !== consumerAlias(displayName))) return;
+      const existing = matchesByGeoid.get(placeGeoid) || {
+        placeGeoid, displayName, countyIds: new Set(), countyMemberships: new Set()
+      };
+      existing.countyIds.add(countyId);
+      (place.countyMemberships || []).forEach((fips) => existing.countyMemberships.add(String(fips)));
+      matchesByGeoid.set(placeGeoid, existing);
+    });
+  });
+
+  // A bare name is authoritative only when the complete statewide registry
+  // identifies one PLACE. Duplicate Texas place names remain ambiguous.
+  if (matchesByGeoid.size !== 1) return null;
+  const match = [...matchesByGeoid.values()][0];
+  const countyMemberships = [...match.countyMemberships].filter((fips) => /^48\d{3}$/.test(fips)).sort();
+  const countyFipsFor = (countyId, county) => String(county?.countyFips
+    || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[countyId] : "") || "");
+  const countyIds = countyMemberships.map((fips) => Object.entries(GRIDLY_COUNTY_REGISTRY)
+    .find(([countyId, county]) => countyFipsFor(countyId, county) === fips)?.[0]).filter(Boolean).sort();
+  const community = match.displayName.replace(/^(?:City|Town|Village) of\s+/i, "");
+  const canonicalMultiCountyPlace = countyMemberships.length > 1;
+  const operationalCountyIds = new Set(gridlyGetSelectableOperationalCountyIds());
+  const operational = countyIds.length === countyMemberships.length && countyIds.every((countyId) => operationalCountyIds.has(countyId));
+  const awarenessArea = Object.freeze({
+    key: `place-${match.placeGeoid}`,
+    storageValue: community,
+    label: community,
+    countyId: canonicalMultiCountyPlace ? null : countyIds[0] || null,
+    countyIds: Object.freeze([...countyIds]),
+    countyMemberships: Object.freeze([...countyMemberships]),
+    placeGeoid: match.placeGeoid,
+    communityId: match.placeGeoid,
+    canonicalCommunityIdentity: "PLACE_GEOID",
+    canonicalMultiCountyPlace
+  });
+  const candidates = countyMemberships.map((countyFips) => {
+    const countyId = Object.entries(GRIDLY_COUNTY_REGISTRY)
+      .find(([candidateCountyId, county]) => countyFipsFor(candidateCountyId, county) === countyFips)?.[0] || null;
+    return Object.freeze({
+      awarenessArea,
+      awarenessAreaKey: awarenessArea.key,
+      community,
+      governedCommunityLabel: match.displayName,
+      county: countyId ? GRIDLY_COUNTY_REGISTRY[countyId]?.name || countyId : null,
+      countyId,
+      countyFips,
+      placeGeoid: match.placeGeoid,
+      canonicalIdentity: "PLACE_GEOID",
+      countyMemberships: awarenessArea.countyMemberships,
+      operational: Boolean(countyId && operationalCountyIds.has(countyId))
+    });
+  });
+  return Object.freeze({
+    query: String(query || "").replace(/\s+/g, " ").trim(),
+    status: canonicalMultiCountyPlace ? "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE" : (operational ? "RESOLVED_OPERATIONAL" : "RESOLVED_NOT_OPERATIONAL"),
+    matchType: "town",
+    community,
+    county: canonicalMultiCountyPlace ? null : candidates[0]?.county || null,
+    countyId: canonicalMultiCountyPlace ? null : countyIds[0] || null,
+    countyMemberships: awarenessArea.countyMemberships,
+    countyIds: awarenessArea.countyIds,
+    placeGeoid: match.placeGeoid,
+    communityKey: match.placeGeoid,
+    canonicalIdentity: "PLACE_GEOID",
+    operational,
+    awarenessAreaKey: awarenessArea.key,
+    awarenessArea,
+    ambiguous: false,
+    candidates: Object.freeze(candidates)
+  });
+}
+
 /**
- * Recognize only a complete, bare name from Gridly's governed statewide
- * consumer PLACE/community registry.  This deliberately delegates identity,
- * ambiguity, multi-county membership, and operational status to the shared
- * awareness-area resolver instead of guessing from arbitrary text.
+ * Recognize only a complete, unambiguous bare name from Gridly's governed
+ * statewide Census PLACE registry. Search identity is statewide and therefore
+ * must not inherit the operational awareness resolver's county/local limits.
  */
 function resolveGridlyGovernedBareTexasPlaceQuery(query = "") {
   const raw = String(query || "").replace(/\s+/g, " ").trim();
   if (!raw || raw.length > 96 || !/^[a-z][a-z .'-]*$/i.test(raw)) return null;
-  const resolution = resolveGridlyAwarenessAreaQuery(raw);
-  if (resolution.matchType !== "town"
-      || !["RESOLVED_OPERATIONAL", "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE"].includes(resolution.status)) return null;
-  return resolution;
+  return resolveGridlyStatewideCanonicalBarePlaceQuery(raw);
 }
 
 function gridlySearchQueryHasDestinationIndicator(query = "") {
@@ -40692,6 +40773,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       explicitTexasString: 0,
       explicitLocalityString: 0,
       explicitDistance: 0,
+      canonicalPlaceAuthority: 0,
       titleMatch: 0,
       nearbyMatchAvailability: 0,
       explicitMatchAvailability: 0
@@ -40745,6 +40827,9 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       if (isLocality) scoreBreakdown.explicitLocalityString = 8;
       if (Number.isFinite(distanceMiles) && distanceMiles <= 75) scoreBreakdown.explicitDistance = 6;
     }
+    // Exact bare PLACE queries have already passed unique statewide identity
+    // resolution. Their canonical candidate must survive local POI/road caps.
+    if (result?.provider === "gridly_canonical_place") scoreBreakdown.canonicalPlaceAuthority = 3000;
     scoreBreakdown.titleMatch = titleMatchScore;
     let score = Object.values(scoreBreakdown).reduce((total, contribution) => total + contribution, 0);
     const resultBucket = isContextualLocalSearch && Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 50
@@ -95695,14 +95780,21 @@ async function gridlySearchAddress(query, options = {}) {
   let canonicalPlaceResults = [];
   if (governedCommunity) {
     const area = governedCommunity.awarenessArea || governedCommunity.candidates?.[0]?.awarenessArea;
-    if (Number.isFinite(Number(area?.lat)) && Number.isFinite(Number(area?.lng))) {
+    let canonicalFocus = resolveGridlyCanonicalPlacePresentationFocus({ placeGeoid: governedCommunity.placeGeoid || area?.placeGeoid });
+    if (!canonicalFocus && typeof gridlyLoadStatewidePlacePresentation === "function") {
+      await gridlyLoadStatewidePlacePresentation();
+      canonicalFocus = resolveGridlyCanonicalPlacePresentationFocus({ placeGeoid: governedCommunity.placeGeoid || area?.placeGeoid });
+    }
+    const canonicalLat = canonicalFocus?.lat ?? area?.lat;
+    const canonicalLng = canonicalFocus?.lng ?? area?.lng;
+    if (Number.isFinite(Number(canonicalLat)) && Number.isFinite(Number(canonicalLng))) {
       const countyNames = (governedCommunity.candidates || []).map((candidate) => candidate.county).filter(Boolean);
       canonicalPlaceResults = [normalizeGridlySearchResult({
         id: `place-${governedCommunity.placeGeoid || area.placeGeoid || area.communityId}`,
         name: governedCommunity.community || area.label,
         display_name: `${governedCommunity.community || area.label}, Texas`,
         subtitle: countyNames.length > 1 ? `Multi-county community · ${countyNames.join(" · ")}` : `${countyNames[0] || governedCommunity.county || "Texas"}`,
-        lat: Number(area.lat), lon: Number(area.lng), type: "city", provider: "gridly_canonical_place",
+        lat: Number(canonicalLat), lon: Number(canonicalLng), type: "city", provider: "gridly_canonical_place",
         address: { city: governedCommunity.community || area.label, county: countyNames.join(", "), state: "Texas" },
         placeGeoid: governedCommunity.placeGeoid || area.placeGeoid || null,
         countyMemberships: governedCommunity.countyMemberships || governedCommunity.candidates?.[0]?.countyMemberships || []

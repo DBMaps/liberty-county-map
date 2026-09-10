@@ -16,21 +16,20 @@ function functionSource(name) {
 }
 
 function runtime() {
-  const governed = new Map(projection.communities
-    .filter(row => row.consumerEligible)
-    .map(row => [row.displayName.toLowerCase(), row]));
+  const registry = {};
+  for (const row of projection.communities.filter(row => row.consumerEligible)) {
+    for (const countyFips of row.countyMemberships) {
+      const countyId = `county-${countyFips}`;
+      registry[countyId] ||= { countyFips, name: `County ${countyFips}`, consumerAwarenessAreas: [] };
+      registry[countyId].consumerAwarenessAreas.push({ ...row, canonicalIdentity: 'PLACE_GEOID' });
+    }
+  }
   const sandbox = { window: {} };
-  sandbox.resolveGridlyAwarenessAreaQuery = query => {
-    const row = governed.get(String(query).toLowerCase());
-    if (!row) return { status: 'NOT_FOUND', matchType: 'town' };
-    return {
-      status: row.countyMemberships.length > 1 ? 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE' : 'RESOLVED_OPERATIONAL',
-      matchType: 'town', community: row.displayName, placeGeoid: row.placeGeoid,
-      countyMemberships: row.countyMemberships
-    };
-  };
   vm.createContext(sandbox);
   vm.runInContext(`
+    const GRIDLY_COUNTY_REGISTRY = ${JSON.stringify(registry)};
+    const GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID = {};
+    const gridlyGetSelectableOperationalCountyIds = () => Object.keys(GRIDLY_COUNTY_REGISTRY);
     const LOCAL_PLACE_LOOKUP = {};
     const GRIDLY_DESTINATION_INTENTS = { GENERIC_LOCAL: 'generic_local', EXPLICIT_DESTINATION: 'explicit_destination', BUSINESS_PLACE: 'business_place', ADDRESS: 'address' };
     const GRIDLY_SEARCH_ADDRESS_WORDS = new Set(['street', 'st', 'road', 'rd']);
@@ -40,6 +39,8 @@ function runtime() {
     ${functionSource('getGridlySearchQueryTokens')}
     ${functionSource('normalizeGridlyBrandSearchText')}
     ${functionSource('gridlySearchQueryHasAddressIndicator')}
+    ${functionSource('normalizeGridlyAwarenessAreaLookupText')}
+    ${functionSource('resolveGridlyStatewideCanonicalBarePlaceQuery')}
     ${functionSource('resolveGridlyGovernedBareTexasPlaceQuery')}
     ${functionSource('gridlySearchQueryHasDestinationIndicator')}
     ${functionSource('classifyGridlyDestinationSearchIntent')}
@@ -51,11 +52,12 @@ function runtime() {
 
 test('Dallas and other exact governed Texas PLACE names become geographic destination intent', () => {
   const search = runtime();
-  for (const name of ['Dallas', 'Austin', 'Abilene', 'Dayton', 'Crosby', 'Fredericksburg', 'Port Arthur']) {
+  for (const name of ['Dallas', 'Austin', 'Abilene', 'Dayton', 'Crosby', 'Fredericksburg', 'Port Arthur', 'Pecos']) {
     const authority = search.recognize(name);
     assert.ok(authority, `${name} is present in governed statewide authority`);
     assert.equal(search.classify(name).type, 'explicit_destination');
-    assert.equal(authority.placeGeoid, projection.communities.find(row => row.displayName === name).placeGeoid);
+    const projected = projection.communities.find(row => row.displayName === name || row.displayName === `Town of ${name}`);
+    assert.equal(authority.placeGeoid, projected.placeGeoid);
   }
 });
 
