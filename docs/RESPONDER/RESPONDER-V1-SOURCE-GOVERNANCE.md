@@ -1,0 +1,14 @@
+# Responder / Agency V1 source governance
+
+Contract version: `responder.agency.v1.phase0.1`. `AGENCY_OFFICIAL` is a distinct record identity, lifecycle, badge, timestamp, expiry, and audit lineage. It may be grouped visually with nearby evidence but is never stored as or destructively deduplicated into DriveTexas, NWS, community reports, crossing authority, or a Gridly system message. No source silently overwrites another. The [existing official-source strategy](../doccleanup/V339-OFFICIAL-SOURCE-PRODUCT-INTEGRATION-STRATEGY.md) remains design authority for awareness-first, source-separated wording; this Phase 0 contract does not activate that future product surface.
+
+| Situation | V1 presentation contract |
+| --- | --- |
+| Agency `road_closed` + DriveTexas construction at same point | Group in one map area if helpful, but retain two cards/IDs/badges. Lead with current closure for travel awareness; show DriveTexas construction with its own timestamp/expiry. Do not say TxDOT confirmed the agency closure. |
+| Agency `high_water` + community flooding nearby | Label “Agency update” and “Community reported” separately. Say “community report nearby,” not “officially confirmed” or “confirmed by Gridly.” Preserve community report identity and lifecycle. |
+| Agency `public_works_notice` + NWS alert | Show local agency notice and broader weather alert as separate scopes. Do not turn either into a forecast, dispatch instruction, or causal claim. |
+| Agency update at governed crossing | Preserve the crossing's canonical ID and popup authority. Link context only when `crossing_id` is validated; never convert the agency row into the crossing record or change crossing lifecycle. |
+
+Same-point records may share a presentation group, nearby records may receive proximity wording, and conflicting conditions must remain separately visible with source-specific updated/expiry times. A newer timestamp does not automatically invalidate another source. Expiration hides only the expired family record. Consumer ranking may foreground current road closure while maintaining the other evidence. Any future claim of cross-source corroboration requires a separately governed matching rule and owner approval.
+
+Hard separation from community protocol-v2: no agency action writes `public.reports`, community `report_retention.replay_evidence`, device links, observation receipts, or the `reporting_enabled` admission state. Agency authentication is an individual Auth user, not a community device identity. The independent `agency_publishing_enabled` gate defaults false. Agency public output is read-only and allowlisted in [the consumer projection](RESPONDER-V1-CONSUMER-PROJECTION.md). Owner export/archive patterns can be reused conceptually for deterministic manifests and redaction, never by mixing agency employee identity into consumer exports.

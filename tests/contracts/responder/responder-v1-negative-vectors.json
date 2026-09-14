@@ -1,0 +1,937 @@
+{
+  "contractVersion": "responder.agency.v1.phase0.1",
+  "vectorKind": "negative",
+  "fixtureCatalog": {
+    "note": "Synthetic logical fixtures only; the square is not the real polygon for FIPS 48001 and grants no authority.",
+    "countyA": {
+      "fips": "48001",
+      "polygonLonLat": [
+        [
+          -97,
+          30
+        ],
+        [
+          -96,
+          30
+        ],
+        [
+          -96,
+          31
+        ],
+        [
+          -97,
+          31
+        ],
+        [
+          -97,
+          30
+        ]
+      ],
+      "interiorPointLonLat": [
+        -96.5,
+        30.5
+      ],
+      "sharedBoundaryPointLonLat": [
+        -96,
+        30.5
+      ],
+      "outsidePointLonLat": [
+        -95.5,
+        30.5
+      ]
+    },
+    "ids": {
+      "actorA": "00000000-0000-4000-8000-000000000001",
+      "actorB": "00000000-0000-4000-8000-000000000002",
+      "gridly": "00000000-0000-4000-8000-000000000003",
+      "orgA": "10000000-0000-4000-8000-000000000001",
+      "orgB": "10000000-0000-4000-8000-000000000002"
+    }
+  },
+  "vectors": [
+    {
+      "id": "N01-viewer-draft",
+      "actorRole": "VIEWER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "valid draft but VIEWER role",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N02-responder-activate",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "pending_review",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_non_closure",
+      "payloadCondition": "pending non-closure; RESPONDER lacks reviewer role",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N03-responder-wrong-org",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "actor belongs orgA; target orgB",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N04-supervisor-wrong-org",
+      "actorRole": "SUPERVISOR",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "pending_review",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_non_closure",
+      "payloadCondition": "actor belongs orgA; pending update belongs orgB",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N05-admin-self-promote",
+      "actorRole": "AGENCY_ADMIN",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "change_member_role",
+      "payloadCondition": "Agency Admin attempts own role escalation",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N06-last-admin-removal",
+      "actorRole": "AGENCY_ADMIN",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "revoke_member",
+      "payloadCondition": "target is sole active Agency Admin",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N07-aal1-dashboard",
+      "actorRole": "VIEWER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal1",
+      "authorityState": "not_required",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "none",
+      "publicVisibilityResult": "unchanged",
+      "action": "read_dashboard",
+      "payloadCondition": "valid organization but no second factor",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N08-aal1-mutation",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal1",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "valid draft but aal1",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N09-suspended-member",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "suspended",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "membership suspended",
+      "expectedResult": "suspended"
+    },
+    {
+      "id": "N10-revoked-member",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "revoked",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "membership revoked",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N11-suspended-org",
+      "actorRole": "SUPERVISOR",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "suspended"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "pending_review",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_non_closure",
+      "payloadCondition": "organization operation suspended",
+      "expectedResult": "suspended"
+    },
+    {
+      "id": "N12-revoked-org",
+      "actorRole": "SUPERVISOR",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "revoked",
+        "operation": "suspended"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "pending_review",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_non_closure",
+      "payloadCondition": "verification revoked and organization suspended",
+      "expectedResult": "suspended"
+    },
+    {
+      "id": "N13-unverified-org",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "pending_review",
+        "operation": "inactive"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "verification pending_review",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N14-unknown-fips",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "unknown_fips",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "county FIPS 48999 absent from 254 inventory",
+      "expectedResult": "out_of_scope"
+    },
+    {
+      "id": "N15-outside-point",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "out_of_scope",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.outsidePointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "point countyA.outsidePointLonLat",
+      "expectedResult": "out_of_scope"
+    },
+    {
+      "id": "N16-boundary-point",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "ambiguous_boundary",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.sharedBoundaryPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "point countyA.sharedBoundaryPointLonLat",
+      "expectedResult": "out_of_scope"
+    },
+    {
+      "id": "N17-stale-authority",
+      "actorRole": "SUPERVISOR",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "stale",
+      "updateState": "pending_review",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_non_closure",
+      "payloadCondition": "submitted authority version differs from current approved version",
+      "expectedResult": "out_of_scope"
+    },
+    {
+      "id": "N18-spoofed-authority-id",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "spoofed_id",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "client supplies orgB authority ID while acting for orgA",
+      "expectedResult": "out_of_scope"
+    },
+    {
+      "id": "N19-replay-same",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "replay_no_new_event",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "same token actor action target and payload digest as accepted first attempt",
+      "expectedResult": "already_processed"
+    },
+    {
+      "id": "N20-replay-different",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "same token with different payload digest",
+      "expectedResult": "invalid_request"
+    },
+    {
+      "id": "N21-stale-revision",
+      "actorRole": "SUPERVISOR",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "active",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "edit_active_update",
+      "payloadCondition": "expected revision 2 but current revision 3",
+      "expectedResult": "stale_revision"
+    },
+    {
+      "id": "N22-closure-self-approval",
+      "actorRole": "SUPERVISOR",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "pending_review",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_road_closed",
+      "payloadCondition": "draft author actorA; approver actorA even though Supervisor",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N23-closure-no-second-approver",
+      "actorRole": "AGENCY_ADMIN",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "pending_review",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_road_closed",
+      "payloadCondition": "only draft author is qualified; no distinct approver exists",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N24-expired-active",
+      "actorRole": null,
+      "actorClass": "public",
+      "actorUserId": null,
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": null,
+      "aal": "none",
+      "authorityState": "approved",
+      "updateState": "effective_expired",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "none",
+      "publicVisibilityResult": "hidden",
+      "action": "read_consumer_projection",
+      "payloadCondition": "stored active update with server_now equal expires_at; expect no row",
+      "expectedResult": "accepted"
+    },
+    {
+      "id": "N25-terminal-reactivation",
+      "actorRole": "SUPERVISOR",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "resolved",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_non_closure",
+      "payloadCondition": "resolved update cannot become active",
+      "expectedResult": "invalid_request"
+    },
+    {
+      "id": "N26-unauthorized-governance",
+      "actorRole": "AGENCY_ADMIN",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "approve_authority",
+      "payloadCondition": "Agency Admin attempts platform authority approval",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N27-private-projection-leak",
+      "actorRole": null,
+      "actorClass": "public",
+      "actorUserId": null,
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": null,
+      "aal": "none",
+      "authorityState": "approved",
+      "updateState": "active",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "none",
+      "publicVisibilityResult": "public_only",
+      "action": "read_consumer_projection",
+      "payloadCondition": "input contains employee_email and reviewer_user_id; response must omit both",
+      "expectedResult": "accepted"
+    },
+    {
+      "id": "N28-community-badge-spoof",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "source_family COMMUNITY with verified_agency badge",
+      "expectedResult": "invalid_request"
+    },
+    {
+      "id": "N29-official-family-spoof",
+      "actorRole": "RESPONDER",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "create_draft",
+      "payloadCondition": "source_family NWS or DriveTexas supplied by agency client",
+      "expectedResult": "invalid_request"
+    },
+    {
+      "id": "N30-invite-reuse",
+      "actorRole": null,
+      "actorClass": "invitee",
+      "actorUserId": "00000000-0000-4000-8000-000000000002",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "invited",
+      "aal": "aal2",
+      "authorityState": "not_required",
+      "updateState": null,
+      "inviteState": "redeemed",
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "replay_no_new_event",
+      "publicVisibilityResult": "unchanged",
+      "action": "redeem_invite",
+      "payloadCondition": "same redeemed invite token presented again",
+      "expectedResult": "already_processed"
+    },
+    {
+      "id": "N31-expired-invite",
+      "actorRole": null,
+      "actorClass": "invitee",
+      "actorUserId": "00000000-0000-4000-8000-000000000002",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "invited",
+      "aal": "aal2",
+      "authorityState": "not_required",
+      "updateState": null,
+      "inviteState": "expired",
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "redeem_invite",
+      "payloadCondition": "server_now at or after invite expiry",
+      "expectedResult": "expired"
+    },
+    {
+      "id": "N32-wrong-invite-identity",
+      "actorRole": null,
+      "actorClass": "invitee",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "invited",
+      "aal": "aal2",
+      "authorityState": "not_required",
+      "updateState": null,
+      "inviteState": "created",
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "redeem_invite",
+      "payloadCondition": "invite target actorB but authenticated actorA",
+      "expectedResult": "forbidden"
+    },
+    {
+      "id": "N33-municipal-point-proxy",
+      "actorRole": "GRIDLY_ADMIN",
+      "actorClass": "platform_admin",
+      "actorUserId": "00000000-0000-4000-8000-000000000003",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": null,
+      "aal": "aal2",
+      "authorityState": "missing_geometry",
+      "updateState": null,
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "approve_authority",
+      "payloadCondition": "PLACE presentation point supplied in place of full municipal polygon",
+      "expectedResult": "out_of_scope"
+    },
+    {
+      "id": "N34-mass-publication",
+      "actorRole": "SUPERVISOR",
+      "actorClass": "agency_member",
+      "actorUserId": "00000000-0000-4000-8000-000000000001",
+      "orgState": {
+        "verification": "verified",
+        "operation": "active"
+      },
+      "membershipState": "active",
+      "aal": "aal2",
+      "authorityState": "approved",
+      "updateState": "pending_review",
+      "inviteState": null,
+      "fixtureRef": "countyA.interiorPointLonLat",
+      "expectedSideEffects": {
+        "businessState": "unchanged",
+        "newBusinessEvents": 0,
+        "newReceiptClaims": 0
+      },
+      "expectedAuditBehavior": "bounded_denial_telemetry_only",
+      "publicVisibilityResult": "unchanged",
+      "action": "activate_non_closure",
+      "payloadCondition": "approved command exceeds bounded organization publication rate",
+      "expectedResult": "rate_limited"
+    }
+  ]
+}
