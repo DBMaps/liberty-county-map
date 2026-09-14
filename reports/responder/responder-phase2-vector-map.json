@@ -1,0 +1,242 @@
+{
+  "contractVersion": "responder.agency.v1.phase0.1",
+  "mappingVersion": "responder.agency.v1.phase2.1",
+  "classificationRule": "Executable means the whole Phase 0 vector's bounded status, business side effect, audit behavior, and lack of public effect can be checked by local Phase 2 helpers. Draft, geography, RLS, dashboard rendering, and consumer vectors remain deferred.",
+  "counts": {
+    "EXECUTABLE IN PHASE 2": 9,
+    "DEFERRED PHASE 3": 8,
+    "DEFERRED PHASE 4": 2,
+    "DEFERRED PHASE 5": 29,
+    "DEFERRED DASHBOARD": 2,
+    "DEFERRED CONSUMER": 4
+  },
+  "executableVectorIds": [
+    "N05-admin-self-promote",
+    "N06-last-admin-removal",
+    "N07-aal1-dashboard",
+    "N30-invite-reuse",
+    "N31-expired-invite",
+    "N32-wrong-invite-identity",
+    "P11-admin-invite",
+    "P12-invite-redemption",
+    "P13-admin-suspend-member"
+  ],
+  "vectors": [
+    {
+      "id": "N01-viewer-draft",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N02-responder-activate",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N03-responder-wrong-org",
+      "classification": "DEFERRED PHASE 4"
+    },
+    {
+      "id": "N04-supervisor-wrong-org",
+      "classification": "DEFERRED PHASE 4"
+    },
+    {
+      "id": "N05-admin-self-promote",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "N06-last-admin-removal",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "N07-aal1-dashboard",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "N08-aal1-mutation",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N09-suspended-member",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N10-revoked-member",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N11-suspended-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N12-revoked-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N13-unverified-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N14-unknown-fips",
+      "classification": "DEFERRED PHASE 3"
+    },
+    {
+      "id": "N15-outside-point",
+      "classification": "DEFERRED PHASE 3"
+    },
+    {
+      "id": "N16-boundary-point",
+      "classification": "DEFERRED PHASE 3"
+    },
+    {
+      "id": "N17-stale-authority",
+      "classification": "DEFERRED PHASE 3"
+    },
+    {
+      "id": "N18-spoofed-authority-id",
+      "classification": "DEFERRED PHASE 3"
+    },
+    {
+      "id": "N19-replay-same",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N20-replay-different",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N21-stale-revision",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N22-closure-self-approval",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N23-closure-no-second-approver",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N24-expired-active",
+      "classification": "DEFERRED CONSUMER"
+    },
+    {
+      "id": "N25-terminal-reactivation",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N26-unauthorized-governance",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N27-private-projection-leak",
+      "classification": "DEFERRED CONSUMER"
+    },
+    {
+      "id": "N28-community-badge-spoof",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N29-official-family-spoof",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N30-invite-reuse",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "N31-expired-invite",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "N32-wrong-invite-identity",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "N33-municipal-point-proxy",
+      "classification": "DEFERRED PHASE 3"
+    },
+    {
+      "id": "N34-mass-publication",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P01-viewer-dashboard",
+      "classification": "DEFERRED DASHBOARD"
+    },
+    {
+      "id": "P02-responder-create",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P03-responder-edit-own",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P04-responder-submit",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P05-supervisor-return",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P06-supervisor-nonclosure",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P07-second-actor-closure",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P08-supervisor-edit-active",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P09-supervisor-renew",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P10-supervisor-resolve",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P11-admin-invite",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "P12-invite-redemption",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "P13-admin-suspend-member",
+      "classification": "EXECUTABLE IN PHASE 2"
+    },
+    {
+      "id": "P14-gridly-verify-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P15-gridly-approve-county",
+      "classification": "DEFERRED PHASE 3"
+    },
+    {
+      "id": "P16-valid-county-point",
+      "classification": "DEFERRED PHASE 3"
+    },
+    {
+      "id": "P17-valid-public-projection",
+      "classification": "DEFERRED CONSUMER"
+    },
+    {
+      "id": "P18-suspend-hides-public",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P19-expiry-hides-public",
+      "classification": "DEFERRED CONSUMER"
+    },
+    {
+      "id": "P20-member-self-read",
+      "classification": "DEFERRED DASHBOARD"
+    }
+  ]
+}
