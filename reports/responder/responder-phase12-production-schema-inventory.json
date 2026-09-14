@@ -1,0 +1,5010 @@
+{
+  "schemaVersion": "responder.phase12.productionSchemaInventory.v1",
+  "branch": "RESPONDER-PHASE12-production-schema-inventory",
+  "startingHead": "3952342e7334b56b09495d341b0fef15d9bcfa30",
+  "inventoryDate": "2026-09-14",
+  "projectLabel": "Gridly Platform",
+  "evidenceBoundary": "Authorized production metadata and bounded aggregate counts only; no personal rows, secrets, or object mutation",
+  "connection": {
+    "database": "postgres",
+    "currentUser": "postgres",
+    "sessionUser": "postgres",
+    "currentSchema": "public",
+    "serverTimezone": "UTC",
+    "serverVersion": "17.6",
+    "postgisVersion": "3.3.7",
+    "transactionReadOnly": "on",
+    "verification": "BEGIN TRANSACTION READ ONLY; SHOW transaction_read_only returned on; catalog SELECTs; ROLLBACK"
+  },
+  "status": {
+    "b02": "B02 RESOLVED — PRODUCTION SCHEMA INVENTORY COMPLETE",
+    "b03": "B03 STILL BLOCKED — DEPLOYED SOURCE DOES NOT MATCH / CANNOT BE VERIFIED",
+    "countyEquivalence": "PRODUCTION EQUIVALENCE NOT PROVEN"
+  },
+  "counts": {
+    "nonSystemSchemas": 12,
+    "relations": 72,
+    "applicationColumns": 182,
+    "applicationConstraints": 72,
+    "applicationIndexes": 36,
+    "applicationFunctions": 15,
+    "applicationPolicies": 7,
+    "applicationTriggers": 9,
+    "deployedMigrations": 14,
+    "trackedMigrations": 14
+  },
+  "schemas": [
+    {
+      "name": "auth",
+      "owner": "supabase_admin",
+      "functions": 4,
+      "relations": 24,
+      "objectKinds": {
+        "r": 23,
+        "p": 0,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 1
+      }
+    },
+    {
+      "name": "extensions",
+      "owner": "postgres",
+      "functions": 799,
+      "relations": 5,
+      "objectKinds": {
+        "r": 1,
+        "p": 0,
+        "v": 4,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    },
+    {
+      "name": "graphql",
+      "owner": "supabase_admin",
+      "functions": 0,
+      "relations": 0,
+      "objectKinds": {
+        "r": 0,
+        "p": 0,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    },
+    {
+      "name": "graphql_public",
+      "owner": "supabase_admin",
+      "functions": 1,
+      "relations": 0,
+      "objectKinds": {
+        "r": 0,
+        "p": 0,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    },
+    {
+      "name": "gridly_control",
+      "owner": "postgres",
+      "functions": 2,
+      "relations": 2,
+      "objectKinds": {
+        "r": 2,
+        "p": 0,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    },
+    {
+      "name": "history_capture",
+      "owner": "postgres",
+      "functions": 0,
+      "relations": 3,
+      "objectKinds": {
+        "r": 3,
+        "p": 0,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    },
+    {
+      "name": "public",
+      "owner": "pg_database_owner",
+      "functions": 6,
+      "relations": 8,
+      "objectKinds": {
+        "r": 7,
+        "p": 1,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    },
+    {
+      "name": "realtime",
+      "owner": "supabase_admin",
+      "functions": 15,
+      "relations": 11,
+      "objectKinds": {
+        "r": 9,
+        "p": 1,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 1
+      }
+    },
+    {
+      "name": "report_retention",
+      "owner": "postgres",
+      "functions": 6,
+      "relations": 8,
+      "objectKinds": {
+        "r": 6,
+        "p": 0,
+        "v": 1,
+        "m": 0,
+        "f": 0,
+        "S": 1
+      }
+    },
+    {
+      "name": "storage",
+      "owner": "supabase_admin",
+      "functions": 17,
+      "relations": 8,
+      "objectKinds": {
+        "r": 8,
+        "p": 0,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    },
+    {
+      "name": "supabase_migrations",
+      "owner": "postgres",
+      "functions": 0,
+      "relations": 1,
+      "objectKinds": {
+        "r": 1,
+        "p": 0,
+        "v": 0,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    },
+    {
+      "name": "vault",
+      "owner": "supabase_admin",
+      "functions": 5,
+      "relations": 2,
+      "objectKinds": {
+        "r": 1,
+        "p": 0,
+        "v": 1,
+        "m": 0,
+        "f": 0,
+        "S": 0
+      }
+    }
+  ],
+  "objects": [
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "audit_log_entries",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "custom_oauth_providers",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "flow_state",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "identities",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "instances",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "mfa_amr_claims",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "mfa_challenges",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "mfa_factors",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "oauth_authorizations",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "oauth_client_states",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "oauth_clients",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "oauth_consents",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "one_time_tokens",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "refresh_tokens",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "S",
+      "name": "refresh_tokens_id_seq",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": 1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "saml_providers",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "saml_relay_states",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "schema_migrations",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": 76,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "sessions",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "sso_domains",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "sso_providers",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "users",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "webauthn_challenges",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "webauthn_credentials",
+      "owner": "supabase_auth_admin",
+      "schema": "auth",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "v",
+      "name": "geography_columns",
+      "owner": "supabase_admin",
+      "schema": "extensions",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "v",
+      "name": "geometry_columns",
+      "owner": "supabase_admin",
+      "schema": "extensions",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "v",
+      "name": "pg_stat_statements",
+      "owner": "postgres",
+      "schema": "extensions",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "v",
+      "name": "pg_stat_statements_info",
+      "owner": "postgres",
+      "schema": "extensions",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "spatial_ref_sys",
+      "owner": "supabase_admin",
+      "schema": "extensions",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": 8500,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "prelaunch_reset_authorization",
+      "owner": "postgres",
+      "schema": "gridly_control",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "reset_revocations",
+      "owner": "postgres",
+      "schema": "gridly_control",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "historical_events",
+      "owner": "postgres",
+      "schema": "history_capture",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 1,
+      "estimatedRows": 0,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "retention_runs",
+      "owner": "postgres",
+      "schema": "history_capture",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "writer_monitoring_events",
+      "owner": "postgres",
+      "schema": "history_capture",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "gridly_feedback",
+      "owner": "postgres",
+      "schema": "public",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 1,
+      "estimatedRows": -1,
+      "exactRows": 7,
+      "rowClass": "SMALL EXISTING DATASET"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "gridly_geocode_cache",
+      "owner": "postgres",
+      "schema": "public",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": 485,
+      "exactRows": 489,
+      "rowClass": "SMALL EXISTING DATASET"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "gridly_geocode_provider_state",
+      "owner": "postgres",
+      "schema": "public",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": 2,
+      "exactRows": 2,
+      "rowClass": "SMALL EXISTING DATASET"
+    },
+    {
+      "rls": true,
+      "kind": "p",
+      "name": "gridly_texas_address_points",
+      "owner": "postgres",
+      "schema": "public",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "gridly_texas_address_points_default",
+      "owner": "postgres",
+      "schema": "public",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "gridly_texas_county_boundaries",
+      "owner": "postgres",
+      "schema": "public",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "gridly_verified_rural_addresses",
+      "owner": "postgres",
+      "schema": "public",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "reports",
+      "owner": "postgres",
+      "schema": "public",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 5,
+      "estimatedRows": 0,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "p",
+      "name": "messages",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "messages_2026_09_11",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "messages_2026_09_12",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "messages_2026_09_13",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "messages_2026_09_14",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "messages_2026_09_15",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "messages_2026_09_16",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "messages_2026_09_17",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "schema_migrations",
+      "owner": "supabase_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": 69,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "subscription",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": 0,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "S",
+      "name": "subscription_id_seq",
+      "owner": "supabase_realtime_admin",
+      "schema": "realtime",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": 1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "admission_state",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 1,
+      "rowClass": "SMALL EXISTING DATASET"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "condition_month_counts",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "device_links",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": false,
+      "kind": "v",
+      "name": "health",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "observation_receipts",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "replay_evidence",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 0,
+      "rowClass": "EMPTY OBJECT"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "runs",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": 1,
+      "rowClass": "SMALL EXISTING DATASET"
+    },
+    {
+      "rls": false,
+      "kind": "S",
+      "name": "runs_id_seq",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": 1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "buckets",
+      "owner": "supabase_storage_admin",
+      "schema": "storage",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "buckets_analytics",
+      "owner": "supabase_storage_admin",
+      "schema": "storage",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "buckets_vectors",
+      "owner": "supabase_storage_admin",
+      "schema": "storage",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "migrations",
+      "owner": "supabase_storage_admin",
+      "schema": "storage",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": 59,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "objects",
+      "owner": "supabase_storage_admin",
+      "schema": "storage",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": 1261,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "s3_multipart_uploads",
+      "owner": "supabase_storage_admin",
+      "schema": "storage",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "s3_multipart_uploads_parts",
+      "owner": "supabase_storage_admin",
+      "schema": "storage",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": true,
+      "kind": "r",
+      "name": "vector_indexes",
+      "owner": "supabase_storage_admin",
+      "schema": "storage",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "schema_migrations",
+      "owner": "postgres",
+      "schema": "supabase_migrations",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "v",
+      "name": "decrypted_secrets",
+      "owner": "supabase_admin",
+      "schema": "vault",
+      "forceRls": false,
+      "primaryKey": false,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    },
+    {
+      "rls": false,
+      "kind": "r",
+      "name": "secrets",
+      "owner": "supabase_admin",
+      "schema": "vault",
+      "forceRls": false,
+      "primaryKey": true,
+      "policyCount": 0,
+      "estimatedRows": -1,
+      "exactRows": null,
+      "rowClass": "UNKNOWN"
+    }
+  ],
+  "columns": [
+    {
+      "name": "singleton",
+      "type": "boolean",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": "true",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "migration_id",
+      "type": "text",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "project_ref",
+      "type": "text",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "owner_authorization_id",
+      "type": "uuid",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "authorized_at",
+      "type": "timestamp with time zone",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": "clock_timestamp()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "consumed_at",
+      "type": "timestamp with time zone",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "launched_at",
+      "type": "timestamp with time zone",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "expected_reports",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expected_device_reports",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expected_synthetic_reports",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expected_embedded_device_reports",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expected_cleared_reports",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expected_historical_events",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expected_historical_clears",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expected_writer_events",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expected_retention_runs",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "deleted_reports",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "deleted_historical_events",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "deleted_writer_events",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "deleted_retention_runs",
+      "type": "bigint",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "authorization_digest",
+      "type": "bytea",
+      "object": "gridly_control.reset_revocations",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "revoked_at",
+      "type": "timestamp with time zone",
+      "object": "gridly_control.reset_revocations",
+      "default": "clock_timestamp()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "reason",
+      "type": "text",
+      "object": "gridly_control.reset_revocations",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "prior_fingerprint",
+      "type": "jsonb",
+      "object": "gridly_control.reset_revocations",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "uuid",
+      "object": "history_capture.historical_events",
+      "default": "gen_random_uuid()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "schema_version",
+      "type": "text",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "phase",
+      "type": "text",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "event_type",
+      "type": "text",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_kind",
+      "type": "text",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "source_report_id",
+      "type": "text",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "idempotency_key",
+      "type": "text",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "observed_at",
+      "type": "timestamp with time zone",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "received_at",
+      "type": "timestamp with time zone",
+      "object": "history_capture.historical_events",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "hook_name",
+      "type": "text",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "envelope",
+      "type": "jsonb",
+      "object": "history_capture.historical_events",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "payload",
+      "type": "jsonb",
+      "object": "history_capture.historical_events",
+      "default": "'{}'::jsonb",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "metadata",
+      "type": "jsonb",
+      "object": "history_capture.historical_events",
+      "default": "'{}'::jsonb",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "retained_until",
+      "type": "timestamp with time zone",
+      "object": "history_capture.historical_events",
+      "default": "(now() + '1 year 6 mons'::interval)",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "uuid",
+      "object": "history_capture.retention_runs",
+      "default": "gen_random_uuid()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "started_at",
+      "type": "timestamp with time zone",
+      "object": "history_capture.retention_runs",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "completed_at",
+      "type": "timestamp with time zone",
+      "object": "history_capture.retention_runs",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "retention_target",
+      "type": "interval",
+      "object": "history_capture.retention_runs",
+      "default": "'1 year 6 mons'::interval",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "deleted_historical_event_count",
+      "type": "integer",
+      "object": "history_capture.retention_runs",
+      "default": "0",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "object": "history_capture.retention_runs",
+      "default": "'planned'::text",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "detail",
+      "type": "jsonb",
+      "object": "history_capture.retention_runs",
+      "default": "'{}'::jsonb",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "uuid",
+      "object": "history_capture.writer_monitoring_events",
+      "default": "gen_random_uuid()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "event_type",
+      "type": "text",
+      "object": "history_capture.writer_monitoring_events",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "reason",
+      "type": "text",
+      "object": "history_capture.writer_monitoring_events",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "idempotency_key",
+      "type": "text",
+      "object": "history_capture.writer_monitoring_events",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "object": "history_capture.writer_monitoring_events",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "detail",
+      "type": "jsonb",
+      "object": "history_capture.writer_monitoring_events",
+      "default": "'{}'::jsonb",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "uuid",
+      "object": "public.gridly_feedback",
+      "default": "gen_random_uuid()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "object": "public.gridly_feedback",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "category",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "message",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "awareness_area",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "platform",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "gridly_version",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "page_url",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "user_agent",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": "'new'::text",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "county_id",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "object": "public.gridly_feedback",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "cache_key",
+      "type": "text",
+      "object": "public.gridly_geocode_cache",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "provider_namespace",
+      "type": "text",
+      "object": "public.gridly_geocode_cache",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "response",
+      "type": "jsonb",
+      "object": "public.gridly_geocode_cache",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "object": "public.gridly_geocode_cache",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "expires_at",
+      "type": "timestamp with time zone",
+      "object": "public.gridly_geocode_cache",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "object": "public.gridly_geocode_cache",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "provider_namespace",
+      "type": "text",
+      "object": "public.gridly_geocode_provider_state",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "next_allowed_at",
+      "type": "timestamp with time zone",
+      "object": "public.gridly_geocode_provider_state",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "cooldown_until",
+      "type": "timestamp with time zone",
+      "object": "public.gridly_geocode_provider_state",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "lookup_hash",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "house_number",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "canonical_road_identity",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "locality",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": "''::text",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "locality_aliases",
+      "type": "text[]",
+      "object": "public.gridly_texas_address_points",
+      "default": "'{}'::text[]",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "county_id",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "county_fips",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "postal_code",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": "''::text",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "latitude",
+      "type": "double precision",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "longitude",
+      "type": "double precision",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "precision",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_id",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_authority",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_version",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_date",
+      "type": "date",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "source_license",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "attribution_required",
+      "type": "boolean",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "consumer_eligible",
+      "type": "boolean",
+      "object": "public.gridly_texas_address_points",
+      "default": "false",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "build_version",
+      "type": "text",
+      "object": "public.gridly_texas_address_points",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "lookup_hash",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "house_number",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "canonical_road_identity",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "locality",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": "''::text",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "locality_aliases",
+      "type": "text[]",
+      "object": "public.gridly_texas_address_points_default",
+      "default": "'{}'::text[]",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "county_id",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "county_fips",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "postal_code",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": "''::text",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "latitude",
+      "type": "double precision",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "longitude",
+      "type": "double precision",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "precision",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_id",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_authority",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_version",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_date",
+      "type": "date",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "source_license",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "attribution_required",
+      "type": "boolean",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "consumer_eligible",
+      "type": "boolean",
+      "object": "public.gridly_texas_address_points_default",
+      "default": "false",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "build_version",
+      "type": "text",
+      "object": "public.gridly_texas_address_points_default",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "county_fips",
+      "type": "text",
+      "object": "public.gridly_texas_county_boundaries",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "geom",
+      "type": "geometry(MultiPolygon,4326)",
+      "object": "public.gridly_texas_county_boundaries",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "boundary_version",
+      "type": "text",
+      "object": "public.gridly_texas_county_boundaries",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "uuid",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": "gen_random_uuid()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "lookup_hash",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "normalized_address",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "house_number",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "canonical_road_identity",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "locality",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "county_id",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "postal_code",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "latitude",
+      "type": "double precision",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "longitude",
+      "type": "double precision",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "coordinate_source",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "verification_method",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "verification_date",
+      "type": "date",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "verification_status",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "source_authority",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "aliases",
+      "type": "jsonb",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": "'[]'::jsonb",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "precision",
+      "type": "text",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "consumer_eligible",
+      "type": "boolean",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": "false",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "updated_at",
+      "type": "timestamp with time zone",
+      "object": "public.gridly_verified_rural_addresses",
+      "default": "now()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "uuid",
+      "object": "public.reports",
+      "default": "gen_random_uuid()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "crossing_id",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "crossing_name",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "railroad",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "lat",
+      "type": "double precision",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "lng",
+      "type": "double precision",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "report_type",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "severity",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "detail",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "source",
+      "type": "text",
+      "object": "public.reports",
+      "default": "'user'::text",
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "confidence",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "device_id",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "object": "public.reports",
+      "default": "now()",
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "expires_at",
+      "type": "timestamp with time zone",
+      "object": "public.reports",
+      "default": "(now() + '01:30:00'::interval)",
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "county_id",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "original_submitted_at",
+      "type": "timestamp with time zone",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "linkage_deadline",
+      "type": "timestamp with time zone",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "cleanup_after",
+      "type": "timestamp with time zone",
+      "object": "public.reports",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "singleton",
+      "type": "boolean",
+      "object": "report_retention.admission_state",
+      "default": "true",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "protocol_version",
+      "type": "integer",
+      "object": "report_retention.admission_state",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "reporting_enabled",
+      "type": "boolean",
+      "object": "report_retention.admission_state",
+      "default": "false",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "changed_at",
+      "type": "timestamp with time zone",
+      "object": "report_retention.admission_state",
+      "default": "clock_timestamp()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "submission_month",
+      "type": "date",
+      "object": "report_retention.condition_month_counts",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "condition_family",
+      "type": "text",
+      "object": "report_retention.condition_month_counts",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "report_count",
+      "type": "bigint",
+      "object": "report_retention.condition_month_counts",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "report_id",
+      "type": "uuid",
+      "object": "report_retention.device_links",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "device_id",
+      "type": "text",
+      "object": "report_retention.device_links",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "last_success_at",
+      "type": "timestamp with time zone",
+      "object": "report_retention.health",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "overdue_cleanup_count",
+      "type": "bigint",
+      "object": "report_retention.health",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "breached_deadline_count",
+      "type": "bigint",
+      "object": "report_retention.health",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "last_status",
+      "type": "text",
+      "object": "report_retention.health",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "report_id",
+      "type": "uuid",
+      "object": "report_retention.observation_receipts",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "token_digest",
+      "type": "bytea",
+      "object": "report_retention.observation_receipts",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "original_submitted_at",
+      "type": "timestamp with time zone",
+      "object": "report_retention.observation_receipts",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "token_digest",
+      "type": "bytea",
+      "object": "report_retention.replay_evidence",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "first_accepted_at",
+      "type": "timestamp with time zone",
+      "object": "report_retention.replay_evidence",
+      "default": "clock_timestamp()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "id",
+      "type": "bigint",
+      "object": "report_retention.runs",
+      "default": null,
+      "identity": "a",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "started_at",
+      "type": "timestamp with time zone",
+      "object": "report_retention.runs",
+      "default": "clock_timestamp()",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "completed_at",
+      "type": "timestamp with time zone",
+      "object": "report_retention.runs",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "object": "report_retention.runs",
+      "default": null,
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "deleted_reports",
+      "type": "bigint",
+      "object": "report_retention.runs",
+      "default": "0",
+      "identity": "",
+      "nullable": false,
+      "generated": ""
+    },
+    {
+      "name": "error_code",
+      "type": "text",
+      "object": "report_retention.runs",
+      "default": null,
+      "identity": "",
+      "nullable": true,
+      "generated": ""
+    }
+  ],
+  "constraints": [
+    {
+      "name": "prelaunch_reset_authorizatio_expected_embedded_device_rep_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_embedded_device_reports >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_expected_cleared_reports_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_cleared_reports >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_expected_device_reports_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_device_reports >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_expected_historical_clears_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_historical_clears >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_expected_historical_events_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_historical_events >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_expected_reports_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_reports >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_expected_retention_runs_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_retention_runs >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_expected_synthetic_reports_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_synthetic_reports >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_expected_writer_events_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (expected_writer_events >= 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_migration_id_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (migration_id = '20260908200554'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_owner_authorization_id_key",
+      "type": "u",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "UNIQUE (owner_authorization_id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_pkey",
+      "type": "p",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "PRIMARY KEY (singleton)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_project_ref_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (project_ref ~ '^[a-z0-9]{20}$'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "prelaunch_reset_authorization_singleton_check",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (singleton)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "reset_status_allowed",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK (status = ANY (ARRAY['authorized'::text, 'revoked'::text, 'consumed'::text, 'launched'::text]))",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "reset_status_timestamps",
+      "type": "c",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "definition": "CHECK ((status = ANY (ARRAY['authorized'::text, 'revoked'::text])) AND consumed_at IS NULL AND launched_at IS NULL OR status = 'consumed'::text AND consumed_at IS NOT NULL AND launched_at IS NULL OR status = 'launched'::text AND consumed_at IS NOT NULL AND launched_at IS NOT NULL)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "reset_revocations_pkey",
+      "type": "p",
+      "object": "gridly_control.reset_revocations",
+      "definition": "PRIMARY KEY (authorization_digest)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "reset_revocations_reason_check",
+      "type": "c",
+      "object": "gridly_control.reset_revocations",
+      "definition": "CHECK (reason = 'failed deployment'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "historical_events_event_type_check",
+      "type": "c",
+      "object": "history_capture.historical_events",
+      "definition": "CHECK (event_type = ANY (ARRAY['report_created'::text, 'report_cleared'::text]))",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "historical_events_idempotency_key_key",
+      "type": "u",
+      "object": "history_capture.historical_events",
+      "definition": "UNIQUE (idempotency_key)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "historical_events_pkey",
+      "type": "p",
+      "object": "history_capture.historical_events",
+      "definition": "PRIMARY KEY (id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "retention_runs_pkey",
+      "type": "p",
+      "object": "history_capture.retention_runs",
+      "definition": "PRIMARY KEY (id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "writer_monitoring_events_pkey",
+      "type": "p",
+      "object": "history_capture.writer_monitoring_events",
+      "definition": "PRIMARY KEY (id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_feedback_category_length",
+      "type": "c",
+      "object": "public.gridly_feedback",
+      "definition": "CHECK (char_length(category) >= 1 AND char_length(category) <= 80)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_feedback_message_length",
+      "type": "c",
+      "object": "public.gridly_feedback",
+      "definition": "CHECK (char_length(message) >= 1 AND char_length(message) <= 4000)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_feedback_pkey",
+      "type": "p",
+      "object": "public.gridly_feedback",
+      "definition": "PRIMARY KEY (id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_feedback_status_allowed",
+      "type": "c",
+      "object": "public.gridly_feedback",
+      "definition": "CHECK (status = ANY (ARRAY['new'::text, 'reviewing'::text, 'closed'::text]))",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_geocode_cache_cache_key_check",
+      "type": "c",
+      "object": "public.gridly_geocode_cache",
+      "definition": "CHECK (cache_key ~ '^[a-f0-9]{64}$'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_geocode_cache_pkey",
+      "type": "p",
+      "object": "public.gridly_geocode_cache",
+      "definition": "PRIMARY KEY (cache_key)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_geocode_provider_state_pkey",
+      "type": "p",
+      "object": "public.gridly_geocode_provider_state",
+      "definition": "PRIMARY KEY (provider_namespace)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_county_fips_check",
+      "type": "c",
+      "object": "public.gridly_texas_address_points",
+      "definition": "CHECK (county_fips ~ '^48[0-9]{3}$'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_latitude_check",
+      "type": "c",
+      "object": "public.gridly_texas_address_points",
+      "definition": "CHECK (latitude >= 25::double precision AND latitude <= 37::double precision)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_longitude_check",
+      "type": "c",
+      "object": "public.gridly_texas_address_points",
+      "definition": "CHECK (longitude >= '-107'::integer::double precision AND longitude <= '-93'::integer::double precision)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_pkey",
+      "type": "p",
+      "object": "public.gridly_texas_address_points",
+      "definition": "PRIMARY KEY (county_fips, id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_state_check",
+      "type": "c",
+      "object": "public.gridly_texas_address_points",
+      "definition": "CHECK (state = 'TX'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_county_fips_check",
+      "type": "c",
+      "object": "public.gridly_texas_address_points_default",
+      "definition": "CHECK (county_fips ~ '^48[0-9]{3}$'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_default_pkey",
+      "type": "p",
+      "object": "public.gridly_texas_address_points_default",
+      "definition": "PRIMARY KEY (county_fips, id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_latitude_check",
+      "type": "c",
+      "object": "public.gridly_texas_address_points_default",
+      "definition": "CHECK (latitude >= 25::double precision AND latitude <= 37::double precision)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_longitude_check",
+      "type": "c",
+      "object": "public.gridly_texas_address_points_default",
+      "definition": "CHECK (longitude >= '-107'::integer::double precision AND longitude <= '-93'::integer::double precision)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_address_points_state_check",
+      "type": "c",
+      "object": "public.gridly_texas_address_points_default",
+      "definition": "CHECK (state = 'TX'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_county_boundaries_county_fips_check",
+      "type": "c",
+      "object": "public.gridly_texas_county_boundaries",
+      "definition": "CHECK (county_fips ~ '^48[0-9]{3}$'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_texas_county_boundaries_pkey",
+      "type": "p",
+      "object": "public.gridly_texas_county_boundaries",
+      "definition": "PRIMARY KEY (county_fips)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_aliases_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (jsonb_typeof(aliases) = 'array'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_house_number_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (house_number ~ '^[0-9]{1,9}[A-Za-z]?$'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_latitude_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (latitude >= 25.7::double precision AND latitude <= 36.6::double precision)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_longitude_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (longitude >= '-106.7'::numeric::double precision AND longitude <= '-93.5'::numeric::double precision)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_lookup_hash_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (lookup_hash ~ '^[a-f0-9]{64}$'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_lookup_hash_key",
+      "type": "u",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "UNIQUE (lookup_hash)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_pkey",
+      "type": "p",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "PRIMARY KEY (id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_postal_code_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (postal_code ~ '^[0-9]{5}(-[0-9]{4})?$'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_precision_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (\"precision\" = ANY (ARRAY['verified_address_point'::text, 'verified_entrance'::text]))",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_state_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (upper(state) = 'TX'::text)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_verification_method_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (verification_method = ANY (ARRAY['county_911_address_record'::text, 'county_appraisal_situs_record'::text, 'owner_confirmed_gps'::text, 'field_verified_entrance'::text, 'authoritative_address_point_dataset'::text]))",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "gridly_verified_rural_addresses_verification_status_check",
+      "type": "c",
+      "object": "public.gridly_verified_rural_addresses",
+      "definition": "CHECK (verification_status = ANY (ARRAY['pending'::text, 'verified'::text, 'revoked'::text]))",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "reports_device_never_stored",
+      "type": "c",
+      "object": "public.reports",
+      "definition": "CHECK (device_id IS NULL)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "reports_pkey",
+      "type": "p",
+      "object": "public.reports",
+      "definition": "PRIMARY KEY (id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "admission_state_pkey",
+      "type": "p",
+      "object": "report_retention.admission_state",
+      "definition": "PRIMARY KEY (singleton)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "admission_state_protocol_version_check",
+      "type": "c",
+      "object": "report_retention.admission_state",
+      "definition": "CHECK (protocol_version = 2)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "admission_state_singleton_check",
+      "type": "c",
+      "object": "report_retention.admission_state",
+      "definition": "CHECK (singleton)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "condition_month_counts_condition_family_check",
+      "type": "c",
+      "object": "report_retention.condition_month_counts",
+      "definition": "CHECK (condition_family = ANY (ARRAY['road'::text, 'crossing'::text]))",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "condition_month_counts_pkey",
+      "type": "p",
+      "object": "report_retention.condition_month_counts",
+      "definition": "PRIMARY KEY (submission_month, condition_family)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "condition_month_counts_report_count_check",
+      "type": "c",
+      "object": "report_retention.condition_month_counts",
+      "definition": "CHECK (report_count > 0)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "device_links_pkey",
+      "type": "p",
+      "object": "report_retention.device_links",
+      "definition": "PRIMARY KEY (report_id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "device_links_report_id_fkey",
+      "type": "f",
+      "object": "report_retention.device_links",
+      "definition": "FOREIGN KEY (report_id) REFERENCES reports(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED",
+      "deleteAction": "c",
+      "referencedObject": "reports"
+    },
+    {
+      "name": "observation_receipts_pkey",
+      "type": "p",
+      "object": "report_retention.observation_receipts",
+      "definition": "PRIMARY KEY (report_id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "observation_receipts_report_id_fkey",
+      "type": "f",
+      "object": "report_retention.observation_receipts",
+      "definition": "FOREIGN KEY (report_id) REFERENCES reports(id) ON DELETE CASCADE",
+      "deleteAction": "c",
+      "referencedObject": "reports"
+    },
+    {
+      "name": "observation_receipts_token_digest_fkey",
+      "type": "f",
+      "object": "report_retention.observation_receipts",
+      "definition": "FOREIGN KEY (token_digest) REFERENCES report_retention.replay_evidence(token_digest)",
+      "deleteAction": "a",
+      "referencedObject": "report_retention.replay_evidence"
+    },
+    {
+      "name": "observation_receipts_token_digest_key",
+      "type": "u",
+      "object": "report_retention.observation_receipts",
+      "definition": "UNIQUE (token_digest)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "replay_evidence_pkey",
+      "type": "p",
+      "object": "report_retention.replay_evidence",
+      "definition": "PRIMARY KEY (token_digest)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "replay_evidence_token_digest_check",
+      "type": "c",
+      "object": "report_retention.replay_evidence",
+      "definition": "CHECK (octet_length(token_digest) = 32)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "runs_pkey",
+      "type": "p",
+      "object": "report_retention.runs",
+      "definition": "PRIMARY KEY (id)",
+      "deleteAction": " ",
+      "referencedObject": null
+    },
+    {
+      "name": "runs_status_check",
+      "type": "c",
+      "object": "report_retention.runs",
+      "definition": "CHECK (status = ANY (ARRAY['running'::text, 'succeeded'::text, 'failed'::text]))",
+      "deleteAction": " ",
+      "referencedObject": null
+    }
+  ],
+  "indexes": [
+    {
+      "name": "prelaunch_reset_authorization_owner_authorization_id_key",
+      "valid": true,
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "unique": true,
+      "primary": false,
+      "definition": "CREATE UNIQUE INDEX prelaunch_reset_authorization_owner_authorization_id_key ON gridly_control.prelaunch_reset_authorization USING btree (owner_authorization_id)"
+    },
+    {
+      "name": "prelaunch_reset_authorization_pkey",
+      "valid": true,
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX prelaunch_reset_authorization_pkey ON gridly_control.prelaunch_reset_authorization USING btree (singleton)"
+    },
+    {
+      "name": "reset_revocations_pkey",
+      "valid": true,
+      "object": "gridly_control.reset_revocations",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX reset_revocations_pkey ON gridly_control.reset_revocations USING btree (authorization_digest)"
+    },
+    {
+      "name": "historical_events_event_type_observed_at_idx",
+      "valid": true,
+      "object": "history_capture.historical_events",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX historical_events_event_type_observed_at_idx ON history_capture.historical_events USING btree (event_type, observed_at DESC)"
+    },
+    {
+      "name": "historical_events_idempotency_key_key",
+      "valid": true,
+      "object": "history_capture.historical_events",
+      "unique": true,
+      "primary": false,
+      "definition": "CREATE UNIQUE INDEX historical_events_idempotency_key_key ON history_capture.historical_events USING btree (idempotency_key)"
+    },
+    {
+      "name": "historical_events_pkey",
+      "valid": true,
+      "object": "history_capture.historical_events",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX historical_events_pkey ON history_capture.historical_events USING btree (id)"
+    },
+    {
+      "name": "historical_events_retained_until_idx",
+      "valid": true,
+      "object": "history_capture.historical_events",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX historical_events_retained_until_idx ON history_capture.historical_events USING btree (retained_until)"
+    },
+    {
+      "name": "historical_events_source_report_id_idx",
+      "valid": true,
+      "object": "history_capture.historical_events",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX historical_events_source_report_id_idx ON history_capture.historical_events USING btree (source_report_id) WHERE (source_report_id IS NOT NULL)"
+    },
+    {
+      "name": "retention_runs_pkey",
+      "valid": true,
+      "object": "history_capture.retention_runs",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX retention_runs_pkey ON history_capture.retention_runs USING btree (id)"
+    },
+    {
+      "name": "writer_monitoring_events_created_at_idx",
+      "valid": true,
+      "object": "history_capture.writer_monitoring_events",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX writer_monitoring_events_created_at_idx ON history_capture.writer_monitoring_events USING btree (created_at DESC)"
+    },
+    {
+      "name": "writer_monitoring_events_pkey",
+      "valid": true,
+      "object": "history_capture.writer_monitoring_events",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX writer_monitoring_events_pkey ON history_capture.writer_monitoring_events USING btree (id)"
+    },
+    {
+      "name": "gridly_feedback_pkey",
+      "valid": true,
+      "object": "public.gridly_feedback",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX gridly_feedback_pkey ON public.gridly_feedback USING btree (id)"
+    },
+    {
+      "name": "gridly_geocode_cache_expiry_idx",
+      "valid": true,
+      "object": "public.gridly_geocode_cache",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX gridly_geocode_cache_expiry_idx ON public.gridly_geocode_cache USING btree (expires_at)"
+    },
+    {
+      "name": "gridly_geocode_cache_pkey",
+      "valid": true,
+      "object": "public.gridly_geocode_cache",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX gridly_geocode_cache_pkey ON public.gridly_geocode_cache USING btree (cache_key)"
+    },
+    {
+      "name": "gridly_geocode_provider_state_pkey",
+      "valid": true,
+      "object": "public.gridly_geocode_provider_state",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX gridly_geocode_provider_state_pkey ON public.gridly_geocode_provider_state USING btree (provider_namespace)"
+    },
+    {
+      "name": "gridly_texas_address_points_pkey",
+      "valid": true,
+      "object": "public.gridly_texas_address_points",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX gridly_texas_address_points_pkey ON ONLY public.gridly_texas_address_points USING btree (county_fips, id)"
+    },
+    {
+      "name": "gridly_tx_address_exact_idx",
+      "valid": true,
+      "object": "public.gridly_texas_address_points",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX gridly_tx_address_exact_idx ON ONLY public.gridly_texas_address_points USING btree (county_fips, lookup_hash) WHERE consumer_eligible"
+    },
+    {
+      "name": "gridly_texas_address_points_default_county_fips_lookup_hash_idx",
+      "valid": true,
+      "object": "public.gridly_texas_address_points_default",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX gridly_texas_address_points_default_county_fips_lookup_hash_idx ON public.gridly_texas_address_points_default USING btree (county_fips, lookup_hash) WHERE consumer_eligible"
+    },
+    {
+      "name": "gridly_texas_address_points_default_pkey",
+      "valid": true,
+      "object": "public.gridly_texas_address_points_default",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX gridly_texas_address_points_default_pkey ON public.gridly_texas_address_points_default USING btree (county_fips, id)"
+    },
+    {
+      "name": "gridly_texas_county_boundaries_geom_idx",
+      "valid": true,
+      "object": "public.gridly_texas_county_boundaries",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX gridly_texas_county_boundaries_geom_idx ON public.gridly_texas_county_boundaries USING gist (geom)"
+    },
+    {
+      "name": "gridly_texas_county_boundaries_pkey",
+      "valid": true,
+      "object": "public.gridly_texas_county_boundaries",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX gridly_texas_county_boundaries_pkey ON public.gridly_texas_county_boundaries USING btree (county_fips)"
+    },
+    {
+      "name": "gridly_verified_rural_addresses_eligible_idx",
+      "valid": true,
+      "object": "public.gridly_verified_rural_addresses",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX gridly_verified_rural_addresses_eligible_idx ON public.gridly_verified_rural_addresses USING btree (lookup_hash) WHERE (consumer_eligible AND (verification_status = 'verified'::text))"
+    },
+    {
+      "name": "gridly_verified_rural_addresses_lookup_hash_key",
+      "valid": true,
+      "object": "public.gridly_verified_rural_addresses",
+      "unique": true,
+      "primary": false,
+      "definition": "CREATE UNIQUE INDEX gridly_verified_rural_addresses_lookup_hash_key ON public.gridly_verified_rural_addresses USING btree (lookup_hash)"
+    },
+    {
+      "name": "gridly_verified_rural_addresses_pkey",
+      "valid": true,
+      "object": "public.gridly_verified_rural_addresses",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX gridly_verified_rural_addresses_pkey ON public.gridly_verified_rural_addresses USING btree (id)"
+    },
+    {
+      "name": "reports_cleanup_after_idx",
+      "valid": true,
+      "object": "public.reports",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX reports_cleanup_after_idx ON public.reports USING btree (cleanup_after)"
+    },
+    {
+      "name": "reports_created_at_idx",
+      "valid": true,
+      "object": "public.reports",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX reports_created_at_idx ON public.reports USING btree (created_at DESC)"
+    },
+    {
+      "name": "reports_crossing_id_idx",
+      "valid": true,
+      "object": "public.reports",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX reports_crossing_id_idx ON public.reports USING btree (crossing_id)"
+    },
+    {
+      "name": "reports_expires_at_idx",
+      "valid": true,
+      "object": "public.reports",
+      "unique": false,
+      "primary": false,
+      "definition": "CREATE INDEX reports_expires_at_idx ON public.reports USING btree (expires_at)"
+    },
+    {
+      "name": "reports_pkey",
+      "valid": true,
+      "object": "public.reports",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX reports_pkey ON public.reports USING btree (id)"
+    },
+    {
+      "name": "admission_state_pkey",
+      "valid": true,
+      "object": "report_retention.admission_state",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX admission_state_pkey ON report_retention.admission_state USING btree (singleton)"
+    },
+    {
+      "name": "condition_month_counts_pkey",
+      "valid": true,
+      "object": "report_retention.condition_month_counts",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX condition_month_counts_pkey ON report_retention.condition_month_counts USING btree (submission_month, condition_family)"
+    },
+    {
+      "name": "device_links_pkey",
+      "valid": true,
+      "object": "report_retention.device_links",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX device_links_pkey ON report_retention.device_links USING btree (report_id)"
+    },
+    {
+      "name": "observation_receipts_pkey",
+      "valid": true,
+      "object": "report_retention.observation_receipts",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX observation_receipts_pkey ON report_retention.observation_receipts USING btree (report_id)"
+    },
+    {
+      "name": "observation_receipts_token_digest_key",
+      "valid": true,
+      "object": "report_retention.observation_receipts",
+      "unique": true,
+      "primary": false,
+      "definition": "CREATE UNIQUE INDEX observation_receipts_token_digest_key ON report_retention.observation_receipts USING btree (token_digest)"
+    },
+    {
+      "name": "replay_evidence_pkey",
+      "valid": true,
+      "object": "report_retention.replay_evidence",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX replay_evidence_pkey ON report_retention.replay_evidence USING btree (token_digest)"
+    },
+    {
+      "name": "runs_pkey",
+      "valid": true,
+      "object": "report_retention.runs",
+      "unique": true,
+      "primary": true,
+      "definition": "CREATE UNIQUE INDEX runs_pkey ON report_retention.runs USING btree (id)"
+    }
+  ],
+  "functions": [
+    {
+      "name": "graphql",
+      "owner": "supabase_admin",
+      "schema": "graphql_public",
+      "returns": "jsonb",
+      "signature": "\"operationName\" text, query text, variables jsonb, extensions jsonb",
+      "searchPath": null,
+      "volatility": "v",
+      "anonExecute": true,
+      "publicExecute": true,
+      "securityDefiner": false,
+      "serviceRoleExecute": true,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "guard_prelaunch_reset_authorization",
+      "owner": "postgres",
+      "schema": "gridly_control",
+      "returns": "trigger",
+      "signature": "",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": false,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "guard_reset_revocations",
+      "owner": "postgres",
+      "schema": "gridly_control",
+      "returns": "trigger",
+      "signature": "",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": false,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "cancel_community_operation",
+      "owner": "postgres",
+      "schema": "public",
+      "returns": "jsonb",
+      "signature": "operation_id text",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": true,
+      "publicExecute": false,
+      "securityDefiner": true,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "gridly_cooldown_geocode_provider",
+      "owner": "postgres",
+      "schema": "public",
+      "returns": "void",
+      "signature": "p_namespace text, p_seconds integer",
+      "searchPath": "search_path=public",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": true,
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "gridly_lookup_texas_address",
+      "owner": "postgres",
+      "schema": "public",
+      "returns": "TABLE(id text, house_number text, canonical_road_identity text, locality text, county_id text, county_fips text, state text, postal_code text, latitude double precision, longitude double precision, \"precision\" text, source_id text, source_authority text, source_version text, source_date date, source_license text, attribution_required boolean, build_version text)",
+      "signature": "p_lookup_hash text, p_county_fips text",
+      "searchPath": "search_path=public",
+      "volatility": "s",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": true,
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "gridly_reserve_geocode_provider_slot",
+      "owner": "postgres",
+      "schema": "public",
+      "returns": "timestamp with time zone",
+      "signature": "p_namespace text, p_interval_ms integer",
+      "searchPath": "search_path=public",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": true,
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "mutate_community_observation",
+      "owner": "postgres",
+      "schema": "public",
+      "returns": "jsonb",
+      "signature": "operation_id text, observation_id uuid, action text, changes jsonb, reporter_device_id text",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": true,
+      "publicExecute": false,
+      "securityDefiner": true,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "submit_community_observation",
+      "owner": "postgres",
+      "schema": "public",
+      "returns": "jsonb",
+      "signature": "submission_token text, report jsonb, reporter_device_id text",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": true,
+      "publicExecute": false,
+      "securityDefiner": true,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "claim_operation",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "returns": "boolean",
+      "signature": "token text",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": false,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "guard_report",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "returns": "trigger",
+      "signature": "",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": true,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "preserve_replay_evidence",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "returns": "trigger",
+      "signature": "",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": false,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "public_report",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "returns": "jsonb",
+      "signature": "report_id uuid",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "s",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": false,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "reject_legacy_history",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "returns": "trigger",
+      "signature": "",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": false,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "run_cleanup",
+      "owner": "postgres",
+      "schema": "report_retention",
+      "returns": "bigint",
+      "signature": "",
+      "searchPath": "search_path=pg_catalog",
+      "volatility": "v",
+      "anonExecute": false,
+      "publicExecute": false,
+      "securityDefiner": true,
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    }
+  ],
+  "functionAuthReferences": [
+    {
+      "object": "gridly_control.guard_prelaunch_reset_authorization",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "gridly_control.guard_reset_revocations",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "public.cancel_community_operation",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "public.gridly_cooldown_geocode_provider",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "public.gridly_lookup_texas_address",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "public.gridly_reserve_geocode_provider_slot",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "public.mutate_community_observation",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "public.submit_community_observation",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "report_retention.claim_operation",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "report_retention.guard_report",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "report_retention.preserve_replay_evidence",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "report_retention.public_report",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "report_retention.reject_legacy_history",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    },
+    {
+      "object": "report_retention.run_cleanup",
+      "usesAuthJwt": false,
+      "usesAuthUid": false,
+      "usesCurrentSetting": false
+    }
+  ],
+  "policies": [
+    {
+      "name": "history_capture_anon_insert_phase1a_events",
+      "roles": [
+        "anon"
+      ],
+      "using": null,
+      "object": "history_capture.historical_events",
+      "command": "a",
+      "withCheck": "((schema_version = 'history_capture.phase_1a.v1'::text) AND (phase = '1A'::text) AND (event_type = ANY (ARRAY['report_created'::text, 'report_cleared'::text])) AND (idempotency_key IS NOT NULL) AND (observed_at IS NOT NULL) AND (envelope IS NOT NULL) AND (payload IS NOT NULL) AND (metadata IS NOT NULL) AND (jsonb_typeof(envelope) = 'object'::text) AND (jsonb_typeof(payload) = 'object'::text) AND (jsonb_typeof(metadata) = 'object'::text))",
+      "permissive": true
+    },
+    {
+      "name": "Allow anonymous feedback inserts",
+      "roles": [
+        "anon"
+      ],
+      "using": null,
+      "object": "public.gridly_feedback",
+      "command": "a",
+      "withCheck": "((category IS NOT NULL) AND (length(TRIM(BOTH FROM category)) > 0) AND (char_length(category) <= 80) AND (message IS NOT NULL) AND (length(TRIM(BOTH FROM message)) > 0) AND (char_length(message) <= 4000) AND (COALESCE(status, 'new'::text) = 'new'::text))",
+      "permissive": true
+    },
+    {
+      "name": "Anyone can insert reports",
+      "roles": [
+        "PUBLIC"
+      ],
+      "using": null,
+      "object": "public.reports",
+      "command": "a",
+      "withCheck": "true",
+      "permissive": true
+    },
+    {
+      "name": "Anyone can read reports",
+      "roles": [
+        "PUBLIC"
+      ],
+      "using": "true",
+      "object": "public.reports",
+      "command": "r",
+      "withCheck": null,
+      "permissive": true
+    },
+    {
+      "name": "Public can insert reports",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "using": null,
+      "object": "public.reports",
+      "command": "a",
+      "withCheck": "true",
+      "permissive": true
+    },
+    {
+      "name": "Public can read reports",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "using": "true",
+      "object": "public.reports",
+      "command": "r",
+      "withCheck": null,
+      "permissive": true
+    },
+    {
+      "name": "report_retention_read_boundary",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "using": "((cleanup_after > statement_timestamp()) AND (linkage_deadline > statement_timestamp()))",
+      "object": "public.reports",
+      "command": "r",
+      "withCheck": null,
+      "permissive": false
+    }
+  ],
+  "triggers": [
+    {
+      "name": "prelaunch_reset_authorization_guard",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER prelaunch_reset_authorization_guard BEFORE DELETE OR UPDATE ON gridly_control.prelaunch_reset_authorization FOR EACH ROW EXECUTE FUNCTION gridly_control.guard_prelaunch_reset_authorization()"
+    },
+    {
+      "name": "prelaunch_reset_authorization_no_truncate",
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER prelaunch_reset_authorization_no_truncate BEFORE TRUNCATE ON gridly_control.prelaunch_reset_authorization FOR EACH STATEMENT EXECUTE FUNCTION gridly_control.guard_prelaunch_reset_authorization()"
+    },
+    {
+      "name": "reset_revocations_immutable",
+      "object": "gridly_control.reset_revocations",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER reset_revocations_immutable BEFORE DELETE OR UPDATE OR TRUNCATE ON gridly_control.reset_revocations FOR EACH STATEMENT EXECUTE FUNCTION gridly_control.guard_reset_revocations()"
+    },
+    {
+      "name": "history_capture_closed",
+      "object": "history_capture.historical_events",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER history_capture_closed BEFORE INSERT OR UPDATE ON history_capture.historical_events FOR EACH ROW EXECUTE FUNCTION report_retention.reject_legacy_history()"
+    },
+    {
+      "name": "history_monitoring_closed",
+      "object": "history_capture.writer_monitoring_events",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER history_monitoring_closed BEFORE INSERT OR UPDATE ON history_capture.writer_monitoring_events FOR EACH ROW EXECUTE FUNCTION report_retention.reject_legacy_history()"
+    },
+    {
+      "name": "report_retention_origin",
+      "object": "public.reports",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER report_retention_origin BEFORE INSERT OR UPDATE ON reports FOR EACH ROW EXECUTE FUNCTION report_retention.guard_report()"
+    },
+    {
+      "name": "observation_receipt_immutable",
+      "object": "report_retention.observation_receipts",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER observation_receipt_immutable BEFORE UPDATE ON report_retention.observation_receipts FOR EACH ROW EXECUTE FUNCTION report_retention.preserve_replay_evidence()"
+    },
+    {
+      "name": "replay_evidence_immutable",
+      "object": "report_retention.replay_evidence",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER replay_evidence_immutable BEFORE DELETE OR UPDATE ON report_retention.replay_evidence FOR EACH ROW EXECUTE FUNCTION report_retention.preserve_replay_evidence()"
+    },
+    {
+      "name": "replay_evidence_no_truncate",
+      "object": "report_retention.replay_evidence",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER replay_evidence_no_truncate BEFORE TRUNCATE ON report_retention.replay_evidence FOR EACH STATEMENT EXECUTE FUNCTION report_retention.preserve_replay_evidence()"
+    }
+  ],
+  "schemaGrants": [
+    {
+      "schema": "auth",
+      "anonUsage": true,
+      "publicUsage": false,
+      "serviceRoleUsage": true,
+      "authenticatedUsage": true
+    },
+    {
+      "schema": "extensions",
+      "anonUsage": true,
+      "publicUsage": false,
+      "serviceRoleUsage": true,
+      "authenticatedUsage": true
+    },
+    {
+      "schema": "graphql",
+      "anonUsage": true,
+      "publicUsage": false,
+      "serviceRoleUsage": true,
+      "authenticatedUsage": true
+    },
+    {
+      "schema": "graphql_public",
+      "anonUsage": true,
+      "publicUsage": false,
+      "serviceRoleUsage": true,
+      "authenticatedUsage": true
+    },
+    {
+      "schema": "gridly_control",
+      "anonUsage": false,
+      "publicUsage": false,
+      "serviceRoleUsage": false,
+      "authenticatedUsage": false
+    },
+    {
+      "schema": "history_capture",
+      "anonUsage": false,
+      "publicUsage": false,
+      "serviceRoleUsage": false,
+      "authenticatedUsage": false
+    },
+    {
+      "schema": "public",
+      "anonUsage": true,
+      "publicUsage": true,
+      "serviceRoleUsage": true,
+      "authenticatedUsage": true
+    },
+    {
+      "schema": "realtime",
+      "anonUsage": true,
+      "publicUsage": false,
+      "serviceRoleUsage": true,
+      "authenticatedUsage": true
+    },
+    {
+      "schema": "report_retention",
+      "anonUsage": false,
+      "publicUsage": false,
+      "serviceRoleUsage": false,
+      "authenticatedUsage": false
+    },
+    {
+      "schema": "storage",
+      "anonUsage": true,
+      "publicUsage": false,
+      "serviceRoleUsage": true,
+      "authenticatedUsage": true
+    },
+    {
+      "schema": "supabase_migrations",
+      "anonUsage": false,
+      "publicUsage": false,
+      "serviceRoleUsage": false,
+      "authenticatedUsage": false
+    },
+    {
+      "schema": "vault",
+      "anonUsage": false,
+      "publicUsage": false,
+      "serviceRoleUsage": true,
+      "authenticatedUsage": false
+    }
+  ],
+  "tableGrants": [
+    {
+      "object": "gridly_control.prelaunch_reset_authorization",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "gridly_control.reset_revocations",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "history_capture.historical_events",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "history_capture.retention_runs",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "history_capture.writer_monitoring_events",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "public.gridly_feedback",
+      "anonDelete": false,
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "public.gridly_geocode_cache",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": true,
+      "serviceRoleSelect": true,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "public.gridly_geocode_provider_state",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": true,
+      "serviceRoleSelect": true,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "public.gridly_texas_address_points",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "public.gridly_texas_address_points_default",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "public.gridly_texas_county_boundaries",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "public.gridly_verified_rural_addresses",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": true,
+      "serviceRoleSelect": true,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "public.reports",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "report_retention.admission_state",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "report_retention.condition_month_counts",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "report_retention.device_links",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "report_retention.health",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "report_retention.observation_receipts",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "report_retention.replay_evidence",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "object": "report_retention.runs",
+      "anonDelete": false,
+      "anonInsert": false,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "publicInsert": false,
+      "publicSelect": false,
+      "serviceRoleInsert": false,
+      "serviceRoleSelect": false,
+      "authenticatedDelete": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    }
+  ],
+  "columnGrants": [
+    {
+      "column": "id",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "created_at",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "category",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "message",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "awareness_area",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "platform",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "gridly_version",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "page_url",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "user_agent",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "status",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "county_id",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "state",
+      "object": "public.gridly_feedback",
+      "anonInsert": true,
+      "anonSelect": false,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "id",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "crossing_id",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "crossing_name",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "railroad",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "lat",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "lng",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "report_type",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "severity",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "detail",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "source",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "confidence",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "created_at",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    },
+    {
+      "column": "expires_at",
+      "object": "public.reports",
+      "anonInsert": false,
+      "anonSelect": true,
+      "anonUpdate": false,
+      "authenticatedInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedUpdate": false
+    }
+  ],
+  "sequenceGrants": [
+    {
+      "object": "report_retention.runs_id_seq",
+      "anonUsage": false,
+      "serviceRoleUsage": false,
+      "authenticatedUsage": false
+    }
+  ],
+  "applicationRoles": [
+    {
+      "name": "gridly_retention_monitor",
+      "login": false,
+      "bypassRls": false
+    }
+  ],
+  "extensions": [
+    {
+      "name": "pg_stat_statements",
+      "schema": "extensions",
+      "version": "1.11"
+    },
+    {
+      "name": "pgcrypto",
+      "schema": "extensions",
+      "version": "1.3"
+    },
+    {
+      "name": "plpgsql",
+      "schema": "pg_catalog",
+      "version": "1.0"
+    },
+    {
+      "name": "postgis",
+      "schema": "extensions",
+      "version": "3.3.7"
+    },
+    {
+      "name": "supabase_vault",
+      "schema": "vault",
+      "version": "0.3.1"
+    },
+    {
+      "name": "uuid-ossp",
+      "schema": "extensions",
+      "version": "1.1"
+    }
+  ],
+  "authMetadata": {
+    "usersObjectPresent": true,
+    "functions": [
+      {
+        "name": "email",
+        "returns": "text",
+        "signature": "",
+        "securityDefiner": false
+      },
+      {
+        "name": "jwt",
+        "returns": "jsonb",
+        "signature": "",
+        "securityDefiner": false
+      },
+      {
+        "name": "role",
+        "returns": "text",
+        "signature": "",
+        "securityDefiner": false
+      },
+      {
+        "name": "uid",
+        "returns": "uuid",
+        "signature": "",
+        "securityDefiner": false
+      }
+    ],
+    "foreignKeysToAuthUsers": [
+      {
+        "name": "identities_user_id_fkey",
+        "object": "auth.identities",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "deleteAction": "c"
+      },
+      {
+        "name": "mfa_factors_user_id_fkey",
+        "object": "auth.mfa_factors",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "deleteAction": "c"
+      },
+      {
+        "name": "oauth_authorizations_user_id_fkey",
+        "object": "auth.oauth_authorizations",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "deleteAction": "c"
+      },
+      {
+        "name": "oauth_consents_user_id_fkey",
+        "object": "auth.oauth_consents",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "deleteAction": "c"
+      },
+      {
+        "name": "one_time_tokens_user_id_fkey",
+        "object": "auth.one_time_tokens",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "deleteAction": "c"
+      },
+      {
+        "name": "sessions_user_id_fkey",
+        "object": "auth.sessions",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "deleteAction": "c"
+      },
+      {
+        "name": "webauthn_challenges_user_id_fkey",
+        "object": "auth.webauthn_challenges",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "deleteAction": "c"
+      },
+      {
+        "name": "webauthn_credentials_user_id_fkey",
+        "object": "auth.webauthn_credentials",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "deleteAction": "c"
+      }
+    ],
+    "applicationForeignKeysToAuthUsers": []
+  },
+  "migrationHistory": [
+    {
+      "name": "create_gridly_feedback",
+      "version": "202606070001"
+    },
+    {
+      "name": "add_county_metadata_columns",
+      "version": "202606110001"
+    },
+    {
+      "name": "add_historical_incident_tables_draft",
+      "version": "202606160001"
+    },
+    {
+      "name": "rollback_historical_incident_tables_draft",
+      "version": "202606160002"
+    },
+    {
+      "name": "history_capture_storage",
+      "version": "202606170410"
+    },
+    {
+      "name": "rollback_history_capture_storage",
+      "version": "202606170411"
+    },
+    {
+      "name": "history_capture_schema_exposure",
+      "version": "202606170425"
+    },
+    {
+      "name": "rollback_history_capture_schema_exposure",
+      "version": "202606170426"
+    },
+    {
+      "name": "lp100_geocoding_governance",
+      "version": "202607280100"
+    },
+    {
+      "name": "lp103_verified_rural_address_registry",
+      "version": "202607290100"
+    },
+    {
+      "name": "lp1041_texas_address_foundation",
+      "version": "202607290200"
+    },
+    {
+      "name": "community_report_retention",
+      "version": "202609080001"
+    },
+    {
+      "name": "community_submission_protocol",
+      "version": "202609080002"
+    },
+    {
+      "name": "lp24422a_prelaunch_reset_and_atomic_report_transition",
+      "version": "20260908200554"
+    }
+  ],
+  "migrationComparison": {
+    "trackedCount": 14,
+    "deployedCount": 14,
+    "trackedNotDeployed": [],
+    "deployedNotTracked": [],
+    "nameMismatches": [],
+    "orderingMatch": true
+  },
+  "county": {
+    "rows": 0,
+    "srids": [],
+    "uniqueFips": 0,
+    "invalidFips": 0,
+    "nullGeometry": 0,
+    "duplicateFips": 0,
+    "geometryTypes": [],
+    "invalidGeometry": 0,
+    "boundaryVersions": [],
+    "geometryColumns": [
+      {
+        "srid": 4326,
+        "type": "MULTIPOLYGON",
+        "column": "geom",
+        "object": "gridly_texas_county_boundaries",
+        "schema": "public",
+        "dimensions": 2
+      }
+    ],
+    "frozenLocalCountyCount": 254,
+    "frozenLocalGitBlobSha256": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+    "comparison": "No deployed county rows, so FIPS, validity and coordinate equivalence cannot be established"
+  },
+  "controls": {
+    "launched": false,
+    "prelaunchStatus": "consumed",
+    "reportingEnabled": false,
+    "agencyPublishingObjectExists": false,
+    "cronObjectExists": false
+  },
+  "apiExposure": {
+    "localConfigSchemas": [
+      "public",
+      "graphql_public"
+    ],
+    "productionPgrstDbSchemasSetting": null,
+    "productionExposedSchemasVerified": false,
+    "publicationTables": [
+      {
+        "table": "reports",
+        "schema": "public",
+        "publication": "supabase_realtime"
+      },
+      {
+        "table": "messages_2026_09_11",
+        "schema": "realtime",
+        "publication": "supabase_realtime_messages_publication"
+      },
+      {
+        "table": "messages_2026_09_12",
+        "schema": "realtime",
+        "publication": "supabase_realtime_messages_publication"
+      },
+      {
+        "table": "messages_2026_09_13",
+        "schema": "realtime",
+        "publication": "supabase_realtime_messages_publication"
+      },
+      {
+        "table": "messages_2026_09_14",
+        "schema": "realtime",
+        "publication": "supabase_realtime_messages_publication"
+      },
+      {
+        "table": "messages_2026_09_15",
+        "schema": "realtime",
+        "publication": "supabase_realtime_messages_publication"
+      },
+      {
+        "table": "messages_2026_09_16",
+        "schema": "realtime",
+        "publication": "supabase_realtime_messages_publication"
+      },
+      {
+        "table": "messages_2026_09_17",
+        "schema": "realtime",
+        "publication": "supabase_realtime_messages_publication"
+      }
+    ]
+  },
+  "newBlockers": [
+    {
+      "id": "P12-01",
+      "finding": "Deployed county boundary table has zero rows; 254-county responder source cannot be verified or reused at runtime",
+      "relatedBlocker": "B03"
+    }
+  ],
+  "noProductionWriteIssued": true
+}

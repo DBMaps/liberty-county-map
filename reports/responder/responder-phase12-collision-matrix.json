@@ -1,0 +1,286 @@
+{
+  "schemaVersion": "responder.phase12.collisionMatrix.v1",
+  "branch": "RESPONDER-PHASE12-production-schema-inventory",
+  "startingHead": "3952342e7334b56b09495d341b0fef15d9bcfa30",
+  "scope": "Phase 1–8 responder object families compared with deployed catalog names and semantics; no migration authorized",
+  "exactCollisionCount": 0,
+  "semanticCollisionCount": 10,
+  "rows": [
+    {
+      "proposedObject": "agency_private schema",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "low",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Create only in later separately authorized migration",
+      "rlsImplication": "Keep outside Data API; default deny",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.organizations",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "medium",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "New private table; verify organization keys and state constraints",
+      "rlsImplication": "Live verified/active checks; no public table grants",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.organization_memberships",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "New UUID membership/history; no cascading Auth FK",
+      "rlsImplication": "One-active-org and role-scoped live RLS",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.organization_authorities",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "public.gridly_texas_county_boundaries"
+      ],
+      "risk": "high",
+      "reusePossible": "Geometry source only after B03 resolution",
+      "renameRequired": false,
+      "migrationImplication": "Versioned authority must bind an approved populated canonical source",
+      "rlsImplication": "Governance-only writes and live county checks",
+      "ownerDecisionNeeded": true,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.agency_updates",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "public.reports"
+      ],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Keep AGENCY_OFFICIAL records separate from community reports",
+      "rlsImplication": "Private agency RLS; bounded consumer projection only",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.agency_update_events",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "history_capture.historical_events"
+      ],
+      "risk": "medium",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "New append-only agency evidence; never write community history",
+      "rlsImplication": "No ordinary direct writes or cross-source reads",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.organization_verification_events",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "medium",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "New append-only verification evidence",
+      "rlsImplication": "Governance-only access",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.organization_governance_events",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "medium",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "New append-only governance evidence",
+      "rlsImplication": "Separate GRIDLY_ADMIN boundary",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.organization_invites",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "New digest/expiry/UUID binding; no raw token storage",
+      "rlsImplication": "Scoped invite summary only; no direct token read",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.agency_operation_receipts",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "report_retention.observation_receipts",
+        "report_retention.replay_evidence"
+      ],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Separate actor/org/action replay domain",
+      "rlsImplication": "Private receipts; no community receipt grants",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.governance_operation_receipts",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "report_retention.observation_receipts"
+      ],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Separate governance replay domain",
+      "rlsImplication": "Governance-only receipt access",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.agency_program_controls",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "report_retention.admission_state"
+      ],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Separate agency_publishing_enabled gate; never reuse reporting_enabled",
+      "rlsImplication": "Privileged gate check at activation/projection",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.county_geometry_catalog",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "public.gridly_texas_county_boundaries"
+      ],
+      "risk": "high",
+      "reusePossible": "Potential canonical source after population/provenance proof",
+      "renameRequired": false,
+      "migrationImplication": "Avoid unjustified duplicate geometry; immutable source/hash binding",
+      "rlsImplication": "Private authority catalog with strict boundary semantics",
+      "ownerDecisionNeeded": true,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.local_auth_identities",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "FIXTURE-ONLY REMOVE; use auth.users UUID plus live eligibility",
+      "rlsImplication": "Never ship synthetic assurance/session state",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private.phase4_session_bindings",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "FIXTURE-ONLY REMOVE; derive subject from verified Auth",
+      "rlsImplication": "Never ship session_user fixture binding",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private phase2–8 command/RLS/governance helpers",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "public.submit_community_observation",
+        "public.mutate_community_observation",
+        "public.cancel_community_operation"
+      ],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Create production-specific signatures; drop fixture actor parameters",
+      "rlsImplication": "Narrow EXECUTE; server-derived actor; no community RPC reuse",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private responder read-model views",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "medium",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "New bounded invoker views for org/roster/authority/invites/queue",
+      "rlsImplication": "security_invoker and live identity eligibility",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private phase8 dashboard views",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "medium",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "New queue/map/inspector/affordance views",
+      "rlsImplication": "security_invoker; no private event/receipt exposure",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "agency_private indexes and lifecycle/audit triggers",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "public.reports",
+        "history_capture.historical_events"
+      ],
+      "risk": "medium",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Use distinct names and retain community trigger semantics",
+      "rlsImplication": "No new grants via index/trigger; review definer ownership",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "responder_public schema",
+      "productionCollision": "NO COLLISION",
+      "existingObjects": [],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Create only after exposed-schema configuration is verified",
+      "rlsImplication": "Private-by-default; public schema exposure remains unverified",
+      "ownerDecisionNeeded": false,
+      "exactNameExists": false
+    },
+    {
+      "proposedObject": "responder_public.agency_updates projection",
+      "productionCollision": "SEMANTIC COLLISION",
+      "existingObjects": [
+        "public.reports"
+      ],
+      "risk": "high",
+      "reusePossible": "No",
+      "renameRequired": false,
+      "migrationImplication": "Separate source-family projection; no reporting_enabled reuse",
+      "rlsImplication": "Only bounded safe columns and live publishing gate",
+      "ownerDecisionNeeded": true,
+      "exactNameExists": false
+    }
+  ]
+}
