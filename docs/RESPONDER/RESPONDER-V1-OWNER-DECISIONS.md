@@ -13,6 +13,7 @@ Contract version: `responder.agency.v1.phase0.1`. `APPROVED` means explicitly su
 | Condition vocabulary | APPROVED | road_closed, high_water, obstruction, construction, public_works_notice | Phase 5 |
 | Expiry | APPROVED | 12h default, 24h maximum; later category policy separate | Phase 5 |
 | Agency gate | APPROVED | `agency_publishing_enabled=false`, independent of community gate | Phase 1/5 |
+| Agency publication rate | APPROVED | At most 60 successful agency activations per organization in a rolling 60-minute window; only successful activations count; threshold returns `rate_limited`; resolve and withdraw remain available | Phase 7 local fixture |
 | Public wording | APPROVED | “Verified Agency”; “Agency update”; no Gridly condition confirmation | Phase 9 |
 | Responder identity privacy | APPROVED | Organization public; individual employee/Auth identity private | Phase 9 |
 | Municipal/district publishing | APPROVED | Closed until full certified polygons; PLACE points/memberships forbidden | Future phase |

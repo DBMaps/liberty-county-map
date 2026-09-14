@@ -1,0 +1,296 @@
+{
+  "contractVersion": "responder.agency.v1.phase0.1",
+  "mappingVersion": "responder.agency.v1.phase7.1",
+  "classificationRule": "Full vectors require exact bounded result, state, audit/receipt where applicable, and observable public projection. Partial structural coverage is deferred.",
+  "counts": {
+    "total": 54,
+    "previouslyComplete": 45,
+    "newlyCompletePhase7": 6,
+    "totalComplete": 51,
+    "deferredDashboard": 2,
+    "deferredConsumer": 0,
+    "deferredBackend": 1
+  },
+  "previouslyCompleteVectorIds": [
+    "N01-viewer-draft",
+    "N02-responder-activate",
+    "N03-responder-wrong-org",
+    "N04-supervisor-wrong-org",
+    "N05-admin-self-promote",
+    "N06-last-admin-removal",
+    "N07-aal1-dashboard",
+    "N08-aal1-mutation",
+    "N09-suspended-member",
+    "N10-revoked-member",
+    "N11-suspended-org",
+    "N12-revoked-org",
+    "N13-unverified-org",
+    "N14-unknown-fips",
+    "N15-outside-point",
+    "N16-boundary-point",
+    "N17-stale-authority",
+    "N18-spoofed-authority-id",
+    "N19-replay-same",
+    "N20-replay-different",
+    "N21-stale-revision",
+    "N22-closure-self-approval",
+    "N23-closure-no-second-approver",
+    "N25-terminal-reactivation",
+    "N28-community-badge-spoof",
+    "N29-official-family-spoof",
+    "N30-invite-reuse",
+    "N31-expired-invite",
+    "N32-wrong-invite-identity",
+    "N33-municipal-point-proxy",
+    "P02-responder-create",
+    "P03-responder-edit-own",
+    "P04-responder-submit",
+    "P05-supervisor-return",
+    "P06-supervisor-nonclosure",
+    "P07-second-actor-closure",
+    "P08-supervisor-edit-active",
+    "P09-supervisor-renew",
+    "P10-supervisor-resolve",
+    "P11-admin-invite",
+    "P12-invite-redemption",
+    "P13-admin-suspend-member",
+    "P14-gridly-verify-org",
+    "P15-gridly-approve-county",
+    "P16-valid-county-point"
+  ],
+  "newlyCompleteVectorIds": [
+    "N24-expired-active",
+    "N27-private-projection-leak",
+    "N34-mass-publication",
+    "P17-valid-public-projection",
+    "P18-suspend-hides-public",
+    "P19-expiry-hides-public"
+  ],
+  "dashboardDeferredVectorIds": [
+    "P01-viewer-dashboard",
+    "P20-member-self-read"
+  ],
+  "consumerDeferredVectorIds": [],
+  "backendDeferredVectorIds": [
+    "N26-unauthorized-governance"
+  ],
+  "vectors": [
+    {
+      "id": "N01-viewer-draft",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N02-responder-activate",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N03-responder-wrong-org",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N04-supervisor-wrong-org",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N05-admin-self-promote",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N06-last-admin-removal",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N07-aal1-dashboard",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N08-aal1-mutation",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N09-suspended-member",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N10-revoked-member",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N11-suspended-org",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N12-revoked-org",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N13-unverified-org",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N14-unknown-fips",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N15-outside-point",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N16-boundary-point",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N17-stale-authority",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N18-spoofed-authority-id",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N19-replay-same",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N20-replay-different",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N21-stale-revision",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N22-closure-self-approval",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N23-closure-no-second-approver",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N24-expired-active",
+      "classification": "NEWLY PASSED PHASE 7 FULL VECTOR"
+    },
+    {
+      "id": "N25-terminal-reactivation",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N26-unauthorized-governance",
+      "classification": "DEFERRED BACKEND",
+      "reason": "Ordinary agency login has no governance EXECUTE grant and receives SQL permission denied; the frozen vector requires bounded forbidden. Granting governance EXECUTE would weaken the role boundary."
+    },
+    {
+      "id": "N27-private-projection-leak",
+      "classification": "NEWLY PASSED PHASE 7 FULL VECTOR"
+    },
+    {
+      "id": "N28-community-badge-spoof",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N29-official-family-spoof",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "N30-invite-reuse",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N31-expired-invite",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N32-wrong-invite-identity",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N33-municipal-point-proxy",
+      "classification": "NEWLY PASSED PHASE 6 FULL VECTOR"
+    },
+    {
+      "id": "N34-mass-publication",
+      "classification": "NEWLY PASSED PHASE 7 FULL VECTOR"
+    },
+    {
+      "id": "P01-viewer-dashboard",
+      "classification": "DEFERRED DASHBOARD"
+    },
+    {
+      "id": "P02-responder-create",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P03-responder-edit-own",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P04-responder-submit",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P05-supervisor-return",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P06-supervisor-nonclosure",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P07-second-actor-closure",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P08-supervisor-edit-active",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P09-supervisor-renew",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P10-supervisor-resolve",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P11-admin-invite",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "P12-invite-redemption",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "P13-admin-suspend-member",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "P14-gridly-verify-org",
+      "classification": "NEWLY PASSED PHASE 6 FULL VECTOR"
+    },
+    {
+      "id": "P15-gridly-approve-county",
+      "classification": "NEWLY PASSED PHASE 6 FULL VECTOR"
+    },
+    {
+      "id": "P16-valid-county-point",
+      "classification": "NEWLY PASSED PHASE 5 FULL VECTOR"
+    },
+    {
+      "id": "P17-valid-public-projection",
+      "classification": "NEWLY PASSED PHASE 7 FULL VECTOR"
+    },
+    {
+      "id": "P18-suspend-hides-public",
+      "classification": "NEWLY PASSED PHASE 7 FULL VECTOR"
+    },
+    {
+      "id": "P19-expiry-hides-public",
+      "classification": "NEWLY PASSED PHASE 7 FULL VECTOR"
+    },
+    {
+      "id": "P20-member-self-read",
+      "classification": "DEFERRED DASHBOARD"
+    }
+  ]
+}
