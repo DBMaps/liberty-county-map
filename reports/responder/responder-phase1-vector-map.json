@@ -1,0 +1,238 @@
+{
+  "contractVersion": "responder.agency.v1.phase0.1",
+  "mappingVersion": "responder.agency.v1.phase1.1",
+  "classificationRule": "A vector is executable only when its full actor, bounded status, side effect, audit, and public-visibility assertions can run. Phase 1 tests structural predicates only; no Phase 0 command vector is claimed executable.",
+  "counts": {
+    "EXECUTABLE IN PHASE 1": 0,
+    "REQUIRES PHASE 2 AUTH": 5,
+    "REQUIRES PHASE 3 AUTHORITY LOGIC": 8,
+    "REQUIRES PHASE 4 RLS": 2,
+    "REQUIRES PHASE 5 COMMAND RPC": 32,
+    "REQUIRES DASHBOARD": 3,
+    "REQUIRES CONSUMER PROJECTION": 4
+  },
+  "phase1StructuralAnalogues": [
+    "N25-terminal-reactivation",
+    "N28-community-badge-spoof",
+    "N29-official-family-spoof",
+    "N33-municipal-point-proxy"
+  ],
+  "vectors": [
+    {
+      "id": "N01-viewer-draft",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N02-responder-activate",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N03-responder-wrong-org",
+      "classification": "REQUIRES PHASE 4 RLS"
+    },
+    {
+      "id": "N04-supervisor-wrong-org",
+      "classification": "REQUIRES PHASE 4 RLS"
+    },
+    {
+      "id": "N05-admin-self-promote",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N06-last-admin-removal",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N07-aal1-dashboard",
+      "classification": "REQUIRES DASHBOARD"
+    },
+    {
+      "id": "N08-aal1-mutation",
+      "classification": "REQUIRES PHASE 2 AUTH"
+    },
+    {
+      "id": "N09-suspended-member",
+      "classification": "REQUIRES PHASE 2 AUTH"
+    },
+    {
+      "id": "N10-revoked-member",
+      "classification": "REQUIRES PHASE 2 AUTH"
+    },
+    {
+      "id": "N11-suspended-org",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N12-revoked-org",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N13-unverified-org",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N14-unknown-fips",
+      "classification": "REQUIRES PHASE 3 AUTHORITY LOGIC"
+    },
+    {
+      "id": "N15-outside-point",
+      "classification": "REQUIRES PHASE 3 AUTHORITY LOGIC"
+    },
+    {
+      "id": "N16-boundary-point",
+      "classification": "REQUIRES PHASE 3 AUTHORITY LOGIC"
+    },
+    {
+      "id": "N17-stale-authority",
+      "classification": "REQUIRES PHASE 3 AUTHORITY LOGIC"
+    },
+    {
+      "id": "N18-spoofed-authority-id",
+      "classification": "REQUIRES PHASE 3 AUTHORITY LOGIC"
+    },
+    {
+      "id": "N19-replay-same",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N20-replay-different",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N21-stale-revision",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N22-closure-self-approval",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N23-closure-no-second-approver",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N24-expired-active",
+      "classification": "REQUIRES CONSUMER PROJECTION"
+    },
+    {
+      "id": "N25-terminal-reactivation",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N26-unauthorized-governance",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N27-private-projection-leak",
+      "classification": "REQUIRES CONSUMER PROJECTION"
+    },
+    {
+      "id": "N28-community-badge-spoof",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N29-official-family-spoof",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N30-invite-reuse",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N31-expired-invite",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "N32-wrong-invite-identity",
+      "classification": "REQUIRES PHASE 2 AUTH"
+    },
+    {
+      "id": "N33-municipal-point-proxy",
+      "classification": "REQUIRES PHASE 3 AUTHORITY LOGIC"
+    },
+    {
+      "id": "N34-mass-publication",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P01-viewer-dashboard",
+      "classification": "REQUIRES DASHBOARD"
+    },
+    {
+      "id": "P02-responder-create",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P03-responder-edit-own",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P04-responder-submit",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P05-supervisor-return",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P06-supervisor-nonclosure",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P07-second-actor-closure",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P08-supervisor-edit-active",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P09-supervisor-renew",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P10-supervisor-resolve",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P11-admin-invite",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P12-invite-redemption",
+      "classification": "REQUIRES PHASE 2 AUTH"
+    },
+    {
+      "id": "P13-admin-suspend-member",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P14-gridly-verify-org",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P15-gridly-approve-county",
+      "classification": "REQUIRES PHASE 3 AUTHORITY LOGIC"
+    },
+    {
+      "id": "P16-valid-county-point",
+      "classification": "REQUIRES PHASE 3 AUTHORITY LOGIC"
+    },
+    {
+      "id": "P17-valid-public-projection",
+      "classification": "REQUIRES CONSUMER PROJECTION"
+    },
+    {
+      "id": "P18-suspend-hides-public",
+      "classification": "REQUIRES PHASE 5 COMMAND RPC"
+    },
+    {
+      "id": "P19-expiry-hides-public",
+      "classification": "REQUIRES CONSUMER PROJECTION"
+    },
+    {
+      "id": "P20-member-self-read",
+      "classification": "REQUIRES DASHBOARD"
+    }
+  ]
+}
