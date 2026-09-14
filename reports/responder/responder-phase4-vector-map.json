@@ -1,0 +1,269 @@
+{
+  "contractVersion": "responder.agency.v1.phase0.1",
+  "mappingVersion": "responder.agency.v1.phase4.1",
+  "classificationRule": "A frozen vector is complete only when its bounded result, business mutation, event, receipt, and public effect (or lack thereof) are executable. Phase 4 proves RLS cross-organization preconditions for N03 and N04 but does not implement their create_draft or activate_non_closure commands; both remain deferred to Phase 5.",
+  "counts": {
+    "PREVIOUSLY PASSED FULL VECTOR": 9,
+    "NEWLY PASSED PHASE 4 FULL VECTOR": 0,
+    "DEFERRED PHASE 5": 39,
+    "DEFERRED DASHBOARD": 2,
+    "DEFERRED CONSUMER": 4
+  },
+  "executableVectorIds": [
+    "N05-admin-self-promote",
+    "N06-last-admin-removal",
+    "N07-aal1-dashboard",
+    "N30-invite-reuse",
+    "N31-expired-invite",
+    "N32-wrong-invite-identity",
+    "P11-admin-invite",
+    "P12-invite-redemption",
+    "P13-admin-suspend-member"
+  ],
+  "vectors": [
+    {
+      "id": "N01-viewer-draft",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N02-responder-activate",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N03-responder-wrong-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N04-supervisor-wrong-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N05-admin-self-promote",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N06-last-admin-removal",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N07-aal1-dashboard",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N08-aal1-mutation",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N09-suspended-member",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N10-revoked-member",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N11-suspended-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N12-revoked-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N13-unverified-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N14-unknown-fips",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N15-outside-point",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N16-boundary-point",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N17-stale-authority",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N18-spoofed-authority-id",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N19-replay-same",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N20-replay-different",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N21-stale-revision",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N22-closure-self-approval",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N23-closure-no-second-approver",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N24-expired-active",
+      "classification": "DEFERRED CONSUMER"
+    },
+    {
+      "id": "N25-terminal-reactivation",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N26-unauthorized-governance",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N27-private-projection-leak",
+      "classification": "DEFERRED CONSUMER"
+    },
+    {
+      "id": "N28-community-badge-spoof",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N29-official-family-spoof",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N30-invite-reuse",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N31-expired-invite",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N32-wrong-invite-identity",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "N33-municipal-point-proxy",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "N34-mass-publication",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P01-viewer-dashboard",
+      "classification": "DEFERRED DASHBOARD"
+    },
+    {
+      "id": "P02-responder-create",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P03-responder-edit-own",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P04-responder-submit",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P05-supervisor-return",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P06-supervisor-nonclosure",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P07-second-actor-closure",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P08-supervisor-edit-active",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P09-supervisor-renew",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P10-supervisor-resolve",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P11-admin-invite",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "P12-invite-redemption",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "P13-admin-suspend-member",
+      "classification": "PREVIOUSLY PASSED FULL VECTOR"
+    },
+    {
+      "id": "P14-gridly-verify-org",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P15-gridly-approve-county",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P16-valid-county-point",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P17-valid-public-projection",
+      "classification": "DEFERRED CONSUMER"
+    },
+    {
+      "id": "P18-suspend-hides-public",
+      "classification": "DEFERRED PHASE 5"
+    },
+    {
+      "id": "P19-expiry-hides-public",
+      "classification": "DEFERRED CONSUMER"
+    },
+    {
+      "id": "P20-member-self-read",
+      "classification": "DEFERRED DASHBOARD"
+    }
+  ],
+  "phase3AuthoritySubcheckIds": [
+    "N14-unknown-fips",
+    "N15-outside-point",
+    "N16-boundary-point",
+    "N17-stale-authority",
+    "N18-spoofed-authority-id",
+    "N33-municipal-point-proxy",
+    "P15-gridly-approve-county",
+    "P16-valid-county-point"
+  ],
+  "phase3AuthoritySubcheckStatus": "Partial geometry/authority preconditions only; none is claimed as a complete Phase 0 command vector. Municipal approval remains excluded from V1.",
+  "previouslyPassedVectorIds": [
+    "N05-admin-self-promote",
+    "N06-last-admin-removal",
+    "N07-aal1-dashboard",
+    "N30-invite-reuse",
+    "N31-expired-invite",
+    "N32-wrong-invite-identity",
+    "P11-admin-invite",
+    "P12-invite-redemption",
+    "P13-admin-suspend-member"
+  ],
+  "newlyPassedVectorIds": [],
+  "phase4RlsSubcheckIds": [
+    "N03-responder-wrong-org",
+    "N04-supervisor-wrong-org"
+  ],
+  "phase4RlsSubcheckStatus": "Cross-org RLS read/write preconditions tested; full frozen command vectors remain deferred until Phase 5."
+}
