@@ -1,0 +1,348 @@
+{
+  "schemaVersion": "responder.phase9.readiness.v1",
+  "baseline": {
+    "branch": "RESPONDER-PHASE9-production-readiness-audit",
+    "startingHead": "df21c4baf8c8154f58fb61b9bf099cc2e9c254df",
+    "frozenVectors": {
+      "complete": 54,
+      "total": 54
+    },
+    "evidenceBoundary": "local repository only; production state unknown"
+  },
+  "decision": "CONDITIONAL GO",
+  "decisionScope": "production implementation planning only; no deployment authorization",
+  "blockers": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "B13"
+  ],
+  "areas": [
+    {
+      "area": "Schema",
+      "localCertification": "Phase 1–8 local SQL and 54/54 vectors",
+      "productionTranslationStatus": "Design ready; deployed inventory unknown",
+      "blocker": [
+        "B02"
+      ],
+      "requiredAction": "Compare live catalog; draft private migrations and verify constraints",
+      "risk": "high",
+      "ownerDecisionNeeded": "No",
+      "deploymentPhase": "0–2"
+    },
+    {
+      "area": "Auth",
+      "localCertification": "Phase 2 synthetic identity",
+      "productionTranslationStatus": "Requires production adapter",
+      "blocker": [
+        "B01"
+      ],
+      "requiredAction": "Bind verified Auth subject server-side; reject spoofed actors",
+      "risk": "critical",
+      "ownerDecisionNeeded": "Yes: recovery policy",
+      "deploymentPhase": "3"
+    },
+    {
+      "area": "MFA",
+      "localCertification": "Local aal2 negative/positive tests",
+      "productionTranslationStatus": "Live TOTP claim semantics unverified",
+      "blocker": [
+        "B01"
+      ],
+      "requiredAction": "Verify actual aal2 on every dashboard/command/governance request",
+      "risk": "critical",
+      "ownerDecisionNeeded": "Yes: factor recovery",
+      "deploymentPhase": "3"
+    },
+    {
+      "area": "Membership",
+      "localCertification": "Local role matrix and live checks",
+      "productionTranslationStatus": "Auth mapping and offboarding unproven",
+      "blocker": [
+        "B01",
+        "B04"
+      ],
+      "requiredAction": "Recheck current role/org/epoch in DB; test stale JWT",
+      "risk": "critical",
+      "ownerDecisionNeeded": "No",
+      "deploymentPhase": "3–5"
+    },
+    {
+      "area": "Authority",
+      "localCertification": "Phase 3/6 local governance",
+      "productionTranslationStatus": "County source not runtime-approved",
+      "blocker": [
+        "B03",
+        "B05"
+      ],
+      "requiredAction": "Approve source; version/hash bind; independent grant/revoke SOP",
+      "risk": "critical",
+      "ownerDecisionNeeded": "Yes: source and approvers",
+      "deploymentPhase": "3–5"
+    },
+    {
+      "area": "RLS",
+      "localCertification": "Phase 4 forced RLS and negative matrix",
+      "productionTranslationStatus": "Real-role owner/grant behavior untested",
+      "blocker": [
+        "B04"
+      ],
+      "requiredAction": "Translate all private policies and test as actual roles",
+      "risk": "critical",
+      "ownerDecisionNeeded": "No",
+      "deploymentPhase": "2–5"
+    },
+    {
+      "area": "Commands",
+      "localCertification": "Phase 5/7 command and replay tests",
+      "productionTranslationStatus": "Fixture definer/session owner not portable",
+      "blocker": [
+        "B01",
+        "B04",
+        "B12"
+      ],
+      "requiredAction": "Rewrite actor/owner boundary; gate false negative tests",
+      "risk": "critical",
+      "ownerDecisionNeeded": "No",
+      "deploymentPhase": "4"
+    },
+    {
+      "area": "Governance",
+      "localCertification": "Phase 6 local verification/suspension",
+      "productionTranslationStatus": "Human operators and production privileges unverified",
+      "blocker": [
+        "B04",
+        "B05"
+      ],
+      "requiredAction": "Staff admin SOP; independent review; test rollback",
+      "risk": "high",
+      "ownerDecisionNeeded": "Yes: governance staffing",
+      "deploymentPhase": "5"
+    },
+    {
+      "area": "Receipts",
+      "localCertification": "Separate agency/governance immutable ledgers",
+      "productionTranslationStatus": "Backup and retention unresolved",
+      "blocker": [
+        "B08",
+        "B09"
+      ],
+      "requiredAction": "Preserve consumed-token ledger and define retention/restore",
+      "risk": "critical",
+      "ownerDecisionNeeded": "Yes: retention",
+      "deploymentPhase": "4–5"
+    },
+    {
+      "area": "Rate limit",
+      "localCertification": "Phase 7 60/60m local atomic behavior",
+      "productionTranslationStatus": "Production load/lock latency unknown",
+      "blocker": [
+        "B11"
+      ],
+      "requiredAction": "Benchmark organization row lock/index under concurrency",
+      "risk": "high",
+      "ownerDecisionNeeded": "No",
+      "deploymentPhase": "4,8"
+    },
+    {
+      "area": "Consumer projection",
+      "localCertification": "Phase 7 18-key gated projection",
+      "productionTranslationStatus": "No dedicated AGENCY_OFFICIAL app integration",
+      "blocker": [
+        "B10"
+      ],
+      "requiredAction": "Integrate separate lineage and cache removal; gated launch",
+      "risk": "critical",
+      "ownerDecisionNeeded": "Yes: consumer launch",
+      "deploymentPhase": "7–8"
+    },
+    {
+      "area": "Dashboard",
+      "localCertification": "Phase 8 role/queue/map/inspector model",
+      "productionTranslationStatus": "No live aal2 client or hosting proof",
+      "blocker": [
+        "B01",
+        "B07"
+      ],
+      "requiredAction": "Build pinned static client, no-store/CSP, read-only pilot",
+      "risk": "high",
+      "ownerDecisionNeeded": "Yes: subdomain launch",
+      "deploymentPhase": "6"
+    },
+    {
+      "area": "Email",
+      "localCertification": "Local invite lifecycle only",
+      "productionTranslationStatus": "No outbound SMTP proof",
+      "blocker": [
+        "B06"
+      ],
+      "requiredAction": "Verify existing delivery or approve bounded manual onboarding",
+      "risk": "high",
+      "ownerDecisionNeeded": "Yes: onboarding path",
+      "deploymentPhase": "3–5"
+    },
+    {
+      "area": "Backups",
+      "localCertification": "Append-only event/receipt contracts",
+      "productionTranslationStatus": "PITR/isolated restore unverified",
+      "blocker": [
+        "B09"
+      ],
+      "requiredAction": "Rehearse complete history and replay-ledger restore",
+      "risk": "critical",
+      "ownerDecisionNeeded": "Yes: RPO/RTO",
+      "deploymentPhase": "0,8"
+    },
+    {
+      "area": "Retention",
+      "localCertification": "Provisional owner figures only",
+      "productionTranslationStatus": "No operative responder legal schedule",
+      "blocker": [
+        "B08"
+      ],
+      "requiredAction": "Approve category-specific privacy/retention and immutable conflict handling",
+      "risk": "high",
+      "ownerDecisionNeeded": "Yes: policy",
+      "deploymentPhase": "0,8"
+    },
+    {
+      "area": "Monitoring",
+      "localCertification": "Local suite and existing runbook patterns",
+      "productionTranslationStatus": "Live alert/log capacity unknown",
+      "blocker": [
+        "B11"
+      ],
+      "requiredAction": "Instrument failures/gate/locks/projection and test on-call",
+      "risk": "high",
+      "ownerDecisionNeeded": "Yes: incident owner",
+      "deploymentPhase": "0,8"
+    },
+    {
+      "area": "Hosting",
+      "localCertification": "Consumer static app exists",
+      "productionTranslationStatus": "Responder host/header/cost unknown",
+      "blocker": [
+        "B07"
+      ],
+      "requiredAction": "Validate existing host and pinned build/security headers",
+      "risk": "medium",
+      "ownerDecisionNeeded": "Yes: hosting choice",
+      "deploymentPhase": "6"
+    },
+    {
+      "area": "DNS/TLS",
+      "localCertification": "Desired responders.gridlygo.com only",
+      "productionTranslationStatus": "Control/cert/Auth redirect unverified",
+      "blocker": [
+        "B07"
+      ],
+      "requiredAction": "Verify DNS, TLS, redirects and rollback",
+      "risk": "medium",
+      "ownerDecisionNeeded": "Yes: domain launch",
+      "deploymentPhase": "6"
+    },
+    {
+      "area": "Rollback",
+      "localCertification": "Local gate and suspension behavior",
+      "productionTranslationStatus": "Production layered drill not performed",
+      "blocker": [
+        "B09",
+        "B12"
+      ],
+      "requiredAction": "Rehearse asset/projection/command/RLS forward-fix with gate false",
+      "risk": "critical",
+      "ownerDecisionNeeded": "Yes: rollback owner",
+      "deploymentPhase": "0,8"
+    },
+    {
+      "area": "Pilot",
+      "localCertification": "County-first model and role matrix",
+      "productionTranslationStatus": "Named agency/limits/authorization absent",
+      "blocker": [
+        "B03",
+        "B05",
+        "B13"
+      ],
+      "requiredAction": "Choose agency, caps, independent roles; dry-run then separately authorize",
+      "risk": "critical",
+      "ownerDecisionNeeded": "Yes: pilot and publishing",
+      "deploymentPhase": "8"
+    },
+    {
+      "area": "County geometry",
+      "localCertification": "254-county frozen manifest; local loader",
+      "productionTranslationStatus": "Existing tracked production boundary source may overlap",
+      "blocker": [
+        "B02",
+        "B03"
+      ],
+      "requiredAction": "Compare canonical hash/version/coverage; reuse if equivalent",
+      "risk": "high",
+      "ownerDecisionNeeded": "Yes: runtime source",
+      "deploymentPhase": "3"
+    },
+    {
+      "area": "Governance accounts",
+      "localCertification": "Separate GRIDLY_ADMIN local role",
+      "productionTranslationStatus": "Real staffing/recovery unavailable",
+      "blocker": [
+        "B05"
+      ],
+      "requiredAction": "Use individual aal2 admins and independent review/recovery",
+      "risk": "high",
+      "ownerDecisionNeeded": "Yes: operator staffing",
+      "deploymentPhase": "5"
+    },
+    {
+      "area": "Security definer",
+      "localCertification": "Local fixed search_path and bounded grants",
+      "productionTranslationStatus": "BYPASSRLS fixture owners unsafe",
+      "blocker": [
+        "B04"
+      ],
+      "requiredAction": "Least-privilege dedicated owners, PUBLIC revoke, injection/grant audit",
+      "risk": "critical",
+      "ownerDecisionNeeded": "No",
+      "deploymentPhase": "4–5"
+    },
+    {
+      "area": "Operations",
+      "localCertification": "Local gate, revoke, suspend, audit",
+      "productionTranslationStatus": "Live SOP/alert/recovery unproven",
+      "blocker": [
+        "B05",
+        "B09",
+        "B11",
+        "B12"
+      ],
+      "requiredAction": "Prove incident runbook, gate and withdrawal drill",
+      "risk": "high",
+      "ownerDecisionNeeded": "Yes: on-call and incident owner",
+      "deploymentPhase": "0,8"
+    },
+    {
+      "area": "Cost and plan",
+      "localCertification": "No paid provider required by local tests",
+      "productionTranslationStatus": "Supabase/hosting/email/backup entitlements unknown",
+      "blocker": [
+        "B01",
+        "B06",
+        "B07",
+        "B09"
+      ],
+      "requiredAction": "Verify current entitlements before adding paid service",
+      "risk": "medium",
+      "ownerDecisionNeeded": "Yes: spending if needed",
+      "deploymentPhase": "0"
+    }
+  ]
+}
