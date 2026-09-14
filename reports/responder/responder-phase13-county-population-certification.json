@@ -1,0 +1,89 @@
+{
+  "phase": 13,
+  "scope": "LOCAL_REHEARSAL_ONLY",
+  "branch": "RESPONDER-PHASE13-county-population-readiness",
+  "startingHead": "1b4ee0dc5ea617e7bbac1368bc1b507dce1579ff",
+  "source": {
+    "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+    "canonicalForm": "git-blob-HEAD",
+    "sha256": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+    "bytes": 13934264,
+    "packageVersion": "lp148-owner-built-statewide-runtime-geometry-v1",
+    "countyCount": 254,
+    "uniqueFipsCount": 254,
+    "canonicalFipsSha256": "7e80dd17d4d295d904f986a193ab259850e607c6bdfde3a7454e9af5a54a2092",
+    "coordinatePairs": 604979,
+    "rings": 254,
+    "bounds": [-106.645646, 25.837048, -93.508039, 36.500704]
+  },
+  "productionEvidence": {
+    "basis": "reports/responder/responder-phase12-production-schema-inventory.json",
+    "observedRows": 0,
+    "observedPostgres": "17.6",
+    "observedPostgis": "3.3.7",
+    "target": "public.gridly_texas_county_boundaries",
+    "owner": "postgres",
+    "columns": ["county_fips text NOT NULL PRIMARY KEY", "geom geometry(MultiPolygon,4326) NOT NULL", "boundary_version text NOT NULL"],
+    "spatialIndex": "gridly_texas_county_boundaries_geom_idx USING gist (geom)",
+    "rlsEnabled": true,
+    "forceRls": false,
+    "policyCount": 0,
+    "triggerCount": 0,
+    "publicAnonAuthenticatedInsertAndSelect": false,
+    "requiresFreshPreflight": true
+  },
+  "artifact": {
+    "path": "db/responder-local/phase13_county_population_rehearsal.sql",
+    "loaderVersion": "responder.phase13.countyPopulation.v1",
+    "bytes": 13965684,
+    "sha256": "9e17bb6a0f08580aabcc4943ab9b3bdda6f41e7205a78a7dab8d696a8037815e",
+    "generatedCountyCount": 254,
+    "deterministic": true,
+    "generationTimestampInPayload": false,
+    "productionMigration": false,
+    "policy": "VERIFY_THEN_NOOP_IF_IDENTICAL",
+    "lock": "SHARE ROW EXCLUSIVE on target table",
+    "targetPermanentWriteScope": ["public.gridly_texas_county_boundaries"]
+  },
+  "localFixture": {
+    "postgres": "17.10",
+    "postgis": "3.6.2",
+    "disposable": true,
+    "productionShaped": true,
+    "initialRows": 0,
+    "finalRows": 254,
+    "equivalentCount": 254,
+    "typeSridValidityAndPointCountPass": true,
+    "strictLibertyChambersBoundaryPass": true,
+    "spatialIndexPlanObserved": true,
+    "inTransactionDigest": "54f42bb9795dd2f4f6f743a14b4d86e7",
+    "freshReadOnlyDigestMatched": true,
+    "noOpPreservedXminAndDigest": true,
+    "driftCasesRejected": ["one existing row", "one missing county", "altered geometry", "254-row wrong-county geometry", "duplicate primary key", "extra valid-format FIPS"],
+    "injectedFailureAfterInsertedRows": 127,
+    "injectedFailureRolledBackToRows": 0,
+    "localTimingsMs": {
+      "generation": 719,
+      "load": 3225,
+      "readOnlyValidation": 656,
+      "noop": 2949,
+      "boundary": 146,
+      "injectedRollback": 2818
+    },
+    "phase13TestsPassed": 11,
+    "phase13TestsFailed": 0
+  },
+  "compatibility": {
+    "postgis337ProductionBehaviorVerified": false,
+    "reason": "Local PostGIS is 3.6.2; only conservative geometry functions were used, but exact production behavior requires separately authorized verification."
+  },
+  "status": {
+    "p12_01": "OPEN_PENDING_AUTHORIZED_PRODUCTION_POPULATION_AND_254_POSTLOAD_CHECK",
+    "b03": "OPEN_PENDING_PRODUCTION_EQUIVALENCE_BOUNDARY_AND_VERSION_BINDING",
+    "productionPopulationPerformed": false,
+    "supabaseAccessed": false,
+    "productionServiceAccessed": false,
+    "deploymentPerformed": false,
+    "responderAuthorityBindingAuthorized": false
+  }
+}
