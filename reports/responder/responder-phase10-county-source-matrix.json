@@ -1,0 +1,447 @@
+{
+  "schemaVersion": "responder.phase10.countySourceDecision.v1",
+  "branch": "RESPONDER-PHASE10-county-source-decision-audit",
+  "startingHead": "67faaadb8ac2057556f6e641faf5cc5e494d5ab5",
+  "scope": "local read-only comparison; no deployed database inventory",
+  "recommendation": "REUSE EXISTING GRIDLY COUNTY GEOMETRY",
+  "b03Status": "STILL BLOCKED",
+  "b03Reason": "Local shared geometry choice is supported, but frozen runtime/deploy authorization is false and production table contents, versioning, PostGIS semantics, and governance remain unverified.",
+  "frozen": {
+    "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+    "canonicalGitBlobSha256": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+    "canonicalGitBlobBytes": 13934264,
+    "counties": 254,
+    "workingCopySha256": "a0ac566669d03bc1461d6289869e6e3928d5e6501a43256dbbf1e0f088fe4ce0",
+    "workingCopyBytes": 13934265
+  },
+  "sources": [
+    {
+      "path": "assets/boundaries/texas-counties-boundaries.geojson",
+      "kind": "LP137 statewide source FeatureCollection",
+      "sha256": "09b9bc52c53f983451bb55899a03109f4002a3bcb1b47e0fe69cc38ed804332c",
+      "counties": 254,
+      "uniqueFips": 254,
+      "geometryType": "Polygon",
+      "exactFrozenGeometryMatches": 254,
+      "fitness": "FIT WITH ADAPTATION",
+      "role": "shared source lineage"
+    },
+    {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+      "kind": "LP148 frozen responder candidate",
+      "sha256": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+      "counties": 254,
+      "uniqueFips": 254,
+      "geometryType": "Polygon",
+      "exactFrozenGeometryMatches": 254,
+      "fitness": "FIT WITH ADAPTATION",
+      "role": "package-generation approved; runtime/deploy not approved"
+    },
+    {
+      "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+      "kind": "LP1904 shared runtime",
+      "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316",
+      "counties": 254,
+      "uniqueFips": 254,
+      "geometryType": "Polygon",
+      "exactFrozenGeometryMatches": 254,
+      "fitness": "FIT WITH ADAPTATION",
+      "role": "current tracked consumer runtime geometry"
+    },
+    {
+      "path": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
+      "kind": "synthetic cartographic placeholder",
+      "sha256": "f405cdc2ff464f406feaa0bcc13df8242b4ef1e2ab0bbb00f073bfccb4244154",
+      "counties": 254,
+      "uniqueFips": 254,
+      "geometryType": "MultiPolygon",
+      "exactFrozenGeometryMatches": 0,
+      "fitness": "DISPLAY-ONLY / NOT FIT",
+      "role": "historical placeholder; not authoritative for boundary use"
+    },
+    {
+      "path": "assets/county-implementation/*/boundary/*-county-boundary.geojson",
+      "kind": "28 per-county FeatureCollections",
+      "sha256": null,
+      "counties": 28,
+      "uniqueFips": 28,
+      "geometryType": "Polygon",
+      "exactFrozenGeometryMatches": 0,
+      "fitness": "UNKNOWN",
+      "role": "legacy/operational source assets; incomplete statewide and nonidentical"
+    },
+    {
+      "path": "data/liberty-county-boundary.geojson",
+      "kind": "legacy single-county FeatureCollection",
+      "sha256": "be41e6556c9aa7ac224894cc8c08dca465ab02671adef9fda1dcc3c3b4df4793",
+      "counties": 1,
+      "uniqueFips": 1,
+      "geometryType": "Polygon",
+      "exactFrozenGeometryMatches": 0,
+      "fitness": "DISPLAY-ONLY / NOT FIT",
+      "role": "legacy Liberty geometry; not statewide and differs from frozen Liberty polygon"
+    },
+    {
+      "path": "supabase/migrations/202607290200_lp1041_texas_address_foundation.sql",
+      "kind": "tracked table definition, no row data",
+      "sha256": null,
+      "counties": null,
+      "uniqueFips": null,
+      "geometryType": "geometry(MultiPolygon,4326)",
+      "exactFrozenGeometryMatches": null,
+      "fitness": "UNKNOWN",
+      "role": "production candidate public.gridly_texas_county_boundaries; deployed state unknown"
+    }
+  ],
+  "comparison": {
+    "fipsMissingFromShared": [],
+    "fipsExtraInShared": [],
+    "sharedVsFrozenExactGeometryMatches": 254,
+    "sourceVsFrozenExactGeometryMatches": 254,
+    "cartographicVsFrozenExactGeometryMatches": 0,
+    "allMainGeometry": {
+      "polygons": 254,
+      "rings": 254,
+      "coordinatePairs": 604979,
+      "coordinateDimensions": [
+        2,
+        2
+      ],
+      "bbox": [
+        -106.645646,
+        25.837048,
+        -93.508039,
+        36.500704
+      ]
+    }
+  },
+  "perCountyHashMethod": "SHA-256 of canonical tracked Git blob bytes, independent of Windows checkout line endings",
+  "perCountyBoundaryFiles": [
+    {
+      "path": "assets/county-implementation/austin/boundary/austin-county-boundary.geojson",
+      "sha256": "d5a551256e5499287ac1105c4f22cefb64cf0a0d632034e907ceb7f99a2b0c65",
+      "fips": "48015",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson",
+      "sha256": "75323185a0bb51c3ed8a47c3a9cf738832f5a223e32d65d2c460404b965f1144",
+      "fips": "48039",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson",
+      "sha256": "290a02386f4dacb21f7ffb3301e2fce4e04c6b05f2dda10530116fcb343ada8f",
+      "fips": "48041",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson",
+      "sha256": "044742a4dbd8662863eaccd6c302a77a768703cce71bb316dac498f891c1cafa",
+      "fips": "48057",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/chambers/boundary/chambers-county-boundary.geojson",
+      "sha256": "5bf60d7c1d656794a278254465da0bb15273540a4481c560fa3250049293d749",
+      "fips": "48071",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson",
+      "sha256": "6c56ac55bc50c829e935bdafe67b69b59eda7e9d7478a34b1b85115a953c3edd",
+      "fips": "48089",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson",
+      "sha256": "7abd1020a19c7d9c2b7c4461f26fa9d09663c4230a4a6036f24a4b540619b2fc",
+      "fips": "48149",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson",
+      "sha256": "18d9b9d8678f2981abf01906266ad913799ff5163bd215d1687f9739aa1029e9",
+      "fips": "48157",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson",
+      "sha256": "218c5d55f71fc66858d6eab44a56f54cfd901c74323d05aa5da69118fc168157",
+      "fips": "48167",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson",
+      "sha256": "67cc770866661a8c5463a09a0b4da25fbbe66c9ed8a63b3deb76d83348a8d154",
+      "fips": "48185",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson",
+      "sha256": "1074fc150fd2c7d1e0dd5b4e1b5c309176d912f6955e7a94f77d38fc2a28b6ab",
+      "fips": "48199",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/harris/boundary/harris-county-boundary.geojson",
+      "sha256": "bff86efafb05e8f388a8d44384bac83e120da350ad0c0eb988ffb7c4fb77e72d",
+      "fips": "48201",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson",
+      "sha256": "608204e127a06bf8ed258695e54dbd183872998830db5637bc10b539a2a10118",
+      "fips": "48239",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson",
+      "sha256": "59ba29fdff1aa6e8e3b35f8e2e886101912639041d4b9f1b91dfe7ee4c88f764",
+      "fips": "48241",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
+      "sha256": "672e5decc1ad9bbd5f7a1f128335751e2c9939edb30ed41fb1018d41e2fee255",
+      "fips": "48245",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson",
+      "sha256": "11cd71a97dba1fd5de6061feff641426ac1f3d205d220c3d636eb9b200a290ed",
+      "fips": "48285",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson",
+      "sha256": "022b1738187f7cb9ef33a6508bfa1b60ff919043f49b410fbfc9db723f451536",
+      "fips": "48291",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": "Gridly-Source-Data/Census/liberty-county-2025-wgs84.geojson"
+    },
+    {
+      "path": "assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson",
+      "sha256": "78eece5350dcf582f25287ba74bcde35724166f94ec0629f352a0f80b151b899",
+      "fips": "48321",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+      "sha256": "84613cc1c9eaa3711efe2bd29ed7ed2ed7efa4c8b8d1c4374e6e9b7a7af15b70",
+      "fips": "48339",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": "Gridly-Source-Data/Census/montgomery-county-2025-wgs84.geojson"
+    },
+    {
+      "path": "assets/county-implementation/newton/boundary/newton-county-boundary.geojson",
+      "sha256": "ce61f1aa493c4fc9bff747f1dbffb2b17d6e813c82ef53b60121ad63c167358c",
+      "fips": "48351",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/orange/boundary/orange-county-boundary.geojson",
+      "sha256": "392de9ff3b02ce1ea3aefec83b7479bae9982bb7d6cf5bb1435c339a15d36ee9",
+      "fips": "48361",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/polk/boundary/polk-county-boundary.geojson",
+      "sha256": "3cec1bf5eb0cb064475b363704362151c0ec2b83923685221beb2fd4f7afcd67",
+      "fips": "48373",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
+      "sha256": "c3e6fe33fb477e8a81906db9d5acaf9c0e3507770fd4bb8b69c7e6e08a2e141d",
+      "fips": "48407",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": "Gridly-Source-Data/Census/san-jacinto-county-2025-wgs84.geojson"
+    },
+    {
+      "path": "assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson",
+      "sha256": "3b4978ceb1c0f6ec11e8ab48cb3fe469160297985d1d52e0ea2c69aedda14e19",
+      "fips": "48457",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/walker/boundary/walker-county-boundary.geojson",
+      "sha256": "c0806f8383340b5fe58939967ba4d71050f83d8d46b7ba7c8f972717b803c52c",
+      "fips": "48471",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/waller/boundary/waller-county-boundary.geojson",
+      "sha256": "6870da1816eaace0f28bd7048a22f1fb3e6da9b4e1a79f3962ad0fc1f4b3904e",
+      "fips": "48473",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/washington/boundary/washington-county-boundary.geojson",
+      "sha256": "eb777d28624f87d6f97ac40042fba5e273000a366288c59720250f5b1ffb2824",
+      "fips": "48477",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    },
+    {
+      "path": "assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson",
+      "sha256": "1d9f25ac36406b33facaa279226ab17a6aad622038a812e32224ef482b11ee5f",
+      "fips": "48481",
+      "geometryType": "Polygon",
+      "sourceLibraryPath": null
+    }
+  ],
+  "criteria": [
+    {
+      "criterion": "Canonicality",
+      "sharedExistingSource": "Shared LP1904 runtime and LP148/LP137 lineage are governed Gridly sources",
+      "responderSpecificSource": "Local Phase 3 fixture uses LP148 package but would create separate responder authority store",
+      "evidence": "Runtime source is configured in js/gridlyRuntimeEnvironmentConfig.js; LP148 provenance and Phase 3 SQL",
+      "risk": "Shared table deployment and immutability unknown",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "254-county completeness",
+      "sharedExistingSource": "254 unique Texas FIPS",
+      "responderSpecificSource": "254 in frozen responder package",
+      "evidence": "Read-only comparison: both 254, missing/extra 0",
+      "risk": "Live database rows unknown",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "FIPS stability",
+      "sharedExistingSource": "Exact 254-FIPS set matches frozen",
+      "responderSpecificSource": "Same set loaded locally",
+      "evidence": "Per-FIPS comparison: missing/extra 0",
+      "risk": "Future updates need controlled identity contract",
+      "preferred": "tie"
+    },
+    {
+      "criterion": "Geometry equivalence",
+      "sharedExistingSource": "254/254 exact ordered coordinate arrays match frozen",
+      "responderSpecificSource": "Frozen copy is identical by construction",
+      "evidence": "Shared runtime and LP137 each 604979 coordinate pairs, 254 rings, same bbox",
+      "risk": "No local full topology validator; DB conversion unverified",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Boundary semantics",
+      "sharedExistingSource": "Consumer runtime uses inclusive deterministic lowest-county-id",
+      "responderSpecificSource": "Responder requires ST_Touches reject and exactly one ST_Contains",
+      "evidence": "js/app.js versus local Phase 3 SQL",
+      "risk": "Cannot reuse consumer resolver or address ST_Covers",
+      "preferred": "adapt_shared"
+    },
+    {
+      "criterion": "Versioning",
+      "sharedExistingSource": "Shared runtime SHA-256 and package version pinned",
+      "responderSpecificSource": "Fixture catalog pins frozen LP148 SHA",
+      "evidence": "Runtime manifest and responder authority manifest",
+      "risk": "Existing tracked DB table has boundary_version but no immutable row guarantee",
+      "preferred": "adapt_shared"
+    },
+    {
+      "criterion": "Provenance",
+      "sharedExistingSource": "LP137 source to LP148 frozen to LP1904 runtime, exact coordinate preservation",
+      "responderSpecificSource": "Responder fixture cites LP148",
+      "evidence": "Source/manifest/sourceSummary lineage",
+      "risk": "Original upstream authority beyond repository designation unverified",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Authorization fitness",
+      "sharedExistingSource": "Full-resolution geometry fit with strict server-side adaptation",
+      "responderSpecificSource": "Fixture passes strict local PostGIS tests",
+      "evidence": "254 closed rings, 2D, all coordinates in range; local geometry exact",
+      "risk": "Production topology, SRID, grants, strict edges unverified",
+      "preferred": "adapt_shared"
+    },
+    {
+      "criterion": "Maintenance",
+      "sharedExistingSource": "One governed shared geometry lineage",
+      "responderSpecificSource": "Second full catalog and grant copies can drift",
+      "evidence": "Source files and Phase 3 SQL",
+      "risk": "Shared updates require responder review/fail-closed version pin",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Storage",
+      "sharedExistingSource": "One canonical geometry store plus lightweight authority references",
+      "responderSpecificSource": "Additional 254-row catalog plus per-grant polygon copies",
+      "evidence": "13.9MB frozen package; 47.9MB runtime package",
+      "risk": "Actual PostGIS storage unknown",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Migration complexity",
+      "sharedExistingSource": "Versioned shared reference and strict query adapter",
+      "responderSpecificSource": "New private catalog, loader, RLS, indexes, synchronization",
+      "evidence": "Phase 9 ordered migration design and LP104 migration",
+      "risk": "Both require reviewed production migration; neither authorized now",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Auditability",
+      "sharedExistingSource": "Authority stores FIPS, source/version hash, immutable version reference and receipt",
+      "responderSpecificSource": "Authority stores geometry copy and source metadata",
+      "evidence": "Phase 3 authority schema and Phase 6 events",
+      "risk": "Retention of old geometry versions required",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Rollback",
+      "sharedExistingSource": "Pin prior shared version and disable activation; preserve grants/history",
+      "responderSpecificSource": "Roll back catalog version with copy reconciliation",
+      "evidence": "Phase 9 rollback design",
+      "risk": "No destructive history deletion",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Operational simplicity",
+      "sharedExistingSource": "Single canonical source, separate responder governance",
+      "responderSpecificSource": "Two geometry catalogs plus synchronization",
+      "evidence": "Runtime shared source and responder fixture",
+      "risk": "Independent reviewer and change process needed",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Risk of drift",
+      "sharedExistingSource": "Pinned immutable shared version prevents silent widening",
+      "responderSpecificSource": "Two independent copies can diverge",
+      "evidence": "Exact current local geometry equality; future changes unknown",
+      "risk": "Hard fail on hash/version mismatch",
+      "preferred": "shared"
+    },
+    {
+      "criterion": "Test impact",
+      "sharedExistingSource": "Adapt Phase 3 storage assertions, retain all frozen behavior vectors",
+      "responderSpecificSource": "Retain Phase 3 fixture shape but add drift and sync tests",
+      "evidence": "Phase 3-8 tests and 54 frozen vectors",
+      "risk": "Production tests required for strict boundary and version pin",
+      "preferred": "shared"
+    }
+  ]
+}
