@@ -1,10 +1,29 @@
 {
-  "schema_version": "gridly.responder.phase14b.recoveryCheckpointEvidence.v1",
+  "schema_version": "gridly.responder.phase14b.recoveryCheckpointEvidence.v2",
   "phase": "14B",
   "scope": "READ_ONLY_RECOVERY_CHECKPOINT_VERIFICATION",
   "branch": "RESPONDER-PHASE14B-production-recovery-checkpoint",
   "starting_head": "33eb5c1ea22613a8f0046f66f6e0b4aa12d8147a",
+  "current_baseline_commit": "1f0985fc1b8bad4e20b8d7cba7275462428d0153",
   "audit_timestamp": "2026-09-15T00:13:02.953347Z",
+  "initial_audit_result": {
+    "checkpoint_proven": false,
+    "accepted_for_phase14_retry": false,
+    "retry_gate": "PHASE 14 RETRY RECOVERY GATE NOT SATISFIED",
+    "historical_finding": "The initial Phase 14B audit correctly found that no concrete project checkpoint was proven by the evidence available to the auditor at that time."
+  },
+  "owner_evidence_update": {
+    "record_type": "SUBSEQUENT_OWNER_EVIDENCE_UPDATE",
+    "owner_decision_timestamp": null,
+    "recorded_against_commit": "1f0985fc1b8bad4e20b8d7cba7275462428d0153",
+    "evidence_classification": "OWNER_REPORTED_SUPABASE_DASHBOARD_OBSERVATION",
+    "reviewed_by": "DJ Burns Collective LLC / Gridly owner",
+    "project_context": "Gridly production Supabase project",
+    "dashboard_statement": "Projects are backed up daily and can be restored.",
+    "restore_action_visible": true,
+    "owner_accepted_for_scope": "future bounded county-population retry",
+    "independent_dashboard_reinspection_performed_by_this_update": false
+  },
   "production_database": {
     "project_label": "Gridly Platform",
     "database_name": "postgres",
@@ -23,16 +42,27 @@
     "view_dependents": 0,
     "responder_schema_count": 0
   },
-  "checkpoint_type": "UNKNOWN",
-  "checkpoint_timestamp": null,
-  "checkpoint_age": null,
-  "checkpoint_age_policy": "NOT_DEFINED_IN_PROJECT_EVIDENCE",
+  "checkpoint_type": "SCHEDULED_PHYSICAL_DATABASE_BACKUP",
+  "checkpoint_timestamp": "2026-09-14T04:46:09Z",
+  "checkpoint_age": {
+    "at_initial_audit": "PT19H26M53.953347S",
+    "at_owner_acceptance": null,
+    "owner_decision_timestamp_not_provided": true
+  },
+  "checkpoint_age_policy": "OWNER_ACCEPTED_AS_RECENT_FOR_FUTURE_BOUNDED_COUNTY_POPULATION_RETRY",
+  "visible_scheduled_physical_backups": [
+    "2026-09-14T04:46:09Z",
+    "2026-09-13T04:45:50Z",
+    "2026-09-12T04:45:56Z",
+    "2026-09-11T04:48:36Z",
+    "2026-09-10T04:51:07Z"
+  ],
   "evidence_source": [
     {
       "path": "reports/lp172/backup-evidence.json",
-      "classification": "CURRENT_EVIDENCE_OF_UNRESOLVED_OWNER_ACTION",
+      "classification": "HISTORICAL_UNRESOLVED_OWNER_ACTION_AT_INITIAL_AUDIT",
       "verification_date": null,
-      "finding": "Latest successful backup metadata and PITR availability are OWNER_ACTION_REQUIRED."
+      "finding": "At the initial audit, latest successful backup metadata and PITR availability were OWNER_ACTION_REQUIRED."
     },
     {
       "path": "reports/lp171/backup-evidence-closure.json",
@@ -68,7 +98,13 @@
       "source": "Supabase Dashboard Database Backups",
       "classification": "UNAVAILABLE_WITHOUT_INTERACTIVE_LOGIN",
       "verification_date": "2026-09-15",
-      "finding": "No backup listing or timestamp was obtained."
+      "finding": "The initial auditor obtained no backup listing or timestamp. This remains the correct historical finding for the initial audit."
+    },
+    {
+      "source": "Subsequent owner review of Supabase Dashboard Database Backups",
+      "classification": "OWNER_REPORTED_CONCRETE_PROJECT_EVIDENCE",
+      "verification_date": null,
+      "finding": "The owner reported a scheduled physical database backup at 2026-09-14T04:46:09Z with an available Restore action, four additional daily scheduled physical backups, and accepted the checkpoint for the future bounded county-population retry."
     },
     {
       "url": "https://supabase.com/docs/guides/platform/backups",
@@ -83,23 +119,21 @@
       "finding": "Documents a database-only restore to a new project and its reconfiguration limits; project eligibility was not proven."
     }
   ],
-  "database_covered": "NOT_PROVEN_BY_A_CONCRETE_CHECKPOINT",
-  "backup_pitr_capability": "UNKNOWN",
-  "restore_mechanism": "PLATFORM_METHODS_DOCUMENTED_BUT_PROJECT_AVAILABILITY_UNPROVEN",
+  "database_covered": "OWNER_CONFIRMED_GRIDLY_PRODUCTION_DATABASE_PHYSICAL_BACKUP",
+  "backup_pitr_capability": "SCHEDULED_PHYSICAL_DATABASE_BACKUP_OBSERVED; PITR_NOT_CLAIMED",
+  "restore_mechanism": "OWNER_OBSERVED_AVAILABLE_SUPABASE_DASHBOARD_RESTORE_ACTION",
   "recovery_owner": {
-    "classification": "PARTIALLY_IDENTIFIED",
-    "authorization_role": "DJ Burns Collective LLC owner",
-    "operator_role": "designated database operator",
-    "assigned_operator": null
+    "classification": "IDENTIFIED_BY_OWNER_ROLE",
+    "authorization_role": "DJ Burns Collective LLC / Gridly owner",
+    "operator_role": "Gridly owner using the authorized Supabase project dashboard",
+    "assigned_operator": "DJ Burns Collective LLC / Gridly owner",
+    "named_individual": null
   },
   "recovery_procedure": {
     "classification": "DOCUMENTED_BUT_PRODUCTION_UNTESTED",
     "primary_path": "docs/LEGAL/LP24421-RECOVERY-RUNBOOK.md",
     "county_retry_path": "docs/RESPONDER/RESPONDER-PHASE14A-PRODUCTION-COUNTY-RETRY-RUNBOOK.md",
-    "missing": [
-      "concrete checkpoint selection",
-      "assigned recovery operator",
-      "project-specific restore availability",
+    "remaining_limitations": [
       "observed restoration duration",
       "production restore test evidence"
     ]
@@ -108,63 +142,81 @@
   "restore_scope_risk": "HIGH",
   "restore_scope_reason": "A whole-database recovery can revert unrelated reports, feedback, geocode/provider state, Auth records and migrations created after the selected checkpoint; a new-project restore also requires non-database reconfiguration.",
   "restore_test_status": "NO_PRODUCTION_RESTORE_EVIDENCE",
-  "recovery_health": "UNKNOWN",
+  "recovery_health": "PARTIALLY_SUPPORTED_BY_FIVE_CONSECUTIVE_VISIBLE_SCHEDULED_BACKUPS_AND_AVAILABLE_RESTORE_ACTION; PROVIDER_HEALTH_TELEMETRY_NOT_CAPTURED",
   "owner_acceptance_required": true,
-  "owner_acceptance_status": "CANNOT_BE_REQUESTED_ON_CONCRETE_CHECKPOINT_EVIDENCE_BECAUSE_CHECKPOINT_IS_UNKNOWN",
+  "owner_acceptance_status": "ACCEPTED_BY_DJ_BURNS_COLLECTIVE_LLC_GRIDLY_OWNER_FOR_FUTURE_BOUNDED_COUNTY_POPULATION_RETRY",
   "primary_recovery_strategy": [
     "hold the county insert transaction open through certification and ROLLBACK on any failure",
     "perform immediate fresh postcommit read-only certification",
-    "use a narrowly reviewed forward correction when safe",
-    "use whole-database or new-project restore only when necessary and separately owner-authorized"
+    "consider a narrow forward correction only under separate authorization when safe",
+    "use the approved Supabase physical backup only as the disaster-recovery fallback, not as the first-line rollback mechanism"
   ],
-  "county_write_recovery_sufficiency": "INSUFFICIENT",
+  "county_write_recovery_sufficiency": "SUFFICIENT_FOR_BOUNDED_RETRY_WITH_ACKNOWLEDGED_NONBLOCKING_LIMITATIONS",
   "acceptance_criteria": {
     "recent_backup_or_pitr_exists": {
-      "pass": false,
-      "reason": "No concrete current checkpoint listing or provider metadata was obtained."
+      "status": "PASS",
+      "gate_blocking": false,
+      "reason": "The owner observed and approved the 2026-09-14 scheduled physical database backup and four preceding daily backups."
     },
     "checkpoint_timestamp_known": {
-      "pass": false,
-      "reason": "No checkpoint timestamp is available."
+      "status": "PASS",
+      "gate_blocking": false,
+      "reason": "The approved checkpoint timestamp is 2026-09-14T04:46:09Z."
     },
     "checkpoint_predates_future_write": {
-      "pass": false,
-      "reason": "Cannot compare an unknown checkpoint with a future operation."
+      "status": "PASS",
+      "gate_blocking": false,
+      "reason": "The checkpoint is fixed in the past and the bounded county-population retry remains a future separately authorized operation."
     },
     "target_database_covered": {
-      "pass": false,
-      "reason": "General platform coverage does not prove that a concrete checkpoint covers this project."
+      "status": "PASS",
+      "gate_blocking": false,
+      "reason": "The owner identified the checkpoint on the Gridly production project's database backup page; scheduled physical database backup scope covers the target database."
     },
     "recovery_mechanism_known": {
-      "pass": false,
-      "reason": "Platform methods are documented, but this project's available method is unverified."
+      "status": "PASS",
+      "gate_blocking": false,
+      "reason": "The owner observed an available Restore action for the concrete checkpoint in the authorized project dashboard."
     },
     "recovery_owner_identified": {
-      "pass": false,
-      "reason": "Owner/operator responsibilities are defined, but no assigned recovery operator is evidenced."
+      "status": "PASS",
+      "gate_blocking": false,
+      "reason": "DJ Burns Collective LLC / Gridly owner accepted recovery responsibility through the authorized Supabase project dashboard; no individual name was supplied."
     },
     "recovery_procedure_known": {
-      "pass": true,
+      "status": "PASS",
+      "gate_blocking": false,
       "reason": "Repository runbooks define isolation, checkpoint choice, certification and controlled reconnection."
     },
     "prepopulation_restore_path_proven": {
-      "pass": false,
-      "reason": "No production restore test or concrete checkpoint proves restoration to the prepopulation state."
+      "status": "PARTIAL",
+      "gate_blocking": false,
+      "reason": "A concrete pre-write physical backup and project Restore action establish the fallback path, but no production restore was executed and restoration duration is unknown."
     },
     "no_degraded_recovery_state": {
-      "pass": false,
-      "reason": "Health is unknown; silence cannot establish a healthy backup state."
+      "status": "PARTIAL",
+      "gate_blocking": false,
+      "reason": "Five consecutive scheduled backups and an available Restore action support availability; provider health telemetry and a restore test were not captured."
     },
     "owner_acceptance_based_on_concrete_evidence": {
-      "pass": false,
-      "reason": "There is no concrete checkpoint for owner acceptance."
+      "status": "PASS",
+      "gate_blocking": false,
+      "reason": "The Gridly owner expressly accepted the identified checkpoint for the future bounded county-population retry."
     }
   },
-  "accepted_for_phase14_retry": false,
-  "retry_gate": "PHASE 14 RETRY RECOVERY GATE NOT SATISFIED",
+  "acceptance_criteria_summary": {
+    "pass": 8,
+    "partial": 2,
+    "fail": 0,
+    "blocking": 0
+  },
+  "accepted_for_phase14_retry": true,
+  "retry_gate": "PHASE 14 RETRY RECOVERY GATE SATISFIED",
   "p12_01": "OPEN",
   "b03": "OPEN",
   "production_write_occurred": false,
   "backup_or_restore_action_occurred": false,
-  "production_configuration_changed": false
+  "production_configuration_changed": false,
+  "production_or_supabase_access_during_local_update": false,
+  "county_population_occurred": false
 }
