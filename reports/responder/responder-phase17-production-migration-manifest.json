@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "gridly.responder.phase17.productionMigrationManifest.v1",
+  "phase": "17",
+  "recordedDate": "2026-09-15",
+  "branch": "RESPONDER-PHASE17-production-migration-readiness",
+  "sourcePhase16Commit": "df98157a9e5e77065077ae657fa3062017c88ea0",
+  "phase17Commit": null,
+  "phase17CommitNote": "Filled by the final response because embedding the commit in its own committed manifest is self-referential.",
+  "readinessVerdict": "CONDITIONAL GO",
+  "deploymentAuthorizationStatus": "NOT AUTHORIZED",
+  "deploymentStatus": "NOT DEPLOYED",
+  "productionMutations": "NONE",
+  "package": {
+    "migration": {
+      "path": "db/responder-local/phase17_production_migration.sql",
+      "sha256": "20fd8161586beee09c57084c4f5299aa59c1c901fdcd5890e1cb5949a83ec687"
+    },
+    "preflight": {
+      "path": "db/responder-local/phase17_production_preflight.sql",
+      "sha256": "5222a68cf9a9d9459dfb6843fa967bc50bca318d353a6b3391f517106c798cc7"
+    },
+    "postflight": {
+      "path": "db/responder-local/phase17_production_postflight.sql",
+      "sha256": "3e08baf5ea6c2a0d90a32f776296ad3866c2b833013220a8940b4c0349503aae"
+    },
+    "rollback": {
+      "path": "db/responder-local/phase17_production_rollback.sql",
+      "sha256": "c09a3694dd8ee66e182b62356200984a39abf8b3bcecdbb4bd22d03cdce12c85"
+    }
+  },
+  "futureMigration": {
+    "name": "prepare_responder_production_schema",
+    "filename": "<supabase-cli-generated-timestamp>_prepare_responder_production_schema.sql",
+    "generationRequired": "supabase migration new prepare_responder_production_schema",
+    "sourceMustBeByteIdenticalTo": "db/responder-local/phase17_production_migration.sql",
+    "oneDeploymentOnly": true
+  },
+  "requiredProduction": {
+    "projectRef": "nhwhkbkludzkuyxmkkcj",
+    "databasePrincipal": "postgres",
+    "postgres": ">=17.6,<18",
+    "observedPostgres": "17.6",
+    "postgis": ">=3.3.7,<4",
+    "observedPostgis": "3.3.7",
+    "extensions": ["postgis@extensions", "pgcrypto@extensions"],
+    "roles": ["postgres:bypassrls", "anon:no-bypassrls", "authenticated:no-bypassrls", "service_role:bypassrls"],
+    "countyTable": "public.gridly_texas_county_boundaries",
+    "countyRows": 254,
+    "communityReportingEnabled": false
+  },
+  "expectedInventory": {
+    "schemas": ["agency_private", "responder_public"],
+    "privateEnums": ["authority_status", "condition_type", "invite_status", "lifecycle_state", "membership_role", "membership_status", "operating_status", "principal_status", "update_event_type", "verification_status"],
+    "privateTables": ["activation_rate_events", "agency_update_events", "agency_update_revisions", "agency_updates", "governance_events", "gridly_admin_grants", "operation_receipts", "organization_county_authorities", "organization_invites", "organization_memberships", "organizations", "principals", "road_closure_approvals"],
+    "publicTables": ["agency_updates"],
+    "privateFunctions": ["_current_authority_for_point", "_live_auth_context", "_public_update_eligible", "_refresh_public_projection", "_withdraw_active_updates", "agency_governance_command", "agency_membership_command", "agency_update_command", "current_gridly_admin_security_context", "current_responder_security_context", "reject_append_only_mutation"],
+    "publicSecurityInvokerFunctions": ["agency_governance_command(jsonb)", "agency_membership_command(jsonb)", "agency_update_command(jsonb)"],
+    "policyCount": 14,
+    "privatePolicyCount": 13,
+    "publicPolicyCount": 1,
+    "explicitIndexes": ["activation_rate_events_rolling_idx", "agency_update_events_activation_lineage_idx", "agency_update_events_org_time_idx", "agency_update_revisions_location_gist_idx", "agency_update_revisions_org_state_idx", "agency_updates_org_state_idx", "governance_events_org_time_idx", "operation_receipts_actor_time_idx", "operation_receipts_org_time_idx", "organization_county_authorities_current_lookup_idx", "organization_county_authorities_one_current_idx", "organization_invites_expiry_idx", "organization_invites_one_live_email_idx", "organization_memberships_one_active_org_per_user_idx", "organization_memberships_org_status_role_idx", "organization_memberships_user_status_idx", "responder_public_agency_updates_expiry_idx"],
+    "appendOnlyTriggerCount": 6,
+    "publicProjectionColumnCount": 18,
+    "views": []
+  },
+  "zeroActivationInvariants": [
+    "all responder tables contain zero rows",
+    "no organization, principal, membership, GRIDLY_ADMIN grant, or county authority is seeded",
+    "no active update, approval, activation event, or consumer row exists",
+    "agency_publishing_enabled defaults false",
+    "community reporting remains false",
+    "responder_public is not added to Data API exposed schemas by SQL",
+    "agency_private is never exposed"
+  ],
+  "dataApi": {
+    "responderPublicExposureRequiredBeforePilot": true,
+    "configurationPerformed": false,
+    "agencyPrivateExposureForbidden": true
+  },
+  "verification": {
+    "localPostgres": "17.10",
+    "localPostgis": "3.6.2",
+    "dirtyFailureCases": {"passed": 13, "failed": 0, "total": 13},
+    "disposableDatabaseChecks": {"passed": 20, "failed": 0, "total": 20},
+    "phase17StaticContracts": {"passed": 16, "failed": 0, "total": 16},
+    "phase17SecurityVectors": {"passed": 38, "failed": 0, "total": 38},
+    "phase17SecurityDatabaseChecks": {"passed": 22, "failed": 0, "total": 22},
+    "phase16SecurityRegressionVectors": {"passed": 38, "failed": 0, "total": 38},
+    "phase16DatabaseRegressionChecks": {"passed": 22, "failed": 0, "total": 22},
+    "emptyRollback": "PASS",
+    "rollbackRefusalWithEvidence": "PASS",
+    "productionVersionClone": "REQUIRED_NOT_RUN",
+    "freshProductionPreflight": "REQUIRED_NOT_RUN",
+    "securityAdvisor": "REQUIRED_NOT_RUN",
+    "performanceAdvisor": "REQUIRED_NOT_RUN"
+  },
+  "remainingOwnerGates": [
+    "fresh production recovery checkpoint and restore authority",
+    "exact-version production-shaped clone rehearsal",
+    "current Supabase CLI generated migration and history reconciliation",
+    "fresh read-only production preflight",
+    "staging Security and Performance Advisors",
+    "explicit approval of exact commit, migration timestamp, hash, project, operator, and window"
+  ],
+  "secretsRecorded": false,
+  "pushed": false,
+  "merged": false,
+  "protectedOriginalWorktreeTouched": false
+}
