@@ -17,6 +17,11 @@ export const runtimePolicy = Object.freeze({
   files: [
     'index.html', 'manifest.json', 'service-worker.js', 'css/styles.css',
     'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',
+    'assets/walkthrough/gridly-walkthrough-kbyg.png',
+    'assets/walkthrough/gridly-walkthrough-nearby.png',
+    'assets/walkthrough/gridly-walkthrough-alerts.png',
+    'assets/walkthrough/gridly-walkthrough-report.png',
+    'assets/walkthrough/gridly-walkthrough-settings.png',
     'assets/favicon-32.png', 'assets/gridly-header-compact.png',
     'assets/gridly-header-ultra-compact.png', 'assets/gridly-header-ultra-compact-fixed.png',
     'assets/gridly-logo-horizontal-lite-mode.png', 'assets/gridly-logo-primary.png',
