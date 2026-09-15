@@ -271,6 +271,132 @@ test('Stage 5 probes are GET-only, zero-row bounded, body-suppressed, and follow
   assert.doesNotMatch(evidenceSql, /\b(?:INSERT|UPDATE|DELETE|TRUNCATE)\b/i);
 });
 
+test('Stage 6 requires explicit authorization and rejects a session UUID credential', () => {
+  const shell = process.platform === 'win32' ? 'powershell.exe' : 'pwsh';
+  const unauthorized = spawnSync(shell, ['-NoProfile','-ExecutionPolicy','Bypass','-File',path.join(root, paths.ps1),
+    '-Mode','RemoveFactor',
+    '-TestUserId','11111111-1111-4111-8111-111111111111',
+    '-FactorId','22222222-2222-4222-8222-222222222222'], { cwd: root, encoding: 'utf8' });
+  assert.notEqual(unauthorized.status, 0);
+  assert.match(`${unauthorized.stdout}\n${unauthorized.stderr}`, /without -AuthorizeProductionMutation/);
+  const start = ps1.indexOf("'RemoveFactor' {");
+  const end = ps1.indexOf("\n    'RecoverUnverifiedTotpFactor' {", start);
+  const dispatch = ps1.slice(start, end);
+  assert.match(dispatch, /if \(\$SessionId\)/);
+  assert.match(dispatch, /-SessionId is not accepted as a removal credential/);
+  assert.match(dispatch, /Require-TestEmail; Require-TestUserId; Require-FactorId; Require-PublishableKey; Require-AdminKey; Require-OperatorPassword; Require-TotpCode/);
+});
+
+test('Stage 6 validates the exact live marked user and exact verified TOTP factor before mutation', () => {
+  const start = helper.indexOf('async function removeFactor()');
+  const end = helper.indexOf('\nasync function recoverUnverifiedTotpFactor()', start);
+  const stage6 = helper.slice(start, end);
+  const userRead = stage6.indexOf('/auth/v1/admin/users/${encodeURIComponent(userId)}`');
+  const marker = stage6.indexOf('gridly_operator_test !== TEST_LABEL');
+  const deleted = stage6.indexOf('user?.deleted_at');
+  const factorList = stage6.indexOf('/factors`');
+  const cardinality = stage6.indexOf('matching.length !== 1');
+  const ownership = stage6.indexOf('exactFactor.user_id');
+  const type = stage6.indexOf("factorType !== 'totp'");
+  const status = stage6.indexOf("exactFactor.status !== 'verified'");
+  const signIn = stage6.indexOf('await signIn(');
+  assert.ok(userRead >= 0 && marker > userRead && deleted > marker && factorList > deleted);
+  assert.ok(cardinality > factorList && ownership > cardinality && type > ownership && status > type && signIn > status);
+  assert.match(stage6, /requireUuid\(env\('GRIDLY_RESPONDER_TEST_USER_ID'\)/);
+  assert.match(stage6, /requireUuid\(env\('GRIDLY_RESPONDER_FACTOR_ID'\)/);
+});
+
+test('Stage 6 creates one pre-removal password session and proves same-session TOTP aal2', () => {
+  const start = helper.indexOf('async function removeFactor()');
+  const end = helper.indexOf('\nasync function recoverUnverifiedTotpFactor()', start);
+  const stage6 = helper.slice(start, end);
+  const deleteIndex = stage6.indexOf("label: 'Delete exact verified Stage 6 TOTP factor'");
+  const beforeDelete = stage6.slice(0, deleteIndex);
+  assert.equal((beforeDelete.match(/await signIn\(/g) || []).length, 1);
+  assert.equal((beforeDelete.match(/await elevateTotp\(/g) || []).length, 1);
+  assert.match(beforeDelete, /aal1Claims\.session_id !== staleClaims\.session_id/);
+  assert.match(beforeDelete, /staleClaims\.aal !== 'aal2'/);
+  assert.match(beforeDelete, /amr_methods\.includes\('password'\)/);
+  assert.match(beforeDelete, /amr_methods\.includes\('totp'\)/);
+  assert.match(beforeDelete, /const preRemovalProbe = await probeOldToken\(baseUrl, staleAccessToken\)/);
+  assert.match(beforeDelete, /preRemovalProbe\.auth_user_http_status !== 200/);
+  assert.match(beforeDelete, /!preRemovalProbe\.postgrest_jwt_accepted/);
+  assert.match(beforeDelete, /preRemovalProbe\.postgrest_zero_rows_confirmed !== true/);
+  assert.match(beforeDelete, /!preRemovalExpStillInFuture/);
+});
+
+test('Stage 6 uses one exact Admin factor deletion and no user-side deletion, logout, or session deletion', () => {
+  const start = helper.indexOf('async function removeFactor()');
+  const end = helper.indexOf('\nasync function recoverUnverifiedTotpFactor()', start);
+  const stage6 = helper.slice(start, end);
+  assert.equal((stage6.match(/method: 'DELETE'/g) || []).length, 1);
+  assert.match(stage6, /\/auth\/v1\/admin\/users\/\$\{encodeURIComponent\(userId\)\}\/factors\/\$\{encodeURIComponent\(factorId\)\}/);
+  assert.doesNotMatch(stage6, /request\(baseUrl, `\/auth\/v1\/factors\/\$\{encodeURIComponent\(factorId\)\}`,[\s\S]*method: 'DELETE'/);
+  assert.doesNotMatch(stage6, /\/auth\/v1\/logout|should_soft_delete|\/sessions\//);
+  assert.doesNotMatch(stage6, /(?:INSERT|UPDATE|DELETE)\s+(?:FROM|INTO)\s+auth\.(?:sessions|refresh_tokens)/i);
+  assert.doesNotMatch(stage6, /writeQrFile|friendly_name|factor_type:\s*'totp'/);
+  assert.doesNotMatch(stage6, /\/rest\/v1\/[^'`?]+(?:\?|`)[\s\S]*method:\s*'(?:POST|PUT|PATCH|DELETE)'/);
+  assert.match(stage6, /explicit_logout_performed: false/);
+  assert.match(stage6, /explicit_session_delete_performed: false/);
+  assert.match(stage6, /user_delete_performed: false/);
+  assert.match(stage6, /factor_replacement_performed: false/);
+  assert.match(stage6, /factorDelete\.data = null/);
+});
+
+test('Stage 6 reuses the same old tokens, attempts refresh once, and signs in once after removal', () => {
+  const start = helper.indexOf('async function removeFactor()');
+  const end = helper.indexOf('\nasync function recoverUnverifiedTotpFactor()', start);
+  const stage6 = helper.slice(start, end);
+  const deleteIndex = stage6.indexOf("label: 'Delete exact verified Stage 6 TOTP factor'");
+  const afterDelete = stage6.slice(deleteIndex);
+  assert.match(afterDelete, /const postRemovalProbe = await probeOldToken\(baseUrl, staleAccessToken\)/);
+  assert.match(stage6, /same_token_reused: true/);
+  assert.equal((stage6.match(/grant_type=refresh_token/g) || []).length, 1);
+  assert.match(stage6, /body: \{ refresh_token: staleRefreshToken \}/);
+  assert.match(stage6, /attempted: true, accepted: true/);
+  assert.match(stage6, /attempted: true, accepted: false/);
+  assert.equal((afterDelete.match(/await signIn\(/g) || []).length, 1);
+  assert.ok(afterDelete.indexOf('grant_type=refresh_token') < afterDelete.indexOf('fresh = await signIn'));
+});
+
+test('Stage 6 output is allowlisted and all secret-bearing references are cleared', () => {
+  const start = helper.indexOf('async function removeFactor()');
+  const end = helper.indexOf('\nasync function recoverUnverifiedTotpFactor()', start);
+  const stage6 = helper.slice(start, end);
+  const returnStart = stage6.indexOf('return {');
+  const returnEnd = stage6.indexOf('\n    };', returnStart);
+  const safeOutput = stage6.slice(returnStart, returnEnd);
+  for (const field of ['pre_removal','admin_factor_delete','post_removal_old_access_token','old_refresh',
+    'fresh_password_sign_in','postgrest_zero_rows_confirmed','sub_sha256_16']) {
+    assert.match(safeOutput, new RegExp(field), field);
+  }
+  assert.doesNotMatch(safeOutput, /staleAccessToken|staleRefreshToken|refreshResponse|adminKey|Authorization|claim_names/);
+  assert.doesNotMatch(stage6, /createHash|fs\.write|writeQrFile|process\.stdout|console\.log/);
+  assert.match(stage6, /finally \{[\s\S]*staleAccessToken = null;[\s\S]*staleRefreshToken = null;/);
+  for (const value of ['refreshResponse?.data','fresh','aal2','aal1']) assert.match(stage6, new RegExp(`clearSessionSecrets\\(${value.replace('?', '\\?')}\\)`));
+  for (const name of ['GRIDLY_RESPONDER_TEST_PASSWORD','GRIDLY_RESPONDER_TOTP_CODE','GRIDLY_SUPABASE_PUBLISHABLE_KEY',
+    'GRIDLY_SUPABASE_SECRET_KEY','GRIDLY_SUPABASE_SERVICE_ROLE_KEY']) assert.match(stage6, new RegExp(name));
+  const dispatcherCleanup = ps1.slice(ps1.indexOf("if ($Mode -eq 'RemoveFactor')"));
+  for (const name of ['GRIDLY_RESPONDER_TEST_PASSWORD','GRIDLY_SUPABASE_PUBLISHABLE_KEY',
+    'GRIDLY_SUPABASE_SECRET_KEY','GRIDLY_SUPABASE_SERVICE_ROLE_KEY']) assert.match(dispatcherCleanup, new RegExp(name));
+  assert.match(dispatcherCleanup, /SetEnvironmentVariable\(\$Name, \$null, \[EnvironmentVariableTarget\]::Process\)/);
+});
+
+test('Stage 6 retains bounded read-only reset correlation and documents outcome classification', () => {
+  assert.match(evidenceSql, /BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY/);
+  assert.match(evidenceSql, /requested_session_count/);
+  assert.match(evidenceSql, /'aal', x\.aal/);
+  assert.match(evidenceSql, /'factor_id', x\.factor_id/);
+  assert.match(evidenceSql, /auth\.mfa_amr_claims/);
+  assert.doesNotMatch(evidenceSql, /\b(?:INSERT|UPDATE|DELETE|TRUNCATE|CREATE|ALTER|DROP|GRANT|REVOKE)\b/i);
+  assert.match(doc, /OUTCOME A[^\n]*SESSION REVOKED/i);
+  assert.match(doc, /OUTCOME B[^\n]*SESSION SURVIVES BUT IS DOWNGRADED/i);
+  assert.match(doc, /OUTCOME C[^\n]*UNEXPECTED STATE/i);
+  assert.match(doc, /one old-refresh-token grant attempt/i);
+  assert.match(doc, /one post-removal password sign-in/i);
+  assert.match(doc, /Cleanup, replacement enrollment, session revocation, and user deletion remain separately authorized/);
+});
+
 test('integer-second cutoff rejects the observed and same-second token', () => {
   const result = spawnSync(process.execPath, [path.join(root, paths.helper),'simulate-cutoff','1700000000','1700000001'], {
     cwd: root, encoding: 'utf8'

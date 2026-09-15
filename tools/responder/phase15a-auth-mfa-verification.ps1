@@ -215,7 +215,10 @@ try {
       Invoke-SafeNode 'revoke-session' | Out-Null
     }
     'RemoveFactor' {
-      Require-TestEmail; Require-TestUserId; Require-FactorId; Require-PublishableKey; Require-OperatorPassword; Require-TotpCode
+      if ($SessionId) {
+        throw 'Stage 6 creates and evaluates one new disposable AAL2 session; -SessionId is not accepted as a removal credential.'
+      }
+      Require-TestEmail; Require-TestUserId; Require-FactorId; Require-PublishableKey; Require-AdminKey; Require-OperatorPassword; Require-TotpCode
       Invoke-SafeNode 'remove-factor' | Out-Null
     }
     'RecoverUnverifiedTotpFactor' {
@@ -236,5 +239,11 @@ try {
   }
   foreach ($Name in @('GRIDLY_RESPONDER_TEST_USER_ID','GRIDLY_RESPONDER_FACTOR_ID','GRIDLY_RESPONDER_TOTP_CODE')) {
     [Environment]::SetEnvironmentVariable($Name, $null, [EnvironmentVariableTarget]::Process)
+  }
+  if ($Mode -eq 'RemoveFactor') {
+    foreach ($Name in @('GRIDLY_RESPONDER_TEST_PASSWORD','GRIDLY_SUPABASE_PUBLISHABLE_KEY',
+      'GRIDLY_SUPABASE_SECRET_KEY','GRIDLY_SUPABASE_SERVICE_ROLE_KEY')) {
+      [Environment]::SetEnvironmentVariable($Name, $null, [EnvironmentVariableTarget]::Process)
+    }
   }
 }

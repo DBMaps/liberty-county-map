@@ -391,35 +391,142 @@ The correlation command prompts only for the production database password if `PG
 
 **Paste back.** The complete safe revocation JSON and complete single-object correlation JSON. Never paste credentials, tokens, authenticator codes, headers, or response bodies.
 
-### Stage 8 — remove/reset the TOTP factor and probe stale evidence
+### Stage 8 — Stage 6 verified-TOTP reset experiment
 
-**Purpose.** Establish a fresh `aal2` session, delete the exact TOTP factor as that user, probe the saved old access token, attempt one refresh in memory, then perform a fresh password sign-in and inspect resulting assurance/factors.
+**Purpose.** This is the owner-controlled Stage 6 reset experiment. It verifies the exact marked identity and verified TOTP factor through the server-side Admin API before mutation; creates one new password session; elevates that same session to `aal2`; probes it; administratively deletes only the exact factor; reuses the exact old access token for the same probes; attempts the exact old refresh token once; and performs one fresh password sign-in. It determines whether production removes the session or retains it with downgraded managed assurance while the already-issued JWT remains stale.
 
-**Preconditions.** Stage 7 passed; verified `$FactorId` still exists.
+**Preconditions.** Stage 5 passed; `$TestUserId` and `$FactorId` are exact; the factor remains `totp/verified`; the owner has the dedicated email/password, a current authenticator code, the production publishable/anon key, and a server/operator Admin credential. `-SessionId` is prohibited in the mutation mode. The historical Stage 4 session is observation evidence, not a removal credential.
+
+**Later production mutations.** One pre-removal password sign-in; one TOTP challenge/verification; exact Admin deletion of one factor; one old-refresh-token grant attempt, which may rotate managed refresh state if accepted; and one post-removal password sign-in. The helper performs no explicit logout, session deletion, user deletion, factor replacement, application write, or SQL DML.
 
 > **OWNER EXECUTION REQUIRED**
 
 ```powershell
+cd 'C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze'
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+
+$TestUserId = [guid]'f01c5e50-854b-49ab-a65f-0ba81744943a'
+$FactorId = [guid]'5afa5b22-4797-416a-8144-b71dab682c40'
+if (-not $env:GRIDLY_RESPONDER_TEST_EMAIL) {
+  $env:GRIDLY_RESPONDER_TEST_EMAIL = Read-Host 'Dedicated temporary test email'
+}
+$env:GRIDLY_SUPABASE_URL = 'https://nhwhkbkludzkuyxmkkcj.supabase.co'
+
 & '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
   -Mode RemoveFactor `
   -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
   -TestUserId $TestUserId `
   -FactorId $FactorId `
   -AuthorizeProductionMutation
-
-& '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
-  -Mode InspectReset -TestUserId $TestUserId
 ```
 
-**Expected output.** Removed factor UUID; old `aal2` claim summary; old-token Auth/PostgREST statuses; refresh accepted/denied and safe refreshed claims; fresh sign-in claims; empty factor list; and SQL showing no factor row plus current session/AMR state.
+The concealed prompts, when values are absent, are: production publishable/anon key, production secret/service-role key, temporary test-user password, and current authenticator TOTP code. Never paste any prompt value into evidence or chat. The dispatcher clears the password, TOTP code, publishable key, and both accepted Admin-key environment names in `finally`, even when they existed before invocation.
 
-**Pass condition.** Exact factor is gone. Record independently whether the old JWT remains endpoint-accepted, whether refresh survives, whether the session row survives, and whether a fresh sign-in is `aal1` with no TOTP factor. Demonstrate that a Gridly `enabled + minimum_iat + live session/factor` predicate can reject the stale token immediately.
+The exact factor mutation is `DELETE /auth/v1/admin/users/{userId}/factors/{factorId}` with the Admin credential in this operator-side Node process. The response body is discarded. The helper never calls the user-side factor-delete path, `/logout`, a session-delete path, a user-delete path, or a factor-enrollment path.
 
-**Fail condition.** Wrong factor affected, factor still verified/present, fresh sign-in incorrectly satisfies the TOTP contract, or output contains a secret.
+Safe JSON shape; numeric/status placeholders are replaced by observations:
 
-**Rollback / stop.** Factor removal is irreversible. Proceed to Stage 10 unless Stage 9 is explicitly justified.
+```json
+{
+  "mode": "RemoveFactor",
+  "session_scope": "new_disposable_aal2_session_only",
+  "marked_user_verified": true,
+  "verified_factor_id": "5afa5b22-4797-416a-8144-b71dab682c40",
+  "same_session_elevated_to_aal2": true,
+  "pre_removal": {
+    "aal": "aal2",
+    "session_id": "<former disposable AAL2 session UUID>",
+    "iat": 0,
+    "exp": 0,
+    "amr_methods": ["password", "totp"],
+    "token_exp_still_in_future": true,
+    "auth_user_http_status": 0,
+    "postgrest_zero_row_http_status": 0,
+    "postgrest_zero_rows_confirmed": true
+  },
+  "admin_factor_delete": {
+    "factor_id": "5afa5b22-4797-416a-8144-b71dab682c40",
+    "http_status": 200,
+    "explicit_logout_performed": false,
+    "explicit_session_delete_performed": false,
+    "user_delete_performed": false,
+    "factor_replacement_performed": false
+  },
+  "post_removal_old_access_token": {
+    "same_token_reused": true,
+    "auth_user_http_status": 0,
+    "postgrest_zero_row_http_status": 0,
+    "postgrest_zero_rows_confirmed": true,
+    "token_exp_still_in_future": true
+  },
+  "old_refresh": {
+    "attempted": true,
+    "accepted": false,
+    "http_status": 0,
+    "refreshed_aal": null,
+    "refreshed_session_id": null,
+    "refreshed_iat": null,
+    "refreshed_exp": null,
+    "refreshed_amr_methods": []
+  },
+  "fresh_password_sign_in": {
+    "aal": "<observed AAL>",
+    "session_id": "<fresh post-removal session UUID>",
+    "iat": 0,
+    "exp": 0,
+    "amr_methods": ["<observed methods>"],
+    "sub_sha256_16": "<safe subject digest>",
+    "factors": []
+  }
+}
+```
 
-**Paste back.** Removal JSON and reset-correlation JSON.
+If refresh succeeds, `accepted` is `true` and only the safe refreshed AAL/session/`iat`/`exp`/AMR fields are populated. The old refresh token is attempted exactly once and is never retried, printed, hashed, or persisted. All access, refresh, provider-token, Admin-key, password, and TOTP references are cleared in `finally` before the helper process exits.
+
+Copy `pre_removal.session_id` and `fresh_password_sign_in.session_id` only, then run both exact read-only correlations:
+
+```powershell
+$FormerAal2SessionId = [guid](Read-Host 'Paste only pre_removal.session_id')
+$FreshPasswordSessionId = [guid](Read-Host 'Paste only fresh_password_sign_in.session_id')
+
+$env:PGHOST = 'db.nhwhkbkludzkuyxmkkcj.supabase.co'
+$env:PGPORT = '5432'
+$env:PGDATABASE = 'postgres'
+$env:PGUSER = 'postgres'
+$env:PGSSLMODE = 'verify-full'
+
+& '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
+  -Mode InspectReset `
+  -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
+  -TestUserId $TestUserId `
+  -SessionId $FormerAal2SessionId
+
+& '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
+  -Mode InspectReset `
+  -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
+  -TestUserId $TestUserId `
+  -SessionId $FreshPasswordSessionId
+```
+
+Both correlations use repeatable-read read-only transactions, exact UUID predicates, short timeouts, one safe JSON row, and rollback. They report all sessions only for `$TestUserId`; `mfa_amr_claims` is restricted to the requested session.
+
+**Interpretation.** Classify from production evidence only:
+
+- **OUTCOME A — SESSION REVOKED:** former `requested_session_count=0`. Old Auth and refresh behavior are recorded independently; PostgREST may still accept the unexpired JWT.
+- **OUTCOME B — SESSION SURVIVES BUT IS DOWNGRADED:** former `requested_session_count=1`, live session `aal=aal1`, `factor_id=null`, and TOTP AMR absent from live managed state. The stale access token may still claim `aal2`/TOTP and remain endpoint-accepted.
+- **OUTCOME C — UNEXPECTED STATE:** factor remains, session remains `aal2`, factor association or TOTP AMR contradicts removal, fresh sign-in retains TOTP capability, response returns application data, or any other cross-layer inconsistency occurs.
+
+Current Supabase Auth source and its 2.193.0 changelog implement Admin deletion by downgrading factor-associated sessions and stripping the applicable MFA AMR evidence, while the public Admin API reference still describes all-session logout. This discrepancy is why production observation controls the Gridly decision.
+
+**Expected output.** Exact safe pre/post statuses; confirmed zero-row reads; Admin delete `200`; one old-refresh result; one fresh-sign-in claim summary and factor list; then two SQL objects with `transaction_read_only=on`, `user_count=1`, marker true, exact `requested_session_count`, safe user-scoped sessions, refresh-token count, factors, and requested-session AMR evidence.
+
+**Pass condition.** Exact factor is gone; old access/refresh behavior is measured while unexpired; the former session is unambiguously classified A or B; AMR/session/factor state agrees; fresh sign-in behavior is measured; and the evidence can select the smallest fail-closed combination of live session, live assurance/factor/AMR, and `minimum_iat`.
+
+**Fail condition.** Any input/marker/factor mismatch; different-session elevation; missing password/TOTP AMR; nonempty PostgREST result; wrong deletion endpoint/status; refresh retry; token expiry before comparison; unclassified/contradictory state; factor replacement; user/application mutation; SQL write; or secret-bearing output.
+
+**Rollback / stop.** Factor removal is irreversible. Stop immediately after the safe helper JSON and two bounded correlations. Cleanup, replacement enrollment, session revocation, and user deletion remain separately authorized. On failure, preserve IDs and paste only safe field names/statuses; do not retry factor deletion or the old refresh token.
+
+**Paste back.** Complete safe RemoveFactor JSON and both complete correlation JSON objects. Never paste credentials, tokens, authenticator codes, response bodies, headers, email, or factor secrets.
 
 ### Stage 9 — optional re-enrollment
 

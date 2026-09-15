@@ -160,7 +160,8 @@ async function probeOldToken(baseUrl, accessToken) {
     auth_user_http_status: auth.status,
     auth_user_accepted: auth.status === 200,
     postgrest_zero_row_http_status: rest.status,
-    postgrest_jwt_accepted: restAccepted
+    postgrest_jwt_accepted: restAccepted,
+    postgrest_zero_rows_confirmed: restAccepted ? true : null
   };
 }
 
@@ -334,27 +335,153 @@ async function removeFactor() {
   const { baseUrl } = requireProject();
   const userId = requireUuid(env('GRIDLY_RESPONDER_TEST_USER_ID'), 'Test user ID');
   const factorId = requireUuid(env('GRIDLY_RESPONDER_FACTOR_ID'), 'Factor ID');
-  const aal1 = await signIn(baseUrl, userId);
-  const aal2 = await elevateTotp(baseUrl, aal1, factorId);
-  const oldAccessToken = aal2.access_token;
-  const oldRefreshToken = aal2.refresh_token;
-  const before = publicClaims(oldAccessToken, userId);
-  await request(baseUrl, `/auth/v1/factors/${encodeURIComponent(factorId)}`, {
-    method: 'DELETE', apiKey: publishableKey(), bearer: oldAccessToken, label: 'Remove TOTP factor'
-  });
-  const probe = await probeOldToken(baseUrl, oldAccessToken);
-  let refresh;
+  let adminKey = secretKey();
+  let aal1 = null;
+  let aal2 = null;
+  let staleAccessToken = null;
+  let staleRefreshToken = null;
+  let refreshResponse = null;
+  let fresh = null;
   try {
-    const refreshed = await request(baseUrl, '/auth/v1/token?grant_type=refresh_token', {
-      method: 'POST', apiKey: publishableKey(), body: { refresh_token: oldRefreshToken }, label: 'Post-removal refresh'
+    const exact = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+      apiKey: adminKey, label: 'Read exact Stage 6 test user'
     });
-    refresh = { accepted: true, claims: publicClaims(refreshed.data?.access_token, userId) };
-  } catch {
-    refresh = { accepted: false, claims: null };
+    const user = exact.data?.user || exact.data;
+    if (String(user?.id || '').toLowerCase() !== userId) {
+      fail('Stage 6 refused: admin response did not match the supplied test user UUID.');
+    }
+    if (user?.app_metadata?.gridly_operator_test !== TEST_LABEL) {
+      fail('Stage 6 refused: supplied UUID is not marked as the dedicated Gridly test identity.');
+    }
+    if (user?.deleted_at) fail('Stage 6 refused: the dedicated Gridly test identity is deleted.');
+
+    const factorResponse = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}/factors`, {
+      apiKey: adminKey, label: 'List exact Stage 6 test-user factors'
+    });
+    const values = Array.isArray(factorResponse.data) ? factorResponse.data :
+      factorResponse.data && Array.isArray(factorResponse.data.all) ? factorResponse.data.all :
+      factorResponse.data && Array.isArray(factorResponse.data.factors) ? factorResponse.data.factors : [];
+    const matching = values.filter((factor) =>
+      factor && typeof factor.id === 'string' && factor.id.toLowerCase() === factorId
+    );
+    if (matching.length !== 1) {
+      fail(`Stage 6 refused: expected exactly one factor matching the supplied UUID; found ${matching.length}.`);
+    }
+    const exactFactor = matching[0];
+    if (exactFactor.user_id && String(exactFactor.user_id).toLowerCase() !== userId) {
+      fail('Stage 6 refused: supplied factor does not belong to the supplied test user.');
+    }
+    const factorType = exactFactor.factor_type || exactFactor.type || null;
+    if (factorType !== 'totp') fail('Stage 6 refused: supplied factor is not TOTP.');
+    if (exactFactor.status !== 'verified') fail('Stage 6 refused: supplied factor is not verified.');
+
+    aal1 = await signIn(baseUrl, userId);
+    if (aal1.user?.app_metadata?.gridly_operator_test !== TEST_LABEL) {
+      fail('Stage 6 refused: signed-in user is not marked as the dedicated Gridly test identity.');
+    }
+    const aal1Claims = publicClaims(aal1.access_token, userId);
+    aal2 = await elevateTotp(baseUrl, aal1, factorId);
+    if (!aal2.refresh_token) fail('Stage 6 refused: AAL2 response omitted the session refresh token.');
+    staleAccessToken = aal2.access_token;
+    staleRefreshToken = aal2.refresh_token;
+    const staleClaims = publicClaims(staleAccessToken, userId);
+    if (aal1Claims.session_id !== staleClaims.session_id) {
+      fail('Stage 6 refused: TOTP verification replaced the new password session instead of elevating it.');
+    }
+    if (staleClaims.aal !== 'aal2' || !staleClaims.amr_methods.includes('password') || !staleClaims.amr_methods.includes('totp')) {
+      fail('Stage 6 refused: the new session did not produce password plus TOTP aal2 evidence.');
+    }
+
+    const preRemovalProbe = await probeOldToken(baseUrl, staleAccessToken);
+    const preRemovalExpStillInFuture = Number.isInteger(staleClaims.exp) && staleClaims.exp > Math.floor(Date.now() / 1000);
+    if (preRemovalProbe.auth_user_http_status !== 200 || !preRemovalProbe.postgrest_jwt_accepted ||
+        preRemovalProbe.postgrest_zero_rows_confirmed !== true || !preRemovalExpStillInFuture) {
+      fail('Stage 6 refused: the fresh AAL2 token did not pass the safe pre-removal baseline.');
+    }
+    const factorDelete = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}/factors/${encodeURIComponent(factorId)}`, {
+      method: 'DELETE', apiKey: adminKey, label: 'Delete exact verified Stage 6 TOTP factor', accept: [200]
+    });
+    const factorDeleteStatus = factorDelete.status;
+    factorDelete.data = null;
+
+    const postRemovalProbe = await probeOldToken(baseUrl, staleAccessToken);
+    const postRemovalExpStillInFuture = Number.isInteger(staleClaims.exp) && staleClaims.exp > Math.floor(Date.now() / 1000);
+
+    refreshResponse = await request(baseUrl, '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST', apiKey: publishableKey(), body: { refresh_token: staleRefreshToken },
+      label: 'Single old-refresh-token test after factor removal', accept: [200, 400, 401, 403, 422]
+    });
+    let refreshEvidence;
+    if (refreshResponse.status === 200) {
+      if (!refreshResponse.data?.access_token || !refreshResponse.data?.refresh_token) {
+        fail('Stage 6 refused: accepted refresh omitted replacement session tokens.');
+      }
+      const refreshedClaims = publicClaims(refreshResponse.data.access_token, userId);
+      refreshEvidence = {
+        attempted: true, accepted: true, http_status: refreshResponse.status,
+        refreshed_aal: refreshedClaims.aal, refreshed_session_id: refreshedClaims.session_id,
+        refreshed_iat: refreshedClaims.iat, refreshed_exp: refreshedClaims.exp,
+        refreshed_amr_methods: refreshedClaims.amr_methods
+      };
+    } else {
+      refreshEvidence = {
+        attempted: true, accepted: false, http_status: refreshResponse.status,
+        refreshed_aal: null, refreshed_session_id: null, refreshed_iat: null,
+        refreshed_exp: null, refreshed_amr_methods: []
+      };
+    }
+
+    fresh = await signIn(baseUrl, userId);
+    const freshClaims = publicClaims(fresh.access_token, userId);
+    const factors = await listUserFactors(baseUrl, fresh.access_token);
+    return {
+      mode: 'RemoveFactor',
+      session_scope: 'new_disposable_aal2_session_only',
+      marked_user_verified: true,
+      verified_factor_id: factorId,
+      same_session_elevated_to_aal2: true,
+      pre_removal: {
+        aal: staleClaims.aal, session_id: staleClaims.session_id, iat: staleClaims.iat, exp: staleClaims.exp,
+        amr_methods: staleClaims.amr_methods, token_exp_still_in_future: preRemovalExpStillInFuture,
+        auth_user_http_status: preRemovalProbe.auth_user_http_status,
+        postgrest_zero_row_http_status: preRemovalProbe.postgrest_zero_row_http_status,
+        postgrest_zero_rows_confirmed: preRemovalProbe.postgrest_zero_rows_confirmed
+      },
+      admin_factor_delete: {
+        factor_id: factorId, http_status: factorDeleteStatus,
+        explicit_logout_performed: false, explicit_session_delete_performed: false,
+        user_delete_performed: false, factor_replacement_performed: false
+      },
+      post_removal_old_access_token: {
+        same_token_reused: true,
+        auth_user_http_status: postRemovalProbe.auth_user_http_status,
+        postgrest_zero_row_http_status: postRemovalProbe.postgrest_zero_row_http_status,
+        postgrest_zero_rows_confirmed: postRemovalProbe.postgrest_zero_rows_confirmed,
+        token_exp_still_in_future: postRemovalExpStillInFuture
+      },
+      old_refresh: refreshEvidence,
+      fresh_password_sign_in: {
+        aal: freshClaims.aal, session_id: freshClaims.session_id, iat: freshClaims.iat, exp: freshClaims.exp,
+        amr_methods: freshClaims.amr_methods, sub_sha256_16: freshClaims.sub_sha256_16, factors
+      }
+    };
+  } finally {
+    staleAccessToken = null;
+    staleRefreshToken = null;
+    clearSessionSecrets(refreshResponse?.data);
+    clearSessionSecrets(fresh);
+    clearSessionSecrets(aal2);
+    clearSessionSecrets(aal1);
+    refreshResponse = null;
+    fresh = null;
+    aal2 = null;
+    aal1 = null;
+    adminKey = null;
+    for (const name of ['GRIDLY_RESPONDER_TEST_PASSWORD', 'GRIDLY_RESPONDER_TOTP_CODE',
+      'GRIDLY_SUPABASE_PUBLISHABLE_KEY', 'GRIDLY_SUPABASE_SECRET_KEY', 'GRIDLY_SUPABASE_SERVICE_ROLE_KEY']) {
+      delete process.env[name];
+    }
   }
-  const fresh = await signIn(baseUrl, userId);
-  const factors = await listUserFactors(baseUrl, fresh.access_token);
-  return { mode: 'RemoveFactor', removed_factor_id: factorId, claims_before: before, old_token_probe: probe, post_removal_refresh: refresh, fresh_sign_in_claims: publicClaims(fresh.access_token, userId), factors };
 }
 
 async function recoverUnverifiedTotpFactor() {
