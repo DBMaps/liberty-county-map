@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "gridly.responder.phase18.productionShapedCloneRehearsal.v1",
+  "phase": "18",
+  "recordedAt": "2026-09-15T19:16:46Z",
+  "branch": "RESPONDER-PHASE18-production-shaped-clone-rehearsal",
+  "startingCommit": "546590737be954684ef6826448596aba78fe595f",
+  "finalCommit": null,
+  "finalCommitNote": "Reported after commit because a commit cannot contain its own identity.",
+  "rehearsalVerdict": "PASS",
+  "deploymentAuthorizationStatus": "NOT AUTHORIZED",
+  "productionAccessPerformed": "NONE",
+  "productionMutations": "NONE",
+  "productionDeployment": "NONE",
+  "environment": {
+    "containerName": "gridly-phase18-exact-db",
+    "containerMarker": "com.gridly.phase18.nonproduction=true",
+    "databaseMarker": "GRIDLY_PHASE18_NON_PRODUCTION",
+    "networkExposure": "loopback-only random host port",
+    "dockerDesktop": "4.91.0",
+    "dockerEngine": "29.8.0",
+    "dockerArchitecture": "linux/amd64 via WSL2",
+    "baseImage": "postgres:17.6-bookworm",
+    "baseImageDigest": "sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3",
+    "rehearsalImage": "gridly/postgres17.6-postgis3.3.7-exact:phase18",
+    "rehearsalImageId": "sha256:c6bb935d4a002250fa5207499c0a0429bb0d367d6662b67977a65d714ac4d05d",
+    "postgres": "17.6 (Debian 17.6-2.pgdg12+1)",
+    "postgresVersionNum": 170006,
+    "postgis": "3.3.7",
+    "postgisBuild": "POSTGIS=\"3.3.7 a0c7967\" [EXTENSION] PGSQL=\"170\" GEOS=\"3.11.1-CAPI-1.17.1\" PROJ=\"9.8.1\" LIBXML=\"2.9.14\" LIBJSON=\"0.16\" LIBPROTOBUF=\"1.4.1\" WAGYU=\"0.5.0 (Internal)\""
+  },
+  "clone": {
+    "method": "Synthetic production-shaped bootstrap derived from committed Phase 17 production evidence; no production connection or dump.",
+    "fidelityStatus": "PASS_FOR_PHASE18_SQL_REHEARSAL",
+    "sourceKind": "synthetic-production-shaped-bootstrap",
+    "roles": {"postgresBypassRls": true, "anonBypassRls": false, "authenticatedBypassRls": false, "serviceRoleBypassRls": true},
+    "authTables": ["mfa_amr_claims", "mfa_factors", "sessions", "users"],
+    "extensions": {"postgis": "3.3.7", "pgcrypto": "1.3"},
+    "countyRows": 254,
+    "validCountyRows": 254,
+    "reportingEnabled": false,
+    "baseline": {"reports": 0, "feedback": 7, "geocodeCache": 489, "geocodeProviderState": 2, "historicalEvents": 0, "retentionRuns": 1},
+    "preResponderMigrationHistoryRows": 14,
+    "preResponderMigrationHistoryMax": "20260908200554",
+    "limitations": [
+      "This is a catalog-and-baseline clone, not a copy of production data.",
+      "The image contains core PostGIS only; raster, topology, and tiger are outside the responder contract.",
+      "The HTTP rehearsal used the current official self-hosted PostgREST image; production project gateway/configuration parity remains a later production-matched staging check."
+    ]
+  },
+  "supabaseCli": {
+    "version": "2.117.0",
+    "install": "exact pinned devDependency with lockfile",
+    "telemetryDisabledDuringRehearsal": true,
+    "linkedMetadataHazardDetected": "supabase/.temp points to production; no implicit linked command was used",
+    "allDatabaseCommandsUsedExplicitLocalDbUrl": true
+  },
+  "migration": {
+    "filename": "20260915190450_prepare_responder_production_schema.sql",
+    "path": "supabase/migrations/20260915190450_prepare_responder_production_schema.sql",
+    "sha256": "20fd8161586beee09c57084c4f5299aa59c1c901fdcd5890e1cb5949a83ec687",
+    "sourcePhase17Path": "db/responder-local/phase17_production_migration.sql",
+    "sourcePhase17Sha256": "20fd8161586beee09c57084c4f5299aa59c1c901fdcd5890e1cb5949a83ec687",
+    "relationship": "BYTE_IDENTICAL",
+    "dryRun": "PASS_EXACTLY_ONE_PENDING",
+    "firstApply": "PASS",
+    "secondApplyAfterRollback": "PASS"
+  },
+  "preflight": {
+    "status": "PHASE17_PRODUCTION_PREFLIGHT_PASS",
+    "transactionReadOnly": "on",
+    "responderSchemasAbsent": true,
+    "projectIdentityShapeVerified": true,
+    "countyRows": 254
+  },
+  "postflight": {
+    "status": "PHASE17_PRODUCTION_POSTFLIGHT_PASS",
+    "privateTables": 13,
+    "publicTables": 1,
+    "privateFunctions": 11,
+    "publicWrappers": 3,
+    "policies": 14,
+    "explicitIndexes": 17,
+    "appendOnlyTriggers": 6,
+    "zeroActivation": true,
+    "boundedBaselineUnchanged": true
+  },
+  "security": {
+    "behavioralVectors": {"passed": 38, "failed": 0, "total": 38},
+    "databaseChecks": {"passed": 22, "failed": 0, "total": 22},
+    "dirtyFailureCases": {"passed": 13, "failed": 0, "total": 13},
+    "migrationDatabaseChecks": {"passed": 20, "failed": 0, "total": 20},
+    "securityDefinerAudit": {
+      "status": "PASS",
+      "privateDefiners": 10,
+      "ownedByPostgres": 10,
+      "emptySearchPath": 10,
+      "publicOrServiceRoleExecutable": 0,
+      "authenticatedExecutableAllowlistCount": 6,
+      "anonExecutableAllowlistCount": 1,
+      "publicDefinerWrappers": 0,
+      "publicInvokerWrappers": 3
+    }
+  },
+  "dataApi": {
+    "status": "PASS",
+    "databaseRoleGrantRlsAndWrapperChecks": "PASS",
+    "httpPostgrestRehearsed": true,
+    "postgrestVersion": "14.17",
+    "postgrestImageDigest": "sha256:c9dc201e555f5d8e37e7f39cdd4df0229774996e213bfd7de8d10ac609030f2c",
+    "networkExposure": "loopback-only random host port",
+    "anonymousProjection": {"httpStatus": 200, "body": []},
+    "anonymousCommandWrapper": {"httpStatus": 401, "result": "DENIED"},
+    "authenticatedInvalidCommandWrapper": {"httpStatus": 200, "result": "invalid_request"},
+    "responderPublicExposureConfigured": false,
+    "agencyPrivateExposureConfigured": false,
+    "separateOwnerControlledExposureStillRequired": true
+  },
+  "rollback": {
+    "emptyRollback": "PASS",
+    "protectedBaselinesPreserved": true,
+    "evidenceBearingRollbackRefusal": "PASS",
+    "externalDependencyRollbackRefusal": "PASS"
+  },
+  "determinism": {
+    "status": "PASS",
+    "firstCatalogFingerprintSha256": "aaafeb1f5c39522f30f832bee3bd6d7537c8fcb53b82ccf5a28d08dfe81cc8a0",
+    "secondCatalogFingerprintSha256": "aaafeb1f5c39522f30f832bee3bd6d7537c8fcb53b82ccf5a28d08dfe81cc8a0"
+  },
+  "migrationHistory": {
+    "status": "PASS",
+    "finalRows": 15,
+    "generatedVersionCount": 1,
+    "generatedNameCount": 1,
+    "localAndCloneHistoriesMatch": true
+  },
+  "advisors": {
+    "classification": "PASS_WITH_INFORMATIONAL_ONLY_FINDINGS",
+    "security": {"errors": 0, "warnings": 0, "info": 1, "note": "Synthetic baseline county table has RLS enabled with no policy and no grants."},
+    "performance": {"errors": 0, "warnings": 0, "info": 25, "unindexedForeignKeys": 10, "unusedIndexes": 15, "note": "Informational results on a deliberately empty, newly installed schema; retain for production traffic review."}
+  },
+  "recoveryCheckpointRequiredBeforeProduction": true,
+  "remainingProductionOnlyBlockers": [
+    "fresh owner-controlled read-only production preflight",
+    "fresh verified production backup/PITR recovery checkpoint and restore authority",
+    "explicit owner approval of exact commit, migration timestamp, SHA, project, operator, and window",
+    "separately approved responder_public Data API exposed-schema configuration before pilot use",
+    "production-matched staging confirmation of the separately approved Data API configuration",
+    "post-deployment production Security and Performance Advisor review"
+  ],
+  "secretScan": "PASS_NO_CREDENTIAL_MATERIAL_IN_PHASE18_ARTIFACTS",
+  "protectedOriginalWorktreeTouched": false,
+  "pushed": false,
+  "merged": false
+}

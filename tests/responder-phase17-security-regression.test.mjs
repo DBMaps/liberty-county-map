@@ -9,7 +9,9 @@ import {fileURLToPath} from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const {RESPONDER_PHASE17_PGBIN:bin,RESPONDER_PHASE17_PGPORT:port,
-  RESPONDER_PHASE17_PGUSER:owner,RESPONDER_PHASE17_PGDATA:data}=process.env;
+  RESPONDER_PHASE17_PGUSER:owner,RESPONDER_PHASE17_PGDATA:data,
+  RESPONDER_PHASE17_PGPASSWORD:password,
+  RESPONDER_PHASE17_EXPECTED_POSTGIS:expectedPostgis='3.6.2'}=process.env;
 if(!bin||!/^[0-9]{4,5}$/.test(port||'')||!data||!fs.existsSync(data)
   ||!path.basename(data).startsWith('gridly-responder-phase17-')
   ||path.relative(os.tmpdir(),path.resolve(data)).startsWith('..'))
@@ -17,6 +19,7 @@ if(!bin||!/^[0-9]{4,5}$/.test(port||'')||!data||!fs.existsSync(data)
 const env={...process.env};
 for(const k of Object.keys(env)) if(/^PG/i.test(k)||/SUPABASE|DATABASE_URL/i.test(k)) delete env[k];
 Object.assign(env,{PGHOST:'127.0.0.1',PGPORT:port,PGUSER:owner,PGCONNECT_TIMEOUT:'3'});
+if(password) env.PGPASSWORD=password;
 const database=`gridly_responder_p17_${randomUUID().replaceAll('-','').slice(0,18)}`;
 let created=false,passed=0,failed=0,dbPassed=0,dbFailed=0;
 function psql(db,args,allowFailure=false){
@@ -67,7 +70,7 @@ try{
   apply('phase17_test_bootstrap.sql');
   apply('phase17_production_migration.sql');
   assert.match(q("SELECT current_setting('server_version')"),/^17\./);
-  assert.equal(q("SELECT extensions.postgis_lib_version()"),'3.6.2');
+  assert.equal(q("SELECT extensions.postgis_lib_version()"),expectedPostgis);
   dbCheck('private schema created',q("SELECT count(*) FROM pg_namespace WHERE nspname='agency_private'"),'1');
   dbCheck('public schema created',q("SELECT count(*) FROM pg_namespace WHERE nspname='responder_public'"),'1');
   dbCheck('13 private tables',q("SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='agency_private' AND c.relkind='r'"),'13');

@@ -9,7 +9,8 @@ import {fileURLToPath} from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const {RESPONDER_PHASE17_PGBIN:bin,RESPONDER_PHASE17_PGPORT:port,
-  RESPONDER_PHASE17_PGUSER:owner,RESPONDER_PHASE17_PGDATA:data}=process.env;
+  RESPONDER_PHASE17_PGUSER:owner,RESPONDER_PHASE17_PGDATA:data,
+  RESPONDER_PHASE17_PGPASSWORD:password}=process.env;
 if(!bin||!/^[0-9]{4,5}$/.test(port||'')||owner!=='postgres'||!data||!fs.existsSync(data)
   ||!path.basename(data).startsWith('gridly-responder-phase17-')
   ||path.relative(os.tmpdir(),path.resolve(data)).startsWith('..'))
@@ -17,6 +18,7 @@ if(!bin||!/^[0-9]{4,5}$/.test(port||'')||owner!=='postgres'||!data||!fs.existsSy
 const env={...process.env};
 for(const k of Object.keys(env)) if(/^PG/i.test(k)||/SUPABASE|DATABASE_URL/i.test(k)) delete env[k];
 Object.assign(env,{PGHOST:'127.0.0.1',PGPORT:port,PGUSER:owner,PGCONNECT_TIMEOUT:'3'});
+if(password) env.PGPASSWORD=password;
 let dbChecks=0,dirtyPassed=0,dirtyFailed=0;
 function psql(db,args,allowFailure=false){
   const r=spawnSync(path.join(bin,'psql.exe'),['-X','-w','-q','-A','-t','-v','ON_ERROR_STOP=1','-d',db,...args],

@@ -17,9 +17,11 @@
     "fzstd": "0.1.1",
     "hyparquet": "1.17.0",
     "hyparquet-compressors": "1.0.0",
-    "hysnappy": "1.0.0"
+    "hysnappy": "1.0.0",
+    "supabase": "2.117.0"
   },
   "scripts": {
+    "test:responder:phase18": "node --test tests/responder-phase18-contracts.test.mjs tests/responder-phase17-contracts.test.mjs tests/responder-phase16-contracts.test.mjs",
     "test:lp2445:parity": "node --test tests/lp2445-governed-active-condition-parity.test.mjs tests/lp2445-live-writer-sequence.test.mjs",
     "test:lp2445:acceptance": "npm run test:lp2445:parity && npm run test:lp2445:saved-address && npm run test:lp2448:route-publication && npm run test:lp2449:travel-brief-projection && npm run test:lp24410:runtime-source-authority && npm run test:lp24411:stable-runtime-source-authority && npm run test:lp24412:governed-report-retrieval && npm run test:lp24413:incident-render-reconciliation && npm run test:lp24414:incident-attribution-gating && npm run test:lp24415:deferred-package-warmup && npm run test:lp24416:crossing-diagnostic-gating && npm run test:lp24417:roadway-report-startup-dependency && npm run test:lp24418:roadway-report-startup-overlap && npm run test:lp24419:report-snapshot-membership && node --test tests/lp2445-bare-texas-place-destination.test.mjs tests/lp2445-final-short-landscape-density.test.mjs",
     "test:lp24419:report-snapshot-membership": "node --test tests/lp24419-report-snapshot-membership.test.cjs",
