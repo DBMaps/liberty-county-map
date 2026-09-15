@@ -42,7 +42,7 @@ test('County authority is explicit countywide then authoritative presentation co
 });
 
 test('canonical PLACE camera transaction carries ephemeral identity without manufacturing primary county', () => {
-  assert.match(app, /gridlyActiveGeographicPresentation = Object\.freeze\(\{ semanticLevel: "PLACE", placeGeoid, placeLabel:[^\n]+explicitCountyId: null \}\)/);
+  assert.match(app, /gridlyActiveGeographicPresentation = Object\.freeze\(\{ semanticLevel: "PLACE", placeGeoid, placeLabel:[^\n]+explicitCountyId: null, presentationAuthority: "GOVERNED_SELECTION", governedAwarenessKey: String\(area\.key \|\| `place-\$\{placeGeoid\}`\) \}\)/);
   assert.match(app, /"4819000": Object\.freeze\(\{ lat: 32\.78294501748632, lng: -96\.79538726806642/);
   assert.match(app, /stalePersistedContextIgnored: Boolean\(persistedAwarenessCountyId && persistedAwarenessCountyId !== resolvedCountyId\)/);
 });

@@ -29987,17 +29987,26 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
     const safeBottomY = Math.max(safeTopY + 80, Math.round((bounds?.bottom || (mapRect?.bottom || viewportHeight)) - (mapRect?.top || 0)));
     const usableCenter = getGridlyMobilePortraitUsableMapCenter(mapRef);
     const preferredY = usableCenter.measured ? usableCenter.centerY : Math.round(viewportHeight * 0.62);
-    const lowerTargetY = safeTopY + estimatedPopupSize.height + 12;
+    const visibleTopY = usableCenter.measured ? Math.round(usableCenter.usableTop - (mapRect?.top || 0)) : safeTopY;
+    const portraitPopupHeight = Math.min(360, Math.round(viewportHeight * 0.46));
+    const lowerTargetY = Math.max(safeTopY, visibleTopY) + portraitPopupHeight + 8;
     const upperTargetY = safeBottomY - 28;
+    const popupHalfWidth = Math.ceil(estimatedPopupSize.width / 2);
+    const safeLeftX = Math.round((bounds?.left || mapRect?.left || 0) - (mapRect?.left || 0)) + popupHalfWidth;
+    const safeRightX = Math.round((bounds?.right || mapRect?.right || viewportWidth) - (mapRect?.left || 0)) - popupHalfWidth;
+    const desiredX = safeLeftX <= safeRightX
+      ? Math.max(safeLeftX, Math.min(safeRightX, Math.round(markerPoint.x)))
+      : Math.round(viewportWidth / 2);
     const desiredY = lowerTargetY <= upperTargetY
       ? Math.max(lowerTargetY, Math.min(upperTargetY, preferredY))
       : Math.max(safeTopY + 80, Math.min(upperTargetY, preferredY));
+    const mobilePanX = Math.round(markerPoint.x - desiredX);
     const mobilePanY = Math.round(markerPoint.y - desiredY);
-    const shouldMobilePan = Math.abs(mobilePanY) > 4;
+    const shouldMobilePan = Math.abs(mobilePanX) > 4 || Math.abs(mobilePanY) > 4;
     window.__gridlyLastPopupAutoPanApplied = shouldMobilePan;
     gridlyPopupCameraPanApplied = shouldMobilePan;
     gridlyPopupAnchorMode = "mobile-portrait-safe-vertical-zone";
-    gridlyPopupLastSafeTargetPoint = { x: Math.round(markerPoint.x), y: desiredY };
+    gridlyPopupLastSafeTargetPoint = { x: desiredX, y: desiredY };
     gridlyPopupViewportBounds = {
       ...(gridlyPopupViewportBounds || {}),
       mobilePortraitSafeZone: true,
@@ -30005,7 +30014,9 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
       safeBottomY,
       preferredY,
       usableCenter,
+      desiredX,
       desiredY,
+      panX: mobilePanX,
       panY: mobilePanY,
       containmentBounds: bounds
     };
@@ -30038,7 +30049,7 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
     };
     if (typeof mapRef.once === "function") mapRef.once("moveend", finishMobileReposition);
     session.openTimer = setTimeout(finishMobileReposition, 320);
-    mapRef.panBy([0, mobilePanY], { animate: true, duration: 0.2 });
+    mapRef.panBy([mobilePanX, mobilePanY], { animate: true, duration: 0.2 });
     return true;
   }
 

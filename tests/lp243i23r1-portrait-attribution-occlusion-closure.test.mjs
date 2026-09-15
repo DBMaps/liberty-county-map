@@ -48,7 +48,9 @@ test("closure is portrait-only and freezes protected geometry and integrations",
   assert.match(initMap, /tile\.openstreetmap\.org/);
   assert.match(initMap, /World_Imagery\/MapServer\/tile/);
   assert.match(html, /css\/styles\.css\?v=lp244\.24b-owner-review/);
-  assert.match(html, /js\/app\.js\?v=lp244\.24b-owner-review/);
+  assert.match(html, /js\/gridly-report-protocol\.js\?v=lp244\.23d-protocol-v2-readiness/);
+  assert.match(html, /js\/app\.js\?v=lp244\.23d-protocol-v2-readiness/);
+  assert.match(app, /const APP_BUILD = "lp244\.23d-protocol-v2-readiness"/);
 });
 
 test("LP243.I2.3, I2.2, I2.1R1, and J/J1 protections remain available", () => {
