@@ -1,0 +1,88 @@
+{
+  "phase": "14D",
+  "scope": "LOCAL_PSQL_FILE_EXECUTION_READINESS_ONLY",
+  "branch": "RESPONDER-PHASE14D-psql-file-execution-readiness",
+  "starting_head": "9552228cf64973b41bf0c42e6843b568eb514217",
+  "phase14c_ancestor": true,
+  "certified_input": {
+    "payload_path": "db/responder-local/phase14a_county_population_payload.sql",
+    "payload_bytes": 13965052,
+    "payload_sha256": "464565b291946ff12e948d683e402c83caa39e2737748996f669fa2327a25a9e",
+    "county_count": 254,
+    "coordinate_pairs": 604979,
+    "fips_sha256": "7e80dd17d4d295d904f986a193ab259850e607c6bdfde3a7454e9af5a54a2092",
+    "transaction_control_statements": 0,
+    "modified": false
+  },
+  "local_toolchain": {
+    "psql": "17.10",
+    "postgres": "17.10",
+    "postgis": "3.6.2"
+  },
+  "executor": {
+    "path": "db/responder-local/phase14d_county_population_executor.sql",
+    "classification": "LOCAL_CERTIFIED_EXECUTOR_TEMPLATE_NOT_A_MIGRATION",
+    "one_session": true,
+    "payload_transport": "PSQL_BACKSLASH_I_FILE_STREAMING",
+    "on_error_stop": true,
+    "owns_begin": true,
+    "lock_mode": "SHARE ROW EXCLUSIVE",
+    "preflight_before_payload": true,
+    "certification_before_decision": true,
+    "safe_default": "ROLLBACK",
+    "commit_requires_external_true_flag": "phase14d_commit_authorized",
+    "connection_parameters_external": true,
+    "credentials_present": false,
+    "fixed_production_connection_present": false
+  },
+  "path_strategy": {
+    "required_form": "ABSOLUTE_WINDOWS_PATH_WITH_FORWARD_SLASHES",
+    "psql_variable": "phase14d_payload_path",
+    "shell_current_directory_independent": true,
+    "rehearsed_from_responder_worktree": true
+  },
+  "local_rehearsal": {
+    "fixture": "DISPOSABLE_PRODUCTION_SHAPED_POSTGRES_POSTGIS",
+    "rollback_after_success": "PASS_FINAL_ROWS_0",
+    "commit_after_success": "PASS_FRESH_READ_ONLY_ROWS_254",
+    "forced_certification_failure": "PASS_ROLLBACK_FINAL_ROWS_0",
+    "payload_sql_error": "PASS_ON_ERROR_STOP_CONNECTION_CLOSE_ROLLBACK",
+    "certification_sql_error": "PASS_ON_ERROR_STOP_CONNECTION_CLOSE_ROLLBACK",
+    "same_backend_pid_before_and_after_include": true,
+    "same_transaction_id_before_and_after_include": true,
+    "executor_only_transaction_control": true,
+    "committed_table_digest": "54f42bb9795dd2f4f6f743a14b4d86e7",
+    "unrelated_sentinels_unchanged": true,
+    "final_rows": 0,
+    "payload_sql_error_exit_code": 3,
+    "certification_sql_error_exit_code": 3,
+    "timings_ms": {
+      "rollback": 2216,
+      "commit": 2222
+    }
+  },
+  "validation": {
+    "phase14d": {"passed": 11, "failed": 0},
+    "phase14c": {"passed": 9, "failed": 0},
+    "phase14b": {"passed": 10, "failed": 0},
+    "phase14a": {"passed": 9, "failed": 0},
+    "phase13": {"passed": 11, "failed": 0},
+    "payload_sha_verified": true,
+    "json_valid": true,
+    "javascript_syntax_valid": true,
+    "sql_executed_in_disposable_fixture": true,
+    "local_links_valid": true,
+    "conflict_markers_absent": true,
+    "credential_material_absent": true,
+    "whitespace_valid": true,
+    "git_diff_check_passed": true
+  },
+  "recommendation": "PSQL FILE STREAMING READY",
+  "production_authorization_granted": false,
+  "production_accessed": false,
+  "supabase_accessed": false,
+  "production_population_retried": false,
+  "database_migration_created": false,
+  "p12_01": "OPEN",
+  "b03": "OPEN"
+}
