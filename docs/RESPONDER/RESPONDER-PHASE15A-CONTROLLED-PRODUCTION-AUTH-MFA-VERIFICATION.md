@@ -305,15 +305,25 @@ $NewIat = [long](Read-Host 'Paste candidate new token iat integer')
 
 **Paste back.** The complete local JSON result.
 
-### Stage 7 — revoke one real session and probe its old token
+### Stage 7 — controlled stale-token/session-revocation verification
 
-**Purpose.** Create a fresh TOTP `aal2` session, revoke that exact current session with `scope=local`, and use its saved in-memory access token only for two zero-write probes: Auth user introspection and `public.reports?select=id&limit=0`.
+**Purpose.** This is the owner-controlled Stage 5 stale-token experiment. It creates **one new disposable password session**, challenges the exact already-verified TOTP factor, confirms that the same new session reaches `aal2`, probes it, revokes only that new session with `scope=local`, and probes the exact same still-in-memory token again. It does not target or accept the historical Stage 4 session `ebae3ce4-a615-40ea-a80e-35eee5280af6` as a revocation credential. It does not revoke any earlier AAL1 session.
 
-**Preconditions.** Stage 5 passed; factor remains verified. The report query has `limit=0` and cannot return or mutate report data.
+**Preconditions.** Factor/session correlation passed; the supplied factor remains exact, TOTP, and verified. The operator knows the dedicated test email and password and has a current authenticator code. The helper refuses `-SessionId` in this mode. The report probe is the GET-only request `/rest/v1/reports?select=id&limit=0`; an accepted response must parse as an empty array or the helper stops with the body suppressed. It cannot return application rows, mutate a report, activate reporting, or require a responder schema.
 
 > **OWNER EXECUTION REQUIRED**
 
 ```powershell
+cd 'C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze'
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+
+$TestUserId = [guid]'f01c5e50-854b-49ab-a65f-0ba81744943a'
+$FactorId = [guid]'5afa5b22-4797-416a-8144-b71dab682c40'
+if (-not $env:GRIDLY_RESPONDER_TEST_EMAIL) {
+  $env:GRIDLY_RESPONDER_TEST_EMAIL = Read-Host 'Dedicated temporary test email'
+}
+$env:GRIDLY_SUPABASE_URL = 'https://nhwhkbkludzkuyxmkkcj.supabase.co'
+
 & '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
   -Mode RevokeSession `
   -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
@@ -322,23 +332,64 @@ $NewIat = [long](Read-Host 'Paste candidate new token iat integer')
   -AuthorizeProductionMutation
 ```
 
-Copy only `revoked_session` and inspect it:
+Expect three secret prompts when their process environment variables are absent: production publishable/anon key, temporary test-user password, and current authenticator TOTP code. PowerShell uses `Read-Host -AsSecureString`; none is displayed. Never paste any of them into chat.
 
-```powershell
-$RevokedSessionId = [guid](Read-Host 'Paste only revoked_session')
-& '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
-  -Mode InspectRevocation -TestUserId $TestUserId -SessionId $RevokedSessionId
+The helper keeps both session responses and the one AAL2 bearer token in process memory only. It uses the same `staleAccessToken` variable for the pre-probes, local logout, and post-probes. Its `finally` block nulls the bearer variable and clears access, refresh, and provider-token fields from both in-memory session responses before the Node process terminates. It never hashes the bearer token, puts it in an environment variable, writes it to a file, or emits a response body or Authorization header.
+
+Safe JSON shape, with observed values in place of angle-bracket descriptions:
+
+```json
+{
+  "mode": "RevokeSession",
+  "session_scope": "new_disposable_aal2_session_only",
+  "new_password_session_created": true,
+  "same_session_elevated_to_aal2": true,
+  "verified_factor_id": "5afa5b22-4797-416a-8144-b71dab682c40",
+  "historical_session_id_accepted_as_credential": false,
+  "revoked_session": "<new session UUID>",
+  "pre_revocation": {
+    "aal": "aal2",
+    "session_id": "<same new session UUID>",
+    "iat": 0,
+    "exp": 0,
+    "amr_methods": ["password", "totp"],
+    "auth_user_http_status": 0,
+    "postgrest_zero_row_http_status": 0
+  },
+  "logout_scope": "local",
+  "logout_http_status": 204,
+  "same_token_reused": true,
+  "post_revocation": {
+    "auth_user_http_status": 0,
+    "postgrest_zero_row_http_status": 0,
+    "token_exp_still_in_future": true
+  },
+  "factor_removed_or_reset": false
+}
 ```
 
-**Expected output.** Safe pre-revocation claims, logout HTTP 204, Auth `/user` status/accepted boolean, zero-row PostgREST status/accepted boolean, and SQL `requested_session_count=0` for the revoked session.
+The pre/post probe status values are observations rather than pass values; only successful local logout is fixed at `204`. Copy only `revoked_session` from this safe JSON and inspect it:
 
-**Pass condition.** Session-row removal is observed. Separately record whether each old-token endpoint still accepts the unexpired JWT. The proposed Gridly live-session predicate must deny because the requested session count is zero regardless of gateway acceptance.
+```powershell
+$RevokedSessionId = [guid](Read-Host 'Paste only the new revoked_session UUID from safe JSON')
+& '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
+  -Mode InspectRevocation `
+  -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
+  -TestUserId $TestUserId `
+  -SessionId $RevokedSessionId
+```
 
-**Fail condition.** Session persists unexpectedly, any probe writes or returns application rows, or the helper emits a token.
+The correlation command prompts only for the production database password if `PGPASSWORD` is absent. It runs `BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY`, scopes every Auth lookup to `$TestUserId` and the exact `$RevokedSessionId`, and rolls back.
 
-**Rollback / stop.** Revocation is intentionally irreversible. The test user and factor remain; use Stage 10 if stopping.
+**Expected output.** Safe `aal2` claims and AMR method names; pre-revocation Auth and zero-row PostgREST statuses; logout `204`; `same_token_reused=true`; post-revocation statuses; `token_exp_still_in_future`; and correlation with `transaction_read_only=on`, `user_count=1`, `requested_session_count=0`, the verified TOTP factor still present, and all unrelated test-user sessions still listed.
 
-**Paste back.** Revocation JSON and correlation JSON.
+**Pass condition.** The new session reached `aal2` through TOTP; both pre-probes completed; local logout returned `204`; the same token was reused; the token remained unexpired during the post-probes; and the exact revoked session row is absent afterward. Record endpoint behavior rather than forcing an expected outcome. If Auth rejects the old token, PostgREST accepts it, and `requested_session_count=0`, Gridly must treat the missing live `auth.sessions` row as immediate authorization failure even though the JWT remains cryptographically valid and works against stateless PostgREST.
+
+**Fail condition.** Wrong/multiple factor, factor not verified TOTP, new session not `aal2`, session ID changes during elevation, logout not `204`, token expired before the post-probes, revoked session persists, an accepted PostgREST probe returns anything other than zero rows, an earlier session is missing unexpectedly, factor state changes, or any secret/body/header is emitted.
+
+**Rollback / stop.** Stop immediately after the Stage 5 JSON and its bounded read-only correlation. Do not remove/reset the factor, revoke another session, delete the user, or run cleanup without separate owner authorization. Revocation of the one new disposable session is intentionally irreversible; its absence is the expected recovery state.
+
+**Paste back.** The complete safe revocation JSON and complete single-object correlation JSON. Never paste credentials, tokens, authenticator codes, headers, or response bodies.
 
 ### Stage 8 — remove/reset the TOTP factor and probe stale evidence
 

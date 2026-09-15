@@ -152,12 +152,23 @@ async function probeOldToken(baseUrl, accessToken) {
   const rest = await request(baseUrl, '/rest/v1/reports?select=id&limit=0', {
     apiKey: key, bearer: accessToken, label: 'Old-token zero-row PostgREST probe', accept: [200, 206, 401, 403]
   });
+  const restAccepted = rest.status === 200 || rest.status === 206;
+  if (restAccepted && (!Array.isArray(rest.data) || rest.data.length !== 0)) {
+    fail('Zero-row PostgREST probe returned unexpected application data. Response body suppressed.');
+  }
   return {
     auth_user_http_status: auth.status,
     auth_user_accepted: auth.status === 200,
     postgrest_zero_row_http_status: rest.status,
-    postgrest_jwt_accepted: rest.status === 200 || rest.status === 206
+    postgrest_jwt_accepted: restAccepted
   };
+}
+
+function clearSessionSecrets(session) {
+  if (!session || typeof session !== 'object') return;
+  for (const field of ['access_token', 'refresh_token', 'provider_token', 'provider_refresh_token']) {
+    if (Object.hasOwn(session, field)) session[field] = null;
+  }
 }
 
 function writeQrFile(qrCode) {
@@ -251,14 +262,72 @@ async function revokeSession() {
   const { baseUrl } = requireProject();
   const userId = requireUuid(env('GRIDLY_RESPONDER_TEST_USER_ID'), 'Test user ID');
   const factorId = requireUuid(env('GRIDLY_RESPONDER_FACTOR_ID'), 'Factor ID');
-  const aal1 = await signIn(baseUrl, userId);
-  const aal2 = await elevateTotp(baseUrl, aal1, factorId);
-  const oldAccessToken = aal2.access_token;
-  const before = publicClaims(oldAccessToken, userId);
-  const logout = await request(baseUrl, '/auth/v1/logout?scope=local', {
-    method: 'POST', apiKey: publishableKey(), bearer: oldAccessToken, label: 'Local session revocation', accept: [204]
-  });
-  return { mode: 'RevokeSession', revoked_session: before.session_id, claims_before: before, logout_http_status: logout.status, old_token_probe: await probeOldToken(baseUrl, oldAccessToken) };
+  let aal1 = null;
+  let aal2 = null;
+  let staleAccessToken = null;
+  try {
+    aal1 = await signIn(baseUrl, userId);
+    if (aal1.user?.app_metadata?.gridly_operator_test !== TEST_LABEL) {
+      fail('Stage 5 refused: signed-in user is not marked as the dedicated Gridly test identity.');
+    }
+    const aal1Claims = publicClaims(aal1.access_token, userId);
+    const factors = await listUserFactors(baseUrl, aal1.access_token);
+    const matchingFactors = factors.filter((factor) => String(factor.id).toLowerCase() === factorId);
+    if (matchingFactors.length !== 1) fail('Stage 5 refused: supplied factor did not match exactly one factor for the test user.');
+    if (matchingFactors[0].factor_type !== 'totp' || matchingFactors[0].status !== 'verified') {
+      fail('Stage 5 refused: supplied factor must be a verified TOTP factor.');
+    }
+
+    aal2 = await elevateTotp(baseUrl, aal1, factorId);
+    staleAccessToken = aal2.access_token;
+    const aal2Claims = publicClaims(staleAccessToken, userId);
+    if (aal1Claims.session_id !== aal2Claims.session_id) fail('Stage 5 refused: TOTP verification replaced the new password session instead of elevating it.');
+    if (aal2Claims.aal !== 'aal2' || !aal2Claims.amr_methods.includes('totp')) {
+      fail('Stage 5 refused: the new session did not produce the required TOTP aal2 evidence.');
+    }
+
+    const preRevocationProbe = await probeOldToken(baseUrl, staleAccessToken);
+    const logout = await request(baseUrl, '/auth/v1/logout?scope=local', {
+      method: 'POST', apiKey: publishableKey(), bearer: staleAccessToken,
+      label: 'Exact new-session local revocation', accept: [204]
+    });
+    const postRevocationProbe = await probeOldToken(baseUrl, staleAccessToken);
+    const tokenExpStillInFuture = Number.isInteger(aal2Claims.exp) && aal2Claims.exp > Math.floor(Date.now() / 1000);
+
+    return {
+      mode: 'RevokeSession',
+      session_scope: 'new_disposable_aal2_session_only',
+      new_password_session_created: true,
+      same_session_elevated_to_aal2: true,
+      verified_factor_id: factorId,
+      historical_session_id_accepted_as_credential: false,
+      revoked_session: aal2Claims.session_id,
+      pre_revocation: {
+        aal: aal2Claims.aal,
+        session_id: aal2Claims.session_id,
+        iat: aal2Claims.iat,
+        exp: aal2Claims.exp,
+        amr_methods: aal2Claims.amr_methods,
+        auth_user_http_status: preRevocationProbe.auth_user_http_status,
+        postgrest_zero_row_http_status: preRevocationProbe.postgrest_zero_row_http_status
+      },
+      logout_scope: 'local',
+      logout_http_status: logout.status,
+      same_token_reused: true,
+      post_revocation: {
+        auth_user_http_status: postRevocationProbe.auth_user_http_status,
+        postgrest_zero_row_http_status: postRevocationProbe.postgrest_zero_row_http_status,
+        token_exp_still_in_future: tokenExpStillInFuture
+      },
+      factor_removed_or_reset: false
+    };
+  } finally {
+    staleAccessToken = null;
+    clearSessionSecrets(aal2);
+    clearSessionSecrets(aal1);
+    aal2 = null;
+    aal1 = null;
+  }
 }
 
 async function removeFactor() {

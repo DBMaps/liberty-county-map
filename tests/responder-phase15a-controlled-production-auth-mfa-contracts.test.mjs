@@ -200,6 +200,77 @@ test('runbook documents exact compromised-factor recovery and mandatory read-onl
   assert.match(doc, /Never rerun this recovery mode after `deleted=true`/);
 });
 
+test('Stage 5 is owner-authorized and refuses any historical session UUID credential', () => {
+  const shell = process.platform === 'win32' ? 'powershell.exe' : 'pwsh';
+  const unauthorized = spawnSync(shell, ['-NoProfile','-ExecutionPolicy','Bypass','-File',path.join(root, paths.ps1),
+    '-Mode','RevokeSession',
+    '-TestUserId','11111111-1111-4111-8111-111111111111',
+    '-FactorId','22222222-2222-4222-8222-222222222222'], { cwd: root, encoding: 'utf8' });
+  assert.notEqual(unauthorized.status, 0);
+  assert.match(`${unauthorized.stdout}\n${unauthorized.stderr}`, /without -AuthorizeProductionMutation/);
+  const start = ps1.indexOf("'RevokeSession' {");
+  const end = ps1.indexOf("\n    'RemoveFactor' {", start);
+  assert.ok(start >= 0 && end > start);
+  const dispatch = ps1.slice(start, end);
+  const mutatingModes = ps1.match(/\$MutatingModes = @\(([^)]*)\)/s)?.[1] || '';
+  assert.match(mutatingModes, /'RevokeSession'/);
+  assert.match(ps1, /\$MutatingModes -contains \$Mode -and -not \$AuthorizeProductionMutation/);
+  assert.match(dispatch, /if \(\$SessionId\)/);
+  assert.match(dispatch, /-SessionId is not accepted as a revocation credential/);
+  assert.match(dispatch, /Require-TestEmail; Require-TestUserId; Require-FactorId; Require-PublishableKey; Require-OperatorPassword; Require-TotpCode/);
+});
+
+test('Stage 5 creates one password session and elevates that same session with one exact verified TOTP factor', () => {
+  const start = helper.indexOf('async function revokeSession()');
+  const end = helper.indexOf('\nasync function removeFactor()', start);
+  assert.ok(start >= 0 && end > start);
+  const stage5 = helper.slice(start, end);
+  assert.equal((stage5.match(/await signIn\(/g) || []).length, 1);
+  assert.equal((stage5.match(/await elevateTotp\(/g) || []).length, 1);
+  assert.match(stage5, /gridly_operator_test !== TEST_LABEL/);
+  assert.match(stage5, /matchingFactors\.length !== 1/);
+  assert.match(stage5, /factor_type !== 'totp'.*status !== 'verified'/s);
+  assert.match(stage5, /aal1Claims\.session_id !== aal2Claims\.session_id/);
+  assert.match(stage5, /aal2Claims\.aal !== 'aal2'.*amr_methods\.includes\('totp'\)/s);
+  assert.match(stage5, /new_password_session_created: true/);
+  assert.match(stage5, /same_session_elevated_to_aal2: true/);
+});
+
+test('Stage 5 reuses one memory-only token for pre-probe, local logout, and post-probe', () => {
+  const start = helper.indexOf('async function revokeSession()');
+  const end = helper.indexOf('\nasync function removeFactor()', start);
+  const stage5 = helper.slice(start, end);
+  assert.match(stage5, /const preRevocationProbe = await probeOldToken\(baseUrl, staleAccessToken\)/);
+  assert.match(stage5, /\/auth\/v1\/logout\?scope=local/);
+  assert.match(stage5, /bearer: staleAccessToken/);
+  assert.match(stage5, /const postRevocationProbe = await probeOldToken\(baseUrl, staleAccessToken\)/);
+  assert.match(stage5, /same_token_reused: true/);
+  assert.match(stage5, /token_exp_still_in_future: tokenExpStillInFuture/);
+  const returnStart = stage5.indexOf('return {');
+  const returnEnd = stage5.indexOf('\n    };', returnStart);
+  const safeOutput = stage5.slice(returnStart, returnEnd);
+  assert.doesNotMatch(safeOutput, /access_token|refresh_token|staleAccessToken|claim_names|sub_sha256|auth_user_accepted|postgrest_jwt_accepted|Authorization/);
+  assert.doesNotMatch(stage5, /process\.stdout|console\.log/);
+  assert.match(stage5, /finally \{[\s\S]*staleAccessToken = null;[\s\S]*clearSessionSecrets\(aal2\);[\s\S]*clearSessionSecrets\(aal1\)/);
+  assert.doesNotMatch(stage5, /createHash|fs\.write|writeQrFile|process\.env\[[^\]]*TOKEN/);
+  assert.doesNotMatch(stage5, /method: 'DELETE'|should_soft_delete|grant_type=refresh_token/);
+});
+
+test('Stage 5 probes are GET-only, zero-row bounded, body-suppressed, and followed by bounded SQL support', () => {
+  const probeStart = helper.indexOf('async function probeOldToken(');
+  const probeEnd = helper.indexOf('\nfunction clearSessionSecrets', probeStart);
+  const probe = helper.slice(probeStart, probeEnd);
+  assert.match(probe, /\/auth\/v1\/user/);
+  assert.match(probe, /\/rest\/v1\/reports\?select=id&limit=0/);
+  assert.doesNotMatch(probe, /method:\s*'(?:POST|PUT|PATCH|DELETE)'/);
+  assert.match(probe, /restAccepted.*Array\.isArray\(rest\.data\).*rest\.data\.length !== 0/s);
+  assert.doesNotMatch(probe.slice(probe.indexOf('return {')), /\.data|response body/i);
+  assert.match(evidenceSql, /requested_session_count/);
+  assert.match(evidenceSql, /BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY/);
+  assert.match(evidenceSql, /WHERE x\.user_id = s\.user_id AND s\.session_id IS NOT NULL AND x\.id = s\.session_id/);
+  assert.doesNotMatch(evidenceSql, /\b(?:INSERT|UPDATE|DELETE|TRUNCATE)\b/i);
+});
+
 test('integer-second cutoff rejects the observed and same-second token', () => {
   const result = spawnSync(process.execPath, [path.join(root, paths.helper),'simulate-cutoff','1700000000','1700000001'], {
     cwd: root, encoding: 'utf8'

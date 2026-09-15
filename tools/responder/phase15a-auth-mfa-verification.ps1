@@ -208,6 +208,9 @@ try {
       Invoke-SafeNode 'simulate-cutoff' $Arguments | Out-Null
     }
     'RevokeSession' {
+      if ($SessionId) {
+        throw 'Stage 5 creates and revokes one new disposable AAL2 session; -SessionId is not accepted as a revocation credential.'
+      }
       Require-TestEmail; Require-TestUserId; Require-FactorId; Require-PublishableKey; Require-OperatorPassword; Require-TotpCode
       Invoke-SafeNode 'revoke-session' | Out-Null
     }
