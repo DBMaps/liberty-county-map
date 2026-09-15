@@ -2,11 +2,21 @@
 
 ## Executive decision
 
-**Decision: CONDITIONAL GO.** The frozen Responder V1 identity and authorization model is structurally implementable against the current Gridly Platform Supabase production database, but it is not safe to treat native `aal2` or Auth sign-out as the entire control. Phase 16 needs a small private Auth adapter that combines verified JWT authentication evidence with live session/factor state, a server-controlled `valid_after` cutoff, and current responder authorization rows.
+**Historical Phase 15 decision: CONDITIONAL GO.** The frozen Responder V1 identity and authorization model was structurally implementable against the current Gridly Platform Supabase production database, but the empty Auth tenant prevented behavioral verification.
 
-**B01 disposition: OPEN.** The catalog proves the required storage types and PostgreSQL helpers. Current Supabase documentation defines the JWT and session semantics. The project has **zero** Auth users, sessions, refresh tokens, factors, and AMR rows, however, and Dashboard-only settings were unavailable without a fresh interactive GitHub sign-in. Therefore this read-only phase cannot prove the actual project's TOTP enrollment/challenge, issued JWT shape, factor removal, or session-revocation behavior. Those mutation-dependent cases are explicitly **REQUIRES CONTROLLED FOLLOW-UP VERIFICATION**, not inferred as passed.
+**Superseding Phase 15A disposition: B01 CLOSED WITH IMPLEMENTATION REQUIREMENTS.** The owner-controlled production run subsequently proved password `aal1`, TOTP enrollment and challenge, same-session `aal2` elevation, JWT/session/factor/AMR correlation, local session revocation, stale access-token behavior, Admin verified-factor removal, managed session downgrade, refresh behavior, and fresh post-reset sign-in. The safe evidence is frozen in the [Phase 15A production evidence](../../reports/responder/responder-phase15a-production-auth-mfa-verification.json) and the [Phase 15A runbook](RESPONDER-PHASE15A-CONTROLLED-PRODUCTION-AUTH-MFA-VERIFICATION.md).
 
-This is an architecture/capability decision only. It does not authorize a responder migration, production implementation, user/factor creation, or publishing.
+Phase 15A does not authorize a responder migration, production implementation, or publishing. Temporary-test cleanup remains a separately owner-controlled operational exit and does not reopen the now-observed B01 behavior.
+
+## Phase 15A production closure addendum
+
+Stage 5 proved that local logout of session `ea8d0111-0830-4c95-ba71-c7e3d89a76fc` returned HTTP 204 and removed its `auth.sessions` row. The exact same unexpired access token then failed `GET /auth/v1/user` with 403 while a bounded zero-row PostgREST read still returned 200. A signed, unexpired JWT is therefore not immediate revocation evidence; a missing live session must deny.
+
+Stage 6 removed exact verified TOTP factor `5afa5b22-4797-416a-8144-b71dab682c40` with Admin HTTP 200. The old unexpired AAL2 token still returned 200 from both Auth user lookup and the zero-row PostgREST probe. Its old refresh token was accepted once and returned the same session `cf4af3f6-0d78-4555-83dd-a1ec2aa6330e` downgraded to `aal1` with password-only AMR. Read-only correlation showed that session and historical session `ebae3ce4-a615-40ea-a80e-35eee5280af6` remained but had live `aal1` and null `factor_id`; TOTP AMR and factor rows were absent. Fresh session `099e2aee-b8be-4bc1-8580-bad0f9d3c7d4` was also `aal1`, password-only, with no factors.
+
+The final Phase 16 predicate derives the actor from `auth.uid()` and treats signed JWT AAL/AMR only as consistency evidence. Every privileged request must require a matching live session owned by that user, live session `aal2`, non-null live factor binding to the same user's currently verified TOTP factor, live session TOTP AMR evidence, an active responder principal/membership, and current organization, role, county-authority, publishing-gate, and command authorization. Missing or inconsistent state denies.
+
+A separate `valid_after`/`minimum_iat` cutoff is **optional defense in depth**, not part of the minimum correctness predicate proved by production. Successful session revocation removes the live session; verified-factor deletion downgrades affected live sessions and removes factor/TOTP evidence. A cutoff remains useful for incident containment, provider-behavior drift, reconciliation, or preventing pre-incident sessions from becoming usable after re-enable, but it cannot replace live checks.
 
 ## Evidence boundary
 
@@ -118,7 +128,9 @@ Authentication claims and authorization state are different:
 
 Role, membership, organization, authority, and gate changes do not need a JWT epoch because their source of truth is already live. Use a cutoff only for authentication-security events and emergency account revocation, not as a substitute for current authorization rows.
 
-## Minimum robust session-freshness design
+## Historical provisional session-freshness design
+
+This section records the conservative design proposed before production behavioral evidence existed. It is superseded by the Phase 15A closure addendum and final runbook contract: live session assurance/factor/AMR checks are required, while `valid_after` is optional defense in depth.
 
 Phase 16 should introduce one private principal-security row per privileged Auth UUID, shared by agency responders and individual Gridly governance users:
 
@@ -166,7 +178,9 @@ The following are release dependencies, not Phase 15 changes:
 | Invitations/SMTP | Approved SMTP or tightly bounded owner-approved pilot delivery; generic errors and no enumeration | Deferred owner gate; not an Auth-capability blocker |
 | Auth audit/monitoring | Detect out-of-band factor/user/session changes and reconcile principal state fail closed | Operational implementation required |
 
-## Phase 16 security contract
+## Historical provisional Phase 16 security contract
+
+The following was the Phase 15 pre-verification constraint set. Where it requires a cutoff, the completed Phase 15A evidence supersedes that requirement with the smaller final live-state predicate documented above and in the Phase 15A runbook.
 
 Phase 16 must obey all of these implementation constraints:
 
@@ -185,9 +199,9 @@ Phase 16 must obey all of these implementation constraints:
 13. Treat production's currently observed `aal3` as unsupported/fail-closed until deliberately reconciled with the frozen contract.
 14. Do not modify managed `auth` schema objects or install triggers there. If out-of-band Auth changes cannot be prevented, add controlled reconciliation/monitoring outside `auth` and fail closed.
 
-## Remaining controlled-verification items
+## Controlled-verification items completed by Phase 15A
 
-Before B01 may close, an authorized non-pilot disposable Auth identity must prove, without exposing token contents:
+The following list was Phase 15's required follow-up. Phase 15A completed the Auth-flow items without exposing token contents. Dashboard configuration and operational SOP items remain release dependencies, but no longer constitute an unresolved B01 platform-behavior question:
 
 - current project TOTP enrollment, challenge, verification, unenrollment, and re-enrollment APIs are enabled;
 - the post-challenge JWT has UUID `sub`/`session_id`, integer `iat`/`exp`, exact `aal2`, and `amr.method=totp`;
@@ -210,6 +224,6 @@ Before B01 may close, an authorized non-pilot disposable Auth identity must prov
 - **Original LP244.26 worktree:** not accessed or modified; all work remained in the responder worktree
 - **Push/merge:** NONE
 
-**Final blocker disposition: B01 OPEN.** There is no discovered architectural NO-GO: the current platform has the necessary primitives, and the minimum adapter is precise. B01 remains open only because the current empty Auth tenant cannot supply mutation-dependent behavioral evidence under this phase's read-only rules and the project-level settings were not readable without interactive sign-in.
+**Historical Phase 15 blocker disposition: B01 OPEN.** That was correct for the read-only, empty-tenant audit at the time. The completed Phase 15A production verification supersedes it with **B01 CLOSED WITH IMPLEMENTATION REQUIREMENTS**. Cleanup of the marked temporary test identity remains pending separate owner execution and zero-state certification.
 
-B01 OPEN — CONTROLLED PRODUCTION AUTH FLOW VERIFICATION REQUIRED
+B01 CLOSED WITH IMPLEMENTATION REQUIREMENTS — PHASE 15A PRODUCTION VERIFICATION COMPLETE

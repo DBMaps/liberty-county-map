@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
   [Parameter(Mandatory=$true)]
-  [ValidateSet('Preflight','CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','InspectCorrelation','SimulateCutoff','RevokeSession','InspectRevocation','RemoveFactor','InspectReset','RecoverUnverifiedTotpFactor','Cleanup')]
+  [ValidateSet('Preflight','CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','InspectCorrelation','SimulateCutoff','RevokeSession','InspectRevocation','RemoveFactor','InspectReset','RecoverUnverifiedTotpFactor','Cleanup','CertifyCleanup')]
   [string]$Mode,
 
   [ValidatePattern('^[a-z0-9]{20}$')]
@@ -28,6 +28,7 @@ $ExpectedProjectRef = 'nhwhkbkludzkuyxmkkcj'
 $ExpectedBranch = 'RESPONDER-PHASE15A-controlled-production-auth-mfa-verification'
 $ExpectedWorktree = 'C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze'
 $TestLabel = 'Gridly Responder Auth Verification Test'
+$CleanupTestUserId = 'f01c5e50-854b-49ab-a65f-0ba81744943a'
 $MutatingModes = @('CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','RevokeSession','RemoveFactor','RecoverUnverifiedTotpFactor','Cleanup')
 $TemporarySecrets = New-Object System.Collections.Generic.List[string]
 
@@ -226,11 +227,24 @@ try {
       Invoke-SafeNode 'recover-unverified-totp-factor' | Out-Null
     }
     'Cleanup' {
+      if ($TestUserId.ToLowerInvariant() -ne $CleanupTestUserId) {
+        throw 'Cleanup refuses every UUID except the frozen Phase 15A temporary test user.'
+      }
       Require-TestEmail; Require-TestUserId; Require-PublishableKey; Require-AdminKey; Require-OperatorPassword
       Invoke-SafeNode 'cleanup' | Out-Null
-      Invoke-SafePsql (Join-Path $PSScriptRoot 'phase15a-auth-evidence.sql') @{
-        test_user_id=$TestUserId; session_id=''
-      } | Out-Null
+    }
+    'CertifyCleanup' {
+      if (-not $TestUserId -or $TestUserId.ToLowerInvariant() -ne $CleanupTestUserId) {
+        throw 'Cleanup certification requires the frozen Phase 15A temporary test user UUID.'
+      }
+      Require-TestUserId
+      $Certification = Invoke-SafePsql (Join-Path $PSScriptRoot 'phase15a-cleanup-certification.sql') @{
+        test_user_id=$TestUserId
+      }
+      if (-not $Certification.cleanup_certified) {
+        throw 'CLEANUP_CERTIFICATION_FAILED: one or more exact test-identity Auth rows remain.'
+      }
+      Write-Host 'CLEANUP_CERTIFICATION_PASS'
     }
   }
 } finally {
@@ -240,7 +254,7 @@ try {
   foreach ($Name in @('GRIDLY_RESPONDER_TEST_USER_ID','GRIDLY_RESPONDER_FACTOR_ID','GRIDLY_RESPONDER_TOTP_CODE')) {
     [Environment]::SetEnvironmentVariable($Name, $null, [EnvironmentVariableTarget]::Process)
   }
-  if ($Mode -eq 'RemoveFactor') {
+  if ($Mode -in @('RemoveFactor','Cleanup')) {
     foreach ($Name in @('GRIDLY_RESPONDER_TEST_PASSWORD','GRIDLY_SUPABASE_PUBLISHABLE_KEY',
       'GRIDLY_SUPABASE_SECRET_KEY','GRIDLY_SUPABASE_SERVICE_ROLE_KEY')) {
       [Environment]::SetEnvironmentVariable($Name, $null, [EnvironmentVariableTarget]::Process)

@@ -5,6 +5,7 @@ import path from 'node:path';
 
 const EXPECTED_PROJECT_REF = 'nhwhkbkludzkuyxmkkcj';
 const TEST_LABEL = 'Gridly Responder Auth Verification Test';
+const CLEANUP_TEST_USER_ID = 'f01c5e50-854b-49ab-a65f-0ba81744943a';
 const action = process.argv[2] || '';
 
 function fail(message) {
@@ -536,36 +537,70 @@ async function recoverUnverifiedTotpFactor() {
 async function cleanup() {
   const { baseUrl } = requireProject();
   const userId = requireUuid(env('GRIDLY_RESPONDER_TEST_USER_ID'), 'Test user ID');
-  const key = secretKey();
-  const exact = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
-    apiKey: key, label: 'Read exact cleanup user'
-  });
-  const user = exact.data?.user || exact.data;
-  if (user?.app_metadata?.gridly_operator_test !== TEST_LABEL) fail('Cleanup refused: supplied UUID is not marked as the dedicated Gridly test identity.');
-  if (String(user?.email || '').toLowerCase() !== env('GRIDLY_RESPONDER_TEST_EMAIL').toLowerCase()) fail('Cleanup refused: supplied UUID and test email do not match.');
-  let globalLogout = 'not-established';
+  if (userId !== CLEANUP_TEST_USER_ID) fail('Cleanup refused: only the frozen Phase 15A test user UUID is permitted.');
+  let key = secretKey();
+  let cleanupSession = null;
+  let exact = null;
+  let factorResponse = null;
   try {
-    const session = await signIn(baseUrl, userId);
-    await request(baseUrl, '/auth/v1/logout?scope=global', {
-      method: 'POST', apiKey: publishableKey(), bearer: session.access_token, label: 'Global test-user session revocation', accept: [204]
+    exact = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+      apiKey: key, label: 'Read exact cleanup user'
     });
-    globalLogout = 'completed';
-  } catch {
-    globalLogout = 'sign-in-unavailable-admin-delete-will-cascade';
-  }
-  const factorResponse = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}/factors`, {
-    apiKey: key, label: 'List exact cleanup user factors'
-  });
-  const factors = normalizeFactors(factorResponse.data);
-  for (const factor of factors) {
-    await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}/factors/${encodeURIComponent(factor.id)}`, {
-      method: 'DELETE', apiKey: key, label: 'Delete exact cleanup user factor'
+    const user = exact.data?.user || exact.data;
+    if (String(user?.id || '').toLowerCase() !== userId) fail('Cleanup refused: Admin response did not match the exact test user UUID.');
+    if (user?.app_metadata?.gridly_operator_test !== TEST_LABEL) fail('Cleanup refused: supplied UUID is not marked as the dedicated Gridly test identity.');
+    if (user?.deleted_at) fail('Cleanup refused: the exact test identity is already deleted; run read-only certification.');
+    if (String(user?.email || '').toLowerCase() !== env('GRIDLY_RESPONDER_TEST_EMAIL').toLowerCase()) fail('Cleanup refused: supplied UUID and test email do not match.');
+
+    factorResponse = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}/factors`, {
+      apiKey: key, label: 'List exact cleanup user factors'
     });
+    const factors = normalizeFactors(factorResponse.data);
+
+    cleanupSession = await signIn(baseUrl, userId);
+    const logout = await request(baseUrl, '/auth/v1/logout?scope=global', {
+      method: 'POST', apiKey: publishableKey(), bearer: cleanupSession.access_token,
+      label: 'Global exact test-user session revocation', accept: [204]
+    });
+    logout.data = null;
+
+    let factorsRemoved = 0;
+    for (const factor of factors) {
+      const factorId = requireUuid(factor.id, 'Cleanup factor ID');
+      const removed = await request(baseUrl,
+        `/auth/v1/admin/users/${encodeURIComponent(userId)}/factors/${encodeURIComponent(factorId)}`, {
+          method: 'DELETE', apiKey: key, label: 'Delete exact cleanup-user factor'
+        });
+      removed.data = null;
+      factorsRemoved += 1;
+    }
+
+    const deleted = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+      method: 'DELETE', apiKey: key, body: { should_soft_delete: false },
+      label: 'Hard-delete exact dedicated Auth test user'
+    });
+    deleted.data = null;
+
+    return {
+      mode: 'Cleanup', target_scope: 'one_exact_marked_phase15a_test_user_only', user_id: userId,
+      marked_user_verified: true, email_match_verified: true, user_not_deleted_verified: true,
+      cleanup_session_created: true,
+      session_retirement: { method: 'authenticated_global_logout', scope: 'global', http_status: logout.status },
+      factor_cleanup: { listed_count: factors.length, removed_count: factorsRemoved, exact_user_only: true },
+      user_delete: { method: 'admin_hard_delete_exact_user', http_status: deleted.status, hard_deleted: true },
+      sql_dml_performed: false, application_or_responder_mutation_performed: false
+    };
+  } finally {
+    clearSessionSecrets(cleanupSession);
+    if (exact?.data && typeof exact.data === 'object') exact.data = null;
+    if (factorResponse?.data && typeof factorResponse.data === 'object') factorResponse.data = null;
+    cleanupSession = null;
+    exact = null;
+    factorResponse = null;
+    key = null;
+    for (const name of ['GRIDLY_RESPONDER_TEST_PASSWORD', 'GRIDLY_SUPABASE_PUBLISHABLE_KEY',
+      'GRIDLY_SUPABASE_SECRET_KEY', 'GRIDLY_SUPABASE_SERVICE_ROLE_KEY']) delete process.env[name];
   }
-  await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
-    method: 'DELETE', apiKey: key, body: { should_soft_delete: false }, label: 'Delete exact dedicated Auth test user'
-  });
-  return { mode: 'Cleanup', user_id: userId, sessions_revocation: globalLogout, factors_removed: factors.length, hard_deleted: true };
 }
 
 function simulateCutoff() {

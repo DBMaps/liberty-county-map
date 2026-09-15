@@ -2,11 +2,21 @@
 
 ## 1. Objective
 
-Phase 15A is an owner-operated, one-identity production verification plan for closing B01. It measures the actual Gridly Platform Supabase Auth behavior for password `aal1`, TOTP enrollment and challenge, `aal2`, JWT/AMR shape, Auth-table correlation, session revocation, factor removal, stale tokens, and final deletion. It creates no responder schema, membership, public content, report, migration, policy, grant, or publishing path.
+Phase 15A is an owner-operated, one-identity production verification and cleanup plan. The production verification is complete: it measured actual Gridly Platform Supabase Auth behavior for password `aal1`, TOTP enrollment and challenge, `aal2`, JWT/AMR shape, Auth-table correlation, session revocation, factor removal, stale tokens, refresh, and fresh post-reset sign-in. It created no responder schema, membership, public content, report, migration, policy, grant, or publishing path.
 
-Phase 15 established a **CONDITIONAL GO** against project `Gridly Platform`, reference `nhwhkbkludzkuyxmkkcj`, while Auth was empty. Phase 15A is ready for owner execution but does not close B01 until every required production observation below is returned and reconciled.
+Phase 15 established a **CONDITIONAL GO** against project `Gridly Platform`, reference `nhwhkbkludzkuyxmkkcj`, while Auth was empty. The completed Stage 5 and Stage 6 observations close B01 **WITH IMPLEMENTATION REQUIREMENTS**. Final deletion of the marked temporary identity remains separately owner-controlled cleanup, followed by mandatory read-only zero-state certification.
 
 Official behavior references used to design this procedure are the Supabase [MFA guide](https://supabase.com/docs/guides/auth/auth-mfa), [TOTP flow](https://supabase.com/docs/guides/auth/auth-mfa/totp), [sessions guide](https://supabase.com/docs/guides/auth/sessions), [JWT fields](https://supabase.com/docs/guides/auth/jwt-fields), [user management](https://supabase.com/docs/guides/auth/managing-user-data), and the upstream [Auth REST OpenAPI](https://github.com/supabase/auth/blob/master/openapi.yaml). Observations from this project take precedence over assumed behavior.
+
+The machine-readable [Phase 15A production evidence](../../reports/responder/responder-phase15a-production-auth-mfa-verification.json) contains only safe identifiers, status codes, assurance/method values, counts, and conclusions. It contains no email, token, password, TOTP value, key, header, or response body.
+
+### Completed production evidence
+
+- **Stage 5 — native session revocation:** disposable session `ea8d0111-0830-4c95-ba71-c7e3d89a76fc` was `aal2` with password+TOTP AMR. Before logout, Auth user and zero-row PostgREST probes were 200. Local logout returned 204. Reusing the exact same unexpired token produced Auth 403 but PostgREST 200; read-only correlation returned `requested_session_count=0` and `transaction_read_only=on`.
+- **Stage 6 — verified-factor removal:** Admin deletion of factor `5afa5b22-4797-416a-8144-b71dab682c40` returned 200 without explicit logout/session/user deletion or replacement enrollment. The exact old unexpired AAL2 token for session `cf4af3f6-0d78-4555-83dd-a1ec2aa6330e` still produced Auth 200 and zero-row PostgREST 200. Its old refresh token was accepted once, retained the same session ID, and returned `aal1` with password-only AMR.
+- **Managed reset state:** read-only correlation showed former AAL2 session `cf4af3f6-0d78-4555-83dd-a1ec2aa6330e` survived with `aal1`, null `factor_id`, password-only AMR, and no factor. Historical Stage 4 session `ebae3ce4-a615-40ea-a80e-35eee5280af6` was likewise downgraded to `aal1` with null `factor_id`. Fresh password session `099e2aee-b8be-4bc1-8580-bad0f9d3c7d4` was `aal1`, password-only, with no factors. The observed user-scoped refresh-token count was 6.
+
+These results select Stage 6 Outcome B: sessions survive but are downgraded. They also prove that the already-issued JWT can retain stale AAL2/TOTP claims after the live managed state is downgraded.
 
 ## 2. Production mutation authorization boundary
 
@@ -544,13 +554,22 @@ Use the exact Stage 3 and Stage 4 blocks once, assigning the returned new factor
 
 ### Stage 10 — retire the test identity
 
-**Purpose.** Verify the exact UUID/email/administrative marker, globally revoke sessions if sign-in remains available, remove factors only for that UUID, hard-delete only that marked user, then certify zero residual rows.
+**Purpose.** Verify the one frozen UUID, email, administrative marker, and live user state; create one cleanup session; require supported global logout HTTP 204; remove only factors listed by the Admin API for that exact user; hard-delete only that marked user through the Admin API; then separately certify zero residual rows.
 
-**Preconditions.** Exact `$TestUserId`; email environment unchanged; no other UUID is supplied.
+**Preconditions.** Exact `$TestUserId` `f01c5e50-854b-49ab-a65f-0ba81744943a`; dedicated email unchanged; current test-user password available; production publishable and server/operator Admin credentials available; no shell transcript; clean expected responder worktree. The current observed factor list is empty. Any UUID other than the frozen test UUID is rejected before credentials are requested.
 
-> **OWNER EXECUTION REQUIRED**
+> **OWNER EXECUTION REQUIRED — CLEANUP IS NOT AUTHORIZED BY THIS COMMIT**
 
 ```powershell
+cd 'C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze'
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+
+$TestUserId = [guid]'f01c5e50-854b-49ab-a65f-0ba81744943a'
+if (-not $env:GRIDLY_RESPONDER_TEST_EMAIL) {
+  $env:GRIDLY_RESPONDER_TEST_EMAIL = Read-Host 'Dedicated temporary test email'
+}
+$env:GRIDLY_SUPABASE_URL = 'https://nhwhkbkludzkuyxmkkcj.supabase.co'
+
 & '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
   -Mode Cleanup `
   -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
@@ -558,15 +577,66 @@ Use the exact Stage 3 and Stage 4 blocks once, assigning the returned new factor
   -AuthorizeProductionMutation
 ```
 
-**Expected output.** Marker/email verification succeeds internally; session revocation disposition; bounded factor removal count; `hard_deleted=true`; then SQL `user_count=0`, empty sessions/factors/AMR arrays, and refresh-token count zero.
+Concealed prompts are production publishable/anon key, production secret/service-role Admin key, and the temporary test-user password. The helper creates one cleanup session only so `POST /auth/v1/logout?scope=global` can retire all managed sessions/refresh state. HTTP 204 is mandatory; failure stops before factor or user deletion. The helper then uses only exact Admin URLs below and suppresses response bodies:
 
-**Pass condition.** Test user, its sessions, refresh tokens, factors, and AMR rows all equal zero. Global Auth counts return to the Stage 0 baseline. Reporting remains false and responder schemas remain absent when Stage 0 is rerun.
+- `DELETE /auth/v1/admin/users/{exact-user-id}/factors/{factor-id}` only for factors returned for that exact user;
+- `DELETE /auth/v1/admin/users/{exact-user-id}` with hard-delete semantics.
 
-**Fail condition.** Marker or email mismatch, wildcard/non-UUID target, any residual row, or any unrelated Auth count change.
+Expected safe cleanup JSON:
 
-**Rollback / stop.** Deletion is intentionally irreversible. On partial failure, do not substitute another UUID; use the recovery matrix and repeat only the exact cleanup against `$TestUserId` after review.
+```json
+{
+  "mode": "Cleanup",
+  "target_scope": "one_exact_marked_phase15a_test_user_only",
+  "user_id": "f01c5e50-854b-49ab-a65f-0ba81744943a",
+  "marked_user_verified": true,
+  "email_match_verified": true,
+  "user_not_deleted_verified": true,
+  "cleanup_session_created": true,
+  "session_retirement": {
+    "method": "authenticated_global_logout",
+    "scope": "global",
+    "http_status": 204
+  },
+  "factor_cleanup": {
+    "listed_count": 0,
+    "removed_count": 0,
+    "exact_user_only": true
+  },
+  "user_delete": {
+    "method": "admin_hard_delete_exact_user",
+    "http_status": 200,
+    "hard_deleted": true
+  },
+  "sql_dml_performed": false,
+  "application_or_responder_mutation_performed": false
+}
+```
 
-**Paste back.** Cleanup JSON, zero-state correlation JSON, and a final Stage 0 read-only preflight JSON. Never paste secrets.
+Run certification as a separate read-only owner step after reviewing the cleanup JSON:
+
+```powershell
+$env:PGHOST = 'db.nhwhkbkludzkuyxmkkcj.supabase.co'
+$env:PGPORT = '5432'
+$env:PGDATABASE = 'postgres'
+$env:PGUSER = 'postgres'
+$env:PGSSLMODE = 'verify-full'
+
+& '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
+  -Mode CertifyCleanup `
+  -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
+  -TestUserId $TestUserId
+```
+
+Certification is an exact-UUID, repeatable-read, read-only transaction with short timeouts and rollback. It emits `transaction_read_only=on`, five zero counts, `cleanup_certified=true`, then `CLEANUP_CERTIFICATION_PASS`.
+
+**Pass condition.** Global logout is 204; exact hard deletion is 200; test user, sessions, refresh tokens, factors, and joined AMR rows all equal zero; and `cleanup_certified=true`. Global Auth counts return to the Stage 0 baseline. Reporting remains false and responder schemas remain absent when Stage 0 is rerun.
+
+**Fail condition.** UUID differs from the frozen cleanup UUID; Admin response UUID, marker, live state, or email mismatches; global logout is not 204; an Admin deletion fails; any residual count is nonzero; or any unrelated Auth user is addressed.
+
+**Rollback / stop.** Deletion is intentionally irreversible. Stop after the cleanup JSON; review it before certification. Stop after `CLEANUP_CERTIFICATION_PASS`. On partial failure, do not substitute another UUID, directly delete managed Auth rows, or improvise a broader operation. Preserve the exact UUID and safe completed-step/status fields for review before any retry.
+
+**Paste back.** Complete safe Cleanup JSON, complete CertifyCleanup JSON, the pass marker, and a final Stage 0 read-only preflight JSON. Never paste secrets.
 
 ## 5. Recovery procedure for an interrupted run
 
@@ -581,9 +651,9 @@ Always begin recovery with Stage 0. If it returns a `recovery_user_id`, set `$Te
 | User + AAL2 session | session/AMR/factor correlate | Resume Stage 5 or 7 | Stage 10 |
 | Session revoked | requested session count zero; user/factor remain | Resume Stage 8 | Stage 10 |
 | Factor removed | factor list empty | Skip Stage 9 unless needed; proceed to cleanup | Stage 10 |
-| Partial cleanup | exact user or child counts remain | Stop, compare UUID/marker, rerun only exact Stage 10 | Never delete rows with SQL or use an all-user operation |
+| Partial cleanup | cleanup output or certification is incomplete | If the exact user is absent, run `CertifyCleanup`; if it remains, inspect exact state and obtain review before retry | Never delete rows with SQL or use an all-user operation |
 
-If the marked user exists but the password is unavailable, Stage 10 can still verify the exact marker, remove exact-user factors through the admin API, and hard-delete that user; its session and token rows cascade. Its output explicitly records that sign-in/global logout was unavailable. Final SQL zero-state is still mandatory.
+If the marked user exists but its password is unavailable, the prepared Stage 10 mode fails closed because it cannot prove global logout HTTP 204. Do not bypass that precondition or fall back to direct Auth-table DML. Recover the dedicated credential or obtain a separately reviewed owner authorization for a revised supported Admin cleanup path. If hard deletion already succeeded, do not rerun mutation; run `CertifyCleanup` only.
 
 ## 6. Evidence handling and redaction
 
@@ -593,33 +663,37 @@ Never persist or paste email, password, access/refresh token, complete JWT, auth
 
 The Node helper parses issued JWTs only to select allowed evidence. It never verifies authorization from local decoding. Production authorization conclusions use observed Auth endpoint behavior and bounded database correlation. The stale-token PostgREST probe is a GET with `select=id&limit=0`; it cannot return or write a report row.
 
-## 7. Authorization contract decision to freeze after observations
+## 7. Final authorization contract selected from observations
 
-The provisional minimum is candidate C with precision clarified:
+**Selected minimum: live principal + live session assurance + current authorization.** Stage 5 showed that an unexpired token can outlive its session for stateless PostgREST. Stage 6 showed that a verified-factor reset can leave a session row alive while downgrading its managed AAL, clearing `factor_id`, deleting the factor, and removing TOTP AMR; the old JWT still claimed and exercised stale AAL2 state. Therefore neither JWT claims nor live session existence alone is sufficient.
 
-- private principal `enabled boolean` for immediate emergency/user eligibility shutdown;
-- integer `minimum_iat bigint` (the exact-second form of `valid_after`) for MFA reset/credential-security cutoffs;
-- exact live `session_id` ownership/existence for immediate native sign-out/session revocation;
-- separate current membership, organization, role, county authority, publishing gate, and GRIDLY_ADMIN grant checks.
+The minimum Phase 16 control is:
 
-Candidate A (`enabled + valid_after`) cannot observe native sign-out before JWT expiry. Candidate B (`enabled + live session`) cannot distinguish a still-live session carrying pre-reset `aal2` evidence if factor removal does not end it. C covers both. A single sentinel timestamp could encode disabled state, but makes incident operations and audit meaning less clear without removing a substantive check.
+- private active/enabled principal state for an immediate Gridly eligibility kill switch;
+- exact signed `session_id` parsed as UUID and matched to a live `auth.sessions` row owned by `auth.uid()`;
+- live session `aal=aal2`;
+- non-null live `factor_id` joined to a same-user `auth.mfa_factors` row with `factor_type=totp` and `status=verified`;
+- live `auth.mfa_amr_claims` TOTP method for that session;
+- signed JWT `aal2` and TOTP AMR as fail-closed consistency checks, never as substitutes for live state;
+- current active membership, organization verification/operation, role, county authority, publishing gate, command rule, and separate GRIDLY_ADMIN grant where applicable.
 
-The live session query is practical only inside a narrowly owned `SECURITY DEFINER` function because `authenticated` has no direct Auth-table read grant. It creates coupling to Supabase-managed schema. Do not grant clients Auth-table access, modify managed Auth objects, or install Auth triggers. Freeze direct `auth.sessions`/factor/AMR dependencies only after Stage 5 proves the exact keys. If future Supabase support changes, a private session allowlist/cutoff adapter is safer operationally but cannot mirror out-of-band native sign-out without a trusted reconciliation path. For the high-value responder surface, current Supabase guidance explicitly supports checking JWT `session_id` against `auth.sessions`; the narrow definer is provisionally preferred.
+`valid_after`/integer `minimum_iat` is **optional defense in depth**, not required by the minimum production-proven predicate. Native logout is immediately caught by the missing live session. Admin factor reset is immediately caught by live `aal1`, null factor binding, missing factor, and missing TOTP AMR. A cutoff remains useful for incident containment, partial provider failures, behavior drift, reconciliation, or ensuring pre-incident sessions cannot become useful after re-enable. If implemented, use integer JWT-second semantics and treat it as an additional fail-closed predicate; never use it instead of live session/assurance/authority checks.
 
-Emergency offboarding uses all three controls in order: disable; advance `minimum_iat`; revoke Auth sessions. Ordinary membership removal, organization suspension, role downgrade, county-authority change, publishing-gate change, and GRIDLY_ADMIN grant removal already fail from live authorization rows and do not need a new cutoff. A user ban blocks future sign-in/refresh behavior but is not trusted to revoke issued access tokens. Token expiry remains defense in depth.
+The live checks require a narrowly owned private `SECURITY DEFINER` helper because client roles have no direct managed-Auth table reads. It must use an empty search path, fully qualified names, revoked default `PUBLIC` execute, minimum caller grants, no dynamic SQL, no general Auth-table reader, and no managed `auth` modification or trigger. Production acceptance must pin and test the managed columns/relationships and fail closed on provider drift.
 
-## 8. TOTP-specific predicate to freeze after observations
+## 8. Frozen TOTP-specific predicate
 
-The minimum candidate predicate is:
+The final predicate is:
 
 1. signed JWT `aal` is exactly `aal2`;
 2. JWT `amr` is a well-formed array containing method `totp`;
 3. JWT `session_id` belongs to `auth.uid()` and is live;
 4. the same session's `auth.mfa_amr_claims` records TOTP authentication;
 5. if observed consistently, `auth.sessions.factor_id` identifies a currently `verified`, same-user `auth.mfa_factors.factor_type='totp'` row;
-6. principal enabled and `iat >= minimum_iat`.
+6. current active principal and authorization rows pass;
+7. when the optional cutoff is deployed, integer JWT `iat >= minimum_iat` also passes.
 
-`aal2` alone is insufficient because phone/WebAuthn can also establish it. Missing, malformed, alternate-only, cross-user, removed-factor, or inconsistent evidence fails closed. Stage 4/5 observations decide whether both AMR-table and factor-ID joins are stable enough to require or whether signed JWT TOTP AMR plus live session/cutoff is the smaller supported contract.
+`aal2` alone is insufficient because phone/WebAuthn can also establish it. Missing, malformed, alternate-only, cross-user, removed-factor, or inconsistent evidence fails closed. Production Stage 4 established the session/factor/AMR relationship; Stage 6 established that factor reset clears the live relationship even while the old JWT remains stale. Both the factor join and live AMR check are required implementation constraints.
 
 ## 9. Production safety invariants
 
@@ -627,9 +701,9 @@ At every stage: `reporting_enabled` remains false; agency publishing remains abs
 
 The procedure intentionally performs only Auth mutations required by the stage. It never executes SQL DML. All SQL begins a repeatable-read read-only transaction, sets short timeouts and UTC, emits one bounded JSON row, and rolls back.
 
-## 10. Final B01 closure criteria
+## 10. Final B01 disposition
 
-B01 can close only after owner evidence proves all of the following and final cleanup passes:
+**B01 CLOSED WITH IMPLEMENTATION REQUIREMENTS.** Owner evidence proved:
 
 1. one marked user was created and no other user changed;
 2. real password sign-in produced correlated `aal1` session evidence;
@@ -642,12 +716,12 @@ B01 can close only after owner evidence proves all of the following and final cl
 9. session revocation row behavior, Auth `/user` behavior, and normal zero-row PostgREST JWT behavior were separately measured;
 10. factor removal effects on the old access token, refresh, session, fresh sign-in, factor row, and AMR evidence were measured;
 11. the final authorization recommendation is selected from A–D based on those measurements;
-12. cleanup returns the dedicated user's users/sessions/refresh tokens/factors/AMR rows to zero and final Stage 0 invariants pass.
+12. the minimum authorization contract is live principal + live session ownership + live AAL2 + live verified TOTP factor + live TOTP AMR + current responder/governance authorization.
 
-Any missing production observation leaves B01 open. Documentation alone cannot substitute for the controlled run.
+Temporary identity cleanup and zero-state certification remain mandatory Phase 15A operational exit work, but no authentication-behavior uncertainty remains open under B01. Phase 16 implementation acceptance remains blocked until the frozen predicate is implemented and tested; closure is not deployment authorization.
 
 ## 11. What the owner must paste back
 
 After each stage paste only the complete safe JSON/status named in that stage. Preserve field names and values exactly; do not summarize `same_session_id`, AMR methods, HTTP statuses, counts, or timestamps. UUIDs in these outputs are intentional correlation evidence. Never paste entered environment values, secure prompts, QR/seed, TOTP code, email, password, or token.
 
-The review checkpoints are mandatory: Stage 0 before Stage 1; Stage 1/2 before enrollment; Stage 4/5 before revocation; Stage 7 before factor removal; Stage 8 before optional re-enrollment; and Stage 10 plus final preflight before B01 closure.
+The remaining review checkpoints are mandatory: owner review before Stage 10 cleanup, review of the cleanup JSON before read-only certification, and final Stage 0 read-only preflight after certification.

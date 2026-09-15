@@ -16,7 +16,8 @@ test('Phase 15 preserves the exact baseline and gives a bounded decision',()=>{
   assert.equal(evidence.startingHead,'5adf3d01e4c44ae30f8c12cd4c55f796022bceaf');
   assert.equal(evidence.decision,'CONDITIONAL GO');
   assert.equal(evidence.b01Disposition,'OPEN');
-  assert.equal(doc.trimEnd().split('\n').at(-1),'B01 OPEN — CONTROLLED PRODUCTION AUTH FLOW VERIFICATION REQUIRED');
+  assert.match(doc,/Historical Phase 15 blocker disposition: B01 OPEN/);
+  assert.equal(doc.trimEnd().split('\n').at(-1),'B01 CLOSED WITH IMPLEMENTATION REQUIREMENTS — PHASE 15A PRODUCTION VERIFICATION COMPLETE');
 });
 
 test('production evidence is read-only, aggregate-only, and secret-free',()=>{

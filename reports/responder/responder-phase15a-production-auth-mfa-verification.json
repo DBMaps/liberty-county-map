@@ -1,0 +1,163 @@
+{
+  "phase": "15A",
+  "recordedDate": "2026-09-15",
+  "project": {
+    "name": "Gridly Platform",
+    "ref": "nhwhkbkludzkuyxmkkcj"
+  },
+  "testIdentity": {
+    "userId": "f01c5e50-854b-49ab-a65f-0ba81744943a",
+    "marker": "Gridly Responder Auth Verification Test",
+    "temporary": true,
+    "cleanupStatus": "PENDING_OWNER_EXECUTION",
+    "currentFactorCount": 0,
+    "lastObservedRefreshTokenCount": 6
+  },
+  "stage5": {
+    "purpose": "same-token behavior after exact local session logout",
+    "disposableSessionId": "ea8d0111-0830-4c95-ba71-c7e3d89a76fc",
+    "preLogout": {
+      "aal": "aal2",
+      "amrMethods": [
+        "password",
+        "totp"
+      ],
+      "authUserHttpStatus": 200,
+      "postgrestZeroRowHttpStatus": 200
+    },
+    "logout": {
+      "scope": "local",
+      "httpStatus": 204
+    },
+    "postLogoutOldAccessToken": {
+      "sameTokenReused": true,
+      "tokenExpStillInFuture": true,
+      "authUserHttpStatus": 403,
+      "postgrestZeroRowHttpStatus": 200
+    },
+    "databaseCorrelation": {
+      "requestedSessionCount": 0,
+      "transactionReadOnly": "on"
+    },
+    "conclusion": "The revoked session disappeared from live Auth state while the same unexpired JWT remained accepted by stateless PostgREST."
+  },
+  "stage6": {
+    "purpose": "same-token and refresh behavior after exact verified-TOTP Admin deletion",
+    "removedFactorId": "5afa5b22-4797-416a-8144-b71dab682c40",
+    "disposableSessionId": "cf4af3f6-0d78-4555-83dd-a1ec2aa6330e",
+    "preRemoval": {
+      "aal": "aal2",
+      "amrMethods": [
+        "password",
+        "totp"
+      ],
+      "authUserHttpStatus": 200,
+      "postgrestZeroRowHttpStatus": 200
+    },
+    "adminFactorDelete": {
+      "httpStatus": 200,
+      "explicitLogoutPerformed": false,
+      "explicitSessionDeletePerformed": false,
+      "userDeletePerformed": false,
+      "replacementFactorCreated": false
+    },
+    "postRemovalOldAccessToken": {
+      "sameTokenReused": true,
+      "tokenExpStillInFuture": true,
+      "authUserHttpStatus": 200,
+      "postgrestZeroRowHttpStatus": 200
+    },
+    "oldRefresh": {
+      "attemptedExactlyOnce": true,
+      "accepted": true,
+      "httpStatus": 200,
+      "sessionId": "cf4af3f6-0d78-4555-83dd-a1ec2aa6330e",
+      "sameSessionId": true,
+      "aal": "aal1",
+      "amrMethods": [
+        "password"
+      ]
+    },
+    "formerDisposableSessionCorrelation": {
+      "sessionId": "cf4af3f6-0d78-4555-83dd-a1ec2aa6330e",
+      "requestedSessionCount": 1,
+      "sessionPresent": true,
+      "aal": "aal1",
+      "factorId": null,
+      "amrMethods": [
+        "password"
+      ],
+      "factorCount": 0,
+      "transactionReadOnly": "on"
+    },
+    "historicalStage4SessionCorrelation": {
+      "sessionId": "ebae3ce4-a615-40ea-a80e-35eee5280af6",
+      "sessionPresent": true,
+      "aal": "aal1",
+      "factorId": null
+    },
+    "freshPasswordSignIn": {
+      "sessionId": "099e2aee-b8be-4bc1-8580-bad0f9d3c7d4",
+      "requestedSessionCount": 1,
+      "aal": "aal1",
+      "factorId": null,
+      "amrMethods": [
+        "password"
+      ],
+      "factors": [],
+      "transactionReadOnly": "on"
+    },
+    "observedOutcome": "SESSION_SURVIVES_BUT_IS_DOWNGRADED",
+    "conclusion": "Factor deletion downgraded affected live sessions and removed live factor and TOTP AMR evidence, while the already-issued AAL2 JWT remained accepted until live authorization state was consulted."
+  },
+  "b01": {
+    "disposition": "CLOSED WITH IMPLEMENTATION REQUIREMENTS",
+    "remainingBehavioralUnknowns": [],
+    "cleanupRequiredForOperationalExit": true,
+    "cleanupIsDeploymentAuthorization": false
+  },
+  "phase16": {
+    "minimumAuthorizationPredicate": [
+      "auth.uid() is non-null and is the canonical caller; no actor UUID is accepted from the request",
+      "signed session_id parses as UUID and maps to a live auth.sessions row owned by auth.uid()",
+      "live auth.sessions.aal is exactly aal2",
+      "live auth.sessions.factor_id is non-null and maps to the same user's factor",
+      "live factor_type is totp and live factor status is verified",
+      "live auth.mfa_amr_claims contains totp for the same session",
+      "signed JWT aal2 and totp AMR agree with live state but never substitute for it",
+      "private responder principal and membership are active",
+      "organization verification, operation state, role and county authority are current",
+      "publishing gate and command-specific authorization are current"
+    ],
+    "validAfter": {
+      "classification": "OPTIONAL_DEFENSE_IN_DEPTH",
+      "requiredForMinimumCorrectness": false,
+      "reason": "Observed session revocation removes live session state and observed factor removal downgrades live AAL, clears factor_id, removes the factor and strips TOTP AMR. The mandatory live predicate denies both stale-token cases immediately.",
+      "useCases": [
+        "incident containment",
+        "provider behavior drift",
+        "partial-failure reconciliation",
+        "preventing pre-incident sessions from becoming usable after principal re-enable"
+      ]
+    },
+    "failClosedOn": [
+      "missing or foreign session",
+      "live AAL other than aal2",
+      "missing factor_id",
+      "missing, wrong-user, non-totp or unverified factor",
+      "missing live TOTP AMR",
+      "signed/live assurance disagreement",
+      "inactive principal or membership",
+      "stale organization, role, authority, gate or command authorization",
+      "unsupported managed Auth schema behavior"
+    ]
+  },
+  "safety": {
+    "rawTokensPersisted": false,
+    "credentialsRecorded": false,
+    "totpSecretRecorded": false,
+    "applicationRowsRead": 0,
+    "applicationOrResponderSchemaMutations": false,
+    "codexProductionMutationsForThisEvidenceCommit": "NONE"
+  }
+}

@@ -11,7 +11,9 @@ const paths = {
   ps1: 'tools/responder/phase15a-auth-mfa-verification.ps1',
   helper: 'tools/responder/phase15a-auth-mfa-helper.mjs',
   preflight: 'tools/responder/phase15a-preflight.sql',
-  evidence: 'tools/responder/phase15a-auth-evidence.sql'
+  evidence: 'tools/responder/phase15a-auth-evidence.sql',
+  cleanupCertification: 'tools/responder/phase15a-cleanup-certification.sql',
+  productionEvidence: 'reports/responder/responder-phase15a-production-auth-mfa-verification.json'
 };
 const read = (name) => fs.readFileSync(path.join(root, paths[name]), 'utf8');
 const doc = read('doc');
@@ -19,6 +21,8 @@ const ps1 = read('ps1');
 const helper = read('helper');
 const preflightSql = read('preflight');
 const evidenceSql = read('evidence');
+const cleanupCertificationSql = read('cleanupCertification');
+const productionEvidence = JSON.parse(read('productionEvidence'));
 
 test('Phase 15A deliverables exist and preserve the owner-only production boundary', () => {
   for (const relative of Object.values(paths)) assert.ok(fs.existsSync(path.join(root, relative)), relative);
@@ -102,7 +106,7 @@ test('JWT evidence is an allowlisted summary with TOTP method and redacted subje
 });
 
 test('read-only SQL is bounded to project email or supplied UUID/session and emits no secrets', () => {
-  for (const sql of [preflightSql, evidenceSql]) {
+  for (const sql of [preflightSql, evidenceSql, cleanupCertificationSql]) {
     assert.match(sql, /BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY/);
     assert.match(sql, /SET LOCAL statement_timeout = '20s'/);
     assert.match(sql, /SET LOCAL search_path = pg_catalog/);
@@ -129,7 +133,7 @@ test('production application and responder schemas cannot be mutated by the harn
 test('cleanup is exact-user scoped, marker checked, factor-first, and hard deletes only that UUID', () => {
   const marker = helper.indexOf('gridly_operator_test !== TEST_LABEL');
   const factorList = helper.indexOf('/factors`,', marker);
-  const factorDelete = helper.indexOf('/factors/${encodeURIComponent(factor.id)}`', marker);
+  const factorDelete = helper.indexOf('/factors/${encodeURIComponent(factorId)}`', marker);
   const userDelete = helper.indexOf('body: { should_soft_delete: false }', marker);
   assert.ok(marker >= 0 && factorList > marker && factorDelete > factorList && userDelete > factorDelete);
   assert.match(helper, /encodeURIComponent\(userId\)/g);
@@ -376,7 +380,7 @@ test('Stage 6 output is allowlisted and all secret-bearing references are cleare
   for (const value of ['refreshResponse?.data','fresh','aal2','aal1']) assert.match(stage6, new RegExp(`clearSessionSecrets\\(${value.replace('?', '\\?')}\\)`));
   for (const name of ['GRIDLY_RESPONDER_TEST_PASSWORD','GRIDLY_RESPONDER_TOTP_CODE','GRIDLY_SUPABASE_PUBLISHABLE_KEY',
     'GRIDLY_SUPABASE_SECRET_KEY','GRIDLY_SUPABASE_SERVICE_ROLE_KEY']) assert.match(stage6, new RegExp(name));
-  const dispatcherCleanup = ps1.slice(ps1.indexOf("if ($Mode -eq 'RemoveFactor')"));
+  const dispatcherCleanup = ps1.slice(ps1.indexOf("if ($Mode -in @('RemoveFactor','Cleanup'))"));
   for (const name of ['GRIDLY_RESPONDER_TEST_PASSWORD','GRIDLY_SUPABASE_PUBLISHABLE_KEY',
     'GRIDLY_SUPABASE_SECRET_KEY','GRIDLY_SUPABASE_SERVICE_ROLE_KEY']) assert.match(dispatcherCleanup, new RegExp(name));
   assert.match(dispatcherCleanup, /SetEnvironmentVariable\(\$Name, \$null, \[EnvironmentVariableTarget\]::Process\)/);
@@ -420,7 +424,130 @@ test('runbook covers every stage, recovery state, evidence return and B01 decisi
     'User + verified factor','User + AAL2 session','Session revoked','Factor removed','Partial cleanup']) {
     assert.ok(doc.includes(state), state);
   }
-  assert.match(doc, /candidate C with precision clarified/);
-  assert.match(doc, /B01 can close only after owner evidence proves/);
-  assert.match(doc, /Any missing production observation leaves B01 open/);
+  assert.match(doc, /Selected minimum: live principal \+ live session assurance \+ current authorization/);
+  assert.match(doc, /B01 CLOSED WITH IMPLEMENTATION REQUIREMENTS/);
+  assert.match(doc, /cleanup and zero-state certification remain mandatory Phase 15A operational exit work/i);
+});
+
+test('final production evidence records exact Stage 5 revocation behavior', () => {
+  assert.equal(productionEvidence.stage5.disposableSessionId, 'ea8d0111-0830-4c95-ba71-c7e3d89a76fc');
+  assert.deepEqual(productionEvidence.stage5.preLogout.amrMethods, ['password', 'totp']);
+  assert.equal(productionEvidence.stage5.preLogout.authUserHttpStatus, 200);
+  assert.equal(productionEvidence.stage5.logout.httpStatus, 204);
+  assert.equal(productionEvidence.stage5.postLogoutOldAccessToken.sameTokenReused, true);
+  assert.equal(productionEvidence.stage5.postLogoutOldAccessToken.tokenExpStillInFuture, true);
+  assert.equal(productionEvidence.stage5.postLogoutOldAccessToken.authUserHttpStatus, 403);
+  assert.equal(productionEvidence.stage5.postLogoutOldAccessToken.postgrestZeroRowHttpStatus, 200);
+  assert.equal(productionEvidence.stage5.databaseCorrelation.requestedSessionCount, 0);
+  assert.equal(productionEvidence.stage5.databaseCorrelation.transactionReadOnly, 'on');
+});
+
+test('final production evidence records exact Stage 6 downgrade behavior', () => {
+  const stage6 = productionEvidence.stage6;
+  assert.equal(stage6.removedFactorId, '5afa5b22-4797-416a-8144-b71dab682c40');
+  assert.equal(stage6.disposableSessionId, 'cf4af3f6-0d78-4555-83dd-a1ec2aa6330e');
+  assert.equal(stage6.adminFactorDelete.httpStatus, 200);
+  assert.equal(stage6.postRemovalOldAccessToken.authUserHttpStatus, 200);
+  assert.equal(stage6.postRemovalOldAccessToken.postgrestZeroRowHttpStatus, 200);
+  assert.equal(stage6.oldRefresh.accepted, true);
+  assert.equal(stage6.oldRefresh.sessionId, stage6.disposableSessionId);
+  assert.equal(stage6.oldRefresh.aal, 'aal1');
+  assert.deepEqual(stage6.oldRefresh.amrMethods, ['password']);
+  assert.equal(stage6.formerDisposableSessionCorrelation.requestedSessionCount, 1);
+  assert.equal(stage6.formerDisposableSessionCorrelation.aal, 'aal1');
+  assert.equal(stage6.formerDisposableSessionCorrelation.factorId, null);
+  assert.equal(stage6.freshPasswordSignIn.sessionId, '099e2aee-b8be-4bc1-8580-bad0f9d3c7d4');
+  assert.equal(stage6.freshPasswordSignIn.aal, 'aal1');
+  assert.deepEqual(stage6.freshPasswordSignIn.factors, []);
+  assert.equal(stage6.observedOutcome, 'SESSION_SURVIVES_BUT_IS_DOWNGRADED');
+});
+
+test('B01 closes with mandatory live assurance and optional valid_after', () => {
+  assert.equal(productionEvidence.b01.disposition, 'CLOSED WITH IMPLEMENTATION REQUIREMENTS');
+  assert.deepEqual(productionEvidence.b01.remainingBehavioralUnknowns, []);
+  const predicate = productionEvidence.phase16.minimumAuthorizationPredicate.join('\n');
+  for (const required of ['auth.uid()', 'auth.sessions', 'aal2', 'factor_id', 'totp', 'verified',
+    'auth.mfa_amr_claims', 'principal', 'membership', 'county authority', 'publishing gate']) {
+    assert.match(predicate, new RegExp(required.replace(/[.()]/g, '\\$&'), 'i'), required);
+  }
+  assert.equal(productionEvidence.phase16.validAfter.classification, 'OPTIONAL_DEFENSE_IN_DEPTH');
+  assert.equal(productionEvidence.phase16.validAfter.requiredForMinimumCorrectness, false);
+  assert.match(doc, /`valid_after`\/integer `minimum_iat` is \*\*optional defense in depth\*\*/);
+});
+
+test('cleanup is locked to the frozen marked identity and requires global logout before exact Admin deletion', () => {
+  const cleanupStart = helper.indexOf('async function cleanup()');
+  const cleanupEnd = helper.indexOf('\nfunction simulateCutoff()', cleanupStart);
+  const cleanup = helper.slice(cleanupStart, cleanupEnd);
+  assert.match(helper, /const CLEANUP_TEST_USER_ID = 'f01c5e50-854b-49ab-a65f-0ba81744943a'/);
+  assert.match(cleanup, /userId !== CLEANUP_TEST_USER_ID/);
+  assert.match(cleanup, /Admin response did not match the exact test user UUID/);
+  assert.match(cleanup, /gridly_operator_test !== TEST_LABEL/);
+  assert.match(cleanup, /user\?\.deleted_at/);
+  assert.match(cleanup, /supplied UUID and test email do not match/);
+  assert.equal((cleanup.match(/await signIn\(/g) || []).length, 1);
+  const logout = cleanup.indexOf('/auth/v1/logout?scope=global');
+  const factorDelete = cleanup.indexOf('/factors/${encodeURIComponent(factorId)}`');
+  const userDelete = cleanup.indexOf('body: { should_soft_delete: false }');
+  assert.ok(logout >= 0 && factorDelete > logout && userDelete > factorDelete);
+  assert.match(cleanup, /accept: \[204\]/);
+  assert.doesNotMatch(cleanup, /catch\s*\{/);
+  assert.match(cleanup, /\/auth\/v1\/admin\/users\/\$\{encodeURIComponent\(userId\)\}/);
+  assert.doesNotMatch(cleanup, /deleteAllUsers|\/admin\/users\?page|\b(?:INSERT|UPDATE|DELETE)\s+(?:FROM|INTO)\s+auth\./i);
+});
+
+test('cleanup refuses before credentials without explicit production authorization', () => {
+  const shell = process.platform === 'win32' ? 'powershell.exe' : 'pwsh';
+  const result = spawnSync(shell, ['-NoProfile','-ExecutionPolicy','Bypass','-File',path.join(root, paths.ps1),
+    '-Mode','Cleanup','-ProjectRef','nhwhkbkludzkuyxmkkcj',
+    '-TestUserId','f01c5e50-854b-49ab-a65f-0ba81744943a'], { cwd: root, encoding: 'utf8' });
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /without -AuthorizeProductionMutation/);
+  assert.doesNotMatch(output, /publishable\/anon key|secret\/service-role key|test-user password/);
+});
+
+test('cleanup emits only safe state and clears all credential references in finally', () => {
+  const cleanupStart = helper.indexOf('async function cleanup()');
+  const cleanupEnd = helper.indexOf('\nfunction simulateCutoff()', cleanupStart);
+  const cleanup = helper.slice(cleanupStart, cleanupEnd);
+  for (const field of ['target_scope', 'marked_user_verified', 'email_match_verified',
+    'session_retirement', 'factor_cleanup', 'user_delete', 'sql_dml_performed']) {
+    assert.match(cleanup, new RegExp(field), field);
+  }
+  const returned = cleanup.slice(cleanup.indexOf('return {'), cleanup.indexOf('\n    };', cleanup.indexOf('return {')));
+  assert.doesNotMatch(returned, /access_token|refresh_token|cleanupSession|Authorization|password|email:/i);
+  assert.match(cleanup, /finally \{[\s\S]*clearSessionSecrets\(cleanupSession\)/);
+  for (const name of ['GRIDLY_RESPONDER_TEST_PASSWORD', 'GRIDLY_SUPABASE_PUBLISHABLE_KEY',
+    'GRIDLY_SUPABASE_SECRET_KEY', 'GRIDLY_SUPABASE_SERVICE_ROLE_KEY']) assert.match(cleanup, new RegExp(name));
+  const dispatcherCleanup = ps1.slice(ps1.indexOf("if ($Mode -in @('RemoveFactor','Cleanup'))"));
+  assert.match(dispatcherCleanup, /SetEnvironmentVariable\(\$Name, \$null, \[EnvironmentVariableTarget\]::Process\)/);
+});
+
+test('post-cleanup certification is separate, exact-user bounded, read-only and fail closed', () => {
+  assert.match(ps1, /'Cleanup','CertifyCleanup'/);
+  const cleanupDispatch = ps1.slice(ps1.indexOf("'Cleanup' {"), ps1.indexOf("'CertifyCleanup' {"));
+  const certifyDispatch = ps1.slice(ps1.indexOf("'CertifyCleanup' {"), ps1.indexOf('\n    }', ps1.indexOf("'CertifyCleanup' {")) + 6);
+  assert.doesNotMatch(cleanupDispatch, /Invoke-SafePsql/);
+  assert.match(certifyDispatch, /phase15a-cleanup-certification\.sql/);
+  assert.match(certifyDispatch, /cleanup_certified/);
+  assert.match(certifyDispatch, /CLEANUP_CERTIFICATION_PASS/);
+  assert.match(cleanupCertificationSql, /BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY/);
+  assert.match(cleanupCertificationSql, /:'test_user_id'::uuid/);
+  for (const field of ['user_count', 'session_count', 'refresh_token_count', 'factor_count', 'amr_claim_count']) {
+    assert.match(cleanupCertificationSql, new RegExp(`'${field}'`), field);
+  }
+  assert.match(cleanupCertificationSql, /cleanup_certified/);
+  assert.match(cleanupCertificationSql, /ROLLBACK/);
+  assert.doesNotMatch(cleanupCertificationSql, /\b(?:INSERT|UPDATE|DELETE|TRUNCATE|CREATE|ALTER|DROP|GRANT|REVOKE)\b/i);
+});
+
+test('closure artifacts contain no raw secret-bearing evidence', () => {
+  const generated = `${doc}\n${JSON.stringify(productionEvidence)}\n${cleanupCertificationSql}`;
+  assert.doesNotMatch(generated,
+    /eyJ[A-Za-z0-9_-]{30,}\.eyJ[A-Za-z0-9_-]{30,}|sb_(?:secret|service)_[A-Za-z0-9_-]{12,}|otpauth:\/\/|-----BEGIN [A-Z ]*PRIVATE KEY-----/);
+  assert.equal(productionEvidence.safety.rawTokensPersisted, false);
+  assert.equal(productionEvidence.safety.credentialsRecorded, false);
+  assert.equal(productionEvidence.safety.applicationRowsRead, 0);
+  assert.equal(productionEvidence.safety.codexProductionMutationsForThisEvidenceCommit, 'NONE');
 });
