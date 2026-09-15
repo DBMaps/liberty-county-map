@@ -11,8 +11,20 @@ const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const read = (path) => readFileSync(join(repositoryRoot, path), 'utf8');
 const bytes = (path) => readFileSync(join(repositoryRoot, path));
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
+const pngDimensions = (value) => {
+  assert.equal(value.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', 'asset must be a valid PNG');
+  assert.equal(value.subarray(12, 16).toString('ascii'), 'IHDR', 'PNG must begin with an IHDR chunk');
+  return { width: value.readUInt32BE(16), height: value.readUInt32BE(20) };
+};
 const manifest = JSON.parse(read('assets/walkthrough/walkthrough-assets.json'));
-const expected = Object.fromEntries(manifest.slides.map(({ id, productionAsset, sha256: hash }) => [id, { path: productionAsset, hash }]));
+const expectedDimensions = {
+  kbyg: { width: 836, height: 1124 },
+  nearby: { width: 828, height: 1796 },
+  alerts: { width: 832, height: 1796 },
+  report: { width: 884, height: 1808 },
+  settings: { width: 856, height: 1812 },
+};
+const expected = Object.fromEntries(manifest.slides.map(({ id, productionAsset, sha256: hash, width, height }) => [id, { path: productionAsset, hash, width, height }]));
 
 function assertExactCase(relativePath) {
   let current = repositoryRoot;
@@ -34,7 +46,11 @@ test('LP244.27 onboarding source paths are exact, immutable, and Capacitor-compa
     assert.equal(asset.path.startsWith('/'), false, `${asset.path} must remain origin-relative`);
     assert.equal(asset.path.includes('..'), false, `${asset.path} must not traverse directories`);
     assertExactCase(asset.path);
-    assert.equal(sha256(bytes(asset.path)), asset.hash, `${asset.path} must match its approved hash`);
+    const assetBytes = bytes(asset.path);
+    assert.equal(sha256(assetBytes), asset.hash, `${asset.path} must match its approved hash`);
+    assert.deepEqual({ width: asset.width, height: asset.height }, expectedDimensions[id], `${asset.path} manifest dimensions must match the LP244.27 quality target`);
+    assert.deepEqual(pngDimensions(assetBytes), expectedDimensions[id], `${asset.path} intrinsic dimensions must match the governed manifest`);
+    assert.ok(asset.width >= 800 && asset.height >= 1100, `${asset.path} must remain a high-density walkthrough asset`);
     assert.match(featureMarkup, new RegExp(`data-gridly-approved-slide="${id}"[\\s\\S]*?src="${asset.path.replaceAll('/', '\\/')}"`));
     assert.equal(html.includes(asset.path), false, `${asset.path} is dynamically referenced, not static HTML`);
     assert.equal(css.includes(asset.path), false, `${asset.path} is image content, not a CSS URL`);
@@ -47,12 +63,14 @@ test('LP244.27 governed native copy lands all five images in Android public layo
   const destinationRoot = mkdtempSync(join(tmpdir(), 'gridly-lp24427-'));
   const androidPublic = join(destinationRoot, 'android', 'app', 'src', 'main', 'assets', 'public');
   try {
-    for (const { path, hash } of Object.values(expected)) {
+    for (const { path, hash, width, height } of Object.values(expected)) {
       assert.ok(runtimePolicy.files.includes(path), `${path} must be explicitly governed by the native allowlist`);
       await copyGovernedRuntime(repositoryRoot, androidPublic, path);
       const packagedPath = join(androidPublic, path);
       assert.ok(existsSync(packagedPath), `${path} must land under Android assets/public`);
-      assert.equal(sha256(readFileSync(packagedPath)), hash, `${path} must remain byte-identical after native copy`);
+      const packagedBytes = readFileSync(packagedPath);
+      assert.equal(sha256(packagedBytes), hash, `${path} must remain byte-identical after native copy`);
+      assert.deepEqual(pngDimensions(packagedBytes), { width, height }, `${path} must retain its native high-density dimensions after copy`);
     }
     assert.equal(runtimePolicy.files.includes('assets/walkthrough'), false, 'reference-only walkthrough files must not enter native staging through a broad directory copy');
     assert.equal(existsSync(join(androidPublic, manifest.referenceOnly.path)), false, 'owner reference composite must remain outside the Android runtime');

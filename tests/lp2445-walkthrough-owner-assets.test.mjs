@@ -81,6 +81,7 @@ test("manifest declares portrait authority and supersedes landscape cropping", (
   assert.equal(manifest.landscapeFeatureCropping, "superseded_by_portrait_only_walkthrough_decision");
 });
 
-test("FM 1409 is an explicit immutable owner-reference contract", () => {
-  assert.match(manifest.slides.find((slide) => slide.id === "nearby").landscapeFocus, /immutable FM 1409 label/);
+test("current Liberty crossing context is explicit in the governed source-capture contract", () => {
+  assert.match(manifest.sourceAuthority, /Current local Gridly UI[\s\S]*deviceScaleFactor 3[\s\S]*no AI generation or interpolation upscaling/i);
+  assert.match(manifest.slides.find((slide) => slide.id === "nearby").landscapeFocus, /Liberty map[\s\S]*Loop 227 Main Street label/);
 });

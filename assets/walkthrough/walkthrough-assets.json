@@ -1,5 +1,6 @@
 {
-  "contract": "LP244.5 owner-approved walkthrough artwork",
+  "contract": "LP244.27 current-local-UI high-density walkthrough artwork",
+  "sourceAuthority": "Current local Gridly UI at http://127.0.0.1:5500 captured with Playwright at deviceScaleFactor 3 using a deterministic Liberty active-crossing fixture; no AI generation or interpolation upscaling.",
   "runtimeReferenceCompositeAllowed": false,
   "portraitAuthority": "Complete approved artwork; intrinsic aspect ratio preserved with object-fit: contain.",
   "orientationAuthority": "portrait",
@@ -9,37 +10,47 @@
     {
       "id": "kbyg",
       "productionAsset": "assets/walkthrough/gridly-walkthrough-kbyg.png",
-      "sha256": "99603a84bedf645b905c19c15c38cc73d57bd8e828c9207353cd987f0fb1debc",
-      "portraitFocus": "Complete Travel Brief artwork",
-      "landscapeFocus": "Know Before You Go, Travel Brief, travel-time guidance, and active Dayton community report"
+      "width": 836,
+      "height": 1124,
+      "sha256": "671401d521e56043161dc19cb65f0d9178604851e8fb2a60310f5671317e71dd",
+      "portraitFocus": "Current Travel Brief with active Liberty community report",
+      "landscapeFocus": "Know Before You Go, Travel Brief, travel-time guidance, and active Liberty community report"
     },
     {
       "id": "nearby",
       "productionAsset": "assets/walkthrough/gridly-walkthrough-nearby.png",
-      "sha256": "d04487b75aa72f5a814ced1daee7fa90af7112919713b78901f24cc03a7348f3",
-      "portraitFocus": "Complete Dayton map artwork",
-      "landscapeFocus": "Dayton map, blocked crossing marker, surrounding roadway geography, and immutable FM 1409 label"
+      "width": 828,
+      "height": 1796,
+      "sha256": "9eb20df9c6c29720e5fefbc8c1c5ff49a7e50dc9ff43e75755fe82c505a3fdfd",
+      "portraitFocus": "Current Liberty map artwork with active Loop 227 Main Street crossing marker",
+      "landscapeFocus": "Liberty map, active crossing marker, surrounding roadway geography, and Loop 227 Main Street label"
     },
     {
       "id": "alerts",
       "productionAsset": "assets/walkthrough/gridly-walkthrough-alerts.png",
-      "sha256": "b7b6612d778245c4a1f34cda26969c684ce5ec016edb4917949b8f5550cd8b1f",
-      "portraitFocus": "Complete Alerts artwork",
-      "landscapeFocus": "Alerts, active condition, Community Reports, Blocked, Main Street, and Show me"
+      "width": 832,
+      "height": 1796,
+      "sha256": "14b7c6132f4f1339a68db10b809df34c788a06725f7aed9d291de8b6b148c738",
+      "portraitFocus": "Current Alerts artwork with one active community condition",
+      "landscapeFocus": "Alerts, one active condition, Community Reports, Blocked Crossing, and Loop 227 Main Street"
     },
     {
       "id": "report",
       "productionAsset": "assets/walkthrough/gridly-walkthrough-report.png",
-      "sha256": "3a67c7cc8ee1466279b7eca322772e37bb8023b074425f4154e18a4ee873bf9f",
+      "width": 884,
+      "height": 1808,
+      "sha256": "272df50f005126dbeb4333cdc97a8a5836242403a59b4f0adf831bff496c9c4f",
       "portraitFocus": "Complete Report artwork",
       "landscapeFocus": "Report, What are you seeing, and hazard selection grid"
     },
     {
       "id": "settings",
       "productionAsset": "assets/walkthrough/gridly-walkthrough-settings.png",
-      "sha256": "d76f7bc1818efa016d807e5c20a181d6e824cbc3b4e03dbe66010ebea921a452",
-      "portraitFocus": "Complete Settings artwork",
-      "landscapeFocus": "Settings, Awareness, Home Area, Dayton, Liberty County, and Change Home Area"
+      "width": 856,
+      "height": 1812,
+      "sha256": "29d933616ff4a344ad859201b555d32ea0ab36a540a664e3cd9b9a019f7ea582",
+      "portraitFocus": "Current Settings artwork",
+      "landscapeFocus": "Settings, Awareness, Home Area, Liberty, Liberty County, and Change Home Area"
     }
   ],
   "referenceOnly": {
