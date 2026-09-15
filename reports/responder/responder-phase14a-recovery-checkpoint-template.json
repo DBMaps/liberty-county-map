@@ -1,0 +1,28 @@
+{
+  "purpose": "FUTURE_PRODUCTION_RETRY_TEMPLATE_NOT_EVIDENCE",
+  "targetDatabase": null,
+  "targetTable": "public.gridly_texas_county_boundaries",
+  "checkpoint": {
+    "type": null,
+    "timestamp": null,
+    "evidenceSource": null,
+    "databaseCoverageConfirmed": null,
+    "predatesWriteConfirmed": null,
+    "recentEnoughForOwner": null,
+    "backupHealth": null,
+    "unresolvedFailure": null,
+    "recoveryOwner": null,
+    "restoreMethod": null,
+    "runbookReference": null,
+    "prepopulationRestoreConfidence": null,
+    "notes": null
+  },
+  "ownerAcceptance": {
+    "accepted": false,
+    "acceptedBy": null,
+    "acceptedAt": null,
+    "scope": null
+  },
+  "stopIfAnyRequiredFieldUnknown": true,
+  "containsLiveProductionEvidence": false
+}

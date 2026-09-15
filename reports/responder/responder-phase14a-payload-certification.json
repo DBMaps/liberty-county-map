@@ -1,0 +1,59 @@
+{
+  "phase": "14A",
+  "scope": "LOCAL_TRANSACTION_REPAIR_ONLY",
+  "branch": "RESPONDER-PHASE14A-production-payload-transaction-repair",
+  "startingHead": "43ae26e3b1b59b94712fdf83dcf2667180b000fa",
+  "source": {
+    "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+    "sha256": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+    "countyCount": 254,
+    "coordinatePairs": 604979,
+    "fipsSha256": "7e80dd17d4d295d904f986a193ab259850e607c6bdfde3a7454e9af5a54a2092"
+  },
+  "historicalPhase13Artifact": {
+    "path": "db/responder-local/phase13_county_population_rehearsal.sql",
+    "bytes": 13965684,
+    "sha256": "9e17bb6a0f08580aabcc4943ab9b3bdda6f41e7205a78a7dab8d696a8037815e",
+    "hasTopLevelBegin": true,
+    "hasTopLevelCommit": true,
+    "hasTopLevelRollback": false,
+    "modified": false
+  },
+  "payload": {
+    "path": "db/responder-local/phase14a_county_population_payload.sql",
+    "bytes": 13965052,
+    "sha256": "464565b291946ff12e948d683e402c83caa39e2737748996f669fa2327a25a9e",
+    "generatorVersion": "responder.phase14a.transactionNeutralPayload.v1",
+    "insertCount": 254,
+    "mutationTargets": ["public.gridly_texas_county_boundaries"],
+    "transactionControlStatements": 0,
+    "ddlStatements": 0,
+    "otherDmlStatements": 0,
+    "deterministic": true,
+    "productionMigration": false
+  },
+  "rehearsal": {
+    "localPostgres": "17.10",
+    "localPostgis": "3.6.2",
+    "intentionalRollbackToZero": true,
+    "postInsertCertificationFailureRollbackToZero": true,
+    "commitTo254": true,
+    "committedDigest": "54f42bb9795dd2f4f6f743a14b4d86e7",
+    "freshReadOnlyDigestMatched": true,
+    "unrelatedSentinelsUnchanged": true,
+    "nonemptyTargetRejected": true,
+    "strictBoundaryPassed": true,
+    "testCountPassed": 9,
+    "testCountFailed": 0,
+    "timingsMs": {
+      "intentionalRollback": 2978,
+      "forcedPostInsertFailure": 2661,
+      "commit": 2791
+    }
+  },
+  "recoveryCheckpointAccepted": false,
+  "productionAccessed": false,
+  "productionPopulationPerformed": false,
+  "p12_01": "OPEN",
+  "b03": "OPEN"
+}
