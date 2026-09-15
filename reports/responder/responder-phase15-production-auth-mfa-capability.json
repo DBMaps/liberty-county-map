@@ -1,0 +1,110 @@
+{
+  "contractVersion": "responder.agency.v1.phase0.1",
+  "phase": 15,
+  "branch": "RESPONDER-PHASE15-production-auth-mfa-capability-audit",
+  "startingHead": "5adf3d01e4c44ae30f8c12cd4c55f796022bceaf",
+  "productionProject": "Gridly Platform",
+  "productionProjectRef": "nhwhkbkludzkuyxmkkcj",
+  "capturedAt": "2026-09-15T12:09:38.944911Z",
+  "decision": "CONDITIONAL GO",
+  "b01Disposition": "OPEN",
+  "b01ClosureCondition": "Controlled end-to-end verification must prove the current project's TOTP enrollment/challenge, aal2/amr/session_id JWT shape, factor removal/reset, session revocation, and the proposed database predicate with a disposable production Auth test identity before deployment acceptance.",
+  "evidenceBoundary": {
+    "repository": "Phase 0-14E contracts, local SQL fixtures, tests, production inventories, and current source scan",
+    "production": "Bounded catalog and aggregate SELECT evidence in REPEATABLE READ READ ONLY transactions; no user rows or secret values read",
+    "platformSemantics": "Current official Supabase Auth, JWT, sessions, MFA, and RLS documentation",
+    "notProven": "Mutation-dependent Auth flows and Dashboard-only configuration"
+  },
+  "production": {
+    "transactionReadOnly": "on",
+    "database": "postgres",
+    "currentUser": "postgres",
+    "sessionUser": "postgres",
+    "serverVersion": "17.6",
+    "timezone": "UTC",
+    "responderSchemaCount": 0,
+    "exactCounts": {
+      "auth.users": 0,
+      "auth.sessions": 0,
+      "auth.refresh_tokens": 0,
+      "auth.mfa_factors": 0,
+      "auth.mfa_amr_claims": 0
+    },
+    "types": {
+      "auth.users.id": "uuid NOT NULL PRIMARY KEY",
+      "auth.sessions.id": "uuid NOT NULL PRIMARY KEY",
+      "auth.sessions.user_id": "uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE",
+      "auth.sessions.factor_id": "uuid nullable",
+      "auth.sessions.aal": "auth.aal_level nullable",
+      "auth.mfa_factors.id": "uuid NOT NULL PRIMARY KEY",
+      "auth.mfa_factors.user_id": "uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE",
+      "auth.mfa_amr_claims.session_id": "uuid NOT NULL REFERENCES auth.sessions(id) ON DELETE CASCADE"
+    },
+    "enumValues": {
+      "auth.aal_level": ["aal1", "aal2", "aal3"],
+      "auth.factor_type": ["totp", "webauthn", "phone"],
+      "auth.factor_status": ["unverified", "verified"]
+    },
+    "helpers": {
+      "auth.uid()": "STABLE SECURITY INVOKER; returns request JWT sub cast to uuid",
+      "auth.jwt()": "STABLE SECURITY INVOKER; returns request JWT claims as jsonb",
+      "auth.email()": "STABLE SECURITY INVOKER; returns request JWT email",
+      "auth.role()": "STABLE SECURITY INVOKER; returns request JWT role"
+    },
+    "ordinaryRoleDirectAuthTableSelect": {
+      "anon": false,
+      "authenticated": false,
+      "service_role": false,
+      "postgres": true
+    },
+    "finalReadOnlyConfirmation": {
+      "capturedAt": "2026-09-15T12:26:04.181947Z",
+      "transactionReadOnly": "on",
+      "authUsers": 0,
+      "authSessions": 0,
+      "authRefreshTokens": 0,
+      "authMfaFactors": 0,
+      "authMfaAmrClaims": 0,
+      "responderSchemaCount": 0
+    }
+  },
+  "capabilities": [
+    {"requirement":"immutable Auth UUID identity","status":"SUPPORTED DIRECTLY","proven":true,"adapterNeeded":false,"blocker":false},
+    {"requirement":"auth.uid() / JWT sub mapping","status":"SUPPORTED DIRECTLY","proven":true,"adapterNeeded":false,"blocker":false},
+    {"requirement":"email is not identity","status":"SUPPORTED DIRECTLY","proven":true,"adapterNeeded":false,"blocker":false},
+    {"requirement":"aal2 visible to PostgreSQL","status":"SUPPORTED DIRECTLY","proven":true,"adapterNeeded":false,"blocker":false},
+    {"requirement":"TOTP capability","status":"REQUIRES CONTROLLED FOLLOW-UP VERIFICATION","proven":false,"adapterNeeded":true,"blocker":true},
+    {"requirement":"TOTP-specific method evidence","status":"SUPPORTED WITH ADAPTER","proven":true,"adapterNeeded":true,"blocker":false},
+    {"requirement":"session_id and live session check","status":"SUPPORTED WITH ADAPTER","proven":true,"adapterNeeded":true,"blocker":false},
+    {"requirement":"iat cutoff","status":"SUPPORTED WITH ADAPTER","proven":true,"adapterNeeded":true,"blocker":false},
+    {"requirement":"live membership and authority override","status":"SUPPORTED WITH ADAPTER","proven":true,"adapterNeeded":true,"blocker":false},
+    {"requirement":"factor reset / emergency offboarding","status":"REQUIRES OPERATIONAL CONTROL","proven":false,"adapterNeeded":true,"blocker":true},
+    {"requirement":"individual GRIDLY_ADMIN mapping","status":"SUPPORTED WITH ADAPTER","proven":true,"adapterNeeded":true,"blocker":false},
+    {"requirement":"browser/service-role separation","status":"SUPPORTED DIRECTLY","proven":true,"adapterNeeded":false,"blocker":false}
+  ],
+  "minimumFreshnessDesign": {
+    "principalState": ["user_id uuid primary key", "enabled boolean", "valid_after timestamptz"],
+    "requestPredicate": [
+      "auth.uid() is non-null and equals the verified JWT sub",
+      "JWT role is authenticated and is_anonymous is false",
+      "JWT aal is exactly aal2",
+      "JWT amr contains method totp",
+      "JWT session_id is a UUID for a live auth.sessions row owned by auth.uid()",
+      "live session is aal2 and records the TOTP method/factor after controlled verification",
+      "JWT iat is present and not before the private valid_after cutoff",
+      "private principal is enabled",
+      "live membership, organization, role, county authority, publishing gate, and command rules pass"
+    ],
+    "securityEventOrder": [
+      "Disable the private principal and advance valid_after in the responder control transaction",
+      "Revoke the affected Auth session(s) through a server-only administrative path",
+      "Apply membership/factor/offboarding action and durable audit receipt",
+      "Require a new TOTP challenge and a post-cutoff aal2 session before re-enabling after recovery"
+    ],
+    "notRequired": ["JWT organization/role/authority claims", "client-supplied actor", "security_epoch claim", "browser service role"]
+  },
+  "productionMutations": "NONE",
+  "secretsExposed": "NONE",
+  "pushed": false,
+  "merged": false
+}
