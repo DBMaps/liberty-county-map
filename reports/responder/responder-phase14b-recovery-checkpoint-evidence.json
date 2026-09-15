@@ -1,0 +1,170 @@
+{
+  "schema_version": "gridly.responder.phase14b.recoveryCheckpointEvidence.v1",
+  "phase": "14B",
+  "scope": "READ_ONLY_RECOVERY_CHECKPOINT_VERIFICATION",
+  "branch": "RESPONDER-PHASE14B-production-recovery-checkpoint",
+  "starting_head": "33eb5c1ea22613a8f0046f66f6e0b4aa12d8147a",
+  "audit_timestamp": "2026-09-15T00:13:02.953347Z",
+  "production_database": {
+    "project_label": "Gridly Platform",
+    "database_name": "postgres",
+    "postgres_version": "17.6",
+    "postgis_version": "3.3.7",
+    "current_user": "postgres",
+    "session_user": "postgres",
+    "server_timezone": "UTC",
+    "transaction_read_only": "on"
+  },
+  "target": {
+    "table": "public.gridly_texas_county_boundaries",
+    "exists": true,
+    "row_count": 0,
+    "foreign_key_dependents": 0,
+    "view_dependents": 0,
+    "responder_schema_count": 0
+  },
+  "checkpoint_type": "UNKNOWN",
+  "checkpoint_timestamp": null,
+  "checkpoint_age": null,
+  "checkpoint_age_policy": "NOT_DEFINED_IN_PROJECT_EVIDENCE",
+  "evidence_source": [
+    {
+      "path": "reports/lp172/backup-evidence.json",
+      "classification": "CURRENT_EVIDENCE_OF_UNRESOLVED_OWNER_ACTION",
+      "verification_date": null,
+      "finding": "Latest successful backup metadata and PITR availability are OWNER_ACTION_REQUIRED."
+    },
+    {
+      "path": "reports/lp171/backup-evidence-closure.json",
+      "classification": "STALE_UNAVAILABLE_EVIDENCE",
+      "verification_date": null,
+      "finding": "Backup source, latest status, plan capability, PITR and owner were unavailable."
+    },
+    {
+      "path": "reports/lp171/restoration-rehearsal.json",
+      "classification": "PROCEDURE_ONLY",
+      "verification_date": null,
+      "finding": "Local/tabletop rehearsal passed; production restoration is explicitly NOT_TESTED."
+    },
+    {
+      "path": "docs/LEGAL/LP24421-RECOVERY-RUNBOOK.md",
+      "classification": "PROCEDURE_ONLY",
+      "verification_date": "2026-09-08",
+      "finding": "Defines owner authorization, isolated restore and recertification; states project backup/PITR settings and provider workflow remain unverified."
+    },
+    {
+      "path": "docs/LEGAL/LP24422-PRODUCTION-REPORT-RETENTION-MIGRATION-READINESS.md",
+      "classification": "PROCEDURE_ONLY",
+      "verification_date": null,
+      "finding": "Defines Dashboard evidence to collect and states the connector cannot read backup status, leaving the checkpoint owner-blocking."
+    },
+    {
+      "path": "docs/RESPONDER/RESPONDER-PHASE14A-PRODUCTION-COUNTY-RETRY-RUNBOOK.md",
+      "classification": "CURRENT_PROCEDURE_ONLY",
+      "verification_date": "2026-09-14",
+      "finding": "Defines the county retry checkpoint gate but is not backup evidence."
+    },
+    {
+      "source": "Supabase Dashboard Database Backups",
+      "classification": "UNAVAILABLE_WITHOUT_INTERACTIVE_LOGIN",
+      "verification_date": "2026-09-15",
+      "finding": "No backup listing or timestamp was obtained."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/platform/backups",
+      "classification": "GENERAL_PLATFORM_CAPABILITY_ONLY",
+      "verification_date": "2026-09-15",
+      "finding": "Documents scheduled backup and PITR mechanisms but does not prove this project's checkpoint."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/platform/clone-project",
+      "classification": "GENERAL_RESTORE_PROCEDURE_ONLY",
+      "verification_date": "2026-09-15",
+      "finding": "Documents a database-only restore to a new project and its reconfiguration limits; project eligibility was not proven."
+    }
+  ],
+  "database_covered": "NOT_PROVEN_BY_A_CONCRETE_CHECKPOINT",
+  "backup_pitr_capability": "UNKNOWN",
+  "restore_mechanism": "PLATFORM_METHODS_DOCUMENTED_BUT_PROJECT_AVAILABILITY_UNPROVEN",
+  "recovery_owner": {
+    "classification": "PARTIALLY_IDENTIFIED",
+    "authorization_role": "DJ Burns Collective LLC owner",
+    "operator_role": "designated database operator",
+    "assigned_operator": null
+  },
+  "recovery_procedure": {
+    "classification": "DOCUMENTED_BUT_PRODUCTION_UNTESTED",
+    "primary_path": "docs/LEGAL/LP24421-RECOVERY-RUNBOOK.md",
+    "county_retry_path": "docs/RESPONDER/RESPONDER-PHASE14A-PRODUCTION-COUNTY-RETRY-RUNBOOK.md",
+    "missing": [
+      "concrete checkpoint selection",
+      "assigned recovery operator",
+      "project-specific restore availability",
+      "observed restoration duration",
+      "production restore test evidence"
+    ]
+  },
+  "restore_scope": "WHOLE_DATABASE_OR_DATABASE_ONLY_NEW_PROJECT_IF_AVAILABLE",
+  "restore_scope_risk": "HIGH",
+  "restore_scope_reason": "A whole-database recovery can revert unrelated reports, feedback, geocode/provider state, Auth records and migrations created after the selected checkpoint; a new-project restore also requires non-database reconfiguration.",
+  "restore_test_status": "NO_PRODUCTION_RESTORE_EVIDENCE",
+  "recovery_health": "UNKNOWN",
+  "owner_acceptance_required": true,
+  "owner_acceptance_status": "CANNOT_BE_REQUESTED_ON_CONCRETE_CHECKPOINT_EVIDENCE_BECAUSE_CHECKPOINT_IS_UNKNOWN",
+  "primary_recovery_strategy": [
+    "hold the county insert transaction open through certification and ROLLBACK on any failure",
+    "perform immediate fresh postcommit read-only certification",
+    "use a narrowly reviewed forward correction when safe",
+    "use whole-database or new-project restore only when necessary and separately owner-authorized"
+  ],
+  "county_write_recovery_sufficiency": "INSUFFICIENT",
+  "acceptance_criteria": {
+    "recent_backup_or_pitr_exists": {
+      "pass": false,
+      "reason": "No concrete current checkpoint listing or provider metadata was obtained."
+    },
+    "checkpoint_timestamp_known": {
+      "pass": false,
+      "reason": "No checkpoint timestamp is available."
+    },
+    "checkpoint_predates_future_write": {
+      "pass": false,
+      "reason": "Cannot compare an unknown checkpoint with a future operation."
+    },
+    "target_database_covered": {
+      "pass": false,
+      "reason": "General platform coverage does not prove that a concrete checkpoint covers this project."
+    },
+    "recovery_mechanism_known": {
+      "pass": false,
+      "reason": "Platform methods are documented, but this project's available method is unverified."
+    },
+    "recovery_owner_identified": {
+      "pass": false,
+      "reason": "Owner/operator responsibilities are defined, but no assigned recovery operator is evidenced."
+    },
+    "recovery_procedure_known": {
+      "pass": true,
+      "reason": "Repository runbooks define isolation, checkpoint choice, certification and controlled reconnection."
+    },
+    "prepopulation_restore_path_proven": {
+      "pass": false,
+      "reason": "No production restore test or concrete checkpoint proves restoration to the prepopulation state."
+    },
+    "no_degraded_recovery_state": {
+      "pass": false,
+      "reason": "Health is unknown; silence cannot establish a healthy backup state."
+    },
+    "owner_acceptance_based_on_concrete_evidence": {
+      "pass": false,
+      "reason": "There is no concrete checkpoint for owner acceptance."
+    }
+  },
+  "accepted_for_phase14_retry": false,
+  "retry_gate": "PHASE 14 RETRY RECOVERY GATE NOT SATISFIED",
+  "p12_01": "OPEN",
+  "b03": "OPEN",
+  "production_write_occurred": false,
+  "backup_or_restore_action_occurred": false,
+  "production_configuration_changed": false
+}
