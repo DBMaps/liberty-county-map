@@ -1,0 +1,153 @@
+{
+  "schema_version": "gridly.responder.phase14c.productionCountyCertification.v1",
+  "phase": "14C",
+  "branch": "RESPONDER-PHASE14C-production-county-population-retry",
+  "starting_head": "c01ecc98516448d0d7757a2a90e0a23d2860ad65",
+  "mission": "Populate public.gridly_texas_county_boundaries from zero to 254 rows in one guarded production transaction",
+  "outcome": "PRODUCTION COUNTY POPULATION NOT ATTEMPTED — PREFLIGHT BLOCKED",
+  "certified_input": {
+    "source_path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+    "source_identity": "CANONICAL_TRACKED_GIT_BLOB",
+    "source_sha256": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+    "source_canonical_bytes": 13934264,
+    "county_count": 254,
+    "coordinate_pairs": 604979,
+    "fips_sha256": "7e80dd17d4d295d904f986a193ab259850e607c6bdfde3a7454e9af5a54a2092",
+    "payload_path": "db/responder-local/phase14a_county_population_payload.sql",
+    "payload_bytes": 13965052,
+    "payload_sha256": "464565b291946ff12e948d683e402c83caa39e2737748996f669fa2327a25a9e",
+    "payload_insert_count": 254,
+    "payload_transaction_neutral": true,
+    "payload_forbidden_statement_count": 0,
+    "payload_modified": false
+  },
+  "recovery_gate": {
+    "classification": "PHASE 14 RETRY RECOVERY GATE SATISFIED",
+    "checkpoint_type": "SCHEDULED_PHYSICAL_DATABASE_BACKUP",
+    "checkpoint_timestamp": "2026-09-14T04:46:09Z",
+    "recovery_operator": "DJ Burns Collective LLC / Gridly owner using the authorized Supabase project dashboard",
+    "primary_protection": "IN_TRANSACTION_CERTIFICATION_AND_ROLLBACK_BEFORE_COMMIT",
+    "disaster_recovery_fallback": "OWNER_APPROVED_PHYSICAL_DATABASE_BACKUP",
+    "restore_performed": false
+  },
+  "production_preflight": {
+    "status": "PASS",
+    "observed_at": "2026-09-15T00:50:50.298533Z",
+    "transaction_read_only": "on",
+    "database": "postgres",
+    "current_user": "postgres",
+    "session_user": "postgres",
+    "server_timezone": "UTC",
+    "postgres_version": "17.6",
+    "postgis_version": "3.3.7",
+    "target": {
+      "table": "public.gridly_texas_county_boundaries",
+      "exists": true,
+      "owner": "postgres",
+      "row_count": 0,
+      "columns": [
+        "county_fips text NOT NULL",
+        "geom extensions.geometry(MultiPolygon,4326) NOT NULL",
+        "boundary_version text NOT NULL"
+      ],
+      "column_defaults": 0,
+      "primary_key": "gridly_texas_county_boundaries_pkey (county_fips)",
+      "fips_check": "gridly_texas_county_boundaries_county_fips_check",
+      "gist_index": "gridly_texas_county_boundaries_geom_idx",
+      "gist_index_valid": true,
+      "rls_enabled": true,
+      "force_rls": false,
+      "policy_count": 0,
+      "user_trigger_count": 0,
+      "foreign_key_dependents": 0,
+      "dependent_views": 0,
+      "unexpected_dml_grants": false
+    },
+    "migrations": {
+      "count": 14,
+      "digest": "407a3121702601ece79d76e30a0f846e",
+      "reconciled_with_phase12": true
+    },
+    "controls": {
+      "reporting_enabled": false,
+      "reporting_protocol": 2,
+      "prelaunch_status": "consumed",
+      "launched_at_is_null": true,
+      "agency_publishing_object_exists": false,
+      "cron_schema_exists": false
+    },
+    "responder_dependencies": {
+      "agency_private_schema_exists": false,
+      "responder_public_schema_exists": false,
+      "target_dependency_detected": false
+    },
+    "bounded_counts": {
+      "reports": 0,
+      "feedback": 7,
+      "historical_events": 0,
+      "geocode_cache": 489,
+      "geocode_provider_state": 2
+    }
+  },
+  "execution_channel": {
+    "direct_psql_session_available": false,
+    "connector_sql_available": true,
+    "unchanged_payload_reconstructed_locally": true,
+    "reconstructed_payload_characters": 13965052,
+    "transport_submission_attempted": true,
+    "transport_result": "REQUEST_ENTITY_TOO_LARGE",
+    "transport_error_stage": "MCP_HTTP_REQUEST_BOUNDARY",
+    "sql_received_by_postgres": false,
+    "production_write_transaction_opened": false,
+    "population_execution_attempted": false,
+    "payload_insert_statements_executed": 0,
+    "commit_decision_reached": false,
+    "commit_executed": false,
+    "rollback_required": false,
+    "rollback_executed": false,
+    "second_write_attempted": false,
+    "retry_performed": false
+  },
+  "in_transaction_certification": {
+    "status": "NOT_RUN_NO_WRITE_TRANSACTION",
+    "row_count": null,
+    "unique_fips": null,
+    "geometry_digest": null,
+    "strict_boundary": "NOT_RUN"
+  },
+  "postcommit_certification": {
+    "status": "NOT_APPLICABLE_NO_COMMIT",
+    "production_postgis_population_result": "NOT_EXERCISED",
+    "strict_boundary_result": "NOT_EXERCISED"
+  },
+  "final_read_only_confirmation": {
+    "status": "PASS_UNCHANGED_ZERO_ROW_STATE",
+    "observed_at": "2026-09-15T01:06:26.256491Z",
+    "transaction_read_only": "on",
+    "postgres_version": "17.6",
+    "postgis_version": "3.3.7",
+    "target_rows": 0,
+    "unique_fips": 0,
+    "migration_count": 14,
+    "migration_digest": "407a3121702601ece79d76e30a0f846e",
+    "reporting_enabled": false,
+    "launched_at_is_null": true,
+    "agency_private_schema_exists": false,
+    "responder_public_schema_exists": false,
+    "agency_publishing_object_exists": false
+  },
+  "production_change_inventory": {
+    "authorized_target_rows_before": 0,
+    "authorized_target_rows_after": 0,
+    "authorized_rows_inserted": 0,
+    "unintended_writes": false,
+    "production_configuration_changed": false,
+    "migration_executed": false,
+    "backup_created_or_restored": false
+  },
+  "p12_01": "OPEN",
+  "b03": "OPEN",
+  "responder_activation": "NONE",
+  "agency_publishing_enabled": false,
+  "local_evidence_only_after_production_access_ended": true
+}
