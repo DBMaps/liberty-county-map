@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
   [Parameter(Mandatory=$true)]
-  [ValidateSet('Preflight','CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','InspectCorrelation','SimulateCutoff','RevokeSession','InspectRevocation','RemoveFactor','InspectReset','Cleanup')]
+  [ValidateSet('Preflight','CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','InspectCorrelation','SimulateCutoff','RevokeSession','InspectRevocation','RemoveFactor','InspectReset','RecoverUnverifiedTotpFactor','Cleanup')]
   [string]$Mode,
 
   [ValidatePattern('^[a-z0-9]{20}$')]
@@ -28,7 +28,7 @@ $ExpectedProjectRef = 'nhwhkbkludzkuyxmkkcj'
 $ExpectedBranch = 'RESPONDER-PHASE15A-controlled-production-auth-mfa-verification'
 $ExpectedWorktree = 'C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze'
 $TestLabel = 'Gridly Responder Auth Verification Test'
-$MutatingModes = @('CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','RevokeSession','RemoveFactor','Cleanup')
+$MutatingModes = @('CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','RevokeSession','RemoveFactor','RecoverUnverifiedTotpFactor','Cleanup')
 $TemporarySecrets = New-Object System.Collections.Generic.List[string]
 
 function Get-ProcessEnvironment([string]$Name) {
@@ -214,6 +214,10 @@ try {
     'RemoveFactor' {
       Require-TestEmail; Require-TestUserId; Require-FactorId; Require-PublishableKey; Require-OperatorPassword; Require-TotpCode
       Invoke-SafeNode 'remove-factor' | Out-Null
+    }
+    'RecoverUnverifiedTotpFactor' {
+      Require-TestUserId; Require-FactorId; Require-AdminKey
+      Invoke-SafeNode 'recover-unverified-totp-factor' | Out-Null
     }
     'Cleanup' {
       Require-TestEmail; Require-TestUserId; Require-PublishableKey; Require-AdminKey; Require-OperatorPassword

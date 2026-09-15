@@ -162,9 +162,50 @@ $FactorId = [guid](Read-Host 'Paste only factor_id')
 
 **Fail condition.** A preexisting/second factor, non-TOTP type, QR not removed, or factor not bound to the exact user.
 
-**Rollback / stop.** Do not enroll again. Use Stage 10 cleanup, whose exact-user admin path removes an unverified factor before deleting the user.
+**Rollback / stop.** Do not enroll again. If the QR or seed was exposed, use the exact unverified-factor recovery below after separate owner authorization. Use Stage 10 only if the owner intends to retire the entire test identity.
 
 **Paste back.** Safe enrollment and correlation JSON only. Never paste QR, seed, URI, or TOTP code.
+
+#### Stage 3 recovery — delete one compromised unverified TOTP factor
+
+**Purpose.** Remove one exact compromised `totp/unverified` factor through the supported server-side Auth Admin factor-deletion endpoint while preserving the marked test user, every session, and every refresh token. This recovery performs no sign-in, enrollment, challenge, verification, logout, user deletion, SQL DML, or application/responder mutation.
+
+**Preconditions.** Bounded correlation proves one exact marked test user and identifies the exact unverified TOTP factor UUID. The owner has separately authorized deletion of only that UUID. Do not use this mode for a verified factor: Supabase documents that deleting a verified factor signs the user out of all active sessions.
+
+> **OWNER EXECUTION REQUIRED — EXACT UNVERIFIED FACTOR ONLY**
+
+```powershell
+$TestUserId = [guid](Read-Host 'Paste only the marked test user_id UUID')
+$FactorId = [guid](Read-Host 'Paste only the compromised unverified factor_id UUID')
+
+& '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
+  -Mode RecoverUnverifiedTotpFactor `
+  -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
+  -TestUserId $TestUserId `
+  -FactorId $FactorId `
+  -AuthorizeProductionMutation
+```
+
+The mode securely prompts only for the production secret/service-role key when it is not already present in the operator process. It fetches the exact user and requires `app_metadata.gridly_operator_test=Gridly Responder Auth Verification Test`; lists factors only for that user; requires exactly one factor matching `$FactorId`; rejects any returned cross-user ownership; requires `factor_type=totp` and `status=unverified`; then sends one exact admin factor `DELETE`. UUID validation rejects wildcard/all-factor targets.
+
+**Expected output.** One safe JSON object reports `mode=RecoverUnverifiedTotpFactor`, the exact user/factor UUIDs, `user_marker_verified=true`, `matching_factor_count=1`, `factor_type=totp`, `prior_status=unverified`, `deleted=true`, `session_operation_performed=false`, `refresh_token_operation_performed=false`, `user_delete_operation_performed=false`, `password_sign_in_performed=false`, and `totp_challenge_performed=false`. It emits no key, email, token, password, QR, seed, URI, or response body.
+
+**Read-only correlation.** After the safe deletion JSON, run only:
+
+```powershell
+& '.\tools\responder\phase15a-auth-mfa-verification.ps1' `
+  -Mode InspectCorrelation `
+  -ProjectRef 'nhwhkbkludzkuyxmkkcj' `
+  -TestUserId $TestUserId
+```
+
+**Pass condition.** The marked user remains; the previously observed sessions remain unchanged and `aal1`; the managed refresh-token count is recorded exactly as observed; `factors=[]`; no `aal2` session exists; and `transaction_read_only=on`.
+
+**Fail condition.** Missing/wrong marker, missing or duplicate matching factor, non-TOTP type, status other than `unverified`, any session/user/refresh-token change, or any unexpected output.
+
+**Rollback / stop.** Factor deletion is irreversible. Never rerun this recovery mode after `deleted=true`. If the deletion result is uncertain, run bounded correlation only. If the factor is absent, stop; if it remains, stop and request review rather than signing in, challenging, enrolling, revoking, deleting the user, or using SQL DML against `auth`.
+
+**Paste back.** The complete safe deletion JSON and the complete correlation JSON. Never paste the admin key or any secret-bearing value.
 
 ### Stage 4 — challenge TOTP and achieve AAL2
 
@@ -377,7 +418,7 @@ Always begin recovery with Stage 0. If it returns a `recovery_user_id`, set `$Te
 | --- | --- | --- | --- |
 | User exists, no session/factor | `user_count=1`; empty sessions/factors | Resume Stage 2 or stop | Stage 10 |
 | User + AAL1 session | session `aal1`; no factor | Resume Stage 3 | Stage 10 globally revokes then deletes |
-| User + TOTP factor, not verified | one `totp/unverified` | If QR was not captured, do not enroll a duplicate; clean up and restart only after zero-state proof | Stage 10 admin-removes factor |
+| User + TOTP factor, not verified | one `totp/unverified` | If the factor is compromised/unusable, run exact unverified-factor recovery after separate authorization; otherwise resume Stage 4 only with an intact secret | Exact recovery preserves user/sessions; Stage 10 only when retiring the user |
 | User + verified factor | `totp/verified`; no proved AAL2 session | Resume Stage 4 with exact factor | Stage 10 |
 | User + AAL2 session | session/AMR/factor correlate | Resume Stage 5 or 7 | Stage 10 |
 | Session revoked | requested session count zero; user/factor remain | Resume Stage 8 | Stage 10 |

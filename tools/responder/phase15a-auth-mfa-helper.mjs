@@ -288,6 +288,55 @@ async function removeFactor() {
   return { mode: 'RemoveFactor', removed_factor_id: factorId, claims_before: before, old_token_probe: probe, post_removal_refresh: refresh, fresh_sign_in_claims: publicClaims(fresh.access_token, userId), factors };
 }
 
+async function recoverUnverifiedTotpFactor() {
+  const { baseUrl } = requireProject();
+  const userId = requireUuid(env('GRIDLY_RESPONDER_TEST_USER_ID'), 'Test user ID');
+  const factorId = requireUuid(env('GRIDLY_RESPONDER_FACTOR_ID'), 'Factor ID');
+  const key = secretKey();
+
+  const exact = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+    apiKey: key, label: 'Read exact TOTP recovery user'
+  });
+  const user = exact.data?.user || exact.data;
+  if (String(user?.id || '').toLowerCase() !== userId) {
+    fail('TOTP recovery refused: admin response did not match the supplied test user UUID.');
+  }
+  if (user?.app_metadata?.gridly_operator_test !== TEST_LABEL) {
+    fail('TOTP recovery refused: supplied UUID is not marked as the dedicated Gridly test identity.');
+  }
+
+  const factorResponse = await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}/factors`, {
+    apiKey: key, label: 'List exact TOTP recovery user factors'
+  });
+  const values = Array.isArray(factorResponse.data) ? factorResponse.data :
+    factorResponse.data && Array.isArray(factorResponse.data.all) ? factorResponse.data.all :
+    factorResponse.data && Array.isArray(factorResponse.data.factors) ? factorResponse.data.factors : [];
+  const matching = values.filter((factor) =>
+    factor && typeof factor.id === 'string' && factor.id.toLowerCase() === factorId
+  );
+  if (matching.length !== 1) {
+    fail(`TOTP recovery refused: expected exactly one factor matching the supplied UUID; found ${matching.length}.`);
+  }
+  const factor = matching[0];
+  if (factor.user_id && String(factor.user_id).toLowerCase() !== userId) {
+    fail('TOTP recovery refused: supplied factor does not belong to the supplied test user.');
+  }
+  const factorType = factor.factor_type || factor.type || null;
+  if (factorType !== 'totp') fail('TOTP recovery refused: supplied factor is not TOTP.');
+  if (factor.status !== 'unverified') fail('TOTP recovery refused: supplied factor is not unverified.');
+
+  await request(baseUrl, `/auth/v1/admin/users/${encodeURIComponent(userId)}/factors/${encodeURIComponent(factorId)}`, {
+    method: 'DELETE', apiKey: key, label: 'Delete exact unverified TOTP recovery factor'
+  });
+  return {
+    mode: 'RecoverUnverifiedTotpFactor', user_id: userId, user_marker_verified: true,
+    factor_id: factorId, matching_factor_count: matching.length, factor_type: factorType,
+    prior_status: factor.status, deleted: true, session_operation_performed: false,
+    refresh_token_operation_performed: false, user_delete_operation_performed: false,
+    password_sign_in_performed: false, totp_challenge_performed: false
+  };
+}
+
 async function cleanup() {
   const { baseUrl } = requireProject();
   const userId = requireUuid(env('GRIDLY_RESPONDER_TEST_USER_ID'), 'Test user ID');
@@ -343,6 +392,7 @@ const actions = {
   preflight, 'create-test-user': createTestUser, 'inspect-aal1': inspectAal1,
   'enroll-totp': enrollTotp, 'verify-totp': verifyTotp,
   'revoke-session': revokeSession, 'remove-factor': removeFactor, cleanup,
+  'recover-unverified-totp-factor': recoverUnverifiedTotpFactor,
   'simulate-cutoff': simulateCutoff
 };
 

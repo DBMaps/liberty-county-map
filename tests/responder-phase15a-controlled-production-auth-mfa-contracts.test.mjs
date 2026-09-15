@@ -32,7 +32,7 @@ test('Phase 15A deliverables exist and preserve the owner-only production bounda
 
 test('every session or Auth mutation mode requires an explicit authorization switch', () => {
   assert.match(ps1, /\[switch\]\$AuthorizeProductionMutation/);
-  for (const mode of ['CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','RevokeSession','RemoveFactor','Cleanup']) {
+  for (const mode of ['CreateTestUser','InspectAal1','EnrollTotp','VerifyTotp','RevokeSession','RemoveFactor','RecoverUnverifiedTotpFactor','Cleanup']) {
     assert.match(ps1, new RegExp(`'${mode}'`), mode);
   }
   assert.match(ps1, /\$MutatingModes -contains \$Mode -and -not \$AuthorizeProductionMutation/);
@@ -45,6 +45,17 @@ test('a production mutation mode refuses before credentials when authorization i
     '-Mode','CreateTestUser'], { cwd: root, encoding: 'utf8' });
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /without -AuthorizeProductionMutation/);
+});
+
+test('exact TOTP recovery refuses before credentials when authorization is absent', () => {
+  const shell = process.platform === 'win32' ? 'powershell.exe' : 'pwsh';
+  const result = spawnSync(shell, ['-NoProfile','-ExecutionPolicy','Bypass','-File',path.join(root, paths.ps1),
+    '-Mode','RecoverUnverifiedTotpFactor',
+    '-TestUserId','11111111-1111-4111-8111-111111111111',
+    '-FactorId','22222222-2222-4222-8222-222222222222'], { cwd: root, encoding: 'utf8' });
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /without -AuthorizeProductionMutation/);
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /secret\/service-role key/);
 });
 
 test('PowerShell parses and modes remain individually dispatched', () => {
@@ -124,6 +135,69 @@ test('cleanup is exact-user scoped, marker checked, factor-first, and hard delet
   assert.match(helper, /encodeURIComponent\(userId\)/g);
   assert.match(ps1, /ValidatePattern\('\^\$\|\^\[0-9a-fA-F\]/);
   assert.match(doc, /Never delete rows with SQL or use an all-user operation/);
+});
+
+test('exact TOTP recovery validates marked user and one exact factor before deletion', () => {
+  const start = helper.indexOf('async function recoverUnverifiedTotpFactor()');
+  const end = helper.indexOf('\nasync function cleanup()', start);
+  assert.ok(start >= 0 && end > start);
+  const recovery = helper.slice(start, end);
+  const userRead = recovery.indexOf('/auth/v1/admin/users/${encodeURIComponent(userId)}`');
+  const userMatch = recovery.indexOf("admin response did not match the supplied test user UUID");
+  const marker = recovery.indexOf('gridly_operator_test !== TEST_LABEL');
+  const factorList = recovery.indexOf('/factors`');
+  const cardinality = recovery.indexOf('matching.length !== 1');
+  const type = recovery.indexOf("factorType !== 'totp'");
+  const status = recovery.indexOf("factor.status !== 'unverified'");
+  const deletion = recovery.indexOf('/factors/${encodeURIComponent(factorId)}`');
+  assert.ok(userRead >= 0 && userMatch > userRead && marker > userMatch && factorList > marker);
+  assert.ok(cardinality > factorList && type > cardinality && status > type && deletion > status);
+  assert.match(recovery, /factor\.id\.toLowerCase\(\) === factorId/);
+  assert.match(recovery, /factor\.user_id.*!== userId/s);
+  assert.match(recovery, /method: 'DELETE', apiKey: key/);
+});
+
+test('exact TOTP recovery uses only the server-side admin credential', () => {
+  const start = ps1.indexOf("'RecoverUnverifiedTotpFactor' {");
+  const end = ps1.indexOf("\n    'Cleanup' {", start);
+  assert.ok(start >= 0 && end > start);
+  const dispatch = ps1.slice(start, end);
+  assert.match(dispatch, /Require-TestUserId; Require-FactorId; Require-AdminKey/);
+  assert.match(dispatch, /Invoke-SafeNode 'recover-unverified-totp-factor'/);
+  assert.doesNotMatch(dispatch, /Require-TestEmail|Require-PublishableKey|Require-OperatorPassword|Require-TotpCode|Require-PsqlEnvironment/);
+});
+
+test('exact TOTP recovery has no session, refresh, user-delete, sign-in, challenge, or schema mutation path', () => {
+  const start = helper.indexOf('async function recoverUnverifiedTotpFactor()');
+  const end = helper.indexOf('\nasync function cleanup()', start);
+  const recovery = helper.slice(start, end);
+  assert.doesNotMatch(recovery, /signIn\(|elevateTotp\(|\/logout|grant_type=refresh_token|should_soft_delete|writeQrFile\(|\/rest\/v1/);
+  assert.doesNotMatch(recovery, /(?:INSERT|UPDATE|DELETE)\s+(?:FROM|INTO)\s+auth\./i);
+  assert.doesNotMatch(recovery, /agency_private|responder_public|gridly_control|\/rest\/v1/);
+  for (const field of ['session_operation_performed','refresh_token_operation_performed',
+    'user_delete_operation_performed','password_sign_in_performed','totp_challenge_performed']) {
+    assert.match(recovery, new RegExp(`${field}: false`), field);
+  }
+});
+
+test('exact TOTP recovery cannot perform wildcard or all-factor deletion', () => {
+  const start = helper.indexOf('async function recoverUnverifiedTotpFactor()');
+  const end = helper.indexOf('\nasync function cleanup()', start);
+  const recovery = helper.slice(start, end);
+  assert.match(recovery, /requireUuid\(env\('GRIDLY_RESPONDER_TEST_USER_ID'\)/);
+  assert.match(recovery, /requireUuid\(env\('GRIDLY_RESPONDER_FACTOR_ID'\)/);
+  assert.match(recovery, /encodeURIComponent\(userId\).*\/factors\/\$\{encodeURIComponent\(factorId\)\}/s);
+  assert.doesNotMatch(recovery, /for\s*\(|forEach\s*\(|deleteAll|\/factors\/\*/);
+});
+
+test('runbook documents exact compromised-factor recovery and mandatory read-only correlation', () => {
+  assert.match(doc, /Stage 3 recovery — delete one compromised unverified TOTP factor/);
+  assert.match(doc, /-Mode RecoverUnverifiedTotpFactor/);
+  assert.match(doc, /requires `factor_type=totp` and `status=unverified`/);
+  assert.match(doc, /performs no sign-in, enrollment, challenge, verification, logout, user deletion, SQL DML/);
+  assert.match(doc, /session_operation_performed/);
+  assert.match(doc, /-Mode InspectCorrelation/);
+  assert.match(doc, /Never rerun this recovery mode after `deleted=true`/);
 });
 
 test('integer-second cutoff rejects the observed and same-second token', () => {
