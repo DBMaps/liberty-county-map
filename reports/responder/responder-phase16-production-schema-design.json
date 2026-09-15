@@ -1,0 +1,150 @@
+{
+  "phase": "16",
+  "recordedDate": "2026-09-15",
+  "baselineHead": "a5beccdfc17ebe9ebc6d1e9baf9dfb37bab51614",
+  "branch": "RESPONDER-PHASE16-production-schema-rls-command-design",
+  "architectureVerdict": "GO",
+  "deploymentStatus": "NOT_DEPLOYED",
+  "productionMutations": "NONE",
+  "schemas": {
+    "private": "agency_private",
+    "dataApi": "responder_public"
+  },
+  "tables": {
+    "agency_private": [
+      "organizations",
+      "principals",
+      "organization_memberships",
+      "gridly_admin_grants",
+      "organization_county_authorities",
+      "agency_updates",
+      "agency_update_revisions",
+      "road_closure_approvals",
+      "agency_update_events",
+      "activation_rate_events",
+      "operation_receipts",
+      "governance_events",
+      "organization_invites"
+    ],
+    "responder_public": ["agency_updates"]
+  },
+  "authHelpers": [
+    "agency_private._live_auth_context()",
+    "agency_private.current_responder_security_context()",
+    "agency_private.current_gridly_admin_security_context()"
+  ],
+  "authPredicate": [
+    "auth.uid non-null and equals signed sub",
+    "signed session_id parses as UUID",
+    "signed aal2 and TOTP AMR consistency",
+    "live same-user auth.sessions row",
+    "live session aal2 and non-null factor_id",
+    "live same-user verified TOTP factor",
+    "live TOTP mfa_amr_claim for the session",
+    "active private principal",
+    "optional integer minimum_iat is additive only",
+    "active membership and verified active organization",
+    "separate live GRIDLY_ADMIN UUID grant where applicable"
+  ],
+  "rpcs": {
+    "privateDefiners": [
+      "agency_private.agency_update_command(jsonb)",
+      "agency_private.agency_membership_command(jsonb)",
+      "agency_private.agency_governance_command(jsonb)"
+    ],
+    "publicSecurityInvokerWrappers": [
+      "responder_public.agency_update_command(jsonb)",
+      "responder_public.agency_membership_command(jsonb)",
+      "responder_public.agency_governance_command(jsonb)"
+    ]
+  },
+  "policies": {
+    "privateTablesWithRlsAndForceRls": 13,
+    "privateMutationPolicies": 0,
+    "publicProjectionPolicies": 1,
+    "directAuthenticatedPrivateMutationGrants": 0
+  },
+  "indexes": [
+    "organization_memberships_one_active_org_per_user_idx",
+    "organization_memberships_org_status_role_idx",
+    "organization_county_authorities_one_current_idx",
+    "organization_county_authorities_current_lookup_idx",
+    "agency_updates_org_state_idx",
+    "agency_update_revisions_org_state_idx",
+    "agency_update_revisions_location_gist_idx",
+    "agency_update_events_org_time_idx",
+    "agency_update_events_activation_lineage_idx",
+    "activation_rate_events_rolling_idx",
+    "operation_receipts_actor_time_idx",
+    "operation_receipts_org_time_idx",
+    "governance_events_org_time_idx",
+    "organization_invites_one_live_email_idx",
+    "organization_invites_expiry_idx",
+    "responder_public_agency_updates_expiry_idx"
+  ],
+  "countyAuthority": {
+    "table": "public.gridly_texas_county_boundaries",
+    "geometryColumn": "geom",
+    "requiredRows": 254,
+    "srid": 4326,
+    "predicate": "extensions.ST_Contains(county.geom, submitted_point)",
+    "boundaryAccepted": false,
+    "callerCountyOrAuthorityAccepted": false
+  },
+  "roadClosed": {
+    "distinctBy": "Auth user UUID",
+    "creatorLiveContextRecordedAtCreation": true,
+    "approverLiveContextRequiredAtActivation": true,
+    "databaseDistinctConstraint": true,
+    "uniqueApprovalPerPendingRevision": true,
+    "activationEventRequiresApprovalForeignKey": true
+  },
+  "rateLimit": {
+    "successfulActivations": 60,
+    "windowMinutes": 60,
+    "scope": "organization",
+    "organizationRowLock": true,
+    "failedAttemptsCount": false,
+    "resolveExempt": true,
+    "withdrawExempt": true
+  },
+  "consumerProjection": {
+    "sourceFamily": "AGENCY_OFFICIAL",
+    "columnCount": 18,
+    "employeeIdentityPresent": false,
+    "derivedExpiry": true,
+    "currentEligibilityRecheckedByRls": true,
+    "nonNullCrossingIdPublication": "FAIL_CLOSED_PENDING_GOVERNED_REGISTRY"
+  },
+  "verification": {
+    "postgresLocal": "17.10",
+    "postgisLocal": "3.6.2",
+    "productionCompatibilityTarget": {"postgres": "17.6", "postgis": "3.3.7"},
+    "requiredSecurityVectors": {"passed": 36, "failed": 0, "total": 36},
+    "additionalReplayVectors": {"passed": 2, "failed": 0, "total": 2},
+    "allSecurityVectors": {"passed": 38, "failed": 0, "total": 38},
+    "databaseStructuralChecks": {"passed": 22, "failed": 0, "total": 22},
+    "staticContractTests": {"passed": 12, "failed": 0, "total": 12},
+    "preActivationRollback": "PASS"
+  },
+  "phase17Readiness": "MAY_PROCEED_TO_SEPARATELY_AUTHORIZED_MIGRATION_READINESS",
+  "productionPrerequisites": [
+    "generate real migration with current Supabase CLI",
+    "repeat schema/county/Auth catalog preflight",
+    "validate on PostgreSQL 17.6 and PostGIS 3.3.7 non-production clone",
+    "confirm responder_public is exposed and agency_private is not",
+    "run security and performance advisors in non-production",
+    "keep every agency publishing gate false",
+    "obtain separate owner deployment authorization"
+  ],
+  "closedSurfaces": [
+    "unaffiliated verification request",
+    "organization public-profile approval",
+    "lost-admin recovery",
+    "non-null governed crossing ID publication"
+  ],
+  "secretsRecorded": false,
+  "pushed": false,
+  "merged": false,
+  "protectedOriginalWorktreeTouched": false
+}
