@@ -193,5 +193,6 @@ test('staged Android and browser authorities carry byte-identical availability l
   }
   const contract=JSON.parse(fs.readFileSync(path.join(ROOT,'android/app/src/main/assets/public/community-submission-contract.json'),'utf8'));
   assert.ok(contract.schema['202609160001_lp24429a_reporting_availability_contract.sql']);
-  assert.equal(contract.version,'lp244.29a-reporting-availability-guard');
+  assert.equal(contract.version,'lp244.33-google-play-compliance');
+  assert.ok(contract.schema['20260916183911_google_play_compliance_closure.sql']);
 });

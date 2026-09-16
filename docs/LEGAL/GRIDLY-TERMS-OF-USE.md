@@ -1,12 +1,10 @@
 # Gridly Terms of Use
 
-> PROPOSED FOR OWNER REVIEW — NOT APPROVED OR PUBLISHED. The effective date below is the owner-selected proposed date; it does not make this draft operative.
-
-**Effective date:** September 8, 2026
+**Effective date:** September 16, 2026
 
 ## 1. Operator and agreement
 
-These Terms govern your use of Gridly, operated by DJ Burns Collective LLC, doing business as Gridly App ("Gridly," "we," "us"). Our domain is gridlygo.com. By using Gridly after these Terms are made available as the applicable terms, you agree to them. If you do not agree, do not use the service. Our Privacy Policy separately explains information handling; agreement to these Terms is not a substitute for any legally required privacy consent.
+These Terms govern your use of Gridly, operated by DJ Burns Collective LLC, doing business as Gridly App ("Gridly," "we," "us"). Our domain is gridlygo.com. By using Gridly after these Terms are made available as the applicable terms, you agree to them. If you do not agree, do not use the service. Our Privacy Policy separately explains information handling; agreement to these Terms is not a substitute for any legally required privacy consent. Before a first community submission, and whenever the community terms version changes, Gridly requires an explicit acceptance of these Terms and the Community Guidelines. The current community version is **gridly-ugc-2026-09-16-v1**.
 
 ## 2. Eligibility and permitted use
 
@@ -32,7 +30,7 @@ Gridly does not guarantee independent review before a report appears. You remain
 
 ## 5. Community submissions and prohibited conduct
 
-Submit only content you are entitled to provide, and describe observations honestly without presenting guesses as verified facts. Do not submit false, fraudulent, threatening, discriminatory, abusive, unlawful, spam, privacy-invasive, or otherwise unsafe content. Do not include another person's sensitive information, impersonate an authority or another user, manipulate confirmations, or knowingly misrepresent a report's location or status.
+Submit only first-hand observations you are entitled to provide, and describe them honestly without presenting guesses as verified facts. Do not submit false or manipulated information; threats, harassment, bullying, hate, discrimination, sexual content, or glorification of violence; names, contact details, license plates, faces, home locations, or other personal or confidential information; spam, advertising, repeated content, coordinated manipulation, automated submissions, or attempts to evade safeguards; or instructions encouraging unsafe driving, trespass, interference with responders, illegal conduct, or obstruction of roads or railways.
 
 Do not attempt unauthorized access, interfere with the service or its security, introduce malicious code, evade abuse controls, or extract or redistribute data in violation of applicable law or third-party licenses. These restrictions do not prohibit conduct that applicable law expressly protects.
 
@@ -40,7 +38,9 @@ You retain any rights you have in your submissions. By submitting content, you g
 
 This permission does not extend a community report's device-linkage period beyond the Privacy Policy's maximum of 180 days from original submission. Any later retention of condition information must meet that policy's removal requirements and permitted historical purposes; it is not permission for permanent reporter tracking, a new commercial sale, or targeted advertising.
 
-We may review or restrict submissions and remove or limit content that violates these Terms or creates safety, privacy, or legal concerns. This does not promise continuous moderation or a particular response time. Contact support@gridlygo.com to report misuse and privacy@gridlygo.com for privacy or personal-data requests. Content disappearing from the map does not mean every database record or backup has been deleted.
+Each shared report offers in-app **Report** and **Hide** controls. Hiding is local to the current device. A complaint does not automatically prove a violation. We may review, quarantine, remove, or decline to act on content; restrict an abusive source; preserve bounded operational evidence; and cooperate with lawful requests. Enforcement may occur without advance notice when needed for safety, privacy, abuse prevention, or legal compliance. This does not promise continuous moderation or a particular response time.
+
+Use **Delete mine** to request deletion of a report when the current device can verify the private source association. Other privacy requests may be submitted through Settings or privacy@gridlygo.com. Content disappearing from the map does not itself prove every provider copy or backup has been deleted; the Privacy Policy describes retention and deletion controls.
 
 ## 6. Intellectual property and third-party services
 

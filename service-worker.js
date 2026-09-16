@@ -1,5 +1,5 @@
-const GRIDLY_SW_VERSION = "lp244.29a-reporting-availability-guard";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24429a-v1";
+const GRIDLY_SW_VERSION = "lp244.33-google-play-compliance";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24433-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
@@ -11,6 +11,9 @@ const GRIDLY_CLOSURE_URLS = [
   "./assets/icon-192.png",
   "./assets/icon-512.png",
   "./assets/store/branding/Logos/gridly-logo-horizontal.png",
+  "./legal/privacy.html",
+  "./legal/terms.html",
+  "./legal/community-guidelines.html",
   "./js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js",
   "./js/gridlyCanonicalCrossingRuntime.js",
   "./data/runtime/canonical-crossing-memberships-v1.json",
