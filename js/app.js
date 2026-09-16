@@ -3611,13 +3611,22 @@ function gridlyStoryActiveRecords(governedProjection) {
 
 function gridlyStoryWeatherMeaningfulImpact(weather) {
   if (!weather) return null;
+  const gridlyStoryWeatherMeasurement = (value) => {
+    if (value === null || value === undefined) return NaN;
+    const normalized = String(value).replace(/[^\d.-]/g, "").trim();
+    if (!/\d/.test(normalized)) return NaN;
+    const numeric = Number(normalized);
+    return Number.isFinite(numeric) ? numeric : NaN;
+  };
   const text = gridlyStoryText([
     weather.summary, weather.alertTitle, weather.condition, weather.event, weather.category,
     weather.headline, weather.title, weather.description, weather.severity
   ].filter(Boolean).join(" ")).toLowerCase();
-  const temperature = Number(String(weather.temperature ?? "").replace(/[^\d.-]/g, ""));
-  const windMph = Number(String(weather.windMph ?? weather.windSpeed ?? weather.wind ?? "").replace(/[^\d.-]/g, ""));
-  const visibilityMiles = Number(String(weather.visibilityMiles ?? weather.visibility ?? "").replace(/[^\d.-]/g, ""));
+  // LP244.28: missing provider measurements are unknown, never zero.  Number("")
+  // is 0, which previously made an alert-only Heat Advisory look like <= 32 F.
+  const temperature = gridlyStoryWeatherMeasurement(weather.temperature);
+  const windMph = gridlyStoryWeatherMeasurement(weather.windMph ?? weather.windSpeed ?? weather.wind);
+  const visibilityMiles = gridlyStoryWeatherMeasurement(weather.visibilityMiles ?? weather.visibility);
   if (/flash flood|flood|high water|standing water/.test(text)) return { kind: "flooding", situation: "Flooding potential may affect local roads.", recommendation: "Avoid flooded roads and check your route before leaving.", detail: "Flooding potential may affect local travel." };
   if (/dense fog|fog|poor visibility|low visibility/.test(text) || (Number.isFinite(visibilityMiles) && visibilityMiles > 0 && visibilityMiles <= 1)) return { kind: "fog", situation: "Dense fog may reduce visibility.", recommendation: "Allow extra travel time.", detail: "Visibility may be reduced." };
   if (/thunderstorm|severe storm|storm warning|lightning/.test(text)) return { kind: "storm", situation: "Storms may affect local travel.", recommendation: "Drive with extra caution.", detail: "Storms may affect local travel." };
