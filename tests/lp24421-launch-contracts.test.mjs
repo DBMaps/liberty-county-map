@@ -15,7 +15,7 @@ test('generated submission manifest binds current client, PWA authority and sche
   assert.deepEqual(await communitySubmissionContract(dir),first);
   assert.equal(first.legacyCreationCompatible,false);
   assert.equal(first.protocol_version,2);
-  assert.equal(Object.keys(first.schema).length,3);
+  assert.equal(Object.keys(first.schema).length,4);
   const sw=await readFile('service-worker.js','utf8');
   assert.ok(sw.includes(`const GRIDLY_SW_VERSION = "${first.version}"`));
   assert.ok(sw.includes(`const GRIDLY_CLOSURE_CACHE_NAME = "${first.cache}"`));
@@ -32,8 +32,8 @@ test('regenerated Android client is certified against the current protocol bundl
  const directory='android/app/src/main/assets/public';
  const expected=await communitySubmissionContract(directory);
  assert.deepEqual(await verifyCommunitySubmissionBundle(directory),expected);
- assert.equal(expected.version,'lp244.23d-protocol-v2-readiness');
- assert.equal(expected.cache,'gridly-pwa-shell-lp24423d-v2');
+ assert.equal(expected.version,'lp244.29a-reporting-availability-guard');
+ assert.equal(expected.cache,'gridly-pwa-shell-lp24429a-v1');
  assert.equal(expected.protocol_version,2);
  assert.equal(expected.legacyCreationCompatible,false);
 });

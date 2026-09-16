@@ -15,7 +15,7 @@ const {
 
 const ROOT = path.resolve(__dirname, '..');
 const PSQL = process.env.GRIDLY_TEST_PSQL || 'C:/Program Files/PostgreSQL/17/bin/psql.exe';
-const PORT = 55441;
+const PORT = Number(process.env.GRIDLY_TEST_PGPORT || 55441);
 const ENV = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^PG/i.test(key)));
 const FIXTURE = fs.readFileSync(path.join(__dirname, 'fixtures/lp24421-baseline.sql'), 'utf8');
 const FEEDBACK_MIGRATION = fs.readFileSync(path.join(ROOT, 'supabase/migrations/202606070001_create_gridly_feedback.sql'), 'utf8');

@@ -8,8 +8,9 @@ const protocol=require('../js/gridly-report-protocol.js');
 const {renderAuthorization,migrationSql,supersededMigrationSql}=require('./helpers/lp24422a-prelaunch.cjs');
 const db=`gridly_protocol_test_${process.pid}`;
 const psql=process.env.GRIDLY_TEST_PSQL||'C:/Program Files/PostgreSQL/17/bin/psql.exe';
+const port=process.env.GRIDLY_TEST_PGPORT||'55441';
 const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>!/^PG/i.test(k)));
-const args=(database=db)=>['-X','-q','-A','-t','-v','ON_ERROR_STOP=1','-h','127.0.0.1','-p','55441','-U','postgres','-d',database];
+const args=(database=db)=>['-X','-q','-A','-t','-v','ON_ERROR_STOP=1','-h','127.0.0.1','-p',port,'-U','postgres','-d',database];
 function sql(query,{database=db,denied=false}={}) {
  const r=spawnSync(psql,args(database),{input:query,encoding:'utf8',env,windowsHide:true,timeout:30000});
  if(denied){assert.notEqual(r.status,0);assert.match(r.stderr,/permission denied|Replay evidence is append-only/);return;}

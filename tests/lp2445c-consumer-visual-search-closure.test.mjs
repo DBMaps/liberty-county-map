@@ -52,7 +52,7 @@ test("asset identity invalidates the pre-gate browser shell", () => {
   assert.match(html, /css\/styles\.css\?v=lp244\.24b-owner-review/);
   assert.ok(html.includes(`js/app.js?v=${app.match(/const APP_BUILD = "([^"\n]+)"/)?.[1]}`), "current application asset identity is bound");
   assert.equal(sw.match(/const GRIDLY_SW_VERSION = "([^"\n]+)"/)?.[1], app.match(/const APP_BUILD = "([^"\n]+)"/)?.[1]);
-  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24423d-v2"/);
+  assert.match(sw, /GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24429a-v1"/);
   assert.match(sw, /cache: "no-store"/);
   assert.match(sw, /caches\.delete\(cacheName\)/);
 });
