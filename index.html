@@ -1507,25 +1507,79 @@
       document.head.appendChild(script);
     })();
   </script>
+  <script>
+    (function installGridlyCertificationDiagnosticLoader(globalScope) {
+      "use strict";
+      var manifestUrl = "consumer-script-manifest.json";
+
+      function waitForConsumerStartup() {
+        if (document.readyState === "complete") return Promise.resolve();
+        return new Promise(function (resolve) {
+          globalScope.addEventListener("load", resolve, { once: true });
+        });
+      }
+
+      function loadDiagnostic(entry) {
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement("script");
+          script.src = entry.src;
+          script.async = false;
+          script.dataset.gridlyCertificationDiagnostic = entry.src;
+          script.onload = function () {
+            var missing = entry.globals.filter(function (name) {
+              return typeof globalScope[name] === "undefined";
+            });
+            if (missing.length) {
+              reject(new Error("Diagnostic globals missing after " + entry.src + ": " + missing.join(", ")));
+              return;
+            }
+            resolve(entry.src);
+          };
+          script.onerror = function () {
+            script.remove();
+            reject(new Error("Unable to load certification diagnostic: " + entry.src));
+          };
+          document.head.appendChild(script);
+        });
+      }
+
+      globalScope.gridlyLoadCertificationDiagnostics = async function gridlyLoadCertificationDiagnostics(options) {
+        await waitForConsumerStartup();
+        var response = await fetch(manifestUrl, { cache: "no-store" });
+        if (!response.ok) throw new Error("Unable to read the governed consumer script manifest.");
+        var manifest = await response.json();
+        if (manifest.schemaVersion !== "gridly.consumerScripts.v1" || !Array.isArray(manifest.diagnosticScripts)) {
+          throw new Error("Unsupported consumer script manifest.");
+        }
+        var nativeRuntime = Boolean(globalScope.Capacitor
+          && typeof globalScope.Capacitor.isNativePlatform === "function"
+          && globalScope.Capacitor.isNativePlatform());
+        var selected = nativeRuntime
+          ? manifest.diagnosticScripts.filter(function (entry) { return entry.nativeOptIn === true; })
+          : manifest.diagnosticScripts;
+        if (Array.isArray(options && options.scripts)) {
+          var requested = new Set(options.scripts);
+          selected = selected.filter(function (entry) {
+            return requested.has(entry.src) || requested.has(entry.src.split("?")[0]);
+          });
+          if (selected.length !== requested.size) throw new Error("One or more requested diagnostics are not governed.");
+        }
+        var loaded = [];
+        for (var entry of selected) loaded.push(await loadDiagnostic(entry));
+        return Object.freeze({ loaded: Object.freeze(loaded), count: loaded.length });
+      };
+    })(window);
+  </script>
   <script src="js/gridlyPackageRegistry.js?v=lp244.23d-protocol-v2-readiness"></script>
   <script src="js/gridlyDriveTexasProvider.js?v=831"></script>
   <script src="js/gridlyWeatherProvider.js?v=2401g"></script>
   <script src="js/gridlyWeatherAuthorityFoundation.js?v=0381"></script>
   <script src="js/gridlyUnifiedIntelligence.js?v=833"></script>
-  <script src="js/gridlyIntelligenceActivationReadiness.js?v=834"></script>
-  <script src="js/gridlyUnifiedIntelligenceSimulation.js?v=835"></script>
-  <script src="js/gridlyOfficialProviderSourceEvaluation.js?v=836"></script>
-  <script src="js/gridlyDriveTexasConnectorEndpointAudit.js?v=837"></script>
-  <script src="js/gridlyWeatherConnectorEndpointAudit.js?v=838"></script>
-  <script src="js/gridlyLiveConnectorDesignReadinessAudit.js?v=839"></script>
   <script src="js/gridlyDriveTexasLiveConnector.js?v=840"></script>
   <script src="js/gridlyWeatherLiveConnector.js?v=2401g"></script>
   <script src="js/gridlyWeatherAuthoritySourceIntegration.js?v=2401h"></script>
   <script src="js/gridlyOfficialProviderActivation.js?v=003"></script>
-  <script src="js/gridlyCrossProviderEvaluationAudit.js?v=845"></script>
-  <script src="js/gridlyUnifiedIntelligenceReadinessAudit.js?v=847"></script>
   <script src="js/gridlyUnifiedIntelligencePrototype.js?v=853"></script>
-  <script src="js/gridlyUnifiedIntelligenceObservationAudit.js?v=849"></script>
   <script src="js/gridlyTxdotService.js?v=1710"></script>
   <script src="js/gridlyTxdotGeometryRetentionPrototype.js?v=296"></script>
   <script src="js/gridlyRouteWatchGeometryRuntimeShadowAudit.js?v=3083"></script>
@@ -1553,9 +1607,8 @@
     <script src="js/gridlyRuntimeSourceRegistryBridge.js"></script>
     <script src="js/gridlyCrossingCoverageAuthority.js"></script>
     <!-- The V783 crossing provider must exist before app.js registers its
-         DOMContentLoaded production inventory load. Keep this provider stack
-         in dependency order: validation -> adapter -> provider. -->
-    <script src="js/gridlyCrossingPackageValidationAudit.js"></script>
+         DOMContentLoaded production inventory load. Keep the consumer stack
+         in dependency order: adapter -> provider. -->
     <script src="js/gridlyCrossingPackageAdapter.js"></script>
     <script src="js/gridlyCrossingProvider.js"></script>
 
@@ -1573,8 +1626,6 @@
   <script src="js/gridly-saved-place-revalidation-ownership.js?v=2447"></script>
   <script src="js/gridly-route-publication-ownership.js?v=2448"></script>
   <script src="js/gridly-saved-address-ui-state.js?v=2446-live-map-confirmation"></script>
-  <script src="js/lp102-rural-address-cases.js?v=1021"></script>
-  <script src="js/lp104-regional-rural-address-audit.js?v=104"></script>
   <script src="js/gridlyIncidentLocationIdentity.js?v=1854000000"></script>
   <script src="js/gridly-statewide-zip-resolver.js?v=1"></script>
   <script src="js/gridlyAlertSemanticContract.js?v=214"></script>
@@ -1590,18 +1641,10 @@
   <script src="js/app.js?v=lp244.29a-reporting-availability-guard"></script>
   <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
   <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=03921"></script>
-  <script src="js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044"></script>
-  <script src="js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js?v=0371"></script>
   <script src="js/gridlyEndToEndPerformanceAudit.js?v=919"></script>
   <script src="js/gridlyRuntimePerformanceAudit.js?v=2243"></script>
   <script src="js/gridlyDirectionalAwarenessLayer.js?v=704"></script>
-  <script src="js/gridlyNativeProviderOriginAudit.js?v=native-provider-origin-v1"></script>
-
-    <script src="js/gridlyRuntimeSourceComparisonAudit.js"></script>
     <script src="js/gridlyRuntimeSourceBridgeActivation.js"></script>
   <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
-  <script src="js/gridlyLp0941LaunchSurfaceAudit.js"></script>
-  <script src="js/gridlyLp095UnifiedPresentationAudit.js"></script>
-  <script src="js/gridlyLp0952CrossingAlertInteractionAudit.js"></script>
 </body>
 </html>

@@ -13,9 +13,9 @@ const output = resolve(root, process.argv.includes('--output') ? process.argv[pr
 // of things which happen not to be forbidden today.  Manufacturing trees remain
 // in the repository, but can enter a native bundle only through this contract.
 export const runtimePolicy = Object.freeze({
-  trees: ['js'],
+  trees: [],
   files: [
-    'index.html', 'manifest.json', 'service-worker.js', 'css/styles.css',
+    'index.html', 'manifest.json', 'service-worker.js', 'consumer-script-manifest.json', 'css/styles.css',
     'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',
     'assets/walkthrough/gridly-walkthrough-kbyg.png',
     'assets/walkthrough/gridly-walkthrough-nearby.png',
@@ -57,6 +57,7 @@ export const prohibited = [
 const governedSourcePathException = 'assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson';
 const isProhibited = (path) => path !== governedSourcePathException && prohibited.some((pattern) => pattern.test(path));
 const runtimeConfigPath = 'js/gridlyRuntimeEnvironmentConfig.js';
+const consumerScriptManifestPath = 'consumer-script-manifest.json';
 const vendorAssets = [
   ['node_modules/leaflet/dist/leaflet.js', 'vendor/leaflet/leaflet.js'],
   ['node_modules/leaflet/dist/leaflet.css', 'vendor/leaflet/leaflet.css'],
@@ -70,6 +71,54 @@ const nativeStartupReplacements = [
   ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', 'vendor/leaflet/leaflet.js'],
   ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', 'vendor/supabase/supabase.js']
 ];
+
+function localScriptPath(source) {
+  if (/^https?:\/\//i.test(source)) return null;
+  const path = source.split(/[?#]/, 1)[0].replaceAll('\\', '/');
+  if (!path.startsWith('js/') || !path.endsWith('.js')) throw new Error(`Consumer script is not a governed JavaScript path: ${source}`);
+  return path;
+}
+
+export function consumerRuntimeScriptPaths(manifest) {
+  return [...new Set([
+    ...manifest.startupScripts.map(localScriptPath).filter(Boolean),
+    ...manifest.dynamicRuntimeScripts.map(localScriptPath)
+  ])];
+}
+
+export function nativePackagedScriptPaths(manifest) {
+  return [...new Set([
+    ...consumerRuntimeScriptPaths(manifest),
+    ...manifest.diagnosticScripts.filter((entry) => entry.nativeOptIn === true).map((entry) => localScriptPath(entry.src))
+  ])];
+}
+
+export async function readConsumerScriptManifest(sourceRoot = root) {
+  const manifest = JSON.parse(await readFile(join(sourceRoot, consumerScriptManifestPath), 'utf8'));
+  if (manifest.schemaVersion !== 'gridly.consumerScripts.v1') throw new Error('Unsupported consumer script manifest schema.');
+  if (!Array.isArray(manifest.startupScripts) || !Array.isArray(manifest.dynamicRuntimeScripts) || !Array.isArray(manifest.diagnosticScripts)) throw new Error('Consumer script manifest boundaries are incomplete.');
+  if (manifest.diagnosticScripts.length !== 19) throw new Error(`Expected 19 opt-in diagnostic scripts; found ${manifest.diagnosticScripts.length}.`);
+
+  const index = await readFile(join(sourceRoot, 'index.html'), 'utf8');
+  const indexScripts = [...index.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)].map((match) => match[1]);
+  if (JSON.stringify(indexScripts) !== JSON.stringify(manifest.startupScripts)) throw new Error('Consumer startup scripts differ from the governed manifest or order.');
+
+  const runtimeScripts = consumerRuntimeScriptPaths(manifest);
+  const diagnostics = manifest.diagnosticScripts.map((entry) => localScriptPath(entry.src));
+  if (new Set(runtimeScripts).size !== runtimeScripts.length || new Set(diagnostics).size !== diagnostics.length) throw new Error('Consumer script manifest contains duplicate JavaScript paths.');
+  const overlap = diagnostics.filter((path) => runtimeScripts.includes(path));
+  if (overlap.length) throw new Error(`Opt-in diagnostics crossed the consumer runtime boundary: ${overlap.join(', ')}`);
+  for (const entry of manifest.diagnosticScripts) {
+    if (!Array.isArray(entry.globals) || entry.globals.length === 0) throw new Error(`Diagnostic has no governed global contract: ${entry.src}`);
+  }
+  for (const path of [...runtimeScripts, ...diagnostics]) await stat(join(sourceRoot, path));
+
+  const startupSources = (await Promise.all(manifest.startupScripts.map(localScriptPath).filter(Boolean).map((path) => readFile(join(sourceRoot, path), 'utf8')))).join('\n');
+  for (const source of manifest.dynamicRuntimeScripts) {
+    if (!startupSources.includes(source)) throw new Error(`Dynamic runtime script is not loaded by a governed startup module: ${source}`);
+  }
+  return manifest;
+}
 
 export async function copyGovernedRuntime(sourceRoot, destination, entry) {
   const normalized = entry.replaceAll('\\', '/');
@@ -114,6 +163,7 @@ export async function stageNativeAddressRuntime(sourceRoot, destination) {
 }
 
 export async function stage(destination, { runtimeConfigFile } = {}) {
+  const consumerScriptManifest = await readConsumerScriptManifest(root);
   let composedRuntimeConfig = null;
   if (runtimeConfigFile) {
     const ownerInput = resolve(runtimeConfigFile);
@@ -130,6 +180,7 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
   await mkdir(destination, { recursive: true });
   const copyRuntime = (entry) => copyGovernedRuntime(root, destination, entry);
   for (const entry of [...runtimePolicy.trees, ...runtimePolicy.files]) await copyRuntime(entry);
+  for (const entry of nativePackagedScriptPaths(consumerScriptManifest)) await copyRuntime(entry);
 
   // Computed/data-driven authorities are expanded from their production
   // manifests, rather than approximated with broad directory copies.
@@ -271,6 +322,7 @@ async function identity(directory) {
 
 async function verify(directory, { reportFile } = {}) {
   await verifyCommunitySubmissionBundle(directory);
+  const consumerScriptManifest = await readConsumerScriptManifest(root);
   const required = [
     'index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi',
     'Community-Packages', 'Crossing-Packages',
@@ -281,6 +333,11 @@ async function verify(directory, { reportFile } = {}) {
   ];
   for (const item of required) await stat(join(directory, item));
   const paths = await files(directory);
+  const expectedScripts = nativePackagedScriptPaths(consumerScriptManifest).sort();
+  const stagedScripts = paths.filter((path) => path.startsWith('js/') && path.endsWith('.js')).sort();
+  if (JSON.stringify(stagedScripts) !== JSON.stringify(expectedScripts)) throw new Error('Native JavaScript boundary differs from the governed consumer manifest.');
+  const unintendedDiagnostics = consumerScriptManifest.diagnosticScripts.filter((entry) => entry.nativeOptIn !== true).map((entry) => localScriptPath(entry.src));
+  if (unintendedDiagnostics.some((path) => paths.includes(path))) throw new Error('Native stage contains a source-only certification diagnostic.');
   const referenced = new Set();
   const html = await readFile(join(directory, 'index.html'), 'utf8');
   for (const match of html.matchAll(/\b(?:src|href)=["']([^"']+)["']/g)) referenced.add(match[1]);

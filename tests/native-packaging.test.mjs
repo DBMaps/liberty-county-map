@@ -293,12 +293,11 @@ test('native stage is an allowlist with measured anti-bloat closure', () => {
   assert.match(tool, /addressManifest\.packages/);
 });
 
-test('native tree staging filters prohibited descendants and repeats deterministically', async () => {
+test('governed tree-copy helper filters prohibited descendants and repeats deterministically', async () => {
   const first = mkdtempSync(join(tmpdir(), 'gridly-native-web-policy-a-'));
   const second = mkdtempSync(join(tmpdir(), 'gridly-native-web-policy-b-'));
   const localConfig = 'js/gridly.local.js';
   const hadLocalConfig = existsSync(localConfig);
-  const originalLocalConfig = hadLocalConfig ? readFileSync(localConfig) : undefined;
   try {
     if (!hadLocalConfig) writeFileSync(localConfig, 'globalThis.GRIDLY_LOCAL_TEST_ONLY = true;\n');
 
@@ -306,7 +305,7 @@ test('native tree staging filters prohibited descendants and repeats determinist
     await copyGovernedRuntime(process.cwd(), second, 'js');
     assert.equal(existsSync(join(first, localConfig)), false, 'an *.local.js descendant of the allowed js tree must not be staged');
     for (const required of ['js/app.js', 'js/gridlyRuntimeEnvironmentConfig.js', 'js/gridlyNativeProviderOriginAudit.js']) {
-      assert.ok(existsSync(join(first, required)), `${required} must remain in the production native stage`);
+      assert.ok(existsSync(join(first, required)), `${required} must remain available to the governed copy helper`);
     }
     const stagedIdentity = (destination) => directoryFiles(destination).map((relativePath) => {
       return [relativePath, createHash('sha256').update(readFileSync(join(destination, relativePath))).digest('hex')];
@@ -315,8 +314,7 @@ test('native tree staging filters prohibited descendants and repeats determinist
   } finally {
     rmSync(first, { recursive: true, force: true });
     rmSync(second, { recursive: true, force: true });
-    if (hadLocalConfig) writeFileSync(localConfig, originalLocalConfig);
-    else rmSync(localConfig, { force: true });
+    if (!hadLocalConfig) rmSync(localConfig, { force: true });
   }
 });
 
@@ -338,12 +336,14 @@ test('native address and POI computed-path authorities remain bounded and comple
   assert.match(tool, /Capacitor's Android local server can reject double-extension/);
 });
 
-test('native provider origin helper is bounded and never exposes credential values', () => {
+test('native provider origin diagnostic is bounded, credential-safe, and opt-in', () => {
   const helper = text('js/gridlyNativeProviderOriginAudit.js');
   assert.match(helper, /gridlyNativeProviderOriginAudit/);
   for (const field of ['capacitorPlatform', 'documentLocationOrigin', 'viewportWidth', 'computedRootFontSize', 'nativeTypographyAuthority', 'nativeTypographyStatus', 'driveTexasConfigFamily', 'supabaseClientInitialized', 'nwsEndpointReachability', 'poiManifestPresence', 'crossingPackagePresence']) assert.match(helper, new RegExp(field));
   assert.doesNotMatch(helper, /authorization|apiKeyValue|supabaseKey/i);
-  assert.match(text('index.html'), /gridlyNativeProviderOriginAudit\.js/);
+  assert.doesNotMatch(text('index.html'), /<script[^>]+gridlyNativeProviderOriginAudit\.js/);
+  const manifest = JSON.parse(text('consumer-script-manifest.json'));
+  assert.ok(manifest.diagnosticScripts.some((entry) => entry.src.startsWith('js/gridlyNativeProviderOriginAudit.js')));
 });
 
 test('Android typography normalization is native-only and preserves Gridly density authority', () => {
