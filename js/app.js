@@ -3611,13 +3611,22 @@ function gridlyStoryActiveRecords(governedProjection) {
 
 function gridlyStoryWeatherMeaningfulImpact(weather) {
   if (!weather) return null;
+  const gridlyStoryWeatherMeasurement = (value) => {
+    if (value === null || value === undefined) return NaN;
+    const normalized = String(value).replace(/[^\d.-]/g, "").trim();
+    if (!/\d/.test(normalized)) return NaN;
+    const numeric = Number(normalized);
+    return Number.isFinite(numeric) ? numeric : NaN;
+  };
   const text = gridlyStoryText([
     weather.summary, weather.alertTitle, weather.condition, weather.event, weather.category,
     weather.headline, weather.title, weather.description, weather.severity
   ].filter(Boolean).join(" ")).toLowerCase();
-  const temperature = Number(String(weather.temperature ?? "").replace(/[^\d.-]/g, ""));
-  const windMph = Number(String(weather.windMph ?? weather.windSpeed ?? weather.wind ?? "").replace(/[^\d.-]/g, ""));
-  const visibilityMiles = Number(String(weather.visibilityMiles ?? weather.visibility ?? "").replace(/[^\d.-]/g, ""));
+  // LP244.28: missing provider measurements are unknown, never zero.  Number("")
+  // is 0, which previously made an alert-only Heat Advisory look like <= 32 F.
+  const temperature = gridlyStoryWeatherMeasurement(weather.temperature);
+  const windMph = gridlyStoryWeatherMeasurement(weather.windMph ?? weather.windSpeed ?? weather.wind);
+  const visibilityMiles = gridlyStoryWeatherMeasurement(weather.visibilityMiles ?? weather.visibility);
   if (/flash flood|flood|high water|standing water/.test(text)) return { kind: "flooding", situation: "Flooding potential may affect local roads.", recommendation: "Avoid flooded roads and check your route before leaving.", detail: "Flooding potential may affect local travel." };
   if (/dense fog|fog|poor visibility|low visibility/.test(text) || (Number.isFinite(visibilityMiles) && visibilityMiles > 0 && visibilityMiles <= 1)) return { kind: "fog", situation: "Dense fog may reduce visibility.", recommendation: "Allow extra travel time.", detail: "Visibility may be reduced." };
   if (/thunderstorm|severe storm|storm warning|lightning/.test(text)) return { kind: "storm", situation: "Storms may affect local travel.", recommendation: "Drive with extra caution.", detail: "Storms may affect local travel." };
@@ -17476,7 +17485,7 @@ const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
 // Release identity follows service-worker.js; native verification rejects drift.
-const APP_BUILD = "lp244.23d-protocol-v2-readiness";
+const APP_BUILD = "lp244.29a-reporting-availability-guard";
 const GRIDLY_APP_VERSION_LABEL = "Gridly V204.0B";
 const GRIDLY_APP_BUILD_LABEL = "Build 1710";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
@@ -29987,17 +29996,26 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
     const safeBottomY = Math.max(safeTopY + 80, Math.round((bounds?.bottom || (mapRect?.bottom || viewportHeight)) - (mapRect?.top || 0)));
     const usableCenter = getGridlyMobilePortraitUsableMapCenter(mapRef);
     const preferredY = usableCenter.measured ? usableCenter.centerY : Math.round(viewportHeight * 0.62);
-    const lowerTargetY = safeTopY + estimatedPopupSize.height + 12;
+    const visibleTopY = usableCenter.measured ? Math.round(usableCenter.usableTop - (mapRect?.top || 0)) : safeTopY;
+    const portraitPopupHeight = Math.min(360, Math.round(viewportHeight * 0.46));
+    const lowerTargetY = Math.max(safeTopY, visibleTopY) + portraitPopupHeight + 8;
     const upperTargetY = safeBottomY - 28;
+    const popupHalfWidth = Math.ceil(estimatedPopupSize.width / 2);
+    const safeLeftX = Math.round((bounds?.left || mapRect?.left || 0) - (mapRect?.left || 0)) + popupHalfWidth;
+    const safeRightX = Math.round((bounds?.right || mapRect?.right || viewportWidth) - (mapRect?.left || 0)) - popupHalfWidth;
+    const desiredX = safeLeftX <= safeRightX
+      ? Math.max(safeLeftX, Math.min(safeRightX, Math.round(markerPoint.x)))
+      : Math.round(viewportWidth / 2);
     const desiredY = lowerTargetY <= upperTargetY
       ? Math.max(lowerTargetY, Math.min(upperTargetY, preferredY))
       : Math.max(safeTopY + 80, Math.min(upperTargetY, preferredY));
+    const mobilePanX = Math.round(markerPoint.x - desiredX);
     const mobilePanY = Math.round(markerPoint.y - desiredY);
-    const shouldMobilePan = Math.abs(mobilePanY) > 4;
+    const shouldMobilePan = Math.abs(mobilePanX) > 4 || Math.abs(mobilePanY) > 4;
     window.__gridlyLastPopupAutoPanApplied = shouldMobilePan;
     gridlyPopupCameraPanApplied = shouldMobilePan;
     gridlyPopupAnchorMode = "mobile-portrait-safe-vertical-zone";
-    gridlyPopupLastSafeTargetPoint = { x: Math.round(markerPoint.x), y: desiredY };
+    gridlyPopupLastSafeTargetPoint = { x: desiredX, y: desiredY };
     gridlyPopupViewportBounds = {
       ...(gridlyPopupViewportBounds || {}),
       mobilePortraitSafeZone: true,
@@ -30005,7 +30023,9 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
       safeBottomY,
       preferredY,
       usableCenter,
+      desiredX,
       desiredY,
+      panX: mobilePanX,
       panY: mobilePanY,
       containmentBounds: bounds
     };
@@ -30038,7 +30058,7 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
     };
     if (typeof mapRef.once === "function") mapRef.once("moveend", finishMobileReposition);
     session.openTimer = setTimeout(finishMobileReposition, 320);
-    mapRef.panBy([0, mobilePanY], { animate: true, duration: 0.2 });
+    mapRef.panBy([mobilePanX, mobilePanY], { animate: true, duration: 0.2 });
     return true;
   }
 
@@ -47726,7 +47746,9 @@ function initSupabase() {
   try {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, { global: { fetch: (url, options) => fetch(url, { ...options, cache: "no-store" }) } });
     gridlyPublishSupabaseClientAuthority();
+    gridlyBindReportingAvailabilityRefresh();
     gridlyRefreshPendingOperationButton();
+    void gridlyRefreshReportingAvailability({ force: true }).then(gridlyRefreshPendingOperationButton);
 
     setSync(`Live sync connected · Build ${APP_BUILD}`);
 
@@ -88857,6 +88879,118 @@ function gridlyGetCommunityProtocolClient() {
   if (window.gridlyReportProtocol?.protocol_version !== 2) throw new Error("Reporting requires the current Gridly build. Update or reload Gridly.");
   return gridlyCommunityProtocolClient ||= window.gridlyReportProtocol.create();
 }
+
+/* LP244.29A REPORTING AVAILABILITY RUNTIME START */
+const GRIDLY_REPORTING_AVAILABILITY_STATES = Object.freeze({ UNKNOWN: "UNKNOWN", ENABLED: "ENABLED", DISABLED: "DISABLED" });
+const GRIDLY_REPORTING_AVAILABILITY_MAX_AGE_MS = 60 * 1000;
+const GRIDLY_REPORTING_UNAVAILABLE_MESSAGE = "Community reporting is temporarily unavailable. Please try again later.";
+
+function gridlyCreateReportingAvailabilityRuntime({ now = () => Date.now(), maxAgeMs = GRIDLY_REPORTING_AVAILABILITY_MAX_AGE_MS } = {}) {
+  const guardedKinds = new Set(["create", "confirm", "edit", "clear"]);
+  let state = GRIDLY_REPORTING_AVAILABILITY_STATES.UNKNOWN;
+  let checkedAt = null;
+  let changedAt = null;
+  let source = "initial";
+  let refreshPromise = null;
+
+  function snapshot() {
+    const stale = Number.isFinite(checkedAt) && now() - checkedAt >= maxAgeMs;
+    return Object.freeze({
+      state: stale ? GRIDLY_REPORTING_AVAILABILITY_STATES.UNKNOWN : state,
+      lastKnownState: state,
+      stale,
+      checkedAt,
+      changedAt,
+      source
+    });
+  }
+
+  function setUnknown(nextSource = "status_unavailable") {
+    state = GRIDLY_REPORTING_AVAILABILITY_STATES.UNKNOWN;
+    checkedAt = null;
+    changedAt = null;
+    source = nextSource;
+    return snapshot();
+  }
+
+  async function refresh(client, { force = false } = {}) {
+    const current = snapshot();
+    if (!force && current.state !== GRIDLY_REPORTING_AVAILABILITY_STATES.UNKNOWN) return current;
+    if (refreshPromise) return refreshPromise;
+    refreshPromise = (async () => {
+      try {
+        if (!client || typeof client.rpc !== "function") return setUnknown();
+        const response = await client.rpc("get_community_reporting_status");
+        if (response?.error) return setUnknown();
+        const record = Array.isArray(response?.data) ? response.data[0] : response?.data;
+        const parsedChangedAt = typeof record?.changed_at === "string" ? Date.parse(record.changed_at) : NaN;
+        if (record?.protocol_version !== 2 || typeof record?.reporting_enabled !== "boolean" || !Number.isFinite(parsedChangedAt)) return setUnknown("invalid_status");
+        state = record.reporting_enabled ? GRIDLY_REPORTING_AVAILABILITY_STATES.ENABLED : GRIDLY_REPORTING_AVAILABILITY_STATES.DISABLED;
+        checkedAt = now();
+        changedAt = new Date(parsedChangedAt).toISOString();
+        source = "status_rpc";
+        return snapshot();
+      } catch (_) {
+        return setUnknown();
+      }
+    })().finally(() => { refreshPromise = null; });
+    return refreshPromise;
+  }
+
+  function observeResult(result) {
+    if (result?.status === "maintenance") {
+      state = GRIDLY_REPORTING_AVAILABILITY_STATES.DISABLED;
+      checkedAt = now();
+      changedAt = null;
+      source = "writer_maintenance";
+    }
+    return snapshot();
+  }
+
+  async function submit(kind, payload, protocolClient, transportClient, device) {
+    if (guardedKinds.has(kind)) {
+      if (snapshot().state === GRIDLY_REPORTING_AVAILABILITY_STATES.UNKNOWN) await refresh(transportClient);
+      if (snapshot().state === GRIDLY_REPORTING_AVAILABILITY_STATES.DISABLED) {
+        return Object.freeze({ status: "maintenance", blockedBeforeBegin: true });
+      }
+    }
+    const result = await protocolClient.submit(kind, payload, transportClient, device);
+    observeResult(result);
+    return result;
+  }
+
+  return Object.freeze({ snapshot, refresh, observeResult, submit });
+}
+/* LP244.29A REPORTING AVAILABILITY RUNTIME END */
+
+const gridlyReportingAvailabilityRuntime = gridlyCreateReportingAvailabilityRuntime();
+let gridlyReportingAvailabilityResumeBound = false;
+function gridlyRefreshReportingAvailability(options = {}) {
+  return gridlyReportingAvailabilityRuntime.refresh(supabaseClient, options);
+}
+function gridlyBindReportingAvailabilityRefresh() {
+  if (gridlyReportingAvailabilityResumeBound) return;
+  gridlyReportingAvailabilityResumeBound = true;
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "visible") return;
+    void gridlyRefreshReportingAvailability({ force: true }).then(gridlyRefreshPendingOperationButton);
+  });
+}
+function gridlyReportingResultMessage(result) {
+  return result?.blockedBeforeBegin ? GRIDLY_REPORTING_UNAVAILABLE_MESSAGE : window.gridlyReportProtocol.outcome(result?.status).message;
+}
+function gridlyReportingSubmissionErrorMessage(error, fallback) {
+  return error?.code === "maintenance" ? (error.message || GRIDLY_REPORTING_UNAVAILABLE_MESSAGE) : fallback;
+}
+function gridlySubmitCommunityOperation(kind, payload, client = supabaseClient, device = deviceId) {
+  return gridlyReportingAvailabilityRuntime.submit(kind, payload, gridlyGetCommunityProtocolClient(), client, device);
+}
+window.gridlyReportingAvailability = Object.freeze({
+  states: GRIDLY_REPORTING_AVAILABILITY_STATES,
+  snapshot: () => gridlyReportingAvailabilityRuntime.snapshot(),
+  refresh: (options = {}) => gridlyRefreshReportingAvailability(options)
+});
+
 function gridlyRefreshPendingOperationButton() {
   let pending;
   try { pending = gridlyGetCommunityProtocolClient().pending(); } catch (_) { return; }
@@ -88870,6 +89004,7 @@ function gridlyRefreshPendingOperationButton() {
       button.disabled = true;
       try {
         const result = await gridlyGetCommunityProtocolClient().retry(supabaseClient, deviceId);
+        gridlyReportingAvailabilityRuntime.observeResult(result);
         const outcome = window.gridlyReportProtocol.outcome(result.status);
         setConfirmation(outcome.message, outcome.success ? "success" : "error");
         if (outcome.success) await loadSharedReports("pending_report_resolved");
@@ -88877,18 +89012,23 @@ function gridlyRefreshPendingOperationButton() {
     };
     document.body.appendChild(button);
   }
-  button.textContent = pending.kind === "cancel" ? "Finish expired pending report" : "Retry pending report";
+  const reportingDisabled = gridlyReportingAvailabilityRuntime.snapshot().state === GRIDLY_REPORTING_AVAILABILITY_STATES.DISABLED;
+  button.textContent = reportingDisabled
+    ? (pending.kind === "cancel" ? "Finish pending report when reporting reopens" : "Retry pending report when reporting reopens")
+    : (pending.kind === "cancel" ? "Finish expired pending report" : "Retry pending report");
+  if (reportingDisabled) button.title = GRIDLY_REPORTING_UNAVAILABLE_MESSAGE;
+  else button.removeAttribute("title");
 }
 async function gridlySubmitCommunityMutation(action, observationId, changes = {}) {
   if (!observationId) { setConfirmation("The original report is unavailable. Refresh before updating it.", "error"); return false; }
   try {
-    const result = await gridlyGetCommunityProtocolClient().submit(action, { observation_id: observationId, changes }, supabaseClient, deviceId);
+    const result = await gridlySubmitCommunityOperation(action, { observation_id: observationId, changes });
     if (result.status === "already_processed") {
       await loadSharedReports("community_mutation_replay");
-      setConfirmation(window.gridlyReportProtocol.outcome(result.status).message, "error"); return false;
+      setConfirmation(gridlyReportingResultMessage(result), "error"); return false;
     }
     if (result.status !== "accepted") {
-      setConfirmation(window.gridlyReportProtocol.outcome(result.status).message, "error"); return false;
+      setConfirmation(gridlyReportingResultMessage(result), "error"); return false;
     }
     await loadSharedReports("community_mutation_resolved"); return true;
   } catch (_) { setConfirmation("A report is pending. Use Retry pending report.", "error"); return false; }
@@ -88903,9 +89043,9 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row, op
       const isClear = ["cleared", "hazard_cleared"].includes(row.report_type);
       const target = String(row.detail || "").match(/lifecycle_report_id:\s*([^\s)]+)/)?.[1];
       if (isClear && !target) return { error: { code: "ORIGINAL_REQUIRED", message: "Original report unavailable." } };
-      const result = await gridlyGetCommunityProtocolClient().submit(isClear ? "clear" : "create",
+      const result = await gridlySubmitCommunityOperation(isClear ? "clear" : "create",
         isClear ? { observation_id: target, changes: {} } : payload, client, deviceId);
-      if (!["accepted", "already_processed"].includes(result.status)) return { error: { code: result.status, message: window.gridlyReportProtocol.outcome(result.status).message } };
+      if (!["accepted", "already_processed"].includes(result.status)) return { error: { code: result.status, message: gridlyReportingResultMessage(result) } };
       let returned = result.report;
       if (isClear && !returned) {
         const read = await client.from("reports").select(GRIDLY_REPORTS_BASE_SELECT_COLUMNS).eq("id", target);
@@ -90556,8 +90696,9 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
       lastSubmitError: message,
       submitShapePass: Boolean(lastGridlyRoadHazardSubmitShapeAudit?.submitShapePass && !message)
     };
-    updateReportingState({ lastReportError: "Your report could not be submitted. Check your connection and try again." });
-    setConfirmation("Your report could not be submitted. Check your connection and try again.", "error");
+    const consumerErrorMessage = gridlyReportingSubmissionErrorMessage(error, "Your report could not be submitted. Check your connection and try again.");
+    updateReportingState({ lastReportError: consumerErrorMessage });
+    setConfirmation(consumerErrorMessage, "error");
     setSync("Report not submitted");
     updateReportingState({ submissionInProgress: false, locationLookupInProgress: false });
     gridlyMarkReportSubmissionRecovery("failure", { flow: "hazard", reportType: hazardType, lifecycleId: recoveryLifecycleId, message });
@@ -93933,7 +94074,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
       buttonEl.textContent = "Failed";
     }
 
-    setConfirmation("Your report could not be submitted. Check your connection and try again.", "error");
+    setConfirmation(gridlyReportingSubmissionErrorMessage(error, "Your report could not be submitted. Check your connection and try again."), "error");
     setSync("Report not submitted");
 
     if (buttonEl) {

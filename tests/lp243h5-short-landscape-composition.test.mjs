@@ -4,9 +4,12 @@ import test from "node:test";
 
 const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-const finalAuthority = css.slice(css.indexOf("/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY"));
+const finalAuthorityStart = css.indexOf("/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY");
+const finalAuthorityEnd = css.indexOf("/* LP244.4", finalAuthorityStart);
+const finalAuthority = css.slice(finalAuthorityStart, finalAuthorityEnd);
 
 test("superseded milestone geometry defers to the one H10B authority", () => {
+  assert.ok(finalAuthorityStart >= 0 && finalAuthorityEnd > finalAuthorityStart);
   assert.equal((css.match(/LP243\.H10B FINAL SHORT-LANDSCAPE AUTHORITY/g) || []).length, 1);
   assert.match(finalAuthority, /@media \(orientation: landscape\) and \(max-height: 500px\)/);
   assert.doesNotMatch(finalAuthority, /126px|128px|min\(720px|transform:\s*scale\(/);

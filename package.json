@@ -705,6 +705,7 @@
     "verify:native-web:configured": "node tools/native-web.mjs --verify --report-file .artifacts/native-web-identity.json",
     "verify:native-poi:android": "node tools/verify-native-poi-android.mjs",
     "test:native-packaging": "node --test tests/native-packaging.test.mjs",
+    "test:lp24430a": "node --test tests/lp24430a-prelaunch-startup-cleanup.test.mjs",
     "build:native-assets": "node tools/native-assets.mjs",
     "prepare:native": "npm run build:native-web:configured && npm run verify:native-web:configured",
     "verify:android:fast": "node tools/android-acceptance/fast.mjs",

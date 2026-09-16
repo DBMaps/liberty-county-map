@@ -119,7 +119,8 @@ test('exact UI adapter rejects maintenance and replay without fabricating a mark
   assert.ok(end>1);
   let result={status:'maintenance'},writes=0,refreshes=0;
   const context={window:{gridlyReportProtocol:protocol},deviceId:'synthetic-device',GRIDLY_DIRECT_FEEDBACK_TABLE:'gridly_feedback',GRIDLY_REPORTS_BASE_INSERT_KEYS:[],
-    gridlyPickRowKeys:r=>({...r}),gridlyGetCommunityProtocolClient:()=>({submit:async()=>result}),gridlyRefreshPendingOperationButton:()=>{},loadSharedReports:async()=>refreshes++};
+    gridlyPickRowKeys:r=>({...r}),gridlySubmitCommunityOperation:async()=>result,gridlyReportingResultMessage:r=>protocol.outcome(r.status).message,
+    gridlyRefreshPendingOperationButton:()=>{},loadSharedReports:async()=>refreshes++};
   vm.createContext(context);vm.runInContext(rest.slice(0,end),context);
   const direct={from(){writes++;throw Error('direct write forbidden');}};
   for(const status of ['maintenance','stale_client','retryable_failure','already_processed']){
@@ -147,7 +148,8 @@ test('exact mutation UI does not call a consumed-token replay a confirmed update
   const source=app.slice(app.indexOf('async function gridlySubmitCommunityMutation('),app.indexOf('async function gridlyInsertWithCountyMetadataFallback('));
   let status='already_processed',message='';
   const ctx={window:{gridlyReportProtocol:protocol},deviceId:'synthetic-device',supabaseClient:transport,
-    gridlyGetCommunityProtocolClient:()=>({submit:async()=>({status})}),loadSharedReports:async()=>{},gridlyRefreshPendingOperationButton:()=>{},setConfirmation:m=>message=m};
+    gridlySubmitCommunityOperation:async()=>({status}),gridlyReportingResultMessage:r=>protocol.outcome(r.status).message,
+    loadSharedReports:async()=>{},gridlyRefreshPendingOperationButton:()=>{},setConfirmation:m=>message=m};
   vm.createContext(ctx);vm.runInContext(source,ctx);
   for(status of ['already_processed','maintenance','stale_client','forbidden']){
     assert.equal(await ctx.gridlySubmitCommunityMutation('edit',report.id,{}),false);assert.ok(message);

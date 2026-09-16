@@ -52,8 +52,10 @@ test("Leaflet ownership, legal copy, providers, and disclosure behavior remain u
   assert.doesNotMatch(r2Css + boundary, /tileLayer|ArcGIS|DriveTexas|weather/);
 });
 
-test("protected LP243 milestones remain runnable and asset identities advance together", () => {
+test("protected LP243 milestones remain runnable and current asset authorities stay bound", () => {
   protections.forEach((source, index) => assert.match(source, /test\(/, protectedTests[index]));
   assert.match(html, /css\/styles\.css\?v=lp244\.24b-owner-review/);
-  assert.match(html, /js\/app\.js\?v=lp244\.24b-owner-review/);
+  assert.match(html, /js\/gridly-report-protocol\.js\?v=lp244\.23d-protocol-v2-readiness/);
+  assert.match(html, /js\/app\.js\?v=lp244\.23d-protocol-v2-readiness/);
+  assert.match(app, /const APP_BUILD = "lp244\.23d-protocol-v2-readiness"/);
 });

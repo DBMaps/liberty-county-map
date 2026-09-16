@@ -47,7 +47,14 @@ The identity report contains the candidate Git SHA; sorted final path list; each
 
 ## 5. Diagnostic status
 
-Run `await window.gridlyNativeProviderOriginAudit?.()` in the device WebView console. It returns only:
+Load the governed native-packaged opt-in diagnostic and run it in the device WebView console:
+
+```js
+await window.gridlyLoadCertificationDiagnostics({ scripts: ["js/gridlyNativeProviderOriginAudit.js"] })
+await window.gridlyNativeProviderOriginAudit?.()
+```
+
+It returns only:
 
 - Capacitor platform;
 - document href, origin, protocol and hostname;
@@ -85,6 +92,7 @@ npx cap open android
 In Android Studio select a physical phone with USB debugging enabled, choose the `app` debug configuration, then **Run**. No release signing is needed. Open Chrome `chrome://inspect`, inspect Gridly, and run:
 
 ```js
+await window.gridlyLoadCertificationDiagnostics({ scripts: ["js/gridlyNativeProviderOriginAudit.js"] })
 await window.gridlyNativeProviderOriginAudit?.()
 ```
 
@@ -119,6 +127,7 @@ npx cap open ios
 In Xcode select the App target, Signing & Capabilities, and the owner's development Team; retain bundle identifier `com.gridlygo.gridly`. Select a connected physical iPhone and **Run**—do not Archive or upload. In Safari enable the Develop menu, select the iPhone/Gridly WebView, and run:
 
 ```js
+await window.gridlyLoadCertificationDiagnostics({ scripts: ["js/gridlyNativeProviderOriginAudit.js"] })
 await window.gridlyNativeProviderOriginAudit?.()
 ```
 

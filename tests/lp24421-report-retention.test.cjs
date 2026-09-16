@@ -7,12 +7,14 @@ const vm = require('node:vm');
 const {renderAuthorization,migrationSql,supersededMigrationSql} = require('./helpers/lp24422a-prelaunch.cjs');
 
 // Deliberately no connection URL, production credentials, or non-loopback host.
-// Run against a DISPOSABLE PostgreSQL 17 cluster on localhost:55441.
+// Run against a DISPOSABLE PostgreSQL 17 cluster on loopback. Port 55441 is
+// the default; GRIDLY_TEST_PGPORT supports hosts where Windows reserves it.
 const psql = process.env.GRIDLY_TEST_PSQL || 'C:/Program Files/PostgreSQL/17/bin/psql.exe';
+const port = process.env.GRIDLY_TEST_PGPORT || '55441';
 const database = `gridly_retention_test_${process.pid}`;
 function sql(text, { db = database, fail = false } = {}) {
   const result = spawnSync(psql, ['-X','-q','-A','-t','-v','ON_ERROR_STOP=1',
-    '-h','127.0.0.1','-p','55441','-U','postgres','-d',db],
+    '-h','127.0.0.1','-p',port,'-U','postgres','-d',db],
     { input: text, encoding: 'utf8', windowsHide: true, timeout: 30000,
       env: Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^PG/i.test(key))) });
   if (fail) { assert.notEqual(result.status,0,'query must be denied'); return result.stderr; }
@@ -153,7 +155,8 @@ test('report helper uses only the token protocol and never falls back to direct 
   const sent=[];
   const ctx=vm.createContext({deviceId:'fixture-private-device', GRIDLY_REPORTS_BASE_INSERT_KEYS:[],
     gridlyPickRowKeys:row=>({...row}), gridlyRefreshPendingOperationButton(){},
-    gridlyGetCommunityProtocolClient:()=>({submit:async(kind,payload,client,device)=>{sent.push({kind,payload,device});return {status:'accepted',report:{id:'fixture-report',crossing_id:'DOT-fixture'}};}})});
+    gridlySubmitCommunityOperation:async(kind,payload,client,device)=>{sent.push({kind,payload,device});return {status:'accepted',report:{id:'fixture-report',crossing_id:'DOT-fixture'}};},
+    gridlyReportingResultMessage:()=>''});
   vm.runInContext(source.slice(start,end),ctx);
   const result=await ctx.gridlyInsertWithCountyMetadataFallback({from(){throw Error('legacy write forbidden');}},'reports',{crossing_id:'DOT-fixture',device_id:null});
   assert.equal(result.error,null);assert.equal(sent.length,1);assert.equal(sent[0].device,'fixture-private-device');

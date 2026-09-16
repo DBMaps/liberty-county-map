@@ -1,5 +1,5 @@
-const GRIDLY_SW_VERSION = "lp244.23d-protocol-v2-readiness";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24423d-v2";
+const GRIDLY_SW_VERSION = "lp244.29a-reporting-availability-guard";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24429a-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
