@@ -5,16 +5,42 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def gridlyReleaseStoreFile = project.findProperty('GRIDLY_RELEASE_STORE_FILE')
+def gridlyReleaseStorePassword = project.findProperty('GRIDLY_RELEASE_STORE_PASSWORD')
+def gridlyReleaseKeyAlias = project.findProperty('GRIDLY_RELEASE_KEY_ALIAS')
+def gridlyReleaseKeyPassword = project.findProperty('GRIDLY_RELEASE_KEY_PASSWORD')
+
 android {
     namespace 'com.gridlygo.gridly'
     compileSdk 36
 
+    signingConfigs {
+        release {
+            if (
+                gridlyReleaseStoreFile &&
+                gridlyReleaseStorePassword &&
+                gridlyReleaseKeyAlias &&
+                gridlyReleaseKeyPassword
+            ) {
+                storeFile file(gridlyReleaseStoreFile)
+                storePassword gridlyReleaseStorePassword
+                keyAlias gridlyReleaseKeyAlias
+                keyPassword gridlyReleaseKeyPassword
+            }
+        }
+    }
     defaultConfig {
         applicationId 'com.gridlygo.gridly'
         minSdk 24
         targetSdk 36
         versionCode 1
         versionName '1.0.0'
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
     }
 
     compileOptions {
