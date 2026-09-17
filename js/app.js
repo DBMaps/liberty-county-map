@@ -17485,7 +17485,7 @@ const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
 // Release identity follows service-worker.js; native verification rejects drift.
-const APP_BUILD = "lp244.29a-reporting-availability-guard";
+const APP_BUILD = "lp244.33-google-play-compliance";
 const GRIDLY_APP_VERSION_LABEL = "Gridly V204.0B";
 const GRIDLY_APP_BUILD_LABEL = "Build 1710";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
@@ -60162,7 +60162,9 @@ async function loadSharedReports(reason = "manual") {
 
     const normalizeStage = reportStage("local filtering and normalization", { dependency: "normalizeReports" });
     beginRoadwayDependencyPhase("normalization");
-    const normalized = normalizeReports(rawRows);
+    const normalized = window.gridlyUgcCompliance?.filterVisible
+      ? window.gridlyUgcCompliance.filterVisible(normalizeReports(rawRows), gridlyResolveCommunityReportId)
+      : normalizeReports(rawRows);
     endRoadwayDependencyPhase();
     beginRoadwayDependencyPhase("governance");
     normalized.filter(gridlyIsRoadClearedHazardRecord).forEach((clearRecord) => {
@@ -85878,6 +85880,27 @@ function gridlyCommunityPopupActionsEligible(incident = {}) {
   return Boolean(identity && rawLat != null && rawLng != null && Number.isFinite(Number(rawLat)) && Number.isFinite(Number(rawLng)));
 }
 
+function gridlyResolveCommunityReportId(record = {}) {
+  const uuidV4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const candidates = [record.persistedReportId, record.report_id, record.reportId, record.sourceReportId, record.id];
+  return candidates.map((value) => String(value || "").trim()).find((value) => uuidV4.test(value)) || "";
+}
+
+function gridlyCommunityComplianceControls(record = {}) {
+  const reportId = gridlyResolveCommunityReportId(record);
+  return reportId ? (window.gridlyUgcCompliance?.controlsHtml?.(reportId) || "") : "";
+}
+
+function gridlyApplyLocalCommunityHide(reportId) {
+  const target = String(reportId || "").toLowerCase();
+  const keep = (record) => gridlyResolveCommunityReportId(record).toLowerCase() !== target;
+  activeReports = (Array.isArray(activeReports) ? activeReports : []).filter(keep);
+  activeHazards = (Array.isArray(activeHazards) ? activeHazards : []).filter(keep);
+  recentlyClearedRoadHazards = (Array.isArray(recentlyClearedRoadHazards) ? recentlyClearedRoadHazards : []).filter(keep);
+  try { map?.closePopup?.(); } catch (_) {}
+  refreshReportHazardViews("local_community_hide");
+}
+
 function buildUnifiedIncidentPopup(incident, options = {}){
   const popupBuildStart = gridlyNowMs();
   const auditRow = {
@@ -85896,6 +85919,7 @@ function buildUnifiedIncidentPopup(incident, options = {}){
     return html;
   };
   const isActive = incident.status === "active";
+  const complianceControls = gridlyCommunityComplianceControls(incident);
   const typeCategory = incident.id?.startsWith("rail-") ? "rail" : "road";
   const communityLifecycleTarget = typeCategory === "road"
     ? gridlyResolveCommunityIncidentLifecycleTarget(incident)
@@ -85917,6 +85941,7 @@ function buildUnifiedIncidentPopup(incident, options = {}){
       <span class="gridly-popup-meta" data-gridly-crossing-popup-field="reportCountLine">Community reports</span>
       <span class="gridly-popup-trust" data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
       <span class="gridly-popup-freshness" data-gridly-crossing-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span>
+      ${complianceControls}
     `;
     gridlyAddPopupAuditDuration(auditRow, "htmlGenerationDurationMs", htmlGenerationStart);
     if (!isActive) {
@@ -85938,6 +85963,7 @@ function buildUnifiedIncidentPopup(incident, options = {}){
     <span class="gridly-popup-meta" data-gridly-hazard-popup-field="sourceLine">Community reports</span>
     <span class="gridly-popup-trust" data-gridly-hazard-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
     <span class="gridly-popup-freshness" data-gridly-hazard-popup-field="freshnessLine">${sanitizeText(String(model.freshnessLine || "").replace(/^Updated\s*/i, "Updated "))}</span>
+    ${complianceControls}
   `;
   gridlyAddPopupAuditDuration(auditRow, "htmlGenerationDurationMs", htmlGenerationStart);
 
@@ -88977,14 +89003,42 @@ function gridlyBindReportingAvailabilityRefresh() {
   });
 }
 function gridlyReportingResultMessage(result) {
+  if (result?.status === "terms_required") return "Accept the Community Terms and Guidelines before sharing a new report.";
   return result?.blockedBeforeBegin ? GRIDLY_REPORTING_UNAVAILABLE_MESSAGE : window.gridlyReportProtocol.outcome(result?.status).message;
 }
 function gridlyReportingSubmissionErrorMessage(error, fallback) {
-  return error?.code === "maintenance" ? (error.message || GRIDLY_REPORTING_UNAVAILABLE_MESSAGE) : fallback;
+  if (error?.code === "maintenance") return error.message || GRIDLY_REPORTING_UNAVAILABLE_MESSAGE;
+  if (error?.code === "terms_required") return error.message || "Accept the Community Terms and Guidelines before sharing a new report.";
+  return fallback;
 }
-function gridlySubmitCommunityOperation(kind, payload, client = supabaseClient, device = deviceId) {
+async function gridlySubmitCommunityOperation(kind, payload, client = supabaseClient, device = deviceId) {
+  if (kind === "create") {
+    const accepted = await window.gridlyUgcCompliance?.ensureAccepted?.();
+    if (!accepted) return Object.freeze({ status: "terms_required", blockedBeforeBegin: true });
+  }
   return gridlyReportingAvailabilityRuntime.submit(kind, payload, gridlyGetCommunityProtocolClient(), client, device);
 }
+window.gridlyUgcComplianceBridge = Object.freeze({
+  notify: (message, kind = "success") => setConfirmation(message, kind),
+  onHide: (reportId) => {
+    gridlyApplyLocalCommunityHide(reportId);
+    void loadSharedReports("local_community_hide_reconcile");
+  },
+  submitModeration: async ({ operationId, reportId, reason }) => {
+    if (!supabaseClient) return { status: "retryable_failure" };
+    const response = await supabaseClient.rpc("submit_community_moderation_report", {
+      operation_id: operationId, target_report_id: reportId, reason, reporter_device_id: deviceId
+    });
+    return response?.error ? { status: "retryable_failure" } : (response?.data || { status: "retryable_failure" });
+  },
+  requestDeletion: async ({ operationId, reportId }) => {
+    if (!supabaseClient) return { status: "retryable_failure" };
+    const response = await supabaseClient.rpc("request_community_report_deletion", {
+      operation_id: operationId, target_report_id: reportId, reporter_device_id: deviceId
+    });
+    return response?.error ? { status: "retryable_failure" } : (response?.data || { status: "retryable_failure" });
+  }
+});
 window.gridlyReportingAvailability = Object.freeze({
   states: GRIDLY_REPORTING_AVAILABILITY_STATES,
   snapshot: () => gridlyReportingAvailabilityRuntime.snapshot(),
@@ -91847,6 +91901,7 @@ function buildPopup(crossing, report) {
   const model = buildGridlyLeafletCrossingPopupConsumerModel(crossing, report);
   lastGridlyCrossingPopupConsumerState = model;
   const actionButtons = buildGridlyCrossingPopupActionButtons(crossing, model, report);
+  const complianceControls = gridlyCommunityComplianceControls(report || {});
 
   return `
     <div class="gridly-popup gridly-premium-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="leaflet" data-gridly-crossing-popup-state="${sanitizeText(model.popupState)}">
@@ -91860,6 +91915,7 @@ function buildPopup(crossing, report) {
       <div class="popup-report-grid">
         ${actionButtons}
       </div>
+      ${complianceControls}
     </div>
   `;
 }
@@ -120356,7 +120412,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         </details>
         <details class="settings-modal-section settings-list-section settings-section-support" data-gridly-about>
           <summary class="settings-list-summary"><span class="settings-list-title">Support</span><span class="settings-list-meta">Help · About · Privacy · Version</span></summary>
-          <div class="settings-list-detail"><p><strong>About Gridly</strong><br>${GRIDLY_APP_VERSION_LABEL} · ${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">Find help, installation, feedback, privacy, terms, and product information here.</p>${buildGridlyPwaInstallCardHtml({ v2: true })}${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Show walkthrough again</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
+          <div class="settings-list-detail"><p><strong>About Gridly</strong><br>${GRIDLY_APP_VERSION_LABEL} · ${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">Find help, installation, feedback, privacy, terms, and product information here.</p>${buildGridlyPwaInstallCardHtml({ v2: true })}${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Show walkthrough again</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="privacy" type="button">Privacy &amp; deletion</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="terms" type="button">Terms of Use</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="guidelines" type="button">Community Guidelines</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
         </details>
       </div>`;
     const buildDuration = Number((getGridlySettingsPerfNow() - buildStartedAt).toFixed(2));
@@ -120399,7 +120455,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           ${otherSubtypeOptionsHtml}
         </div>
       </details>
-      <div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use my location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap the map</button></div>
+      <div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><p class="gridly-v2-sheet-copy">Sharing requires acceptance of the <button class="gridly-ugc-link" data-gridly-ugc-action="legal" data-document="terms" type="button">Terms</button> and <button class="gridly-ugc-link" data-gridly-ugc-action="legal" data-document="guidelines" type="button">Community Guidelines</button>. When reporting is paused for review, nothing is queued.</p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use my location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap the map</button></div>
     </div>`;
   }
 

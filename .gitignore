@@ -110,3 +110,5 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 /.artifacts/android-acceptance/
 *.apk
 *.log
+
+output/

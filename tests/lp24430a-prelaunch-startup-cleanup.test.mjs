@@ -46,7 +46,7 @@ const nonconsumerNativeScripts = [
 test('normal consumer startup exactly matches the governed ordered manifest', () => {
   assert.equal(manifest.schemaVersion, 'gridly.consumerScripts.v1');
   assert.deepEqual(indexScripts, manifest.startupScripts);
-  assert.equal(indexScripts.length, 76);
+  assert.equal(indexScripts.length, 77);
   assert.equal(new Set(indexScripts).size, indexScripts.length);
   assert.equal(manifest.diagnosticScripts.length, 19);
   for (const entry of manifest.diagnosticScripts) {
@@ -120,8 +120,8 @@ test('native stage contains only governed consumer JavaScript plus exact vendor 
     const expected = nativePackagedScriptPaths(manifest).sort();
     const staged = expected.filter((path) => existsSync(join(destination, path))).sort();
     assert.deepEqual(staged, expected);
-    assert.equal(runtime.length, 76);
-    assert.equal(expected.length, 77);
+    assert.equal(runtime.length, 77);
+    assert.equal(expected.length, 78);
     for (const entry of manifest.diagnosticScripts) {
       assert.equal(existsSync(join(destination, pathOf(entry.src))), entry.nativeOptIn === true, `${entry.src} packaging must match its governed boundary`);
     }

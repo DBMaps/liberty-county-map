@@ -25,4 +25,4 @@ Consumers are intended to be able to contact privacy@gridlygo.com for applicable
 
 Gridly may retain and potentially commercialize aggregated or deidentified historical condition intelligence about occurrences, locations, roads/corridors, crossings, frequency, timing, duration, severity, confirmation/resolution, recurrence, and regional patterns. Gridly does not intend to sell or commercialize personal information, persistent reporter/device identities, individual movement histories, or reporter-specific histories. Reporter residential ZIP is not an approved replacement identifier and is not introduced by this policy.
 
-The owner-selected product eligibility minimum age is 16; this is not a statement that 16 is a universal legal driving age and remains subject to legal review.
+The owner-selected product eligibility minimum age is 18; this is not a statement that 18 is a universal legal driving age and remains subject to legal review. The launch posture restricts users Google has determined to be minors.

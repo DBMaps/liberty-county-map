@@ -4,7 +4,7 @@ Effective Date: [DEFERRED UNTIL FINAL LEGAL APPROVAL]
 
 # Gridly Terms of Service
 
-These unapproved draft terms are between you and DJ Burns Collective LLC. Planned support: support@gridlygo.com (not yet proven operational). The owner-selected minimum product eligibility age is 16, subject to final legal review and any applicable consent requirements; 16 is not characterized as a universal legal driving age.
+These unapproved draft terms are between you and DJ Burns Collective LLC. Planned support: support@gridlygo.com (not yet proven operational). The owner-selected minimum product eligibility age is 18, subject to final legal review and any applicable consent requirements; 18 is not characterized as a universal legal driving age. The launch posture restricts users Google has determined to be minors.
 
 ## Informational awareness and safety
 

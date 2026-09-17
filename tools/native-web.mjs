@@ -15,7 +15,7 @@ const output = resolve(root, process.argv.includes('--output') ? process.argv[pr
 export const runtimePolicy = Object.freeze({
   trees: [],
   files: [
-    'index.html', 'manifest.json', 'service-worker.js', 'consumer-script-manifest.json', 'css/styles.css',
+    'index.html', 'manifest.json', 'service-worker.js', 'consumer-script-manifest.json', 'css/styles.css', 'legal',
     'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',
     'assets/walkthrough/gridly-walkthrough-kbyg.png',
     'assets/walkthrough/gridly-walkthrough-nearby.png',
@@ -285,7 +285,7 @@ export async function communitySubmissionContract(directory) {
   if (app.match(/const APP_BUILD = "([^"]+)"/)?.[1] !== version || scripts(index).some(path=>!path.endsWith(`?v=${version}`))) throw new Error('App/PWA version authority drift');
   const protocol = await readFile(join(directory,'js/gridly-report-protocol.js'),'utf8');
   if (!protocol.includes('const PROTOCOL_VERSION = 2;')) throw new Error('Retired reporting protocol');
-  return {schemaVersion:'gridly.communitySubmissionBundle.v2',protocol_version:2,legacyCreationCompatible:false,version,cache,scripts:scripts(index),runtime:Object.fromEntries(await Promise.all(runtime.map(async path=>[path,await digest(join(directory,path))]))),schema:Object.fromEntries(await Promise.all(['202609080001_community_report_retention.sql','202609080002_community_submission_protocol.sql','20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql','202609160001_lp24429a_reporting_availability_contract.sql'].map(async name=>[name,await digest(join(root,'supabase/migrations',name))])))};
+  return {schemaVersion:'gridly.communitySubmissionBundle.v2',protocol_version:2,legacyCreationCompatible:false,version,cache,scripts:scripts(index),runtime:Object.fromEntries(await Promise.all(runtime.map(async path=>[path,await digest(join(directory,path))]))),schema:Object.fromEntries(await Promise.all(['202609080001_community_report_retention.sql','202609080002_community_submission_protocol.sql','20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql','202609160001_lp24429a_reporting_availability_contract.sql','20260916183911_google_play_compliance_closure.sql'].map(async name=>[name,await digest(join(root,'supabase/migrations',name))])))};
 }
 
 export async function verifyCommunitySubmissionBundle(directory) {
@@ -324,7 +324,7 @@ async function verify(directory, { reportFile } = {}) {
   await verifyCommunitySubmissionBundle(directory);
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   const required = [
-    'index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi',
+    'index.html', 'manifest.json', 'service-worker.js', 'css', 'js', 'assets', 'data', 'poi', 'legal',
     'Community-Packages', 'Crossing-Packages',
     ...vendorAssets.map(([, target]) => target),
     'poi/lp24111-d5-standalone-2026-08-28/runtime-v2/manifest.json',
