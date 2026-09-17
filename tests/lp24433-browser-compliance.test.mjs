@@ -35,7 +35,7 @@ test('browser requires affirmative acceptance before resolving a new UGC gate',a
     await page.locator('[data-gridly-ugc-consent-accept]').click();
     await page.waitForFunction(()=>window.__gateResult===true);
     const accepted=await page.evaluate(()=>window.gridlyUgcCompliance.acceptance());
-    assert.equal(accepted.version,'gridly-ugc-2026-09-16-v1');
+    assert.equal(accepted.version,'gridly-ugc-2026-09-17-v2');
     assert.ok(Number.isFinite(Date.parse(accepted.acceptedAt)));
   } finally { await browser.close(); }
 });

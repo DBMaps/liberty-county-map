@@ -1,8 +1,8 @@
 # Gridly Community Guidelines
 
-**Effective date:** September 16, 2026
+**Effective date:** September 17, 2026
 
-**Acceptance version:** `gridly-ugc-2026-09-16-v1`
+**Acceptance version:** `gridly-ugc-2026-09-17-v2`
 
 Community reports are shared observations, not official traffic information or emergency reports. If anyone may be in danger, call 911 or the appropriate authority. Never use Gridly while driving.
 
@@ -29,4 +29,4 @@ A complaint does not automatically prove a violation. Reviewers examine content,
 
 Use **Delete mine** on a report submitted from this device to create a verified deletion request. The device association is private and temporary. If it is no longer available, use the Privacy entry in Settings for assistance. Hiding content affects only this device; deletion or moderation affects the shared service.
 
-You must be at least 16 to use Gridly. Before the first community submission, and whenever this version changes, you must explicitly accept the Terms of Use and these Guidelines.
+You must be at least 18 to use Gridly. Gridly may restrict access for users Google has determined to be minors. Before the first community submission, and whenever this version changes, you must explicitly accept the Terms of Use and these Guidelines.

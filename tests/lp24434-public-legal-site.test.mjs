@@ -11,6 +11,7 @@ const pageFiles = [
   'privacy/index.html',
   'terms/index.html',
   'community-guidelines/index.html',
+  'delete-data/index.html',
   'support/index.html',
 ];
 
@@ -59,7 +60,7 @@ function resolveSiteReference(pageFile, reference) {
   return resolve(dirname(join(siteRoot, pageFile)), withoutQuery);
 }
 
-test('all five public pages and deployment files exist', () => {
+test('all six public pages and deployment files exist', () => {
   for (const pageFile of pageFiles) {
     assert.ok(existsSync(join(siteRoot, pageFile)), `${pageFile} is missing`);
   }
@@ -118,6 +119,49 @@ test('support contacts and required safety notice are correct', () => {
   }
   assert.match(support, /Gridly does not replace official emergency instructions, roadway authorities, weather agencies, or emergency services\./);
   assert.match(support, /href="https:\/\/gridlygo\.com"/);
+  assert.match(support, /href="\/delete-data"/);
+  assert.match(readSiteFile('privacy/index.html'), /href="\/delete-data"/);
+});
+
+test('data-deletion page states request steps, outcomes, and bounded retention', () => {
+  const deletion = readSiteFile('delete-data/index.html');
+  assert.match(deletion, /<h1>Delete Gridly Data<\/h1>/);
+  assert.match(deletion, /<strong>Product:<\/strong> Gridly/);
+  assert.match(deletion, /DJ Burns Collective LLC, doing business as Gridly App/);
+  assert.match(deletion, /does not create consumer user accounts/);
+  assert.match(deletion, /Delete mine/);
+  assert.match(deletion, /href="mailto:privacy@gridlygo\.com"/);
+  assert.match(deletion, /approximate time and place/);
+  assert.match(deletion, /removes the public community report/);
+  assert.match(deletion, /private device link and live submission receipt/);
+  assert.match(deletion, /One-way replay evidence without a report or device reference/);
+  assert.match(deletion, /day 149/);
+  assert.match(deletion, /180 days/);
+  assert.match(deletion, /no-more-than-90-day completion window/);
+  assert.match(deletion, /does not promise deletion from a third-party provider's systems/);
+  assert.match(deletion, /does not describe retained or de-linked information as anonymous/);
+});
+
+test('launch-facing legal copy consistently enforces the 18-and-over posture', () => {
+  const launchFacingFiles = [
+    'docs/LEGAL/GRIDLY-PRIVACY-POLICY.md',
+    'docs/LEGAL/GRIDLY-TERMS-OF-USE.md',
+    'docs/LEGAL/GRIDLY-COMMUNITY-GUIDELINES.md',
+    'legal/drafts/privacy-policy.md',
+    'legal/drafts/terms-of-service.md',
+    'legal/privacy.html',
+    'legal/terms.html',
+    'legal/community-guidelines.html',
+    'public-site/privacy/index.html',
+    'public-site/terms/index.html',
+    'public-site/community-guidelines/index.html',
+  ];
+  const copy = launchFacingFiles.map((file) => readFileSync(join(repositoryRoot, file), 'utf8')).join('\n');
+  assert.doesNotMatch(copy, /16\+|at least 16|age 16|under 16|16 years old|minimum (?:product )?(?:eligibility )?age is 16/i);
+  assert.match(copy, /at least 18/);
+  assert.match(copy, /age 18 and older/);
+  assert.match(copy, /Google has determined to be minors/);
+  assert.match(copy, /gridly-ugc-2026-09-17-v2/);
 });
 
 test('site has no app, tracking, storage, or location runtime', () => {
@@ -129,7 +173,7 @@ test('site has no app, tracking, storage, or location runtime', () => {
 
 test('Cloudflare Pages routing and security headers are ready', () => {
   const redirects = readSiteFile('_redirects');
-  for (const route of ['privacy', 'terms', 'community-guidelines', 'support']) {
+  for (const route of ['privacy', 'terms', 'community-guidelines', 'delete-data', 'support']) {
     assert.match(redirects, new RegExp(`/${route}\\s+/${route}/index\\.html\\s+200`));
   }
 

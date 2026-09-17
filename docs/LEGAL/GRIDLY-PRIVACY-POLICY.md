@@ -1,6 +1,6 @@
 # Gridly Privacy Policy
 
-**Effective date:** September 16, 2026
+**Effective date:** September 17, 2026
 
 ## 1. Operator and scope
 
@@ -79,7 +79,7 @@ The app uses HTTPS for its configured remote data requests. No network transmiss
 
 ## 9. Children and minors
 
-Gridly is a general-audience service for users age 16 and older and is not directed to children under 16. People under 16 must not use Gridly or submit personal information through it. The current app does not verify age or provide a parental-consent system. If you believe a child under 16 has supplied personal information, contact privacy@gridlygo.com so the matter can be reviewed and appropriate action taken. An age statement does not remove protections that apply to children's information.
+Gridly is intended only for users age 18 and older and is not directed to minors. People under 18 must not use Gridly or submit personal information through it. Gridly may restrict access for users Google has determined to be minors. The current app does not independently verify age or provide a parental-consent system. If you believe a person under 18 has supplied personal information, contact privacy@gridlygo.com so the matter can be reviewed and appropriate action taken. An age statement does not remove protections that apply to minors' information.
 
 ## 10. Changes and contact
 

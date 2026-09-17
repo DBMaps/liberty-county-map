@@ -1,14 +1,14 @@
 # Gridly Terms of Use
 
-**Effective date:** September 16, 2026
+**Effective date:** September 17, 2026
 
 ## 1. Operator and agreement
 
-These Terms govern your use of Gridly, operated by DJ Burns Collective LLC, doing business as Gridly App ("Gridly," "we," "us"). Our domain is gridlygo.com. By using Gridly after these Terms are made available as the applicable terms, you agree to them. If you do not agree, do not use the service. Our Privacy Policy separately explains information handling; agreement to these Terms is not a substitute for any legally required privacy consent. Before a first community submission, and whenever the community terms version changes, Gridly requires an explicit acceptance of these Terms and the Community Guidelines. The current community version is **gridly-ugc-2026-09-16-v1**.
+These Terms govern your use of Gridly, operated by DJ Burns Collective LLC, doing business as Gridly App ("Gridly," "we," "us"). Our domain is gridlygo.com. By using Gridly after these Terms are made available as the applicable terms, you agree to them. If you do not agree, do not use the service. Our Privacy Policy separately explains information handling; agreement to these Terms is not a substitute for any legally required privacy consent. Before a first community submission, and whenever the community terms version changes, Gridly requires an explicit acceptance of these Terms and the Community Guidelines. The current community version is **gridly-ugc-2026-09-17-v2**.
 
 ## 2. Eligibility and permitted use
 
-You must be at least 16 years old to use Gridly. If you are below the age of legal majority where you live, use Gridly only with a parent or guardian's permission. The minimum product age is not a statement about legal driving age or permission to drive. Gridly does not currently verify age or provide a parental-consent system.
+You must be at least 18 years old to use Gridly. Gridly is restricted to adults and may restrict access for users Google has determined to be minors. The minimum product age is not a statement about legal driving age or permission to drive. Gridly does not independently verify age or provide a parental-consent system.
 
 Subject to these Terms and applicable law, you may use the functions made available in Gridly for their intended awareness and reporting purposes. Gridly 1.0 will initially be offered in the United States, with condition coverage focused on Texas. Information and feature coverage vary; United States availability does not mean nationwide condition coverage. A map or search result does not certify service coverage or suitability in a location.
 

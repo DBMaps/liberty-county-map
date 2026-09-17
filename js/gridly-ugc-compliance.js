@@ -1,7 +1,7 @@
 (function gridlyUgcComplianceModule(root) {
   "use strict";
 
-  const TERMS_VERSION = "gridly-ugc-2026-09-16-v1";
+  const TERMS_VERSION = "gridly-ugc-2026-09-17-v2";
   const ACCEPTANCE_KEY = "gridlyUgcTermsAcceptanceV1";
   const HIDDEN_REPORTS_KEY = "gridlyHiddenCommunityReportsV1";
   const MAX_HIDDEN_REPORTS = 500;

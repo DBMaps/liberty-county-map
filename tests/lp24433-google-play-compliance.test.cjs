@@ -29,10 +29,10 @@ beforeEach(() => {
 test('acceptance is explicit, versioned, timestamped and invalidates older versions', () => {
   const compliance = loadCompliance();
   assert.equal(compliance.acceptance(), null);
-  const accepted = compliance.acceptTerms(new Date('2026-09-16T18:00:00.000Z'));
-  assert.deepEqual(accepted, { version: 'gridly-ugc-2026-09-16-v1', acceptedAt: '2026-09-16T18:00:00.000Z' });
+  const accepted = compliance.acceptTerms(new Date('2026-09-17T18:00:00.000Z'));
+  assert.deepEqual(accepted, { version: 'gridly-ugc-2026-09-17-v2', acceptedAt: '2026-09-17T18:00:00.000Z' });
   assert.deepEqual(compliance.acceptance(), accepted);
-  global.localStorage.setItem('gridlyUgcTermsAcceptanceV1', JSON.stringify({ version: 'old', acceptedAt: accepted.acceptedAt }));
+  global.localStorage.setItem('gridlyUgcTermsAcceptanceV1', JSON.stringify({ version: 'gridly-ugc-2026-09-16-v1', acceptedAt: accepted.acceptedAt }));
   assert.equal(compliance.acceptance(), null);
 });
 
@@ -110,7 +110,7 @@ test('final-draft policy sources no longer contain obsolete proposed/unpublished
   for (const file of ['GRIDLY-PRIVACY-POLICY.md','GRIDLY-TERMS-OF-USE.md']) {
     const text = fs.readFileSync(path.join(ROOT,'docs/LEGAL',file),'utf8');
     assert.doesNotMatch(text,/PROPOSED FOR OWNER REVIEW|PUBLICATION BLOCKED|not yet operative/i);
-    assert.match(text,/September 16, 2026/);
+    assert.match(text,/September 17, 2026/);
   }
   const guidelines = fs.readFileSync(path.join(ROOT,'docs/LEGAL/GRIDLY-COMMUNITY-GUIDELINES.md'),'utf8');
   assert.match(guidelines,/Report/); assert.match(guidelines,/Hide/); assert.match(guidelines,/Delete mine/);
