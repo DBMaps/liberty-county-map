@@ -13,29 +13,26 @@ test('homepage presents Gridly and the legal organization prominently', () => {
   assert.match(homepage, /Gridly/);
   assert.match(homepage, /Know Before You Go/);
   assert.match(homepage, /Built in Texas, for Texas\./);
-  assert.match(homepage, /Gridly is a product of <strong>DJ Burns Collective LLC<\/strong>/);
-  assert.match(homepage, /DJ Burns Collective LLC develops Gridly as a Texas-focused travel-awareness product\./);
-  assert.match(homepage, /From rural communities to major cities\./);
+  assert.match(homepage, /developed by <strong>DJ Burns Collective LLC<\/strong>/);
+  assert.match(homepage, /DJ Burns Collective LLC develops Gridly as Texas-focused travel-awareness software/);
+  assert.match(homepage, /From rural communities to major cities/);
   assert.match(homepage, /gridlygo\.com/);
-  assert.match(homepage, /Travel-awareness software/);
+  assert.match(homepage, /travel-awareness software/i);
 });
 
 test('homepage describes only governed product capabilities and reporting state', () => {
-  for (const capability of ['Road Awareness', 'Weather Awareness', 'Railroad Crossings', 'Nearby Places', 'Community Awareness']) {
+  for (const capability of ['Road Conditions', 'Weather Awareness', 'Railroad Crossings', 'Nearby Places', 'Community Awareness']) {
     assert.match(homepage, new RegExp(`>${capability}<`));
   }
-  assert.match(homepage, /Gridly helps people understand local travel conditions before they head out/);
-  assert.match(homepage, /Awareness Platform First\./);
-  assert.match(homepage, /Route Intelligence Second\./);
-  assert.match(homepage, /Reporting may be unavailable and is currently not activated for public use\./);
-  assert.match(homepage, /initial availability does not imply nationwide condition coverage/);
-  assert.match(homepage, /official-source information attributed/);
+  assert.match(homepage, /Gridly brings road, weather, railroad crossing and community awareness together before a trip/);
+  assert.match(homepage, /Community reporting is activated only when available; it is not currently open for public reporting\./);
+  assert.match(homepage, /attributed official alerts/);
+  assert.doesNotMatch(homepage, /Awareness Platform First|Route Intelligence Second|Product position/);
 });
 
 test('store language is coming-soon only and remains 18+', () => {
   assert.match(homepage, /Coming to the Apple App Store and Google Play\./);
-  assert.match(homepage, /It has not yet been released/);
-  assert.match(homepage, /adults 18 and over/);
+  assert.match(homepage, /Planned for adults 18 and over\./);
   assert.doesNotMatch(homepage, /16\+|at least 16|age 16|under 16/i);
   assert.doesNotMatch(homepage, /(?:download|get|available) (?:it |Gridly )?now|now available|available today|approved by Apple|approved by Google/i);
   assert.doesNotMatch(homepage, /app-store-badge|google-play-badge/i);
@@ -46,7 +43,6 @@ test('homepage visibly exposes every legal and support destination', () => {
     assert.match(homepage, new RegExp(`href="${route}"`));
   }
   assert.match(homepage, /href="mailto:support@gridlygo\.com"/);
-  assert.match(homepage, /Clear policies\. Direct contact\./);
 });
 
 test('homepage is canonical to the root domain without a www dependency', () => {
@@ -62,7 +58,7 @@ test('homepage remains a static company site without app or tracking runtime', (
 });
 
 test('shared design supplies responsive company, capability, trust, and resource layouts', () => {
-  for (const selector of ['.product-brief', '.capability-grid', '.company-grid', '.trust-section', '.availability-section', '.footer-identity']) {
+  for (const selector of ['.route-visual', '.capability-grid', '.texas-panel', '.journey-card', '.company-layout', '.footer-primary']) {
     assert.ok(css.includes(selector), `${selector} is missing`);
   }
   assert.match(css, /@media \(max-width: 54rem\)/);

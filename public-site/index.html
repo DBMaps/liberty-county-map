@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Gridly provides road, weather, crossing, and community awareness for Texas travel.">
+  <meta name="description" content="Gridly brings road, weather, railroad crossing, nearby-place and community awareness together for Texas travel.">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#031521">
+  <meta name="theme-color" content="#061b2b">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; script-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Gridly — Know Before You Go</title>
   <link rel="canonical" href="https://gridlygo.com/">
@@ -19,142 +19,157 @@
       <img class="brand-logo" src="/assets/gridly-logo-horizontal.png" width="2000" height="600" alt="Gridly — Know Before You Go">
     </a>
     <nav class="site-nav" aria-label="Primary navigation">
-      <a href="#capabilities">Product</a>
+      <a href="#capabilities">What it brings together</a>
+      <a href="#texas">Texas</a>
       <a href="#company">Company</a>
-      <a href="/privacy">Privacy</a>
-      <a href="/terms">Terms</a>
-      <a href="/community-guidelines">Guidelines</a>
-      <a href="/delete-data">Delete Data</a>
       <a href="/support">Support</a>
     </nav>
   </header>
+
   <main class="home-main" id="main-content">
-    <section class="hero" aria-labelledby="home-title">
-      <div class="hero-copy">
-        <p class="eyebrow">Built in Texas, for Texas.</p>
-        <p class="brand-statement"><strong>Gridly</strong><span>Know Before You Go</span></p>
-        <h1 id="home-title">Understand local conditions before you head out.</h1>
-        <p class="hero-lead">Gridly helps people understand local travel conditions before they head out — from rural communities to major cities across Texas.</p>
-        <p class="company-lead">Gridly is a product of <strong>DJ Burns Collective LLC</strong>, a Texas company developing practical software for local travel awareness.</p>
-        <div class="hero-actions">
-          <a class="primary-action" href="#capabilities">Explore Gridly</a>
-          <a class="secondary-action" href="/support">Contact support</a>
+    <section class="hero-section" aria-labelledby="home-title">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Built in Texas, for Texas.</p>
+          <p class="hero-brand"><strong>Gridly</strong><span>Know Before You Go</span></p>
+          <h1 id="home-title">Know what’s ahead before you head out.</h1>
+          <p class="hero-lead">Gridly brings road, weather, railroad crossing and community awareness together before a trip—from rural communities to major cities.</p>
+          <p class="hero-company">A Texas travel-awareness app developed by <strong>DJ Burns Collective LLC</strong>.</p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#capabilities">Explore Gridly <span aria-hidden="true">↓</span></a>
+            <a class="text-action" href="/support">Contact support <span aria-hidden="true">↗</span></a>
+          </div>
+          <p class="store-note"><span aria-hidden="true"></span>Coming to the Apple App Store and Google Play. Planned for adults 18 and over.</p>
+        </div>
+
+        <div class="route-visual" aria-hidden="true">
+          <div class="route-orbit route-orbit-one"></div>
+          <div class="route-orbit route-orbit-two"></div>
+          <svg class="route-line" viewBox="0 0 560 560" focusable="false">
+            <path d="M34 468C116 442 137 352 205 338C289 320 267 222 348 200C418 181 431 111 520 82"></path>
+          </svg>
+          <div class="route-marker route-marker-start"><span></span></div>
+          <div class="route-marker route-marker-middle"><span></span></div>
+          <div class="route-marker route-marker-end"><span></span></div>
+          <div class="signal-card signal-road"><small>Road</small><strong>Local context</strong></div>
+          <div class="signal-card signal-weather"><small>Weather</small><strong>Official alerts</strong></div>
+          <div class="signal-card signal-crossing"><small>Crossings</small><strong>Before the tracks</strong></div>
+          <div class="visual-pin">
+            <svg viewBox="0 0 72 88" focusable="false"><path d="M36 3C18 3 6 16 6 34c0 23 30 50 30 50s30-27 30-50C66 16 54 3 36 3Z"></path><circle cx="36" cy="34" r="11"></circle></svg>
+          </div>
         </div>
       </div>
-      <aside class="product-brief" aria-label="Gridly product position">
-        <p class="brief-label">Product position</p>
-        <p class="brief-heading">Awareness Platform First.</p>
-        <p class="brief-heading brief-heading-secondary">Route Intelligence Second.</p>
-        <dl class="brief-facts">
-          <div><dt>Focus</dt><dd>Texas travel context</dd></div>
-          <div><dt>Format</dt><dd>Consumer mobile app</dd></div>
-          <div><dt>Status</dt><dd>Store launch planned</dd></div>
-        </dl>
-      </aside>
     </section>
 
-    <section class="home-section capabilities-section" id="capabilities" aria-labelledby="capabilities-title">
-      <div class="section-heading">
-        <p class="eyebrow">A clearer picture before the trip</p>
-        <h2 id="capabilities-title">Local awareness in one focused experience</h2>
-        <p>Gridly brings together the conditions and context that can shape a trip without presenting itself as an emergency service or turn-by-turn navigation replacement.</p>
-      </div>
-      <div class="capability-grid">
-        <article class="capability-card">
-          <span class="capability-index" aria-hidden="true">01</span>
-          <h3>Road Awareness</h3>
-          <p>Review roadway conditions, closures, hazards and route context before making travel decisions.</p>
-        </article>
-        <article class="capability-card">
-          <span class="capability-index" aria-hidden="true">02</span>
-          <h3>Weather Awareness</h3>
-          <p>See current weather context and attributed official alerts alongside the places relevant to a trip.</p>
-        </article>
-        <article class="capability-card">
-          <span class="capability-index" aria-hidden="true">03</span>
-          <h3>Railroad Crossings</h3>
-          <p>Explore crossing locations and available condition context as part of a broader travel-awareness view.</p>
-        </article>
-        <article class="capability-card">
-          <span class="capability-index" aria-hidden="true">04</span>
-          <h3>Nearby Places</h3>
-          <p>Discover nearby destinations and local context using Gridly's packaged and configured place sources.</p>
-        </article>
-        <article class="capability-card capability-card-wide">
-          <span class="capability-index" aria-hidden="true">05</span>
-          <h3>Community Awareness</h3>
-          <p>Community-reported conditions are part of Gridly's product design. Reporting may be unavailable and is currently not activated for public use.</p>
-        </article>
+    <section class="capabilities-section" id="capabilities" aria-labelledby="capabilities-title">
+      <div class="section-shell">
+        <header class="section-intro">
+          <p class="eyebrow">One view. More local context.</p>
+          <h2 id="capabilities-title">What Gridly brings together</h2>
+          <p>Useful signals for the places and routes that matter to your trip.</p>
+        </header>
+        <div class="capability-grid">
+          <article class="capability-card capability-road">
+            <span class="capability-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M17 42 21 6M31 42 27 6M24 11v5m0 7v5m0 7v5"></path></svg></span>
+            <div><h3>Road Conditions</h3><p>See available closures, hazards and roadway context before leaving.</p></div>
+          </article>
+          <article class="capability-card capability-weather">
+            <span class="capability-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M14 34h22a8 8 0 0 0 1-16 13 13 0 0 0-25-1 9 9 0 0 0 2 17Z"></path><path d="m18 39-2 4m9-4-2 4m9-4-2 4"></path></svg></span>
+            <div><h3>Weather Awareness</h3><p>Keep attributed official alerts and current weather in view.</p></div>
+          </article>
+          <article class="capability-card capability-crossings">
+            <span class="capability-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="m10 10 28 28M38 10 10 38M24 6v36M8 24h32"></path><circle cx="24" cy="24" r="18"></circle></svg></span>
+            <div><h3>Railroad Crossings</h3><p>Bring crossing locations and available conditions into the trip picture.</p></div>
+          </article>
+          <article class="capability-card capability-places">
+            <span class="capability-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 44s14-12 14-26a14 14 0 0 0-28 0c0 14 14 26 14 26Z"></path><circle cx="24" cy="18" r="5"></circle></svg></span>
+            <div><h3>Nearby Places</h3><p>Search Texas communities and find useful destinations nearby.</p></div>
+          </article>
+          <article class="capability-card capability-community">
+            <span class="capability-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="17" cy="18" r="6"></circle><circle cx="33" cy="18" r="6"></circle><path d="M6 40c1-9 5-14 11-14s10 5 11 14m-4 0c1-9 4-14 9-14 6 0 9 5 9 14"></path></svg></span>
+            <div><h3>Community Awareness</h3><p>Community reporting is activated only when available; it is not currently open for public reporting.</p></div>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section class="positioning-band" aria-labelledby="texas-title">
-      <div>
-        <p class="eyebrow">Texas is the focus</p>
-        <h2 id="texas-title">From rural communities to major cities.</h2>
+    <section class="texas-section" id="texas" aria-labelledby="texas-title">
+      <div class="section-shell texas-panel">
+        <div class="texas-copy">
+          <p class="eyebrow">The place we know</p>
+          <h2 id="texas-title">Built in Texas,<br><em>for Texas.</em></h2>
+          <p>From rural communities to major cities, Gridly is focused on the local context that shapes travel across Texas.</p>
+        </div>
+        <div class="texas-art" aria-hidden="true">
+          <span class="texas-wordmark">TX</span>
+          <span class="texas-star">★</span>
+          <span class="texas-line texas-line-one"></span>
+          <span class="texas-line texas-line-two"></span>
+          <p>Rural roads <span></span> Town crossings <span></span> City streets</p>
+        </div>
       </div>
-      <p>Gridly is designed around the scale and variety of travel in Texas. Product coverage varies by place and source; the planned initial availability does not imply nationwide condition coverage.</p>
     </section>
 
-    <section class="home-section company-section" id="company" aria-labelledby="company-title">
-      <div class="section-heading">
-        <p class="eyebrow">Company</p>
-        <h2 id="company-title">Developed by DJ Burns Collective LLC</h2>
+    <section class="experience-section" aria-labelledby="experience-title">
+      <div class="section-shell experience-layout">
+        <div class="experience-copy">
+          <p class="eyebrow">A better start to the trip</p>
+          <h2 id="experience-title">Local awareness,<br>without the noise.</h2>
+          <p>Gridly is designed to help you gather the essentials, understand the area and make your own travel decisions.</p>
+        </div>
+        <div class="journey-card" aria-label="How Gridly supports a trip">
+          <div class="journey-step">
+            <span class="journey-symbol" aria-hidden="true">⌕</span>
+            <div><small>Search</small><strong>Choose a Texas community</strong></div>
+          </div>
+          <div class="journey-connector" aria-hidden="true"></div>
+          <div class="journey-step">
+            <span class="journey-symbol" aria-hidden="true">◎</span>
+            <div><small>Review</small><strong>See available local context</strong></div>
+          </div>
+          <div class="journey-connector" aria-hidden="true"></div>
+          <div class="journey-step">
+            <span class="journey-symbol" aria-hidden="true">→</span>
+            <div><small>Go</small><strong>Leave better informed</strong></div>
+          </div>
+        </div>
       </div>
-      <div class="company-grid">
+    </section>
+
+    <section class="company-section" id="company" aria-labelledby="company-title">
+      <div class="section-shell company-layout">
         <div class="company-copy">
-          <p>DJ Burns Collective LLC develops Gridly as a Texas-focused travel-awareness product. Gridly is software designed to help people gather useful local context before they go.</p>
-          <p>The product is being prepared as a consumer mobile app for a coordinated Apple App Store and Google Play launch. The planned consumer launch is for adults 18 and over.</p>
+          <p class="eyebrow">Company &amp; trust</p>
+          <h2 id="company-title">Gridly is developed by<br>DJ Burns Collective LLC.</h2>
+          <p>DJ Burns Collective LLC develops Gridly as Texas-focused travel-awareness software at <strong>gridlygo.com</strong>.</p>
+          <a class="company-contact" href="mailto:support@gridlygo.com">support@gridlygo.com <span aria-hidden="true">↗</span></a>
         </div>
-        <div class="company-identity" aria-label="Organization identity">
-          <p><span>Organization</span><strong>DJ Burns Collective LLC</strong></p>
-          <p><span>Product</span><strong>Gridly</strong></p>
-          <p><span>Domain</span><strong>gridlygo.com</strong></p>
-          <p><span>Purpose</span><strong>Travel-awareness software</strong></p>
-        </div>
+        <aside class="trust-note" aria-label="Important use guidance">
+          <span class="trust-icon" aria-hidden="true">!</span>
+          <p>Gridly supports awareness and decision-making. It does not replace emergency instructions, roadway authorities, weather agencies, railroad signals or navigation services.</p>
+        </aside>
       </div>
-    </section>
-
-    <section class="trust-section" aria-labelledby="trust-title">
-      <div class="trust-mark" aria-hidden="true">G</div>
-      <div>
-        <p class="eyebrow">Use with official guidance</p>
-        <h2 id="trust-title">Awareness supports decisions. It does not replace authority.</h2>
-        <p>Gridly keeps official-source information attributed where it appears. It does not replace emergency instructions, roadway authorities, weather agencies, railroad signals or navigation services. Conditions can change quickly; always follow official directions and what you can safely observe.</p>
-      </div>
-    </section>
-
-    <section class="availability-section" aria-labelledby="availability-title">
-      <p class="availability-kicker">Mobile availability</p>
-      <h2 id="availability-title">Coming to the Apple App Store and Google Play.</h2>
-      <p>Gridly is being prepared for a coordinated mobile launch. It has not yet been released, and community reporting remains off until separately activated.</p>
-    </section>
-
-    <section class="home-section resources-section" aria-labelledby="resources-title">
-      <div class="section-heading resources-heading">
-        <div>
-          <p class="eyebrow">Trust and support</p>
-          <h2 id="resources-title">Clear policies. Direct contact.</h2>
-        </div>
-        <p>Questions about Gridly? Contact <a href="mailto:support@gridlygo.com">support@gridlygo.com</a>.</p>
-      </div>
-      <nav class="link-grid" aria-label="Policies and support">
-        <a class="link-card" href="/privacy"><span>Privacy Policy</span><span>How Gridly handles information</span><span aria-hidden="true">↗</span></a>
-        <a class="link-card" href="/terms"><span>Terms of Use</span><span>Product terms and safe use</span><span aria-hidden="true">↗</span></a>
-        <a class="link-card" href="/community-guidelines"><span>Community Guidelines</span><span>Standards for community content</span><span aria-hidden="true">↗</span></a>
-        <a class="link-card" href="/delete-data"><span>Delete Data</span><span>Report-deletion options and limits</span><span aria-hidden="true">↗</span></a>
-        <a class="link-card" href="/support"><span>Support</span><span>Contact and safety resources</span><span aria-hidden="true">↗</span></a>
-      </nav>
     </section>
   </main>
+
   <footer class="site-footer">
-    <div class="footer-identity">
-      <strong>DJ Burns Collective LLC</strong>
-      <span>Developer of Gridly — travel-awareness software built in Texas.</span>
-      <span>© 2026 DJ Burns Collective LLC. All rights reserved.</span>
+    <div class="footer-primary">
+      <a class="footer-brand" href="/" aria-label="Gridly home">
+        <img src="/assets/gridly-logo-horizontal.png" width="2000" height="600" alt="Gridly — Know Before You Go">
+      </a>
+      <p>Texas-focused travel awareness from DJ Burns Collective LLC.</p>
+      <a href="mailto:support@gridlygo.com">support@gridlygo.com</a>
     </div>
-    <div class="footer-links" aria-label="Footer navigation">
-      <a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/community-guidelines">Guidelines</a><a href="/delete-data">Delete Data</a><a href="/support">Support</a><a href="mailto:support@gridlygo.com">support@gridlygo.com</a>
+    <nav class="footer-links" aria-label="Legal and support navigation">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Use</a>
+      <a href="/community-guidelines">Community Guidelines</a>
+      <a href="/delete-data">Delete Data</a>
+      <a href="/support">Support</a>
+    </nav>
+    <div class="footer-meta">
+      <span>Gridly · gridlygo.com</span>
+      <span>© 2026 DJ Burns Collective LLC. All rights reserved.</span>
     </div>
   </footer>
 </body>
