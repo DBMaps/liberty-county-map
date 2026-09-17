@@ -81,7 +81,7 @@ a:focus-visible {
 }
 
 .brand-logo {
-  width: clamp(12.5rem, 18vw, 15.5rem);
+  width: clamp(10.5rem, 15vw, 13rem);
   height: auto;
   display: block;
 }
@@ -98,7 +98,7 @@ a:focus-visible {
   display: inline-flex;
   align-items: center;
   color: #d4e6ea;
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   font-weight: 750;
   text-decoration: none;
   text-underline-offset: 0.32em;
@@ -123,7 +123,7 @@ a:focus-visible {
 .eyebrow {
   margin: 0 0 1rem;
   color: #007d82;
-  font-size: 0.73rem;
+  font-size: 0.78rem;
   font-weight: 880;
   letter-spacing: 0.19em;
   text-transform: uppercase;
@@ -183,9 +183,9 @@ h3 {
 }
 
 .hero-logo {
-  width: clamp(17rem, 30vw, 25rem);
+  width: clamp(16rem, 27vw, 22rem);
   height: auto;
-  margin: 0 0 1.7rem;
+  margin: 0 0 1.25rem;
   display: block;
 }
 
@@ -200,7 +200,7 @@ h3 {
   max-width: 40rem;
   margin: 1.5rem 0 0;
   color: #cee1e6;
-  font-size: clamp(1.08rem, 1.8vw, 1.3rem);
+  font-size: clamp(1.12rem, 1.8vw, 1.34rem);
 }
 
 .hero-actions {
@@ -238,7 +238,7 @@ h3 {
   align-items: center;
   gap: 0.65rem;
   color: #bdd2d8;
-  font-size: 0.88rem;
+  font-size: 0.92rem;
 }
 
 .store-note > span {
@@ -252,8 +252,8 @@ h3 {
 
 .age-note {
   margin: 1rem 0 0;
-  color: #7899a4;
-  font-size: 0.78rem;
+  color: #91adb6;
+  font-size: 0.84rem;
 }
 
 .product-stage {
@@ -268,7 +268,7 @@ h3 {
   align-items: center;
   gap: 0.7rem;
   color: #b9d3d9;
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 850;
   letter-spacing: 0.13em;
   text-transform: uppercase;
@@ -283,7 +283,7 @@ h3 {
 }
 
 .device-frame {
-  width: min(100%, 26rem);
+  width: min(100%, 28rem);
   aspect-ratio: 9 / 15.5;
   margin: 0 auto;
   padding: 0.65rem;
@@ -339,9 +339,9 @@ h3 {
   background: rgba(3, 22, 33, 0.94);
   box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.24);
   color: #d5e8eb;
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   font-weight: 750;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .hero-route {
@@ -423,17 +423,19 @@ h3 {
 }
 
 .story-primary {
-  min-height: 36rem;
-  padding: clamp(2rem, 5vw, 4rem);
+  min-height: 34rem;
+  padding: clamp(2rem, 4.5vw, 3.5rem);
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
-  border-radius: 0.4rem 4rem 0.4rem 0.4rem;
+  border: 1px solid rgba(165, 247, 241, 0.18);
+  border-radius: 2rem 2rem 0.6rem 2rem;
   background:
     radial-gradient(circle at 80% 20%, rgba(19, 215, 211, 0.16), transparent 24rem),
     var(--navy-900);
   color: var(--white);
+  box-shadow: 0 2rem 4rem rgba(8, 36, 50, 0.14);
 }
 
 .story-primary-copy {
@@ -462,7 +464,7 @@ h3 {
 .story-kicker {
   margin: 0 0 0.65rem;
   color: var(--cyan-200);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 850;
   letter-spacing: 0.17em;
   text-transform: uppercase;
@@ -477,7 +479,8 @@ h3 {
 .story-primary-copy > p:last-child {
   margin: 1rem 0 0;
   color: #bdd1d7;
-  font-size: 1rem;
+  font-size: 1.04rem;
+  line-height: 1.6;
 }
 
 .story-geometry {
@@ -538,24 +541,27 @@ h3 {
 }
 
 .signal-row {
-  padding: 1.8rem 0;
+  padding: 1.8rem 0 1.8rem 1.2rem;
+  position: relative;
   display: grid;
-  grid-template-columns: 4rem 1fr;
+  grid-template-columns: 1fr;
   align-items: start;
-  gap: 1.4rem;
   border-top: 1px solid var(--line);
+}
+
+.signal-row::before {
+  width: 0.3rem;
+  height: 1.6rem;
+  position: absolute;
+  top: 2rem;
+  left: 0;
+  border-radius: 99px;
+  background: var(--cyan-500);
+  content: "";
 }
 
 .signal-row:last-child {
   border-bottom: 1px solid var(--line);
-}
-
-.signal-code {
-  margin: 0;
-  color: #00888c;
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.1em;
 }
 
 .signal-row h3 {
@@ -568,7 +574,8 @@ h3 {
   max-width: 25rem;
   margin: 0.55rem 0 0;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .signal-community {
@@ -576,7 +583,7 @@ h3 {
 }
 
 .experience-section {
-  padding: clamp(6rem, 10vw, 9rem) 0 clamp(5.5rem, 9vw, 8rem);
+  padding: clamp(5rem, 8vw, 7rem) 0;
   position: relative;
   overflow: hidden;
   background: var(--white);
@@ -605,12 +612,12 @@ h3 {
 
 .journey-card {
   width: min(88rem, calc(100% - 3rem));
-  margin: clamp(4rem, 8vw, 7rem) auto 0;
-  padding: 2.5rem 0 0;
+  margin: clamp(3rem, 5vw, 4.5rem) auto 0;
+  padding: 2rem 0 0;
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(2rem, 7vw, 7rem);
+  gap: clamp(2rem, 5vw, 5rem);
 }
 
 .journey-route {
@@ -623,16 +630,16 @@ h3 {
 }
 
 .journey-step {
-  min-height: 14rem;
+  min-height: 10.5rem;
   position: relative;
 }
 
 .journey-step-middle {
-  transform: translateY(3.5rem);
+  transform: none;
 }
 
 .journey-index {
-  margin: 0 0 1.2rem;
+  margin: 0 0 0.8rem;
   color: #00878b;
   font-size: clamp(1.35rem, 2.5vw, 2rem);
   font-weight: 900;
@@ -650,7 +657,7 @@ h3 {
   width: 1.1rem;
   height: 1.1rem;
   position: absolute;
-  top: -3rem;
+  top: -2.5rem;
   left: 0;
   border: 3px solid var(--white);
   border-radius: 50%;
@@ -765,7 +772,8 @@ h3 {
   max-width: 44rem;
   margin: 1.4rem 0 0;
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 1.08rem;
+  line-height: 1.65;
 }
 
 .company-copy > p strong {
@@ -798,7 +806,8 @@ h3 {
 .trust-note > p:last-child {
   margin: 0;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.98rem;
+  line-height: 1.6;
 }
 
 .document-main {
@@ -955,7 +964,8 @@ h3 {
   border-top: 1px solid rgba(165, 247, 241, 0.1);
   background: var(--navy-1000);
   color: #9eb6be;
-  font-size: 0.84rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 
 .footer-primary {
@@ -1009,7 +1019,7 @@ h3 {
   gap: 1rem;
   border-top: 1px solid rgba(165, 247, 241, 0.1);
   color: #708b95;
-  font-size: 0.76rem;
+  font-size: 0.84rem;
 }
 
 @media (max-width: 68rem) {
@@ -1019,7 +1029,7 @@ h3 {
   }
 
   .device-frame {
-    width: 22rem;
+    width: 23.5rem;
   }
 
   .capability-grid {
@@ -1058,11 +1068,11 @@ h3 {
 
   .product-stage {
     width: min(100%, 34rem);
-    margin-top: 1.5rem;
+    margin-top: 0.75rem;
   }
 
   .device-frame {
-    width: min(24rem, 80vw);
+    width: min(25.5rem, 86vw);
   }
 
   .product-stage figcaption {
@@ -1123,7 +1133,7 @@ h3 {
   }
 
   .brand-logo {
-    width: 12.5rem;
+    width: 10rem;
   }
 
   .site-nav {
@@ -1136,7 +1146,7 @@ h3 {
   }
 
   .hero-logo {
-    width: min(22rem, 82vw);
+    width: min(20rem, 74vw);
   }
 
   .hero-actions {
@@ -1172,7 +1182,7 @@ h3 {
   .journey-step,
   .journey-step-middle {
     min-height: 0;
-    padding: 0 0 3.5rem 3rem;
+    padding: 0 0 2.75rem 3rem;
     transform: none;
   }
 
@@ -1246,11 +1256,11 @@ h3 {
   }
 
   .hero-lead {
-    font-size: 1rem;
+    font-size: 1.08rem;
   }
 
   .device-frame {
-    width: min(21rem, 88vw);
+    width: min(22.5rem, 92vw);
     border-radius: 2.5rem;
   }
 
@@ -1261,7 +1271,7 @@ h3 {
   .product-stage figcaption {
     width: 10rem;
     bottom: 11%;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
   }
 
   .capabilities-section,
@@ -1273,7 +1283,7 @@ h3 {
   .story-primary {
     min-height: 30rem;
     padding: 1.5rem;
-    border-radius: 0.35rem 2.5rem 0.35rem 0.35rem;
+    border-radius: 1.4rem 1.4rem 0.5rem 1.4rem;
   }
 
   .story-marker {
@@ -1289,9 +1299,11 @@ h3 {
   }
 
   .signal-row {
-    padding: 1.5rem 0;
-    grid-template-columns: 3.2rem 1fr;
-    gap: 1rem;
+    padding: 1.5rem 0 1.5rem 1.15rem;
+  }
+
+  .signal-row::before {
+    top: 1.7rem;
   }
 
   .journey-card {
