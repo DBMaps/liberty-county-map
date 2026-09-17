@@ -41,8 +41,8 @@ test('capability and journey language remains consumer-facing and truthful', () 
   }
   assert.match(homepage, /Community reporting is activated only when available; it is not currently open for public reporting\./);
   assert.match(homepage, /Choose a Texas community/);
-  assert.match(homepage, /See available local context/);
-  assert.match(homepage, /Leave better informed/);
+  assert.match(homepage, /See the local awareness that’s available/);
+  assert.match(homepage, /Leave with a clearer picture/);
 });
 
 test('internal product-position and audit language was removed', () => {
@@ -57,11 +57,12 @@ test('store language is restrained, pre-launch, and consistently 18+', () => {
   assert.doesNotMatch(homepage, /available now|download now|approved by Apple|approved by Google|review completed|app-store-badge|google-play-badge/i);
 });
 
-test('visual treatment uses only local brand imagery and no fabricated app screenshot', () => {
+test('visual treatment uses only local brand imagery and the approved current product capture', () => {
   const imageSources = [...homepage.matchAll(/<img\b[^>]*src="([^"]+)"/g)].map((match) => match[1]);
-  assert.deepEqual([...new Set(imageSources)], ['/assets/gridly-logo-horizontal.png']);
-  assert.doesNotMatch(homepage, /assets\/(?:walkthrough|onboarding|store)|phone-frame|device-mockup|app-screenshot/i);
+  assert.deepEqual([...new Set(imageSources)], ['/assets/gridly-logo-horizontal.png', '/assets/gridly-product-current.png']);
+  assert.doesNotMatch(homepage, /assets\/(?:walkthrough|onboarding|store)|device-mockup|app-screenshot/i);
   assert.ok(existsSync(join(root, 'public-site/assets/gridly-logo-horizontal.png')));
+  assert.ok(existsSync(join(root, 'public-site/assets/gridly-product-current.png')));
 });
 
 test('legal, support, canonical, and static-site safeguards remain intact', () => {
@@ -79,9 +80,9 @@ test('responsive and accessible styling covers required layout behavior', () => 
   assert.match(homepage, /<main class="home-main" id="main-content">/);
   assert.match(homepage, /aria-labelledby="home-title"/);
   assert.match(css, /a:focus-visible/);
-  assert.match(css, /@media \(max-width: 64rem\)/);
+  assert.match(css, /@media \(max-width: 68rem\)/);
   assert.match(css, /@media \(max-width: 54rem\)/);
-  assert.match(css, /@media \(max-width: 44rem\)/);
+  assert.match(css, /@media \(max-width: 46rem\)/);
   assert.match(css, /@media \(max-width: 34rem\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.doesNotMatch(css, /animation(?:-name)?\s*:/i);

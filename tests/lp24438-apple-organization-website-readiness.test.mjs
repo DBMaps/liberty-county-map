@@ -13,7 +13,7 @@ test('homepage presents Gridly and the legal organization prominently', () => {
   assert.match(homepage, /Gridly/);
   assert.match(homepage, /Know Before You Go/);
   assert.match(homepage, /Built in Texas, for Texas\./);
-  assert.match(homepage, /developed by <strong>DJ Burns Collective LLC<\/strong>/);
+  assert.match(homepage, /Gridly is developed by DJ Burns Collective LLC\./);
   assert.match(homepage, /DJ Burns Collective LLC develops Gridly as Texas-focused travel-awareness software/);
   assert.match(homepage, /From rural communities to major cities/);
   assert.match(homepage, /gridlygo\.com/);
@@ -24,7 +24,7 @@ test('homepage describes only governed product capabilities and reporting state'
   for (const capability of ['Road Conditions', 'Weather Awareness', 'Railroad Crossings', 'Nearby Places', 'Community Awareness']) {
     assert.match(homepage, new RegExp(`>${capability}<`));
   }
-  assert.match(homepage, /Gridly brings road, weather, railroad crossing and community awareness together before a trip/);
+  assert.match(homepage, /Gridly brings roads, weather, railroad crossings, nearby places and community awareness into one clear view before a trip/);
   assert.match(homepage, /Community reporting is activated only when available; it is not currently open for public reporting\./);
   assert.match(homepage, /attributed official alerts/);
   assert.doesNotMatch(homepage, /Awareness Platform First|Route Intelligence Second|Product position/);
@@ -58,7 +58,7 @@ test('homepage remains a static company site without app or tracking runtime', (
 });
 
 test('shared design supplies responsive company, capability, trust, and resource layouts', () => {
-  for (const selector of ['.route-visual', '.capability-grid', '.texas-panel', '.journey-card', '.company-layout', '.footer-primary']) {
+  for (const selector of ['.product-stage', '.capability-grid', '.texas-panel', '.journey-card', '.company-layout', '.footer-primary']) {
     assert.ok(css.includes(selector), `${selector} is missing`);
   }
   assert.match(css, /@media \(max-width: 54rem\)/);
