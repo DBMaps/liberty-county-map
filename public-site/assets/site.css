@@ -58,18 +58,18 @@ h3 { font-size: 1.375rem; line-height: 1.3; font-weight: 600; letter-spacing: -.
 .primary-action:hover { background: var(--cyan-200); }
 .store-note { max-width: 25rem; margin-top: 1.25rem; font-size: .875rem; line-height: 1.5; color: #d4e2e5; }
 .age-note { margin-top: .5rem; font-size: .875rem; color: #a6bec6; }
-.product-stage { justify-self: start; margin-left: 1.5rem; width: 100%; max-width: 21rem; }
-.device-frame { width: 19.375rem; max-width: 100%; margin-inline: auto; padding: 7px; border: 1px solid #45616c; border-radius: 2rem; background: #09111a; box-shadow: 0 24px 48px #00000035; }
+.product-stage { justify-self: start; width: 100%; max-width: 21rem; }
+.device-frame { width: 20.625rem; max-width: 100%; margin-inline: auto; padding: 7px; border: 1px solid #45616c; border-radius: 2rem; background: #09111a; box-shadow: 0 24px 48px #00000035; }
 .device-frame img { width: 100%; border-radius: 1.5rem; }
 figcaption { margin-top: 1rem; font-size: .875rem; line-height: 1.5; color: var(--muted); }
 figcaption span { display: block; font-weight: 500; }
-.product-stage figcaption { text-align: center; color: #abc5cb; }
-.product-stage figcaption span { color: #e0eeef; }
+.product-stage figcaption { margin-top: .75rem; text-align: center; font-size: .8125rem; line-height: 1.45; color: #a6bec6; }
+.product-stage figcaption span { font-weight: 400; }
 .capabilities-section, .experience-section, .texas-section, .company-section { padding-block: var(--space-section); }
 .section-intro { margin-bottom: var(--space-heading); }
 .section-intro > p:last-child:not(.eyebrow) { margin-top: 1.25rem; max-width: 40rem; color: var(--muted); font-size: 1.125rem; line-height: 1.6; }
-.capability-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-.product-evidence { max-width: 32rem; }
+.capability-grid { display: grid; grid-template-columns: 1.08fr 1fr; gap: 3rem; align-items: start; }
+.product-evidence { max-width: 34rem; }
 .product-evidence > img { width: 100%; border-radius: var(--radius-feature); }
 .product-evidence figcaption { max-width: 32rem; }
 .product-evidence figcaption span { color: var(--ink); margin-bottom: .25rem; }
@@ -98,6 +98,7 @@ figcaption span { display: block; font-weight: 500; }
 .texas-figure { justify-self: center; width: min(100%, 26rem); }
 .texas-figure figcaption { text-align: center; }
 .company-section h2 { font-size: 2.75rem; line-height: 1.1; }
+.company-section .section-intro { margin-bottom: 2rem; }
 .company-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 4rem; }
 .company-copy > p, .trust-note p { font-size: 1.125rem; line-height: 1.6; color: var(--muted); }
 .company-contact { display: inline-flex; align-items: center; min-height: 2.75rem; margin-top: 1.25rem; color: #006d72; font-weight: 600; }
@@ -112,7 +113,7 @@ figcaption span { display: block; font-weight: 500; }
 .footer-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; column-gap: 1.5rem; }
 .footer-links a { display: flex; align-items: center; min-height: 2.75rem; text-decoration: none; }
 .footer-links a:hover { text-decoration: underline; }
-.footer-meta { grid-column: 1 / -1; padding-top: 1.5rem; border-top: 1px solid #29414a; font-size: .8125rem; }
+.footer-meta { grid-column: 1 / -1; padding-top: 1.5rem; border-top: 1px solid #29414a; font-size: .875rem; text-wrap: balance; }
 .document-main {
   width: min(64rem, calc(100% - 2rem));
   margin: 3rem auto 5rem;
@@ -282,10 +283,10 @@ figcaption span { display: block; font-weight: 500; }
 }
 @media (max-width: 46rem) {
   :root { --layout-inset: 1.5rem; --space-section: 4rem; --space-heading: 2rem; }
-  .site-header { flex-direction: column; align-items: flex-start; gap: .25rem; padding-block: .75rem .25rem; }
-  .brand-logo { width: 7rem; }
+  .site-header { flex-direction: column; align-items: flex-start; gap: .5rem; padding-block: 1rem .5rem; }
+  .brand-logo { width: 7.75rem; }
   .site-nav { width: 100%; justify-content: space-between; gap: .25rem 1rem; }
-  .site-nav a { font-size: .8125rem; min-height: 2.75rem; }
+  .site-nav a { display: inline-flex; align-items: center; font-size: .875rem; min-width: 2.75rem; min-height: 2.75rem; }
   .hero-inner { display: flex; flex-direction: column; align-items: stretch; padding-block: 2.5rem 3rem; gap: 2rem; min-height: 0; }
   h1 { font-size: 3rem; line-height: 1.04; letter-spacing: -.04em; }
   h2 { font-size: 2.25rem; line-height: 1.09; }
@@ -294,6 +295,7 @@ figcaption span { display: block; font-weight: 500; }
   .primary-action { margin-top: 1.5rem; }
   .store-note { margin-top: 1rem; max-width: 22rem; }
   .product-stage { align-self: center; margin-left: 0; max-width: 20rem; }
+  .product-stage figcaption { font-size: .875rem; }
   .device-frame { width: 17.5rem; }
   .capability-grid, .texas-panel, .company-layout { grid-template-columns: 1fr; gap: 2rem; }
   .section-intro > p:last-child:not(.eyebrow) { font-size: 1rem; margin-top: 1rem; }
@@ -302,6 +304,7 @@ figcaption span { display: block; font-weight: 500; }
   .signal-row { padding-block: 1.25rem; }
   .signal-row h3 { font-size: 1.25rem; }
   .community-note { margin-top: 1.25rem; }
+  .journey-card { gap: 2.5rem; }
   .journey-step { grid-template-columns: 1.5rem 1fr; gap: .5rem 1rem; }
   .journey-step h3 { font-size: 1.5rem; }
   .journey-step > p { font-size: 1rem; min-height: 0; }
@@ -312,9 +315,8 @@ figcaption span { display: block; font-weight: 500; }
   .company-section h2 { font-size: 2rem; line-height: 1.125; }
   .company-copy > p { font-size: 1rem; }
   .trust-note { padding: 1.5rem 0 0; border-left: 0; border-top: 1px solid var(--line); }
-  .site-footer { grid-template-columns: 1fr; gap: 2rem; padding-top: 3rem; }
+  .site-footer { grid-template-columns: 1fr; gap: 2.5rem; padding-top: 3rem; }
   .footer-links { grid-template-columns: 1fr; }
-  .footer-meta { font-size: .8125rem; }
 }
 @media (max-width: 34rem) {
   .document-main { width: calc(100% - 2rem); }
