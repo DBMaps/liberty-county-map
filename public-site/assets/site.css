@@ -27,7 +27,7 @@
   --shadow: none;
 }
 * { box-sizing: border-box; }
-html { min-width: 320px; scroll-behavior: smooth; scroll-padding-top: 2rem; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; min-width: 320px; scroll-behavior: smooth; scroll-padding-top: 2rem; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-size: 1rem; line-height: 1.6; }
 img { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-underline-offset: .22em; }
@@ -281,41 +281,54 @@ figcaption span { display: block; font-weight: 500; }
   .journey-step > p { grid-column: 2; margin-top: 0; }
   .journey-evidence, .outcome-copy { grid-column: 3; grid-row: 1 / 4; margin-top: 0; padding-top: 0; }
 }
-@media (max-width: 46rem) {
-  :root { --layout-inset: 1.5rem; --space-section: 4rem; --space-heading: 2rem; }
-  .site-header { flex-direction: column; align-items: flex-start; gap: .5rem; padding-block: 1rem .5rem; }
-  .brand-logo { width: 7.75rem; }
-  .site-nav { width: 100%; justify-content: space-between; gap: .25rem 1rem; }
-  .site-nav a { display: inline-flex; align-items: center; font-size: .875rem; min-width: 2.75rem; min-height: 2.75rem; }
-  .hero-inner { display: flex; flex-direction: column; align-items: stretch; padding-block: 2.5rem 3rem; gap: 2rem; min-height: 0; }
-  h1 { font-size: 3rem; line-height: 1.04; letter-spacing: -.04em; }
-  h2 { font-size: 2.25rem; line-height: 1.09; }
-  .eyebrow { margin-bottom: .75rem; }
-  .hero-lead { margin-top: 1.25rem; font-size: 1.0625rem; line-height: 1.55; }
-  .primary-action { margin-top: 1.5rem; }
+/* LP244.42B: pixel caps keep mobile assets independent of text scaling.
+   Text remains scalable; normal flow needs no fixed toolbar or viewport-height sizing. */
+@media (max-width: 736px) {
+  :root { --layout-inset: 24px; --space-section: 56px; --space-heading: 28px; }
+  .site-header { flex-direction: column; align-items: flex-start; gap: 4px; padding-block: 12px 4px; min-height: 0; }
+  .brand-logo { width: 116px; }
+  .site-nav { width: 100%; justify-content: space-between; gap: 0 12px; }
+  .site-nav a { display: inline-flex; align-items: center; font-size: .9375rem; min-width: 44px; min-height: 44px; padding-block: 8px; }
+  .hero-inner { display: flex; flex-direction: column; align-items: stretch; padding-block: 32px 40px; gap: 28px; min-height: 0; }
+  h1 { font-size: clamp(2.75rem, 11vw, 3rem); line-height: 1.04; letter-spacing: -.04em; }
+  h2 { font-size: 2.125rem; line-height: 1.12; }
+  .eyebrow { margin-bottom: 12px; font-size: .8125rem; }
+  .hero-lead { margin-top: 16px; font-size: 1.0625rem; line-height: 1.55; }
+  .primary-action { margin-top: 20px; min-height: 48px; }
   .store-note { margin-top: 1rem; max-width: 22rem; }
-  .product-stage { align-self: center; margin-left: 0; max-width: 20rem; }
-  .product-stage figcaption { font-size: .875rem; }
-  .device-frame { width: 17.5rem; }
-  .capability-grid, .texas-panel, .company-layout { grid-template-columns: 1fr; gap: 2rem; }
-  .section-intro > p:last-child:not(.eyebrow) { font-size: 1rem; margin-top: 1rem; }
+  .product-stage { align-self: center; margin-left: 0; max-width: 300px; }
+  .store-note, .age-note, figcaption, .product-stage figcaption { font-size: .9375rem; line-height: 1.5; }
+  .device-frame { width: 240px; }
+  .capability-grid, .texas-panel, .company-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .section-intro > p:last-child:not(.eyebrow) { font-size: 1.0625rem; margin-top: 1rem; }
   .product-evidence { width: 100%; max-width: none; }
-  .product-evidence > img { max-height: 24rem; width: auto; margin-inline: auto; }
+  .product-evidence > img { width: 82%; max-width: 280px; max-height: none; margin-inline: auto; }
   .signal-row { padding-block: 1.25rem; }
   .signal-row h3 { font-size: 1.25rem; }
-  .community-note { margin-top: 1.25rem; }
+  .community-note { margin-top: 24px; padding-left: 16px; }
+  .community-note h3 { font-size: 1.125rem; }
+  .signal-row p, .community-note p { font-size: 1.0625rem; line-height: 1.6; }
   .journey-card { gap: 2.5rem; }
-  .journey-step { grid-template-columns: 1.5rem 1fr; gap: .5rem 1rem; }
+  .journey-step { grid-template-columns: 24px minmax(0, 1fr); gap: 8px 12px; }
   .journey-step h3 { font-size: 1.5rem; }
-  .journey-step > p { font-size: 1rem; min-height: 0; }
-  .journey-evidence, .outcome-copy { grid-column: 2; grid-row: auto; margin-top: 1rem; }
+  .journey-step > p { font-size: 1.0625rem; min-height: 0; }
+  .journey-evidence { grid-column: 1 / -1; grid-row: auto; margin-top: 16px; min-width: 0; }
+  .journey-evidence img { width: 82%; max-width: 280px; margin-inline: auto; }
+  .journey-evidence figcaption, .product-evidence figcaption { max-width: 320px; margin-inline: auto; }
+  .outcome-copy { grid-column: 2; grid-row: auto; margin-top: 16px; }
   .outcome-copy p { font-size: 1.75rem; }
-  .texas-copy > p:last-child { font-size: 1rem; margin-top: 1rem; }
-  .texas-figure { width: min(100%, 19rem); }
+  .texas-copy > p:last-child { font-size: 1.0625rem; margin-top: 1rem; }
+  .texas-figure { width: 72%; max-width: 232px; }
   .company-section h2 { font-size: 2rem; line-height: 1.125; }
-  .company-copy > p { font-size: 1rem; }
+  .company-copy > p, .trust-note p { font-size: 1.0625rem; line-height: 1.65; }
+  .company-contact { overflow-wrap: anywhere; }
   .trust-note { padding: 1.5rem 0 0; border-left: 0; border-top: 1px solid var(--line); }
-  .site-footer { grid-template-columns: 1fr; gap: 2.5rem; padding-top: 3rem; }
+  .site-footer { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 32px 24px; font-size: .9375rem; }
+  .brand-link { display: inline-flex; align-items: center; min-height: 44px; }
+  .footer-brand { max-width: 100%; }
+  .footer-brand img { width: 120px; max-width: min(100%, 120px); }
+  .footer-links a, .footer-primary > a:last-child { min-height: 44px; }
+  .footer-meta { padding-top: 20px; }
   .footer-links { grid-template-columns: 1fr; }
 }
 @media (max-width: 34rem) {
