@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const homepage = readFileSync(join(root, 'public-site/index.html'), 'utf8');
 const css = readFileSync(join(root, 'public-site/assets/site.css'), 'utf8');
-const productImage = readFileSync(join(root, 'public-site/assets/gridly-product-current.png'));
+const productImage = readFileSync(join(root, 'public-site/assets/gridly-hero.png'));
 
 test('premium art direction preserves the five-part product-led story', () => {
   const main = homepage.match(/<main\b[\s\S]*?<\/main>/)?.[0] || '';
@@ -20,38 +20,32 @@ test('premium art direction preserves the five-part product-led story', () => {
 });
 
 test('the approved real interface remains unchanged and prominently referenced', () => {
-  assert.match(homepage, /class="product-stage"[\s\S]*?src="\/assets\/gridly-product-current\.png"/);
+  assert.match(homepage, /class="product-stage"[\s\S]*?src="\/assets\/gridly-hero\.png"/);
   assert.equal(
     createHash('sha256').update(productImage).digest('hex'),
-    '44baf377f5fb72d2f425e60b52bd3f9d276d56a75bed47c66df8562e22dfbaac',
+    '52e7aee1bb93fcf3925c425d5a6c9a5382d8de92dc6c3f2f6e0e567d03c1e355',
   );
 });
 
-test('desktop and mobile both receive subtle coherent angled-device treatments', () => {
-  assert.ok(css.includes('transform: rotateZ(2.5deg)'));
-  assert.ok(css.includes('transform: rotateZ(2.25deg)'));
-  assert.doesNotMatch(css, /rotateY\(-8deg\)|rotateZ\(5\.5deg\)|rotateY\(-3deg\)|rotateZ\(-4deg\)/);
-  assert.match(css, /\.hero-copy\s*{[\s\S]*?grid-row:\s*1;/);
-  assert.match(css, /\.product-stage\s*{[\s\S]*?grid-row:\s*1;/);
+test('product imagery is upright and its caption does not obscure the interface', () => {
+  assert.doesNotMatch(css, /rotate[XYZ]?\(|perspective\(/);
+  assert.match(homepage, /<figcaption><span>Actual Gridly interface/);
+  assert.doesNotMatch(homepage, /hero-route|screen-label|hero-logo/);
 });
 
-test('art-directed story surfaces retain readable consumer language', () => {
-  for (const heading of ['Road Conditions', 'Weather Awareness', 'Railroad Crossings', 'Nearby Places', 'Community Awareness']) {
-    assert.match(homepage, new RegExp(`<h3>${heading}<\\/h3>`));
-  }
-  assert.match(css, /LP244\.41 premium art direction/);
-  assert.match(css, /\.capability-grid\s*{[\s\S]*?border-radius:\s*4rem 1\.2rem 4rem 1\.2rem/);
-  assert.match(css, /\.journey-step::before/);
-  assert.match(css, /\.texas-road\s*{[\s\S]*?background-color:\s*var\(--navy-900\)/);
-  assert.doesNotMatch(homepage, /class="signal-code"|>\s*(?:WX|RR|POI|YOU)\s*</);
+test('awareness capabilities have equal editorial roles and reporting is separated', () => {
+  const list = homepage.match(/<div class="signal-list">([\s\S]*?)<\/div>/)[1];
+  for (const label of ['Road Conditions','Weather Awareness','Railroad Crossings','Nearby Places']) assert.ok(list.includes('<h3>'+label+'</h3>'));
+  assert.doesNotMatch(list, /Community Awareness/);
+  assert.match(homepage, /<aside class="community-note"><h3>Community Awareness<\/h3><p>See community-reported conditions and help keep local information current\./);
 });
 
 test('launch, age, reporting, and organization truths remain explicit', () => {
   for (const statement of [
-    'Coming to the Apple App Store and Google Play.',
-    'Planned for adults 18 and over.',
-    'Community reporting is activated only when available; it is not currently open for public reporting.',
-    'DJ Burns Collective LLC develops Gridly as Texas-focused travel-awareness software',
+    'Coming soon to the Apple App Store and Google Play.',
+    'For adults 18 and over.',
+    'See community-reported conditions and help keep local information current.',
+    'a Texas-focused software company helping people understand what may affect a trip before they leave',
     'Awareness, not authority.',
   ]) {
     assert.ok(homepage.includes(statement), `${statement} is missing`);

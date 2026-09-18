@@ -8,29 +8,30 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const homepage = readFileSync(join(root, 'public-site/index.html'), 'utf8');
 const css = readFileSync(join(root, 'public-site/assets/site.css'), 'utf8');
-const productImagePath = join(root, 'public-site/assets/gridly-product-current.png');
+const productImagePath = join(root, 'public-site/assets/gridly-hero.png');
 const certification = readFileSync(join(root, 'docs/launch/GRIDLY-LP24440-WORLD-CLASS-PUBLIC-BRAND-SITE.md'), 'utf8');
 
 test('Gridly and the real product dominate the hero hierarchy', () => {
   const hero = homepage.match(/<section class="hero-section"[\s\S]*?<\/section>/)?.[0] || '';
-  assert.match(hero, /class="hero-logo"[\s\S]*Gridly — Know Before You Go/);
+  assert.doesNotMatch(hero, /class="hero-logo"/);
+  assert.match(hero, /Know Before You Go/);
   assert.match(hero, /<h1 id="home-title">See what’s ahead\.<\/h1>/);
   assert.match(hero, /class="product-stage"/);
-  assert.match(hero, /src="\/assets\/gridly-product-current\.png"/);
+  assert.match(hero, /src="\/assets\/gridly-hero\.png"/);
   assert.doesNotMatch(hero.match(/<h1[\s\S]*?<\/h1>/)?.[0] || '', /DJ Burns Collective LLC/);
   assert.ok(homepage.indexOf('Gridly') < homepage.indexOf('DJ Burns Collective LLC'));
 });
 
-test('approved product capture is byte-identical to the audited native artifact', () => {
+test('approved hero is an unretouched crop of the audited quiet-state native capture', () => {
   assert.ok(existsSync(productImagePath));
   const digest = createHash('sha256').update(readFileSync(productImagePath)).digest('hex');
-  assert.equal(digest, '44baf377f5fb72d2f425e60b52bd3f9d276d56a75bed47c66df8562e22dfbaac');
-  assert.match(homepage, /alt="Current Gridly mobile interface showing limited local coverage, a Texas map and no active issues nearby"/);
+  assert.equal(digest, '52e7aee1bb93fcf3925c425d5a6c9a5382d8de92dc6c3f2f6e0e567d03c1e355');
+  assert.match(homepage, /alt="Actual Gridly interface showing a quiet community, the Dayton map, and Location Context Dayton\."/);
 });
 
 test('product story is editorial rather than a generic equal-card grid', () => {
   assert.match(homepage, /<h2 id="product-title">Know what matters\.<\/h2>/);
-  assert.match(homepage, /class="story-primary"/);
+  assert.match(homepage, /class="product-evidence"/);
   assert.match(homepage, /class="signal-list"/);
   for (const capability of ['Road Conditions', 'Weather Awareness', 'Railroad Crossings', 'Nearby Places', 'Community Awareness']) {
     assert.match(homepage, new RegExp(`<h3>${capability}<\\/h3>`));
@@ -41,22 +42,22 @@ test('product story is editorial rather than a generic equal-card grid', () => {
 test('experience and Texas stories retain concise launch truths', () => {
   for (const statement of [
     'Choose a Texas community or destination.',
-    'See the local awareness that’s available.',
+    'Check available local conditions and alerts.',
     'Leave with a clearer picture.',
     'Built in Texas,',
     'for Texas.',
     'From rural communities to major cities.',
-    'Coming to the Apple App Store and Google Play.',
-    'Planned for adults 18 and over.',
+    'Coming soon to the Apple App Store and Google Play.',
+    'For adults 18 and over.',
   ]) {
     assert.ok(homepage.includes(statement), `${statement} is missing`);
   }
-  assert.match(homepage, /Community reporting is activated only when available; it is not currently open for public reporting\./);
+  assert.match(homepage, /See community-reported conditions and help keep local information current\./);
 });
 
 test('company remains visible without taking over the hero', () => {
-  assert.match(homepage, /Gridly is developed by DJ Burns Collective LLC\./);
-  assert.match(homepage, /DJ Burns Collective LLC develops Gridly as Texas-focused travel-awareness software/);
+  assert.match(homepage, /Gridly is developed by DJ Burns Collective LLC,/);
+  assert.match(homepage, /a Texas-focused software company helping people understand what may affect a trip before they leave/);
   assert.match(homepage, /gridlygo\.com/);
   assert.match(homepage, /href="mailto:support@gridlygo\.com"/);
   assert.doesNotMatch(homepage, /<h[12][^>]*>[^<]*DJ Burns Collective LLC/i);
@@ -82,7 +83,7 @@ test('store, age, legal, canonical, and privacy safeguards remain correct', () =
 });
 
 test('responsive product-led composition preserves accessible static behavior', () => {
-  for (const selector of ['.hero-logo', '.product-stage', '.device-frame', '.story-primary', '.signal-list', '.journey-route', '.texas-road']) {
+  for (const selector of ['.hero-copy', '.product-stage', '.device-frame', '.product-evidence', '.signal-row', '.journey-step', '.texas-figure']) {
     assert.ok(css.includes(selector), `${selector} is missing`);
   }
   assert.match(homepage, /class="skip-link"/);
