@@ -1,0 +1,84 @@
+{
+  "phase": 24,
+  "title": "Local Real Supabase Auth Integration",
+  "status": "BLOCKED_REAL_LOCAL_SUPABASE_AUTH_UNAVAILABLE",
+  "classification": [
+    "LOCAL",
+    "DISPOSABLE_AUDIT",
+    "SYNTHETIC_DATA_ONLY",
+    "NON_PRODUCTION"
+  ],
+  "versions": {
+    "supabase_cli": "2.117.0",
+    "docker_cli": "29.8.0",
+    "docker_desktop": "4.91.0",
+    "gotrue_auth": null,
+    "postgresql_native": "17.10",
+    "node": "24.17.0"
+  },
+  "local_environment": {
+    "supabase_cli_source": "npm cache, invoked offline",
+    "docker_engine_healthy": false,
+    "docker_api_available": false,
+    "native_gotrue_available": false,
+    "go_toolchain_available": false,
+    "alternative_container_runtime_available": false,
+    "existing_link_metadata_detected": true,
+    "existing_link_metadata_contents_read": false,
+    "local_urls": [],
+    "local_ports": []
+  },
+  "blocker": {
+    "component": "Docker Desktop Linux engine",
+    "summary": "Docker Desktop backend exited while attempting to rename an inaccessible stale local runtime socket.",
+    "bounded_recovery": [
+      "verified the exact zero-byte runtime socket",
+      "verified no Docker process was using it",
+      "stopped WSL",
+      "attempted exact socket removal"
+    ],
+    "recovery_result": "socket remained inaccessible and Docker engine remained unavailable",
+    "fallback_result": "independent GoTrue unavailable because no binary, Go toolchain, or healthy container engine exists"
+  },
+  "tests": {
+    "real_auth_integration_total": 0,
+    "passed": 0,
+    "failed": 0,
+    "blocked": 1,
+    "jwt_vector_count": 0,
+    "mfa_vector_count": 0,
+    "invitation_vector_count": 0,
+    "concurrency_vector_count": 0
+  },
+  "safety": {
+    "secret_scan_result": "PASS",
+    "remote_connection_count": 0,
+    "production_credential_count": 0,
+    "production_auth_user_count": 0,
+    "production_migration_count": 0,
+    "production_rls_change_count": 0,
+    "consumer_change_count": 0,
+    "public_site_change_count": 0,
+    "native_app_change_count": 0,
+    "deployment_count": 0,
+    "reporting_activation_change_count": 0
+  },
+  "teardown": {
+    "supabase_stack_started": false,
+    "containers_started": 0,
+    "auth_users_created": 0,
+    "docker_processes_remaining": 0,
+    "wsl_distributions_running": 0,
+    "result": "No Phase 24 service or process remains. A pre-existing inaccessible Docker runtime socket remains and requires host repair."
+  },
+  "artifacts_sha256": {
+    "tools/responder/phase24/README.md": "15b6e8d0243eddc65a0545c8144a20a9a2575f2bde4ecad8256e0a4a9568c566",
+    "docs/RESPONDER/RESPONDER-PHASE24-DISPATCH-LOCAL-REAL-SUPABASE-AUTH-INTEGRATION.md": "a553076c067284dd448dd9347c335fbf5a76e6152c59ded35ef3dfef256ef0fe"
+  },
+  "required_prerequisites": [
+    "healthy Docker-compatible Linux container engine, or pinned native GoTrue runtime",
+    "isolated unlinked disposable Supabase project directory",
+    "successful local Auth health check before user creation"
+  ],
+  "phase25_recommendation": "Do not begin Phase 25; repair prerequisites and resume Phase 24."
+}
