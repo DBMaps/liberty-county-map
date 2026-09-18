@@ -1,0 +1,80 @@
+{
+  "phase": 25,
+  "status": "READY_FOR_OWNER_MIGRATION_DESIGN_REVIEW",
+  "design_only": true,
+  "authorized_for_production_execution": false,
+  "source_commits": {
+    "phase20": "b30aebba132e618fd55705a61259279173c7381e",
+    "phase21": "b69ccd8bb345d9e732929a0a118353d2593301d8",
+    "phase22": "bff41bb18f328767376c0a8103bade516c8dd7c6",
+    "phase23": "11b59730557291fa718ea86fd5e29c94e558d5db",
+    "phase24": "a510f95788bba294b3d165ac9d42a077763bd190"
+  },
+  "design_artifact_hash_algorithm": "sha256",
+  "design_artifact_hashes": {
+    "docs/RESPONDER/RESPONDER-PHASE25-DISPATCH-PRODUCTION-SHAPED-NEUTRAL-MIGRATION-DESIGN.md": "8ef5b334be2c8c1f510d28b80f7d005542aa5e5258a858b260b7340f6193bc65",
+    "tests/responder-phase25-production-shaped-neutral-migration-design.test.mjs": "d908376482ae6dc2d75add34aa1cd50a32f5f5babb3e9f5f22ba40e1b8bb7338",
+    "tools/responder/phase25/commands-design.sql": "6d6556c18004b42c3e29fa313c85d846cd93587bbb2377c51d8968b169157d88",
+    "tools/responder/phase25/compatibility-design.sql": "0865b1d6d93261daf468409c2095f10242c612c5510e9a797c8eb4ed056defe4",
+    "tools/responder/phase25/grants-design.sql": "4e070c42eab2d62ff9983ff1fa25cfb737db8362e6efe923642d08a9c8251bc6",
+    "tools/responder/phase25/migration-plan.md": "2912cdc86cb23119dc2e5738b559eff28441d57bc9eaf5c644d9502a4983f0c9",
+    "tools/responder/phase25/owner-decisions.md": "2d5dec57d4205cf8a59c0740d10f6f295de33e951640d2549aaee08768b2e571",
+    "tools/responder/phase25/package-lint.mjs": "56b10fbbad069c76e25a7978ddd5b5fc63a54293681c7dc81afbb4669d816497",
+    "tools/responder/phase25/postflight-design.sql": "f738e83c0ce759cca2a33b896cef188cdfb9ef4ca3f0e2d9b3b3e6d552918a90",
+    "tools/responder/phase25/preflight-design.sql": "a87b6de03a223d70bbbda7772db98f1adcb5d6e66d92da71fa9e86652bb680b8",
+    "tools/responder/phase25/README.md": "66c1e8c3bbc7477d5af6089b2d422ac269fa749273b3ed019714ebbd20672158",
+    "tools/responder/phase25/rls-design.sql": "dfa21e29f3d37a12bde5def2ea7a5be11b33316b0435576049c3b3950a2f56bf",
+    "tools/responder/phase25/rollback-design.sql": "8bff83b2d3dad624a0530a2510476d7d644371fd718780275ce4fa08d610ac6f",
+    "tools/responder/phase25/schema-design.sql": "761fc4b58334f694f0c47f9d2721d5ac110028a9556afad27e29e3ffedeb722f"
+  },
+  "counts": {
+    "schemas": 4,
+    "enum_types": 23,
+    "tables": 22,
+    "permissions": 26,
+    "capabilities": 5,
+    "api_wrappers": 26,
+    "private_commands": 26,
+    "helpers_and_triggers": 12,
+    "functions_total": 64,
+    "rls_policies": 17,
+    "compatibility_decisions": 13,
+    "owner_decisions": 11,
+    "unresolved_production_verifications": 14,
+    "prohibited_paths": 0,
+    "production_connections": 0
+  },
+  "role_grant_inventory": {
+    "anon": ["USAGE dispatch_api", "SELECT dispatch_api.public_safe_projections"],
+    "authenticated": ["USAGE dispatch_api", "explicit API view SELECT", "explicit API wrapper EXECUTE", "private schema USAGE", "exact guarded private command EXECUTE"],
+    "service_role": ["no Dispatch command EXECUTE by default", "no client table grant"],
+    "dispatch_function_owner": ["optional future NOLOGIN minimal function owner", "no BYPASSRLS", "no superuser"]
+  },
+  "compatibility_classification_counts": {
+    "REUSE_DIRECTLY": 2,
+    "COMPATIBILITY_VIEW_WRAPPER": 2,
+    "DATA_MIGRATION": 6,
+    "SUPERSEDE": 2,
+    "RETIRE": 1
+  },
+  "safety_counters": {
+    "production_sql_executions": 0,
+    "production_migrations": 0,
+    "production_auth_changes": 0,
+    "production_users_created": 0,
+    "consumer_changes": 0,
+    "public_site_changes": 0,
+    "android_ios_changes": 0,
+    "reporting_changes": 0,
+    "deployments": 0,
+    "pushes": 0,
+    "merges": 0
+  },
+  "validation": {
+    "command": "node --test tests/responder-phase25-production-shaped-neutral-migration-design.test.mjs",
+    "tests": 4,
+    "passed": 4,
+    "failed": 0
+  },
+  "next_branch_recommendation": "RESPONDER-PHASE26-dispatch-neutral-production-shaped-clone-rehearsal"
+}
