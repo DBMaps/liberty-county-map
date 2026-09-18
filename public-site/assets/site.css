@@ -1537,20 +1537,20 @@ h3 {
   top: 13%;
   left: 50%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(60, 229, 223, 0.24), rgba(19, 215, 211, 0.06) 46%, transparent 72%);
-  filter: blur(1rem);
+  background: radial-gradient(circle, rgba(60, 229, 223, 0.2), rgba(19, 215, 211, 0.05) 46%, transparent 72%);
+  filter: blur(0.75rem);
   content: "";
-  transform: translateX(-50%) rotate(-8deg);
+  transform: translateX(-50%) rotate(2deg);
 }
 
 .product-stage::after {
   position: absolute;
   z-index: -1;
   inset: 14% -5% 7% 3%;
-  border: 1px solid rgba(165, 247, 241, 0.14);
+  border: 1px solid rgba(165, 247, 241, 0.11);
   border-radius: 48% 52% 46% 54%;
   content: "";
-  transform: rotate(-9deg);
+  transform: rotate(2deg);
 }
 
 .screen-label {
@@ -1568,12 +1568,12 @@ h3 {
   border-radius: 3.35rem;
   background: linear-gradient(138deg, #285469, #020b12 42%, #0d4658 100%);
   box-shadow:
-    -2.5rem 3.5rem 7rem rgba(0, 0, 0, 0.46),
-    1.4rem 1rem 3rem rgba(19, 215, 211, 0.11),
+    -1.4rem 2.6rem 4.8rem rgba(0, 0, 0, 0.42),
+    0.65rem 0.9rem 2.4rem rgba(19, 215, 211, 0.09),
     inset 0 1px 0 rgba(255, 255, 255, 0.17),
-    0 0 0 0.75rem rgba(165, 247, 241, 0.035);
-  transform: perspective(75rem) rotateY(-8deg) rotateX(1.5deg) rotateZ(5.5deg);
-  transform-origin: 50% 54%;
+    0 0 0 0.5rem rgba(165, 247, 241, 0.03);
+  transform: rotateZ(2.5deg);
+  transform-origin: 50% 88%;
 }
 
 .screen-crop {
@@ -1598,7 +1598,7 @@ h3 {
   right: -8rem;
   bottom: -5rem;
   border-color: rgba(60, 229, 223, 0.17);
-  transform: rotate(-10deg);
+  transform: rotate(2deg);
 }
 
 .capabilities-section {
@@ -2162,7 +2162,7 @@ h3 {
 
   .device-frame {
     width: min(22.5rem, 86vw);
-    transform: perspective(70rem) rotateY(-3deg) rotateX(1deg) rotateZ(-4deg);
+    transform: rotateZ(2.25deg);
   }
 
   .product-stage figcaption {

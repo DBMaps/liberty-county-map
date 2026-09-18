@@ -27,9 +27,10 @@ test('the approved real interface remains unchanged and prominently referenced',
   );
 });
 
-test('desktop and mobile both receive deliberate angled-device treatments', () => {
-  assert.ok(css.includes('perspective(75rem) rotateY(-8deg) rotateX(1.5deg) rotateZ(5.5deg)'));
-  assert.ok(css.includes('perspective(70rem) rotateY(-3deg) rotateX(1deg) rotateZ(-4deg)'));
+test('desktop and mobile both receive subtle coherent angled-device treatments', () => {
+  assert.ok(css.includes('transform: rotateZ(2.5deg)'));
+  assert.ok(css.includes('transform: rotateZ(2.25deg)'));
+  assert.doesNotMatch(css, /rotateY\(-8deg\)|rotateZ\(5\.5deg\)|rotateY\(-3deg\)|rotateZ\(-4deg\)/);
   assert.match(css, /\.hero-copy\s*{[\s\S]*?grid-row:\s*1;/);
   assert.match(css, /\.product-stage\s*{[\s\S]*?grid-row:\s*1;/);
 });
