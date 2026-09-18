@@ -80,7 +80,7 @@ test('responsive and accessible styling covers required layout behavior', () => 
   assert.match(css, /a:focus-visible/);
   assert.match(css, /@media \(max-width: 68rem\)/);
   assert.match(css, /@media \(max-width: 54rem\)/);
-  assert.match(css, /@media \(max-width: 46rem\)/);
+  assert.match(css, /@media \(max-width: 736px\)/);
   assert.match(css, /@media \(max-width: 34rem\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.doesNotMatch(css, /animation(?:-name)?\s*:/i);
