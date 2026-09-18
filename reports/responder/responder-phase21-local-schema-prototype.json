@@ -1,0 +1,80 @@
+{
+  "manifest_version": 1,
+  "phase": 21,
+  "title": "Neutral Dispatch local schema prototype",
+  "classification": "LOCAL DISPOSABLE PROTOTYPE ONLY - NOT A PRODUCTION MIGRATION",
+  "authoritative_contract": {
+    "path": "docs/RESPONDER/RESPONDER-PHASE20-DISPATCH-NEUTRAL-CONTRACT-FREEZE.md",
+    "commit": "b30aebba132e618fd55705a61259279173c7381e"
+  },
+  "runtime": {
+    "postgres": "PostgreSQL 17.10",
+    "host": "127.0.0.1",
+    "port": "ephemeral random loopback port",
+    "cluster": "%TEMP%\\gridly-dispatch-phase21-<uuid>",
+    "remote_connection": false,
+    "production_credentials": false,
+    "teardown_verified": true
+  },
+  "commands": [
+    "& tools/responder/phase21/run-local-prototype.ps1",
+    "git diff --check",
+    "git status --short --branch"
+  ],
+  "files": [
+    {
+      "path": "tools/responder/phase21/apply.sql",
+      "kind": "schema",
+      "sha256": "cf7ab5096fe91f46282ad1f20eb07c75f863b65f6430fa7074b6d1f8def6e05e"
+    },
+    {
+      "path": "tools/responder/phase21/fixtures.sql",
+      "kind": "synthetic-fixtures",
+      "sha256": "921f1bd11ea0e9367b8af7c24bf5dad9789c48d8d30e38284e54f1cffc5bc2ac"
+    },
+    {
+      "path": "tools/responder/phase21/rollback.sql",
+      "kind": "rollback",
+      "sha256": "d6b2d89b36418ccd435772d4f3945a8f52c31cce2649e4d7580567cf9e3ef303"
+    },
+    {
+      "path": "tools/responder/phase21/run-local-prototype.ps1",
+      "kind": "disposable-runner",
+      "sha256": "3c7814ccd53a2b675d8419f51e74951e3cf268d58345a3a7d3f09fc49281fe98"
+    },
+    {
+      "path": "tools/responder/phase21/README.md",
+      "kind": "local-warning",
+      "sha256": "f336e2711d2c29039b90bbb06da55e151a6507a3f99587d117c0fa5297479cd8"
+    },
+    {
+      "path": "tests/responder-phase21-local-schema.test.mjs",
+      "kind": "structural-and-security-tests",
+      "sha256": "2228a49b335ff3d24dfe510abe0f96bb65fe902f5dc1ded7ac32b8245e2ccd1c"
+    },
+    {
+      "path": "docs/RESPONDER/RESPONDER-PHASE21-DISPATCH-NEUTRAL-LOCAL-SCHEMA-PROTOTYPE.md",
+      "kind": "phase-report",
+      "sha256": "706237b699e9555569a331b4bbe3b369de4c0c3371846dc3ae5e5ceee9d2b283"
+    }
+  ],
+  "result": {
+    "grouped_tests_passed": 10,
+    "grouped_tests_failed": 0,
+    "security_vectors_passed": 20,
+    "security_vectors_partial": 0,
+    "security_vectors_deferred": 0,
+    "schema_apply": "PASS",
+    "fixtures": "PASS",
+    "rollback": "PASS",
+    "cluster_removal": "PASS"
+  },
+  "production_safety": {
+    "new_production_migrations": 0,
+    "consumer_files_changed": 0,
+    "public_site_files_changed": 0,
+    "android_files_changed": 0,
+    "ios_files_changed": 0,
+    "deployment_files_changed": 0
+  }
+}
