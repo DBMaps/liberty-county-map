@@ -1,0 +1,123 @@
+{
+  "manifest_version": 1,
+  "phase": 22,
+  "title": "Neutral Dispatch local RLS and command prototype",
+  "classification": "LOCAL DISPOSABLE PROTOTYPE ONLY - NOT A PRODUCTION MIGRATION",
+  "authoritative_inputs": [
+    {
+      "phase": 20,
+      "path": "docs/RESPONDER/RESPONDER-PHASE20-DISPATCH-NEUTRAL-CONTRACT-FREEZE.md",
+      "commit": "b30aebba132e618fd55705a61259279173c7381e"
+    },
+    {
+      "phase": 21,
+      "path": "docs/RESPONDER/RESPONDER-PHASE21-DISPATCH-NEUTRAL-LOCAL-SCHEMA-PROTOTYPE.md",
+      "commit": "b69ccd8bb345d9e732929a0a118353d2593301d8"
+    }
+  ],
+  "runtime": {
+    "postgres": "PostgreSQL 17.10",
+    "host": "127.0.0.1",
+    "port": "ephemeral random loopback port",
+    "cluster": "%TEMP%\\gridly-dispatch-phase22-<uuid>",
+    "remote_connection_count": 0,
+    "production_credentials": false,
+    "teardown_verified": true
+  },
+  "commands": [
+    "& tools/responder/phase22/run-local-prototype.ps1",
+    "git diff --check",
+    "git status --short --branch"
+  ],
+  "files": [
+    {
+      "path": "tools/responder/phase21/apply.sql",
+      "kind": "reused-schema-dependency",
+      "sha256": "cf7ab5096fe91f46282ad1f20eb07c75f863b65f6430fa7074b6d1f8def6e05e"
+    },
+    {
+      "path": "tools/responder/phase21/fixtures.sql",
+      "kind": "reused-fixture-dependency",
+      "sha256": "921f1bd11ea0e9367b8af7c24bf5dad9789c48d8d30e38284e54f1cffc5bc2ac"
+    },
+    {
+      "path": "tools/responder/phase21/rollback.sql",
+      "kind": "reused-rollback-dependency",
+      "sha256": "d6b2d89b36418ccd435772d4f3945a8f52c31cce2649e4d7580567cf9e3ef303"
+    },
+    {
+      "path": "tools/responder/phase22/README.md",
+      "kind": "local-warning",
+      "sha256": "d74d8fdf8766bcb3d442c24c4fece98c9c66a35d6de7f2930464c848b0917cd8"
+    },
+    {
+      "path": "tools/responder/phase22/apply.sql",
+      "kind": "session-rls-receipt-layer",
+      "sha256": "413c7130e8513d90a38a573b38eb5f38b1c2d5542ef0b92aa06a9976f92e61d2"
+    },
+    {
+      "path": "tools/responder/phase22/commands.sql",
+      "kind": "bounded-command-layer",
+      "sha256": "79e1f3dc85ae29aa624501061f4ee5544eaa3642467ec010eb77c385f7ec0567"
+    },
+    {
+      "path": "tools/responder/phase22/fixtures.sql",
+      "kind": "synthetic-session-fixtures",
+      "sha256": "ac7f0b81201cc2bd00393742cd3307811497a18c4c2cda3c9a59d8fe20db0df9"
+    },
+    {
+      "path": "tools/responder/phase22/rollback.sql",
+      "kind": "phase22-rollback",
+      "sha256": "88b0f94bb6fa86ca25740376e98b89cacc9e9dc3ca228f2d45c09629a7f3140e"
+    },
+    {
+      "path": "tools/responder/phase22/run-local-prototype.ps1",
+      "kind": "disposable-runner",
+      "sha256": "5d3bf1acb309f15c4897c0629182de85d12845497097c3701876a1be8f935968"
+    },
+    {
+      "path": "tests/responder-phase22-local-rls-command.test.mjs",
+      "kind": "authorization-command-concurrency-tests",
+      "sha256": "380834e0ce0d09c15a14bde17287f87f6f360953dbfc4c26deeca9c2ebc71d49"
+    },
+    {
+      "path": "docs/RESPONDER/RESPONDER-PHASE22-DISPATCH-NEUTRAL-LOCAL-RLS-COMMAND-PROTOTYPE.md",
+      "kind": "phase-report",
+      "sha256": "d32c967635dc579a043d7f3ea2856496e7c3a26401f1202d104e319c249bbc52"
+    }
+  ],
+  "result": {
+    "node_tests_passed": 15,
+    "node_tests_failed": 0,
+    "assertion_call_sites": 62,
+    "explicit_expected_denial_sites": 34,
+    "security_vector_groups_passed": 13,
+    "security_vector_groups_partial": 0,
+    "security_vector_groups_deferred": 0,
+    "command_entry_points": 20,
+    "security_definer_functions_reviewed": 34,
+    "required_audit_event_types_verified": 16,
+    "schema_apply": "PASS",
+    "fixtures": "PASS",
+    "rollback": "PASS",
+    "cluster_removal": "PASS"
+  },
+  "concurrency": {
+    "expected_revision_update": "one winner, one stale failure",
+    "duplicate_invitation_acceptance": "two deterministic replay responses, one membership and one receipt",
+    "ownership_transfer_acceptance": "one winner, one stale failure",
+    "capability_revocation": "one winner, one stale failure",
+    "projection_approval": "one winner, one stale failure"
+  },
+  "production_safety": {
+    "production_migration_count": 0,
+    "remote_connection_count": 0,
+    "production_credential_count": 0,
+    "consumer_file_change_count": 0,
+    "public_site_change_count": 0,
+    "android_change_count": 0,
+    "ios_change_count": 0,
+    "deployment_change_count": 0,
+    "reporting_activation_change_count": 0
+  }
+}
