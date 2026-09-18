@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const homepage = readFileSync(join(root, 'public-site/index.html'), 'utf8');
 const css = readFileSync(join(root, 'public-site/assets/site.css'), 'utf8');
-const productImagePath = join(root, 'public-site/assets/gridly-product-current.png');
+const productImagePath = join(root, 'public-site/assets/gridly-hero.png');
 const certification = readFileSync(join(root, 'docs/launch/GRIDLY-LP24440-WORLD-CLASS-PUBLIC-BRAND-SITE.md'), 'utf8');
 
 test('Gridly and the real product dominate the hero hierarchy', () => {
@@ -22,11 +22,11 @@ test('Gridly and the real product dominate the hero hierarchy', () => {
   assert.ok(homepage.indexOf('Gridly') < homepage.indexOf('DJ Burns Collective LLC'));
 });
 
-test('approved product capture is byte-identical to the audited native artifact', () => {
+test('approved hero is an unretouched crop of the audited quiet-state native capture', () => {
   assert.ok(existsSync(productImagePath));
   const digest = createHash('sha256').update(readFileSync(productImagePath)).digest('hex');
-  assert.equal(digest, '44baf377f5fb72d2f425e60b52bd3f9d276d56a75bed47c66df8562e22dfbaac');
-  assert.match(homepage, /alt="Actual Gridly interface: Dayton map and Liberty County context, with limited local coverage and crossing information temporarily unavailable\."/);
+  assert.equal(digest, '8e2a661c5a4f18e9e9cb0a05c8efeb7cb22213d414b50197aeafcd2cdd1fcee8');
+  assert.match(homepage, /alt="Actual Gridly interface showing a quiet community, a Dallas search result, and nearby-place controls around Dayton\."/);
 });
 
 test('product story is editorial rather than a generic equal-card grid', () => {
@@ -48,11 +48,11 @@ test('experience and Texas stories retain concise launch truths', () => {
     'for Texas.',
     'From rural communities to major cities.',
     'Coming soon to the Apple App Store and Google Play.',
-    'Planned for adults 18 and over.',
+    'For adults 18 and over.',
   ]) {
     assert.ok(homepage.includes(statement), `${statement} is missing`);
   }
-  assert.match(homepage, /Public community reporting is not open yet\./);
+  assert.match(homepage, /See community-reported conditions and help keep local information current\./);
 });
 
 test('company remains visible without taking over the hero', () => {

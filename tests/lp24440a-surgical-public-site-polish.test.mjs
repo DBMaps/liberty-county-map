@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const homepage = readFileSync(join(root, 'public-site/index.html'), 'utf8');
 const css = readFileSync(join(root, 'public-site/assets/site.css'), 'utf8');
-const productImage = readFileSync(join(root, 'public-site/assets/gridly-product-current.png'));
+const productImage = readFileSync(join(root, 'public-site/assets/gridly-hero.png'));
 
 test('surgical polish preserves the approved page architecture and story order', () => {
   const main = homepage.match(/<main\b[\s\S]*?<\/main>/)?.[0] || '';
@@ -28,9 +28,9 @@ test('real Gridly interface remains the dominant product proof', () => {
   assert.match(homepage, /src="\/assets\/gridly-hero\.png"/);
   assert.equal(
     createHash('sha256').update(productImage).digest('hex'),
-    '44baf377f5fb72d2f425e60b52bd3f9d276d56a75bed47c66df8562e22dfbaac',
+    '8e2a661c5a4f18e9e9cb0a05c8efeb7cb22213d414b50197aeafcd2cdd1fcee8',
   );
-  assert.match(homepage, /Example showing limited local coverage/);
+  assert.match(homepage, /Actual Gridly interface · Dallas search/);
 });
 
 test('awareness signals use clear headings without unexplained acronym labels', () => {
@@ -65,7 +65,7 @@ test('protected Texas, availability, age, and company truths remain unchanged', 
     'for Texas.',
     'From rural communities to major cities.',
     'Coming soon to the Apple App Store and Google Play.',
-    'Planned for adults 18 and over.',
+    'For adults 18 and over.',
     'a Texas-focused software company helping people understand what may affect a trip before they leave',
   ]) {
     assert.ok(homepage.includes(statement), `${statement} is missing`);

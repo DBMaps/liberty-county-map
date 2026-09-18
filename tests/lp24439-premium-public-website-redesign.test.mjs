@@ -39,7 +39,7 @@ test('capability and journey language remains consumer-facing and truthful', () 
   for (const capability of ['Road Conditions', 'Weather Awareness', 'Railroad Crossings', 'Nearby Places', 'Community Awareness']) {
     assert.match(homepage, new RegExp(`<h3>${capability}<\\/h3>`));
   }
-  assert.match(homepage, /Public community reporting is not open yet\./);
+  assert.match(homepage, /See community-reported conditions and help keep local information current\./);
   assert.match(homepage, /Choose a Texas community/);
   assert.match(homepage, /Check available local conditions and alerts/);
   assert.match(homepage, /Leave with a clearer picture/);
@@ -52,7 +52,7 @@ test('internal product-position and audit language was removed', () => {
 
 test('store language is restrained, pre-launch, and consistently 18+', () => {
   assert.match(homepage, /Coming soon to the Apple App Store and Google Play\./);
-  assert.match(homepage, /Planned for adults 18 and over\./);
+  assert.match(homepage, /For adults 18 and over\./);
   assert.doesNotMatch(homepage, /16\+|at least 16|age 16|under 16/i);
   assert.doesNotMatch(homepage, /available now|download now|approved by Apple|approved by Google|review completed|app-store-badge|google-play-badge/i);
 });

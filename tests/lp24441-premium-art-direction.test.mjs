@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const homepage = readFileSync(join(root, 'public-site/index.html'), 'utf8');
 const css = readFileSync(join(root, 'public-site/assets/site.css'), 'utf8');
-const productImage = readFileSync(join(root, 'public-site/assets/gridly-product-current.png'));
+const productImage = readFileSync(join(root, 'public-site/assets/gridly-hero.png'));
 
 test('premium art direction preserves the five-part product-led story', () => {
   const main = homepage.match(/<main\b[\s\S]*?<\/main>/)?.[0] || '';
@@ -23,7 +23,7 @@ test('the approved real interface remains unchanged and prominently referenced',
   assert.match(homepage, /class="product-stage"[\s\S]*?src="\/assets\/gridly-hero\.png"/);
   assert.equal(
     createHash('sha256').update(productImage).digest('hex'),
-    '44baf377f5fb72d2f425e60b52bd3f9d276d56a75bed47c66df8562e22dfbaac',
+    '8e2a661c5a4f18e9e9cb0a05c8efeb7cb22213d414b50197aeafcd2cdd1fcee8',
   );
 });
 
@@ -37,14 +37,14 @@ test('awareness capabilities have equal editorial roles and reporting is separat
   const list = homepage.match(/<div class="signal-list">([\s\S]*?)<\/div>/)[1];
   for (const label of ['Road Conditions','Weather Awareness','Railroad Crossings','Nearby Places']) assert.ok(list.includes('<h3>'+label+'</h3>'));
   assert.doesNotMatch(list, /Community Awareness/);
-  assert.match(homepage, /<aside class="community-note"><h3>Community Awareness<\/h3><p>Public community reporting is not open yet\./);
+  assert.match(homepage, /<aside class="community-note"><h3>Community Awareness<\/h3><p>See community-reported conditions and help keep local information current\./);
 });
 
 test('launch, age, reporting, and organization truths remain explicit', () => {
   for (const statement of [
     'Coming soon to the Apple App Store and Google Play.',
-    'Planned for adults 18 and over.',
-    'Public community reporting is not open yet.',
+    'For adults 18 and over.',
+    'See community-reported conditions and help keep local information current.',
     'a Texas-focused software company helping people understand what may affect a trip before they leave',
     'Awareness, not authority.',
   ]) {

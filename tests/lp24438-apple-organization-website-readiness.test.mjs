@@ -25,14 +25,14 @@ test('homepage describes only governed product capabilities and reporting state'
     assert.match(homepage, new RegExp(`>${capability}<`));
   }
   assert.match(homepage, /Understand local road conditions, weather, and what may affect your trip before you leave/);
-  assert.match(homepage, /Public community reporting is not open yet\./);
+  assert.match(homepage, /See community-reported conditions and help keep local information current\./);
   assert.match(homepage, /official alerts, with their sources/);
   assert.doesNotMatch(homepage, /Awareness Platform First|Route Intelligence Second|Product position/);
 });
 
 test('store language is coming-soon only and remains 18+', () => {
   assert.match(homepage, /Coming soon to the Apple App Store and Google Play\./);
-  assert.match(homepage, /Planned for adults 18 and over\./);
+  assert.match(homepage, /For adults 18 and over\./);
   assert.doesNotMatch(homepage, /16\+|at least 16|age 16|under 16/i);
   assert.doesNotMatch(homepage, /(?:download|get|available) (?:it |Gridly )?now|now available|available today|approved by Apple|approved by Google/i);
   assert.doesNotMatch(homepage, /app-store-badge|google-play-badge/i);
