@@ -15,6 +15,22 @@
   --line: #cfdee1;
   --focus: #ffd95e;
   --shadow: 0 2rem 5rem rgba(2, 21, 31, 0.17);
+  --layout-max: 88rem;
+  --layout-inset: 4rem;
+  --space-section: clamp(7rem, 10vw, 10rem);
+  --space-heading: clamp(3.5rem, 6vw, 5.5rem);
+  --radius-card: 2rem 0.625rem 2rem 0.625rem;
+  --radius-feature: 3rem 0.75rem 3rem 0.75rem;
+  --border-dark: 1px solid rgba(165, 247, 241, 0.14);
+  --divider-dark: rgba(165, 247, 241, 0.14);
+  --shadow-card: 0 2rem 4.5rem rgba(8, 36, 50, 0.15);
+  --shadow-card-dark: 0 2rem 4.5rem rgba(0, 0, 0, 0.2);
+  --shadow-feature: 0 3rem 7rem rgba(8, 36, 50, 0.18);
+  --text-eyebrow: 0.83rem;
+  --text-detail: 0.98rem;
+  --text-body: 1.08rem;
+  --text-body-large: 1.18rem;
+  --leading-copy: 1.65;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -2748,5 +2764,147 @@ h3 {
 
   .footer-meta {
     font-size: 0.93rem;
+  }
+}
+
+/* LP244.42 design-system normalization */
+.section-shell,
+.hero-inner,
+.journey-card {
+  width: min(var(--layout-max), calc(100% - var(--layout-inset)));
+}
+
+.eyebrow,
+.story-kicker {
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.17em;
+  line-height: 1.45;
+}
+
+.capabilities-section,
+.experience-section,
+.texas-section,
+.company-section {
+  padding-block: var(--space-section);
+}
+
+.section-intro {
+  margin-bottom: var(--space-heading);
+}
+
+.experience-heading h2 {
+  max-width: 13ch;
+}
+
+.journey-card {
+  margin-top: var(--space-heading);
+}
+
+.capability-grid,
+.texas-road {
+  border: var(--border-dark);
+  border-radius: var(--radius-feature);
+  box-shadow: var(--shadow-feature);
+}
+
+.story-primary,
+.journey-step,
+.trust-note {
+  border-radius: var(--radius-card);
+}
+
+.journey-step {
+  min-height: 18.5rem;
+  border: var(--border-dark);
+  box-shadow: var(--shadow-card-dark);
+}
+
+.trust-note {
+  justify-content: center;
+  border: var(--border-dark);
+  box-shadow:
+    var(--shadow-card),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.signal-list {
+  counter-reset: none;
+}
+
+.signal-row {
+  padding-right: 1.5rem;
+  counter-increment: none;
+  border-top-color: var(--divider-dark);
+}
+
+.signal-row:last-child {
+  border-bottom-color: var(--divider-dark);
+}
+
+.signal-row::after,
+.journey-step::before {
+  display: none;
+  content: none;
+}
+
+.story-primary-copy > p:last-child,
+.trust-note > p:last-child {
+  font-size: var(--text-body);
+  line-height: var(--leading-copy);
+}
+
+.signal-row div p {
+  font-size: var(--text-detail);
+  line-height: 1.6;
+}
+
+.texas-copy > p:last-child,
+.company-copy > p:not(.eyebrow) {
+  font-size: var(--text-body-large);
+}
+
+.company-layout {
+  gap: clamp(3rem, 6vw, 6rem);
+}
+
+.footer-links a {
+  border-bottom-color: rgba(165, 247, 241, 0.1);
+}
+
+@media (max-width: 68rem) {
+  :root {
+    --layout-inset: 3rem;
+  }
+}
+
+@media (max-width: 56rem) {
+  :root {
+    --layout-inset: 2rem;
+    --space-section: 6.5rem;
+    --space-heading: 3rem;
+    --radius-feature: 2.5rem 0.75rem 2.5rem 0.75rem;
+  }
+
+  .signal-row,
+  .signal-row:nth-child(even) {
+    padding-right: 1.1rem;
+  }
+
+  .journey-step,
+  .journey-step:first-of-type,
+  .journey-step-middle,
+  .journey-step:last-child {
+    min-height: 13rem;
+  }
+
+  .site-footer {
+    padding-inline: 1rem;
+  }
+}
+
+@media (max-width: 34rem) {
+  :root {
+    --space-section: 6rem;
+    --radius-feature: 2rem 0.625rem 2rem 0.625rem;
   }
 }
