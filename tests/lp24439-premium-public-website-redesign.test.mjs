@@ -23,7 +23,7 @@ test('homepage answers the core consumer and organization questions concisely', 
     'Know Before You Go',
     'Built in Texas, for Texas.',
     'From rural communities to major cities',
-    'DJ Burns Collective LLC develops Gridly as Texas-focused travel-awareness software',
+    'a Texas-focused software company helping people understand what may affect a trip before they leave',
     'gridlygo.com',
     'support@gridlygo.com',
   ]) {
@@ -39,9 +39,9 @@ test('capability and journey language remains consumer-facing and truthful', () 
   for (const capability of ['Road Conditions', 'Weather Awareness', 'Railroad Crossings', 'Nearby Places', 'Community Awareness']) {
     assert.match(homepage, new RegExp(`<h3>${capability}<\\/h3>`));
   }
-  assert.match(homepage, /Community reporting is activated only when available; it is not currently open for public reporting\./);
+  assert.match(homepage, /Public community reporting is not open yet\./);
   assert.match(homepage, /Choose a Texas community/);
-  assert.match(homepage, /See the local awareness that’s available/);
+  assert.match(homepage, /Check available local conditions and alerts/);
   assert.match(homepage, /Leave with a clearer picture/);
 });
 
@@ -51,18 +51,16 @@ test('internal product-position and audit language was removed', () => {
 });
 
 test('store language is restrained, pre-launch, and consistently 18+', () => {
-  assert.match(homepage, /Coming to the Apple App Store and Google Play\./);
+  assert.match(homepage, /Coming soon to the Apple App Store and Google Play\./);
   assert.match(homepage, /Planned for adults 18 and over\./);
   assert.doesNotMatch(homepage, /16\+|at least 16|age 16|under 16/i);
   assert.doesNotMatch(homepage, /available now|download now|approved by Apple|approved by Google|review completed|app-store-badge|google-play-badge/i);
 });
 
-test('visual treatment uses only local brand imagery and the approved current product capture', () => {
-  const imageSources = [...homepage.matchAll(/<img\b[^>]*src="([^"]+)"/g)].map((match) => match[1]);
-  assert.deepEqual([...new Set(imageSources)], ['/assets/gridly-logo-horizontal.png', '/assets/gridly-product-current.png']);
-  assert.doesNotMatch(homepage, /assets\/(?:walkthrough|onboarding|store)|device-mockup|app-screenshot/i);
-  assert.ok(existsSync(join(root, 'public-site/assets/gridly-logo-horizontal.png')));
-  assert.ok(existsSync(join(root, 'public-site/assets/gridly-product-current.png')));
+test('visual treatment uses only local, traceable product and geographic assets', () => {
+  const sources = [...homepage.matchAll(/<img\b[^>]*src="([^"]+)"/g)].map(m => m[1]);
+  assert.deepEqual([...new Set(sources)], ['/assets/gridly-wordmark.png', '/assets/gridly-hero.png', '/assets/gridly-local-detail.png', '/assets/gridly-search-detail.png', '/assets/gridly-review-detail.png', '/assets/texas.svg']);
+  for (const source of sources) assert.ok(existsSync(join(root, 'public-site', source)));
 });
 
 test('legal, support, canonical, and static-site safeguards remain intact', () => {

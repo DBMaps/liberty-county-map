@@ -25,12 +25,12 @@ test('surgical polish preserves the approved page architecture and story order',
 });
 
 test('real Gridly interface remains the dominant product proof', () => {
-  assert.match(homepage, /src="\/assets\/gridly-product-current\.png"/);
+  assert.match(homepage, /src="\/assets\/gridly-hero\.png"/);
   assert.equal(
     createHash('sha256').update(productImage).digest('hex'),
     '44baf377f5fb72d2f425e60b52bd3f9d276d56a75bed47c66df8562e22dfbaac',
   );
-  assert.match(css, /\.device-frame\s*{[\s\S]*?width:\s*min\(100%, 28rem\)/);
+  assert.match(homepage, /Example showing limited local coverage/);
 });
 
 test('awareness signals use clear headings without unexplained acronym labels', () => {
@@ -39,22 +39,24 @@ test('awareness signals use clear headings without unexplained acronym labels', 
   }
   assert.doesNotMatch(homepage, /class="signal-code"|>\s*(?:WX|RR|POI|YOU)\s*</);
   assert.doesNotMatch(css, /\.signal-code\b/);
-  assert.match(css, /\.signal-row::before/);
+  assert.doesNotMatch(homepage, /story-geometry|road-node/);
 });
 
-test('Search Review Go remains a continuous, compact responsive journey', () => {
-  for (const label of ['Search', 'Review', 'Go']) {
-    assert.match(homepage, new RegExp(`<p class="journey-index">${label}<\\/p>`));
-  }
-  assert.match(css, /\.journey-step-middle\s*{\s*transform:\s*none;/);
-  assert.match(css, /@media \(max-width: 46rem\)[\s\S]*?\.journey-route[\s\S]*?linear-gradient\(var\(--navy-900\), var\(--cyan-500\), var\(--navy-900\)\)/);
+test('Search Review Go keeps evidence in the first two steps and an outcome in the third', () => {
+  const steps = [...homepage.matchAll(/<article class="journey-step[^"]*">([\s\S]*?)<\/article>/g)].map(m => m[1]);
+  assert.equal(steps.length, 3);
+  for (const [i,label] of ['Search','Review','Go'].entries()) assert.ok(steps[i].includes('<h3>'+label+'</h3>'));
+  assert.match(steps[0], /gridly-search-detail/);
+  assert.match(steps[1], /gridly-review-detail/);
+  assert.doesNotMatch(steps[2], /<img|<svg|<canvas/);
+  assert.doesNotMatch(homepage, /journey-route|journey-dot|→/);
 });
 
-test('brand hierarchy keeps the hero identity larger than the header identity', () => {
-  assert.match(css, /\.brand-logo\s*{\s*width:\s*clamp\(10\.5rem, 15vw, 13rem\)/);
-  assert.match(css, /\.hero-logo\s*{\s*width:\s*clamp\(16rem, 27vw, 22rem\)/);
-  assert.match(css, /\.site-footer[\s\S]*?font-size:\s*0\.92rem/);
-  assert.match(css, /\.footer-meta[\s\S]*?font-size:\s*0\.84rem/);
+test('brand identity appears once before the product and once in the footer', () => {
+  assert.equal((homepage.match(/src="\/assets\/gridly-wordmark.png"/g) || []).length, 2);
+  const hero = homepage.match(/<section class="hero-section"[\s\S]*?<\/section>/)[0];
+  assert.doesNotMatch(hero, /gridly-wordmark|hero-logo/);
+  assert.match(hero, /Understand local road conditions, weather/);
 });
 
 test('protected Texas, availability, age, and company truths remain unchanged', () => {
@@ -62,9 +64,9 @@ test('protected Texas, availability, age, and company truths remain unchanged', 
     'Built in Texas,',
     'for Texas.',
     'From rural communities to major cities.',
-    'Coming to the Apple App Store and Google Play.',
+    'Coming soon to the Apple App Store and Google Play.',
     'Planned for adults 18 and over.',
-    'DJ Burns Collective LLC develops Gridly as Texas-focused travel-awareness software',
+    'a Texas-focused software company helping people understand what may affect a trip before they leave',
   ]) {
     assert.ok(homepage.includes(statement), `${statement} is missing`);
   }

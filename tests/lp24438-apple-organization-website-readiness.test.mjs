@@ -13,25 +13,25 @@ test('homepage presents Gridly and the legal organization prominently', () => {
   assert.match(homepage, /Gridly/);
   assert.match(homepage, /Know Before You Go/);
   assert.match(homepage, /Built in Texas, for Texas\./);
-  assert.match(homepage, /Gridly is developed by DJ Burns Collective LLC\./);
-  assert.match(homepage, /DJ Burns Collective LLC develops Gridly as Texas-focused travel-awareness software/);
+  assert.match(homepage, /Gridly is developed by DJ Burns Collective LLC,/);
+  assert.match(homepage, /a Texas-focused software company helping people understand what may affect a trip before they leave/);
   assert.match(homepage, /From rural communities to major cities/);
   assert.match(homepage, /gridlygo\.com/);
-  assert.match(homepage, /travel-awareness software/i);
+  assert.match(homepage, /Texas-focused software company/i);
 });
 
 test('homepage describes only governed product capabilities and reporting state', () => {
   for (const capability of ['Road Conditions', 'Weather Awareness', 'Railroad Crossings', 'Nearby Places', 'Community Awareness']) {
     assert.match(homepage, new RegExp(`>${capability}<`));
   }
-  assert.match(homepage, /Gridly brings roads, weather, railroad crossings, nearby places and community awareness into one clear view before a trip/);
-  assert.match(homepage, /Community reporting is activated only when available; it is not currently open for public reporting\./);
-  assert.match(homepage, /attributed official alerts/);
+  assert.match(homepage, /Understand local road conditions, weather, and what may affect your trip before you leave/);
+  assert.match(homepage, /Public community reporting is not open yet\./);
+  assert.match(homepage, /official alerts, with their sources/);
   assert.doesNotMatch(homepage, /Awareness Platform First|Route Intelligence Second|Product position/);
 });
 
 test('store language is coming-soon only and remains 18+', () => {
-  assert.match(homepage, /Coming to the Apple App Store and Google Play\./);
+  assert.match(homepage, /Coming soon to the Apple App Store and Google Play\./);
   assert.match(homepage, /Planned for adults 18 and over\./);
   assert.doesNotMatch(homepage, /16\+|at least 16|age 16|under 16/i);
   assert.doesNotMatch(homepage, /(?:download|get|available) (?:it |Gridly )?now|now available|available today|approved by Apple|approved by Google/i);
