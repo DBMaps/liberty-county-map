@@ -1,7 +1,7 @@
 {
   "phase": 24,
   "title": "Local Real Supabase Auth Integration",
-  "status": "BLOCKED_REAL_LOCAL_SUPABASE_AUTH_UNAVAILABLE",
+  "status": "PASS_REAL_LOCAL_SUPABASE_AUTH",
   "classification": [
     "LOCAL",
     "DISPOSABLE_AUDIT",
@@ -12,43 +12,44 @@
     "supabase_cli": "2.117.0",
     "docker_cli": "29.8.0",
     "docker_desktop": "4.91.0",
-    "gotrue_auth": null,
-    "postgresql_native": "17.10",
+    "gotrue_auth": "2.196.0",
+    "postgresql_container": "17.6.1.167",
+    "postgrest": "16.2",
     "node": "24.17.0"
   },
   "local_environment": {
     "supabase_cli_source": "npm cache, invoked offline",
-    "docker_engine_healthy": false,
-    "docker_api_available": false,
-    "native_gotrue_available": false,
-    "go_toolchain_available": false,
-    "alternative_container_runtime_available": false,
+    "docker_engine_healthy": true,
+    "docker_api_available": true,
+    "auth_api_available": true,
     "existing_link_metadata_detected": true,
     "existing_link_metadata_contents_read": false,
-    "local_urls": [],
-    "local_ports": []
-  },
-  "blocker": {
-    "component": "Docker Desktop Linux engine",
-    "summary": "Docker Desktop backend exited while attempting to rename an inaccessible stale local runtime socket.",
-    "bounded_recovery": [
-      "verified the exact zero-byte runtime socket",
-      "verified no Docker process was using it",
-      "stopped WSL",
-      "attempted exact socket removal"
+    "local_urls": [
+      "http://127.0.0.1:54321",
+      "http://127.0.0.1:54324"
     ],
-    "recovery_result": "socket remained inaccessible and Docker engine remained unavailable",
-    "fallback_result": "independent GoTrue unavailable because no binary, Go toolchain, or healthy container engine exists"
+    "local_ports": [54321, 54322, 54324],
+    "network_binding": "loopback-only custom Docker bridge"
+  },
+  "evidence": {
+    "auth_user_model": "canonical auth.users UUID and auth.identities binding",
+    "jwt_signing": "ES256",
+    "initial_aal": "aal1",
+    "verified_aal": "aal2",
+    "verified_amr": ["password", "totp"],
+    "refresh_aal": "aal2",
+    "factor_removal": "stale JWT remains cryptographically valid; live Dispatch factor check denies",
+    "mfa_freshness_recommendation": "KEEP_AAL2_ONLY_MVP"
   },
   "tests": {
-    "real_auth_integration_total": 0,
-    "passed": 0,
+    "real_auth_integration_total": 14,
+    "passed": 14,
     "failed": 0,
-    "blocked": 1,
-    "jwt_vector_count": 0,
-    "mfa_vector_count": 0,
-    "invitation_vector_count": 0,
-    "concurrency_vector_count": 0
+    "blocked": 0,
+    "jwt_vector_count": 4,
+    "mfa_vector_count": 8,
+    "invitation_vector_count": 10,
+    "concurrency_vector_count": 3
   },
   "safety": {
     "secret_scan_result": "PASS",
@@ -64,21 +65,21 @@
     "reporting_activation_change_count": 0
   },
   "teardown": {
-    "supabase_stack_started": false,
-    "containers_started": 0,
-    "auth_users_created": 0,
+    "supabase_stack_started": true,
+    "containers_started": 5,
+    "auth_users_created": 8,
     "docker_processes_remaining": 0,
-    "wsl_distributions_running": 0,
-    "result": "No Phase 24 service or process remains. A pre-existing inaccessible Docker runtime socket remains and requires host repair."
+    "temporary_project_directories_remaining": 0,
+    "temporary_networks_remaining": 0,
+    "result": "PASS: runner stopped the unlinked stack, removed its network, and deleted disposable state."
   },
   "artifacts_sha256": {
-    "tools/responder/phase24/README.md": "15b6e8d0243eddc65a0545c8144a20a9a2575f2bde4ecad8256e0a4a9568c566",
-    "docs/RESPONDER/RESPONDER-PHASE24-DISPATCH-LOCAL-REAL-SUPABASE-AUTH-INTEGRATION.md": "a553076c067284dd448dd9347c335fbf5a76e6152c59ded35ef3dfef256ef0fe"
+    "tools/responder/phase24/README.md": "e645d5d716a9f27530f41892f37ae1f52bea5f77814a06828cfbe7eaddb020ea",
+    "tools/responder/phase24/bootstrap.sql": "771cf18f09678e9a94d6ba48b2167566c42be9ff8b88ca42e6c1f9867f9fb304",
+    "tools/responder/phase24/apply.sql": "f5b3c7d04c97c616d73b7355b0eb0cd1d81072b9e1f90b401fc03715c192e5d3",
+    "tools/responder/phase24/run-local-real-auth.ps1": "b983c35493a062c31e52d352e51f864e8ed8257209c7931016b61e49070d30ec",
+    "tests/responder-phase24-local-real-supabase-auth.test.mjs": "8e8746af6f5eb22eabe9f2e6c2046e015ab61beb77bfad2244e1a80d26eafe67",
+    "docs/RESPONDER/RESPONDER-PHASE24-DISPATCH-LOCAL-REAL-SUPABASE-AUTH-INTEGRATION.md": "052176ee49bc4a668532db733b3df74d4c48262c717cabb702b23c82625ff8c8"
   },
-  "required_prerequisites": [
-    "healthy Docker-compatible Linux container engine, or pinned native GoTrue runtime",
-    "isolated unlinked disposable Supabase project directory",
-    "successful local Auth health check before user creation"
-  ],
-  "phase25_recommendation": "Do not begin Phase 25; repair prerequisites and resume Phase 24."
+  "phase25_recommendation": "A: production-shaped neutral migration package design; not implemented in Phase 24."
 }

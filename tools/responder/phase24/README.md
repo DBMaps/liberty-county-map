@@ -1,25 +1,30 @@
 # Phase 24 local real Supabase Auth integration
 
-**BLOCKED — REAL LOCAL SUPABASE AUTH UNAVAILABLE**
+**LOCAL DISPOSABLE SYNTHETIC-DATA-ONLY VALIDATION — PASS**
 
-**LOCAL AUDIT ONLY. NOT A PRODUCTION MIGRATION.**
+**NOT A PRODUCTION MIGRATION**
 
-Phase 24 did not substitute the Phase 23 synthetic harness. The availability
-audit found a cached Supabase CLI and an installed Docker Desktop client, but the
-Docker engine could not start. Docker Desktop exited while handling a stale local
-runtime socket, and Windows would not remove that socket after all Docker
-processes and WSL distributions were stopped. No native GoTrue binary, Go
-toolchain, Podman, or other Docker-compatible engine was available for fallback.
+This layer connects real local Supabase Auth evidence to the Phase 22 Dispatch
+command context. It uses canonical Auth UUIDs, signed session claims, verified
+same-user TOTP factors, live Auth sessions, and live Dispatch authorization
+state. It never uses the Phase 23 synthetic Auth harness as evidence.
 
-No Supabase project-link command was run. Existing link metadata was detected in
-the checkout, but its project identifier and credentials were not read or used.
-No Auth API, database, remote endpoint, or production service was contacted.
+Files:
 
-Prerequisites to resume:
+- `bootstrap.sql` provides the local Supabase pgcrypto compatibility binding.
+- `apply.sql` creates the real-Auth bridge, invitation commands, and bounded
+  PostgREST RPC surface.
+- `run-local-real-auth.ps1` creates an isolated unlinked stack, runs the suite,
+  stops all services, removes the Docker network, and deletes temporary state.
 
-1. Repair or reinstall Docker Desktop so the Linux engine and Docker API become
-   healthy, or provide a supported Docker-compatible runtime.
-2. Alternatively, provide a pinned local GoTrue binary plus its required local
-   PostgreSQL/runtime dependencies.
-3. Preserve an isolated, unlinked disposable Supabase project directory.
-4. Re-run Phase 24 from the authoritative Phase 23 commit.
+Prerequisites are Docker Desktop with a healthy Linux engine and the repository's
+pinned Supabase CLI dependency. Run from the repository root:
+
+```powershell
+& tools/responder/phase24/run-local-real-auth.ps1
+```
+
+The runner uses loopback ports 54321 (API), 54322 (PostgreSQL), and 54324
+(Mailpit). It aborts if its disposable project is linked or the API is not
+loopback-only. Credentials and TOTP material remain ephemeral and are never
+printed by the runner or committed.

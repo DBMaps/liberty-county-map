@@ -2,145 +2,174 @@
 
 ## 1. Executive Summary
 
-Phase 24 is blocked. A real local Supabase Auth service could not be started, so
-no synthetic substitute was used and no real-Auth success claim is made.
+Phase 24 passed against a real, disposable, unlinked local Supabase stack. Real
+GoTrue users, sessions, ES256 JWTs, TOTP factors, refresh tokens, and Auth state
+were integrated with the Phase 22 command model without weakening Phase 20–23
+authorization or transaction invariants. The Phase 23 synthetic harness was not
+used as evidence.
 
 ## 2. Environment / Tooling
 
-- Supabase CLI: cached npm CLI 2.117.0, callable offline
-- Docker CLI: 29.8.0
-- Docker Desktop: 4.91.0 installed, engine unavailable
-- Native PostgreSQL: 17.10
+- Supabase CLI: 2.117.0, invoked offline from the pinned npm dependency
+- Docker CLI / Engine: 29.8.0, linux/amd64
+- Docker Desktop: 4.91.0
+- Supabase Auth / GoTrue: 2.196.0
+- PostgreSQL container: 17.6.1.167
+- PostgREST: 16.2
 - Node.js: 24.17.0
-- Go, native GoTrue, Podman, and nerdctl: unavailable
-- WSL 2: Ubuntu and Docker Desktop distributions present
 
 ## 3. Local Supabase Isolation
 
-Existing Supabase link metadata was detected but neither its identifier nor any
-credential was read or used. No `supabase link`, remote database command, or
-remote Auth request ran. The intended implementation would use a separate
-disposable directory and loopback-only network.
+The runner creates a new temporary project, rejects project-link metadata, and
+uses a dedicated Docker bridge whose published ports bind to loopback. Endpoints
+are `http://127.0.0.1:54321` (API), `127.0.0.1:54322` (PostgreSQL), and
+`http://127.0.0.1:54324` (Mailpit). Unneeded services are excluded. Existing
+checkout link metadata was neither read nor used.
 
 ## 4. Auth User Model
 
-Not exercised because no real local Auth service became available.
+Signup created canonical UUIDs and identities in real Auth tables. Dispatch
+profiles reference the Auth UUID; command payload identity fields cannot replace
+the authenticated actor.
 
 ## 5. Email / Identity Verification
 
-Not exercised. No local or production Auth user was created.
+Local signup auto-confirmed the synthetic addresses. Invitation matching uses
+the confirmed server-side Auth identity, not raw client input. A manual email
+confirmation UI was not applicable to this local configuration.
 
 ## 6. Session Model
 
-Not exercised. No access token or refresh token was issued.
+Real signup issued access and refresh tokens and a session associated with the
+same Auth user. Evidence was inspected without logging credential values.
 
 ## 7. JWT Claims
 
-Not exercised. Phase 23 findings remain architectural evidence only and were not
-represented as Phase 24 real-Auth results.
+`sub` identifies the actor. `session_id`, `aal`, AMR, `iat`, and `exp` supply
+authentication evidence. Organization, membership, role, permissions, scope,
+and capabilities remain live database authorization state.
 
 ## 8. JWT Signature Validation
 
-Not exercised because no local signing service or JWKS endpoint was available.
+Local user tokens used ES256. Valid tokens were accepted; tampered payloads,
+random signatures, and a genuinely expired token signed in memory with the
+disposable Auth JWK were rejected. No signing material was persisted.
 
 ## 9. TOTP Enrollment
 
-Not exercised. No TOTP seed was created or stored.
+Real TOTP factors were enrolled through Auth. RFC 6238 codes were generated in
+memory from ephemeral seeds; neither seeds nor codes were written to artifacts.
 
 ## 10. Challenge / Verification
 
-Not exercised. No real challenge or verification API was reachable.
+Real challenge and verification calls succeeded with the current code. A
+deliberately different code and cross-user factor challenge failed.
 
 ## 11. AAL / AMR Results
 
-No actual AAL1/AAL2 or AMR evidence was generated.
+Initial sessions were AAL1. TOTP verification produced AAL2 with password and
+TOTP in AMR. Refresh preserved AAL2 and TOTP AMR. Auth session, factor, and AMR
+rows remained bound to the same user/session.
 
 ## 12. MFA Freshness Conclusion
 
-Phase 24 cannot validate the Phase 23 AAL2-only MVP recommendation. The decision
-remains `OWNER_DECISION_REQUIRED FOR STEP-UP` until real local evidence exists.
+**KEEP AAL2-ONLY MVP.** Real Auth provides durable AAL2/TOTP evidence and the
+bridge independently rechecks the live session and factor. Recent-operation
+step-up for ownership transfer or recovery remains an owner policy decision.
 
 ## 13. Refresh Token Results
 
-Not exercised. No refresh token existed.
+Refresh preserved user and session identity, rotated the token, and retained
+AAL2/TOTP. Reuse was exercised inside and outside the configured interval; the
+suite accepts server rejection or a newly rotated token. Cross-type refresh was
+denied, and logout invalidated refresh continuity.
 
 ## 14. Factor Removal Results
 
-Not exercised. The critical stale-AAL2-token behavior after unenrollment remains
-unverified locally.
+Real unenrollment removed the factor. The prior JWT remained cryptographically
+valid and claimed AAL2, but the next Dispatch check denied because no live
+same-user verified factor remained. The live factor check is required.
 
 ## 15. User Disable/Delete Results
 
-Not exercised against real Supabase Auth.
+A banned user's prior token failed the next Dispatch check. After deletion,
+Auth rejected user lookup and Dispatch continued to deny the prior token.
 
 ## 16. Auth-to-Dispatch Bridge
 
-Not implemented. Phase 23's synthetic trusted-claim bridge was not reused as a
-substitute.
+Actor and session derive from `auth.uid()` and the signed `session_id`. The live
+predicate cross-checks JWT evidence, Auth user/session, verified same-user
+factor, TOTP AMR, and active Dispatch profile. Only bounded RPCs are exposed.
 
 ## 17. Existing User Invitation
 
-Not exercised with a real Auth user.
+A matching verified AAL2 user activated one membership. Wrong-user, expired,
+revoked, and non-idempotent replay attempts were denied; idempotent replay
+returned the original result without duplicate audit.
 
 ## 18. New User Invitation
 
-Not exercised with a real signup/session/TOTP lifecycle.
+An invite preceded signup. The new account was denied at AAL1, then enrolled
+TOTP, reached AAL2, accepted the invitation, and activated membership.
 
 ## 19. Multi-Organization Results
 
-Not exercised with a real JWT/session identity.
+One real identity accepted invitations into two organizations with different
+roles and permissions. Explicit organization selection was required and no
+authority inherited across organizations.
 
 ## 20. Revocation Results
 
-Not exercised against a still-valid real Auth session.
+With still-valid JWTs, membership suspension and revocation, organization
+suspension, capability revocation, and factor removal caused the next applicable
+Dispatch operation to deny.
 
 ## 21. Platform Admin Results
 
-Not exercised with a real Auth actor.
+A real AAL2 user with a platform grant could run the platform capability command.
+The grant implied neither organization membership nor ordinary organization
+authority; recovery remains separately governed.
 
 ## 22. Spoof Resistance
 
-Real JWT tampering, invalid-signature, expiry, and cross-user factor probes were
-not possible without a running Auth service.
+Tampered, wrongly signed, fabricated, and expired tokens were rejected.
+Cross-user factors failed. Payload user/membership identifiers were ignored in
+favor of the Auth actor, and cross-organization operations were denied.
 
 ## 23. Concurrency
 
-Invitation concurrency was not rerun because Phase 24 requires real Auth users.
-Phase 22/23 transactional evidence is unchanged but is not counted as Phase 24.
+Two simultaneous accepts converged on one membership. Accept-versus-revoke
+produced one success, one denial, and a valid terminal state. Second-organization
+acceptance succeeded; Phase 22 locking and idempotency invariants held.
 
 ## 24. Auth / Dispatch Audit Boundary
 
-No Auth or Dispatch events were emitted during the availability audit.
+Auth login/logout/refresh/factor events remained in Auth audit/state. Dispatch
+recorded invitation, membership, command, capability, and projection events.
+No plaintext invitation token or Auth credential appeared in Dispatch audit.
 
 ## 25. Secrets Hygiene
 
-No JWT, refresh token, TOTP secret, password, service-role key, signing key,
-project reference, or production URL was written to these artifacts. Existing
-link metadata contents were deliberately not read.
+JWTs, refresh tokens, TOTP seeds, passwords, service-role keys, and private keys
+exist only in process memory or disposable state. Changed-file scans found no
+token-shaped values, local credentials, production URLs, or project references.
 
 ## 26. Production Gaps
 
-Every real-Auth success criterion remains open: canonical Auth user, real
-session/JWT, signature validation, TOTP lifecycle, AAL2, refresh rotation,
-factor removal, invitation binding, multi-org operation, revocation, spoofing,
-platform separation, and real-Auth concurrency.
+This is not a production migration. Production configuration, provider behavior,
+monitoring, recovery policy, neutral migrations, and rollout remain open. The
+local bridge is evidence, not deployable production SQL.
 
 ## 27. Deviations
 
-The availability audit found the cached CLI only after checking the npm cache.
-Docker Desktop was installed but stopped. One bounded startup attempt failed
-because its backend could not rename a stale local runtime socket. The exact
-zero-byte socket was verified with no Docker process using it; deletion failed
-both before and after WSL shutdown. Retrying or resetting Docker state was not
-safe or useful. Independent GoTrue fallback was impossible without a GoTrue
-binary, Go toolchain, or working container engine.
-
-Supabase's current local-development documentation requires the CLI and a
-Docker-compatible runtime and recommends loopback isolation. That second
-prerequisite was not met.
+The resumed Docker engine cleared the blocker. Current local Supabase issued
+ES256 user tokens and preserved AAL2 through refresh, superseding observations
+from one degraded post-reset stack. Local auto-confirm precluded a separate
+unverified-email UI flow. Refresh reuse is version/configuration dependent, so
+the suite proves rotation and records rejection or re-rotation.
 
 ## 28. Phase 25 Recommendation
 
-Do not begin Phase 25. Repair the local container runtime or provide a pinned
-native GoTrue stack, then resume Phase 24 and obtain the required real-Auth
-evidence first.
+Choose **A. production-shaped neutral migration package design** next. It is the
+smallest step that turns the proven boundary into reviewable environment-neutral
+artifacts while retaining a no-deploy gate. Phase 25 was not implemented.
