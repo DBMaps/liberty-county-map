@@ -9,6 +9,17 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const homepage = readFileSync(join(root, 'public-site/index.html'), 'utf8');
 const css = readFileSync(join(root, 'public-site/assets/site.css'), 'utf8');
 
+test('product images provide sufficient original pixels for high-density display', () => {
+  for (const [file, width, height] of [
+    ['gridly-hero.png', 600, 1100],
+    ['gridly-search-detail.png', 650, 1000],
+    ['gridly-review-detail.png', 650, 450],
+  ]) {
+    const bytes = readFileSync(join(root, 'public-site/assets', file));
+    assert.ok(bytes.readUInt32BE(16) >= width && bytes.readUInt32BE(20) >= height, file);
+  }
+});
+
 test('featured product evidence tells one coherent Dayton story', () => {
   assert.doesNotMatch(homepage, /Dallas|Nearby places around Dayton/i);
   assert.match(homepage, /Actual Gridly interface · Dayton, Texas/);
@@ -40,10 +51,10 @@ test('product details remain unretouched crops of inspected native captures', ()
   // Source coordinates and hashes are recorded in the execution artifact's imagery-provenance.json.
   // Owner-authoritative Dayton sources and rectangles: docs/launch/GRIDLY-LP24442-DAYTON-IMAGERY.md.
   const expected = {
-    'gridly-hero.png': '52e7aee1bb93fcf3925c425d5a6c9a5382d8de92dc6c3f2f6e0e567d03c1e355',
-    'gridly-local-detail.png': '801a0ea2f6035734e9f9197127cae3d01de732505aace56ad975b4fd699354f6',
-    'gridly-search-detail.png': '4890f10e48f0c0f816b0c89da63ef3ca71e24133801bc822fc9fe2563fa68fe8',
-    'gridly-review-detail.png': 'c87d5d65e89bed6aaa4f6020ad3d6f03836d67990fc527a7c1fe0ff25c4cd188',
+    'gridly-hero.png': '74fdddd19c941ad45d268c44cd3e78934763413a358f828c7e28c91ff34047ee',
+    'gridly-local-detail.png': 'cea6a8eca28795867422ac01f1bb7eccf508e2bd19ed8fb6d0f4c04fa317355a',
+    'gridly-search-detail.png': 'facff358b2d929517ca74bca72fb8a308292115490c0940f66cf4cf5273b6ff0',
+    'gridly-review-detail.png': '976ff2bbc19216ed8f022e3a48cd6a48de2671c6b52eb4d2aa712f78198ad9ae',
   };
   for (const [file, hash] of Object.entries(expected)) {
     assert.equal(createHash('sha256').update(readFileSync(join(root, 'public-site/assets', file))).digest('hex'), hash, file);
