@@ -1,0 +1,64 @@
+{
+  "phase": 23,
+  "title": "Local Auth + Invitation Integration",
+  "classification": [
+    "LOCAL",
+    "DISPOSABLE",
+    "SYNTHETIC",
+    "NON_PRODUCTION"
+  ],
+  "local_auth_method": {
+    "choice": "C",
+    "name": "faithful synthetic Auth/JWT/TOTP harness",
+    "rationale": "Supabase CLI and Docker were absent and no disposable GoTrue pattern exists in the repository.",
+    "real_totp_codes": false,
+    "jwt_signature_verification": false,
+    "trusted_claim_boundary_modeled": true
+  },
+  "versions": {
+    "postgresql": "17.10",
+    "auth_service": "modeled Supabase Auth semantics; no Auth service installed",
+    "node_test_runner": "runtime-provided"
+  },
+  "tests": {
+    "command": "& tools/responder/phase23/run-local-auth-prototype.ps1",
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "mfa_vector_count": 11,
+    "invitation_vector_count": 14,
+    "multi_org_vector_count": 4,
+    "revocation_vector_count": 11,
+    "concurrency_vector_count": 2
+  },
+  "safety": {
+    "remote_connection_count": 0,
+    "production_credential_count": 0,
+    "production_auth_user_count": 0,
+    "production_migration_count": 0,
+    "production_rls_change_count": 0,
+    "deployment_count": 0,
+    "teardown": {
+      "passed": true,
+      "evidence": "PostgreSQL reported server stopped; runner removed the validated random gridly-dispatch-phase23-* temp directory in finally."
+    }
+  },
+  "artifacts_sha256": {
+    "tools/responder/phase23/README.md": "680b4c52adcf9b457137d35089f7573a62bdf7bb57492cd81a1f6e8c88956b7a",
+    "tools/responder/phase23/auth-harness.mjs": "b99172e7315d1c1b3124107bcb54f3b9874c7d962f8ba1e58de1b03e2d52e01e",
+    "tools/responder/phase23/apply.sql": "4333e9e86417b53eb006ad0a3a24fc6253f7245beed5ad2b8cfc70d3271aba57",
+    "tools/responder/phase23/fixtures.sql": "bfff035d1d6fc41de430ceca4d38fe72571f22af901a72b834d697ff63dffb6a",
+    "tools/responder/phase23/rollback.sql": "22231afc7019a7d84ae7213a098003a52a703c0d096443d81a726b3b05d29eeb",
+    "tools/responder/phase23/run-local-auth-prototype.ps1": "a45b7492f5e11a22decea464190b416535559a131280ad8a612f735db715a8fd",
+    "tests/responder-phase23-local-auth-invitation.test.mjs": "b4efb5a3cd0f0bf20278416f3f0092fc5125b6ade2518f6bb6515c0c96ba7fcb",
+    "docs/RESPONDER/RESPONDER-PHASE23-DISPATCH-LOCAL-AUTH-INVITATION-INTEGRATION.md": "5b92b5004dee0d39f7c3b6db0c986fa334658acebfc4b04741d28c2dd170b379"
+  },
+  "mfa_freshness": {
+    "recommendation": "AAL2 sufficient for MVP with short JWT expiry and live session/factor checks",
+    "phase22_15_minute_window_frozen": false,
+    "recent_step_up_for_sensitive_commands": "OWNER_DECISION_REQUIRED"
+  },
+  "phase24_recommendation": "D - local real Supabase Auth integration"
+}
