@@ -25,8 +25,8 @@ test('Gridly and the real product dominate the hero hierarchy', () => {
 test('approved hero is an unretouched crop of the audited quiet-state native capture', () => {
   assert.ok(existsSync(productImagePath));
   const digest = createHash('sha256').update(readFileSync(productImagePath)).digest('hex');
-  assert.equal(digest, '8e2a661c5a4f18e9e9cb0a05c8efeb7cb22213d414b50197aeafcd2cdd1fcee8');
-  assert.match(homepage, /alt="Actual Gridly interface showing a quiet community, a Dallas search result, and nearby-place controls around Dayton\."/);
+  assert.equal(digest, '52e7aee1bb93fcf3925c425d5a6c9a5382d8de92dc6c3f2f6e0e567d03c1e355');
+  assert.match(homepage, /alt="Actual Gridly interface showing a quiet community, the Dayton map, and Location Context Dayton\."/);
 });
 
 test('product story is editorial rather than a generic equal-card grid', () => {

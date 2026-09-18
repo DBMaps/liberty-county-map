@@ -23,7 +23,7 @@ test('the approved real interface remains unchanged and prominently referenced',
   assert.match(homepage, /class="product-stage"[\s\S]*?src="\/assets\/gridly-hero\.png"/);
   assert.equal(
     createHash('sha256').update(productImage).digest('hex'),
-    '8e2a661c5a4f18e9e9cb0a05c8efeb7cb22213d414b50197aeafcd2cdd1fcee8',
+    '52e7aee1bb93fcf3925c425d5a6c9a5382d8de92dc6c3f2f6e0e567d03c1e355',
   );
 });
 

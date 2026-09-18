@@ -9,6 +9,20 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const homepage = readFileSync(join(root, 'public-site/index.html'), 'utf8');
 const css = readFileSync(join(root, 'public-site/assets/site.css'), 'utf8');
 
+test('featured product evidence tells one coherent Dayton story', () => {
+  assert.doesNotMatch(homepage, /Dallas|Nearby places around Dayton/i);
+  assert.match(homepage, /Actual Gridly interface · Dayton, Texas/);
+  assert.match(homepage, /Find a community\. Dayton search example\./);
+  assert.match(homepage, /Know Before You Go\. Dayton Travel Brief\./);
+  assert.match(homepage, /Dayton map and local awareness context\./);
+  for (const file of ['gridly-hero.png', 'gridly-local-detail.png', 'gridly-search-detail.png', 'gridly-review-detail.png']) {
+    const img = homepage.match(new RegExp('<img[^>]+src="/assets/' + file + '"[^>]+>'))[0];
+    assert.match(img, /alt="[^"]*Dayton/);
+    const png = readFileSync(join(root, 'public-site/assets', file));
+    assert.ok(img.includes(`width="${png.readUInt32BE(16)}" height="${png.readUInt32BE(20)}"`));
+  }
+});
+
 test('final product copy separates launch capabilities from store distribution', () => {
   assert.match(homepage, /See community-reported conditions and help keep local information current\./);
   assert.match(homepage, /For adults 18 and over\./);
@@ -24,12 +38,12 @@ test('final product copy separates launch capabilities from store distribution',
 
 test('product details remain unretouched crops of inspected native captures', () => {
   // Source coordinates and hashes are recorded in the execution artifact's imagery-provenance.json.
-  // All four crops use the genuine quiet-state native capture .artifacts/lp24424a-search.png.
+  // Owner-authoritative Dayton sources and rectangles: docs/launch/GRIDLY-LP24442-DAYTON-IMAGERY.md.
   const expected = {
-    'gridly-hero.png': '8e2a661c5a4f18e9e9cb0a05c8efeb7cb22213d414b50197aeafcd2cdd1fcee8',
-    'gridly-local-detail.png': '2b40917dd30a3e92fb9a0c195e46fb66dedba2c170e425ae1a010a4eada72c6e',
-    'gridly-search-detail.png': '6246e919be5cc80981b4aa55ac07b3a6c0f8ca95fedf8149b74adc5b4ca915d9',
-    'gridly-review-detail.png': '60068dfe0a3f2ffed8eb99a3e29c1ba23caf68debb4e2b36251d82a20a5a3502',
+    'gridly-hero.png': '52e7aee1bb93fcf3925c425d5a6c9a5382d8de92dc6c3f2f6e0e567d03c1e355',
+    'gridly-local-detail.png': '801a0ea2f6035734e9f9197127cae3d01de732505aace56ad975b4fd699354f6',
+    'gridly-search-detail.png': '4890f10e48f0c0f816b0c89da63ef3ca71e24133801bc822fc9fe2563fa68fe8',
+    'gridly-review-detail.png': 'c87d5d65e89bed6aaa4f6020ad3d6f03836d67990fc527a7c1fe0ff25c4cd188',
   };
   for (const [file, hash] of Object.entries(expected)) {
     assert.equal(createHash('sha256').update(readFileSync(join(root, 'public-site/assets', file))).digest('hex'), hash, file);
