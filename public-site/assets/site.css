@@ -2477,21 +2477,39 @@ h3 {
 }
 
 .eyebrow {
-  font-size: 0.8rem;
+  font-size: 0.83rem;
   line-height: 1.45;
 }
 
 .store-note {
-  font-size: 0.95rem;
+  color: #c9dde1;
+  font-size: 0.98rem;
+  line-height: 1.5;
 }
 
 .age-note {
-  font-size: 0.9rem;
+  color: #b7ccd1;
+  font-size: 0.93rem;
   line-height: 1.5;
 }
 
 .device-frame {
-  width: min(100%, 29.25rem);
+  width: min(100%, 30rem);
+}
+
+.hero-lead {
+  color: #e1eff1;
+  line-height: 1.68;
+}
+
+.story-primary-copy > p:last-child {
+  color: #d8eaec;
+  line-height: 1.65;
+}
+
+.signal-row div p {
+  color: #b8ced2;
+  line-height: 1.6;
 }
 
 .company-copy > p:not(.eyebrow) {
@@ -2517,7 +2535,8 @@ h3 {
 }
 
 .footer-meta {
-  font-size: 0.9rem;
+  color: #a2b8be;
+  font-size: 0.93rem;
   line-height: 1.6;
 }
 
@@ -2552,6 +2571,10 @@ h3 {
     margin-bottom: 1.6rem;
   }
 
+  .hero-lead {
+    font-size: 1.1rem;
+  }
+
   .product-stage {
     margin-top: 0.75rem;
     padding-block: 2.6rem 3.1rem;
@@ -2570,8 +2593,8 @@ h3 {
   .signal-row::after {
     right: 0.2rem;
     bottom: -0.45rem;
-    color: rgba(165, 247, 241, 0.045);
-    font-size: 3.35rem;
+    color: rgba(165, 247, 241, 0.032);
+    font-size: 3.15rem;
   }
 
   .signal-row div p {
@@ -2653,7 +2676,13 @@ h3 {
 
   .footer-links a {
     min-height: 3.5rem;
-    font-size: 0.94rem;
+    font-size: 0.96rem;
+  }
+
+  .footer-primary p,
+  .footer-primary > a:not(.footer-brand) {
+    font-size: 0.96rem;
+    line-height: 1.6;
   }
 }
 
@@ -2685,8 +2714,8 @@ h3 {
   }
 
   .signal-row::after {
-    color: rgba(165, 247, 241, 0.035);
-    font-size: 3rem;
+    color: rgba(165, 247, 241, 0.022);
+    font-size: 2.8rem;
   }
 
   .journey-step,
@@ -2714,10 +2743,10 @@ h3 {
   .footer-links a {
     min-height: 3.5rem;
     padding-right: 0.75rem;
-    font-size: 0.92rem;
+    font-size: 0.95rem;
   }
 
   .footer-meta {
-    font-size: 0.9rem;
+    font-size: 0.93rem;
   }
 }
