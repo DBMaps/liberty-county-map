@@ -1,0 +1,46 @@
+{
+  "crosby": {
+    "context": "SEARCH",
+    "place": "Crosby",
+    "visible": false,
+    "identity": "LOCATION CONTEXT • CROSBY",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0
+    },
+    "dockTop": 771.40625,
+    "viewport": 390,
+    "ownership": {
+      "visible": true,
+      "owner": "destination",
+      "hasSelectedDestination": true,
+      "pendingDestinationConfirmation": true,
+      "selectedLabel": "Crosby",
+      "routePreviewActive": false,
+      "routePreviewStatus": "idle",
+      "routeIsMonitoring": false,
+      "explicitDestinationPanelOpen": false,
+      "popupInteractionActive": false,
+      "awarenessPanelMode": false,
+      "routeOrDestinationOwnership": true,
+      "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+    },
+    "weather": {
+      "awarenessKey": "harris-tx-crosby",
+      "identityClass": "CANONICAL_PLACE",
+      "countyId": "harris-tx",
+      "stableIdentity": "4817756",
+      "lat": 29.91154,
+      "lng": -95.0632549,
+      "placeGeoid": "4817756"
+    },
+    "nearby": "Crosby",
+    "community": "Crosby",
+    "roads": "Crosby",
+    "location": "Crosby"
+  },
+  "errors": []
+}

@@ -29785,3 +29785,15 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     height: 44px !important;
   }
 }
+
+/* LP244.45A — reuse the Location Context actions for temporary awareness. */
+#gridlyTemporaryContextReturnHome[hidden] {
+  display: none !important;
+}
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-temporary-awareness-controls .mobile-destination-command-actions .compact-btn {
+    width: 96px !important;
+    min-width: 96px !important;
+    max-width: 96px !important;
+  }
+}

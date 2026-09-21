@@ -43032,14 +43032,20 @@ function getGridlyMobileCommandCardVisibilityState(summary = null) {
     && !gridlySearchUiState.routePreviewTransitionStarted
     && !routePreviewActive
   );
-  const routeOrDestinationOwnership = Boolean(hasSelectedDestination || routePreviewActive || routeIsMonitoring || explicitDestinationPanelOpen);
-  const awarenessPanelMode = Boolean(!routeOrDestinationOwnership && shouldShowGridlyMobileAwarenessPanel(summary));
+  // LP244.45A: a selected destination is not a visible route surface after
+  // Search closes. Keep the existing Location Context card as its owner.
+  const temporaryContext = typeof gridlyGetCurrentAwarenessContext === "function" ? gridlyGetCurrentAwarenessContext() : null;
+  const temporaryAwarenessMode = Boolean(temporaryContext?.type === "SEARCH"
+    && !routePreviewActive && !routeIsMonitoring && !explicitDestinationPanelOpen);
+  const routeOrDestinationOwnership = Boolean(!temporaryAwarenessMode && (hasSelectedDestination || routePreviewActive || routeIsMonitoring || explicitDestinationPanelOpen));
+  const awarenessPanelMode = Boolean(temporaryAwarenessMode || (!routeOrDestinationOwnership && shouldShowGridlyMobileAwarenessPanel(summary)));
   const routeOrDestinationVisible = Boolean(routeOrDestinationOwnership && !popupInteractionActive);
   return {
     visible: Boolean(awarenessPanelMode || routeOrDestinationVisible),
     owner: awarenessPanelMode ? "awareness" : routeIsMonitoring ? "route" : hasSelectedDestination ? "destination" : routePreviewActive ? "route-preview" : explicitDestinationPanelOpen ? "destination-panel" : "none",
     hasSelectedDestination,
-    pendingDestinationConfirmation,
+    pendingDestinationConfirmation: pendingDestinationConfirmation && !temporaryAwarenessMode,
+    temporaryAwarenessMode,
     selectedLabel,
     routePreviewActive,
     routePreviewStatus: preview?.status || null,
@@ -43268,6 +43274,7 @@ function syncMobileDestinationCommandCard(options = {}) {
   const awarenessSummary = getGridlyMobileAwarenessPanelSummary(options?.communityAwarenessSummary ? { summary: options.communityAwarenessSummary } : {});
   const visibilityState = getGridlyMobileCommandCardVisibilityState(awarenessSummary);
   const popupInteractionActive = visibilityState.popupInteractionActive;
+  const temporaryAwarenessMode = visibilityState.temporaryAwarenessMode === true;
   const awarenessPanelMode = Boolean(visibilityState.awarenessPanelMode);
   const cardVisible = Boolean(visibilityState.visible && !visibilityState.pendingDestinationConfirmation);
   const card = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
@@ -43279,6 +43286,7 @@ function syncMobileDestinationCommandCard(options = {}) {
       card.classList.remove("visible", "active", "is-awareness-panel", "awareness", "owner-awareness", "gridly-awareness-owner", "is-destination-panel");
     }
   }
+  card?.classList.toggle("has-temporary-awareness-controls", Boolean(cardVisible && temporaryAwarenessMode));
   card?.classList.toggle("is-awareness-panel", Boolean(cardVisible && awarenessPanelMode));
   card?.classList.toggle("awareness", Boolean(cardVisible && awarenessPanelMode));
   card?.classList.toggle("owner-awareness", Boolean(cardVisible && awarenessPanelMode));
@@ -43287,13 +43295,25 @@ function syncMobileDestinationCommandCard(options = {}) {
   document.body?.classList.toggle("gridly-mobile-awareness-panel-present", Boolean(cardVisible && awarenessPanelMode));
   window.__gridlyMobileCommandCardVisibilityState = { ...visibilityState, visible: cardVisible };
   window.__gridlySyncAwarenessPanelDockContract?.();
+  const returnHome = document.getElementById("gridlyTemporaryContextReturnHome");
+  if (returnHome) {
+    returnHome.hidden = !temporaryAwarenessMode || !cardVisible;
+    if (returnHome.dataset.bound !== "true") {
+      returnHome.addEventListener("click", () => {
+        clearGridlyPendingDestination({ reason: "temporary-context-return-home" });
+        syncMobileDestinationCommandCard();
+        document.getElementById("mobileDestinationCommandBtn")?.focus();
+      });
+      returnHome.dataset.bound = "true";
+    }
+  }
 
   if (!cardVisible) {
     document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", true);
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
     safeText("mobileDestinationCommandImpact", "");
   } else if (awarenessPanelMode) {
-    safeText("mobileAwarenessPanelKicker", getGridlyLocationAwarenessCardKicker(awarenessSummary.areaName || awarenessSummary.awarenessAreaName));
+    safeText("mobileAwarenessPanelKicker", getGridlyLocationAwarenessCardKicker(temporaryAwarenessMode ? gridlyGetCurrentAwarenessContext().placeName : (awarenessSummary.areaName || awarenessSummary.awarenessAreaName)));
     // The kicker owns community identity on this compact consumer surface.
     // Keep title/status values in the summary model for their legitimate
     // consumers, but do not duplicate them in the collapsed card or a11y tree.
@@ -47002,6 +47022,7 @@ function hideGridlySearchShell(options = {}) {
   shell.hidden = true;
   shell.setAttribute("hidden", "");
   shell.dataset.searchUi = "dormant";
+  if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
   if (options?.clear === true) {
     const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
     const results = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");

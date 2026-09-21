@@ -1,0 +1,262 @@
+{
+  "crosby": {
+    "context": "SEARCH",
+    "place": "Crosby",
+    "visible": true,
+    "identity": "LOCATION CONTEXT • CROSBY",
+    "rect": {
+      "x": 12,
+      "y": 657,
+      "width": 366,
+      "height": 104,
+      "bottom": 761
+    },
+    "dockTop": 771.40625,
+    "viewport": 390,
+    "ownership": {
+      "visible": true,
+      "owner": "awareness",
+      "hasSelectedDestination": true,
+      "pendingDestinationConfirmation": false,
+      "temporaryAwarenessMode": true,
+      "selectedLabel": "Crosby",
+      "routePreviewActive": false,
+      "routePreviewStatus": "idle",
+      "routeIsMonitoring": false,
+      "explicitDestinationPanelOpen": false,
+      "popupInteractionActive": false,
+      "awarenessPanelMode": true,
+      "routeOrDestinationOwnership": false,
+      "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+    },
+    "weather": {
+      "awarenessKey": "harris-tx-crosby",
+      "identityClass": "CANONICAL_PLACE",
+      "countyId": "harris-tx",
+      "stableIdentity": "4817756",
+      "lat": 29.91154,
+      "lng": -95.0632549,
+      "placeGeoid": "4817756"
+    },
+    "nearby": "Crosby",
+    "community": "Crosby",
+    "roads": "Crosby",
+    "location": "Crosby",
+    "mapCenter": {
+      "lat": 30.3414794,
+      "lng": -95.0900115
+    },
+    "kbyg": "Crosby, TX",
+    "crossingHome": false,
+    "crossingCrosby": true
+  },
+  "dayton": {
+    "context": "SEARCH",
+    "place": "Dayton",
+    "visible": true,
+    "identity": "LOCATION CONTEXT • DAYTON",
+    "rect": {
+      "x": 12,
+      "y": 657,
+      "width": 366,
+      "height": 104,
+      "bottom": 761
+    },
+    "dockTop": 771.40625,
+    "viewport": 390,
+    "ownership": {
+      "visible": true,
+      "owner": "awareness",
+      "hasSelectedDestination": true,
+      "pendingDestinationConfirmation": false,
+      "temporaryAwarenessMode": true,
+      "selectedLabel": "Dayton",
+      "routePreviewActive": false,
+      "routePreviewStatus": "idle",
+      "routeIsMonitoring": false,
+      "explicitDestinationPanelOpen": false,
+      "popupInteractionActive": false,
+      "awarenessPanelMode": true,
+      "routeOrDestinationOwnership": false,
+      "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+    },
+    "weather": {
+      "awarenessKey": "dayton",
+      "identityClass": "CANONICAL_PLACE",
+      "countyId": "liberty-tx",
+      "stableIdentity": "4819432",
+      "lat": 30.0473202,
+      "lng": -94.8873913,
+      "placeGeoid": "4819432"
+    },
+    "nearby": "Dayton",
+    "community": "Dayton",
+    "roads": "Dayton",
+    "location": "Dayton",
+    "mapCenter": {
+      "lat": 30.3414794,
+      "lng": -95.0900115
+    },
+    "kbyg": "Dayton, TX",
+    "crossingHome": false,
+    "crossingCrosby": false
+  },
+  "home": {
+    "context": "HOME",
+    "place": "Cleveland",
+    "visible": true,
+    "identity": "LOCATION CONTEXT • CLEVELAND",
+    "rect": {
+      "x": 12,
+      "y": 699,
+      "width": 366,
+      "height": 62,
+      "bottom": 761
+    },
+    "dockTop": 771.40625,
+    "viewport": 390,
+    "ownership": {
+      "visible": true,
+      "owner": "awareness",
+      "hasSelectedDestination": false,
+      "pendingDestinationConfirmation": false,
+      "temporaryAwarenessMode": false,
+      "selectedLabel": "",
+      "routePreviewActive": false,
+      "routePreviewStatus": "idle",
+      "routeIsMonitoring": false,
+      "explicitDestinationPanelOpen": false,
+      "popupInteractionActive": false,
+      "awarenessPanelMode": true,
+      "routeOrDestinationOwnership": false,
+      "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+    },
+    "weather": {
+      "awarenessKey": "cleveland",
+      "identityClass": "CANONICAL_PLACE",
+      "countyId": "liberty-tx",
+      "stableIdentity": "4815436",
+      "lat": 30.3413,
+      "lng": -95.0858,
+      "placeGeoid": "4815436"
+    },
+    "nearby": "Cleveland",
+    "community": "Cleveland",
+    "roads": "Cleveland",
+    "location": "Cleveland",
+    "mapCenter": {
+      "lat": 30.3414794,
+      "lng": -95.0900115
+    },
+    "kbyg": "Cleveland, TX",
+    "crossingHome": true,
+    "crossingCrosby": false
+  },
+  "narrow": [
+    {
+      "context": "SEARCH",
+      "place": "Crosby",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CROSBY",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 336,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 360,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": true,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "Crosby",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "harris-tx-crosby",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "harris-tx",
+        "stableIdentity": "4817756",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "placeGeoid": "4817756"
+      },
+      "nearby": "Crosby",
+      "community": "Crosby",
+      "roads": "Crosby",
+      "location": "Crosby",
+      "mapCenter": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "kbyg": "Crosby, TX",
+      "crossingHome": false,
+      "crossingCrosby": true
+    },
+    {
+      "context": "SEARCH",
+      "place": "Crosby",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CROSBY",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 296,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 320,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": true,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "Crosby",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "harris-tx-crosby",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "harris-tx",
+        "stableIdentity": "4817756",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "placeGeoid": "4817756"
+      },
+      "nearby": "Crosby",
+      "community": "Crosby",
+      "roads": "Crosby",
+      "location": "Crosby",
+      "mapCenter": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "kbyg": "Crosby, TX",
+      "crossingHome": false,
+      "crossingCrosby": true
+    }
+  ],
+  "errors": [],
+  "homeStorageUnchanged": true,
+  "productionRequests": false
+}
