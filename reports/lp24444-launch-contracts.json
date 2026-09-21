@@ -1,0 +1,567 @@
+{
+  "schemaVersion": 1,
+  "contractVersion": "LP24444.v1",
+  "baseline": "0b8a5914cf69dcbc9f658b860d8d8cd9a2f57467",
+  "status": "FROZEN_FOR_IMPLEMENTATION",
+  "runtimeImplementedByThisPhase": false,
+  "precedence": "LP24444 owner decisions supersede LP24443 proposals; this JSON owns enumerations and numeric defaults; named documents own validation, algorithms and exceptions.",
+  "product": {
+    "posture": "Know Before You Go; awareness first, route intelligence second",
+    "mandatoryAccounts": false,
+    "portraitAuthoritative": true,
+    "turnByTurn": false,
+    "automaticRerouting": false,
+    "navigationEtaClaims": false,
+    "emergencyRouting": false,
+    "liveTrainDetection": false,
+    "continuousBackgroundLocation": false,
+    "continuousPositionHistory": false,
+    "primaryNotificationTransport": "NATIVE_SERVER_PUSH"
+  },
+  "context": {
+    "types": [
+      "NONE",
+      "HOME",
+      "SEARCH",
+      "AROUND_ME",
+      "ROUTE_WATCH"
+    ],
+    "selectionRule": "Last explicit valid user transition owns visible context; active watch does not override later inspection. Bootstrap alone restores valid Home. Invalid temporary context remains explicitly unavailable, never silently Home.",
+    "homeWrites": "Explicit confirmed Home chooser only",
+    "searchPersistence": "MEMORY_ONLY_UNLESS_EXPLICIT_SAVE",
+    "aroundMePersistence": "MEMORY_ONLY",
+    "aroundMeNotifications": "FOREGROUND_IN_APP_ONLY",
+    "aroundMeMaxFixAgeSeconds": 120,
+    "numericAheadMaxFixAgeSeconds": 30,
+    "numericAheadMaxAccuracyMeters": 50,
+    "currentPlaceContainment": "Accuracy envelope must have unambiguous governed membership; otherwise coordinate area with uncertainty",
+    "requiredFields": [
+      "v",
+      "contextId",
+      "generation",
+      "contextType",
+      "identityKind",
+      "placeId",
+      "placeName",
+      "countyId",
+      "countyMemberships",
+      "qualification",
+      "lat",
+      "lng",
+      "geometryRef",
+      "geometryPrecision",
+      "source",
+      "selectedAt",
+      "expiresAt",
+      "routeWatchId",
+      "position",
+      "health"
+    ],
+    "consumers": [
+      "Location Context",
+      "Weather",
+      "NWS Alerts",
+      "DriveTexas",
+      "Community Reports",
+      "Crossings",
+      "Nearby Places",
+      "KBYG / Travel Brief",
+      "Map focus"
+    ],
+    "notificationContextRule": "Evaluate explicitly consented server subscriptions independently of visible context; no automatic subscription from Search or Around Me",
+    "identityKinds": [
+      "NONE",
+      "CANONICAL_PLACE",
+      "GOVERNED_LOCALITY",
+      "COORDINATE",
+      "ROUTE"
+    ],
+    "sources": [
+      "HOME_RESTORE",
+      "HOME_SELECTION",
+      "SEARCH_SELECTION",
+      "USER_LOCATION",
+      "ROUTE_SELECTION",
+      "NOTIFICATION_TAP",
+      "EXPLICIT_MAP_INSPECTION"
+    ],
+    "healthStates": [
+      "LOADING",
+      "FRESH",
+      "STALE",
+      "UNAVAILABLE"
+    ],
+    "maxIdCharacters": 128,
+    "maxNameCharacters": 120,
+    "maxQualificationSourceCharacters": 64,
+    "acquisitionTimeoutSeconds": 10,
+    "requestedMaximumFixAgeSeconds": 60
+  },
+  "routeWatch": {
+    "states": [
+      "INACTIVE",
+      "CONFIGURING",
+      "ACTIVE",
+      "PAUSED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXPIRED"
+    ],
+    "oneActiveOrPausedWatchPerInstallation": true,
+    "defaultWithoutDurationSeconds": 14400,
+    "minimumDurationDerivedLifetimeSeconds": 3600,
+    "maximumLifetimeSeconds": 43200,
+    "durationLifetimeFormula": "min(43200,max(3600,2*providerDurationSeconds+1800))",
+    "lifetimeExtension": "None in place; new explicit watch ID after original termination",
+    "pauseExtendsExpiry": false,
+    "arrivalCompletion": "User confirmation only; location may suggest completion but cannot complete from a single fix",
+    "backgroundRelevance": "STATIC_CORRIDOR_ONLY",
+    "progressUpload": false,
+    "restart": "Restore bounded descriptor as awaiting reconciliation; fetch server state and require fresh position for moving claims",
+    "localPersistedFields": [
+      "watchId",
+      "expiresAt",
+      "state",
+      "generation",
+      "geometryHash",
+      "pendingStopOrPause"
+    ],
+    "routing": {
+      "engine": "OSRM driving route API through Gridly routing boundary",
+      "currentEndpointEvidence": "https://router.project-osrm.org/route/v1/driving",
+      "productionEndpoint": "Deployment configuration subject to capacity/provider-policy gate",
+      "request": "origin/destination lon,lat; overview=full; geometries=geojson; alternatives=false; steps=false",
+      "straightLineFallback": false,
+      "geometryReuseMaxAgeSeconds": 900,
+      "geometryCacheScope": "Per explicit trip, never a global endpoint history",
+      "capacityApprovalRequired": true,
+      "automaticReroute": false,
+      "requestDeadlineSeconds": 10,
+      "capacityTestPeakMultiplier": 2
+    }
+  },
+  "relevance": {
+    "classes": [
+      "HIGH",
+      "MEDIUM",
+      "SUPPRESSED"
+    ],
+    "candidateDiscoveryMiles": 0.8,
+    "localPreviewCorridorFeetEvidence": 750,
+    "geometryComparisonToleranceMeters": 60,
+    "toleranceStatus": "CONFIGURABLE_STARTING_VALUE_FROM_EXISTING_SHADOW_SCORING_REQUIRES_FIXTURE_AND_DEVICE_CERTIFICATION_NOT_PROOF_BY_ITSELF",
+    "numericAheadRoundToMiles": 1,
+    "numericAheadRequires": [
+      "foreground",
+      "fix age <=30s",
+      "accuracy <=50m",
+      "two consistent samples",
+      "unique segment projection",
+      "validated connected route",
+      "uncertainty does not cross ahead/behind or rounding boundary"
+    ],
+    "staticPushNumericAhead": false,
+    "highImpactLookahead": "Remaining route for foreground; complete active static corridor for server. No new uncalibrated fixed-mile cutoff.",
+    "communityRoadMaxAgeSeconds": 10800,
+    "communityRailMaxAgeSeconds": 5400,
+    "routineCommunityMaxAgeSeconds": 4500,
+    "nwsIngestionCadenceSeconds": 120,
+    "driveTexasIngestionCadenceSeconds": 180,
+    "sourceFreshnessCadences": 3,
+    "unknownPrecisionHighPush": false,
+    "geometryRelations": [
+      "DIRECT_CORRIDOR",
+      "NEAR_CORRIDOR",
+      "REGIONAL",
+      "NONE",
+      "UNKNOWN"
+    ],
+    "progressRelations": [
+      "AHEAD",
+      "BEHIND",
+      "AT_POSITION",
+      "AMBIGUOUS"
+    ],
+    "minimumConsistentPositionSamples": 2
+  },
+  "hazards": {
+    "conditions": [
+      "UNKNOWN",
+      "FLOODING",
+      "ROAD_OBSTRUCTION",
+      "CRASH_SCENE",
+      "DEBRIS",
+      "CONSTRUCTION",
+      "DISABLED_VEHICLE",
+      "TRAFFIC_BACKUP",
+      "RAIL_CROSSING_CONDITION",
+      "ICE",
+      "WINTER_ROAD_CONDITION",
+      "WINTER_PRECIPITATION",
+      "REDUCED_VISIBILITY",
+      "OTHER_ROAD_HAZARD",
+      "WEATHER_EVENT",
+      "OFFICIAL_NOTICE"
+    ],
+    "severity": [
+      "UNKNOWN",
+      "LOW",
+      "MODERATE",
+      "HIGH",
+      "SEVERE"
+    ],
+    "advisories": [
+      "UNKNOWN",
+      "NOT_APPLICABLE",
+      "USE_CAUTION",
+      "EXPECT_DELAYS",
+      "MONITOR_CONDITIONS",
+      "AVOID_AREA",
+      "RESTRICTED_ACCESS",
+      "IMPASSABLE",
+      "ROAD_CLOSED",
+      "DETOUR_REQUIRED",
+      "TRAFFIC_CONTROL"
+    ],
+    "authorityClasses": [
+      "UNKNOWN",
+      "COMMUNITY_OBSERVATION",
+      "OFFICIAL_PUBLIC",
+      "AUTHORIZED_ORGANIZATION",
+      "SYSTEM_DERIVED"
+    ],
+    "sourceDomains": [
+      "UNKNOWN",
+      "COMMUNITY",
+      "WEATHER",
+      "ROADWAY",
+      "ORGANIZATION"
+    ],
+    "confidence": [
+      "UNKNOWN",
+      "LOW",
+      "MEDIUM",
+      "HIGH"
+    ],
+    "lifecycle": [
+      "ACTIVE",
+      "RESOLVED",
+      "EXPIRED",
+      "CANCELLED"
+    ],
+    "updatedMeaning": "Material revision/change type, not a replacement lifecycle state",
+    "geometryClasses": [
+      "UNKNOWN",
+      "POINT",
+      "LINE",
+      "POLYGON",
+      "ROAD_SEGMENT",
+      "PLACE_ONLY",
+      "COUNTY_ONLY"
+    ],
+    "unknownMeaning": "Required/applicable evidence unavailable; never positive evidence",
+    "notApplicableMeaning": "Known inapplicable dimension, supported only where explicitly specified",
+    "communityAuthorityEscalation": false,
+    "winterMinimum": [
+      {
+        "concept": "ICE / ICY ROAD",
+        "condition": "ICE",
+        "subtype": "GENERAL",
+        "label": "Ice reported"
+      },
+      {
+        "concept": "BLACK ICE SUSPECTED",
+        "condition": "ICE",
+        "subtype": "SUSPECTED_BLACK_ICE",
+        "label": "Possible black ice reported"
+      },
+      {
+        "concept": "BRIDGE / OVERPASS ICING",
+        "condition": "ICE",
+        "subtype": "BRIDGE_OVERPASS",
+        "label": "Bridge/overpass icing reported"
+      },
+      {
+        "concept": "SNOW-COVERED ROAD",
+        "condition": "WINTER_ROAD_CONDITION",
+        "subtype": "SNOW_COVER",
+        "label": "Snow-covered road reported"
+      },
+      {
+        "concept": "SLEET / FREEZING RAIN",
+        "condition": "WINTER_PRECIPITATION",
+        "subtype": "SLEET_OR_FREEZING_RAIN",
+        "label": "Sleet/freezing rain reported"
+      },
+      {
+        "concept": "REDUCED VISIBILITY",
+        "condition": "REDUCED_VISIBILITY",
+        "subtype": "WINTER",
+        "label": "Reduced visibility reported"
+      },
+      {
+        "concept": "WINTER ROAD HAZARD",
+        "condition": "WINTER_ROAD_CONDITION",
+        "subtype": "UNSPECIFIED",
+        "label": "Winter road hazard reported"
+      },
+      {
+        "concept": "ROAD IMPASSABLE DUE TO WINTER CONDITIONS",
+        "condition": "WINTER_ROAD_CONDITION",
+        "subtype": "UNSPECIFIED",
+        "observedPassability": "IMPASSABLE",
+        "label": "Road appears impassable; winter conditions reported"
+      }
+    ],
+    "observedPassability": [
+      null,
+      "BLOCKED",
+      "IMPASSABLE"
+    ],
+    "changeTypes": [
+      "CREATED",
+      "UPDATED",
+      "TERMINATED"
+    ],
+    "unknownLifecycle": null
+  },
+  "notifications": {
+    "contexts": [
+      "HOME",
+      "ROUTE_WATCH",
+      "AROUND_ME",
+      "DESTINATION"
+    ],
+    "launchServerContexts": [
+      "HOME",
+      "ROUTE_WATCH"
+    ],
+    "destinationWatchScope": "SHOULD_HAVE_SEPARATE_OPT_IN_NOT_IN_MUST_HAVE_DELIVERY_GATE",
+    "priorities": [
+      "HIGH_AWARENESS",
+      "ROUTINE"
+    ],
+    "osCriticalAlertPrivilege": false,
+    "content": [
+      "SEVERE_WEATHER",
+      "ROAD_HAZARD",
+      "ROAD_CLOSURE",
+      "WINTER_HAZARD",
+      "COMMUNITY_UPDATE",
+      "OFFICIAL_NOTICE",
+      "CONSTRUCTION"
+    ],
+    "dedupeUniqueKey": [
+      "installation_id",
+      "event_id",
+      "material_revision"
+    ],
+    "contextInDedupeKey": false,
+    "maxProviderTtlSeconds": 300,
+    "outboxMaxAttempts": 5,
+    "outboxLeaseSeconds": 30,
+    "ambiguousSendResult": "UNKNOWN; do not blindly resend same revision",
+    "deliveryGuarantee": "Best effort; provider acceptance is not displayed/read receipt; no exactly-once guarantee",
+    "defaults": {
+      "master": false,
+      "homeAfterExplicitOptIn": true,
+      "routeAfterExplicitOptIn": true,
+      "severeWeather": true,
+      "significantHazards": true,
+      "communityUpdates": false,
+      "routineUpdates": false,
+      "quietHoursEnabled": false,
+      "highAwarenessBypassAppQuietHours": false
+    },
+    "quietHours": "Launch control, local IANA timezone/DST-aware; all priorities respect it by default; no OS mute bypass",
+    "routineBatchSeconds": 900,
+    "routineMaxPerLocalDay": 3,
+    "sameEventMaterialUpdateCooldownSeconds": 900,
+    "cooldownBypass": "Verified increase to HIGH/SEVERE or newly authorized ROAD_CLOSED/IMPASSABLE/AVOID_AREA; unique revision still required",
+    "highAwarenessBurstRule": "No hard cap drops distinct HIGH events; mandatory cross-context dedupe, same-event update cooldown, burst/fatigue certification and nonidentifying rate metrics",
+    "deepLink": {
+      "version": 1,
+      "maxBytes": 1024,
+      "maxStringLength": 128,
+      "targets": [
+        "PLACE_CONTEXT",
+        "TRAVEL_BRIEF",
+        "REPORT",
+        "WEATHER_ALERT",
+        "ROAD_CONDITION",
+        "ROUTE_WATCH",
+        "AROUND_ME"
+      ],
+      "arbitraryUrls": false,
+      "publicDomainAssociationRequiredForPushTaps": false,
+      "resolveDeadlineSeconds": 10,
+      "maxCountyMemberships": 254
+    },
+    "outboxStates": [
+      "PENDING",
+      "LEASED",
+      "SUBMITTED",
+      "UNKNOWN",
+      "CANCELLED",
+      "EXPIRED",
+      "FAILED"
+    ],
+    "envelopeMaxBytes": 3072,
+    "retryBaseSeconds": 5,
+    "retryCapSeconds": 60
+  },
+  "installation": {
+    "identity": "Server-issued UUIDv4 independent of report device ID/provider installation ID",
+    "ownershipCredential": "Client-generated 256-bit random secret over TLS; server stores digest only; bearer authorization on limited Edge API",
+    "secretStorage": "Android Keystore-backed encrypted native storage; iOS Keychain ThisDeviceOnly plus reinstall container marker",
+    "idAloneAuthorizes": false,
+    "tokenBinding": "Explicit foreground registration probe, nonce received by same pending native enrollment and credential-authenticated acknowledgment before token activation",
+    "oneActiveTokenPerProviderEnvironment": true,
+    "idempotencyKey": "UUIDv4; same method/path/body required on retry",
+    "mutationRequestBodyMaxBytes": 65536,
+    "routeGeometryMaxVertices": 10000,
+    "registrationProbeLifetimeSeconds": 300,
+    "credentialRotationOverlapSeconds": 600,
+    "routineCredentialRotationDays": 30,
+    "installationIdleExpiryDays": 90,
+    "physicalSensitivePurgeMaxMinutes": 15,
+    "outboxTerminalRetentionHours": 24,
+    "deliveryIdentifyingRetentionDays": 7,
+    "dedupeTerminalRetentionDays": 7,
+    "idempotencyRetentionHours": 24,
+    "nonidentifyingTombstoneRetentionDays": 30,
+    "retentionStatus": "Engineering maximums for implementation and release review; not legal-policy approval",
+    "tokenStates": [
+      "PENDING_VERIFICATION",
+      "ACTIVE",
+      "ROTATED",
+      "INVALID",
+      "REVOKED"
+    ],
+    "unverifiedBootstrapRetentionHours": 24,
+    "tokenProbeMaxPerHour": 3,
+    "enrollmentMaxPerIpHour": 5,
+    "mutationMaxPerMinute": 60,
+    "watchCreationMaxPerHour": 6,
+    "stopDeleteReserveMaxPerMinute": 10,
+    "ipRateLimitRetentionHours": 1,
+    "eventTerminalRetentionDays": 7
+  },
+  "phases": [
+    {
+      "id": "LP244.45",
+      "name": "Unified Awareness Context Foundation",
+      "dependsOn": [
+        "LP244.44"
+      ]
+    },
+    {
+      "id": "LP244.46",
+      "name": "Hazard Advisory and Complete Winter Normalization",
+      "dependsOn": [
+        "LP244.45"
+      ]
+    },
+    {
+      "id": "LP244.47",
+      "name": "Destination Quick Check and Foreground Around Me",
+      "dependsOn": [
+        "LP244.45",
+        "LP244.46"
+      ]
+    },
+    {
+      "id": "LP244.48",
+      "name": "Private Notification Backend and Installation Security",
+      "dependsOn": [
+        "LP244.46"
+      ]
+    },
+    {
+      "id": "LP244.49",
+      "name": "Native Registration Deep Links and Required Consent",
+      "dependsOn": [
+        "LP244.47",
+        "LP244.48"
+      ]
+    },
+    {
+      "id": "LP244.50",
+      "name": "Home Severe Weather and Significant Hazard Delivery",
+      "dependsOn": [
+        "LP244.49"
+      ]
+    },
+    {
+      "id": "LP244.51",
+      "name": "Route Watch Relevance and Static Corridor Notifications",
+      "dependsOn": [
+        "LP244.47",
+        "LP244.50"
+      ]
+    },
+    {
+      "id": "LP244.52",
+      "name": "Settings Quiet Hours and Degraded Mode Integration Certification",
+      "dependsOn": [
+        "LP244.51"
+      ]
+    },
+    {
+      "id": "LP244.53",
+      "name": "Physical Android and iPhone Launch Certification",
+      "dependsOn": [
+        "LP244.52"
+      ]
+    }
+  ],
+  "launchScope": {
+    "MUST_HAVE": [
+      "Destination Quick Check",
+      "Foreground Around Me",
+      "Route Watch useful trip awareness",
+      "Native Home notifications",
+      "Severe weather notifications",
+      "Significant hazard notifications",
+      "Static corridor Route Watch notifications",
+      "Deep-link taps",
+      "All eight winter minimum concepts",
+      "No-login security and deletion",
+      "Consent and truthful delivery settings",
+      "Quiet hours when notifications enabled",
+      "Physical Android and iPhone certification"
+    ],
+    "SHOULD_HAVE": [
+      "Explicit bounded destination watch"
+    ],
+    "POST_LAUNCH_OR_OUTSIDE_PRODUCT": [
+      "Background Around Me subscriptions/geofencing",
+      "Turn-by-turn navigation",
+      "Automatic rerouting",
+      "Continuous location history",
+      "Live train detection without a new authoritative source"
+    ]
+  },
+  "validationCases": [
+    "Cleveland Home plus Crosby Search preserves Home bytes",
+    "Beaumont Around Me expires after 120s without Home fallback",
+    "Active route plus Search keeps independent route subscription",
+    "Paused or expired watch cannot enqueue",
+    "Background payload never has numeric ahead copy",
+    "County-only hazard cannot be exact-route HIGH",
+    "One flood across Home Route Destination has one event/revision delivery decision",
+    "Community closure does not become official advisory",
+    "All eight winter concepts have projection and marker plan",
+    "Unknown deep-link version never executes a URL",
+    "Installation ID alone cannot mutate",
+    "Deletion revokes before physical purge",
+    "Offline Stop exposes pending server cancellation",
+    "Reinstall does not recover orphan Keychain subscription",
+    "No runtime/native/production changes in LP24444"
+  ],
+  "certification": {
+    "controlledDeliveryRepetitionsPerAppState": 3,
+    "physicalAndroidRequired": true,
+    "physicalIphoneRequired": true
+  }
+}
