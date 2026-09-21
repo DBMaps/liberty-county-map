@@ -1,0 +1,22 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const app=fs.readFileSync('js/app.js','utf8');
+const points=JSON.parse(fs.readFileSync('data/generated/gridly-statewide-place-presentation-v1.json','utf8')).places;
+const inventory=JSON.parse(fs.readFileSync('data/generated/lp214-county-community-inventory.json','utf8')).counties;
+function extract(name){const start=app.indexOf('function '+name+'(');return app.slice(start,app.indexOf('\nfunction ',start+10));}
+function runtime(){let current=null;const calls=[],writes=[];
+ const h={map:{},gridlySemanticCameraSequence:0,gridlyPlacePresentationTargets:points,GRIDLY_TOWN_STARTUP_ZOOM:12,getGridlyHomeTownAwarenessAnchor:()=>current.area,renderGridlyAwarenessMapIdentity:()=>{},gridlyGetCurrentAwarenessContext:()=>current,gridlyResolveCanonicalPlaceGeoid:a=>a.placeGeoid,gridlySynchronizeActiveCountyForOperationalContext:()=>writes.push('Home synchronizer'),setGridlyAwarenessView:(point,zoom,options)=>{calls.push({point,zoom,options});return true;},focusGridlyDestinationOnMap:(lat,lng)=>{calls.push({point:{lat,lng},poi:true});return true;}};
+ vm.createContext(h);vm.runInContext(extract('gridlyFocusSearchAwarenessContext')+'\n'+extract('gridlyDispatchSemanticCamera')+'\n'+extract('applyGridlyHomeTownAwarenessContext'),h);
+ function select(name,focus=true){const county=inventory.find(c=>c.communities.some(p=>p.consumerLabel===name));const place=county.communities.find(p=>p.consumerLabel===name);const p=points[place.placeGeoid];const area={label:name,placeGeoid:place.placeGeoid,countyId:county.countyId,lat:p.lat,lng:p.lon};const destination={id:name,placeGeoid:place.placeGeoid,lat:p.lat,lng:p.lon};current={type:'SEARCH',area,countyId:county.countyId,destinationId:name,health:'FRESH'};if(focus)h.gridlyFocusSearchAwarenessContext(current,destination);return{context:current,destination};}
+ function home(){const item=select('Cleveland',false);current={...item.context,type:'HOME'};h.gridlyDispatchSemanticCamera(current.area,current.countyId,{source:'temporary-context-cleared'});}
+ return{h,calls,writes,select,home,get current(){return current;}};
+}
+for(const sequence of [['Crosby','HOME','Dayton'],['Crosby','Dayton'],['Dayton','Crosby'],['Crosby','Dayton','Crosby','Dayton']])test('one governed camera per transition: Cleveland → '+sequence.join(' → '),()=>{const r=runtime();r.home();r.calls.length=0;for(const name of sequence){if(name==='HOME')r.home();else r.select(name);const expected=points[r.current.area.placeGeoid],last=r.calls.at(-1);assert.equal(last.point.lat,expected.lat);assert.equal(last.point.lng,expected.lon);}assert.equal(r.calls.length,sequence.length);});
+test('late Crosby handoff and semantic dispatch are rejected after Dayton',()=>{const r=runtime(),old=r.select('Crosby');r.select('Dayton');const count=r.calls.length;assert.equal(r.h.gridlyFocusSearchAwarenessContext(old.context,old.destination),false);assert.equal(r.h.gridlyDispatchSemanticCamera(old.context.area,old.context.countyId,{temporaryContext:old.context}),false);assert.equal(r.calls.length,count);assert.equal(r.current.area.label,'Dayton');});
+test('Search camera does not call Home-persisting county synchronizer',()=>{const r=runtime();r.select('Austin');assert.equal(r.writes.length,0);r.home();assert.equal(r.writes.length,1);});
+test('POI camera preserves exact destination separately from canonical awareness',()=>{const r=runtime(),item=r.select('Crosby');const destination={id:item.destination.id,lat:item.destination.lat+0.01,lng:item.destination.lng};r.h.gridlyFocusSearchAwarenessContext(item.context,destination);assert.equal(r.calls.at(-1).point.lat,destination.lat);assert.equal(r.calls.at(-1).poi,true);});
+test('unavailable context cannot dispatch a canonical camera',()=>{const r=runtime(),item=r.select('Crosby');item.context.health='UNAVAILABLE';const count=r.calls.length;assert.equal(r.h.gridlyFocusSearchAwarenessContext(item.context,item.destination),false);assert.equal(r.calls.length,count);});
+
+test('late crossing hydration uses current Dayton and preserves its committed camera',()=>{const r=runtime();r.select('Crosby');r.select('Dayton');const count=r.calls.length;assert.equal(r.h.applyGridlyHomeTownAwarenessContext({source:'crossings_loaded',fitMap:true}),true);assert.equal(r.calls.length,count);assert.equal(r.current.area.label,'Dayton');});

@@ -46400,7 +46400,7 @@ function selectGridlySearchResult(result, options = {}) {
   const state = ensureGridlySearchState();
   state.activeResult = normalized;
   state.selectedDestination = normalized;
-  if (typeof gridlySelectSearchAwarenessContext === "function") gridlySelectSearchAwarenessContext(normalized);
+  const awarenessContext = typeof gridlySelectSearchAwarenessContext === "function" ? gridlySelectSearchAwarenessContext(normalized) : null;
   if (normalized.provider === "saved_place" || normalized.raw?.savedPlace === true) {
     activeDestinationPlace = {
       id: normalized.providerId || normalized.id,
@@ -46435,7 +46435,8 @@ function selectGridlySearchResult(result, options = {}) {
   const previewBtn = gridlySearchUiRefs.previewBtn || document.getElementById("gridlyDestinationPreviewBtn");
   if (previewBtn && typeof previewBtn.focus === "function") requestAnimationFrame(() => previewBtn.focus({ preventScroll: true }));
   syncMobileDestinationCommandCard();
-  if (marker && !isGridlyDestinationVisibilityCardPresent()) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
+  if (awarenessContext) gridlyFocusSearchAwarenessContext(awarenessContext, normalized);
+  else if (marker && !isGridlyDestinationVisibilityCardPresent()) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
   setGridlyDestinationPerformanceTiming("destinationSelectMs", getGridlyDestinationPerfNow() - destinationSelectStartedAt);
   return normalized;
 }
@@ -48730,6 +48731,19 @@ function gridlySelectSearchAwarenessContext(destination) {
   return gridlyRefreshUnifiedAwarenessContext("temporary-search-selected");
 }
 
+// LP244.45B: accepted selection owns one focus, independently of card visibility.
+function gridlyFocusSearchAwarenessContext(context, destination) {
+  if (!context || context !== gridlyGetCurrentAwarenessContext() || context.type !== "SEARCH"
+      || context.destinationId !== destination?.id || context.health !== "FRESH") return false;
+  if (destination.placeGeoid || destination.raw?.gridlyResolution?.placeGeoid) {
+    return gridlyDispatchSemanticCamera(context.area, context.countyId, {
+      source: "temporary-search-selected", temporaryContext: context, animate: false
+    });
+  }
+  // A POI keeps its precise destination focus, separate from community awareness.
+  return focusGridlyDestinationOnMap(destination.lat, destination.lng);
+}
+
 function gridlyClearTemporaryAwarenessContext(options = {}) {
   const store = gridlyGetAwarenessContextStore();
   if (!store.temporary) return null;
@@ -49559,7 +49573,12 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
   if (!area) return false;
   // Synchronization resolves the governed PLACE camera itself; it must occur
   // after semantic identity exists and before any presentation movement.
-  gridlySynchronizeActiveCountyForOperationalContext(area, countyId, options.source || "semantic-camera");
+  if (options.temporaryContext) {
+    // The unified transition already owns county hydration. Do not run the
+    // Home-persisting synchronizer, or accept a stale deferred camera request.
+    if (options.temporaryContext !== gridlyGetCurrentAwarenessContext()
+        || options.temporaryContext.type !== "SEARCH" || options.temporaryContext.area !== area) return false;
+  } else gridlySynchronizeActiveCountyForOperationalContext(area, countyId, options.source || "semantic-camera");
   if (typeof gridlyRecordCommunityTransitionStage === "function") gridlyRecordCommunityTransitionStage("presentation_dispatch", { authoritativeCounty: countyId || null, subsystem: "presentation", subsystemCounty: countyId || null, cameraTarget: { placeGeoid: gridlyResolveCanonicalPlaceGeoid(area), lat: area?.lat ?? area?.focus?.lat ?? null, lng: area?.lng ?? area?.focus?.lng ?? null }, reason: options.source || "semantic-camera" });
   if (!map) return false;
   const sequence = ++gridlySemanticCameraSequence;

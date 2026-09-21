@@ -1,0 +1,38 @@
+{
+  "phase": "LP244.45B",
+  "baseline": "a3218de7fd0b1a4de40768df7e631ead473ec60e",
+  "status": "READY FOR OWNER RETEST",
+  "focused": {
+    "tests": 9,
+    "pass": 9
+  },
+  "mainBatch": {
+    "tests": 76,
+    "pass": 76,
+    "fail": 0,
+    "artifact": "reports/lp24445b-tests.txt"
+  },
+  "additional": {
+    "tests": 43,
+    "pass": 41,
+    "fail": 2,
+    "artifact": "reports/lp24445b-camera-consumer-tests.txt"
+  },
+  "baselineAdditional": {
+    "tests": 43,
+    "pass": 41,
+    "fail": 2,
+    "artifact": "reports/lp24445b-baseline-camera-tests.txt"
+  },
+  "newRegressions": 0,
+  "browser": "reports/lp24445b-browser.json",
+  "baselineBrowser": "reports/lp24445b-baseline-browser.json",
+  "rapidBrowser": "reports/lp24445b-quick-browser.json",
+  "homePersistenceUnchanged": true,
+  "productionRequests": false,
+  "layoutFilesChanged": false,
+  "runtimeFiles": [
+    "js/app.js"
+  ],
+  "ownerAcceptance": "Physical/local owner retest pending"
+}
