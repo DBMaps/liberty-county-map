@@ -1,0 +1,2760 @@
+{
+  "phase": "LP244.47A",
+  "verdict": "READY FOR OWNER FINAL VISUAL REVIEW",
+  "finalOwnerApproval": false,
+  "startingCommit": "a3d5d1ffa077fb98aab8610e328e3e2e67c6c9e8",
+  "branch": "LP244.47-marker-system-unification",
+  "reference": {
+    "path": "C:/Users/gulfi/Downloads/ChatGPT Image Sep 21, 2026, 02_37_10 PM.png",
+    "sha256": "cb6f15f15fce39846813df2a1717c7826e80ba1c47bfa6cbb4c9c805f7da4097"
+  },
+  "inventory": {
+    "hazardConditions": 29,
+    "informationalCrossingLocation": 1,
+    "totalAssets": 30,
+    "lookupKeys": 84
+  },
+  "suites": [
+    {
+      "name": "focused",
+      "path": "reports/lp24447a-focused-tests.txt",
+      "tests": 52,
+      "passed": 52,
+      "failed": 0
+    },
+    {
+      "name": "regression",
+      "path": "reports/lp24447a-regression-tests.txt",
+      "tests": 67,
+      "passed": 67,
+      "failed": 0
+    }
+  ],
+  "totalPasses": 119,
+  "breakdown": {
+    "lp24447a": 9,
+    "lp24447": 14,
+    "lp24446b": 7,
+    "lp24446": 22,
+    "lp24445Context": 29,
+    "otherRegressions": 38
+  },
+  "browser": {
+    "phase": "LP244.47A",
+    "startingCommit": "a3d5d1ff",
+    "synthetic": true,
+    "backendWrites": false,
+    "reportingActivated": false,
+    "tileAccess": "Only GET public map tiles; all backend requests blocked/stubbed",
+    "maps": [
+      {
+        "name": "urban",
+        "center": [
+          30.0466,
+          -94.8852
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/black-ice-suspected.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 365,
+            "title": "Possible black ice reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/snow-covered-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 365,
+            "title": "Snow-covered road reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/flooding-high-water.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 365,
+            "title": "Flooding reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/crash-wreck.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 525,
+            "title": "Crash reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/disabled-vehicle.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 525,
+            "title": "Disabled Vehicle",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/road-blocked.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 525,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/road-impassable.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 685,
+            "title": "Road appears impassable",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/construction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 685,
+            "title": "Construction",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/traffic-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 685,
+            "title": "Traffic Backup / Heavy Delay",
+            "selectedWidth": 70.4000244140625
+          }
+        ],
+        "loadedTiles": 24
+      },
+      {
+        "name": "rural",
+        "center": [
+          30.115,
+          -94.894
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/black-ice-suspected.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 365,
+            "title": "Possible black ice reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/snow-covered-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 365,
+            "title": "Snow-covered road reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/flooding-high-water.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 365,
+            "title": "Flooding reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/crash-wreck.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 525,
+            "title": "Crash reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/disabled-vehicle.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 525,
+            "title": "Disabled Vehicle",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/road-blocked.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 525,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/road-impassable.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 685,
+            "title": "Road appears impassable",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/construction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 685,
+            "title": "Construction",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/traffic-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 685,
+            "title": "Traffic Backup / Heavy Delay",
+            "selectedWidth": 70.4000244140625
+          }
+        ],
+        "loadedTiles": 33
+      },
+      {
+        "name": "water",
+        "center": [
+          30.019,
+          -94.822
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/black-ice-suspected.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 365,
+            "title": "Possible black ice reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/snow-covered-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 365,
+            "title": "Snow-covered road reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/flooding-high-water.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 365,
+            "title": "Flooding reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/crash-wreck.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 525,
+            "title": "Crash reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/disabled-vehicle.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 525,
+            "title": "Disabled Vehicle",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/road-blocked.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 525,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/road-impassable.svg",
+            "width": 64,
+            "height": 64,
+            "x": 489,
+            "y": 685,
+            "title": "Road appears impassable",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/construction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 688,
+            "y": 685,
+            "title": "Construction",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/traffic-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 887,
+            "y": 685,
+            "title": "Traffic Backup / Heavy Delay",
+            "selectedWidth": 70.4000244140625
+          }
+        ],
+        "loadedTiles": 15
+      }
+    ],
+    "mobile": [
+      {
+        "width": 320,
+        "types": [
+          "ice",
+          "black_ice_suspected",
+          "bridge_overpass_icing",
+          "snow_covered_road",
+          "sleet_freezing_rain",
+          "reduced_visibility",
+          "winter_road_hazard",
+          "flooding",
+          "crash"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/icy-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 344,
+            "title": "Ice reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/black-ice-suspected.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 344,
+            "title": "Possible black ice reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/bridge-overpass-icing.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 344,
+            "title": "Bridge or overpass icing reported",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/snow-covered-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 479,
+            "title": "Snow-covered road reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/sleet-freezing-rain.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 479,
+            "title": "Sleet or freezing rain reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/reduced-visibility.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 479,
+            "title": "Reduced visibility reported",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/winter-road-hazard.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 613,
+            "title": "Winter road hazard reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/flooding-high-water.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 613,
+            "title": "Flooding reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/crash-wreck.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 613,
+            "title": "Crash reported",
+            "selectedWidth": 70.40000915527344
+          }
+        ]
+      },
+      {
+        "width": 320,
+        "types": [
+          "disabled_vehicle",
+          "debris",
+          "road_blocked",
+          "road_impassable",
+          "construction",
+          "planned_work",
+          "traffic_backup",
+          "other_hazard",
+          "road_closed"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/disabled-vehicle.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 344,
+            "title": "Disabled Vehicle",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/debris-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 344,
+            "title": "Debris in Road",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/road-blocked.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 344,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/road-impassable.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 479,
+            "title": "Road appears impassable",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/construction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 479,
+            "title": "Construction",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/traffic-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 613,
+            "title": "Traffic Backup / Heavy Delay",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/other-road-hazard.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 613,
+            "title": "Other Hazard",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/road-closed-official.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 613,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/planned-work.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 479,
+            "title": "Planned work",
+            "selectedWidth": 70.40000915527344
+          }
+        ]
+      },
+      {
+        "width": 320,
+        "types": [
+          "downed_power_line",
+          "utility_work",
+          "emergency_response_activity",
+          "livestock_on_road",
+          "traffic_signal_issue",
+          "rail_blockage_delay",
+          "rail_issue",
+          "crossing_infrastructure",
+          "txdot_damage"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/downed-power-line.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 344,
+            "title": "Downed Power Line",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/emergency-response.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 344,
+            "title": "Emergency Response Activity",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/livestock-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 479,
+            "title": "Livestock on Road",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/traffic-signal-issue.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 479,
+            "title": "Traffic Signal Issue",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/crossing-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 479,
+            "title": "Rail crossing condition reported",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/crossing-condition.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 613,
+            "title": "Rail crossing condition reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/utility-work.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/crossing-location.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 613,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/road-damage.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 613,
+            "title": "Community Report",
+            "selectedWidth": 70.40000915527344
+          }
+        ]
+      },
+      {
+        "width": 320,
+        "types": [
+          "txdot_bridge_restriction",
+          "txdot_incident",
+          "txdot_other"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/bridge-restriction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 39,
+            "y": 344,
+            "title": "Bridge Restriction",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/roadway-incident.svg",
+            "width": 64,
+            "height": 64,
+            "x": 128,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/travel-advisory.svg",
+            "width": 64,
+            "height": 64,
+            "x": 217,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.40000915527344
+          }
+        ]
+      },
+      {
+        "width": 360,
+        "types": [
+          "ice",
+          "black_ice_suspected",
+          "bridge_overpass_icing",
+          "snow_covered_road",
+          "sleet_freezing_rain",
+          "reduced_visibility",
+          "winter_road_hazard",
+          "flooding",
+          "crash"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/icy-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 344,
+            "title": "Ice reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/black-ice-suspected.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 344,
+            "title": "Possible black ice reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/bridge-overpass-icing.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 344,
+            "title": "Bridge or overpass icing reported",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/snow-covered-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 479,
+            "title": "Snow-covered road reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/sleet-freezing-rain.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 479,
+            "title": "Sleet or freezing rain reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/reduced-visibility.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 479,
+            "title": "Reduced visibility reported",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/winter-road-hazard.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 613,
+            "title": "Winter road hazard reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/flooding-high-water.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 613,
+            "title": "Flooding reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/crash-wreck.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 613,
+            "title": "Crash reported",
+            "selectedWidth": 70.40000915527344
+          }
+        ]
+      },
+      {
+        "width": 360,
+        "types": [
+          "disabled_vehicle",
+          "debris",
+          "road_blocked",
+          "road_impassable",
+          "construction",
+          "planned_work",
+          "traffic_backup",
+          "other_hazard",
+          "road_closed"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/disabled-vehicle.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 344,
+            "title": "Disabled Vehicle",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/debris-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 344,
+            "title": "Debris in Road",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/road-blocked.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 344,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/road-impassable.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 479,
+            "title": "Road appears impassable",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/construction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 479,
+            "title": "Construction",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/traffic-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 613,
+            "title": "Traffic Backup / Heavy Delay",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/other-road-hazard.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 613,
+            "title": "Other Hazard",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/road-closed-official.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 613,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/planned-work.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 479,
+            "title": "Planned work",
+            "selectedWidth": 70.40000915527344
+          }
+        ]
+      },
+      {
+        "width": 360,
+        "types": [
+          "downed_power_line",
+          "utility_work",
+          "emergency_response_activity",
+          "livestock_on_road",
+          "traffic_signal_issue",
+          "rail_blockage_delay",
+          "rail_issue",
+          "crossing_infrastructure",
+          "txdot_damage"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/downed-power-line.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 344,
+            "title": "Downed Power Line",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/emergency-response.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 344,
+            "title": "Emergency Response Activity",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/livestock-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 479,
+            "title": "Livestock on Road",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/traffic-signal-issue.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 479,
+            "title": "Traffic Signal Issue",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/crossing-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 479,
+            "title": "Rail crossing condition reported",
+            "selectedWidth": 70.40000915527344
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/crossing-condition.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 613,
+            "title": "Rail crossing condition reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/utility-work.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/crossing-location.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 613,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/road-damage.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 613,
+            "title": "Community Report",
+            "selectedWidth": 70.40000915527344
+          }
+        ]
+      },
+      {
+        "width": 360,
+        "types": [
+          "txdot_bridge_restriction",
+          "txdot_incident",
+          "txdot_other"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/bridge-restriction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 48,
+            "y": 344,
+            "title": "Bridge Restriction",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/roadway-incident.svg",
+            "width": 64,
+            "height": 64,
+            "x": 148,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/travel-advisory.svg",
+            "width": 64,
+            "height": 64,
+            "x": 248,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.40000915527344
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "types": [
+          "ice",
+          "black_ice_suspected",
+          "bridge_overpass_icing",
+          "snow_covered_road",
+          "sleet_freezing_rain",
+          "reduced_visibility",
+          "winter_road_hazard",
+          "flooding",
+          "crash"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/icy-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 344,
+            "title": "Ice reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/black-ice-suspected.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 344,
+            "title": "Possible black ice reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/bridge-overpass-icing.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 344,
+            "title": "Bridge or overpass icing reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/snow-covered-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 479,
+            "title": "Snow-covered road reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/sleet-freezing-rain.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 479,
+            "title": "Sleet or freezing rain reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/reduced-visibility.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 479,
+            "title": "Reduced visibility reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/winter-road-hazard.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 613,
+            "title": "Winter road hazard reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/flooding-high-water.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 613,
+            "title": "Flooding reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/crash-wreck.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 613,
+            "title": "Crash reported",
+            "selectedWidth": 70.4000244140625
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "types": [
+          "disabled_vehicle",
+          "debris",
+          "road_blocked",
+          "road_impassable",
+          "construction",
+          "planned_work",
+          "traffic_backup",
+          "other_hazard",
+          "road_closed"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/disabled-vehicle.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 344,
+            "title": "Disabled Vehicle",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/debris-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 344,
+            "title": "Debris in Road",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/road-blocked.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 344,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/road-impassable.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 479,
+            "title": "Road appears impassable",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/construction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 479,
+            "title": "Construction",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/traffic-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 613,
+            "title": "Traffic Backup / Heavy Delay",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/other-road-hazard.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 613,
+            "title": "Other Hazard",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/road-closed-official.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 613,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/planned-work.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 479,
+            "title": "Planned work",
+            "selectedWidth": 70.4000244140625
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "types": [
+          "downed_power_line",
+          "utility_work",
+          "emergency_response_activity",
+          "livestock_on_road",
+          "traffic_signal_issue",
+          "rail_blockage_delay",
+          "rail_issue",
+          "crossing_infrastructure",
+          "txdot_damage"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/downed-power-line.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 344,
+            "title": "Downed Power Line",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/emergency-response.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 344,
+            "title": "Emergency Response Activity",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/livestock-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 479,
+            "title": "Livestock on Road",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/traffic-signal-issue.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 479,
+            "title": "Traffic Signal Issue",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/crossing-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 479,
+            "title": "Rail crossing condition reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/crossing-condition.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 613,
+            "title": "Rail crossing condition reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/utility-work.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/crossing-location.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 613,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/road-damage.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 613,
+            "title": "Community Report",
+            "selectedWidth": 70.4000244140625
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "types": [
+          "txdot_bridge_restriction",
+          "txdot_incident",
+          "txdot_other"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/bridge-restriction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 54,
+            "y": 344,
+            "title": "Bridge Restriction",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/roadway-incident.svg",
+            "width": 64,
+            "height": 64,
+            "x": 163,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/travel-advisory.svg",
+            "width": 64,
+            "height": 64,
+            "x": 272,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.4000244140625
+          }
+        ]
+      },
+      {
+        "width": 440,
+        "types": [
+          "ice",
+          "black_ice_suspected",
+          "bridge_overpass_icing",
+          "snow_covered_road",
+          "sleet_freezing_rain",
+          "reduced_visibility",
+          "winter_road_hazard",
+          "flooding",
+          "crash"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/icy-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 344,
+            "title": "Ice reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/black-ice-suspected.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 344,
+            "title": "Possible black ice reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/bridge-overpass-icing.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 344,
+            "title": "Bridge or overpass icing reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/snow-covered-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 479,
+            "title": "Snow-covered road reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/sleet-freezing-rain.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 479,
+            "title": "Sleet or freezing rain reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/reduced-visibility.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 479,
+            "title": "Reduced visibility reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/winter-road-hazard.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 613,
+            "title": "Winter road hazard reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/flooding-high-water.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 613,
+            "title": "Flooding reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/crash-wreck.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 613,
+            "title": "Crash reported",
+            "selectedWidth": 70.4000244140625
+          }
+        ]
+      },
+      {
+        "width": 440,
+        "types": [
+          "disabled_vehicle",
+          "debris",
+          "road_blocked",
+          "road_impassable",
+          "construction",
+          "planned_work",
+          "traffic_backup",
+          "other_hazard",
+          "road_closed"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/disabled-vehicle.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 344,
+            "title": "Disabled Vehicle",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/debris-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 344,
+            "title": "Debris in Road",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/road-blocked.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 344,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/road-impassable.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 479,
+            "title": "Road appears impassable",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/construction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 479,
+            "title": "Construction",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/traffic-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 613,
+            "title": "Traffic Backup / Heavy Delay",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/other-road-hazard.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 613,
+            "title": "Other Hazard",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/road-closed-official.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 613,
+            "title": "Road appears blocked",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/planned-work.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 479,
+            "title": "Planned work",
+            "selectedWidth": 70.4000244140625
+          }
+        ]
+      },
+      {
+        "width": 440,
+        "types": [
+          "downed_power_line",
+          "utility_work",
+          "emergency_response_activity",
+          "livestock_on_road",
+          "traffic_signal_issue",
+          "rail_blockage_delay",
+          "rail_issue",
+          "crossing_infrastructure",
+          "txdot_damage"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/downed-power-line.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 344,
+            "title": "Downed Power Line",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/emergency-response.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 344,
+            "title": "Emergency Response Activity",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-3",
+            "asset": "assets/markers/unified/livestock-road.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 479,
+            "title": "Livestock on Road",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-4",
+            "asset": "assets/markers/unified/traffic-signal-issue.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 479,
+            "title": "Traffic Signal Issue",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-5",
+            "asset": "assets/markers/unified/crossing-delay.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 479,
+            "title": "Rail crossing condition reported",
+            "selectedWidth": 70.4000244140625
+          },
+          {
+            "id": "lp47-6",
+            "asset": "assets/markers/unified/crossing-condition.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 613,
+            "title": "Rail crossing condition reported",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/utility-work.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-7",
+            "asset": "assets/markers/unified/crossing-location.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 613,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-8",
+            "asset": "assets/markers/unified/road-damage.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 613,
+            "title": "Community Report",
+            "selectedWidth": 70.4000244140625
+          }
+        ]
+      },
+      {
+        "width": 440,
+        "types": [
+          "txdot_bridge_restriction",
+          "txdot_incident",
+          "txdot_other"
+        ],
+        "rendered": [
+          {
+            "id": "lp47-0",
+            "asset": "assets/markers/unified/bridge-restriction.svg",
+            "width": 64,
+            "height": 64,
+            "x": 65,
+            "y": 344,
+            "title": "Bridge Restriction",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-1",
+            "asset": "assets/markers/unified/roadway-incident.svg",
+            "width": 64,
+            "height": 64,
+            "x": 188,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.39999389648438
+          },
+          {
+            "id": "lp47-2",
+            "asset": "assets/markers/unified/travel-advisory.svg",
+            "width": 64,
+            "height": 64,
+            "x": 311,
+            "y": 344,
+            "title": "Community Report",
+            "selectedWidth": 70.4000244140625
+          }
+        ]
+      }
+    ],
+    "assets": [
+      {
+        "condition": "ice",
+        "label": "Ice / Icy Road",
+        "asset": "icy-road.svg",
+        "family": "winter",
+        "color": "#29a9ed",
+        "symbol": "crystal",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "icy",
+          "icy_road",
+          "icy_roads"
+        ]
+      },
+      {
+        "condition": "black_ice_suspected",
+        "label": "Possible Black Ice",
+        "asset": "black-ice-suspected.svg",
+        "family": "winter",
+        "color": "#29a9ed",
+        "symbol": "slick road, glint and small uncertainty cue",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "black_ice",
+          "possible_black_ice"
+        ]
+      },
+      {
+        "condition": "bridge_overpass_icing",
+        "label": "Bridge / Overpass Icing",
+        "asset": "bridge-overpass-icing.svg",
+        "family": "winter",
+        "color": "#29a9ed",
+        "symbol": "bridge and crystal",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "bridge_icing",
+          "overpass_icing"
+        ]
+      },
+      {
+        "condition": "snow_covered_road",
+        "label": "Snow-Covered Road",
+        "asset": "snow-covered-road.svg",
+        "family": "winter",
+        "color": "#29a9ed",
+        "symbol": "road with accumulated snowbanks",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "snow_on_road"
+        ]
+      },
+      {
+        "condition": "sleet_freezing_rain",
+        "label": "Sleet / Freezing Rain",
+        "asset": "sleet-freezing-rain.svg",
+        "family": "winter",
+        "color": "#29a9ed",
+        "symbol": "cloud, rain and ice pellets",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "sleet",
+          "freezing_rain"
+        ]
+      },
+      {
+        "condition": "reduced_visibility",
+        "label": "Reduced Visibility",
+        "asset": "reduced-visibility.svg",
+        "family": "winter",
+        "color": "#29a9ed",
+        "symbol": "eye and fog",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "low_visibility"
+        ]
+      },
+      {
+        "condition": "winter_road_hazard",
+        "label": "Other Winter Road Hazard",
+        "asset": "winter-road-hazard.svg",
+        "family": "winter",
+        "color": "#29a9ed",
+        "symbol": "caution triangle and crystal",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "winter_hazard"
+        ]
+      },
+      {
+        "condition": "flooding",
+        "label": "Flooding / High Water",
+        "asset": "flooding-high-water.svg",
+        "family": "water",
+        "color": "#12adae",
+        "symbol": "road entering water",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "flood",
+          "high_water",
+          "standing_water",
+          "water_over_road",
+          "txdot_flooding"
+        ]
+      },
+      {
+        "condition": "crash",
+        "label": "Crash / Wreck",
+        "asset": "crash-wreck.svg",
+        "family": "vehicle",
+        "color": "#9468bf",
+        "symbol": "two vehicles and impact burst",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "wreck",
+          "crash_scene",
+          "crash_incident"
+        ]
+      },
+      {
+        "condition": "disabled_vehicle",
+        "label": "Disabled Vehicle",
+        "asset": "disabled-vehicle.svg",
+        "family": "vehicle",
+        "color": "#9468bf",
+        "symbol": "vehicle with raised hood",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": []
+      },
+      {
+        "condition": "debris",
+        "label": "Debris in Road",
+        "asset": "debris-road.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "bold obstruction occupying travel lane",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "debris_in_road",
+          "fallen_tree"
+        ]
+      },
+      {
+        "condition": "road_blocked",
+        "label": "Road appears blocked",
+        "asset": "road-blocked.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "obstacle across road",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "blocked_road",
+          "blocked_roadway"
+        ]
+      },
+      {
+        "condition": "road_impassable",
+        "label": "Road appears impassable",
+        "asset": "road-impassable.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "broken roadway and gap",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "impassable",
+          "winter_impassable"
+        ]
+      },
+      {
+        "condition": "construction",
+        "label": "Construction",
+        "asset": "construction.svg",
+        "family": "work",
+        "color": "#ec7b27",
+        "symbol": "work cone",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "road_work",
+          "txdot_construction"
+        ]
+      },
+      {
+        "condition": "planned_work",
+        "label": "Planned Work",
+        "asset": "planned-work.svg",
+        "family": "work",
+        "color": "#ec7b27",
+        "symbol": "calendar and scheduled-work clock",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "scheduled_work"
+        ]
+      },
+      {
+        "condition": "traffic_backup",
+        "label": "Traffic Backup / Heavy Delay",
+        "asset": "traffic-delay.svg",
+        "family": "vehicle",
+        "color": "#9468bf",
+        "symbol": "queue of vehicles",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "heavy_traffic",
+          "traffic_delay"
+        ]
+      },
+      {
+        "condition": "other_hazard",
+        "label": "Other Hazard",
+        "asset": "other-road-hazard.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "general caution triangle",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "other",
+          "road_hazard",
+          "other_road_hazard",
+          "hazard_cleared",
+          "txdot_hazard"
+        ]
+      },
+      {
+        "condition": "road_closed",
+        "label": "Official Road Closed",
+        "asset": "road-closed-official.svg",
+        "family": "restriction",
+        "color": "#d64654",
+        "symbol": "no entry across road",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "txdot_closure",
+          "road_closure",
+          "closure"
+        ]
+      },
+      {
+        "condition": "downed_power_line",
+        "label": "Downed Power Line",
+        "asset": "downed-power-line.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "leaning broken pole with downed wire and electrical cue",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": []
+      },
+      {
+        "condition": "utility_work",
+        "label": "Utility Work",
+        "asset": "utility-work.svg",
+        "family": "work",
+        "color": "#ec7b27",
+        "symbol": "utility pole and wrench",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": []
+      },
+      {
+        "condition": "emergency_response_activity",
+        "label": "Emergency Response Activity",
+        "asset": "emergency-response.svg",
+        "family": "vehicle",
+        "color": "#9468bf",
+        "symbol": "response beacon",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "emergency_response_impact"
+        ]
+      },
+      {
+        "condition": "livestock_on_road",
+        "label": "Livestock on Road",
+        "asset": "livestock-road.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "livestock silhouette",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": []
+      },
+      {
+        "condition": "traffic_signal_issue",
+        "label": "Traffic Signal Issue",
+        "asset": "traffic-signal-issue.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "signal with interruption slash",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "signal_outage"
+        ]
+      },
+      {
+        "condition": "rail_blockage_delay",
+        "label": "Reported Crossing Delay",
+        "asset": "crossing-delay.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "crossbuck and delay clock",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "blocked",
+          "heavy",
+          "delayed",
+          "delay",
+          "blocked_crossing",
+          "crossing_blocked",
+          "train_blocking_crossing",
+          "rail_blockage",
+          "rail_blocked",
+          "rail_delay"
+        ]
+      },
+      {
+        "condition": "rail_issue",
+        "label": "Reported Crossing Condition",
+        "asset": "crossing-condition.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "crossbuck and caution cue",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "rail_crossing_condition"
+        ]
+      },
+      {
+        "condition": "crossing_infrastructure",
+        "label": "Crossing Location",
+        "asset": "crossing-location.svg",
+        "family": "infrastructure",
+        "color": "#98acbd",
+        "symbol": "neutral railroad track location",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": [
+          "rail",
+          "rail_crossing_infrastructure"
+        ]
+      },
+      {
+        "condition": "txdot_damage",
+        "label": "Road Damage",
+        "asset": "road-damage.svg",
+        "family": "caution",
+        "color": "#e5a92b",
+        "symbol": "road surface crack",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": []
+      },
+      {
+        "condition": "txdot_bridge_restriction",
+        "label": "Bridge Restriction",
+        "asset": "bridge-restriction.svg",
+        "family": "restriction",
+        "color": "#d64654",
+        "symbol": "bridge span with vertical clearance limit",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": []
+      },
+      {
+        "condition": "txdot_incident",
+        "label": "Roadway Incident",
+        "asset": "roadway-incident.svg",
+        "family": "vehicle",
+        "color": "#9468bf",
+        "symbol": "road with incident alert cue",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": []
+      },
+      {
+        "condition": "txdot_other",
+        "label": "Travel Advisory",
+        "asset": "travel-advisory.svg",
+        "family": "information",
+        "color": "#98acbd",
+        "symbol": "information symbol",
+        "size": 64,
+        "tipRatio": 0.953125,
+        "aliases": []
+      }
+    ],
+    "errors": [],
+    "infrastructure": [
+      {
+        "id": "lp47-0",
+        "asset": "assets/markers/unified/debris-road.svg",
+        "width": 64,
+        "height": 64,
+        "x": 489,
+        "y": 365,
+        "title": "Debris in Road",
+        "selectedWidth": 70.4000244140625
+      },
+      {
+        "id": "lp47-1",
+        "asset": "assets/markers/unified/downed-power-line.svg",
+        "width": 64,
+        "height": 64,
+        "x": 688,
+        "y": 365,
+        "title": "Downed Power Line",
+        "selectedWidth": 70.4000244140625
+      },
+      {
+        "id": "lp47-2",
+        "asset": "assets/markers/unified/utility-work.svg",
+        "width": 64,
+        "height": 64,
+        "x": 887,
+        "y": 365,
+        "title": "Community Report",
+        "selectedWidth": 70.4000244140625
+      },
+      {
+        "id": "lp47-3",
+        "asset": "assets/markers/unified/road-damage.svg",
+        "width": 64,
+        "height": 64,
+        "x": 489,
+        "y": 525,
+        "title": "Community Report",
+        "selectedWidth": 70.4000244140625
+      },
+      {
+        "id": "lp47-4",
+        "asset": "assets/markers/unified/bridge-restriction.svg",
+        "width": 64,
+        "height": 64,
+        "x": 688,
+        "y": 525,
+        "title": "Bridge Restriction",
+        "selectedWidth": 70.4000244140625
+      }
+    ],
+    "pickerSelections": {
+      "primary": 16,
+      "subtypes": 5
+    },
+    "selected": 70.39999389648438
+  },
+  "vectors": {
+    "renderer": "Edge canvas, no network",
+    "scale": 64,
+    "checks": [
+      {
+        "condition": "ice",
+        "edgeAlpha": 0,
+        "whitePixels": 331,
+        "navyPixels": 1299,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "black_ice_suspected",
+        "edgeAlpha": 0,
+        "whitePixels": 308,
+        "navyPixels": 1314,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "bridge_overpass_icing",
+        "edgeAlpha": 0,
+        "whitePixels": 301,
+        "navyPixels": 1254,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "snow_covered_road",
+        "edgeAlpha": 0,
+        "whitePixels": 500,
+        "navyPixels": 1161,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "sleet_freezing_rain",
+        "edgeAlpha": 0,
+        "whitePixels": 462,
+        "navyPixels": 1207,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "reduced_visibility",
+        "edgeAlpha": 0,
+        "whitePixels": 376,
+        "navyPixels": 1180,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "winter_road_hazard",
+        "edgeAlpha": 0,
+        "whitePixels": 311,
+        "navyPixels": 1260,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "flooding",
+        "edgeAlpha": 0,
+        "whitePixels": 324,
+        "navyPixels": 1281,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "crash",
+        "edgeAlpha": 0,
+        "whitePixels": 374,
+        "navyPixels": 1242,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "disabled_vehicle",
+        "edgeAlpha": 0,
+        "whitePixels": 327,
+        "navyPixels": 1296,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "debris",
+        "edgeAlpha": 0,
+        "whitePixels": 351,
+        "navyPixels": 1316,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "road_blocked",
+        "edgeAlpha": 0,
+        "whitePixels": 357,
+        "navyPixels": 1275,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "road_impassable",
+        "edgeAlpha": 0,
+        "whitePixels": 283,
+        "navyPixels": 1357,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "construction",
+        "edgeAlpha": 0,
+        "whitePixels": 304,
+        "navyPixels": 1381,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "planned_work",
+        "edgeAlpha": 0,
+        "whitePixels": 398,
+        "navyPixels": 1183,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "traffic_backup",
+        "edgeAlpha": 0,
+        "whitePixels": 158,
+        "navyPixels": 1404,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "other_hazard",
+        "edgeAlpha": 0,
+        "whitePixels": 308,
+        "navyPixels": 1320,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "road_closed",
+        "edgeAlpha": 0,
+        "whitePixels": 311,
+        "navyPixels": 1306,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "downed_power_line",
+        "edgeAlpha": 0,
+        "whitePixels": 287,
+        "navyPixels": 1384,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "utility_work",
+        "edgeAlpha": 0,
+        "whitePixels": 257,
+        "navyPixels": 1420,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "emergency_response_activity",
+        "edgeAlpha": 0,
+        "whitePixels": 353,
+        "navyPixels": 1257,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "livestock_on_road",
+        "edgeAlpha": 0,
+        "whitePixels": 303,
+        "navyPixels": 1342,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "traffic_signal_issue",
+        "edgeAlpha": 0,
+        "whitePixels": 338,
+        "navyPixels": 1300,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "rail_blockage_delay",
+        "edgeAlpha": 0,
+        "whitePixels": 302,
+        "navyPixels": 1327,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "rail_issue",
+        "edgeAlpha": 0,
+        "whitePixels": 298,
+        "navyPixels": 1361,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "crossing_infrastructure",
+        "edgeAlpha": 0,
+        "whitePixels": 367,
+        "navyPixels": 1260,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "txdot_damage",
+        "edgeAlpha": 0,
+        "whitePixels": 286,
+        "navyPixels": 1368,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "txdot_bridge_restriction",
+        "edgeAlpha": 0,
+        "whitePixels": 355,
+        "navyPixels": 1247,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "txdot_incident",
+        "edgeAlpha": 0,
+        "whitePixels": 321,
+        "navyPixels": 1315,
+        "naturalWidth": 256
+      },
+      {
+        "condition": "txdot_other",
+        "edgeAlpha": 0,
+        "whitePixels": 287,
+        "navyPixels": 1365,
+        "naturalWidth": 256
+      }
+    ]
+  },
+  "assets": [
+    {
+      "condition": "ice",
+      "path": "assets/markers/unified/icy-road.svg",
+      "sha256": "2cbe622107bdfebcf839b9ef4b9b20f8e9880680e39ba96d7e2d21b2b7af7508"
+    },
+    {
+      "condition": "black_ice_suspected",
+      "path": "assets/markers/unified/black-ice-suspected.svg",
+      "sha256": "25a0b5abaa0bee597aba44922f9a6ffc1c3de0b2c014699a1a65dd559e3f39ce"
+    },
+    {
+      "condition": "bridge_overpass_icing",
+      "path": "assets/markers/unified/bridge-overpass-icing.svg",
+      "sha256": "6a922f97c8fc4a2d565ce28839023eefd940a3508bcbac65c7d2c516a9b9f14a"
+    },
+    {
+      "condition": "snow_covered_road",
+      "path": "assets/markers/unified/snow-covered-road.svg",
+      "sha256": "2210dbcc66c8b4e2a65c6c76eaf592411382fb26bd3590a519610335af176a20"
+    },
+    {
+      "condition": "sleet_freezing_rain",
+      "path": "assets/markers/unified/sleet-freezing-rain.svg",
+      "sha256": "c4da7fa5c570fb5f76ef27d63eb56a050fcea6cff84bc9bf67be3a6e1ae4fdfa"
+    },
+    {
+      "condition": "reduced_visibility",
+      "path": "assets/markers/unified/reduced-visibility.svg",
+      "sha256": "149eefb842725f0edd4c4cfa3cdcda9570ed7b7fd02a500736450e38b58b6697"
+    },
+    {
+      "condition": "winter_road_hazard",
+      "path": "assets/markers/unified/winter-road-hazard.svg",
+      "sha256": "590918a007354d491ffb6436982348dc133d5c5c65995e559699dbdf39224a79"
+    },
+    {
+      "condition": "flooding",
+      "path": "assets/markers/unified/flooding-high-water.svg",
+      "sha256": "578e7b112a8ba9a0cb73a8b8a04435a9943b38f74afae4a6dabf86cd2898b255"
+    },
+    {
+      "condition": "crash",
+      "path": "assets/markers/unified/crash-wreck.svg",
+      "sha256": "f71acf28e99909fd17105bf0ef3078ea854731e75752356a21398c2a2630c986"
+    },
+    {
+      "condition": "disabled_vehicle",
+      "path": "assets/markers/unified/disabled-vehicle.svg",
+      "sha256": "d3d192f37a2b74d26061023b95c9c2335ead32917ea78253b0d8998f0ab31e99"
+    },
+    {
+      "condition": "debris",
+      "path": "assets/markers/unified/debris-road.svg",
+      "sha256": "45467b8c48cd373dfd33ccebb8c9f9ce4915c5cd3a6b262277bbc7ad483b0a2c"
+    },
+    {
+      "condition": "road_blocked",
+      "path": "assets/markers/unified/road-blocked.svg",
+      "sha256": "f55009e6fcf0652087b7856d912d9df8cdc5f7cc3b66b833549c2042dc3a11fa"
+    },
+    {
+      "condition": "road_impassable",
+      "path": "assets/markers/unified/road-impassable.svg",
+      "sha256": "f4b30c97a4d5616ff0627eb97b45623b9ab9b723f620f3fc89ea1542cc500aad"
+    },
+    {
+      "condition": "construction",
+      "path": "assets/markers/unified/construction.svg",
+      "sha256": "1beef0baffb43dbbd03a9c86db67cb60dd917538121f979d35c3a7112b61bbf2"
+    },
+    {
+      "condition": "planned_work",
+      "path": "assets/markers/unified/planned-work.svg",
+      "sha256": "8c526403d952da597e8acd8399e840c50a429bece01e89c85e746088961018b7"
+    },
+    {
+      "condition": "traffic_backup",
+      "path": "assets/markers/unified/traffic-delay.svg",
+      "sha256": "daa723b37efc439ad34cb544f516ef553f1451920927fd803980c85ec5335e73"
+    },
+    {
+      "condition": "other_hazard",
+      "path": "assets/markers/unified/other-road-hazard.svg",
+      "sha256": "0d37707f86c81ec88d6405675fe6b1bbbe2d2d40f033999b8124ce42f2e7e1fe"
+    },
+    {
+      "condition": "road_closed",
+      "path": "assets/markers/unified/road-closed-official.svg",
+      "sha256": "0d1835765bcb067f338ba6b85df720205e5cb6fdd9a98f1c72548f38d133953d"
+    },
+    {
+      "condition": "downed_power_line",
+      "path": "assets/markers/unified/downed-power-line.svg",
+      "sha256": "ba381378604548be262dcda8630a3af3d5bf4560a21edfd14866b000d5a1fd10"
+    },
+    {
+      "condition": "utility_work",
+      "path": "assets/markers/unified/utility-work.svg",
+      "sha256": "4f381902ce79fe2070c55308b99b104cc86472db28ac3f335dc6bb3e26ecacc9"
+    },
+    {
+      "condition": "emergency_response_activity",
+      "path": "assets/markers/unified/emergency-response.svg",
+      "sha256": "53506877be7f488da2a0b4e3aba4ee032a14e06d1d8ace85142ea9b85ddb5daf"
+    },
+    {
+      "condition": "livestock_on_road",
+      "path": "assets/markers/unified/livestock-road.svg",
+      "sha256": "45129fe3598c362aa592110541d8d34da1936bb9e551a1f05e8ade8c7fda0872"
+    },
+    {
+      "condition": "traffic_signal_issue",
+      "path": "assets/markers/unified/traffic-signal-issue.svg",
+      "sha256": "8f6ce8b104f29e27ef34dc2ea432fceb6fc70624a313107bbcbf0a195638cdd8"
+    },
+    {
+      "condition": "rail_blockage_delay",
+      "path": "assets/markers/unified/crossing-delay.svg",
+      "sha256": "35ec3181d02ce6f98b07375af89f47fd7306374b9ac4efcafc93fc8a64f49b0b"
+    },
+    {
+      "condition": "rail_issue",
+      "path": "assets/markers/unified/crossing-condition.svg",
+      "sha256": "1420bc97ea792ceb61eb90b0d9e14db9e2c14a2db9a46b7e84df6fbf2ecccfd3"
+    },
+    {
+      "condition": "crossing_infrastructure",
+      "path": "assets/markers/unified/crossing-location.svg",
+      "sha256": "dda0397b8b2397334f6ed490d6af59016a0b0c83b3245eca41bf657e03ba5856"
+    },
+    {
+      "condition": "txdot_damage",
+      "path": "assets/markers/unified/road-damage.svg",
+      "sha256": "ed8c71ff724c41e1f91ce041ad4916be37bffe45572da463defdef107d53c2cb"
+    },
+    {
+      "condition": "txdot_bridge_restriction",
+      "path": "assets/markers/unified/bridge-restriction.svg",
+      "sha256": "9e1fb8b3c8c8a17c02db71e71b5279c6db05e7b34f778f44c4e139557f28dcfd"
+    },
+    {
+      "condition": "txdot_incident",
+      "path": "assets/markers/unified/roadway-incident.svg",
+      "sha256": "f0b3bf87686a4fc9ff6ebe39046953bd70684cf3a257467abcb1a647043fce9b"
+    },
+    {
+      "condition": "txdot_other",
+      "path": "assets/markers/unified/travel-advisory.svg",
+      "sha256": "ece29728dc14ed7a7364c440fcc7e62ef7a3dbe700293dad797b38be0e815088"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/community-road-state-comparison-final.png",
+      "sha256": "4a7e22916443ec0e06cdc7bcf6d49dcd828a048610fdc01f038fed79cc8079ee"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/complete-marker-library-64px.png",
+      "sha256": "113a0b84a39cccfa51962450c7d942a8bd28553056a5aeb0ed2b9031576fbc0f"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/complete-marker-library-dark.png",
+      "sha256": "2a68d5e2183c1a7971b071c3253e84fb4a69ede36d12cbbaf8aa71305a09d226"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/complete-marker-library-final.png",
+      "sha256": "c3f20577d36d1a8cf0905af8c8bf069f28a0631b05bf1acb1edf40ee852bf32c"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/complete-marker-map-density-final.png",
+      "sha256": "2ac8cc30adf3ea193e758ec033df27aefb0dc5a72fac92c7ca24a5f89bb025f3"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/complete-marker-map-rural.png",
+      "sha256": "d732203c66059bbc0f261dd24790586f52704d2ff3de538b3b260c709ffd84f4"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/complete-marker-map-urban.png",
+      "sha256": "2ac8cc30adf3ea193e758ec033df27aefb0dc5a72fac92c7ca24a5f89bb025f3"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/complete-marker-map-water.png",
+      "sha256": "d051bc915ec5cbe9876b9d8dd97a465ebfa42d65876ae41896dd1f65d376a343"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/infrastructure-marker-final.png",
+      "sha256": "248f3c0ef4b51b2df3c59a1d57433d18df086cbf36999e970c13bea146cd9ea2"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-320-0.png",
+      "sha256": "daa185c027c2e9f229bd7e2ad7b6c4ae53793b5c650b0d751d60408867ab3091"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-320-18.png",
+      "sha256": "6c177adf69dd2cd38d4d2300d09382abf03aa7d1ed7643ee092b4e0c2b093a29"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-320-27.png",
+      "sha256": "e75d14f901f3cd2a9856aa1af5c010ef337e3a25c6856923298d9c32bb9fe02c"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-320-9.png",
+      "sha256": "6b28a7b4f680568df5695eaa6668d1a44ef203792feceabffc4f3e61c9cfdd90"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-360-0.png",
+      "sha256": "a8b998788005ab4b7bbef01e462cb402a70f5d35281e444a4738302e3addc791"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-360-18.png",
+      "sha256": "3b7d40f32a71b3825b7872510b9f15f232b42dec3f2b5861aa1fe95e15c44ca0"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-360-27.png",
+      "sha256": "30863b50f0ef94f30fca4b344c7fcd00b0ce01ef428d347702dc7804c9eb055b"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-360-9.png",
+      "sha256": "6c289a460c550605a85786bb2aba16554f1048c6185e8905a6dd0cbaafcee509"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-390-0.png",
+      "sha256": "143ab5e8ae4bf3764fffde6c0c560d172290cf9a2af58089ba2932604b2922e1"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-390-18.png",
+      "sha256": "54b42052b087db0cbe64ed8ef4163c6fe7541692fd9d6b6e516b2b137ce8ee2f"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-390-27.png",
+      "sha256": "8313c08e5294f599f88085704d16c25a1a1d57e8bef6b2b6cdde2a80153fbd9a"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-390-9.png",
+      "sha256": "ba7961ba5660b0a08b51202295c172efced446beeb8de13d9cac444651ff54d1"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-440-0.png",
+      "sha256": "0f5954593940ef0f9d40595ea0b6303bec64431b7409b5b285c479ee4bfc6d51"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-440-18.png",
+      "sha256": "0c84415fd1e9c4ae909b8af7bcdd1b9fa82c4959d81231b9a8d2989c7a05ef82"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-440-27.png",
+      "sha256": "d82793baabafc8469fe012d594eefe440e88c45b5ef5f20774573201d10d2faa"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/map-mobile-440-9.png",
+      "sha256": "888f982a07c372e2c49dd54b7d79db86f4d713ac80a8ff4472acaf99ae562a40"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/marker-before-after.png",
+      "sha256": "3f8a8cafad6d3c848717f95dd23222045db50403ddef2a55a9c7e5d943381831"
+    },
+    {
+      "path": ".artifacts/lp24447a-approved-marker-review/winter-marker-final.png",
+      "sha256": "4746638a3b0f4e1f6a9d8bf6850201542abab44901cfd3f04aa47dc1a92b5aa1"
+    }
+  ],
+  "historicalFailures": {
+    "count": 2,
+    "details": "LP045.1 line 8 / LP045.2 line 23 source-string assertions, reproduced and documented in LP244.47. app.js remains byte-identical in this follow-up.",
+    "baselineEvidence": "reports/lp24447-historical-baseline.txt"
+  },
+  "newRegressions": 0,
+  "protectedSourcesByteUnchanged": [
+    "js/app.js",
+    "css/styles.css",
+    "index.html",
+    "js/gridlyHazardNormalization.js",
+    "js/gridlyDriveTexasProvider.js",
+    "js/gridlyWeatherProvider.js",
+    "js/gridly-report-protocol.js",
+    "js/gridly-ugc-compliance.js"
+  ],
+  "noninterference": {
+    "productionWrites": false,
+    "reportingActivation": false,
+    "backendChanges": false,
+    "nativeChanges": false,
+    "notificationChanges": false,
+    "push": false,
+    "merge": false,
+    "deploy": false
+  },
+  "openItems": [
+    "Owner final visual review before publication",
+    "Existing synthetic grouped/raw fallback layer duplication unchanged"
+  ]
+}
