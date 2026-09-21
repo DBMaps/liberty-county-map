@@ -1,0 +1,179 @@
+{
+  "baseline": "44f2778caf9cc9e10edde4fdb629d60d4dc0fd91",
+  "existingSuites": [
+    "tests/lp2419-home-area-selection-simplification.test.mjs",
+    "tests/lp240x1-governed-home-identity-repair.test.mjs",
+    "tests/lp217-canonical-multi-county-authority.test.mjs",
+    "tests/lp2171-multi-county-result-selection-identity.test.mjs",
+    "tests/lp216-community-transition-instrumentation.test.mjs",
+    "tests/lp2444-2-native-search-geolocation-runtime.test.mjs",
+    "tests/lp2445-bare-texas-place-destination.test.mjs",
+    "tests/lp24424-explicit-destination-choice.test.mjs",
+    "tests/lp243f-search-nearby-repair.test.mjs",
+    "tests/lp2413-weather-startup-authority.test.cjs",
+    "tests/lp2401g-bounded-nws-point-weather.test.cjs",
+    "tests/lp24428-weather-kbyg-consistency.test.mjs",
+    "tests/lp2449-travel-brief-projection-consolidation.test.cjs",
+    "tests/lp243d-location-context-count-and-kbyg-labels.test.cjs",
+    "tests/lp219-governed-awareness-evidence-contract.test.cjs",
+    "tests/lp2194-governed-active-evidence-consumer-propagation.test.cjs",
+    "tests/lp2445-governed-active-condition-parity.test.mjs",
+    "tests/lp218-crossing-watched-count-contract.test.mjs",
+    "tests/lp220-statewide-crossing-viewport-eligibility.test.mjs",
+    "tests/lp24115c-runtime-v2-reconciliation.test.mjs",
+    "tests/lp2448-route-publication-ownership.test.mjs",
+    "tests/lp1782-statewide-route-intelligence-geometry-bridge.test.mjs",
+    "tests/lp1783-route-aware-incident-hydration.test.mjs",
+    "tests/lp1784-live-proximity-route-intelligence.test.mjs",
+    "tests/lp1785-live-route-progress-propagation.test.mjs",
+    "tests/lp1786-cleared-route-convergence.test.mjs",
+    "tests/lp24429a-reporting-availability.test.cjs",
+    "tests/lp2402a-official-roadways-visible-projection.test.mjs"
+  ],
+  "status": "READY_FOR_OWNER_REVIEW",
+  "branch": "LP244.45-unified-awareness-context-foundation",
+  "focused": {
+    "tests": 16,
+    "pass": 16,
+    "fail": 0,
+    "artifact": "reports/lp24445-focused-tests.txt"
+  },
+  "existingBaseline": {
+    "tests": 217,
+    "pass": 199,
+    "fail": 18,
+    "artifact": "reports/lp24445-baseline-tests.txt",
+    "environmentFailures": 12,
+    "contractFailures": 6
+  },
+  "existingFinal": {
+    "suiteFiles": 27,
+    "tests": 205,
+    "pass": 199,
+    "fail": 6,
+    "artifact": "reports/lp24445-existing-tests.txt",
+    "excluded": "tests/lp24429a-reporting-availability.test.cjs: unavailable local PostgreSQL 127.0.0.1:55441"
+  },
+  "additionalPoiProvider": {
+    "tests": 19,
+    "pass": 19,
+    "fail": 0,
+    "artifact": "reports/lp24445-poi-provider-tests.txt"
+  },
+  "knownFailures": {
+    "file": "tests/lp219-governed-awareness-evidence-contract.test.cjs",
+    "count": 6,
+    "classification": "Reproduced at starting HEAD; unchanged contract expectation failures",
+    "names": [
+      "blocked_crossing community report classification",
+      "disabled_vehicle community report classification",
+      "flooded_road community report classification",
+      "closed_road community report classification",
+      "rail_crossing_issue community report classification",
+      "map publication does not imply Alerts or KBYG eligibility"
+    ]
+  },
+  "newRegressions": 0,
+  "browser": {
+    "runner": "tools/lp24445/verify-browser.mjs",
+    "engine": "headless Microsoft Edge / Playwright",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scenarioGroups": 12,
+    "pageErrors": [],
+    "productionRequests": false,
+    "nws": "deterministic local responses",
+    "storage": "Four Home storage values compared byte-for-byte before/after temporary selections and clear",
+    "coverage": [
+      "Cleveland Home",
+      "Crosby Search across nine consumers",
+      "Dayton",
+      "Austin/Hays",
+      "Austin/Travis",
+      "Abilene/Jones",
+      "Abilene/Taylor",
+      "Dallas",
+      "POI punctuation and locality",
+      "invalid membership unavailable including KBYG",
+      "clear",
+      "restart",
+      "Search close",
+      "Home Settings label"
+    ],
+    "limits": [
+      "Seeded existing Home/Work saved destinations avoid unchanged baseline null saved-place revalidation error; this is not fresh-install certification.",
+      "Remote tiles/providers/backend are blocked; no live service or native-device certification."
+    ]
+  },
+  "performance": {
+    "scope": "Deterministic browser Home to Crosby, captured before remaining scenarios",
+    "baselineNwsRequests": [
+      "https://api.weather.gov/points/30.3413,-95.0858",
+      "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+      "https://api.weather.gov/alerts/active?point=30.3413,-95.0858"
+    ],
+    "currentNwsRequests": [
+      "https://api.weather.gov/points/30.3413,-95.0858",
+      "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+      "https://api.weather.gov/alerts/active?point=30.3413,-95.0858",
+      "https://api.weather.gov/points/29.91154,-95.0632549",
+      "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+      "https://api.weather.gov/alerts/active?point=29.91154,-95.0632549"
+    ],
+    "baselineCount": 3,
+    "currentCount": 6,
+    "interpretation": "Baseline makes one Cleveland request set and incorrectly never requests Crosby. Current makes one set each for Cleveland and Crosby (points, forecast, alerts), with no duplicated locality request set. Context refresh reuses county hydration and provider caches; no new timers or rAF loops."
+  },
+  "portrait": {
+    "layoutEqual": true,
+    "visibleBriefHeading": "TRAVEL BRIEF · Crosby",
+    "visibleSettingsHome": "Cleveland",
+    "artifacts": [
+      "reports/lp24445-portrait-baseline-brief.png",
+      "reports/lp24445-portrait-baseline-home.png",
+      "reports/lp24445-portrait-baseline-search-open.png",
+      "reports/lp24445-portrait-baseline-search.png",
+      "reports/lp24445-portrait-baseline-settings.png",
+      "reports/lp24445-portrait-brief.png",
+      "reports/lp24445-portrait-home.png",
+      "reports/lp24445-portrait-search-open.png",
+      "reports/lp24445-portrait-search.png",
+      "reports/lp24445-portrait-settings.png"
+    ],
+    "visualReview": "Home, open Search, expanded Travel Brief and expanded Settings compared with baseline. Existing hierarchy preserved; only temporary Travel Brief identity text changed. Existing light-theme low contrast remains unchanged."
+  },
+  "noninterference": {
+    "runtimeFiles": [
+      "js/app.js",
+      "js/gridlyPoiBrowserProvider.js",
+      "js/gridlyWeatherLiveConnector.js"
+    ],
+    "homeStorageMigration": false,
+    "temporaryPersistentStorage": false,
+    "reportingActivation": false,
+    "moderation": false,
+    "retention": false,
+    "privacy": false,
+    "notifications": false,
+    "taxonomy": false,
+    "androidNative": false,
+    "iosNative": false,
+    "publicSite": false,
+    "dispatch": false,
+    "production": false,
+    "push": false,
+    "merge": false,
+    "deploy": false
+  },
+  "validation": {
+    "syntaxChecks": [
+      "js/app.js",
+      "js/gridlyPoiBrowserProvider.js",
+      "js/gridlyWeatherLiveConnector.js",
+      "tools/lp24445/verify-browser.mjs"
+    ],
+    "diffCheck": "passed"
+  }
+}

@@ -1,0 +1,430 @@
+{
+  "baseline": false,
+  "home": {
+    "v": 1,
+    "type": "HOME",
+    "contextType": "HOME",
+    "generation": 0,
+    "placeId": "4815436",
+    "placeName": "Cleveland",
+    "countyId": "liberty-tx",
+    "countyName": "Liberty County",
+    "memberships": [
+      "48291",
+      "48339",
+      "48407"
+    ],
+    "lat": 30.3413,
+    "lng": -95.0858,
+    "source": "persisted-home",
+    "selectedAt": 1790005738856,
+    "expiresAt": null,
+    "health": "FRESH",
+    "routeWatchId": null,
+    "area": {
+      "key": "cleveland",
+      "label": "Cleveland",
+      "storageValue": "Cleveland",
+      "countyId": "liberty-tx",
+      "lat": 30.3413,
+      "lng": -95.0858,
+      "radiusMiles": 9,
+      "startupZoom": 13,
+      "source": "existing local app anchor"
+    },
+    "destinationId": null
+  },
+  "selection": {
+    "result": {
+      "id": "place-4817756",
+      "title": "Crosby",
+      "label": "Crosby",
+      "lat": 29.91154,
+      "lng": -95.0632549,
+      "subtitle": "Harris County",
+      "address": {
+        "city": "Crosby",
+        "county": "Harris County",
+        "state": "Texas"
+      },
+      "coordinates": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "bounds": null,
+      "provider": "gridly_canonical_place",
+      "providerId": "place-4817756",
+      "type": "city",
+      "confidence": 0,
+      "source": "gridly_canonical_place",
+      "searchIntent": "explicit_destination",
+      "searchRank": {
+        "score": 3440.25,
+        "bucket": "other_texas_results",
+        "inBounds": true,
+        "isTexas": true,
+        "isLibertyCounty": false,
+        "isLocality": true,
+        "distanceMiles": 29.724428201937698,
+        "anchorDistanceMiles": 29.724428201937698,
+        "anchor": {
+          "label": "Cleveland",
+          "source": "governed_location_context"
+        },
+        "comparatorInputs": {
+          "stableInputOrderScore": 1.25,
+          "queryMatchClass": "exact_name",
+          "businessRelevanceScore": 0,
+          "exactName": true,
+          "qualityScore": 360,
+          "sourcePriorityScore": 0,
+          "seedPriorityScore": 0,
+          "localityMode": "explicit_intent",
+          "reservation": "none"
+        },
+        "scoreBreakdown": {
+          "stableInputOrder": 1.25,
+          "exactAddress": 0,
+          "addressPrecision": 0,
+          "inexactAddress": 0,
+          "businessRelevance": 0,
+          "quality": 360,
+          "addressGeographyConflict": 0,
+          "savedPlace": 0,
+          "seedUsefulness": 0,
+          "seedContext": 0,
+          "governedDistance": 0,
+          "inBounds": 0,
+          "libertyCountyString": 0,
+          "localityString": 0,
+          "texasString": 0,
+          "extremeDistance": 0,
+          "explicitSeedLocality": 0,
+          "explicitInBounds": 25,
+          "explicitTexasString": 12,
+          "explicitLocalityString": 8,
+          "explicitDistance": 6,
+          "canonicalPlaceAuthority": 3000,
+          "titleMatch": 28,
+          "nearbyMatchAvailability": 0,
+          "explicitMatchAvailability": 0
+        },
+        "scoreBreakdownTotal": 3440.25,
+        "scoreResidual": 0,
+        "rankScope": "pre_projection_comparator",
+        "rank": 1,
+        "comparatorRank": 1,
+        "publishedRank": 1
+      },
+      "localPoiSeed": false,
+      "display_name": "Crosby, Texas",
+      "placeGeoid": "4817756",
+      "requestedOperationalCountyId": null,
+      "countyId": null,
+      "countyMemberships": [
+        "48201"
+      ],
+      "raw": {
+        "id": "place-4817756",
+        "name": "Crosby",
+        "display_name": "Crosby, Texas",
+        "subtitle": "Harris County",
+        "lat": 29.91154,
+        "lon": -95.0632549,
+        "type": "city",
+        "provider": "gridly_canonical_place",
+        "address": {
+          "city": "Crosby",
+          "county": "Harris County",
+          "state": "Texas"
+        },
+        "placeGeoid": "4817756",
+        "countyMemberships": [
+          "48201"
+        ]
+      },
+      "consumerType": "Place",
+      "precision": "place",
+      "exactAddress": false,
+      "approximate": false,
+      "houseAgreement": false,
+      "roadAgreement": false,
+      "geographyPass": false,
+      "conflictReasons": []
+    },
+    "context": {
+      "v": 1,
+      "type": "SEARCH",
+      "contextType": "SEARCH",
+      "generation": 1,
+      "placeId": "4817756",
+      "placeName": "Crosby",
+      "countyId": "harris-tx",
+      "countyName": "Harris County",
+      "memberships": [
+        "48201"
+      ],
+      "lat": 29.91154,
+      "lng": -95.0632549,
+      "source": "canonical-destination",
+      "selectedAt": 1790005739952,
+      "expiresAt": null,
+      "health": "FRESH",
+      "routeWatchId": null,
+      "area": {
+        "key": "harris-tx-crosby",
+        "label": "Crosby",
+        "storageValue": "Crosby",
+        "countyId": "harris-tx",
+        "communityId": "4817756",
+        "placeGeoid": "4817756",
+        "canonicalCommunityIdentity": "PLACE_GEOID",
+        "lat": 29.9119,
+        "lng": -95.0622,
+        "radiusMiles": 7,
+        "startupZoom": 13,
+        "source": "V904R9 Harris coverage audit addition; Harris county boundary/crossing runtime package",
+        "countyMemberships": [
+          "48201"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "destinationId": "place-4817756"
+    },
+    "point": {
+      "awarenessKey": "harris-tx-crosby",
+      "identityClass": "CANONICAL_PLACE",
+      "countyId": "harris-tx",
+      "stableIdentity": "4817756",
+      "lat": 29.91154,
+      "lng": -95.0632549,
+      "placeGeoid": "4817756"
+    },
+    "nearby": {
+      "label": "Crosby",
+      "latitude": 29.91154,
+      "longitude": -95.0632549,
+      "countyContextId": "harris-tx",
+      "originType": "CANONICAL_PLACE",
+      "communityIdentity": {
+        "stableGovernedIdentity": "place-4817756",
+        "placeGeoid": "4817756"
+      },
+      "source": "unified-awareness-context",
+      "generation": 1
+    },
+    "summary": "Crosby"
+  },
+  "outcomes": [
+    {
+      "consumerIntegration": {
+        "roads": {
+          "activeCounty": "harris-tx",
+          "activeCommunity": "Crosby",
+          "activeAwarenessMode": "area",
+          "retainedCompleteSourceRecordCount": 0,
+          "currentAwarenessAreaRecordCount": 0,
+          "retainedSourceTimestamp": null,
+          "derivedAreaViewTimestamp": "2026-09-21T15:49:14.124Z",
+          "lastSuccessfulFetchTimestamp": null,
+          "lastFetchError": "DriveTexas connector API key is not configured",
+          "lastFilterReason": "awareness-area-resolved",
+          "lastFilteredCounty": "harris-tx",
+          "lastFilteredCommunity": "Crosby",
+          "lastFilterCoordinates": {
+            "lat": 29.91154,
+            "lng": -95.0632549
+          },
+          "lastFilterRadius": 7,
+          "lastFilterCanonicalKey": "place-4817756",
+          "lastFilterFocusAuthority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+          "geographicEvaluationState": "AVAILABLE",
+          "lastAreaViewGeneration": 7,
+          "lastFetchGeneration": 0,
+          "lastInstalledFetchGeneration": 0,
+          "staleAreaViewCompletionIgnoredCount": 0,
+          "staleFetchCompletionIgnoredCount": 0,
+          "completeSourceDatasetPreservedAcrossAreaChange": true,
+          "currentAwarenessViewIdentity": "place-4817756",
+          "currentAwarenessViewCounty": "harris-tx",
+          "selectedAreaIdentity": "place-4817756",
+          "selectedAreaCounty": "harris-tx",
+          "currentAwarenessViewMatchesSelectedArea": true,
+          "selectedRecordIds": [],
+          "selectedRecordCounties": [],
+          "selectedRecordCommunities": [],
+          "selectedRecordCoordinates": [],
+          "selectedRoutes": [],
+          "selectedCategories": [],
+          "selectedRawSourceText": [],
+          "refetchRequired": false,
+          "retainedDataReused": false,
+          "sourcePresentationOwnershipSeparationActive": true
+        },
+        "location": "Crosby",
+        "nearby": {
+          "name": "Crosby",
+          "latitude": 29.91154,
+          "longitude": -95.0632549,
+          "countyContextId": "harris-tx",
+          "originType": "CANONICAL_PLACE",
+          "communityIdentity": {
+            "stableGovernedIdentity": "place-4817756",
+            "placeGeoid": "4817756"
+          },
+          "radiusMiles": 5,
+          "limit": 50
+        },
+        "communityCrosby": true,
+        "communityCleveland": false,
+        "crossingCrosby": true,
+        "crossingCleveland": false
+      },
+      "briefLocation": "Crosby, TX"
+    },
+    "Cleveland Home / Crosby Search preserves all four Home storage keys and agrees across weather, Nearby and KBYG",
+    {
+      "name": "Dayton",
+      "county": "liberty-tx",
+      "activeCounty": "liberty-tx",
+      "weather": "liberty-tx",
+      "nearby": "liberty-tx",
+      "summary": "Dayton",
+      "memberships": [
+        "48291"
+      ]
+    },
+    {
+      "name": "Austin",
+      "county": "hays-tx",
+      "activeCounty": "hays-tx",
+      "weather": "hays-tx",
+      "nearby": "hays-tx",
+      "summary": "Austin",
+      "memberships": [
+        "48021",
+        "48209",
+        "48453",
+        "48491"
+      ]
+    },
+    {
+      "name": "Austin",
+      "county": "travis-tx",
+      "activeCounty": "travis-tx",
+      "weather": "travis-tx",
+      "nearby": "travis-tx",
+      "summary": "Austin",
+      "memberships": [
+        "48021",
+        "48209",
+        "48453",
+        "48491"
+      ]
+    },
+    {
+      "name": "Abilene",
+      "county": "jones-tx",
+      "activeCounty": "jones-tx",
+      "weather": "jones-tx",
+      "nearby": "jones-tx",
+      "summary": "Abilene",
+      "memberships": [
+        "48253",
+        "48441"
+      ]
+    },
+    {
+      "name": "Abilene",
+      "county": "taylor-tx",
+      "activeCounty": "taylor-tx",
+      "weather": "taylor-tx",
+      "nearby": "taylor-tx",
+      "summary": "Abilene",
+      "memberships": [
+        "48253",
+        "48441"
+      ]
+    },
+    {
+      "name": "Dallas",
+      "county": "dallas-tx",
+      "activeCounty": "dallas-tx",
+      "weather": "dallas-tx",
+      "nearby": "dallas-tx",
+      "summary": "Dallas",
+      "memberships": [
+        "48085",
+        "48113",
+        "48121",
+        "48257",
+        "48397"
+      ]
+    },
+    "POI destination title/point retained independently of Crosby awareness",
+    "Invalid temporary membership fails unavailable without Home or stale-county substitution",
+    "Existing clear action restores Cleveland without reload",
+    "Restart rehydrates Home, never Search"
+  ],
+  "briefLocation": "Crosby, TX",
+  "visibleBriefHeading": "TRAVEL BRIEF · Crosby",
+  "settingsHome": {
+    "label": "Cleveland",
+    "meta": "Watching Cleveland, Liberty County.",
+    "storageValue": "Cleveland"
+  },
+  "visibleSettingsHome": "Cleveland",
+  "primaryWeatherRequests": [
+    "https://api.weather.gov/points/30.3413,-95.0858",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=30.3413,-95.0858",
+    "https://api.weather.gov/points/29.91154,-95.0632549",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=29.91154,-95.0632549"
+  ],
+  "layout": {
+    "map": {
+      "x": 0,
+      "y": 84,
+      "width": 390,
+      "height": 844
+    },
+    "gridlyAddressSearchInput": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    "gridlyV2TopStatusPrimary": {
+      "x": 23,
+      "y": 54,
+      "width": 344,
+      "height": 18.125
+    }
+  },
+  "errors": [],
+  "weatherRequests": [
+    "https://api.weather.gov/points/30.3413,-95.0858",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=30.3413,-95.0858",
+    "https://api.weather.gov/points/29.91154,-95.0632549",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=29.91154,-95.0632549",
+    "https://api.weather.gov/points/30.0473202,-94.8873913",
+    "https://api.weather.gov/points/30.2986219,-97.7541339",
+    "https://api.weather.gov/points/32.44645,-99.7475905",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/points/32.7933334,-96.7665128",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=30.0473202,-94.8873913",
+    "https://api.weather.gov/alerts/active?point=30.2986219,-97.7541339",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=32.44645,-99.7475905",
+    "https://api.weather.gov/alerts/active?point=32.7933334,-96.7665128",
+    "https://api.weather.gov/points/30.3413,-95.0858",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=30.3413,-95.0858"
+  ],
+  "remoteRequestsBlocked": true
+}

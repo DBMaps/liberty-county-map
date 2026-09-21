@@ -120,12 +120,13 @@
     shardPromises.set(key, pending); try { return await pending; } finally { shardPromises.delete(key); }
   }
   async function search(request) {
+    const contextGeneration = root.gridlyGetCurrentAwarenessContext?.().generation;
     if (!gateEnabled()) { rollback(); fail("POI_PROVIDER_GATE_OFF", "provider is disabled"); }
-    validateRequest(request); const value = await initialize(); const candidates = candidateShardIds(value, request); state.candidateShardIds = candidates; state.requestedRadiusMiles = request.radiusMiles; state.lastSearchOriginType = request.originType || null; state.requestCommunityIdentity = request.communityIdentity || null; state.requestCountyContextId = request.countyContextId;
+    validateRequest(request); const value = await initialize(); const candidates = candidateShardIds(value, request);
     const rows = (await Promise.all(candidates.map(loadShard))).flat(); const eligible = []; const seen = new Set();
     for (const row of rows) { if (request.category && row.gridlyCategory !== request.category) continue; if (!recordMatchesNameTokens(row, request.nameTokens)) continue; const distance = distanceMiles(request, row); if (distance <= request.radiusMiles && !seen.has(row.id)) { seen.add(row.id); eligible.push({ ...row, distanceMiles: Number(distance.toFixed(3)) }); } }
-    eligible.sort((a, b) => a.distanceMiles - b.distanceMiles || a.id.localeCompare(b.id)); const results = eligible.slice(0, 50); state.rawEligibleCount = eligible.length; state.returnedCount = results.length; state.zeroResult = results.length === 0; state.providerFailure = null;
-    const result = { status: results.length ? "RESULTS" : "ZERO_RESULT", requestedRadiusMiles: request.radiusMiles, candidateShardIds: candidates, loadedShardIds: [...candidates], rawEligibleCount: eligible.length, returnedCount: results.length, results, requestContext: { originType: request.originType || null, communityIdentity: request.communityIdentity || null, countyContextId: request.countyContextId }, attribution: { text: "POI data sources and licenses", target: "DATA_SOURCES_AND_LICENSES" } }; renderResults(result); return result;
+    eligible.sort((a, b) => a.distanceMiles - b.distanceMiles || a.id.localeCompare(b.id)); const results = eligible.slice(0, 50);
+    const result = { status: results.length ? "RESULTS" : "ZERO_RESULT", requestedRadiusMiles: request.radiusMiles, candidateShardIds: candidates, loadedShardIds: [...candidates], rawEligibleCount: eligible.length, returnedCount: results.length, results, requestContext: { originType: request.originType || null, communityIdentity: request.communityIdentity || null, countyContextId: request.countyContextId }, attribution: { text: "POI data sources and licenses", target: "DATA_SOURCES_AND_LICENSES" } }; if (contextGeneration === root.gridlyGetCurrentAwarenessContext?.().generation) { Object.assign(state, { candidateShardIds: candidates, requestedRadiusMiles: request.radiusMiles, lastSearchOriginType: request.originType || null, requestCommunityIdentity: request.communityIdentity || null, requestCountyContextId: request.countyContextId, rawEligibleCount: eligible.length, returnedCount: results.length, zeroResult: results.length === 0, providerFailure: null }); renderResults(result); } return result;
   }
   function rollback() { manifest = null; manifestPromise = null; shardCache.clear(); shardPromises.clear(); Object.assign(state, { providerInitialized: false, manifestVerified: false, candidateShardIds: [], loadedShardIds: [], cacheHitCount: 0, cacheMissCount: 0, requestedRadiusMiles: null, rawEligibleCount: 0, returnedCount: 0, zeroResult: false, lastSearchOriginType: null, requestCommunityIdentity: null, requestCountyContextId: null, attributionAvailable: false, providerFailure: null }); root.document?.getElementById("gridlyPoiNonProductionSurface")?.remove(); }
   function requestForCohort(name, radiusMiles, category) { const item = COHORTS[name]; if (!item) fail("REQUEST", "unknown acceptance location"); return { name, latitude: item[0], longitude: item[1], countyContextId: item[2], originType: item[3], communityIdentity: item[4], radiusMiles: Number(radiusMiles), category: category || undefined, limit: 50 }; }
@@ -169,6 +170,11 @@
       target.append(item);
     }
   }
+  function refreshAwarenessContext() {
+    const target = root.document?.getElementById("gridlyPoiNonProductionResults");
+    if (target) target.replaceChildren();
+    return refreshSurfaceContext();
+  }
   function refreshSurfaceContext(section = root.document?.getElementById("gridlyPoiNonProductionSurface")) { if (!section) return null; const context = root.gridlyGetCurrentGovernedLocationContext?.() || null; section.querySelector("#gridlyPoiContextLabel").textContent = context ? `Nearby places around ${context.label}` : "Choose a location first to see nearby places."; section.querySelector("#gridlyPoiSearch").disabled = !context; return context; }
   function renderSurface() {
     if (!gateEnabled() || !state.manifestVerified || !root.document || root.document.getElementById("gridlyPoiNonProductionSurface")) return;
@@ -207,10 +213,11 @@
       if (!request) { section.querySelector("#gridlyPoiNonProductionResults").textContent = ""; return; }
       section.querySelector("#gridlyPoiContextLabel").textContent = `Nearby places around ${request.name}`;
       button.disabled = true;
-      try { await search(request); } catch (error) { state.providerFailure = `${error.stage || "PROVIDER"}: ${error.message}`; section.querySelector("#gridlyPoiNonProductionResults").textContent = "Nearby places could not be loaded. Please try again."; } finally { button.disabled = false; }
+      const contextGeneration = root.gridlyGetCurrentAwarenessContext?.().generation;
+      try { await search(request); } catch (error) { if (contextGeneration !== root.gridlyGetCurrentAwarenessContext?.().generation) return; state.providerFailure = `${error.stage || "PROVIDER"}: ${error.message}`; section.querySelector("#gridlyPoiNonProductionResults").textContent = "Nearby places could not be loaded. Please try again."; } finally { refreshSurfaceContext(section); }
     });
   }
-  const api = Object.freeze({ initialize, search, rollback, requestForCohort, requestForCurrentContext, audit, EXPECTED, _test: Object.freeze({ validateManifest, validateRecord, validateRequest, assertContextRequestAgreement, candidateShardIds, distanceMiles, recordMatchesNameTokens, selectResult, runtimeUrl }) });
+  const api = Object.freeze({ initialize, search, rollback, requestForCohort, requestForCurrentContext, refreshAwarenessContext, audit, EXPECTED, _test: Object.freeze({ validateManifest, validateRecord, validateRequest, assertContextRequestAgreement, candidateShardIds, distanceMiles, recordMatchesNameTokens, selectResult, runtimeUrl }) });
   root.GridlyPoiBrowserProvider = api; root.gridlyPoiBrowserRehearsalAudit = audit;
   if (root.document) { const automaticallyInitialize = () => { if (gateEnabled()) initialize().catch(() => {}); else rollback(); }; if (root.document.readyState === "loading") root.document.addEventListener("DOMContentLoaded", automaticallyInitialize, { once: true }); else automaticallyInitialize(); root.addEventListener?.("pageshow", automaticallyInitialize); }
 })(typeof window !== "undefined" ? window : globalThis);

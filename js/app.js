@@ -4825,6 +4825,14 @@ function gridlyTravelBriefProjectionAudit() {
 }
 
 function gridlyBuildTravelBriefModel(storyInput) {
+  const temporaryArea = typeof gridlyReadTemporaryAwarenessArea === "function" ? gridlyReadTemporaryAwarenessArea() : null;
+  if (temporaryArea?.unavailable === true) return Object.freeze({
+    version: "LP061", title: "Current Conditions", driverDecisionPattern: true,
+    sections: Object.freeze([{ key: "driver-decision", title: "Before You Go", familyState: "UNAVAILABLE",
+      lines: ["Awareness unavailable for this selection", "Choose another location or clear Search to return Home."] }]),
+    unifiedEvidence: null, governedKbygEvidenceIds: Object.freeze([]),
+    kbygPresentationContext: { community: temporaryArea.label }, storyConnected: false
+  });
   const projectionContext = gridlyBuildTravelBriefProjectionContext();
   const records = projectionContext.records;
   const governedKbygEvidenceIds = projectionContext.awarenessRows.map((row) => row.evidenceId);
@@ -5557,6 +5565,13 @@ function gridlyBriefInteractionRender() {
   const travelSupport = document.querySelector("#gridlyBriefTravelSupport");
   if (greeting) greeting.textContent = model.greeting;
   if (location) location.textContent = model.location;
+  // The compact portrait layout hides the legacy location hero. Keep the
+  // existing visible heading explicit while inspecting a temporary area.
+  const briefHeading = document.querySelector("#gridlyBriefInteractionPanel .gridly-brief-section-label");
+  const temporaryArea = typeof gridlyReadTemporaryAwarenessArea === "function" ? gridlyReadTemporaryAwarenessArea() : null;
+  if (briefHeading) briefHeading.textContent = temporaryArea
+    ? "TRAVEL BRIEF · " + (temporaryArea.unavailable ? "Selected location" : temporaryArea.label)
+    : "TRAVEL BRIEF";
   if (weather) {
     weather.replaceChildren();
     if (model.weather) {
@@ -18787,7 +18802,7 @@ function getGridlyLp0517SettingsHomeDisplay() {
     };
   }
   const display = typeof getGridlySettingsAwarenessAreaDisplay === "function" ? getGridlySettingsAwarenessAreaDisplay() : { label: "Not selected", meta: "Choose the community-watch area Gridly should follow." };
-  const resolved = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const resolved = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea({ homeOnly: true }) : null;
   const county = resolved?.countyId ? (gridlyLp0516CountyName?.(resolved.countyId, null) || "Gridly coverage area") : (display.meta || "Gridly coverage area").replace(/^.*?,\s*/, "") || "Gridly coverage area";
   return { label: display.label || "Not selected", county, zip: "Not set", zipSet: false, canonical: false };
 }
@@ -41415,6 +41430,7 @@ function clearGridlyPendingDestination(options = {}) {
   clearGridlyDestinationRoutePreview({ silent: true });
   clearGridlyDestinationMarker({ silent: true });
   renderGridlyDestinationConfirmation();
+  if (typeof gridlyClearTemporaryAwarenessContext === "function") gridlyClearTemporaryAwarenessContext();
 }
 
 function changeGridlyPendingDestination() {
@@ -46364,6 +46380,7 @@ function selectGridlySearchResult(result, options = {}) {
   const state = ensureGridlySearchState();
   state.activeResult = normalized;
   state.selectedDestination = normalized;
+  if (typeof gridlySelectSearchAwarenessContext === "function") gridlySelectSearchAwarenessContext(normalized);
   if (normalized.provider === "saved_place" || normalized.raw?.savedPlace === true) {
     activeDestinationPlace = {
       id: normalized.providerId || normalized.id,
@@ -48523,6 +48540,12 @@ if (typeof window !== "undefined") { window.gridlyBeginCommunityTransitionTrace 
 
 function gridlyResolveGovernedWeatherPoint(selected = null) {
   const area = selected || getGridlySelectedAwarenessArea();
+  if (area?.unavailable === true) return null;
+  if (area?.coordinateOnly === true && typeof gridlyReadTemporaryAwarenessArea === "function" && area === gridlyReadTemporaryAwarenessArea()) {
+    if (!Number.isFinite(area.lat) || !Number.isFinite(area.lng)) return null;
+    return Object.freeze({ awarenessKey: area.key, identityClass: "DIRECT_COORDINATE", countyId: area.countyId,
+      stableIdentity: area.key, lat: area.lat, lng: area.lng, placeGeoid: null });
+  }
   if (!area || area.fallback === true || area.countyWide === true) return null;
   const registered = GRIDLY_AWARENESS_AREA_BY_KEY?.[area.key] || null;
   const canonicalPlace = gridlyResolveCanonicalPlaceGeoid(area);
@@ -48552,7 +48575,173 @@ if (typeof window !== "undefined") {
   window.setTimeout?.(() => window.gridlyWeatherConnector?.refreshAwarenessView?.("initial-governed-awareness-ready"), 0);
 }
 
-function getGridlySelectedAwarenessArea() {
+// LP244.45: runtime-only selection owner. Home storage remains owned by the
+// existing confirmed Home workflow. No coordinate history or provider timers.
+var gridlyAwarenessContextFoundation;
+function gridlyGetAwarenessContextStore() {
+  if (!gridlyAwarenessContextFoundation) gridlyAwarenessContextFoundation = {
+    types: Object.freeze({ HOME: "HOME", SEARCH: "SEARCH", AROUND_ME: "AROUND_ME", ROUTE_WATCH: "ROUTE_WATCH", NONE: "NONE" }),
+    temporary: null, generation: 0, transitions: [], refreshes: 0
+  };
+  return gridlyAwarenessContextFoundation;
+}
+
+function gridlyIsForegroundAwarenessFixFresh(position, now = Date.now()) {
+  const capturedAt = position?.timestamp;
+  return typeof capturedAt === "number" && Number.isFinite(capturedAt)
+    && now >= capturedAt && now - capturedAt <= 120000;
+}
+
+function gridlyBuildAwarenessContext(type, area, options = {}) {
+  const store = gridlyGetAwarenessContextStore();
+  if (!Object.values(store.types).includes(type)) return null;
+  const focus = area ? resolveGridlyCanonicalPlacePresentationFocus(area) : null;
+  const point = type === store.types.AROUND_ME ? area : focus || area;
+  return Object.freeze({
+    v: 1, type, contextType: type, generation: store.generation,
+    placeId: area ? gridlyResolveCanonicalPlaceGeoid(area) || area.key || null : null,
+    placeName: area?.label || "Choose a location", countyId: area?.countyId || null,
+    countyName: GRIDLY_COUNTY_REGISTRY[area?.countyId]?.name || null,
+    memberships: Object.freeze([...(area?.countyMemberships || (area ? gridlyResolveCanonicalPlaceRegistryIdentity(area)?.countyMemberships : null) || (area?.countyId ? [GRIDLY_COUNTY_REGISTRY[area.countyId]?.countyFips].filter(Boolean) : []))]),
+    lat: Number.isFinite(point?.lat) ? point.lat : null,
+    lng: Number.isFinite(point?.lng) ? point.lng : null,
+    source: options.source || "persisted-home", selectedAt: options.selectedAt || Date.now(),
+    expiresAt: options.position ? options.position.timestamp + 120000 : null,
+    health: options.health || (area ? "FRESH" : "UNAVAILABLE"),
+    routeWatchId: options.routeWatchId || null, area: area || null,
+    destinationId: options.destinationId || null
+  });
+}
+
+function gridlyGetCurrentAwarenessContext() {
+  const store = gridlyGetAwarenessContextStore();
+  if (store.temporary) return store.temporary;
+  const area = getGridlySelectedAwarenessArea();
+  const signature = [area?.key, area?.countyId, area?.lat, area?.lng].join('|');
+  if (!store.home || store.homeSignature !== signature || store.home.generation !== store.generation) {
+    if (store.home && store.homeSignature !== signature) store.generation += 1;
+    store.homeSignature = signature;
+    store.home = gridlyBuildAwarenessContext(area ? store.types.HOME : store.types.NONE, area);
+  }
+  return store.home;
+}
+
+function gridlyReadTemporaryAwarenessArea() {
+  return gridlyGetAwarenessContextStore().temporary?.area || null;
+}
+
+function gridlyBuildSearchAwarenessArea(destination) {
+  const raw = destination.raw || {};
+  const placeGeoid = destination.placeGeoid || raw.gridlyResolution?.placeGeoid || null;
+  const explicitCounty = destination.requestedOperationalCountyId || raw.requestedOperationalCountyId
+    || destination.countyId || raw.countyId || raw.countyContextId || null;
+  let area = placeGeoid ? GRIDLY_AWARENESS_AREA_BY_KEY[`place-${placeGeoid}`]
+    || GRIDLY_AWARENESS_AREA_DEFINITIONS.find((row) => gridlyResolveCanonicalPlaceGeoid(row) === placeGeoid) : null;
+  // A POI title is never a PLACE name. Only source locality metadata may
+  // resolve its surrounding community; absent evidence stays coordinate-only.
+  if (!area && !placeGeoid) {
+    const address = typeof destination.address === "object" ? destination.address : raw.address;
+    const locality = address?.city || address?.town || address?.village || raw.gridlyResolution?.community;
+    if (locality) {
+      const candidate = resolveGridlyAwarenessAreaForCounty(locality, explicitCounty || "");
+      const focus = candidate && (resolveGridlyCanonicalPlacePresentationFocus(candidate) || candidate);
+      if (focus && Number.isFinite(focus.lat) && Number.isFinite(focus.lng)
+          && getDistanceMiles(destination.lat, destination.lng, focus.lat, focus.lng) <= (candidate.radiusMiles || DEFAULT_NEARBY_RADIUS_MILES)) area = candidate;
+    }
+  }
+  if (area) {
+    const geoid = gridlyResolveCanonicalPlaceGeoid(area);
+    const memberships = destination.countyMemberships?.length ? destination.countyMemberships
+      : area.countyMemberships || gridlyResolveCanonicalPlaceRegistryIdentity(area)?.countyMemberships || [GRIDLY_COUNTY_REGISTRY[area.countyId]?.countyFips].filter(Boolean);
+    if (geoid) area = Object.freeze({ ...area, placeGeoid: geoid, countyMemberships: Object.freeze([...memberships]), canonicalMultiCountyPlace: memberships.length > 1 });
+    const countyId = gridlyResolveCanonicalCountyIdForOperationalContext(area, explicitCounty || area.countyId);
+    if (!countyId) return null; // Reject invalid explicit membership, never take the first county.
+    return gridlyProjectCanonicalPlaceOperationalCounty(area, countyId);
+  }
+  const resolvedCounty = gridlyResolveCountyIdForCoordinate(destination.lat, destination.lng)?.countyId;
+  const countyId = explicitCounty || resolvedCounty;
+  if (!countyId || !GRIDLY_COUNTY_REGISTRY[countyId]) return null;
+  return Object.freeze({ key: `selected-location:${destination.id}`, label: "Selected location", storageValue: "Selected location",
+    lat: destination.lat, lng: destination.lng, countyId, countyMemberships: Object.freeze([GRIDLY_COUNTY_REGISTRY[countyId].countyFips]),
+    radiusMiles: DEFAULT_NEARBY_RADIUS_MILES, countyWide: false, fallback: false, coordinateOnly: true });
+}
+
+function gridlyRefreshUnifiedAwarenessContext(reason, options = {}) {
+  const store = gridlyGetAwarenessContextStore();
+  invalidateGridlySelectedAwarenessAreaResolutionCache(reason);
+  const context = gridlyGetCurrentAwarenessContext();
+  const area = context.area;
+  // Existing LP216/219 county generation owns dataset hydration. A same-county
+  // selection reuses that dataset and filters it through the new context.
+  if (area?.countyId && area.countyId !== gridlyGetActiveCountyId()) {
+    gridlySetActiveCountyContext(area.countyId, { preservePersistedAwareness: true, preserveSemanticCamera: true, source: reason });
+  }
+  activeGeoFilter = area?.countyWide ? "county" : "town";
+  crossingRenderFilterVersion += 1;
+  invalidateGridlyPortraitAwarenessSnapshotsForAreaChange(area, reason);
+  window.gridlyWeatherConnector?.refreshAwarenessView?.(reason);
+  window.gridlyDriveTexasConnector?.refreshAwarenessView?.(reason);
+  window.GridlyPoiBrowserProvider?.refreshAwarenessContext?.();
+  syncGridlyAwarenessAreaSurfacesImmediately(reason, { summaryOptions: { awarenessArea: area } });
+  scheduleRenderCrossings?.(reason, { force: true });
+  updateMobileWatchHeader?.();
+  if (options.fitMap && area) gridlyDispatchSemanticCamera(area, area.countyId, { source: reason });
+  store.refreshes += 1;
+  return context;
+}
+
+function gridlySelectSearchAwarenessContext(destination) {
+  const store = gridlyGetAwarenessContextStore();
+  const area = gridlyBuildSearchAwarenessArea(destination);
+  // A valid selected point with unresolved governance remains visibly selected,
+  // unavailable to local sources. It must never publish the previous Home area.
+  const selectedArea = area || Object.freeze({ key: `unavailable-selection:${destination.id}`, label: "Selected location — awareness unavailable",
+    storageValue: "Selected location", countyId: null, lat: null, lng: null, countyMemberships: Object.freeze([]), unavailable: true });
+  const previous = store.temporary?.type || store.types.HOME;
+  store.generation += 1;
+  store.temporary = gridlyBuildAwarenessContext(store.types.SEARCH, selectedArea, {
+    source: destination.placeGeoid ? "canonical-destination" : "poi-search", destinationId: destination.id,
+    health: area ? "FRESH" : "UNAVAILABLE"
+  });
+  store.transitions.push(Object.freeze({ fromContext: previous, toContext: store.types.SEARCH, placeId: store.temporary.placeId,
+    countyId: store.temporary.countyId, generation: store.generation, reason: "search-selection", timestamp: Date.now() }));
+  store.transitions = store.transitions.slice(-20);
+  return gridlyRefreshUnifiedAwarenessContext("temporary-search-selected");
+}
+
+function gridlyClearTemporaryAwarenessContext(options = {}) {
+  const store = gridlyGetAwarenessContextStore();
+  if (!store.temporary) return null;
+  store.temporary = null;
+  store.generation += 1;
+  if (options.refresh === false) return null; // Existing explicit Home transaction owns its refresh.
+  return gridlyRefreshUnifiedAwarenessContext("temporary-context-cleared", { fitMap: options.fitMap !== false });
+}
+
+// Compatibility snapshot only: .47 owns activation/provider parity; .51 owns
+// route context activation. Neither old GPS nor an existing trip auto-selects.
+function gridlyCreateForegroundAwarenessContext(position, area = null) {
+  const store = gridlyGetAwarenessContextStore();
+  const fresh = gridlyIsForegroundAwarenessFixFresh(position);
+  const coords = position?.coords;
+  const valid = typeof coords?.latitude === "number" && typeof coords?.longitude === "number"
+    && Number.isFinite(coords.latitude) && Number.isFinite(coords.longitude)
+    && Math.abs(coords.latitude) <= 90 && Math.abs(coords.longitude) <= 180;
+  const point = fresh && valid ? { ...(area || {}), label: area?.label || "Current area", lat: coords.latitude, lng: coords.longitude } : null;
+  return gridlyBuildAwarenessContext(store.types.AROUND_ME, point, { source: "foreground-location", position: fresh ? position : null, health: fresh && valid ? "FRESH" : "STALE" });
+}
+if (typeof window !== "undefined") {
+  window.gridlyGetCurrentAwarenessContext = gridlyGetCurrentAwarenessContext;
+  window.gridlyClearTemporaryAwarenessContext = gridlyClearTemporaryAwarenessContext;
+  window.gridlyCreateForegroundAwarenessContext = gridlyCreateForegroundAwarenessContext;
+}
+// End LP244.45 context foundation.
+
+function getGridlySelectedAwarenessArea(options = {}) {
+  if (options?.homeOnly !== true && typeof gridlyReadTemporaryAwarenessArea === "function") {
+    const temporaryArea = gridlyReadTemporaryAwarenessArea();
+    if (temporaryArea) return temporaryArea;
+  }
   gridlySelectedAwarenessAreaResolutionCache.totalGetterCalls += 1;
   gridlyRecordSelectedAwarenessAreaGetterCaller(gridlySelectedAwarenessAreaResolutionCache.totalGetterCalls);
   const persistedHome = typeof gridlyReadHomePersonalizationRecord === "function" ? gridlyReadHomePersonalizationRecord() : null;
@@ -48607,6 +48796,17 @@ function getGridlySelectedAwarenessArea() {
 // deliberately derives from the selected awareness area / active presentation
 // and active county; it does not persist location state or create a new owner.
 function gridlyGetCurrentGovernedLocationContext() {
+  if (typeof gridlyReadTemporaryAwarenessArea === "function") {
+    const temporary = gridlyReadTemporaryAwarenessArea();
+    if (temporary) {
+      const point = gridlyResolveGovernedWeatherPoint(temporary);
+      if (!point || !temporary.countyId) return null;
+      return Object.freeze({ label: temporary.label, latitude: point.lat, longitude: point.lng,
+        countyContextId: temporary.countyId, originType: point.identityClass,
+        communityIdentity: point.identityClass === "DIRECT_COORDINATE" ? null : Object.freeze({ stableGovernedIdentity: point.placeGeoid ? 'place-' + point.placeGeoid : point.stableIdentity, placeGeoid: point.placeGeoid }),
+        source: "unified-awareness-context", generation: gridlyGetAwarenessContextStore().generation });
+    }
+  }
   const presentation = gridlyActiveGeographicPresentation;
   const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
   const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
@@ -48673,6 +48873,13 @@ if (typeof window !== "undefined") window.gridlyGetCurrentGovernedLocationContex
 function getGridlyCanonicalAwarenessPresentationContext(options = {}) {
   return gridlyLp016AlertsPostPaintDelayMeasure("getGridlyCanonicalAwarenessPresentationContext", "awareness", () => {
   const selectedArea = options?.awarenessArea || (typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null);
+  if (selectedArea?.unavailable === true) return Object.freeze({
+    owner: "awareness_area", source: "unified-awareness-context", selectedAwarenessArea: selectedArea,
+    key: selectedArea.key, label: selectedArea.label, storageValue: selectedArea.storageValue,
+    displayName: selectedArea.label, localityLabel: selectedArea.label, countyId: null, countyName: "",
+    lat: null, lng: null, radiusMiles: null, countyWide: false, fallback: false,
+    geographicEvaluationState: "CANONICAL_FOCUS_UNAVAILABLE", unavailable: true
+  });
   const fallbackCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : GRIDLY_DEFAULT_COUNTY_ID;
   const countyId = gridlyNormalizeCountyId(selectedArea?.countyId || fallbackCountyId || GRIDLY_DEFAULT_COUNTY_ID);
   const countyConfig = GRIDLY_COUNTY_REGISTRY[countyId] || GRIDLY_COUNTY_REGISTRY[GRIDLY_DEFAULT_COUNTY_ID] || {};
@@ -50658,6 +50865,7 @@ function saveGridlyHomeTownPreference(town, options = {}) {
   invalidateGridlySelectedAwarenessAreaResolutionCache?.("saveGridlyHomeTownPreference:start");
   const area = resolveGridlyAwarenessArea(town);
   if (!area) return "";
+  if (typeof gridlyClearTemporaryAwarenessContext === "function") gridlyClearTemporaryAwarenessContext({ refresh: false });
   // The confirmed-home record outranks Settings/profile state. Retire that
   // owner when the established Settings transaction selects a different area,
   // so readers cannot restore the previous Home Area after the save.
@@ -53158,6 +53366,7 @@ function gridlyCrossingSatisfiesConsumerVisibilityPolicy(crossing = {}) {
 }
 
 function gridlyCrossingOwnedByAwarenessArea(crossing = {}, awarenessArea = getGridlySelectedAwarenessArea()) {
+  if (awarenessArea?.unavailable === true) return false;
   if (!awarenessArea) return false;
   if (awarenessArea.countyWide || awarenessArea.fallback) {
     const activeCountyId = gridlyNormalizeCountyId(awarenessArea.countyId || gridlyGetActiveCountyId());
@@ -53318,6 +53527,7 @@ function gridlyGetGovernedAwarenessGeometry(area = {}) {
 }
 
 function isGridlyRecordInAwarenessArea(record = {}, area = getGridlySelectedAwarenessArea()) {
+  if (area?.unavailable === true) return false;
   if (!area) return false;
   if (area.countyWide || area.fallback) {
     const areaCountyId = gridlyNormalizeCountyId(area?.countyId || gridlyGetActiveCountyId());
@@ -53555,6 +53765,13 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
   const errors = [];
   const warnings = [];
   let selectedArea = options?.awarenessArea || getGridlySelectedAwarenessArea();
+  if (selectedArea?.unavailable === true) return {
+    selectedAwarenessArea: selectedArea, awarenessAreaName: selectedArea.label,
+    crossingsInArea: [], activeHazardsInArea: [], activeReportsInArea: [],
+    activityLevel: "Unknown", awarenessStatus: "Awareness unavailable for this selection",
+    awarenessStatusReason: "Location qualification unavailable", lastUpdated: new Date().toISOString(),
+    sourceBreakdown: {}, warnings: ["Temporary selection could not be qualified; Home data is not substituted."], errors: []
+  };
   if (!selectedArea) {
     selectedArea = GRIDLY_AWARENESS_AREA_BY_KEY["liberty-county"] || null;
     warnings.push("No selected awareness area resolved; using Liberty County fallback for read-only awareness intelligence.");
@@ -95416,6 +95633,8 @@ function normalizeGridlySearchResult(result) {
     localPoiSeed: Boolean(result.localPoiSeed || rawPayload?.localSeed),
     display_name: displayName || "",
     placeGeoid: result.placeGeoid || rawPayload?.placeGeoid || null,
+    requestedOperationalCountyId: result.requestedOperationalCountyId || rawPayload?.requestedOperationalCountyId || null,
+    countyId: result.countyId || rawPayload?.countyId || rawPayload?.countyContextId || null,
     countyMemberships: Array.isArray(result.countyMemberships)
       ? [...result.countyMemberships]
       : (Array.isArray(rawPayload?.countyMemberships) ? [...rawPayload.countyMemberships] : []),
@@ -101896,7 +102115,7 @@ function describeGridlySettingsPlace(place, fallbackLabel) {
 }
 
 function getGridlySettingsAwarenessAreaDisplay() {
-  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea({ homeOnly: true }) : null;
   if (!area) {
     return {
       label: "Not selected",
@@ -102430,6 +102649,7 @@ function gridlySaveCanonicalMultiCountyPlaceHome(result = {}, source = "canonica
   const record = { zip: "", countyId: requestedCountyId, countyName: requestedCounty.name, countyMemberships: [...(result.countyMemberships || [])], communityKey: result.placeGeoid, communityLabel: result.community, awarenessAreaKey: `place-${result.placeGeoid}`, consumerLabel: result.community, identityType: "PLACE_GEOID", canonicalRegionId: null, resolutionStatus: "manual_confirmed", resolutionMethod: source, sourceVersion: "LP217", confirmedAt: new Date().toISOString(), schemaVersion: GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION };
   const validation = gridlyLp0517ValidateHomeRecord(record);
   if (!validation.valid) return false;
+  if (typeof gridlyClearTemporaryAwarenessContext === "function") gridlyClearTemporaryAwarenessContext({ refresh: false });
   try {
     localStorage.setItem(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY, JSON.stringify(record));
     gridlySafeLocalStorageSet("gridlyHomeTown", result.community);

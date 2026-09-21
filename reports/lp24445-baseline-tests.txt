@@ -1,0 +1,679 @@
+✔ ready statewide destination geometry is the monitored Route Intelligence path without coordinate changes (38.6475ms)
+✔ community and official fixtures share governed route relevance while off-route records remain excluded (21.4679ms)
+✔ local 80-mile route policy and Awareness filtering are not bypassed (23.263ms)
+✔ governed monitored geometry is sufficient when no legacy map layer exists (25.2656ms)
+✔ Dayton local collections remain county-filtered while route source remains available (7.3425ms)
+✔ route-near community and truthful official fixtures share the unchanged 0.8-mile policy (35.5622ms)
+✔ cleared route records cannot re-enter active route intelligence (30.4485ms)
+✔ local route policy and official provider ingestion remain unchanged (34.0691ms)
+✔ far, approaching, near, off-route, cleared, and stopped states use governed proximity (27.5629ms)
+✔ runtime propagation updates consumer, audit, freshness, and confidence from one source set (16.3283ms)
+✔ destination source bridge preserves local Awareness and official compatibility (20.1237ms)
+✔ current route origin remains separate from live position (14.807ms)
+✔ Route Watch geolocation advances independently without rebuilding the route (21.7184ms)
+✔ Route Watch owns and stops its single geolocation subscription (15.558ms)
+✔ consumer and audits share live proximity while local Awareness and official inputs remain isolated (46.0293ms)
+✔ cleared, off-route, and stopped guards remain in the canonical proximity path (13.7479ms)
+✔ two active conditions are independently represented (6.731ms)
+✔ selective clear and repeated persistence refresh preserve flooding only (2.9622ms)
+✔ consumer flooding truth replaces cleared road-closure wording (13.8518ms)
+✔ official support requires current normalized official identity (0.7994ms)
+✔ Destination evidence counts normalized community and official records directly (4.3864ms)
+✔ clear and refresh invalidate Route Watch consumer cache identity (5.489ms)
+✔ freshness and confidence continue to consume the remaining live proximity set (4.2142ms)
+✔ Dayton Awareness stays local and Route Watch stop stays isolated (16.4389ms)
+✔ LP216 ledger is audit-only and preserves explicit identity fields (24.9657ms)
+✔ explicit multi-county membership is preserved or fails closed, never replaced by membership order (15.3528ms)
+✔ membership data and LP213 statewide control remain unchanged (2.0608ms)
+✔ all county-governed consumers emit into the same transaction ledger (18.1147ms)
+✔ canonical callers carry the owner-selected governed county and ambiguous saves fail closed (11.6882ms)
+✔ county-scoped activation bypasses label-only reconstruction (0.8519ms)
+✔ canonical PLACE persistence binds and restores explicit governed county authority (12.3019ms)
+✔ known C/J cohort and statewide multi-county identities retain governed memberships (2.8822ms)
+✔ LP216 ledger and stale-generation guards remain wired to converging consumers (18.4069ms)
+✔ membership rows use canonical PLACE plus explicit governed county identity (5.3274ms)
+✔ Abilene selection is unique and preserves Taylor or Jones authority through activation (16.3084ms)
+✔ Midland membership rows remain independent positive controls (1.253ms)
+✔ regression cohort and every static multi-county membership have unique selectable identities (27.4661ms)
+✔ canonical card remains county-neutral while operational membership is retained and ambiguity fails closed (11.0883ms)
+✔ Family I reproducers publish governed watched-area eligibility, independent of marker DOM (19.7486ms)
+✔ positive controls preserve watched, viewport-rendered, and inventory distinctions (3.6232ms)
+✔ ACTIVE_EMPTY remains a legitimate governed zero (0.6931ms)
+✔ compact summary coordinates are rejoined to canonical watched-area authority (12.957ms)
+✔ authoritative load invalidates counts and stale generations cannot overwrite a newer count (17.655ms)
+✔ map movement schedules rendering only and does not redefine watched count (2.9063ms)
+✔ county authority and C/J membership contracts remain upstream and no control special cases exist (23.3038ms)
+✔ LP218 diagnostics expose bounded count state rather than crossing collections (26.8924ms)
+✔ one governed provider identity is stable across consumer projections (11.835ms)
+✔ Location Context derives from unique governed eligible evidence, not rows (2.7077ms)
+✔ grouped KBYG rows do not redefine Rankin underlying count (1.5923ms)
+✖ blocked_crossing community report has deterministic existing-runtime classification (6.2416ms)
+✖ disabled_vehicle community report has deterministic existing-runtime classification (11.9468ms)
+✖ flooded_road community report has deterministic existing-runtime classification (3.6353ms)
+✖ closed_road community report has deterministic existing-runtime classification (1.6224ms)
+✖ rail_crossing_issue community report has deterministic existing-runtime classification (9.7912ms)
+✔ Pecos two-report fixture proves blocked crossing is the single counted issue (2.4521ms)
+✔ Cienegas initial blocked crossing is map-published and count eligible (1.5959ms)
+✔ Cienegas later four fails closed unless all four identities are available (1.3006ms)
+✔ four identified Cienegas items explain four without duplicate inflation (5.1863ms)
+✔ Val Verde generated incident remains evidence when Alerts and KBYG omit it (1.6765ms)
+✔ Pearsall official flooding is full-stack eligible (1.7483ms)
+✔ Floydada Travel Advisory stays present and exposes KBYG propagation failure (0.8243ms)
+✔ quiet control is governed zero (0.575ms)
+✔ stale evidence cannot inflate current count (1.0879ms)
+✔ duplicate evidence cannot inflate current count (0.9325ms)
+✔ older asynchronous generation cannot overwrite current snapshot (1.7567ms)
+✖ map publication does not imply Alerts or KBYG eligibility (1.2931ms)
+✔ identity-less projection fails closed and cannot become evidence (1.046ms)
+✔ production instrumentation is bounded and contains no town/county special cases (51.9876ms)
+✔ quiet control stays quiet for Alerts and KBYG (13.3657ms)
+✔ active road hazard follows existing Alerts and KBYG policy (10.311ms)
+✔ blocked crossing follows the explicit LP223 Alerts and KBYG policy (2.2195ms)
+✔ mixed Pecos control publishes each policy-eligible identity without inflation (2.2752ms)
+✔ cleared history is retained but excluded from consumers (1.2277ms)
+✔ stale and old-area evidence do not propagate (1.4629ms)
+✔ Sulphur Springs browser-equivalent authority reaches active KBYG and Alerts DOM inputs (82.9082ms)
+✔ production predicate is live Leaflet geographic bounds with [lat,lng] operands (11.8767ms)
+✔ Huntsville fixture preserves identity and admits a real Walker crossing in authoritative bounds (2.5957ms)
+✔ Eastland stays filtered, distant and foreign-county crossings stay excluded (0.7943ms)
+✔ GeoJSON and Leaflet coordinate order is conserved on fresh load and transition (1.1196ms)
+✔ LP244.20: pending request health survives an old response and settles before publication (57.949ms)
+✔ A/B/F/G/H/P: governed Dayton and non-PLACE Tarkington ACTIVE/QUIET preserve provider ID (20.3549ms)
+✔ C/D/O: request failures and malformed HTTP 200 fail closed (10.8802ms)
+✔ I/J: late Dayton/Tarkington responses are suppressed across both transition directions (9.5614ms)
+✔ K/L/M/N: multi-county point is conserved; unsupported/county-wide fail closed; statewide endpoint retained (4.945ms)
+✔ B/N: identity transition atomically invalidates old authority before the new response (13.0254ms)
+✔ G/H/O/P: bounded cache is retained but reused only by its exact identity (8.4508ms)
+✔ I/J/K: authority and Weather family reject mixed identity lineage (13.5749ms)
+✔ LP240.2A cases A-F and R suppress type disclosures and group repeated roads across types (107.3728ms)
+✔ LP240.2A cases G-K and O-Q preserve identity, counts, order, Show me, and migrate road disclosure open state (2.1611ms)
+✔ LP240.2A cases L-N leave Weather, Community Reports, and non-active source rendering on LP236 paths (2.5974ms)
+✔ all 20 formerly rejected and all 29 governed non-PLACE identities resolve exactly (3.738ms)
+✔ Tarkington and ordinary/Houston controls use registered county:key authority (0.8144ms)
+✔ canonical PLACE authority remains primary (1.9885ms)
+✔ non-PLACE trust boundary rejects fabricated and conflicting records (0.8259ms)
+✔ statewide inventory reconciles with zero eligible class gaps after repair (4.4976ms)
+✔ save validation, startup rehydration, and passive audit use the shared resolver (3.5804ms)
+✔ v2 POI accepts only governed mandatory and optional fields (6.5445ms)
+✔ county_fips projection is exact, complete, and fail closed (2.4363ms)
+✔ Dayton canonical PLACE and Tarkington governed non-PLACE are request-only identities (0.9794ms)
+✔ map-center, county-only, rural, direct-coordinate, and unincorporated requests need no community (0.6897ms)
+✔ stale identities and origin fabrication fail closed (0.8277ms)
+✔ Austin, Abilene, and Midland preserve selected county separately (0.7633ms)
+✔ cross-boundary result retains its county and never inherits request community (0.6108ms)
+✔ v1 cache cannot be reused and release/compliance mismatches fail closed (16.7926ms)
+✔ unresolved and malformed startup authority waits without requesting NWS (27.9304ms)
+✔ not-ready to governed Sulphur Springs transition starts with the governed NWS points request (14.1205ms)
+✔ one zero component remains a valid governed points lookup (4.0464ms)
+✔ governed resolver rejects null coercion and only the paired zero sentinel (2.8029ms)
+✔ onboarding and Settings start with the shared community-or-ZIP search (6.1052ms)
+✔ Portrait Settings exposes one Home Area action and opens the primary chooser directly (12.7966ms)
+✔ Home Area chooser keeps one traveler vocabulary and the full Settings column (9.9052ms)
+✔ selection presentation preserves explicit multi-county membership (11.7205ms)
+✔ Dayton and Tarkington retain governed identity classes (1.3542ms)
+✔ location is secondary and denial leaves search rendered (6.4547ms)
+✔ acceptance is read-only and save plus rehydration retain shared governance (6.0774ms)
+✔ statewide eligibility authority is unchanged (1.7361ms)
+✔ mixed official and Community Report families use governed cardinality (2.5594ms)
+✔ presentation cardinality is not an authority and quiet state remains zero (0.4483ms)
+✔ governed projection includes active Community Reports once and rejects stale rows (16.104ms)
+✔ KBYG consolidated labels use shared governed casing (3.4345ms)
+✔ unknown KBYG roadway condition has a safe deliberate fallback (2.1389ms)
+✔ production normalization passes governed evidence and never Alerts DOM cardinality (2.426ms)
+✔ initial and reset states are neutral while completed empty searches retain feedback (32.8964ms)
+✔ governed context biases unqualified ranking without constraining explicit searches (17.1854ms)
+✔ Nearby Places owns a contained picker and consumer-safe copy (1.1811ms)
+✔ all POI cards use the shared destination adapter with intact identity fields (4.4205ms)
+✔ protected authority and route implementation are not redefined by this repair (2.0415ms)
+✔ 1 search submission alone does not route (17.1851ms)
+✔ 2 a single rendered result does not auto-route (0.5957ms)
+✔ 3 Enter submits search without choosing an ambiguous first result (0.6195ms)
+✔ 4 result selection creates a visible pending confirmation (0.8042ms)
+✔ 5 only Preview route explicitly initiates destination route calculation (0.7274ms)
+✔ 6 Change returns to candidate selection without routing (2.3143ms)
+✔ 7 double activation is suppressed while one preview is pending (2.267ms)
+✔ 8 stale search completion cannot replace current input or selection (2.092ms)
+✔ 9 stale route publication remains owned by the existing controller (5.0241ms)
+✔ 10 visible identity and routed coordinates share one selected object (2.1667ms)
+✔ 11 route failure preserves the confirmed destination (1.4941ms)
+✔ 12 retry reuses the same confirmed destination (0.6361ms)
+✔ 13 no-route and provider failure messages are distinct and truthful (0.7379ms)
+✔ 14 dismissal cannot initiate routing (1.2997ms)
+✔ 15 closing restores focus to the opening control when practical (2.2741ms)
+✔ 16 keyboard operation supports Enter, Escape, and native buttons (0.4102ms)
+✔ 17 accessible names, announcements, focus visibility, and selected state exist (2.4633ms)
+✔ 18 consumer confirmation never exposes raw coordinates (0.6331ms)
+✔ 19 protected portrait structure keeps bounded actions and reduced motion (2.4313ms)
+✔ 20 route provider and source-authority contracts remain unchanged (0.2982ms)
+✔ 21 pending selection hides the underlying route-summary strip (40.766ms)
+✔ 22 pending selection publishes no route geometry or route-state presentation (0.8326ms)
+✔ 23 Preview route reveals route presentation only after the explicit transition (0.4521ms)
+✔ 24 changing or dismissing clears stale route presentation (291.2451ms)
+✔ 25 destination identity is not duplicated in stacked consumer panels before preview (0.5579ms)
+✔ 1 current Heat Advisory without a temperature cannot become freezing KBYG (15.4405ms)
+✔ 2 stale freeze evidence is excluded from current weather authority (6.086ms)
+✔ 3 expired freeze alerts are not eligible (1.8737ms)
+✔ 4 retained historical weather cannot be promoted as current (2.4653ms)
+✔ 5 current PLACE identity must own the KBYG weather candidate (1.972ms)
+✔ 6 precise current PLACE authority wins over a county or legacy weather candidate (4.9854ms)
+✔ 7 area transition invalidates previous weather before publishing the next identity (8.6285ms)
+✔ 8 hard refresh does not rehydrate a stale weather narrative (5.157ms)
+✔ 9 a legitimate current freeze condition still promotes freezing awareness (2.539ms)
+✔ 10 a legitimate current Heat Advisory still promotes heat awareness (2.9152ms)
+✔ 11 non-weather KBYG transportation candidates remain unaffected (4.9096ms)
+✔ 12 current NWS official alerts remain independently governed (2.2972ms)
+✔ 13 multi-county PLACE weather identity remains PLACE-owned (10.4395ms)
+✖ status RPC is bounded, accurate and callable only by ordinary read clients (0.703ms)
+✖ status RPC preserves private-table denial and introduces no write privilege or leaked fields (0.0854ms)
+✖ availability state starts UNKNOWN and maps true, false and failure explicitly (0.0607ms)
+✖ availability refresh is de-duplicated, bounded to 60 seconds and cannot remain authoritative indefinitely (0.0749ms)
+✖ known disabled blocks create, confirm, edit and clear before protocol begin or writer transport (0.0823ms)
+✖ UNKNOWN preserves existing behavior for every guarded operation kind (1.0429ms)
+✖ ENABLED uses protocol v2 unchanged and accepted results still clear pending storage (0.2413ms)
+✖ enabled snapshot followed by server maintenance preserves one UUID and downgrades availability (0.2ms)
+✖ disabled startup preserves existing pending identity; retry and cancellation remain callable (0.2702ms)
+✖ startup/resume refresh, UX copy and all consumer entry paths use the shared boundary (0.2811ms)
+✖ staged Android and browser authorities carry byte-identical availability logic (0.1093ms)
+✖ C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs (2088.1478ms)
+✔ Dallas destination runtime publishes one governed non-null collection (18.8548ms)
+✔ native first grant and already-granted success each continue once (17.5901ms)
+✔ native unavailable is delivered to visible recovery owner and invalid coordinates fail closed (12.6991ms)
+✔ native pending request remains singular across pause/resume and browser fallback is unchanged (17.3198ms)
+✔ production report owner has one watchdog, duplicate guard, governed submission, and terminal cleanup (8.702ms)
+✔ Android native plugin continues permission callbacks without background permission (1.6552ms)
+✔ AndroidX location compatibility owns API 24-29 fallback and API 30+ delegation (2.952ms)
+✔ foreground permission contract remains identical across every supported Android API (1.9351ms)
+✔ Dallas and other exact governed Texas PLACE names become geographic destination intent (210.1945ms)
+✔ Dallas, TX, ZIP, address, arbitrary text, and POI classifications remain protected (29.8738ms)
+✔ bare PLACE resolution precedes acquisition without changing qualified-query behavior (19.4061ms)
+✔ the real interactive coordinator carries governed authority into canonical publication (6.1279ms)
+✔ LP244.5 Governed Active Condition Parity: Dayton crossing representations converge everywhere (6.593ms)
+✔ LP244.5 contract preserves two genuinely distinct reports (0.5217ms)
+✔ LP244.5 contract never deduplicates by equal display text (0.6756ms)
+✔ LP244.5 contract excludes cleared history and stale records (0.7127ms)
+✔ LP244.5 crossing association uses persisted community report identity (0.9615ms)
+✔ LP244.5 official and community conditions remain independently countable (0.4276ms)
+✔ LP244.5 county-qualified governed input cannot acquire wrong-county membership (0.7159ms)
+✔ LP244.5 set-in-stone assertions detect surface and quiet-state divergence (0.4668ms)
+✔ LP244.5 parity contract is wired into production summary, Top Awareness, Brief, and owner audit (83.3797ms)
+✔ pending route plus Clear suppresses every late consumer publication (6.212ms)
+✔ pending Route Watch plus Stop cannot revive monitoring (0.483ms)
+✔ Route B remains authoritative when B completes before A (0.8351ms)
+✔ A may publish before B starts and B owns the final state (0.5793ms)
+✔ stale failure after B is current cannot publish an error or clear B (0.6204ms)
+✔ timeout completion after Clear remains suppressed (0.5293ms)
+✔ Route Watch activation cannot revive a stale destination (0.5025ms)
+✔ normal current request publishes successfully (0.5254ms)
+✔ saved-coordinate destination parity is unchanged at publication (1.4032ms)
+✔ Map Center and Current Location origin ownership remains exact (0.9763ms)
+✔ same-route rapid-repeat suppression remains endpoint and time scoped (60.1473ms)
+✔ production route publishers and invalidators use the shared authority (46.6143ms)
+✔ active Travel Brief consumers retain their legacy semantics with one projection construction (36.4958ms)
+✔ multiple conditions preserve governed identity and order (6.1286ms)
+✔ duplicate evidence retains governed canonical suppression (4.5296ms)
+✔ cleared, stale, inactive, and empty inputs remain excluded (14.7329ms)
+✔ source-family mix keeps community rows first and official roadways separate from story records (6.4239ms)
+✔ separate builds construct fresh projections and never reuse prior rows (4.4349ms)
+✔ production Travel Brief is wired to the build-scoped context and exposes the audit (1.3369ms)
+ℹ tests 217
+ℹ suites 0
+ℹ pass 199
+ℹ fail 18
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9245.6295
+
+✖ failing tests:
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ blocked_crossing community report has deterministic existing-runtime classification (6.2416ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ disabled_vehicle community report has deterministic existing-runtime classification (11.9468ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ flooded_road community report has deterministic existing-runtime classification (3.6353ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ closed_road community report has deterministic existing-runtime classification (1.6224ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ rail_crossing_issue community report has deterministic existing-runtime classification (9.7912ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:79:1
+✖ map publication does not imply Alerts or KBYG eligibility (1.2931ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:81:49)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:52:1
+✖ status RPC is bounded, accurate and callable only by ordinary read clients (0.703ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:65:1
+✖ status RPC preserves private-table denial and introduces no write privilege or leaked fields (0.0854ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:77:1
+✖ availability state starts UNKNOWN and maps true, false and failure explicitly (0.0607ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:89:1
+✖ availability refresh is de-duplicated, bounded to 60 seconds and cannot remain authoritative indefinitely (0.0749ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:103:1
+✖ known disabled blocks create, confirm, edit and clear before protocol begin or writer transport (0.0823ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:122:1
+✖ UNKNOWN preserves existing behavior for every guarded operation kind (1.0429ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:131:1
+✖ ENABLED uses protocol v2 unchanged and accepted results still clear pending storage (0.2413ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:142:1
+✖ enabled snapshot followed by server maintenance preserves one UUID and downgrades availability (0.2ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:155:1
+✖ disabled startup preserves existing pending identity; retry and cancellation remain callable (0.2702ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:170:1
+✖ startup/resume refresh, UX copy and all consumer entry paths use the shared boundary (0.2811ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:188:1
+✖ staged Android and browser authorities carry byte-identical availability logic (0.1093ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:42:3)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:41:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24429a-reporting-availability.test.cjs:50:1
+✖ C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs (2088.1478ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:38:10)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24429a-reporting-availability.test.cjs:50:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.runHook (node:internal/test_runner/test:1198:20)
+      at after (node:internal/test_runner/test:1251:20)
+      at Test.run (node:internal/test_runner/test:1332:13) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

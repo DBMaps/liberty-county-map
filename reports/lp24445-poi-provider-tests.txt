@@ -1,0 +1,27 @@
+✔ production gate is exact-value fail closed and does not fetch while off (35.1104ms)
+✔ only exact production activation or the strict QA override opens the effective gate (1.5297ms)
+✔ certified manifest and bounded candidate selection pass (1.9785ms)
+✔ release, schema, attribution, and fanout mismatches fail closed (1.7222ms)
+✔ v2 validator rejects v1, community identity, unknown fields, and coordinates (1.0197ms)
+✔ request identity, radius, rollback, and no-fallback diagnostics are enforced (0.9939ms)
+✔ current canonical Dayton context builds the request without a POI location selection (1.6883ms)
+✔ current governed non-PLACE context keeps stable identity and null PLACE GEOID (2.813ms)
+✔ context/request agreement assertion rejects a mismatched governed authority (1.2509ms)
+✔ current multi-county selection preserves its authoritative county membership (1.2526ms)
+✔ unresolved current context does not create a default request (0.9449ms)
+✔ consumer surface is contextual while cohort selection remains API-only (0.4214ms)
+✔ radius is a three-option accessible segment and not a visible native select (0.4327ms)
+✔ radius and category controls map through the unchanged current-context request contract (0.9801ms)
+✔ shared result selection preserves runtime-v2 identity and context (1.1038ms)
+✔ Gridly location projection reads governed selection, presentation, and active county authorities (1.0787ms)
+✔ governed selection dispatch marks both PLACE and LOCAL coordinates with selection ownership (5.5256ms)
+✔ an unowned or later standalone LOCAL presentation remains direct-coordinate authority (1.4866ms)
+✔ multi-county acceptance cohorts retain selected county independently of identity (1.2306ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 217.5135

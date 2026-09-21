@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: HOME snapshot is stable, canonical and persistent owner remains separate
+ok 1 - HOME snapshot is stable, canonical and persistent owner remains separate
+  ---
+  duration_ms: 12.129
+  type: 'test'
+  ...
+# Subtest: Cleveland to Crosby is SEARCH and preserves Home storage
+ok 2 - Cleveland to Crosby is SEARCH and preserves Home storage
+  ---
+  duration_ms: 3.1339
+  type: 'test'
+  ...
+# Subtest: Clear restores Cleveland and one coherent refresh per transition
+ok 3 - Clear restores Cleveland and one coherent refresh per transition
+  ---
+  duration_ms: 3.8974
+  type: 'test'
+  ...
+# Subtest: Dayton replaces Crosby with a newer context generation
+ok 4 - Dayton replaces Crosby with a newer context generation
+  ---
+  duration_ms: 2.448
+  type: 'test'
+  ...
+# Subtest: Austin/Hays and Austin/Travis retain independent membership qualification
+ok 5 - Austin/Hays and Austin/Travis retain independent membership qualification
+  ---
+  duration_ms: 3.6758
+  type: 'test'
+  ...
+# Subtest: Abilene/Jones and Taylor plus Dallas use existing governed fixtures
+ok 6 - Abilene/Jones and Taylor plus Dallas use existing governed fixtures
+  ---
+  duration_ms: 1.886
+  type: 'test'
+  ...
+# Subtest: invalid explicit membership fails unavailable instead of substituting Home
+ok 7 - invalid explicit membership fails unavailable instead of substituting Home
+  ---
+  duration_ms: 2.6413
+  type: 'test'
+  ...
+# Subtest: POI source locality resolves surrounding community without changing destination
+ok 8 - POI source locality resolves surrounding community without changing destination
+  ---
+  duration_ms: 1.8746
+  type: 'test'
+  ...
+# Subtest: POI without locality retains coordinate scope, never POI-as-PLACE
+ok 9 - POI without locality retains coordinate scope, never POI-as-PLACE
+  ---
+  duration_ms: 2.6098
+  type: 'test'
+  ...
+# Subtest: 120-second fix boundary, future timestamps, and missing timestamps fail truthfully
+ok 10 - 120-second fix boundary, future timestamps, and missing timestamps fail truthfully
+  ---
+  duration_ms: 2.1393
+  type: 'test'
+  ...
+# Subtest: Around Me snapshot is ephemeral compatibility, not implicit activation
+ok 11 - Around Me snapshot is ephemeral compatibility, not implicit activation
+  ---
+  duration_ms: 2.6262
+  type: 'test'
+  ...
+# Subtest: Route placeholder never activates and restarting loses Search, not Home
+ok 12 - Route placeholder never activates and restarting loses Search, not Home
+  ---
+  duration_ms: 5.126
+  type: 'test'
+  ...
+# Subtest: diagnostics are bounded and carry no precise position history
+ok 13 - diagnostics are bounded and carry no precise position history
+  ---
+  duration_ms: 4.0701
+  type: 'test'
+  ...
+# Subtest: late Crosby NWS publication cannot replace Dayton; unavailable context clears records
+ok 14 - late Crosby NWS publication cannot replace Dayton; unavailable context clears records
+  ---
+  duration_ms: 7.2071
+  type: 'test'
+  ...
+# Subtest: Home-only adapter bypasses active Search for Settings without clearing it
+ok 15 - Home-only adapter bypasses active Search for Settings without clearing it
+  ---
+  duration_ms: 5.1037
+  type: 'test'
+  ...
+# Subtest: late POI result cannot overwrite the newer context audit
+ok 16 - late POI result cannot overwrite the newer context audit
+  ---
+  duration_ms: 515.7088
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 772.588

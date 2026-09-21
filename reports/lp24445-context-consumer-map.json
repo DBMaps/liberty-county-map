@@ -1,0 +1,130 @@
+{
+  "phase": "LP244.45",
+  "owner": "js/app.js:gridlyGetAwarenessContextStore",
+  "resolver": "gridlyGetCurrentAwarenessContext",
+  "legacyConsumerAdapter": "getGridlySelectedAwarenessArea",
+  "consumers": [
+    {
+      "consumer": "Map",
+      "file": "js/app.js",
+      "functions": [
+        "selectGridlySearchResult",
+        "gridlyDispatchSemanticCamera"
+      ],
+      "context": "Search preserves destination coordinates; clear restores Home camera",
+      "protection": "Existing destination marker and semantic camera remain separate from persisted Home"
+    },
+    {
+      "consumer": "Location Context",
+      "file": "js/app.js",
+      "functions": [
+        "getGridlyCanonicalAwarenessPresentationContext",
+        "getGridlySelectedAwarenessArea"
+      ],
+      "context": "Selected context area; unresolved temporary area has no county fallback",
+      "protection": "Presentation county does not replace explicit operational county"
+    },
+    {
+      "consumer": "Weather",
+      "file": "js/app.js; js/gridlyWeatherLiveConnector.js",
+      "functions": [
+        "gridlyResolveGovernedWeatherPoint",
+        "refreshAwarenessView"
+      ],
+      "context": "Canonical PLACE point, or qualified temporary coordinate",
+      "protection": "Existing identity/in-flight cache and generation reject stale publication"
+    },
+    {
+      "consumer": "NWS Alerts",
+      "file": "js/gridlyWeatherLiveConnector.js",
+      "functions": [
+        "fetchNow",
+        "resolvePoint"
+      ],
+      "context": "Same selected point as weather; no alert matching expansion",
+      "protection": "Invalid context clears normalized records and invalidates authority"
+    },
+    {
+      "consumer": "DriveTexas",
+      "file": "js/gridlyDriveTexasLiveConnector.js",
+      "functions": [
+        "selectedAwarenessArea",
+        "refreshAwarenessView",
+        "deriveAwarenessView"
+      ],
+      "context": "Shared selected-area and canonical presentation adapters",
+      "protection": "Existing source-generation/derived-view identity; geometry, activation and radius unchanged"
+    },
+    {
+      "consumer": "Community Awareness",
+      "file": "js/app.js",
+      "functions": [
+        "buildGridlyCommunityAwarenessIntelligenceSummary",
+        "isGridlyRecordInAwarenessArea",
+        "gridlyGetGovernedActiveAwarenessRows"
+      ],
+      "context": "Shared selected-area geometry plus current operational county",
+      "protection": "LP216/219 county generation and invalidated portrait snapshots; unavailable sentinel excludes old records"
+    },
+    {
+      "consumer": "Crossings",
+      "file": "js/app.js",
+      "functions": [
+        "gridlyCrossingOwnedByAwarenessArea",
+        "gridlySelectConsumerVisibleCrossings",
+        "ensureGridlyActiveCountyCrossingInventory"
+      ],
+      "context": "Shared selected-area geometry and governed county inventory",
+      "protection": "Existing county hydration generation; same-county switches re-filter inventory"
+    },
+    {
+      "consumer": "Nearby Places",
+      "file": "js/app.js; js/gridlyPoiBrowserProvider.js",
+      "functions": [
+        "gridlyGetCurrentGovernedLocationContext",
+        "requestForCurrentContext",
+        "refreshAwarenessContext",
+        "search"
+      ],
+      "context": "Active temporary area precedes legacy map/Home selection",
+      "protection": "Context generation guards asynchronous result publication and request audit; shard cache remains reusable"
+    },
+    {
+      "consumer": "KBYG / Travel Brief",
+      "file": "js/app.js",
+      "functions": [
+        "gridlyBuildTravelBriefModel",
+        "gridlyBriefInteractionRender",
+        "buildGridlyCommunityAwarenessIntelligenceSummary"
+      ],
+      "context": "Shared community/weather/road/crossing projections",
+      "protection": "Snapshot invalidation plus visible temporary-place heading; unresolved selection has UNAVAILABLE model"
+    }
+  ],
+  "legitimateSeparateReaders": [
+    {
+      "reader": "getGridlySelectedAwarenessArea({ homeOnly: true })",
+      "reason": "Settings Home label/county must display saved Home during Search; uses existing persisted-home validation, never mutates temporary owner."
+    },
+    {
+      "reader": "gridlyReadHomePersonalizationRecord / Settings community / gridlyUserProfile",
+      "reason": "Home persistence, explicit Home editing and startup rehydration remain Home-owned."
+    },
+    {
+      "reader": "GridlySearchState.selectedDestination",
+      "reason": "POI title/coordinates and route preview destination are not community identity."
+    },
+    {
+      "reader": "gridlyActiveGeographicPresentation",
+      "reason": "Existing standalone LOCAL map exploration remains a direct-coordinate Nearby context only when no temporary context is active."
+    },
+    {
+      "reader": "GRIDLY_ACTIVE_COUNTY_ID",
+      "reason": "Dataset hydration/filtering and source county qualification; not an independent place selector."
+    },
+    {
+      "reader": "existing Route Watch state",
+      "reason": "Activation/stop, saved destination, route geometry and proximity remain separately governed; no automatic unified-context takeover in .45."
+    }
+  ]
+}
