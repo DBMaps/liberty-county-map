@@ -12328,6 +12328,16 @@ const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MARKER_VISUAL_SCALE = 1.08;
 const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MARKER_DISPLAY_SIZE = 78;
 const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MOBILE_PORTRAIT_DISPLAY_SIZE = 76;
 const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MOBILE_PORTRAIT_DISPLAY_SIZE = 80;
+// LP244.46B: one asset-path authority for all winter conditions.
+const GRIDLY_WINTER_MARKER_ASSETS = Object.freeze({
+  "ICE": "icy-road.svg",
+  "BLACK_ICE_SUSPECTED": "black-ice-suspected.svg",
+  "BRIDGE_OVERPASS_ICING": "bridge-overpass-icing.svg",
+  "SNOW_COVERED_ROAD": "snow-covered-road.svg",
+  "SLEET_FREEZING_RAIN": "sleet-freezing-rain.svg",
+  "REDUCED_VISIBILITY": "reduced-visibility.svg",
+  "WINTER_ROAD_HAZARD": "winter-road.svg"
+});
 const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
   "construction-zone.png",
   "crash-on-road.png",
@@ -12343,7 +12353,7 @@ const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
   "traffic-signal-issue.png",
   "train-front.png",
   "water-over-road.png",
-  "winter-road.svg"
+  ...Object.values(GRIDLY_WINTER_MARKER_ASSETS)
 ]);
 const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
   construction: "construction-zone.png",
@@ -12355,13 +12365,7 @@ const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
   emergency_response_impact: "emergency-response.png",
   fallen_tree: "debris-in-road.png",
   flooding: "water-over-road.png",
-  ice: "winter-road.svg",
-  black_ice_suspected: "winter-road.svg",
-  bridge_overpass_icing: "winter-road.svg",
-  snow_covered_road: "winter-road.svg",
-  sleet_freezing_rain: "winter-road.svg",
-  reduced_visibility: "winter-road.svg",
-  winter_road_hazard: "winter-road.svg",
+  ...Object.fromEntries(Object.entries(GRIDLY_WINTER_MARKER_ASSETS).map(([condition, asset]) => [condition.toLowerCase(), asset])),
   road_blocked: "other-hazard.png",
   road_impassable: "other-hazard.png",
   high_water: "water-over-road.png",
@@ -12387,7 +12391,7 @@ const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
 });
 
 const GRIDLY_PRODUCTION_MARKER_TIP_ANCHOR_RATIOS = Object.freeze({
-  "winter-road.svg": 244 / 256,
+  ...Object.fromEntries(Object.values(GRIDLY_WINTER_MARKER_ASSETS).map(asset => [asset, 244 / 256])),
   "construction-zone.png": 244 / 256,
   "crash-on-road.png": 193 / 256,
   "debris-in-road.png": 200 / 256,
@@ -61860,6 +61864,8 @@ function getHazardMetadata(type = "") {
 }
 
 function getGridlyProductionMarkerCategory(incident = {}, fallbackCategory = "other_hazard") {
+  const winterCondition = incident.normalizedEvent?.condition || (typeof GridlyHazardNormalization !== "undefined" ? GridlyHazardNormalization.aliases[String(incident.submittedHazardType || incident.report_type || incident.type || fallbackCategory).trim().toLowerCase().replace(/[\s-]+/g, "_")] : null);
+  if (winterCondition && GRIDLY_WINTER_MARKER_ASSETS[winterCondition]) return winterCondition.toLowerCase();
   if (incident.normalizedEvent?.authorityClass === "COMMUNITY_OBSERVATION" && incident.normalizedEvent.condition === "ROAD_BLOCKED") return "road_blocked";
   const normalizedFallback = getHazardCategory(fallbackCategory);
   const subtype = normalizedFallback === "other_hazard" ? resolveOtherHazardSubtypeFromRecord(incident) : "";
@@ -61963,6 +61969,11 @@ function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
 }
 
 function getGridlyProductionMarkerAsset(category = "other_hazard") {
+  const winterCondition = typeof GridlyHazardNormalization !== "undefined" ? GridlyHazardNormalization.aliases[String(category).trim().toLowerCase().replace(/[\s-]+/g, "_")] : null;
+  if (winterCondition && GRIDLY_WINTER_MARKER_ASSETS[winterCondition]) {
+    const assetName = GRIDLY_WINTER_MARKER_ASSETS[winterCondition];
+    return { category: winterCondition.toLowerCase(), assetName, assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}` };
+  }
   const normalizedCategory = String(category || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
   const assetName = GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedCategory] || GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS.other_hazard;
   return {
@@ -109798,7 +109809,8 @@ function gridlyLp0452RecordOfficialMarkerConstructionFailure(trace, stage, error
 }
 
 function gridlyBuildOfficialRoadwayProductionMarkerIcon(record = {}) {
-  const productionMarkerCategory = gridlyOfficialRoadwayPresentationCategory(record);
+  const winterCategory = getGridlyProductionMarkerCategory(record, record.category);
+  const productionMarkerCategory = GRIDLY_WINTER_MARKER_ASSETS[String(winterCategory).toUpperCase()] ? winterCategory : gridlyOfficialRoadwayPresentationCategory(record);
   const productionMarkerAsset = getGridlyProductionMarkerAsset(productionMarkerCategory);
   const productionMarkerAnchor = getGridlyProductionMarkerAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);
   const productionMarkerPopupAnchor = getGridlyProductionMarkerPopupAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);

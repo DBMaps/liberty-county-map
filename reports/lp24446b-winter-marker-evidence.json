@@ -1,0 +1,690 @@
+{
+  "startingCommit": "78241632",
+  "phase": "LP244.46B",
+  "renderer": "renderUnifiedIncidents",
+  "synthetic": true,
+  "backendWrites": false,
+  "reportingEnabled": false,
+  "tileAccess": "Read-only OpenStreetMap / Esri GET requests; other remote requests blocked or locally stubbed.",
+  "names": [
+    "Ice / Icy Road",
+    "Possible Black Ice",
+    "Bridge / Overpass Icing",
+    "Snow-Covered Road",
+    "Sleet / Freezing Rain",
+    "Reduced Visibility",
+    "Other Winter Road Hazard",
+    "Flooding / High Water",
+    "Construction",
+    "Generic road hazard",
+    "Closure asset (comparison only)"
+  ],
+  "dimensions": [
+    {
+      "id": "winter-preview-1",
+      "asset": "assets/markers/png/icy-road.svg",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-high gridly-visual-owner-active_hazard gridly-visual-state-active gridly-visual-priority-4 gridly-impact-high leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-2",
+      "asset": "assets/markers/png/black-ice-suspected.svg",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-low gridly-visual-owner-community_alert gridly-visual-state-active gridly-visual-priority-6 gridly-impact-low leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-3",
+      "asset": "assets/markers/png/bridge-overpass-icing.svg",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-low gridly-visual-owner-community_alert gridly-visual-state-active gridly-visual-priority-6 gridly-impact-low leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-4",
+      "asset": "assets/markers/png/snow-covered-road.svg",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-low gridly-visual-owner-community_alert gridly-visual-state-active gridly-visual-priority-6 gridly-impact-low leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-5",
+      "asset": "assets/markers/png/sleet-freezing-rain.svg",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-low gridly-visual-owner-community_alert gridly-visual-state-active gridly-visual-priority-6 gridly-impact-low leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-6",
+      "asset": "assets/markers/png/reduced-visibility.svg",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-low gridly-visual-owner-community_alert gridly-visual-state-active gridly-visual-priority-6 gridly-impact-low leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-7",
+      "asset": "assets/markers/png/winter-road.svg",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-low gridly-visual-owner-community_alert gridly-visual-state-active gridly-visual-priority-6 gridly-impact-low leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-8",
+      "asset": "assets/markers/png/water-over-road.png",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 89.5999755859375,
+        "height": 89.60000610351562
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-high gridly-visual-owner-active_hazard gridly-visual-state-active gridly-visual-priority-4 gridly-impact-high leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-9",
+      "asset": "assets/markers/png/construction-zone.png",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-moderate gridly-visual-owner-active_hazard gridly-visual-state-active gridly-visual-priority-5 gridly-impact-moderate leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-10",
+      "asset": "assets/markers/png/other-hazard.png",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 64,
+        "height": 64
+      },
+      "className": "leaflet-marker-icon gridly-production-marker-icon gridly-marker-hazard-low gridly-visual-owner-community_alert gridly-visual-state-active gridly-visual-priority-6 gridly-impact-low leaflet-zoom-animated leaflet-interactive"
+    },
+    {
+      "id": "winter-preview-11",
+      "asset": "assets/markers/png/road-closed.png",
+      "iconSize": [
+        64,
+        64
+      ],
+      "renderedImage": {
+        "width": 65.72900390625,
+        "height": 65.72900390625
+      },
+      "className": "leaflet-marker-icon gridly-official-roadway-marker-icon leaflet-zoom-animated leaflet-interactive"
+    }
+  ],
+  "mobile": [
+    {
+      "width": 320,
+      "check": [
+        {
+          "type": "ice",
+          "title": "Ice reported",
+          "asset": "icy-road.svg"
+        },
+        {
+          "type": "black_ice_suspected",
+          "title": "Possible black ice reported",
+          "asset": "black-ice-suspected.svg"
+        },
+        {
+          "type": "bridge_overpass_icing",
+          "title": "Bridge or overpass icing reported",
+          "asset": "bridge-overpass-icing.svg"
+        },
+        {
+          "type": "snow_covered_road",
+          "title": "Snow-covered road reported",
+          "asset": "snow-covered-road.svg"
+        },
+        {
+          "type": "sleet_freezing_rain",
+          "title": "Sleet or freezing rain reported",
+          "asset": "sleet-freezing-rain.svg"
+        },
+        {
+          "type": "reduced_visibility",
+          "title": "Reduced visibility reported",
+          "asset": "reduced-visibility.svg"
+        },
+        {
+          "type": "winter_road_hazard",
+          "title": "Winter road hazard reported",
+          "asset": "winter-road.svg"
+        }
+      ],
+      "render": [
+        {
+          "asset": "assets/markers/png/icy-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 26,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/black-ice-suspected.svg",
+          "width": 64,
+          "height": 64,
+          "x": 112,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/bridge-overpass-icing.svg",
+          "width": 64,
+          "height": 64,
+          "x": 198,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/snow-covered-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 26,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/sleet-freezing-rain.svg",
+          "width": 64,
+          "height": 64,
+          "x": 112,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/reduced-visibility.svg",
+          "width": 64,
+          "height": 64,
+          "x": 198,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/winter-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 26,
+          "y": 588,
+          "iconSize": [
+            64,
+            64
+          ]
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "check": [
+        {
+          "type": "ice",
+          "title": "Ice reported",
+          "asset": "icy-road.svg"
+        },
+        {
+          "type": "black_ice_suspected",
+          "title": "Possible black ice reported",
+          "asset": "black-ice-suspected.svg"
+        },
+        {
+          "type": "bridge_overpass_icing",
+          "title": "Bridge or overpass icing reported",
+          "asset": "bridge-overpass-icing.svg"
+        },
+        {
+          "type": "snow_covered_road",
+          "title": "Snow-covered road reported",
+          "asset": "snow-covered-road.svg"
+        },
+        {
+          "type": "sleet_freezing_rain",
+          "title": "Sleet or freezing rain reported",
+          "asset": "sleet-freezing-rain.svg"
+        },
+        {
+          "type": "reduced_visibility",
+          "title": "Reduced visibility reported",
+          "asset": "reduced-visibility.svg"
+        },
+        {
+          "type": "winter_road_hazard",
+          "title": "Winter road hazard reported",
+          "asset": "winter-road.svg"
+        }
+      ],
+      "render": [
+        {
+          "asset": "assets/markers/png/icy-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 33,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/black-ice-suspected.svg",
+          "width": 64,
+          "height": 64,
+          "x": 130,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/bridge-overpass-icing.svg",
+          "width": 64,
+          "height": 64,
+          "x": 227,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/snow-covered-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 33,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/sleet-freezing-rain.svg",
+          "width": 64,
+          "height": 64,
+          "x": 130,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/reduced-visibility.svg",
+          "width": 64,
+          "height": 64,
+          "x": 227,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/winter-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 33,
+          "y": 588,
+          "iconSize": [
+            64,
+            64
+          ]
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "check": [
+        {
+          "type": "ice",
+          "title": "Ice reported",
+          "asset": "icy-road.svg"
+        },
+        {
+          "type": "black_ice_suspected",
+          "title": "Possible black ice reported",
+          "asset": "black-ice-suspected.svg"
+        },
+        {
+          "type": "bridge_overpass_icing",
+          "title": "Bridge or overpass icing reported",
+          "asset": "bridge-overpass-icing.svg"
+        },
+        {
+          "type": "snow_covered_road",
+          "title": "Snow-covered road reported",
+          "asset": "snow-covered-road.svg"
+        },
+        {
+          "type": "sleet_freezing_rain",
+          "title": "Sleet or freezing rain reported",
+          "asset": "sleet-freezing-rain.svg"
+        },
+        {
+          "type": "reduced_visibility",
+          "title": "Reduced visibility reported",
+          "asset": "reduced-visibility.svg"
+        },
+        {
+          "type": "winter_road_hazard",
+          "title": "Winter road hazard reported",
+          "asset": "winter-road.svg"
+        }
+      ],
+      "render": [
+        {
+          "asset": "assets/markers/png/icy-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 39,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/black-ice-suspected.svg",
+          "width": 64,
+          "height": 64,
+          "x": 144,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/bridge-overpass-icing.svg",
+          "width": 64,
+          "height": 64,
+          "x": 248,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/snow-covered-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 39,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/sleet-freezing-rain.svg",
+          "width": 64,
+          "height": 64,
+          "x": 144,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/reduced-visibility.svg",
+          "width": 64,
+          "height": 64,
+          "x": 248,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/winter-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 39,
+          "y": 588,
+          "iconSize": [
+            64,
+            64
+          ]
+        }
+      ]
+    },
+    {
+      "width": 440,
+      "check": [
+        {
+          "type": "ice",
+          "title": "Ice reported",
+          "asset": "icy-road.svg"
+        },
+        {
+          "type": "black_ice_suspected",
+          "title": "Possible black ice reported",
+          "asset": "black-ice-suspected.svg"
+        },
+        {
+          "type": "bridge_overpass_icing",
+          "title": "Bridge or overpass icing reported",
+          "asset": "bridge-overpass-icing.svg"
+        },
+        {
+          "type": "snow_covered_road",
+          "title": "Snow-covered road reported",
+          "asset": "snow-covered-road.svg"
+        },
+        {
+          "type": "sleet_freezing_rain",
+          "title": "Sleet or freezing rain reported",
+          "asset": "sleet-freezing-rain.svg"
+        },
+        {
+          "type": "reduced_visibility",
+          "title": "Reduced visibility reported",
+          "asset": "reduced-visibility.svg"
+        },
+        {
+          "type": "winter_road_hazard",
+          "title": "Winter road hazard reported",
+          "asset": "winter-road.svg"
+        }
+      ],
+      "render": [
+        {
+          "asset": "assets/markers/png/icy-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 48,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/black-ice-suspected.svg",
+          "width": 64,
+          "height": 64,
+          "x": 166,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/bridge-overpass-icing.svg",
+          "width": 64,
+          "height": 64,
+          "x": 284,
+          "y": 361,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/snow-covered-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 48,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/sleet-freezing-rain.svg",
+          "width": 64,
+          "height": 64,
+          "x": 166,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/reduced-visibility.svg",
+          "width": 64,
+          "height": 64,
+          "x": 284,
+          "y": 479,
+          "iconSize": [
+            64,
+            64
+          ]
+        },
+        {
+          "asset": "assets/markers/png/winter-road.svg",
+          "width": 64,
+          "height": 64,
+          "x": 48,
+          "y": 588,
+          "iconSize": [
+            64,
+            64
+          ]
+        }
+      ]
+    }
+  ],
+  "layerEntries": 22,
+  "note": "Synthetic input renders grouped and raw fallback layers at identical coordinates. Clustering/deduplication logic is unchanged; the fixture preserves these entries.",
+  "errors": [],
+  "previewWritesRuntimeFiles": false,
+  "actualPopupLabelsMatch": true,
+  "ownerStatus": "READY FOR OWNER VISUAL REVIEW",
+  "tests": {
+    "passed": 94,
+    "failed": 0,
+    "focusedMarker": 7,
+    "normalization": 22,
+    "context": 29,
+    "otherRelevant": 36,
+    "baselineFailure": "LP045.2 alert-focus source assertion reproduces at 78241632; no new failure."
+  },
+  "assets": {
+    "ice": {
+      "file": "assets/markers/png/icy-road.svg",
+      "sha256": "2e18e5249568e0b10625046808bfd5606ff9f2af7682c44cf6b778527c3e8ff5"
+    },
+    "black_ice_suspected": {
+      "file": "assets/markers/png/black-ice-suspected.svg",
+      "sha256": "061db6a7a46e390730abdadfa6917526a604e51af846be789b45844bc76043b3"
+    },
+    "bridge_overpass_icing": {
+      "file": "assets/markers/png/bridge-overpass-icing.svg",
+      "sha256": "37121ab1907f7014f5233c8f4a587d40841332415cc304872bec61ff58c363ff"
+    },
+    "snow_covered_road": {
+      "file": "assets/markers/png/snow-covered-road.svg",
+      "sha256": "e7493266c750ab35db7216892eba865985e1e0faebf544251e7157e0a183a48b"
+    },
+    "sleet_freezing_rain": {
+      "file": "assets/markers/png/sleet-freezing-rain.svg",
+      "sha256": "9d8f4b1a5921969fe6bd8a0cc796641b6a4a97fe74027c7ff8a28765ea49f073"
+    },
+    "reduced_visibility": {
+      "file": "assets/markers/png/reduced-visibility.svg",
+      "sha256": "e2b01e095d0b603216edcfc7689f06205faa1c82c03ca80960e1837ed951e52c"
+    },
+    "winter_road_hazard": {
+      "file": "assets/markers/png/winter-road.svg",
+      "sha256": "44b1796a01ec768dcc05e95e894f985f2aff828f55a1c008bb22e55499f5567b"
+    }
+  }
+}

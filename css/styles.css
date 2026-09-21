@@ -19399,7 +19399,7 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   --gridly-production-marker-artwork-scale: 1.48;
 }
 
-#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"], [data-marker-category="ice"]) {
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"]) {
   --gridly-production-marker-artwork-scale: 1.4;
 }
 

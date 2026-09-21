@@ -66,7 +66,7 @@ try {
   evidence.widths.push({width,picker:metric,card});
   await page.evaluate(()=>map.closePopup());
  }
- evidence.marker=await page.evaluate(async()=>{const asset=getGridlyProductionMarkerAsset('ice');const img=new Image();img.src=asset.assetPath;await img.decode();return {...asset,width:img.naturalWidth,height:img.naturalHeight,aliases:GridlyHazardNormalization.winterOptions.map(o=>getGridlyProductionMarkerAsset(o.type).assetName)};});assert.equal(evidence.marker.assetName,'winter-road.svg');assert.equal(evidence.marker.width,256);assert.equal(new Set(evidence.marker.aliases).size,1);
+ evidence.marker=await page.evaluate(async()=>{const asset=getGridlyProductionMarkerAsset('ice');const img=new Image();img.src=asset.assetPath;await img.decode();return {...asset,width:img.naturalWidth,height:img.naturalHeight,aliases:GridlyHazardNormalization.winterOptions.map(o=>getGridlyProductionMarkerAsset(o.type).assetName)};});assert.equal(evidence.marker.assetName,'icy-road.svg');assert.equal(evidence.marker.width,256);assert.equal(new Set(evidence.marker.aliases).size,7);
  const performance=await page.evaluate(()=>{const start=performance.now();for(let i=0;i<10000;i++)GridlyHazardNormalization.community({type:'ice',lat:30,lng:-95});return {normalizations:10000,durationMs:performance.now()-start};});evidence.performance=performance;
  assert.deepEqual(errors,[]);
  console.log(JSON.stringify({widths:evidence.widths.map(w=>w.width),models:evidence.models.length,performance,errors}));
