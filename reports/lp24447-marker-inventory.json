@@ -1,0 +1,1644 @@
+{
+  "phase": "LP244.47",
+  "capturedBeforeArtworkChanges": true,
+  "startingCommit": "9c9e082d9c2a8af955a666ef1a2207aa4903867d",
+  "rows": [
+    {
+      "category": "construction",
+      "canonicalCondition": "CONSTRUCTION",
+      "consumerLabel": "Construction",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/construction-zone.png",
+      "aliases": [
+        "construction",
+        "road_work"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "construction zone",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "crash",
+      "canonicalCondition": "CRASH_SCENE",
+      "consumerLabel": "Crash / Wreck",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/crash-on-road.png",
+      "aliases": [
+        "crash",
+        "wreck",
+        "crash_scene",
+        "crash_incident"
+      ],
+      "currentColor": "black with red ring",
+      "currentSymbol": "crash on road",
+      "renderSize": "64px box; artwork scale 1.52",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "debris",
+      "canonicalCondition": "DEBRIS",
+      "consumerLabel": "Debris In Road",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/debris-in-road.png",
+      "aliases": [
+        "debris",
+        "fallen_tree",
+        "debris_in_road"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "debris in road",
+      "renderSize": "64px box; artwork scale 1.73",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "disabled_vehicle",
+      "canonicalCondition": "DISABLED_VEHICLE",
+      "consumerLabel": "Disabled Vehicle",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/disabled-vehicle.png",
+      "aliases": [
+        "disabled_vehicle"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "disabled vehicle",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "downed_power_line",
+      "canonicalCondition": "DOWNED_POWER_LINE",
+      "consumerLabel": "Downed Power Line",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/downed-power-line.png",
+      "aliases": [],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "downed power line",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "emergency_response_activity",
+      "canonicalCondition": "EMERGENCY_RESPONSE_ACTIVITY",
+      "consumerLabel": "Emergency Response Activity",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/emergency-response.png",
+      "aliases": [],
+      "currentColor": "black with red ring",
+      "currentSymbol": "emergency response",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "emergency_response_impact",
+      "canonicalCondition": "EMERGENCY_RESPONSE_IMPACT",
+      "consumerLabel": "emergency response impact",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/emergency-response.png",
+      "aliases": [],
+      "currentColor": "black with red ring",
+      "currentSymbol": "emergency response",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "fallen_tree",
+      "canonicalCondition": "DEBRIS",
+      "consumerLabel": "fallen tree",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/debris-in-road.png",
+      "aliases": [
+        "debris",
+        "fallen_tree",
+        "debris_in_road"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "debris in road",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "flooding",
+      "canonicalCondition": "FLOODING",
+      "consumerLabel": "Flooding",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/water-over-road.png",
+      "aliases": [
+        "flooding",
+        "flood"
+      ],
+      "currentColor": "black/navy with blue ring",
+      "currentSymbol": "water over road",
+      "renderSize": "64px box; artwork scale 1.4",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "ice",
+      "canonicalCondition": "ICE",
+      "consumerLabel": "Ice",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/icy-road.svg",
+      "aliases": [
+        "ice",
+        "icy",
+        "icy_road",
+        "icy_roads"
+      ],
+      "currentColor": "navy #17445f / pale blue",
+      "currentSymbol": "icy road",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "white 8/256 outer border, pale blue inset ring",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "black_ice_suspected",
+      "canonicalCondition": "BLACK_ICE_SUSPECTED",
+      "consumerLabel": "Possible black ice",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/black-ice-suspected.svg",
+      "aliases": [
+        "black_ice_suspected",
+        "black_ice",
+        "possible_black_ice"
+      ],
+      "currentColor": "navy #17445f / pale blue",
+      "currentSymbol": "black ice suspected",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "white 8/256 outer border, pale blue inset ring",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "bridge_overpass_icing",
+      "canonicalCondition": "BRIDGE_OVERPASS_ICING",
+      "consumerLabel": "Bridge / overpass icing",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/bridge-overpass-icing.svg",
+      "aliases": [
+        "bridge_overpass_icing",
+        "bridge_icing",
+        "overpass_icing"
+      ],
+      "currentColor": "navy #17445f / pale blue",
+      "currentSymbol": "bridge overpass icing",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "white 8/256 outer border, pale blue inset ring",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "snow_covered_road",
+      "canonicalCondition": "SNOW_COVERED_ROAD",
+      "consumerLabel": "Snow-covered road",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/snow-covered-road.svg",
+      "aliases": [
+        "snow_covered_road",
+        "snow_on_road"
+      ],
+      "currentColor": "navy #17445f / pale blue",
+      "currentSymbol": "snow covered road",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "white 8/256 outer border, pale blue inset ring",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "sleet_freezing_rain",
+      "canonicalCondition": "SLEET_FREEZING_RAIN",
+      "consumerLabel": "Sleet / freezing rain",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/sleet-freezing-rain.svg",
+      "aliases": [
+        "sleet_freezing_rain",
+        "sleet",
+        "freezing_rain"
+      ],
+      "currentColor": "navy #17445f / pale blue",
+      "currentSymbol": "sleet freezing rain",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "white 8/256 outer border, pale blue inset ring",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "reduced_visibility",
+      "canonicalCondition": "REDUCED_VISIBILITY",
+      "consumerLabel": "Reduced visibility",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/reduced-visibility.svg",
+      "aliases": [
+        "reduced_visibility",
+        "low_visibility"
+      ],
+      "currentColor": "navy #17445f / pale blue",
+      "currentSymbol": "reduced visibility",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "white 8/256 outer border, pale blue inset ring",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "winter_road_hazard",
+      "canonicalCondition": "WINTER_ROAD_HAZARD",
+      "consumerLabel": "Other winter road hazard",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/winter-road.svg",
+      "aliases": [
+        "winter_road_hazard",
+        "winter_hazard"
+      ],
+      "currentColor": "navy #17445f / pale blue",
+      "currentSymbol": "winter road",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "white 8/256 outer border, pale blue inset ring",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "road_blocked",
+      "canonicalCondition": "ROAD_BLOCKED",
+      "consumerLabel": "Road appears blocked",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/other-hazard.png",
+      "aliases": [
+        "road_blocked",
+        "road_closed",
+        "road_closure",
+        "blocked_road",
+        "blocked_roadway"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "other hazard",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "road_impassable",
+      "canonicalCondition": "ROAD_IMPASSABLE",
+      "consumerLabel": "Road appears impassable",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/other-hazard.png",
+      "aliases": [
+        "road_impassable",
+        "impassable",
+        "winter_impassable"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "other hazard",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "high_water",
+      "canonicalCondition": "HIGH_WATER",
+      "consumerLabel": "High water reported",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/water-over-road.png",
+      "aliases": [
+        "high_water",
+        "standing_water",
+        "water_over_road"
+      ],
+      "currentColor": "black/navy with blue ring",
+      "currentSymbol": "water over road",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "livestock_on_road",
+      "canonicalCondition": "LIVESTOCK_ON_ROAD",
+      "consumerLabel": "Livestock on Road",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/livestock-on-road.png",
+      "aliases": [],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "livestock on road",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "other_hazard",
+      "canonicalCondition": "OTHER_ROAD_HAZARD",
+      "consumerLabel": "Other Hazard",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/other-hazard.png",
+      "aliases": [
+        "road_hazard",
+        "other",
+        "other_hazard",
+        "hazard_cleared"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "other hazard",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "other",
+      "canonicalCondition": "OTHER_ROAD_HAZARD",
+      "consumerLabel": "Other",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/other-hazard.png",
+      "aliases": [
+        "other_hazard",
+        "road_hazard",
+        "other"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "other hazard",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "crossing_infrastructure",
+      "canonicalCondition": "CROSSING_INFRASTRUCTURE",
+      "consumerLabel": "crossing infrastructure",
+      "sources": [
+        "crossing inventory"
+      ],
+      "currentAsset": "assets/markers/png/rail-crossing.png",
+      "aliases": [],
+      "currentColor": "gray/white",
+      "currentSymbol": "rail crossing",
+      "renderSize": "72/78 desktop;76/80 portrait",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "rail",
+      "canonicalCondition": "RAIL",
+      "consumerLabel": "rail",
+      "sources": [
+        "crossing inventory"
+      ],
+      "currentAsset": "assets/markers/png/rail-crossing.png",
+      "aliases": [],
+      "currentColor": "gray/white",
+      "currentSymbol": "rail crossing",
+      "renderSize": "72/78 desktop;76/80 portrait",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "rail_blockage_delay",
+      "canonicalCondition": "RAIL_CROSSING_CONDITION",
+      "consumerLabel": "Train Blocking Crossing",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/train-front.png",
+      "aliases": [
+        "blocked",
+        "heavy",
+        "delayed",
+        "delay",
+        "blocked_crossing",
+        "crossing_blocked",
+        "train_blocking_crossing",
+        "rail_blockage_delay",
+        "rail_blockage",
+        "rail_blocked",
+        "rail_delay",
+        "rail_issue"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "train front",
+      "renderSize": "64px box; artwork scale 1.26",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "rail_crossing_infrastructure",
+      "canonicalCondition": "RAIL_CROSSING_INFRASTRUCTURE",
+      "consumerLabel": "rail crossing infrastructure",
+      "sources": [
+        "crossing inventory"
+      ],
+      "currentAsset": "assets/markers/png/rail-crossing.png",
+      "aliases": [],
+      "currentColor": "gray/white",
+      "currentSymbol": "rail crossing",
+      "renderSize": "72/78 desktop;76/80 portrait",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "rail_issue",
+      "canonicalCondition": "RAIL_CROSSING_CONDITION",
+      "consumerLabel": "Rail Issue",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/other-hazard.png",
+      "aliases": [
+        "rail_issue",
+        "blocked",
+        "heavy",
+        "delayed",
+        "delay",
+        "blocked_crossing",
+        "crossing_blocked",
+        "train_blocking_crossing",
+        "rail_blockage_delay",
+        "rail_blockage",
+        "rail_blocked",
+        "rail_delay"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "other hazard",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "road_closed",
+      "canonicalCondition": "ROAD_BLOCKED",
+      "consumerLabel": "Road appears blocked",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/road-closed.png",
+      "aliases": [
+        "road_closed",
+        "road_blocked",
+        "road_closure",
+        "blocked_road",
+        "blocked_roadway"
+      ],
+      "currentColor": "black with red ring",
+      "currentSymbol": "road closed",
+      "renderSize": "64px box; artwork scale 1.48",
+      "authorityBehavior": "Community normalized ROAD_BLOCKED overrides closure art; official closure separate",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "signal_outage",
+      "canonicalCondition": "SIGNAL_OUTAGE",
+      "consumerLabel": "signal outage",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/traffic-signal-issue.png",
+      "aliases": [],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "traffic signal issue",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "standing_water",
+      "canonicalCondition": "HIGH_WATER",
+      "consumerLabel": "standing water",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/water-over-road.png",
+      "aliases": [
+        "high_water",
+        "standing_water",
+        "water_over_road"
+      ],
+      "currentColor": "black/navy with blue ring",
+      "currentSymbol": "water over road",
+      "renderSize": "64px box; artwork scale 1.4",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "traffic_backup",
+      "canonicalCondition": "TRAFFIC_BACKUP",
+      "consumerLabel": "Traffic Backup / Heavy Delay",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/traffic-backup-heavy-delay.png",
+      "aliases": [
+        "traffic_backup",
+        "heavy_traffic",
+        "traffic_delay"
+      ],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "traffic backup heavy delay",
+      "renderSize": "64px box; artwork scale 1.9",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "traffic_signal_issue",
+      "canonicalCondition": "TRAFFIC_SIGNAL_ISSUE",
+      "consumerLabel": "Traffic Signal Issue",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/traffic-signal-issue.png",
+      "aliases": [],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "traffic signal issue",
+      "renderSize": "64px box; artwork scale 1.83",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "txdot_closure",
+      "canonicalCondition": "TXDOT_CLOSURE",
+      "consumerLabel": "txdot closure",
+      "sources": [
+        "DriveTexas"
+      ],
+      "currentAsset": "assets/markers/png/road-closed.png",
+      "aliases": [],
+      "currentColor": "black with red ring",
+      "currentSymbol": "road closed",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "official source badge and attributed popup",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "txdot_construction",
+      "canonicalCondition": "TXDOT_CONSTRUCTION",
+      "consumerLabel": "txdot construction",
+      "sources": [
+        "DriveTexas"
+      ],
+      "currentAsset": "assets/markers/png/construction-zone.png",
+      "aliases": [],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "construction zone",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "official source badge and attributed popup",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "txdot_damage",
+      "canonicalCondition": "TXDOT_DAMAGE",
+      "consumerLabel": "txdot damage",
+      "sources": [
+        "DriveTexas"
+      ],
+      "currentAsset": "assets/markers/png/debris-in-road.png",
+      "aliases": [],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "debris in road",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "official source badge and attributed popup",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "txdot_flooding",
+      "canonicalCondition": "TXDOT_FLOODING",
+      "consumerLabel": "txdot flooding",
+      "sources": [
+        "DriveTexas"
+      ],
+      "currentAsset": "assets/markers/png/water-over-road.png",
+      "aliases": [],
+      "currentColor": "black/navy with blue ring",
+      "currentSymbol": "water over road",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "official source badge and attributed popup",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "txdot_other",
+      "canonicalCondition": "TXDOT_OTHER",
+      "consumerLabel": "txdot other",
+      "sources": [
+        "DriveTexas"
+      ],
+      "currentAsset": "assets/markers/png/other-hazard.png",
+      "aliases": [],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "other hazard",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "official source badge and attributed popup",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    },
+    {
+      "category": "utility_work",
+      "canonicalCondition": "UTILITY_WORK",
+      "consumerLabel": "utility work",
+      "sources": [
+        "community",
+        "official when supported"
+      ],
+      "currentAsset": "assets/markers/png/downed-power-line.png",
+      "aliases": [],
+      "currentColor": "black with amber ring",
+      "currentSymbol": "downed power line",
+      "renderSize": "64px box; artwork scale 1",
+      "authorityBehavior": "Source and lifecycle handled separately from artwork",
+      "status": "active mapping; aliases retained",
+      "border": "raster colored inner ring and black outline; variable padding",
+      "shadow": "CSS 0 7px 12px black .34; extra red glow on high/consequence critical"
+    }
+  ],
+  "assets": [
+    {
+      "file": "assets/markers/png/black-ice-suspected.svg",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/bridge-overpass-icing.svg",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/construction-zone.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/crash-on-road.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/debris-in-road.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/disabled-vehicle.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/downed-power-line.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/emergency-response.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/icy-road.svg",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/livestock-on-road.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/other-hazard.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/rail-crossing.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/reduced-visibility.svg",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/road-closed.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/sleet-freezing-rain.svg",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/snow-covered-road.svg",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/traffic-backup-heavy-delay.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/traffic-signal-issue.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/train-front.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/water-over-road.png",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/png/winter-road.svg",
+      "status": "active at baseline"
+    },
+    {
+      "file": "assets/markers/svg/GRIDLY-MARKER-SYSTEM-V1.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-construction.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-crash.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-crossing.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-debris.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-disabled.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-emergency.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-flooding.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-livestock.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-other.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-power-line.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-road-closed.svg",
+      "status": "unwired legacy/reference; retained"
+    },
+    {
+      "file": "assets/markers/svg/marker-train.svg",
+      "status": "unwired legacy/reference; retained"
+    }
+  ],
+  "picker": {
+    "road": [
+      {
+        "value": "flooding",
+        "label": "Flooding"
+      },
+      {
+        "value": "crash",
+        "label": "Crash / Wreck"
+      },
+      {
+        "value": "disabled_vehicle",
+        "label": "Disabled Vehicle"
+      },
+      {
+        "value": "debris",
+        "label": "Debris In Road"
+      },
+      {
+        "value": "road_blocked",
+        "label": "Road appears blocked"
+      },
+      {
+        "value": "road_impassable",
+        "label": "Road appears impassable"
+      },
+      {
+        "value": "ice",
+        "label": "Ice"
+      },
+      {
+        "value": "black_ice_suspected",
+        "label": "Possible black ice"
+      },
+      {
+        "value": "bridge_overpass_icing",
+        "label": "Bridge / overpass icing"
+      },
+      {
+        "value": "snow_covered_road",
+        "label": "Snow-covered road"
+      },
+      {
+        "value": "sleet_freezing_rain",
+        "label": "Sleet / freezing rain"
+      },
+      {
+        "value": "reduced_visibility",
+        "label": "Reduced visibility"
+      },
+      {
+        "value": "winter_road_hazard",
+        "label": "Other winter road hazard"
+      },
+      {
+        "value": "construction",
+        "label": "Construction"
+      },
+      {
+        "value": "traffic_backup",
+        "label": "Traffic Backup / Heavy Delay"
+      },
+      {
+        "value": "other_hazard",
+        "label": "Other Hazard"
+      }
+    ],
+    "other": [
+      {
+        "value": "livestock_on_road",
+        "label": "Livestock on Road",
+        "narrativeLabel": "Livestock"
+      },
+      {
+        "value": "traffic_signal_issue",
+        "label": "Traffic Signal Issue",
+        "narrativeLabel": "Traffic signal issue"
+      },
+      {
+        "value": "downed_power_line",
+        "label": "Downed Power Line",
+        "narrativeLabel": "Downed power line"
+      },
+      {
+        "value": "emergency_response_activity",
+        "label": "Emergency Response Activity",
+        "narrativeLabel": "Emergency response activity"
+      },
+      {
+        "value": "other",
+        "label": "Other",
+        "narrativeLabel": "Hazard"
+      }
+    ]
+  },
+  "normalizationDefinitions": {
+    "FLOODING": [
+      "Flooding reported",
+      "flooding",
+      [
+        "flood",
+        "flooding"
+      ]
+    ],
+    "HIGH_WATER": [
+      "High water reported",
+      "flooding",
+      [
+        "high_water",
+        "standing_water",
+        "water_over_road"
+      ]
+    ],
+    "ROAD_BLOCKED": [
+      "Road appears blocked",
+      "other_hazard",
+      [
+        "road_blocked",
+        "road_closed",
+        "road_closure",
+        "blocked_road",
+        "blocked_roadway"
+      ]
+    ],
+    "ROAD_IMPASSABLE": [
+      "Road appears impassable",
+      "other_hazard",
+      [
+        "road_impassable",
+        "impassable",
+        "winter_impassable"
+      ]
+    ],
+    "CRASH_SCENE": [
+      "Crash reported",
+      "crash",
+      [
+        "crash",
+        "wreck",
+        "crash_scene",
+        "crash_incident"
+      ]
+    ],
+    "DEBRIS": [
+      "Debris in Road",
+      "debris",
+      [
+        "debris",
+        "fallen_tree",
+        "debris_in_road"
+      ]
+    ],
+    "CONSTRUCTION": [
+      "Construction",
+      "construction",
+      [
+        "construction",
+        "road_work"
+      ]
+    ],
+    "PLANNED_WORK": [
+      "Planned work",
+      "construction",
+      [
+        "planned_work",
+        "scheduled_work"
+      ]
+    ],
+    "RAIL_CROSSING_CONDITION": [
+      "Rail crossing condition reported",
+      "rail_blockage_delay",
+      [
+        "blocked",
+        "heavy",
+        "delayed",
+        "delay",
+        "blocked_crossing",
+        "crossing_blocked",
+        "train_blocking_crossing",
+        "rail_blockage_delay",
+        "rail_blockage",
+        "rail_blocked",
+        "rail_delay",
+        "rail_issue"
+      ]
+    ],
+    "ICE": [
+      "Ice reported",
+      "winter",
+      [
+        "ice",
+        "icy",
+        "icy_road",
+        "icy_roads"
+      ]
+    ],
+    "BLACK_ICE_SUSPECTED": [
+      "Possible black ice reported",
+      "winter",
+      [
+        "black_ice_suspected",
+        "black_ice",
+        "possible_black_ice"
+      ]
+    ],
+    "BRIDGE_OVERPASS_ICING": [
+      "Bridge or overpass icing reported",
+      "winter",
+      [
+        "bridge_overpass_icing",
+        "bridge_icing",
+        "overpass_icing"
+      ]
+    ],
+    "SNOW_COVERED_ROAD": [
+      "Snow-covered road reported",
+      "winter",
+      [
+        "snow_covered_road",
+        "snow_on_road"
+      ]
+    ],
+    "SLEET_FREEZING_RAIN": [
+      "Sleet or freezing rain reported",
+      "winter",
+      [
+        "sleet_freezing_rain",
+        "sleet",
+        "freezing_rain"
+      ]
+    ],
+    "REDUCED_VISIBILITY": [
+      "Reduced visibility reported",
+      "winter",
+      [
+        "reduced_visibility",
+        "low_visibility"
+      ]
+    ],
+    "WINTER_ROAD_HAZARD": [
+      "Winter road hazard reported",
+      "winter",
+      [
+        "winter_road_hazard",
+        "winter_hazard"
+      ]
+    ],
+    "OTHER_ROAD_HAZARD": [
+      "Other Hazard",
+      "other_hazard",
+      [
+        "other_hazard",
+        "road_hazard",
+        "other"
+      ]
+    ],
+    "DISABLED_VEHICLE": [
+      "Disabled Vehicle",
+      "disabled_vehicle",
+      [
+        "disabled_vehicle"
+      ]
+    ],
+    "TRAFFIC_BACKUP": [
+      "Traffic Backup / Heavy Delay",
+      "traffic_backup",
+      [
+        "traffic_backup",
+        "heavy_traffic",
+        "traffic_delay"
+      ]
+    ]
+  },
+  "legacyAliases": {
+    "blocked": "rail_blockage_delay",
+    "heavy": "rail_blockage_delay",
+    "delayed": "rail_blockage_delay",
+    "delay": "rail_blockage_delay",
+    "blocked_crossing": "rail_blockage_delay",
+    "crossing_blocked": "rail_blockage_delay",
+    "train_blocking_crossing": "rail_blockage_delay",
+    "crash": "crash",
+    "wreck": "crash",
+    "flooding": "flooding",
+    "ice": "ice",
+    "debris": "debris",
+    "construction": "construction",
+    "road_closed": "road_closed",
+    "disabled_vehicle": "disabled_vehicle",
+    "rail_blockage_delay": "rail_blockage_delay",
+    "rail_blockage": "rail_blockage_delay",
+    "rail_blocked": "rail_blockage_delay",
+    "rail_delay": "rail_blockage_delay",
+    "rail_issue": "rail_issue",
+    "traffic_backup": "traffic_backup",
+    "heavy_traffic": "traffic_backup",
+    "traffic_delay": "traffic_backup",
+    "road_hazard": "other_hazard",
+    "other": "other_hazard",
+    "other_hazard": "other_hazard",
+    "hazard_cleared": "other_hazard"
+  },
+  "nonHazardPoints": [
+    {
+      "id": "crossing_infrastructure",
+      "owner": "renderCrossings",
+      "asset": "rail-crossing.png",
+      "size": "72–80",
+      "semantics": "Fixed location, not live train presence"
+    },
+    {
+      "id": "user_location",
+      "owner": "updateUserLocationMarker",
+      "asset": "CSS awareness ring/core",
+      "size": 30
+    },
+    {
+      "id": "destination",
+      "owner": "setGridlyDestinationMarker",
+      "asset": "CSS destination ring/core",
+      "size": 32
+    },
+    {
+      "id": "route_origin",
+      "owner": "gridlyCreateRouteEndpointMarker",
+      "asset": "CSS endpoint",
+      "size": 12
+    },
+    {
+      "id": "route_destination",
+      "owner": "gridlyCreateRouteEndpointMarker",
+      "asset": "CSS endpoint",
+      "size": 18
+    },
+    {
+      "id": "awareness_identity",
+      "owner": "awareness identity label layer",
+      "asset": "DOM label",
+      "size": "text-sized; not hazard icon",
+      "status": "inactive: awarenessPanelOwnsIdentity=true suppresses map label; panel owns identity"
+    },
+    {
+      "id": "report_placement",
+      "owner": "placement preview",
+      "asset": "Leaflet circle",
+      "size": "radius 4"
+    }
+  ],
+  "geometry": "NWS polygon / official line and polygon geometry owners remain separate. No point conversion.",
+  "runtimeReferences": [
+    {
+      "line": 12322,
+      "text": "const GRIDLY_PRODUCTION_MARKER_BASE_PATH = \"assets/markers/png/\";"
+    },
+    {
+      "line": 12323,
+      "text": "const GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE = 256;"
+    },
+    {
+      "line": 12324,
+      "text": "const GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE = 64;"
+    },
+    {
+      "line": 12341,
+      "text": "const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze(["
+    },
+    {
+      "line": 12358,
+      "text": "const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({"
+    },
+    {
+      "line": 12393,
+      "text": "const GRIDLY_PRODUCTION_MARKER_TIP_ANCHOR_RATIOS = Object.freeze({"
+    },
+    {
+      "line": 12411,
+      "text": "function getGridlyProductionMarkerAnchor(categoryOrAsset = \"\", displaySize = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE) {"
+    },
+    {
+      "line": 12412,
+      "text": "const assetName = String(GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[categoryOrAsset] || categoryOrAsset || \"\").split(\"/\").pop();"
+    },
+    {
+      "line": 12415,
+      "text": ": GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE;"
+    },
+    {
+      "line": 12416,
+      "text": "const tipRatio = GRIDLY_PRODUCTION_MARKER_TIP_ANCHOR_RATIOS[assetName] || 0.5;"
+    },
+    {
+      "line": 12420,
+      "text": "function getGridlyProductionMarkerPopupAnchor(categoryOrAsset = \"\", displaySize = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE) {"
+    },
+    {
+      "line": 12425,
+      "text": "const GRIDLY_PRODUCTION_MARKER_LOAD_STATE = {"
+    },
+    {
+      "line": 12430,
+      "text": "const GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE = new Map();"
+    },
+    {
+      "line": 15559,
+      "text": "const endpointIcon = window.L.divIcon({"
+    },
+    {
+      "line": 15566,
+      "text": "return window.L.marker(point, {"
+    },
+    {
+      "line": 52543,
+      "text": "} else if (L.marker && L.divIcon && Number.isFinite(Number(labelPlacement.latLng?.[0])) && Number.isFinite(Number(labelPlacement.latLng?.[1]))) {"
+    },
+    {
+      "line": 52544,
+      "text": "gridlyAwarenessIdentityLabelLayer = L.marker(labelPlacement.latLng, {"
+    },
+    {
+      "line": 52548,
+      "text": "icon: L.divIcon({"
+    },
+    {
+      "line": 55108,
+      "text": "userMarker = L.marker(markerLatLng, {"
+    },
+    {
+      "line": 55113,
+      "text": "icon: L.divIcon({"
+    },
+    {
+      "line": 61551,
+      "text": "? GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE"
+    },
+    {
+      "line": 61558,
+      "text": "const icon = L.divIcon({"
+    },
+    {
+      "line": 61575,
+      "text": "const marker = L.marker([crossing.lat, crossing.lng], { icon, keyboard: false, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id), gridlyCommunityStatus: hasActiveIssue ? \"active\" : \"inventory\", status: hasActiveIssue ? \"active\" : \"inventory\", gridlyCountyId: gridlyGetActiveCountyId(), gridlyCrossingCountyId: crossing.countyId || gridlyGetActiveCountyId() })"
+    },
+    {
+      "line": 61872,
+      "text": "if (subtype && GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[subtype]) return subtype;"
+    },
+    {
+      "line": 61878,
+      "text": "if (GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[rawType] && rawType !== \"rail\") return rawType;"
+    },
+    {
+      "line": 61884,
+      "text": "if (GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedVisualCategory]) return normalizedVisualCategory;"
+    },
+    {
+      "line": 61886,
+      "text": "return GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedFallback] ? normalizedFallback : \"other_hazard\";"
+    },
+    {
+      "line": 61896,
+      "text": "return markerAsset === assetName || src.endsWith(`${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`) || src.endsWith(`/${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`);"
+    },
+    {
+      "line": 61909,
+      "text": "if (!normalizedAsset || GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.has(normalizedAsset)) return;"
+    },
+    {
+      "line": 61910,
+      "text": "const assetPath = `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${normalizedAsset}`;"
+    },
+    {
+      "line": 61912,
+      "text": "GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.set(normalizedAsset, pendingState);"
+    },
+    {
+      "line": 61922,
+      "text": "GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.set(normalizedAsset, {"
+    },
+    {
+      "line": 61931,
+      "text": "GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.set(normalizedAsset, {"
+    },
+    {
+      "line": 61943,
+      "text": "const expectedSize = GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE;"
+    },
+    {
+      "line": 61944,
+      "text": "return GRIDLY_PRODUCTION_MARKER_ASSETS.map((filename) => {"
+    },
+    {
+      "line": 61947,
+      "text": "const probedDimensions = GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.get(filename) || {};"
+    },
+    {
+      "line": 61957,
+      "text": "assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${filename}`,"
+    },
+    {
+      "line": 61975,
+      "text": "return { category: winterCondition.toLowerCase(), assetName, assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}` };"
+    },
+    {
+      "line": 61978,
+      "text": "const assetName = GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedCategory] || GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS.other_hazard;"
+    },
+    {
+      "line": 61982,
+      "text": "assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`"
+    },
+    {
+      "line": 61989,
+      "text": "GRIDLY_PRODUCTION_MARKER_LOAD_STATE.attempted.add(normalizedAsset);"
+    },
+    {
+      "line": 61991,
+      "text": "GRIDLY_PRODUCTION_MARKER_LOAD_STATE.loaded.add(normalizedAsset);"
+    },
+    {
+      "line": 61992,
+      "text": "GRIDLY_PRODUCTION_MARKER_LOAD_STATE.failed.delete(normalizedAsset);"
+    },
+    {
+      "line": 61994,
+      "text": "GRIDLY_PRODUCTION_MARKER_LOAD_STATE.failed.add(normalizedAsset);"
+    },
+    {
+      "line": 61999,
+      "text": "const categoryAssetRows = Object.entries(GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS).map(([category, assetName]) => ({"
+    },
+    {
+      "line": 62001,
+      "text": "assignedMarkerAsset: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`"
+    },
+    {
+      "line": 62017,
+      "text": ".filter((category) => !GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[category]);"
+    },
+    {
+      "line": 62019,
+      "text": "const assetName = row.assignedMarkerAsset.replace(GRIDLY_PRODUCTION_MARKER_BASE_PATH, \"\");"
+    },
+    {
+      "line": 62026,
+      "text": ".map(([assetName, categories]) => ({ assignedMarkerAsset: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`, categories }));"
+    },
+    {
+      "line": 62031,
+      "text": "const assetLoadFailures = Array.from(new Set([...GRIDLY_PRODUCTION_MARKER_LOAD_STATE.failed, ...domFailures]));"
+    },
+    {
+      "line": 62032,
+      "text": "const unmappedAssets = GRIDLY_PRODUCTION_MARKER_ASSETS.filter((assetName) => !assetToCategories[assetName]);"
+    },
+    {
+      "line": 62038,
+      "text": "const productionMarkerDisplaySize = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE;"
+    },
+    {
+      "line": 62040,
+      "text": "road_closed: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}road-closed.png`,"
+    },
+    {
+      "line": 62041,
+      "text": "flooding: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}water-over-road.png`,"
+    },
+    {
+      "line": 62042,
+      "text": "rail_blockage_delay: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}train-front.png`"
+    },
+    {
+      "line": 62053,
+      "text": "renderingOwner: \"renderUnifiedIncidents uses Leaflet L.divIcon inside unifiedIncidentLayer; popup/click behavior remains on the Leaflet marker instance.\","
+    },
+    {
+      "line": 62057,
+      "text": "productionPngExpectedMasterSize: `${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}x${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}`,"
+    },
+    {
+      "line": 62069,
+      "text": "assetsAvailable: GRIDLY_PRODUCTION_MARKER_ASSETS.map((assetName) => `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`),"
+    },
+    {
+      "line": 62082,
+      "text": "attempted: Array.from(GRIDLY_PRODUCTION_MARKER_LOAD_STATE.attempted),"
+    },
+    {
+      "line": 62083,
+      "text": "loaded: Array.from(GRIDLY_PRODUCTION_MARKER_LOAD_STATE.loaded),"
+    },
+    {
+      "line": 62400,
+      "text": "GRIDLY_PRODUCTION_MARKER_ASSETS.forEach((assetName) => queueGridlyProductionMarkerDimensionProbe(assetName));"
+    },
+    {
+      "line": 77524,
+      "text": "\"marker creation\": \"Audit Leaflet divIcon/L.marker construction and marker visual-state helpers.\","
+    },
+    {
+      "line": 77994,
+      "text": "const productionMarkerAnchor = getGridlyProductionMarkerAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);"
+    },
+    {
+      "line": 77995,
+      "text": "const productionMarkerPopupAnchor = getGridlyProductionMarkerPopupAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);"
+    },
+    {
+      "line": 78012,
+      "text": "const icon = L.divIcon({"
+    },
+    {
+      "line": 78030,
+      "text": "iconSize: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE],"
+    },
+    {
+      "line": 78041,
+      "text": "const marker = L.marker([lat, lng], {"
+    },
+    {
+      "line": 88266,
+      "text": "L.circleMarker([finalPlacement.lat, finalPlacement.lng], { radius: 4, color: \"#8fb6ff\", weight: 1, fillOpacity: 0.3, opacity: 0.8 })"
+    },
+    {
+      "line": 91522,
+      "text": "width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;"
+    },
+    {
+      "line": 91523,
+      "text": "height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;"
+    },
+    {
+      "line": 91532,
+      "text": "width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;"
+    },
+    {
+      "line": 91533,
+      "text": "height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;"
+    },
+    {
+      "line": 91534,
+      "text": "min-width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px;"
+    },
+    {
+      "line": 91535,
+      "text": "min-height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px;"
+    },
+    {
+      "line": 91547,
+      "text": "width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;"
+    },
+    {
+      "line": 91548,
+      "text": "height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;"
+    },
+    {
+      "line": 91763,
+      "text": "width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;"
+    },
+    {
+      "line": 91764,
+      "text": "height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;"
+    },
+    {
+      "line": 98075,
+      "text": "const destinationIcon = window.L.divIcon({"
+    },
+    {
+      "line": 98082,
+      "text": "marker = window.L.marker([coordinates.lat, coordinates.lng], {"
+    },
+    {
+      "line": 109815,
+      "text": "const productionMarkerAnchor = getGridlyProductionMarkerAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);"
+    },
+    {
+      "line": 109816,
+      "text": "const productionMarkerPopupAnchor = getGridlyProductionMarkerPopupAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);"
+    },
+    {
+      "line": 109839,
+      "text": "return L.divIcon({"
+    },
+    {
+      "line": 109855,
+      "text": "iconSize: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE],"
+    },
+    {
+      "line": 109916,
+      "text": "marker = L.marker([coords.lat, coords.lng], {"
+    }
+  ],
+  "findings": [
+    "ROAD_BLOCKED and ROAD_IMPASSABLE share fallback artwork",
+    "rail_issue shares generic caution",
+    "utility_work shares downed power line",
+    "fallen_tree shares debris",
+    "DriveTexas broad label projection loses damage/disabled/delay subtypes",
+    "PNG interior padding causes 1.26–1.9 condition-specific enlargement",
+    "Crossing inventory uses train-independent crossbuck but active condition uses train face",
+    "13 older SVG assets are unwired (12 markers + system reference)",
+    "No active hazard mapping may be removed; old binaries retained for historical compatibility"
+  ],
+  "finalDisposition": {
+    "retiredRuntimeAssets": 21,
+    "retainedLegacyReferenceAssets": 13,
+    "deletedAssets": 0,
+    "deletedActiveMappings": 0,
+    "sourceExceptions": [
+      "Non-hazard location/destination/route markers keep their existing DOM/CSS visuals",
+      "NWS polygons and official geometry owners unchanged",
+      "Official TX source badge retained"
+    ]
+  }
+}

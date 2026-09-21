@@ -1,0 +1,12 @@
+LP043 DriveTexas geometry preservation and authority repair checks passed
+✔ tests\lp043-drivetexas-geometry-preservation-and-authority-repair.test.js (248.6104ms)
+LP044/LP039 shared DriveTexas geometry authority regression tests passed
+✔ tests\lp044-lp039-shared-drivetexas-geometry-authority.test.js (246.3248ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 309.1301
