@@ -1,0 +1,360 @@
+{
+  "contract": {
+    "condition": [
+      "FLOODING",
+      "HIGH_WATER",
+      "ROAD_BLOCKED",
+      "ROAD_IMPASSABLE",
+      "CRASH_SCENE",
+      "DEBRIS",
+      "CONSTRUCTION",
+      "PLANNED_WORK",
+      "RAIL_CROSSING_CONDITION",
+      "ICE",
+      "BLACK_ICE_SUSPECTED",
+      "BRIDGE_OVERPASS_ICING",
+      "SNOW_COVERED_ROAD",
+      "SLEET_FREEZING_RAIN",
+      "REDUCED_VISIBILITY",
+      "WINTER_ROAD_HAZARD",
+      "OTHER_ROAD_HAZARD",
+      "DISABLED_VEHICLE",
+      "TRAFFIC_BACKUP",
+      "UNKNOWN",
+      "NOT_APPLICABLE"
+    ],
+    "severity": [
+      "UNKNOWN",
+      "LOW",
+      "MODERATE",
+      "HIGH",
+      "SEVERE"
+    ],
+    "authorityClass": [
+      "COMMUNITY_OBSERVATION",
+      "OFFICIAL_PUBLIC",
+      "AUTHORIZED_ORGANIZATION",
+      "SYSTEM_DERIVED"
+    ],
+    "advisoryAuthority": [
+      "COMMUNITY_SAFE",
+      "AUTHORIZED_ONLY",
+      "DISPATCH_PRIVATE",
+      "CONSUMER_PROJECTABLE"
+    ],
+    "lifecycle": [
+      "ACTIVE",
+      "UPDATED",
+      "RESOLVED",
+      "EXPIRED",
+      "CANCELLED",
+      "UNKNOWN"
+    ],
+    "geometryPrecision": [
+      "POINT",
+      "LINE",
+      "POLYGON",
+      "ROAD_SEGMENT",
+      "PLACE_ONLY",
+      "COUNTY_ONLY",
+      "UNKNOWN"
+    ]
+  },
+  "aliases": {
+    "flooding": "FLOODING",
+    "flood": "FLOODING",
+    "high_water": "HIGH_WATER",
+    "standing_water": "HIGH_WATER",
+    "water_over_road": "HIGH_WATER",
+    "road_blocked": "ROAD_BLOCKED",
+    "road_closed": "ROAD_BLOCKED",
+    "road_closure": "ROAD_BLOCKED",
+    "blocked_road": "ROAD_BLOCKED",
+    "blocked_roadway": "ROAD_BLOCKED",
+    "road_impassable": "ROAD_IMPASSABLE",
+    "impassable": "ROAD_IMPASSABLE",
+    "winter_impassable": "ROAD_IMPASSABLE",
+    "crash_scene": "CRASH_SCENE",
+    "crash": "CRASH_SCENE",
+    "wreck": "CRASH_SCENE",
+    "crash_incident": "CRASH_SCENE",
+    "debris": "DEBRIS",
+    "fallen_tree": "DEBRIS",
+    "debris_in_road": "DEBRIS",
+    "construction": "CONSTRUCTION",
+    "road_work": "CONSTRUCTION",
+    "planned_work": "PLANNED_WORK",
+    "scheduled_work": "PLANNED_WORK",
+    "rail_crossing_condition": "RAIL_CROSSING_CONDITION",
+    "blocked": "RAIL_CROSSING_CONDITION",
+    "heavy": "RAIL_CROSSING_CONDITION",
+    "delayed": "RAIL_CROSSING_CONDITION",
+    "delay": "RAIL_CROSSING_CONDITION",
+    "blocked_crossing": "RAIL_CROSSING_CONDITION",
+    "crossing_blocked": "RAIL_CROSSING_CONDITION",
+    "train_blocking_crossing": "RAIL_CROSSING_CONDITION",
+    "rail_blockage_delay": "RAIL_CROSSING_CONDITION",
+    "rail_blockage": "RAIL_CROSSING_CONDITION",
+    "rail_blocked": "RAIL_CROSSING_CONDITION",
+    "rail_delay": "RAIL_CROSSING_CONDITION",
+    "rail_issue": "RAIL_CROSSING_CONDITION",
+    "ice": "ICE",
+    "icy": "ICE",
+    "icy_road": "ICE",
+    "icy_roads": "ICE",
+    "black_ice_suspected": "BLACK_ICE_SUSPECTED",
+    "black_ice": "BLACK_ICE_SUSPECTED",
+    "possible_black_ice": "BLACK_ICE_SUSPECTED",
+    "bridge_overpass_icing": "BRIDGE_OVERPASS_ICING",
+    "bridge_icing": "BRIDGE_OVERPASS_ICING",
+    "overpass_icing": "BRIDGE_OVERPASS_ICING",
+    "snow_covered_road": "SNOW_COVERED_ROAD",
+    "snow_on_road": "SNOW_COVERED_ROAD",
+    "sleet_freezing_rain": "SLEET_FREEZING_RAIN",
+    "sleet": "SLEET_FREEZING_RAIN",
+    "freezing_rain": "SLEET_FREEZING_RAIN",
+    "reduced_visibility": "REDUCED_VISIBILITY",
+    "low_visibility": "REDUCED_VISIBILITY",
+    "winter_road_hazard": "WINTER_ROAD_HAZARD",
+    "winter_hazard": "WINTER_ROAD_HAZARD",
+    "other_road_hazard": "OTHER_ROAD_HAZARD",
+    "other_hazard": "OTHER_ROAD_HAZARD",
+    "road_hazard": "OTHER_ROAD_HAZARD",
+    "other": "OTHER_ROAD_HAZARD",
+    "disabled_vehicle": "DISABLED_VEHICLE",
+    "traffic_backup": "TRAFFIC_BACKUP",
+    "heavy_traffic": "TRAFFIC_BACKUP",
+    "traffic_delay": "TRAFFIC_BACKUP"
+  },
+  "conditions": {
+    "FLOODING": [
+      "Flooding reported",
+      "flooding",
+      [
+        "flood",
+        "flooding"
+      ]
+    ],
+    "HIGH_WATER": [
+      "High water reported",
+      "flooding",
+      [
+        "high_water",
+        "standing_water",
+        "water_over_road"
+      ]
+    ],
+    "ROAD_BLOCKED": [
+      "Road appears blocked",
+      "other_hazard",
+      [
+        "road_blocked",
+        "road_closed",
+        "road_closure",
+        "blocked_road",
+        "blocked_roadway"
+      ]
+    ],
+    "ROAD_IMPASSABLE": [
+      "Road appears impassable",
+      "other_hazard",
+      [
+        "road_impassable",
+        "impassable",
+        "winter_impassable"
+      ]
+    ],
+    "CRASH_SCENE": [
+      "Crash reported",
+      "crash",
+      [
+        "crash",
+        "wreck",
+        "crash_scene",
+        "crash_incident"
+      ]
+    ],
+    "DEBRIS": [
+      "Debris in Road",
+      "debris",
+      [
+        "debris",
+        "fallen_tree",
+        "debris_in_road"
+      ]
+    ],
+    "CONSTRUCTION": [
+      "Construction",
+      "construction",
+      [
+        "construction",
+        "road_work"
+      ]
+    ],
+    "PLANNED_WORK": [
+      "Planned work",
+      "construction",
+      [
+        "planned_work",
+        "scheduled_work"
+      ]
+    ],
+    "RAIL_CROSSING_CONDITION": [
+      "Rail crossing condition reported",
+      "rail_blockage_delay",
+      [
+        "blocked",
+        "heavy",
+        "delayed",
+        "delay",
+        "blocked_crossing",
+        "crossing_blocked",
+        "train_blocking_crossing",
+        "rail_blockage_delay",
+        "rail_blockage",
+        "rail_blocked",
+        "rail_delay",
+        "rail_issue"
+      ]
+    ],
+    "ICE": [
+      "Ice reported",
+      "winter",
+      [
+        "ice",
+        "icy",
+        "icy_road",
+        "icy_roads"
+      ]
+    ],
+    "BLACK_ICE_SUSPECTED": [
+      "Possible black ice reported",
+      "winter",
+      [
+        "black_ice_suspected",
+        "black_ice",
+        "possible_black_ice"
+      ]
+    ],
+    "BRIDGE_OVERPASS_ICING": [
+      "Bridge or overpass icing reported",
+      "winter",
+      [
+        "bridge_overpass_icing",
+        "bridge_icing",
+        "overpass_icing"
+      ]
+    ],
+    "SNOW_COVERED_ROAD": [
+      "Snow-covered road reported",
+      "winter",
+      [
+        "snow_covered_road",
+        "snow_on_road"
+      ]
+    ],
+    "SLEET_FREEZING_RAIN": [
+      "Sleet or freezing rain reported",
+      "winter",
+      [
+        "sleet_freezing_rain",
+        "sleet",
+        "freezing_rain"
+      ]
+    ],
+    "REDUCED_VISIBILITY": [
+      "Reduced visibility reported",
+      "winter",
+      [
+        "reduced_visibility",
+        "low_visibility"
+      ]
+    ],
+    "WINTER_ROAD_HAZARD": [
+      "Winter road hazard reported",
+      "winter",
+      [
+        "winter_road_hazard",
+        "winter_hazard"
+      ]
+    ],
+    "OTHER_ROAD_HAZARD": [
+      "Other Hazard",
+      "other_hazard",
+      [
+        "other_hazard",
+        "road_hazard",
+        "other"
+      ]
+    ],
+    "DISABLED_VEHICLE": [
+      "Disabled Vehicle",
+      "disabled_vehicle",
+      [
+        "disabled_vehicle"
+      ]
+    ],
+    "TRAFFIC_BACKUP": [
+      "Traffic Backup / Heavy Delay",
+      "traffic_backup",
+      [
+        "traffic_backup",
+        "heavy_traffic",
+        "traffic_delay"
+      ]
+    ]
+  },
+  "advisories": {
+    "USE_CAUTION": "COMMUNITY_SAFE",
+    "EXPECT_DELAYS": "COMMUNITY_SAFE",
+    "MONITOR_CONDITIONS": "COMMUNITY_SAFE",
+    "AVOID_AREA": "AUTHORIZED_ONLY",
+    "RESTRICTED_ACCESS": "AUTHORIZED_ONLY",
+    "IMPASSABLE": "AUTHORIZED_ONLY",
+    "ROAD_CLOSED": "AUTHORIZED_ONLY",
+    "DETOUR_REQUIRED": "AUTHORIZED_ONLY",
+    "TRAFFIC_CONTROL": "AUTHORIZED_ONLY"
+  },
+  "advisoryLabels": {
+    "USE_CAUTION": "Use caution",
+    "EXPECT_DELAYS": "Expect delays",
+    "MONITOR_CONDITIONS": "Monitor conditions",
+    "AVOID_AREA": "Avoid Area",
+    "RESTRICTED_ACCESS": "Restricted Access",
+    "IMPASSABLE": "Impassable",
+    "ROAD_CLOSED": "Road Closed",
+    "DETOUR_REQUIRED": "Detour Required",
+    "TRAFFIC_CONTROL": "Traffic Control"
+  },
+  "winterPicker": [
+    {
+      "type": "ice",
+      "label": "Ice"
+    },
+    {
+      "type": "black_ice_suspected",
+      "label": "Possible black ice"
+    },
+    {
+      "type": "bridge_overpass_icing",
+      "label": "Bridge / overpass icing"
+    },
+    {
+      "type": "snow_covered_road",
+      "label": "Snow-covered road"
+    },
+    {
+      "type": "sleet_freezing_rain",
+      "label": "Sleet / freezing rain"
+    },
+    {
+      "type": "reduced_visibility",
+      "label": "Reduced visibility"
+    },
+    {
+      "type": "winter_road_hazard",
+      "label": "Other winter road hazard"
+    }
+  ],
+  "reserved": "AUTHORIZED_ORGANIZATION, DISPATCH_PRIVATE and CONSUMER_PROJECTABLE are contract values only; no Dispatch runtime, projection authorization, notification delivery or route relevance is enabled."
+}

@@ -205,6 +205,7 @@
 
     return freeze({
       id: sourceId || `weather-foundation-${index}`,
+      normalizedEvent: globalScope.GridlyHazardNormalization?.weather(record) || null,
       provider: PROVIDER_NAME,
       providerId: PROVIDER_ID,
       category,

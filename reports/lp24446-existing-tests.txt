@@ -1,0 +1,385 @@
+LP043 DriveTexas geometry preservation and authority repair checks passed
+✔ tests\lp043-drivetexas-geometry-preservation-and-authority-repair.test.js (269.5879ms)
+✔ selected canonical community outranks county and produces community-level Sulphur Springs copy (5.2698ms)
+✔ evidence community, county, and generic fallbacks retain statewide precedence (1.6556ms)
+✔ KBYG excludes incident road detail while Alerts keeps its dedicated incident projection (9.9009ms)
+✔ repair is KBYG-specific and does not route through shared incident-location formatter (4.5085ms)
+✔ county governance, eligibility, lifecycle, and multi-county membership remain outside presentation selector (2.7827ms)
+✔ Location Context, top Awareness, Community Pulse, and report lifecycle remain separate consumers (5.2397ms)
+✔ owner console acceptance helper reports surface separation and governance fields (1.0384ms)
+✔ production implementation is generic with no Sulphur Springs special case (2.4814ms)
+✔ LP237 reconciles Flooding presentation aliases into one governed condition (13.4837ms)
+✔ LP237 reconciles Road Closed presentation aliases into one governed condition (2.0113ms)
+✔ LP237 reconciles Blocked Crossing presentation aliases into one governed condition (3.7933ms)
+✔ LP237 reconciles Debris / Obstruction presentation aliases into one governed condition (1.19ms)
+✔ LP237 keeps the same canonical owner before and after two authoritative refreshes (2.5844ms)
+✔ LP237 global contract works for a different subtype outside Austin without county rekeying (2.8001ms)
+✔ LP237 does not change official roadway canonical identity semantics (1.4748ms)
+✔ LP237.1 fails closed for submitted one / governed zero instead of passing vacuously (1.4326ms)
+✔ LP237.1 cannot certify an empty owner-acceptance sample (2.6078ms)
+✔ LP237.1 reconciles an explicit legitimate terminal disposition (1.0442ms)
+✔ LP237.1 preserves multi-county community authority and hazard geography metadata (7.9171ms)
+✔ LP237.1 rejects stale runtime authority and truthfully identifies out-of-scope geography (3.2625ms)
+✔ LP237.1 production selection does not inherit a stale active county (99.9457ms)
+✔ LP237.2 owner audit uses bounded published authority without leaking engine (53.1308ms)
+✔ LP237.2 owner audit fails closed when bounded authority is unavailable (49.7048ms)
+✔ LP237.2 submitted one / governed zero remains a failing owner result (52.2876ms)
+✔ LP237.2 repair is scope-only and keeps production lifecycle wiring unchanged (54.788ms)
+✔ LP243.B governs known Community Report casing without rewriting unknown prose (3.1377ms)
+✔ LP243.B places the existing Show me owner in a bounded upper-right grid column (5.2147ms)
+✔ LP243.B preserves Show me eligibility, data, delegated action ownership, and governed target calls (23.3512ms)
+✔ LP243.B retains LP243.A official roadway labels and semantic hierarchy authorities (26.1158ms)
+✖ disabled create/mutation/clear/cancellation are truthful and never auto-retry (0.9176ms)
+✖ fixture-only enablement accepts exact client; temporary linkage and deadlines remain private (0.1337ms)
+✖ lost response, restart and duplicate retry preserve one token and one consumer report (0.0658ms)
+✖ mutation, confirmation and clear update the original row without resetting retention (0.1846ms)
+✖ offline/reconnect is manual; cancellation tombstones the same pending identity (0.1203ms)
+✖ stale clients, missing/forged token shapes and legacy direct writes fail closed (0.0601ms)
+✖ consumer transport strips private fields and device values; stale/maintenance outcomes never claim success (0.0768ms)
+✖ exact UI adapter rejects maintenance and replay without fabricating a marker or using direct writes (0.0834ms)
+✖ legacy history writer cannot be enabled by client options or supplied storage (0.1002ms)
+✖ exact mutation UI does not call a consumed-token replay a confirmed update (0.1189ms)
+✖ Level 1 and encrypted Level 2 export only this disposable post-transition fixture (0.0515ms)
+✖ C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs (2082.3175ms)
+✔ 1 current Heat Advisory without a temperature cannot become freezing KBYG (10.6073ms)
+✔ 2 stale freeze evidence is excluded from current weather authority (6.1659ms)
+✔ 3 expired freeze alerts are not eligible (2.2355ms)
+✔ 4 retained historical weather cannot be promoted as current (2.3541ms)
+✔ 5 current PLACE identity must own the KBYG weather candidate (2.4525ms)
+✔ 6 precise current PLACE authority wins over a county or legacy weather candidate (4.5234ms)
+✔ 7 area transition invalidates previous weather before publishing the next identity (10.6997ms)
+✔ 8 hard refresh does not rehydrate a stale weather narrative (7.2379ms)
+✔ 9 a legitimate current freeze condition still promotes freezing awareness (2.7765ms)
+✔ 10 a legitimate current Heat Advisory still promotes heat awareness (2.8196ms)
+✔ 11 non-weather KBYG transportation candidates remain unaffected (4.186ms)
+✔ 12 current NWS official alerts remain independently governed (2.4081ms)
+✔ 13 multi-county PLACE weather identity remains PLACE-owned (3.6071ms)
+✔ active Travel Brief consumers retain their legacy semantics with one projection construction (23.7474ms)
+✔ multiple conditions preserve governed identity and order (7.2259ms)
+✔ duplicate evidence retains governed canonical suppression (5.5147ms)
+✔ cleared, stale, inactive, and empty inputs remain excluded (17.3732ms)
+✔ source-family mix keeps community rows first and official roadways separate from story records (13.4424ms)
+✔ separate builds construct fresh projections and never reuse prior rows (4.9301ms)
+✔ production Travel Brief is wired to the build-scoped context and exposes the audit (1.8904ms)
+ℹ tests 62
+ℹ suites 0
+ℹ pass 50
+ℹ fail 12
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4660.3835
+
+✖ failing tests:
+
+test at tests\lp24423d-client-readiness.test.cjs:44:1
+✖ disabled create/mutation/clear/cancellation are truthful and never auto-retry (0.9176ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:55:1
+✖ fixture-only enablement accepts exact client; temporary linkage and deadlines remain private (0.1337ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:65:1
+✖ lost response, restart and duplicate retry preserve one token and one consumer report (0.0658ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:77:1
+✖ mutation, confirmation and clear update the original row without resetting retention (0.1846ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:87:1
+✖ offline/reconnect is manual; cancellation tombstones the same pending identity (0.1203ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:98:1
+✖ stale clients, missing/forged token shapes and legacy direct writes fail closed (0.0601ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:109:1
+✖ consumer transport strips private fields and device values; stale/maintenance outcomes never claim success (0.0768ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:115:1
+✖ exact UI adapter rejects maintenance and replay without fabricating a marker or using direct writes (0.0834ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:138:1
+✖ legacy history writer cannot be enabled by client options or supplied storage (0.1002ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:146:1
+✖ exact mutation UI does not call a consumed-token replay a confirmed update (0.1189ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:159:1
+✖ Level 1 and encrypted Level 2 export only this disposable post-transition fixture (0.0515ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.setupBaseline (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:106:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:36:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:35:1) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24423d-client-readiness.test.cjs:42:1
+✖ C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs (2082.3175ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at psql (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:31:15)
+      at Object.dropDatabase (C:\GitHub\liberty-county-map\tests\lp24423a-production-batch.test.cjs:156:3)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24423d-client-readiness.test.cjs:42:19)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.runHook (node:internal/test_runner/test:1198:20)
+      at after (node:internal/test_runner/test:1251:20)
+      at Test.run (node:internal/test_runner/test:1332:13) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

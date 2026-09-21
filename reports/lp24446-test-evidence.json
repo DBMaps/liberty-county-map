@@ -1,0 +1,547 @@
+{
+  "phase": "LP244.46",
+  "branch": "LP244.46-hazard-advisory-winter-normalization",
+  "startingHead": "6c5504b38d7aa1dbffb41586fda6b0ec1f337aac",
+  "verdict": "READY FOR OWNER REVIEW",
+  "runtimeHashes": {
+    "js/gridlyHazardNormalization.js": "1737c50957e4313b41145765ebe1c0bc600b625b7748384c00cc296459b70e58",
+    "js/app.js": "281559b02fa1c7410d2b16ff48a93664e2ec83eaa2dced3a531ef35f489d7ef8",
+    "js/gridlyConditionDisplayLabel.js": "9c8b1aefe84eb2a733b39f2256b12ad214c38035ca3962038ff4e0b5777ade85",
+    "js/gridlyDriveTexasProvider.js": "85653a1efe1e838f708d9143e246f6dc0d8b8702cdc72e21a1be32af3913d412",
+    "js/gridlyWeatherProvider.js": "8cfbe5b7a7ffcde1c8a3d2951f137a830ae2da3000b7d46d7b32cbe3d6752afc",
+    "index.html": "2de822f0c3fa72b754a755bc52c773ff97ae500128d9880241c817a5bab7c607",
+    "assets/markers/png/winter-road.svg": "f681a861800df504f0e94944ab835d2ddf1cce03a96458613ca198cc794121f7"
+  },
+  "testMatrix": [
+    {
+      "id": "A",
+      "scenario": "legacy community report",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "B",
+      "scenario": "community road blocked",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "C",
+      "scenario": "community impassable",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "D",
+      "scenario": "official road closed",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "E",
+      "scenario": "official detour",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "F",
+      "scenario": "community detour attempt",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "G",
+      "scenario": "ice picker / marker / KBYG",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "H",
+      "scenario": "possible black ice",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "I",
+      "scenario": "bridge icing",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "J",
+      "scenario": "snow-covered road",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "K",
+      "scenario": "sleet / freezing rain",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "L",
+      "scenario": "reduced visibility",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "M",
+      "scenario": "winter plus impassability",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "N",
+      "scenario": "NWS winter alert",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "O",
+      "scenario": "DriveTexas closure",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "P",
+      "scenario": "resolved excluded",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "Q",
+      "scenario": "expired excluded",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "R",
+      "scenario": "unknown severity",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "S",
+      "scenario": "confirmations do not confer authority",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "T",
+      "scenario": "system-derived stays nonofficial",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "U",
+      "scenario": "legacy aliases",
+      "result": "PASS",
+      "evidence": "tests/lp24446-hazard-normalization.test.cjs; reports/lp24446-final-tests.txt; reports/lp24446-portrait-browser.json"
+    },
+    {
+      "id": "V",
+      "scenario": "LP244.45 context sequence",
+      "result": "PASS",
+      "evidence": "reports/lp24446Context-quick-browser.json"
+    }
+  ],
+  "tests": {
+    "finalTargeted": {
+      "passed": 124,
+      "failed": 0,
+      "focused": 22,
+      "lp24445": 29,
+      "otherRelevant": 73,
+      "log": "reports/lp24446-final-tests.txt"
+    },
+    "historical": {
+      "current": {
+        "passed": 20,
+        "failed": 9
+      },
+      "startingHead": {
+        "passed": 20,
+        "failed": 9
+      },
+      "newFailures": 0,
+      "details": [
+        "LP197: 2 existing missing VM helper failures",
+        "LP219: 6 existing classification assertions",
+        "LP243H8: 1 superseded geometry assertion"
+      ],
+      "logs": [
+        "reports/lp24446-historical-current.txt",
+        "reports/lp24446-historical-baseline.txt"
+      ]
+    },
+    "databaseIntegration": {
+      "status": "UNAVAILABLE",
+      "suites": [
+        "lp24421-submission-protocol",
+        "lp24423d-client-readiness"
+      ],
+      "reason": "Local PostgreSQL 127.0.0.1:55441 refused connection during setup. No production fallback. No schema/protocol edits.",
+      "assertionsNotExecuted": 24,
+      "newRegression": false
+    }
+  },
+  "portrait": {
+    "widths": [
+      320,
+      360,
+      390,
+      440
+    ],
+    "winterModels": 7,
+    "allOptionsSelected": true,
+    "horizontalOverflow": false,
+    "errors": [],
+    "marker": {
+      "category": "ice",
+      "assetName": "winter-road.svg",
+      "assetPath": "assets/markers/png/winter-road.svg",
+      "width": 256,
+      "height": 256,
+      "aliases": [
+        "winter-road.svg",
+        "winter-road.svg",
+        "winter-road.svg",
+        "winter-road.svg",
+        "winter-road.svg",
+        "winter-road.svg",
+        "winter-road.svg"
+      ]
+    },
+    "screenshots": [
+      "reports/lp24446-picker-320.png",
+      "reports/lp24446-card-320.png",
+      "reports/lp24446-picker-360.png",
+      "reports/lp24446-card-360.png",
+      "reports/lp24446-picker-390.png",
+      "reports/lp24446-card-390.png",
+      "reports/lp24446-picker-440.png",
+      "reports/lp24446-card-440.png"
+    ]
+  },
+  "performance": {
+    "normalizations": 10000,
+    "durationMs": 13.300000011920929
+  },
+  "context": {
+    "rows": 7,
+    "errors": [],
+    "homeStorageUnchanged": true
+  },
+  "ownerFixtures": [
+    {
+      "selection": "Ice",
+      "event": {
+        "version": 1,
+        "condition": "ICE",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "UNKNOWN",
+        "sourceGeometry": null,
+        "provenance": {
+          "source": "community",
+          "sourceId": "",
+          "rawType": "ice",
+          "sourceClassification": "ice",
+          "observedAt": null,
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": null,
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"ICE\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"UNKNOWN\",null,null,\"UNKNOWN\"]"
+      },
+      "display": "Ice reported"
+    },
+    {
+      "selection": "Possible black ice",
+      "event": {
+        "version": 1,
+        "condition": "BLACK_ICE_SUSPECTED",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "UNKNOWN",
+        "sourceGeometry": null,
+        "provenance": {
+          "source": "community",
+          "sourceId": "",
+          "rawType": "black_ice_suspected",
+          "sourceClassification": "black_ice_suspected",
+          "observedAt": null,
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": null,
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"BLACK_ICE_SUSPECTED\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"UNKNOWN\",null,null,\"UNKNOWN\"]"
+      },
+      "display": "Possible black ice reported"
+    },
+    {
+      "selection": "Bridge / overpass icing",
+      "event": {
+        "version": 1,
+        "condition": "BRIDGE_OVERPASS_ICING",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "UNKNOWN",
+        "sourceGeometry": null,
+        "provenance": {
+          "source": "community",
+          "sourceId": "",
+          "rawType": "bridge_overpass_icing",
+          "sourceClassification": "bridge_overpass_icing",
+          "observedAt": null,
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": null,
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"BRIDGE_OVERPASS_ICING\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"UNKNOWN\",null,null,\"UNKNOWN\"]"
+      },
+      "display": "Bridge or overpass icing reported"
+    },
+    {
+      "selection": "Snow-covered road",
+      "event": {
+        "version": 1,
+        "condition": "SNOW_COVERED_ROAD",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "UNKNOWN",
+        "sourceGeometry": null,
+        "provenance": {
+          "source": "community",
+          "sourceId": "",
+          "rawType": "snow_covered_road",
+          "sourceClassification": "snow_covered_road",
+          "observedAt": null,
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": null,
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"SNOW_COVERED_ROAD\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"UNKNOWN\",null,null,\"UNKNOWN\"]"
+      },
+      "display": "Snow-covered road reported"
+    },
+    {
+      "selection": "Sleet / freezing rain",
+      "event": {
+        "version": 1,
+        "condition": "SLEET_FREEZING_RAIN",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "UNKNOWN",
+        "sourceGeometry": null,
+        "provenance": {
+          "source": "community",
+          "sourceId": "",
+          "rawType": "sleet_freezing_rain",
+          "sourceClassification": "sleet_freezing_rain",
+          "observedAt": null,
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": null,
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"SLEET_FREEZING_RAIN\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"UNKNOWN\",null,null,\"UNKNOWN\"]"
+      },
+      "display": "Sleet or freezing rain reported"
+    },
+    {
+      "selection": "Reduced visibility",
+      "event": {
+        "version": 1,
+        "condition": "REDUCED_VISIBILITY",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "UNKNOWN",
+        "sourceGeometry": null,
+        "provenance": {
+          "source": "community",
+          "sourceId": "",
+          "rawType": "reduced_visibility",
+          "sourceClassification": "reduced_visibility",
+          "observedAt": null,
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": null,
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"REDUCED_VISIBILITY\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"UNKNOWN\",null,null,\"UNKNOWN\"]"
+      },
+      "display": "Reduced visibility reported"
+    },
+    {
+      "selection": "Other winter road hazard",
+      "event": {
+        "version": 1,
+        "condition": "WINTER_ROAD_HAZARD",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "UNKNOWN",
+        "sourceGeometry": null,
+        "provenance": {
+          "source": "community",
+          "sourceId": "",
+          "rawType": "winter_road_hazard",
+          "sourceClassification": "winter_road_hazard",
+          "observedAt": null,
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": null,
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"WINTER_ROAD_HAZARD\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"UNKNOWN\",null,null,\"UNKNOWN\"]"
+      },
+      "display": "Winter road hazard reported"
+    },
+    {
+      "selection": "Winter observation with impassability",
+      "event": {
+        "version": 1,
+        "condition": "ICE",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "UNKNOWN",
+        "sourceGeometry": null,
+        "provenance": {
+          "source": "community",
+          "sourceId": "",
+          "rawType": "ice",
+          "sourceClassification": "ice",
+          "observedAt": null,
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": null,
+        "accessObservation": "ROAD_IMPASSABLE",
+        "markerFamily": "winter",
+        "materialRevision": "[\"ICE\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"UNKNOWN\",null,null,\"ROAD_IMPASSABLE\"]"
+      },
+      "display": "Ice reported; road appears impassable"
+    }
+  ],
+  "protectedChecks": [
+    {
+      "file": "js/gridly-report-protocol.js",
+      "contentUnchangedIgnoringCheckoutLineEndings": true
+    },
+    {
+      "file": "js/gridly-ugc-compliance.js",
+      "contentUnchangedIgnoringCheckoutLineEndings": true
+    },
+    {
+      "file": "js/gridlyDriveTexasLiveConnector.js",
+      "contentUnchangedIgnoringCheckoutLineEndings": true
+    },
+    {
+      "file": "js/gridlyWeatherLiveConnector.js",
+      "contentUnchangedIgnoringCheckoutLineEndings": true
+    },
+    {
+      "file": "service-worker.js",
+      "contentUnchangedIgnoringCheckoutLineEndings": true
+    }
+  ],
+  "noninterference": {
+    "migration": false,
+    "databaseWrites": false,
+    "reportingActivated": false,
+    "retentionPolicyChanged": false,
+    "publicSiteChanged": false,
+    "dispatchChanged": false,
+    "notificationsAdded": false,
+    "nativePushChanged": false,
+    "routeRelevanceAdded": false,
+    "push": false,
+    "merge": false,
+    "deploy": false
+  },
+  "deferred": [
+    "Database-backed protocol integration requires the disposable local database.",
+    "Organization/Dispatch authorization, notification delivery and route relevance are reserved for later phases."
+  ],
+  "commitPolicy": {
+    "count": 1,
+    "message": "Normalize hazards advisories and winter conditions",
+    "scope": "local only; containing commit identifies this artifact"
+  }
+}

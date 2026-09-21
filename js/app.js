@@ -3262,10 +3262,11 @@ function gridlyBuildCanonicalLiveIncidentPresentation(record = {}) {
   const raw = record?.canonicalSourceRecord || record?.raw || record?.source || record?.latestReport || {};
   const isCrossing = identity.crossingOwnershipExplicit;
   const sourceText = String(record?.sourceKind || record?.providerId || record?.sourceId || raw?.sourceKind || raw?.providerId || "").toLowerCase();
-  const sourceFamily = /weather|nws|noaa/.test(sourceText) ? "WEATHER" : (isCrossing ? "CROSSING_REPORTS" : (/official|drivetexas|txdot/.test(sourceText) ? "OFFICIAL_ROADWAYS" : "COMMUNITY_REPORTS"));
+  const sourceFamily = record.normalizedEvent?.authorityClass === "COMMUNITY_OBSERVATION" ? (isCrossing ? "CROSSING_REPORTS" : "COMMUNITY_REPORTS") : /weather|nws|noaa/.test(sourceText) ? "WEATHER" : (isCrossing ? "CROSSING_REPORTS" : (/official|drivetexas|txdot/.test(sourceText) ? "OFFICIAL_ROADWAYS" : "COMMUNITY_REPORTS"));
   const canonicalKey = record?.submittedHazardType || record?.submitted_hazard_type || record?.hazardType || record?.hazard_type || record?.report_type || record?.reportType || record?.category || record?.type || identity.hazardType;
   const subtype = record?.subtype || record?.hazardSubtype || record?.otherHazardSubtype || raw?.subtype || raw?.hazardSubtype;
-  const displayCondition = typeof gridlyConditionDisplayLabel === "function" ? gridlyConditionDisplayLabel({ sourceFamily, canonicalKey, subtype, providerEvent: record?.event || raw?.event, trustedLabel: identity.presentationCondition }) : identity.presentationCondition;
+  const normalizedConditionLabel = record.normalizedEvent?.accessObservation === "ROAD_IMPASSABLE" && typeof GridlyHazardNormalization !== "undefined" ? GridlyHazardNormalization.label(record.normalizedEvent) : "";
+  const displayCondition = normalizedConditionLabel || (typeof gridlyConditionDisplayLabel === "function" ? gridlyConditionDisplayLabel({ sourceFamily, canonicalKey, subtype, providerEvent: record?.event || raw?.event, trustedLabel: identity.presentationCondition }) : identity.presentationCondition);
   const locationLabel = typeof normalizeGridlyAlertCardLocationLabel === "function" ? normalizeGridlyAlertCardLocationLabel(record) : (record?.locationName || record?.roadName || record?.crossingName || "Local roadway");
   const freshnessLabel = typeof formatGridlyHazardPopupFreshnessLine === "function" ? formatGridlyHazardPopupFreshnessLine(record) : (record?.minutesText || "Updated just now");
   const reportCount = Math.max(1, Number(record?.incidentReportCount || record?.activeReportCount || record?.reports_count || record?.count || (Array.isArray(record?.reports) ? record.reports.length : 1)) || 1);
@@ -4327,6 +4328,10 @@ function gridlyTravelBriefRecordLine(record, fallback) {
 }
 
 function gridlyTravelBriefCommunityCondition(record = {}) {
+  if (typeof GridlyHazardNormalization !== "undefined") {
+    const event = record.normalizedEvent || GridlyHazardNormalization.community({type:record.report_type || record.reportType || record.hazardType || record.type || record.category});
+    if (["winter", "other_hazard"].includes(event.markerFamily) && !["OTHER_ROAD_HAZARD", "UNKNOWN"].includes(event.condition) || ["ROAD_BLOCKED", "HIGH_WATER"].includes(event.condition)) return event.condition.toLowerCase();
+  }
   const text = gridlyTravelBriefCleanLine([
     record.consumerSummary,
     record.headline,
@@ -4401,13 +4406,17 @@ const GRIDLY_TRAVEL_BRIEF_COMMUNITY_CONDITION_COPY = Object.freeze({
   "flooding": Object.freeze({ singular: "Flooding", plural: "Flooding", mixed: "flooding" }),
   "crossing-delay": Object.freeze({ singular: "Crossing delay", plural: "Crossing delays", mixed: "crossing delays" }),
   "road-hazard": Object.freeze({ singular: "Road hazard", plural: "Road hazards", mixed: "road hazards" }),
-  "road-closure": Object.freeze({ singular: "Road closure", plural: "Road closures", mixed: "road closures" }),
+  "road-closure": Object.freeze({ singular: "Road appears blocked", plural: "Roads appear blocked", mixed: "roads reported blocked" }),
   "crash": Object.freeze({ singular: "Crash", plural: "Crashes", mixed: "crashes" }),
   "construction": Object.freeze({ singular: "Construction", plural: "Construction", mixed: "construction" }),
   "community-report": Object.freeze({ singular: "Community report", plural: "Community reports", mixed: "community reports" })
 });
 
 function gridlyTravelBriefCommunityConditionCopy(conditionKey) {
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[conditionKey]) {
+    const label = GridlyHazardNormalization.label(GridlyHazardNormalization.community({type:conditionKey}));
+    return {singular:label, plural:label, mixed:label.toLowerCase()};
+  }
   return GRIDLY_TRAVEL_BRIEF_COMMUNITY_CONDITION_COPY[conditionKey] || GRIDLY_TRAVEL_BRIEF_COMMUNITY_CONDITION_COPY["community-report"];
 }
 
@@ -4421,9 +4430,10 @@ function gridlyTravelBriefCommunityLine(record = {}) {
 }
 
 function gridlyTravelBriefCommunityConditionLine(condition, copy, locality = "") {
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[condition] && !["flooding", "crash", "construction"].includes(condition)) return `${copy.singular}${locality ? ` in ${locality}` : " nearby"}.`;
   if (condition === "flooding") return locality ? `${copy.singular} affecting roads in ${locality}.` : "Flooding affecting nearby roads.";
   if (condition === "crossing-delay") return locality ? `${copy.plural} reported in ${locality}.` : "Crossing delays reported nearby.";
-  if (condition === "road-closure") return locality ? `${copy.singular} affecting roads in ${locality}.` : "Road closure affecting nearby roads.";
+  if (condition === "road-closure") return locality ? `${copy.singular} in ${locality}.` : "Road appears blocked nearby.";
   if (condition === "road-hazard") return locality ? `${copy.singular} affecting roads in ${locality}.` : "Road hazard affecting nearby roads.";
   if (condition === "crash") return locality ? `${copy.singular} affecting travel in ${locality}.` : "Crash affecting nearby travel.";
   if (condition === "construction") return locality ? `${copy.singular} affecting roads in ${locality}.` : "Construction affecting nearby roads.";
@@ -10191,6 +10201,15 @@ if (typeof window !== "undefined") {
 }
 
 const HAZARD_TYPES = {
+  black_ice_suspected: { label: "Possible black ice", icon: "❄", severity: "unknown", detail: "Shared observation: Possible black ice." },
+  bridge_overpass_icing: { label: "Bridge / overpass icing", icon: "❄", severity: "unknown", detail: "Shared observation: Bridge / overpass icing." },
+  snow_covered_road: { label: "Snow-covered road", icon: "❄", severity: "unknown", detail: "Shared observation: Snow-covered road." },
+  sleet_freezing_rain: { label: "Sleet / freezing rain", icon: "❄", severity: "unknown", detail: "Shared observation: Sleet / freezing rain." },
+  reduced_visibility: { label: "Reduced visibility", icon: "❄", severity: "unknown", detail: "Shared observation: Reduced visibility." },
+  winter_road_hazard: { label: "Other winter road hazard", icon: "❄", severity: "unknown", detail: "Shared observation: Other winter road hazard." },
+  road_blocked: { label: "Road appears blocked", icon: "⚠", severity: "unknown", detail: "Shared observation: Road appears blocked." },
+  road_impassable: { label: "Road appears impassable", icon: "⚠", severity: "unknown", detail: "Shared observation: Road appears impassable." },
+  high_water: { label: "High water reported", icon: "⚠", severity: "unknown", detail: "Shared observation: High water reported." },
   flooding: {
     label: "Flooding",
     icon: "🌊",
@@ -10222,10 +10241,10 @@ const HAZARD_TYPES = {
     detail: "Shared report: construction may slow travel."
   },
   road_closed: {
-    label: "Road Closed",
-    icon: "⛔",
+    label: "Road appears blocked",
+    icon: "⚠",
     severity: "high",
-    detail: "Shared report: road closure is blocking travel."
+    detail: "Shared observation: road appears blocked."
   },
   disabled_vehicle: {
     label: "Disabled Vehicle",
@@ -10269,7 +10288,9 @@ const ROAD_HAZARD_TYPE_OPTIONS = [
   { value: "crash", label: "Crash / Wreck" },
   { value: "disabled_vehicle", label: "Disabled Vehicle" },
   { value: "debris", label: "Debris In Road" },
-  { value: "road_closed", label: "Road Closed" },
+  { value: "road_blocked", label: "Road appears blocked" },
+  { value: "road_impassable", label: "Road appears impassable" },
+  ...GridlyHazardNormalization.winterOptions.map(({ type, label }) => ({ value: type, label })),
   { value: "construction", label: "Construction" },
   { value: "traffic_backup", label: "Traffic Backup / Heavy Delay" },
   { value: "other_hazard", label: "Other Hazard" }
@@ -12321,7 +12342,8 @@ const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
   "traffic-backup-heavy-delay.png",
   "traffic-signal-issue.png",
   "train-front.png",
-  "water-over-road.png"
+  "water-over-road.png",
+  "winter-road.svg"
 ]);
 const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
   construction: "construction-zone.png",
@@ -12333,7 +12355,16 @@ const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
   emergency_response_impact: "emergency-response.png",
   fallen_tree: "debris-in-road.png",
   flooding: "water-over-road.png",
-  ice: "water-over-road.png",
+  ice: "winter-road.svg",
+  black_ice_suspected: "winter-road.svg",
+  bridge_overpass_icing: "winter-road.svg",
+  snow_covered_road: "winter-road.svg",
+  sleet_freezing_rain: "winter-road.svg",
+  reduced_visibility: "winter-road.svg",
+  winter_road_hazard: "winter-road.svg",
+  road_blocked: "other-hazard.png",
+  road_impassable: "other-hazard.png",
+  high_water: "water-over-road.png",
   livestock_on_road: "livestock-on-road.png",
   other_hazard: "other-hazard.png",
   other: "other-hazard.png",
@@ -12356,6 +12387,7 @@ const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
 });
 
 const GRIDLY_PRODUCTION_MARKER_TIP_ANCHOR_RATIOS = Object.freeze({
+  "winter-road.svg": 244 / 256,
   "construction-zone.png": 244 / 256,
   "crash-on-road.png": 193 / 256,
   "debris-in-road.png": 200 / 256,
@@ -58785,7 +58817,7 @@ window.gridlyAuditHelperExposureAudit = gridlyAuditHelperExposureAudit;
 exposeGridlyAuditHelper("gridlyAuditHelperExposureAudit", gridlyAuditHelperExposureAudit);
 
 
-const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "traffic_backup", "other_hazard"]);
+const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["black_ice_suspected", "bridge_overpass_icing", "snow_covered_road", "sleet_freezing_rain", "reduced_visibility", "winter_road_hazard", "road_blocked", "road_impassable", "high_water", "flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "traffic_backup", "other_hazard"]);
 const GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES = Object.freeze([...GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES, "hazard_cleared", "wreck"]);
 const GRIDLY_SUPABASE_TEST_HAZARD_CONFIRMATION = "CLEAR_SUPABASE_TEST_HAZARDS";
 
@@ -58795,6 +58827,10 @@ function gridlyGetSharedRoadHazardReportTypes() {
 
 function gridlyNormalizeSharedRoadHazardType(type = "") {
   const normalized = String(type || "").trim().toLowerCase();
+  if (typeof GridlyHazardNormalization !== "undefined" && !Object.prototype.hasOwnProperty.call(HAZARD_TYPES, normalized)) {
+    const canonical = GridlyHazardNormalization.aliases[normalized.replace(/[ -]+/g, "_")]?.toLowerCase();
+    if (canonical && Object.prototype.hasOwnProperty.call(HAZARD_TYPES, canonical)) return canonical;
+  }
   return normalized === "wreck" ? "crash" : normalized;
 }
 
@@ -58804,7 +58840,7 @@ function gridlyIsHazardDeviceCrossingId(crossingId = "") {
 
 function gridlyIsSharedRoadHazardReportRow(row = {}) {
   const rawType = String(row?.report_type || row?.type || "").trim().toLowerCase();
-  return GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES.includes(rawType);
+  return GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES.includes(gridlyNormalizeSharedRoadHazardType(rawType));
 }
 
 function gridlyIsTxDotReportSource(row = {}) {
@@ -60608,7 +60644,7 @@ function normalizeReports(rows) {
     );
 
     const incomingType = String(row.report_type || "other").toLowerCase();
-    const reportType = incomingType === "wreck" ? "crash" : incomingType;
+    const reportType = gridlyNormalizeSharedRoadHazardType(incomingType);
     const parsedStructuredMetadata = extractOtherHazardStructuredMetadata(row);
     const otherHazardMetadata = reportType === "other_hazard" ? parsedStructuredMetadata : { ...(parsedStructuredMetadata && typeof parsedStructuredMetadata === "object" ? parsedStructuredMetadata : {}), category: reportType };
     const structuredRoadContext = otherHazardMetadata?.canonicalRoadContext && typeof otherHazardMetadata.canonicalRoadContext === "object" ? otherHazardMetadata.canonicalRoadContext : {};
@@ -60649,6 +60685,9 @@ function normalizeReports(rows) {
       : "";
     return {
       id: row.id,
+      legacyReportType: row.report_type,
+      normalizedEvent: typeof GridlyHazardNormalization !== "undefined" ? GridlyHazardNormalization.community(row) : null,
+      lifecycleState: row.lifecycleState || row.lifecycle || row.status || undefined,
       persistedReportId: persistedReportId || null,
       explicitLifecycleTargetRaw: explicitLifecycleTargetRaw || null,
       lifecycleIdentity: lifecycleIdentity || null,
@@ -60675,7 +60714,7 @@ function normalizeReports(rows) {
       communityKey: otherHazardMetadata?.communityKey || otherHazardMetadata?.placeGeoid || recoveredPlaceIdentity?.communityKey || "",
       placeGeoid: otherHazardMetadata?.placeGeoid || otherHazardMetadata?.communityKey || recoveredPlaceIdentity?.placeGeoid || "",
       icon: isHazard ? copy.icon : "",
-      severity: row.severity || copy.severity,
+      severity: row.severity || "unknown",
       title: isHazard
         ? `${copy.icon} ${otherHazardSubtype ? getOtherHazardSubtypeLabel(otherHazardSubtype) : copy.label}`
         : `${row.crossing_name || "Crossing"} ${copy.shortTitle}`,
@@ -61821,6 +61860,7 @@ function getHazardMetadata(type = "") {
 }
 
 function getGridlyProductionMarkerCategory(incident = {}, fallbackCategory = "other_hazard") {
+  if (incident.normalizedEvent?.authorityClass === "COMMUNITY_OBSERVATION" && incident.normalizedEvent.condition === "ROAD_BLOCKED") return "road_blocked";
   const normalizedFallback = getHazardCategory(fallbackCategory);
   const subtype = normalizedFallback === "other_hazard" ? resolveOtherHazardSubtypeFromRecord(incident) : "";
   if (subtype && GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[subtype]) return subtype;
@@ -62790,6 +62830,11 @@ function gridlyIsClearedHazardAwarenessRecord(record = {}) {
 
 function getGridlyLightweightLifecycleState(item = {}) {
   if (!item || typeof item !== "object") return "inactive";
+  if (typeof GridlyHazardNormalization !== "undefined") {
+    const normalizedState = GridlyHazardNormalization.lifecycle(item);
+    if (["RESOLVED", "EXPIRED", "CANCELLED", "UNKNOWN"].includes(normalizedState)) return normalizedState.toLowerCase();
+    if (item.normalizedEvent && !GridlyHazardNormalization.isActive(item.normalizedEvent)) return item.normalizedEvent.lifecycle.toLowerCase();
+  }
   if (item.expired) return "expired";
   if (gridlyIsClearedHazardAwarenessRecord(item)) return "cleared";
   const explicitState = String(item?.status || item?.lifecycleState || item?.lifecycle || item?.state || item?.raw?.status || item?.raw?.lifecycleState || item?.raw?.lifecycle || item?.raw?.state || "").toLowerCase();
@@ -62902,6 +62947,11 @@ function normalizeGridlyLightweightCategoryValue(value = "") {
 }
 
 function getGridlyLightweightCategoryLabel(category = "unknown") {
+  const key = String(category).toLowerCase().replace(/[ -]+/g, "_");
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[key]) {
+    const event = GridlyHazardNormalization.community({type:key});
+    if (event.markerFamily === "winter" || ["ROAD_BLOCKED", "ROAD_IMPASSABLE", "HIGH_WATER"].includes(event.condition)) return event.condition.toLowerCase();
+  }
   const normalized = normalizeGridlyLightweightCategoryValue(category);
   if (!normalized || normalized === "unknown") return "unknown";
   if (/flood|standing water|high water/.test(normalized)) return "flooding";
@@ -63216,8 +63266,9 @@ function buildGridlyLightweightActiveHeadline(category = "unknown", location = {
     ? (/^(?:\d|north|south|east|west|near\b|on\b|at\b|between\b)/i.test(locationLabel) ? "" : (location?.locationSpecificityLevel === "nearby_phrase" ? "near" : "on"))
     : "nearby";
   const locationPhrase = hasLocation ? `${preposition ? ` ${preposition} ` : " "}${locationLabel}` : " nearby";
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[category] && (["winter", "other_hazard"].includes(GridlyHazardNormalization.community({type:category}).markerFamily) || ["ROAD_BLOCKED", "HIGH_WATER"].includes(GridlyHazardNormalization.community({type:category}).condition))) return `${GridlyHazardNormalization.label(GridlyHazardNormalization.community({type:category}))}${locationPhrase}`;
   if (category === "flooding") return `Flooding${hasLocation ? locationPhrase : " nearby"}`;
-  if (category === "road closure") return `Road closure reported${locationPhrase}`;
+  if (category === "road closure") return `Road appears blocked${locationPhrase}`;
   if (category === "debris") return `Debris in Road reported${locationPhrase}`;
   if (category === "traffic_backup") return `Traffic Backup reported${locationPhrase}`;
   if (category === "rail") return `Train Blocking Crossing${hasLocation ? ` near ${locationLabel}` : ""}`;
@@ -77279,6 +77330,13 @@ function ensureUnifiedIncidentLayerOnMap() {
 }
 
 function gridlyIncidentEligibleForMapMarker(incident = {}) {
+  if (typeof GridlyHazardNormalization !== "undefined") {
+    const event = incident.normalizedEvent || incident.latestReport?.normalizedEvent;
+    const state = GridlyHazardNormalization.lifecycle(incident);
+    if (["RESOLVED", "EXPIRED", "CANCELLED"].includes(state) || (event && !GridlyHazardNormalization.isActive(event))) return false;
+    const winter = event?.markerFamily === "winter" || GridlyHazardNormalization.definitions[GridlyHazardNormalization.aliases[String(incident.report_type || incident.type || "").toLowerCase()]]?.[1] === "winter";
+    if (typeof activeGeoFilter !== "undefined" && activeGeoFilter === "active-delays" && winter && event?.advisory !== "EXPECT_DELAYS") return false;
+  }
   const type = String(incident?.report_type || incident?.type || "").trim().toLowerCase();
   const status = String(incident?.status || incident?.state || "").trim().toLowerCase();
   const lifecycleState = String(incident?.lifecycleState || incident?.lifecycle || incident?.lifecycle_state || "").trim().toLowerCase();
@@ -84089,6 +84147,7 @@ function getMapSeverityClass(incident){
 
 function getUnifiedIncidentIcon(incident){
   if (incident.status === "cleared") return "✓";
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.definitions[GridlyHazardNormalization.aliases[String(incident.report_type || incident.type || "").toLowerCase()]]?.[1] === "winter") return "❄";
   const m={rail_blocked:"⛔", rail_delay:"🚦", wreck:"🚗", flooding:"🌊", construction:"🚧", closure:"⛔", debris:"⚠️", disabled_vehicle:"🚙", traffic_backup:"🚦", cleared:"✓"};
   return m[incident.type]||"❗";
 }
@@ -84100,6 +84159,8 @@ let lastGridlyCrossingPopupConsumerState = null;
 function getGridlyHazardConsumerTitle(incident = {}) {
   const subtype = resolveOtherHazardSubtypeFromRecord(incident);
   if (subtype) return getOtherHazardSubtypeLabel(subtype);
+  const normalized = incident.normalizedEvent;
+  if (typeof GridlyHazardNormalization !== "undefined" && (normalized || GridlyHazardNormalization.aliases[String(incident.report_type || incident.type || "").toLowerCase()])) return GridlyHazardNormalization.label(normalized || GridlyHazardNormalization.community(incident));
   const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
   return (typeof formatRoadHazardCategoryLabel === "function" ? formatRoadHazardCategoryLabel(category) : HAZARD_TYPES?.[category]?.label) || "Other Hazard";
 }
@@ -84518,7 +84579,7 @@ function buildGridlyHazardPopupConsumerModel(incident = {}, options = {}) {
   const reportCountLine = trustModel.reportCountLine;
   const freshnessLine = formatGridlyHazardPopupFreshnessLine(incident);
   const confidenceLine = trustModel.trustLine;
-  const guidanceLine = /(?:flood|water|closed|closure|crash|wreck|debris|power|livestock|disabled|traffic|construction)/i.test(title)
+  const guidanceLine = incident.normalizedEvent?.markerFamily === "winter" ? "Use caution on winter roads." : /(?:flood|water|closed|closure|crash|wreck|debris|power|livestock|disabled|traffic|construction)/i.test(title)
     ? "Expect slower travel and use caution."
     : "Check current alerts before leaving.";
   gridlyAddPopupAuditDuration(auditRow, "narrativeDurationMs", stepStart);
@@ -85425,6 +85486,7 @@ function normalizeGridlyAlertCardLocationLabel(alert = {}) {
 }
 
 function gridlyAlertsPresentationSourceClass(record = {}) {
+  if (record.normalizedEvent?.authorityClass === "COMMUNITY_OBSERVATION" && record.normalizedEvent?.condition !== "RAIL_CROSSING_CONDITION") return "community_report";
   const ownership = typeof globalThis !== "undefined" ? globalThis.gridlyAlertSemanticContract?.sourceOwnership?.(record) : null;
   if (ownership === "OFFICIAL_ROADWAY") return "official_roadway";
   if (ownership === "WEATHER") return "weather_provider";
@@ -86920,7 +86982,9 @@ counter.textContent = "Road conditions appear calm";
       <button type="button" data-action="open-hazard-placement" data-hazard-type="crash">🚗 Crash / Wreck</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="disabled_vehicle">🚙 Disabled Vehicle</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="debris">⚠️ Debris in Road</button>
-      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_closed">⛔ Road Closed</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_blocked">⚠ Road appears blocked</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_impassable">Road appears impassable</button>
+      <details><summary>Winter road conditions</summary>${GridlyHazardNormalization.winterOptions.map(option => `<button type="button" data-action="open-hazard-placement" data-hazard-type="${option.type}">${option.label}</button>`).join("")}</details>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="construction">🚧 Construction</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="traffic_backup">🚦 Traffic Backup / Heavy Delay</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="other_hazard">❗ Other Hazard</button>
@@ -91845,7 +91909,7 @@ function injectHazardStyles() {
       --gridly-production-marker-artwork-scale: 1.48;
     }
 
-    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"], [data-marker-category="ice"]) {
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"]) {
       --gridly-production-marker-artwork-scale: 1.4;
     }
 
@@ -106928,6 +106992,7 @@ function getCorridorSeverityTheme(severityLabel = "Clear") {
 const ROAD_HAZARD_DISPLAY_CATEGORIES = new Set(["road_closed", "flooding", "crash", "construction", "disabled_vehicle", "debris", "traffic_backup", "other_hazard"]);
 
 function formatRoadHazardCategoryLabel(category) {
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[category]) return GridlyHazardNormalization.label(GridlyHazardNormalization.community({ type: category }));
   const labels = {
     road_closed: "Road Closed",
     flooding: "Flooding",
@@ -115601,6 +115666,8 @@ function gridlyOfficialSituationTimeframe(record = {}, sourceType = "official-ro
 function buildGridlyOfficialSituationAlert(record = {}, sourceType = "official-roadways") {
   if (!record || typeof record !== "object") return null;
   const isWeather = sourceType === "weather";
+  const normalizedEvent = record.normalizedEvent;
+  if (normalizedEvent && typeof GridlyHazardNormalization !== "undefined" && !GridlyHazardNormalization.isActive(normalizedEvent)) return null;
   const category = String(record.category || record.event || record.title || (isWeather ? "Weather" : "Travel Advisory")).trim();
   const location = gridlyOfficialSituationLocation(record, sourceType);
   const sourceLabel = isWeather ? "Weather" : "Official Roadways";
@@ -115613,11 +115680,12 @@ function buildGridlyOfficialSituationAlert(record = {}, sourceType = "official-r
   const impact = presentation?.impactSentence || (isWeather
     ? "Heavy rainfall, reduced visibility, wind, or severe conditions may affect travel."
     : (/construction|lane|work/i.test(category) ? "Expect delays." : "Use caution and expect changing travel conditions."));
-  const displayTitle = presentation?.title || category;
+  const displayTitle = normalizedEvent?.authorityClass === "OFFICIAL_PUBLIC" && typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.advisories[normalizedEvent.advisory] === "AUTHORIZED_ONLY" ? GridlyHazardNormalization.label(normalizedEvent) : presentation?.title || category;
   const timeframe = gridlyOfficialSituationTimeframe(record, sourceType);
   const id = `official-situation-${sourceType}-${String(record.id || record.title || location).replace(/[^a-z0-9_-]+/gi, "-").slice(0, 72)}`;
   return {
     id,
+    normalizedEvent,
     providerId: isWeather ? "weather" : "drivetexas",
     reportKind: "official-situation",
     situationType: isWeather ? "weather-event" : category,
@@ -116059,6 +116127,12 @@ function isRecentlyCleared(report, now = Date.now()) {
 
 function getIncidentLifecycleState(report, now = Date.now()) {
   if (!report) return "inactive";
+  if (typeof GridlyHazardNormalization !== "undefined") {
+    const lifecycle = GridlyHazardNormalization.lifecycle(report, now);
+    if (lifecycle === "CANCELLED" || lifecycle === "EXPIRED" || lifecycle === "UNKNOWN") return "inactive";
+    if (lifecycle === "RESOLVED" && !isClearedReportType(report.type || report.report_type)) return "cleared";
+    if (report.normalizedEvent && !GridlyHazardNormalization.isActive(report.normalizedEvent, now)) return "inactive";
+  }
   const explicitState = String(report.status || report.lifecycleState || report.lifecycle || report.state || report.raw?.status || report.raw?.lifecycleState || report.raw?.lifecycle || report.raw?.state || "").trim().toLowerCase();
   const reportType = report.type || report.report_type || report.reportType || report.raw?.type || report.raw?.report_type || report.raw?.reportType || explicitState;
   if (isClearedReportType(reportType) || isClearedReportType(explicitState) || ["cleared", "recently_cleared", "historical", "stale"].includes(explicitState)) {
@@ -118818,7 +118892,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     { label: "Crash / Wreck", type: "crash" },
     { label: "Disabled Vehicle", type: "disabled_vehicle" },
     { label: "Debris in Road", type: "debris" },
-    { label: "Road Closed", type: "road_closed" },
+    { label: "Road appears blocked", type: "road_blocked" },
+    { label: "Road appears impassable", type: "road_impassable" },
     { label: "Construction", type: "construction" },
     { label: "Traffic Backup / Heavy Delay", type: "traffic_backup" },
     { label: "Other Hazard", type: "other_hazard" }
@@ -120708,6 +120783,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return `<div class="gridly-v2-report-picker" data-v2-report-hazard-picker>
       <p class="gridly-v2-sheet-copy gridly-v2-report-prompt"><strong>What are you seeing?</strong><span>Choose the closest match.</span></p>
       <div class="gridly-v2-tiles gridly-v2-report-tiles">${primaryOptionsHtml}</div>
+      <details class="settings-list-section" data-v2-winter-hazards><summary class="settings-list-summary"><span class="settings-list-title">Winter road conditions</span><span class="settings-list-meta">Ice, snow and visibility</span></summary><div class="gridly-v2-tiles gridly-v2-report-tiles">${GridlyHazardNormalization.winterOptions.map(option => `<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div></details>
       <details class="gridly-v2-other-hazard-subtypes settings-list-section" data-v2-other-hazard-subtypes hidden>
         <summary class="settings-list-summary gridly-v2-other-hazard-summary"><span class="settings-list-title">Other Hazard</span><span class="settings-list-meta">Choose subtype</span></summary>
         <div class="gridly-v2-list settings-list-detail gridly-v2-other-hazard-subtype-list">

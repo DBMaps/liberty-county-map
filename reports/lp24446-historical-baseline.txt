@@ -1,0 +1,479 @@
+✔ registry is the exact four owner-approved GEOID-keyed presentation cameras (6.3319ms)
+✖ semantic PLACE dispatch uses overrides exactly and canonical fallback otherwise (5.9932ms)
+✖ canonical identities and memberships remain unchanged and Austin County cannot inherit Austin camera (7.9013ms)
+✔ shared selection and reload paths converge on GEOID dispatch without persisted coordinates (4.5392ms)
+✔ metro precedence, county fitting, and Route Watch movement remain outside the PLACE override (5.1491ms)
+✔ one governed provider identity is stable across consumer projections (8.0233ms)
+✔ Location Context derives from unique governed eligible evidence, not rows (1.7854ms)
+✔ grouped KBYG rows do not redefine Rankin underlying count (3.0485ms)
+✖ blocked_crossing community report has deterministic existing-runtime classification (3.0414ms)
+✖ disabled_vehicle community report has deterministic existing-runtime classification (1.4371ms)
+✖ flooded_road community report has deterministic existing-runtime classification (1.3593ms)
+✖ closed_road community report has deterministic existing-runtime classification (0.9513ms)
+✖ rail_crossing_issue community report has deterministic existing-runtime classification (0.8281ms)
+✔ Pecos two-report fixture proves blocked crossing is the single counted issue (1.0077ms)
+✔ Cienegas initial blocked crossing is map-published and count eligible (0.7996ms)
+✔ Cienegas later four fails closed unless all four identities are available (0.4954ms)
+✔ four identified Cienegas items explain four without duplicate inflation (0.7978ms)
+✔ Val Verde generated incident remains evidence when Alerts and KBYG omit it (0.5574ms)
+✔ Pearsall official flooding is full-stack eligible (0.5068ms)
+✔ Floydada Travel Advisory stays present and exposes KBYG propagation failure (0.56ms)
+✔ quiet control is governed zero (0.2958ms)
+✔ stale evidence cannot inflate current count (0.4688ms)
+✔ duplicate evidence cannot inflate current count (0.5748ms)
+✔ older asynchronous generation cannot overwrite current snapshot (0.7061ms)
+✖ map publication does not imply Alerts or KBYG eligibility (0.7359ms)
+✔ identity-less projection fails closed and cannot become evidence (0.3023ms)
+✔ production instrumentation is bounded and contains no town/county special cases (13.489ms)
+✖ superseded milestone geometry defers to the one H10B authority (4.5324ms)
+✔ final invariants preserve mounted owners, accessibility, and presentation-local state (4.2542ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 20
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 395.301
+
+✖ failing tests:
+
+test at tests\lp197-governed-place-consumer-presentation-cameras.test.mjs:54:1
+✖ semantic PLACE dispatch uses overrides exactly and canonical fallback otherwise (5.9932ms)
+  ReferenceError: gridlySynchronizeActiveCountyForOperationalContext is not defined
+      at Object.gridlyDispatchSemanticCamera (evalmachine.<anonymous>:10:10)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/tests/lp197-governed-place-consumer-presentation-cameras.test.mjs:57:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+
+test at tests\lp197-governed-place-consumer-presentation-cameras.test.mjs:66:1
+✖ canonical identities and memberships remain unchanged and Austin County cannot inherit Austin camera (7.9013ms)
+  ReferenceError: gridlySynchronizeActiveCountyForOperationalContext is not defined
+      at Object.gridlyDispatchSemanticCamera (evalmachine.<anonymous>:10:10)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/tests/lp197-governed-place-consumer-presentation-cameras.test.mjs:77:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ blocked_crossing community report has deterministic existing-runtime classification (3.0414ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ disabled_vehicle community report has deterministic existing-runtime classification (1.4371ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ flooded_road community report has deterministic existing-runtime classification (1.3593ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ closed_road community report has deterministic existing-runtime classification (0.9513ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ rail_crossing_issue community report has deterministic existing-runtime classification (0.8281ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:79:1
+✖ map publication does not imply Alerts or KBYG eligibility (0.7359ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:81:49)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp243h8-collapsible-landscape-command-panel.test.mjs:9:1
+✖ superseded milestone geometry defers to the one H10B authority (4.5324ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /126px|128px|min\(720px|transform:\s*scale\(/. Input:
+
+  '/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY\r\n' +
+    '   H10A RCA: H5-H9 successively compensated fixed reserves and surfaces, so\r\n' +
+    '   collapsed controls still consumed map height. This single block replaces\r\n' +
+    '   that geometry. H1/H4 ownership and H2/H3 tall-wide rules remain invariant. */\r\n' +
+    '.gridly-landscape-command-handle { display: none; }\r\n' +
+    '\r\n' +
+    '@media (orientation: landscape) and (max-height: 500px) {\r\n' +
+    '  /* LP244.5 final density correction. The former 104px structural reserve,\r\n' +
+    '     card padding, and map margin stacked into a 130px first painted map row.\r\n' +
+    '     The header/filter system itself needs 100px at the reference viewport;\r\n' +
+    '     everything after that is functional map content. */\r\n' +
+    '  body[data-layout-mode="portrait"] #mapSection.command-center,\r\n' +
+    '  body[data-layout-mode="portrait"] #mapSection.command-center > .map-card,\r\n' +
+    '  body[data-layout-mode="portrait"] #mapSection.command-center .map-frame,\r\n' +
+    '  body[data-layout-mode="portrait"] #mapSection.command-center #map {\r\n' +
+    '    margin-block: 0 !important;\r\n' +
+    '    padding-block: 0 !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] {\r\n' +
+    '    --lp243h10b-inline-start: max(8px, env(safe-area-inset-left, 0px));\r\n' +
+    '    --lp243h10b-inline-end: max(8px, env(safe-area-inset-right, 0px));\r\n' +
+    '    --lp243h10b-top-height: 104px;\r\n' +
+    '    --lp243h10b-command-height: 106px;\r\n' +
+    '    --lp243h10b-foreground-z: 10000;\r\n' +
+    '    width: 100%;\r\n' +
+    '    height: 100dvh;\r\n' +
+    '    min-height: 100dvh;\r\n' +
+    '    overflow: hidden;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 {\r\n' +
+    '    width: 100%;\r\n' +
+    '    height: 100dvh;\r\n' +
+    '    min-height: 100dvh;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] .app-shell.premium-layout {\r\n' +
+    '    position: fixed;\r\n' +
+    '    inset: 0;\r\n' +
+    '    display: grid;\r\n' +
+    '    grid-template-rows: var(--lp243h10b-top-height) minmax(0, 1fr);\r\n' +
+    '    box-sizing: border-box;\r\n' +
+    '    width: 100% !important;\r\n' +
+    '    max-width: none !important;\r\n' +
+    '    height: 100dvh;\r\n' +
+    '    max-height: 100dvh;\r\n' +
+    '    margin: 0 !important;\r\n' +
+    '    padding: 0 var(--lp243h10b-inline-end) 0 var(--lp243h10b-inline-start) !important;\r\n' +
+    '    overflow: hidden;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] .main-column {\r\n' +
+    '    grid-row: 2;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] :is(.main-column, #mapSection.command-center, .map-card, .map-frame, #map) {\r\n' +
+    '    box-sizing: border-box;\r\n' +
+    '    width: 100% !important;\r\n' +
+    '    max-width: none !important;\r\n' +
+    '    min-height: 0 !important;\r\n' +
+    '    height: auto !important;\r\n' +
+    '    max-height: none !important;\r\n' +
+    '    margin-inline: 0 !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] :is(.main-column, #mapSection.command-center, .map-card, .map-frame) {\r\n' +
+    '    display: flex;\r\n' +
+    '    flex: 1 1 0;\r\n' +
+    '    flex-direction: column;\r\n' +
+    '    overflow: hidden;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #map { flex: 1 1 0; }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {\r\n' +
+    '    top: max(3px, env(safe-area-inset-top, 0px)) !important;\r\n' +
+    '    left: var(--lp243h10b-inline-start) !important;\r\n' +
+    '    right: var(--lp243h10b-inline-end) !important;\r\n' +
+    '    width: auto !important;\r\n' +
+    '    min-height: 32px !important;\r\n' +
+    '    padding-block: 2px !important;\r\n' +
+    '    transform: none !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img { max-height: 21px !important; }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {\r\n' +
+    '    top: calc(max(3px, env(safe-area-inset-top, 0px)) + 35px) !important;\r\n' +
+    '    left: var(--lp243h10b-inline-start) !important;\r\n' +
+    '    right: var(--lp243h10b-inline-end) !important;\r\n' +
+    '    display: grid !important;\r\n' +
+    '    grid-template-columns: minmax(0, 1fr) auto !important;\r\n' +
+    '    gap: 2px 6px !important;\r\n' +
+    '    width: auto !important;\r\n' +
+    '    max-width: none !important;\r\n' +
+    '    transform: none !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 :is(.gridly-v2-status-pill, .gridly-brief-foundation-handle) {\r\n' +
+    '    min-height: 32px !important;\r\n' +
+    '    max-height: 32px !important;\r\n' +
+    '    padding-block: 2px !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill :is(span, small) { display: none !important; }\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong {\r\n' +
+    '    overflow: hidden;\r\n' +
+    '    text-overflow: ellipsis;\r\n' +
+    '    white-space: nowrap;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {\r\n' +
+    '    position: static !important;\r\n' +
+    '    grid-column: 1 / -1;\r\n' +
+    '    min-height: 30px !important;\r\n' +
+    '    padding: 1px !important;\r\n' +
+    '  }\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {\r\n' +
+    '    min-height: 27px !important;\r\n' +
+    '    padding-block: 1px !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {\r\n' +
+    '    top: calc(var(--lp243h10b-top-height) + 8px) !important;\r\n' +
+    '    bottom: auto !important;\r\n' +
+    '    gap: 2px !important;\r\n' +
+    '    padding: 3px !important;\r\n' +
+    '  }\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button {\r\n' +
+    '    width: 34px !important;\r\n' +
+    '    height: 34px !important;\r\n' +
+    '    min-height: 34px !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  /* Fixed overlays never participate in the structural grid or shell padding. */\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {\r\n' +
+    '    position: fixed !important;\r\n' +
+    '    z-index: 1200;\r\n' +
+    '    left: var(--lp243h10b-inline-start) !important;\r\n' +
+    '    right: var(--lp243h10b-inline-end) !important;\r\n' +
+    '    bottom: 0 !important;\r\n' +
+    '    width: auto !important;\r\n' +
+    '    height: var(--lp243h10b-command-height) !important;\r\n' +
+    '    min-height: 0 !important;\r\n' +
+    '    padding: 0 0 env(safe-area-inset-bottom, 0px) !important;\r\n' +
+    '    margin: 0 !important;\r\n' +
+    '    background: var(--gridly-elevated) !important;\r\n' +
+    '    transform: translateY(100%) !important;\r\n' +
+    '    transition: transform 160ms ease;\r\n' +
+    '    overflow: visible !important;\r\n' +
+    '    pointer-events: none !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] .gridly-landscape-command-handle {\r\n' +
+    '    position: absolute;\r\n' +
+    '    z-index: 2;\r\n' +
+    '    display: grid;\r\n' +
+    '    place-items: center;\r\n' +
+    '    left: 50%;\r\n' +
+    '    bottom: 100%;\r\n' +
+    '    width: 58px;\r\n' +
+    '    min-width: 58px;\r\n' +
+    '    height: 44px;\r\n' +
+    '    min-height: 44px;\r\n' +
+    '    padding: 0;\r\n' +
+    '    transform: translateX(-50%);\r\n' +
+    '    border: 1px solid var(--gridly-border-neutral);\r\n' +
+    '    border-radius: 14px 14px 0 0;\r\n' +
+    '    background: var(--gridly-elevated);\r\n' +
+    '    color: var(--gridly-text-primary);\r\n' +
+    '    cursor: pointer;\r\n' +
+    '    touch-action: manipulation;\r\n' +
+    '    pointer-events: auto;\r\n' +
+    '  }\r\n' +
+    '  body[data-layout-mode="portrait"] .gridly-landscape-command-handle:focus-visible {\r\n' +
+    '    outline: 3px solid var(--gridly-accent, #2f80ed);\r\n' +
+    '    outline-offset: -3px;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock,\r\n' +
+    '  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {\r\n' +
+    '    visibility: hidden !important;\r\n' +
+    '    opacity: 0 !important;\r\n' +
+    '    pointer-events: none !important;\r\n' +
+    '  }\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {\r\n' +
+    '    position: absolute !important;\r\n' +
+    '    inset: 48px 0 0 !important;\r\n' +
+    '    width: auto !important;\r\n' +
+    '    min-height: 54px !important;\r\n' +
+    '    transform: none !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)\r\n' +
+    '    #gridlyPortraitV2 .gridly-v2-bottom-region {\r\n' +
+    '    transform: translateY(0) !important;\r\n' +
+    '    pointer-events: auto !important;\r\n' +
+    '  }\r\n' +
+    '  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)\r\n' +
+    '    #gridlyPortraitV2 .gridly-v2-bottom-dock,\r\n' +
+    '  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)\r\n' +
+    '    .map-card > .mobile-destination-command {\r\n' +
+    '    visibility: visible !important;\r\n' +
+    '    opacity: 1 !important;\r\n' +
+    '    pointer-events: auto !important;\r\n' +
+    '  }\r\n' +
+    '  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)\r\n' +
+    '    .map-card > .mobile-destination-command {\r\n' +
+    '    position: fixed !important;\r\n' +
+    '    z-index: 1201;\r\n' +
+    '    left: var(--lp243h10b-inline-start) !important;\r\n' +
+    '    right: var(--lp243h10b-inline-end) !important;\r\n' +
+    '    bottom: calc(58px + env(safe-area-inset-bottom, 0px)) !important;\r\n' +
+    '    width: auto !important;\r\n' +
+    '    max-width: none !important;\r\n' +
+    '    min-height: 48px !important;\r\n' +
+    '    margin: 0 !important;\r\n' +
+    '    padding-block: 3px !important;\r\n' +
+    '    transform: none !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  /* Search and the lifecycle-owned V2 sheet are the foreground owner. */\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]),\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]) {\r\n' +
+    '    position: fixed !important;\r\n' +
+    '    z-index: var(--lp243h10b-foreground-z) !important;\r\n' +
+    '    inset: max(8px, env(safe-area-inset-top, 0px)) var(--lp243h10b-inline-end)\r\n' +
+    '      max(8px, env(safe-area-inset-bottom, 0px)) var(--lp243h10b-inline-start) !important;\r\n' +
+    '    width: auto !important;\r\n' +
+    '    max-width: none !important;\r\n' +
+    '    height: auto !important;\r\n' +
+    '    max-height: none !important;\r\n' +
+    '    transform: none !important;\r\n' +
+    '    overflow: hidden !important;\r\n' +
+    '    pointer-events: auto !important;\r\n' +
+    '  }\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card,\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]) #gridlyPortraitV2SheetBody {\r\n' +
+    '    min-height: 0;\r\n' +
+    '    max-height: 100% !important;\r\n' +
+    '    overflow-x: hidden !important;\r\n' +
+    '    overflow-y: auto !important;\r\n' +
+    '    overscroll-behavior: contain;\r\n' +
+    '  }\r\n' +
+    '  body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden])) .gridly-v2-bottom-region,\r\n' +
+    '  body[data-layout-mode="portrait"] #gridlyPortraitV2:has(#gridlyPortraitV2Sheet:not([hidden])) .gridly-v2-bottom-region {\r\n' +
+    '    visibility: hidden !important;\r\n' +
+    '    pointer-events: none !important;\r\n' +
+    '  }\r\n' +
+    '\r\n' +
+    '  /* KBYG is the screen in short landscape, never a floating card. */\r\n' +
+    '  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {\r\n' +
+    '    position: fixed !important;\r\n' +
+    '    z-index: 1301 !important;\r\n' +
+    '    inset: 0 !important;\r\n' +
+    '    box-sizing: border-box;\r\n'... 71900 more characters
+
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/tests/lp243h8-collapsible-landscape-command-panel.test.mjs:12:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.start (node:internal/test_runner/test:1177:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '/* LP243.H10B FINAL SHORT-LANDSCAPE AUTHORITY\r\n   H10A RCA: H5-H9 successively compensated fixed reserves and surfaces, so\r\n   collapsed controls still consumed map height. This single block replaces\r\n   that geometry. H1/H4 ownership and H2/H3 tall-wide rules remain invariant. */\r\n.gridly-landscape-command-handle { display: none; }\r\n\r\n@media (orientation: landscape) and (max-height: 500px) {\r\n  /* LP244.5 final density correction. The former 104px structural reserve,\r\n     card padding, and map margin stacked into a 130px first painted map row.\r\n     The header/filter system itself needs 100px at the reference viewport;\r\n     everything after that is functional map content. */\r\n  body[data-layout-mode="portrait"] #mapSection.command-center,\r\n  body[data-layout-mode="portrait"] #mapSection.command-center > .map-card,\r\n  body[data-layout-mode="portrait"] #mapSection.command-center .map-frame,\r\n  body[data-layout-mode="portrait"] #mapSection.command-center #map {\r\n    margin-block: 0 !important;\r\n    padding-block: 0 !important;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] {\r\n    --lp243h10b-inline-start: max(8px, env(safe-area-inset-left, 0px));\r\n    --lp243h10b-inline-end: max(8px, env(safe-area-inset-right, 0px));\r\n    --lp243h10b-top-height: 104px;\r\n    --lp243h10b-command-height: 106px;\r\n    --lp243h10b-foreground-z: 10000;\r\n    width: 100%;\r\n    height: 100dvh;\r\n    min-height: 100dvh;\r\n    overflow: hidden;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 {\r\n    width: 100%;\r\n    height: 100dvh;\r\n    min-height: 100dvh;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] .app-shell.premium-layout {\r\n    position: fixed;\r\n    inset: 0;\r\n    display: grid;\r\n    grid-template-rows: var(--lp243h10b-top-height) minmax(0, 1fr);\r\n    box-sizing: border-box;\r\n    width: 100% !important;\r\n    max-width: none !important;\r\n    height: 100dvh;\r\n    max-height: 100dvh;\r\n    margin: 0 !important;\r\n    padding: 0 var(--lp243h10b-inline-end) 0 var(--lp243h10b-inline-start) !important;\r\n    overflow: hidden;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] .main-column {\r\n    grid-row: 2;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] :is(.main-column, #mapSection.command-center, .map-card, .map-frame, #map) {\r\n    box-sizing: border-box;\r\n    width: 100% !important;\r\n    max-width: none !important;\r\n    min-height: 0 !important;\r\n    height: auto !important;\r\n    max-height: none !important;\r\n    margin-inline: 0 !important;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] :is(.main-column, #mapSection.command-center, .map-card, .map-frame) {\r\n    display: flex;\r\n    flex: 1 1 0;\r\n    flex-direction: column;\r\n    overflow: hidden;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] #map { flex: 1 1 0; }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {\r\n    top: max(3px, env(safe-area-inset-top, 0px)) !important;\r\n    left: var(--lp243h10b-inline-start) !important;\r\n    right: var(--lp243h10b-inline-end) !important;\r\n    width: auto !important;\r\n    min-height: 32px !important;\r\n    padding-block: 2px !important;\r\n    transform: none !important;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img { max-height: 21px !important; }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {\r\n    top: calc(max(3px, env(safe-area-inset-top, 0px)) + 35px) !important;\r\n    left: var(--lp243h10b-inline-start) !important;\r\n    right: var(--lp243h10b-inline-end) !important;\r\n    display: grid !important;\r\n    grid-template-columns: minmax(0, 1fr) auto !important;\r\n    gap: 2px 6px !important;\r\n    width: auto !important;\r\n    max-width: none !important;\r\n    transform: none !important;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 :is(.gridly-v2-status-pill, .gridly-brief-foundation-handle) {\r\n    min-height: 32px !important;\r\n    max-height: 32px !important;\r\n    padding-block: 2px !important;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill :is(span, small) { display: none !important; }\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong {\r\n    overflow: hidden;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {\r\n    position: static !important;\r\n    grid-column: 1 / -1;\r\n    min-height: 30px !important;\r\n    padding: 1px !important;\r\n  }\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {\r\n    min-height: 27px !important;\r\n    padding-block: 1px !important;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {\r\n    top: calc(var(--lp243h10b-top-height) + 8px) !important;\r\n    bottom: auto !important;\r\n    gap: 2px !important;\r\n    padding: 3px !important;\r\n  }\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button {\r\n    width: 34px !important;\r\n    height: 34px !important;\r\n    min-height: 34px !important;\r\n  }\r\n\r\n  /* Fixed overlays never participate in the structural grid or shell padding. */\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {\r\n    position: fixed !important;\r\n    z-index: 1200;\r\n    left: var(--lp243h10b-inline-start) !important;\r\n    right: var(--lp243h10b-inline-end) !important;\r\n    bottom: 0 !important;\r\n    width: auto !important;\r\n    height: var(--lp243h10b-command-height) !important;\r\n    min-height: 0 !important;\r\n    padding: 0 0 env(safe-area-inset-bottom, 0px) !important;\r\n    margin: 0 !important;\r\n    background: var(--gridly-elevated) !important;\r\n    transform: translateY(100%) !important;\r\n    transition: transform 160ms ease;\r\n    overflow: visible !important;\r\n    pointer-events: none !important;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] .gridly-landscape-command-handle {\r\n    position: absolute;\r\n    z-index: 2;\r\n    display: grid;\r\n    place-items: center;\r\n    left: 50%;\r\n    bottom: 100%;\r\n    width: 58px;\r\n    min-width: 58px;\r\n    height: 44px;\r\n    min-height: 44px;\r\n    padding: 0;\r\n    transform: translateX(-50%);\r\n    border: 1px solid var(--gridly-border-neutral);\r\n    border-radius: 14px 14px 0 0;\r\n    background: var(--gridly-elevated);\r\n    color: var(--gridly-text-primary);\r\n    cursor: pointer;\r\n    touch-action: manipulation;\r\n    pointer-events: auto;\r\n  }\r\n  body[data-layout-mode="portrait"] .gridly-landscape-command-handle:focus-visible {\r\n    outline: 3px solid var(--gridly-accent, #2f80ed);\r\n    outline-offset: -3px;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock,\r\n  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {\r\n    visibility: hidden !important;\r\n    opacity: 0 !important;\r\n    pointer-events: none !important;\r\n  }\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {\r\n    position: absolute !important;\r\n    inset: 48px 0 0 !important;\r\n    width: auto !important;\r\n    min-height: 54px !important;\r\n    transform: none !important;\r\n  }\r\n\r\n  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)\r\n    #gridlyPortraitV2 .gridly-v2-bottom-region {\r\n    transform: translateY(0) !important;\r\n    pointer-events: auto !important;\r\n  }\r\n  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)\r\n    #gridlyPortraitV2 .gridly-v2-bottom-dock,\r\n  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)\r\n    .map-card > .mobile-destination-command {\r\n    visibility: visible !important;\r\n    opacity: 1 !important;\r\n    pointer-events: auto !important;\r\n  }\r\n  body[data-layout-mode="portrait"]:is(.gridly-h8-command-expanded, .gridly-h9-command-fail-open)\r\n    .map-card > .mobile-destination-command {\r\n    position: fixed !important;\r\n    z-index: 1201;\r\n    left: var(--lp243h10b-inline-start) !important;\r\n    right: var(--lp243h10b-inline-end) !important;\r\n    bottom: calc(58px + env(safe-area-inset-bottom, 0px)) !important;\r\n    width: auto !important;\r\n    max-width: none !important;\r\n    min-height: 48px !important;\r\n    margin: 0 !important;\r\n    padding-block: 3px !important;\r\n    transform: none !important;\r\n  }\r\n\r\n  /* Search and the lifecycle-owned V2 sheet are the foreground owner. */\r\n  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]),\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]) {\r\n    position: fixed !important;\r\n    z-index: var(--lp243h10b-foreground-z) !important;\r\n    inset: max(8px, env(safe-area-inset-top, 0px)) var(--lp243h10b-inline-end)\r\n      max(8px, env(safe-area-inset-bottom, 0px)) var(--lp243h10b-inline-start) !important;\r\n    width: auto !important;\r\n    max-width: none !important;\r\n    height: auto !important;\r\n    max-height: none !important;\r\n    transform: none !important;\r\n    overflow: hidden !important;\r\n    pointer-events: auto !important;\r\n  }\r\n  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card,\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet:not([hidden]) #gridlyPortraitV2SheetBody {\r\n    min-height: 0;\r\n    max-height: 100% !important;\r\n    overflow-x: hidden !important;\r\n    overflow-y: auto !important;\r\n    overscroll-behavior: contain;\r\n  }\r\n  body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden])) .gridly-v2-bottom-region,\r\n  body[data-layout-mode="portrait"] #gridlyPortraitV2:has(#gridlyPortraitV2Sheet:not([hidden])) .gridly-v2-bottom-region {\r\n    visibility: hidden !important;\r\n    pointer-events: none !important;\r\n  }\r\n\r\n  /* KBYG is the screen in short landscape, never a floating card. */\r\n  body[data-layout-mode="portrait"].gridly-h9-brief-foreground #gridlyPortraitV2 .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {\r\n    position: fixed !important;\r\n    z-index: 1301 !important;\r\n    inset: 0 !important;\r\n    box-sizing: border-box;\r\n'... 71900 more characters,
+    expected: /126px|128px|min\(720px|transform:\s*scale\(/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
