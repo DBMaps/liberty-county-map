@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "audit": "LP244.43",
+  "baseline": "647c85a30d042a90276c3915ba92538df78ddf1c",
+  "auditOnly": true,
+  "launchCertified": false,
+  "classificationMeaning": "Primary status plus concurrent foundations/blockers; READY TO IMPLEMENT does not mean ready to ship.",
+  "features": [
+    {
+      "feature": "Destination Quick Check",
+      "primary": "PARTIAL FOUNDATION",
+      "additional": ["READY TO IMPLEMENT"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:40181", "js/app.js:46335", "js/app.js:48555"],
+      "gap": "Temporary search exists; shared awareness/weather still derive from Home.",
+      "gate": "Cleveland Home remains byte-identical while all requested Crosby awareness surfaces use one temporary context."
+    },
+    {
+      "feature": "Around Me",
+      "primary": "PARTIAL FOUNDATION",
+      "additional": ["READY TO IMPLEMENT"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:54444", "js/app.js:54773", "js/app.js:87497", "android/app/src/main/java/com/gridlygo/gridly/GridlyGeolocationPlugin.kt:20"],
+      "gap": "Foreground position exists; provider parity, current PLACE, stale/revoked fixes and weather context are incomplete.",
+      "gate": "Physical Android/iPhone temporary current-area awareness without Home mutation; manual fallback."
+    },
+    {
+      "feature": "Route Watch",
+      "primary": "PARTIAL FOUNDATION",
+      "additional": ["BLOCKED BY PRODUCT DECISION"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:19558", "js/app.js:101410", "js/app.js:100602", "js/app.js:78619"],
+      "gap": "Foreground implementation exists; TTL, stale progress, signed ahead/behind and background contract need hardening.",
+      "gate": "Real road geometry, clear lifecycle, start/stop/expiry, no navigation promise; sustainable OSRM dependency."
+    },
+    {
+      "feature": "Home notifications",
+      "primary": "BLOCKED BY BACKEND",
+      "additional": ["BLOCKED BY NATIVE CONFIG", "PARTIAL FOUNDATION"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:105333", "js/app.js:101633", "supabase/config.toml:4"],
+      "gap": "Preferences and diagnostic candidates only; registry, subscriptions, event ingestion/outbox and native delivery missing.",
+      "gate": "Opt-in Home severe/weather/significant-hazard delivery with exact tap, expiry, dedupe and deletion."
+    },
+    {
+      "feature": "Around Me notifications",
+      "primary": "BLOCKED BY BACKEND",
+      "additional": ["BLOCKED BY NATIVE CONFIG", "BLOCKED BY PRODUCT DECISION"],
+      "priority": "SHOULD HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:54444", "js/app.js:105333"],
+      "gap": "No fresh current-area subscription or delivery; background near-now would require new location truth.",
+      "gate": "Explicit ephemeral scope and position expiry; owner decision required for continuous background requirement.",
+      "scopeCaveat": "Foreground Around Me itself remains must-have; do not market near-now alerts without delivering them."
+    },
+    {
+      "feature": "Route Watch notifications",
+      "primary": "BLOCKED BY BACKEND",
+      "additional": ["BLOCKED BY NATIVE CONFIG", "BLOCKED BY PRODUCT DECISION"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:105212", "js/app.js:54773", "js/app.js:45501"],
+      "gap": "Existing watch is foreground; no server send pipeline, durable dedupe or certified moving-ahead targeting.",
+      "gate": "Bounded static-corridor push or explicitly approved fresh-progress design; stop cancels pending generation.",
+      "scopeCaveat": "Required before claiming background trip alerts; any deferral requires explicit owner decision."
+    },
+    {
+      "feature": "Severe Weather notifications",
+      "primary": "BLOCKED BY BACKEND",
+      "additional": ["BLOCKED BY NATIVE CONFIG", "PARTIAL FOUNDATION"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/gridlyWeatherProvider.js:196", "js/gridlyWeatherLiveConnector.js:9"],
+      "gap": "Client selected-point alerts exist; server feed, stable replacement identity and complete route geometry are missing.",
+      "gate": "Official active warning/source expiry, correct geometry/point scope and tap target; no county-only ahead claim."
+    },
+    {
+      "feature": "Hazard notifications",
+      "primary": "BLOCKED BY BACKEND",
+      "additional": ["BLOCKED BY NATIVE CONFIG", "PARTIAL FOUNDATION"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:105276", "js/gridly-report-protocol.js:7", "js/gridlyDriveTexasProvider.js:188"],
+      "gap": "Source/lifecycle data and diagnostic candidates exist; authorized public relevance and delivery not wired.",
+      "gate": "One significant relevant event notification across contexts, source truth and prompt expiry/withdrawal."
+    },
+    {
+      "feature": "Condition + Severity + Advisory",
+      "primary": "PARTIAL FOUNDATION",
+      "additional": ["NET NEW", "READY TO IMPLEMENT"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:10178", "js/app.js:12256", "js/gridlyConditionDisplayLabel.js:12", "js/gridly-report-protocol.js:7"],
+      "gap": "Conditions/severity exist; first-class advisory/issuer permission contract is new.",
+      "gate": "Versioned backward-compatible public projection; community cannot assert official closures."
+    },
+    {
+      "feature": "Winter hazards",
+      "primary": "PARTIAL FOUNDATION",
+      "additional": ["READY TO IMPLEMENT"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:10185", "js/app.js:58531", "js/app.js:106668", "js/gridlyWeatherProvider.js:54"],
+      "gap": "Ice retrieval exists, but picker/filter/marker parity and winter source normalization are incomplete.",
+      "gate": "Truthful ice/winter observation path and official-source differentiation before winter claims; broader subtypes can be sequenced."
+    },
+    {
+      "feature": "Deep linking",
+      "primary": "PARTIAL FOUNDATION",
+      "additional": ["NET NEW", "BLOCKED BY NATIVE CONFIG"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["ios/App/App/AppDelegate.swift:1", "android/app/src/main/AndroidManifest.xml:1", "js/app.js:110429"],
+      "gap": "iOS delegate proxy and internal focus actions exist; no registered URL/native push target dispatcher.",
+      "gate": "Cold/warm/terminated taps resolve exact authorized temporary context; expired/offline targets remain truthful."
+    },
+    {
+      "feature": "Notification settings",
+      "primary": "PARTIAL FOUNDATION",
+      "additional": ["NET NEW", "READY TO IMPLEMENT"],
+      "priority": "MUST HAVE FOR LAUNCH",
+      "evidence": ["js/app.js:101633", "js/app.js:120392", "js/app.js:105364"],
+      "gap": "Local switches exist; real consent/status, context/content grouping, quiet hours and owner sync are new.",
+      "gate": "No first-launch OS prompt; old true defaults are not consent; denied/failed/enabled states distinct."
+    }
+  ],
+  "verification": {
+    "existingTests": 92,
+    "passed": 91,
+    "failed": 1,
+    "failure": "LP165 protected-artifact-hashes historical certification drift at current baseline; no unrelated regeneration performed.",
+    "physicalDevicesTested": false,
+    "productionInspected": false,
+    "runtimeModified": false,
+    "verdict": "A. READY FOR IMPLEMENTATION PLANNING"
+  }
+}
