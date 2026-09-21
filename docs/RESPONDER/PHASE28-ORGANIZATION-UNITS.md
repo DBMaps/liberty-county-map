@@ -1,0 +1,13 @@
+# Organization and optional unit contract
+
+An organization is an independent governance and ownership boundary. `organization_units` belongs to exactly one organization; parent units must belong to the same organization. Unit type classifies configuration only. Parentage is descriptive: it does not inherit membership, permission, publication capability, scope, or private records. Parentage is immutable through the pilot API, preventing cycle creation by reparenting; new units can only refer to an already existing same-organization parent.
+
+Separate Dayton organizations and a shared City organization with Public Works/Police units are both representable. The configuration deliberately does not resolve their legal identity. Fire, EMS, Emergency Management, Utilities, Transportation, Administration and Other use the same schema. Organizations without units retain organization-scoped records with `PRIVATE_TO_ORGANIZATION`. There is no synthetic default unit required for a utility company, school district, county emergency management office, fleet/trucking company, contractor, industrial facility, or transportation authority.
+
+`unit_memberships` references the existing organization membership with a composite organization foreign key. A membership may belong to several units. Both membership states must be active; AAL2 and role permission are still required. Explicit unit-scope grants restrict which scopes a unit may use. Organization admin and owner require unit membership for unit-private records. Platform administrators gain no ordinary private access from platform status.
+
+Every record owns one organization and optionally one unit. Creation validates the unit against server-side membership and scope. Updates cannot transfer ownership or silently broaden classification. A unitless record must explicitly request organization-level privacy. All private source reads remain within the owning unit or explicit organization-level contract, even when a sanitized share exists.
+
+Organizations and units with history are offboarded/archived, not physically deleted. Browser roles have no DELETE privileges. Foreign keys restrict orphaned lineage. A future legal-structure change requires reviewed archival/migration, not rewriting historical owning organization/unit IDs. Cross-organization sharing is denied in this phase; future inter-agency agreements would need a separate governed recipient contract and tests.
+
+Units, memberships and shares are revisioned. Their commands append tokenized pilot events with command hash and source/decision lineage. No UI-selected unit ID, unit name, sector, source class, or parent hierarchy can substitute for authorization.

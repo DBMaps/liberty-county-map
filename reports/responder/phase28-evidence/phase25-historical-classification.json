@@ -1,0 +1,33 @@
+{
+  "classification": "KNOWN_PREEXISTING_NON_PHASE28_FAILURE",
+  "failingTest": "manifest counts and artifact hashes match the design package",
+  "path": "tools/responder/phase25/owner-decisions.md",
+  "firstKnownReproducibleBaseline": "4f89805ed836ab6e73dc383d99a2f24d55d83f5f",
+  "sourceCommit": {
+    "commit": "9917ceca5a680d0e69ca3f177d3e5af922c1ace1",
+    "exitCode": 0,
+    "tests": 4,
+    "passed": 4,
+    "failed": 0,
+    "expected": "2d5dec57d4205cf8a59c0740d10f6f295de33e951640d2549aaee08768b2e571",
+    "actual": "2d5dec57d4205cf8a59c0740d10f6f295de33e951640d2549aaee08768b2e571",
+    "output": "TAP version 13\n# Subtest: Phase 25 package passes static safety and contract lint\nok 1 - Phase 25 package passes static safety and contract lint\n  ---\n  duration_ms: 23.6298\n  type: 'test'\n  ...\n# Subtest: Phase 25 adds no migration-path or deploy-runner artifacts\nok 2 - Phase 25 adds no migration-path or deploy-runner artifacts\n  ---\n  duration_ms: 1.3153\n  type: 'test'\n  ...\n# Subtest: all SQL designs remain inside inert block comments\nok 3 - all SQL designs remain inside inert block comments\n  ---\n  duration_ms: 11.6622\n  type: 'test'\n  ...\n# Subtest: manifest counts and artifact hashes match the design package\nok 4 - manifest counts and artifact hashes match the design package\n  ---\n  duration_ms: 23.1059\n  type: 'test'\n  ...\n1..4\n# tests 4\n# suites 0\n# pass 4\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 236.705\n",
+    "disposableDirectory": "C:\\Users\\gulfi\\AppData\\Local\\Temp\\gridly-phase25-certification-pjpIMu"
+  },
+  "startingHead": {
+    "commit": "4f89805ed836ab6e73dc383d99a2f24d55d83f5f",
+    "exitCode": 1,
+    "tests": 4,
+    "passed": 3,
+    "failed": 1,
+    "expected": "2d5dec57d4205cf8a59c0740d10f6f295de33e951640d2549aaee08768b2e571",
+    "actual": "d2d23b110f9b429e792fce724e6cc0f8c28a7b405b48425f4b5621e4b36db015",
+    "output": "TAP version 13\n# Subtest: Phase 25 package passes static safety and contract lint\nok 1 - Phase 25 package passes static safety and contract lint\n  ---\n  duration_ms: 23.9652\n  type: 'test'\n  ...\n# Subtest: Phase 25 adds no migration-path or deploy-runner artifacts\nok 2 - Phase 25 adds no migration-path or deploy-runner artifacts\n  ---\n  duration_ms: 1.28\n  type: 'test'\n  ...\n# Subtest: all SQL designs remain inside inert block comments\nok 3 - all SQL designs remain inside inert block comments\n  ---\n  duration_ms: 12.7594\n  type: 'test'\n  ...\n# Subtest: manifest counts and artifact hashes match the design package\nnot ok 4 - manifest counts and artifact hashes match the design package\n  ---\n  duration_ms: 15.8544\n  type: 'test'\n  location: 'C:\\\\Users\\\\gulfi\\\\AppData\\\\Local\\\\Temp\\\\gridly-phase25-certification-yu1jwt\\\\tests\\\\responder-phase25-production-shaped-neutral-migration-design.test.mjs:42:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    tools/responder/phase25/owner-decisions.md\n    + actual - expected\n    \n    + 'd2d23b110f9b429e792fce724e6cc0f8c28a7b405b48425f4b5621e4b36db015'\n    - '2d5dec57d4205cf8a59c0740d10f6f295de33e951640d2549aaee08768b2e571'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: '2d5dec57d4205cf8a59c0740d10f6f295de33e951640d2549aaee08768b2e571'\n  actual: 'd2d23b110f9b429e792fce724e6cc0f8c28a7b405b48425f4b5621e4b36db015'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///C:/Users/gulfi/AppData/Local/Temp/gridly-phase25-certification-yu1jwt/tests/responder-phase25-production-shaped-neutral-migration-design.test.mjs:52:12)\n    Test.runInAsyncScope (node:async_hooks:227:14)\n    Test.run (node:internal/test_runner/test:1306:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:897:18)\n    Test.postRun (node:internal/test_runner/test:1447:19)\n    Test.run (node:internal/test_runner/test:1372:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)\n  ...\n1..4\n# tests 4\n# suites 0\n# pass 3\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 200.3578\n",
+    "disposableDirectory": "C:\\Users\\gulfi\\AppData\\Local\\Temp\\gridly-phase25-certification-yu1jwt"
+  },
+  "current": {
+    "exitCode": 1,
+    "output": "TAP version 13\n# Subtest: Phase 25 package passes static safety and contract lint\nok 1 - Phase 25 package passes static safety and contract lint\n  ---\n  duration_ms: 25.5726\n  type: 'test'\n  ...\n# Subtest: Phase 25 adds no migration-path or deploy-runner artifacts\nok 2 - Phase 25 adds no migration-path or deploy-runner artifacts\n  ---\n  duration_ms: 1.8329\n  type: 'test'\n  ...\n# Subtest: all SQL designs remain inside inert block comments\nok 3 - all SQL designs remain inside inert block comments\n  ---\n  duration_ms: 12.5106\n  type: 'test'\n  ...\n# Subtest: manifest counts and artifact hashes match the design package\nnot ok 4 - manifest counts and artifact hashes match the design package\n  ---\n  duration_ms: 11.9436\n  type: 'test'\n  location: 'C:\\\\GitHub\\\\liberty-county-map\\\\.artifacts\\\\worktrees\\\\RESPONDER-PHASE0-v1-contract-freeze\\\\tests\\\\responder-phase25-production-shaped-neutral-migration-design.test.mjs:42:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    tools/responder/phase25/owner-decisions.md\n    + actual - expected\n    \n    + 'd2d23b110f9b429e792fce724e6cc0f8c28a7b405b48425f4b5621e4b36db015'\n    - '2d5dec57d4205cf8a59c0740d10f6f295de33e951640d2549aaee08768b2e571'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: '2d5dec57d4205cf8a59c0740d10f6f295de33e951640d2549aaee08768b2e571'\n  actual: 'd2d23b110f9b429e792fce724e6cc0f8c28a7b405b48425f4b5621e4b36db015'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tests/responder-phase25-production-shaped-neutral-migration-design.test.mjs:52:12)\n    Test.runInAsyncScope (node:async_hooks:227:14)\n    Test.run (node:internal/test_runner/test:1306:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:897:18)\n    Test.postRun (node:internal/test_runner/test:1447:19)\n    Test.run (node:internal/test_runner/test:1372:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)\n  ...\n1..4\n# tests 4\n# suites 0\n# pass 3\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 196.2121\n"
+  },
+  "historicalFilesModified": false
+}

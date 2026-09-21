@@ -1,0 +1,214 @@
+{
+  "dispatch_private.unit_type": [
+    "PUBLIC_WORKS",
+    "LAW_ENFORCEMENT",
+    "FIRE",
+    "EMS",
+    "EMERGENCY_MANAGEMENT",
+    "UTILITIES",
+    "TRANSPORTATION",
+    "ADMINISTRATION",
+    "OTHER"
+  ],
+  "dispatch_private.scope_type": [
+    "COUNTY",
+    "MULTI_COUNTY",
+    "STATEWIDE",
+    "SERVICE_TERRITORY",
+    "CORRIDOR",
+    "ROUTE",
+    "FACILITY",
+    "SITE",
+    "NON_GEOGRAPHIC"
+  ],
+  "dispatch_private.record_type": [
+    "CONDITION",
+    "HAZARD",
+    "PLANNED_WORK",
+    "OPERATIONAL_NOTICE"
+  ],
+  "dispatch_private.unit_status": [
+    "PLANNED",
+    "ACTIVE",
+    "SUSPENDED",
+    "OFFBOARDED"
+  ],
+  "dispatch_audit.receipt_status": [
+    "ACCEPTED"
+  ],
+  "dispatch_private.review_state": [
+    "NOT_SUBMITTED",
+    "PENDING_REVIEW",
+    "APPROVED",
+    "REJECTED",
+    "WITHDRAWN"
+  ],
+  "dispatch_private.scope_status": [
+    "ACTIVE",
+    "SUSPENDED",
+    "REVOKED"
+  ],
+  "dispatch_private.source_class": [
+    "COMMUNITY",
+    "OFFICIAL_PUBLIC",
+    "ORGANIZATION",
+    "PRIVATE_OPERATIONAL"
+  ],
+  "dispatch_private.record_status": [
+    "DRAFT",
+    "OPEN",
+    "IN_PROGRESS",
+    "MONITORING",
+    "CLOSED",
+    "CANCELLED"
+  ],
+  "dispatch_private.profile_status": [
+    "ACTIVE",
+    "DISABLED"
+  ],
+  "dispatch_private.record_priority": [
+    "LOW",
+    "NORMAL",
+    "HIGH",
+    "CRITICAL"
+  ],
+  "dispatch_private.recovery_status": [
+    "FIRST_APPROVED",
+    "RECOVERED",
+    "CANCELLED"
+  ],
+  "dispatch_private.audit_event_type": [
+    "ORGANIZATION_CREATED",
+    "ORGANIZATION_UPDATED",
+    "ORGANIZATION_ACTIVATED",
+    "ORGANIZATION_SUSPENDED",
+    "ORGANIZATION_REINSTATED",
+    "ORGANIZATION_CLOSED",
+    "MEMBER_INVITED",
+    "INVITATION_ACCEPTED",
+    "INVITATION_DECLINED",
+    "INVITATION_EXPIRED",
+    "MEMBER_SUSPENDED",
+    "MEMBER_REACTIVATED",
+    "MEMBER_REVOKED",
+    "MEMBERSHIP_LEFT",
+    "ROLE_CHANGED",
+    "OWNERSHIP_TRANSFER_INITIATED",
+    "OWNERSHIP_TRANSFER_CANCELLED",
+    "OWNERSHIP_TRANSFERRED",
+    "OWNERSHIP_RECOVERED",
+    "SCOPE_GRANTED",
+    "SCOPE_REVOKED",
+    "CAPABILITY_GRANTED",
+    "CAPABILITY_SUSPENDED",
+    "CAPABILITY_REVOKED",
+    "RECORD_CREATED",
+    "RECORD_UPDATED",
+    "RECORD_ASSIGNED",
+    "RECORD_CLOSED",
+    "RECORD_CANCELLED",
+    "PROJECTION_SUBMITTED",
+    "PROJECTION_APPROVED",
+    "PROJECTION_REJECTED",
+    "PROJECTION_PUBLISHED",
+    "PROJECTION_WITHDRAWN",
+    "SETTINGS_CHANGED"
+  ],
+  "dispatch_private.onboarding_state": [
+    "PLANNED",
+    "IDENTITY_VERIFIED",
+    "ADMIN_ASSIGNED",
+    "MEMBERSHIP_CONFIGURED",
+    "SCOPE_CONFIGURED",
+    "MFA_VERIFIED",
+    "PRIVATE_PILOT_READY",
+    "PUBLISHING_REVIEW_REQUIRED",
+    "PUBLISHING_ENABLED",
+    "SUSPENDED",
+    "OFFBOARDED"
+  ],
+  "dispatch_private.permission_scope": [
+    "ORGANIZATION",
+    "PLATFORM"
+  ],
+  "dispatch_private.visibility_class": [
+    "PRIVATE",
+    "ORGANIZATION",
+    "PROJECTION_CANDIDATE",
+    "PUBLIC_PROJECTION"
+  ],
+  "dispatch_private.assignment_status": [
+    "ASSIGNED",
+    "CLEARED"
+  ],
+  "dispatch_private.capability_status": [
+    "PENDING",
+    "ACTIVE",
+    "SUSPENDED",
+    "REVOKED"
+  ],
+  "dispatch_private.invitation_status": [
+    "PENDING",
+    "ACCEPTED",
+    "DECLINED",
+    "EXPIRED",
+    "REVOKED"
+  ],
+  "dispatch_private.membership_status": [
+    "INVITED",
+    "ACTIVE",
+    "SUSPENDED",
+    "REVOKED"
+  ],
+  "dispatch_private.organization_type": [
+    "FIRE",
+    "EMS",
+    "LAW_ENFORCEMENT",
+    "EMERGENCY_MANAGEMENT",
+    "UTILITY",
+    "FLEET",
+    "TRUCKING",
+    "MUNICIPALITY",
+    "SCHOOL_DISTRICT",
+    "CONTRACTOR",
+    "PRIVATE_COMPANY",
+    "INDUSTRIAL_OPERATOR",
+    "TRANSPORTATION_OPERATOR",
+    "INFRASTRUCTURE_OPERATOR",
+    "OTHER"
+  ],
+  "dispatch_private.projection_status": [
+    "SUBMITTED",
+    "APPROVED",
+    "REJECTED",
+    "WITHDRAWN"
+  ],
+  "dispatch_private.role_template_key": [
+    "OWNER",
+    "ORGANIZATION_ADMIN",
+    "SUPERVISOR",
+    "OPERATOR",
+    "VIEWER"
+  ],
+  "dispatch_private.verification_level": [
+    "UNVERIFIED",
+    "VERIFIED_ORGANIZATION",
+    "VERIFIED_PUBLIC_ENTITY"
+  ],
+  "dispatch_private.organization_status": [
+    "PENDING",
+    "ACTIVE",
+    "SUSPENDED",
+    "CLOSED"
+  ],
+  "dispatch_private.internal_share_class": [
+    "PRIVATE_TO_UNIT",
+    "PRIVATE_TO_ORGANIZATION",
+    "SHARED_WITH_SELECTED_UNITS"
+  ],
+  "dispatch_private.ownership_transfer_status": [
+    "PENDING",
+    "ACCEPTED",
+    "CANCELLED"
+  ]
+}

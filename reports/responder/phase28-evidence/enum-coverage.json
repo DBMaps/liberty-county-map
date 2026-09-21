@@ -1,0 +1,1618 @@
+{
+  "staticCoverage": "EXHAUSTIVE",
+  "runtimeCoverage": "DOCUMENTED_EQUIVALENCE_CLASSES",
+  "unknown": 0,
+  "permissions": [
+    "audit.read",
+    "awareness.read",
+    "internal.read",
+    "internal.share",
+    "members.invite",
+    "members.manage",
+    "members.read",
+    "operations.assign",
+    "operations.close",
+    "operations.create",
+    "operations.read",
+    "operations.update",
+    "organization.manage",
+    "organization.read",
+    "ownership.transfer",
+    "platform.abuse.manage",
+    "platform.audit.investigate",
+    "platform.capability.manage",
+    "platform.organization.suspend",
+    "platform.organization.verify",
+    "platform.ownership.recover",
+    "projection.publish",
+    "projection.review",
+    "projection.submit",
+    "scope.manage",
+    "scope.read",
+    "settings.manage",
+    "settings.read",
+    "units.manage"
+  ],
+  "values": [
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "PUBLIC_WORKS",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "LAW_ENFORCEMENT",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "FIRE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "EMS",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "EMERGENCY_MANAGEMENT",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "UTILITIES",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "TRANSPORTATION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "ADMINISTRATION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_type",
+      "value": "OTHER",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive classification; membership and scope determine access; Police/Public Works get no automatic authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "COUNTY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "MULTI_COUNTY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "STATEWIDE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "SERVICE_TERRITORY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "CORRIDOR",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "ROUTE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "FACILITY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "SITE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_type",
+      "value": "NON_GEOGRAPHIC",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All values share live scope/ownership branch; every value cast, classified and denied implicit platform authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_type",
+      "value": "CONDITION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All four types tested across all 36 lifecycle pairs. HAZARD never admitted to pilot publishing.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_type",
+      "value": "HAZARD",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All four types tested across all 36 lifecycle pairs. HAZARD never admitted to pilot publishing.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_type",
+      "value": "PLANNED_WORK",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All four types tested across all 36 lifecycle pairs. HAZARD never admitted to pilot publishing.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_type",
+      "value": "OPERATIONAL_NOTICE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All four types tested across all 36 lifecycle pairs. HAZARD never admitted to pilot publishing.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_status",
+      "value": "PLANNED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE plus ready onboarding required; PLANNED/SUSPENDED/OFFBOARDED deny unit access. OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_status",
+      "value": "ACTIVE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE plus ready onboarding required; PLANNED/SUSPENDED/OFFBOARDED deny unit access. OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_status",
+      "value": "SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE plus ready onboarding required; PLANNED/SUSPENDED/OFFBOARDED deny unit access. OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.unit_status",
+      "value": "OFFBOARDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE plus ready onboarding required; PLANNED/SUSPENDED/OFFBOARDED deny unit access. OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "unit_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_audit.receipt_status",
+      "value": "ACCEPTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACCEPTED is append-only evidence; rejected commands produce no receipt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "receipt_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.review_state",
+      "value": "NOT_SUBMITTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, executable review uses projection_status; no separate Phase 28 transition API (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "review_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.review_state",
+      "value": "PENDING_REVIEW",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, executable review uses projection_status; no separate Phase 28 transition API (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "review_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.review_state",
+      "value": "APPROVED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, executable review uses projection_status; no separate Phase 28 transition API (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "review_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.review_state",
+      "value": "REJECTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, executable review uses projection_status; no separate Phase 28 transition API (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "review_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.review_state",
+      "value": "WITHDRAWN",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, executable review uses projection_status; no separate Phase 28 transition API (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "review_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_status",
+      "value": "ACTIVE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE only; SUSPENDED and REVOKED tested through live RLS.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_status",
+      "value": "SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE only; SUSPENDED and REVOKED tested through live RLS.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.scope_status",
+      "value": "REVOKED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE only; SUSPENDED and REVOKED tested through live RLS.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "scope_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.source_class",
+      "value": "COMMUNITY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Provenance vocabulary; all values cast; Dispatch creates PRIVATE_OPERATIONAL and governed consumer ORGANIZATION. Caller classification never grants authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "source_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.source_class",
+      "value": "OFFICIAL_PUBLIC",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Provenance vocabulary; all values cast; Dispatch creates PRIVATE_OPERATIONAL and governed consumer ORGANIZATION. Caller classification never grants authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "source_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.source_class",
+      "value": "ORGANIZATION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Provenance vocabulary; all values cast; Dispatch creates PRIVATE_OPERATIONAL and governed consumer ORGANIZATION. Caller classification never grants authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "source_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.source_class",
+      "value": "PRIVATE_OPERATIONAL",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Provenance vocabulary; all values cast; Dispatch creates PRIVATE_OPERATIONAL and governed consumer ORGANIZATION. Caller classification never grants authority.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "source_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_status",
+      "value": "DRAFT",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All 36 transition pairs for all four types; CLOSED/CANCELLED are terminal, no reopen.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_status",
+      "value": "OPEN",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All 36 transition pairs for all four types; CLOSED/CANCELLED are terminal, no reopen.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_status",
+      "value": "IN_PROGRESS",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All 36 transition pairs for all four types; CLOSED/CANCELLED are terminal, no reopen.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_status",
+      "value": "MONITORING",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All 36 transition pairs for all four types; CLOSED/CANCELLED are terminal, no reopen.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_status",
+      "value": "CLOSED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All 36 transition pairs for all four types; CLOSED/CANCELLED are terminal, no reopen.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_status",
+      "value": "CANCELLED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "All 36 transition pairs for all four types; CLOSED/CANCELLED are terminal, no reopen.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.profile_status",
+      "value": "ACTIVE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE requires live Auth; DISABLED denies every command (40 command negatives).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "profile_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.profile_status",
+      "value": "DISABLED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE requires live Auth; DISABLED denies every command (40 command negatives).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "profile_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_priority",
+      "value": "LOW",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive private data; enum cast/constraint accepted for every value; never an authorization input or consumer field.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_priority",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_priority",
+      "value": "NORMAL",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive private data; enum cast/constraint accepted for every value; never an authorization input or consumer field.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_priority",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_priority",
+      "value": "HIGH",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive private data; enum cast/constraint accepted for every value; never an authorization input or consumer field.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_priority",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.record_priority",
+      "value": "CRITICAL",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive private data; enum cast/constraint accepted for every value; never an authorization input or consumer field.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "record_priority",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.recovery_status",
+      "value": "FIRST_APPROVED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "FIRST_APPROVED only; RECOVERED consumed; CANCELLED cannot complete. Two bound live approvers required.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "recovery_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.recovery_status",
+      "value": "RECOVERED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "FIRST_APPROVED only; RECOVERED consumed; CANCELLED cannot complete. Two bound live approvers required.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "recovery_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.recovery_status",
+      "value": "CANCELLED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "FIRST_APPROVED only; RECOVERED consumed; CANCELLED cannot complete. Two bound live approvers required.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "recovery_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "ORGANIZATION_CREATED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "ORGANIZATION_UPDATED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "ORGANIZATION_ACTIVATED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "ORGANIZATION_SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "ORGANIZATION_REINSTATED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "ORGANIZATION_CLOSED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "MEMBER_INVITED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "INVITATION_ACCEPTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "INVITATION_DECLINED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "INVITATION_EXPIRED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "MEMBER_SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "MEMBER_REACTIVATED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "MEMBER_REVOKED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "MEMBERSHIP_LEFT",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "ROLE_CHANGED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "OWNERSHIP_TRANSFER_INITIATED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "OWNERSHIP_TRANSFER_CANCELLED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "OWNERSHIP_TRANSFERRED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "OWNERSHIP_RECOVERED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "SCOPE_GRANTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "SCOPE_REVOKED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "CAPABILITY_GRANTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "CAPABILITY_SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "CAPABILITY_REVOKED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "RECORD_CREATED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "RECORD_UPDATED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "RECORD_ASSIGNED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "RECORD_CLOSED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "RECORD_CANCELLED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "PROJECTION_SUBMITTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "PROJECTION_APPROVED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "PROJECTION_REJECTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "PROJECTION_PUBLISHED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "PROJECTION_WITHDRAWN",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.audit_event_type",
+      "value": "SETTINGS_CHANGED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive append-only event vocabulary; each value cast; none participates in authorization. Arbitrary update/delete denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "audit_event_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "PLANNED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "IDENTITY_VERIFIED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "ADMIN_ASSIGNED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "MEMBERSHIP_CONFIGURED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "SCOPE_CONFIGURED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "MFA_VERIFIED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "PRIVATE_PILOT_READY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "PUBLISHING_REVIEW_REQUIRED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "PUBLISHING_ENABLED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.onboarding_state",
+      "value": "OFFBOARDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Sequential owner review through private readiness; publication needs independent platform authority; SUSPENDED denies use; OFFBOARDED terminal.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "onboarding_state",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.permission_scope",
+      "value": "ORGANIZATION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ORGANIZATION uses live membership/role; PLATFORM uses independent live platform grant. Every API gets outsider denial.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "permission_scope",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.permission_scope",
+      "value": "PLATFORM",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ORGANIZATION uses live membership/role; PLATFORM uses independent live platform grant. Every API gets outsider denial.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "permission_scope",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.visibility_class",
+      "value": "PRIVATE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, no Phase 28 column/API transition uses this enum; no authorization branches (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "visibility_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.visibility_class",
+      "value": "ORGANIZATION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, no Phase 28 column/API transition uses this enum; no authorization branches (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "visibility_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.visibility_class",
+      "value": "PROJECTION_CANDIDATE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, no Phase 28 column/API transition uses this enum; no authorization branches (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "visibility_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.visibility_class",
+      "value": "PUBLIC_PROJECTION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Reserved vocabulary, no Phase 28 column/API transition uses this enum; no authorization branches (NOT_APPLICABLE runtime).",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "visibility_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.assignment_status",
+      "value": "ASSIGNED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ASSIGNED/CLEARED are private evidence vocabulary; assign creates ASSIGNED. No clear-assignment API in frozen command inventory.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "assignment_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.assignment_status",
+      "value": "CLEARED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ASSIGNED/CLEARED are private evidence vocabulary; assign creates ASSIGNED. No clear-assignment API in frozen command inventory.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "assignment_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.capability_status",
+      "value": "PENDING",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE plus nonexpired bounded duration only; PENDING/SUSPENDED/REVOKED cannot publish; revoked renewal denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "capability_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.capability_status",
+      "value": "ACTIVE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE plus nonexpired bounded duration only; PENDING/SUSPENDED/REVOKED cannot publish; revoked renewal denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "capability_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.capability_status",
+      "value": "SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE plus nonexpired bounded duration only; PENDING/SUSPENDED/REVOKED cannot publish; revoked renewal denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "capability_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.capability_status",
+      "value": "REVOKED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE plus nonexpired bounded duration only; PENDING/SUSPENDED/REVOKED cannot publish; revoked renewal denied.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "capability_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.invitation_status",
+      "value": "PENDING",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Only PENDING and unexpired can accept/revoke; terminal statuses cannot reopen; token bound to authenticated identity.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "invitation_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.invitation_status",
+      "value": "ACCEPTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Only PENDING and unexpired can accept/revoke; terminal statuses cannot reopen; token bound to authenticated identity.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "invitation_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.invitation_status",
+      "value": "DECLINED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Only PENDING and unexpired can accept/revoke; terminal statuses cannot reopen; token bound to authenticated identity.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "invitation_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.invitation_status",
+      "value": "EXPIRED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Only PENDING and unexpired can accept/revoke; terminal statuses cannot reopen; token bound to authenticated identity.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "invitation_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.invitation_status",
+      "value": "REVOKED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Only PENDING and unexpired can accept/revoke; terminal statuses cannot reopen; token bound to authenticated identity.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "invitation_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.membership_status",
+      "value": "INVITED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE required; all remaining states deny live RLS; REVOKED cannot reactivate.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "membership_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.membership_status",
+      "value": "ACTIVE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE required; all remaining states deny live RLS; REVOKED cannot reactivate.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "membership_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.membership_status",
+      "value": "SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE required; all remaining states deny live RLS; REVOKED cannot reactivate.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "membership_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.membership_status",
+      "value": "REVOKED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE required; all remaining states deny live RLS; REVOKED cannot reactivate.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "membership_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "FIRE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "EMS",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "LAW_ENFORCEMENT",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "EMERGENCY_MANAGEMENT",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "UTILITY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "FLEET",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "TRUCKING",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "MUNICIPALITY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "SCHOOL_DISTRICT",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "CONTRACTOR",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "PRIVATE_COMPANY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "INDUSTRIAL_OPERATOR",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "TRANSPORTATION_OPERATOR",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "INFRASTRUCTURE_OPERATOR",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_type",
+      "value": "OTHER",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Descriptive: every value cast and every classification retains membership gates and fails platform-authority attempt.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_type",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.projection_status",
+      "value": "SUBMITTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "SUBMITTED requires independent review; APPROVED required to publish; REJECTED/WITHDRAWN cannot publish.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "projection_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.projection_status",
+      "value": "APPROVED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "SUBMITTED requires independent review; APPROVED required to publish; REJECTED/WITHDRAWN cannot publish.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "projection_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.projection_status",
+      "value": "REJECTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "SUBMITTED requires independent review; APPROVED required to publish; REJECTED/WITHDRAWN cannot publish.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "projection_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.projection_status",
+      "value": "WITHDRAWN",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "SUBMITTED requires independent review; APPROVED required to publish; REJECTED/WITHDRAWN cannot publish.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "projection_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.role_template_key",
+      "value": "OWNER",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Fixed permission catalog: owner/admin/member/viewer and platform isolation exercised; no sector role exists.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "role_template_key",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.role_template_key",
+      "value": "ORGANIZATION_ADMIN",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Fixed permission catalog: owner/admin/member/viewer and platform isolation exercised; no sector role exists.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "role_template_key",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.role_template_key",
+      "value": "SUPERVISOR",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Fixed permission catalog: owner/admin/member/viewer and platform isolation exercised; no sector role exists.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "role_template_key",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.role_template_key",
+      "value": "OPERATOR",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Fixed permission catalog: owner/admin/member/viewer and platform isolation exercised; no sector role exists.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "role_template_key",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.role_template_key",
+      "value": "VIEWER",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Fixed permission catalog: owner/admin/member/viewer and platform isolation exercised; no sector role exists.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "role_template_key",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.verification_level",
+      "value": "UNVERIFIED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Only VERIFIED_PUBLIC_ENTITY plus attestation/scope/grant authorizes public projection; other states cannot authorize publication.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "verification_level",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.verification_level",
+      "value": "VERIFIED_ORGANIZATION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Only VERIFIED_PUBLIC_ENTITY plus attestation/scope/grant authorizes public projection; other states cannot authorize publication.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "verification_level",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.verification_level",
+      "value": "VERIFIED_PUBLIC_ENTITY",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "Only VERIFIED_PUBLIC_ENTITY plus attestation/scope/grant authorizes public projection; other states cannot authorize publication.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "verification_level",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_status",
+      "value": "PENDING",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE only permits tenant reads; every other state denied in live RLS matrix; CLOSED terminal for reactivation.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_status",
+      "value": "ACTIVE",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE only permits tenant reads; every other state denied in live RLS matrix; CLOSED terminal for reactivation.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_status",
+      "value": "SUSPENDED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE only permits tenant reads; every other state denied in live RLS matrix; CLOSED terminal for reactivation.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.organization_status",
+      "value": "CLOSED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "ACTIVE only permits tenant reads; every other state denied in live RLS matrix; CLOSED terminal for reactivation.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "organization_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.internal_share_class",
+      "value": "PRIVATE_TO_UNIT",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "PRIVATE_TO_UNIT source isolates unit; PRIVATE_TO_ORGANIZATION remains tenant-only; selected sharing is separate sanitized recipient projection.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "internal_share_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.internal_share_class",
+      "value": "PRIVATE_TO_ORGANIZATION",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "PRIVATE_TO_UNIT source isolates unit; PRIVATE_TO_ORGANIZATION remains tenant-only; selected sharing is separate sanitized recipient projection.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "internal_share_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.internal_share_class",
+      "value": "SHARED_WITH_SELECTED_UNITS",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "PRIVATE_TO_UNIT source isolates unit; PRIVATE_TO_ORGANIZATION remains tenant-only; selected sharing is separate sanitized recipient projection.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "internal_share_class",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.ownership_transfer_status",
+      "value": "PENDING",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "PENDING only accepts/cancels. ACCEPTED/CANCELLED terminal; replay after acceptance denied, concurrent starts one pending.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "ownership_transfer_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.ownership_transfer_status",
+      "value": "ACCEPTED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "PENDING only accepts/cancels. ACCEPTED/CANCELLED terminal; replay after acceptance denied, concurrent starts one pending.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "ownership_transfer_status",
+      "status": "PASS"
+    },
+    {
+      "type": "dispatch_private.ownership_transfer_status",
+      "value": "CANCELLED",
+      "catalog": "PASS",
+      "cast": "PASS",
+      "context": "PENDING only accepts/cancels. ACCEPTED/CANCELLED terminal; replay after acceptance denied, concurrent starts one pending.",
+      "authorization": "Never sufficient alone",
+      "runtimeEquivalence": "ownership_transfer_status",
+      "status": "PASS"
+    }
+  ]
+}

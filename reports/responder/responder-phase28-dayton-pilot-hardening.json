@@ -1,0 +1,207 @@
+{
+  "phase": 28,
+  "status": "READY_FOR_OWNER_REVIEW",
+  "verdict": "A. READY FOR OWNER REVIEW",
+  "validatedAt": "2026-09-21T13:43:34.340Z",
+  "branch": "RESPONDER-PHASE28-dispatch-dayton-multidepartment-pilot-hardening",
+  "startingHead": "4f89805ed836ab6e73dc383d99a2f24d55d83f5f",
+  "initialWorkingTree": "UNTRACKED_PHASE28_ARTIFACTS_ALREADY_PRESENT",
+  "commitIdentity": "Containing local commit; certification generated before the single authorized commit",
+  "push": false,
+  "merge": false,
+  "deployment": false,
+  "productionConnections": 0,
+  "productionChanges": 0,
+  "consumerRuntimeChanges": 0,
+  "websiteChanges": 0,
+  "tests": {
+    "nodeTests": 84,
+    "passed": 83,
+    "failed": 1,
+    "currentPhasePassed": 23,
+    "knownHistoricalFailures": 1,
+    "newRegressions": 0,
+    "unexplainedFailures": 0,
+    "skipped": 0
+  },
+  "currentExecution": {
+    "phase21": {
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "phase21-rerun.log",
+      "logSha256": "5a0d1c0694364a6f9af38dc6a3b7b6558daf1d350e11e050071ca30c69c044ad"
+    },
+    "phase22": {
+      "tests": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "phase22-rerun.log",
+      "logSha256": "efab8b09c4258372619285098473a32a5d884ef1dba6cac42f5887e765335e86"
+    },
+    "phase23": {
+      "tests": 11,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "phase23-rerun.log",
+      "logSha256": "8e47bf479e06bd7aafb57b7c24d862bc67f255f38811dfa2c4937e46db80517b"
+    },
+    "phase24": {
+      "tests": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "phase24-current.log",
+      "logSha256": "27bf7a91ac87072eea7056e5e24d2f4bc6ed0e0b38025aee5b45fdf74f6bc307"
+    },
+    "phase26Runtime": {
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "phase26-current.log",
+      "logSha256": "6376c399032df9e8412fbf7d2ca9c7c12d2cd68acbbdca4cf41fd7005d684a0e"
+    },
+    "phase28Runtime": {
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "phase28-closure-current.log",
+      "logSha256": "14a5737b4ff207a10b75e4aeee2f6f32f7c6b7314886c7ca74d585ede4163a78"
+    },
+    "contracts": {
+      "tests": 31,
+      "passed": 30,
+      "failed": 1,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "contracts-final.log",
+      "logSha256": "7ba7c8f37af7e23b283b22dd2a3ecda4257db81dfa1cc93c45a9d003d9b43951"
+    }
+  },
+  "regressionMatrix": [
+    [
+      "21",
+      10,
+      10,
+      0
+    ],
+    [
+      "22",
+      15,
+      15,
+      0
+    ],
+    [
+      "23",
+      11,
+      11,
+      0
+    ],
+    [
+      "24",
+      14,
+      14,
+      0
+    ],
+    [
+      "25",
+      4,
+      3,
+      1
+    ],
+    [
+      "26",
+      5,
+      5,
+      0
+    ],
+    [
+      "27 frozen contracts",
+      2,
+      2,
+      0
+    ],
+    [
+      "28",
+      23,
+      23,
+      0
+    ]
+  ],
+  "commandCertification": {
+    "total": 40,
+    "pass": 40,
+    "notApplicable": 0,
+    "failed": 0,
+    "unknown": 0
+  },
+  "runtimeCheckGroups": {
+    "general": 135,
+    "closure": 542
+  },
+  "lifecycleCombinations": 144,
+  "enumValues": 158,
+  "securityCatalog": {
+    "schemas": 4,
+    "tables": 36,
+    "views": 3,
+    "functions": 92,
+    "rlsPolicies": 20,
+    "roles": 5,
+    "permissions": 29,
+    "capabilities": 5,
+    "enumTypes": 27,
+    "commands": 40
+  },
+  "catalogFingerprint": "cbfefacd1cf7470131227d65a393c3e7444ca505e6a29c60b1bbaf04c64ded35",
+  "historicalFailure": "KNOWN_PREEXISTING_NON_PHASE28_FAILURE",
+  "localRehearsal": {
+    "realSupabaseAuth": true,
+    "realJWT": true,
+    "totp": true,
+    "packageApply": "PASS",
+    "postflight": "PASS",
+    "emptyRollbackAndReapply": "PASS",
+    "evidenceBearingRollbackRefused": true,
+    "phase28Teardown": {
+      "production_credentials": 0,
+      "remote_connections": 0,
+      "runtime_directory_removed": true,
+      "networks_remaining": [],
+      "containers_remaining": [],
+      "phase": 28,
+      "temporary_databases_remaining": 0
+    },
+    "phase26Teardown": {
+      "remote_connections": 0,
+      "runtime_directory_removed": true,
+      "phase": 26,
+      "production_credentials": 0,
+      "networks_remaining": [],
+      "temporary_databases_remaining": 0,
+      "containers_remaining": []
+    },
+    "packageSha256": "2764b88b0823df8148fbb953ba67eb1ba29862b3b25ce52aa754df3b1fec0670"
+  },
+  "implementationGaps": [],
+  "securityGaps": [],
+  "blockers": [],
+  "preproductionDecisions": [
+    "Legal/privacy approval of retention and deletion schedules",
+    "Actual departmental legal structure and authoritative Dayton scope evidence",
+    "Approved transactional invitation provider and exact HTTPS origin",
+    "Three named trained recovery administrators and operating schedules",
+    "Real departmental participants and activation evidence"
+  ]
+}

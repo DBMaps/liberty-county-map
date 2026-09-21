@@ -1,0 +1,30 @@
+{
+  "validatedAt": "2026-09-21T13:43:34.340Z",
+  "results": {
+    "tests": 31,
+    "passed": 30,
+    "failed": 1,
+    "skipped": 0,
+    "cancelled": 0,
+    "log": "contracts-final.log",
+    "logSha256": "7ba7c8f37af7e23b283b22dd2a3ecda4257db81dfa1cc93c45a9d003d9b43951"
+  },
+  "phase25": {
+    "tests": 4,
+    "passed": 3,
+    "failed": 1,
+    "classification": "KNOWN_PREEXISTING_NON_PHASE28_FAILURE"
+  },
+  "phase26": {
+    "tests": 4,
+    "passed": 4
+  },
+  "phase27": {
+    "tests": 2,
+    "passed": 2
+  },
+  "phase28": {
+    "tests": 21,
+    "passed": 21
+  }
+}
