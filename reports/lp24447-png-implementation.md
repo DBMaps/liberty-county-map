@@ -1,5 +1,7 @@
 # LP244.47 exact approved PNG implementation
 
+Semantic correction LP244.47A: the original generic Roadway Incident → Travel Advisory mapping was incorrect and is superseded by reports/lp24447a-semantic-correction.md. Earlier runtime evidence describes the pre-correction pass.
+
 Starting branch: LP244.47-marker-system-unification
 Starting HEAD: f8c9892274943ecabf6652e6e20e393cc8e4d8c7
 
@@ -24,7 +26,7 @@ Cache query versions were updated for the four touched JS/CSS resources. The ser
 ## Consolidations
 - Legacy impassable is still stored/normalized as ROAD_IMPASSABLE; consumer wording and visual resolve to Road Appears Blocked / #12. Its separate picker option is removed. Official advisory authority rules remain unchanged.
 - Fallen Tree retains raw input and resolves to Debris in Road / #11.
-- Generic Roadway Incident has no standalone visual definition; it resolves to Travel Advisory / #28. Known Crash/Wreck takes precedence over a generic incident category.
+- Generic Roadway Incident has no standalone visual definition; it resolves to Other Hazard / #16. Explicit Travel Advisory input resolves to Travel Advisory / #28. Known specific conditions retain precedence over a generic incident category.
 - Reported Crossing Delay / #23, Blocked Crossing / #24 and neutral Crossing Location / #25 remain distinct. Navigation carries no hazard severity or authority semantics.
 
 ## Local certification and review

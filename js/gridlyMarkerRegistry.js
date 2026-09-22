@@ -272,8 +272,8 @@ const entries={
     "width": 1254,
     "height": 1254
   },
-  "txdot_other": {
-    "condition": "txdot_other",
+  "travel_advisory": {
+    "condition": "travel_advisory",
     "label": "Travel Advisory",
     "asset": "28-travel-advisory.png",
     "family": "information",
@@ -366,10 +366,13 @@ const aliases={
   "rail_crossing_infrastructure": "crossing_infrastructure",
   "txdot_damage": "txdot_damage",
   "txdot_bridge_restriction": "txdot_bridge_restriction",
-  "txdot_incident": "txdot_other",
-  "txdot_other": "txdot_other",
+  "txdot_incident": "other_hazard",
+  "txdot_other": "other_hazard",
   "reported_crossing_delay": "rail_blockage_delay",
-  "roadway_incident": "txdot_other"
+  "roadway_incident": "other_hazard",
+  "incident": "other_hazard",
+  "travel_advisory": "travel_advisory",
+  "txdot_travel_advisory": "travel_advisory"
 };
 const navigation={
   "current_location": {
