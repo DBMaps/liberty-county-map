@@ -77119,7 +77119,22 @@ function getActiveDelayCrossingsForViewport() {
   });
 }
 
+// Area is owned by the accepted temporary context, not a retained Home camera.
+// Reading the current context also preserves the existing Route Watch owner.
+function gridlyGetTemporaryAreaFilterTarget() {
+  const context = gridlyGetCurrentAwarenessContext();
+  if (!["SEARCH", "AROUND_ME"].includes(context?.type) || context.health !== "FRESH" || context.area?.unavailable) return null;
+  const area = context.area;
+  if (!area || !context.countyId || ![context.lat, context.lng].every((value) => typeof value === "number" && Number.isFinite(value))) return null;
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(area);
+  const camera = placeGeoid ? gridlyGetGovernedPlaceConsumerPresentationCamera(placeGeoid) : null;
+  return { ...area, lat: camera?.lat ?? context.lat, lng: camera?.lng ?? context.lng,
+    startupZoom: camera?.zoom ?? area.startupZoom ?? GRIDLY_TOWN_STARTUP_ZOOM };
+}
+
 function gridlyReissueActiveAreaPresentation(source = "geo-filter-empty") {
+  const temporaryTarget = activeGeoFilter === "town" ? gridlyGetTemporaryAreaFilterTarget() : null;
+  if (temporaryTarget) return setGridlyAwarenessView({ lat: temporaryTarget.lat, lng: temporaryTarget.lng }, temporaryTarget.startupZoom, { animate: true, compensateForChrome: false });
   const currentPresentation = gridlyActiveGeographicPresentation;
   if (currentPresentation && currentPresentation.semanticLevel !== "COUNTYWIDE" && [currentPresentation.lat, currentPresentation.lng].every((value) => Number.isFinite(Number(value)))) {
     const zoom = gridlyCommittedSemanticCamera?.zoom || GRIDLY_TOWN_STARTUP_ZOOM;
@@ -77157,6 +77172,9 @@ function gridlyApplyZeroCrossingViewportContract(filterKey = activeGeoFilter, re
 
 function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
   if (!map) return;
+  if (activeGeoFilter === "town" && gridlyGetTemporaryAreaFilterTarget()) {
+    return gridlyReissueActiveAreaPresentation("area-filter-temporary-context");
+  }
 
   let targetBounds = null;
   let targetCrossings = Array.isArray(visibleCrossings) ? visibleCrossings : [];
@@ -77268,9 +77286,9 @@ function getVisibleCrossingsForFilter(reason = "unknown") {
 
   if (activeGeoFilter === "town") {
     const presentation = gridlyActiveGeographicPresentation;
-    const awarenessAnchor = presentation && presentation.semanticLevel !== "COUNTYWIDE" && [presentation.lat, presentation.lng].every((value) => Number.isFinite(Number(value)))
+    const awarenessAnchor = gridlyGetTemporaryAreaFilterTarget() || (presentation && presentation.semanticLevel !== "COUNTYWIDE" && [presentation.lat, presentation.lng].every((value) => Number.isFinite(Number(value)))
       ? { lat: Number(presentation.lat), lng: Number(presentation.lng), radiusMiles: 10 }
-      : (typeof getGridlyHomeTownAwarenessAnchor === "function" ? getGridlyHomeTownAwarenessAnchor() : null);
+      : (typeof getGridlyHomeTownAwarenessAnchor === "function" ? getGridlyHomeTownAwarenessAnchor() : null));
     const filtered = awarenessAnchor ? getGridlyHomeTownCrossings(awarenessAnchor) : crossings.filter(
       (crossing) => String(crossing.city || "").toLowerCase() === getMyTownKey()
     );

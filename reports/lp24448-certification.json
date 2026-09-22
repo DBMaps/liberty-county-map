@@ -1,53 +1,38 @@
 {
-  "phase": "LP244.48",
+  "phase": "LP244.48 targeted Area filter repair",
   "branch": "LP244.48-destination-quick-check-around-me",
-  "startingHead": "7c79a649a820f9404133ca900c69bbd3fa25c90d",
+  "startingHead": "5eb003a89189dcdcd3b2b599858967c44bf4ff1d",
+  "lp24448Baseline": "7c79a649a820f9404133ca900c69bbd3fa25c90d",
   "focused": {
-    "passed": 99,
+    "passed": 106,
     "failed": 0
   },
   "broader": {
-    "passed": 64,
-    "failed": 0
+    "passed": 82,
+    "failed": 0,
+    "originalSuiteCount": 64,
+    "additionalAreaCountyCoverageCount": 18
+  },
+  "baselineReproduction": {
+    "context": "SEARCH Dayton",
+    "areaEvaluation": {
+      "lat": 30.3413,
+      "lng": -95.0858
+    },
+    "cause": "Retained geographic presentation takes precedence over temporary Area owner"
   },
   "browser": {
+    "command": "node tools/lp24448/verify-browser.mjs --quick",
     "widths": [
       390,
       320,
       360,
       440
     ],
-    "principalViewport": [
-      390,
-      844
-    ],
     "snapshots": 15,
+    "filterChecks": 36,
     "errors": [],
     "homeStorageUnchanged": true,
-    "homeIdentity": {
-      "place": "Cleveland",
-      "county": "liberty-tx"
-    },
-    "consumerAgreement": true,
-    "multiCountyCases": [
-      [
-        "Austin",
-        "hays-tx"
-      ],
-      [
-        "Austin",
-        "travis-tx"
-      ],
-      [
-        "Abilene",
-        "jones-tx"
-      ],
-      [
-        "Abilene",
-        "taylor-tx"
-      ]
-    ],
-    "multiCountyAssertionsPassed": true,
     "route": {
       "kind": "ROUTE_WATCH",
       "locationBlocked": false,
@@ -71,106 +56,519 @@
       ],
       "after": "HOME"
     },
-    "expiryAndSettings": {
-      "r": {
-        "expired": "STALE",
-        "after": "FRESH",
-        "home": {
-          "label": "Cleveland",
-          "county": "Liberty County",
-          "zip": "Not set",
-          "zipSet": false,
-          "canonical": false
-        }
+    "filterProof": [
+      {
+        "width": 390,
+        "filter": "town",
+        "place": "Around Me",
+        "county": "harris-tx",
+        "center": {
+          "lat": 29.91154,
+          "lng": -95.06325
+        },
+        "zoom": 13,
+        "inventoryOwner": "harris-tx",
+        "renderedCount": 5,
+        "layerAttached": true
       },
-      "settingsHome": "Cleveland",
-      "errors": []
-    }
+      {
+        "width": 390,
+        "filter": "nearby",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.982868082472276,
+          "lng": -94.97246380001249
+        },
+        "zoom": 15,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 390,
+        "filter": "town",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 390,
+        "filter": "county",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.168016818980004,
+          "lng": -94.80406600000002
+        },
+        "zoom": 9,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 0,
+        "layerAttached": true
+      },
+      {
+        "width": 390,
+        "filter": "all",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.98052620672118,
+          "lng": -94.97246380001249
+        },
+        "zoom": 12,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 390,
+        "filter": "nearby",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.982868082472276,
+          "lng": -94.97246380001249
+        },
+        "zoom": 15,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 390,
+        "filter": "town",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 390,
+        "filter": "town",
+        "place": "Crosby",
+        "county": "harris-tx",
+        "center": {
+          "lat": 29.91154,
+          "lng": -95.0632549
+        },
+        "zoom": 13,
+        "inventoryOwner": "harris-tx",
+        "renderedCount": 5,
+        "layerAttached": true
+      },
+      {
+        "width": 390,
+        "filter": "town",
+        "place": "Cleveland",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.3414794,
+          "lng": -95.0900115
+        },
+        "zoom": 13,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 13,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "town",
+        "place": "Around Me",
+        "county": "harris-tx",
+        "center": {
+          "lat": 29.91154,
+          "lng": -95.06325
+        },
+        "zoom": 13,
+        "inventoryOwner": "harris-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "nearby",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.982533532174617,
+          "lng": -94.97246380001249
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 2,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "town",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.047327604802298,
+          "lng": -94.88737106323242
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "county",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.168016818980004,
+          "lng": -94.80406600000002
+        },
+        "zoom": 9,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 0,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "all",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.98052620672118,
+          "lng": -94.97246380001249
+        },
+        "zoom": 12,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "nearby",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.982533532174617,
+          "lng": -94.97246380001249
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 2,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "town",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.047327604802298,
+          "lng": -94.88737106323242
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "town",
+        "place": "Crosby",
+        "county": "harris-tx",
+        "center": {
+          "lat": 29.91154,
+          "lng": -95.0632549
+        },
+        "zoom": 13,
+        "inventoryOwner": "harris-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 320,
+        "filter": "town",
+        "place": "Cleveland",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.3414794,
+          "lng": -95.0900115
+        },
+        "zoom": 13,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 12,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "town",
+        "place": "Around Me",
+        "county": "harris-tx",
+        "center": {
+          "lat": 29.91154,
+          "lng": -95.06325
+        },
+        "zoom": 13,
+        "inventoryOwner": "harris-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "nearby",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.982868082472276,
+          "lng": -94.97246380001249
+        },
+        "zoom": 15,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "town",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "county",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.168016818980004,
+          "lng": -94.80406600000002
+        },
+        "zoom": 9,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 0,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "all",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.98052620672118,
+          "lng": -94.97246380001249
+        },
+        "zoom": 12,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "nearby",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.982868082472276,
+          "lng": -94.97246380001249
+        },
+        "zoom": 15,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "town",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "town",
+        "place": "Crosby",
+        "county": "harris-tx",
+        "center": {
+          "lat": 29.91154,
+          "lng": -95.0632549
+        },
+        "zoom": 13,
+        "inventoryOwner": "harris-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 360,
+        "filter": "town",
+        "place": "Cleveland",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.3414794,
+          "lng": -95.0900115
+        },
+        "zoom": 13,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 11,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "town",
+        "place": "Around Me",
+        "county": "harris-tx",
+        "center": {
+          "lat": 29.91154,
+          "lng": -95.06325
+        },
+        "zoom": 13,
+        "inventoryOwner": "harris-tx",
+        "renderedCount": 5,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "nearby",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.982868082472276,
+          "lng": -94.97246380001249
+        },
+        "zoom": 15,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "town",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "county",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.168016818980004,
+          "lng": -94.80406600000002
+        },
+        "zoom": 9,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 0,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "all",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.98052620672118,
+          "lng": -94.97246380001249
+        },
+        "zoom": 12,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "nearby",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 29.982868082472276,
+          "lng": -94.97246380001249
+        },
+        "zoom": 15,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 1,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "town",
+        "place": "Dayton",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "zoom": 14,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 4,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "town",
+        "place": "Crosby",
+        "county": "harris-tx",
+        "center": {
+          "lat": 29.91154,
+          "lng": -95.0632549
+        },
+        "zoom": 13,
+        "inventoryOwner": "harris-tx",
+        "renderedCount": 5,
+        "layerAttached": true
+      },
+      {
+        "width": 440,
+        "filter": "town",
+        "place": "Cleveland",
+        "county": "liberty-tx",
+        "center": {
+          "lat": 30.3414794,
+          "lng": -95.0900115
+        },
+        "zoom": 13,
+        "inventoryOwner": "liberty-tx",
+        "renderedCount": 12,
+        "layerAttached": true
+      }
+    ],
+    "routeFixture": "Local deterministic OSRM-shaped response; lifecycle verification only",
+    "priorAttempt": "Full UI-search run completed portrait filter checks; final live routing dependency returned no route layer. Harness dependency replaced; final complete run passed."
   },
-  "markerProof": [
+  "markers": [
     {
       "path": "assets/markers/approved/01-icy-road.png",
       "sha256": "7d3aa411b33bf6c94130da85e088040de4969553e629aaf25d3e9e9a154db9c6",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/18-downed-power-line.png",
-      "sha256": "35f78162fd3b4bb7081fd83b33b4a5631f123b61e91db4a49e02ebac5b77b535",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/03-bridge-overpass-icing.png",
-      "sha256": "8507b570e6905708c33a4a70c565e5a7a45f915ee19a5489588c4d4a5344e5c9",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/10-disabled-vehicle.png",
-      "sha256": "acd105f612e5e611c04eea54239f12a0933454b53212e0aa31860c1854251bf7",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/12-road-appears-blocked.png",
-      "sha256": "87875bbde5de071ce0b7911f24085ed66c06df692240c78ea6c3fd21dbab8eda",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/27-bridge-restriction.png",
-      "sha256": "09afcdc1a6299aa5652c106e52deef6bb660ed262898c8d0193ee6a67750ad99",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/16-other-hazard.png",
-      "sha256": "756e9fb17ce132ec355c3a6a577a137df8c5d4f4d007e2e3980ab8586033bd8d",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/14-planned-work.png",
-      "sha256": "497818823cab459330e28f337790c13e0fbb05bef0a9a74d815bdbd8becdf317",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/24-blocked-crossing.png",
-      "sha256": "d5c4ba76a1637cbb48c2b2296428277cfb442725c4a561ffd8f56fbc4976a6d1",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/28-travel-advisory.png",
-      "sha256": "90bd8c7369fa00f6c616ed8cf9cc60249570f985e3354bad6e982a179a46eed5",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/26-road-damage.png",
-      "sha256": "f3a8e30faf79b5c01d8facc826f46241dd1de604dd206ce5bc5ec8f50296caf3",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/19-utility-work.png",
-      "sha256": "7525ce7d52883557cc68ef4bfbde3515f19e55ba714ce67e8d1a4adcfdee9d1e",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/04-snow-covered-road.png",
-      "sha256": "1b1ef14997e1e85a2f821672573dff340d948401f05c8674e5d82d6624d6d013",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/11-debris-in-road.png",
-      "sha256": "e81f53d97dbb355a70bd07647efdb2f8e0fd60f6ca3283fd7a69e3ec664dffa6",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/22-traffic-signal-issue.png",
-      "sha256": "fafbc983754b813ceb57d9b6912f6c890dc337f6f747690bdaf28c0a3eba587b",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/09-crash-wreck.png",
-      "sha256": "a912a7d475c4eaa73098ab36da2da1bcb3eb31fed343affe16ebcf62d6ff0d37",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/20-emergency-response-activity.png",
-      "sha256": "2cda15832549510f40e944cc8634e75a3afa636c68809e1d71968273a1dbc97c",
       "unchanged": true
     },
     {
@@ -179,38 +577,13 @@
       "unchanged": true
     },
     {
-      "path": "assets/markers/approved/07-other-winter-road-hazard.png",
-      "sha256": "d5b99b8586dbc9cfd679a0ccbf39751261965f0ae92f1df3fca2fa5f31c2fe8d",
+      "path": "assets/markers/approved/03-bridge-overpass-icing.png",
+      "sha256": "8507b570e6905708c33a4a70c565e5a7a45f915ee19a5489588c4d4a5344e5c9",
       "unchanged": true
     },
     {
-      "path": "assets/markers/approved/21-livestock-on-road.png",
-      "sha256": "64d7d695b666f4bdb9e7a36c4ac3cda207115574efac88bf956101d31e4a8752",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/13-construction.png",
-      "sha256": "4f332561f26f7897575248b2b8f7fbc18391e61e7d2fbe8aa7611f3627fa91bd",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/15-traffic-backup-heavy-delay.png",
-      "sha256": "c0d3587c68314586ec24b16c8d573b6adc5f88f19b560135437a3831b904ba8c",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/25-crossing-location.png",
-      "sha256": "7aaf91a9d9c5575602759a8aab8d41f092b7f0b5ecc78ff5a1f795dbdf11e6a7",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/08-flooding-high-water.png",
-      "sha256": "95865cb30a50919e362e320548dd9ba140b6dee5c2a0b336931fe838494aa99c",
-      "unchanged": true
-    },
-    {
-      "path": "assets/markers/approved/23-reported-crossing-delay.png",
-      "sha256": "47bda7eda308c346e0a3be5ad8d63d21b1140d3cfff190083d6feb22e2ea89eb",
+      "path": "assets/markers/approved/04-snow-covered-road.png",
+      "sha256": "1b1ef14997e1e85a2f821672573dff340d948401f05c8674e5d82d6624d6d013",
       "unchanged": true
     },
     {
@@ -219,23 +592,128 @@
       "unchanged": true
     },
     {
-      "path": "assets/markers/approved/17-official-road-closed.png",
-      "sha256": "1e900560d2cdcdc7661a8c20b0791f27734689a28414a8d2609787526d8346f1",
-      "unchanged": true
-    },
-    {
       "path": "assets/markers/approved/06-reduced-visibility.png",
       "sha256": "e4f8bf2dc6becfc93dfff39d8d055e40e72421fcd4a673d9786284272d3a68c9",
       "unchanged": true
     },
     {
-      "path": "assets/markers/approved/navigation/trip-destination.png",
-      "sha256": "608e370e0aae5235fdf6788adaee27a951b13a9afee67cace4d9cad2a11b0c5e",
+      "path": "assets/markers/approved/07-other-winter-road-hazard.png",
+      "sha256": "d5b99b8586dbc9cfd679a0ccbf39751261965f0ae92f1df3fca2fa5f31c2fe8d",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/08-flooding-high-water.png",
+      "sha256": "95865cb30a50919e362e320548dd9ba140b6dee5c2a0b336931fe838494aa99c",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/09-crash-wreck.png",
+      "sha256": "a912a7d475c4eaa73098ab36da2da1bcb3eb31fed343affe16ebcf62d6ff0d37",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/10-disabled-vehicle.png",
+      "sha256": "acd105f612e5e611c04eea54239f12a0933454b53212e0aa31860c1854251bf7",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/11-debris-in-road.png",
+      "sha256": "e81f53d97dbb355a70bd07647efdb2f8e0fd60f6ca3283fd7a69e3ec664dffa6",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/12-road-appears-blocked.png",
+      "sha256": "87875bbde5de071ce0b7911f24085ed66c06df692240c78ea6c3fd21dbab8eda",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/13-construction.png",
+      "sha256": "4f332561f26f7897575248b2b8f7fbc18391e61e7d2fbe8aa7611f3627fa91bd",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/14-planned-work.png",
+      "sha256": "497818823cab459330e28f337790c13e0fbb05bef0a9a74d815bdbd8becdf317",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/15-traffic-backup-heavy-delay.png",
+      "sha256": "c0d3587c68314586ec24b16c8d573b6adc5f88f19b560135437a3831b904ba8c",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/16-other-hazard.png",
+      "sha256": "756e9fb17ce132ec355c3a6a577a137df8c5d4f4d007e2e3980ab8586033bd8d",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/17-official-road-closed.png",
+      "sha256": "1e900560d2cdcdc7661a8c20b0791f27734689a28414a8d2609787526d8346f1",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/18-downed-power-line.png",
+      "sha256": "35f78162fd3b4bb7081fd83b33b4a5631f123b61e91db4a49e02ebac5b77b535",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/19-utility-work.png",
+      "sha256": "7525ce7d52883557cc68ef4bfbde3515f19e55ba714ce67e8d1a4adcfdee9d1e",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/20-emergency-response-activity.png",
+      "sha256": "2cda15832549510f40e944cc8634e75a3afa636c68809e1d71968273a1dbc97c",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/21-livestock-on-road.png",
+      "sha256": "64d7d695b666f4bdb9e7a36c4ac3cda207115574efac88bf956101d31e4a8752",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/22-traffic-signal-issue.png",
+      "sha256": "fafbc983754b813ceb57d9b6912f6c890dc337f6f747690bdaf28c0a3eba587b",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/23-reported-crossing-delay.png",
+      "sha256": "47bda7eda308c346e0a3be5ad8d63d21b1140d3cfff190083d6feb22e2ea89eb",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/24-blocked-crossing.png",
+      "sha256": "d5c4ba76a1637cbb48c2b2296428277cfb442725c4a561ffd8f56fbc4976a6d1",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/25-crossing-location.png",
+      "sha256": "7aaf91a9d9c5575602759a8aab8d41f092b7f0b5ecc78ff5a1f795dbdf11e6a7",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/26-road-damage.png",
+      "sha256": "f3a8e30faf79b5c01d8facc826f46241dd1de604dd206ce5bc5ec8f50296caf3",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/27-bridge-restriction.png",
+      "sha256": "09afcdc1a6299aa5652c106e52deef6bb660ed262898c8d0193ee6a67750ad99",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/28-travel-advisory.png",
+      "sha256": "90bd8c7369fa00f6c616ed8cf9cc60249570f985e3354bad6e982a179a46eed5",
       "unchanged": true
     },
     {
       "path": "assets/markers/approved/navigation/current-location.png",
       "sha256": "b4476f48535f9aa2e1dd39eced8c6d624a43949b76a10d129c567f7a1845cf1b",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/navigation/trip-destination.png",
+      "sha256": "608e370e0aae5235fdf6788adaee27a951b13a9afee67cace4d9cad2a11b0c5e",
       "unchanged": true
     },
     {
@@ -245,23 +723,21 @@
     }
   ],
   "changedFiles": [
-    "consumer-script-manifest.json",
     "docs/launch/LP24448-DESTINATION-QUICK-CHECK-AROUND-ME.md",
-    "index.html",
     "js/app.js",
     "reports/lp24448-broader-tests.txt",
     "reports/lp24448-browser.json",
     "reports/lp24448-certification.json",
-    "reports/lp24448-expiry-runtime.json",
     "reports/lp24448-focused-tests.txt",
     "tests/lp24445-unified-awareness-context.test.cjs",
+    "tests/post-lp2013-awareness-coverage-state-repair.test.mjs",
+    "tests/post-lp2013-portrait-filter-viewport-refinement.test.mjs",
     "tools/lp24448/verify-browser.mjs"
   ],
-  "knownLimitations": [
-    "Physical keyboard/native permission UI requires later device acceptance; reduced-height browser viewport and existing native bridge contract were tested.",
-    "Pre-existing Alerts focus/aria-hidden warning unchanged.",
-    "Previously reported long-frame warning remains a separate profiling follow-up."
+  "fixtureRepairs": [
+    "Viewport fixture now supplies HOME context and geographic presentation and loads the new target helper. Missing presentation also failed at starting HEAD.",
+    "Active coverage-copy fixture now supplies explicit completeness, matching neighboring cases. Missing report-read state also failed at starting HEAD."
   ],
-  "prohibitedActionsPerformed": [],
-  "commitMessage": "Complete destination quick check and Around Me"
+  "protectedSystemsChanged": [],
+  "commitMessage": "Fix Area filter temporary context ownership"
 }

@@ -60,7 +60,7 @@ test('active and recently-cleared evidence outrank limited coverage', () => {
   const coverage = api.getGridlyAwarenessCoverageState();
   assert.equal(api.classifyGridlyAwarenessTrustState({ activeCount: 1, coverage }), 'active');
   assert.equal(api.classifyGridlyAwarenessTrustState({ recentlyCleared: true, coverage }), 'recently_cleared');
-  assert.equal(api.getGridlyHomeCommunityPulseCopy({ quiet: false, activeCount: 1, activityLevel: 'active', coverage }).state, 'one_issue');
+  assert.equal(api.getGridlyHomeCommunityPulseCopy({ quiet: false, activeCount: 1, activityLevel: 'active', coverage, completeness: { canStateCommunityQuiet: false, canStateTravelNormal: false } }).state, 'one_issue');
 });
 
 test('filter feedback owns only the filter status surface', () => {

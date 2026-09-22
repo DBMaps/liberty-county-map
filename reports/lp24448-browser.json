@@ -19,7 +19,7 @@
         "lat": 30.3413,
         "lng": -95.0858,
         "source": "persisted-home",
-        "selectedAt": 1790084871918,
+        "selectedAt": 1790100417551,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -114,7 +114,7 @@
         "lat": 29.91154,
         "lng": -95.0632549,
         "source": "canonical-destination",
-        "selectedAt": 1790084886296,
+        "selectedAt": 1790100426008,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -199,7 +199,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/trip-destination.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/trip-destination.png",
           "loaded": true
         }
       ]
@@ -210,7 +210,7 @@
         "v": 1,
         "type": "SEARCH",
         "contextType": "SEARCH",
-        "generation": 4,
+        "generation": 3,
         "placeId": "4819432",
         "placeName": "Dayton",
         "countyId": "liberty-tx",
@@ -221,7 +221,7 @@
         "lat": 30.0473202,
         "lng": -94.8873913,
         "source": "canonical-destination",
-        "selectedAt": 1790084924023,
+        "selectedAt": 1790100429005,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -304,7 +304,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/trip-destination.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/trip-destination.png",
           "loaded": true
         }
       ]
@@ -315,7 +315,7 @@
         "v": 1,
         "type": "HOME",
         "contextType": "HOME",
-        "generation": 5,
+        "generation": 4,
         "placeId": "4815436",
         "placeName": "Cleveland",
         "countyId": "liberty-tx",
@@ -328,7 +328,7 @@
         "lat": 30.3413,
         "lng": -95.0858,
         "source": "persisted-home",
-        "selectedAt": 1790084930739,
+        "selectedAt": 1790100434503,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -412,8 +412,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 6,
-        "placeId": "foreground-location:1790084940961",
+        "generation": 5,
+        "placeId": "foreground-location:1790100443960",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -423,12 +423,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790084945592,
-        "expiresAt": 1790085060961,
+        "selectedAt": 1790100448255,
+        "expiresAt": 1790100563960,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790084940961",
+          "key": "foreground-location:1790100443960",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -473,10 +473,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790084940961",
+        "awarenessKey": "foreground-location:1790100443960",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790084940961",
+        "stableIdentity": "foreground-location:1790100443960",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -505,7 +505,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -516,8 +516,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 9,
-        "placeId": "foreground-location:1790084986022",
+        "generation": 10,
+        "placeId": "foreground-location:1790100514512",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -527,12 +527,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790084986132,
-        "expiresAt": 1790085106022,
+        "selectedAt": 1790100514633,
+        "expiresAt": 1790100634512,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790084986022",
+          "key": "foreground-location:1790100514512",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -577,10 +577,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790084986022",
+        "awarenessKey": "foreground-location:1790100514512",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790084986022",
+        "stableIdentity": "foreground-location:1790100514512",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -590,8 +590,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.22290387568068,
-        "lng": -95.08258271324566
+        "lat": 30.2040798048372,
+        "lng": -95.08141683183479
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -609,7 +609,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -620,8 +620,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 11,
-        "placeId": "foreground-location:1790084998826",
+        "generation": 12,
+        "placeId": "foreground-location:1790100535328",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -631,12 +631,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790085002883,
-        "expiresAt": 1790085118826,
+        "selectedAt": 1790100541142,
+        "expiresAt": 1790100655328,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790084998826",
+          "key": "foreground-location:1790100535328",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -681,10 +681,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790084998826",
+        "awarenessKey": "foreground-location:1790100535328",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790084998826",
+        "stableIdentity": "foreground-location:1790100535328",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -694,8 +694,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 29.911495738488924,
-        "lng": -95.06332397460939
+        "lat": 29.91154,
+        "lng": -95.06325
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -713,7 +713,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -724,8 +724,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 14,
-        "placeId": "foreground-location:1790085039527",
+        "generation": 17,
+        "placeId": "foreground-location:1790100602909",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -735,12 +735,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790085039647,
-        "expiresAt": 1790085159527,
+        "selectedAt": 1790100603029,
+        "expiresAt": 1790100722909,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790085039527",
+          "key": "foreground-location:1790100602909",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -785,10 +785,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790085039527",
+        "awarenessKey": "foreground-location:1790100602909",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790085039527",
+        "stableIdentity": "foreground-location:1790100602909",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -798,8 +798,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.248131204119645,
-        "lng": -95.08414553467341
+        "lat": 30.20517093258997,
+        "lng": -95.08148440547247
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -817,7 +817,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -828,8 +828,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 16,
-        "placeId": "foreground-location:1790085055527",
+        "generation": 19,
+        "placeId": "foreground-location:1790100623023",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -839,12 +839,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790085060063,
-        "expiresAt": 1790085175527,
+        "selectedAt": 1790100627865,
+        "expiresAt": 1790100743023,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790085055527",
+          "key": "foreground-location:1790100623023",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -889,10 +889,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790085055527",
+        "awarenessKey": "foreground-location:1790100623023",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790085055527",
+        "stableIdentity": "foreground-location:1790100623023",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -902,8 +902,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 29.911495738488924,
-        "lng": -95.06332397460939
+        "lat": 29.91154,
+        "lng": -95.06325
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -921,7 +921,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -932,8 +932,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 19,
-        "placeId": "foreground-location:1790085093801",
+        "generation": 24,
+        "placeId": "foreground-location:1790100692379",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -943,12 +943,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790085093912,
-        "expiresAt": 1790085213801,
+        "selectedAt": 1790100692510,
+        "expiresAt": 1790100812379,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790085093801",
+          "key": "foreground-location:1790100692379",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -993,10 +993,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790085093801",
+        "awarenessKey": "foreground-location:1790100692379",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790085093801",
+        "stableIdentity": "foreground-location:1790100692379",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -1006,8 +1006,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.233105986753493,
-        "lng": -95.0832146810498
+        "lat": 30.21953953944608,
+        "lng": -95.08237432446
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -1025,7 +1025,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -1036,8 +1036,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 21,
-        "placeId": "foreground-location:1790085105765",
+        "generation": 26,
+        "placeId": "foreground-location:1790100711884",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -1047,12 +1047,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790085111728,
-        "expiresAt": 1790085225765,
+        "selectedAt": 1790100720160,
+        "expiresAt": 1790100831884,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790085105765",
+          "key": "foreground-location:1790100711884",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -1097,10 +1097,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790085105765",
+        "awarenessKey": "foreground-location:1790100711884",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790085105765",
+        "stableIdentity": "foreground-location:1790100711884",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -1110,8 +1110,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 29.911495738488924,
-        "lng": -95.06332397460939
+        "lat": 29.91154,
+        "lng": -95.06325
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -1129,7 +1129,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -1140,8 +1140,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 24,
-        "placeId": "foreground-location:1790085155830",
+        "generation": 31,
+        "placeId": "foreground-location:1790100792093",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -1151,12 +1151,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790085155936,
-        "expiresAt": 1790085275830,
+        "selectedAt": 1790100792216,
+        "expiresAt": 1790100912093,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790085155830",
+          "key": "foreground-location:1790100792093",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -1201,10 +1201,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790085155830",
+        "awarenessKey": "foreground-location:1790100792093",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790085155830",
+        "stableIdentity": "foreground-location:1790100792093",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -1214,8 +1214,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.21286542949051,
-        "lng": -95.08196094761234
+        "lat": 30.226286396909227,
+        "lng": -95.08279223560584
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -1233,7 +1233,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -1244,7 +1244,7 @@
         "v": 1,
         "type": "HOME",
         "contextType": "HOME",
-        "generation": 25,
+        "generation": 32,
         "placeId": "4815436",
         "placeName": "Cleveland",
         "countyId": "liberty-tx",
@@ -1257,7 +1257,7 @@
         "lat": 30.3413,
         "lng": -95.0858,
         "source": "persisted-home",
-        "selectedAt": 1790085168697,
+        "selectedAt": 1790100804493,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -1335,7 +1335,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -1346,8 +1346,8 @@
         "v": 1,
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
-        "generation": 27,
-        "placeId": "foreground-location:1790085183768",
+        "generation": 33,
+        "placeId": "foreground-location:1790100820128",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -1357,12 +1357,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790085183833,
-        "expiresAt": 1790085303768,
+        "selectedAt": 1790100820173,
+        "expiresAt": 1790100940128,
         "health": "STALE",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790085183768",
+          "key": "foreground-location:1790100820128",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -1412,8 +1412,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.135583030633192,
-        "lng": -95.07717631842262
+        "lat": 30.153092458950777,
+        "lng": -95.07826001567955
       },
       "crossingHome": false,
       "crossingCrosby": false,
@@ -1436,7 +1436,7 @@
         "v": 1,
         "type": "HOME",
         "contextType": "HOME",
-        "generation": 33,
+        "generation": 39,
         "placeId": "4815436",
         "placeName": "Cleveland",
         "countyId": "liberty-tx",
@@ -1449,7 +1449,7 @@
         "lat": 30.3413,
         "lng": -95.0858,
         "source": "persisted-home",
-        "selectedAt": 1790085214091,
+        "selectedAt": 1790100846804,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -1527,15 +1527,15 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         },
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/trip-start.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/trip-start.png",
           "loaded": true
         },
         {
-          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/trip-destination.png",
+          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/trip-destination.png",
           "loaded": true
         }
       ]
@@ -1549,6 +1549,2056 @@
     440
   ],
   "homeUnchanged": true,
+  "filterProof": [
+    {
+      "width": 390,
+      "filter": "town",
+      "county": "harris-tx",
+      "place": "Around Me",
+      "type": "AROUND_ME",
+      "center": {
+        "lat": 29.91154,
+        "lng": -95.06325
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "LOCAL",
+        "placeGeoid": null,
+        "placeLabel": "Around Me",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "foreground-location:1790100443960"
+      },
+      "areaTarget": {
+        "key": "foreground-location:1790100443960",
+        "label": "Around Me",
+        "storageValue": "Around Me",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "countyId": "harris-tx",
+        "countyMemberships": [
+          null
+        ],
+        "radiusMiles": 8,
+        "countyWide": false,
+        "fallback": false,
+        "coordinateOnly": true,
+        "startupZoom": 13
+      },
+      "inventoryOwner": "harris-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        },
+        {
+          "lat": 29.9378040002764,
+          "lng": -95.0318302995617
+        }
+      ],
+      "layerCount": 5,
+      "attached": true
+    },
+    {
+      "width": 390,
+      "filter": "nearby",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.982868082472276,
+        "lng": -94.97246380001249
+      },
+      "zoom": 15,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 390,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 30.0403479997689,
+          "lng": -94.8977530001271
+        },
+        {
+          "lat": 30.0400397997531,
+          "lng": -94.8973149995609
+        },
+        {
+          "lat": 30.0469190000594,
+          "lng": -94.8892150002384
+        },
+        {
+          "lat": 30.0482671001437,
+          "lng": -94.8874153001269
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 390,
+      "filter": "county",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.168016818980004,
+        "lng": -94.80406600000002
+      },
+      "zoom": 9,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [],
+      "layerCount": 0,
+      "attached": true
+    },
+    {
+      "width": 390,
+      "filter": "all",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.98052620672118,
+        "lng": -94.97246380001249
+      },
+      "zoom": 12,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 390,
+      "filter": "nearby",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.982868082472276,
+        "lng": -94.97246380001249
+      },
+      "zoom": 15,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 390,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 30.0403479997689,
+          "lng": -94.8977530001271
+        },
+        {
+          "lat": 30.0400397997531,
+          "lng": -94.8973149995609
+        },
+        {
+          "lat": 30.0469190000594,
+          "lng": -94.8892150002384
+        },
+        {
+          "lat": 30.0482671001437,
+          "lng": -94.8874153001269
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 390,
+      "filter": "town",
+      "county": "harris-tx",
+      "place": "Crosby",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4817756",
+        "placeLabel": "Crosby",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "harris-tx-crosby"
+      },
+      "areaTarget": {
+        "key": "harris-tx-crosby",
+        "label": "Crosby",
+        "storageValue": "Crosby",
+        "countyId": "harris-tx",
+        "communityId": "4817756",
+        "placeGeoid": "4817756",
+        "canonicalCommunityIdentity": "PLACE_GEOID",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "radiusMiles": 7,
+        "startupZoom": 13,
+        "source": "V904R9 Harris coverage audit addition; Harris county boundary/crossing runtime package",
+        "countyMemberships": [
+          "48201"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "harris-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        },
+        {
+          "lat": 29.9378040002764,
+          "lng": -95.0318302995617
+        }
+      ],
+      "layerCount": 5,
+      "attached": true
+    },
+    {
+      "width": 390,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Cleveland",
+      "type": "HOME",
+      "center": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4815436",
+        "placeLabel": "Cleveland",
+        "lat": 30.3414794,
+        "lng": -95.0900115,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "cleveland"
+      },
+      "areaTarget": null,
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        },
+        {
+          "lat": 29.9378040002764,
+          "lng": -95.0318302995617
+        },
+        {
+          "lat": 30.2909614997936,
+          "lng": -95.1207769999953
+        },
+        {
+          "lat": 30.3050847999075,
+          "lng": -95.1104878997502
+        },
+        {
+          "lat": 30.3233873998267,
+          "lng": -95.0998289002206
+        },
+        {
+          "lat": 30.3380252997383,
+          "lng": -95.0913025999902
+        },
+        {
+          "lat": 30.3383840003665,
+          "lng": -95.1107550003252
+        },
+        {
+          "lat": 30.3398897997295,
+          "lng": -95.0902161002305
+        },
+        {
+          "lat": 30.3425537001671,
+          "lng": -95.08866420039
+        },
+        {
+          "lat": 30.3435288998671,
+          "lng": -95.0880949999782
+        }
+      ],
+      "layerCount": 13,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "town",
+      "county": "harris-tx",
+      "place": "Around Me",
+      "type": "AROUND_ME",
+      "center": {
+        "lat": 29.91154,
+        "lng": -95.06325
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "LOCAL",
+        "placeGeoid": null,
+        "placeLabel": "Around Me",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "foreground-location:1790100535328"
+      },
+      "areaTarget": {
+        "key": "foreground-location:1790100535328",
+        "label": "Around Me",
+        "storageValue": "Around Me",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "countyId": "harris-tx",
+        "countyMemberships": [
+          null
+        ],
+        "radiusMiles": 8,
+        "countyWide": false,
+        "fallback": false,
+        "coordinateOnly": true,
+        "startupZoom": 13
+      },
+      "inventoryOwner": "harris-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "nearby",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.982533532174617,
+        "lng": -94.97246380001249
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        },
+        {
+          "lat": 29.9935030002577,
+          "lng": -94.9590289999668
+        }
+      ],
+      "layerCount": 2,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.047327604802298,
+        "lng": -94.88737106323242
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 30.0403479997689,
+          "lng": -94.8977530001271
+        },
+        {
+          "lat": 30.0400397997531,
+          "lng": -94.8973149995609
+        },
+        {
+          "lat": 30.0469190000594,
+          "lng": -94.8892150002384
+        },
+        {
+          "lat": 30.0482671001437,
+          "lng": -94.8874153001269
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "county",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.168016818980004,
+        "lng": -94.80406600000002
+      },
+      "zoom": 9,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [],
+      "layerCount": 0,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "all",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.98052620672118,
+        "lng": -94.97246380001249
+      },
+      "zoom": 12,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "nearby",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.982533532174617,
+        "lng": -94.97246380001249
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        },
+        {
+          "lat": 29.9935030002577,
+          "lng": -94.9590289999668
+        }
+      ],
+      "layerCount": 2,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.047327604802298,
+        "lng": -94.88737106323242
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 30.0403479997689,
+          "lng": -94.8977530001271
+        },
+        {
+          "lat": 30.0400397997531,
+          "lng": -94.8973149995609
+        },
+        {
+          "lat": 30.0469190000594,
+          "lng": -94.8892150002384
+        },
+        {
+          "lat": 30.0482671001437,
+          "lng": -94.8874153001269
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "town",
+      "county": "harris-tx",
+      "place": "Crosby",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4817756",
+        "placeLabel": "Crosby",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "harris-tx-crosby"
+      },
+      "areaTarget": {
+        "key": "harris-tx-crosby",
+        "label": "Crosby",
+        "storageValue": "Crosby",
+        "countyId": "harris-tx",
+        "communityId": "4817756",
+        "placeGeoid": "4817756",
+        "canonicalCommunityIdentity": "PLACE_GEOID",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "radiusMiles": 7,
+        "startupZoom": 13,
+        "source": "V904R9 Harris coverage audit addition; Harris county boundary/crossing runtime package",
+        "countyMemberships": [
+          "48201"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "harris-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 320,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Cleveland",
+      "type": "HOME",
+      "center": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4815436",
+        "placeLabel": "Cleveland",
+        "lat": 30.3414794,
+        "lng": -95.0900115,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "cleveland"
+      },
+      "areaTarget": null,
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        },
+        {
+          "lat": 30.3050847999075,
+          "lng": -95.1104878997502
+        },
+        {
+          "lat": 30.3233873998267,
+          "lng": -95.0998289002206
+        },
+        {
+          "lat": 30.3380252997383,
+          "lng": -95.0913025999902
+        },
+        {
+          "lat": 30.3383840003665,
+          "lng": -95.1107550003252
+        },
+        {
+          "lat": 30.3398897997295,
+          "lng": -95.0902161002305
+        },
+        {
+          "lat": 30.3425537001671,
+          "lng": -95.08866420039
+        },
+        {
+          "lat": 30.3435288998671,
+          "lng": -95.0880949999782
+        },
+        {
+          "lat": 30.3450066996375,
+          "lng": -95.0872351999619
+        }
+      ],
+      "layerCount": 12,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "town",
+      "county": "harris-tx",
+      "place": "Around Me",
+      "type": "AROUND_ME",
+      "center": {
+        "lat": 29.91154,
+        "lng": -95.06325
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "LOCAL",
+        "placeGeoid": null,
+        "placeLabel": "Around Me",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "foreground-location:1790100623023"
+      },
+      "areaTarget": {
+        "key": "foreground-location:1790100623023",
+        "label": "Around Me",
+        "storageValue": "Around Me",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "countyId": "harris-tx",
+        "countyMemberships": [
+          null
+        ],
+        "radiusMiles": 8,
+        "countyWide": false,
+        "fallback": false,
+        "coordinateOnly": true,
+        "startupZoom": 13
+      },
+      "inventoryOwner": "harris-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "nearby",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.982868082472276,
+        "lng": -94.97246380001249
+      },
+      "zoom": 15,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 30.0403479997689,
+          "lng": -94.8977530001271
+        },
+        {
+          "lat": 30.0400397997531,
+          "lng": -94.8973149995609
+        },
+        {
+          "lat": 30.0469190000594,
+          "lng": -94.8892150002384
+        },
+        {
+          "lat": 30.0482671001437,
+          "lng": -94.8874153001269
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "county",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.168016818980004,
+        "lng": -94.80406600000002
+      },
+      "zoom": 9,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [],
+      "layerCount": 0,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "all",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.98052620672118,
+        "lng": -94.97246380001249
+      },
+      "zoom": 12,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "nearby",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.982868082472276,
+        "lng": -94.97246380001249
+      },
+      "zoom": 15,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 30.0403479997689,
+          "lng": -94.8977530001271
+        },
+        {
+          "lat": 30.0400397997531,
+          "lng": -94.8973149995609
+        },
+        {
+          "lat": 30.0469190000594,
+          "lng": -94.8892150002384
+        },
+        {
+          "lat": 30.0482671001437,
+          "lng": -94.8874153001269
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "town",
+      "county": "harris-tx",
+      "place": "Crosby",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4817756",
+        "placeLabel": "Crosby",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "harris-tx-crosby"
+      },
+      "areaTarget": {
+        "key": "harris-tx-crosby",
+        "label": "Crosby",
+        "storageValue": "Crosby",
+        "countyId": "harris-tx",
+        "communityId": "4817756",
+        "placeGeoid": "4817756",
+        "canonicalCommunityIdentity": "PLACE_GEOID",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "radiusMiles": 7,
+        "startupZoom": 13,
+        "source": "V904R9 Harris coverage audit addition; Harris county boundary/crossing runtime package",
+        "countyMemberships": [
+          "48201"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "harris-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 360,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Cleveland",
+      "type": "HOME",
+      "center": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4815436",
+        "placeLabel": "Cleveland",
+        "lat": 30.3414794,
+        "lng": -95.0900115,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "cleveland"
+      },
+      "areaTarget": null,
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        },
+        {
+          "lat": 30.3050847999075,
+          "lng": -95.1104878997502
+        },
+        {
+          "lat": 30.3233873998267,
+          "lng": -95.0998289002206
+        },
+        {
+          "lat": 30.3380252997383,
+          "lng": -95.0913025999902
+        },
+        {
+          "lat": 30.3383840003665,
+          "lng": -95.1107550003252
+        },
+        {
+          "lat": 30.3398897997295,
+          "lng": -95.0902161002305
+        },
+        {
+          "lat": 30.3425537001671,
+          "lng": -95.08866420039
+        },
+        {
+          "lat": 30.3435288998671,
+          "lng": -95.0880949999782
+        }
+      ],
+      "layerCount": 11,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "town",
+      "county": "harris-tx",
+      "place": "Around Me",
+      "type": "AROUND_ME",
+      "center": {
+        "lat": 29.91154,
+        "lng": -95.06325
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "LOCAL",
+        "placeGeoid": null,
+        "placeLabel": "Around Me",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "foreground-location:1790100711884"
+      },
+      "areaTarget": {
+        "key": "foreground-location:1790100711884",
+        "label": "Around Me",
+        "storageValue": "Around Me",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "countyId": "harris-tx",
+        "countyMemberships": [
+          null
+        ],
+        "radiusMiles": 8,
+        "countyWide": false,
+        "fallback": false,
+        "coordinateOnly": true,
+        "startupZoom": 13
+      },
+      "inventoryOwner": "harris-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        },
+        {
+          "lat": 29.9378040002764,
+          "lng": -95.0318302995617
+        }
+      ],
+      "layerCount": 5,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "nearby",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.982868082472276,
+        "lng": -94.97246380001249
+      },
+      "zoom": 15,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 30.0403479997689,
+          "lng": -94.8977530001271
+        },
+        {
+          "lat": 30.0400397997531,
+          "lng": -94.8973149995609
+        },
+        {
+          "lat": 30.0469190000594,
+          "lng": -94.8892150002384
+        },
+        {
+          "lat": 30.0482671001437,
+          "lng": -94.8874153001269
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "county",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.168016818980004,
+        "lng": -94.80406600000002
+      },
+      "zoom": 9,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [],
+      "layerCount": 0,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "all",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.98052620672118,
+        "lng": -94.97246380001249
+      },
+      "zoom": 12,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "nearby",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.982868082472276,
+        "lng": -94.97246380001249
+      },
+      "zoom": 15,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.9883168998907,
+          "lng": -94.9657710996175
+        }
+      ],
+      "layerCount": 1,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Dayton",
+      "type": "SEARCH",
+      "center": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "zoom": 14,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "placeLabel": "Dayton",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "dayton"
+      },
+      "areaTarget": {
+        "key": "dayton",
+        "label": "Dayton",
+        "storageValue": "Dayton",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "radiusMiles": 8,
+        "startupZoom": 14,
+        "source": "existing local app anchor",
+        "placeGeoid": "4819432",
+        "countyMemberships": [
+          "48291"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 30.0403479997689,
+          "lng": -94.8977530001271
+        },
+        {
+          "lat": 30.0400397997531,
+          "lng": -94.8973149995609
+        },
+        {
+          "lat": 30.0469190000594,
+          "lng": -94.8892150002384
+        },
+        {
+          "lat": 30.0482671001437,
+          "lng": -94.8874153001269
+        }
+      ],
+      "layerCount": 4,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "town",
+      "county": "harris-tx",
+      "place": "Crosby",
+      "type": "SEARCH",
+      "center": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4817756",
+        "placeLabel": "Crosby",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "harris-tx-crosby"
+      },
+      "areaTarget": {
+        "key": "harris-tx-crosby",
+        "label": "Crosby",
+        "storageValue": "Crosby",
+        "countyId": "harris-tx",
+        "communityId": "4817756",
+        "placeGeoid": "4817756",
+        "canonicalCommunityIdentity": "PLACE_GEOID",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "radiusMiles": 7,
+        "startupZoom": 13,
+        "source": "V904R9 Harris coverage audit addition; Harris county boundary/crossing runtime package",
+        "countyMemberships": [
+          "48201"
+        ],
+        "canonicalMultiCountyPlace": false
+      },
+      "inventoryOwner": "harris-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        },
+        {
+          "lat": 29.9378040002764,
+          "lng": -95.0318302995617
+        }
+      ],
+      "layerCount": 5,
+      "attached": true
+    },
+    {
+      "width": 440,
+      "filter": "town",
+      "county": "liberty-tx",
+      "place": "Cleveland",
+      "type": "HOME",
+      "center": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "zoom": 13,
+      "home": "Cleveland",
+      "presentation": {
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4815436",
+        "placeLabel": "Cleveland",
+        "lat": 30.3414794,
+        "lng": -95.0900115,
+        "explicitCountyId": null,
+        "presentationAuthority": "GOVERNED_SELECTION",
+        "governedAwarenessKey": "cleveland"
+      },
+      "areaTarget": null,
+      "inventoryOwner": "liberty-tx",
+      "markers": [
+        {
+          "lat": 29.91326999979,
+          "lng": -95.0637990004122
+        },
+        {
+          "lat": 29.9099607998401,
+          "lng": -95.0680860996129
+        },
+        {
+          "lat": 29.9097749999619,
+          "lng": -95.068369999582
+        },
+        {
+          "lat": 29.9215440002141,
+          "lng": -95.0529900001965
+        },
+        {
+          "lat": 29.9378040002764,
+          "lng": -95.0318302995617
+        },
+        {
+          "lat": 30.2849470998542,
+          "lng": -95.1257070000886
+        },
+        {
+          "lat": 30.2909614997936,
+          "lng": -95.1207769999953
+        },
+        {
+          "lat": 30.3050847999075,
+          "lng": -95.1104878997502
+        },
+        {
+          "lat": 30.3233873998267,
+          "lng": -95.0998289002206
+        },
+        {
+          "lat": 30.3380252997383,
+          "lng": -95.0913025999902
+        },
+        {
+          "lat": 30.3383840003665,
+          "lng": -95.1107550003252
+        },
+        {
+          "lat": 30.3398897997295,
+          "lng": -95.0902161002305
+        }
+      ],
+      "layerCount": 12,
+      "attached": true
+    }
+  ],
   "route": {
     "kind": "ROUTE_WATCH",
     "locationBlocked": false,
