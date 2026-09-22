@@ -1,0 +1,15 @@
+{
+  "r": {
+    "expired": "STALE",
+    "after": "FRESH",
+    "home": {
+      "label": "Cleveland",
+      "county": "Liberty County",
+      "zip": "Not set",
+      "zipSet": false,
+      "canonical": false
+    }
+  },
+  "settingsHome": "Cleveland",
+  "errors": []
+}

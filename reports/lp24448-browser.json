@@ -1,0 +1,1575 @@
+{
+  "rows": [
+    {
+      "label": "01-home",
+      "context": {
+        "v": 1,
+        "type": "HOME",
+        "contextType": "HOME",
+        "generation": 1,
+        "placeId": "4815436",
+        "placeName": "Cleveland",
+        "countyId": "liberty-tx",
+        "countyName": "Liberty County",
+        "memberships": [
+          "48291",
+          "48339",
+          "48407"
+        ],
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "source": "persisted-home",
+        "selectedAt": 1790084871918,
+        "expiresAt": null,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "cleveland",
+          "label": "Cleveland",
+          "storageValue": "Cleveland",
+          "countyId": "liberty-tx",
+          "lat": 30.3413,
+          "lng": -95.0858,
+          "radiusMiles": 9,
+          "startupZoom": 13,
+          "source": "existing local app anchor"
+        },
+        "destinationId": null
+      },
+      "place": "Cleveland",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CLEVELAND",
+      "rect": {
+        "x": 12,
+        "y": 699,
+        "width": 366,
+        "height": 62,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": false,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "cleveland",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4815436",
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "placeGeoid": "4815436"
+      },
+      "nearby": "Cleveland",
+      "community": "Cleveland",
+      "roads": "Cleveland",
+      "location": "Cleveland",
+      "mapCenter": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "kbyg": "Cleveland, TX",
+      "crossingHome": true,
+      "crossingCrosby": false,
+      "health": "FRESH",
+      "returnHome": false,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": []
+    },
+    {
+      "label": "02-search",
+      "context": {
+        "v": 1,
+        "type": "SEARCH",
+        "contextType": "SEARCH",
+        "generation": 2,
+        "placeId": "4817756",
+        "placeName": "Crosby",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          "48201"
+        ],
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "source": "canonical-destination",
+        "selectedAt": 1790084886296,
+        "expiresAt": null,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "harris-tx-crosby",
+          "label": "Crosby",
+          "storageValue": "Crosby",
+          "countyId": "harris-tx",
+          "communityId": "4817756",
+          "placeGeoid": "4817756",
+          "canonicalCommunityIdentity": "PLACE_GEOID",
+          "lat": 29.9119,
+          "lng": -95.0622,
+          "radiusMiles": 7,
+          "startupZoom": 13,
+          "source": "V904R9 Harris coverage audit addition; Harris county boundary/crossing runtime package",
+          "countyMemberships": [
+            "48201"
+          ],
+          "canonicalMultiCountyPlace": false
+        },
+        "destinationId": "place-4817756"
+      },
+      "place": "Crosby",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CROSBY",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": true,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "Crosby",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "harris-tx-crosby",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "harris-tx",
+        "stableIdentity": "4817756",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "placeGeoid": "4817756"
+      },
+      "nearby": "Crosby",
+      "community": "Crosby",
+      "roads": "Crosby",
+      "location": "Crosby",
+      "mapCenter": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "kbyg": "Crosby, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/trip-destination.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "03-repeated-search",
+      "context": {
+        "v": 1,
+        "type": "SEARCH",
+        "contextType": "SEARCH",
+        "generation": 4,
+        "placeId": "4819432",
+        "placeName": "Dayton",
+        "countyId": "liberty-tx",
+        "countyName": "Liberty County",
+        "memberships": [
+          "48291"
+        ],
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "source": "canonical-destination",
+        "selectedAt": 1790084924023,
+        "expiresAt": null,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "dayton",
+          "label": "Dayton",
+          "storageValue": "Dayton",
+          "countyId": "liberty-tx",
+          "lat": 30.0466,
+          "lng": -94.8852,
+          "radiusMiles": 8,
+          "startupZoom": 14,
+          "source": "existing local app anchor",
+          "placeGeoid": "4819432",
+          "countyMemberships": [
+            "48291"
+          ],
+          "canonicalMultiCountyPlace": false
+        },
+        "destinationId": "place-4819432"
+      },
+      "place": "Dayton",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • DAYTON",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": true,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "Dayton",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "dayton",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4819432",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "placeGeoid": "4819432"
+      },
+      "nearby": "Dayton",
+      "community": "Dayton",
+      "roads": "Dayton",
+      "location": "Dayton",
+      "mapCenter": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "kbyg": "Dayton, TX",
+      "crossingHome": false,
+      "crossingCrosby": false,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/trip-destination.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "04-home-restored",
+      "context": {
+        "v": 1,
+        "type": "HOME",
+        "contextType": "HOME",
+        "generation": 5,
+        "placeId": "4815436",
+        "placeName": "Cleveland",
+        "countyId": "liberty-tx",
+        "countyName": "Liberty County",
+        "memberships": [
+          "48291",
+          "48339",
+          "48407"
+        ],
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "source": "persisted-home",
+        "selectedAt": 1790084930739,
+        "expiresAt": null,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "cleveland",
+          "label": "Cleveland",
+          "storageValue": "Cleveland",
+          "countyId": "liberty-tx",
+          "lat": 30.3413,
+          "lng": -95.0858,
+          "radiusMiles": 9,
+          "startupZoom": 13,
+          "source": "existing local app anchor"
+        },
+        "destinationId": null
+      },
+      "place": "Cleveland",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CLEVELAND",
+      "rect": {
+        "x": 12,
+        "y": 699,
+        "width": 366,
+        "height": 62,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": false,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "cleveland",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4815436",
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "placeGeoid": "4815436"
+      },
+      "nearby": "Cleveland",
+      "community": "Cleveland",
+      "roads": "Cleveland",
+      "location": "Cleveland",
+      "mapCenter": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "kbyg": "Cleveland, TX",
+      "crossingHome": true,
+      "crossingCrosby": false,
+      "health": "FRESH",
+      "returnHome": false,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": []
+    },
+    {
+      "label": "around-390",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 6,
+        "placeId": "foreground-location:1790084940961",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790084945592,
+        "expiresAt": 1790085060961,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790084940961",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "foreground-location:1790084940961",
+        "identityClass": "DIRECT_COORDINATE",
+        "countyId": "harris-tx",
+        "stableIdentity": "foreground-location:1790084940961",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "placeGeoid": null
+      },
+      "nearby": "Around Me",
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 29.91154,
+        "lng": -95.06325
+      },
+      "kbyg": "Around Me, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "search-around-390",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 9,
+        "placeId": "foreground-location:1790084986022",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790084986132,
+        "expiresAt": 1790085106022,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790084986022",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "foreground-location:1790084986022",
+        "identityClass": "DIRECT_COORDINATE",
+        "countyId": "harris-tx",
+        "stableIdentity": "foreground-location:1790084986022",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "placeGeoid": null
+      },
+      "nearby": "Around Me",
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 30.22290387568068,
+        "lng": -95.08258271324566
+      },
+      "kbyg": "Around Me, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "around-320",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 11,
+        "placeId": "foreground-location:1790084998826",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790085002883,
+        "expiresAt": 1790085118826,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790084998826",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 296,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 320,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "foreground-location:1790084998826",
+        "identityClass": "DIRECT_COORDINATE",
+        "countyId": "harris-tx",
+        "stableIdentity": "foreground-location:1790084998826",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "placeGeoid": null
+      },
+      "nearby": "Around Me",
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 29.911495738488924,
+        "lng": -95.06332397460939
+      },
+      "kbyg": "Around Me, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "search-around-320",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 14,
+        "placeId": "foreground-location:1790085039527",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790085039647,
+        "expiresAt": 1790085159527,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790085039527",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 296,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 320,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "foreground-location:1790085039527",
+        "identityClass": "DIRECT_COORDINATE",
+        "countyId": "harris-tx",
+        "stableIdentity": "foreground-location:1790085039527",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "placeGeoid": null
+      },
+      "nearby": "Around Me",
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 30.248131204119645,
+        "lng": -95.08414553467341
+      },
+      "kbyg": "Around Me, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "around-360",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 16,
+        "placeId": "foreground-location:1790085055527",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790085060063,
+        "expiresAt": 1790085175527,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790085055527",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 336,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 360,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "foreground-location:1790085055527",
+        "identityClass": "DIRECT_COORDINATE",
+        "countyId": "harris-tx",
+        "stableIdentity": "foreground-location:1790085055527",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "placeGeoid": null
+      },
+      "nearby": "Around Me",
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 29.911495738488924,
+        "lng": -95.06332397460939
+      },
+      "kbyg": "Around Me, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "search-around-360",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 19,
+        "placeId": "foreground-location:1790085093801",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790085093912,
+        "expiresAt": 1790085213801,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790085093801",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 336,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 360,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "foreground-location:1790085093801",
+        "identityClass": "DIRECT_COORDINATE",
+        "countyId": "harris-tx",
+        "stableIdentity": "foreground-location:1790085093801",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "placeGeoid": null
+      },
+      "nearby": "Around Me",
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 30.233105986753493,
+        "lng": -95.0832146810498
+      },
+      "kbyg": "Around Me, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "around-440",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 21,
+        "placeId": "foreground-location:1790085105765",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790085111728,
+        "expiresAt": 1790085225765,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790085105765",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 416,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 440,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "foreground-location:1790085105765",
+        "identityClass": "DIRECT_COORDINATE",
+        "countyId": "harris-tx",
+        "stableIdentity": "foreground-location:1790085105765",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "placeGeoid": null
+      },
+      "nearby": "Around Me",
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 29.911495738488924,
+        "lng": -95.06332397460939
+      },
+      "kbyg": "Around Me, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "search-around-440",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 24,
+        "placeId": "foreground-location:1790085155830",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790085155936,
+        "expiresAt": 1790085275830,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790085155830",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 416,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 440,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "foreground-location:1790085155830",
+        "identityClass": "DIRECT_COORDINATE",
+        "countyId": "harris-tx",
+        "stableIdentity": "foreground-location:1790085155830",
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "placeGeoid": null
+      },
+      "nearby": "Around Me",
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 30.21286542949051,
+        "lng": -95.08196094761234
+      },
+      "kbyg": "Around Me, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "health": "FRESH",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "denied",
+      "context": {
+        "v": 1,
+        "type": "HOME",
+        "contextType": "HOME",
+        "generation": 25,
+        "placeId": "4815436",
+        "placeName": "Cleveland",
+        "countyId": "liberty-tx",
+        "countyName": "Liberty County",
+        "memberships": [
+          "48291",
+          "48339",
+          "48407"
+        ],
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "source": "persisted-home",
+        "selectedAt": 1790085168697,
+        "expiresAt": null,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "cleveland",
+          "label": "Cleveland",
+          "storageValue": "Cleveland",
+          "countyId": "liberty-tx",
+          "lat": 30.3413,
+          "lng": -95.0858,
+          "radiusMiles": 9,
+          "startupZoom": 13,
+          "source": "existing local app anchor"
+        },
+        "destinationId": null
+      },
+      "place": "Cleveland",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CLEVELAND",
+      "rect": {
+        "x": 12,
+        "y": 699,
+        "width": 366,
+        "height": 62,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": false,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "cleveland",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4815436",
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "placeGeoid": "4815436"
+      },
+      "nearby": "Cleveland",
+      "community": "Cleveland",
+      "roads": "Cleveland",
+      "location": "Cleveland",
+      "mapCenter": {
+        "lat": 30.341472652403482,
+        "lng": -95.08993148803712
+      },
+      "kbyg": "Cleveland, TX",
+      "crossingHome": true,
+      "crossingCrosby": false,
+      "health": "FRESH",
+      "returnHome": false,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "label": "stale",
+      "context": {
+        "v": 1,
+        "type": "AROUND_ME",
+        "contextType": "AROUND_ME",
+        "generation": 27,
+        "placeId": "foreground-location:1790085183768",
+        "placeName": "Around Me",
+        "countyId": "harris-tx",
+        "countyName": "Harris County",
+        "memberships": [
+          null
+        ],
+        "lat": 29.91154,
+        "lng": -95.06325,
+        "source": "foreground-location",
+        "selectedAt": 1790085183833,
+        "expiresAt": 1790085303768,
+        "health": "STALE",
+        "routeWatchId": null,
+        "area": {
+          "key": "foreground-location:1790085183768",
+          "label": "Around Me",
+          "storageValue": "Around Me",
+          "lat": 29.91154,
+          "lng": -95.06325,
+          "countyId": "harris-tx",
+          "countyMemberships": [
+            null
+          ],
+          "radiusMiles": 8,
+          "countyWide": false,
+          "fallback": false,
+          "coordinateOnly": true,
+          "unavailable": true
+        },
+        "destinationId": null
+      },
+      "place": "Around Me",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • AROUND ME",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": null,
+      "community": "Around Me",
+      "roads": "Around Me",
+      "location": "Around Me",
+      "mapCenter": {
+        "lat": 30.135583030633192,
+        "lng": -95.07717631842262
+      },
+      "crossingHome": false,
+      "crossingCrosby": false,
+      "health": "STALE",
+      "returnHome": true,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": []
+    },
+    {
+      "label": "route-regression",
+      "context": {
+        "v": 1,
+        "type": "HOME",
+        "contextType": "HOME",
+        "generation": 33,
+        "placeId": "4815436",
+        "placeName": "Cleveland",
+        "countyId": "liberty-tx",
+        "countyName": "Liberty County",
+        "memberships": [
+          "48291",
+          "48339",
+          "48407"
+        ],
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "source": "persisted-home",
+        "selectedAt": 1790085214091,
+        "expiresAt": null,
+        "health": "FRESH",
+        "routeWatchId": null,
+        "area": {
+          "key": "cleveland",
+          "label": "Cleveland",
+          "storageValue": "Cleveland",
+          "countyId": "liberty-tx",
+          "lat": 30.3413,
+          "lng": -95.0858,
+          "radiusMiles": 9,
+          "startupZoom": 13,
+          "source": "existing local app anchor"
+        },
+        "destinationId": null
+      },
+      "place": "Cleveland",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CLEVELAND",
+      "rect": {
+        "x": 12,
+        "y": 683,
+        "width": 366,
+        "height": 78.375,
+        "bottom": 761.375
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": false,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "cleveland",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4815436",
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "placeGeoid": "4815436"
+      },
+      "nearby": "Cleveland",
+      "community": "Cleveland",
+      "roads": "Cleveland",
+      "location": "Cleveland",
+      "mapCenter": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "kbyg": "Cleveland, TX",
+      "crossingHome": true,
+      "crossingCrosby": false,
+      "health": "FRESH",
+      "returnHome": false,
+      "home": "Cleveland",
+      "homeCounty": "liberty-tx",
+      "settingsHome": {
+        "label": "Cleveland",
+        "county": "Liberty County",
+        "zip": "Not set",
+        "zipSet": false,
+        "canonical": false
+      },
+      "marker": [
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/current-location.png",
+          "loaded": true
+        },
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/trip-start.png",
+          "loaded": true
+        },
+        {
+          "url": "http://127.0.0.1:58342/assets/markers/approved/navigation/trip-destination.png",
+          "loaded": true
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "widths": [
+    390,
+    320,
+    360,
+    440
+  ],
+  "homeUnchanged": true,
+  "route": {
+    "kind": "ROUTE_WATCH",
+    "locationBlocked": false,
+    "result": null,
+    "unchanged": true,
+    "endpoints": [
+      {
+        "html": "<img class=\"gridly-navigation-marker-img\" src=\"assets/markers/approved/navigation/trip-start.png\" alt=\"\" aria-hidden=\"true\">",
+        "anchor": [
+          24,
+          47.04
+        ]
+      },
+      {
+        "html": "<img class=\"gridly-navigation-marker-img\" src=\"assets/markers/approved/navigation/trip-destination.png\" alt=\"\" aria-hidden=\"true\">",
+        "anchor": [
+          24,
+          47.04
+        ]
+      }
+    ],
+    "after": "HOME"
+  }
+}

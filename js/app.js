@@ -42999,7 +42999,7 @@ function getGridlyMobileCommandCardVisibilityState(summary = null) {
   // LP244.45A: a selected destination is not a visible route surface after
   // Search closes. Keep the existing Location Context card as its owner.
   const temporaryContext = typeof gridlyGetCurrentAwarenessContext === "function" ? gridlyGetCurrentAwarenessContext() : null;
-  const temporaryAwarenessMode = Boolean(temporaryContext?.type === "SEARCH"
+  const temporaryAwarenessMode = Boolean(["SEARCH", "AROUND_ME"].includes(temporaryContext?.type)
     && !routePreviewActive && !routeIsMonitoring && !explicitDestinationPanelOpen);
   const routeOrDestinationOwnership = Boolean(!temporaryAwarenessMode && (hasSelectedDestination || routePreviewActive || routeIsMonitoring || explicitDestinationPanelOpen));
   const awarenessPanelMode = Boolean(temporaryAwarenessMode || (!routeOrDestinationOwnership && shouldShowGridlyMobileAwarenessPanel(summary)));
@@ -43285,7 +43285,7 @@ function syncMobileDestinationCommandCard(options = {}) {
     safeText("mobileDestinationCommandMeta", "");
     document.getElementById("mobileDestinationCommandTitle")?.toggleAttribute("hidden", true);
     document.getElementById("mobileDestinationCommandMeta")?.toggleAttribute("hidden", true);
-    safeText("mobileAwarenessPanelIssues", awarenessSummary.activeIssuesLine);
+    safeText("mobileAwarenessPanelIssues", gridlyGetCurrentAwarenessContext().type === "AROUND_ME" && gridlyGetCurrentAwarenessContext().health === "STALE" ? "Location is out of date. Tap Around Me to refresh." : awarenessSummary.activeIssuesLine);
     safeText("mobileAwarenessPanelCrossings", "");
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", !String(awarenessSummary.activeIssuesLine || "").trim());
     document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", true);
@@ -46333,6 +46333,10 @@ window.gridlyDestinationAuthorityAudit = function gridlyDestinationAuthorityAudi
 };
 
 function selectGridlySearchResult(result, options = {}) {
+  if (gridlyIsRouteWatchAwarenessActive()) {
+    setConfirmation("Stop Route Watch before checking another area.", "info");
+    return null;
+  }
   resetGridlyDestinationPerformanceAudit("selecting");
   const destinationSelectStartedAt = getGridlyDestinationPerfNow();
   gridlyDestinationPerformanceAuditState.destinationFlowStartedAt = destinationSelectStartedAt;
@@ -48601,6 +48605,12 @@ function gridlyBuildAwarenessContext(type, area, options = {}) {
 
 function gridlyGetCurrentAwarenessContext() {
   const store = gridlyGetAwarenessContextStore();
+  if (gridlyIsRouteWatchAwarenessActive()) {
+    const area = store.temporary?.area || getGridlySelectedAwarenessArea({ homeOnly: true });
+    const routeWatchId = window.__gridlySelectedRouteId || "active-trip";
+    if (!store.route || store.route.area !== area || store.route.routeWatchId !== routeWatchId) store.route = gridlyBuildAwarenessContext(store.types.ROUTE_WATCH, area, { source: "existing-route-watch", routeWatchId });
+    return store.route;
+  }
   if (store.temporary) return store.temporary;
   const area = getGridlySelectedAwarenessArea();
   const signature = [area?.key, area?.countyId, area?.lat, area?.lng].join('|');
@@ -48677,6 +48687,7 @@ function gridlyRefreshUnifiedAwarenessContext(reason, options = {}) {
 }
 
 function gridlySelectSearchAwarenessContext(destination) {
+  if (gridlyIsRouteWatchAwarenessActive()) return gridlyGetCurrentAwarenessContext();
   const store = gridlyGetAwarenessContextStore();
   const area = gridlyBuildSearchAwarenessArea(destination);
   // A valid selected point with unresolved governance remains visibly selected,
@@ -48712,13 +48723,13 @@ function gridlyClearTemporaryAwarenessContext(options = {}) {
   const store = gridlyGetAwarenessContextStore();
   if (!store.temporary) return null;
   store.temporary = null;
+  if (store.expiryTimer) window.clearTimeout?.(store.expiryTimer);
   store.generation += 1;
   if (options.refresh === false) return null; // Existing explicit Home transaction owns its refresh.
   return gridlyRefreshUnifiedAwarenessContext("temporary-context-cleared", { fitMap: options.fitMap !== false });
 }
 
-// Compatibility snapshot only: .47 owns activation/provider parity; .51 owns
-// route context activation. Neither old GPS nor an existing trip auto-selects.
+// Foreground snapshots do not activate themselves. Only explicit Around Me commits them.
 function gridlyCreateForegroundAwarenessContext(position, area = null) {
   const store = gridlyGetAwarenessContextStore();
   const fresh = gridlyIsForegroundAwarenessFixFresh(position);
@@ -48733,6 +48744,41 @@ if (typeof window !== "undefined") {
   window.gridlyGetCurrentAwarenessContext = gridlyGetCurrentAwarenessContext;
   window.gridlyClearTemporaryAwarenessContext = gridlyClearTemporaryAwarenessContext;
   window.gridlyCreateForegroundAwarenessContext = gridlyCreateForegroundAwarenessContext;
+}
+
+// LP244.48 uses this same store; a foreground request is a bounded transaction.
+function gridlyIsRouteWatchAwarenessActive() {
+  return Boolean(window.__gridlyRouteWatchActive || (typeof routeWatchActivated !== "undefined" && routeWatchActivated));
+}
+function gridlyExpireForegroundAwarenessContext(expected, now = Date.now()) {
+  const store = gridlyGetAwarenessContextStore();
+  if (store.temporary !== expected || expected.type !== "AROUND_ME" || expected.health !== "FRESH" || now <= expected.expiresAt) return false;
+  // Freshness changes are not a newer explicit selection: an in-flight refresh may still succeed.
+  store.temporary = Object.freeze({ ...expected, health: "STALE", area: Object.freeze({ ...expected.area, unavailable: true }) });
+  if (!gridlyIsRouteWatchAwarenessActive() && typeof userMarker !== "undefined" && userMarker) { map?.removeLayer(userMarker); userMarker = null; }
+  gridlyRefreshUnifiedAwarenessContext("foreground-location-expired");
+  return true;
+}
+function gridlyActivateForegroundAwarenessContext(position) {
+  if (gridlyIsRouteWatchAwarenessActive()) return null;
+  const snapshot = gridlyCreateForegroundAwarenessContext(position);
+  if (snapshot.health !== "FRESH") return null;
+  const countyId = gridlyResolveCountyIdForCoordinate(snapshot.lat, snapshot.lng)?.countyId;
+  if (!countyId || !GRIDLY_COUNTY_REGISTRY[countyId]) return null;
+  const store = gridlyGetAwarenessContextStore();
+  const previous = store.temporary?.type || "HOME";
+  const area = Object.freeze({ key: "foreground-location:" + position.timestamp, label: "Around Me", storageValue: "Around Me", lat: snapshot.lat, lng: snapshot.lng, countyId, countyMemberships: Object.freeze([GRIDLY_COUNTY_REGISTRY[countyId].countyFips]), radiusMiles: DEFAULT_NEARBY_RADIUS_MILES, countyWide: false, fallback: false, coordinateOnly: true });
+  store.generation += 1;
+  store.temporary = gridlyBuildAwarenessContext("AROUND_ME", area, { source: "foreground-location", position });
+  const context = store.temporary;
+  store.transitions.push(Object.freeze({ fromContext: previous, toContext: "AROUND_ME", generation: store.generation, countyId, reason: "explicit-foreground-location", timestamp: Date.now() }));
+  store.transitions = store.transitions.slice(-20);
+  if (typeof setGridlyUserLocation === "function") setGridlyUserLocation({ lat: context.lat, lng: context.lng, suppressRouteOriginRefresh: true });
+  gridlyRefreshUnifiedAwarenessContext("temporary-around-me-selected");
+  if (typeof softlyCenterMapOnGridlyUserLocation === "function") softlyCenterMapOnGridlyUserLocation({ lat: context.lat, lng: context.lng });
+  if (store.expiryTimer) window.clearTimeout?.(store.expiryTimer);
+  store.expiryTimer = window.setTimeout?.(() => gridlyExpireForegroundAwarenessContext(context), Math.max(1, context.expiresAt - Date.now() + 1));
+  return context;
 }
 // End LP244.45 context foundation.
 
@@ -54663,26 +54709,34 @@ function refreshGridlyUserLocationAwarenessContext(source = "user_location_contr
 }
 
 function requestGridlyUserLocationFromControl(source = "portrait_v2_location_control") {
+  if (gridlyIsRouteWatchAwarenessActive()) { setConfirmation("Stop Route Watch before checking Around Me.", "info"); return false; }
+  const store = gridlyGetAwarenessContextStore();
+  if (store.foregroundPending) return false;
+  const generation = store.generation;
+  store.foregroundPending = true;
   recordGridlyGeolocationRequest(source);
-  if (typeof navigator === "undefined" || typeof navigator.geolocation === "undefined") return false;
   const control = document.querySelector("[data-v2-control='use-location']");
   control?.setAttribute("aria-busy", "true");
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      control?.removeAttribute("aria-busy");
-      gridlyCachedGeolocationPermissionStatus = "granted";
-      const coords = getValidGridlyUserLocationCoordinates(position);
-      if (!coords) return;
-      if (!setGridlyUserLocation(coords)) return;
-      softlyCenterMapOnGridlyUserLocation(coords);
-      refreshGridlyUserLocationAwarenessContext(source);
-    },
-    () => {
-      control?.removeAttribute("aria-busy");
-      gridlyCachedGeolocationPermissionStatus = "denied";
-    },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-  );
+  let settled = false;
+  let watchdog;
+  const finish = (position, error) => {
+    if (settled) return;
+    settled = true;
+    window.clearTimeout(watchdog);
+    store.foregroundPending = false;
+    control?.removeAttribute("aria-busy");
+    // A newer explicit selection, Return Home, or active trip owns the UI.
+    if (store.generation !== generation || gridlyIsRouteWatchAwarenessActive()) return;
+    const context = !error && gridlyActivateForegroundAwarenessContext(position);
+    if (context) { gridlyCachedGeolocationPermissionStatus = "granted"; setConfirmation("Around Me uses this location for up to two minutes. Your Home is unchanged.", "info"); return; }
+    if (store.temporary?.type === "AROUND_ME") gridlyExpireForegroundAwarenessContext(store.temporary);
+    const denied = Number(error?.code) === 1 || String(error?.code || "").toLowerCase() === "permission_denied";
+    const message = denied ? "Location permission was denied. Your area is unchanged." : Number(error?.code) === 3 ? "Location timed out. Your area is unchanged. Try Around Me again." : "A fresh location is unavailable. Your area is unchanged. Try Around Me again.";
+    setConfirmation(message, "info");
+  };
+  watchdog = window.setTimeout(() => finish(null, { code: 3 }), 11000);
+  try { requestGridlyForegroundPosition(position => finish(position), error => finish(null, error), { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }); }
+  catch (error) { finish(null, error); }
   return true;
 }
 
@@ -55017,7 +55071,8 @@ function stopGridlyRouteWatchPositionUpdates() {
 
 function renderUserLocationDot() {
   if (!map) return;
-  const coords = getValidGridlyUserLocationCoordinates(userLocation);
+  const awareness = gridlyGetAwarenessContextStore().temporary;
+  const coords = !gridlyIsRouteWatchAwarenessActive() && awareness?.type === "AROUND_ME" && awareness.health === "STALE" ? null : getValidGridlyUserLocationCoordinates(userLocation);
   if (!coords) {
     if (userMarker) {
       map.removeLayer(userMarker);
