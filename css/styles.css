@@ -29820,3 +29820,12 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   transform-origin: 50% 95.3125% !important;
   filter: drop-shadow(0 0 2px white) drop-shadow(0 2px 4px rgba(10, 25, 35, .5)) !important;
 }
+
+/* Owner navigation PNGs are independent of hazard/source/severity styling. */
+#map .gridly-navigation-marker-icon { background: transparent; border: 0; width: 48px; height: 48px; }
+#map .gridly-navigation-marker-img { display: block; width: 48px; height: 48px; object-fit: contain; max-width: none; pointer-events: none; }
+
+/* Approved PNGs already contain their artwork treatment; do not recolor or add shadows. */
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon),
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon) :is(.gridly-hazard-marker, .gridly-crossing-marker).has-production-marker .gridly-production-marker-img,
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon):is(.gridly-alert-focused-marker, [data-gridly-selected="true"]) :is(.gridly-hazard-marker, .gridly-crossing-marker).has-production-marker .gridly-production-marker-img { filter: none !important; }

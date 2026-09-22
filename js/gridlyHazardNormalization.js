@@ -11,12 +11,12 @@
     FLOODING: ['Flooding reported', 'flooding', ['flood', 'flooding']],
     HIGH_WATER: ['High water reported', 'flooding', ['high_water', 'standing_water', 'water_over_road']],
     ROAD_BLOCKED: ['Road appears blocked', 'other_hazard', ['road_blocked', 'road_closed', 'road_closure', 'blocked_road', 'blocked_roadway']],
-    ROAD_IMPASSABLE: ['Road appears impassable', 'other_hazard', ['road_impassable', 'impassable', 'winter_impassable']],
+    ROAD_IMPASSABLE: ['Road Appears Blocked', 'other_hazard', ['road_impassable', 'impassable', 'winter_impassable']],
     CRASH_SCENE: ['Crash reported', 'crash', ['crash', 'wreck', 'crash_scene', 'crash_incident']],
     DEBRIS: ['Debris in Road', 'debris', ['debris', 'fallen_tree', 'debris_in_road']],
     CONSTRUCTION: ['Construction', 'construction', ['construction', 'road_work']],
     PLANNED_WORK: ['Planned work', 'construction', ['planned_work', 'scheduled_work']],
-    RAIL_CROSSING_CONDITION: ['Rail crossing condition reported', 'rail_blockage_delay', ['blocked', 'heavy', 'delayed', 'delay', 'blocked_crossing', 'crossing_blocked', 'train_blocking_crossing', 'rail_blockage_delay', 'rail_blockage', 'rail_blocked', 'rail_delay', 'rail_issue']],
+    RAIL_CROSSING_CONDITION: ['Reported Crossing Delay', 'rail_blockage_delay', ['blocked', 'heavy', 'delayed', 'delay', 'blocked_crossing', 'crossing_blocked', 'train_blocking_crossing', 'rail_blockage_delay', 'rail_blockage', 'rail_blocked', 'rail_delay', 'rail_issue']],
     ICE: ['Ice reported', 'winter', ['ice', 'icy', 'icy_road', 'icy_roads']],
     BLACK_ICE_SUSPECTED: ['Possible black ice reported', 'winter', ['black_ice_suspected', 'black_ice', 'possible_black_ice']],
     BRIDGE_OVERPASS_ICING: ['Bridge or overpass icing reported', 'winter', ['bridge_overpass_icing', 'bridge_icing', 'overpass_icing']],
@@ -110,8 +110,9 @@
   function label(event) {
     if (event.weatherPhenomenon) return event.weatherPhenomenon;
     if (event.authorityClass === 'OFFICIAL_PUBLIC' && advisories[event.advisory] === 'AUTHORIZED_ONLY') return advisoryLabels[event.advisory];
+    if (event.condition === 'RAIL_CROSSING_CONDITION' && ['blocked','blocked_crossing','crossing_blocked','train_blocking_crossing','rail_blocked','rail_issue'].includes(event.provenance?.rawType)) return 'Blocked Crossing';
     const conditionLabel = definitions[event.condition]?.[0] || 'Road condition reported';
-    return event.accessObservation === 'ROAD_IMPASSABLE' && event.condition !== 'ROAD_IMPASSABLE' ? conditionLabel + '; road appears impassable' : conditionLabel;
+    return event.accessObservation === 'ROAD_IMPASSABLE' && event.condition !== 'ROAD_IMPASSABLE' ? conditionLabel + '; road appears blocked' : conditionLabel;
   }
   function isActive(event, now = Date.now()) { return ['ACTIVE','UPDATED'].includes(event.lifecycle) && !(event.expiresAt && Date.parse(event.expiresAt) <= now); }
   function materiallyReopened(previous, next) { return terminal.has(previous.lifecycle) && isActive(next) && Boolean(previous.provenance.sourceId) && previous.provenance.sourceId === next.provenance.sourceId && Boolean(next.provenance.updatedAt) && Date.parse(next.provenance.updatedAt) > Date.parse(previous.provenance.updatedAt || previous.provenance.observedAt || '') && previous.materialRevision !== next.materialRevision; }

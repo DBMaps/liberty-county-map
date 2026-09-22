@@ -10208,7 +10208,7 @@ const HAZARD_TYPES = {
   reduced_visibility: { label: "Reduced visibility", icon: "❄", severity: "unknown", detail: "Shared observation: Reduced visibility." },
   winter_road_hazard: { label: "Other winter road hazard", icon: "❄", severity: "unknown", detail: "Shared observation: Other winter road hazard." },
   road_blocked: { label: "Road appears blocked", icon: "⚠", severity: "unknown", detail: "Shared observation: Road appears blocked." },
-  road_impassable: { label: "Road appears impassable", icon: "⚠", severity: "unknown", detail: "Shared observation: Road appears impassable." },
+  road_impassable: { label: "Road Appears Blocked", icon: "⚠", severity: "unknown", detail: "Shared observation: Road Appears Blocked." },
   high_water: { label: "High water reported", icon: "⚠", severity: "unknown", detail: "Shared observation: High water reported." },
   flooding: {
     label: "Flooding",
@@ -10265,7 +10265,7 @@ const HAZARD_TYPES = {
     detail: "Shared report: a train is blocking a crossing and may affect travel."
   },
   rail_issue: {
-    label: "Rail Issue",
+    label: "Blocked Crossing",
     icon: "🚉",
     severity: "moderate",
     detail: "Shared report: rail issue may affect a crossing."
@@ -10289,7 +10289,6 @@ const ROAD_HAZARD_TYPE_OPTIONS = [
   { value: "disabled_vehicle", label: "Disabled Vehicle" },
   { value: "debris", label: "Debris In Road" },
   { value: "road_blocked", label: "Road appears blocked" },
-  { value: "road_impassable", label: "Road appears impassable" },
   ...GridlyHazardNormalization.winterOptions.map(({ type, label }) => ({ value: type, label })),
   { value: "construction", label: "Construction" },
   { value: "traffic_backup", label: "Traffic Backup / Heavy Delay" },
@@ -15476,19 +15475,22 @@ function gridlyGetVisualSignatureRouteStyle(kind = "core") {
   return { ...(styles[kind] || styles.core) };
 }
 
+const gridlyNavigationIconCache = new Map();
+function getGridlyNavigationMarkerIcon(kind) {
+  const entry = GridlyMarkerRegistry.resolveNavigation(kind);
+  if (!entry || !window.L?.divIcon) return null;
+  if (!gridlyNavigationIconCache.has(entry.key)) gridlyNavigationIconCache.set(entry.key, window.L.divIcon({
+    className: "gridly-navigation-marker-icon",
+    html: '<img class="gridly-navigation-marker-img" src="' + GridlyMarkerRegistry.navigationBasePath + entry.asset + '" alt="" aria-hidden="true">',
+    iconSize: [entry.size, entry.size], iconAnchor: entry.anchor, popupAnchor: [0, -entry.anchor[1]]
+  }));
+  return gridlyNavigationIconCache.get(entry.key);
+}
+
 function gridlyCreateRouteEndpointMarker(point, kind = "destination") {
   if (!Array.isArray(point) || point.length < 2 || !window.L?.marker || !window.L?.divIcon) return null;
   const isDestination = kind === "destination";
-  const endpointSize = isDestination ? 18 : 12;
-  const endpointAnchor = endpointSize / 2;
-  const endpointLabel = sanitizeText(kind);
-  const endpointIcon = window.L.divIcon({
-    className: `gridly-route-endpoint-icon gridly-route-endpoint-icon-${endpointLabel}`,
-    html: `<span class="gridly-route-endpoint gridly-route-endpoint-${endpointLabel}" aria-hidden="true"></span>`,
-    iconSize: [endpointSize, endpointSize],
-    iconAnchor: [endpointAnchor, endpointAnchor],
-    popupAnchor: [0, -endpointAnchor]
-  });
+  const endpointIcon = getGridlyNavigationMarkerIcon(isDestination ? "trip_destination" : "trip_start");
   return window.L.marker(point, {
     pane: "routePane",
     icon: endpointIcon,
@@ -55036,12 +55038,7 @@ function renderUserLocationDot() {
     keyboard: false,
     bubblingMouseEvents: false,
     zIndexOffset: 8,
-    icon: L.divIcon({
-      className: "gridly-user-location-awareness-dot",
-      iconSize: [30, 30],
-      iconAnchor: [15, 15],
-      html: '<span class="gridly-user-location-awareness-dot__ring"></span><span class="gridly-user-location-awareness-dot__core"></span>'
-    })
+    icon: getGridlyNavigationMarkerIcon("current_location")
   });
   userMarker.options.gridlyLayerType = "user_location_layer";
   userMarker.options.gridlyOwner = "user location ownership";
@@ -61802,6 +61799,10 @@ function getGridlyProductionMarkerCategory(incident = {}, fallbackCategory = "ot
   if (["road_closed", "road_closure", "closure", "txdot_closure"].includes(rawType) && incident.normalizedEvent?.authorityClass !== "OFFICIAL_PUBLIC") return "road_blocked";
   if (rawType === "rail" && normalizedFallback === "rail_blockage_delay") return "rail_blockage_delay";
   const explicitCategory = GridlyMarkerRegistry.aliases[rawType];
+  if (!explicitCategory || ["other_hazard", "txdot_other"].includes(explicitCategory)) {
+    const specific = [incident.normalizedEvent?.condition, incident.type, incident.hazardType].map(value => GridlyMarkerRegistry.aliases[String(value || "").toLowerCase().replace(/[\s-]+/g, "_")]).find(value => value && !["other_hazard", "txdot_other", "road_closed"].includes(value));
+    if (specific) return specific;
+  }
   if (explicitCategory) return explicitCategory;
   const normalizedConditionCategory = GridlyMarkerRegistry.aliases[String(incident.normalizedEvent?.condition || "").toLowerCase()];
   if (normalizedConditionCategory) return normalizedConditionCategory;
@@ -61873,8 +61874,8 @@ function queueGridlyProductionMarkerDimensionProbe(assetName = "") {
 }
 
 function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
-  const expectedSize = GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE;
   return GRIDLY_PRODUCTION_MARKER_ASSETS.map((filename) => {
+    const expected = Object.values(GridlyMarkerRegistry.entries).find(e => e.asset === filename);
     queueGridlyProductionMarkerDimensionProbe(filename);
     const renderedDimensions = getGridlyProductionMarkerRenderedImageDimensions(auditDocument, filename);
     const probedDimensions = GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.get(filename) || {};
@@ -61883,15 +61884,15 @@ function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
     const status = renderedDimensions?.status || probedDimensions.status || "pending";
     const hasMeasuredDimensions = measuredWidth > 0 && measuredHeight > 0;
     const dimensionResolved = hasMeasuredDimensions || status === "failed";
-    const naturalWidth = hasMeasuredDimensions ? measuredWidth : (status === "failed" ? measuredWidth : expectedSize);
-    const naturalHeight = hasMeasuredDimensions ? measuredHeight : (status === "failed" ? measuredHeight : expectedSize);
+    const naturalWidth = hasMeasuredDimensions ? measuredWidth : (status === "failed" ? measuredWidth : expected.width);
+    const naturalHeight = hasMeasuredDimensions ? measuredHeight : (status === "failed" ? measuredHeight : expected.height);
     return {
       filename,
       assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${filename}`,
       naturalWidth,
       naturalHeight,
-      expectedSizePass: naturalWidth === expectedSize && naturalHeight === expectedSize,
-      expectedMasterSize: `${expectedSize}x${expectedSize}`,
+      expectedSizePass: naturalWidth === expected.width && naturalHeight === expected.height,
+      expectedMasterSize: `${expected.width}x${expected.height}`,
       status,
       dimensionResolved,
       dimensionSource: hasMeasuredDimensions
@@ -61976,14 +61977,14 @@ function buildGridlyProductionMarkerAudit() {
       renderingOwner: "renderUnifiedIncidents uses Leaflet L.divIcon inside unifiedIncidentLayer; popup/click behavior remains on the Leaflet marker instance.",
       hazardGeneration: "Hazards are normalized through getUnifiedIncidents/getHazardCategory, deduped, lifecycle-filtered by gridlyIncidentEligibleForMapMarker, then rendered into unifiedIncidentLayer.",
       clusteringBehavior: "No hazard MarkerClusterGroup ownership detected in this path; existing unifiedIncidentLayer layering is preserved.",
-      productionPngMarkersEnabled: false,
-      productionSvgMarkersEnabled: true,
-      productionPngExpectedMasterSize: `${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}x${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}`,
+      productionPngMarkersEnabled: true,
+      productionSvgMarkersEnabled: false,
+      productionPngExpectedMasterSize: "owner-source dimensions per registry",
       productionMarkerDisplaySize: `${productionMarkerDisplaySize}x${productionMarkerDisplaySize}`,
       productionPngAssetDimensionPass: productionMarkerAssetDimensionPass,
       visualRenderingMergeGate: productionMarkerAssetDimensionPass
-        ? "PASS: every production SVG master reports 256x256; owner visual review is still required."
-        : "BLOCKED: do not merge additional visual rendering until every production SVG master reports 256x256; owner visual review is still required."
+        ? "PASS: every approved PNG matches its owner-source dimensions; owner visual review is still required."
+        : "BLOCKED: do not merge additional visual rendering until every approved PNG matches its owner-source dimensions; owner visual review is still required."
     },
     categories: categoryAssetRows,
     missingMappings,
@@ -86918,7 +86919,6 @@ counter.textContent = "Road conditions appear calm";
       <button type="button" data-action="open-hazard-placement" data-hazard-type="disabled_vehicle">🚙 Disabled Vehicle</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="debris">⚠️ Debris in Road</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="road_blocked">⚠ Road appears blocked</button>
-      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_impassable">Road appears impassable</button>
       <details><summary>Winter road conditions</summary>${GridlyHazardNormalization.winterOptions.map(option => `<button type="button" data-action="open-hazard-placement" data-hazard-type="${option.type}">${option.label}</button>`).join("")}</details>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="construction">🚧 Construction</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="traffic_backup">🚦 Traffic Backup / Heavy Delay</button>
@@ -97996,13 +97996,7 @@ function setGridlyDestinationMarker(result, options = {}) {
   let marker = null;
   try {
     const destinationTitle = String(normalized.title || normalized.address || "Selected destination");
-    const destinationIcon = window.L.divIcon({
-      className: "gridly-destination-signature-icon",
-      html: `<div class="gridly-destination-signature-marker" data-gridly-map-owner="destination" data-gridly-visual-state="destination_selected" data-gridly-selected="true" aria-hidden="true"><span class="gridly-destination-ring"></span><span class="gridly-destination-core"></span></div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      popupAnchor: [0, -18]
-    });
+    const destinationIcon = getGridlyNavigationMarkerIcon("trip_destination");
     marker = window.L.marker([coordinates.lat, coordinates.lng], {
       title: destinationTitle,
       icon: destinationIcon,
@@ -109644,6 +109638,10 @@ function gridlyOfficialRoadwayPresentationCategory(record = {}) {
   const raw = String(record.category || record.type || record.hazardType || record.title || record.description || "").trim().toLowerCase();
   const normalized = record.normalizedEvent;
   if (normalized?.advisory === "ROAD_CLOSED" || /\b(?:closure|closed)\b/.test(raw.replace(/_/g, " "))) return "txdot_closure";
+  if (/^(?:incident|roadway[_ ]incident|txdot_incident|travel advisory|txdot_other|other|hazard)$/i.test(raw)) {
+    const specific = [record.hazardType, record.type, normalized?.condition].map(value => GridlyMarkerRegistry.aliases[String(value || "").toLowerCase().replace(/[\s-]+/g, "_")]).find(value => value && !["other_hazard", "txdot_other", "road_closed"].includes(value));
+    if (specific) return specific;
+  }
   const exact = GridlyMarkerRegistry.aliases[raw.replace(/[\s-]+/g, "_")];
   if (exact) return exact === "construction" ? "txdot_construction" : exact;
   if (/disabled|stalled/.test(raw)) return "disabled_vehicle";
@@ -118841,7 +118839,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     { label: "Disabled Vehicle", type: "disabled_vehicle" },
     { label: "Debris in Road", type: "debris" },
     { label: "Road appears blocked", type: "road_blocked" },
-    { label: "Road appears impassable", type: "road_impassable" },
     { label: "Construction", type: "construction" },
     { label: "Traffic Backup / Heavy Delay", type: "traffic_backup" },
     { label: "Other Hazard", type: "other_hazard" }
