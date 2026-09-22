@@ -1,0 +1,356 @@
+✔ ready statewide destination geometry is the monitored Route Intelligence path without coordinate changes (32.5045ms)
+✔ community and official fixtures share governed route relevance while off-route records remain excluded (19.8225ms)
+✔ local 80-mile route policy and Awareness filtering are not bypassed (23.9649ms)
+✔ governed monitored geometry is sufficient when no legacy map layer exists (24.4917ms)
+✔ Dayton local collections remain county-filtered while route source remains available (16.2156ms)
+✔ route-near community and truthful official fixtures share the unchanged 0.8-mile policy (30.6568ms)
+✔ cleared route records cannot re-enter active route intelligence (27.5161ms)
+✔ local route policy and official provider ingestion remain unchanged (46.5739ms)
+✔ far, approaching, near, off-route, cleared, and stopped states use governed proximity (28.6507ms)
+✔ runtime propagation updates consumer, audit, freshness, and confidence from one source set (21.3315ms)
+✔ destination source bridge preserves local Awareness and official compatibility (25.569ms)
+✔ current route origin remains separate from live position (7.0895ms)
+✔ Route Watch geolocation advances independently without rebuilding the route (13.8803ms)
+✔ Route Watch owns and stops its single geolocation subscription (16.439ms)
+✔ consumer and audits share live proximity while local Awareness and official inputs remain isolated (34.4631ms)
+✔ cleared, off-route, and stopped guards remain in the canonical proximity path (15.5913ms)
+✔ two active conditions are independently represented (6.3815ms)
+✔ selective clear and repeated persistence refresh preserve flooding only (2.2596ms)
+✔ consumer flooding truth replaces cleared road-closure wording (14.3757ms)
+✔ official support requires current normalized official identity (1.1029ms)
+✔ Destination evidence counts normalized community and official records directly (4.877ms)
+✔ clear and refresh invalidate Route Watch consumer cache identity (7.2168ms)
+✔ freshness and confidence continue to consume the remaining live proximity set (6.6049ms)
+✔ Dayton Awareness stays local and Route Watch stop stays isolated (19.5616ms)
+✔ LP216 ledger is audit-only and preserves explicit identity fields (28.0849ms)
+✔ explicit multi-county membership is preserved or fails closed, never replaced by membership order (18.3713ms)
+✔ membership data and LP213 statewide control remain unchanged (5.6586ms)
+✔ all county-governed consumers emit into the same transaction ledger (23.7827ms)
+✔ canonical callers carry the owner-selected governed county and ambiguous saves fail closed (17.4924ms)
+✔ county-scoped activation bypasses label-only reconstruction (0.5579ms)
+✔ canonical PLACE persistence binds and restores explicit governed county authority (12.6374ms)
+✔ known C/J cohort and statewide multi-county identities retain governed memberships (3.7598ms)
+✔ LP216 ledger and stale-generation guards remain wired to converging consumers (26.588ms)
+✔ membership rows use canonical PLACE plus explicit governed county identity (17.8456ms)
+✔ Abilene selection is unique and preserves Taylor or Jones authority through activation (19.5279ms)
+✔ Midland membership rows remain independent positive controls (1.2169ms)
+✔ regression cohort and every static multi-county membership have unique selectable identities (15.8996ms)
+✔ canonical card remains county-neutral while operational membership is retained and ambiguity fails closed (12.2767ms)
+✔ Family I reproducers publish governed watched-area eligibility, independent of marker DOM (21.8877ms)
+✔ positive controls preserve watched, viewport-rendered, and inventory distinctions (3.0115ms)
+✔ ACTIVE_EMPTY remains a legitimate governed zero (0.6618ms)
+✔ compact summary coordinates are rejoined to canonical watched-area authority (15.1416ms)
+✔ authoritative load invalidates counts and stale generations cannot overwrite a newer count (24.2258ms)
+✔ map movement schedules rendering only and does not redefine watched count (3.8203ms)
+✔ county authority and C/J membership contracts remain upstream and no control special cases exist (15.1237ms)
+✔ LP218 diagnostics expose bounded count state rather than crossing collections (34.3164ms)
+✔ one governed provider identity is stable across consumer projections (38.4586ms)
+✔ Location Context derives from unique governed eligible evidence, not rows (1.8114ms)
+✔ grouped KBYG rows do not redefine Rankin underlying count (1.5905ms)
+✖ blocked_crossing community report has deterministic existing-runtime classification (3.927ms)
+✖ disabled_vehicle community report has deterministic existing-runtime classification (2.9843ms)
+✖ flooded_road community report has deterministic existing-runtime classification (5.0952ms)
+✖ closed_road community report has deterministic existing-runtime classification (1.3485ms)
+✖ rail_crossing_issue community report has deterministic existing-runtime classification (1.2203ms)
+✔ Pecos two-report fixture proves blocked crossing is the single counted issue (1.6134ms)
+✔ Cienegas initial blocked crossing is map-published and count eligible (1.4478ms)
+✔ Cienegas later four fails closed unless all four identities are available (1.181ms)
+✔ four identified Cienegas items explain four without duplicate inflation (3.2257ms)
+✔ Val Verde generated incident remains evidence when Alerts and KBYG omit it (4.9331ms)
+✔ Pearsall official flooding is full-stack eligible (1.0898ms)
+✔ Floydada Travel Advisory stays present and exposes KBYG propagation failure (0.8344ms)
+✔ quiet control is governed zero (0.6566ms)
+✔ stale evidence cannot inflate current count (1.4451ms)
+✔ duplicate evidence cannot inflate current count (1.0202ms)
+✔ older asynchronous generation cannot overwrite current snapshot (1.0856ms)
+✖ map publication does not imply Alerts or KBYG eligibility (1.5998ms)
+✔ identity-less projection fails closed and cannot become evidence (0.7785ms)
+✔ production instrumentation is bounded and contains no town/county special cases (160.6373ms)
+✔ quiet control stays quiet for Alerts and KBYG (3.7656ms)
+✔ active road hazard follows existing Alerts and KBYG policy (11.6481ms)
+✔ blocked crossing follows the explicit LP223 Alerts and KBYG policy (2.0424ms)
+✔ mixed Pecos control publishes each policy-eligible identity without inflation (1.8224ms)
+✔ cleared history is retained but excluded from consumers (1.2259ms)
+✔ stale and old-area evidence do not propagate (1.6051ms)
+✔ Sulphur Springs browser-equivalent authority reaches active KBYG and Alerts DOM inputs (101.5629ms)
+✔ production predicate is live Leaflet geographic bounds with [lat,lng] operands (15.876ms)
+✔ Huntsville fixture preserves identity and admits a real Walker crossing in authoritative bounds (2.1045ms)
+✔ Eastland stays filtered, distant and foreign-county crossings stay excluded (2.0181ms)
+✔ GeoJSON and Leaflet coordinate order is conserved on fresh load and transition (0.9791ms)
+✔ LP244.20: pending request health survives an old response and settles before publication (47.4477ms)
+✔ A/B/F/G/H/P: governed Dayton and non-PLACE Tarkington ACTIVE/QUIET preserve provider ID (28.3651ms)
+✔ C/D/O: request failures and malformed HTTP 200 fail closed (10.1523ms)
+✔ I/J: late Dayton/Tarkington responses are suppressed across both transition directions (16.0708ms)
+✔ K/L/M/N: multi-county point is conserved; unsupported/county-wide fail closed; statewide endpoint retained (7.578ms)
+✔ B/N: identity transition atomically invalidates old authority before the new response (6.7974ms)
+✔ G/H/O/P: bounded cache is retained but reused only by its exact identity (8.472ms)
+✔ I/J/K: authority and Weather family reject mixed identity lineage (5.7187ms)
+✔ LP240.2A cases A-F and R suppress type disclosures and group repeated roads across types (126.8149ms)
+✔ LP240.2A cases G-K and O-Q preserve identity, counts, order, Show me, and migrate road disclosure open state (2.4301ms)
+✔ LP240.2A cases L-N leave Weather, Community Reports, and non-active source rendering on LP236 paths (3.1277ms)
+✔ all 20 formerly rejected and all 29 governed non-PLACE identities resolve exactly (4.1093ms)
+✔ Tarkington and ordinary/Houston controls use registered county:key authority (7.1721ms)
+✔ canonical PLACE authority remains primary (2.5535ms)
+✔ non-PLACE trust boundary rejects fabricated and conflicting records (0.7661ms)
+✔ statewide inventory reconciles with zero eligible class gaps after repair (2.2309ms)
+✔ save validation, startup rehydration, and passive audit use the shared resolver (6.7089ms)
+✔ v2 POI accepts only governed mandatory and optional fields (9.0971ms)
+✔ county_fips projection is exact, complete, and fail closed (2.5931ms)
+✔ Dayton canonical PLACE and Tarkington governed non-PLACE are request-only identities (1.1921ms)
+✔ map-center, county-only, rural, direct-coordinate, and unincorporated requests need no community (0.8883ms)
+✔ stale identities and origin fabrication fail closed (0.6321ms)
+✔ Austin, Abilene, and Midland preserve selected county separately (0.6395ms)
+✔ cross-boundary result retains its county and never inherits request community (0.7606ms)
+✔ v1 cache cannot be reused and release/compliance mismatches fail closed (51.8471ms)
+✔ unresolved and malformed startup authority waits without requesting NWS (37.6432ms)
+✔ not-ready to governed Sulphur Springs transition starts with the governed NWS points request (38.4351ms)
+✔ one zero component remains a valid governed points lookup (3.7124ms)
+✔ governed resolver rejects null coercion and only the paired zero sentinel (2.5948ms)
+✔ onboarding and Settings start with the shared community-or-ZIP search (18.6186ms)
+✔ Portrait Settings exposes one Home Area action and opens the primary chooser directly (13.7877ms)
+✔ Home Area chooser keeps one traveler vocabulary and the full Settings column (35.9409ms)
+✔ selection presentation preserves explicit multi-county membership (61.5808ms)
+✔ Dayton and Tarkington retain governed identity classes (3.3637ms)
+✔ location is secondary and denial leaves search rendered (5.6828ms)
+✔ acceptance is read-only and save plus rehydration retain shared governance (5.7136ms)
+✔ statewide eligibility authority is unchanged (2.3082ms)
+✔ mixed official and Community Report families use governed cardinality (3.7396ms)
+✔ presentation cardinality is not an authority and quiet state remains zero (0.4297ms)
+✔ governed projection includes active Community Reports once and rejects stale rows (17.1027ms)
+✔ KBYG consolidated labels use shared governed casing (7.1868ms)
+✔ unknown KBYG roadway condition has a safe deliberate fallback (3.3747ms)
+✔ production normalization passes governed evidence and never Alerts DOM cardinality (8.3086ms)
+✔ initial and reset states are neutral while completed empty searches retain feedback (31.4039ms)
+✔ governed context biases unqualified ranking without constraining explicit searches (17.1458ms)
+✔ Nearby Places owns a contained picker and consumer-safe copy (1.9525ms)
+✔ all POI cards use the shared destination adapter with intact identity fields (9.0894ms)
+✔ protected authority and route implementation are not redefined by this repair (2.2748ms)
+✔ 1 search submission alone does not route (5.896ms)
+✔ 2 a single rendered result does not auto-route (0.8053ms)
+✔ 3 Enter submits search without choosing an ambiguous first result (0.8756ms)
+✔ 4 result selection creates a visible pending confirmation (0.9589ms)
+✔ 5 only Preview route explicitly initiates destination route calculation (1.0658ms)
+✔ 6 Change returns to candidate selection without routing (1.9832ms)
+✔ 7 double activation is suppressed while one preview is pending (12.4291ms)
+✔ 8 stale search completion cannot replace current input or selection (4.5309ms)
+✔ 9 stale route publication remains owned by the existing controller (2.6164ms)
+✔ 10 visible identity and routed coordinates share one selected object (4.0036ms)
+✔ 11 route failure preserves the confirmed destination (0.6565ms)
+✔ 12 retry reuses the same confirmed destination (0.7303ms)
+✔ 13 no-route and provider failure messages are distinct and truthful (1.0317ms)
+✔ 14 dismissal cannot initiate routing (17.4305ms)
+✔ 15 closing restores focus to the opening control when practical (3.4176ms)
+✔ 16 keyboard operation supports Enter, Escape, and native buttons (1.1864ms)
+✔ 17 accessible names, announcements, focus visibility, and selected state exist (2.7293ms)
+✔ 18 consumer confirmation never exposes raw coordinates (0.6801ms)
+✔ 19 protected portrait structure keeps bounded actions and reduced motion (2.225ms)
+✔ 20 route provider and source-authority contracts remain unchanged (2.8546ms)
+✔ 21 pending selection hides the underlying route-summary strip (60.7763ms)
+✔ 22 pending selection publishes no route geometry or route-state presentation (0.5205ms)
+✔ 23 Preview route reveals route presentation only after the explicit transition (0.2769ms)
+✔ 24 changing or dismissing clears stale route presentation (429.0552ms)
+✔ 25 destination identity is not duplicated in stacked consumer panels before preview (0.8111ms)
+✔ 1 current Heat Advisory without a temperature cannot become freezing KBYG (14.15ms)
+✔ 2 stale freeze evidence is excluded from current weather authority (3.9582ms)
+✔ 3 expired freeze alerts are not eligible (1.901ms)
+✔ 4 retained historical weather cannot be promoted as current (8.8077ms)
+✔ 5 current PLACE identity must own the KBYG weather candidate (4.8247ms)
+✔ 6 precise current PLACE authority wins over a county or legacy weather candidate (14.0581ms)
+✔ 7 area transition invalidates previous weather before publishing the next identity (14.129ms)
+✔ 8 hard refresh does not rehydrate a stale weather narrative (38.2782ms)
+✔ 9 a legitimate current freeze condition still promotes freezing awareness (8.3875ms)
+✔ 10 a legitimate current Heat Advisory still promotes heat awareness (2.7862ms)
+✔ 11 non-weather KBYG transportation candidates remain unaffected (11.5288ms)
+✔ 12 current NWS official alerts remain independently governed (2.0743ms)
+✔ 13 multi-county PLACE weather identity remains PLACE-owned (3.0387ms)
+✔ Dallas destination runtime publishes one governed non-null collection (53.664ms)
+✔ native first grant and already-granted success each continue once (21.044ms)
+✔ native unavailable is delivered to visible recovery owner and invalid coordinates fail closed (6.9457ms)
+✔ native pending request remains singular across pause/resume and browser fallback is unchanged (17.733ms)
+✔ production report owner has one watchdog, duplicate guard, governed submission, and terminal cleanup (8.3367ms)
+✔ Android native plugin continues permission callbacks without background permission (2.7137ms)
+✔ AndroidX location compatibility owns API 24-29 fallback and API 30+ delegation (2.4106ms)
+✔ foreground permission contract remains identical across every supported Android API (1.7564ms)
+✔ Dallas and other exact governed Texas PLACE names become geographic destination intent (300.8483ms)
+✔ Dallas, TX, ZIP, address, arbitrary text, and POI classifications remain protected (62.9309ms)
+✔ bare PLACE resolution precedes acquisition without changing qualified-query behavior (35.7574ms)
+✔ the real interactive coordinator carries governed authority into canonical publication (12.17ms)
+✔ LP244.5 Governed Active Condition Parity: Dayton crossing representations converge everywhere (5.8718ms)
+✔ LP244.5 contract preserves two genuinely distinct reports (0.5013ms)
+✔ LP244.5 contract never deduplicates by equal display text (0.5205ms)
+✔ LP244.5 contract excludes cleared history and stale records (0.5893ms)
+✔ LP244.5 crossing association uses persisted community report identity (0.718ms)
+✔ LP244.5 official and community conditions remain independently countable (2.2513ms)
+✔ LP244.5 county-qualified governed input cannot acquire wrong-county membership (1.1913ms)
+✔ LP244.5 set-in-stone assertions detect surface and quiet-state divergence (0.7148ms)
+✔ LP244.5 parity contract is wired into production summary, Top Awareness, Brief, and owner audit (110.6525ms)
+✔ pending route plus Clear suppresses every late consumer publication (8.7086ms)
+✔ pending Route Watch plus Stop cannot revive monitoring (0.6556ms)
+✔ Route B remains authoritative when B completes before A (0.6751ms)
+✔ A may publish before B starts and B owns the final state (0.5414ms)
+✔ stale failure after B is current cannot publish an error or clear B (0.675ms)
+✔ timeout completion after Clear remains suppressed (0.699ms)
+✔ Route Watch activation cannot revive a stale destination (0.6186ms)
+✔ normal current request publishes successfully (0.6375ms)
+✔ saved-coordinate destination parity is unchanged at publication (1.5132ms)
+✔ Map Center and Current Location origin ownership remains exact (0.9055ms)
+✔ same-route rapid-repeat suppression remains endpoint and time scoped (78.5886ms)
+✔ production route publishers and invalidators use the shared authority (54.9898ms)
+✔ active Travel Brief consumers retain their legacy semantics with one projection construction (31.9425ms)
+✔ multiple conditions preserve governed identity and order (8.649ms)
+✔ duplicate evidence retains governed canonical suppression (3.9249ms)
+✔ cleared, stale, inactive, and empty inputs remain excluded (18.7021ms)
+✔ source-family mix keeps community rows first and official roadways separate from story records (7.8595ms)
+✔ separate builds construct fresh projections and never reuse prior rows (4.9404ms)
+✔ production Travel Brief is wired to the build-scoped context and exposes the audit (1.9079ms)
+ℹ tests 205
+ℹ suites 0
+ℹ pass 199
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9542.2502
+
+✖ failing tests:
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ blocked_crossing community report has deterministic existing-runtime classification (3.927ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ disabled_vehicle community report has deterministic existing-runtime classification (2.9843ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ flooded_road community report has deterministic existing-runtime classification (5.0952ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ closed_road community report has deterministic existing-runtime classification (1.3485ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:28:3
+✖ rail_crossing_issue community report has deterministic existing-runtime classification (1.2203ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'PROPAGATION_FAILURE'
+  - 'PRODUCT_CONTRACT_UNDEFINED'
+        ^
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPAGATION_FAILURE',
+    expected: 'PRODUCT_CONTRACT_UNDEFINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp219-governed-awareness-evidence-contract.test.cjs:79:1
+✖ map publication does not imply Alerts or KBYG eligibility (1.5998ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp219-governed-awareness-evidence-contract.test.cjs:81:49)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

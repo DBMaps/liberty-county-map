@@ -3262,10 +3262,11 @@ function gridlyBuildCanonicalLiveIncidentPresentation(record = {}) {
   const raw = record?.canonicalSourceRecord || record?.raw || record?.source || record?.latestReport || {};
   const isCrossing = identity.crossingOwnershipExplicit;
   const sourceText = String(record?.sourceKind || record?.providerId || record?.sourceId || raw?.sourceKind || raw?.providerId || "").toLowerCase();
-  const sourceFamily = /weather|nws|noaa/.test(sourceText) ? "WEATHER" : (isCrossing ? "CROSSING_REPORTS" : (/official|drivetexas|txdot/.test(sourceText) ? "OFFICIAL_ROADWAYS" : "COMMUNITY_REPORTS"));
+  const sourceFamily = record.normalizedEvent?.authorityClass === "COMMUNITY_OBSERVATION" ? (isCrossing ? "CROSSING_REPORTS" : "COMMUNITY_REPORTS") : /weather|nws|noaa/.test(sourceText) ? "WEATHER" : (isCrossing ? "CROSSING_REPORTS" : (/official|drivetexas|txdot/.test(sourceText) ? "OFFICIAL_ROADWAYS" : "COMMUNITY_REPORTS"));
   const canonicalKey = record?.submittedHazardType || record?.submitted_hazard_type || record?.hazardType || record?.hazard_type || record?.report_type || record?.reportType || record?.category || record?.type || identity.hazardType;
   const subtype = record?.subtype || record?.hazardSubtype || record?.otherHazardSubtype || raw?.subtype || raw?.hazardSubtype;
-  const displayCondition = typeof gridlyConditionDisplayLabel === "function" ? gridlyConditionDisplayLabel({ sourceFamily, canonicalKey, subtype, providerEvent: record?.event || raw?.event, trustedLabel: identity.presentationCondition }) : identity.presentationCondition;
+  const normalizedConditionLabel = record.normalizedEvent?.accessObservation === "ROAD_IMPASSABLE" && typeof GridlyHazardNormalization !== "undefined" ? GridlyHazardNormalization.label(record.normalizedEvent) : "";
+  const displayCondition = normalizedConditionLabel || (typeof gridlyConditionDisplayLabel === "function" ? gridlyConditionDisplayLabel({ sourceFamily, canonicalKey, subtype, providerEvent: record?.event || raw?.event, trustedLabel: identity.presentationCondition }) : identity.presentationCondition);
   const locationLabel = typeof normalizeGridlyAlertCardLocationLabel === "function" ? normalizeGridlyAlertCardLocationLabel(record) : (record?.locationName || record?.roadName || record?.crossingName || "Local roadway");
   const freshnessLabel = typeof formatGridlyHazardPopupFreshnessLine === "function" ? formatGridlyHazardPopupFreshnessLine(record) : (record?.minutesText || "Updated just now");
   const reportCount = Math.max(1, Number(record?.incidentReportCount || record?.activeReportCount || record?.reports_count || record?.count || (Array.isArray(record?.reports) ? record.reports.length : 1)) || 1);
@@ -4327,6 +4328,10 @@ function gridlyTravelBriefRecordLine(record, fallback) {
 }
 
 function gridlyTravelBriefCommunityCondition(record = {}) {
+  if (typeof GridlyHazardNormalization !== "undefined") {
+    const event = record.normalizedEvent || GridlyHazardNormalization.community({type:record.report_type || record.reportType || record.hazardType || record.type || record.category});
+    if (["winter", "other_hazard"].includes(event.markerFamily) && !["OTHER_ROAD_HAZARD", "UNKNOWN"].includes(event.condition) || ["ROAD_BLOCKED", "HIGH_WATER"].includes(event.condition)) return event.condition.toLowerCase();
+  }
   const text = gridlyTravelBriefCleanLine([
     record.consumerSummary,
     record.headline,
@@ -4401,13 +4406,17 @@ const GRIDLY_TRAVEL_BRIEF_COMMUNITY_CONDITION_COPY = Object.freeze({
   "flooding": Object.freeze({ singular: "Flooding", plural: "Flooding", mixed: "flooding" }),
   "crossing-delay": Object.freeze({ singular: "Crossing delay", plural: "Crossing delays", mixed: "crossing delays" }),
   "road-hazard": Object.freeze({ singular: "Road hazard", plural: "Road hazards", mixed: "road hazards" }),
-  "road-closure": Object.freeze({ singular: "Road closure", plural: "Road closures", mixed: "road closures" }),
+  "road-closure": Object.freeze({ singular: "Road appears blocked", plural: "Roads appear blocked", mixed: "roads reported blocked" }),
   "crash": Object.freeze({ singular: "Crash", plural: "Crashes", mixed: "crashes" }),
   "construction": Object.freeze({ singular: "Construction", plural: "Construction", mixed: "construction" }),
   "community-report": Object.freeze({ singular: "Community report", plural: "Community reports", mixed: "community reports" })
 });
 
 function gridlyTravelBriefCommunityConditionCopy(conditionKey) {
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[conditionKey]) {
+    const label = GridlyHazardNormalization.label(GridlyHazardNormalization.community({type:conditionKey}));
+    return {singular:label, plural:label, mixed:label.toLowerCase()};
+  }
   return GRIDLY_TRAVEL_BRIEF_COMMUNITY_CONDITION_COPY[conditionKey] || GRIDLY_TRAVEL_BRIEF_COMMUNITY_CONDITION_COPY["community-report"];
 }
 
@@ -4421,9 +4430,10 @@ function gridlyTravelBriefCommunityLine(record = {}) {
 }
 
 function gridlyTravelBriefCommunityConditionLine(condition, copy, locality = "") {
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[condition] && !["flooding", "crash", "construction"].includes(condition)) return `${copy.singular}${locality ? ` in ${locality}` : " nearby"}.`;
   if (condition === "flooding") return locality ? `${copy.singular} affecting roads in ${locality}.` : "Flooding affecting nearby roads.";
   if (condition === "crossing-delay") return locality ? `${copy.plural} reported in ${locality}.` : "Crossing delays reported nearby.";
-  if (condition === "road-closure") return locality ? `${copy.singular} affecting roads in ${locality}.` : "Road closure affecting nearby roads.";
+  if (condition === "road-closure") return locality ? `${copy.singular} in ${locality}.` : "Road appears blocked nearby.";
   if (condition === "road-hazard") return locality ? `${copy.singular} affecting roads in ${locality}.` : "Road hazard affecting nearby roads.";
   if (condition === "crash") return locality ? `${copy.singular} affecting travel in ${locality}.` : "Crash affecting nearby travel.";
   if (condition === "construction") return locality ? `${copy.singular} affecting roads in ${locality}.` : "Construction affecting nearby roads.";
@@ -4825,6 +4835,14 @@ function gridlyTravelBriefProjectionAudit() {
 }
 
 function gridlyBuildTravelBriefModel(storyInput) {
+  const temporaryArea = typeof gridlyReadTemporaryAwarenessArea === "function" ? gridlyReadTemporaryAwarenessArea() : null;
+  if (temporaryArea?.unavailable === true) return Object.freeze({
+    version: "LP061", title: "Current Conditions", driverDecisionPattern: true,
+    sections: Object.freeze([{ key: "driver-decision", title: "Before You Go", familyState: "UNAVAILABLE",
+      lines: ["Awareness unavailable for this selection", "Choose another location or clear Search to return Home."] }]),
+    unifiedEvidence: null, governedKbygEvidenceIds: Object.freeze([]),
+    kbygPresentationContext: { community: temporaryArea.label }, storyConnected: false
+  });
   const projectionContext = gridlyBuildTravelBriefProjectionContext();
   const records = projectionContext.records;
   const governedKbygEvidenceIds = projectionContext.awarenessRows.map((row) => row.evidenceId);
@@ -5557,6 +5575,13 @@ function gridlyBriefInteractionRender() {
   const travelSupport = document.querySelector("#gridlyBriefTravelSupport");
   if (greeting) greeting.textContent = model.greeting;
   if (location) location.textContent = model.location;
+  // The compact portrait layout hides the legacy location hero. Keep the
+  // existing visible heading explicit while inspecting a temporary area.
+  const briefHeading = document.querySelector("#gridlyBriefInteractionPanel .gridly-brief-section-label");
+  const temporaryArea = typeof gridlyReadTemporaryAwarenessArea === "function" ? gridlyReadTemporaryAwarenessArea() : null;
+  if (briefHeading) briefHeading.textContent = temporaryArea
+    ? "TRAVEL BRIEF · " + (temporaryArea.unavailable ? "Selected location" : temporaryArea.label)
+    : "TRAVEL BRIEF";
   if (weather) {
     weather.replaceChildren();
     if (model.weather) {
@@ -10176,6 +10201,15 @@ if (typeof window !== "undefined") {
 }
 
 const HAZARD_TYPES = {
+  black_ice_suspected: { label: "Possible black ice", icon: "❄", severity: "unknown", detail: "Shared observation: Possible black ice." },
+  bridge_overpass_icing: { label: "Bridge / overpass icing", icon: "❄", severity: "unknown", detail: "Shared observation: Bridge / overpass icing." },
+  snow_covered_road: { label: "Snow-covered road", icon: "❄", severity: "unknown", detail: "Shared observation: Snow-covered road." },
+  sleet_freezing_rain: { label: "Sleet / freezing rain", icon: "❄", severity: "unknown", detail: "Shared observation: Sleet / freezing rain." },
+  reduced_visibility: { label: "Reduced visibility", icon: "❄", severity: "unknown", detail: "Shared observation: Reduced visibility." },
+  winter_road_hazard: { label: "Other winter road hazard", icon: "❄", severity: "unknown", detail: "Shared observation: Other winter road hazard." },
+  road_blocked: { label: "Road appears blocked", icon: "⚠", severity: "unknown", detail: "Shared observation: Road appears blocked." },
+  road_impassable: { label: "Road Appears Blocked", icon: "⚠", severity: "unknown", detail: "Shared observation: Road Appears Blocked." },
+  high_water: { label: "High water reported", icon: "⚠", severity: "unknown", detail: "Shared observation: High water reported." },
   flooding: {
     label: "Flooding",
     icon: "🌊",
@@ -10207,10 +10241,10 @@ const HAZARD_TYPES = {
     detail: "Shared report: construction may slow travel."
   },
   road_closed: {
-    label: "Road Closed",
-    icon: "⛔",
+    label: "Road appears blocked",
+    icon: "⚠",
     severity: "high",
-    detail: "Shared report: road closure is blocking travel."
+    detail: "Shared observation: road appears blocked."
   },
   disabled_vehicle: {
     label: "Disabled Vehicle",
@@ -10231,7 +10265,7 @@ const HAZARD_TYPES = {
     detail: "Shared report: a train is blocking a crossing and may affect travel."
   },
   rail_issue: {
-    label: "Rail Issue",
+    label: "Blocked Crossing",
     icon: "🚉",
     severity: "moderate",
     detail: "Shared report: rail issue may affect a crossing."
@@ -10254,7 +10288,8 @@ const ROAD_HAZARD_TYPE_OPTIONS = [
   { value: "crash", label: "Crash / Wreck" },
   { value: "disabled_vehicle", label: "Disabled Vehicle" },
   { value: "debris", label: "Debris In Road" },
-  { value: "road_closed", label: "Road Closed" },
+  { value: "road_blocked", label: "Road appears blocked" },
+  ...GridlyHazardNormalization.winterOptions.map(({ type, label }) => ({ value: type, label })),
   { value: "construction", label: "Construction" },
   { value: "traffic_backup", label: "Traffic Backup / Heavy Delay" },
   { value: "other_hazard", label: "Other Hazard" }
@@ -12283,79 +12318,20 @@ const HAZARD_CATEGORY_MAP = {
   hazard_cleared: "other_hazard"
 };
 
-const GRIDLY_PRODUCTION_MARKER_BASE_PATH = "assets/markers/png/";
+const GRIDLY_PRODUCTION_MARKER_BASE_PATH = GridlyMarkerRegistry.basePath;
 const GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE = 256;
-const GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE = 64;
-const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE = 72;
+const GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE = GridlyMarkerRegistry.size;
+const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE = 64;
 const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MIN = 16;
-const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MARKER_VISUAL_SCALE = 1.08;
-const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MARKER_DISPLAY_SIZE = 78;
-const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MOBILE_PORTRAIT_DISPLAY_SIZE = 76;
-const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MOBILE_PORTRAIT_DISPLAY_SIZE = 80;
-const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
-  "construction-zone.png",
-  "crash-on-road.png",
-  "debris-in-road.png",
-  "disabled-vehicle.png",
-  "downed-power-line.png",
-  "emergency-response.png",
-  "livestock-on-road.png",
-  "other-hazard.png",
-  "rail-crossing.png",
-  "road-closed.png",
-  "traffic-backup-heavy-delay.png",
-  "traffic-signal-issue.png",
-  "train-front.png",
-  "water-over-road.png"
-]);
-const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
-  construction: "construction-zone.png",
-  crash: "crash-on-road.png",
-  debris: "debris-in-road.png",
-  disabled_vehicle: "disabled-vehicle.png",
-  downed_power_line: "downed-power-line.png",
-  emergency_response_activity: "emergency-response.png",
-  emergency_response_impact: "emergency-response.png",
-  fallen_tree: "debris-in-road.png",
-  flooding: "water-over-road.png",
-  ice: "water-over-road.png",
-  livestock_on_road: "livestock-on-road.png",
-  other_hazard: "other-hazard.png",
-  other: "other-hazard.png",
-  crossing_infrastructure: "rail-crossing.png",
-  rail: "rail-crossing.png",
-  rail_blockage_delay: "train-front.png",
-  rail_crossing_infrastructure: "rail-crossing.png",
-  rail_issue: "other-hazard.png",
-  road_closed: "road-closed.png",
-  signal_outage: "traffic-signal-issue.png",
-  standing_water: "water-over-road.png",
-  traffic_backup: "traffic-backup-heavy-delay.png",
-  traffic_signal_issue: "traffic-signal-issue.png",
-  txdot_closure: "road-closed.png",
-  txdot_construction: "construction-zone.png",
-  txdot_damage: "debris-in-road.png",
-  txdot_flooding: "water-over-road.png",
-  txdot_other: "other-hazard.png",
-  utility_work: "downed-power-line.png"
-});
-
-const GRIDLY_PRODUCTION_MARKER_TIP_ANCHOR_RATIOS = Object.freeze({
-  "construction-zone.png": 244 / 256,
-  "crash-on-road.png": 193 / 256,
-  "debris-in-road.png": 200 / 256,
-  "disabled-vehicle.png": 244 / 256,
-  "downed-power-line.png": 244 / 256,
-  "emergency-response.png": 244 / 256,
-  "livestock-on-road.png": 244 / 256,
-  "other-hazard.png": 242 / 256,
-  "rail-crossing.png": 1053 / 1536,
-  "road-closed.png": 192 / 256,
-  "traffic-backup-heavy-delay.png": 192 / 256,
-  "traffic-signal-issue.png": 194 / 256,
-  "train-front.png": 205 / 256,
-  "water-over-road.png": 204 / 256
-});
+const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MARKER_VISUAL_SCALE = 1;
+const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MARKER_DISPLAY_SIZE = 64;
+const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MOBILE_PORTRAIT_DISPLAY_SIZE = 64;
+const GRIDLY_CROSSING_INFRASTRUCTURE_STREET_ZOOM_MOBILE_PORTRAIT_DISPLAY_SIZE = 64;
+// LP244.47: compatibility names project the single marker registry.
+const GRIDLY_WINTER_MARKER_ASSETS = GridlyMarkerRegistry.winterAssets;
+const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze(Object.values(GridlyMarkerRegistry.entries).map(entry => entry.asset));
+const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = GridlyMarkerRegistry.assetMap;
+const GRIDLY_PRODUCTION_MARKER_TIP_ANCHOR_RATIOS = Object.freeze(Object.fromEntries(Object.values(GridlyMarkerRegistry.entries).map(entry => [entry.asset, entry.tipRatio])));
 
 function getGridlyProductionMarkerAnchor(categoryOrAsset = "", displaySize = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE) {
   const assetName = String(GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[categoryOrAsset] || categoryOrAsset || "").split("/").pop();
@@ -15499,19 +15475,22 @@ function gridlyGetVisualSignatureRouteStyle(kind = "core") {
   return { ...(styles[kind] || styles.core) };
 }
 
+const gridlyNavigationIconCache = new Map();
+function getGridlyNavigationMarkerIcon(kind) {
+  const entry = GridlyMarkerRegistry.resolveNavigation(kind);
+  if (!entry || !window.L?.divIcon) return null;
+  if (!gridlyNavigationIconCache.has(entry.key)) gridlyNavigationIconCache.set(entry.key, window.L.divIcon({
+    className: "gridly-navigation-marker-icon",
+    html: '<img class="gridly-navigation-marker-img" src="' + GridlyMarkerRegistry.navigationBasePath + entry.asset + '" alt="" aria-hidden="true">',
+    iconSize: [entry.size, entry.size], iconAnchor: entry.anchor, popupAnchor: [0, -entry.anchor[1]]
+  }));
+  return gridlyNavigationIconCache.get(entry.key);
+}
+
 function gridlyCreateRouteEndpointMarker(point, kind = "destination") {
   if (!Array.isArray(point) || point.length < 2 || !window.L?.marker || !window.L?.divIcon) return null;
   const isDestination = kind === "destination";
-  const endpointSize = isDestination ? 18 : 12;
-  const endpointAnchor = endpointSize / 2;
-  const endpointLabel = sanitizeText(kind);
-  const endpointIcon = window.L.divIcon({
-    className: `gridly-route-endpoint-icon gridly-route-endpoint-icon-${endpointLabel}`,
-    html: `<span class="gridly-route-endpoint gridly-route-endpoint-${endpointLabel}" aria-hidden="true"></span>`,
-    iconSize: [endpointSize, endpointSize],
-    iconAnchor: [endpointAnchor, endpointAnchor],
-    popupAnchor: [0, -endpointAnchor]
-  });
+  const endpointIcon = getGridlyNavigationMarkerIcon(isDestination ? "trip_destination" : "trip_start");
   return window.L.marker(point, {
     pane: "routePane",
     icon: endpointIcon,
@@ -18787,7 +18766,7 @@ function getGridlyLp0517SettingsHomeDisplay() {
     };
   }
   const display = typeof getGridlySettingsAwarenessAreaDisplay === "function" ? getGridlySettingsAwarenessAreaDisplay() : { label: "Not selected", meta: "Choose the community-watch area Gridly should follow." };
-  const resolved = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const resolved = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea({ homeOnly: true }) : null;
   const county = resolved?.countyId ? (gridlyLp0516CountyName?.(resolved.countyId, null) || "Gridly coverage area") : (display.meta || "Gridly coverage area").replace(/^.*?,\s*/, "") || "Gridly coverage area";
   return { label: display.label || "Not selected", county, zip: "Not set", zipSet: false, canonical: false };
 }
@@ -41415,6 +41394,7 @@ function clearGridlyPendingDestination(options = {}) {
   clearGridlyDestinationRoutePreview({ silent: true });
   clearGridlyDestinationMarker({ silent: true });
   renderGridlyDestinationConfirmation();
+  if (typeof gridlyClearTemporaryAwarenessContext === "function") gridlyClearTemporaryAwarenessContext();
 }
 
 function changeGridlyPendingDestination() {
@@ -43016,14 +42996,20 @@ function getGridlyMobileCommandCardVisibilityState(summary = null) {
     && !gridlySearchUiState.routePreviewTransitionStarted
     && !routePreviewActive
   );
-  const routeOrDestinationOwnership = Boolean(hasSelectedDestination || routePreviewActive || routeIsMonitoring || explicitDestinationPanelOpen);
-  const awarenessPanelMode = Boolean(!routeOrDestinationOwnership && shouldShowGridlyMobileAwarenessPanel(summary));
+  // LP244.45A: a selected destination is not a visible route surface after
+  // Search closes. Keep the existing Location Context card as its owner.
+  const temporaryContext = typeof gridlyGetCurrentAwarenessContext === "function" ? gridlyGetCurrentAwarenessContext() : null;
+  const temporaryAwarenessMode = Boolean(temporaryContext?.type === "SEARCH"
+    && !routePreviewActive && !routeIsMonitoring && !explicitDestinationPanelOpen);
+  const routeOrDestinationOwnership = Boolean(!temporaryAwarenessMode && (hasSelectedDestination || routePreviewActive || routeIsMonitoring || explicitDestinationPanelOpen));
+  const awarenessPanelMode = Boolean(temporaryAwarenessMode || (!routeOrDestinationOwnership && shouldShowGridlyMobileAwarenessPanel(summary)));
   const routeOrDestinationVisible = Boolean(routeOrDestinationOwnership && !popupInteractionActive);
   return {
     visible: Boolean(awarenessPanelMode || routeOrDestinationVisible),
     owner: awarenessPanelMode ? "awareness" : routeIsMonitoring ? "route" : hasSelectedDestination ? "destination" : routePreviewActive ? "route-preview" : explicitDestinationPanelOpen ? "destination-panel" : "none",
     hasSelectedDestination,
-    pendingDestinationConfirmation,
+    pendingDestinationConfirmation: pendingDestinationConfirmation && !temporaryAwarenessMode,
+    temporaryAwarenessMode,
     selectedLabel,
     routePreviewActive,
     routePreviewStatus: preview?.status || null,
@@ -43252,6 +43238,7 @@ function syncMobileDestinationCommandCard(options = {}) {
   const awarenessSummary = getGridlyMobileAwarenessPanelSummary(options?.communityAwarenessSummary ? { summary: options.communityAwarenessSummary } : {});
   const visibilityState = getGridlyMobileCommandCardVisibilityState(awarenessSummary);
   const popupInteractionActive = visibilityState.popupInteractionActive;
+  const temporaryAwarenessMode = visibilityState.temporaryAwarenessMode === true;
   const awarenessPanelMode = Boolean(visibilityState.awarenessPanelMode);
   const cardVisible = Boolean(visibilityState.visible && !visibilityState.pendingDestinationConfirmation);
   const card = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
@@ -43263,6 +43250,7 @@ function syncMobileDestinationCommandCard(options = {}) {
       card.classList.remove("visible", "active", "is-awareness-panel", "awareness", "owner-awareness", "gridly-awareness-owner", "is-destination-panel");
     }
   }
+  card?.classList.toggle("has-temporary-awareness-controls", Boolean(cardVisible && temporaryAwarenessMode));
   card?.classList.toggle("is-awareness-panel", Boolean(cardVisible && awarenessPanelMode));
   card?.classList.toggle("awareness", Boolean(cardVisible && awarenessPanelMode));
   card?.classList.toggle("owner-awareness", Boolean(cardVisible && awarenessPanelMode));
@@ -43271,13 +43259,25 @@ function syncMobileDestinationCommandCard(options = {}) {
   document.body?.classList.toggle("gridly-mobile-awareness-panel-present", Boolean(cardVisible && awarenessPanelMode));
   window.__gridlyMobileCommandCardVisibilityState = { ...visibilityState, visible: cardVisible };
   window.__gridlySyncAwarenessPanelDockContract?.();
+  const returnHome = document.getElementById("gridlyTemporaryContextReturnHome");
+  if (returnHome) {
+    returnHome.hidden = !temporaryAwarenessMode || !cardVisible;
+    if (returnHome.dataset.bound !== "true") {
+      returnHome.addEventListener("click", () => {
+        clearGridlyPendingDestination({ reason: "temporary-context-return-home" });
+        syncMobileDestinationCommandCard();
+        document.getElementById("mobileDestinationCommandBtn")?.focus();
+      });
+      returnHome.dataset.bound = "true";
+    }
+  }
 
   if (!cardVisible) {
     document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", true);
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
     safeText("mobileDestinationCommandImpact", "");
   } else if (awarenessPanelMode) {
-    safeText("mobileAwarenessPanelKicker", getGridlyLocationAwarenessCardKicker(awarenessSummary.areaName || awarenessSummary.awarenessAreaName));
+    safeText("mobileAwarenessPanelKicker", getGridlyLocationAwarenessCardKicker(temporaryAwarenessMode ? gridlyGetCurrentAwarenessContext().placeName : (awarenessSummary.areaName || awarenessSummary.awarenessAreaName)));
     // The kicker owns community identity on this compact consumer surface.
     // Keep title/status values in the summary model for their legitimate
     // consumers, but do not duplicate them in the collapsed card or a11y tree.
@@ -46364,6 +46364,7 @@ function selectGridlySearchResult(result, options = {}) {
   const state = ensureGridlySearchState();
   state.activeResult = normalized;
   state.selectedDestination = normalized;
+  const awarenessContext = typeof gridlySelectSearchAwarenessContext === "function" ? gridlySelectSearchAwarenessContext(normalized) : null;
   if (normalized.provider === "saved_place" || normalized.raw?.savedPlace === true) {
     activeDestinationPlace = {
       id: normalized.providerId || normalized.id,
@@ -46398,7 +46399,8 @@ function selectGridlySearchResult(result, options = {}) {
   const previewBtn = gridlySearchUiRefs.previewBtn || document.getElementById("gridlyDestinationPreviewBtn");
   if (previewBtn && typeof previewBtn.focus === "function") requestAnimationFrame(() => previewBtn.focus({ preventScroll: true }));
   syncMobileDestinationCommandCard();
-  if (marker && !isGridlyDestinationVisibilityCardPresent()) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
+  if (awarenessContext) gridlyFocusSearchAwarenessContext(awarenessContext, normalized);
+  else if (marker && !isGridlyDestinationVisibilityCardPresent()) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
   setGridlyDestinationPerformanceTiming("destinationSelectMs", getGridlyDestinationPerfNow() - destinationSelectStartedAt);
   return normalized;
 }
@@ -46985,6 +46987,7 @@ function hideGridlySearchShell(options = {}) {
   shell.hidden = true;
   shell.setAttribute("hidden", "");
   shell.dataset.searchUi = "dormant";
+  if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
   if (options?.clear === true) {
     const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
     const results = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
@@ -48523,6 +48526,12 @@ if (typeof window !== "undefined") { window.gridlyBeginCommunityTransitionTrace 
 
 function gridlyResolveGovernedWeatherPoint(selected = null) {
   const area = selected || getGridlySelectedAwarenessArea();
+  if (area?.unavailable === true) return null;
+  if (area?.coordinateOnly === true && typeof gridlyReadTemporaryAwarenessArea === "function" && area === gridlyReadTemporaryAwarenessArea()) {
+    if (!Number.isFinite(area.lat) || !Number.isFinite(area.lng)) return null;
+    return Object.freeze({ awarenessKey: area.key, identityClass: "DIRECT_COORDINATE", countyId: area.countyId,
+      stableIdentity: area.key, lat: area.lat, lng: area.lng, placeGeoid: null });
+  }
   if (!area || area.fallback === true || area.countyWide === true) return null;
   const registered = GRIDLY_AWARENESS_AREA_BY_KEY?.[area.key] || null;
   const canonicalPlace = gridlyResolveCanonicalPlaceGeoid(area);
@@ -48552,7 +48561,186 @@ if (typeof window !== "undefined") {
   window.setTimeout?.(() => window.gridlyWeatherConnector?.refreshAwarenessView?.("initial-governed-awareness-ready"), 0);
 }
 
-function getGridlySelectedAwarenessArea() {
+// LP244.45: runtime-only selection owner. Home storage remains owned by the
+// existing confirmed Home workflow. No coordinate history or provider timers.
+var gridlyAwarenessContextFoundation;
+function gridlyGetAwarenessContextStore() {
+  if (!gridlyAwarenessContextFoundation) gridlyAwarenessContextFoundation = {
+    types: Object.freeze({ HOME: "HOME", SEARCH: "SEARCH", AROUND_ME: "AROUND_ME", ROUTE_WATCH: "ROUTE_WATCH", NONE: "NONE" }),
+    temporary: null, generation: 0, transitions: [], refreshes: 0
+  };
+  return gridlyAwarenessContextFoundation;
+}
+
+function gridlyIsForegroundAwarenessFixFresh(position, now = Date.now()) {
+  const capturedAt = position?.timestamp;
+  return typeof capturedAt === "number" && Number.isFinite(capturedAt)
+    && now >= capturedAt && now - capturedAt <= 120000;
+}
+
+function gridlyBuildAwarenessContext(type, area, options = {}) {
+  const store = gridlyGetAwarenessContextStore();
+  if (!Object.values(store.types).includes(type)) return null;
+  const focus = area ? resolveGridlyCanonicalPlacePresentationFocus(area) : null;
+  const point = type === store.types.AROUND_ME ? area : focus || area;
+  return Object.freeze({
+    v: 1, type, contextType: type, generation: store.generation,
+    placeId: area ? gridlyResolveCanonicalPlaceGeoid(area) || area.key || null : null,
+    placeName: area?.label || "Choose a location", countyId: area?.countyId || null,
+    countyName: GRIDLY_COUNTY_REGISTRY[area?.countyId]?.name || null,
+    memberships: Object.freeze([...(area?.countyMemberships || (area ? gridlyResolveCanonicalPlaceRegistryIdentity(area)?.countyMemberships : null) || (area?.countyId ? [GRIDLY_COUNTY_REGISTRY[area.countyId]?.countyFips].filter(Boolean) : []))]),
+    lat: Number.isFinite(point?.lat) ? point.lat : null,
+    lng: Number.isFinite(point?.lng) ? point.lng : null,
+    source: options.source || "persisted-home", selectedAt: options.selectedAt || Date.now(),
+    expiresAt: options.position ? options.position.timestamp + 120000 : null,
+    health: options.health || (area ? "FRESH" : "UNAVAILABLE"),
+    routeWatchId: options.routeWatchId || null, area: area || null,
+    destinationId: options.destinationId || null
+  });
+}
+
+function gridlyGetCurrentAwarenessContext() {
+  const store = gridlyGetAwarenessContextStore();
+  if (store.temporary) return store.temporary;
+  const area = getGridlySelectedAwarenessArea();
+  const signature = [area?.key, area?.countyId, area?.lat, area?.lng].join('|');
+  if (!store.home || store.homeSignature !== signature || store.home.generation !== store.generation) {
+    if (store.home && store.homeSignature !== signature) store.generation += 1;
+    store.homeSignature = signature;
+    store.home = gridlyBuildAwarenessContext(area ? store.types.HOME : store.types.NONE, area);
+  }
+  return store.home;
+}
+
+function gridlyReadTemporaryAwarenessArea() {
+  return gridlyGetAwarenessContextStore().temporary?.area || null;
+}
+
+function gridlyBuildSearchAwarenessArea(destination) {
+  const raw = destination.raw || {};
+  const placeGeoid = destination.placeGeoid || raw.gridlyResolution?.placeGeoid || null;
+  const explicitCounty = destination.requestedOperationalCountyId || raw.requestedOperationalCountyId
+    || destination.countyId || raw.countyId || raw.countyContextId || null;
+  let area = placeGeoid ? GRIDLY_AWARENESS_AREA_BY_KEY[`place-${placeGeoid}`]
+    || GRIDLY_AWARENESS_AREA_DEFINITIONS.find((row) => gridlyResolveCanonicalPlaceGeoid(row) === placeGeoid) : null;
+  // A POI title is never a PLACE name. Only source locality metadata may
+  // resolve its surrounding community; absent evidence stays coordinate-only.
+  if (!area && !placeGeoid) {
+    const address = typeof destination.address === "object" ? destination.address : raw.address;
+    const locality = address?.city || address?.town || address?.village || raw.gridlyResolution?.community;
+    if (locality) {
+      const candidate = resolveGridlyAwarenessAreaForCounty(locality, explicitCounty || "");
+      const focus = candidate && (resolveGridlyCanonicalPlacePresentationFocus(candidate) || candidate);
+      if (focus && Number.isFinite(focus.lat) && Number.isFinite(focus.lng)
+          && getDistanceMiles(destination.lat, destination.lng, focus.lat, focus.lng) <= (candidate.radiusMiles || DEFAULT_NEARBY_RADIUS_MILES)) area = candidate;
+    }
+  }
+  if (area) {
+    const geoid = gridlyResolveCanonicalPlaceGeoid(area);
+    const memberships = destination.countyMemberships?.length ? destination.countyMemberships
+      : area.countyMemberships || gridlyResolveCanonicalPlaceRegistryIdentity(area)?.countyMemberships || [GRIDLY_COUNTY_REGISTRY[area.countyId]?.countyFips].filter(Boolean);
+    if (geoid) area = Object.freeze({ ...area, placeGeoid: geoid, countyMemberships: Object.freeze([...memberships]), canonicalMultiCountyPlace: memberships.length > 1 });
+    const countyId = gridlyResolveCanonicalCountyIdForOperationalContext(area, explicitCounty || area.countyId);
+    if (!countyId) return null; // Reject invalid explicit membership, never take the first county.
+    return gridlyProjectCanonicalPlaceOperationalCounty(area, countyId);
+  }
+  const resolvedCounty = gridlyResolveCountyIdForCoordinate(destination.lat, destination.lng)?.countyId;
+  const countyId = explicitCounty || resolvedCounty;
+  if (!countyId || !GRIDLY_COUNTY_REGISTRY[countyId]) return null;
+  return Object.freeze({ key: `selected-location:${destination.id}`, label: "Selected location", storageValue: "Selected location",
+    lat: destination.lat, lng: destination.lng, countyId, countyMemberships: Object.freeze([GRIDLY_COUNTY_REGISTRY[countyId].countyFips]),
+    radiusMiles: DEFAULT_NEARBY_RADIUS_MILES, countyWide: false, fallback: false, coordinateOnly: true });
+}
+
+function gridlyRefreshUnifiedAwarenessContext(reason, options = {}) {
+  const store = gridlyGetAwarenessContextStore();
+  invalidateGridlySelectedAwarenessAreaResolutionCache(reason);
+  const context = gridlyGetCurrentAwarenessContext();
+  const area = context.area;
+  // Existing LP216/219 county generation owns dataset hydration. A same-county
+  // selection reuses that dataset and filters it through the new context.
+  if (area?.countyId && area.countyId !== gridlyGetActiveCountyId()) {
+    gridlySetActiveCountyContext(area.countyId, { preservePersistedAwareness: true, preserveSemanticCamera: true, source: reason });
+  }
+  activeGeoFilter = area?.countyWide ? "county" : "town";
+  crossingRenderFilterVersion += 1;
+  invalidateGridlyPortraitAwarenessSnapshotsForAreaChange(area, reason);
+  window.gridlyWeatherConnector?.refreshAwarenessView?.(reason);
+  window.gridlyDriveTexasConnector?.refreshAwarenessView?.(reason);
+  window.GridlyPoiBrowserProvider?.refreshAwarenessContext?.();
+  syncGridlyAwarenessAreaSurfacesImmediately(reason, { summaryOptions: { awarenessArea: area } });
+  scheduleRenderCrossings?.(reason, { force: true });
+  updateMobileWatchHeader?.();
+  if (options.fitMap && area) gridlyDispatchSemanticCamera(area, area.countyId, { source: reason });
+  store.refreshes += 1;
+  return context;
+}
+
+function gridlySelectSearchAwarenessContext(destination) {
+  const store = gridlyGetAwarenessContextStore();
+  const area = gridlyBuildSearchAwarenessArea(destination);
+  // A valid selected point with unresolved governance remains visibly selected,
+  // unavailable to local sources. It must never publish the previous Home area.
+  const selectedArea = area || Object.freeze({ key: `unavailable-selection:${destination.id}`, label: "Selected location — awareness unavailable",
+    storageValue: "Selected location", countyId: null, lat: null, lng: null, countyMemberships: Object.freeze([]), unavailable: true });
+  const previous = store.temporary?.type || store.types.HOME;
+  store.generation += 1;
+  store.temporary = gridlyBuildAwarenessContext(store.types.SEARCH, selectedArea, {
+    source: destination.placeGeoid ? "canonical-destination" : "poi-search", destinationId: destination.id,
+    health: area ? "FRESH" : "UNAVAILABLE"
+  });
+  store.transitions.push(Object.freeze({ fromContext: previous, toContext: store.types.SEARCH, placeId: store.temporary.placeId,
+    countyId: store.temporary.countyId, generation: store.generation, reason: "search-selection", timestamp: Date.now() }));
+  store.transitions = store.transitions.slice(-20);
+  return gridlyRefreshUnifiedAwarenessContext("temporary-search-selected");
+}
+
+// LP244.45B: accepted selection owns one focus, independently of card visibility.
+function gridlyFocusSearchAwarenessContext(context, destination) {
+  if (!context || context !== gridlyGetCurrentAwarenessContext() || context.type !== "SEARCH"
+      || context.destinationId !== destination?.id || context.health !== "FRESH") return false;
+  if (destination.placeGeoid || destination.raw?.gridlyResolution?.placeGeoid) {
+    return gridlyDispatchSemanticCamera(context.area, context.countyId, {
+      source: "temporary-search-selected", temporaryContext: context, animate: false
+    });
+  }
+  // A POI keeps its precise destination focus, separate from community awareness.
+  return focusGridlyDestinationOnMap(destination.lat, destination.lng);
+}
+
+function gridlyClearTemporaryAwarenessContext(options = {}) {
+  const store = gridlyGetAwarenessContextStore();
+  if (!store.temporary) return null;
+  store.temporary = null;
+  store.generation += 1;
+  if (options.refresh === false) return null; // Existing explicit Home transaction owns its refresh.
+  return gridlyRefreshUnifiedAwarenessContext("temporary-context-cleared", { fitMap: options.fitMap !== false });
+}
+
+// Compatibility snapshot only: .47 owns activation/provider parity; .51 owns
+// route context activation. Neither old GPS nor an existing trip auto-selects.
+function gridlyCreateForegroundAwarenessContext(position, area = null) {
+  const store = gridlyGetAwarenessContextStore();
+  const fresh = gridlyIsForegroundAwarenessFixFresh(position);
+  const coords = position?.coords;
+  const valid = typeof coords?.latitude === "number" && typeof coords?.longitude === "number"
+    && Number.isFinite(coords.latitude) && Number.isFinite(coords.longitude)
+    && Math.abs(coords.latitude) <= 90 && Math.abs(coords.longitude) <= 180;
+  const point = fresh && valid ? { ...(area || {}), label: area?.label || "Current area", lat: coords.latitude, lng: coords.longitude } : null;
+  return gridlyBuildAwarenessContext(store.types.AROUND_ME, point, { source: "foreground-location", position: fresh ? position : null, health: fresh && valid ? "FRESH" : "STALE" });
+}
+if (typeof window !== "undefined") {
+  window.gridlyGetCurrentAwarenessContext = gridlyGetCurrentAwarenessContext;
+  window.gridlyClearTemporaryAwarenessContext = gridlyClearTemporaryAwarenessContext;
+  window.gridlyCreateForegroundAwarenessContext = gridlyCreateForegroundAwarenessContext;
+}
+// End LP244.45 context foundation.
+
+function getGridlySelectedAwarenessArea(options = {}) {
+  if (options?.homeOnly !== true && typeof gridlyReadTemporaryAwarenessArea === "function") {
+    const temporaryArea = gridlyReadTemporaryAwarenessArea();
+    if (temporaryArea) return temporaryArea;
+  }
   gridlySelectedAwarenessAreaResolutionCache.totalGetterCalls += 1;
   gridlyRecordSelectedAwarenessAreaGetterCaller(gridlySelectedAwarenessAreaResolutionCache.totalGetterCalls);
   const persistedHome = typeof gridlyReadHomePersonalizationRecord === "function" ? gridlyReadHomePersonalizationRecord() : null;
@@ -48607,6 +48795,17 @@ function getGridlySelectedAwarenessArea() {
 // deliberately derives from the selected awareness area / active presentation
 // and active county; it does not persist location state or create a new owner.
 function gridlyGetCurrentGovernedLocationContext() {
+  if (typeof gridlyReadTemporaryAwarenessArea === "function") {
+    const temporary = gridlyReadTemporaryAwarenessArea();
+    if (temporary) {
+      const point = gridlyResolveGovernedWeatherPoint(temporary);
+      if (!point || !temporary.countyId) return null;
+      return Object.freeze({ label: temporary.label, latitude: point.lat, longitude: point.lng,
+        countyContextId: temporary.countyId, originType: point.identityClass,
+        communityIdentity: point.identityClass === "DIRECT_COORDINATE" ? null : Object.freeze({ stableGovernedIdentity: point.placeGeoid ? 'place-' + point.placeGeoid : point.stableIdentity, placeGeoid: point.placeGeoid }),
+        source: "unified-awareness-context", generation: gridlyGetAwarenessContextStore().generation });
+    }
+  }
   const presentation = gridlyActiveGeographicPresentation;
   const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
   const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
@@ -48673,6 +48872,13 @@ if (typeof window !== "undefined") window.gridlyGetCurrentGovernedLocationContex
 function getGridlyCanonicalAwarenessPresentationContext(options = {}) {
   return gridlyLp016AlertsPostPaintDelayMeasure("getGridlyCanonicalAwarenessPresentationContext", "awareness", () => {
   const selectedArea = options?.awarenessArea || (typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null);
+  if (selectedArea?.unavailable === true) return Object.freeze({
+    owner: "awareness_area", source: "unified-awareness-context", selectedAwarenessArea: selectedArea,
+    key: selectedArea.key, label: selectedArea.label, storageValue: selectedArea.storageValue,
+    displayName: selectedArea.label, localityLabel: selectedArea.label, countyId: null, countyName: "",
+    lat: null, lng: null, radiusMiles: null, countyWide: false, fallback: false,
+    geographicEvaluationState: "CANONICAL_FOCUS_UNAVAILABLE", unavailable: true
+  });
   const fallbackCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : GRIDLY_DEFAULT_COUNTY_ID;
   const countyId = gridlyNormalizeCountyId(selectedArea?.countyId || fallbackCountyId || GRIDLY_DEFAULT_COUNTY_ID);
   const countyConfig = GRIDLY_COUNTY_REGISTRY[countyId] || GRIDLY_COUNTY_REGISTRY[GRIDLY_DEFAULT_COUNTY_ID] || {};
@@ -49331,7 +49537,12 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
   if (!area) return false;
   // Synchronization resolves the governed PLACE camera itself; it must occur
   // after semantic identity exists and before any presentation movement.
-  gridlySynchronizeActiveCountyForOperationalContext(area, countyId, options.source || "semantic-camera");
+  if (options.temporaryContext) {
+    // The unified transition already owns county hydration. Do not run the
+    // Home-persisting synchronizer, or accept a stale deferred camera request.
+    if (options.temporaryContext !== gridlyGetCurrentAwarenessContext()
+        || options.temporaryContext.type !== "SEARCH" || options.temporaryContext.area !== area) return false;
+  } else gridlySynchronizeActiveCountyForOperationalContext(area, countyId, options.source || "semantic-camera");
   if (typeof gridlyRecordCommunityTransitionStage === "function") gridlyRecordCommunityTransitionStage("presentation_dispatch", { authoritativeCounty: countyId || null, subsystem: "presentation", subsystemCounty: countyId || null, cameraTarget: { placeGeoid: gridlyResolveCanonicalPlaceGeoid(area), lat: area?.lat ?? area?.focus?.lat ?? null, lng: area?.lng ?? area?.focus?.lng ?? null }, reason: options.source || "semantic-camera" });
   if (!map) return false;
   const sequence = ++gridlySemanticCameraSequence;
@@ -50658,6 +50869,7 @@ function saveGridlyHomeTownPreference(town, options = {}) {
   invalidateGridlySelectedAwarenessAreaResolutionCache?.("saveGridlyHomeTownPreference:start");
   const area = resolveGridlyAwarenessArea(town);
   if (!area) return "";
+  if (typeof gridlyClearTemporaryAwarenessContext === "function") gridlyClearTemporaryAwarenessContext({ refresh: false });
   // The confirmed-home record outranks Settings/profile state. Retire that
   // owner when the established Settings transaction selects a different area,
   // so readers cannot restore the previous Home Area after the save.
@@ -53158,6 +53370,7 @@ function gridlyCrossingSatisfiesConsumerVisibilityPolicy(crossing = {}) {
 }
 
 function gridlyCrossingOwnedByAwarenessArea(crossing = {}, awarenessArea = getGridlySelectedAwarenessArea()) {
+  if (awarenessArea?.unavailable === true) return false;
   if (!awarenessArea) return false;
   if (awarenessArea.countyWide || awarenessArea.fallback) {
     const activeCountyId = gridlyNormalizeCountyId(awarenessArea.countyId || gridlyGetActiveCountyId());
@@ -53318,6 +53531,7 @@ function gridlyGetGovernedAwarenessGeometry(area = {}) {
 }
 
 function isGridlyRecordInAwarenessArea(record = {}, area = getGridlySelectedAwarenessArea()) {
+  if (area?.unavailable === true) return false;
   if (!area) return false;
   if (area.countyWide || area.fallback) {
     const areaCountyId = gridlyNormalizeCountyId(area?.countyId || gridlyGetActiveCountyId());
@@ -53555,6 +53769,13 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
   const errors = [];
   const warnings = [];
   let selectedArea = options?.awarenessArea || getGridlySelectedAwarenessArea();
+  if (selectedArea?.unavailable === true) return {
+    selectedAwarenessArea: selectedArea, awarenessAreaName: selectedArea.label,
+    crossingsInArea: [], activeHazardsInArea: [], activeReportsInArea: [],
+    activityLevel: "Unknown", awarenessStatus: "Awareness unavailable for this selection",
+    awarenessStatusReason: "Location qualification unavailable", lastUpdated: new Date().toISOString(),
+    sourceBreakdown: {}, warnings: ["Temporary selection could not be qualified; Home data is not substituted."], errors: []
+  };
   if (!selectedArea) {
     selectedArea = GRIDLY_AWARENESS_AREA_BY_KEY["liberty-county"] || null;
     warnings.push("No selected awareness area resolved; using Liberty County fallback for read-only awareness intelligence.");
@@ -54817,12 +55038,7 @@ function renderUserLocationDot() {
     keyboard: false,
     bubblingMouseEvents: false,
     zIndexOffset: 8,
-    icon: L.divIcon({
-      className: "gridly-user-location-awareness-dot",
-      iconSize: [30, 30],
-      iconAnchor: [15, 15],
-      html: '<span class="gridly-user-location-awareness-dot__ring"></span><span class="gridly-user-location-awareness-dot__core"></span>'
-    })
+    icon: getGridlyNavigationMarkerIcon("current_location")
   });
   userMarker.options.gridlyLayerType = "user_location_layer";
   userMarker.options.gridlyOwner = "user location ownership";
@@ -58528,7 +58744,7 @@ window.gridlyAuditHelperExposureAudit = gridlyAuditHelperExposureAudit;
 exposeGridlyAuditHelper("gridlyAuditHelperExposureAudit", gridlyAuditHelperExposureAudit);
 
 
-const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "traffic_backup", "other_hazard"]);
+const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["black_ice_suspected", "bridge_overpass_icing", "snow_covered_road", "sleet_freezing_rain", "reduced_visibility", "winter_road_hazard", "road_blocked", "road_impassable", "high_water", "flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "traffic_backup", "other_hazard"]);
 const GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES = Object.freeze([...GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES, "hazard_cleared", "wreck"]);
 const GRIDLY_SUPABASE_TEST_HAZARD_CONFIRMATION = "CLEAR_SUPABASE_TEST_HAZARDS";
 
@@ -58538,6 +58754,10 @@ function gridlyGetSharedRoadHazardReportTypes() {
 
 function gridlyNormalizeSharedRoadHazardType(type = "") {
   const normalized = String(type || "").trim().toLowerCase();
+  if (typeof GridlyHazardNormalization !== "undefined" && !Object.prototype.hasOwnProperty.call(HAZARD_TYPES, normalized)) {
+    const canonical = GridlyHazardNormalization.aliases[normalized.replace(/[ -]+/g, "_")]?.toLowerCase();
+    if (canonical && Object.prototype.hasOwnProperty.call(HAZARD_TYPES, canonical)) return canonical;
+  }
   return normalized === "wreck" ? "crash" : normalized;
 }
 
@@ -58547,7 +58767,7 @@ function gridlyIsHazardDeviceCrossingId(crossingId = "") {
 
 function gridlyIsSharedRoadHazardReportRow(row = {}) {
   const rawType = String(row?.report_type || row?.type || "").trim().toLowerCase();
-  return GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES.includes(rawType);
+  return GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES.includes(gridlyNormalizeSharedRoadHazardType(rawType));
 }
 
 function gridlyIsTxDotReportSource(row = {}) {
@@ -60351,7 +60571,7 @@ function normalizeReports(rows) {
     );
 
     const incomingType = String(row.report_type || "other").toLowerCase();
-    const reportType = incomingType === "wreck" ? "crash" : incomingType;
+    const reportType = gridlyNormalizeSharedRoadHazardType(incomingType);
     const parsedStructuredMetadata = extractOtherHazardStructuredMetadata(row);
     const otherHazardMetadata = reportType === "other_hazard" ? parsedStructuredMetadata : { ...(parsedStructuredMetadata && typeof parsedStructuredMetadata === "object" ? parsedStructuredMetadata : {}), category: reportType };
     const structuredRoadContext = otherHazardMetadata?.canonicalRoadContext && typeof otherHazardMetadata.canonicalRoadContext === "object" ? otherHazardMetadata.canonicalRoadContext : {};
@@ -60392,6 +60612,9 @@ function normalizeReports(rows) {
       : "";
     return {
       id: row.id,
+      legacyReportType: row.report_type,
+      normalizedEvent: typeof GridlyHazardNormalization !== "undefined" ? GridlyHazardNormalization.community(row) : null,
+      lifecycleState: row.lifecycleState || row.lifecycle || row.status || undefined,
       persistedReportId: persistedReportId || null,
       explicitLifecycleTargetRaw: explicitLifecycleTargetRaw || null,
       lifecycleIdentity: lifecycleIdentity || null,
@@ -60418,7 +60641,7 @@ function normalizeReports(rows) {
       communityKey: otherHazardMetadata?.communityKey || otherHazardMetadata?.placeGeoid || recoveredPlaceIdentity?.communityKey || "",
       placeGeoid: otherHazardMetadata?.placeGeoid || otherHazardMetadata?.communityKey || recoveredPlaceIdentity?.placeGeoid || "",
       icon: isHazard ? copy.icon : "",
-      severity: row.severity || copy.severity,
+      severity: row.severity || "unknown",
       title: isHazard
         ? `${copy.icon} ${otherHazardSubtype ? getOtherHazardSubtypeLabel(otherHazardSubtype) : copy.label}`
         : `${row.crossing_name || "Crossing"} ${copy.shortTitle}`,
@@ -61243,7 +61466,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
       priorityRank: railHierarchyConfig.priorityRank
     });
 
-    const crossingMarkerCategory = hasActiveIssue ? "rail_blockage_delay" : "crossing_infrastructure";
+    const crossingMarkerCategory = hasActiveIssue ? getGridlyProductionMarkerCategory(report || {}, "rail_blockage_delay") : "crossing_infrastructure";
     const crossingMarkerAsset = getGridlyProductionMarkerAsset(crossingMarkerCategory);
     const crossingMarkerVisualScale = hasActiveIssue ? 1 : getGridlyCrossingMarkerVisualScale();
     const crossingMarkerStreetZoomSizeApplied = !hasActiveIssue && crossingMarkerVisualScale > 1;
@@ -61258,7 +61481,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
     const icon = L.divIcon({
       className: `gridly-production-marker-icon gridly-crossing-production-marker-icon ${crossingMarkerCategory === "crossing_infrastructure" ? `gridly-crossing-infrastructure-marker-icon ${crossingMarkerSizeClass}` : "gridly-crossing-active-delay-marker-icon"} ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}`,
       html: `<div class="gridly-marker-wrap gridly-crossing-marker-wrap ${crossingMarkerStreetZoomSizeApplied ? "gridly-crossing-street-zoom-marker-size" : ""} ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" style="--gridly-production-marker-anchor-x:${sanitizeText(String(crossingMarkerAnchor[0]))}px; --gridly-production-marker-anchor-y:${sanitizeText(String(crossingMarkerAnchor[1]))}px;" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}" data-infrastructure-opacity="${sanitizeText(String(CROSSING_INFRASTRUCTURE_MARKER_OPACITY))}" data-crossing-marker-visual-scale="${sanitizeText(String(crossingMarkerVisualScale))}" data-crossing-marker-street-zoom-size-applied="${sanitizeText(String(crossingMarkerStreetZoomSizeApplied))}" data-gridly-marker-owner="crossing_inventory">
-        <div class="gridly-crossing-marker has-production-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}" ${railVisualMetadata.attributes} data-category="${sanitizeText(crossingMarkerCategory)}" data-marker-category="${sanitizeText(crossingMarkerCategory)}" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetPath)}" data-state="${sanitizeText(railVisualState)}" data-gridly-marker-owner="crossing_inventory" aria-label="${sanitizeText(hasActiveIssue ? "Train delay" : "Crossing infrastructure")}">
+        <div class="gridly-crossing-marker has-production-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}" ${railVisualMetadata.attributes} data-category="${sanitizeText(crossingMarkerCategory)}" data-marker-category="${sanitizeText(crossingMarkerCategory)}" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetPath)}" data-state="${sanitizeText(railVisualState)}" data-gridly-marker-owner="crossing_inventory" aria-label="${sanitizeText(hasActiveIssue ? GridlyMarkerRegistry.resolve(crossingMarkerCategory).label : "Crossing infrastructure")}">
           <img class="gridly-production-marker-img" src="${sanitizeText(crossingMarkerAsset.assetPath)}" alt="" aria-hidden="true" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetName)}" onload="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')" onerror="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')" />
         </div>
         ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
@@ -61564,11 +61787,25 @@ function getHazardMetadata(type = "") {
 }
 
 function getGridlyProductionMarkerCategory(incident = {}, fallbackCategory = "other_hazard") {
+  const winterCondition = incident.normalizedEvent?.condition || (typeof GridlyHazardNormalization !== "undefined" ? GridlyHazardNormalization.aliases[String(incident.submittedHazardType || incident.report_type || incident.type || fallbackCategory).trim().toLowerCase().replace(/[\s-]+/g, "_")] : null);
+  if (winterCondition && GRIDLY_WINTER_MARKER_ASSETS[winterCondition]) return winterCondition.toLowerCase();
+  if (incident.normalizedEvent?.authorityClass === "COMMUNITY_OBSERVATION" && incident.normalizedEvent.condition === "ROAD_BLOCKED") return "road_blocked";
   const normalizedFallback = getHazardCategory(fallbackCategory);
-  const subtype = normalizedFallback === "other_hazard" ? resolveOtherHazardSubtypeFromRecord(incident) : "";
+  const subtype = resolveOtherHazardSubtypeFromRecord(incident);
   if (subtype && GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[subtype]) return subtype;
 
-  const rawType = String(incident?.report_type || incident?.type || incident?.category || fallbackCategory || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const rawType = String(incident?.submittedHazardType || incident?.legacyReportType || incident?.report_type || incident?.type || incident?.category || fallbackCategory || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  // Legacy closure strings in community rows are observations, never official orders.
+  if (["road_closed", "road_closure", "closure", "txdot_closure"].includes(rawType) && incident.normalizedEvent?.authorityClass !== "OFFICIAL_PUBLIC") return "road_blocked";
+  if (rawType === "rail" && normalizedFallback === "rail_blockage_delay") return "rail_blockage_delay";
+  const explicitCategory = GridlyMarkerRegistry.aliases[rawType];
+  if (!explicitCategory || ["other_hazard", "txdot_other"].includes(explicitCategory)) {
+    const specific = [incident.normalizedEvent?.condition, incident.type, incident.hazardType].map(value => GridlyMarkerRegistry.aliases[String(value || "").toLowerCase().replace(/[\s-]+/g, "_")]).find(value => value && !["other_hazard", "txdot_other", "road_closed"].includes(value));
+    if (specific) return specific;
+  }
+  if (explicitCategory) return explicitCategory;
+  const normalizedConditionCategory = GridlyMarkerRegistry.aliases[String(incident.normalizedEvent?.condition || "").toLowerCase()];
+  if (normalizedConditionCategory) return normalizedConditionCategory;
   const rawHazardCategory = getHazardCategory(rawType);
   if (rawHazardCategory === "rail_blockage_delay") return "rail_blockage_delay";
   if (rawType === "rail_crossing_infrastructure" || rawType === "crossing_infrastructure") return rawType;
@@ -61637,8 +61874,8 @@ function queueGridlyProductionMarkerDimensionProbe(assetName = "") {
 }
 
 function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
-  const expectedSize = GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE;
   return GRIDLY_PRODUCTION_MARKER_ASSETS.map((filename) => {
+    const expected = Object.values(GridlyMarkerRegistry.entries).find(e => e.asset === filename);
     queueGridlyProductionMarkerDimensionProbe(filename);
     const renderedDimensions = getGridlyProductionMarkerRenderedImageDimensions(auditDocument, filename);
     const probedDimensions = GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.get(filename) || {};
@@ -61647,15 +61884,15 @@ function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
     const status = renderedDimensions?.status || probedDimensions.status || "pending";
     const hasMeasuredDimensions = measuredWidth > 0 && measuredHeight > 0;
     const dimensionResolved = hasMeasuredDimensions || status === "failed";
-    const naturalWidth = hasMeasuredDimensions ? measuredWidth : (status === "failed" ? measuredWidth : expectedSize);
-    const naturalHeight = hasMeasuredDimensions ? measuredHeight : (status === "failed" ? measuredHeight : expectedSize);
+    const naturalWidth = hasMeasuredDimensions ? measuredWidth : (status === "failed" ? measuredWidth : expected.width);
+    const naturalHeight = hasMeasuredDimensions ? measuredHeight : (status === "failed" ? measuredHeight : expected.height);
     return {
       filename,
       assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${filename}`,
       naturalWidth,
       naturalHeight,
-      expectedSizePass: naturalWidth === expectedSize && naturalHeight === expectedSize,
-      expectedMasterSize: `${expectedSize}x${expectedSize}`,
+      expectedSizePass: naturalWidth === expected.width && naturalHeight === expected.height,
+      expectedMasterSize: `${expected.width}x${expected.height}`,
       status,
       dimensionResolved,
       dimensionSource: hasMeasuredDimensions
@@ -61666,13 +61903,8 @@ function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
 }
 
 function getGridlyProductionMarkerAsset(category = "other_hazard") {
-  const normalizedCategory = String(category || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
-  const assetName = GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedCategory] || GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS.other_hazard;
-  return {
-    category: normalizedCategory || "other_hazard",
-    assetName,
-    assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`
-  };
+  const entry = GridlyMarkerRegistry.resolve(category);
+  return { category: entry.condition, assetName: entry.asset, assetPath: GRIDLY_PRODUCTION_MARKER_BASE_PATH + entry.asset, family: entry.family, displaySize: entry.size };
 }
 
 function markGridlyProductionMarkerAssetLoad(assetName = "", status = "attempted") {
@@ -61729,11 +61961,11 @@ function buildGridlyProductionMarkerAudit() {
   const productionMarkerAssetDimensionPass = assetDimensionFailures.length === 0;
   const productionMarkerDisplaySize = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE;
   const requiredAssetMappings = {
-    road_closed: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}road-closed.png`,
-    flooding: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}water-over-road.png`,
-    rail_blockage_delay: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}train-front.png`
+    road_closed: getGridlyProductionMarkerAsset("road_closed").assetPath,
+    flooding: getGridlyProductionMarkerAsset("flooding").assetPath,
+    rail_blockage_delay: getGridlyProductionMarkerAsset("rail_blockage_delay").assetPath
   };
-  const railCrossingCategories = assetToCategories["rail-crossing.png"] || [];
+  const railCrossingCategories = assetToCategories[GridlyMarkerRegistry.entries.crossing_infrastructure.asset] || [];
   const railCrossingReservedForInfrastructure = railCrossingCategories.every((category) => /crossing|infrastructure|^rail$/.test(category));
   const activeProductionMarkerOpacityPass = !renderedProductionMarkerDomAudit.markerFound
     || ["1", ""].includes(String(renderedProductionMarkerDomAudit.markerComputedOpacity || ""))
@@ -61746,12 +61978,13 @@ function buildGridlyProductionMarkerAudit() {
       hazardGeneration: "Hazards are normalized through getUnifiedIncidents/getHazardCategory, deduped, lifecycle-filtered by gridlyIncidentEligibleForMapMarker, then rendered into unifiedIncidentLayer.",
       clusteringBehavior: "No hazard MarkerClusterGroup ownership detected in this path; existing unifiedIncidentLayer layering is preserved.",
       productionPngMarkersEnabled: true,
-      productionPngExpectedMasterSize: `${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}x${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}`,
+      productionSvgMarkersEnabled: false,
+      productionPngExpectedMasterSize: "owner-source dimensions per registry",
       productionMarkerDisplaySize: `${productionMarkerDisplaySize}x${productionMarkerDisplaySize}`,
       productionPngAssetDimensionPass: productionMarkerAssetDimensionPass,
       visualRenderingMergeGate: productionMarkerAssetDimensionPass
-        ? "PASS: every production marker PNG master reports 256x256."
-        : "BLOCKED: do not merge additional visual rendering until every production marker PNG master reports 256x256."
+        ? "PASS: every approved PNG matches its owner-source dimensions; owner visual review is still required."
+        : "BLOCKED: do not merge additional visual rendering until every approved PNG matches its owner-source dimensions; owner visual review is still required."
     },
     categories: categoryAssetRows,
     missingMappings,
@@ -62533,6 +62766,11 @@ function gridlyIsClearedHazardAwarenessRecord(record = {}) {
 
 function getGridlyLightweightLifecycleState(item = {}) {
   if (!item || typeof item !== "object") return "inactive";
+  if (typeof GridlyHazardNormalization !== "undefined") {
+    const normalizedState = GridlyHazardNormalization.lifecycle(item);
+    if (["RESOLVED", "EXPIRED", "CANCELLED", "UNKNOWN"].includes(normalizedState)) return normalizedState.toLowerCase();
+    if (item.normalizedEvent && !GridlyHazardNormalization.isActive(item.normalizedEvent)) return item.normalizedEvent.lifecycle.toLowerCase();
+  }
   if (item.expired) return "expired";
   if (gridlyIsClearedHazardAwarenessRecord(item)) return "cleared";
   const explicitState = String(item?.status || item?.lifecycleState || item?.lifecycle || item?.state || item?.raw?.status || item?.raw?.lifecycleState || item?.raw?.lifecycle || item?.raw?.state || "").toLowerCase();
@@ -62645,6 +62883,11 @@ function normalizeGridlyLightweightCategoryValue(value = "") {
 }
 
 function getGridlyLightweightCategoryLabel(category = "unknown") {
+  const key = String(category).toLowerCase().replace(/[ -]+/g, "_");
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[key]) {
+    const event = GridlyHazardNormalization.community({type:key});
+    if (event.markerFamily === "winter" || ["ROAD_BLOCKED", "ROAD_IMPASSABLE", "HIGH_WATER"].includes(event.condition)) return event.condition.toLowerCase();
+  }
   const normalized = normalizeGridlyLightweightCategoryValue(category);
   if (!normalized || normalized === "unknown") return "unknown";
   if (/flood|standing water|high water/.test(normalized)) return "flooding";
@@ -62959,8 +63202,9 @@ function buildGridlyLightweightActiveHeadline(category = "unknown", location = {
     ? (/^(?:\d|north|south|east|west|near\b|on\b|at\b|between\b)/i.test(locationLabel) ? "" : (location?.locationSpecificityLevel === "nearby_phrase" ? "near" : "on"))
     : "nearby";
   const locationPhrase = hasLocation ? `${preposition ? ` ${preposition} ` : " "}${locationLabel}` : " nearby";
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[category] && (["winter", "other_hazard"].includes(GridlyHazardNormalization.community({type:category}).markerFamily) || ["ROAD_BLOCKED", "HIGH_WATER"].includes(GridlyHazardNormalization.community({type:category}).condition))) return `${GridlyHazardNormalization.label(GridlyHazardNormalization.community({type:category}))}${locationPhrase}`;
   if (category === "flooding") return `Flooding${hasLocation ? locationPhrase : " nearby"}`;
-  if (category === "road closure") return `Road closure reported${locationPhrase}`;
+  if (category === "road closure") return `Road appears blocked${locationPhrase}`;
   if (category === "debris") return `Debris in Road reported${locationPhrase}`;
   if (category === "traffic_backup") return `Traffic Backup reported${locationPhrase}`;
   if (category === "rail") return `Train Blocking Crossing${hasLocation ? ` near ${locationLabel}` : ""}`;
@@ -77022,6 +77266,13 @@ function ensureUnifiedIncidentLayerOnMap() {
 }
 
 function gridlyIncidentEligibleForMapMarker(incident = {}) {
+  if (typeof GridlyHazardNormalization !== "undefined") {
+    const event = incident.normalizedEvent || incident.latestReport?.normalizedEvent;
+    const state = GridlyHazardNormalization.lifecycle(incident);
+    if (["RESOLVED", "EXPIRED", "CANCELLED"].includes(state) || (event && !GridlyHazardNormalization.isActive(event))) return false;
+    const winter = event?.markerFamily === "winter" || GridlyHazardNormalization.definitions[GridlyHazardNormalization.aliases[String(incident.report_type || incident.type || "").toLowerCase()]]?.[1] === "winter";
+    if (typeof activeGeoFilter !== "undefined" && activeGeoFilter === "active-delays" && winter && event?.advisory !== "EXPECT_DELAYS") return false;
+  }
   const type = String(incident?.report_type || incident?.type || "").trim().toLowerCase();
   const status = String(incident?.status || incident?.state || "").trim().toLowerCase();
   const lifecycleState = String(incident?.lifecycleState || incident?.lifecycle || incident?.lifecycle_state || "").trim().toLowerCase();
@@ -83832,6 +84083,7 @@ function getMapSeverityClass(incident){
 
 function getUnifiedIncidentIcon(incident){
   if (incident.status === "cleared") return "✓";
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.definitions[GridlyHazardNormalization.aliases[String(incident.report_type || incident.type || "").toLowerCase()]]?.[1] === "winter") return "❄";
   const m={rail_blocked:"⛔", rail_delay:"🚦", wreck:"🚗", flooding:"🌊", construction:"🚧", closure:"⛔", debris:"⚠️", disabled_vehicle:"🚙", traffic_backup:"🚦", cleared:"✓"};
   return m[incident.type]||"❗";
 }
@@ -83843,6 +84095,8 @@ let lastGridlyCrossingPopupConsumerState = null;
 function getGridlyHazardConsumerTitle(incident = {}) {
   const subtype = resolveOtherHazardSubtypeFromRecord(incident);
   if (subtype) return getOtherHazardSubtypeLabel(subtype);
+  const normalized = incident.normalizedEvent;
+  if (typeof GridlyHazardNormalization !== "undefined" && (normalized || GridlyHazardNormalization.aliases[String(incident.report_type || incident.type || "").toLowerCase()])) return GridlyHazardNormalization.label(normalized || GridlyHazardNormalization.community(incident));
   const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
   return (typeof formatRoadHazardCategoryLabel === "function" ? formatRoadHazardCategoryLabel(category) : HAZARD_TYPES?.[category]?.label) || "Other Hazard";
 }
@@ -84261,7 +84515,7 @@ function buildGridlyHazardPopupConsumerModel(incident = {}, options = {}) {
   const reportCountLine = trustModel.reportCountLine;
   const freshnessLine = formatGridlyHazardPopupFreshnessLine(incident);
   const confidenceLine = trustModel.trustLine;
-  const guidanceLine = /(?:flood|water|closed|closure|crash|wreck|debris|power|livestock|disabled|traffic|construction)/i.test(title)
+  const guidanceLine = incident.normalizedEvent?.markerFamily === "winter" ? "Use caution on winter roads." : /(?:flood|water|closed|closure|crash|wreck|debris|power|livestock|disabled|traffic|construction)/i.test(title)
     ? "Expect slower travel and use caution."
     : "Check current alerts before leaving.";
   gridlyAddPopupAuditDuration(auditRow, "narrativeDurationMs", stepStart);
@@ -84305,7 +84559,7 @@ function getGridlyCrossingPopupTitle(incident = {}) {
   const popupState = resolveGridlyCrossingPopupState(incident);
   const typeText = String(incident?.report_type || incident?.reportType || incident?.type || incident?.eventType || incident?.title || "").toLowerCase();
   if (popupState === "recently_cleared") return "Crossing Clear";
-  if (popupState === "no_report") return "Report a Crossing Issue";
+  if (popupState === "no_report") return "Crossing Location";
   if (/\b(?:heavy|delay|delayed|rail_delay|train)\b/.test(typeText)) return "Train Blocking Crossing";
   return "Crossing Blocked";
 }
@@ -84355,7 +84609,7 @@ function buildGridlyCrossingPopupConsumerModel(incident = {}, options = {}) {
   let stepStart = gridlyNowMs();
   const popupState = resolveGridlyCrossingPopupState(incident);
   const canonicalPresentation = gridlyBuildCanonicalLiveIncidentPresentation(incident);
-  const title = canonicalPresentation.title || getGridlyCrossingPopupTitle(incident);
+  const title = popupState === "no_report" ? getGridlyCrossingPopupTitle(incident) : (canonicalPresentation.title || getGridlyCrossingPopupTitle(incident));
   gridlyAddPopupAuditDuration(auditRow, "narrativeDurationMs", stepStart);
   stepStart = gridlyNowMs();
   const lp023ConsumerLocation = typeof gridlyLp023ResolveConsumerLocation === "function" ? gridlyLp023ResolveConsumerLocation(incident, { adapterType: "crossing" }) : null;
@@ -85168,6 +85422,7 @@ function normalizeGridlyAlertCardLocationLabel(alert = {}) {
 }
 
 function gridlyAlertsPresentationSourceClass(record = {}) {
+  if (record.normalizedEvent?.authorityClass === "COMMUNITY_OBSERVATION" && record.normalizedEvent?.condition !== "RAIL_CROSSING_CONDITION") return "community_report";
   const ownership = typeof globalThis !== "undefined" ? globalThis.gridlyAlertSemanticContract?.sourceOwnership?.(record) : null;
   if (ownership === "OFFICIAL_ROADWAY") return "official_roadway";
   if (ownership === "WEATHER") return "weather_provider";
@@ -86663,7 +86918,8 @@ counter.textContent = "Road conditions appear calm";
       <button type="button" data-action="open-hazard-placement" data-hazard-type="crash">🚗 Crash / Wreck</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="disabled_vehicle">🚙 Disabled Vehicle</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="debris">⚠️ Debris in Road</button>
-      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_closed">⛔ Road Closed</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_blocked">⚠ Road appears blocked</button>
+      <details><summary>Winter road conditions</summary>${GridlyHazardNormalization.winterOptions.map(option => `<button type="button" data-action="open-hazard-placement" data-hazard-type="${option.type}">${option.label}</button>`).join("")}</details>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="construction">🚧 Construction</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="traffic_backup">🚦 Traffic Backup / Heavy Delay</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="other_hazard">❗ Other Hazard</button>
@@ -91581,31 +91837,31 @@ function injectHazardStyles() {
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="crash"] {
-      --gridly-production-marker-artwork-scale: 1.52;
+      --gridly-production-marker-artwork-scale: 1;
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="road_closed"] {
-      --gridly-production-marker-artwork-scale: 1.48;
+      --gridly-production-marker-artwork-scale: 1;
     }
 
-    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"], [data-marker-category="ice"]) {
-      --gridly-production-marker-artwork-scale: 1.4;
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"]) {
+      --gridly-production-marker-artwork-scale: 1;
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="debris"] {
-      --gridly-production-marker-artwork-scale: 1.73;
+      --gridly-production-marker-artwork-scale: 1;
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="traffic_backup"] {
-      --gridly-production-marker-artwork-scale: 1.9;
+      --gridly-production-marker-artwork-scale: 1;
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="traffic_signal_issue"] {
-      --gridly-production-marker-artwork-scale: 1.83;
+      --gridly-production-marker-artwork-scale: 1;
     }
 
     #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] {
-      --gridly-production-marker-artwork-scale: 1.26;
+      --gridly-production-marker-artwork-scale: 1;
     }
 
     #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
@@ -95416,6 +95672,8 @@ function normalizeGridlySearchResult(result) {
     localPoiSeed: Boolean(result.localPoiSeed || rawPayload?.localSeed),
     display_name: displayName || "",
     placeGeoid: result.placeGeoid || rawPayload?.placeGeoid || null,
+    requestedOperationalCountyId: result.requestedOperationalCountyId || rawPayload?.requestedOperationalCountyId || null,
+    countyId: result.countyId || rawPayload?.countyId || rawPayload?.countyContextId || null,
     countyMemberships: Array.isArray(result.countyMemberships)
       ? [...result.countyMemberships]
       : (Array.isArray(rawPayload?.countyMemberships) ? [...rawPayload.countyMemberships] : []),
@@ -97738,13 +97996,7 @@ function setGridlyDestinationMarker(result, options = {}) {
   let marker = null;
   try {
     const destinationTitle = String(normalized.title || normalized.address || "Selected destination");
-    const destinationIcon = window.L.divIcon({
-      className: "gridly-destination-signature-icon",
-      html: `<div class="gridly-destination-signature-marker" data-gridly-map-owner="destination" data-gridly-visual-state="destination_selected" data-gridly-selected="true" aria-hidden="true"><span class="gridly-destination-ring"></span><span class="gridly-destination-core"></span></div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      popupAnchor: [0, -18]
-    });
+    const destinationIcon = getGridlyNavigationMarkerIcon("trip_destination");
     marker = window.L.marker([coordinates.lat, coordinates.lng], {
       title: destinationTitle,
       icon: destinationIcon,
@@ -101896,7 +102148,7 @@ function describeGridlySettingsPlace(place, fallbackLabel) {
 }
 
 function getGridlySettingsAwarenessAreaDisplay() {
-  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea({ homeOnly: true }) : null;
   if (!area) {
     return {
       label: "Not selected",
@@ -102430,6 +102682,7 @@ function gridlySaveCanonicalMultiCountyPlaceHome(result = {}, source = "canonica
   const record = { zip: "", countyId: requestedCountyId, countyName: requestedCounty.name, countyMemberships: [...(result.countyMemberships || [])], communityKey: result.placeGeoid, communityLabel: result.community, awarenessAreaKey: `place-${result.placeGeoid}`, consumerLabel: result.community, identityType: "PLACE_GEOID", canonicalRegionId: null, resolutionStatus: "manual_confirmed", resolutionMethod: source, sourceVersion: "LP217", confirmedAt: new Date().toISOString(), schemaVersion: GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION };
   const validation = gridlyLp0517ValidateHomeRecord(record);
   if (!validation.valid) return false;
+  if (typeof gridlyClearTemporaryAwarenessContext === "function") gridlyClearTemporaryAwarenessContext({ refresh: false });
   try {
     localStorage.setItem(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY, JSON.stringify(record));
     gridlySafeLocalStorageSet("gridlyHomeTown", result.community);
@@ -106668,6 +106921,7 @@ function getCorridorSeverityTheme(severityLabel = "Clear") {
 const ROAD_HAZARD_DISPLAY_CATEGORIES = new Set(["road_closed", "flooding", "crash", "construction", "disabled_vehicle", "debris", "traffic_backup", "other_hazard"]);
 
 function formatRoadHazardCategoryLabel(category) {
+  if (typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.aliases[category]) return GridlyHazardNormalization.label(GridlyHazardNormalization.community({ type: category }));
   const labels = {
     road_closed: "Road Closed",
     flooding: "Flooding",
@@ -109381,6 +109635,22 @@ function gridlyLp0393ConsumerDriveTexasPopupHtml(situation) {
 
 
 function gridlyOfficialRoadwayPresentationCategory(record = {}) {
+  const raw = String(record.category || record.type || record.hazardType || record.title || record.description || "").trim().toLowerCase();
+  const normalized = record.normalizedEvent;
+  if (normalized?.advisory === "ROAD_CLOSED" || /\b(?:closure|closed)\b/.test(raw.replace(/_/g, " "))) return "txdot_closure";
+  if (/^(?:incident|roadway[_ ]incident|txdot_incident|travel advisory|txdot_other|other|hazard)$/i.test(raw)) {
+    const specific = [record.hazardType, record.type, normalized?.condition].map(value => GridlyMarkerRegistry.aliases[String(value || "").toLowerCase().replace(/[\s-]+/g, "_")]).find(value => value && !["other_hazard", "txdot_other", "road_closed"].includes(value));
+    if (specific) return specific;
+  }
+  const exact = GridlyMarkerRegistry.aliases[raw.replace(/[\s-]+/g, "_")];
+  if (exact) return exact === "construction" ? "txdot_construction" : exact;
+  if (/disabled|stalled/.test(raw)) return "disabled_vehicle";
+  if (/traffic.*(?:backup|delay)|congestion/.test(raw)) return "traffic_backup";
+  if (/bridge|weight restriction/.test(raw)) return "txdot_bridge_restriction";
+  if (/damage/.test(raw)) return "txdot_damage";
+  if (/debris/.test(raw)) return "debris";
+  if (/incident/.test(raw) && !/crash|collision|accident/.test(raw)) return "txdot_incident";
+  if (/hazard/.test(raw)) return "txdot_hazard";
   const category = gridlyLp019OfficialCategory(record).label.toLowerCase();
   if (/flood|high water/.test(category)) return "txdot_flooding";
   if (/clos|closed/.test(category)) return "txdot_closure";
@@ -109473,7 +109743,8 @@ function gridlyLp0452RecordOfficialMarkerConstructionFailure(trace, stage, error
 }
 
 function gridlyBuildOfficialRoadwayProductionMarkerIcon(record = {}) {
-  const productionMarkerCategory = gridlyOfficialRoadwayPresentationCategory(record);
+  const winterCategory = getGridlyProductionMarkerCategory(record, record.category);
+  const productionMarkerCategory = GRIDLY_WINTER_MARKER_ASSETS[String(winterCategory).toUpperCase()] ? winterCategory : gridlyOfficialRoadwayPresentationCategory(record);
   const productionMarkerAsset = getGridlyProductionMarkerAsset(productionMarkerCategory);
   const productionMarkerAnchor = getGridlyProductionMarkerAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);
   const productionMarkerPopupAnchor = getGridlyProductionMarkerPopupAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);
@@ -115341,6 +115612,8 @@ function gridlyOfficialSituationTimeframe(record = {}, sourceType = "official-ro
 function buildGridlyOfficialSituationAlert(record = {}, sourceType = "official-roadways") {
   if (!record || typeof record !== "object") return null;
   const isWeather = sourceType === "weather";
+  const normalizedEvent = record.normalizedEvent;
+  if (normalizedEvent && typeof GridlyHazardNormalization !== "undefined" && !GridlyHazardNormalization.isActive(normalizedEvent)) return null;
   const category = String(record.category || record.event || record.title || (isWeather ? "Weather" : "Travel Advisory")).trim();
   const location = gridlyOfficialSituationLocation(record, sourceType);
   const sourceLabel = isWeather ? "Weather" : "Official Roadways";
@@ -115353,11 +115626,12 @@ function buildGridlyOfficialSituationAlert(record = {}, sourceType = "official-r
   const impact = presentation?.impactSentence || (isWeather
     ? "Heavy rainfall, reduced visibility, wind, or severe conditions may affect travel."
     : (/construction|lane|work/i.test(category) ? "Expect delays." : "Use caution and expect changing travel conditions."));
-  const displayTitle = presentation?.title || category;
+  const displayTitle = normalizedEvent?.authorityClass === "OFFICIAL_PUBLIC" && typeof GridlyHazardNormalization !== "undefined" && GridlyHazardNormalization.advisories[normalizedEvent.advisory] === "AUTHORIZED_ONLY" ? GridlyHazardNormalization.label(normalizedEvent) : presentation?.title || category;
   const timeframe = gridlyOfficialSituationTimeframe(record, sourceType);
   const id = `official-situation-${sourceType}-${String(record.id || record.title || location).replace(/[^a-z0-9_-]+/gi, "-").slice(0, 72)}`;
   return {
     id,
+    normalizedEvent,
     providerId: isWeather ? "weather" : "drivetexas",
     reportKind: "official-situation",
     situationType: isWeather ? "weather-event" : category,
@@ -115799,6 +116073,12 @@ function isRecentlyCleared(report, now = Date.now()) {
 
 function getIncidentLifecycleState(report, now = Date.now()) {
   if (!report) return "inactive";
+  if (typeof GridlyHazardNormalization !== "undefined") {
+    const lifecycle = GridlyHazardNormalization.lifecycle(report, now);
+    if (lifecycle === "CANCELLED" || lifecycle === "EXPIRED" || lifecycle === "UNKNOWN") return "inactive";
+    if (lifecycle === "RESOLVED" && !isClearedReportType(report.type || report.report_type)) return "cleared";
+    if (report.normalizedEvent && !GridlyHazardNormalization.isActive(report.normalizedEvent, now)) return "inactive";
+  }
   const explicitState = String(report.status || report.lifecycleState || report.lifecycle || report.state || report.raw?.status || report.raw?.lifecycleState || report.raw?.lifecycle || report.raw?.state || "").trim().toLowerCase();
   const reportType = report.type || report.report_type || report.reportType || report.raw?.type || report.raw?.report_type || report.raw?.reportType || explicitState;
   if (isClearedReportType(reportType) || isClearedReportType(explicitState) || ["cleared", "recently_cleared", "historical", "stale"].includes(explicitState)) {
@@ -118558,7 +118838,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     { label: "Crash / Wreck", type: "crash" },
     { label: "Disabled Vehicle", type: "disabled_vehicle" },
     { label: "Debris in Road", type: "debris" },
-    { label: "Road Closed", type: "road_closed" },
+    { label: "Road appears blocked", type: "road_blocked" },
     { label: "Construction", type: "construction" },
     { label: "Traffic Backup / Heavy Delay", type: "traffic_backup" },
     { label: "Other Hazard", type: "other_hazard" }
@@ -120448,6 +120728,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return `<div class="gridly-v2-report-picker" data-v2-report-hazard-picker>
       <p class="gridly-v2-sheet-copy gridly-v2-report-prompt"><strong>What are you seeing?</strong><span>Choose the closest match.</span></p>
       <div class="gridly-v2-tiles gridly-v2-report-tiles">${primaryOptionsHtml}</div>
+      <details class="settings-list-section" data-v2-winter-hazards><summary class="settings-list-summary"><span class="settings-list-title">Winter road conditions</span><span class="settings-list-meta">Ice, snow and visibility</span></summary><div class="gridly-v2-tiles gridly-v2-report-tiles">${GridlyHazardNormalization.winterOptions.map(option => `<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div></details>
       <details class="gridly-v2-other-hazard-subtypes settings-list-section" data-v2-other-hazard-subtypes hidden>
         <summary class="settings-list-summary gridly-v2-other-hazard-summary"><span class="settings-list-title">Other Hazard</span><span class="settings-list-meta">Choose subtype</span></summary>
         <div class="gridly-v2-list settings-list-detail gridly-v2-other-hazard-subtype-list">

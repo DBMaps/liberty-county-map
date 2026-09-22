@@ -1,0 +1,96 @@
+{
+  "phase": "LP244.46",
+  "branch": "LP244.46-hazard-advisory-winter-normalization",
+  "startingHead": "6c5504b38d7aa1dbffb41586fda6b0ec1f337aac",
+  "auditBeforeRuntimeEdits": true,
+  "findings": [
+    {
+      "surface": "reporting UI",
+      "owners": [
+        "js/app.js:HAZARD_TYPES",
+        "ROAD_HAZARD_TYPE_OPTIONS",
+        "V2_REPORT_HAZARD_OPTIONS",
+        "legacy hazard placement buttons"
+      ],
+      "issue": "Ice omitted; legacy road_closed exposes authoritative wording."
+    },
+    {
+      "surface": "protocol / database",
+      "owners": [
+        "js/gridly-report-protocol.js",
+        "supabase/migrations/20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql"
+      ],
+      "issue": "Protocol v2 exact field allowlist; arbitrary nonempty report_type and severity; source forced user by RPC. Keep persistence contract, expiry/admission/mutation unchanged."
+    },
+    {
+      "surface": "normalization / lifecycle",
+      "owners": [
+        "normalizeReports",
+        "getGridlyLightweightLifecycleState",
+        "GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES"
+      ],
+      "issue": "No independent authority/advisory/severity; missing severity inherits category; resolved/cancelled not explicitly excluded by lightweight lifecycle."
+    },
+    {
+      "surface": "consumer labels / KBYG / Active Issues",
+      "owners": [
+        "js/gridlyConditionDisplayLabel.js",
+        "gridlyBuildCanonicalLiveIncidentPresentation",
+        "getGridlyHazardConsumerTitle",
+        "formatRoadHazardCategoryLabel",
+        "buildGridlyLightweightActiveHeadline"
+      ],
+      "issue": "Multiple label owners; road closure/physical obstruction conflated."
+    },
+    {
+      "surface": "markers",
+      "owners": [
+        "HAZARD_CATEGORY_MAP",
+        "GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS",
+        "getGridlyProductionMarkerCategory"
+      ],
+      "issue": "ice maps to water-over-road.png; flooding-specific CSS includes ice."
+    },
+    {
+      "surface": "DriveTexas",
+      "owners": [
+        "js/gridlyDriveTexasProvider.js:normalizeRecord"
+      ],
+      "issue": "Preserves source line geometry separately from marker centroid; category closure pattern also matches blocked. Add independent trusted normalized projection, retain original fields."
+    },
+    {
+      "surface": "NWS",
+      "owners": [
+        "js/gridlyWeatherProvider.js:normalizeRecord"
+      ],
+      "issue": "Weather phenomena must remain weather; preserve source polygon rather than only geometry audit."
+    },
+    {
+      "surface": "crossings / aliases",
+      "owners": [
+        "HAZARD_CATEGORY_MAP",
+        "js/gridlyConditionDisplayLabel.js"
+      ],
+      "issue": "blocked/heavy/delayed are rail aliases, not generic road blocked. wreck aliases crash; road_closed remains legacy community physical-obstruction observation."
+    },
+    {
+      "surface": "legal / guidelines",
+      "owners": [
+        "legal/community-guidelines.html"
+      ],
+      "issue": "Existing guidance explicitly says community observations are not official information. No legal/public-site edit necessary."
+    },
+    {
+      "surface": "tests",
+      "owners": [
+        "tests/lp24421-submission-protocol.test.cjs",
+        "tests/lp24445-unified-awareness-context.test.cjs",
+        "tests/lp24445a-temporary-context-controls.test.cjs",
+        "tests/lp24445b-repeated-search-map-focus.test.cjs",
+        "tests/lp043-drivetexas-geometry-preservation-and-authority-repair.test.js"
+      ],
+      "issue": "Add focused normalization tests and browser portrait evidence; preserve known baseline failures separately."
+    }
+  ],
+  "decision": "Derived additive consumer model. No migration or protocol change. New report types use existing nonempty text contract and same governed submission/expiry controls. One winter marker family."
+}

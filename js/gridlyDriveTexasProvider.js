@@ -199,6 +199,7 @@
 
     return freeze({
       id: sourceId || `drivetexas-foundation-${index}`,
+      normalizedEvent: globalScope.GridlyHazardNormalization?.road({ ...record, sourceGeometry }) || null,
       provider: PROVIDER_NAME,
       providerId: PROVIDER_ID,
       category,

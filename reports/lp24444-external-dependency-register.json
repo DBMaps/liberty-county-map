@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "contractVersion": "LP24444.v1",
+  "asOf": "2026-09-21",
+  "scope": "Design decisions and future release gates only; no services activated, credentials created, live backend inspected or costs approved",
+  "dependencies": [
+    {
+      "id": "OSRM_PRODUCTION_CAPACITY",
+      "requiredForLaunch": true,
+      "existing": "Public router.project-osrm.org route/nearest calls in repository; no audited production capacity agreement",
+      "decision": "OSRM-compatible real driving geometry behind a bounded Gridly routing API; production host configuration requires capacity and terms approval",
+      "cost": "Unpriced. Public endpoint is not an unlimited capacity commitment; self-hosting/approved host incurs infrastructure or provider costs",
+      "credentialNeeded": "Depends on selected host; any upstream secret remains server-side",
+      "ownerAction": "Approve forecast, operating budget, provider limits and production hosting choice",
+      "engineeringAction": "Validate forecast peak and 2x peak, coverage, limits, deadline, geometry caps, privacy redaction and per-trip cache; fail closed if provider cannot support forecast",
+      "physicalDeviceAction": "Real rural/urban/long Texas trips through both entry points, timeout/rate-limit behavior",
+      "blockingPhase": "LP244.51 production route activation",
+      "status": "DESIGN_FROZEN_OPERATIONAL_GATE_OPEN",
+      "evidence": [
+        "js/app.js:19558",
+        "js/app.js:99316",
+        "js/app.js:101524",
+        "docs/launch/LP24443-TRAVEL-CONTEXT-MODEL.md"
+      ],
+      "sources": [
+        "https://project-osrm.org/docs/v5.24.0/api/"
+      ]
+    },
+    {
+      "id": "FCM",
+      "requiredForLaunch": true,
+      "existing": "No native push integration/configuration proven by LP244.43 repository audit; account existence not inspected",
+      "decision": "Android FCM native delivery, adapter-versioned registration, owner-controlled test/production configuration",
+      "cost": "Review current provider plan and backend/egress workload before activation; no cost estimate or paid commitment in this plan",
+      "credentialNeeded": "Firebase application configuration and least-privilege server send credentials; no server secret in app/repository",
+      "ownerAction": "Provide project ownership/access and approve operational account/billing policy",
+      "engineeringAction": "Pin compatible native SDK, implement token/probe/refresh, server adapter, bounded TTL and error classification",
+      "physicalDeviceAction": "Android consent/channels, foreground/background/taps, token rotation/reinstall/invalid endpoint",
+      "blockingPhase": "LP244.49 Android integration",
+      "status": "DESIGN_FROZEN_PROVISIONING_OPEN",
+      "evidence": [
+        "docs/launch/LP24443-NOTIFICATION-ARCHITECTURE.md"
+      ],
+      "sources": [
+        "https://firebase.google.com/docs/cloud-messaging/manage-tokens",
+        "https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan"
+      ]
+    },
+    {
+      "id": "APNS",
+      "requiredForLaunch": true,
+      "existing": "Basic iOS Capacitor delegate scaffold; no audited APNs capability/entitlement/registration pipeline",
+      "decision": "Direct APNs adapter for iOS; no dependency on silent background JavaScript",
+      "cost": "Apple developer membership/signing/device/Mac operational costs subject to owner's existing account; no amount assumed",
+      "credentialNeeded": "Apple team/bundle provisioning and server APNs authentication key; sandbox/production separation",
+      "ownerAction": "Supply authorized Apple team access, macOS/Xcode/signing resources and physical iPhone",
+      "engineeringAction": "Prepare shared code on Windows; integrate entitlement/delegates/token callbacks and sign on macOS; rotate private provider keys",
+      "physicalDeviceAction": "Real iPhone registration, foreground/background/terminated tap, Focus/offline/reinstall and distribution-equivalent delivery",
+      "blockingPhase": "LP244.49 iOS integration and LP244.53 certification",
+      "status": "DESIGN_FROZEN_PROVISIONING_OPEN",
+      "evidence": [
+        "docs/launch/LP24443-NOTIFICATION-ARCHITECTURE.md"
+      ],
+      "sources": [
+        "https://developer.apple.com/documentation/usernotifications/setting-up-a-remote-notification-server",
+        "https://developer.apple.com/documentation/usernotifications/pushing-background-updates-to-your-app"
+      ]
+    },
+    {
+      "id": "SUPABASE_WORKLOAD",
+      "requiredForLaunch": true,
+      "existing": "Repository has Supabase report/geocoding/retention and PostGIS foundations, no audited notification queue or subscription service",
+      "decision": "Private schema, limited ownership Edge API, server ingestion/matcher/outbox workers and deletion jobs",
+      "cost": "Measure reads/spatial writes/queue concurrency/Edge invocations/egress/storage and backup footprint against actual plan; not estimated from current repo",
+      "credentialNeeded": "Authorized staging and future production project access; privileged worker/provider secrets held server-side",
+      "ownerAction": "Approve workload budget, deployment authority, operations monitoring and retention/backup policy",
+      "engineeringAction": "Later migration/grant/RLS review, indexed spatial queries, atomic dedupe/leases, rate tests, cleanup monitoring, isolated backup restore with complete notification-private owner-state purge before APIs/workers",
+      "physicalDeviceAction": "Observe end-to-end registration/alerts/delete during outages and restored network",
+      "blockingPhase": "LP244.48 staging implementation; production activation after certification",
+      "status": "DESIGN_FROZEN_CAPACITY_AND_DEPLOYMENT_GATE_OPEN",
+      "evidence": [
+        "docs/launch/LP24443-NOTIFICATION-ARCHITECTURE.md"
+      ],
+      "sources": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ]
+    },
+    {
+      "id": "ROUTING_FALLBACK",
+      "requiredForLaunch": true,
+      "existing": "Public routing and independent destination/awareness foundations; no certified substitute statewide router",
+      "decision": "No synthetic straight-line fallback. New trip stays unavailable when real geometry cannot be acquired; valid active static corridor may persist only until original expiry",
+      "cost": "No new fallback service selected; alternative compatible host cost belongs to OSRM capacity decision",
+      "credentialNeeded": "None for failure UX; alternative host only if separately approved",
+      "ownerAction": "Approve replacement hosting only if capacity gate fails; no new product decision needed to fail safely",
+      "engineeringAction": "10-second routing deadline, explicit Retry, no truncation, no abandoned watch, Quick Check still usable",
+      "physicalDeviceAction": "Timeout/429/offline/invalid geometry and active-corridor outage scenarios",
+      "blockingPhase": "LP244.51 failure acceptance",
+      "status": "FROZEN_NO_SERVICE_ACTIVATION",
+      "evidence": [
+        "docs/launch/LP24444-ROUTE-WATCH-RELEVANCE-CONTRACT.md"
+      ],
+      "sources": []
+    },
+    {
+      "id": "GEOCODING_CAPACITY",
+      "requiredForLaunch": true,
+      "existing": "Governed PLACE/locality/POI search plus geocoding Edge Function/provider paths; production quota not inspected",
+      "decision": "Prefer existing canonical local identities; bounded explicit geocoding requests, no new location-history service",
+      "cost": "Review actual configured provider and aggregate request forecast; paid alternative may be needed, no assumed free unlimited quota",
+      "credentialNeeded": "Depends on configured approved provider; keep upstream private credentials behind existing boundary",
+      "ownerAction": "Approve existing provider limits or an alternative if forecast violates terms",
+      "engineeringAction": "Inventory actual deployment configuration later, cache only policy-allowed nonpersonal results, enforce aggregate limits/attribution; public Nominatim policy precludes treating it as unlimited client autocomplete",
+      "physicalDeviceAction": "Quick Check/Around Me locality resolution, quota/outage/ambiguous results with no Home mutation",
+      "blockingPhase": "LP244.47 provider-dependent acceptance",
+      "status": "EXISTING_FOUNDATION_CAPACITY_GATE_OPEN",
+      "evidence": [
+        "docs/launch/LP24443-TRAVEL-CONTEXT-MODEL.md"
+      ],
+      "sources": [
+        "https://operations.osmfoundation.org/policies/nominatim/"
+      ]
+    },
+    {
+      "id": "DEEP_LINK_DOMAIN_ASSOCIATION",
+      "requiredForLaunch": false,
+      "existing": "Public website exists; association/configuration for native notification targets is not an audited capability",
+      "decision": "Native callback carries validated v1 internal target; launch needs no new public-domain association or public-site edit",
+      "cost": "None added for internal native targets; future external links would require domain operations review",
+      "credentialNeeded": "None for internal parser; future association requires domain/native app ownership",
+      "ownerAction": "None for frozen launch; approve external share links as a separate scope if later desired",
+      "engineeringAction": "Build strict target union/cold-warm dispatcher; reject arbitrary URLs",
+      "physicalDeviceAction": "Real native tap restoration without relying on web-domain association",
+      "blockingPhase": "None for domain; target parser/taps required in LP244.49",
+      "status": "FROZEN_NOT_A_LAUNCH_DEPENDENCY",
+      "evidence": [
+        "docs/launch/LP24444-NOTIFICATION-DEEP-LINK-CONTRACT.md"
+      ],
+      "sources": [
+        "https://capacitorjs.com/docs/apis/push-notifications"
+      ]
+    },
+    {
+      "id": "NOTIFICATION_PROVIDER_ABSTRACTION",
+      "requiredForLaunch": true,
+      "existing": "Diagnostic notification candidate logic only; delivery disabled in current source",
+      "decision": "Small internal FCM/APNs interface with shared eligibility/dedupe; no commercial broker selected",
+      "cost": "Engineering/operations only beyond chosen providers/backend; no broker subscription committed",
+      "credentialNeeded": "FCM/APNs adapter credentials only; no new broker credential",
+      "ownerAction": "None beyond provider access/budget; a future broker requires a separate privacy/cost decision",
+      "engineeringAction": "Versioned opaque registration, accepted/rejected/unknown results, TTL/collapse mapping, redacted observability and rotation",
+      "physicalDeviceAction": "Both transports obey same source/consent/dedupe/expiry and truthful OS limits",
+      "blockingPhase": "LP244.48 interface and LP244.49 integration",
+      "status": "FROZEN_INTERNAL_ABSTRACTION",
+      "evidence": [
+        "js/app.js:105333",
+        "docs/launch/LP24443-NOTIFICATION-ARCHITECTURE.md"
+      ],
+      "sources": []
+    },
+    {
+      "id": "SOURCE_INGESTION_AND_PUBLIC_AUTHORITY",
+      "requiredForLaunch": true,
+      "existing": "NWS point acquisition, DriveTexas geometry and community moderation exist; complete server corridor catalog/polling capacity not certified",
+      "decision": "Full official geometry/catalog, fresh normalized source events; Dispatch private unless separately authorized",
+      "cost": "Source service access/ingestion egress and worker workload require actual forecast; no new source purchase assumed",
+      "credentialNeeded": "Respect source identification/access requirements and any private operational capability; none created now",
+      "ownerAction": "Approve source reuse/attribution and any organization public-projection authority; no Dispatch integration required for launch",
+      "engineeringAction": "Validate complete catalog, replacement IDs, freshness, source terms/capacity and official geometry; no current point feed claimed corridor-complete",
+      "physicalDeviceAction": "Source-specific outage, actual relevant official event and withdrawn authority tests",
+      "blockingPhase": "LP244.50 Home and LP244.51 route delivery",
+      "status": "DESIGN_FROZEN_SOURCE_GATES_OPEN",
+      "evidence": [
+        "docs/launch/LP24443-TRAVEL-AWARENESS-NOTIFICATIONS-HAZARD-AUDIT.md"
+      ],
+      "sources": [
+        "https://www.weather.gov/documentation/services-web-api"
+      ]
+    },
+    {
+      "id": "RETENTION_BACKUPS_AND_DISCLOSURES",
+      "requiredForLaunch": true,
+      "existing": "Existing report retention/legal surfaces; new notification subsystem policy not approved",
+      "decision": "Engineering TTLs are maxima, immediate revocation plus <=15min sensitive purge; purge all installation-owned notification state from isolated restores before access/workers, require explicit reenrollment, no identifying deletion journal",
+      "cost": "Backup/log/cleanup monitoring and review cost depends on actual provider policy and workload",
+      "credentialNeeded": "Authorized operational access to retention/backup settings during later implementation only",
+      "ownerAction": "Approve disclosure/legal retention, actual backup expiration/access restrictions, conservative restore and reenrollment policy, store privacy answers and launch support policy",
+      "engineeringAction": "Verify actual backups/logs/restore isolation; purge restored credentials/tokens/preferences/watches/geometry/identifying ledgers before APIs/workers restart; block activation if enforcement cannot be established",
+      "physicalDeviceAction": "Delete and offline-delete journey plus redacted backend purge/restore evidence",
+      "blockingPhase": "LP244.48 design implementation and before any production activation",
+      "status": "RELEASE_POLICY_REVIEW_OPEN_NOT_ARCHITECTURE_BLOCKER",
+      "evidence": [
+        "docs/launch/LP24444-NOTIFICATION-BACKEND-CONTRACT.md"
+      ],
+      "sources": []
+    },
+    {
+      "id": "NATIVE_SECURE_STORAGE_AND_SIGNED_CANDIDATES",
+      "requiredForLaunch": true,
+      "existing": "Native wrappers exist; ownership secure-store and push-equipped candidates not implemented",
+      "decision": "Keystore-backed encrypted Android store; Keychain ThisDeviceOnly plus reinstall marker on iOS; new signed candidates on both",
+      "cost": "Dependency review, Mac/hardware/signing and maintenance; no paid plugin chosen",
+      "credentialNeeded": "Signing/provisioning access through approved owner-controlled process",
+      "ownerAction": "Provide supported physical hardware and signing/Mac access; approve dependency licenses if needed",
+      "engineeringAction": "Select maintained compatible secure storage implementation or small reviewed bridge, exclude credentials from backup, test reinstall/rotation/deletion",
+      "physicalDeviceAction": "Verify secret lifecycle, restored/reinstalled app behavior and exact candidate matrix",
+      "blockingPhase": "LP244.49 and LP244.53",
+      "status": "IMPLEMENTATION_SELECTION_AND_DEVICE_GATE_OPEN",
+      "evidence": [
+        "docs/launch/LP24444-NATIVE-PUSH-PLAN.md"
+      ],
+      "sources": []
+    }
+  ]
+}

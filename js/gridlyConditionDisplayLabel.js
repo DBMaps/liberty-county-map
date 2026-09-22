@@ -15,7 +15,7 @@
     crash: "Crash / Wreck",
     disabled_vehicle: "Disabled Vehicle",
     debris: "Debris In Road",
-    road_closed: "Road Closed",
+    road_closed: "Road appears blocked",
     construction: "Construction",
     traffic_backup: "Traffic Backup / Heavy Delay",
     other_hazard: "Other Hazard"
@@ -75,6 +75,8 @@
     }
     if (/community|report|road_hazard/.test(sourceFamily)) {
       if (canonicalKey === "other_hazard" && OTHER_HAZARD_SUBTYPE_LABELS[subtype]) return OTHER_HAZARD_SUBTYPE_LABELS[subtype];
+      const normalization = typeof globalThis !== "undefined" ? globalThis.GridlyHazardNormalization : null;
+      if (normalization?.aliases[canonicalKey]) return normalization.label(normalization.community({ type: canonicalKey }));
       if (COMMUNITY_LABELS[canonicalKey]) return COMMUNITY_LABELS[canonicalKey];
     }
     if (/official|roadway|drivetexas|txdot/.test(sourceFamily)) {

@@ -1,0 +1,14 @@
+{
+  "test": "lp243h8-collapsible-landscape-command-panel.test.mjs: superseded milestone geometry defers to the one H10B authority",
+  "baseline": "0305bd35fb43e62e21190af2a89b82eb14341be9",
+  "baselineOffendingMatches": [
+    "min(720px",
+    "min(720px"
+  ],
+  "currentOffendingMatches": [
+    "min(720px",
+    "min(720px"
+  ],
+  "unchangedFailure": true,
+  "note": "The new scoped CSS adds none of the forbidden tokens; this exact expectation already fails at baseline."
+}

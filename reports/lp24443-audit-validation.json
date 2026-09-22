@@ -1,0 +1,35 @@
+{
+  "audit": "LP244.43",
+  "baseline": "647c85a30d042a90276c3915ba92538df78ddf1c",
+  "artifactValidation": "PASS",
+  "documents": [
+    "docs/launch/LP24443-TRAVEL-AWARENESS-NOTIFICATIONS-HAZARD-AUDIT.md",
+    "docs/launch/LP24443-NOTIFICATION-ARCHITECTURE.md",
+    "docs/launch/LP24443-TRAVEL-CONTEXT-MODEL.md",
+    "docs/launch/LP24443-HAZARD-ADVISORY-TAXONOMY.md",
+    "docs/launch/LP24443-WINTER-HAZARD-READINESS.md",
+    "docs/launch/LP24443-IMPLEMENTATION-SEQUENCE.md"
+  ],
+  "requestPartsCovered": 45,
+  "featureCount": 12,
+  "evidenceReferencesValidated": 38,
+  "inventory": {
+    "tracked": 6664,
+    "scanned": 6321,
+    "excluded": 343
+  },
+  "testCommand": "node --test tests/lp2419-home-area-selection-simplification.test.mjs tests/lp240x1-governed-home-identity-repair.test.mjs tests/lp2444-2-native-search-geolocation-runtime.test.mjs tests/lp2448-route-publication-ownership.test.mjs tests/lp1782-statewide-route-intelligence-geometry-bridge.test.mjs tests/lp1783-route-aware-incident-hydration.test.mjs tests/lp1784-live-proximity-route-intelligence.test.mjs tests/lp1785-live-route-progress-propagation.test.mjs tests/lp1786-cleared-route-convergence.test.mjs tests/lp237-community-hazard-identity-lifecycle.test.cjs tests/lp165/statewide-notification-certification.test.mjs tests/lp2413-weather-startup-authority.test.cjs",
+  "existingTestResult": {
+    "total": 92,
+    "pass": 91,
+    "fail": 1,
+    "exitCode": 1,
+    "failure": "LP165 historical protected-artifact hash drift"
+  },
+  "runtimeChanges": false,
+  "nativeBuildPerformed": false,
+  "productionAccessPerformed": false,
+  "gitPushPerformed": false,
+  "mergePerformed": false,
+  "scope": "Repository/static and extracted-function tests; no physical delivery certification"
+}

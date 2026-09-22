@@ -137,6 +137,8 @@
     const point=resolvePoint(); const nextIdentity=identity(point);
     if (!validGovernedPoint(point)) {
       generation+=1;
+      invalidateCurrentAuthority(null, null);
+      normalizedRecords=[];
       state.requestInFlight=false;
       state.authorityReady=false;
       state.authorityWaitReason="WAITING_FOR_AUTHORITY";

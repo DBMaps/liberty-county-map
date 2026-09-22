@@ -1,0 +1,25 @@
+✔ tests\lp034-consumer-road-context-completion.test.js (151.1902ms)
+✔ tests\lp034r1-audit-observability.test.js (142.4845ms)
+LP044/LP039 shared DriveTexas geometry authority regression tests passed
+✔ tests\lp044-lp039-shared-drivetexas-geometry-authority.test.js (162.2895ms)
+✔ A: one active and one newer clear becomes Recently Cleared (3.4669ms)
+✔ B: two recent independent active reports and one newer clear conflict (0.2091ms)
+✔ C: five recent independent active reports and one newer clear conflict (0.2317ms)
+✔ D: five old lifecycle-stale active reports and one newer clear become Recently Cleared (0.2274ms)
+✔ E: multiple recent active reports and two independent clears become Recently Cleared (0.2027ms)
+✔ F: newer active evidence after clear returns Active (0.1402ms)
+✔ G: clear remains authoritative after its 90-minute presentation window (0.1398ms)
+✔ H: newer active after an aged-out clear presentation returns Active (0.1723ms)
+✔ same-device duplicates do not create independent corroboration (0.2693ms)
+✔ different governed conditions cannot influence resolution (0.2344ms)
+✔ conflict is one traveler-relevant governed condition with bounded copy (1.7328ms)
+✔ loader retains clear lifecycle authority for active TTL while presentation remains 90 minutes (1.8701ms)
+✔ A-H: governed anonymous contributors persist independent lifecycle evidence without multiplying incidents (0.4811ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 248.1296

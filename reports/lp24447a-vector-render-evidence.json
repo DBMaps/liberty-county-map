@@ -1,0 +1,216 @@
+{
+  "renderer": "Edge canvas, no network",
+  "scale": 64,
+  "checks": [
+    {
+      "condition": "ice",
+      "edgeAlpha": 0,
+      "whitePixels": 331,
+      "navyPixels": 1299,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "black_ice_suspected",
+      "edgeAlpha": 0,
+      "whitePixels": 308,
+      "navyPixels": 1314,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "bridge_overpass_icing",
+      "edgeAlpha": 0,
+      "whitePixels": 301,
+      "navyPixels": 1254,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "snow_covered_road",
+      "edgeAlpha": 0,
+      "whitePixels": 500,
+      "navyPixels": 1161,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "sleet_freezing_rain",
+      "edgeAlpha": 0,
+      "whitePixels": 462,
+      "navyPixels": 1207,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "reduced_visibility",
+      "edgeAlpha": 0,
+      "whitePixels": 376,
+      "navyPixels": 1180,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "winter_road_hazard",
+      "edgeAlpha": 0,
+      "whitePixels": 311,
+      "navyPixels": 1260,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "flooding",
+      "edgeAlpha": 0,
+      "whitePixels": 324,
+      "navyPixels": 1281,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "crash",
+      "edgeAlpha": 0,
+      "whitePixels": 374,
+      "navyPixels": 1242,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "disabled_vehicle",
+      "edgeAlpha": 0,
+      "whitePixels": 327,
+      "navyPixels": 1296,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "debris",
+      "edgeAlpha": 0,
+      "whitePixels": 351,
+      "navyPixels": 1316,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "road_blocked",
+      "edgeAlpha": 0,
+      "whitePixels": 357,
+      "navyPixels": 1275,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "road_impassable",
+      "edgeAlpha": 0,
+      "whitePixels": 283,
+      "navyPixels": 1357,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "construction",
+      "edgeAlpha": 0,
+      "whitePixels": 304,
+      "navyPixels": 1381,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "planned_work",
+      "edgeAlpha": 0,
+      "whitePixels": 398,
+      "navyPixels": 1183,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "traffic_backup",
+      "edgeAlpha": 0,
+      "whitePixels": 158,
+      "navyPixels": 1404,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "other_hazard",
+      "edgeAlpha": 0,
+      "whitePixels": 308,
+      "navyPixels": 1320,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "road_closed",
+      "edgeAlpha": 0,
+      "whitePixels": 311,
+      "navyPixels": 1306,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "downed_power_line",
+      "edgeAlpha": 0,
+      "whitePixels": 287,
+      "navyPixels": 1384,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "utility_work",
+      "edgeAlpha": 0,
+      "whitePixels": 257,
+      "navyPixels": 1420,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "emergency_response_activity",
+      "edgeAlpha": 0,
+      "whitePixels": 353,
+      "navyPixels": 1257,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "livestock_on_road",
+      "edgeAlpha": 0,
+      "whitePixels": 303,
+      "navyPixels": 1342,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "traffic_signal_issue",
+      "edgeAlpha": 0,
+      "whitePixels": 338,
+      "navyPixels": 1300,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "rail_blockage_delay",
+      "edgeAlpha": 0,
+      "whitePixels": 302,
+      "navyPixels": 1327,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "rail_issue",
+      "edgeAlpha": 0,
+      "whitePixels": 298,
+      "navyPixels": 1361,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "crossing_infrastructure",
+      "edgeAlpha": 0,
+      "whitePixels": 367,
+      "navyPixels": 1260,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "txdot_damage",
+      "edgeAlpha": 0,
+      "whitePixels": 286,
+      "navyPixels": 1368,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "txdot_bridge_restriction",
+      "edgeAlpha": 0,
+      "whitePixels": 355,
+      "navyPixels": 1247,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "txdot_incident",
+      "edgeAlpha": 0,
+      "whitePixels": 321,
+      "navyPixels": 1315,
+      "naturalWidth": 256
+    },
+    {
+      "condition": "txdot_other",
+      "edgeAlpha": 0,
+      "whitePixels": 287,
+      "navyPixels": 1365,
+      "naturalWidth": 256
+    }
+  ]
+}

@@ -1,0 +1,416 @@
+✖ UUIDv4 crossing and hazard originals succeed; different tokens allow recurring observations (0.7913ms)
+✖ same token, including uppercase spelling, remains idempotent before and after row/link removal (0.1541ms)
+✖ concurrent identical RPC requests commit one original and one device link (0.0783ms)
+✖ legacy/malformed tokens, device-derived hazard IDs and raw-token payloads cannot enter persistent rows (0.0743ms)
+✖ ledger is minimal, private and append-only, including against accidental owner rollback operations (0.0896ms)
+✖ confirm/edit/clear are separate idempotent operations and never replace the original or its clock (0.2412ms)
+✖ day-149 cleanup preserves receipts, rejects later retries and remains idempotent across UTC/DST zones (1.4979ms)
+✖ plaintext tokens never persist in public rows/private links/ledger; cancellation permanently consumes identity (0.1226ms)
+✖ failed transactions do not consume an unaccepted identity; accepted identities survive device-link erasure (0.1644ms)
+✖ secure fallback creates UUIDv4 without Math.random or a device/content input (0.1376ms)
+✖ ambiguous response/restart retries reuse one persisted token; terminal response removes payload (0.0709ms)
+✖ double tap shares one operation; new observation is explicit after terminal result (0.0405ms)
+✖ pending mutations reuse operation_id; pending payload expires to token-only cancellation; storage failure blocks send (0.0958ms)
+✖ C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs (2080.6638ms)
+✔ HOME snapshot is stable, canonical and persistent owner remains separate (14.696ms)
+✔ Cleveland to Crosby is SEARCH and preserves Home storage (4.6868ms)
+✔ Clear restores Cleveland and one coherent refresh per transition (8.0546ms)
+✔ Dayton replaces Crosby with a newer context generation (3.929ms)
+✔ Austin/Hays and Austin/Travis retain independent membership qualification (3.7378ms)
+✔ Abilene/Jones and Taylor plus Dallas use existing governed fixtures (3.2335ms)
+✔ invalid explicit membership fails unavailable instead of substituting Home (5.2876ms)
+✔ POI source locality resolves surrounding community without changing destination (2.8477ms)
+✔ POI without locality retains coordinate scope, never POI-as-PLACE (3.4228ms)
+✔ 120-second fix boundary, future timestamps, and missing timestamps fail truthfully (2.0689ms)
+✔ Around Me snapshot is ephemeral compatibility, not implicit activation (3.9397ms)
+✔ Route placeholder never activates and restarting loses Search, not Home (5.0718ms)
+✔ diagnostics are bounded and carry no precise position history (3.9ms)
+✔ late Crosby NWS publication cannot replace Dayton; unavailable context clears records (18.0091ms)
+✔ Home-only adapter bypasses active Search for Settings without clearing it (4.7503ms)
+✔ late POI result cannot overwrite the newer context audit (576.6829ms)
+✔ closed Search retains awareness owner and bypasses pending-destination suppression (3.9672ms)
+✔ open Search retains existing destination surface ownership (1.3067ms)
+✔ route preview and active Route Watch retain existing ownership (2.4465ms)
+✔ cleared context restores normal Home awareness owner (3.8887ms)
+✔ one governed camera per transition: Cleveland → Crosby → HOME → Dayton (10.0591ms)
+✔ one governed camera per transition: Cleveland → Crosby → Dayton (6.0653ms)
+✔ one governed camera per transition: Cleveland → Dayton → Crosby (5.7056ms)
+✔ one governed camera per transition: Cleveland → Crosby → Dayton → Crosby → Dayton (6.9708ms)
+✔ late Crosby handoff and semantic dispatch are rejected after Dayton (6.8933ms)
+✔ Search camera does not call Home-persisting county synchronizer (7.4276ms)
+✔ POI camera preserves exact destination separately from canonical awareness (6.2676ms)
+✔ unavailable context cannot dispatch a canonical camera (6.2877ms)
+✔ late crossing hydration uses current Dayton and preserves its committed camera (6.3542ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 29
+ℹ fail 14
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4763.5976
+
+✖ failing tests:
+
+test at tests\lp24421-submission-protocol.test.cjs:34:1
+✖ UUIDv4 crossing and hazard originals succeed; different tokens allow recurring observations (0.7913ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:40:1
+✖ same token, including uppercase spelling, remains idempotent before and after row/link removal (0.1541ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:52:1
+✖ concurrent identical RPC requests commit one original and one device link (0.0783ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:64:1
+✖ legacy/malformed tokens, device-derived hazard IDs and raw-token payloads cannot enter persistent rows (0.0743ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:71:1
+✖ ledger is minimal, private and append-only, including against accidental owner rollback operations (0.0896ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:81:1
+✖ confirm/edit/clear are separate idempotent operations and never replace the original or its clock (0.2412ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:97:1
+✖ day-149 cleanup preserves receipts, rejects later retries and remains idempotent across UTC/DST zones (1.4979ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:107:1
+✖ plaintext tokens never persist in public rows/private links/ledger; cancellation permanently consumes identity (0.1226ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:113:1
+✖ failed transactions do not consume an unaccepted identity; accepted identities survive device-link erasure (0.1644ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:119:1
+✖ secure fallback creates UUIDv4 without Math.random or a device/content input (0.1376ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:124:1
+✖ ambiguous response/restart retries reuse one persisted token; terminal response removes payload (0.0709ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:134:1
+✖ double tap shares one operation; new observation is explicit after terminal result (0.0405ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:142:1
+✖ pending mutations reuse operation_id; pending payload expires to token-only cancellation; storage failure blocks send (0.0958ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:25:2)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.createHook (node:internal/test_runner/test:1040:33)
+      at node:internal/test_runner/harness:424:12
+      at Object.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:24:1)
+      at Module._compile (node:internal/modules/cjs/loader:1854:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\lp24421-submission-protocol.test.cjs:32:1
+✖ C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs (2080.6638ms)
+  AssertionError [ERR_ASSERTION]: psql: error: connection to server at "127.0.0.1", port 55441 failed: Connection refused (0x0000274D/10061)
+    Is the server running on that host and accepting TCP/IP connections?
+
+
+  2 !== 0
+
+      at sql (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:17:9)
+      at TestContext.<anonymous> (C:\GitHub\liberty-county-map\tests\lp24421-submission-protocol.test.cjs:32:11)
+      at TestHook.runInAsyncScope (node:async_hooks:227:14)
+      at TestHook.run (node:internal/test_runner/test:1306:25)
+      at TestHook.run (node:internal/test_runner/test:1651:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.runHook (node:internal/test_runner/test:1198:20)
+      at after (node:internal/test_runner/test:1251:20)
+      at Test.run (node:internal/test_runner/test:1332:13) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

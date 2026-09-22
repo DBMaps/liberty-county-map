@@ -1,0 +1,564 @@
+{
+  "widths": [
+    {
+      "width": 320,
+      "picker": {
+        "scrollWidth": 272,
+        "clientWidth": 272,
+        "winterButtons": 7,
+        "labels": [
+          {
+            "text": "Ice",
+            "width": 130,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Possible black ice",
+            "width": 130,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Bridge / overpass icing",
+            "width": 130,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Snow-covered road",
+            "width": 130,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Sleet / freezing rain",
+            "width": 130,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Reduced visibility",
+            "width": 130,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Other winter road hazard",
+            "width": 130,
+            "height": 65.90625,
+            "clipped": false
+          }
+        ]
+      },
+      "card": {
+        "scrollWidth": 261,
+        "clientWidth": 261,
+        "text": "Bridge or overpass icing reported\nLiberty County\nUse caution on winter roads.\nCommunity reports\nAwaiting additional reports\nUpdated just now\nConfirm Still Active\nMark Cleared"
+      }
+    },
+    {
+      "width": 360,
+      "picker": {
+        "scrollWidth": 312,
+        "clientWidth": 312,
+        "winterButtons": 7,
+        "labels": [
+          {
+            "text": "Ice",
+            "width": 150,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Possible black ice",
+            "width": 150,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Bridge / overpass icing",
+            "width": 150,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Snow-covered road",
+            "width": 150,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Sleet / freezing rain",
+            "width": 150,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Reduced visibility",
+            "width": 150,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Other winter road hazard",
+            "width": 150,
+            "height": 65.90625,
+            "clipped": false
+          }
+        ]
+      },
+      "card": {
+        "scrollWidth": 261,
+        "clientWidth": 261,
+        "text": "Bridge or overpass icing reported\nLiberty County\nUse caution on winter roads.\nCommunity reports\nAwaiting additional reports\nUpdated just now\nConfirm Still Active\nMark Cleared"
+      }
+    },
+    {
+      "width": 390,
+      "picker": {
+        "scrollWidth": 342,
+        "clientWidth": 342,
+        "winterButtons": 7,
+        "labels": [
+          {
+            "text": "Ice",
+            "width": 165,
+            "height": 52,
+            "clipped": false
+          },
+          {
+            "text": "Possible black ice",
+            "width": 165,
+            "height": 52,
+            "clipped": false
+          },
+          {
+            "text": "Bridge / overpass icing",
+            "width": 165,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Snow-covered road",
+            "width": 165,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Sleet / freezing rain",
+            "width": 165,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Reduced visibility",
+            "width": 165,
+            "height": 65.90625,
+            "clipped": false
+          },
+          {
+            "text": "Other winter road hazard",
+            "width": 165,
+            "height": 65.90625,
+            "clipped": false
+          }
+        ]
+      },
+      "card": {
+        "scrollWidth": 261,
+        "clientWidth": 261,
+        "text": "Bridge or overpass icing reported\nLiberty County\nUse caution on winter roads.\nCommunity reports\nAwaiting additional reports\nUpdated just now\nConfirm Still Active\nMark Cleared"
+      }
+    },
+    {
+      "width": 440,
+      "picker": {
+        "scrollWidth": 392,
+        "clientWidth": 392,
+        "winterButtons": 7,
+        "labels": [
+          {
+            "text": "Ice",
+            "width": 190,
+            "height": 52,
+            "clipped": false
+          },
+          {
+            "text": "Possible black ice",
+            "width": 190,
+            "height": 52,
+            "clipped": false
+          },
+          {
+            "text": "Bridge / overpass icing",
+            "width": 190,
+            "height": 52,
+            "clipped": false
+          },
+          {
+            "text": "Snow-covered road",
+            "width": 190,
+            "height": 52,
+            "clipped": false
+          },
+          {
+            "text": "Sleet / freezing rain",
+            "width": 190,
+            "height": 52,
+            "clipped": false
+          },
+          {
+            "text": "Reduced visibility",
+            "width": 190,
+            "height": 52,
+            "clipped": false
+          },
+          {
+            "text": "Other winter road hazard",
+            "width": 190,
+            "height": 65.90625,
+            "clipped": false
+          }
+        ]
+      },
+      "card": {
+        "scrollWidth": 261,
+        "clientWidth": 261,
+        "text": "Bridge or overpass icing reported\nLiberty County\nUse caution on winter roads.\nCommunity reports\nAwaiting additional reports\nUpdated just now\nConfirm Still Active\nMark Cleared"
+      }
+    }
+  ],
+  "models": [
+    {
+      "type": "ice",
+      "normalized": {
+        "version": 1,
+        "condition": "ICE",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "POINT",
+        "sourceGeometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.0858,
+            30.3413
+          ]
+        },
+        "provenance": {
+          "source": "community",
+          "sourceId": "fixture-ice",
+          "rawType": "ice",
+          "sourceClassification": "ice",
+          "observedAt": "2026-09-21T17:33:59.020Z",
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": "2026-09-21T18:33:59.020Z",
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"ICE\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"POINT\",{\"type\":\"Point\",\"coordinates\":[-95.0858,30.3413]},null,\"UNKNOWN\"]"
+      },
+      "title": "Ice reported",
+      "popup": "Ice reported",
+      "kbyg": "Ice reported at Liberty County.",
+      "marker": "ice",
+      "lifecycle": "active",
+      "html": "<div class=\"gridly-popup gridly-premium-popup\" data-gridly-hazard-popup=\"consumer\">\n    <strong data-gridly-hazard-popup-field=\"title\">Ice reported</strong>\n    <span class=\"gridly-popup-location\" data-gridly-hazard-popup-field=\"locationLine\">Liberty County</span>\n    <span class=\"gridly-popup-guidance\" data-gridly-hazard-popup-field=\"guidanceLine\">Use caution on winter roads.</span>\n    <span class=\"gridly-popup-meta\" data-gridly-hazard-popup-field=\"sourceLine\">Community reports</span>\n    <span class=\"gridly-popup-trust\" data-gridly-hazard-popup-field=\"confidenceLine\">Awaiting additional reports</span>\n    <span class=\"gridly-popup-freshness\" data-gridly-hazard-popup-field=\"freshnessLine\">Updated just now</span>\n    \n  <div class=\"popup-report-grid\"><button class=\"popup-report-btn warning\" type=\"button\" data-unified-action=\"confirm\" data-incident-id=\"fixture-ice\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-ice\" data-lifecycle-report-type=\"ice\">Confirm Still Active</button><button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"fixture-ice\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-ice\" data-lifecycle-report-type=\"ice\">Mark Cleared</button></div></div>"
+    },
+    {
+      "type": "black_ice_suspected",
+      "normalized": {
+        "version": 1,
+        "condition": "BLACK_ICE_SUSPECTED",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "POINT",
+        "sourceGeometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.0858,
+            30.3413
+          ]
+        },
+        "provenance": {
+          "source": "community",
+          "sourceId": "fixture-black_ice_suspected",
+          "rawType": "black_ice_suspected",
+          "sourceClassification": "black_ice_suspected",
+          "observedAt": "2026-09-21T17:33:59.047Z",
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": "2026-09-21T18:33:59.047Z",
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"BLACK_ICE_SUSPECTED\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"POINT\",{\"type\":\"Point\",\"coordinates\":[-95.0858,30.3413]},null,\"UNKNOWN\"]"
+      },
+      "title": "Possible black ice reported",
+      "popup": "Possible black ice reported",
+      "kbyg": "Possible black ice reported at Liberty County.",
+      "marker": "black_ice_suspected",
+      "lifecycle": "active",
+      "html": "<div class=\"gridly-popup gridly-premium-popup\" data-gridly-hazard-popup=\"consumer\">\n    <strong data-gridly-hazard-popup-field=\"title\">Possible black ice reported</strong>\n    <span class=\"gridly-popup-location\" data-gridly-hazard-popup-field=\"locationLine\">Liberty County</span>\n    <span class=\"gridly-popup-guidance\" data-gridly-hazard-popup-field=\"guidanceLine\">Use caution on winter roads.</span>\n    <span class=\"gridly-popup-meta\" data-gridly-hazard-popup-field=\"sourceLine\">Community reports</span>\n    <span class=\"gridly-popup-trust\" data-gridly-hazard-popup-field=\"confidenceLine\">Awaiting additional reports</span>\n    <span class=\"gridly-popup-freshness\" data-gridly-hazard-popup-field=\"freshnessLine\">Updated just now</span>\n    \n  <div class=\"popup-report-grid\"><button class=\"popup-report-btn warning\" type=\"button\" data-unified-action=\"confirm\" data-incident-id=\"fixture-black_ice_suspected\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-black_ice_suspected\" data-lifecycle-report-type=\"black_ice_suspected\">Confirm Still Active</button><button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"fixture-black_ice_suspected\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-black_ice_suspected\" data-lifecycle-report-type=\"black_ice_suspected\">Mark Cleared</button></div></div>"
+    },
+    {
+      "type": "bridge_overpass_icing",
+      "normalized": {
+        "version": 1,
+        "condition": "BRIDGE_OVERPASS_ICING",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "POINT",
+        "sourceGeometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.0858,
+            30.3413
+          ]
+        },
+        "provenance": {
+          "source": "community",
+          "sourceId": "fixture-bridge_overpass_icing",
+          "rawType": "bridge_overpass_icing",
+          "sourceClassification": "bridge_overpass_icing",
+          "observedAt": "2026-09-21T17:33:59.050Z",
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": "2026-09-21T18:33:59.050Z",
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"BRIDGE_OVERPASS_ICING\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"POINT\",{\"type\":\"Point\",\"coordinates\":[-95.0858,30.3413]},null,\"UNKNOWN\"]"
+      },
+      "title": "Bridge or overpass icing reported",
+      "popup": "Bridge or overpass icing reported",
+      "kbyg": "Bridge or overpass icing reported at Liberty County.",
+      "marker": "bridge_overpass_icing",
+      "lifecycle": "active",
+      "html": "<div class=\"gridly-popup gridly-premium-popup\" data-gridly-hazard-popup=\"consumer\">\n    <strong data-gridly-hazard-popup-field=\"title\">Bridge or overpass icing reported</strong>\n    <span class=\"gridly-popup-location\" data-gridly-hazard-popup-field=\"locationLine\">Liberty County</span>\n    <span class=\"gridly-popup-guidance\" data-gridly-hazard-popup-field=\"guidanceLine\">Use caution on winter roads.</span>\n    <span class=\"gridly-popup-meta\" data-gridly-hazard-popup-field=\"sourceLine\">Community reports</span>\n    <span class=\"gridly-popup-trust\" data-gridly-hazard-popup-field=\"confidenceLine\">Awaiting additional reports</span>\n    <span class=\"gridly-popup-freshness\" data-gridly-hazard-popup-field=\"freshnessLine\">Updated just now</span>\n    \n  <div class=\"popup-report-grid\"><button class=\"popup-report-btn warning\" type=\"button\" data-unified-action=\"confirm\" data-incident-id=\"fixture-bridge_overpass_icing\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-bridge_overpass_icing\" data-lifecycle-report-type=\"bridge_overpass_icing\">Confirm Still Active</button><button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"fixture-bridge_overpass_icing\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-bridge_overpass_icing\" data-lifecycle-report-type=\"bridge_overpass_icing\">Mark Cleared</button></div></div>"
+    },
+    {
+      "type": "snow_covered_road",
+      "normalized": {
+        "version": 1,
+        "condition": "SNOW_COVERED_ROAD",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "POINT",
+        "sourceGeometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.0858,
+            30.3413
+          ]
+        },
+        "provenance": {
+          "source": "community",
+          "sourceId": "fixture-snow_covered_road",
+          "rawType": "snow_covered_road",
+          "sourceClassification": "snow_covered_road",
+          "observedAt": "2026-09-21T17:33:59.055Z",
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": "2026-09-21T18:33:59.055Z",
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"SNOW_COVERED_ROAD\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"POINT\",{\"type\":\"Point\",\"coordinates\":[-95.0858,30.3413]},null,\"UNKNOWN\"]"
+      },
+      "title": "Snow-covered road reported",
+      "popup": "Snow-covered road reported",
+      "kbyg": "Snow-covered road reported at Liberty County.",
+      "marker": "snow_covered_road",
+      "lifecycle": "active",
+      "html": "<div class=\"gridly-popup gridly-premium-popup\" data-gridly-hazard-popup=\"consumer\">\n    <strong data-gridly-hazard-popup-field=\"title\">Snow-covered road reported</strong>\n    <span class=\"gridly-popup-location\" data-gridly-hazard-popup-field=\"locationLine\">Liberty County</span>\n    <span class=\"gridly-popup-guidance\" data-gridly-hazard-popup-field=\"guidanceLine\">Use caution on winter roads.</span>\n    <span class=\"gridly-popup-meta\" data-gridly-hazard-popup-field=\"sourceLine\">Community reports</span>\n    <span class=\"gridly-popup-trust\" data-gridly-hazard-popup-field=\"confidenceLine\">Awaiting additional reports</span>\n    <span class=\"gridly-popup-freshness\" data-gridly-hazard-popup-field=\"freshnessLine\">Updated just now</span>\n    \n  <div class=\"popup-report-grid\"><button class=\"popup-report-btn warning\" type=\"button\" data-unified-action=\"confirm\" data-incident-id=\"fixture-snow_covered_road\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-snow_covered_road\" data-lifecycle-report-type=\"snow_covered_road\">Confirm Still Active</button><button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"fixture-snow_covered_road\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-snow_covered_road\" data-lifecycle-report-type=\"snow_covered_road\">Mark Cleared</button></div></div>"
+    },
+    {
+      "type": "sleet_freezing_rain",
+      "normalized": {
+        "version": 1,
+        "condition": "SLEET_FREEZING_RAIN",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "POINT",
+        "sourceGeometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.0858,
+            30.3413
+          ]
+        },
+        "provenance": {
+          "source": "community",
+          "sourceId": "fixture-sleet_freezing_rain",
+          "rawType": "sleet_freezing_rain",
+          "sourceClassification": "sleet_freezing_rain",
+          "observedAt": "2026-09-21T17:33:59.057Z",
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": "2026-09-21T18:33:59.057Z",
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"SLEET_FREEZING_RAIN\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"POINT\",{\"type\":\"Point\",\"coordinates\":[-95.0858,30.3413]},null,\"UNKNOWN\"]"
+      },
+      "title": "Sleet or freezing rain reported",
+      "popup": "Sleet or freezing rain reported",
+      "kbyg": "Sleet or freezing rain reported at Liberty County.",
+      "marker": "sleet_freezing_rain",
+      "lifecycle": "active",
+      "html": "<div class=\"gridly-popup gridly-premium-popup\" data-gridly-hazard-popup=\"consumer\">\n    <strong data-gridly-hazard-popup-field=\"title\">Sleet or freezing rain reported</strong>\n    <span class=\"gridly-popup-location\" data-gridly-hazard-popup-field=\"locationLine\">Liberty County</span>\n    <span class=\"gridly-popup-guidance\" data-gridly-hazard-popup-field=\"guidanceLine\">Use caution on winter roads.</span>\n    <span class=\"gridly-popup-meta\" data-gridly-hazard-popup-field=\"sourceLine\">Community reports</span>\n    <span class=\"gridly-popup-trust\" data-gridly-hazard-popup-field=\"confidenceLine\">Awaiting additional reports</span>\n    <span class=\"gridly-popup-freshness\" data-gridly-hazard-popup-field=\"freshnessLine\">Updated just now</span>\n    \n  <div class=\"popup-report-grid\"><button class=\"popup-report-btn warning\" type=\"button\" data-unified-action=\"confirm\" data-incident-id=\"fixture-sleet_freezing_rain\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-sleet_freezing_rain\" data-lifecycle-report-type=\"sleet_freezing_rain\">Confirm Still Active</button><button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"fixture-sleet_freezing_rain\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-sleet_freezing_rain\" data-lifecycle-report-type=\"sleet_freezing_rain\">Mark Cleared</button></div></div>"
+    },
+    {
+      "type": "reduced_visibility",
+      "normalized": {
+        "version": 1,
+        "condition": "REDUCED_VISIBILITY",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "POINT",
+        "sourceGeometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.0858,
+            30.3413
+          ]
+        },
+        "provenance": {
+          "source": "community",
+          "sourceId": "fixture-reduced_visibility",
+          "rawType": "reduced_visibility",
+          "sourceClassification": "reduced_visibility",
+          "observedAt": "2026-09-21T17:33:59.060Z",
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": "2026-09-21T18:33:59.060Z",
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"REDUCED_VISIBILITY\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"POINT\",{\"type\":\"Point\",\"coordinates\":[-95.0858,30.3413]},null,\"UNKNOWN\"]"
+      },
+      "title": "Reduced visibility reported",
+      "popup": "Reduced visibility reported",
+      "kbyg": "Reduced visibility reported at Liberty County.",
+      "marker": "reduced_visibility",
+      "lifecycle": "active",
+      "html": "<div class=\"gridly-popup gridly-premium-popup\" data-gridly-hazard-popup=\"consumer\">\n    <strong data-gridly-hazard-popup-field=\"title\">Reduced visibility reported</strong>\n    <span class=\"gridly-popup-location\" data-gridly-hazard-popup-field=\"locationLine\">Liberty County</span>\n    <span class=\"gridly-popup-guidance\" data-gridly-hazard-popup-field=\"guidanceLine\">Use caution on winter roads.</span>\n    <span class=\"gridly-popup-meta\" data-gridly-hazard-popup-field=\"sourceLine\">Community reports</span>\n    <span class=\"gridly-popup-trust\" data-gridly-hazard-popup-field=\"confidenceLine\">Awaiting additional reports</span>\n    <span class=\"gridly-popup-freshness\" data-gridly-hazard-popup-field=\"freshnessLine\">Updated just now</span>\n    \n  <div class=\"popup-report-grid\"><button class=\"popup-report-btn warning\" type=\"button\" data-unified-action=\"confirm\" data-incident-id=\"fixture-reduced_visibility\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-reduced_visibility\" data-lifecycle-report-type=\"reduced_visibility\">Confirm Still Active</button><button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"fixture-reduced_visibility\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-reduced_visibility\" data-lifecycle-report-type=\"reduced_visibility\">Mark Cleared</button></div></div>"
+    },
+    {
+      "type": "winter_road_hazard",
+      "normalized": {
+        "version": 1,
+        "condition": "WINTER_ROAD_HAZARD",
+        "severity": "UNKNOWN",
+        "advisory": "USE_CAUTION",
+        "advisoryAuthority": "COMMUNITY_SAFE",
+        "authorityClass": "COMMUNITY_OBSERVATION",
+        "confidence": {
+          "level": "UNKNOWN",
+          "sourceValue": null,
+          "confirmationCount": 0
+        },
+        "lifecycle": "ACTIVE",
+        "geometryPrecision": "POINT",
+        "sourceGeometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.0858,
+            30.3413
+          ]
+        },
+        "provenance": {
+          "source": "community",
+          "sourceId": "fixture-winter_road_hazard",
+          "rawType": "winter_road_hazard",
+          "sourceClassification": "winter_road_hazard",
+          "observedAt": "2026-09-21T17:33:59.061Z",
+          "updatedAt": null
+        },
+        "weatherPhenomenon": null,
+        "expiresAt": "2026-09-21T18:33:59.061Z",
+        "accessObservation": "UNKNOWN",
+        "markerFamily": "winter",
+        "materialRevision": "[\"WINTER_ROAD_HAZARD\",\"UNKNOWN\",\"USE_CAUTION\",\"ACTIVE\",\"POINT\",{\"type\":\"Point\",\"coordinates\":[-95.0858,30.3413]},null,\"UNKNOWN\"]"
+      },
+      "title": "Winter road hazard reported",
+      "popup": "Winter road hazard reported",
+      "kbyg": "Winter road hazard reported at Liberty County.",
+      "marker": "winter_road_hazard",
+      "lifecycle": "active",
+      "html": "<div class=\"gridly-popup gridly-premium-popup\" data-gridly-hazard-popup=\"consumer\">\n    <strong data-gridly-hazard-popup-field=\"title\">Winter road hazard reported</strong>\n    <span class=\"gridly-popup-location\" data-gridly-hazard-popup-field=\"locationLine\">Liberty County</span>\n    <span class=\"gridly-popup-guidance\" data-gridly-hazard-popup-field=\"guidanceLine\">Use caution on winter roads.</span>\n    <span class=\"gridly-popup-meta\" data-gridly-hazard-popup-field=\"sourceLine\">Community reports</span>\n    <span class=\"gridly-popup-trust\" data-gridly-hazard-popup-field=\"confidenceLine\">Awaiting additional reports</span>\n    <span class=\"gridly-popup-freshness\" data-gridly-hazard-popup-field=\"freshnessLine\">Updated just now</span>\n    \n  <div class=\"popup-report-grid\"><button class=\"popup-report-btn warning\" type=\"button\" data-unified-action=\"confirm\" data-incident-id=\"fixture-winter_road_hazard\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-winter_road_hazard\" data-lifecycle-report-type=\"winter_road_hazard\">Confirm Still Active</button><button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"fixture-winter_road_hazard\" data-incident-category=\"road\" data-report-type=\"\" data-crossing-id=\"\" data-lat=\"30.3413\" data-lng=\"-95.0858\" data-lifecycle-report-id=\"fixture-winter_road_hazard\" data-lifecycle-report-type=\"winter_road_hazard\">Mark Cleared</button></div></div>"
+    }
+  ],
+  "errors": [],
+  "remoteWrites": false,
+  "marker": {
+    "category": "ice",
+    "assetName": "winter-road.svg",
+    "assetPath": "assets/markers/png/winter-road.svg",
+    "width": 256,
+    "height": 256,
+    "aliases": [
+      "winter-road.svg",
+      "winter-road.svg",
+      "winter-road.svg",
+      "winter-road.svg",
+      "winter-road.svg",
+      "winter-road.svg",
+      "winter-road.svg"
+    ]
+  },
+  "performance": {
+    "normalizations": 10000,
+    "durationMs": 13.300000011920929
+  }
+}

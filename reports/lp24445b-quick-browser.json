@@ -1,0 +1,659 @@
+{
+  "baseline": false,
+  "rows": [
+    {
+      "context": "SEARCH",
+      "place": "Crosby",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CROSBY",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": true,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "Crosby",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "harris-tx-crosby",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "harris-tx",
+        "stableIdentity": "4817756",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "placeGeoid": "4817756"
+      },
+      "nearby": "Crosby",
+      "community": "Crosby",
+      "roads": "Crosby",
+      "location": "Crosby",
+      "mapCenter": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "kbyg": "Crosby, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "expected": {
+        "canonicalKey": "place-4817756",
+        "placeGeoid": "4817756",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "zoom": 13,
+        "radiusMiles": 7,
+        "authority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "camera": {
+        "sequence": 3,
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4817756",
+        "target": {
+          "lat": 29.91154,
+          "lng": -95.0632549
+        },
+        "zoom": 13,
+        "presentationSource": "STATEWIDE_PLACE_PRESENTATION",
+        "source": "temporary-search-selected"
+      },
+      "visibility": {
+        "destinationSelected": true,
+        "routePreviewActive": false,
+        "viewportAdjusted": false,
+        "bottomInsetApplied": true,
+        "destinationCardDetected": true,
+        "destinationLat": 29.91154,
+        "destinationLng": -95.0632549
+      },
+      "focusCalls": [
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        }
+      ],
+      "label": "A: Home to Crosby",
+      "agrees": true
+    },
+    {
+      "context": "HOME",
+      "place": "Cleveland",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CLEVELAND",
+      "rect": {
+        "x": 12,
+        "y": 699,
+        "width": 366,
+        "height": 62,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": false,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "cleveland",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4815436",
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "placeGeoid": "4815436"
+      },
+      "nearby": "Cleveland",
+      "community": "Cleveland",
+      "roads": "Cleveland",
+      "location": "Cleveland",
+      "mapCenter": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "kbyg": "Cleveland, TX",
+      "crossingHome": true,
+      "crossingCrosby": false,
+      "expected": {
+        "canonicalKey": "place-4815436",
+        "placeGeoid": "4815436",
+        "lat": 30.3414794,
+        "lng": -95.0900115,
+        "zoom": 13,
+        "radiusMiles": 7,
+        "authority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "camera": {
+        "sequence": 4,
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4815436",
+        "target": {
+          "lat": 30.3414794,
+          "lng": -95.0900115
+        },
+        "zoom": 13,
+        "presentationSource": "STATEWIDE_PLACE_PRESENTATION",
+        "source": "temporary-context-cleared"
+      },
+      "visibility": {
+        "destinationSelected": false,
+        "routePreviewActive": false,
+        "viewportAdjusted": false,
+        "bottomInsetApplied": true,
+        "destinationCardDetected": true,
+        "destinationLat": null,
+        "destinationLng": null
+      },
+      "focusCalls": [
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Cleveland",
+          "source": "temporary-context-cleared",
+          "result": true
+        }
+      ],
+      "label": "B: Return Cleveland",
+      "agrees": true
+    },
+    {
+      "context": "SEARCH",
+      "place": "Dayton",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • DAYTON",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": true,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "Dayton",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "dayton",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4819432",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "placeGeoid": "4819432"
+      },
+      "nearby": "Dayton",
+      "community": "Dayton",
+      "roads": "Dayton",
+      "location": "Dayton",
+      "mapCenter": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "kbyg": "Dayton, TX",
+      "crossingHome": false,
+      "crossingCrosby": false,
+      "expected": {
+        "canonicalKey": "place-4819432",
+        "placeGeoid": "4819432",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "zoom": 13,
+        "radiusMiles": 7,
+        "authority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "camera": {
+        "sequence": 5,
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "target": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "zoom": 13,
+        "presentationSource": "STATEWIDE_PLACE_PRESENTATION",
+        "source": "temporary-search-selected"
+      },
+      "visibility": {
+        "destinationSelected": true,
+        "routePreviewActive": false,
+        "viewportAdjusted": false,
+        "bottomInsetApplied": true,
+        "destinationCardDetected": true,
+        "destinationLat": 30.0473202,
+        "destinationLng": -94.8873913
+      },
+      "focusCalls": [
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Cleveland",
+          "source": "temporary-context-cleared",
+          "result": true
+        },
+        {
+          "place": "Dayton",
+          "source": "temporary-search-selected",
+          "result": true
+        }
+      ],
+      "label": "C/F: Home restored then Dayton",
+      "agrees": true
+    },
+    {
+      "context": "SEARCH",
+      "place": "Crosby",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CROSBY",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": true,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "Crosby",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "harris-tx-crosby",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "harris-tx",
+        "stableIdentity": "4817756",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "placeGeoid": "4817756"
+      },
+      "nearby": "Crosby",
+      "community": "Crosby",
+      "roads": "Crosby",
+      "location": "Crosby",
+      "mapCenter": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "kbyg": "Crosby, TX",
+      "crossingHome": false,
+      "crossingCrosby": true,
+      "expected": {
+        "canonicalKey": "place-4817756",
+        "placeGeoid": "4817756",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "zoom": 13,
+        "radiusMiles": 7,
+        "authority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "camera": {
+        "sequence": 6,
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4817756",
+        "target": {
+          "lat": 29.91154,
+          "lng": -95.0632549
+        },
+        "zoom": 13,
+        "presentationSource": "STATEWIDE_PLACE_PRESENTATION",
+        "source": "temporary-search-selected"
+      },
+      "visibility": {
+        "destinationSelected": true,
+        "routePreviewActive": false,
+        "viewportAdjusted": false,
+        "bottomInsetApplied": true,
+        "destinationCardDetected": true,
+        "destinationLat": 29.91154,
+        "destinationLng": -95.0632549
+      },
+      "focusCalls": [
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Cleveland",
+          "source": "temporary-context-cleared",
+          "result": true
+        },
+        {
+          "place": "Dayton",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        }
+      ],
+      "label": "E: Dayton to Crosby",
+      "agrees": true
+    },
+    {
+      "context": "SEARCH",
+      "place": "Dayton",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • DAYTON",
+      "rect": {
+        "x": 12,
+        "y": 657,
+        "width": 366,
+        "height": 104,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": true,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": true,
+        "selectedLabel": "Dayton",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "dayton",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4819432",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "placeGeoid": "4819432"
+      },
+      "nearby": "Dayton",
+      "community": "Dayton",
+      "roads": "Dayton",
+      "location": "Dayton",
+      "mapCenter": {
+        "lat": 30.0473202,
+        "lng": -94.8873913
+      },
+      "kbyg": "Dayton, TX",
+      "crossingHome": false,
+      "crossingCrosby": false,
+      "expected": {
+        "canonicalKey": "place-4819432",
+        "placeGeoid": "4819432",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "zoom": 13,
+        "radiusMiles": 7,
+        "authority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "camera": {
+        "sequence": 7,
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4819432",
+        "target": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "zoom": 13,
+        "presentationSource": "STATEWIDE_PLACE_PRESENTATION",
+        "source": "temporary-search-selected"
+      },
+      "visibility": {
+        "destinationSelected": true,
+        "routePreviewActive": false,
+        "viewportAdjusted": false,
+        "bottomInsetApplied": true,
+        "destinationCardDetected": true,
+        "destinationLat": 30.0473202,
+        "destinationLng": -94.8873913
+      },
+      "focusCalls": [
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Cleveland",
+          "source": "temporary-context-cleared",
+          "result": true
+        },
+        {
+          "place": "Dayton",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Dayton",
+          "source": "temporary-search-selected",
+          "result": true
+        }
+      ],
+      "label": "D: Crosby to Dayton",
+      "agrees": true
+    },
+    {
+      "stale": {
+        "before": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "after": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "rejected": false,
+        "directRejected": false,
+        "place": "Dayton"
+      }
+    },
+    {
+      "context": "HOME",
+      "place": "Cleveland",
+      "visible": true,
+      "identity": "LOCATION CONTEXT • CLEVELAND",
+      "rect": {
+        "x": 12,
+        "y": 699,
+        "width": 366,
+        "height": 62,
+        "bottom": 761
+      },
+      "dockTop": 771.40625,
+      "viewport": 390,
+      "ownership": {
+        "visible": true,
+        "owner": "awareness",
+        "hasSelectedDestination": false,
+        "pendingDestinationConfirmation": false,
+        "temporaryAwarenessMode": false,
+        "selectedLabel": "",
+        "routePreviewActive": false,
+        "routePreviewStatus": "idle",
+        "routeIsMonitoring": false,
+        "explicitDestinationPanelOpen": false,
+        "popupInteractionActive": false,
+        "awarenessPanelMode": true,
+        "routeOrDestinationOwnership": false,
+        "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+      },
+      "weather": {
+        "awarenessKey": "cleveland",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "liberty-tx",
+        "stableIdentity": "4815436",
+        "lat": 30.3413,
+        "lng": -95.0858,
+        "placeGeoid": "4815436"
+      },
+      "nearby": "Cleveland",
+      "community": "Cleveland",
+      "roads": "Cleveland",
+      "location": "Cleveland",
+      "mapCenter": {
+        "lat": 30.3414794,
+        "lng": -95.0900115
+      },
+      "kbyg": "Cleveland, TX",
+      "crossingHome": true,
+      "crossingCrosby": false,
+      "expected": {
+        "canonicalKey": "place-4815436",
+        "placeGeoid": "4815436",
+        "lat": 30.3414794,
+        "lng": -95.0900115,
+        "zoom": 13,
+        "radiusMiles": 7,
+        "authority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "camera": {
+        "sequence": 10,
+        "semanticLevel": "PLACE",
+        "placeGeoid": "4815436",
+        "target": {
+          "lat": 30.3414794,
+          "lng": -95.0900115
+        },
+        "zoom": 13,
+        "presentationSource": "STATEWIDE_PLACE_PRESENTATION",
+        "source": "temporary-context-cleared"
+      },
+      "visibility": {
+        "destinationSelected": false,
+        "routePreviewActive": false,
+        "viewportAdjusted": false,
+        "bottomInsetApplied": true,
+        "destinationCardDetected": true,
+        "destinationLat": null,
+        "destinationLng": null
+      },
+      "focusCalls": [
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Cleveland",
+          "source": "temporary-context-cleared",
+          "result": true
+        },
+        {
+          "place": "Dayton",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Dayton",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Crosby",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Dayton",
+          "source": "temporary-search-selected",
+          "result": true
+        },
+        {
+          "place": "Crosby",
+          "source": "test-late-crosby",
+          "result": false
+        },
+        {
+          "place": "Cleveland",
+          "source": "temporary-context-cleared",
+          "result": true
+        }
+      ],
+      "label": "final Home",
+      "agrees": true
+    }
+  ],
+  "errors": [],
+  "homeStorageUnchanged": true,
+  "productionRequests": false
+}

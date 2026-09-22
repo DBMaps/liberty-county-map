@@ -1,0 +1,205 @@
+{
+  "baseline": true,
+  "home": {
+    "key": "cleveland",
+    "label": "Cleveland",
+    "storageValue": "Cleveland",
+    "countyId": "liberty-tx",
+    "lat": 30.3413,
+    "lng": -95.0858,
+    "radiusMiles": 9,
+    "startupZoom": 13,
+    "source": "existing local app anchor"
+  },
+  "selection": {
+    "result": {
+      "id": "place-4817756",
+      "title": "Crosby",
+      "label": "Crosby",
+      "lat": 29.91154,
+      "lng": -95.0632549,
+      "subtitle": "Harris County",
+      "address": {
+        "city": "Crosby",
+        "county": "Harris County",
+        "state": "Texas"
+      },
+      "coordinates": {
+        "lat": 29.91154,
+        "lng": -95.0632549
+      },
+      "bounds": null,
+      "provider": "gridly_canonical_place",
+      "providerId": "place-4817756",
+      "type": "city",
+      "confidence": 0,
+      "source": "gridly_canonical_place",
+      "searchIntent": "explicit_destination",
+      "searchRank": {
+        "score": 3440.25,
+        "bucket": "other_texas_results",
+        "inBounds": true,
+        "isTexas": true,
+        "isLibertyCounty": false,
+        "isLocality": true,
+        "distanceMiles": 29.724428201937698,
+        "anchorDistanceMiles": 29.724428201937698,
+        "anchor": {
+          "label": "Cleveland",
+          "source": "governed_location_context"
+        },
+        "comparatorInputs": {
+          "stableInputOrderScore": 1.25,
+          "queryMatchClass": "exact_name",
+          "businessRelevanceScore": 0,
+          "exactName": true,
+          "qualityScore": 360,
+          "sourcePriorityScore": 0,
+          "seedPriorityScore": 0,
+          "localityMode": "explicit_intent",
+          "reservation": "none"
+        },
+        "scoreBreakdown": {
+          "stableInputOrder": 1.25,
+          "exactAddress": 0,
+          "addressPrecision": 0,
+          "inexactAddress": 0,
+          "businessRelevance": 0,
+          "quality": 360,
+          "addressGeographyConflict": 0,
+          "savedPlace": 0,
+          "seedUsefulness": 0,
+          "seedContext": 0,
+          "governedDistance": 0,
+          "inBounds": 0,
+          "libertyCountyString": 0,
+          "localityString": 0,
+          "texasString": 0,
+          "extremeDistance": 0,
+          "explicitSeedLocality": 0,
+          "explicitInBounds": 25,
+          "explicitTexasString": 12,
+          "explicitLocalityString": 8,
+          "explicitDistance": 6,
+          "canonicalPlaceAuthority": 3000,
+          "titleMatch": 28,
+          "nearbyMatchAvailability": 0,
+          "explicitMatchAvailability": 0
+        },
+        "scoreBreakdownTotal": 3440.25,
+        "scoreResidual": 0,
+        "rankScope": "pre_projection_comparator",
+        "rank": 1,
+        "comparatorRank": 1,
+        "publishedRank": 1
+      },
+      "localPoiSeed": false,
+      "display_name": "Crosby, Texas",
+      "placeGeoid": "4817756",
+      "countyMemberships": [
+        "48201"
+      ],
+      "raw": {
+        "id": "place-4817756",
+        "name": "Crosby",
+        "display_name": "Crosby, Texas",
+        "subtitle": "Harris County",
+        "lat": 29.91154,
+        "lon": -95.0632549,
+        "type": "city",
+        "provider": "gridly_canonical_place",
+        "address": {
+          "city": "Crosby",
+          "county": "Harris County",
+          "state": "Texas"
+        },
+        "placeGeoid": "4817756",
+        "countyMemberships": [
+          "48201"
+        ]
+      },
+      "consumerType": "Place",
+      "precision": "place",
+      "exactAddress": false,
+      "approximate": false,
+      "houseAgreement": false,
+      "roadAgreement": false,
+      "geographyPass": false,
+      "conflictReasons": []
+    },
+    "context": {
+      "key": "cleveland",
+      "label": "Cleveland",
+      "storageValue": "Cleveland",
+      "countyId": "liberty-tx",
+      "lat": 30.3413,
+      "lng": -95.0858,
+      "radiusMiles": 9,
+      "startupZoom": 13,
+      "source": "existing local app anchor"
+    },
+    "point": {
+      "awarenessKey": "cleveland",
+      "identityClass": "CANONICAL_PLACE",
+      "countyId": "liberty-tx",
+      "stableIdentity": "4815436",
+      "lat": 30.3413,
+      "lng": -95.0858,
+      "placeGeoid": "4815436"
+    },
+    "nearby": {
+      "label": "Cleveland",
+      "latitude": 30.3413,
+      "longitude": -95.0858,
+      "countyContextId": "liberty-tx",
+      "originType": "CANONICAL_PLACE",
+      "communityIdentity": {
+        "stableGovernedIdentity": "place-4815436",
+        "placeGeoid": "4815436"
+      },
+      "source": "selected_awareness_area"
+    },
+    "summary": "Cleveland"
+  },
+  "outcomes": [],
+  "briefLocation": "Cleveland, TX",
+  "visibleBriefHeading": "TRAVEL BRIEF",
+  "settingsHome": {
+    "label": "Cleveland",
+    "meta": "Watching Cleveland, Liberty County.",
+    "storageValue": "Cleveland"
+  },
+  "visibleSettingsHome": "Cleveland",
+  "primaryWeatherRequests": [
+    "https://api.weather.gov/points/30.3413,-95.0858",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=30.3413,-95.0858"
+  ],
+  "layout": {
+    "map": {
+      "x": 0,
+      "y": 84,
+      "width": 390,
+      "height": 844
+    },
+    "gridlyAddressSearchInput": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    "gridlyV2TopStatusPrimary": {
+      "x": 23,
+      "y": 54,
+      "width": 344,
+      "height": 18.125
+    }
+  },
+  "errors": [],
+  "weatherRequests": [
+    "https://api.weather.gov/points/30.3413,-95.0858",
+    "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+    "https://api.weather.gov/alerts/active?point=30.3413,-95.0858"
+  ],
+  "remoteRequestsBlocked": true
+}

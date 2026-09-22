@@ -19331,8 +19331,8 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
-  width: 72px !important;
-  height: 72px !important;
+  width: 64px !important;
+  height: 64px !important;
 }
 
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
@@ -19343,8 +19343,8 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap.gridly-crossing-street-zoom-marker-size,
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
-  width: 78px !important;
-  height: 78px !important;
+  width: 64px !important;
+  height: 64px !important;
 }
 
 @media (max-width: 640px) and (orientation: portrait) {
@@ -19352,16 +19352,16 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
-    width: 76px !important;
-    height: 76px !important;
+    width: 64px !important;
+    height: 64px !important;
   }
 
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size,
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap.gridly-crossing-street-zoom-marker-size,
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
-    width: 80px !important;
-    height: 80px !important;
+    width: 64px !important;
+    height: 64px !important;
   }
 }
 
@@ -19392,31 +19392,31 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 }
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="crash"] {
-  --gridly-production-marker-artwork-scale: 1.52;
+  --gridly-production-marker-artwork-scale: 1;
 }
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="road_closed"] {
-  --gridly-production-marker-artwork-scale: 1.48;
+  --gridly-production-marker-artwork-scale: 1;
 }
 
-#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"], [data-marker-category="ice"]) {
-  --gridly-production-marker-artwork-scale: 1.4;
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"]) {
+  --gridly-production-marker-artwork-scale: 1;
 }
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="debris"] {
-  --gridly-production-marker-artwork-scale: 1.73;
+  --gridly-production-marker-artwork-scale: 1;
 }
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="traffic_backup"] {
-  --gridly-production-marker-artwork-scale: 1.9;
+  --gridly-production-marker-artwork-scale: 1;
 }
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="traffic_signal_issue"] {
-  --gridly-production-marker-artwork-scale: 1.83;
+  --gridly-production-marker-artwork-scale: 1;
 }
 
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] {
-  --gridly-production-marker-artwork-scale: 1.26;
+  --gridly-production-marker-artwork-scale: 1;
 }
 
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
@@ -29785,3 +29785,47 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
     height: 44px !important;
   }
 }
+
+/* LP244.45A — reuse the Location Context actions for temporary awareness. */
+#gridlyTemporaryContextReturnHome[hidden] {
+  display: none !important;
+}
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-temporary-awareness-controls .mobile-destination-command-actions .compact-btn {
+    width: 96px !important;
+    min-width: 96px !important;
+    max-width: 96px !important;
+  }
+}
+
+/* LP244.47: static vectors own condition art; source and selection remain separate. */
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon) :is(.has-production-marker, .gridly-marker-wrap) {
+  --gridly-production-marker-artwork-scale: 1;
+  transform: none !important;
+  animation: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon) :is(.gridly-hazard-marker, .gridly-crossing-marker).has-production-marker .gridly-production-marker-img {
+  width: 64px !important;
+  height: 64px !important;
+  transform: none !important;
+  filter: drop-shadow(0 2px 3px rgba(10, 25, 35, .32)) !important;
+}
+#map .leaflet-marker-icon.gridly-official-roadway-marker-icon .gridly-official-roadway-marker.has-production-marker::before {
+  display: none;
+}
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon):is(.gridly-alert-focused-marker, [data-gridly-selected="true"]) :is(.gridly-hazard-marker, .gridly-crossing-marker).has-production-marker .gridly-production-marker-img {
+  transform: scale(1.1) !important;
+  transform-origin: 50% 95.3125% !important;
+  filter: drop-shadow(0 0 2px white) drop-shadow(0 2px 4px rgba(10, 25, 35, .5)) !important;
+}
+
+/* Owner navigation PNGs are independent of hazard/source/severity styling. */
+#map .gridly-navigation-marker-icon { background: transparent; border: 0; width: 48px; height: 48px; }
+#map .gridly-navigation-marker-img { display: block; width: 48px; height: 48px; object-fit: contain; max-width: none; pointer-events: none; }
+
+/* Approved PNGs already contain their artwork treatment; do not recolor or add shadows. */
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon),
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon) :is(.gridly-hazard-marker, .gridly-crossing-marker).has-production-marker .gridly-production-marker-img,
+#map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon):is(.gridly-alert-focused-marker, [data-gridly-selected="true"]) :is(.gridly-hazard-marker, .gridly-crossing-marker).has-production-marker .gridly-production-marker-img { filter: none !important; }

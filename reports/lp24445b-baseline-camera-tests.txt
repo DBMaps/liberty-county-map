@@ -1,0 +1,77 @@
+✔ registry is the exact four owner-approved GEOID-keyed presentation cameras (25.658ms)
+✖ semantic PLACE dispatch uses overrides exactly and canonical fallback otherwise (8.3603ms)
+✖ canonical identities and memberships remain unchanged and Austin County cannot inherit Austin camera (17.9433ms)
+✔ shared selection and reload paths converge on GEOID dispatch without persisted coordinates (19.7779ms)
+✔ metro precedence, county fitting, and Route Watch movement remain outside the PLACE override (67.78ms)
+✔ inventory is complete, GEOID ordered, unique, and membership-preserving (90.1665ms)
+✔ four exact LP197 overrides are preserved and lookup is GEOID keyed (17.8859ms)
+✔ candidate derivation, calibration, bad controls, and confidence vocabulary are deterministic (391.7254ms)
+✔ no runtime activation, identity, ZIP, county, Houston, or San Antonio mutation is emitted (1.3729ms)
+✔ reports use LF and a second generated build is byte-identical (418.3986ms)
+✔ mixed official and Community Report families use governed cardinality (2.6168ms)
+✔ presentation cardinality is not an authority and quiet state remains zero (0.5848ms)
+✔ governed projection includes active Community Reports once and rejects stale rows (24.9766ms)
+✔ KBYG consolidated labels use shared governed casing (4.8146ms)
+✔ unknown KBYG roadway condition has a safe deliberate fallback (2.397ms)
+✔ production normalization passes governed evidence and never Alerts DOM cardinality (5.8521ms)
+✔ 1 current Heat Advisory without a temperature cannot become freezing KBYG (11.7606ms)
+✔ 2 stale freeze evidence is excluded from current weather authority (6.0682ms)
+✔ 3 expired freeze alerts are not eligible (3.9367ms)
+✔ 4 retained historical weather cannot be promoted as current (5.9098ms)
+✔ 5 current PLACE identity must own the KBYG weather candidate (2.1813ms)
+✔ 6 precise current PLACE authority wins over a county or legacy weather candidate (9.9945ms)
+✔ 7 area transition invalidates previous weather before publishing the next identity (54.5522ms)
+✔ 8 hard refresh does not rehydrate a stale weather narrative (16.2224ms)
+✔ 9 a legitimate current freeze condition still promotes freezing awareness (5.9073ms)
+✔ 10 a legitimate current Heat Advisory still promotes heat awareness (7.3055ms)
+✔ 11 non-weather KBYG transportation candidates remain unaffected (7.2508ms)
+✔ 12 current NWS official alerts remain independently governed (4.0004ms)
+✔ 13 multi-county PLACE weather identity remains PLACE-owned (6.1846ms)
+✔ cold-start PLACE identities all resolve to governed zoom-13 targets (25.1873ms)
+✔ persisted El Paso Countywide waits for authoritative geometry before map construction (22.5888ms)
+✔ startup restore is read/hydrate-only and crossing activation is gated (24.9498ms)
+✔ no persisted semantic state retains the safe product startup camera (6.383ms)
+✔ governed PLACE artifact identity and statewide coverage remain exact (8.9471ms)
+✔ required PLACE matrix has canonical GEOIDs and one governed target per identity (22.0985ms)
+✔ PLACE dispatcher owns an exact zoom-13 setView and never fits county data (20.1732ms)
+✔ six-city interactive and cold-start PLACE cameras settle exactly on governed targets (126.7135ms)
+✔ non-PLACE setGridlyAwarenessView consumers retain chrome compensation by default (20.0136ms)
+✔ PLACE transition matrix always settles on the newly selected governed target (42.5922ms)
+✔ El Paso and Bexar COUNTYWIDE cameras retain geometry, padding, and max zoom 10 (14.9423ms)
+✔ Home, picker, restore/startup and lifecycle paths converge without PLACE rewrites (30.613ms)
+✔ COUNTYWIDE uses canonical county geometry with chrome padding and max zoom 10 (5.1478ms)
+✔ deferred county geometry is sequence-guarded against a newer PLACE camera (2.5091ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 41
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2180.0382
+
+✖ failing tests:
+
+test at tests\lp197-governed-place-consumer-presentation-cameras.test.mjs:54:1
+✖ semantic PLACE dispatch uses overrides exactly and canonical fallback otherwise (8.3603ms)
+  ReferenceError: gridlySynchronizeActiveCountyForOperationalContext is not defined
+      at Object.gridlyDispatchSemanticCamera (evalmachine.<anonymous>:5:3)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/tests/lp197-governed-place-consumer-presentation-cameras.test.mjs:57:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+
+test at tests\lp197-governed-place-consumer-presentation-cameras.test.mjs:66:1
+✖ canonical identities and memberships remain unchanged and Austin County cannot inherit Austin camera (17.9433ms)
+  ReferenceError: gridlySynchronizeActiveCountyForOperationalContext is not defined
+      at Object.gridlyDispatchSemanticCamera (evalmachine.<anonymous>:5:3)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/tests/lp197-governed-place-consumer-presentation-cameras.test.mjs:77:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7)

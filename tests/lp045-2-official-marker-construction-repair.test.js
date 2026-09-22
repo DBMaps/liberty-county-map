@@ -10,7 +10,7 @@ assert(app.includes('function gridlyLp045OfficialMarkerCoords'), 'LP045.2 offici
 assert(app.includes('record?.sourceCoordinates?.latitude ?? record?.sourceCoordinates?.lat'), 'DriveTexas latitude/lat sourceCoordinates shapes are accepted');
 assert(app.includes('record?.sourceCoordinates?.longitude ?? record?.sourceCoordinates?.lng ?? record?.sourceCoordinates?.lon'), 'DriveTexas longitude/lng/lon sourceCoordinates shapes are accepted');
 assert(app.includes('if (/construct|maintenance|work zone|lane/.test(category)) return "txdot_construction";'), 'Construction maps to an existing Gridly TxDOT construction marker type');
-assert(app.includes('txdot_construction: "construction-zone.png"'), 'TxDOT construction marker type resolves to an existing production marker asset');
+assert.equal(require('../js/gridlyMarkerRegistry.js').resolve('txdot_construction').asset, 'construction.svg', 'TxDOT construction resolves through the authoritative production registry');
 assert(iconBuilder.includes('getGridlyProductionMarkerAsset(productionMarkerCategory)'), 'official icon builder uses production marker asset resolver');
 assert(iconBuilder.includes('L.divIcon({'), 'official icon builder creates a Leaflet divIcon');
 assert(renderer.includes('trace.leafletMarkerConstructorInvoked = true') && renderer.includes('marker = L.marker([coords.lat, coords.lng]'), 'official renderer traces and invokes the Leaflet marker constructor');
